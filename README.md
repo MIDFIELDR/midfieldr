@@ -25,18 +25,14 @@ The basic units for computing persistence metrics are the individual student, co
 
 For investigating graduation rates
 
--   `gather_gradrate()` collect all students matriculating (and imputed to have matriculated) in a program and all students graduating from a program
--   `tally_gradrate()` filter, group, count, and compute graduation rates
--   `graph_gradrate()` graph graduation rates in a multiway plot
+-   `gather_start()`
+-   `gather_grad()`
+-   `tally_gradrate()`
+-   `graph_gradrate()`
 
-For investigating program stickiness
+For investigating stickiness
 
--   `gather_stickiness()` collect all students ever enrolled in a program and all students graduating from a program
--   `tally_stickiness()` filter, group, count, and compute stickiness results
--   `graph_stickiness()` graph stickiness in a multiway plot
-
-For investigation migration yield
-
--   `gather_migration()` collect potential migrators, migrators attracted to a program, and migrators graduating from a program
--   `tally_migration()` filter, group, count, and compute migration yield results
--   `graph_migration()` graph migration yield in a scatterplot with contour lines
+-   `gather_ever()`
+-   `gather_grad()`
+-   `tally_stickiness()`
+-   `graph_stickiness()`
