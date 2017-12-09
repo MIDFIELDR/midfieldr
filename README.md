@@ -2,7 +2,7 @@
 midfieldr <a href="https://engineering.purdue.edu/MIDFIELD" target="blank"><img src="man/figures/midfieldcut.png" align="right"/></a>
 =====================================================================================================================================
 
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/midfieldr)](http://cran.r-project.org/package=midfieldr) [![Build Status](https://travis-ci.org/graphdr/midfieldr.svg?branch=master)](https://travis-ci.org/graphdr/midfieldr)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/midfieldr)](http://cran.r-project.org/package=midfieldr) [![Build Status](https://travis-ci.org/MIDFIELDR/midfieldr.svg?branch=master)](https://travis-ci.org/MIDFIELDR/midfieldr)
 
 midfieldr is a package for investigating student record data provided by registrars at US universities participating in the MIDFIELD project.
 
@@ -16,7 +16,7 @@ Installation
 midfieldr is not currently available from CRAN, but the development version can be installed from github with:
 
     # install.packages("devtools")
-    devtools::install_github("graphdr/midfieldr")
+    devtools::install_github("MIDFIELDR/midfieldr")
 
 Usage
 -----
