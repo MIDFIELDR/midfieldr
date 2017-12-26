@@ -2,33 +2,29 @@
 % Please edit documentation in R/filter_cip.R
 \name{filter_cip}
 \alias{filter_cip}
-\title{Filter CIP program data}
+\title{Filter CIP data}
 \usage{
-filter_cip(type = NULL, series = NULL, data = NULL)
+filter_cip(series = NULL, data = NULL)
 }
 \arguments{
-\item{type}{An integer (2, 4, or 6) representing the CIP taxonomy level}
+\item{series}{The conditions used to filter the data. A character vector (or coercible to one) of 2, 4, or 6-digit CIP codes.}
 
-\item{series}{The first few digits of a CIP code or vector of codes. A character vector, or coercible to one. Can also be one of the predefined vectors of CIP codes for Engineering, Humanities, Mathematics, Sciences, or the Social Sciences (\code{series_engr, series_hum, series_math, series_sci, series_socsci}).}
-
-\item{data}{CIP data frame. The default is the midfieldr \code{cip} dataset with two variables, \code{CIP} and \code{PROGRAM}.}
+\item{data}{A data frame of CIP codes and program names at the 2, 4, and 6-digit levels: \code{CIP2}, \code{PRGM2}, \code{CIP4}, \code{PRGM4}, \code{CIP6}, and \code{PRGM6}. The default is the midfieldr \code{cip} dataset. All variables are characters.}
 }
 \value{
-A subset of the \code{cip} dataset filtered by type and series
+A data frame: \code{data} filtered by the conditions in \code{series}.
 }
 \description{
-Filter CIP program data by type and series. Type is the CIP taxonomy level: 2-digit, 4-digit, or 6-digit. Series is the CIP code.
+Filter a data frame of Classification of Instructional Programs (CIP) codes to return the rows that match conditions.
+}
+\details{
+In the midfieldr datasets (\code{student}, \code{course}, \code{term},   \code{degree}) a 6-digit CIP code identifies the program in which a student is enrolled at matriculation, in a term, and at graduation. The purpose of \code{filter_cip()} is to obtain the 6-digit codes of the programs one wishes to study.
 }
 \examples{
-# Extract all 2-digit CIP data
-filter_cip()
+filter_cip(series = c("490101", "490205"))
+filter_cip(series = c("4901", "4902"))
+filter_cip(series = c("49", "99"))
+filter_cip(series = c("54", "4901", "490205"))
+filter_cip(series = seq(540102, 540108))
 
-# Extract all 4-digit CIP data
-filter_cip(type = 4)
-
-# Extract all 4-digit CIP data in Engineering
-filter_cip(type = 4, series = "14")
-
-# Use the predefined Engineering series
-filter_cip(type = 4, series = series_engr)
 }

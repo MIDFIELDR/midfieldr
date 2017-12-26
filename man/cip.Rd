@@ -4,14 +4,21 @@
 \name{cip}
 \alias{cip}
 \title{Classification of Instructional Programs (CIP) data}
-\format{A data frame (tibble) with 2002 observations and 2 variables. Each observation is a unique program code and name.
+\format{A data frame (tibble) with 1544 observations and 6 variables. Each observation is a unique program.
 
 \describe{
 
-  \item{CIP}{A program code of 2, 4, or 6 digits. A character variable.}
+  \item{CIP2}{The 2-digit program code. A character variable.}
 
-  \item{PROGRAM}{The name of an instructional program. A character variable.}
+  \item{PGRM2}{The name of the 2-digit instructional program. A character variable.}
 
+  \item{CIP4}{The 4-digit program code. A character variable.}
+
+  \item{PGRM4}{The name of the 4-digit instructional program. A character variable.}
+
+  \item{CIP6}{The 6-digit program code. A character variable.}
+
+  \item{PGRM6}{The name of the 6-digit instructional program. A character variable.}
 }}
 \source{
 \url{https://engineering.purdue.edu/MIDFIELD}

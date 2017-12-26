@@ -1,74 +1,64 @@
-#' @importFrom dplyr filter
+#' @importFrom dplyr filter arrange bind_rows
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_length str_c str_detect
 #' @importFrom tibble as.tibble
+#' @importFrom dplyr enquo select
 NULL
 
-#' Filter CIP program data
+#' Filter CIP data
 #'
-#' Filter CIP program data by type and series. Type is the CIP taxonomy level: 2-digit, 4-digit, or 6-digit. Series is the CIP code.
+#' Filter a data frame of Classification of Instructional Programs (CIP) codes to return the rows that match conditions.
 #'
-#' @param type An integer (2, 4, or 6) representing the CIP taxonomy level
+#' In the midfieldr datasets (\code{student}, \code{course}, \code{term},   \code{degree}) a 6-digit CIP code identifies the program in which a student is enrolled at matriculation, in a term, and at graduation. The purpose of \code{filter_cip()} is to obtain the 6-digit codes of the programs one wishes to study.
 #'
-#' @param series The first few digits of a CIP code or vector of codes. A character vector, or coercible to one. Can also be one of the predefined vectors of CIP codes for Engineering, Humanities, Mathematics, Sciences, or the Social Sciences (\code{series_engr, series_hum, series_math, series_sci, series_socsci}).
+#' @param series The conditions used to filter the data. A character vector (or coercible to one) of 2, 4, or 6-digit CIP codes.
 #'
-#' @param data CIP data frame. The default is the midfieldr \code{cip} dataset with two variables, \code{CIP} and \code{PROGRAM}.
+#' @param data A data frame of CIP codes and program names at the 2, 4, and 6-digit levels: \code{CIP2}, \code{PRGM2}, \code{CIP4}, \code{PRGM4}, \code{CIP6}, and \code{PRGM6}. The default is the midfieldr \code{cip} dataset. All variables are characters.
 #'
-#' @return A subset of the \code{cip} dataset filtered by type and series
+#' @return A data frame: \code{data} filtered by the conditions in \code{series}.
+#'
+#' @examples
+#' filter_cip(series = c("490101", "490205"))
+#' filter_cip(series = c("4901", "4902"))
+#' filter_cip(series = c("49", "99"))
+#' filter_cip(series = c("54", "4901", "490205"))
+#' filter_cip(series = seq(540102, 540108))
 #'
 #' @export
-#' @examples
-#' # Extract all 2-digit CIP data
-#' filter_cip()
-#'
-#' # Extract all 4-digit CIP data
-#' filter_cip(type = 4)
-#'
-#' # Extract all 4-digit CIP data in Engineering
-#' filter_cip(type = 4, series = "14")
-#'
-#' # Use the predefined Engineering series
-#' filter_cip(type = 4, series = series_engr)
-filter_cip <- function(type = NULL, series = NULL, data = NULL){
+filter_cip <- function(series = NULL, data = NULL){
 
-	if (is.null(data)) data <- midfieldr::cip
+	# default cip data set
+	if (is.null(data)) {
 
-	# ensure a character argument
-	ensure_str <- function(y) {
-		if (!is.character(y)) {
-			y <- as.character(y)
-		} else {
-			y <- y
-		}
-	}
+		data <- midfieldr::cip
 
-
-
-	# extract the CIP columns by type (2, 4, or 6-digit)
-	if (type == 2 | type == 4 | type == 6) {
-		cip <- filter(data, str_length(CIP) == type)
 	} else {
-		stop("type must be an integer 2, 4, or 6.")
+
+		# check that data frame has correct structure
+    stopifnot(names(data) == names(cip))
+    stopifnot(is.data.frame(data))
 	}
 
-	# filter the CIP by series
-	if (!is.null(series)) {
+	if (is.null(series)) {
 
-		series <- ensure_str(series)
+		# default series is all codes in midfieldr::cip
+		cip <- data
 
-		# permit multiple series
-		series_c <- str_c("^", series)
-		series_c <- str_c(series_c, collapse = "|")
+	} else {
 
-		cip <- filter(cip, str_detect(CIP, series_c))
+		# coerce series to character
+		series <- as.character(series)
+
+		collapse_series <- str_c("^", series, collapse = "|")
+		cip2 <- filter(data, str_detect(CIP2, collapse_series))
+		cip4 <- filter(data, str_detect(CIP4, collapse_series))
+		cip6 <- filter(data, str_detect(CIP6, collapse_series))
+		cip  <- bind_rows(cip2, cip4, cip6)
 	}
 
-	if (nrow(cip) == 0) {stop("Check that the series exists.")}
-
-	cip <- cip %>%
-		unique() %>%
-		tibble::as.tibble()
+	# omit duplicates (if any) and arrange in order of CIP
+	cip <- unique(cip) %>%
+		arrange(CIP2, CIP4, CIP6)
 
 	return(cip)
 }
-"filter_cip"
