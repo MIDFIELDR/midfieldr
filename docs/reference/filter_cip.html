@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Filter CIP program data — filter_cip â€¢ midfieldr</title>
+<title>Filter CIP data — filter_cip â€¢ midfieldr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -68,19 +68,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/filter_cip.html">Filter CIP codes</a>
-    </li>
-    <li>
-      <a href="../articles/compute_gradrate.html">Compute grad rates</a>
-    </li>
-    <li>
-      <a href="../articles/graph_gradrate_case.html">Graph grad rates</a>
-    </li>
-    <li>
-      <a href="../articles/compute_stickiness.html">Compute stickiness</a>
-    </li>
-    <li>
-      <a href="../articles/graph_stickiness_case.html">Graph stickiness</a>
+      <a href="../articles/filter_cip.html">Selecting academic fields of study</a>
     </li>
   </ul>
 </li>
@@ -113,98 +101,84 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Filter CIP program data</h1>
+    <h1>Filter CIP data</h1>
     </div>
 
     
-    <p>Filter CIP program data by type and series. Type is the CIP taxonomy level: 2-digit, 4-digit, or 6-digit. Series is the CIP code.</p>
+    <p>Filter a data frame of Classification of Instructional Programs (CIP) codes to return the rows that match conditions.</p>
     
 
-    <pre class="usage"><span class='fu'>filter_cip</span>(<span class='kw'>type</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>series</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>filter_cip</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>type</th>
-      <td><p>An integer (2, 4, or 6) representing the CIP taxonomy level</p></td>
-    </tr>
-    <tr>
       <th>series</th>
-      <td><p>The first few digits of a CIP code or vector of codes. A character vector, or coercible to one. Can also be one of the predefined vectors of CIP codes for Engineering, Humanities, Mathematics, Sciences, or the Social Sciences (<code>series_engr, series_hum, series_math, series_sci, series_socsci</code>).</p></td>
+      <td><p>The conditions used to filter the data. A character vector (or coercible to one) of 2, 4, or 6-digit CIP codes.</p></td>
     </tr>
     <tr>
       <th>data</th>
-      <td><p>CIP data frame. The default is the midfieldr <code>cip</code> dataset with two variables, <code>code</code> and <code>name</code>.</p></td>
+      <td><p>A data frame of CIP codes and program names at the 2, 4, and 6-digit levels: <code>CIP2</code>, <code>PRGM2</code>, <code>CIP4</code>, <code>PRGM4</code>, <code>CIP6</code>, and <code>PRGM6</code>. The default is the midfieldr <code>cip</code> dataset. All variables are characters.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A subset of the <code>cip</code> dataset filtered by type and series</p>
+    <p>A data frame: <code>data</code> filtered by the conditions in <code>series</code>.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>In the midfieldr datasets (<code>student</code>, <code>course</code>, <code>term</code>,   <code>degree</code>) a 6-digit CIP code identifies the program in which a student is enrolled at matriculation, in a term, and at graduation. The purpose of <code>filter_cip()</code> is to obtain the 6-digit codes of the programs one wishes to study.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Extract all 2-digit CIP data</span>
-<span class='fu'>filter_cip</span>()</div><div class='output co'>#&gt; # A tibble: 48 x 2
-#&gt;     code                                                     name
-#&gt;    &lt;chr&gt;                                                    &lt;chr&gt;
-#&gt;  1    01 Agriculture/Agricultural Operations and Related Sciences
-#&gt;  2    03                       Natural Resources and Conservation
-#&gt;  3    04                        Architecture and Related Services
-#&gt;  4    05                  Area/Ethnic/Cultural and Gender Studies
-#&gt;  5    09           Communications/Journalism and Related Programs
-#&gt;  6    10         Communications Technologies and Support Services
-#&gt;  7    11   Computer and information Sciences and Support Services
-#&gt;  8    12                           Personal and Culinary Services
-#&gt;  9    13                                                Education
-#&gt; 10    14                                              Engineering
-#&gt; # ... with 38 more rows</div><div class='input'>
-<span class='co'># Extract all 4-digit CIP data</span>
-<span class='fu'>filter_cip</span>(<span class='kw'>type</span> <span class='kw'>=</span> <span class='fl'>4</span>)</div><div class='output co'>#&gt; # A tibble: 411 x 2
-#&gt;     code                                                 name
-#&gt;    &lt;chr&gt;                                                &lt;chr&gt;
-#&gt;  1  0100                                  Agriculture/General
-#&gt;  2  0101                 Agricultural Business and Management
-#&gt;  3  0102                           Agricultural Mechanization
-#&gt;  4  0103                   Agricultural Production Operations
-#&gt;  5  0104            Agricultural and Food Products Processing
-#&gt;  6  0105            Agricultural and Domestic Animal Services
-#&gt;  7  0106 Applied Horticulture/Horticultural Business Services
-#&gt;  8  0107                            International Agriculture
-#&gt;  9  0108                         Agricultural Public Services
-#&gt; 10  0109                                      Animal Sciences
-#&gt; # ... with 401 more rows</div><div class='input'>
-<span class='co'># Extract all 4-digit CIP data in Engineering</span>
-<span class='fu'>filter_cip</span>(<span class='kw'>type</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"14"</span>)</div><div class='output co'>#&gt; # A tibble: 40 x 2
-#&gt;     code                                                   name
-#&gt;    &lt;chr&gt;                                                  &lt;chr&gt;
-#&gt;  1  1401                                    Engineering/General
-#&gt;  2  1402   Aerospace/Aeronautical and Astronautical Engineering
-#&gt;  3  1403 Agricultural/Biological Engineering and Bioengineering
-#&gt;  4  1404                              Architectural Engineering
-#&gt;  5  1405                         Biomedical/Medical Engineering
-#&gt;  6  1406                       Ceramic Sciences and Engineering
-#&gt;  7  1407                                   Chemical Engineering
-#&gt;  8  1408                                      Civil Engineering
-#&gt;  9  1409                           Computer Engineering/General
-#&gt; 10  1410  Electrical/Electronics and Communications Engineering
-#&gt; # ... with 30 more rows</div><div class='input'>
-<span class='co'># Use the predefined Engineering series</span>
-<span class='fu'>filter_cip</span>(<span class='kw'>type</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>series</span> <span class='kw'>=</span> <span class='no'>series_engr</span>)</div><div class='output co'>#&gt; # A tibble: 40 x 2
-#&gt;     code                                                   name
-#&gt;    &lt;chr&gt;                                                  &lt;chr&gt;
-#&gt;  1  1401                                    Engineering/General
-#&gt;  2  1402   Aerospace/Aeronautical and Astronautical Engineering
-#&gt;  3  1403 Agricultural/Biological Engineering and Bioengineering
-#&gt;  4  1404                              Architectural Engineering
-#&gt;  5  1405                         Biomedical/Medical Engineering
-#&gt;  6  1406                       Ceramic Sciences and Engineering
-#&gt;  7  1407                                   Chemical Engineering
-#&gt;  8  1408                                      Civil Engineering
-#&gt;  9  1409                           Computer Engineering/General
-#&gt; 10  1410  Electrical/Electronics and Communications Engineering
-#&gt; # ... with 30 more rows</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>filter_cip</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"490101"</span>, <span class='st'>"490205"</span>))</div><div class='output co'>#&gt; # A tibble: 2 x 6
+#&gt;    CIP2                                        PGRM2  CIP4
+#&gt;   &lt;chr&gt;                                        &lt;chr&gt; &lt;chr&gt;
+#&gt; 1    49 Transportation and Materials Moving Services  4901
+#&gt; 2    49 Transportation and Materials Moving Services  4902
+#&gt; # ... with 3 more variables: PGRM4 &lt;chr&gt;, CIP6 &lt;chr&gt;, PGRM6 &lt;chr&gt;</div><div class='input'><span class='fu'>filter_cip</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"4901"</span>, <span class='st'>"4902"</span>))</div><div class='output co'>#&gt; # A tibble: 13 x 6
+#&gt;    CIP2                                        PGRM2  CIP4
+#&gt;   &lt;chr&gt;                                        &lt;chr&gt; &lt;chr&gt;
+#&gt; 1    49 Transportation and Materials Moving Services  4901
+#&gt; 2    49 Transportation and Materials Moving Services  4901
+#&gt; 3    49 Transportation and Materials Moving Services  4901
+#&gt; 4    49 Transportation and Materials Moving Services  4901
+#&gt; 5    49 Transportation and Materials Moving Services  4901
+#&gt; 6    49 Transportation and Materials Moving Services  4901
+#&gt; # ... with 7 more rows, and 3 more variables: PGRM4 &lt;chr&gt;, CIP6 &lt;chr&gt;,
+#&gt; #   PGRM6 &lt;chr&gt;</div><div class='input'><span class='fu'>filter_cip</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"49"</span>, <span class='st'>"99"</span>))</div><div class='output co'>#&gt; # A tibble: 19 x 6
+#&gt;    CIP2                                        PGRM2  CIP4
+#&gt;   &lt;chr&gt;                                        &lt;chr&gt; &lt;chr&gt;
+#&gt; 1    49 Transportation and Materials Moving Services  4901
+#&gt; 2    49 Transportation and Materials Moving Services  4901
+#&gt; 3    49 Transportation and Materials Moving Services  4901
+#&gt; 4    49 Transportation and Materials Moving Services  4901
+#&gt; 5    49 Transportation and Materials Moving Services  4901
+#&gt; 6    49 Transportation and Materials Moving Services  4901
+#&gt; # ... with 13 more rows, and 3 more variables: PGRM4 &lt;chr&gt;, CIP6 &lt;chr&gt;,
+#&gt; #   PGRM6 &lt;chr&gt;</div><div class='input'><span class='fu'>filter_cip</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"54"</span>, <span class='st'>"4901"</span>, <span class='st'>"490205"</span>))</div><div class='output co'>#&gt; # A tibble: 17 x 6
+#&gt;    CIP2                                        PGRM2  CIP4
+#&gt;   &lt;chr&gt;                                        &lt;chr&gt; &lt;chr&gt;
+#&gt; 1    49 Transportation and Materials Moving Services  4901
+#&gt; 2    49 Transportation and Materials Moving Services  4901
+#&gt; 3    49 Transportation and Materials Moving Services  4901
+#&gt; 4    49 Transportation and Materials Moving Services  4901
+#&gt; 5    49 Transportation and Materials Moving Services  4901
+#&gt; 6    49 Transportation and Materials Moving Services  4901
+#&gt; # ... with 11 more rows, and 3 more variables: PGRM4 &lt;chr&gt;, CIP6 &lt;chr&gt;,
+#&gt; #   PGRM6 &lt;chr&gt;</div><div class='input'><span class='fu'>filter_cip</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>seq</span>(<span class='fl'>540102</span>, <span class='fl'>540108</span>))</div><div class='output co'>#&gt; # A tibble: 7 x 6
+#&gt;    CIP2   PGRM2  CIP4   PGRM4   CIP6
+#&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;
+#&gt; 1    54 History  5401 History 540102
+#&gt; 2    54 History  5401 History 540103
+#&gt; 3    54 History  5401 History 540104
+#&gt; 4    54 History  5401 History 540105
+#&gt; 5    54 History  5401 History 540106
+#&gt; 6    54 History  5401 History 540107
+#&gt; # ... with 1 more rows, and 1 more variables: PGRM6 &lt;chr&gt;</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -212,6 +186,8 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

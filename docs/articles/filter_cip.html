@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Filtering CIP data • midfieldr</title>
+<title>Selecting academic fields of study • midfieldr</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/spacelab/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
@@ -45,19 +45,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/filter_cip.html">Filter CIP codes</a>
-    </li>
-    <li>
-      <a href="../articles/compute_gradrate.html">Compute grad rates</a>
-    </li>
-    <li>
-      <a href="../articles/graph_gradrate_case.html">Graph grad rates</a>
-    </li>
-    <li>
-      <a href="../articles/compute_stickiness.html">Compute stickiness</a>
-    </li>
-    <li>
-      <a href="../articles/graph_stickiness_case.html">Graph stickiness</a>
+      <a href="../articles/filter_cip.html">Selecting academic fields of study</a>
     </li>
   </ul>
 </li>
@@ -90,327 +78,503 @@
       </header><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
-      <h1>Filtering CIP data</h1>
+      <h1>Selecting academic fields of study</h1>
             
           </div>
 
     
     
 <div class="contents">
-<p>The first step in exploring student record data is to select the Classification of Instructional Programs (CIP) codes of the programs one wishes to investigate. <code><a href="../reference/filter_cip.html">filter_cip()</a></code> assists in that selection.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># the cip data are included with midfieldr </span>
-<span class="kw">library</span>(midfieldr)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># packages used in the vignette</span>
+<p>The first step in studying MIDFIELD undergraduate student records is selecting the academic fields to study.</p>
+<p>Academic programs are encoded in <code>cip</code>, a data frame of program codes and names of academic fields of study from the Classification of Instructional Programs (CIP) standardized by the US Department of Education.</p>
+<p><code><a href="../reference/filter_cip.html">filter_cip()</a></code> is the function for filtering the <code>cip</code> data frame to obtain the desired programs.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(midfieldr)
+
+<span class="co"># other packages used in the vignette</span>
 <span class="kw">library</span>(dplyr) 
-<span class="kw">library</span>(stringr)</code></pre></div>
-<p>Type <code><a href="../reference/cip.html">?cip</a></code> for the cip dataset help page.</p>
-<div id="basic-filtering" class="section level2">
+<span class="kw">library</span>(magrittr)
+<span class="kw">library</span>(stringr)
+<span class="kw">library</span>(knitr)</code></pre></div>
+<p>For the <code>cip</code> help page, type <code><a href="../reference/cip.html">?cip</a></code>.</p>
+<div id="usage" class="section level2">
 <h2 class="hasAnchor">
-<a href="#basic-filtering" class="anchor"></a>Basic filtering</h2>
-<p>With the default arguments, the set of 2-digit codes and names is returned with 48 observations.</p>
+<a href="#usage" class="anchor"></a>Usage</h2>
+<p><code><a href="../reference/filter_cip.html">filter_cip(series = NULL, data = NULL)</a></code></p>
+<p>With <code>NULL</code> arguments, <code><a href="../reference/filter_cip.html">filter_cip()</a></code> returns the <code>cip</code> data frame.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>()
-<span class="co">#&gt; # A tibble: 48 x 2</span>
-<span class="co">#&gt;    code                                                     name</span>
-<span class="co">#&gt;   &lt;chr&gt;                                                    &lt;chr&gt;</span>
-<span class="co">#&gt; 1    01 Agriculture/Agricultural Operations and Related Sciences</span>
-<span class="co">#&gt; 2    03                       Natural Resources and Conservation</span>
-<span class="co">#&gt; 3    04                        Architecture and Related Services</span>
-<span class="co">#&gt; 4    05                  Area/Ethnic/Cultural and Gender Studies</span>
-<span class="co">#&gt; 5    09           Communications/Journalism and Related Programs</span>
-<span class="co">#&gt; 6    10         Communications Technologies and Support Services</span>
-<span class="co">#&gt; # ... with 42 more rows</span></code></pre></div>
-<p>With <code>type = 4</code> we get the set of 4-digit names and codes with 411 observations.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="dt">type =</span> <span class="dv">4</span>)
-<span class="co">#&gt; # A tibble: 411 x 2</span>
-<span class="co">#&gt;    code                                      name</span>
-<span class="co">#&gt;   &lt;chr&gt;                                     &lt;chr&gt;</span>
-<span class="co">#&gt; 1  0100                       Agriculture/General</span>
-<span class="co">#&gt; 2  0101      Agricultural Business and Management</span>
-<span class="co">#&gt; 3  0102                Agricultural Mechanization</span>
-<span class="co">#&gt; 4  0103        Agricultural Production Operations</span>
-<span class="co">#&gt; 5  0104 Agricultural and Food Products Processing</span>
-<span class="co">#&gt; 6  0105 Agricultural and Domestic Animal Services</span>
-<span class="co">#&gt; # ... with 405 more rows</span></code></pre></div>
-<p>With <code>type = 6</code> we get the set of 6-digit names and codes with 1543 observations.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="dt">type =</span> <span class="dv">6</span>)
-<span class="co">#&gt; # A tibble: 1,543 x 2</span>
-<span class="co">#&gt;     code                                                 name</span>
-<span class="co">#&gt;    &lt;chr&gt;                                                &lt;chr&gt;</span>
-<span class="co">#&gt; 1 010000                                Agriculture - General</span>
-<span class="co">#&gt; 2 010101       Agricultural Business and Management - General</span>
-<span class="co">#&gt; 3 010102        Agribusiness/Agricultural Business Operations</span>
-<span class="co">#&gt; 4 010103                               Agricultural Economics</span>
-<span class="co">#&gt; 5 010104                       Farm/Farm and Ranch Management</span>
-<span class="co">#&gt; 6 010105 Agricultural/Farm Supplies Retailing and Wholesaling</span>
-<span class="co">#&gt; # ... with 1,537 more rows</span></code></pre></div>
-<p>Filtering on a 2-digit series number yields one program.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="dt">series =</span> <span class="st">"14"</span>)
-<span class="co">#&gt; # A tibble: 1 x 2</span>
-<span class="co">#&gt;    code        name</span>
-<span class="co">#&gt;   &lt;chr&gt;       &lt;chr&gt;</span>
-<span class="co">#&gt; 1    14 Engineering</span></code></pre></div>
-<p>The series argument can return more than one series.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"14"</span>, <span class="st">"15"</span>))
-<span class="co">#&gt; # A tibble: 2 x 2</span>
-<span class="co">#&gt;    code                   name</span>
-<span class="co">#&gt;   &lt;chr&gt;                  &lt;chr&gt;</span>
-<span class="co">#&gt; 1    14            Engineering</span>
-<span class="co">#&gt; 2    15 Engineering Technology</span></code></pre></div>
-<p>Changing to 4-digit codes yields all the 4-digit codes in these series.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="dt">type =</span> <span class="dv">4</span>, <span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"14"</span>, <span class="st">"15"</span>))
-<span class="co">#&gt; # A tibble: 57 x 2</span>
-<span class="co">#&gt;    code                                                   name</span>
-<span class="co">#&gt;   &lt;chr&gt;                                                  &lt;chr&gt;</span>
-<span class="co">#&gt; 1  1401                                    Engineering/General</span>
-<span class="co">#&gt; 2  1402   Aerospace/Aeronautical and Astronautical Engineering</span>
-<span class="co">#&gt; 3  1403 Agricultural/Biological Engineering and Bioengineering</span>
-<span class="co">#&gt; 4  1404                              Architectural Engineering</span>
-<span class="co">#&gt; 5  1405                         Biomedical/Medical Engineering</span>
-<span class="co">#&gt; 6  1406                       Ceramic Sciences and Engineering</span>
-<span class="co">#&gt; # ... with 51 more rows</span></code></pre></div>
-</div>
-<div id="predefined-groups-of-programs" class="section level2">
-<h2 class="hasAnchor">
-<a href="#predefined-groups-of-programs" class="anchor"></a>Predefined groups of programs</h2>
-<p>For several groups of programs, CIP codes have been collected in predefined character vectors that can be used as the series argument in <code><a href="../reference/filter_cip.html">filter_cip()</a></code>. Each predefined group is a small data set in midfieldr.</p>
+<span class="co">#&gt; # A tibble: 1,544 x 6</span>
+<span class="co">#&gt;    CIP2                                                    PGRM2  CIP4</span>
+<span class="co">#&gt;   &lt;chr&gt;                                                    &lt;chr&gt; &lt;chr&gt;</span>
+<span class="co">#&gt; 1    01 Agriculture/Agricultural Operations and Related Sciences  0100</span>
+<span class="co">#&gt; 2    01 Agriculture/Agricultural Operations and Related Sciences  0101</span>
+<span class="co">#&gt; 3    01 Agriculture/Agricultural Operations and Related Sciences  0101</span>
+<span class="co">#&gt; 4    01 Agriculture/Agricultural Operations and Related Sciences  0101</span>
+<span class="co">#&gt; 5    01 Agriculture/Agricultural Operations and Related Sciences  0101</span>
+<span class="co">#&gt; 6    01 Agriculture/Agricultural Operations and Related Sciences  0101</span>
+<span class="co">#&gt; # ... with 1,538 more rows, and 3 more variables: PGRM4 &lt;chr&gt;, CIP6 &lt;chr&gt;,</span>
+<span class="co">#&gt; #   PGRM6 &lt;chr&gt;</span></code></pre></div>
+<p>Conditions that cause an error:</p>
 <ul>
-<li>Engineering: <code>series_engr</code>
-</li>
-<li>Humanities: <code>series_hum</code>
-</li>
-<li>Mathematics: <code>series_math</code>
-</li>
-<li>Sciences: <code>series_sci</code>
-</li>
-<li>Social Sciences: <code>series_socsci</code>
-</li>
+<li>
+<code>data</code> not a data frame</li>
+<li>
+<code>data</code> variables different from <code>cip</code> variables (column names)</li>
 </ul>
-<p>For example, to obtain all 4-digit level Engineering programs,</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="dt">type =</span> <span class="dv">4</span>, <span class="dt">series =</span> series_engr)
-<span class="co">#&gt; # A tibble: 40 x 2</span>
-<span class="co">#&gt;    code                                                   name</span>
-<span class="co">#&gt;   &lt;chr&gt;                                                  &lt;chr&gt;</span>
-<span class="co">#&gt; 1  1401                                    Engineering/General</span>
-<span class="co">#&gt; 2  1402   Aerospace/Aeronautical and Astronautical Engineering</span>
-<span class="co">#&gt; 3  1403 Agricultural/Biological Engineering and Bioengineering</span>
-<span class="co">#&gt; 4  1404                              Architectural Engineering</span>
-<span class="co">#&gt; 5  1405                         Biomedical/Medical Engineering</span>
-<span class="co">#&gt; 6  1406                       Ceramic Sciences and Engineering</span>
-<span class="co">#&gt; # ... with 34 more rows</span></code></pre></div>
-<p>To obtain all 6-digit Engineering,</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="dt">type =</span> <span class="dv">6</span>, <span class="dt">series =</span>  series_engr)
-<span class="co">#&gt; # A tibble: 54 x 2</span>
-<span class="co">#&gt;     code                                                   name</span>
-<span class="co">#&gt;    &lt;chr&gt;                                                  &lt;chr&gt;</span>
-<span class="co">#&gt; 1 140101                                  Engineering - General</span>
-<span class="co">#&gt; 2 140102                                        Pre-Engineering</span>
-<span class="co">#&gt; 3 140201   Aerospace/Aeronautical and Astronautical Engineering</span>
-<span class="co">#&gt; 4 140301 Agricultural/Biological Engineering and Bioengineering</span>
-<span class="co">#&gt; 5 140401                              Architectural Engineering</span>
-<span class="co">#&gt; 6 140501                         Biomedical/Medical Engineering</span>
-<span class="co">#&gt; # ... with 48 more rows</span></code></pre></div>
-<p>To see the CIP codes assigned to these predefined vectors,</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">series_socsci
-<span class="co">#&gt;  [1] "05"   "09"   "13"   "19"   "22"   "25"   "36"   "42"   "43"   "44"  </span>
-<span class="co">#&gt; [11] "45"   "3005" "3015" "3020" "3021" "3023" "3026"</span></code></pre></div>
-<p>To see the names of the programs as well,</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cip_socsci &lt;-<span class="st"> </span><span class="kw">filter</span>(cip, code <span class="op">%in%</span><span class="st"> </span>series_socsci) 
-<span class="kw">kable</span>(cip_socsci)</code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">code</th>
-<th align="left">name</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">05</td>
-<td align="left">Area/Ethnic/Cultural and Gender Studies</td>
-</tr>
-<tr class="even">
-<td align="left">09</td>
-<td align="left">Communications/Journalism and Related Programs</td>
-</tr>
-<tr class="odd">
-<td align="left">13</td>
-<td align="left">Education</td>
-</tr>
-<tr class="even">
-<td align="left">19</td>
-<td align="left">Family and Consumer Sciences/Human Sciences</td>
-</tr>
-<tr class="odd">
-<td align="left">22</td>
-<td align="left">Law/Legal Services and Legal Studies</td>
-</tr>
-<tr class="even">
-<td align="left">25</td>
-<td align="left">Library Science</td>
-</tr>
-<tr class="odd">
-<td align="left">36</td>
-<td align="left">Leisure and Recreational Activities</td>
-</tr>
-<tr class="even">
-<td align="left">42</td>
-<td align="left">Psychology</td>
-</tr>
-<tr class="odd">
-<td align="left">43</td>
-<td align="left">Protective Services</td>
-</tr>
-<tr class="even">
-<td align="left">44</td>
-<td align="left">Public Administration and Services</td>
-</tr>
-<tr class="odd">
-<td align="left">45</td>
-<td align="left">Social Sciences</td>
-</tr>
-<tr class="even">
-<td align="left">3005</td>
-<td align="left">Peace Studies and Conflict Resolution - Multi/Interdisciplinary Studies</td>
-</tr>
-<tr class="odd">
-<td align="left">3015</td>
-<td align="left">Science/Technology and Society - Multi/Interdisciplinary Studies</td>
-</tr>
-<tr class="even">
-<td align="left">3020</td>
-<td align="left">International/Global Studies - Multi/Interdisciplinary Studies</td>
-</tr>
-<tr class="odd">
-<td align="left">3021</td>
-<td align="left">Holocaust and Related Studies - Multi/Interdisciplinary Studies</td>
-</tr>
-<tr class="even">
-<td align="left">3023</td>
-<td align="left">Intercultural/Multicultural and Diversity Studies - Multi/Interdisciplinary Studies</td>
-</tr>
-<tr class="odd">
-<td align="left">3026</td>
-<td align="left">Cultural Studies/Critical Theory and Analysis</td>
-</tr>
-</tbody>
-</table>
-<p>To locally remove programs from a predefined vector</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">omit_codes    &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"3005"</span>, <span class="st">"3015"</span>)
-my_series_socsci &lt;-<span class="st"> </span>series_socsci[<span class="op">!</span>series_socsci <span class="op">%in%</span><span class="st"> </span>omit_codes]
-
-<span class="co"># check the result</span>
-my_series_socsci
-<span class="co">#&gt;  [1] "05"   "09"   "13"   "19"   "22"   "25"   "36"   "42"   "43"   "44"  </span>
-<span class="co">#&gt; [11] "45"   "3020" "3021" "3023" "3026"</span></code></pre></div>
-<p>To locally add programs to a predefined vector</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">add_codes     &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"3005"</span>, <span class="st">"3015"</span>)
-my_series_socsci &lt;-<span class="st"> </span><span class="kw">c</span>(my_series_socsci, add_codes)
-
-<span class="co"># check the result</span>
-my_series_socsci
-<span class="co">#&gt;  [1] "05"   "09"   "13"   "19"   "22"   "25"   "36"   "42"   "43"   "44"  </span>
-<span class="co">#&gt; [11] "45"   "3020" "3021" "3023" "3026" "3005" "3015"</span></code></pre></div>
 </div>
-<div id="filter-by-name" class="section level2">
+<div id="directly-specifying-the-cip-codes" class="section level2">
 <h2 class="hasAnchor">
-<a href="#filter-by-name" class="anchor"></a>Filter by name</h2>
-<p>To filter by name across all levels (2, 4, 6), use the conventional <code><a href="http://dplyr.tidyverse.org/reference/filter.html">dplyr::filter()</a></code> function. For example, search for all names that include <code>"techno"</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># filter CIP over names, all levels</span>
-<span class="kw">filter</span>(cip, <span class="kw">str_detect</span>(name, <span class="kw">fixed</span>(<span class="st">"techno"</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)))
-<span class="co">#&gt; # A tibble: 209 x 2</span>
-<span class="co">#&gt;    code                                             name</span>
-<span class="co">#&gt;   &lt;chr&gt;                                            &lt;chr&gt;</span>
-<span class="co">#&gt; 1    10 Communications Technologies and Support Services</span>
-<span class="co">#&gt; 2    15                           Engineering Technology</span>
-<span class="co">#&gt; 3    29                            Military Technologies</span>
-<span class="co">#&gt; 4    41                 Science Technologies/Technicians</span>
-<span class="co">#&gt; 5    47                   Mechanic and Repair Technology</span>
-<span class="co">#&gt; 6  0110                      Food Science and Technology</span>
-<span class="co">#&gt; # ... with 203 more rows</span></code></pre></div>
-<p>If we know the initial level and series we want to search, we use <code><a href="../reference/filter_cip.html">filter_cip()</a></code> or its derivatives and filter the results by name.</p>
-<p>For example, to extract Chemical, Civil, Electrical, and Mechanical Engineering codes from the Engineering results, we start by creating a character vector with those terms,</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># obtain all Engineering programs using 4-digit codes</span>
-engr_cip4 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="dv">4</span>,  series_engr)
-
-<span class="co"># the largest engineering disciplines by numbers employed</span>
-big_name &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"Civil"</span>, <span class="st">"Electrical"</span>, <span class="st">"Industrial"</span>, <span class="st">"Mechanical"</span>)
-big_name &lt;-<span class="st"> </span><span class="kw">str_c</span>(big_name, <span class="dt">collapse =</span> <span class="st">"|"</span>)
-
-<span class="co"># filter for big names only  </span>
-big_engr_cip4 &lt;-<span class="st"> </span>engr_cip4 <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(name, big_name)) 
-
-big_engr_cip4
-<span class="co">#&gt; # A tibble: 4 x 2</span>
-<span class="co">#&gt;    code                                                  name</span>
-<span class="co">#&gt;   &lt;chr&gt;                                                 &lt;chr&gt;</span>
-<span class="co">#&gt; 1  1408                                     Civil Engineering</span>
-<span class="co">#&gt; 2  1410 Electrical/Electronics and Communications Engineering</span>
-<span class="co">#&gt; 3  1419                                Mechanical Engineering</span>
-<span class="co">#&gt; 4  1435                                Industrial Engineering</span></code></pre></div>
-<p>We could then use these 4-digit codes as a custom series to obtain all the 6-digit data associated with these programs,</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># extract the 4-digit codes</span>
-custom_series &lt;-<span class="st"> </span>big_engr_cip4<span class="op">$</span>code
-
-<span class="co"># filter at the 6-digit level </span>
-big_engr_cip6 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="dt">type =</span> <span class="dv">6</span>, <span class="dt">series =</span> custom_series)
-
-<span class="kw">kable</span>(big_engr_cip6)</code></pre></div>
+<a href="#directly-specifying-the-cip-codes" class="anchor"></a>Directly specifying the CIP codes</h2>
+<p>The CIP taxonomy is organized on three levels: a 2-digit series, a 4-digit series, and a 6-digit series. Assigning a character vector of any of these series to the <code>series</code> argument of <code><a href="../reference/filter_cip.html">filter_cip()</a></code> yields a data frame of all associated codes and program names at all three levels.</p>
+<ul>
+<li>If the series includes 1, 3, or 5-digit partial codes, <code><a href="../reference/filter_cip.html">filter_cip()</a></code> returns all codes that start with those partial codes.</li>
+<li>Invalid codes—and valid codes not in the midfieldr <code>cip</code> dataset—are silently ignored.</li>
+</ul>
+<p>Specifying 6-digit codes yields a data frame with a row for each 6-digit code.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 6-digit example</span>
+df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"140802"</span>, <span class="st">"140803"</span>))
+<span class="kw">kable</span>(df)</code></pre></div>
 <table class="table">
 <thead><tr class="header">
-<th align="left">code</th>
-<th align="left">name</th>
+<th align="left">CIP2</th>
+<th align="left">PGRM2</th>
+<th align="left">CIP4</th>
+<th align="left">PGRM4</th>
+<th align="left">CIP6</th>
+<th align="left">PGRM6</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">140801</td>
-<td align="left">Civil Engineering - General</td>
-</tr>
-<tr class="even">
+<td align="left">14</td>
+<td align="left">Engineering</td>
+<td align="left">1408</td>
+<td align="left">Civil Engineering</td>
 <td align="left">140802</td>
 <td align="left">Geotechnical Engineering</td>
 </tr>
-<tr class="odd">
+<tr class="even">
+<td align="left">14</td>
+<td align="left">Engineering</td>
+<td align="left">1408</td>
+<td align="left">Civil Engineering</td>
 <td align="left">140803</td>
 <td align="left">Structural Engineering</td>
 </tr>
+</tbody>
+</table>
+<p>Specifying 4-digit codes yields a data frame with as many rows as there are 6-digit codes in the 4-digit groups.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 4-digit example</span>
+df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"1407"</span>, <span class="st">"1408"</span>))
+<span class="kw">kable</span>(df)</code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">CIP2</th>
+<th align="left">PGRM2</th>
+<th align="left">CIP4</th>
+<th align="left">PGRM4</th>
+<th align="left">CIP6</th>
+<th align="left">PGRM6</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">14</td>
+<td align="left">Engineering</td>
+<td align="left">1407</td>
+<td align="left">Chemical Engineering</td>
+<td align="left">140701</td>
+<td align="left">Chemical Engineering</td>
+</tr>
 <tr class="even">
+<td align="left">14</td>
+<td align="left">Engineering</td>
+<td align="left">1407</td>
+<td align="left">Chemical Engineering</td>
+<td align="left">140702</td>
+<td align="left">Chemical and Biomolecular Engineering</td>
+</tr>
+<tr class="odd">
+<td align="left">14</td>
+<td align="left">Engineering</td>
+<td align="left">1407</td>
+<td align="left">Chemical Engineering</td>
+<td align="left">140799</td>
+<td align="left">Chemical Engineering - Other</td>
+</tr>
+<tr class="even">
+<td align="left">14</td>
+<td align="left">Engineering</td>
+<td align="left">1408</td>
+<td align="left">Civil Engineering</td>
+<td align="left">140801</td>
+<td align="left">Civil Engineering - General</td>
+</tr>
+<tr class="odd">
+<td align="left">14</td>
+<td align="left">Engineering</td>
+<td align="left">1408</td>
+<td align="left">Civil Engineering</td>
+<td align="left">140802</td>
+<td align="left">Geotechnical Engineering</td>
+</tr>
+<tr class="even">
+<td align="left">14</td>
+<td align="left">Engineering</td>
+<td align="left">1408</td>
+<td align="left">Civil Engineering</td>
+<td align="left">140803</td>
+<td align="left">Structural Engineering</td>
+</tr>
+<tr class="odd">
+<td align="left">14</td>
+<td align="left">Engineering</td>
+<td align="left">1408</td>
+<td align="left">Civil Engineering</td>
 <td align="left">140804</td>
 <td align="left">Transportation and Highway Engineering</td>
 </tr>
-<tr class="odd">
+<tr class="even">
+<td align="left">14</td>
+<td align="left">Engineering</td>
+<td align="left">1408</td>
+<td align="left">Civil Engineering</td>
 <td align="left">140805</td>
 <td align="left">Water Resources Engineering</td>
 </tr>
-<tr class="even">
+<tr class="odd">
+<td align="left">14</td>
+<td align="left">Engineering</td>
+<td align="left">1408</td>
+<td align="left">Civil Engineering</td>
 <td align="left">140899</td>
 <td align="left">Civil Engineering - Other</td>
 </tr>
+</tbody>
+</table>
+<p>The 2-digit series represent the most general groupings of related programs. Here, the result includes all History codes and programs.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 2-digit example</span>
+df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="st">"54"</span>)
+<span class="kw">kable</span>(df)</code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">CIP2</th>
+<th align="left">PGRM2</th>
+<th align="left">CIP4</th>
+<th align="left">PGRM4</th>
+<th align="left">CIP6</th>
+<th align="left">PGRM6</th>
+</tr></thead>
+<tbody>
 <tr class="odd">
-<td align="left">141001</td>
-<td align="left">Electrical/Electronics and Communications Engineering</td>
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540101</td>
+<td align="left">History - General</td>
 </tr>
 <tr class="even">
-<td align="left">141003</td>
-<td align="left">Laser and Optical Engineering</td>
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540102</td>
+<td align="left">American History (United States)</td>
 </tr>
 <tr class="odd">
-<td align="left">141004</td>
-<td align="left">Telecommunications Engineering</td>
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540103</td>
+<td align="left">European History</td>
 </tr>
 <tr class="even">
-<td align="left">141099</td>
-<td align="left">Electrical/Electronics and Communications Engineering - Other</td>
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540104</td>
+<td align="left">History and Philosophy of Science and Technology</td>
 </tr>
 <tr class="odd">
-<td align="left">141901</td>
-<td align="left">Mechanical Engineering</td>
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540105</td>
+<td align="left">Public/Applied History and Archival Administration</td>
 </tr>
 <tr class="even">
-<td align="left">143501</td>
-<td align="left">Industrial Engineering</td>
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540106</td>
+<td align="left">Asian History</td>
+</tr>
+<tr class="odd">
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540107</td>
+<td align="left">Canadian History</td>
+</tr>
+<tr class="even">
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540108</td>
+<td align="left">Military History</td>
+</tr>
+<tr class="odd">
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540199</td>
+<td align="left">History - Other</td>
 </tr>
 </tbody>
 </table>
-<p>Note that while Civil Engineering (1408) and Electrical Engineering (1410) have a number of 6-digit specialties, Mechanical Engineering (1419) and Industrial Engineering (1435) do not. This does not imply that such specialties do not exist (they do) but that such specialties are not encoded in the CIP dataset.</p>
+<p>The series argument can include any combination of 2, 4, and 6-digit codes.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># a series with 2, 4, and 6-digits specified</span>
+df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="kw">c</span>(<span class="st">"24"</span>, <span class="st">"4102"</span>, <span class="st">"450202"</span>))
+<span class="kw">kable</span>(df)</code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">CIP2</th>
+<th align="left">PGRM2</th>
+<th align="left">CIP4</th>
+<th align="left">PGRM4</th>
+<th align="left">CIP6</th>
+<th align="left">PGRM6</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">24</td>
+<td align="left">Liberal Arts and Sciences/General Studies and Humanities</td>
+<td align="left">2401</td>
+<td align="left">Liberal Arts and Sciences/General Studies Humanities</td>
+<td align="left">240101</td>
+<td align="left">Liberal Arts and Sciences/Liberal Studies</td>
+</tr>
+<tr class="even">
+<td align="left">24</td>
+<td align="left">Liberal Arts and Sciences/General Studies and Humanities</td>
+<td align="left">2401</td>
+<td align="left">Liberal Arts and Sciences/General Studies Humanities</td>
+<td align="left">240102</td>
+<td align="left">General Studies</td>
+</tr>
+<tr class="odd">
+<td align="left">24</td>
+<td align="left">Liberal Arts and Sciences/General Studies and Humanities</td>
+<td align="left">2401</td>
+<td align="left">Liberal Arts and Sciences/General Studies Humanities</td>
+<td align="left">240103</td>
+<td align="left">Humanities/Humanistic Studies</td>
+</tr>
+<tr class="even">
+<td align="left">24</td>
+<td align="left">Liberal Arts and Sciences/General Studies and Humanities</td>
+<td align="left">2401</td>
+<td align="left">Liberal Arts and Sciences/General Studies Humanities</td>
+<td align="left">240199</td>
+<td align="left">Liberal Arts and Sciences/General Studies and Humanities - Other</td>
+</tr>
+<tr class="odd">
+<td align="left">41</td>
+<td align="left">Science Technologies/Technicians</td>
+<td align="left">4102</td>
+<td align="left">Nuclear and Industrial Radiologic Technologies/Technicians</td>
+<td align="left">410204</td>
+<td align="left">Industrial Radiologic Technology/Technician</td>
+</tr>
+<tr class="even">
+<td align="left">41</td>
+<td align="left">Science Technologies/Technicians</td>
+<td align="left">4102</td>
+<td align="left">Nuclear and Industrial Radiologic Technologies/Technicians</td>
+<td align="left">410205</td>
+<td align="left">Nuclear/Nuclear Power Technology/Technician</td>
+</tr>
+<tr class="odd">
+<td align="left">41</td>
+<td align="left">Science Technologies/Technicians</td>
+<td align="left">4102</td>
+<td align="left">Nuclear and Industrial Radiologic Technologies/Technicians</td>
+<td align="left">410299</td>
+<td align="left">Nuclear and Industrial Radiologic Technologies/Technicians - Other</td>
+</tr>
+<tr class="even">
+<td align="left">45</td>
+<td align="left">Social Sciences</td>
+<td align="left">4502</td>
+<td align="left">Anthropology</td>
+<td align="left">450202</td>
+<td align="left">Physical Anthropology</td>
+</tr>
+</tbody>
+</table>
+<p>A series assigned as a numerical sequence is coerced to characters.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># series as a sequence</span>
+df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="dt">series =</span> <span class="kw">seq</span>(<span class="dv">540102</span>, <span class="dv">540110</span>, <span class="dv">1</span>))
+<span class="kw">kable</span>(df)</code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">CIP2</th>
+<th align="left">PGRM2</th>
+<th align="left">CIP4</th>
+<th align="left">PGRM4</th>
+<th align="left">CIP6</th>
+<th align="left">PGRM6</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540102</td>
+<td align="left">American History (United States)</td>
+</tr>
+<tr class="even">
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540103</td>
+<td align="left">European History</td>
+</tr>
+<tr class="odd">
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540104</td>
+<td align="left">History and Philosophy of Science and Technology</td>
+</tr>
+<tr class="even">
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540105</td>
+<td align="left">Public/Applied History and Archival Administration</td>
+</tr>
+<tr class="odd">
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540106</td>
+<td align="left">Asian History</td>
+</tr>
+<tr class="even">
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540107</td>
+<td align="left">Canadian History</td>
+</tr>
+<tr class="odd">
+<td align="left">54</td>
+<td align="left">History</td>
+<td align="left">5401</td>
+<td align="left">History</td>
+<td align="left">540108</td>
+<td align="left">Military History</td>
+</tr>
+</tbody>
+</table>
+<p>Invalid codes in the sequence, e.g., 540109 and 540110, are silently ignored.</p>
+</div>
+<div id="using-a-previous-result-as-a-data-argument" class="section level2">
+<h2 class="hasAnchor">
+<a href="#using-a-previous-result-as-a-data-argument" class="anchor"></a>Using a previous result as a data argument</h2>
+<p>A data frame produced by <code><a href="../reference/filter_cip.html">filter_cip()</a></code> can be used as the <code>data</code> argument in a subsequent use of <code><a href="../reference/filter_cip.html">filter_cip()</a></code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="st">"49"</span>)</code></pre></div>
+<p>Suppose, after viewing the full “49” series above we decide we only need the “4903” subset. We can use the data frame <code>df1</code> from above as the <code>data</code> argument.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># use a previous result as a data argument</span>
+df2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="dt">series =</span> <span class="st">"4903"</span>, <span class="dt">data =</span> df1)
+<span class="kw">kable</span>(df2)</code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">CIP2</th>
+<th align="left">PGRM2</th>
+<th align="left">CIP4</th>
+<th align="left">PGRM4</th>
+<th align="left">CIP6</th>
+<th align="left">PGRM6</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">49</td>
+<td align="left">Transportation and Materials Moving Services</td>
+<td align="left">4903</td>
+<td align="left">Marine Transportation Services</td>
+<td align="left">490303</td>
+<td align="left">Commercial Fishing</td>
+</tr>
+<tr class="even">
+<td align="left">49</td>
+<td align="left">Transportation and Materials Moving Services</td>
+<td align="left">4903</td>
+<td align="left">Marine Transportation Services</td>
+<td align="left">490304</td>
+<td align="left">Diver/Professional and Instructor</td>
+</tr>
+<tr class="odd">
+<td align="left">49</td>
+<td align="left">Transportation and Materials Moving Services</td>
+<td align="left">4903</td>
+<td align="left">Marine Transportation Services</td>
+<td align="left">490309</td>
+<td align="left">Marine Science/Merchant Marine Officer</td>
+</tr>
+<tr class="even">
+<td align="left">49</td>
+<td align="left">Transportation and Materials Moving Services</td>
+<td align="left">4903</td>
+<td align="left">Marine Transportation Services</td>
+<td align="left">490399</td>
+<td align="left">Marine Transportation Services - Other</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="specifying-the-cip-codes-using-named-series" class="section level2">
+<h2 class="hasAnchor">
+<a href="#specifying-the-cip-codes-using-named-series" class="anchor"></a>Specifying the CIP codes using named series</h2>
+<p>midfieldr includes several datasets of “named series”. A named series is a character vector of 6-digit CIP codes that belong to a group of programs such as Engineering, Physical Sciences, STEM, etc. For more information on the named series, <code>data(package = "midfieldr")</code> or <code><a href="../reference/named_series.html">?named_series</a></code>.</p>
+<p>In use, the named series is the series argument in <code><a href="../reference/filter_cip.html">filter_cip()</a></code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># the engineering series</span>
+engr
+<span class="co">#&gt;  [1] "140101" "140102" "140201" "140301" "140401" "140501" "140601"</span>
+<span class="co">#&gt;  [8] "140701" "140702" "140799" "140801" "140802" "140803" "140804"</span>
+<span class="co">#&gt; [15] "140805" "140899" "140901" "140902" "140903" "140999" "141001"</span>
+<span class="co">#&gt; [22] "141003" "141004" "141099" "141101" "141201" "141301" "141401"</span>
+<span class="co">#&gt; [29] "141801" "141901" "142001" "142101" "142201" "142301" "142401"</span>
+<span class="co">#&gt; [36] "142501" "142701" "142801" "143101" "143201" "143301" "143401"</span>
+<span class="co">#&gt; [43] "143501" "143601" "143701" "143801" "143901" "144001" "144101"</span>
+<span class="co">#&gt; [50] "144201" "144301" "144401" "144501" "149999"</span>
+
+engr_cip &lt;-<span class="st"> </span><span class="kw"><a href="../reference/filter_cip.html">filter_cip</a></span>(<span class="dt">series =</span> engr)
+<span class="kw">glimpse</span>(engr_cip)
+<span class="co">#&gt; Observations: 54</span>
+<span class="co">#&gt; Variables: 6</span>
+<span class="co">#&gt; $ CIP2  &lt;chr&gt; "14", "14", "14", "14", "14", "14", "14", "14", "14", "1...</span>
+<span class="co">#&gt; $ PGRM2 &lt;chr&gt; "Engineering", "Engineering", "Engineering", "Engineerin...</span>
+<span class="co">#&gt; $ CIP4  &lt;chr&gt; "1401", "1401", "1402", "1403", "1404", "1405", "1406", ...</span>
+<span class="co">#&gt; $ PGRM4 &lt;chr&gt; "Engineering/General", "Engineering/General", "Aerospace...</span>
+<span class="co">#&gt; $ CIP6  &lt;chr&gt; "140101", "140102", "140201", "140301", "140401", "14050...</span>
+<span class="co">#&gt; $ PGRM6 &lt;chr&gt; "Engineering - General", "Pre-Engineering", "Aerospace/A...</span></code></pre></div>
+</div>
+<div id="creating-and-saving-custom-series" class="section level2">
+<h2 class="hasAnchor">
+<a href="#creating-and-saving-custom-series" class="anchor"></a>Creating and saving custom series</h2>
 </div>
 </div>
   </div>
@@ -420,9 +584,11 @@ big_engr_cip6 &lt;-<span class="st"> </span><span class="kw"><a href="../referen
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#basic-filtering">Basic filtering</a></li>
-      <li><a href="#predefined-groups-of-programs">Predefined groups of programs</a></li>
-      <li><a href="#filter-by-name">Filter by name</a></li>
+<li><a href="#usage">Usage</a></li>
+      <li><a href="#directly-specifying-the-cip-codes">Directly specifying the CIP codes</a></li>
+      <li><a href="#using-a-previous-result-as-a-data-argument">Using a previous result as a data argument</a></li>
+      <li><a href="#specifying-the-cip-codes-using-named-series">Specifying the CIP codes using named series</a></li>
+      <li><a href="#creating-and-saving-custom-series">Creating and saving custom series</a></li>
       </ul>
 </div>
       </div>
