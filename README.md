@@ -6,16 +6,16 @@ midfieldr <a href="https://engineering.purdue.edu/MIDFIELD" target="blank"><img 
 
 midfieldr is a package for investigating student record data provided by registrars at US universities participating in the MIDFIELD project.
 
-A sample of the MIDFIELD database is accessible using midfieldr. The sample comprises demographic, term, course, and degree information for 165,000 undergraduate students from 1990 to 2016. Because of their size, the sample datasets are provided in separate data packages.
+A sample of the MIDFIELD database is accessible using midfieldr. The sample comprises demographic, term, course, and degree information for 165 072 undergraduate students from 1990 to 2016. Because of their size, the sample datasets are provided in separate data packages.
 
-midfieldr includes functions for aggregating, computing, and graphing student persistence metrics.
+midfieldr includes functions for selecting specific fields of study and aggregating, computing, and graphing student persistence metrics.
 
 Installation
 ------------
 
 midfieldr is not currently available from CRAN, but the development version can be installed from github with:
 
-    # install.packages("devtools")
+    install.packages("devtools")
     devtools::install_github("MIDFIELDR/midfieldr")
 
 Usage
@@ -40,9 +40,14 @@ For investigating stickiness
 Data
 ----
 
-The sample of the MIDFIELD database that is accessible using midfieldr includes:
+The sample of the MIDFIELD database that is accessible using midfieldr and its data packages includes:
 
--   `cip` in the midfieldr package. A dataset of program codes and names of academic fields of study. Each of the 1552 observations is one program at the CIP 6-digit level. ?cip for more information.
--   `student` and `degree` in the midfieldstudent package. Demographic data and graduation data for 165,000 students. Each observation is a unique student.
--   `term` in the midfieldterm package. Academic term data for 165,000 students. Each observation is one term for one student, yielding 1.1 M observations.
--   `course` in the midfieldcourse package. Academic course data for 165,000 students. Each observation is one course for one student, yielding 5.4 M observations.
+-   `cip` in the midfieldr package. A tidy data frame with 1544 observations and 6 CIP variables of program codes and names at the 2, 4, and 6-digit levels. Each observation is a unique program. This dataset occupies 331 kb of memory.
+
+-   `student` in the midfieldstudent package. A tidy data frame with 165 072 observations and 35 demographic variables. Each observation is a unique student. This dataset occupies 49.1 Mb of memory.
+
+-   `degree` in the midfieldstudent package. A tidy data frame with 89 886 observations and 14 graduation variables. Each observation is a unique student. This dataset occupies 10.1 Mb of memory.
+
+-   `term` in the midfieldterm package. A tidy data frame with 1.1 M observations and 22 academic term variables. Each observation is one term for one student. This dataset occupies 200.2 Mb of memory.
+
+-   `course` in the midfieldcourse package. A tidy data frame with 5.4 M observations and 17 academic course variables. Each observation is one course in one term for one student. This dataset occupies 735.1 Mb of memory.
