@@ -3,7 +3,7 @@
 \docType{data}
 \name{data_bits}
 \alias{data_bits}
-\title{Data bits}
+\title{Characteristic numbers describing the midfieldr datasets}
 \format{A vector of named numbers
 \describe{
 
@@ -33,7 +33,7 @@
 data_bits
 }
 \description{
-Characteristics of the midfieldr datasets such as the number of observations or statistical summary values.
+A vector of named numbers describing characteristics of the midfieldr datasets such as the number of observations or statistical summary values.
 }
 \details{
 The purpose of creating this small dataset is to have handy the named numbers without loading the midfieldr datasets to reduce execution times in vignettes.
