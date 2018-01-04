@@ -28,6 +28,8 @@
 #'
 #'   \item{\code{cip_filter()}}{Filter a data frame of Classification of Instructional Programs (CIP) codes to return the rows that match conditions.}
 #'
+#'   \item{\code{join_demographics()}}{Add variables \code{ETHNIC} and \code{SEX} from the \code{student} dataset to a data frame.}
+#'
 #'   }
 #'
 #' @source Data provided by the MIDFIELD project: \url{https://engineering.purdue.edu/MIDFIELD}
@@ -37,6 +39,5 @@ NULL
 
 ## addresses R CMD check warning "no visible binding"
 if (getRversion() >= "2.15.1") {
-	utils::globalVariables(c(".", "CIP2", "CIP4", "CIP6"))
-# "GCIP", "GCIP2", "GCIP3", "GCIP_2", "GCIP_4", "GCIP_6", "MID", "MYEAR", "GYEAR", "GTERM", "ETHNIC", "SEX", "MTERM", "INSTITUTION", "TCIP", "TCIP_2", "TCIP_4", "TCIP_6", "CIP", "GRAD", "EVER", "STICK", "PEER_GROUP", "PROGRAM", "DEGREE", "GDESC", "GDESC2", "GDESC3", "GCODE", "GCODE2", "GCODE3", "TAG", "N_digits"
+	utils::globalVariables(c(".", "CIP2", "CIP4", "CIP6", "student", "MID", "ETHNIC", "SEX"))
 }

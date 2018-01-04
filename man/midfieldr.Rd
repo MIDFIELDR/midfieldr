@@ -41,6 +41,8 @@ midfieldr provides functions to access, manipulate, and graph the student record
 
   \item{\code{cip_filter()}}{Filter a data frame of Classification of Instructional Programs (CIP) codes to return the rows that match conditions.}
 
+  \item{\code{join_demographics()}}{Add variables \code{ETHNIC} and \code{SEX} from the \code{student} dataset to a data frame.}
+
   }
 }
 
