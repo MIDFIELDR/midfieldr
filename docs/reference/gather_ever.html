@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Undergraduate Student Records For Longitudinal Research — midfieldr â€¢ midfieldr</title>
+<title>Gather students ever enrolled in a program — gather_ever â€¢ midfieldr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -104,55 +104,54 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Undergraduate Student Records For Longitudinal Research</h1>
+    <h1>Gather students ever enrolled in a program</h1>
     </div>
 
     
-    <p>A package for investigating a sample from the MIDFIELD database. The data  comprise student records from registrars at participating US universities, including demographic, term, course, and degree information for 165,000 undergraduate students from 1990 to 2016.</p>
+    <p>Filters the <code>term</code> data frame from the <span class="pkg">midfieldterm</span> package to return only those students ever enrolled in the programs being studied. Accounts for students enrolled in more than one program in a term. Adds student demographics from <span class="pkg">midfieldstudent</span>.</p>
     
 
-        
-    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+    <pre class="usage"><span class='fu'>gather_ever</span>(<span class='no'>term</span>, <span class='no'>programs</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>term</th>
+      <td><p>A data frame of term data from <span class="pkg">midfieldterm</span>.</p></td>
+    </tr>
+    <tr>
+      <th>programs</th>
+      <td><p>A data frame with the 6-digit CIP codes (<code>CIP6</code>) and custom label (<code>PGRM</code>) for the programs being studied.</p></td>
+    </tr>
+    </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Data provided by the MIDFIELD project: <a href='https://engineering.purdue.edu/MIDFIELD'>https://engineering.purdue.edu/MIDFIELD</a></p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    <p>A data frame with variables  MID, BEGINYEAR, TYEAR, TTERM, and INSTITUTION from the original <code>term</code> data frame plus new variables:</p><table><tr><td>
+<code>TCIPN</code> </td>
+<td> The "key" variable for gathering the variable names <code>TCIP</code>, <code>TCIP2</code>, and <code>TCIP3</code>.</td>
+</tr><tr><td>
+<code>CIP6</code> </td>
+<td> The 6-digit code of the program in which the student is enrolled.</td>
+</tr><tr><td>
+<code>ETHNIC</code> </td>
+<td> Student race/ethnicty as defined in .<span class="pkg">midfieldstudent</span></td>
+</tr><tr><td>
+<code>SEX</code> </td>
+<td> Student sex as defined in .<span class="pkg">midfieldstudent</span></td>
+</tr></table>
 
-    <p>In our examples illustrating how to use <span class="pkg">midfieldr</span> tools and datasets, the findings are generally disaggregated or conditioned by instructional program and student sex and race/ethnicity.  Sex and race/ethnicity categories are limited to those reported by the US institutions contributing to the MIDFIELD database.</p>
-<p>Datasets are provided with <span class="pkg">midfieldr</span> plus three data packages: <span class="pkg">midfieldstudent</span>, <span class="pkg">midfieldterm</span>, and <span class="pkg">midfieldcourse</span>.</p>
-    
-    <h2 class="hasAnchor" id="data"><a class="anchor" href="#data"></a>Data</h2>
-
-    
-    <dl class='dl-horizontal'>
-    <dt><code>student</code></dt><dd><p><a href='https://github.com/MIDFIELDR/midfieldstudent'>midfieldstudent</a> package. Demographic data for 165,000 students. Each observation is a unique student.</p></dd>
-    <dt><code>term</code></dt><dd><p><a href='https://github.com/MIDFIELDR/midfieldterm'>midfieldterm</a> package. Academic term data for 165,000 students. Each observation is one term for one student, yielding 1.1 M observations.</p></dd>
-    <dt><code>course</code></dt><dd><p><a href='https://github.com/MIDFIELDR/midfieldcourse'>midfieldcourse</a> package. Academic course data for 165,000 students. Each observation is one course for one student, yielding 5.4 M observations.</p></dd>
-    <dt><code>degree</code></dt><dd><p><a href='https://github.com/MIDFIELDR/midfieldstudent'>midfieldstudent</a> package. Graduation data for 90,000 students receiving degrees. Each observation is a unique student.</p></dd>
-    <dt><code>cip</code></dt><dd><p><a href='https://github.com/MIDFIELDR/midfieldr'>midfieldr</a> package. A dataset of program codes and names of academic fields of study. Each of the 1552 observations is one program at the CIP 6-digit level.</p></dd>
-    </dl>
-    
-    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
-
-    
-    <p>midfieldr provides functions to access, manipulate, and graph the student record data.</p><dl class='dl-horizontal'>
-    <dt><code><a href='cip_filter.html'>cip_filter()</a></code></dt><dd><p>Filter a data frame of Classification of Instructional Programs (CIP) codes to return the rows that match conditions.</p></dd>
-    <dt><code><a href='join_demographics.html'>join_demographics()</a></code></dt><dd><p>Add variables <code>ETHNIC</code> and <code>SEX</code> from the <code>student</code> dataset to a data frame.</p></dd>
-    </dl>
+<p>Each observation in the resulting tidy data frame is a unique program per student. Thus the student identifier (<code>MID</code>) for students who change majors will appear in more than one row, once each per unique program. If extant, values <code>TCIP2</code> and <code>TCIP3</code> indicate that a student is enrolled in more than one program in that term.</p>
     
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#source">Source</a></li>
-
-      <li><a href="#details">Details</a></li>
-
-      <li><a href="#data">Data</a></li>
-
-      <li><a href="#functions">Functions</a></li>
+      <li><a href="#value">Value</a></li>
           </ul>
 
   </div>

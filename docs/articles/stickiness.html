@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Persistence metric – stickiness • midfieldr</title>
+<title>Stickiness metric • midfieldr</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/spacelab/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
@@ -45,10 +45,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/cip_filter.html">Selecting instructional programs</a>
+      <a href="../articles/cip_filter.html">Selecting CIP codes</a>
     </li>
     <li>
-      <a href="../articles/stickiness.html">Persistence metric -- stickiness</a>
+      <a href="../articles/stickiness.html">Stickiness metric</a>
     </li>
   </ul>
 </li>
@@ -81,7 +81,7 @@
       </header><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
-      <h1>Persistence metric – stickiness</h1>
+      <h1>Stickiness metric</h1>
             
           </div>
 
@@ -92,16 +92,17 @@
 <h2 class="hasAnchor">
 <a href="#getting-started" class="anchor"></a>Getting started</h2>
 <p>“Stickiness”, a longitudinal persistence metric introduced in 2012, tracks all students who contact an instructional program to determine what percentage “stick” to that program and graduate in it.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
+<p>Stickiness is defined as the ratio of the number of students graduating in a program to the number of students ever enrolled in the program.</p>
 <p>In this article, we show you how to use midfieldr to compute and compare the stickiness of several programs. Our workflow is:</p>
 <ul>
 <li>select the programs</li>
-<li>tally the students ever enrolled</li>
-<li>tally the students graduating<br>
+<li>count the students ever enrolled</li>
+<li>count the students graduating<br>
 </li>
 <li>compute stickiness</li>
 <li>graph stickiness</li>
 </ul>
-<p>In our example, the findings are disaggregated by program, sex, and race/ethnicity because our research questions focus on intersectionality. In your own work, you can decide to disaggregate (or not) on the variables of your choice.</p>
+<p>In our research, because we focus on intersectionality, we typically disaggregate the data by program, sex, and race/ethnicity. You may of course choose your own combination of variables to study.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(midfieldr)       <span class="co"># midfieldr functions and CIP data</span>
 <span class="kw">library</span>(midfieldstudent) <span class="co"># student demographics and degree data</span>
 <span class="kw">library</span>(midfieldterm)    <span class="co"># term data</span></code></pre></div>
@@ -109,93 +110,44 @@
 <div id="select-programs" class="section level2">
 <h2 class="hasAnchor">
 <a href="#select-programs" class="anchor"></a>Select programs</h2>
-<p>For this example, we compare the stickiness of four engineering programs: Civil, Electrical, Industrial, and Mechanical. Their CIP codes were found by keyword search as illustrated in <a href="cip_filter.html">Selecting instructional programs</a>.</p>
-<p>Use <code><a href="../reference/cip_filter.html">cip_filter()</a></code> to obtain the relevant program codes followed by <code>add_column()</code> to label the group of programs. These labels are handy later when we group and summarize the data.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)
+<p>For this example, we compare the stickiness of three engineering programs: Civil, Electrical, and Mechanical. Their CIP codes were found by keyword search as illustrated in <a href="cip_filter.html">Selecting CIP codes</a>.</p>
+<p>Use <code><a href="../reference/cip_filter.html">cip_filter()</a></code> to obtain the relevant program codes followed by <code>add_column()</code> to label the group of programs. These labels are handy for grouping data and for titling graph panels.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># obtain 2, 4, and 6-digit CIP codes and names</span>
+<span class="kw">library</span>(dplyr)
 <span class="kw">library</span>(tibble)
-cve &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1408"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">PGRM =</span> <span class="st">"CVE"</span>)
-ele &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1410"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">PGRM =</span> <span class="st">"ELE"</span>)
-ise &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1435"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">PGRM =</span> <span class="st">"ISE"</span>)
-mce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1419"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">PGRM =</span> <span class="st">"MCE"</span>)</code></pre></div>
-<p>Bind the program data sets into one data frame and discard all but two variables.</p>
+cve &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1408"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">PGRM =</span> <span class="st">"Civil Engineering"</span>)
+ele &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1410"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">PGRM =</span> <span class="st">"Electrical Engineering"</span>)
+mce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1419"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">PGRM =</span> <span class="st">"Mechanical Engineering"</span>)</code></pre></div>
+<p>Bind the program data sets into one data frame and discard all but two variables. The <code>CIP6</code> variable contains the character strings used to filter students from the <code>term</code> and <code>degree</code> datasets; the <code>PGRM</code> variable is handy for grouping the data for counting and graphing.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># bind the four programs</span>
-programs &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(cve, ele, ise, mce) <span class="op">%&gt;%</span><span class="st"> </span>
+programs &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(cve, ele, mce) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">    </span><span class="kw">select</span>(CIP6, PGRM)
 
-<span class="kw">glimpse</span>(programs)
-<span class="co">#&gt; Observations: 12</span>
-<span class="co">#&gt; Variables: 2</span>
-<span class="co">#&gt; $ CIP6 &lt;chr&gt; "140801", "140802", "140803", "140804", "140805", "140899...</span>
-<span class="co">#&gt; $ PGRM &lt;chr&gt; "CVE", "CVE", "CVE", "CVE", "CVE", "CVE", "ELE", "ELE", "...</span></code></pre></div>
-<ul>
-<li>The <code>CIP6</code> variable contains the patterns looked for using <code>str_detect()</code> to obtain the students we seek.</li>
-<li>The <code>PGRM</code> variable is handy later when we group and summarize the data.</li>
-</ul>
+<span class="co"># examine the result</span>
+programs
+<span class="co">#&gt;      CIP6                   PGRM</span>
+<span class="co">#&gt; 1  140801      Civil Engineering</span>
+<span class="co">#&gt; 2  140802      Civil Engineering</span>
+<span class="co">#&gt; 3  140803      Civil Engineering</span>
+<span class="co">#&gt; 4  140804      Civil Engineering</span>
+<span class="co">#&gt; 5  140805      Civil Engineering</span>
+<span class="co">#&gt; 6  140899      Civil Engineering</span>
+<span class="co">#&gt; 7  141001 Electrical Engineering</span>
+<span class="co">#&gt; 8  141003 Electrical Engineering</span>
+<span class="co">#&gt; 9  141004 Electrical Engineering</span>
+<span class="co">#&gt; 10 141099 Electrical Engineering</span>
+<span class="co">#&gt; 11 141901 Mechanical Engineering</span></code></pre></div>
 </div>
-<div id="tally-students-ever-enrolled" class="section level2">
+<div id="count-students-ever-enrolled" class="section level2">
 <h2 class="hasAnchor">
-<a href="#tally-students-ever-enrolled" class="anchor"></a>Tally students ever enrolled</h2>
-<p>We use the <code>term</code> dataset to find students ever enrolled in our programs.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># variables in term</span>
-<span class="kw">names</span>(term)
-<span class="co">#&gt;  [1] "MID"              "TYEAR"            "ENRSTAT"         </span>
-<span class="co">#&gt;  [4] "TDESC"            "INSTCODE"         "TERMGPA"         </span>
-<span class="co">#&gt;  [7] "CUMGPA"           "COOP"             "ONOFFCAMPUS"     </span>
-<span class="co">#&gt; [10] "TTERM"            "INSTITUTION"      "TCIP"            </span>
-<span class="co">#&gt; [13] "STULEVEL"         "ACADEMICSTANDING" "TCODE"           </span>
-<span class="co">#&gt; [16] "TCIP2"            "TDESC2"           "TCODE2"          </span>
-<span class="co">#&gt; [19] "TCIP3"            "TDESC3"           "TCODE3"          </span>
-<span class="co">#&gt; [22] "</span><span class="re">BEGIN</span><span class="co">YEAR"</span></code></pre></div>
-<p>Only a few of the 22 variables in <code>term</code> are needed to tally students ever enrolled. We delete as many variables as possible to improve execution time, selecting only those variables that contribute to the tally (e.g., MID or TCIP) or that might be useful as grouping variables (e.g., INSTITUTION).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># select the useful variables </span>
-ever &lt;-<span class="st"> </span>term <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">select</span>(MID, BEGINYEAR, TYEAR, TTERM, INSTITUTION, TCIP, TCIP2, TCIP3)</code></pre></div>
-<p>Gather all 6-digit codes (TCIP, TCIP2, TCIP3) in one column. Each observation in the resulting tidy data frame is a unique program per student. Thus the MID for students who change majors will appear in more than one row, once each per unique program.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># gather all CIPs in one column</span>
-<span class="kw">library</span>(tidyr)
-ever &lt;-<span class="st"> </span>ever <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">gather</span>(TCIPN, CIP6, TCIP<span class="op">:</span>TCIP3) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">unique</span>()
+<a href="#count-students-ever-enrolled" class="anchor"></a>Count students ever enrolled</h2>
+<p>Use <code><a href="../reference/gather_ever.html">gather_ever()</a></code> to subset the <code>term</code> dataset, retaining only those students ever enrolled in <code>programs</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># gather students ever enrolled in the programs</span>
+ever &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_ever.html">gather_ever</a></span>(term, programs)
 
+<span class="co"># examine the result</span>
 <span class="kw">glimpse</span>(ever)
-<span class="co">#&gt; Observations: 3,410,871</span>
-<span class="co">#&gt; Variables: 7</span>
-<span class="co">#&gt; $ MID         &lt;dbl&gt; 820100107, 820100135, 820100135, 820100156, 820100...</span>
-<span class="co">#&gt; $ </span><span class="re">BEGIN</span><span class="co">YEAR   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span>
-<span class="co">#&gt; $ TYEAR       &lt;dbl&gt; 2005, 1998, 1999, 1993, 1993, 1993, 1992, 1994, 19...</span>
-<span class="co">#&gt; $ TTERM       &lt;chr&gt; "FA", "FA", "SP", "SM", "FA", "SP", "FA", "SP", "S...</span>
-<span class="co">#&gt; $ INSTITUTION &lt;chr&gt; "Institution 1", "Institution 1", "Institution 1",...</span>
-<span class="co">#&gt; $ TCIPN       &lt;chr&gt; "TCIP", "TCIP", "TCIP", "TCIP", "TCIP", "TCIP", "T...</span>
-<span class="co">#&gt; $ CIP6        &lt;chr&gt; "999999", "440701", "440701", "030601", "030601", ...</span></code></pre></div>
-<p>Filter <code>ever</code> for the rows with the desired programs.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># collapse the CIP6 vector to a search string</span>
-<span class="kw">library</span>(stringr)
-series &lt;-<span class="st"> </span><span class="kw">str_c</span>(programs<span class="op">$</span>CIP6, <span class="dt">collapse =</span> <span class="st">"|"</span>)
-
-<span class="co"># keep only those programs in the search string</span>
-ever &lt;-<span class="st"> </span>ever <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(CIP6, series)) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">unique</span>()</code></pre></div>
-<p>Join the program labels we created earlier in <code>programs</code> to the <code>ever</code> data frame.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># join the program labels</span>
-ever &lt;-<span class="st"> </span><span class="kw">left_join</span>(ever, programs, <span class="dt">by =</span> <span class="st">"CIP6"</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">arrange</span>(CIP6)
-<span class="kw">glimpse</span>(ever)
-<span class="co">#&gt; Observations: 58,524</span>
-<span class="co">#&gt; Variables: 8</span>
-<span class="co">#&gt; $ MID         &lt;dbl&gt; 820102025, 820102025, 820102025, 820102025, 820102...</span>
-<span class="co">#&gt; $ </span><span class="re">BEGIN</span><span class="co">YEAR   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span>
-<span class="co">#&gt; $ TYEAR       &lt;dbl&gt; 2004, 2003, 2004, 2004, 2005, 1990, 1991, 1991, 19...</span>
-<span class="co">#&gt; $ TTERM       &lt;chr&gt; "SP", "FA", "FA", "SM", "SP", "FA", "SP", "FA", "S...</span>
-<span class="co">#&gt; $ INSTITUTION &lt;chr&gt; "Institution 1", "Institution 1", "Institution 1",...</span>
-<span class="co">#&gt; $ TCIPN       &lt;chr&gt; "TCIP", "TCIP", "TCIP", "TCIP", "TCIP", "TCIP", "T...</span>
-<span class="co">#&gt; $ CIP6        &lt;chr&gt; "140801", "140801", "140801", "140801", "140801", ...</span>
-<span class="co">#&gt; $ PGRM        &lt;chr&gt; "CVE", "CVE", "CVE", "CVE", "CVE", "CVE", "CVE", "...</span></code></pre></div>
-<p>Join the sex and ethnicity/race demographics from the <code>student</code> dataset to the <code>ever</code> data frame. (<code><a href="../reference/join_demographics.html">?join_demographics</a></code> for more information.)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># add variables ETHNIC and SEX</span>
-ever &lt;-<span class="st"> </span><span class="kw"><a href="../reference/join_demographics.html">join_demographics</a></span>(ever)
-<span class="kw">glimpse</span>(ever)
-<span class="co">#&gt; Observations: 58,524</span>
+<span class="co">#&gt; Observations: 58,306</span>
 <span class="co">#&gt; Variables: 10</span>
 <span class="co">#&gt; $ MID         &lt;dbl&gt; 820102025, 820102025, 820102025, 820102025, 820102...</span>
 <span class="co">#&gt; $ </span><span class="re">BEGIN</span><span class="co">YEAR   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span>
@@ -204,14 +156,57 @@ ever &lt;-<span class="st"> </span><span class="kw"><a href="../reference/join_d
 <span class="co">#&gt; $ INSTITUTION &lt;chr&gt; "Institution 1", "Institution 1", "Institution 1",...</span>
 <span class="co">#&gt; $ TCIPN       &lt;chr&gt; "TCIP", "TCIP", "TCIP", "TCIP", "TCIP", "TCIP", "T...</span>
 <span class="co">#&gt; $ CIP6        &lt;chr&gt; "140801", "140801", "140801", "140801", "140801", ...</span>
-<span class="co">#&gt; $ PGRM        &lt;chr&gt; "CVE", "CVE", "CVE", "CVE", "CVE", "CVE", "CVE", "...</span>
+<span class="co">#&gt; $ PGRM        &lt;chr&gt; "Civil Engineering", "Civil Engineering", "Civil E...</span>
 <span class="co">#&gt; $ ETHNIC      &lt;chr&gt; "No Response", "No Response", "No Response", "No R...</span>
 <span class="co">#&gt; $ SEX         &lt;chr&gt; "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", ...</span></code></pre></div>
-<p>Finally, tally the ever-enrolled numbers by program, sex, and race/ethnicity.</p>
+<p>This is the point at which you decide how to group the student counts. Here, we disaggregate by race/ethnicity, sex, and program. The <code>count()</code> function creates a new variable <code>n</code> that we rename <code>EVER</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># count ever enrolled by grouping variables </span>
+ever_count &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/tally.html">count</a></span>(ever, PGRM, ETHNIC, SEX)  <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">rename</span>(<span class="dt">EVER =</span> n)
+
+<span class="co"># examine the result</span>
+ever_count &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(ever_count, <span class="kw">desc</span>(EVER))
+ever_count
+<span class="co">#&gt; # A tibble: 53 x 4</span>
+<span class="co">#&gt;    PGRM                   ETHNIC          SEX    EVER</span>
+<span class="co">#&gt;    &lt;chr&gt;                  &lt;chr&gt;           &lt;chr&gt; &lt;int&gt;</span>
+<span class="co">#&gt;  1 Mechanical Engineering White           M     21092</span>
+<span class="co">#&gt;  2 Civil Engineering      White           M     11146</span>
+<span class="co">#&gt;  3 Electrical Engineering White           M      8029</span>
+<span class="co">#&gt;  4 Civil Engineering      White           F      3080</span>
+<span class="co">#&gt;  5 Mechanical Engineering White           F      2573</span>
+<span class="co">#&gt;  6 Mechanical Engineering Hispanic/Latino M      1302</span>
+<span class="co">#&gt;  7 Mechanical Engineering No Response     M      1071</span>
+<span class="co">#&gt;  8 Electrical Engineering International   M       974</span>
+<span class="co">#&gt;  9 Electrical Engineering White           F       961</span>
+<span class="co">#&gt; 10 Mechanical Engineering International   M       953</span>
+<span class="co">#&gt; # ... with 43 more rows</span></code></pre></div>
+<p>A graph gives us a sense of the data. The panels and rows of the graph are ordered by median numbers of students. Civil has the largest median; Electrical the smallest; White the largest median; Hawaiian/Pacific Islander the smallest.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># graph ever enrolled numbers </span>
+<span class="kw">library</span>(ggplot2)
+<span class="kw">ggplot</span>(ever_count, <span class="kw">aes</span>(<span class="dt">x =</span> EVER, <span class="dt">y =</span> <span class="kw">reorder</span>(ETHNIC, EVER, median), <span class="dt">col =</span> SEX)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">"Number of students ever enrolled"</span>, <span class="dt">y =</span> <span class="st">""</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">facet_wrap</span>(<span class="op">~</span><span class="st"> </span><span class="kw">reorder</span>(PGRM, <span class="op">-</span>EVER, median), <span class="dt">ncol =</span> <span class="dv">1</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">alpha =</span> <span class="fl">0.8</span>) <span class="op">+</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(lightBr, lightBG)) <span class="op">+</span><span class="st">     </span><span class="co"># midfieldr custom color names</span>
+<span class="st">    </span><span class="kw"><a href="../reference/graph_functions.html">expon_scale_x_log10</a></span>() <span class="op">+</span><span class="st">                                </span><span class="co"># midfieldr custom scale layer</span>
+<span class="st">    </span><span class="kw"><a href="../reference/graph_functions.html">midfield_theme</a></span>()                                       <span class="co"># midfieldr custom theme</span></code></pre></div>
+<p><img src="stickiness_files/figure-html/unnamed-chunk-6-1.png" width="691.2"></p>
+<p>The graph code chunk includes custom arguments and layers:</p>
+<ul>
+<li>
+<code>lightBr</code> and <code>lightBG</code> are named colors in midfieldr adapted from RColorBrewer</li>
+<li>
+<code><a href="../reference/graph_functions.html">expon_scale_x_log10()</a></code> produces powers-of-ten notation on the x scale</li>
+<li>
+<code><a href="../reference/graph_functions.html">midfield_theme()</a></code> is a custom theme based on <code>theme_minimal()</code>
+</li>
+</ul>
+<p>For more information on midfieldr graph functions and arguments, <code>?graph_functions</code>.</p>
 </div>
-<div id="tally-students-graduating" class="section level2">
+<div id="count-students-graduating" class="section level2">
 <h2 class="hasAnchor">
-<a href="#tally-students-graduating" class="anchor"></a>Tally students graduating</h2>
+<a href="#count-students-graduating" class="anchor"></a>Count students graduating</h2>
 </div>
 <div id="compute-stickiness" class="section level2">
 <h2 class="hasAnchor">
@@ -224,7 +219,7 @@ ever &lt;-<span class="st"> </span><span class="kw"><a href="../reference/join_d
 <div class="footnotes">
 <hr>
 <ol>
-<li id="fn1"><p>MW Ohland, MK Orr, RA Layton, SM Lord and RA Long, Introducing “stickiness” as a versatile metric of engineering persistence, <em>2012 Frontiers in Education Conference Proceedings</em>, Seattle, WA, 2012, pp. 1-5. <a href="http://dx.doi.org/10.1109/FIE.2012.6462214">DOI 10.1109/FIE.2012.6462214</a>. Stickiness is defined as the ratio of the number of students graduating in a program to the number of students ever enrolled in the program.<a href="#fnref1">↩</a></p></li>
+<li id="fn1"><p>MW Ohland, MK Orr, RA Layton, SM Lord and RA Long, Introducing “stickiness” as a versatile metric of engineering persistence, <em>2012 Frontiers in Education Conference Proceedings</em>, Seattle, WA, 2012, pp. 1-5. <a href="http://dx.doi.org/10.1109/FIE.2012.6462214">DOI 10.1109/FIE.2012.6462214</a>.<a href="#fnref1">↩</a></p></li>
 </ol>
 </div>
 </div>
@@ -237,8 +232,8 @@ ever &lt;-<span class="st"> </span><span class="kw"><a href="../reference/join_d
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#getting-started">Getting started</a></li>
       <li><a href="#select-programs">Select programs</a></li>
-      <li><a href="#tally-students-ever-enrolled">Tally students ever enrolled</a></li>
-      <li><a href="#tally-students-graduating">Tally students graduating</a></li>
+      <li><a href="#count-students-ever-enrolled">Count students ever enrolled</a></li>
+      <li><a href="#count-students-graduating">Count students graduating</a></li>
       <li><a href="#compute-stickiness">Compute stickiness</a></li>
       <li><a href="#graph-stickiness">Graph stickiness</a></li>
       </ul>
