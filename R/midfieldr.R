@@ -39,5 +39,5 @@ NULL
 
 ## addresses R CMD check warning "no visible binding"
 if (getRversion() >= "2.15.1") {
-	utils::globalVariables(c(".", ".x",  "CIP2", "CIP4", "CIP6", "student", "MID", "ETHNIC", "SEX", "BEGINYEAR", "INSTITUTION", "TCIP", "TCIP2", "TCIP3", "TCIPN", "TTERM", "TYEAR"))
+	utils::globalVariables(c(".", ".x",  "CIP2", "CIP4", "CIP6", "student", "MID", "ETHNIC", "SEX", "BEGINYEAR", "INSTITUTION", "TCIP", "TCIP2", "TCIP3", "TCIPN", "TTERM", "TYEAR", "rcb_colors", "rcb_name", "rcb_code"))
 }

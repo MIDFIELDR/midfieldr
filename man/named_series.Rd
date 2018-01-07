@@ -9,7 +9,7 @@
 \alias{other_stem}
 \alias{phys_sci}
 \alias{stem}
-\title{Named series of CIP  codes}
+\title{Named series of 6-digit CIP  codes}
 \format{A character vector of 6-digit CIP codes}
 \source{
 NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}

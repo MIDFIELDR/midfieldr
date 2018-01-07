@@ -1,4 +1,4 @@
-#' Named series of CIP  codes
+#' Named series of 6-digit CIP  codes
 #'
 #' Collections of 6-digit CIP codes denoting groups of programs used as the series argument in \code{cip_filter()}.
 #'
