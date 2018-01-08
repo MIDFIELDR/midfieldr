@@ -1,0 +1,122 @@
+---
+title: "MIDFIELD data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MIDFIELD data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r echo = FALSE, message = FALSE}
+library(knitr)
+opts_knit$set(root.dir = "../")
+opts_chunk$set(collapse = TRUE, comment = "#>")
+opts_chunk$set(warning = FALSE, message = FALSE)
+opts_chunk$set(error = TRUE, purl = FALSE)
+opts_chunk$set(fig.width = 6)
+options(tibble.print_min = 6L, tibble.print_max = 6L)
+knit_hooks$set(inline = function(x) {
+	if (!is.numeric(x)) { 
+		x 
+		} else if (x >= 10000) { 
+		prettyNum(round(x, 2), big.mark = " ")
+		} else {
+		prettyNum(round(x, 2))
+		}
+	})
+```
+
+```{r echo = FALSE}
+library(midfieldr)
+library(stringr)
+```
+
+
+
+## CIP data 
+
+The midfieldr package includes `cip`, a tidy data frame with `r data_bits[["obs_cip"]]` observations and `r data_bits[["var_cip"]]` CIP variables of program codes and names at the 2, 4, and 6-digit levels. Each observation is a unique program. This dataset occupies `r round(data_bits[["size_cip"]] / 1e+3, 0)` kb of memory.  
+
+The dataset format and variable definitions are described on the help page:
+
+```r
+library(midfieldr)
+?cip
+```
+
+midfieldr also includes collections of 6-digit CIP codes denoting groups of programs. To see the help page: 
+
+```r
+?named_series
+```
+
+
+## Data packages
+
+The MIDFIELD datasets, because of their size, are provided in separate data packages. All datasets are random samples of the MIDFIELD database. 
+
+- [midfieldstudent](https://github.com/MIDFIELDR/midfieldstudent): `student` and `degree` data  
+- [midfieldcourse](https://github.com/MIDFIELDR/midfieldcourse):  `course` data   
+- [midfieldterm](https://github.com/MIDFIELDR/midfieldterm):  `term` data 
+
+To install the data packages using the devtools package:   
+
+```r
+# data packages
+devtools::install_github("MIDFIELDR/midfieldstudent")
+devtools::install_github("MIDFIELDR/midfieldterm")
+devtools::install_github("MIDFIELDR/midfieldcourse")
+```
+
+
+## Student data
+
+The [midfieldstudent](https://github.com/MIDFIELDR/midfieldstudent) package provides `student`, a tidy data frame with `r data_bits[["obs_student"]]` observations and `r data_bits[["var_student"]]` demographic variables. Each observation is a unique student. This dataset occupies `r round(data_bits[["size_student"]] / 1e+6, 1)` Mb of memory. 
+
+The dataset format and variable definitions are described on the help page:
+
+```r
+library(midfieldstudent)
+?student
+```
+   
+
+
+
+
+## Degree  data
+
+Also in the [midfieldstudent](https://github.com/MIDFIELDR/midfieldstudent) package is `degree`, a tidy data frame with `r data_bits[["obs_degree"]]` observations and `r data_bits[["var_degree"]]` graduation variables. Each observation is a unique student. This dataset occupies `r round(data_bits[["size_degree"]] / 1e+6, 1)` Mb of memory. 
+
+The dataset format and variable definitions are described on the help page:
+
+```r
+library(midfieldstudent)
+?degree
+```
+    
+
+
+## Term  data
+
+The [midfieldterm](https://github.com/MIDFIELDR/midfieldterm) package provides `term`, a tidy data frame with `r round(data_bits[["obs_term"]] / 1e+6, 1)` M observations and `r data_bits[["var_term"]]` academic term variables. Each observation is one term for one student. This dataset occupies `r round(data_bits[["size_term"]] / 1e+6, 1)` Mb of memory.  
+
+The dataset format and variable definitions are described on the help page:
+
+```r
+library(midfieldterm)
+?term
+```
+
+
+## Course  data
+
+The [midfieldcourse](https://github.com/MIDFIELDR/midfieldcourse) package provides `course`, a tidy data frame with `r round(data_bits[["obs_course"]] / 1e+6, 1)` M observations and `r data_bits[["var_course"]]` academic course variables. Each observation is one course in one term for one student. This dataset occupies `r round(data_bits[["size_course"]] / 1e+6, 1)` Mb of memory. 
+
+The dataset format and variable definitions are described on the help page:
+
+```r
+library(midfieldcourse)
+?course
+```
+

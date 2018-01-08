@@ -1,0 +1,190 @@
+---
+title: "Selecting CIP codes"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Selecting CIP codes}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, echo = FALSE, message = FALSE}
+library(knitr)
+opts_knit$set(root.dir = "../")
+opts_chunk$set(collapse = TRUE, comment = "#>")
+opts_chunk$set(warning = FALSE, message = FALSE)
+opts_chunk$set(error = TRUE, purl = FALSE)
+opts_chunk$set(fig.width = 6)
+options(tibble.print_max = 10L, tibble.print_min = 5L)
+knit_hooks$set(inline = function(x) {
+	if (!is.numeric(x)) { 
+		x 
+		} else if (x >= 10000) { 
+		prettyNum(round(x, 2), big.mark = " ")
+		} else {
+		prettyNum(round(x, 2))
+		}
+	})
+```
+
+```{r}
+# packages used in the vignette
+library(midfieldr)
+library(dplyr) 
+library(stringr)
+library(knitr)
+```
+
+## Introduction
+
+Instructional programs are encoded in `cip`, a data frame of character variables listing the 2, 4, and 6-digit CIP codes and program names in the MIDFILED database. See the help page (`?cip`) for more detail.  
+
+```{r}
+glimpse(cip)
+```
+
+`cip_filter()` filters `cip` for the programs we wish to study. The function has two arguments:   
+
+- `series` Search terms. A character vector of codes or keywords.  
+- `data` A searchable data frame (`cip` is the default). 
+
+With no arguments, `cip_filter()` returns the top-level entry for each 2-digit series. 
+
+```{r}
+cip_filter()
+```
+
+`cip_filter()` searches all columns in `data` for the strings in `series` and returns a data frame whose rows contain the search terms.
+
+Filtering is performed by `dplyr::filter()` with pattern detection by `stringr::str_detect()`.  
+
+## Search by keywords
+
+Because `cip_filter()` searches all columns in `data`, we can search by keyword to find the CIP codes that match the programs under study. The search is case-sensitive.  
+
+For example, if we wanted all Civil Engineering programs, we might try: 
+
+```{r}
+# series with a keyword
+df <- cip_filter(series = c("Civil", "civil"))
+kable(df)
+```
+
+We found some programs with Civilization in their names as well as Engineering Technology. The results indicate that if we wanted Civil Engineering only, we should search for the 4-digit "1408"  code. 
+
+In the next example we find that the keyword "German" appears in three different  2-digit groups of programs. If we were interested in German Studies specifically, we might want to limit our CIP codes  to "050125" and "160501". 
+
+```{r}
+# series with a keyword
+df <- cip_filter(series = c("German", "german"))
+kable(df)
+```
+
+
+
+
+
+
+## Search by CIP codes
+
+Assigning CIP codes to `series` yields a data frame of all rows from `data` that contain those character strings. Invalid codes---and valid codes not in the midfieldr `cip` dataset---are  silently ignored. 
+
+Specifying 6-digit codes yields a data frame with a row for each 6-digit code.  
+
+```{r}
+# 6-digit example
+df <- cip_filter(series = c("140802", "140803"))
+kable(df)
+```
+
+Specifying 4-digit codes yields a data frame with as many rows as there are rows that include the search strings.   
+
+```{r}
+# 4-digit example
+df <- cip_filter(series = c("1407", "1408"))
+kable(df) %>% kable_styling(font_size = 12)
+```
+
+This search, in addition to the desired Engineering programs, returned two Foreign Language programs because their 6-digit codes contain "1407" and "1408". 
+We use the regular expression notation `^` to match the start of the strings.  
+
+```{r}
+# 4-digit example matching the start of the string 
+df <- cip_filter(series = c("^1407", "^1408"))
+kable(df)
+```
+
+
+
+The 2-digit series represent the most general groupings of related programs. Here, the result includes all History codes and programs. 
+
+```{r}
+# 2-digit example
+df <- cip_filter("^54")
+kable(df)
+```
+
+The series argument can include any combination of 2, 4, and 6-digit codes. 
+
+```{r}
+# a series with 2, 4, and 6-digits specified
+df <- cip_filter(c("^24", "^4102", "^450202"))
+kable(df)
+```
+
+A series assigned numerically is coerced to characters. 
+
+```{r}
+# series as a sequence
+df <- cip_filter(series = seq(540102, 540110, 1))
+kable(df)
+```
+
+Invalid codes in the sequence, e.g., 540109 and 540110, are silently ignored. 
+
+
+
+## Search by named series
+
+midfieldr includes several datasets of "named series". A named series is a character vector of 6-digit CIP codes that belong to a group of programs such as Engineering, Physical Sciences, STEM, etc. To see the full set of available named series, type `?named_series`. 
+
+A named series is assigned to the series argument in `cip_filter()`. 
+
+```{r}
+# the engineering series
+engr
+
+df <- cip_filter(series = engr)
+glimpse(df)
+```
+
+
+
+
+
+
+
+
+
+
+## Using a previous result as a data argument 
+
+A data frame produced by `cip_filter()` can be used as the `data` argument in a subsequent use of `cip_filter()`. 
+
+```{r}
+df1 <- cip_filter("^49")
+```
+
+Suppose, after viewing the full "49" series above we decide we only need the "4903" subset. We can use the data frame `df1` from above as the `data` argument. 
+
+```{r}
+# use a previous result as a data argument
+df2 <- cip_filter(series = "4903", data = df1)
+kable(df2) %>% kable_styling(font_size = 12)
+```
+
+
+
+
+
