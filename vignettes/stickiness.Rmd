@@ -67,7 +67,7 @@ ele <- cip_filter("^1410") %>% add_column(PGRM = "Electrical Engineering")
 mce <- cip_filter("^1419") %>% add_column(PGRM = "Mechanical Engineering")
 ```
 
-Selecting our own `PGRM` label is important when using collections not specifically identified as groups in the CIP dataset, e.g., Humanities, Physical Sciences, and the  collections provided in `midfieldr::named_series`.  
+Selecting our own program label `PGRM` is important when using collections not specifically identified as groups in the CIP dataset, e.g., Humanities, Physical Sciences, and the  collections provided in `midfieldr::named_series`.  
 
 Next we bind the individual program data frames into one data frame. We use: 
 
@@ -99,7 +99,10 @@ To gather the students ever enrolled, we use:
 # gather students ever enrolled in the programs
 library(midfieldstudent)
 library(midfieldterm)
-ever <- gather_ever(term, programs)
+# saves time instead of caching
+# ever <- gather_ever(term, programs)
+# devtools::use_data(ever, overwrite = TRUE, compress = 'bzip2')#temp
+data(ever)
 
 # examine the result
 glimpse(ever)
@@ -143,11 +146,140 @@ ggplot(ever_count, aes(x = EVER, y = reorder(ETHNIC, EVER, median), col = SEX)) 
 
 ## Count students graduating 
 
+To gather the students graduating from a program, we use:
+
+- `student` dataset for student race/ethnicity and sex. 
+- `degree` dataset for the programs from which students graduate. 
+- `midfieldr::gather_grad()` to subset `degree` for those students graduating from `programs` and add variables `ETHNIC` and `SEX`. 
+
+```{r}
+glimpse(degree)
+sort(unique(degree$GCIP))
+sort(unique(degree$GCIP2))
+sort(unique(degree$GCIP3))
+```
+
+```{r}
+library(stringr)
+# draft of gather_grad()
+gather_grad <- function(degree, programs) {
+	
+	# select only those variables likely to be used for grouping
+	grad <- degree %>%
+		dplyr::select(MID, GYEAR, GTERM, INSTITUTION, GCIP, GCIP2, GCIP3)
+	
+	# keep the earliest term in which a student earns a degree
+	grad <- grad %>%
+		arrange(MID, GYEAR, GTERM) %>%
+		group_by(MID) %>%
+		filter(row_number(MID) == 1) %>%
+		ungroup()
+	
+	# gather all 6-digit codes (GCIP, GCIP2, GCIP3) for multiple degrees
+	# omit rows with no second or third degree
+	grad <- grad %>%
+		tidyr::gather(GCIPN, CIP6, GCIP:GCIP3) %>%
+		filter(!is.na(GCIPN)) 
+	
+	# collapse the programs CIP6 vector to a search string
+	# then filter grad for the desired programs
+	series <- stringr::str_c(programs$CIP6, collapse = "|")
+	grad <- grad %>%
+		dplyr::filter(str_detect(CIP6, series)) %>%
+		unique()
+	
+	# Join the program labels to grad
+	grad <- left_join(grad, programs, by = "CIP6") %>%
+		dplyr::arrange(CIP6)
+
+	# Join the sex and ethnicity/race demographics from student
+	grad <- join_demographics(grad)
+	
+	return(grad)
+}
+```
+
+
+```{r}
+grad <- gather_grad(degree, programs)
+glimpse(grad)
+```
+
+
+
+```{r}
+library(tidyr)
+# count graduates by grouping variables 
+grad_count <- count(grad, PGRM, ETHNIC, SEX)  %>% 
+	rename(GRAD = n) %>% 
+	arrange(desc(GRAD))
+
+# examine the result
+grad_count
+
+# join ever and grad
+stickiness <- left_join(ever_count, grad_count, by = c("PGRM", "ETHNIC", "SEX")) 
+
+# if GRAD is NA, due to join with EVER. Is correctly set to zero 
+stickiness <- stickiness %>% 
+	replace_na(list(GRAD = 0))
+
+# compute stickiness
+stickiness <- stickiness %>% 
+	mutate(STICK = round(GRAD / EVER, 2))
+
+	
+												
+kable(stickiness)
+```
+
+```{r}
+# select only those variables likely to be used for grouping
+grad <- degree %>%
+	dplyr::select(MID, GYEAR, GTERM, INSTITUTION, GCIP, GCIP2, GCIP3)
+
+
+unique(grad$GCIP2)
+unique(grad$GCIP3)
+```
+
+```{r}
+# keep the earliest term in which a student earns a degree
+one_degree <- grad %>%
+	filter(is.na(GCIP2) & is.na(GCIP3)) %>%
+	arrange(MID, GYEAR, GTERM)  %>% 
+	unique() %>%
+ 	group_by(MID) %>%
+ 	filter(row_number(MID) == 1) %>%
+	ungroup()
+glimpse(one_degree)
+
+unique(one_degree$GCIP2)
+unique(one_degree$GCIP3)
+
+```
+
+Gather the GCIPs into a single column
+
+```{r}
+one_degree <- one_degree %>% 
+	gather(GCIPN, CIP6, GCIP:GCIP3) %>% 
+	filter(!is.na(CIP6))
+
+glimpse(one_degree)
+```
+
+
+Now count
+
+```{r}
+
+```
+
 
 
 
 ## Compute stickiness 
-
 
 
 
@@ -156,4 +288,11 @@ ggplot(ever_count, aes(x = EVER, y = reorder(ETHNIC, EVER, median), col = SEX)) 
 
 
 
+
+## cleanup 
+
+delete the temp data save 
+```{r}
+# unlink("data/ever.rda")
+```
 
