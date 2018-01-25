@@ -26,7 +26,7 @@ NULL
 #' @export
 gather_ever <- function(term, programs) {
 
-	# select only those variables likely to be used forf grouping
+	# select only those variables likely to be used for grouping
 	ever <- term %>%
 		dplyr::select(MID, BEGINYEAR, TYEAR, TTERM, INSTITUTION, TCIP, TCIP2, TCIP3)
 
@@ -35,7 +35,7 @@ gather_ever <- function(term, programs) {
 		tidyr::gather(TCIPN, CIP6, TCIP:TCIP3) %>%
 		unique()
 
-	# collapse the CIP6 vector to a search string
+	# collapse the programs CIP6 vector to a search string
 	# then filter `ever` for the desired programs
 	series <- stringr::str_c(programs$CIP6, collapse = "|")
 	ever <- ever %>%
