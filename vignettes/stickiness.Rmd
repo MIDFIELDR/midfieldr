@@ -34,9 +34,13 @@ knit_hooks$set(inline = function(x) {
 
 "Stickiness" is a longitudinal persistence metric that tracks all students who contact an instructional program to determine what percentage “stick” to that program and graduate in it. Stickiness is defined as the ratio of the number of students graduating in a program to the number of students ever enrolled in the program.[^1]
 
+<!-- footnote -->
 [^1]: Matthew Ohland, Marisa Orr, Richard Layton, Susan Lord and Russell Long (2012) Introducing “stickiness” as a versatile metric of engineering persistence, in proc. *2012 Frontiers in Education Conference*, Seattle, WA, pp. 1--5. [DOI 10.1109/FIE.2012.6462214](http://dx.doi.org/10.1109/FIE.2012.6462214). 
 
-In this article, we show you how to use functions in midfieldr to compute program stickiness. Our workflow is: 
+
+
+
+In this article, we show you how to use midfieldr functions to compute program stickiness. Our workflow is: 
 
 - select the programs 
 - count the students ever enrolled
@@ -44,7 +48,9 @@ In this article, we show you how to use functions in midfieldr to compute progra
 - compute stickiness 
 - graph stickiness 
 
-Because our research focuses on intersectionality, we typically disaggregate the data by program, sex, and race/ethnicity. You may of course choose your own combination of variables to study. 
+Because our research focuses on intersectionality, we typically disaggregate the data by program, sex, and race/ethnicity.[^2] You may of course choose your own combination of variables to study. 
+
+
 
 
 
@@ -54,8 +60,9 @@ For this example, we compare the stickiness of three engineering programs: Civil
 
 We use:  
 
-- `midfieldr::cip_filter()` to obtain the relevant program codes.  
-- `tibble::add_column()`  to label the program groups we've defined. The `PGRM` variable is handy later for grouping data and for titling graph panels. 
+- `cip_filter()` to obtain the relevant program codes.  
+- `add_column()` (a [tibble](http://tibble.tidyverse.org) function) to add the `PGRM` variable to the data frame: a custom program label we use later for grouping, counting, and graphing. 
+
 
 ```{r warning = FALSE, message = FALSE}
 # obtain 2, 4, and 6-digit CIP codes and names
@@ -67,18 +74,25 @@ ele <- cip_filter("^1410") %>% add_column(PGRM = "Electrical Engineering")
 mce <- cip_filter("^1419") %>% add_column(PGRM = "Mechanical Engineering")
 ```
 
-Selecting our own program label `PGRM` is important when using collections not specifically identified as groups in the CIP dataset, e.g., Humanities, Physical Sciences, and the  collections provided in `midfieldr::named_series`.  
 
-Next we bind the individual program data frames into one data frame. We use: 
+Assigning a custom label to `PGRM` is useful when the set of CIP codes we plan to group and count do not already have a common CIP name. For example, there is no CIP name for the general group of programs we might call Humanities. 
 
-- `dplyr::bind_rows()` to bind the programs into one data frame 
-- `dplyr::select()` to keep two variables: `CIP6` for finding the desired student records and `PGRM` for grouping.
+Selecting the values of `PGRM` is important when using collections not specifically identified as groups in the CIP dataset, e.g., Humanities, Physical Sciences, and the  collections provided in the midfieldr `named_series`.  
+
+Next we bind the individual program data frames into one data frame. We use two [dplyr](http://dplyr.tidyverse.org) functions: 
+
+- `bind_rows()` to bind the programs into one data frame ()
+- `select()` to keep two variables: `CIP6` for finding the desired student records and `PGRM` for grouping.
 
 ```{r}
 # bind the four programs
 programs <- bind_rows(cve, ele, mce) %>% 
 	select(CIP6, PGRM)
+```
 
+Examine the result: there are `r nrow(programs)` CIP codes for these three programs. 
+
+```{r}
 # examine the result
 programs
 ```
@@ -87,32 +101,56 @@ programs
 
 ## Count students ever enrolled 
 
-A student contributes to a program's "ever enrolled" total if the program's CIP code appears in the student's `term` data. Each unique student/program combination is counted only once.  
+A student contributes to a program's "ever enrolled" total if the program's CIP code appears in the student's `term` data. A student is counted once per program.  
 
 To gather the students ever enrolled, we use:
 
-- `student` dataset for student race/ethnicity and sex. 
-- `term` dataset for the programs in which students are enrolled term-by-term. 
-- `midfieldr::gather_ever()` to subset `term` for those students ever enrolled in `programs` and add variables `ETHNIC` and `SEX`. 
+- the midfieldr `term` data for term-by-term program information. 
+- the midfieldr `student` data for student race/ethnicity and sex. 
+- `gather_ever()` to gather students ever enrolled in `programs` and to add their race/ethnicity and sex to the data frame. 
 
-```{r}
+```{r eval=FALSE}
 # gather students ever enrolled in the programs
 library(midfieldstudent)
 library(midfieldterm)
-# saves time instead of caching
+ever <- gather_ever(term, programs)
+```
+
+```{r echo = FALSE}
+# to save execution time during development
+# the previous chunk echoes but does not execute
+# this code chunk executes but does not echo
+library(midfieldstudent)
+library(midfieldterm)
 # ever <- gather_ever(term, programs)
 # devtools::use_data(ever, overwrite = TRUE, compress = 'bzip2')#temp
 data(ever)
+```
 
+To examine the result of the operation, use `glimpse()`, a [tibble](http://tibble.tidyverse.org) function. 
+
+```{r}
 # examine the result
 glimpse(ever)
 ```
 
-At this point, one decides how to group the the students for counting. In our example, we group by race/ethnicity, sex, and program. We use:
+<!-- footnote -->
+```{r echo = FALSE}
+# character values for the footnote
+library(stringr)
+sex_values    <- str_c(sort(unique(ever$SEX)), collapse = ", ")
+ethnic_values <- str_c(sort(unique(ever$ETHNIC)), collapse = ", ")
+```
 
-- `dplyr::count()` to group and count the students by program, ethnicity/race, and sex. The count is assigned to the default variable `n`. 
-- `dplyr::rename()` to rename `n` to `EVER` for the number of students in this group ever enrolled in the program. 
-- `dplyr::arrange()` to arrange the rows of the resulting data frame in order of descending magnitude of the count. 
+[^2]: The possible values of race/ethnicity and sex categories are limited to those used by the participating US institutions. Thus sex is limited to the set  (`r sex_values`) and race/ethnicity is limited to the set (`r ethnic_values`). 
+
+
+
+At this point, one decides how to group the the students for counting. In our example, we group by race/ethnicity, sex, and program. We use the following [dplyr](http://dplyr.tidyverse.org) functions:
+
+- `count()` to group and count the students by program, ethnicity/race, and sex. The count is assigned to the default variable `n`. 
+- `rename()` to rename `n` to `EVER` for the number of students in this group ever enrolled in the program. 
+- `arrange()` to arrange the rows of the resulting data frame in order of descending magnitude of the count. 
 
 ```{r}
 # count ever enrolled by grouping variables 
@@ -124,23 +162,37 @@ ever_count <- count(ever, PGRM, ETHNIC, SEX)  %>%
 ever_count
 ```
 
-To get a sense of the data, we visualize it using a "multiway" graph. (See [Multiway data and graphs](multiway.html) for an in-depth discussion of multiways.)  To construct the graph, we use ggplot2 and the following midfieldr graph functions: 
 
-- `midfieldr::expon_scale_x_log10()` creates exponential powers-of-ten notation and logarithmic grid lines.  
-- `midfieldr::midfield_theme()`, the ggplot `theme_minimal()` with some revisions. 
-- `midfieldr::rcb()` yields a hexadecimal code for specific colors named in the `midfieldr::rcb_colors` dataset.  
 
-```{r fig.width = 7.2, fig.asp = 0.9}
+We can examine our saummarized data using [ggplot2](http://ggplot2.tidyverse.org). 
+
+```{r}
 # multiway graph of ever enrolled numbers 
 library(ggplot2)
-ggplot(ever_count, aes(x = EVER, y = reorder(ETHNIC, EVER, median), col = SEX)) +
+f1 <- ggplot(ever_count, aes(x = EVER, y = reorder(ETHNIC, EVER, median), col = SEX)) +
 	geom_point(size = 2) + 	
 	facet_wrap(~ reorder(PGRM, -EVER, median), ncol = 1) +
-	labs(x = "Number of students ever enrolled", y = "") +
+	labs(x = "Number of students ever enrolled", y = "") 
+```
+
+To format the graph, we use the following midfieldr graph functions: 
+
+- `expon_scale_x_log10()` creates exponential powers-of-ten notation and logarithmic grid lines.  
+- `midfield_theme()`, the ggplot `theme_minimal()` with some revisions. 
+- `rcb()` yields a hexadecimal code for specific colors named in the `midfieldr::rcb_colors` dataset.  
+
+```{r fig.width = 7.2, fig.asp = 0.9}
+# format with midfieldr graph functions
+f1 <- f1 +
 	scale_color_manual(values = c(rcb("mid_Br"), rcb("mid_BG"))) + 
 	expon_scale_x_log10() +
 	midfield_theme() 
+
+print(f1)
 ```
+
+For the rationale underlying the design of this "multiway" graph, see our [Multiway data and graphs](multiway.html) discussion.
+
 
 
 

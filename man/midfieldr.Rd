@@ -4,29 +4,30 @@
 \name{midfieldr}
 \alias{midfieldr}
 \alias{midfieldr-package}
-\title{Undergraduate Student Records For Longitudinal Research}
+\title{Undergraduate Student Records For Longitudinal Research
+\Sexpr[results=hide]{load("data/data_bits.rda")}}
 \source{
 Data provided by the MIDFIELD project: \url{https://engineering.purdue.edu/MIDFIELD}
 }
 \description{
-A package for investigating a sample from the MIDFIELD database. The data  comprise student records from registrars at participating US universities, including demographic, term, course, and degree information for 165,000 undergraduate students from 1990 to 2016.
+A package for investigating a sample from the MIDFIELD database. The data  comprise student records from registrars at participating US universities, including demographic, term, course, and degree information for \Sexpr{data_bits[["obs_student"]]} undergraduate students from \Sexpr{data_bits[["year_min"]]} to \Sexpr{data_bits[["year_max"]]}.
 }
 \details{
 In our examples illustrating how to use \pkg{midfieldr} tools and datasets, the findings are generally disaggregated or conditioned by instructional program and student sex and race/ethnicity.  Sex and race/ethnicity categories are limited to those reported by the US institutions contributing to the MIDFIELD database.
 
-Datasets are provided with \pkg{midfieldr} plus three data packages: \pkg{midfieldstudent}, \pkg{midfieldterm}, and \pkg{midfieldcourse}.
+Datasets are provided with \pkg{midfieldr} plus three data packages: \pkg{midfieldstudents}, \pkg{midfieldterms}, and \pkg{midfieldcourses}.
 }
 \section{Data}{
 
 \describe{
 
-  \item{\code{student}}{\href{https://github.com/MIDFIELDR/midfieldstudent}{midfieldstudent} package. Demographic data for 165,000 students. Each observation is a unique student.}
+  \item{\code{midfieldstudents}}{\href{https://github.com/MIDFIELDR/midfieldstudents}{midfieldstudents} package. Demographic data for \Sexpr{data_bits[["obs_student"]]} students. Each observation is a unique student.}
 
-  \item{\code{term}}{\href{https://github.com/MIDFIELDR/midfieldterm}{midfieldterm} package. Academic term data for 165,000 students. Each observation is one term for one student, yielding 1.1 M observations.}
+  \item{\code{midfieldterms}}{\href{https://github.com/MIDFIELDR/midfieldterms}{midfieldterms} package. Academic term data for \Sexpr{data_bits[["obs_student"]]} students. Each observation is one term for one student, yielding \Sexpr{round(data_bits[["obs_term"]]/1e+6, 1)} M observations.}
 
-  \item{\code{course}}{\href{https://github.com/MIDFIELDR/midfieldcourse}{midfieldcourse} package. Academic course data for 165,000 students. Each observation is one course for one student, yielding 5.4 M observations.}
+  \item{\code{midfieldcourses}}{\href{https://github.com/MIDFIELDR/midfieldcourses}{midfieldcourses} package. Academic course data for \Sexpr{data_bits[["obs_student"]]}. Each observation is one course for one student, yielding \Sexpr{round(data_bits[["obs_course"]]/1e+6, 1)} M observations.}
 
-  \item{\code{degree}}{\href{https://github.com/MIDFIELDR/midfieldstudent}{midfieldstudent} package. Graduation data for 90,000 students receiving degrees. Each observation is a unique student. }
+  \item{\code{midfielddegrees}}{\href{https://github.com/MIDFIELDR/midfieldstudents}{midfieldstudents} package. Graduation data for  \Sexpr{data_bits[["obs_degree"]]} students receiving degrees. Each observation is a unique student. }
 
   \item{\code{cip}}{\href{https://github.com/MIDFIELDR/midfieldr}{midfieldr} package. A dataset of program codes and names of academic fields of study. Each of the 1552 observations is one program at the CIP 6-digit level.}
 
