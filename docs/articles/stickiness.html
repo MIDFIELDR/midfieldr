@@ -8,14 +8,17 @@
 <title>Stickiness metric • midfieldr</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/spacelab/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
-<!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><meta property="og:title" content="Stickiness metric">
+<meta property="og:description" content="">
+<meta name="twitter:card" content="summary">
+<!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body>
-    <div class="container template-vignette">
+    <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -24,8 +27,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">midfieldr</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">midfieldr</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.0</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
@@ -79,20 +86,24 @@
 
       
       </header><div class="row">
-  <div class="col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Stickiness metric</h1>
             
-          </div>
+      
+      <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/master/vignettes/stickiness.Rmd"><code>vignettes/stickiness.Rmd</code></a></small>
+      <div class="hidden name"><code>stickiness.Rmd</code></div>
+
+    </div>
 
     
     
-<div class="contents">
 <div id="getting-started" class="section level2">
 <h2 class="hasAnchor">
 <a href="#getting-started" class="anchor"></a>Getting started</h2>
 <p>“Stickiness” is a longitudinal persistence metric that tracks all students who contact an instructional program to determine what percentage “stick” to that program and graduate in it. Stickiness is defined as the ratio of the number of students graduating in a program to the number of students ever enrolled in the program.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
-<p>In this article, we show you how to use functions in midfieldr to compute program stickiness. Our workflow is:</p>
+<!-- footnote -->
+<p>In this article, we show you how to use midfieldr functions to compute program stickiness. Our workflow is:</p>
 <ul>
 <li>select the programs</li>
 <li>count the students ever enrolled</li>
@@ -101,7 +112,7 @@
 <li>compute stickiness</li>
 <li>graph stickiness</li>
 </ul>
-<p>Because our research focuses on intersectionality, we typically disaggregate the data by program, sex, and race/ethnicity. You may of course choose your own combination of variables to study.</p>
+<p>Because our research focuses on intersectionality, we typically disaggregate the data by program, sex, and race/ethnicity.<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> You may of course choose your own combination of variables to study.</p>
 </div>
 <div id="select-the-programs" class="section level2">
 <h2 class="hasAnchor">
@@ -110,10 +121,10 @@
 <p>We use:</p>
 <ul>
 <li>
-<code><a href="http://www.rdocumentation.org/packages/midfieldr/topics/cip_filter">midfieldr::cip_filter()</a></code> to obtain the relevant program codes.<br>
+<code><a href="../reference/cip_filter.html">cip_filter()</a></code> to obtain the relevant program codes.<br>
 </li>
 <li>
-<code><a href="http://www.rdocumentation.org/packages/tibble/topics/add_column">tibble::add_column()</a></code> to label the program groups we’ve defined. The <code>PGRM</code> variable is handy later for grouping data and for titling graph panels.</li>
+<code>add_column()</code> (a <a href="http://tibble.tidyverse.org">tibble</a> function) to add the <code>PGRM</code> variable to the data frame: a custom program label we use later for grouping, counting, and graphing.</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># obtain 2, 4, and 6-digit CIP codes and names</span>
 <span class="kw">library</span>(dplyr)
@@ -122,19 +133,20 @@
 cve &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1408"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">PGRM =</span> <span class="st">"Civil Engineering"</span>)
 ele &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1410"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">PGRM =</span> <span class="st">"Electrical Engineering"</span>)
 mce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1419"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">PGRM =</span> <span class="st">"Mechanical Engineering"</span>)</code></pre></div>
-<p>Selecting our own <code>PGRM</code> label is important when using collections not specifically identified as groups in the CIP dataset, e.g., Humanities, Physical Sciences, and the collections provided in <code><a href="http://www.rdocumentation.org/packages/midfieldr/topics/named_series">midfieldr::named_series</a></code>.</p>
-<p>Next we bind the individual program data frames into one data frame. We use:</p>
+<p>Assigning a custom label to <code>PGRM</code> is useful when the set of CIP codes we plan to group and count do not already have a common CIP name. For example, there is no CIP name for the general group of programs we might call Humanities.</p>
+<p>Selecting the values of <code>PGRM</code> is important when using collections not specifically identified as groups in the CIP dataset, e.g., Humanities, Physical Sciences, and the collections provided in the midfieldr <code>named_series</code>.</p>
+<p>Next we bind the individual program data frames into one data frame. We use two <a href="http://dplyr.tidyverse.org">dplyr</a> functions:</p>
 <ul>
 <li>
-<code><a href="http://dplyr.tidyverse.org/reference/bind.html">dplyr::bind_rows()</a></code> to bind the programs into one data frame</li>
+<code>bind_rows()</code> to bind the programs into one data frame ()</li>
 <li>
-<code><a href="http://dplyr.tidyverse.org/reference/select.html">dplyr::select()</a></code> to keep two variables: <code>CIP6</code> for finding the desired student records and <code>PGRM</code> for grouping.</li>
+<code>select()</code> to keep two variables: <code>CIP6</code> for finding the desired student records and <code>PGRM</code> for grouping.</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># bind the four programs</span>
 programs &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(cve, ele, mce) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">    </span><span class="kw">select</span>(CIP6, PGRM)
-
-<span class="co"># examine the result</span>
+<span class="st">    </span><span class="kw">select</span>(CIP6, PGRM)</code></pre></div>
+<p>Examine the result: there are 11 CIP codes for these three programs.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># examine the result</span>
 programs
 <span class="co">#&gt;      CIP6                   PGRM</span>
 <span class="co">#&gt; 1  140801      Civil Engineering</span>
@@ -152,22 +164,20 @@ programs
 <div id="count-students-ever-enrolled" class="section level2">
 <h2 class="hasAnchor">
 <a href="#count-students-ever-enrolled" class="anchor"></a>Count students ever enrolled</h2>
-<p>A student contributes to a program’s “ever enrolled” total if the program’s CIP code appears in the student’s <code>term</code> data. Each unique student/program combination is counted only once.</p>
+<p>A student contributes to a program’s “ever enrolled” total if the program’s CIP code appears in the student’s <code>term</code> data. A student is counted once per program.</p>
 <p>To gather the students ever enrolled, we use:</p>
 <ul>
+<li>the midfieldr <code>term</code> data for term-by-term program information.</li>
+<li>the midfieldr <code>student</code> data for student race/ethnicity and sex.</li>
 <li>
-<code>student</code> dataset for student race/ethnicity and sex.</li>
-<li>
-<code>term</code> dataset for the programs in which students are enrolled term-by-term.</li>
-<li>
-<code><a href="http://www.rdocumentation.org/packages/midfieldr/topics/gather_ever">midfieldr::gather_ever()</a></code> to subset <code>term</code> for those students ever enrolled in <code>programs</code> and add variables <code>ETHNIC</code> and <code>SEX</code>.</li>
+<code><a href="../reference/gather_ever.html">gather_ever()</a></code> to gather students ever enrolled in <code>programs</code> and to add their race/ethnicity and sex to the data frame.</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># gather students ever enrolled in the programs</span>
 <span class="kw">library</span>(midfieldstudent)
 <span class="kw">library</span>(midfieldterm)
-ever &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_ever.html">gather_ever</a></span>(term, programs)
-
-<span class="co"># examine the result</span>
+ever &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_ever.html">gather_ever</a></span>(term, programs)</code></pre></div>
+<p>To examine the result of the operation, use <code>glimpse()</code>, a <a href="http://tibble.tidyverse.org">tibble</a> function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># examine the result</span>
 <span class="kw">glimpse</span>(ever)
 <span class="co">#&gt; Observations: 58,306</span>
 <span class="co">#&gt; Variables: 10</span>
@@ -181,14 +191,15 @@ ever &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather
 <span class="co">#&gt; $ PGRM        &lt;chr&gt; "Civil Engineering", "Civil Engineering", "Civil E...</span>
 <span class="co">#&gt; $ ETHNIC      &lt;chr&gt; "No Response", "No Response", "No Response", "No R...</span>
 <span class="co">#&gt; $ SEX         &lt;chr&gt; "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", ...</span></code></pre></div>
-<p>At this point, one decides how to group the the students for counting. In our example, we group by race/ethnicity, sex, and program. We use:</p>
+<!-- footnote -->
+<p>At this point, one decides how to group the the students for counting. In our example, we group by race/ethnicity, sex, and program. We use the following <a href="http://dplyr.tidyverse.org">dplyr</a> functions:</p>
 <ul>
 <li>
-<code><a href="http://dplyr.tidyverse.org/reference/tally.html">dplyr::count()</a></code> to group and count the students by program, ethnicity/race, and sex. The count is assigned to the default variable <code>n</code>.</li>
+<code>count()</code> to group and count the students by program, ethnicity/race, and sex. The count is assigned to the default variable <code>n</code>.</li>
 <li>
-<code><a href="http://dplyr.tidyverse.org/reference/select.html">dplyr::rename()</a></code> to rename <code>n</code> to <code>EVER</code> for the number of students in this group ever enrolled in the program.</li>
+<code>rename()</code> to rename <code>n</code> to <code>EVER</code> for the number of students in this group ever enrolled in the program.</li>
 <li>
-<code><a href="http://dplyr.tidyverse.org/reference/arrange.html">dplyr::arrange()</a></code> to arrange the rows of the resulting data frame in order of descending magnitude of the count.</li>
+<code>arrange()</code> to arrange the rows of the resulting data frame in order of descending magnitude of the count.</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># count ever enrolled by grouping variables </span>
 ever_count &lt;-<span class="st"> </span><span class="kw">count</span>(ever, PGRM, ETHNIC, SEX)  <span class="op">%&gt;%</span><span class="st"> </span>
@@ -211,30 +222,214 @@ ever_count
 <span class="co">#&gt;  9 Electrical Engineering White           F       961</span>
 <span class="co">#&gt; 10 Mechanical Engineering International   M       953</span>
 <span class="co">#&gt; # ... with 43 more rows</span></code></pre></div>
-<p>To get a sense of the data, we visualize it using a “multiway” graph. (See <a href="multiway.html">Multiway data and graphs</a> for an in-depth discussion of multiways.) To construct the graph, we use ggplot2 and the following midfieldr graph functions:</p>
-<ul>
-<li>
-<code><a href="http://www.rdocumentation.org/packages/midfieldr/topics/graph_functions">midfieldr::expon_scale_x_log10()</a></code> creates exponential powers-of-ten notation and logarithmic grid lines.<br>
-</li>
-<li>
-<code><a href="http://www.rdocumentation.org/packages/midfieldr/topics/graph_functions">midfieldr::midfield_theme()</a></code>, the ggplot <code>theme_minimal()</code> with some revisions.</li>
-<li>
-<code><a href="http://www.rdocumentation.org/packages/midfieldr/topics/rcb">midfieldr::rcb()</a></code> yields a hexadecimal code for specific colors named in the <code><a href="http://www.rdocumentation.org/packages/midfieldr/topics/rcb_colors">midfieldr::rcb_colors</a></code> dataset.</li>
-</ul>
+<p>We can examine our saummarized data using <a href="http://ggplot2.tidyverse.org">ggplot2</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># multiway graph of ever enrolled numbers </span>
 <span class="kw">library</span>(ggplot2)
-<span class="kw">ggplot</span>(ever_count, <span class="kw">aes</span>(<span class="dt">x =</span> EVER, <span class="dt">y =</span> <span class="kw">reorder</span>(ETHNIC, EVER, median), <span class="dt">col =</span> SEX)) <span class="op">+</span>
+f1 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(ever_count, <span class="kw">aes</span>(<span class="dt">x =</span> EVER, <span class="dt">y =</span> <span class="kw">reorder</span>(ETHNIC, EVER, median), <span class="dt">col =</span> SEX)) <span class="op">+</span>
 <span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span><span class="st">  </span>
 <span class="st">    </span><span class="kw">facet_wrap</span>(<span class="op">~</span><span class="st"> </span><span class="kw">reorder</span>(PGRM, <span class="op">-</span>EVER, median), <span class="dt">ncol =</span> <span class="dv">1</span>) <span class="op">+</span>
-<span class="st">    </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">"Number of students ever enrolled"</span>, <span class="dt">y =</span> <span class="st">""</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">"Number of students ever enrolled"</span>, <span class="dt">y =</span> <span class="st">""</span>) </code></pre></div>
+<p>To format the graph, we use the following midfieldr graph functions:</p>
+<ul>
+<li>
+<code><a href="../reference/graph_functions.html">expon_scale_x_log10()</a></code> creates exponential powers-of-ten notation and logarithmic grid lines.<br>
+</li>
+<li>
+<code><a href="../reference/graph_functions.html">midfield_theme()</a></code>, the ggplot <code>theme_minimal()</code> with some revisions.</li>
+<li>
+<code><a href="../reference/rcb.html">rcb()</a></code> yields a hexadecimal code for specific colors named in the <code><a href="../reference/rcb_colors.html">midfieldr::rcb_colors</a></code> dataset.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># format with midfieldr graph functions</span>
+f1 &lt;-<span class="st"> </span>f1 <span class="op">+</span>
 <span class="st">    </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="kw"><a href="../reference/rcb.html">rcb</a></span>(<span class="st">"mid_Br"</span>), <span class="kw"><a href="../reference/rcb.html">rcb</a></span>(<span class="st">"mid_BG"</span>))) <span class="op">+</span><span class="st"> </span>
 <span class="st">    </span><span class="kw"><a href="../reference/graph_functions.html">expon_scale_x_log10</a></span>() <span class="op">+</span>
-<span class="st">    </span><span class="kw"><a href="../reference/graph_functions.html">midfield_theme</a></span>() </code></pre></div>
-<p><img src="stickiness_files/figure-html/unnamed-chunk-5-1.png" width="691.2"></p>
+<span class="st">    </span><span class="kw"><a href="../reference/graph_functions.html">midfield_theme</a></span>() 
+
+<span class="kw">print</span>(f1)</code></pre></div>
+<p><img src="stickiness_files/figure-html/unnamed-chunk-10-1.png" width="691.2"></p>
+<p>For the rationale underlying the design of this “multiway” graph, see our <a href="multiway.html">Multiway data and graphs</a> discussion.</p>
 </div>
 <div id="count-students-graduating" class="section level2">
 <h2 class="hasAnchor">
 <a href="#count-students-graduating" class="anchor"></a>Count students graduating</h2>
+<p>To gather the students graduating from a program, we use:</p>
+<ul>
+<li>
+<code>student</code> dataset for student race/ethnicity and sex.</li>
+<li>
+<code>degree</code> dataset for the programs from which students graduate.</li>
+<li>
+<code>midfieldr::gather_grad()</code> to subset <code>degree</code> for those students graduating from <code>programs</code> and add variables <code>ETHNIC</code> and <code>SEX</code>.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">glimpse</span>(degree)
+<span class="co">#&gt; Observations: 89,886</span>
+<span class="co">#&gt; Variables: 14</span>
+<span class="co">#&gt; $ MID         &lt;dbl&gt; 822360267, 823989510, 824343129, 821924342, 821612...</span>
+<span class="co">#&gt; $ GYEAR       &lt;dbl&gt; 1992, 1993, 1993, 1993, 1993, 1993, 1993, 1993, 19...</span>
+<span class="co">#&gt; $ DEGREE      &lt;chr&gt; "BS", "BS", "BS", "BA", "BA", "BS", "BS", "BS", "B...</span>
+<span class="co">#&gt; $ GDESC       &lt;chr&gt; "Biological Science", "Business Administration", "...</span>
+<span class="co">#&gt; $ GTERM       &lt;chr&gt; "SP", "SP", "SP", "SM", "SM", "FA", "SP", "SP", "S...</span>
+<span class="co">#&gt; $ INSTITUTION &lt;chr&gt; "Institution 1", "Institution 1", "Institution 1",...</span>
+<span class="co">#&gt; $ GCIP        &lt;chr&gt; "260101", "520201", "520201", "450201", "450601", ...</span>
+<span class="co">#&gt; $ GCODE       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span>
+<span class="co">#&gt; $ GCIP2       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span>
+<span class="co">#&gt; $ GDESC2      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span>
+<span class="co">#&gt; $ GCODE2      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span>
+<span class="co">#&gt; $ GCIP3       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span>
+<span class="co">#&gt; $ GDESC3      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span>
+<span class="co">#&gt; $ GCODE3      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span>
+<span class="kw">sort</span>(<span class="kw">unique</span>(degree<span class="op">$</span>GCIP))
+<span class="co">#&gt;   [1] "010101" "010102" "010103" "010104" "010304" "010307" "010507"</span>
+<span class="co">#&gt;   [8] "010601" "010605" "010801" "010802" "010901" "011001" "011101"</span>
+<span class="co">#&gt;  [15] "011103" "011106" "011201" "020101" "020201" "020299" "020301"</span>
+<span class="co">#&gt;  [22] "020402" "020403" "020409" "029999" "030101" "030201" "030204"</span>
+<span class="co">#&gt;  [29] "030205" "030301" "030501" "030502" "030601" "040601" "050299"</span>
+<span class="co">#&gt;  [36] "059999" "090101" "090102" "090401" "090499" "110101" "110401"</span>
+<span class="co">#&gt;  [43] "131202" "131203" "131210" "131301" "131309" "131316" "131319"</span>
+<span class="co">#&gt;  [50] "140101" "140301" "140501" "140701" "140801" "140901" "141001"</span>
+<span class="co">#&gt;  [57] "141201" "141301" "141401" "141901" "143501" "150603" "150612"</span>
+<span class="co">#&gt;  [64] "151001" "151202" "160000" "160101" "160302" "160501" "160901"</span>
+<span class="co">#&gt;  [71] "160905" "190101" "190202" "190402" "190503" "190504" "190701"</span>
+<span class="co">#&gt;  [78] "190901" "190905" "230101" "231001" "231303" "240101" "240103"</span>
+<span class="co">#&gt;  [85] "260001" "260101" "260102" "260202" "260210" "260301" "260501"</span>
+<span class="co">#&gt;  [92] "260502" "260701" "260708" "260709" "261201" "261301" "261305"</span>
+<span class="co">#&gt;  [99] "270101" "270301" "270399" "270501" "301801" "301901" "302001"</span>
+<span class="co">#&gt; [106] "310101" "310301" "310505" "380101" "380201" "400101" "400501"</span>
+<span class="co">#&gt; [113] "400601" "400703" "400801" "420101" "430202" "440701" "450101"</span>
+<span class="co">#&gt; [120] "450201" "450401" "450601" "450801" "451001" "451101" "460401"</span>
+<span class="co">#&gt; [127] "500101" "500102" "500301" "500408" "500501" "500701" "500702"</span>
+<span class="co">#&gt; [134] "500901" "510101" "510201" "512202" "512305" "512306" "519999"</span>
+<span class="co">#&gt; [141] "520101" "520201" "520301" "520901" "520902" "520905" "521101"</span>
+<span class="co">#&gt; [148] "540101"</span>
+<span class="kw">sort</span>(<span class="kw">unique</span>(degree<span class="op">$</span>GCIP2))
+<span class="co">#&gt;  [1] "090102" "110101" "160302" "160501" "160901" "160905" "230101"</span>
+<span class="co">#&gt;  [8] "231303" "260101" "260202" "270101" "380101" "380201" "400801"</span>
+<span class="co">#&gt; [15] "420101" "440701" "450401" "450601" "451001" "451101" "500501"</span>
+<span class="co">#&gt; [22] "500702" "500901" "520201" "520301" "521101" "540101"</span>
+<span class="kw">sort</span>(<span class="kw">unique</span>(degree<span class="op">$</span>GCIP3))
+<span class="co">#&gt; [1] "380101"</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(stringr)
+<span class="co"># draft of gather_grad()</span>
+gather_grad &lt;-<span class="st"> </span><span class="cf">function</span>(degree, programs) {
+    
+    <span class="co"># select only those variables likely to be used for grouping</span>
+    grad &lt;-<span class="st"> </span>degree <span class="op">%&gt;%</span>
+<span class="st">        </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/select.html">select</a></span>(MID, GYEAR, GTERM, INSTITUTION, GCIP, GCIP2, GCIP3)
+    
+    <span class="co"># keep the earliest term in which a student earns a degree</span>
+    grad &lt;-<span class="st"> </span>grad <span class="op">%&gt;%</span>
+<span class="st">        </span><span class="kw">arrange</span>(MID, GYEAR, GTERM) <span class="op">%&gt;%</span>
+<span class="st">        </span><span class="kw">group_by</span>(MID) <span class="op">%&gt;%</span>
+<span class="st">        </span><span class="kw">filter</span>(<span class="kw">row_number</span>(MID) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%&gt;%</span>
+<span class="st">        </span><span class="kw">ungroup</span>()
+    
+    <span class="co"># gather all 6-digit codes (GCIP, GCIP2, GCIP3) for multiple degrees</span>
+    <span class="co"># omit rows with no second or third degree</span>
+    grad &lt;-<span class="st"> </span>grad <span class="op">%&gt;%</span>
+<span class="st">        </span>tidyr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/tidyr/topics/gather">gather</a></span>(GCIPN, CIP6, GCIP<span class="op">:</span>GCIP3) <span class="op">%&gt;%</span>
+<span class="st">        </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(GCIPN)) 
+    
+    <span class="co"># collapse the programs CIP6 vector to a search string</span>
+    <span class="co"># then filter grad for the desired programs</span>
+    series &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/stringr/topics/str_c">str_c</a></span>(programs<span class="op">$</span>CIP6, <span class="dt">collapse =</span> <span class="st">"|"</span>)
+    grad &lt;-<span class="st"> </span>grad <span class="op">%&gt;%</span>
+<span class="st">        </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="kw">str_detect</span>(CIP6, series)) <span class="op">%&gt;%</span>
+<span class="st">        </span><span class="kw">unique</span>()
+    
+    <span class="co"># Join the program labels to grad</span>
+    grad &lt;-<span class="st"> </span><span class="kw">left_join</span>(grad, programs, <span class="dt">by =</span> <span class="st">"CIP6"</span>) <span class="op">%&gt;%</span>
+<span class="st">        </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(CIP6)
+
+    <span class="co"># Join the sex and ethnicity/race demographics from student</span>
+    grad &lt;-<span class="st"> </span><span class="kw"><a href="../reference/join_demographics.html">join_demographics</a></span>(grad)
+    
+    <span class="kw">return</span>(grad)
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">grad &lt;-<span class="st"> </span><span class="kw">gather_grad</span>(degree, programs)
+<span class="co">#&gt; Error: package 'tidyselect' was installed by an R version with different internals; it needs to be reinstalled for use with this R version</span>
+<span class="kw">glimpse</span>(grad)
+<span class="co">#&gt; Error in glimpse(grad): object 'grad' not found</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyr)
+<span class="co"># count graduates by grouping variables </span>
+grad_count &lt;-<span class="st"> </span><span class="kw">count</span>(grad, PGRM, ETHNIC, SEX)  <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">rename</span>(<span class="dt">GRAD =</span> n) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">arrange</span>(<span class="kw">desc</span>(GRAD))
+<span class="co">#&gt; Error in group_vars(x): object 'grad' not found</span>
+
+<span class="co"># examine the result</span>
+grad_count
+<span class="co">#&gt; Error in eval(expr, envir, enclos): object 'grad_count' not found</span>
+
+<span class="co"># join ever and grad</span>
+stickiness &lt;-<span class="st"> </span><span class="kw">left_join</span>(ever_count, grad_count, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">"PGRM"</span>, <span class="st">"ETHNIC"</span>, <span class="st">"SEX"</span>)) 
+<span class="co">#&gt; Error in tbl_vars(y): object 'grad_count' not found</span>
+
+<span class="co"># if GRAD is NA, due to join with EVER. Is correctly set to zero </span>
+stickiness &lt;-<span class="st"> </span>stickiness <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">replace_na</span>(<span class="kw">list</span>(<span class="dt">GRAD =</span> <span class="dv">0</span>))
+<span class="co">#&gt; Error in eval(lhs, parent, parent): object 'stickiness' not found</span>
+
+<span class="co"># compute stickiness</span>
+stickiness &lt;-<span class="st"> </span>stickiness <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">STICK =</span> <span class="kw">round</span>(GRAD <span class="op">/</span><span class="st"> </span>EVER, <span class="dv">2</span>))
+<span class="co">#&gt; Error in eval(lhs, parent, parent): object 'stickiness' not found</span>
+
+    
+                                                
+<span class="kw">kable</span>(stickiness)
+<span class="co">#&gt; Error in kable(stickiness): object 'stickiness' not found</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># select only those variables likely to be used for grouping</span>
+grad &lt;-<span class="st"> </span>degree <span class="op">%&gt;%</span>
+<span class="st">    </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/select.html">select</a></span>(MID, GYEAR, GTERM, INSTITUTION, GCIP, GCIP2, GCIP3)
+
+
+<span class="kw">unique</span>(grad<span class="op">$</span>GCIP2)
+<span class="co">#&gt;  [1] NA       "450601" "160302" "230101" "380201" "451101" "231303"</span>
+<span class="co">#&gt;  [8] "420101" "090102" "450401" "160905" "540101" "500702" "160501"</span>
+<span class="co">#&gt; [15] "400801" "521101" "451001" "500901" "520201" "270101" "500501"</span>
+<span class="co">#&gt; [22] "260101" "110101" "440701" "160901" "260202" "520301" "380101"</span>
+<span class="kw">unique</span>(grad<span class="op">$</span>GCIP3)
+<span class="co">#&gt; [1] NA       "380101"</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># keep the earliest term in which a student earns a degree</span>
+one_degree &lt;-<span class="st"> </span>grad <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">filter</span>(<span class="kw">is.na</span>(GCIP2) <span class="op">&amp;</span><span class="st"> </span><span class="kw">is.na</span>(GCIP3)) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">arrange</span>(MID, GYEAR, GTERM)  <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">unique</span>() <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">group_by</span>(MID) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">filter</span>(<span class="kw">row_number</span>(MID) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">ungroup</span>()
+<span class="kw">glimpse</span>(one_degree)
+<span class="co">#&gt; Observations: 88,210</span>
+<span class="co">#&gt; Variables: 7</span>
+<span class="co">#&gt; $ MID         &lt;dbl&gt; 1005272, 1031789, 1033889, 1034676, 1035264, 10358...</span>
+<span class="co">#&gt; $ GYEAR       &lt;dbl&gt; 2007, 2006, 2008, 2006, 2006, 2009, 2008, 2007, 20...</span>
+<span class="co">#&gt; $ GTERM       &lt;chr&gt; "SU", "SP", "SP", "SP", "FA", "FA", "SP", "SP", "S...</span>
+<span class="co">#&gt; $ INSTITUTION &lt;chr&gt; "Institution 2", "Institution 2", "Institution 2",...</span>
+<span class="co">#&gt; $ GCIP        &lt;chr&gt; "090102", "520201", "521101", "270101", "451001", ...</span>
+<span class="co">#&gt; $ GCIP2       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span>
+<span class="co">#&gt; $ GCIP3       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span>
+
+<span class="kw">unique</span>(one_degree<span class="op">$</span>GCIP2)
+<span class="co">#&gt; [1] NA</span>
+<span class="kw">unique</span>(one_degree<span class="op">$</span>GCIP3)
+<span class="co">#&gt; [1] NA</span></code></pre></div>
+<p>Gather the GCIPs into a single column</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">one_degree &lt;-<span class="st"> </span>one_degree <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">gather</span>(GCIPN, CIP6, GCIP<span class="op">:</span>GCIP3) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">    </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(CIP6))
+<span class="co">#&gt; Error: package 'tidyselect' was installed by an R version with different internals; it needs to be reinstalled for use with this R version</span>
+
+<span class="kw">glimpse</span>(one_degree)
+<span class="co">#&gt; Observations: 88,210</span>
+<span class="co">#&gt; Variables: 7</span>
+<span class="co">#&gt; $ MID         &lt;dbl&gt; 1005272, 1031789, 1033889, 1034676, 1035264, 10358...</span>
+<span class="co">#&gt; $ GYEAR       &lt;dbl&gt; 2007, 2006, 2008, 2006, 2006, 2009, 2008, 2007, 20...</span>
+<span class="co">#&gt; $ GTERM       &lt;chr&gt; "SU", "SP", "SP", "SP", "FA", "FA", "SP", "SP", "S...</span>
+<span class="co">#&gt; $ INSTITUTION &lt;chr&gt; "Institution 2", "Institution 2", "Institution 2",...</span>
+<span class="co">#&gt; $ GCIP        &lt;chr&gt; "090102", "520201", "521101", "270101", "451001", ...</span>
+<span class="co">#&gt; $ GCIP2       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span>
+<span class="co">#&gt; $ GCIP3       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span></code></pre></div>
+<p>Now count</p>
 </div>
 <div id="compute-stickiness" class="section level2">
 <h2 class="hasAnchor">
@@ -244,12 +439,18 @@ ever_count
 <h2 class="hasAnchor">
 <a href="#graph-stickiness" class="anchor"></a>Graph stickiness</h2>
 </div>
+<div id="cleanup" class="section level2">
+<h2 class="hasAnchor">
+<a href="#cleanup" class="anchor"></a>cleanup</h2>
+<p>delete the temp data save</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># unlink("data/ever.rda")</span></code></pre></div>
+</div>
 <div class="footnotes">
 <hr>
 <ol>
 <li id="fn1"><p>Matthew Ohland, Marisa Orr, Richard Layton, Susan Lord and Russell Long (2012) Introducing “stickiness” as a versatile metric of engineering persistence, in proc. <em>2012 Frontiers in Education Conference</em>, Seattle, WA, pp. 1–5. <a href="http://dx.doi.org/10.1109/FIE.2012.6462214">DOI 10.1109/FIE.2012.6462214</a>.<a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>The possible values of race/ethnicity and sex categories are limited to those used by the participating US institutions. Thus sex is limited to the set (F, M) and race/ethnicity is limited to the set (Asian, Black, Hawaiian/Pac. Islander, Hispanic/Latino, International, Multi-Racial, Native American, No Response, White).<a href="#fnref2">↩</a></p></li>
 </ol>
-</div>
 </div>
   </div>
 
@@ -264,6 +465,7 @@ ever_count
       <li><a href="#count-students-graduating">Count students graduating</a></li>
       <li><a href="#compute-stickiness">Compute stickiness</a></li>
       <li><a href="#graph-stickiness">Graph stickiness</a></li>
+      <li><a href="#cleanup">cleanup</a></li>
       </ul>
 </div>
       </div>
@@ -276,11 +478,13 @@ ever_count
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
 </div>
+
+  
 
   </body>
 </html>
