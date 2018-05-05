@@ -45,10 +45,10 @@ The sample of the MIDFIELD database that is accessible using midfieldr and its d
 
 -   `cip` in the midfieldr package. A tidy data frame with 1544 observations and 6 CIP variables of program codes and names at the 2, 4, and 6-digit levels. Each observation is a unique program. This dataset occupies 362 kb of memory.
 
--   `midfieldstudents` in the [midfieldstudents](https://github.com/MIDFIELDR/midfieldstudents) package. A tidy data frame with 98,064 observations and 16 demographic variables. Each observation is a unique student. This dataset occupies 17.4 Mb of memory.
+-   `midfieldstudents` in the [midfieldstudents](https://github.com/MIDFIELDR/midfieldstudents) package. A tidy data frame with 98,064 observations and 15 demographic variables. Each observation is a unique student. This dataset occupies 16.7 Mb of memory.
 
--   `midfieldcourses` in the [midfieldcourses](https://github.com/MIDFIELDR/midfieldcourses) package. A tidy data frame with 3.5 M observations and 13 academic course variables. Each observation is one course in one term for one student. This dataset occupies 372 Mb of memory.
+-   `midfieldcourses` in the [midfieldcourses](https://github.com/MIDFIELDR/midfieldcourses) package. A tidy data frame with 3.5 M observations and 12 academic course variables. Each observation is one course in one term for one student. This dataset occupies 343.8 Mb of memory.
 
--   `midfieldterms` in the [midfieldterms](https://github.com/MIDFIELDR/midfieldterms) package. A tidy data frame with 723,886 observations and 14 academic term variables. Each observation is one term for one student. This dataset occupies 84.9 Mb of memory.
+-   `midfieldterms` in the [midfieldterms](https://github.com/MIDFIELDR/midfieldterms) package. A tidy data frame with 723,886 observations and 13 academic term variables. Each observation is one term for one student. This dataset occupies 79.1 Mb of memory.
 
--   `midfielddegrees` in the [midfielddegrees](https://github.com/MIDFIELDR/midfielddegrees) package. A tidy data frame with 49,414 observations and 6 graduation variables. Each observation is a unique student. This dataset occupies 4.3 Mb of memory.
+-   `midfielddegrees` in the [midfielddegrees](https://github.com/MIDFIELDR/midfielddegrees) package. A tidy data frame with 49,414 observations and 5 graduation variables. Each observation is a unique student. This dataset occupies 3.9 Mb of memory.
