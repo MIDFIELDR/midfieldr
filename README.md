@@ -2,7 +2,7 @@
 midfieldr <a href="https://engineering.purdue.edu/MIDFIELD" target="blank"><img src="man/figures/midfieldcut.png" align="right"/></a>
 =====================================================================================================================================
 
-<!-- [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/midfieldr)](http://cran.r-project.org/package=midfieldr) -->
+<!-- [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/midfieldr)](http://cran.r-project.org/package=midfieldr)  -->
 [![Build Status](https://travis-ci.org/MIDFIELDR/midfieldr.svg?branch=master)](https://travis-ci.org/MIDFIELDR/midfieldr) [![License: GPL v3](man/figures/License-GPL-v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 midfieldr is a package for investigating student record data provided by registrars at US universities participating in the MIDFIELD project.
@@ -47,8 +47,8 @@ The sample of the MIDFIELD database that is accessible using midfieldr and its d
 
 -   `midfieldstudents` in the [midfieldstudents](https://github.com/MIDFIELDR/midfieldstudents) package. A tidy data frame with 98,064 observations and 16 demographic variables. Each observation is a unique student. This dataset occupies 17.4 Mb of memory.
 
--   `midfielddegrees` in the [midfielddegrees](https://github.com/MIDFIELDR/midfielddegrees) package. A tidy data frame with 49,414 observations and 6 graduation variables. Each observation is a unique student. This dataset occupies 4.3 Mb of memory.
+-   `midfieldcourses` in the [midfieldcourses](https://github.com/MIDFIELDR/midfieldcourses) package. A tidy data frame with 3.5 M observations and 13 academic course variables. Each observation is one course in one term for one student. This dataset occupies 372 Mb of memory.
 
 -   `midfieldterms` in the [midfieldterms](https://github.com/MIDFIELDR/midfieldterms) package. A tidy data frame with 723,886 observations and 14 academic term variables. Each observation is one term for one student. This dataset occupies 84.9 Mb of memory.
 
--   `midfieldcourses` in the [midfieldcourses](https://github.com/MIDFIELDR/midfieldcourses) package. A tidy data frame with 3.5 M observations and 13 academic course variables. Each observation is one course in one term for one student. This dataset occupies 372 Mb of memory.
+-   `midfielddegrees` in the [midfielddegrees](https://github.com/MIDFIELDR/midfielddegrees) package. A tidy data frame with 49,414 observations and 6 graduation variables. Each observation is a unique student. This dataset occupies 4.3 Mb of memory.
