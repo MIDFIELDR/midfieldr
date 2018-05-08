@@ -14,7 +14,7 @@ midfieldr includes functions for selecting specific fields of study and aggregat
 Installation
 ------------
 
-midfieldr is not currently available from CRAN, but the development version can be installed from github with:
+midfieldr is not currently available from CRAN, but the development version can be installed from GitHub with:
 
     install.packages("devtools")
     devtools::install_github("MIDFIELDR/midfieldr")
@@ -51,4 +51,4 @@ The sample of the MIDFIELD database that is accessible using midfieldr and its d
 
 -   `midfieldterms` in the [midfieldterms](https://github.com/MIDFIELDR/midfieldterms) package. A tidy data frame with 723,886 observations and 13 academic term variables. Each observation is one term for one student. This dataset occupies 79.1 Mb of memory.
 
--   `midfielddegrees` in the [midfielddegrees](https://github.com/MIDFIELDR/midfielddegrees) package. A tidy data frame with 49,414 observations and 5 graduation variables. Each observation is a unique student. This dataset occupies 3.9 Mb of memory.
+-   `midfielddegrees` in the [midfielddegrees](https://github.com/MIDFIELDR/midfielddegrees) package. A tidy data frame with 49,414 observations and 5 graduation variables. Each observation is a unique student. This dataset occupies 3.9 Mb of memory. Because fewer students graduate than matriculate, `midfielddegrees` has fewer observations than `midfieldstudents`.
