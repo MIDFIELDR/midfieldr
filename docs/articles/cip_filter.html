@@ -98,44 +98,44 @@
 
     
     
-<p>The Classification of Instructional Programs (CIP) is a taxonomy of academic programs curated by an agency of the US Department of Education.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># packages used in the vignette</span>
-<span class="kw">library</span>(midfieldr)
-<span class="kw">library</span>(dplyr) 
-<span class="kw">library</span>(stringr)
-<span class="kw">library</span>(knitr)</code></pre></div>
+<p>The Classification of Instructional Programs (CIP) is a taxonomy of academic programs curated by an agency of the US Department of Education.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># packages used in the vignette</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(midfieldr)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(dplyr) </a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">library</span>(stringr)</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">library</span>(knitr)</a></code></pre></div>
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
 <p>Instructional programs are encoded in <code>cip</code>, a data frame of character variables listing the 2, 4, and 6-digit CIP codes and program names in the MIDFILED database. See the help page (<code><a href="../reference/cip.html">?cip</a></code>) for more detail.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">glimpse</span>(cip)
-<span class="co">#&gt; Observations: 1,544</span>
-<span class="co">#&gt; Variables: 6</span>
-<span class="co">#&gt; $ CIP2     &lt;chr&gt; "01", "01", "01", "01", "01", "01", "01", "01", "01",...</span>
-<span class="co">#&gt; $ CIP2Name &lt;chr&gt; "Agriculture/Agricultural Operations and Related Scie...</span>
-<span class="co">#&gt; $ CIP4     &lt;chr&gt; "0100", "0101", "0101", "0101", "0101", "0101", "0101...</span>
-<span class="co">#&gt; $ CIP4Name &lt;chr&gt; "Agriculture/General", "Agricultural Business and Man...</span>
-<span class="co">#&gt; $ CIP6     &lt;chr&gt; "010000", "010101", "010102", "010103", "010104", "01...</span>
-<span class="co">#&gt; $ CIP6Name &lt;chr&gt; "Agriculture - General", "Agricultural Business and M...</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">glimpse</span>(cip)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; Observations: 1,544</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt; Variables: 6</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt; $ CIP2     &lt;chr&gt; "01", "01", "01", "01", "01", "01", "01", "01", "01",...</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt; $ CIP2Name &lt;chr&gt; "Agriculture/Agricultural Operations and Related Scie...</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; $ CIP4     &lt;chr&gt; "0100", "0101", "0101", "0101", "0101", "0101", "0101...</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; $ CIP4Name &lt;chr&gt; "Agriculture/General", "Agricultural Business and Man...</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; $ CIP6     &lt;chr&gt; "010000", "010101", "010102", "010103", "010104", "01...</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; $ CIP6Name &lt;chr&gt; "Agriculture - General", "Agricultural Business and M...</span></a></code></pre></div>
 <p><code><a href="../reference/cip_filter.html">cip_filter()</a></code> filters <code>cip</code> for the programs we wish to study. The function has two arguments:</p>
 <ul>
 <li>
-<code>series</code> Search terms. A character vector of codes or keywords.<br>
+<code>series</code> <span style="display:inline-block; width: 1mm;"></span> Search terms. A character vector of codes or keywords.<br>
 </li>
 <li>
-<code>data</code> A searchable data frame (<code>cip</code> is the default).</li>
+<code>data</code> <span style="display:inline-block; width: 5.5mm;"></span>A searchable data frame (<code>cip</code> is the default).</li>
 </ul>
-<p>With no arguments, <code><a href="../reference/cip_filter.html">cip_filter()</a></code> returns the top-level entry for each 2-digit series.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>()
-<span class="co">#&gt; # A tibble: 48 x 6</span>
-<span class="co">#&gt;   CIP2  CIP2Name             CIP4  CIP4Name         CIP6  CIP6Name        </span>
-<span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;                &lt;chr&gt; &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;           </span>
-<span class="co">#&gt; 1 01    Agriculture/Agricul~ 0100  Agriculture/Gen~ 0100~ Agriculture - G~</span>
-<span class="co">#&gt; 2 03    Natural Resources a~ 0301  Natural Resourc~ 0301~ Natural Resourc~</span>
-<span class="co">#&gt; 3 04    Architecture and Re~ 0402  Architecture     0402~ Architecture (B~</span>
-<span class="co">#&gt; 4 05    Area/Ethnic/Cultura~ 0501  Area Studies     0501~ African Studies </span>
-<span class="co">#&gt; 5 09    Communications/Jour~ 0901  Communications ~ 0901~ Communication -~</span>
-<span class="co">#&gt; # ... with 43 more rows</span></code></pre></div>
+<p>With no arguments, <code><a href="../reference/cip_filter.html">cip_filter()</a></code> returns the unique 2-digit series and the first entry of the corresponding 4- and 6-digit series.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>()</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt; # A tibble: 48 x 6</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt;   CIP2  CIP2Name             CIP4  CIP4Name         CIP6  CIP6Name        </span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;                &lt;chr&gt; &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;           </span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; 1 01    Agriculture/Agricul~ 0100  Agriculture/Gen~ 0100~ Agriculture - G~</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; 2 03    Natural Resources a~ 0301  Natural Resourc~ 0301~ Natural Resourc~</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; 3 04    Architecture and Re~ 0402  Architecture     0402~ Architecture (B~</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; 4 05    Area/Ethnic/Cultura~ 0501  Area Studies     0501~ African Studies </span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; 5 09    Communications/Jour~ 0901  Communications ~ 0901~ Communication -~</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; # ... with 43 more rows</span></a></code></pre></div>
 <p><code><a href="../reference/cip_filter.html">cip_filter()</a></code> searches all columns in <code>data</code> for the strings in <code>series</code> and returns a data frame whose rows contain the search terms.</p>
 <p>Filtering is performed by <code><a href="http://dplyr.tidyverse.org/reference/filter.html">dplyr::filter()</a></code> with pattern detection by <code><a href="http://www.rdocumentation.org/packages/stringr/topics/str_detect">stringr::str_detect()</a></code>.</p>
 </div>
@@ -143,212 +143,715 @@
 <h2 class="hasAnchor">
 <a href="#search-by-keywords" class="anchor"></a>Search by keywords</h2>
 <p>Because <code><a href="../reference/cip_filter.html">cip_filter()</a></code> searches all columns in <code>data</code>, we can search by keyword to find the CIP codes that match the programs under study. The search is case-sensitive.</p>
-<p>For example, if we wanted all Civil Engineering programs, we might try:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># series with a keyword</span>
-df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"Civil"</span>, <span class="st">"civil"</span>))
-<span class="kw">kable</span>(df)</code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">CIP2</th>
-<th align="left">CIP2Name</th>
-<th align="left">CIP4</th>
-<th align="left">CIP4Name</th>
-<th align="left">CIP6</th>
-<th align="left">CIP6Name</th>
+<p>For example, if we wanted all Civil Engineering programs, we might try keywords “civil” and “Civil”.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># series with a keyword</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"Civil"</span>, <span class="st">"civil"</span>))</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;">
+CIP2
+</th>
+<th style="text-align:left;">
+CIP2Name
+</th>
+<th style="text-align:left;">
+CIP4
+</th>
+<th style="text-align:left;">
+CIP4Name
+</th>
+<th style="text-align:left;">
+CIP6
+</th>
+<th style="text-align:left;">
+CIP6Name
+</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
-<td align="left">05</td>
-<td align="left">Area/Ethnic/Cultural and Gender Studies</td>
-<td align="left">0501</td>
-<td align="left">Area Studies</td>
-<td align="left">050102</td>
-<td align="left">American/United States Studies/Civilization</td>
+<tr>
+<td style="text-align:left;">
+05
+</td>
+<td style="text-align:left;">
+Area/Ethnic/Cultural and Gender Studies
+</td>
+<td style="text-align:left;">
+0501
+</td>
+<td style="text-align:left;">
+Area Studies
+</td>
+<td style="text-align:left;">
+050102
+</td>
+<td style="text-align:left;">
+American/United States Studies/Civilization
+</td>
 </tr>
-<tr class="even">
-<td align="left">05</td>
-<td align="left">Area/Ethnic/Cultural and Gender Studies</td>
-<td align="left">0501</td>
-<td align="left">Area Studies</td>
-<td align="left">050103</td>
-<td align="left">Asian Studies/Civilization</td>
+<tr>
+<td style="text-align:left;">
+05
+</td>
+<td style="text-align:left;">
+Area/Ethnic/Cultural and Gender Studies
+</td>
+<td style="text-align:left;">
+0501
+</td>
+<td style="text-align:left;">
+Area Studies
+</td>
+<td style="text-align:left;">
+050103
+</td>
+<td style="text-align:left;">
+Asian Studies/Civilization
+</td>
 </tr>
-<tr class="odd">
-<td align="left">05</td>
-<td align="left">Area/Ethnic/Cultural and Gender Studies</td>
-<td align="left">0501</td>
-<td align="left">Area Studies</td>
-<td align="left">050106</td>
-<td align="left">European Studies/Civilization</td>
+<tr>
+<td style="text-align:left;">
+05
+</td>
+<td style="text-align:left;">
+Area/Ethnic/Cultural and Gender Studies
+</td>
+<td style="text-align:left;">
+0501
+</td>
+<td style="text-align:left;">
+Area Studies
+</td>
+<td style="text-align:left;">
+050106
+</td>
+<td style="text-align:left;">
+European Studies/Civilization
+</td>
 </tr>
-<tr class="even">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1408</td>
-<td align="left">Civil Engineering</td>
-<td align="left">140801</td>
-<td align="left">Civil Engineering - General</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140801
+</td>
+<td style="text-align:left;">
+Civil Engineering - General
+</td>
 </tr>
-<tr class="odd">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1408</td>
-<td align="left">Civil Engineering</td>
-<td align="left">140802</td>
-<td align="left">Geotechnical Engineering</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140802
+</td>
+<td style="text-align:left;">
+Geotechnical Engineering
+</td>
 </tr>
-<tr class="even">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1408</td>
-<td align="left">Civil Engineering</td>
-<td align="left">140803</td>
-<td align="left">Structural Engineering</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140803
+</td>
+<td style="text-align:left;">
+Structural Engineering
+</td>
 </tr>
-<tr class="odd">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1408</td>
-<td align="left">Civil Engineering</td>
-<td align="left">140804</td>
-<td align="left">Transportation and Highway Engineering</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140804
+</td>
+<td style="text-align:left;">
+Transportation and Highway Engineering
+</td>
 </tr>
-<tr class="even">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1408</td>
-<td align="left">Civil Engineering</td>
-<td align="left">140805</td>
-<td align="left">Water Resources Engineering</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140805
+</td>
+<td style="text-align:left;">
+Water Resources Engineering
+</td>
 </tr>
-<tr class="odd">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1408</td>
-<td align="left">Civil Engineering</td>
-<td align="left">140899</td>
-<td align="left">Civil Engineering - Other</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140899
+</td>
+<td style="text-align:left;">
+Civil Engineering - Other
+</td>
 </tr>
-<tr class="even">
-<td align="left">15</td>
-<td align="left">Engineering Technology</td>
-<td align="left">1502</td>
-<td align="left">Civil Engineering Technologies/Technicians</td>
-<td align="left">150201</td>
-<td align="left">Civil Engineering Technology/Technician</td>
+<tr>
+<td style="text-align:left;">
+15
+</td>
+<td style="text-align:left;">
+Engineering Technology
+</td>
+<td style="text-align:left;">
+1502
+</td>
+<td style="text-align:left;">
+Civil Engineering Technologies/Technicians
+</td>
+<td style="text-align:left;">
+150201
+</td>
+<td style="text-align:left;">
+Civil Engineering Technology/Technician
+</td>
 </tr>
-<tr class="odd">
-<td align="left">15</td>
-<td align="left">Engineering Technology</td>
-<td align="left">1513</td>
-<td align="left">Drafting/Design Engineering Technologies/Technicians</td>
-<td align="left">151304</td>
-<td align="left">Civil Drafting and Civil Engineering CAD/CADD</td>
+<tr>
+<td style="text-align:left;">
+15
+</td>
+<td style="text-align:left;">
+Engineering Technology
+</td>
+<td style="text-align:left;">
+1513
+</td>
+<td style="text-align:left;">
+Drafting/Design Engineering Technologies/Technicians
+</td>
+<td style="text-align:left;">
+151304
+</td>
+<td style="text-align:left;">
+Civil Drafting and Civil Engineering CAD/CADD
+</td>
 </tr>
-<tr class="even">
-<td align="left">30</td>
-<td align="left">Muti/Interdisciplinary Studies</td>
-<td align="left">3022</td>
-<td align="left">Classical and Ancient/Oriental Studies - Multi/Interdisciplinary Studies</td>
-<td align="left">302201</td>
-<td align="left">Multi/Interdisciplinary Studies - Ancient Studies/Civilization</td>
+<tr>
+<td style="text-align:left;">
+30
+</td>
+<td style="text-align:left;">
+Muti/Interdisciplinary Studies
+</td>
+<td style="text-align:left;">
+3022
+</td>
+<td style="text-align:left;">
+Classical and Ancient/Oriental Studies - Multi/Interdisciplinary Studies
+</td>
+<td style="text-align:left;">
+302201
+</td>
+<td style="text-align:left;">
+Multi/Interdisciplinary Studies - Ancient Studies/Civilization
+</td>
 </tr>
 </tbody>
 </table>
-<p>We found some programs with Civilization in their names as well as Engineering Technology. The results indicate that if we wanted Civil Engineering only, we should search for the 4-digit “1408” code.</p>
-<p>In the next example we find that the keyword “German” appears in three different 2-digit groups of programs. If we were interested in German Studies specifically, we might want to limit our CIP codes to “050125” and “160501”.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># series with a keyword</span>
-df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"German"</span>, <span class="st">"german"</span>))
-<span class="kw">kable</span>(df)</code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">CIP2</th>
-<th align="left">CIP2Name</th>
-<th align="left">CIP4</th>
-<th align="left">CIP4Name</th>
-<th align="left">CIP6</th>
-<th align="left">CIP6Name</th>
+<p>The search returns some programs with Civilization in their names as well as Engineering Technology. If we wanted Civil Engineering only, we should search for CIPs that start with the 4-digit “1408” code. We use the regular expression notation <code>^</code> to match the start of the strings.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># series with a 4-digit code</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"^1408"</span>)</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;">
+CIP2
+</th>
+<th style="text-align:left;">
+CIP2Name
+</th>
+<th style="text-align:left;">
+CIP4
+</th>
+<th style="text-align:left;">
+CIP4Name
+</th>
+<th style="text-align:left;">
+CIP6
+</th>
+<th style="text-align:left;">
+CIP6Name
+</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
-<td align="left">05</td>
-<td align="left">Area/Ethnic/Cultural and Gender Studies</td>
-<td align="left">0501</td>
-<td align="left">Area Studies</td>
-<td align="left">050125</td>
-<td align="left">German Studies</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140801
+</td>
+<td style="text-align:left;">
+Civil Engineering - General
+</td>
 </tr>
-<tr class="even">
-<td align="left">13</td>
-<td align="left">Education</td>
-<td align="left">1313</td>
-<td align="left">Teacher Education and Professional Development/Specific Subject Areas</td>
-<td align="left">131326</td>
-<td align="left">German Language Teacher Education</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140802
+</td>
+<td style="text-align:left;">
+Geotechnical Engineering
+</td>
 </tr>
-<tr class="odd">
-<td align="left">16</td>
-<td align="left">Foreign Languages/Literatures and Linguistics</td>
-<td align="left">1605</td>
-<td align="left">Germanic Languages/Literatures Linguistics</td>
-<td align="left">160500</td>
-<td align="left">Germanic Languages/Literatures and Linguistics - General</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140803
+</td>
+<td style="text-align:left;">
+Structural Engineering
+</td>
 </tr>
-<tr class="even">
-<td align="left">16</td>
-<td align="left">Foreign Languages/Literatures and Linguistics</td>
-<td align="left">1605</td>
-<td align="left">Germanic Languages/Literatures Linguistics</td>
-<td align="left">160501</td>
-<td align="left">German Language and Literature</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140804
+</td>
+<td style="text-align:left;">
+Transportation and Highway Engineering
+</td>
 </tr>
-<tr class="odd">
-<td align="left">16</td>
-<td align="left">Foreign Languages/Literatures and Linguistics</td>
-<td align="left">1605</td>
-<td align="left">Germanic Languages/Literatures Linguistics</td>
-<td align="left">160502</td>
-<td align="left">Scandinavian Languages/Literatures and Linguistics</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140805
+</td>
+<td style="text-align:left;">
+Water Resources Engineering
+</td>
 </tr>
-<tr class="even">
-<td align="left">16</td>
-<td align="left">Foreign Languages/Literatures and Linguistics</td>
-<td align="left">1605</td>
-<td align="left">Germanic Languages/Literatures Linguistics</td>
-<td align="left">160503</td>
-<td align="left">Danish Language and Literature</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140899
+</td>
+<td style="text-align:left;">
+Civil Engineering - Other
+</td>
 </tr>
-<tr class="odd">
-<td align="left">16</td>
-<td align="left">Foreign Languages/Literatures and Linguistics</td>
-<td align="left">1605</td>
-<td align="left">Germanic Languages/Literatures Linguistics</td>
-<td align="left">160504</td>
-<td align="left">Dutch/Flemish Language and Literature</td>
+</tbody>
+</table>
+<p>In the next example we find that the keyword “German” appears in three different 2-digit groups of programs.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co"># series with a keyword</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"German"</span>, <span class="st">"german"</span>))</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;">
+CIP2
+</th>
+<th style="text-align:left;">
+CIP2Name
+</th>
+<th style="text-align:left;">
+CIP4
+</th>
+<th style="text-align:left;">
+CIP4Name
+</th>
+<th style="text-align:left;">
+CIP6
+</th>
+<th style="text-align:left;">
+CIP6Name
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+05
+</td>
+<td style="text-align:left;">
+Area/Ethnic/Cultural and Gender Studies
+</td>
+<td style="text-align:left;">
+0501
+</td>
+<td style="text-align:left;">
+Area Studies
+</td>
+<td style="text-align:left;">
+050125
+</td>
+<td style="text-align:left;">
+German Studies
+</td>
 </tr>
-<tr class="even">
-<td align="left">16</td>
-<td align="left">Foreign Languages/Literatures and Linguistics</td>
-<td align="left">1605</td>
-<td align="left">Germanic Languages/Literatures Linguistics</td>
-<td align="left">160505</td>
-<td align="left">Norwegian Language and Literature</td>
+<tr>
+<td style="text-align:left;">
+13
+</td>
+<td style="text-align:left;">
+Education
+</td>
+<td style="text-align:left;">
+1313
+</td>
+<td style="text-align:left;">
+Teacher Education and Professional Development/Specific Subject Areas
+</td>
+<td style="text-align:left;">
+131326
+</td>
+<td style="text-align:left;">
+German Language Teacher Education
+</td>
 </tr>
-<tr class="odd">
-<td align="left">16</td>
-<td align="left">Foreign Languages/Literatures and Linguistics</td>
-<td align="left">1605</td>
-<td align="left">Germanic Languages/Literatures Linguistics</td>
-<td align="left">160506</td>
-<td align="left">Swedish Language and Literature</td>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+Foreign Languages/Literatures and Linguistics
+</td>
+<td style="text-align:left;">
+1605
+</td>
+<td style="text-align:left;">
+Germanic Languages/Literatures Linguistics
+</td>
+<td style="text-align:left;">
+160500
+</td>
+<td style="text-align:left;">
+Germanic Languages/Literatures and Linguistics - General
+</td>
 </tr>
-<tr class="even">
-<td align="left">16</td>
-<td align="left">Foreign Languages/Literatures and Linguistics</td>
-<td align="left">1605</td>
-<td align="left">Germanic Languages/Literatures Linguistics</td>
-<td align="left">160599</td>
-<td align="left">Germanic Languages/Literatures and Linguistics - Other</td>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+Foreign Languages/Literatures and Linguistics
+</td>
+<td style="text-align:left;">
+1605
+</td>
+<td style="text-align:left;">
+Germanic Languages/Literatures Linguistics
+</td>
+<td style="text-align:left;">
+160501
+</td>
+<td style="text-align:left;">
+German Language and Literature
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+Foreign Languages/Literatures and Linguistics
+</td>
+<td style="text-align:left;">
+1605
+</td>
+<td style="text-align:left;">
+Germanic Languages/Literatures Linguistics
+</td>
+<td style="text-align:left;">
+160502
+</td>
+<td style="text-align:left;">
+Scandinavian Languages/Literatures and Linguistics
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+Foreign Languages/Literatures and Linguistics
+</td>
+<td style="text-align:left;">
+1605
+</td>
+<td style="text-align:left;">
+Germanic Languages/Literatures Linguistics
+</td>
+<td style="text-align:left;">
+160503
+</td>
+<td style="text-align:left;">
+Danish Language and Literature
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+Foreign Languages/Literatures and Linguistics
+</td>
+<td style="text-align:left;">
+1605
+</td>
+<td style="text-align:left;">
+Germanic Languages/Literatures Linguistics
+</td>
+<td style="text-align:left;">
+160504
+</td>
+<td style="text-align:left;">
+Dutch/Flemish Language and Literature
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+Foreign Languages/Literatures and Linguistics
+</td>
+<td style="text-align:left;">
+1605
+</td>
+<td style="text-align:left;">
+Germanic Languages/Literatures Linguistics
+</td>
+<td style="text-align:left;">
+160505
+</td>
+<td style="text-align:left;">
+Norwegian Language and Literature
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+Foreign Languages/Literatures and Linguistics
+</td>
+<td style="text-align:left;">
+1605
+</td>
+<td style="text-align:left;">
+Germanic Languages/Literatures Linguistics
+</td>
+<td style="text-align:left;">
+160506
+</td>
+<td style="text-align:left;">
+Swedish Language and Literature
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+Foreign Languages/Literatures and Linguistics
+</td>
+<td style="text-align:left;">
+1605
+</td>
+<td style="text-align:left;">
+Germanic Languages/Literatures Linguistics
+</td>
+<td style="text-align:left;">
+160599
+</td>
+<td style="text-align:left;">
+Germanic Languages/Literatures and Linguistics - Other
+</td>
+</tr>
+</tbody>
+</table>
+<p>If we were interested in German Studies specifically, we might want to limit our CIP codes to “050125” and “160501”.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># series with a 6-digit code</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"050125"</span>, <span class="st">"160501"</span>))</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;">
+CIP2
+</th>
+<th style="text-align:left;">
+CIP2Name
+</th>
+<th style="text-align:left;">
+CIP4
+</th>
+<th style="text-align:left;">
+CIP4Name
+</th>
+<th style="text-align:left;">
+CIP6
+</th>
+<th style="text-align:left;">
+CIP6Name
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+05
+</td>
+<td style="text-align:left;">
+Area/Ethnic/Cultural and Gender Studies
+</td>
+<td style="text-align:left;">
+0501
+</td>
+<td style="text-align:left;">
+Area Studies
+</td>
+<td style="text-align:left;">
+050125
+</td>
+<td style="text-align:left;">
+German Studies
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+Foreign Languages/Literatures and Linguistics
+</td>
+<td style="text-align:left;">
+1605
+</td>
+<td style="text-align:left;">
+Germanic Languages/Literatures Linguistics
+</td>
+<td style="text-align:left;">
+160501
+</td>
+<td style="text-align:left;">
+German Language and Literature
+</td>
 </tr>
 </tbody>
 </table>
@@ -356,369 +859,1092 @@ df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filt
 <div id="search-by-cip-codes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#search-by-cip-codes" class="anchor"></a>Search by CIP codes</h2>
-<p>Assigning CIP codes to <code>series</code> yields a data frame of all rows from <code>data</code> that contain those character strings. Invalid codes—and valid codes not in the midfieldr <code>cip</code> dataset—are silently ignored.</p>
+<p>As illustrated above, assigning CIP codes to <code>series</code> yields a data frame of all rows from <code>data</code> that contain those character strings. Invalid codes—and valid codes not in the midfieldr <code>cip</code> dataset—are silently ignored.</p>
 <p>Specifying 6-digit codes yields a data frame with a row for each 6-digit code.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 6-digit example</span>
-df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"140802"</span>, <span class="st">"140803"</span>))
-<span class="kw">kable</span>(df)</code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">CIP2</th>
-<th align="left">CIP2Name</th>
-<th align="left">CIP4</th>
-<th align="left">CIP4Name</th>
-<th align="left">CIP6</th>
-<th align="left">CIP6Name</th>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># 6-digit example</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"140802"</span>, <span class="st">"140803"</span>))</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;">
+CIP2
+</th>
+<th style="text-align:left;">
+CIP2Name
+</th>
+<th style="text-align:left;">
+CIP4
+</th>
+<th style="text-align:left;">
+CIP4Name
+</th>
+<th style="text-align:left;">
+CIP6
+</th>
+<th style="text-align:left;">
+CIP6Name
+</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1408</td>
-<td align="left">Civil Engineering</td>
-<td align="left">140802</td>
-<td align="left">Geotechnical Engineering</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140802
+</td>
+<td style="text-align:left;">
+Geotechnical Engineering
+</td>
 </tr>
-<tr class="even">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1408</td>
-<td align="left">Civil Engineering</td>
-<td align="left">140803</td>
-<td align="left">Structural Engineering</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140803
+</td>
+<td style="text-align:left;">
+Structural Engineering
+</td>
 </tr>
 </tbody>
 </table>
 <p>Specifying 4-digit codes yields a data frame with as many rows as there are rows that include the search strings.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 4-digit example</span>
-df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"1407"</span>, <span class="st">"1408"</span>))
-<span class="kw">kable</span>(df) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kable_styling</span>(<span class="dt">font_size =</span> <span class="dv">12</span>)
-<span class="co">#&gt; Error in kable_styling(., font_size = 12): could not find function "kable_styling"</span></code></pre></div>
-<p>This search, in addition to the desired Engineering programs, returned two Foreign Language programs because their 6-digit codes contain “1407” and “1408”. We use the regular expression notation <code>^</code> to match the start of the strings.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 4-digit example matching the start of the string </span>
-df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"^1407"</span>, <span class="st">"^1408"</span>))
-<span class="kw">kable</span>(df)</code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">CIP2</th>
-<th align="left">CIP2Name</th>
-<th align="left">CIP4</th>
-<th align="left">CIP4Name</th>
-<th align="left">CIP6</th>
-<th align="left">CIP6Name</th>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># 4-digit example</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"1407"</span>, <span class="st">"1408"</span>))</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;">
+CIP2
+</th>
+<th style="text-align:left;">
+CIP2Name
+</th>
+<th style="text-align:left;">
+CIP4
+</th>
+<th style="text-align:left;">
+CIP4Name
+</th>
+<th style="text-align:left;">
+CIP6
+</th>
+<th style="text-align:left;">
+CIP6Name
+</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1407</td>
-<td align="left">Chemical Engineering</td>
-<td align="left">140701</td>
-<td align="left">Chemical Engineering</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1407
+</td>
+<td style="text-align:left;">
+Chemical Engineering
+</td>
+<td style="text-align:left;">
+140701
+</td>
+<td style="text-align:left;">
+Chemical Engineering
+</td>
 </tr>
-<tr class="even">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1407</td>
-<td align="left">Chemical Engineering</td>
-<td align="left">140702</td>
-<td align="left">Chemical and Biomolecular Engineering</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1407
+</td>
+<td style="text-align:left;">
+Chemical Engineering
+</td>
+<td style="text-align:left;">
+140702
+</td>
+<td style="text-align:left;">
+Chemical and Biomolecular Engineering
+</td>
 </tr>
-<tr class="odd">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1407</td>
-<td align="left">Chemical Engineering</td>
-<td align="left">140799</td>
-<td align="left">Chemical Engineering - Other</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1407
+</td>
+<td style="text-align:left;">
+Chemical Engineering
+</td>
+<td style="text-align:left;">
+140799
+</td>
+<td style="text-align:left;">
+Chemical Engineering - Other
+</td>
 </tr>
-<tr class="even">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1408</td>
-<td align="left">Civil Engineering</td>
-<td align="left">140801</td>
-<td align="left">Civil Engineering - General</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140801
+</td>
+<td style="text-align:left;">
+Civil Engineering - General
+</td>
 </tr>
-<tr class="odd">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1408</td>
-<td align="left">Civil Engineering</td>
-<td align="left">140802</td>
-<td align="left">Geotechnical Engineering</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140802
+</td>
+<td style="text-align:left;">
+Geotechnical Engineering
+</td>
 </tr>
-<tr class="even">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1408</td>
-<td align="left">Civil Engineering</td>
-<td align="left">140803</td>
-<td align="left">Structural Engineering</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140803
+</td>
+<td style="text-align:left;">
+Structural Engineering
+</td>
 </tr>
-<tr class="odd">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1408</td>
-<td align="left">Civil Engineering</td>
-<td align="left">140804</td>
-<td align="left">Transportation and Highway Engineering</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140804
+</td>
+<td style="text-align:left;">
+Transportation and Highway Engineering
+</td>
 </tr>
-<tr class="even">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1408</td>
-<td align="left">Civil Engineering</td>
-<td align="left">140805</td>
-<td align="left">Water Resources Engineering</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140805
+</td>
+<td style="text-align:left;">
+Water Resources Engineering
+</td>
 </tr>
-<tr class="odd">
-<td align="left">14</td>
-<td align="left">Engineering</td>
-<td align="left">1408</td>
-<td align="left">Civil Engineering</td>
-<td align="left">140899</td>
-<td align="left">Civil Engineering - Other</td>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140899
+</td>
+<td style="text-align:left;">
+Civil Engineering - Other
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+Foreign Languages/Literatures and Linguistics
+</td>
+<td style="text-align:left;">
+1614
+</td>
+<td style="text-align:left;">
+Southeast Asian and Australasian/Pacific Languages/Literatures Linguistics
+</td>
+<td style="text-align:left;">
+161407
+</td>
+<td style="text-align:left;">
+Thai Language and Literature
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+Foreign Languages/Literatures and Linguistics
+</td>
+<td style="text-align:left;">
+1614
+</td>
+<td style="text-align:left;">
+Southeast Asian and Australasian/Pacific Languages/Literatures Linguistics
+</td>
+<td style="text-align:left;">
+161408
+</td>
+<td style="text-align:left;">
+Vietnamese Language and Literature
+</td>
+</tr>
+</tbody>
+</table>
+<p>This search, in addition to the desired Engineering programs, returned two Foreign Language programs because their 6-digit codes contain “1407” and “1408”. We use the regular expression notation <code>^</code> to match the start of the strings.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># 4-digit example matching the start of the string </span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"^1407"</span>, <span class="st">"^1408"</span>))</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;">
+CIP2
+</th>
+<th style="text-align:left;">
+CIP2Name
+</th>
+<th style="text-align:left;">
+CIP4
+</th>
+<th style="text-align:left;">
+CIP4Name
+</th>
+<th style="text-align:left;">
+CIP6
+</th>
+<th style="text-align:left;">
+CIP6Name
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1407
+</td>
+<td style="text-align:left;">
+Chemical Engineering
+</td>
+<td style="text-align:left;">
+140701
+</td>
+<td style="text-align:left;">
+Chemical Engineering
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1407
+</td>
+<td style="text-align:left;">
+Chemical Engineering
+</td>
+<td style="text-align:left;">
+140702
+</td>
+<td style="text-align:left;">
+Chemical and Biomolecular Engineering
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1407
+</td>
+<td style="text-align:left;">
+Chemical Engineering
+</td>
+<td style="text-align:left;">
+140799
+</td>
+<td style="text-align:left;">
+Chemical Engineering - Other
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140801
+</td>
+<td style="text-align:left;">
+Civil Engineering - General
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140802
+</td>
+<td style="text-align:left;">
+Geotechnical Engineering
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140803
+</td>
+<td style="text-align:left;">
+Structural Engineering
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140804
+</td>
+<td style="text-align:left;">
+Transportation and Highway Engineering
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140805
+</td>
+<td style="text-align:left;">
+Water Resources Engineering
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Engineering
+</td>
+<td style="text-align:left;">
+1408
+</td>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+140899
+</td>
+<td style="text-align:left;">
+Civil Engineering - Other
+</td>
 </tr>
 </tbody>
 </table>
 <p>The 2-digit series represent the most general groupings of related programs. Here, the result includes all History codes and programs.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 2-digit example</span>
-df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^54"</span>)
-<span class="kw">kable</span>(df)</code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">CIP2</th>
-<th align="left">CIP2Name</th>
-<th align="left">CIP4</th>
-<th align="left">CIP4Name</th>
-<th align="left">CIP6</th>
-<th align="left">CIP6Name</th>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># 2-digit example</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^54"</span>)</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;">
+CIP2
+</th>
+<th style="text-align:left;">
+CIP2Name
+</th>
+<th style="text-align:left;">
+CIP4
+</th>
+<th style="text-align:left;">
+CIP4Name
+</th>
+<th style="text-align:left;">
+CIP6
+</th>
+<th style="text-align:left;">
+CIP6Name
+</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540101</td>
-<td align="left">History - General</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540101
+</td>
+<td style="text-align:left;">
+History - General
+</td>
 </tr>
-<tr class="even">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540102</td>
-<td align="left">American History (United States)</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540102
+</td>
+<td style="text-align:left;">
+American History (United States)
+</td>
 </tr>
-<tr class="odd">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540103</td>
-<td align="left">European History</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540103
+</td>
+<td style="text-align:left;">
+European History
+</td>
 </tr>
-<tr class="even">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540104</td>
-<td align="left">History and Philosophy of Science and Technology</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540104
+</td>
+<td style="text-align:left;">
+History and Philosophy of Science and Technology
+</td>
 </tr>
-<tr class="odd">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540105</td>
-<td align="left">Public/Applied History and Archival Administration</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540105
+</td>
+<td style="text-align:left;">
+Public/Applied History and Archival Administration
+</td>
 </tr>
-<tr class="even">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540106</td>
-<td align="left">Asian History</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540106
+</td>
+<td style="text-align:left;">
+Asian History
+</td>
 </tr>
-<tr class="odd">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540107</td>
-<td align="left">Canadian History</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540107
+</td>
+<td style="text-align:left;">
+Canadian History
+</td>
 </tr>
-<tr class="even">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540108</td>
-<td align="left">Military History</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540108
+</td>
+<td style="text-align:left;">
+Military History
+</td>
 </tr>
-<tr class="odd">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540199</td>
-<td align="left">History - Other</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540199
+</td>
+<td style="text-align:left;">
+History - Other
+</td>
 </tr>
 </tbody>
 </table>
 <p>The series argument can include any combination of 2, 4, and 6-digit codes.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># a series with 2, 4, and 6-digits specified</span>
-df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">c</span>(<span class="st">"^24"</span>, <span class="st">"^4102"</span>, <span class="st">"^450202"</span>))
-<span class="kw">kable</span>(df)</code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">CIP2</th>
-<th align="left">CIP2Name</th>
-<th align="left">CIP4</th>
-<th align="left">CIP4Name</th>
-<th align="left">CIP6</th>
-<th align="left">CIP6Name</th>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="co"># a series with 2, 4, and 6-digits specified</span></a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">c</span>(<span class="st">"^24"</span>, <span class="st">"^4102"</span>, <span class="st">"^450202"</span>))</a>
+<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;">
+CIP2
+</th>
+<th style="text-align:left;">
+CIP2Name
+</th>
+<th style="text-align:left;">
+CIP4
+</th>
+<th style="text-align:left;">
+CIP4Name
+</th>
+<th style="text-align:left;">
+CIP6
+</th>
+<th style="text-align:left;">
+CIP6Name
+</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
-<td align="left">24</td>
-<td align="left">Liberal Arts and Sciences/General Studies and Humanities</td>
-<td align="left">2401</td>
-<td align="left">Liberal Arts and Sciences/General Studies Humanities</td>
-<td align="left">240101</td>
-<td align="left">Liberal Arts and Sciences/Liberal Studies</td>
+<tr>
+<td style="text-align:left;">
+24
+</td>
+<td style="text-align:left;">
+Liberal Arts and Sciences/General Studies and Humanities
+</td>
+<td style="text-align:left;">
+2401
+</td>
+<td style="text-align:left;">
+Liberal Arts and Sciences/General Studies Humanities
+</td>
+<td style="text-align:left;">
+240101
+</td>
+<td style="text-align:left;">
+Liberal Arts and Sciences/Liberal Studies
+</td>
 </tr>
-<tr class="even">
-<td align="left">24</td>
-<td align="left">Liberal Arts and Sciences/General Studies and Humanities</td>
-<td align="left">2401</td>
-<td align="left">Liberal Arts and Sciences/General Studies Humanities</td>
-<td align="left">240102</td>
-<td align="left">General Studies</td>
+<tr>
+<td style="text-align:left;">
+24
+</td>
+<td style="text-align:left;">
+Liberal Arts and Sciences/General Studies and Humanities
+</td>
+<td style="text-align:left;">
+2401
+</td>
+<td style="text-align:left;">
+Liberal Arts and Sciences/General Studies Humanities
+</td>
+<td style="text-align:left;">
+240102
+</td>
+<td style="text-align:left;">
+General Studies
+</td>
 </tr>
-<tr class="odd">
-<td align="left">24</td>
-<td align="left">Liberal Arts and Sciences/General Studies and Humanities</td>
-<td align="left">2401</td>
-<td align="left">Liberal Arts and Sciences/General Studies Humanities</td>
-<td align="left">240103</td>
-<td align="left">Humanities/Humanistic Studies</td>
+<tr>
+<td style="text-align:left;">
+24
+</td>
+<td style="text-align:left;">
+Liberal Arts and Sciences/General Studies and Humanities
+</td>
+<td style="text-align:left;">
+2401
+</td>
+<td style="text-align:left;">
+Liberal Arts and Sciences/General Studies Humanities
+</td>
+<td style="text-align:left;">
+240103
+</td>
+<td style="text-align:left;">
+Humanities/Humanistic Studies
+</td>
 </tr>
-<tr class="even">
-<td align="left">24</td>
-<td align="left">Liberal Arts and Sciences/General Studies and Humanities</td>
-<td align="left">2401</td>
-<td align="left">Liberal Arts and Sciences/General Studies Humanities</td>
-<td align="left">240199</td>
-<td align="left">Liberal Arts and Sciences/General Studies and Humanities - Other</td>
+<tr>
+<td style="text-align:left;">
+24
+</td>
+<td style="text-align:left;">
+Liberal Arts and Sciences/General Studies and Humanities
+</td>
+<td style="text-align:left;">
+2401
+</td>
+<td style="text-align:left;">
+Liberal Arts and Sciences/General Studies Humanities
+</td>
+<td style="text-align:left;">
+240199
+</td>
+<td style="text-align:left;">
+Liberal Arts and Sciences/General Studies and Humanities - Other
+</td>
 </tr>
-<tr class="odd">
-<td align="left">41</td>
-<td align="left">Science Technologies/Technicians</td>
-<td align="left">4102</td>
-<td align="left">Nuclear and Industrial Radiologic Technologies/Technicians</td>
-<td align="left">410204</td>
-<td align="left">Industrial Radiologic Technology/Technician</td>
+<tr>
+<td style="text-align:left;">
+41
+</td>
+<td style="text-align:left;">
+Science Technologies/Technicians
+</td>
+<td style="text-align:left;">
+4102
+</td>
+<td style="text-align:left;">
+Nuclear and Industrial Radiologic Technologies/Technicians
+</td>
+<td style="text-align:left;">
+410204
+</td>
+<td style="text-align:left;">
+Industrial Radiologic Technology/Technician
+</td>
 </tr>
-<tr class="even">
-<td align="left">41</td>
-<td align="left">Science Technologies/Technicians</td>
-<td align="left">4102</td>
-<td align="left">Nuclear and Industrial Radiologic Technologies/Technicians</td>
-<td align="left">410205</td>
-<td align="left">Nuclear/Nuclear Power Technology/Technician</td>
+<tr>
+<td style="text-align:left;">
+41
+</td>
+<td style="text-align:left;">
+Science Technologies/Technicians
+</td>
+<td style="text-align:left;">
+4102
+</td>
+<td style="text-align:left;">
+Nuclear and Industrial Radiologic Technologies/Technicians
+</td>
+<td style="text-align:left;">
+410205
+</td>
+<td style="text-align:left;">
+Nuclear/Nuclear Power Technology/Technician
+</td>
 </tr>
-<tr class="odd">
-<td align="left">41</td>
-<td align="left">Science Technologies/Technicians</td>
-<td align="left">4102</td>
-<td align="left">Nuclear and Industrial Radiologic Technologies/Technicians</td>
-<td align="left">410299</td>
-<td align="left">Nuclear and Industrial Radiologic Technologies/Technicians - Other</td>
+<tr>
+<td style="text-align:left;">
+41
+</td>
+<td style="text-align:left;">
+Science Technologies/Technicians
+</td>
+<td style="text-align:left;">
+4102
+</td>
+<td style="text-align:left;">
+Nuclear and Industrial Radiologic Technologies/Technicians
+</td>
+<td style="text-align:left;">
+410299
+</td>
+<td style="text-align:left;">
+Nuclear and Industrial Radiologic Technologies/Technicians - Other
+</td>
 </tr>
-<tr class="even">
-<td align="left">45</td>
-<td align="left">Social Sciences</td>
-<td align="left">4502</td>
-<td align="left">Anthropology</td>
-<td align="left">450202</td>
-<td align="left">Physical Anthropology</td>
+<tr>
+<td style="text-align:left;">
+45
+</td>
+<td style="text-align:left;">
+Social Sciences
+</td>
+<td style="text-align:left;">
+4502
+</td>
+<td style="text-align:left;">
+Anthropology
+</td>
+<td style="text-align:left;">
+450202
+</td>
+<td style="text-align:left;">
+Physical Anthropology
+</td>
 </tr>
 </tbody>
 </table>
 <p>A series assigned numerically is coerced to characters.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># series as a sequence</span>
-df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">seq</span>(<span class="dv">540102</span>, <span class="dv">540110</span>, <span class="dv">1</span>))
-<span class="kw">kable</span>(df)</code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">CIP2</th>
-<th align="left">CIP2Name</th>
-<th align="left">CIP4</th>
-<th align="left">CIP4Name</th>
-<th align="left">CIP6</th>
-<th align="left">CIP6Name</th>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="co"># series as a sequence</span></a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">seq</span>(<span class="dv">540102</span>, <span class="dv">540110</span>, <span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;">
+CIP2
+</th>
+<th style="text-align:left;">
+CIP2Name
+</th>
+<th style="text-align:left;">
+CIP4
+</th>
+<th style="text-align:left;">
+CIP4Name
+</th>
+<th style="text-align:left;">
+CIP6
+</th>
+<th style="text-align:left;">
+CIP6Name
+</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540102</td>
-<td align="left">American History (United States)</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540102
+</td>
+<td style="text-align:left;">
+American History (United States)
+</td>
 </tr>
-<tr class="even">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540103</td>
-<td align="left">European History</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540103
+</td>
+<td style="text-align:left;">
+European History
+</td>
 </tr>
-<tr class="odd">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540104</td>
-<td align="left">History and Philosophy of Science and Technology</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540104
+</td>
+<td style="text-align:left;">
+History and Philosophy of Science and Technology
+</td>
 </tr>
-<tr class="even">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540105</td>
-<td align="left">Public/Applied History and Archival Administration</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540105
+</td>
+<td style="text-align:left;">
+Public/Applied History and Archival Administration
+</td>
 </tr>
-<tr class="odd">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540106</td>
-<td align="left">Asian History</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540106
+</td>
+<td style="text-align:left;">
+Asian History
+</td>
 </tr>
-<tr class="even">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540107</td>
-<td align="left">Canadian History</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540107
+</td>
+<td style="text-align:left;">
+Canadian History
+</td>
 </tr>
-<tr class="odd">
-<td align="left">54</td>
-<td align="left">History</td>
-<td align="left">5401</td>
-<td align="left">History</td>
-<td align="left">540108</td>
-<td align="left">Military History</td>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540108
+</td>
+<td style="text-align:left;">
+Military History
+</td>
 </tr>
 </tbody>
 </table>
@@ -727,45 +1953,153 @@ df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filt
 <div id="search-by-named-series" class="section level2">
 <h2 class="hasAnchor">
 <a href="#search-by-named-series" class="anchor"></a>Search by named series</h2>
-<p>midfieldr includes several datasets of “named series”. A named series is a character vector of 6-digit CIP codes that belong to a group of programs such as Engineering, Physical Sciences, STEM, etc. To see the full set of available named series, type <code><a href="../reference/named_series.html">?named_series</a></code>.</p>
+<p>midfieldr includes several datasets of <em>named series</em>. A named series is a character vector of 6-digit CIP codes that belong to a group of programs such as Engineering, Physical Sciences, STEM, etc. To see the full set of available named series, type <code><a href="../reference/named_series.html">?named_series</a></code>.</p>
 <p>A named series is assigned to the series argument in <code><a href="../reference/cip_filter.html">cip_filter()</a></code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># the engineering series</span>
-engr
-<span class="co">#&gt;  [1] "140101" "140102" "140201" "140301" "140401" "140501" "140601"</span>
-<span class="co">#&gt;  [8] "140701" "140702" "140799" "140801" "140802" "140803" "140804"</span>
-<span class="co">#&gt; [15] "140805" "140899" "140901" "140902" "140903" "140999" "141001"</span>
-<span class="co">#&gt; [22] "141003" "141004" "141099" "141101" "141201" "141301" "141401"</span>
-<span class="co">#&gt; [29] "141801" "141901" "142001" "142101" "142201" "142301" "142401"</span>
-<span class="co">#&gt; [36] "142501" "142701" "142801" "143101" "143201" "143301" "143401"</span>
-<span class="co">#&gt; [43] "143501" "143601" "143701" "143801" "143901" "144001" "144101"</span>
-<span class="co">#&gt; [50] "144201" "144301" "144401" "144501" "149999"</span>
-
-df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> engr)
-<span class="kw">glimpse</span>(df)
-<span class="co">#&gt; Observations: 54</span>
-<span class="co">#&gt; Variables: 6</span>
-<span class="co">#&gt; $ CIP2     &lt;chr&gt; "14", "14", "14", "14", "14", "14", "14", "14", "14",...</span>
-<span class="co">#&gt; $ CIP2Name &lt;chr&gt; "Engineering", "Engineering", "Engineering", "Enginee...</span>
-<span class="co">#&gt; $ CIP4     &lt;chr&gt; "1401", "1401", "1402", "1403", "1404", "1405", "1406...</span>
-<span class="co">#&gt; $ CIP4Name &lt;chr&gt; "Engineering/General", "Engineering/General", "Aerosp...</span>
-<span class="co">#&gt; $ CIP6     &lt;chr&gt; "140101", "140102", "140201", "140301", "140401", "14...</span>
-<span class="co">#&gt; $ CIP6Name &lt;chr&gt; "Engineering - General", "Pre-Engineering", "Aerospac...</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="co"># the engineering series</span></a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">engr</a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="co">#&gt;  [1] "140101" "140102" "140201" "140301" "140401" "140501" "140601"</span></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="co">#&gt;  [8] "140701" "140702" "140799" "140801" "140802" "140803" "140804"</span></a>
+<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="co">#&gt; [15] "140805" "140899" "140901" "140902" "140903" "140999" "141001"</span></a>
+<a class="sourceLine" id="cb14-6" data-line-number="6"><span class="co">#&gt; [22] "141003" "141004" "141099" "141101" "141201" "141301" "141401"</span></a>
+<a class="sourceLine" id="cb14-7" data-line-number="7"><span class="co">#&gt; [29] "141801" "141901" "142001" "142101" "142201" "142301" "142401"</span></a>
+<a class="sourceLine" id="cb14-8" data-line-number="8"><span class="co">#&gt; [36] "142501" "142701" "142801" "143101" "143201" "143301" "143401"</span></a>
+<a class="sourceLine" id="cb14-9" data-line-number="9"><span class="co">#&gt; [43] "143501" "143601" "143701" "143801" "143901" "144001" "144101"</span></a>
+<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co">#&gt; [50] "144201" "144301" "144401" "144501" "149999"</span></a>
+<a class="sourceLine" id="cb14-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb14-12" data-line-number="12">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> engr)</a>
+<a class="sourceLine" id="cb14-13" data-line-number="13"><span class="kw">glimpse</span>(df)</a>
+<a class="sourceLine" id="cb14-14" data-line-number="14"><span class="co">#&gt; Observations: 54</span></a>
+<a class="sourceLine" id="cb14-15" data-line-number="15"><span class="co">#&gt; Variables: 6</span></a>
+<a class="sourceLine" id="cb14-16" data-line-number="16"><span class="co">#&gt; $ CIP2     &lt;chr&gt; "14", "14", "14", "14", "14", "14", "14", "14", "14",...</span></a>
+<a class="sourceLine" id="cb14-17" data-line-number="17"><span class="co">#&gt; $ CIP2Name &lt;chr&gt; "Engineering", "Engineering", "Engineering", "Enginee...</span></a>
+<a class="sourceLine" id="cb14-18" data-line-number="18"><span class="co">#&gt; $ CIP4     &lt;chr&gt; "1401", "1401", "1402", "1403", "1404", "1405", "1406...</span></a>
+<a class="sourceLine" id="cb14-19" data-line-number="19"><span class="co">#&gt; $ CIP4Name &lt;chr&gt; "Engineering/General", "Engineering/General", "Aerosp...</span></a>
+<a class="sourceLine" id="cb14-20" data-line-number="20"><span class="co">#&gt; $ CIP6     &lt;chr&gt; "140101", "140102", "140201", "140301", "140401", "14...</span></a>
+<a class="sourceLine" id="cb14-21" data-line-number="21"><span class="co">#&gt; $ CIP6Name &lt;chr&gt; "Engineering - General", "Pre-Engineering", "Aerospac...</span></a></code></pre></div>
 </div>
 <div id="using-a-previous-result-as-a-data-argument" class="section level2">
 <h2 class="hasAnchor">
 <a href="#using-a-previous-result-as-a-data-argument" class="anchor"></a>Using a previous result as a data argument</h2>
 <p>A data frame produced by <code><a href="../reference/cip_filter.html">cip_filter()</a></code> can be used as the <code>data</code> argument in a subsequent use of <code><a href="../reference/cip_filter.html">cip_filter()</a></code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^49"</span>)</code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">df1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^49"</span>)</a></code></pre></div>
 <p>Suppose, after viewing the full “49” series above we decide we only need the “4903” subset. We can use the data frame <code>df1</code> from above as the <code>data</code> argument.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># use a previous result as a data argument</span>
-df2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"4903"</span>, <span class="dt">data =</span> df1)
-<span class="kw">kable</span>(df2) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kable_styling</span>(<span class="dt">font_size =</span> <span class="dv">12</span>)
-<span class="co">#&gt; Error in kable_styling(., font_size = 12): could not find function "kable_styling"</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="co"># use a previous result as a data argument</span></a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">df2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"4903"</span>, <span class="dt">data =</span> df1)</a>
+<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="kw">kable</span>(df2) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kable_styling</span>(<span class="dt">font_size =</span> <span class="dv">12</span>)</a></code></pre></div>
+<table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;">
+CIP2
+</th>
+<th style="text-align:left;">
+CIP2Name
+</th>
+<th style="text-align:left;">
+CIP4
+</th>
+<th style="text-align:left;">
+CIP4Name
+</th>
+<th style="text-align:left;">
+CIP6
+</th>
+<th style="text-align:left;">
+CIP6Name
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+49
+</td>
+<td style="text-align:left;">
+Transportation and Materials Moving Services
+</td>
+<td style="text-align:left;">
+4903
+</td>
+<td style="text-align:left;">
+Marine Transportation Services
+</td>
+<td style="text-align:left;">
+490303
+</td>
+<td style="text-align:left;">
+Commercial Fishing
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+49
+</td>
+<td style="text-align:left;">
+Transportation and Materials Moving Services
+</td>
+<td style="text-align:left;">
+4903
+</td>
+<td style="text-align:left;">
+Marine Transportation Services
+</td>
+<td style="text-align:left;">
+490304
+</td>
+<td style="text-align:left;">
+Diver/Professional and Instructor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+49
+</td>
+<td style="text-align:left;">
+Transportation and Materials Moving Services
+</td>
+<td style="text-align:left;">
+4903
+</td>
+<td style="text-align:left;">
+Marine Transportation Services
+</td>
+<td style="text-align:left;">
+490309
+</td>
+<td style="text-align:left;">
+Marine Science/Merchant Marine Officer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+49
+</td>
+<td style="text-align:left;">
+Transportation and Materials Moving Services
+</td>
+<td style="text-align:left;">
+4903
+</td>
+<td style="text-align:left;">
+Marine Transportation Services
+</td>
+<td style="text-align:left;">
+490399
+</td>
+<td style="text-align:left;">
+Marine Transportation Services - Other
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="conclusion" class="section level2">
+<h2 class="hasAnchor">
+<a href="#conclusion" class="anchor"></a>Conclusion</h2>
+<p>Having used the <code><a href="../reference/cip_filter.html">cip_filter()</a></code> function to identify the codes of the programs one wishes to study, the codes are used to filter the midfieldr datasets to obtain the records of students who matriculate, ever enroll, or graduate in those programs.</p>
 </div>
 <div class="footnotes">
 <hr>
 <ol>
-<li id="fn1"><p>The CIP is curated by the Integrated Postsecondary Education Data System (IPEDS), the the core postsecondary education data collection program of the National Center for Education Statistics (NCES), an agency of the US Department of Education (<a href="https://nces.ed.gov/ipeds/cipcode" class="uri">https://nces.ed.gov/ipeds/cipcode</a>).<a href="#fnref1">↩</a></p></li>
+<li id="fn1"><p>The CIP is curated by the Integrated Postsecondary Education Data System (IPEDS), the the core postsecondary education data collection program of the National Center for Education Statistics (NCES), an agency of the US Department of Education (<a href="https://nces.ed.gov/ipeds/cipcode" class="uri">https://nces.ed.gov/ipeds/cipcode</a>).<a href="#fnref1" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
   </div>
@@ -780,6 +2114,7 @@ df2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_fil
       <li><a href="#search-by-cip-codes">Search by CIP codes</a></li>
       <li><a href="#search-by-named-series">Search by named series</a></li>
       <li><a href="#using-a-previous-result-as-a-data-argument">Using a previous result as a data argument</a></li>
+      <li><a href="#conclusion">Conclusion</a></li>
       </ul>
 </div>
       </div>

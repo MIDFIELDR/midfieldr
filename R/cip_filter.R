@@ -8,13 +8,21 @@ NULL
 
 #' Filter CIP data
 #'
-#' Filter a data frame of Classification of Instructional Programs (CIP) codes to return the rows that match conditions.
+#' Filter a data frame of Classification of Instructional Programs (CIP) codes
+#' to return the rows that match conditions.
 #'
-#'The purpose of \code{cip_filter()} is to obtain the CIP codes of specific academic programs one wishes to study. The codes returned are used to identify students in the midfieldr datasets (\code{student}, \code{course}, \code{term}, \code{degree})
+#'The purpose of \code{cip_filter()} is to obtain the CIP codes of specific
+#'academic programs one wishes to study. The codes returned are used to identify
+#'students in the midfieldr datasets (\code{student}, \code{course},
+#'\code{term}, \code{degree})
 #'
-#' @param series The conditions used to filter the data. A character vector (or coercible to one) of any combination of 2, 4, or 6-digit CIP codes. If NULL, \code{data} is returned unchanged.
+#' @param series The conditions used to filter the data. A character vector
+#' (or coercible to one) of any combination of 2, 4, or 6-digit CIP codes.
+#' If NULL, \code{data} is returned unchanged.
 #'
-#' @param data A data frame of character variables (or coercible to one). Required variables are \code{CIP2}, \code{CIP4}, and \code{CIP6}. If NULL, \code{data} is the midfieldr \code{cip} dataset.
+#' @param data A data frame of character variables (or coercible to one).
+#' Required variables are \code{CIP2}, \code{CIP4}, and \code{CIP6}. If NULL,
+#' \code{data} is the midfieldr \code{cip} dataset.
 #'
 #' @return A data frame: \code{data} filtered by the conditions in \code{series}.
 #'
@@ -26,13 +34,13 @@ NULL
 #' cip_filter(series = seq(540102, 540108))
 #'
 #' @export
-cip_filter <- function(series = NULL, data = NULL){
-
+cip_filter <- function(series = NULL, data = NULL) {
 	# default cip data set or coerce to characters
-	if (is.null(data)) {data <- midfieldr::cip}
+	if (is.null(data)) {
+		data <- midfieldr::cip
+	}
 
 	if (is.null(series)) {
-
 		# default series is the 2-digit main entries
 		cip <- data %>%
 			arrange(CIP6) %>%
@@ -42,7 +50,6 @@ cip_filter <- function(series = NULL, data = NULL){
 
 
 	} else {
-
 		# coerce series to character
 		series <- as.character(series)
 		collapse_series <- str_c(series, collapse = "|")
@@ -51,8 +58,7 @@ cip_filter <- function(series = NULL, data = NULL){
 		cip <- plyr::ldply(names(data), function(x)
 			paste0("filter(data, str_detect(data$", x, ", collapse_series))")  %>%
 				parse(text = .) %>%
-				eval
-			)
+				eval)
 	}
 
 	# omit duplicates (if any) and arrange in order of CIP

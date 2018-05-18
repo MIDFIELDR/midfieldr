@@ -7,11 +7,11 @@
 join_demographics(df)
 }
 \arguments{
-\item{df}{A data frame of student attributes that includes the variable \code{MID}.}
+\item{df}{A data frame of student attributes that includes the variable \code{ID}.}
 }
 \value{
-The incoming data frame plus two new columns \code{ETHNIC} and \code{SEX}. Other columns are unaffected.
+The incoming data frame plus two new columns \code{sex} and \code{race}. Other columns are unaffected.
 }
 \description{
-Add variables \code{ETHNIC} and \code{SEX} from the \code{student} dataset to a data frame. `dplyr::left_join()` is the joining function and \code{MID} is the join-by variable.
+Add variables \code{race} and \code{sex} from the \code{midfieldstudents} dataset to a data frame. `dplyr::left_join()` is the joining function and \code{ID} is the join-by variable.
 }

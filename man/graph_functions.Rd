@@ -18,8 +18,11 @@ Provides a set of customized layers for graphs created with for \code{ggplot2}.
 \details{
 \describe{
 
-\item{\code{expon_scale_x_log10()}}{Applies the usual \code{scale_x_log10()} function with the scale marked with powers of ten in exponential form and the logarithmic minor grid lines shown.}
+\item{\code{expon_scale_x_log10()}}{Applies the usual \code{scale_x_log10()}
+function with the scale marked with powers of ten in exponential form and the
+logarithmic minor grid lines shown.}
 
-\item{\code{midfield_theme()}}{Applies \code{theme_minimal()} with some additional edits.}
+\item{\code{midfield_theme()}}{Applies \code{theme_minimal()} with some
+additional edits.}
 }
 }

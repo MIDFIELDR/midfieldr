@@ -75,7 +75,7 @@ mce <- cip_filter("^1419") %>% add_column(PGRM = "Mechanical Engineering")
 ```
 
 
-Assigning a custom label to `PGRM` is useful when the set of CIP codes we plan to group and count do not already have a common CIP name. For example, there is no CIP name for the general group of programs we might call Humanities. 
+Assigning a custom label to `PGRM` is useful when the set of CIP codes we plan to group and count do not already have a common CIP name. For example, there is no CIP name for the general group of programs called Humanities. 
 
 Selecting the values of `PGRM` is important when using collections not specifically identified as groups in the CIP dataset, e.g., Humanities, Physical Sciences, and the  collections provided in the midfieldr `named_series`.  
 
@@ -101,19 +101,105 @@ programs
 
 ## Count students ever enrolled 
 
-A student contributes to a program's "ever enrolled" total if the program's CIP code appears in the student's `term` data. A student is counted once per program.  
+A student contributes to a program's "ever enrolled" total if the program's CIP code appears in the student's `midfieldterms` data. A student is counted once per program.  
 
 To gather the students ever enrolled, we use:
 
-- the midfieldr `term` data for term-by-term program information. 
-- the midfieldr `student` data for student race/ethnicity and sex. 
+- the midfieldr `midfieldterms` data for term-by-term program information. 
+- the midfieldr `midfieldstudents` data for student race/ethnicity and sex. 
 - `gather_ever()` to gather students ever enrolled in `programs` and to add their race/ethnicity and sex to the data frame. 
 
 ```{r eval=FALSE}
+# examine midfieldstudents
+df <- midfieldstudents
+
+
+
 # gather students ever enrolled in the programs
-library(midfieldstudent)
-library(midfieldterm)
-ever <- gather_ever(term, programs)
+library(midfieldstudents)
+library(midfieldterms)
+library(DescTools)
+
+# ever <- gather_ever(midfieldterms, programs)
+
+
+library(stringr)
+
+# select variables such that we end up with one unique observation per student
+ever <- midfieldterms %>% 
+	select(ID, program) %>% 
+	unique()
+
+glimpse(ever)
+
+# collapse the programs CIP6 vector to a search string
+# filter `ever` for the desired programs
+series <- stringr::str_c(programs$CIP6, collapse = "|")
+
+
+
+
+ever <- ever %>%
+	dplyr::filter(str_detect(program, series)) %>%
+	unique() %>% 
+	arrange(ID)
+
+glimpse(ever)
+Desc(ever)
+
+str_length(ever$ID[[1]])
+
+# Join the program labels to ever
+programs <- programs %>% 
+	rename(program = CIP6)
+
+ever <- left_join(ever, programs, by = "program") %>%
+	dplyr::arrange(program) %>% 
+	rename(program_label = PGRM)
+
+glimpse(ever)
+```
+
+
+
+```{r}
+df <- ever
+
+
+
+
+# select the three variables we need from the student dataset
+studentID_sex_race <- midfieldstudents %>%
+	select(ID, sex, race)
+
+studentID_sex_race <- unique(studentID_sex_race)
+
+library(DescTools)
+Desc(studentID_sex_race)
+
+
+glimpse(studentID_sex_race)
+
+# # use semi_join to return all rows from the students data frame
+# # with matching IDs in the ever data farme
+# studentID_sex_race <- semi_join(studentID_sex_race, df, by = "ID") %>%
+# 	unique()
+# 
+# glimpse(studentID_sex_race)
+# library(DescTools)
+# Desc(studentID_sex_race)
+
+# join to the data frame
+df <- left_join(df, studentID_sex_race, by = "ID")
+
+
+# Join the sex and ethnicity/race demographics from the `student` dataset to the `ever` data frame.
+# ever <- join_demographics(ever)
+ever <- df
+
+
+Desc(ever)
+
 ```
 
 ```{r echo = FALSE}

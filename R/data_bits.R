@@ -1,8 +1,10 @@
 #' Characteristic numbers describing the midfieldr datasets
 #'
-#' A vector of named numbers describing characteristics of the midfieldr datasets such as the number of observations or statistical summary values.
+#' A vector of named numbers describing characteristics of the midfieldr
+#' datasets such as the number of observations or statistical summary values.
 #'
-#' The purpose of creating this small dataset is to have handy the named numbers without loading the midfieldr datasets to reduce execution times in vignettes.
+#' The purpose of creating this small dataset is to have handy the named numbers
+#' without loading the midfieldr datasets to reduce execution times in vignettes.
 #'
 #' @format A vector of named numbers
 #' \describe{
