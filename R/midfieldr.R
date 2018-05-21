@@ -1,3 +1,6 @@
+#' @importFrom Rdpack reprompt
+NULL
+
 #' Undergraduate Student Records for Longitudinal Research
 #'
 #' A package for investigating a data sample from the MIDFIELD database.
@@ -17,7 +20,10 @@
 #' @section Data:
 #' \describe{
 #'
-#'   \item{\code{cip}}{A dataset of names and codes of academic programs. Each of the 1544 observations is a program described by a 6-digit Classification of Instructional Programs (CIP) code defined by the US Department of Education in 2010.}
+#'   \item{\code{cip}}{A dataset of names and codes of academic programs. Each
+#'   of the 1544 observations is a program described by a 6-digit Classification
+#'   of Instructional Programs (CIP) code defined by the US Department of
+#'   Education in 2010.}
 #'
 #'   \item{\code{midfieldstudents}}{In the \href{https://github.com/MIDFIELDR/midfieldstudents}{\pkg{midfieldstudents}} data package.
 #'  A tidy data frame with 97,640 observations and 15 demographic variables. Each observation is a unique student. Occupies 19 Mb of memory.}
@@ -41,8 +47,8 @@
 #'   \item{\code{cip_filter()}}{Filter a data frame of Classification of
 #'   Instructional Programs (CIP) codes to return the rows that match conditions.}
 #'
-#'   \item{\code{join_demographics()}}{Add variables \code{ETHNIC} and
-#'   \code{SEX} from the \code{student} dataset to a data frame.}
+#'   \item{\code{join_demographics()}}{Add variables \code{sex} and
+#'   \code{race} from the \code{midfieldsstudents} dataset to a data frame.}
 #'
 #' }
 #'
@@ -54,10 +60,10 @@ NULL
 
 ## addresses R CMD check warning "no visible binding"
 if (getRversion() >= "2.15.1") {
-	utils::globalVariables(c(".", ".x", "CIP2", "CIP4", "CIP6", "student", "ID",
-													 "race", "sex", "rcb_colors", "rcb_name", "rcb_code",
-													 "midfielddegrees", "midfieldstudents",
-													 "midfieldterms", "midfieldcourses"
-	)
-	)
+  utils::globalVariables(c(
+    ".", ".x", "CIP2", "CIP4", "CIP6", "student", "ID",
+    "race", "sex", "rcb_colors", "rcb_name", "rcb_code",
+    "midfielddegrees", "midfieldstudents",
+    "midfieldterms", "midfieldcourses", "institution"
+  ))
 }

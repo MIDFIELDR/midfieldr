@@ -1,12 +1,14 @@
 ---
 title: "Stickiness metric"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette: 
+    toc: true
+    toc_depth: 2
 vignette: >
   %\VignetteIndexEntry{Stickiness metric}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
-  chunk_output_type: console
+bibliography: ../inst/REFERENCES.bib
 ---
 
 ```{r setup, echo = FALSE, message = FALSE}
@@ -18,27 +20,24 @@ opts_chunk$set(error = TRUE, purl = FALSE)
 opts_chunk$set(fig.width = 6)
 options(tibble.print_min = 10L, tibble.print_max = 10L)
 knit_hooks$set(inline = function(x) {
-	if (!is.numeric(x)) { 
-		x 
-		} else if (x >= 10000) { 
-		prettyNum(round(x, 2), big.mark = " ")
-		} else {
-		prettyNum(round(x, 2))
-		}
-	})
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
 ```
 
 
 
+
+"Stickiness" is a longitudinal persistence metric that tracks all students who contact an instructional program to determine what percentage “stick” to that program and graduate in it. Stickiness is defined as the ratio of the number of students graduating in a program to the number of students ever enrolled in the program.[@stickiness2012]
+
+
+
 ## Getting started 
-
-"Stickiness" is a longitudinal persistence metric that tracks all students who contact an instructional program to determine what percentage “stick” to that program and graduate in it. Stickiness is defined as the ratio of the number of students graduating in a program to the number of students ever enrolled in the program.[^1]
-
-<!-- footnote -->
-[^1]: Matthew Ohland, Marisa Orr, Richard Layton, Susan Lord and Russell Long (2012) Introducing “stickiness” as a versatile metric of engineering persistence, in proc. *2012 Frontiers in Education Conference*, Seattle, WA, pp. 1--5. [DOI 10.1109/FIE.2012.6462214](http://dx.doi.org/10.1109/FIE.2012.6462214). 
-
-
-
 
 In this article, we show you how to use midfieldr functions to compute program stickiness. Our workflow is: 
 
@@ -50,387 +49,151 @@ In this article, we show you how to use midfieldr functions to compute program s
 
 Because our research focuses on intersectionality, we typically disaggregate the data by program, sex, and race/ethnicity.[^2] You may of course choose your own combination of variables to study. 
 
+If you are an R beginner, you can get the most out of this tutorial by 
+
+- opening a new R script  
+- copying or typing a line of code from the tutorial to your script 
+- running your script after each new line is added 
+- examining the result after each addition   
 
 
 
 
-## Select the programs
+
+
+## Select the programs to study
 
 For this example, we compare the stickiness of three engineering programs: Civil, Electrical, and Mechanical. Their 4-digit CIP codes were found by keyword search as illustrated in [Selecting CIP codes](cip_filter.html). 
 
 We use:  
 
-- `cip_filter()` to obtain the relevant program codes.  
-- `add_column()` (a [tibble](http://tibble.tidyverse.org) function) to add the `PGRM` variable to the data frame: a custom program label we use later for grouping, counting, and graphing. 
+- `cip_filter()` to obtain the relevant program codes 
+- `add_column()` (a [tibble](http://tibble.tidyverse.org) function) to add the user-defined `program` variable 
 
 
 ```{r warning = FALSE, message = FALSE}
-# obtain 2, 4, and 6-digit CIP codes and names
+# obtain CIP codes and names
 library(dplyr)
+library(tidyr)
 library(tibble)
-library(midfieldr) 
-cve <- cip_filter("^1408") %>% add_column(PGRM = "Civil Engineering")
-ele <- cip_filter("^1410") %>% add_column(PGRM = "Electrical Engineering")
-mce <- cip_filter("^1419") %>% add_column(PGRM = "Mechanical Engineering")
+library(midfieldr)
+cve <- cip_filter("^1408") %>% add_column(program = "Civil Engineering")
+ele <- cip_filter("^1410") %>% add_column(program = "Electrical Engineering")
+mce <- cip_filter("^1419") %>% add_column(program = "Mechanical Engineering")
 ```
 
 
-Assigning a custom label to `PGRM` is useful when the set of CIP codes we plan to group and count do not already have a common CIP name. For example, there is no CIP name for the general group of programs called Humanities. 
-
-Selecting the values of `PGRM` is important when using collections not specifically identified as groups in the CIP dataset, e.g., Humanities, Physical Sciences, and the  collections provided in the midfieldr `named_series`.  
+Assigning a custom label via `program` is useful when a set of CIP codes does not already have a common name. For example, there is no CIP name for the Humanities group of programs.  
 
 Next we bind the individual program data frames into one data frame. We use two [dplyr](http://dplyr.tidyverse.org) functions: 
 
-- `bind_rows()` to bind the programs into one data frame ()
-- `select()` to keep two variables: `CIP6` for finding the desired student records and `PGRM` for grouping.
+- `bind_rows()` to bind the programs into one dataframe named `study_group` 
+- `select()` to keep two variables: `CIP6` for finding the desired student records and `program` for grouping 
 
 ```{r}
 # bind the four programs
-programs <- bind_rows(cve, ele, mce) %>% 
-	select(CIP6, PGRM)
+study_group <- bind_rows(cve, ele, mce) %>%
+  select(CIP6, program)
 ```
 
-Examine the result: there are `r nrow(programs)` CIP codes for these three programs. 
+Examine the result: there are `r nrow(study_group)` CIP codes for these three programs. 
 
 ```{r}
 # examine the result
-programs
+study_group
 ```
 
 
 
 ## Count students ever enrolled 
 
-A student contributes to a program's "ever enrolled" total if the program's CIP code appears in the student's `midfieldterms` data. A student is counted once per program.  
-
-To gather the students ever enrolled, we use:
-
-- the midfieldr `midfieldterms` data for term-by-term program information. 
-- the midfieldr `midfieldstudents` data for student race/ethnicity and sex. 
-- `gather_ever()` to gather students ever enrolled in `programs` and to add their race/ethnicity and sex to the data frame. 
-
-```{r eval=FALSE}
-# examine midfieldstudents
-df <- midfieldstudents
-
-
-
-# gather students ever enrolled in the programs
+```{r echo = FALSE}
 library(midfieldstudents)
+
+# make this fix to the data package
+midfieldstudents <- rename(midfieldstudents, CIP6 = program)
+
 library(midfieldterms)
-library(DescTools)
 
-# ever <- gather_ever(midfieldterms, programs)
-
-
-library(stringr)
-
-# select variables such that we end up with one unique observation per student
-ever <- midfieldterms %>% 
-	select(ID, program) %>% 
-	unique()
-
-glimpse(ever)
-
-# collapse the programs CIP6 vector to a search string
-# filter `ever` for the desired programs
-series <- stringr::str_c(programs$CIP6, collapse = "|")
-
-
-
-
-ever <- ever %>%
-	dplyr::filter(str_detect(program, series)) %>%
-	unique() %>% 
-	arrange(ID)
-
-glimpse(ever)
-Desc(ever)
-
-str_length(ever$ID[[1]])
-
-# Join the program labels to ever
-programs <- programs %>% 
-	rename(program = CIP6)
-
-ever <- left_join(ever, programs, by = "program") %>%
-	dplyr::arrange(program) %>% 
-	rename(program_label = PGRM)
-
-glimpse(ever)
+# make this fix to the data package
+midfieldterms <- rename(midfieldterms, CIP6 = program)
 ```
 
-
+`gather_ever()` extracts a subset of `midfieldterms` containing all unique students ever enrolled in the programs listed in `study_group` and joins our user-defined `program` labels to these data. 
 
 ```{r}
-df <- ever
-
-
-
-
-# select the three variables we need from the student dataset
-studentID_sex_race <- midfieldstudents %>%
-	select(ID, sex, race)
-
-studentID_sex_race <- unique(studentID_sex_race)
-
-library(DescTools)
-Desc(studentID_sex_race)
-
-
-glimpse(studentID_sex_race)
-
-# # use semi_join to return all rows from the students data frame
-# # with matching IDs in the ever data farme
-# studentID_sex_race <- semi_join(studentID_sex_race, df, by = "ID") %>%
-# 	unique()
-# 
-# glimpse(studentID_sex_race)
-# library(DescTools)
-# Desc(studentID_sex_race)
-
-# join to the data frame
-df <- left_join(df, studentID_sex_race, by = "ID")
-
-
-# Join the sex and ethnicity/race demographics from the `student` dataset to the `ever` data frame.
-# ever <- join_demographics(ever)
-ever <- df
-
-
-Desc(ever)
-
+# extract unique students from midfieldterms
+unique_students <- gather_ever(midfieldterms, study_group)
 ```
 
-```{r echo = FALSE}
-# to save execution time during development
-# the previous chunk echoes but does not execute
-# this code chunk executes but does not echo
-library(midfieldstudent)
-library(midfieldterm)
-# ever <- gather_ever(term, programs)
-# devtools::use_data(ever, overwrite = TRUE, compress = 'bzip2')#temp
-data(ever)
-```
-
-To examine the result of the operation, use `glimpse()`, a [tibble](http://tibble.tidyverse.org) function. 
+`glimpse()` the result to check the number of observations and to view the first few values of each variable. 
 
 ```{r}
 # examine the result
-glimpse(ever)
+glimpse(unique_students)
 ```
 
-<!-- footnote -->
-```{r echo = FALSE}
-# character values for the footnote
-library(stringr)
-sex_values    <- str_c(sort(unique(ever$SEX)), collapse = ", ")
-ethnic_values <- str_c(sort(unique(ever$ETHNIC)), collapse = ", ")
-```
-
-[^2]: The possible values of race/ethnicity and sex categories are limited to those used by the participating US institutions. Thus sex is limited to the set  (`r sex_values`) and race/ethnicity is limited to the set (`r ethnic_values`). 
-
-
-
-At this point, one decides how to group the the students for counting. In our example, we group by race/ethnicity, sex, and program. We use the following [dplyr](http://dplyr.tidyverse.org) functions:
-
-- `count()` to group and count the students by program, ethnicity/race, and sex. The count is assigned to the default variable `n`. 
-- `rename()` to rename `n` to `EVER` for the number of students in this group ever enrolled in the program. 
-- `arrange()` to arrange the rows of the resulting data frame in order of descending magnitude of the count. 
+`join_demographics()` joins student race and sex from `midfieldstudents` to these data. 
 
 ```{r}
-# count ever enrolled by grouping variables 
-ever_count <- count(ever, PGRM, ETHNIC, SEX)  %>% 
-	rename(EVER = n) %>% 
-	arrange(desc(EVER))
+# join demographics from midfieldstudents
+unique_students <- join_demographics(unique_students)
 
 # examine the result
-ever_count
+glimpse(unique_students)
 ```
 
-
-
-We can examine our saummarized data using [ggplot2](http://ggplot2.tidyverse.org). 
+Before counting students, we select the variables to use for grouping and summarizing, Here, for example, we select program, race, and sex (thereby omitting ID, CIP6, and institution). 
 
 ```{r}
-# multiway graph of ever enrolled numbers 
-library(ggplot2)
-f1 <- ggplot(ever_count, aes(x = EVER, y = reorder(ETHNIC, EVER, median), col = SEX)) +
-	geom_point(size = 2) + 	
-	facet_wrap(~ reorder(PGRM, -EVER, median), ncol = 1) +
-	labs(x = "Number of students ever enrolled", y = "") 
-```
-
-To format the graph, we use the following midfieldr graph functions: 
-
-- `expon_scale_x_log10()` creates exponential powers-of-ten notation and logarithmic grid lines.  
-- `midfield_theme()`, the ggplot `theme_minimal()` with some revisions. 
-- `rcb()` yields a hexadecimal code for specific colors named in the `midfieldr::rcb_colors` dataset.  
-
-```{r fig.width = 7.2, fig.asp = 0.9}
-# format with midfieldr graph functions
-f1 <- f1 +
-	scale_color_manual(values = c(rcb("mid_Br"), rcb("mid_BG"))) + 
-	expon_scale_x_log10() +
-	midfield_theme() 
-
-print(f1)
-```
-
-For the rationale underlying the design of this "multiway" graph, see our [Multiway data and graphs](multiway.html) discussion.
-
-
-
-
-## Count students graduating 
-
-To gather the students graduating from a program, we use:
-
-- `student` dataset for student race/ethnicity and sex. 
-- `degree` dataset for the programs from which students graduate. 
-- `midfieldr::gather_grad()` to subset `degree` for those students graduating from `programs` and add variables `ETHNIC` and `SEX`. 
-
-```{r}
-glimpse(degree)
-sort(unique(degree$GCIP))
-sort(unique(degree$GCIP2))
-sort(unique(degree$GCIP3))
-```
-
-```{r}
-library(stringr)
-# draft of gather_grad()
-gather_grad <- function(degree, programs) {
-	
-	# select only those variables likely to be used for grouping
-	grad <- degree %>%
-		dplyr::select(MID, GYEAR, GTERM, INSTITUTION, GCIP, GCIP2, GCIP3)
-	
-	# keep the earliest term in which a student earns a degree
-	grad <- grad %>%
-		arrange(MID, GYEAR, GTERM) %>%
-		group_by(MID) %>%
-		filter(row_number(MID) == 1) %>%
-		ungroup()
-	
-	# gather all 6-digit codes (GCIP, GCIP2, GCIP3) for multiple degrees
-	# omit rows with no second or third degree
-	grad <- grad %>%
-		tidyr::gather(GCIPN, CIP6, GCIP:GCIP3) %>%
-		filter(!is.na(GCIPN)) 
-	
-	# collapse the programs CIP6 vector to a search string
-	# then filter grad for the desired programs
-	series <- stringr::str_c(programs$CIP6, collapse = "|")
-	grad <- grad %>%
-		dplyr::filter(str_detect(CIP6, series)) %>%
-		unique()
-	
-	# Join the program labels to grad
-	grad <- left_join(grad, programs, by = "CIP6") %>%
-		dplyr::arrange(CIP6)
-
-	# Join the sex and ethnicity/race demographics from student
-	grad <- join_demographics(grad)
-	
-	return(grad)
-}
-```
-
-
-```{r}
-grad <- gather_grad(degree, programs)
-glimpse(grad)
-```
-
-
-
-```{r}
-library(tidyr)
-# count graduates by grouping variables 
-grad_count <- count(grad, PGRM, ETHNIC, SEX)  %>% 
-	rename(GRAD = n) %>% 
-	arrange(desc(GRAD))
+# select the variables to use for counting
+unique_students <- unique_students %>%
+  select(program, sex, race)
 
 # examine the result
-grad_count
-
-# join ever and grad
-stickiness <- left_join(ever_count, grad_count, by = c("PGRM", "ETHNIC", "SEX")) 
-
-# if GRAD is NA, due to join with EVER. Is correctly set to zero 
-stickiness <- stickiness %>% 
-	replace_na(list(GRAD = 0))
-
-# compute stickiness
-stickiness <- stickiness %>% 
-	mutate(STICK = round(GRAD / EVER, 2))
-
-	
-												
-kable(stickiness)
+glimpse(unique_students)
 ```
+
+`count_and_fill()` counts the number of students grouped by the variables we just selected. If race or sex are in the list, empty entries are assigned a zero. 
 
 ```{r}
-# select only those variables likely to be used for grouping
-grad <- degree %>%
-	dplyr::select(MID, GYEAR, GTERM, INSTITUTION, GCIP, GCIP2, GCIP3)
+# count ever enrolled and label the count "ever"
+ever_enrolled <- count_and_fill(unique_students, "ever")
 
-
-unique(grad$GCIP2)
-unique(grad$GCIP3)
+# examine the result
+glimpse(ever_enrolled)
 ```
+
+In summary, four function calls are needed to gather and count the numbers of students ever enrolled in a set of programs. We can chain those functions together in one code chunk as follows: 
 
 ```{r}
-# keep the earliest term in which a student earns a degree
-one_degree <- grad %>%
-	filter(is.na(GCIP2) & is.na(GCIP3)) %>%
-	arrange(MID, GYEAR, GTERM)  %>% 
-	unique() %>%
- 	group_by(MID) %>%
- 	filter(row_number(MID) == 1) %>%
-	ungroup()
-glimpse(one_degree)
+# counting students ever enrolled in a program in one code chain
+ever_enrolled <- gather_ever(midfieldterms, study_group) %>%
+  join_demographics() %>%
+  select(program, race, sex) %>%
+  count_and_fill(., "ever")
 
-unique(one_degree$GCIP2)
-unique(one_degree$GCIP3)
-
+# examine the result
+glimpse(ever_enrolled)
 ```
 
-Gather the GCIPs into a single column
+Alternatively, suppose we want to group by program and sex, but ignore race. We duplicate the earlier code chunk, but edit the `select()` arguments. 
 
 ```{r}
-one_degree <- one_degree %>% 
-	gather(GCIPN, CIP6, GCIP:GCIP3) %>% 
-	filter(!is.na(CIP6))
+# group by program and sex
+ever_enrolled <- gather_ever(midfieldterms, study_group) %>%
+  join_demographics() %>%
+  select(program, sex) %>%
+  count_and_fill(., "ever")
 
-glimpse(one_degree)
+# this set is small enough to view in a table
+ever_enrolled <- ever_enrolled %>% 
+	arrange(desc(ever))
+kable(ever_enrolled)
 ```
 
 
-Now count
-
-```{r}
-
-```
 
 
 
-
-## Compute stickiness 
-
-
-
-## Graph stickiness 
-
-
-
-
-
-## cleanup 
-
-delete the temp data save 
-```{r}
-# unlink("data/ever.rda")
-```
-
+## References

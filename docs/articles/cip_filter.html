@@ -98,26 +98,27 @@
 
     
     
-<p>The Classification of Instructional Programs (CIP) is a taxonomy of academic programs curated by an agency of the US Department of Education.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>The Classification of Instructional Programs (CIP) is a taxonomy of academic programs curated by an agency of the US Department of Education.<span class="citation">(“Classification of Instructional Programs (CIP)” 2010)</span></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># packages used in the vignette</span></a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(midfieldr)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(dplyr) </a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(tibble)</a>
 <a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">library</span>(stringr)</a>
 <a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">library</span>(knitr)</a></code></pre></div>
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>Instructional programs are encoded in <code>cip</code>, a data frame of character variables listing the 2, 4, and 6-digit CIP codes and program names in the MIDFILED database. See the help page (<code><a href="../reference/cip.html">?cip</a></code>) for more detail.</p>
+<p>Instructional programs are encoded in <code>cip</code>, a midfieldr data frame of character variables listing the 2, 4, and 6-digit CIP codes and program names in the MIDFILED database. To learn more, open the help page by running <code><a href="../reference/cip.html">?cip</a></code>.</p>
+<p>Taking a <code>glimpse()</code> of <code>cip</code> reveals that we have 1544 unique observations (6-digit programs) and shows the first few values of the 6 variables.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">glimpse</span>(cip)</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; Observations: 1,544</span></a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt; Variables: 6</span></a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt; $ CIP2     &lt;chr&gt; "01", "01", "01", "01", "01", "01", "01", "01", "01",...</span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt; $ CIP2Name &lt;chr&gt; "Agriculture/Agricultural Operations and Related Scie...</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt; $ CIP2name &lt;chr&gt; "Agriculture/Agricultural Operations and Related Scie...</span></a>
 <a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; $ CIP4     &lt;chr&gt; "0100", "0101", "0101", "0101", "0101", "0101", "0101...</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; $ CIP4Name &lt;chr&gt; "Agriculture/General", "Agricultural Business and Man...</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; $ CIP4name &lt;chr&gt; "Agriculture/General", "Agricultural Business and Man...</span></a>
 <a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; $ CIP6     &lt;chr&gt; "010000", "010101", "010102", "010103", "010104", "01...</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; $ CIP6Name &lt;chr&gt; "Agriculture - General", "Agricultural Business and M...</span></a></code></pre></div>
-<p><code><a href="../reference/cip_filter.html">cip_filter()</a></code> filters <code>cip</code> for the programs we wish to study. The function has two arguments:</p>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; $ CIP6name &lt;chr&gt; "Agriculture - General", "Agricultural Business and M...</span></a></code></pre></div>
+<p><code><a href="../reference/cip_filter.html">cip_filter()</a></code> filters <code>cip</code> data frame for the programs we wish to study. The function has two arguments:</p>
 <ul>
 <li>
 <code>series</code> <span style="display:inline-block; width: 1mm;"></span> Search terms. A character vector of codes or keywords.<br>
@@ -125,10 +126,11 @@
 <li>
 <code>data</code> <span style="display:inline-block; width: 5.5mm;"></span>A searchable data frame (<code>cip</code> is the default).</li>
 </ul>
+<p><code><a href="../reference/cip_filter.html">cip_filter()</a></code> searches all columns in <code>data</code> for the strings in <code>series</code> and returns a data frame whose rows contain the search terms. Filtering is performed by <code><a href="http://dplyr.tidyverse.org/reference/filter.html">dplyr::filter()</a></code> with pattern detection by <code><a href="http://www.rdocumentation.org/packages/stringr/topics/str_detect">stringr::str_detect()</a></code>.</p>
 <p>With no arguments, <code><a href="../reference/cip_filter.html">cip_filter()</a></code> returns the unique 2-digit series and the first entry of the corresponding 4- and 6-digit series.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>()</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt; # A tibble: 48 x 6</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt;   CIP2  CIP2Name             CIP4  CIP4Name         CIP6  CIP6Name        </span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt;   CIP2  CIP2name             CIP4  CIP4name         CIP6  CIP6name        </span></a>
 <a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;                &lt;chr&gt; &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;           </span></a>
 <a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; 1 01    Agriculture/Agricul~ 0100  Agriculture/Gen~ 0100~ Agriculture - G~</span></a>
 <a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; 2 03    Natural Resources a~ 0301  Natural Resourc~ 0301~ Natural Resourc~</span></a>
@@ -136,8 +138,7 @@
 <a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; 4 05    Area/Ethnic/Cultura~ 0501  Area Studies     0501~ African Studies </span></a>
 <a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; 5 09    Communications/Jour~ 0901  Communications ~ 0901~ Communication -~</span></a>
 <a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; # ... with 43 more rows</span></a></code></pre></div>
-<p><code><a href="../reference/cip_filter.html">cip_filter()</a></code> searches all columns in <code>data</code> for the strings in <code>series</code> and returns a data frame whose rows contain the search terms.</p>
-<p>Filtering is performed by <code><a href="http://dplyr.tidyverse.org/reference/filter.html">dplyr::filter()</a></code> with pattern detection by <code><a href="http://www.rdocumentation.org/packages/stringr/topics/str_detect">stringr::str_detect()</a></code>.</p>
+<p><a href="#TOC">back to TOC</a></p>
 </div>
 <div id="search-by-keywords" class="section level2">
 <h2 class="hasAnchor">
@@ -153,19 +154,19 @@
 CIP2
 </th>
 <th style="text-align:left;">
-CIP2Name
+CIP2name
 </th>
 <th style="text-align:left;">
 CIP4
 </th>
 <th style="text-align:left;">
-CIP4Name
+CIP4name
 </th>
 <th style="text-align:left;">
 CIP6
 </th>
 <th style="text-align:left;">
-CIP6Name
+CIP6name
 </th>
 </tr></thead>
 <tbody>
@@ -421,19 +422,19 @@ Multi/Interdisciplinary Studies - Ancient Studies/Civilization
 CIP2
 </th>
 <th style="text-align:left;">
-CIP2Name
+CIP2name
 </th>
 <th style="text-align:left;">
 CIP4
 </th>
 <th style="text-align:left;">
-CIP4Name
+CIP4name
 </th>
 <th style="text-align:left;">
 CIP6
 </th>
 <th style="text-align:left;">
-CIP6Name
+CIP6name
 </th>
 </tr></thead>
 <tbody>
@@ -559,7 +560,7 @@ Civil Engineering - Other
 </tr>
 </tbody>
 </table>
-<p>In the next example we find that the keyword “German” appears in three different 2-digit groups of programs.</p>
+<p>In the next example, suppose we want to study programs relating to German culture, history, politics, language, and literature. Using “German” for the <code>series</code> value yields</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co"># series with a keyword</span></a>
 <a class="sourceLine" id="cb6-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"German"</span>, <span class="st">"german"</span>))</a>
 <a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
@@ -569,19 +570,19 @@ Civil Engineering - Other
 CIP2
 </th>
 <th style="text-align:left;">
-CIP2Name
+CIP2name
 </th>
 <th style="text-align:left;">
 CIP4
 </th>
 <th style="text-align:left;">
-CIP4Name
+CIP4name
 </th>
 <th style="text-align:left;">
 CIP6
 </th>
 <th style="text-align:left;">
-CIP6Name
+CIP6name
 </th>
 </tr></thead>
 <tbody>
@@ -787,9 +788,9 @@ Germanic Languages/Literatures and Linguistics - Other
 </tr>
 </tbody>
 </table>
-<p>If we were interested in German Studies specifically, we might want to limit our CIP codes to “050125” and “160501”.</p>
+<p>From the result we find the specific 6-digit codes we want and refine the search to obtain,</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># series with a 6-digit code</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"050125"</span>, <span class="st">"160501"</span>))</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"050125"</span>, <span class="st">"160501"</span>, <span class="st">"160599"</span>))</a>
 <a class="sourceLine" id="cb7-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead><tr>
@@ -797,19 +798,19 @@ Germanic Languages/Literatures and Linguistics - Other
 CIP2
 </th>
 <th style="text-align:left;">
-CIP2Name
+CIP2name
 </th>
 <th style="text-align:left;">
 CIP4
 </th>
 <th style="text-align:left;">
-CIP4Name
+CIP4name
 </th>
 <th style="text-align:left;">
 CIP6
 </th>
 <th style="text-align:left;">
-CIP6Name
+CIP6name
 </th>
 </tr></thead>
 <tbody>
@@ -853,8 +854,29 @@ Germanic Languages/Literatures Linguistics
 German Language and Literature
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+Foreign Languages/Literatures and Linguistics
+</td>
+<td style="text-align:left;">
+1605
+</td>
+<td style="text-align:left;">
+Germanic Languages/Literatures Linguistics
+</td>
+<td style="text-align:left;">
+160599
+</td>
+<td style="text-align:left;">
+Germanic Languages/Literatures and Linguistics - Other
+</td>
+</tr>
 </tbody>
 </table>
+<p><a href="#TOC">back to TOC</a></p>
 </div>
 <div id="search-by-cip-codes" class="section level2">
 <h2 class="hasAnchor">
@@ -870,19 +892,19 @@ German Language and Literature
 CIP2
 </th>
 <th style="text-align:left;">
-CIP2Name
+CIP2name
 </th>
 <th style="text-align:left;">
 CIP4
 </th>
 <th style="text-align:left;">
-CIP4Name
+CIP4name
 </th>
 <th style="text-align:left;">
 CIP6
 </th>
 <th style="text-align:left;">
-CIP6Name
+CIP6name
 </th>
 </tr></thead>
 <tbody>
@@ -938,19 +960,19 @@ Structural Engineering
 CIP2
 </th>
 <th style="text-align:left;">
-CIP2Name
+CIP2name
 </th>
 <th style="text-align:left;">
 CIP4
 </th>
 <th style="text-align:left;">
-CIP4Name
+CIP4name
 </th>
 <th style="text-align:left;">
 CIP6
 </th>
 <th style="text-align:left;">
-CIP6Name
+CIP6name
 </th>
 </tr></thead>
 <tbody>
@@ -1177,7 +1199,7 @@ Vietnamese Language and Literature
 </tbody>
 </table>
 <p>This search, in addition to the desired Engineering programs, returned two Foreign Language programs because their 6-digit codes contain “1407” and “1408”. We use the regular expression notation <code>^</code> to match the start of the strings.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># 4-digit example matching the start of the string </span></a>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># 4-digit example matching the start of the string</span></a>
 <a class="sourceLine" id="cb10-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"^1407"</span>, <span class="st">"^1408"</span>))</a>
 <a class="sourceLine" id="cb10-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
@@ -1186,19 +1208,19 @@ Vietnamese Language and Literature
 CIP2
 </th>
 <th style="text-align:left;">
-CIP2Name
+CIP2name
 </th>
 <th style="text-align:left;">
 CIP4
 </th>
 <th style="text-align:left;">
-CIP4Name
+CIP4name
 </th>
 <th style="text-align:left;">
 CIP6
 </th>
 <th style="text-align:left;">
-CIP6Name
+CIP6name
 </th>
 </tr></thead>
 <tbody>
@@ -1394,19 +1416,19 @@ Civil Engineering - Other
 CIP2
 </th>
 <th style="text-align:left;">
-CIP2Name
+CIP2name
 </th>
 <th style="text-align:left;">
 CIP4
 </th>
 <th style="text-align:left;">
-CIP4Name
+CIP4name
 </th>
 <th style="text-align:left;">
 CIP6
 </th>
 <th style="text-align:left;">
-CIP6Name
+CIP6name
 </th>
 </tr></thead>
 <tbody>
@@ -1602,19 +1624,19 @@ History - Other
 CIP2
 </th>
 <th style="text-align:left;">
-CIP2Name
+CIP2name
 </th>
 <th style="text-align:left;">
 CIP4
 </th>
 <th style="text-align:left;">
-CIP4Name
+CIP4name
 </th>
 <th style="text-align:left;">
 CIP6
 </th>
 <th style="text-align:left;">
-CIP6Name
+CIP6name
 </th>
 </tr></thead>
 <tbody>
@@ -1790,19 +1812,19 @@ Physical Anthropology
 CIP2
 </th>
 <th style="text-align:left;">
-CIP2Name
+CIP2name
 </th>
 <th style="text-align:left;">
 CIP4
 </th>
 <th style="text-align:left;">
-CIP4Name
+CIP4name
 </th>
 <th style="text-align:left;">
 CIP6
 </th>
 <th style="text-align:left;">
-CIP6Name
+CIP6name
 </th>
 </tr></thead>
 <tbody>
@@ -1949,6 +1971,7 @@ Military History
 </tbody>
 </table>
 <p>Invalid codes in the sequence, e.g., 540109 and 540110, are silently ignored.</p>
+<p><a href="#TOC">back to TOC</a></p>
 </div>
 <div id="search-by-named-series" class="section level2">
 <h2 class="hasAnchor">
@@ -1971,11 +1994,12 @@ Military History
 <a class="sourceLine" id="cb14-14" data-line-number="14"><span class="co">#&gt; Observations: 54</span></a>
 <a class="sourceLine" id="cb14-15" data-line-number="15"><span class="co">#&gt; Variables: 6</span></a>
 <a class="sourceLine" id="cb14-16" data-line-number="16"><span class="co">#&gt; $ CIP2     &lt;chr&gt; "14", "14", "14", "14", "14", "14", "14", "14", "14",...</span></a>
-<a class="sourceLine" id="cb14-17" data-line-number="17"><span class="co">#&gt; $ CIP2Name &lt;chr&gt; "Engineering", "Engineering", "Engineering", "Enginee...</span></a>
+<a class="sourceLine" id="cb14-17" data-line-number="17"><span class="co">#&gt; $ CIP2name &lt;chr&gt; "Engineering", "Engineering", "Engineering", "Enginee...</span></a>
 <a class="sourceLine" id="cb14-18" data-line-number="18"><span class="co">#&gt; $ CIP4     &lt;chr&gt; "1401", "1401", "1402", "1403", "1404", "1405", "1406...</span></a>
-<a class="sourceLine" id="cb14-19" data-line-number="19"><span class="co">#&gt; $ CIP4Name &lt;chr&gt; "Engineering/General", "Engineering/General", "Aerosp...</span></a>
+<a class="sourceLine" id="cb14-19" data-line-number="19"><span class="co">#&gt; $ CIP4name &lt;chr&gt; "Engineering/General", "Engineering/General", "Aerosp...</span></a>
 <a class="sourceLine" id="cb14-20" data-line-number="20"><span class="co">#&gt; $ CIP6     &lt;chr&gt; "140101", "140102", "140201", "140301", "140401", "14...</span></a>
-<a class="sourceLine" id="cb14-21" data-line-number="21"><span class="co">#&gt; $ CIP6Name &lt;chr&gt; "Engineering - General", "Pre-Engineering", "Aerospac...</span></a></code></pre></div>
+<a class="sourceLine" id="cb14-21" data-line-number="21"><span class="co">#&gt; $ CIP6name &lt;chr&gt; "Engineering - General", "Pre-Engineering", "Aerospac...</span></a></code></pre></div>
+<p><a href="#TOC">back to TOC</a></p>
 </div>
 <div id="using-a-previous-result-as-a-data-argument" class="section level2">
 <h2 class="hasAnchor">
@@ -1985,26 +2009,26 @@ Military History
 <p>Suppose, after viewing the full “49” series above we decide we only need the “4903” subset. We can use the data frame <code>df1</code> from above as the <code>data</code> argument.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="co"># use a previous result as a data argument</span></a>
 <a class="sourceLine" id="cb16-2" data-line-number="2">df2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"4903"</span>, <span class="dt">data =</span> df1)</a>
-<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="kw">kable</span>(df2) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kable_styling</span>(<span class="dt">font_size =</span> <span class="dv">12</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="kw">kable</span>(df2)</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
 CIP2
 </th>
 <th style="text-align:left;">
-CIP2Name
+CIP2name
 </th>
 <th style="text-align:left;">
 CIP4
 </th>
 <th style="text-align:left;">
-CIP4Name
+CIP4name
 </th>
 <th style="text-align:left;">
 CIP6
 </th>
 <th style="text-align:left;">
-CIP6Name
+CIP6name
 </th>
 </tr></thead>
 <tbody>
@@ -2091,16 +2115,20 @@ Marine Transportation Services - Other
 </tbody>
 </table>
 </div>
-<div id="conclusion" class="section level2">
+<div id="next" class="section level2">
 <h2 class="hasAnchor">
-<a href="#conclusion" class="anchor"></a>Conclusion</h2>
-<p>Having used the <code><a href="../reference/cip_filter.html">cip_filter()</a></code> function to identify the codes of the programs one wishes to study, the codes are used to filter the midfieldr datasets to obtain the records of students who matriculate, ever enroll, or graduate in those programs.</p>
+<a href="#next" class="anchor"></a>Next</h2>
+<p>Having used <code><a href="../reference/cip_filter.html">cip_filter()</a></code> to identify the codes of the programs one wishes to study, the codes are used to filter the midfieldr datasets to obtain the records of students affiliated with those programs.</p>
+<p><a href="#TOC">back to TOC</a></p>
 </div>
-<div class="footnotes">
-<hr>
-<ol>
-<li id="fn1"><p>The CIP is curated by the Integrated Postsecondary Education Data System (IPEDS), the the core postsecondary education data collection program of the National Center for Education Statistics (NCES), an agency of the US Department of Education (<a href="https://nces.ed.gov/ipeds/cipcode" class="uri">https://nces.ed.gov/ipeds/cipcode</a>).<a href="#fnref1" class="footnote-back">↩</a></p></li>
-</ol>
+<div id="references" class="section level2 unnumbered">
+<h2 class="hasAnchor">
+<a href="#references" class="anchor"></a>References</h2>
+<div id="refs" class="references">
+<div id="ref-cip2010">
+<p>“Classification of Instructional Programs (CIP).” 2010. National Center for Education Statistics (NCES); <a href="https://nces.ed.gov/ipeds/cipcode/" class="uri">https://nces.ed.gov/ipeds/cipcode/</a>.</p>
+</div>
+</div>
 </div>
   </div>
 
@@ -2114,7 +2142,8 @@ Marine Transportation Services - Other
       <li><a href="#search-by-cip-codes">Search by CIP codes</a></li>
       <li><a href="#search-by-named-series">Search by named series</a></li>
       <li><a href="#using-a-previous-result-as-a-data-argument">Using a previous result as a data argument</a></li>
-      <li><a href="#conclusion">Conclusion</a></li>
+      <li><a href="#next">Next</a></li>
+      <li><a href="#references">References</a></li>
       </ul>
 </div>
       </div>

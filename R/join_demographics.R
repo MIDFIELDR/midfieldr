@@ -1,5 +1,6 @@
-#' @importFrom dplyr select left_join semi_join
+#' @importFrom dplyr select filter all_equal left_join mutate
 #' @importFrom magrittr %>%
+#' @importFrom stringr str_detect str_replace
 NULL
 
 #' Join student demographics to a data frame
@@ -11,24 +12,27 @@ NULL
 #' @return The incoming data frame plus two new columns \code{sex} and \code{race}. Other columns are unaffected.
 #'
 #' @export
-join_demographics <- function(df){
+join_demographics <- function(df) {
 
 	stopifnot(is.data.frame(df))
+	# check that necessary variables are present
 	stopifnot("ID" %in% names(df))
 
-	# select the three variables we need from the student dataset
-	studentID_sex_race <- midfieldstudents %>%
-		select(ID, sex, race) %>%
+	# filter midfieldstudents by IDs in input df
+	series <- stringr::str_c(df$ID, collapse = "|")
+	demographics <- midfieldstudents %>%
+		dplyr::select(ID, race, sex) %>%
+		dplyr::filter(stringr::str_detect(ID, series)) %>%
 		unique()
 
-	# use semi_join to return all rows from the students data frame
-	# with matching IDs in the ever data farme
-	studentID_sex_race <- semi_join(studentID_sex_race, df, by = "ID") %>%
-		unique()
-
-	# join to the data frame
-	df <- left_join(df, studentID_sex_race, by = "ID")
-
+	# join demographics if number of unique students identical
+	if (dplyr::all_equal(unique(df$ID), demographics$ID)) {
+		df <- dplyr::left_join(df, demographics, by = "ID") %>%
+			dplyr::mutate(sex = stringr::str_replace(sex, "M", "Male")) %>%
+			dplyr::mutate(sex = stringr::str_replace(sex, "F", "Female"))
+	} else {
+		warning("Mismatch between input ID and midfieldstudents data ID")
+	}
 	return(df)
 }
 "join_demographics"

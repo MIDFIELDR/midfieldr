@@ -98,11 +98,10 @@
 
     
     
+<p>“Stickiness” is a longitudinal persistence metric that tracks all students who contact an instructional program to determine what percentage “stick” to that program and graduate in it. Stickiness is defined as the ratio of the number of students graduating in a program to the number of students ever enrolled in the program.<span class="citation">(Ohland et al. 2012)</span></p>
 <div id="getting-started" class="section level2">
 <h2 class="hasAnchor">
 <a href="#getting-started" class="anchor"></a>Getting started</h2>
-<p>“Stickiness” is a longitudinal persistence metric that tracks all students who contact an instructional program to determine what percentage “stick” to that program and graduate in it. Stickiness is defined as the ratio of the number of students graduating in a program to the number of students ever enrolled in the program.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
-<!-- footnote -->
 <p>In this article, we show you how to use midfieldr functions to compute program stickiness. Our workflow is:</p>
 <ul>
 <li>select the programs</li>
@@ -112,43 +111,51 @@
 <li>compute stickiness</li>
 <li>graph stickiness</li>
 </ul>
-<p>Because our research focuses on intersectionality, we typically disaggregate the data by program, sex, and race/ethnicity.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> You may of course choose your own combination of variables to study.</p>
+<p>Because our research focuses on intersectionality, we typically disaggregate the data by program, sex, and race/ethnicity.[^2] You may of course choose your own combination of variables to study.</p>
+<p>If you are an R beginner, you can get the most out of this tutorial by</p>
+<ul>
+<li>opening a new R script<br>
+</li>
+<li>copying or typing a line of code from the tutorial to your script</li>
+<li>running your script after each new line is added</li>
+<li>examining the result after each addition</li>
+</ul>
 </div>
-<div id="select-the-programs" class="section level2">
+<div id="select-the-programs-to-study" class="section level2">
 <h2 class="hasAnchor">
-<a href="#select-the-programs" class="anchor"></a>Select the programs</h2>
+<a href="#select-the-programs-to-study" class="anchor"></a>Select the programs to study</h2>
 <p>For this example, we compare the stickiness of three engineering programs: Civil, Electrical, and Mechanical. Their 4-digit CIP codes were found by keyword search as illustrated in <a href="cip_filter.html">Selecting CIP codes</a>.</p>
 <p>We use:</p>
 <ul>
 <li>
-<code><a href="../reference/cip_filter.html">cip_filter()</a></code> to obtain the relevant program codes.<br>
-</li>
+<code><a href="../reference/cip_filter.html">cip_filter()</a></code> to obtain the relevant program codes</li>
 <li>
-<code>add_column()</code> (a <a href="http://tibble.tidyverse.org">tibble</a> function) to add the <code>PGRM</code> variable to the data frame: a custom program label we use later for grouping, counting, and graphing.</li>
+<code>add_column()</code> (a <a href="http://tibble.tidyverse.org">tibble</a> function) to add the user-defined <code>program</code> variable</li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># obtain 2, 4, and 6-digit CIP codes and names</span></a>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># obtain CIP codes and names</span></a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(dplyr)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(tibble)</a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">library</span>(midfieldr) </a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">cve &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1408"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">PGRM =</span> <span class="st">"Civil Engineering"</span>)</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6">ele &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1410"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">PGRM =</span> <span class="st">"Electrical Engineering"</span>)</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7">mce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1419"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">PGRM =</span> <span class="st">"Mechanical Engineering"</span>)</a></code></pre></div>
-<p>Assigning a custom label to <code>PGRM</code> is useful when the set of CIP codes we plan to group and count do not already have a common CIP name. For example, there is no CIP name for the general group of programs called Humanities.</p>
-<p>Selecting the values of <code>PGRM</code> is important when using collections not specifically identified as groups in the CIP dataset, e.g., Humanities, Physical Sciences, and the collections provided in the midfieldr <code>named_series</code>.</p>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(tidyr)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">library</span>(tibble)</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">library</span>(midfieldr)</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">cve &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1408"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">program =</span> <span class="st">"Civil Engineering"</span>)</a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">ele &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1410"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">program =</span> <span class="st">"Electrical Engineering"</span>)</a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">mce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1419"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">program =</span> <span class="st">"Mechanical Engineering"</span>)</a></code></pre></div>
+<p>Assigning a custom label via <code>program</code> is useful when a set of CIP codes does not already have a common name. For example, there is no CIP name for the Humanities group of programs.</p>
 <p>Next we bind the individual program data frames into one data frame. We use two <a href="http://dplyr.tidyverse.org">dplyr</a> functions:</p>
 <ul>
 <li>
-<code>bind_rows()</code> to bind the programs into one data frame ()</li>
+<code>bind_rows()</code> to bind the programs into one dataframe named <code>study_group</code>
+</li>
 <li>
-<code>select()</code> to keep two variables: <code>CIP6</code> for finding the desired student records and <code>PGRM</code> for grouping.</li>
+<code>select()</code> to keep two variables: <code>CIP6</code> for finding the desired student records and <code>program</code> for grouping</li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># bind the four programs</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">programs &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(cve, ele, mce) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="st">    </span><span class="kw">select</span>(CIP6, PGRM)</a></code></pre></div>
+<a class="sourceLine" id="cb2-2" data-line-number="2">study_group &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(cve, ele, mce) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="st">  </span><span class="kw">select</span>(CIP6, program)</a></code></pre></div>
 <p>Examine the result: there are 11 CIP codes for these three programs.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># examine the result</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">programs</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt;      CIP6                   PGRM</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">study_group</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt;      CIP6                program</span></a>
 <a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; 1  140801      Civil Engineering</span></a>
 <a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; 2  140802      Civil Engineering</span></a>
 <a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; 3  140803      Civil Engineering</span></a>
@@ -164,372 +171,130 @@
 <div id="count-students-ever-enrolled" class="section level2">
 <h2 class="hasAnchor">
 <a href="#count-students-ever-enrolled" class="anchor"></a>Count students ever enrolled</h2>
-<p>A student contributes to a program’s “ever enrolled” total if the program’s CIP code appears in the student’s <code>midfieldterms</code> data. A student is counted once per program.</p>
-<p>To gather the students ever enrolled, we use:</p>
-<ul>
-<li>the midfieldr <code>midfieldterms</code> data for term-by-term program information.</li>
-<li>the midfieldr <code>midfieldstudents</code> data for student race/ethnicity and sex.</li>
-<li>
-<code><a href="../reference/gather_ever.html">gather_ever()</a></code> to gather students ever enrolled in <code>programs</code> and to add their race/ethnicity and sex to the data frame.</li>
-</ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># examine midfieldstudents</span></a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">df &lt;-<span class="st"> </span>midfieldstudents</a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co"># gather students ever enrolled in the programs</span></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="kw">library</span>(midfieldstudents)</a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="kw">library</span>(midfieldterms)</a>
-<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="kw">library</span>(DescTools)</a>
-<a class="sourceLine" id="cb4-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co"># ever &lt;- gather_ever(midfieldterms, programs)</span></a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb4-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="kw">library</span>(stringr)</a>
-<a class="sourceLine" id="cb4-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co"># select variables such that we end up with one unique observation per student</span></a>
-<a class="sourceLine" id="cb4-17" data-line-number="17">ever &lt;-<span class="st"> </span>midfieldterms <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb4-18" data-line-number="18"><span class="st">    </span><span class="kw">select</span>(ID, program) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb4-19" data-line-number="19"><span class="st">    </span><span class="kw">unique</span>()</a>
-<a class="sourceLine" id="cb4-20" data-line-number="20"></a>
-<a class="sourceLine" id="cb4-21" data-line-number="21"><span class="kw">glimpse</span>(ever)</a>
-<a class="sourceLine" id="cb4-22" data-line-number="22"></a>
-<a class="sourceLine" id="cb4-23" data-line-number="23"><span class="co"># collapse the programs CIP6 vector to a search string</span></a>
-<a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co"># filter `ever` for the desired programs</span></a>
-<a class="sourceLine" id="cb4-25" data-line-number="25">series &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/stringr/topics/str_c">str_c</a></span>(programs<span class="op">$</span>CIP6, <span class="dt">collapse =</span> <span class="st">"|"</span>)</a>
-<a class="sourceLine" id="cb4-26" data-line-number="26"></a>
-<a class="sourceLine" id="cb4-27" data-line-number="27"></a>
-<a class="sourceLine" id="cb4-28" data-line-number="28"></a>
-<a class="sourceLine" id="cb4-29" data-line-number="29"></a>
-<a class="sourceLine" id="cb4-30" data-line-number="30">ever &lt;-<span class="st"> </span>ever <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-31" data-line-number="31"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="kw">str_detect</span>(program, series)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-32" data-line-number="32"><span class="st">    </span><span class="kw">unique</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb4-33" data-line-number="33"><span class="st">    </span><span class="kw">arrange</span>(ID)</a>
-<a class="sourceLine" id="cb4-34" data-line-number="34"></a>
-<a class="sourceLine" id="cb4-35" data-line-number="35"><span class="kw">glimpse</span>(ever)</a>
-<a class="sourceLine" id="cb4-36" data-line-number="36"><span class="kw">Desc</span>(ever)</a>
-<a class="sourceLine" id="cb4-37" data-line-number="37"></a>
-<a class="sourceLine" id="cb4-38" data-line-number="38"><span class="kw">str_length</span>(ever<span class="op">$</span>ID[[<span class="dv">1</span>]])</a>
-<a class="sourceLine" id="cb4-39" data-line-number="39"></a>
-<a class="sourceLine" id="cb4-40" data-line-number="40"><span class="co"># Join the program labels to ever</span></a>
-<a class="sourceLine" id="cb4-41" data-line-number="41">programs &lt;-<span class="st"> </span>programs <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb4-42" data-line-number="42"><span class="st">    </span><span class="kw">rename</span>(<span class="dt">program =</span> CIP6)</a>
-<a class="sourceLine" id="cb4-43" data-line-number="43"></a>
-<a class="sourceLine" id="cb4-44" data-line-number="44">ever &lt;-<span class="st"> </span><span class="kw">left_join</span>(ever, programs, <span class="dt">by =</span> <span class="st">"program"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-45" data-line-number="45"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(program) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb4-46" data-line-number="46"><span class="st">    </span><span class="kw">rename</span>(<span class="dt">program_label =</span> PGRM)</a>
-<a class="sourceLine" id="cb4-47" data-line-number="47"></a>
-<a class="sourceLine" id="cb4-48" data-line-number="48"><span class="kw">glimpse</span>(ever)</a></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">df &lt;-<span class="st"> </span>ever</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb5-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co"># select the three variables we need from the student dataset</span></a>
-<a class="sourceLine" id="cb5-7" data-line-number="7">studentID_sex_race &lt;-<span class="st"> </span>midfieldstudents <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="st">    </span><span class="kw">select</span>(ID, sex, race)</a>
-<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; Error in eval(lhs, parent, parent): object 'midfieldstudents' not found</span></a>
-<a class="sourceLine" id="cb5-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb5-11" data-line-number="11">studentID_sex_race &lt;-<span class="st"> </span><span class="kw">unique</span>(studentID_sex_race)</a>
-<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt; Error in unique(studentID_sex_race): object 'studentID_sex_race' not found</span></a>
-<a class="sourceLine" id="cb5-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="kw">library</span>(DescTools)</a>
-<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="kw">Desc</span>(studentID_sex_race)</a>
-<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="co">#&gt; Error in Desc(studentID_sex_race): object 'studentID_sex_race' not found</span></a>
-<a class="sourceLine" id="cb5-17" data-line-number="17"></a>
-<a class="sourceLine" id="cb5-18" data-line-number="18"></a>
-<a class="sourceLine" id="cb5-19" data-line-number="19"><span class="kw">glimpse</span>(studentID_sex_race)</a>
-<a class="sourceLine" id="cb5-20" data-line-number="20"><span class="co">#&gt; Error in glimpse(studentID_sex_race): object 'studentID_sex_race' not found</span></a>
-<a class="sourceLine" id="cb5-21" data-line-number="21"></a>
-<a class="sourceLine" id="cb5-22" data-line-number="22"><span class="co"># # use semi_join to return all rows from the students data frame</span></a>
-<a class="sourceLine" id="cb5-23" data-line-number="23"><span class="co"># # with matching IDs in the ever data farme</span></a>
-<a class="sourceLine" id="cb5-24" data-line-number="24"><span class="co"># studentID_sex_race &lt;- semi_join(studentID_sex_race, df, by = "ID") %&gt;%</span></a>
-<a class="sourceLine" id="cb5-25" data-line-number="25"><span class="co">#   unique()</span></a>
-<a class="sourceLine" id="cb5-26" data-line-number="26"><span class="co"># </span></a>
-<a class="sourceLine" id="cb5-27" data-line-number="27"><span class="co"># glimpse(studentID_sex_race)</span></a>
-<a class="sourceLine" id="cb5-28" data-line-number="28"><span class="co"># library(DescTools)</span></a>
-<a class="sourceLine" id="cb5-29" data-line-number="29"><span class="co"># Desc(studentID_sex_race)</span></a>
-<a class="sourceLine" id="cb5-30" data-line-number="30"></a>
-<a class="sourceLine" id="cb5-31" data-line-number="31"><span class="co"># join to the data frame</span></a>
-<a class="sourceLine" id="cb5-32" data-line-number="32">df &lt;-<span class="st"> </span><span class="kw">left_join</span>(df, studentID_sex_race, <span class="dt">by =</span> <span class="st">"ID"</span>)</a>
-<a class="sourceLine" id="cb5-33" data-line-number="33"><span class="co">#&gt; Error: `by` can't contain join column `ID` which is missing from LHS</span></a>
-<a class="sourceLine" id="cb5-34" data-line-number="34"></a>
-<a class="sourceLine" id="cb5-35" data-line-number="35"></a>
-<a class="sourceLine" id="cb5-36" data-line-number="36"><span class="co"># Join the sex and ethnicity/race demographics from the `student` dataset to the `ever` data frame.</span></a>
-<a class="sourceLine" id="cb5-37" data-line-number="37"><span class="co"># ever &lt;- join_demographics(ever)</span></a>
-<a class="sourceLine" id="cb5-38" data-line-number="38">ever &lt;-<span class="st"> </span>df</a>
-<a class="sourceLine" id="cb5-39" data-line-number="39"></a>
-<a class="sourceLine" id="cb5-40" data-line-number="40"></a>
-<a class="sourceLine" id="cb5-41" data-line-number="41"><span class="kw">Desc</span>(ever)</a>
-<a class="sourceLine" id="cb5-42" data-line-number="42"><span class="co">#&gt; ------------------------------------------------------------------------- </span></a>
-<a class="sourceLine" id="cb5-43" data-line-number="43"><span class="co">#&gt; Describe ever (tbl_df, tbl, data.frame):</span></a>
-<a class="sourceLine" id="cb5-44" data-line-number="44"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-45" data-line-number="45"><span class="co">#&gt; data.frame:  58306 obs. of  10 variables</span></a>
-<a class="sourceLine" id="cb5-46" data-line-number="46"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-47" data-line-number="47"><span class="co">#&gt;   Nr  ColName      Class      NAs             Levels</span></a>
-<a class="sourceLine" id="cb5-48" data-line-number="48"><span class="co">#&gt;   1   MID          numeric        .                 </span></a>
-<a class="sourceLine" id="cb5-49" data-line-number="49"><span class="co">#&gt;   2   BEGINYEAR    numeric    58306 (100.0%)        </span></a>
-<a class="sourceLine" id="cb5-50" data-line-number="50"><span class="co">#&gt;   3   TYEAR        numeric        .                 </span></a>
-<a class="sourceLine" id="cb5-51" data-line-number="51"><span class="co">#&gt;   4   TTERM        character      .                 </span></a>
-<a class="sourceLine" id="cb5-52" data-line-number="52"><span class="co">#&gt;   5   INSTITUTION  character      .                 </span></a>
-<a class="sourceLine" id="cb5-53" data-line-number="53"><span class="co">#&gt;   6   TCIPN        character      .                 </span></a>
-<a class="sourceLine" id="cb5-54" data-line-number="54"><span class="co">#&gt;   7   CIP6         character      .                 </span></a>
-<a class="sourceLine" id="cb5-55" data-line-number="55"><span class="co">#&gt;   8   PGRM         character      .                 </span></a>
-<a class="sourceLine" id="cb5-56" data-line-number="56"><span class="co">#&gt;   9   ETHNIC       character      .                 </span></a>
-<a class="sourceLine" id="cb5-57" data-line-number="57"><span class="co">#&gt;   10  SEX          character      .                 </span></a>
-<a class="sourceLine" id="cb5-58" data-line-number="58"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-59" data-line-number="59"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-60" data-line-number="60"><span class="co">#&gt; ------------------------------------------------------------------------- </span></a>
-<a class="sourceLine" id="cb5-61" data-line-number="61"><span class="co">#&gt; 1 - MID (numeric)</span></a>
-<a class="sourceLine" id="cb5-62" data-line-number="62"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-63" data-line-number="63"><span class="co">#&gt;           length               n             NAs          unique</span></a>
-<a class="sourceLine" id="cb5-64" data-line-number="64"><span class="co">#&gt;           58'306          58'306               0          10'006</span></a>
-<a class="sourceLine" id="cb5-65" data-line-number="65"><span class="co">#&gt;                           100.0%            0.0%                </span></a>
-<a class="sourceLine" id="cb5-66" data-line-number="66"><span class="co">#&gt;                                                                 </span></a>
-<a class="sourceLine" id="cb5-67" data-line-number="67"><span class="co">#&gt;              .05             .10             .25          median</span></a>
-<a class="sourceLine" id="cb5-68" data-line-number="68"><span class="co">#&gt;   820'452'781.00  820'782'803.00  821'879'633.00  823'666'155.50</span></a>
-<a class="sourceLine" id="cb5-69" data-line-number="69"><span class="co">#&gt;                                                                 </span></a>
-<a class="sourceLine" id="cb5-70" data-line-number="70"><span class="co">#&gt;            range              sd           vcoef             mad</span></a>
-<a class="sourceLine" id="cb5-71" data-line-number="71"><span class="co">#&gt;    10'825'178.00    3'347'412.02            0.00    3'396'260.76</span></a>
-<a class="sourceLine" id="cb5-72" data-line-number="72"><span class="co">#&gt;                                                                 </span></a>
-<a class="sourceLine" id="cb5-73" data-line-number="73"><span class="co">#&gt;               0s            mean          meanCI</span></a>
-<a class="sourceLine" id="cb5-74" data-line-number="74"><span class="co">#&gt;                0  824'655'309.12  824'628'137.86</span></a>
-<a class="sourceLine" id="cb5-75" data-line-number="75"><span class="co">#&gt;             0.0%                  824'682'480.37</span></a>
-<a class="sourceLine" id="cb5-76" data-line-number="76"><span class="co">#&gt;                                                 </span></a>
-<a class="sourceLine" id="cb5-77" data-line-number="77"><span class="co">#&gt;              .75             .90             .95</span></a>
-<a class="sourceLine" id="cb5-78" data-line-number="78"><span class="co">#&gt;   828'106'238.00  829'807'427.00  830'226'097.00</span></a>
-<a class="sourceLine" id="cb5-79" data-line-number="79"><span class="co">#&gt;                                                 </span></a>
-<a class="sourceLine" id="cb5-80" data-line-number="80"><span class="co">#&gt;              IQR            skew            kurt</span></a>
-<a class="sourceLine" id="cb5-81" data-line-number="81"><span class="co">#&gt;     6'226'605.00            0.48           -1.22</span></a>
-<a class="sourceLine" id="cb5-82" data-line-number="82"><span class="co">#&gt;                                                 </span></a>
-<a class="sourceLine" id="cb5-83" data-line-number="83"><span class="co">#&gt; lowest : 820'101'136.0, 820'102'025.0 (5), 820'102'571.0 (9), 820'102'802.0 (12), 820'103'019.0 (2)</span></a>
-<a class="sourceLine" id="cb5-84" data-line-number="84"><span class="co">#&gt; highest: 830'891'531.0 (3), 830'895'353.0 (2), 830'913'294.0, 830'918'782.0 (3), 830'926'314.0 (3)</span></a>
-<a class="sourceLine" id="cb5-85" data-line-number="85"><span class="co">#&gt; Warning in n * h: NAs produced by integer overflow</span></a>
-<a class="sourceLine" id="cb5-86" data-line-number="86"><span class="co">#&gt; Warning in PlotFdist(x = x$x, main = main, args.hist = args.hist, ...):</span></a>
-<a class="sourceLine" id="cb5-87" data-line-number="87"><span class="co">#&gt; NaNs produced</span></a>
-<a class="sourceLine" id="cb5-88" data-line-number="88"><span class="co">#&gt; Error in if (abs(n) &gt; 2) {: missing value where TRUE/FALSE needed</span></a></code></pre></div>
-<p><img src="stickiness_files/figure-html/unnamed-chunk-5-1.png" width="576"></p>
-<pre><code>#&gt; Error in library(midfieldstudent): there is no package called 'midfieldstudent'
-#&gt; Error in library(midfieldterm): there is no package called 'midfieldterm'</code></pre>
-<p>To examine the result of the operation, use <code>glimpse()</code>, a <a href="http://tibble.tidyverse.org">tibble</a> function.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># examine the result</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw">glimpse</span>(ever)</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; Observations: 58,306</span></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt; Variables: 10</span></a>
-<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt; $ MID         &lt;dbl&gt; 820102025, 820102025, 820102025, 820102025, 820102...</span></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt; $ BEGINYEAR   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; $ TYEAR       &lt;dbl&gt; 2004, 2003, 2004, 2004, 2005, 1990, 1991, 1991, 19...</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt; $ TTERM       &lt;chr&gt; "SP", "FA", "FA", "SM", "SP", "FA", "SP", "FA", "S...</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt; $ INSTITUTION &lt;chr&gt; "Institution 1", "Institution 1", "Institution 1",...</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; $ TCIPN       &lt;chr&gt; "TCIP", "TCIP", "TCIP", "TCIP", "TCIP", "TCIP", "T...</span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt; $ CIP6        &lt;chr&gt; "140801", "140801", "140801", "140801", "140801", ...</span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt; $ PGRM        &lt;chr&gt; "Civil Engineering", "Civil Engineering", "Civil E...</span></a>
-<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt; $ ETHNIC      &lt;chr&gt; "No Response", "No Response", "No Response", "No R...</span></a>
-<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt; $ SEX         &lt;chr&gt; "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", ...</span></a></code></pre></div>
-<!-- footnote -->
-<p>At this point, one decides how to group the the students for counting. In our example, we group by race/ethnicity, sex, and program. We use the following <a href="http://dplyr.tidyverse.org">dplyr</a> functions:</p>
-<ul>
-<li>
-<code>count()</code> to group and count the students by program, ethnicity/race, and sex. The count is assigned to the default variable <code>n</code>.</li>
-<li>
-<code>rename()</code> to rename <code>n</code> to <code>EVER</code> for the number of students in this group ever enrolled in the program.</li>
-<li>
-<code>arrange()</code> to arrange the rows of the resulting data frame in order of descending magnitude of the count.</li>
-</ul>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># count ever enrolled by grouping variables </span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">ever_count &lt;-<span class="st"> </span><span class="kw">count</span>(ever, PGRM, ETHNIC, SEX)  <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">    </span><span class="kw">rename</span>(<span class="dt">EVER =</span> n) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">    </span><span class="kw">arrange</span>(<span class="kw">desc</span>(EVER))</a>
-<a class="sourceLine" id="cb8-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co"># examine the result</span></a>
-<a class="sourceLine" id="cb8-7" data-line-number="7">ever_count</a>
-<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">#&gt; # A tibble: 53 x 4</span></a>
-<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co">#&gt;    PGRM                   ETHNIC          SEX    EVER</span></a>
-<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#&gt;    &lt;chr&gt;                  &lt;chr&gt;           &lt;chr&gt; &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="co">#&gt;  1 Mechanical Engineering White           M     21092</span></a>
-<a class="sourceLine" id="cb8-12" data-line-number="12"><span class="co">#&gt;  2 Civil Engineering      White           M     11146</span></a>
-<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#&gt;  3 Electrical Engineering White           M      8029</span></a>
-<a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#&gt;  4 Civil Engineering      White           F      3080</span></a>
-<a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt;  5 Mechanical Engineering White           F      2573</span></a>
-<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co">#&gt;  6 Mechanical Engineering Hispanic/Latino M      1302</span></a>
-<a class="sourceLine" id="cb8-17" data-line-number="17"><span class="co">#&gt;  7 Mechanical Engineering No Response     M      1071</span></a>
-<a class="sourceLine" id="cb8-18" data-line-number="18"><span class="co">#&gt;  8 Electrical Engineering International   M       974</span></a>
-<a class="sourceLine" id="cb8-19" data-line-number="19"><span class="co">#&gt;  9 Electrical Engineering White           F       961</span></a>
-<a class="sourceLine" id="cb8-20" data-line-number="20"><span class="co">#&gt; 10 Mechanical Engineering International   M       953</span></a>
-<a class="sourceLine" id="cb8-21" data-line-number="21"><span class="co">#&gt; # ... with 43 more rows</span></a></code></pre></div>
-<p>We can examine our saummarized data using <a href="http://ggplot2.tidyverse.org">ggplot2</a>.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># multiway graph of ever enrolled numbers </span></a>
-<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw">library</span>(ggplot2)</a>
-<a class="sourceLine" id="cb9-3" data-line-number="3">f1 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(ever_count, <span class="kw">aes</span>(<span class="dt">x =</span> EVER, <span class="dt">y =</span> <span class="kw">reorder</span>(ETHNIC, EVER, median), <span class="dt">col =</span> SEX)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span><span class="st">  </span></a>
-<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="st">    </span><span class="kw">facet_wrap</span>(<span class="op">~</span><span class="st"> </span><span class="kw">reorder</span>(PGRM, <span class="op">-</span>EVER, median), <span class="dt">ncol =</span> <span class="dv">1</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="st">    </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">"Number of students ever enrolled"</span>, <span class="dt">y =</span> <span class="st">""</span>) </a></code></pre></div>
-<p>To format the graph, we use the following midfieldr graph functions:</p>
-<ul>
-<li>
-<code><a href="../reference/graph_functions.html">expon_scale_x_log10()</a></code> creates exponential powers-of-ten notation and logarithmic grid lines.<br>
-</li>
-<li>
-<code><a href="../reference/graph_functions.html">midfield_theme()</a></code>, the ggplot <code>theme_minimal()</code> with some revisions.</li>
-<li>
-<code><a href="../reference/rcb.html">rcb()</a></code> yields a hexadecimal code for specific colors named in the <code><a href="../reference/rcb_colors.html">midfieldr::rcb_colors</a></code> dataset.</li>
-</ul>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># format with midfieldr graph functions</span></a>
-<a class="sourceLine" id="cb10-2" data-line-number="2">f1 &lt;-<span class="st"> </span>f1 <span class="op">+</span></a>
-<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">    </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="kw"><a href="../reference/rcb.html">rcb</a></span>(<span class="st">"mid_Br"</span>), <span class="kw"><a href="../reference/rcb.html">rcb</a></span>(<span class="st">"mid_BG"</span>))) <span class="op">+</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">    </span><span class="kw"><a href="../reference/graph_functions.html">expon_scale_x_log10</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="st">    </span><span class="kw"><a href="../reference/graph_functions.html">midfield_theme</a></span>() </a>
+<p><code><a href="../reference/gather_ever.html">gather_ever()</a></code> extracts a subset of <code>midfieldterms</code> containing all unique students ever enrolled in the programs listed in <code>study_group</code> and joins our user-defined <code>program</code> labels to these data.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># extract unique students from midfieldterms</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">unique_students &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_ever.html">gather_ever</a></span>(midfieldterms, study_group)</a></code></pre></div>
+<p><code>glimpse()</code> the result to check the number of observations and to view the first few values of each variable.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># examine the result</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">glimpse</span>(unique_students)</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt; Observations: 9,389</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt; Variables: 4</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; $ ID          &lt;chr&gt; "MID25783197", "MID25783388", "MID25783441", "MID2...</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt; $ institution &lt;chr&gt; "Institution M", "Institution M", "Institution M",...</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt; $ CIP6        &lt;chr&gt; "140801", "141901", "140801", "141001", "140801", ...</span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; $ program     &lt;chr&gt; "Civil Engineering", "Mechanical Engineering", "Ci...</span></a></code></pre></div>
+<p><code><a href="../reference/join_demographics.html">join_demographics()</a></code> joins student race and sex from <code>midfieldstudents</code> to these data.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co"># join demographics from midfieldstudents</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">unique_students &lt;-<span class="st"> </span><span class="kw"><a href="../reference/join_demographics.html">join_demographics</a></span>(unique_students)</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co"># examine the result</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw">glimpse</span>(unique_students)</a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; Observations: 9,389</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; Variables: 6</span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; $ ID          &lt;chr&gt; "MID25783197", "MID25783388", "MID25783441", "MID2...</span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; $ institution &lt;chr&gt; "Institution M", "Institution M", "Institution M",...</span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; $ CIP6        &lt;chr&gt; "140801", "141901", "140801", "141001", "140801", ...</span></a>
+<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; $ program     &lt;chr&gt; "Civil Engineering", "Mechanical Engineering", "Ci...</span></a>
+<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; $ race        &lt;chr&gt; "White", "White", "White", "White", "White", "Whit...</span></a>
+<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; $ sex         &lt;chr&gt; "Male", "Male", "Male", "Male", "Male", "Male", "M...</span></a></code></pre></div>
+<p>Before counting students, we select the variables to use for grouping and summarizing, Here, for example, we select program, race, and sex (thereby omitting ID, CIP6, and institution).</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># select the variables to use for counting</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">unique_students &lt;-<span class="st"> </span>unique_students <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">select</span>(program, sex, race)</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co"># examine the result</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="kw">glimpse</span>(unique_students)</a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; Observations: 9,389</span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt; Variables: 3</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt; $ program &lt;chr&gt; "Civil Engineering", "Mechanical Engineering", "Civil ...</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; $ sex     &lt;chr&gt; "Male", "Male", "Male", "Male", "Male", "Male", "Male"...</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt; $ race    &lt;chr&gt; "White", "White", "White", "White", "White", "White", ...</span></a></code></pre></div>
+<p><code>count_and_fill()</code> counts the number of students grouped by the variables we just selected. If race or sex are in the list, empty entries are assigned a zero.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># count ever enrolled and label the count "ever"</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">ever_enrolled &lt;-<span class="st"> </span><span class="kw">count_and_fill</span>(unique_students, <span class="st">"ever"</span>)</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co"># examine the result</span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="kw">glimpse</span>(ever_enrolled)</a>
+<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt; Observations: 48</span></a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#&gt; Variables: 4</span></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">#&gt; $ program &lt;chr&gt; "Civil Engineering", "Civil Engineering", "Civil Engin...</span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co">#&gt; $ race    &lt;chr&gt; "Asian", "Black", "Hispanic", "International", "Native...</span></a>
+<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#&gt; $ sex     &lt;chr&gt; "Female", "Female", "Female", "Female", "Female", "Fem...</span></a>
+<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="co">#&gt; $ ever    &lt;dbl&gt; 22, 71, 16, 2, 0, 12, 2, 445, 50, 180, 24, 11, 3, 11, ...</span></a></code></pre></div>
+<p>In summary, four function calls are needed to gather and count the numbers of students ever enrolled in a set of programs. We can chain those functions together in one code chunk as follows:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># counting students ever enrolled in a program in one code chain</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">ever_enrolled &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_ever.html">gather_ever</a></span>(midfieldterms, study_group) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/join_demographics.html">join_demographics</a></span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(program, race, sex) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="st">  </span><span class="kw">count_and_fill</span>(., <span class="st">"ever"</span>)</a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co"># examine the result</span></a>
+<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="kw">glimpse</span>(ever_enrolled)</a>
+<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; Observations: 48</span></a>
+<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt; Variables: 4</span></a>
+<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co">#&gt; $ program &lt;chr&gt; "Civil Engineering", "Civil Engineering", "Civil Engin...</span></a>
+<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="co">#&gt; $ race    &lt;chr&gt; "Asian", "Black", "Hispanic", "International", "Native...</span></a>
+<a class="sourceLine" id="cb9-13" data-line-number="13"><span class="co">#&gt; $ sex     &lt;chr&gt; "Female", "Female", "Female", "Female", "Female", "Fem...</span></a>
+<a class="sourceLine" id="cb9-14" data-line-number="14"><span class="co">#&gt; $ ever    &lt;dbl&gt; 22, 71, 16, 2, 0, 12, 2, 445, 50, 180, 24, 11, 3, 11, ...</span></a></code></pre></div>
+<p>Alternatively, suppose we want to group by program and sex, but ignore race. We duplicate the earlier code chunk, but edit the <code>select()</code> arguments.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># group by program and sex</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">ever_enrolled &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_ever.html">gather_ever</a></span>(midfieldterms, study_group) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/join_demographics.html">join_demographics</a></span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(program, sex) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="st">  </span><span class="kw">count_and_fill</span>(., <span class="st">"ever"</span>)</a>
 <a class="sourceLine" id="cb10-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="kw">print</span>(f1)</a></code></pre></div>
-<p><img src="stickiness_files/figure-html/unnamed-chunk-11-1.png" width="691.2"></p>
-<p>For the rationale underlying the design of this “multiway” graph, see our <a href="multiway.html">Multiway data and graphs</a> discussion.</p>
+<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co"># this set is small enough to view in a table</span></a>
+<a class="sourceLine" id="cb10-8" data-line-number="8">ever_enrolled &lt;-<span class="st"> </span>ever_enrolled <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="st">    </span><span class="kw">arrange</span>(<span class="kw">desc</span>(ever))</a>
+<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="kw">kable</span>(ever_enrolled)</a></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">program</th>
+<th align="left">sex</th>
+<th align="right">ever</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Mechanical Engineering</td>
+<td align="left">Male</td>
+<td align="right">3331</td>
+</tr>
+<tr class="even">
+<td align="left">Electrical Engineering</td>
+<td align="left">Male</td>
+<td align="right">2500</td>
+</tr>
+<tr class="odd">
+<td align="left">Civil Engineering</td>
+<td align="left">Male</td>
+<td align="right">1836</td>
+</tr>
+<tr class="even">
+<td align="left">Mechanical Engineering</td>
+<td align="left">Female</td>
+<td align="right">626</td>
+</tr>
+<tr class="odd">
+<td align="left">Civil Engineering</td>
+<td align="left">Female</td>
+<td align="right">570</td>
+</tr>
+<tr class="even">
+<td align="left">Electrical Engineering</td>
+<td align="left">Female</td>
+<td align="right">526</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="count-students-graduating" class="section level2">
+<div id="references" class="section level2 unnumbered">
 <h2 class="hasAnchor">
-<a href="#count-students-graduating" class="anchor"></a>Count students graduating</h2>
-<p>To gather the students graduating from a program, we use:</p>
-<ul>
-<li>
-<code>student</code> dataset for student race/ethnicity and sex.</li>
-<li>
-<code>degree</code> dataset for the programs from which students graduate.</li>
-<li>
-<code>midfieldr::gather_grad()</code> to subset <code>degree</code> for those students graduating from <code>programs</code> and add variables <code>ETHNIC</code> and <code>SEX</code>.</li>
-</ul>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">glimpse</span>(degree)</a>
-<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="co">#&gt; Error in glimpse(degree): object 'degree' not found</span></a>
-<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="kw">sort</span>(<span class="kw">unique</span>(degree<span class="op">$</span>GCIP))</a>
-<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt; Error in unique(degree$GCIP): object 'degree' not found</span></a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="kw">sort</span>(<span class="kw">unique</span>(degree<span class="op">$</span>GCIP2))</a>
-<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; Error in unique(degree$GCIP2): object 'degree' not found</span></a>
-<a class="sourceLine" id="cb11-7" data-line-number="7"><span class="kw">sort</span>(<span class="kw">unique</span>(degree<span class="op">$</span>GCIP3))</a>
-<a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt; Error in unique(degree$GCIP3): object 'degree' not found</span></a></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">library</span>(stringr)</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="co"># draft of gather_grad()</span></a>
-<a class="sourceLine" id="cb12-3" data-line-number="3">gather_grad &lt;-<span class="st"> </span><span class="cf">function</span>(degree, programs) {</a>
-<a class="sourceLine" id="cb12-4" data-line-number="4">    </a>
-<a class="sourceLine" id="cb12-5" data-line-number="5">    <span class="co"># select only those variables likely to be used for grouping</span></a>
-<a class="sourceLine" id="cb12-6" data-line-number="6">    grad &lt;-<span class="st"> </span>degree <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="st">        </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/select.html">select</a></span>(MID, GYEAR, GTERM, INSTITUTION, GCIP, GCIP2, GCIP3)</a>
-<a class="sourceLine" id="cb12-8" data-line-number="8">    </a>
-<a class="sourceLine" id="cb12-9" data-line-number="9">    <span class="co"># keep the earliest term in which a student earns a degree</span></a>
-<a class="sourceLine" id="cb12-10" data-line-number="10">    grad &lt;-<span class="st"> </span>grad <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-11" data-line-number="11"><span class="st">        </span><span class="kw">arrange</span>(MID, GYEAR, GTERM) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-12" data-line-number="12"><span class="st">        </span><span class="kw">group_by</span>(MID) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-13" data-line-number="13"><span class="st">        </span><span class="kw">filter</span>(<span class="kw">row_number</span>(MID) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-14" data-line-number="14"><span class="st">        </span><span class="kw">ungroup</span>()</a>
-<a class="sourceLine" id="cb12-15" data-line-number="15">    </a>
-<a class="sourceLine" id="cb12-16" data-line-number="16">    <span class="co"># gather all 6-digit codes (GCIP, GCIP2, GCIP3) for multiple degrees</span></a>
-<a class="sourceLine" id="cb12-17" data-line-number="17">    <span class="co"># omit rows with no second or third degree</span></a>
-<a class="sourceLine" id="cb12-18" data-line-number="18">    grad &lt;-<span class="st"> </span>grad <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-19" data-line-number="19"><span class="st">        </span>tidyr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/tidyr/topics/gather">gather</a></span>(GCIPN, CIP6, GCIP<span class="op">:</span>GCIP3) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-20" data-line-number="20"><span class="st">        </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(GCIPN)) </a>
-<a class="sourceLine" id="cb12-21" data-line-number="21">    </a>
-<a class="sourceLine" id="cb12-22" data-line-number="22">    <span class="co"># collapse the programs CIP6 vector to a search string</span></a>
-<a class="sourceLine" id="cb12-23" data-line-number="23">    <span class="co"># then filter grad for the desired programs</span></a>
-<a class="sourceLine" id="cb12-24" data-line-number="24">    series &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/stringr/topics/str_c">str_c</a></span>(programs<span class="op">$</span>CIP6, <span class="dt">collapse =</span> <span class="st">"|"</span>)</a>
-<a class="sourceLine" id="cb12-25" data-line-number="25">    grad &lt;-<span class="st"> </span>grad <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-26" data-line-number="26"><span class="st">        </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="kw">str_detect</span>(CIP6, series)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-27" data-line-number="27"><span class="st">        </span><span class="kw">unique</span>()</a>
-<a class="sourceLine" id="cb12-28" data-line-number="28">    </a>
-<a class="sourceLine" id="cb12-29" data-line-number="29">    <span class="co"># Join the program labels to grad</span></a>
-<a class="sourceLine" id="cb12-30" data-line-number="30">    grad &lt;-<span class="st"> </span><span class="kw">left_join</span>(grad, programs, <span class="dt">by =</span> <span class="st">"CIP6"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-31" data-line-number="31"><span class="st">        </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(CIP6)</a>
-<a class="sourceLine" id="cb12-32" data-line-number="32"></a>
-<a class="sourceLine" id="cb12-33" data-line-number="33">    <span class="co"># Join the sex and ethnicity/race demographics from student</span></a>
-<a class="sourceLine" id="cb12-34" data-line-number="34">    grad &lt;-<span class="st"> </span><span class="kw"><a href="../reference/join_demographics.html">join_demographics</a></span>(grad)</a>
-<a class="sourceLine" id="cb12-35" data-line-number="35">    </a>
-<a class="sourceLine" id="cb12-36" data-line-number="36">    <span class="kw">return</span>(grad)</a>
-<a class="sourceLine" id="cb12-37" data-line-number="37">}</a></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">grad &lt;-<span class="st"> </span><span class="kw">gather_grad</span>(degree, programs)</a>
-<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="co">#&gt; Error in eval(lhs, parent, parent): object 'degree' not found</span></a>
-<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="kw">glimpse</span>(grad)</a>
-<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="co">#&gt; Error in glimpse(grad): object 'grad' not found</span></a></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw">library</span>(tidyr)</a>
-<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="co"># count graduates by grouping variables </span></a>
-<a class="sourceLine" id="cb14-3" data-line-number="3">grad_count &lt;-<span class="st"> </span><span class="kw">count</span>(grad, PGRM, ETHNIC, SEX)  <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="st">    </span><span class="kw">rename</span>(<span class="dt">GRAD =</span> n) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="st">    </span><span class="kw">arrange</span>(<span class="kw">desc</span>(GRAD))</a>
-<a class="sourceLine" id="cb14-6" data-line-number="6"><span class="co">#&gt; Error in group_vars(x): object 'grad' not found</span></a>
-<a class="sourceLine" id="cb14-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb14-8" data-line-number="8"><span class="co"># examine the result</span></a>
-<a class="sourceLine" id="cb14-9" data-line-number="9">grad_count</a>
-<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'grad_count' not found</span></a>
-<a class="sourceLine" id="cb14-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb14-12" data-line-number="12"><span class="co"># join ever and grad</span></a>
-<a class="sourceLine" id="cb14-13" data-line-number="13">stickiness &lt;-<span class="st"> </span><span class="kw">left_join</span>(ever_count, grad_count, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">"PGRM"</span>, <span class="st">"ETHNIC"</span>, <span class="st">"SEX"</span>)) </a>
-<a class="sourceLine" id="cb14-14" data-line-number="14"><span class="co">#&gt; Error in tbl_vars(y): object 'grad_count' not found</span></a>
-<a class="sourceLine" id="cb14-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb14-16" data-line-number="16"><span class="co"># if GRAD is NA, due to join with EVER. Is correctly set to zero </span></a>
-<a class="sourceLine" id="cb14-17" data-line-number="17">stickiness &lt;-<span class="st"> </span>stickiness <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb14-18" data-line-number="18"><span class="st">    </span><span class="kw">replace_na</span>(<span class="kw">list</span>(<span class="dt">GRAD =</span> <span class="dv">0</span>))</a>
-<a class="sourceLine" id="cb14-19" data-line-number="19"><span class="co">#&gt; Error in eval(lhs, parent, parent): object 'stickiness' not found</span></a>
-<a class="sourceLine" id="cb14-20" data-line-number="20"></a>
-<a class="sourceLine" id="cb14-21" data-line-number="21"><span class="co"># compute stickiness</span></a>
-<a class="sourceLine" id="cb14-22" data-line-number="22">stickiness &lt;-<span class="st"> </span>stickiness <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb14-23" data-line-number="23"><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">STICK =</span> <span class="kw">round</span>(GRAD <span class="op">/</span><span class="st"> </span>EVER, <span class="dv">2</span>))</a>
-<a class="sourceLine" id="cb14-24" data-line-number="24"><span class="co">#&gt; Error in eval(lhs, parent, parent): object 'stickiness' not found</span></a>
-<a class="sourceLine" id="cb14-25" data-line-number="25"></a>
-<a class="sourceLine" id="cb14-26" data-line-number="26">    </a>
-<a class="sourceLine" id="cb14-27" data-line-number="27">                                                </a>
-<a class="sourceLine" id="cb14-28" data-line-number="28"><span class="kw">kable</span>(stickiness)</a>
-<a class="sourceLine" id="cb14-29" data-line-number="29"><span class="co">#&gt; Error in kable(stickiness): object 'stickiness' not found</span></a></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="co"># select only those variables likely to be used for grouping</span></a>
-<a class="sourceLine" id="cb15-2" data-line-number="2">grad &lt;-<span class="st"> </span>degree <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/select.html">select</a></span>(MID, GYEAR, GTERM, INSTITUTION, GCIP, GCIP2, GCIP3)</a>
-<a class="sourceLine" id="cb15-4" data-line-number="4"><span class="co">#&gt; Error in eval(lhs, parent, parent): object 'degree' not found</span></a>
-<a class="sourceLine" id="cb15-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb15-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb15-7" data-line-number="7"><span class="kw">unique</span>(grad<span class="op">$</span>GCIP2)</a>
-<a class="sourceLine" id="cb15-8" data-line-number="8"><span class="co">#&gt; Error in unique(grad$GCIP2): object 'grad' not found</span></a>
-<a class="sourceLine" id="cb15-9" data-line-number="9"><span class="kw">unique</span>(grad<span class="op">$</span>GCIP3)</a>
-<a class="sourceLine" id="cb15-10" data-line-number="10"><span class="co">#&gt; Error in unique(grad$GCIP3): object 'grad' not found</span></a></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="co"># keep the earliest term in which a student earns a degree</span></a>
-<a class="sourceLine" id="cb16-2" data-line-number="2">one_degree &lt;-<span class="st"> </span>grad <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="st">    </span><span class="kw">filter</span>(<span class="kw">is.na</span>(GCIP2) <span class="op">&amp;</span><span class="st"> </span><span class="kw">is.na</span>(GCIP3)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="st">    </span><span class="kw">arrange</span>(MID, GYEAR, GTERM)  <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb16-5" data-line-number="5"><span class="st">    </span><span class="kw">unique</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-6" data-line-number="6"><span class="st">    </span><span class="kw">group_by</span>(MID) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-7" data-line-number="7"><span class="st">    </span><span class="kw">filter</span>(<span class="kw">row_number</span>(MID) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-8" data-line-number="8"><span class="st">    </span><span class="kw">ungroup</span>()</a>
-<a class="sourceLine" id="cb16-9" data-line-number="9"><span class="co">#&gt; Error in eval(lhs, parent, parent): object 'grad' not found</span></a>
-<a class="sourceLine" id="cb16-10" data-line-number="10"><span class="kw">glimpse</span>(one_degree)</a>
-<a class="sourceLine" id="cb16-11" data-line-number="11"><span class="co">#&gt; Error in glimpse(one_degree): object 'one_degree' not found</span></a>
-<a class="sourceLine" id="cb16-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb16-13" data-line-number="13"><span class="kw">unique</span>(one_degree<span class="op">$</span>GCIP2)</a>
-<a class="sourceLine" id="cb16-14" data-line-number="14"><span class="co">#&gt; Error in unique(one_degree$GCIP2): object 'one_degree' not found</span></a>
-<a class="sourceLine" id="cb16-15" data-line-number="15"><span class="kw">unique</span>(one_degree<span class="op">$</span>GCIP3)</a>
-<a class="sourceLine" id="cb16-16" data-line-number="16"><span class="co">#&gt; Error in unique(one_degree$GCIP3): object 'one_degree' not found</span></a></code></pre></div>
-<p>Gather the GCIPs into a single column</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">one_degree &lt;-<span class="st"> </span>one_degree <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="st">    </span><span class="kw">gather</span>(GCIPN, CIP6, GCIP<span class="op">:</span>GCIP3) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="st">    </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(CIP6))</a>
-<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="co">#&gt; Error in eval(lhs, parent, parent): object 'one_degree' not found</span></a>
-<a class="sourceLine" id="cb17-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb17-6" data-line-number="6"><span class="kw">glimpse</span>(one_degree)</a>
-<a class="sourceLine" id="cb17-7" data-line-number="7"><span class="co">#&gt; Error in glimpse(one_degree): object 'one_degree' not found</span></a></code></pre></div>
-<p>Now count</p>
+<a href="#references" class="anchor"></a>References</h2>
+<div id="refs" class="references">
+<div id="ref-stickiness2012">
+<p>Ohland, Matthew, Marisa Orr, Richard Layton, Susan Lord, and Russell Long. 2012. “Introducing Stickiness as a Versatile Metric of Engineering Persistence.” In <em>Proceedings of the Frontiers in Education Conference</em>, 1–5.</p>
 </div>
-<div id="compute-stickiness" class="section level2">
-<h2 class="hasAnchor">
-<a href="#compute-stickiness" class="anchor"></a>Compute stickiness</h2>
 </div>
-<div id="graph-stickiness" class="section level2">
-<h2 class="hasAnchor">
-<a href="#graph-stickiness" class="anchor"></a>Graph stickiness</h2>
-</div>
-<div id="cleanup" class="section level2">
-<h2 class="hasAnchor">
-<a href="#cleanup" class="anchor"></a>cleanup</h2>
-<p>delete the temp data save</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="co"># unlink("data/ever.rda")</span></a></code></pre></div>
-</div>
-<div class="footnotes">
-<hr>
-<ol>
-<li id="fn1"><p>Matthew Ohland, Marisa Orr, Richard Layton, Susan Lord and Russell Long (2012) Introducing “stickiness” as a versatile metric of engineering persistence, in proc. <em>2012 Frontiers in Education Conference</em>, Seattle, WA, pp. 1–5. <a href="http://dx.doi.org/10.1109/FIE.2012.6462214">DOI 10.1109/FIE.2012.6462214</a>.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>The possible values of race/ethnicity and sex categories are limited to those used by the participating US institutions. Thus sex is limited to the set (F, M) and race/ethnicity is limited to the set (Asian, Black, Hawaiian/Pac. Islander, Hispanic/Latino, International, Multi-Racial, Native American, No Response, White).<a href="#fnref2" class="footnote-back">↩</a></p></li>
-</ol>
 </div>
   </div>
 
@@ -539,12 +304,9 @@
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#getting-started">Getting started</a></li>
-      <li><a href="#select-the-programs">Select the programs</a></li>
+      <li><a href="#select-the-programs-to-study">Select the programs to study</a></li>
       <li><a href="#count-students-ever-enrolled">Count students ever enrolled</a></li>
-      <li><a href="#count-students-graduating">Count students graduating</a></li>
-      <li><a href="#compute-stickiness">Compute stickiness</a></li>
-      <li><a href="#graph-stickiness">Graph stickiness</a></li>
-      <li><a href="#cleanup">cleanup</a></li>
+      <li><a href="#references">References</a></li>
       </ul>
 </div>
       </div>

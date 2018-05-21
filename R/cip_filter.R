@@ -11,10 +11,9 @@ NULL
 #' Filter a data frame of Classification of Instructional Programs (CIP) codes
 #' to return the rows that match conditions.
 #'
-#'The purpose of \code{cip_filter()} is to obtain the CIP codes of specific
-#'academic programs one wishes to study. The codes returned are used to identify
-#'students in the midfieldr datasets (\code{student}, \code{course},
-#'\code{term}, \code{degree})
+#' The purpose of \code{cip_filter()} is to obtain the CIP codes of specific
+#' programs and use the results to obtain the records of students in those
+#' programs.
 #'
 #' @param series The conditions used to filter the data. A character vector
 #' (or coercible to one) of any combination of 2, 4, or 6-digit CIP codes.
@@ -35,7 +34,7 @@ NULL
 #'
 #' @export
 cip_filter <- function(series = NULL, data = NULL) {
-	# default cip data set or coerce to characters
+	# default cip data set, else coerce to characters
 	if (is.null(data)) {
 		data <- midfieldr::cip
 	}

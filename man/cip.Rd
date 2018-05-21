@@ -13,18 +13,18 @@ All variables are characters. An observation is a unique program.
   most general groupings of related programs" (US National Center for
   Education Statistics).}
 
-  \item{CIP2Name}{Name of a program at the 2-digit level.}
+  \item{CIP2name}{Name of a program at the 2-digit level.}
 
   \item{CIP4}{An instructional program's 4-digit code, representing
   "intermediate groupings of programs that have comparable content and
   objectives".}
 
-  \item{CIP4Name}{Name of a program at the 4-digit level.}
+  \item{CIP4name}{Name of a program at the 4-digit level.}
 
   \item{CIP6}{An instructional program's 6-digit code, representing
   "specific instructional programs".}
 
-  \item{CIP6Name}{Name of a program at the 6-digit level.}
+  \item{CIP6name}{Name of a program at the 6-digit level.}
 }}
 \source{
 The MIDFIELD project (\url{https://engineering.purdue.edu/MIDFIELD})

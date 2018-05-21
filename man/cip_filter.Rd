@@ -24,9 +24,8 @@ to return the rows that match conditions.
 }
 \details{
 The purpose of \code{cip_filter()} is to obtain the CIP codes of specific
-academic programs one wishes to study. The codes returned are used to identify
-students in the midfieldr datasets (\code{student}, \code{course},
-\code{term}, \code{degree})
+programs and use the results to obtain the records of students in those
+programs.
 }
 \examples{
 cip_filter(series = c("490101", "490205"))

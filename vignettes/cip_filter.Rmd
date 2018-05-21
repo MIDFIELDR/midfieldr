@@ -8,8 +8,7 @@ vignette: >
   %\VignetteIndexEntry{Selecting CIP codes}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
-  chunk_output_type: console
+bibliography: ../inst/REFERENCES.bib
 ---
 
 ```{r setup, echo = FALSE, message = FALSE}
@@ -21,48 +20,56 @@ opts_chunk$set(error = TRUE, purl = FALSE)
 opts_chunk$set(fig.width = 6)
 options(tibble.print_max = 10L, tibble.print_min = 5L)
 knit_hooks$set(inline = function(x) {
-	if (!is.numeric(x)) { 
-		x 
-		} else if (x >= 10000) { 
-		prettyNum(round(x, 2), big.mark = ",")
-		} else {
-		prettyNum(round(x, 2))
-		}
-	})
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+
+# unpack data bits
+data_bits <- midfieldr:::data_bits_cip
+obs_cip <- round(data_bits$data[data_bits$name == "obs_cip"] / 1e+0, 1)
+var_cip <- data_bits$data[data_bits$name == "var_cip"]
+size_cip <- round(data_bits$data[data_bits$name == "size_cip"] / 1e+3, 0)
 ```
 
-The Classification of Instructional Programs (CIP) is a taxonomy of academic  programs curated by an agency of the US Department of Education.[^1]
+The Classification of Instructional Programs (CIP) is a taxonomy of academic  programs curated by an agency of the US Department of Education.[@cip2010]
 
-[^1]: The CIP is curated by the Integrated Postsecondary Education Data System (IPEDS), the the core postsecondary education data collection program of the National Center for Education Statistics (NCES), an agency of the US Department of Education (https://nces.ed.gov/ipeds/cipcode). 
 
 
 
 ```{r}
 # packages used in the vignette
 library(midfieldr)
-library(dplyr) 
+library(tibble)
 library(stringr)
 library(knitr)
 ```
 
 ```{r echo = FALSE}
-# For formatting the output seen by the reader
-# but not used by the reader
+# use kable_styling() for output but conceal from novice user
 library(kableExtra)
 ```
 
 ## Introduction
 
-Instructional programs are encoded in `cip`, a data frame of character variables listing the 2, 4, and 6-digit CIP codes and program names in the MIDFILED database. See the help page (`?cip`) for more detail.  
+Instructional programs are encoded in `cip`, a midfieldr data frame of character variables listing the 2, 4, and 6-digit CIP codes and program names in the MIDFILED database. To learn more, open the help page by running `?cip`. 
+
+Taking a `glimpse()` of `cip` reveals that we have  `r obs_cip` unique observations (6-digit programs) and shows the first few values of the `r var_cip` variables. 
 
 ```{r}
 glimpse(cip)
 ```
 
-`cip_filter()` filters `cip` for the programs we wish to study. The function has two arguments:   
+`cip_filter()` filters `cip` data frame for the programs we wish to study. The function has two arguments:   
 
 - `series` <span style="display:inline-block; width: 1mm;"></span> Search terms. A character vector of codes or keywords.  
 - `data` <span style="display:inline-block; width: 5.5mm;"></span>A searchable data frame (`cip` is the default). 
+
+`cip_filter()` searches all columns in `data` for the strings in `series` and returns a data frame whose rows contain the search terms. Filtering is performed by `dplyr::filter()` with pattern detection by `stringr::str_detect()`. 
 
 With no arguments, `cip_filter()` returns the unique 2-digit series and the first entry of the corresponding 4- and 6-digit series. 
 
@@ -70,9 +77,11 @@ With no arguments, `cip_filter()` returns the unique 2-digit series and the firs
 cip_filter()
 ```
 
-`cip_filter()` searches all columns in `data` for the strings in `series` and returns a data frame whose rows contain the search terms.
 
-Filtering is performed by `dplyr::filter()` with pattern detection by `stringr::str_detect()`.  
+
+
+
+
 
 ## Search by keywords
 
@@ -87,6 +96,7 @@ kable(df)
 ```
 
 ```{r echo = FALSE}
+# using kable_styling() for output but conceal from novice user
 kable(df, "html") %>% kable_styling(font_size = 12)
 ```
 
@@ -99,10 +109,11 @@ kable(df)
 ```
 
 ```{r echo = FALSE}
+# using kable_styling() for output but conceal from novice user
 kable(df, "html") %>% kable_styling(font_size = 12)
 ```
 
-In the next example we find that the keyword "German" appears in three different 2-digit groups of programs. 
+In the next example, suppose we want to study programs relating to German culture, history, politics, language, and literature. Using  "German" for the `series` value yields 
 
 ```{r results = "hide"}
 # series with a keyword
@@ -111,20 +122,23 @@ kable(df)
 ```
 
 ```{r echo = FALSE}
+# using kable_styling() for output but conceal from novice user
 kable(df, "html") %>% kable_styling(font_size = 12)
 ```
 
- If we were interested in German Studies specifically, we might want to limit our CIP codes  to "050125" and "160501".
+From the result we find the specific 6-digit codes we want and refine the search to obtain, 
  
 ```{r results = "hide"}
 # series with a 6-digit code
-df <- cip_filter(series = c("050125", "160501"))
+df <- cip_filter(series = c("050125", "160501", "160599"))
 kable(df)
 ```
  
 ```{r echo = FALSE}
+# using kable_styling() for output but conceal from novice user
 kable(df, "html") %>% kable_styling(font_size = 12)
 ```
+
 
 
 
@@ -143,6 +157,7 @@ kable(df)
 ```
 
 ```{r echo = FALSE}
+# using kable_styling() for output but conceal from novice user
 kable(df, "html") %>% kable_styling(font_size = 12)
 ```
 
@@ -155,18 +170,20 @@ kable(df)
 ```
 
 ```{r echo = FALSE}
+# using kable_styling() for output but conceal from novice user
 kable(df, "html") %>% kable_styling(font_size = 12)
 ```
 
 This search, in addition to the desired Engineering programs, returned two Foreign Language programs because their 6-digit codes contain "1407" and "1408". We use the regular expression notation `^` to match the start of the strings.
 
 ```{r results = "hide"}
-# 4-digit example matching the start of the string 
+# 4-digit example matching the start of the string
 df <- cip_filter(series = c("^1407", "^1408"))
 kable(df)
 ```
 
 ```{r echo = FALSE}
+# using kable_styling() for output but conceal from novice user
 kable(df, "html") %>% kable_styling(font_size = 12)
 ```
 
@@ -180,6 +197,7 @@ kable(df)
 ```
 
 ```{r echo = FALSE}
+# using kable_styling() for output but conceal from novice user
 kable(df, "html") %>% kable_styling(font_size = 12)
 ```
 
@@ -192,6 +210,7 @@ kable(df)
 ```
 
 ```{r echo = FALSE}
+# using kable_styling() for output but conceal from novice user
 kable(df, "html") %>% kable_styling(font_size = 12)
 ```
 
@@ -204,10 +223,13 @@ kable(df)
 ```
 
 ```{r echo = FALSE}
+# using kable_styling() for output but conceal from novice user
 kable(df, "html") %>% kable_styling(font_size = 12)
 ```
 
 Invalid codes in the sequence, e.g., 540109 and 540110, are silently ignored. 
+
+
 
 
 
@@ -229,11 +251,6 @@ glimpse(df)
 
 
 
-
-
-
-
-
 ## Using a previous result as a data argument 
 
 A data frame produced by `cip_filter()` can be used as the `data` argument in a subsequent use of `cip_filter()`. 
@@ -247,17 +264,16 @@ Suppose, after viewing the full "49" series above we decide we only need the "49
 ```{r results = "hide"}
 # use a previous result as a data argument
 df2 <- cip_filter(series = "4903", data = df1)
-kable(df2) %>% kable_styling(font_size = 12)
+kable(df2)
 ```
 
-
 ```{r echo = FALSE}
+# using kable_styling() for output but conceal from novice user
 kable(df2, "html") %>% kable_styling(font_size = 12)
 ```
 
 
 
+## References
 
-## Conclusion
 
-Having used the `cip_filter()` function to identify the codes of the programs one wishes to study, the codes are used to filter the midfieldr   datasets to obtain the records of students who matriculate, ever enroll, or graduate in those programs. 

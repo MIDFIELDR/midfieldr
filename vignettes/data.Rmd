@@ -1,10 +1,14 @@
 ---
 title: "MIDFIELD data"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette: 
+    toc: true
+    toc_depth: 2
 vignette: >
   %\VignetteIndexEntry{MIDFIELD data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: ../inst/REFERENCES.bib
 ---
 
 ```{r echo = FALSE, message = FALSE}
@@ -16,53 +20,61 @@ opts_chunk$set(error = TRUE, purl = FALSE)
 opts_chunk$set(fig.width = 6)
 options(tibble.print_min = 6L, tibble.print_max = 6L)
 knit_hooks$set(inline = function(x) {
-	if (!is.numeric(x)) { 
-		x 
-		} else if (x >= 10000) { 
-		prettyNum(round(x, 2), big.mark = ",")
-		} else {
-		prettyNum(round(x, 2))
-		}
-	})
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
 ```
 
 ```{r echo = FALSE}
 library(midfieldr)
 library(stringr)
-data_bits <- midfieldr:::data_bits
+
+# unpack data bits
+data_bits <- midfieldr:::data_bits_cip
+obs_cip <- round(data_bits$data[data_bits$name == "obs_cip"] / 1e+0, 1)
+var_cip <- data_bits$data[data_bits$name == "var_cip"]
+size_cip <- round(data_bits$data[data_bits$name == "size_cip"] / 1e+3, 0)
+
+data_bits <- midfieldstudents:::data_bits_students
+obs_student <- round(data_bits$data[data_bits$name == "obs_student"] / 1e+0, 1)
+size_student <- round(data_bits$data[data_bits$name == "size_student"] / 1e+6, 0)
+var_student <- data_bits$data[data_bits$name == "var_student"]
+year_min <- data_bits$data[data_bits$name == "year_min"]
+
+data_bits <- midfielddegrees:::data_bits_degrees
+obs_degree <- round(data_bits$data[data_bits$name == "obs_degree"] / 1e+0, 1)
+var_degree <- data_bits$data[data_bits$name == "var_degree"]
+size_degree <- round(data_bits$data[data_bits$name == "size_degree"] / 1e+6, 0)
+award_degree <- round(data_bits$data[data_bits$name == "award_degree"] / 1e+0, 1)
+year_max <- data_bits$data[data_bits$name == "year_max"]
+
+data_bits <- midfieldterms:::data_bits_terms
+obs_term <- round(data_bits$data[data_bits$name == "obs_term"] / 1e+0, 1)
+var_term <- data_bits$data[data_bits$name == "var_term"]
+size_term <- round(data_bits$data[data_bits$name == "size_term"] / 1e+6, 0)
+
+data_bits <- midfieldcourses:::data_bits_courses
+obs_course <- round(data_bits$data[data_bits$name == "obs_course"] / 1e+6, 1)
+var_course <- data_bits$data[data_bits$name == "var_course"]
+size_course <- round(data_bits$data[data_bits$name == "size_course"] / 1e+6, 0)
 ```
 
 
+The midieldr package includes Classification of Instructional Programs (CIP) data from the US Department of Education [@cip2010].
 
-## CIP data 
-
-The midfieldr package includes `cip`, a tidy data frame with `r data_bits[["obs_cip"]]` observations and `r data_bits[["var_cip"]]` CIP variables of program codes and names at the 2, 4, and 6-digit levels. Each observation is a unique program. This dataset occupies `r round(data_bits[["size_cip"]] / 1e+3, 0)` kb of memory.  
-
-The dataset format and variable definitions are described on the help page:
-
-```r
-library(midfieldr)
-?cip
-```
-
-midfieldr also includes collections of 6-digit CIP codes denoting groups of programs. To see the help page: 
-
-```r
-?named_series
-```
+Separate data packages provide a stratified sample of student record data from the MIDFIELD database. The process of designing, compiling, maintaining, protecting, and sharing the MIDFIELD data is described in [@aee2016]. 
 
 
-## Data packages
-
-The MIDFIELD datasets, because of their size, are provided in separate data packages. The  datasets are a stratified sample of the MIDFIELD database. 
-
-- [midfieldstudents](https://github.com/MIDFIELDR/midfieldstudents) 
-- [midfieldcourses](https://github.com/MIDFIELDR/midfieldcourses) 
-- [midfieldterms](https://github.com/MIDFIELDR/midfieldterms) 
-- [midfielddegrees](https://github.com/MIDFIELDR/midfielddegrees) 
 
 
-To install the data packages using the devtools package:   
+## Installing the data packages
+
+Four data packages provide the stratified data sample from the MIDFIELD database. To install the data packages, 
 
 ```r
 # data packages
@@ -73,22 +85,43 @@ devtools::install_github("MIDFIELDR/midfielddegrees")
 ```
 
 
+
+
+## CIP data 
+
+The midfieldr package includes `cip`, a tidy data frame with `r obs_cip` observations and `r var_cip` Classification of Instructional Programs (CIP)  variables. Each observation is a unique program; the variables are the program codes and names at the 2, 4, and 6-digit levels. This dataset occupies `r size_cip` kb of memory. Open the help page by running: 
+
+```r
+library(midfieldr)
+?cip
+```
+
+midfieldr also includes collections of 6-digit CIP codes denoting groups of programs. To learn more, open the help page by running `?named_series`. 
+
+
+
+
+
+
+
+
+
 ## Student data
 
-The [midfieldstudents](https://github.com/MIDFIELDR/midfieldstudents) package provides `midfieldstudents`, a tidy data frame with `r data_bits[["obs_student"]]` observations and `r data_bits[["var_student"]]` demographic variables. Each observation is a unique student. This dataset occupies `r round(data_bits[["size_student"]] / 1e+6, 1)` Mb of memory. 
-
-The dataset format and variable definitions are described on the help page:
+The midfieldstudents package provides `midfieldstudents`, a tidy data frame with `r obs_student` observations and `r var_student` demographic variables, occupying `r size_student` Mb of memory. Each observation is a unique student. Open the help page by running: 
 
 ```r
 library(midfieldstudents)
 ?midfieldstudents
 ```
-   
+
+
+
+
+
 ## Course  data
 
-The [midfieldcourses](https://github.com/MIDFIELDR/midfieldcourses) package provides `midfieldcourses`, a tidy data frame with `r round(data_bits[["obs_course"]] / 1e+6, 1)` M observations and `r data_bits[["var_course"]]` academic course variables. Each observation is one course in one term for one student. This dataset occupies `r round(data_bits[["size_course"]] / 1e+6, 0)` Mb of memory. 
-
-The dataset format and variable definitions are described on the help page:
+The midfieldcourses package provides `midfieldcourses`, a tidy data frame with `r obs_course` M observations and `r var_course` academic course variables, occupying `r size_course` Mb of memory. midfieldcourses is the largest of the midfieldr datasets. Each observation is one course in one term for one student. Open the help page by running: 
 
 ```r
 library(midfieldcourses)
@@ -102,9 +135,7 @@ library(midfieldcourses)
 
 ## Term  data
 
-The [midfieldterms](https://github.com/MIDFIELDR/midfieldterms) package provides `midfieldterms`, a tidy data frame with `r round(data_bits[["obs_term"]] / 1e+0, 0)`  observations and `r data_bits[["var_term"]]` academic term variables. Each observation is one term for one student. This dataset occupies `r round(data_bits[["size_term"]] / 1e+6, 1)` Mb of memory.  
-
-The dataset format and variable definitions are described on the help page:
+The midfieldterms package provides `midfieldterms`, a tidy data frame with `r obs_term`  observations and `r var_term` academic term variables, occupying `r size_term` Mb of memory. Each observation is one term for one student. Open the help page by running: 
 
 ```r
 library(midfieldterms)
@@ -112,16 +143,15 @@ library(midfieldterms)
 ```
 
 
-`
+
 
 ## Degree  data
 
-The [midfielddegrees](https://github.com/MIDFIELDR/midfielddegrees) package provides `midfielddegrees`, a tidy data frame with `r data_bits[["obs_degree"]]` observations and `r data_bits[["var_degree"]]` graduation variables. Each observation is a unique student. This dataset occupies `r round(data_bits[["size_degree"]] / 1e+6, 1)` Mb of memory. 
-
-The dataset format and variable definitions are described on the help page:
+The midfielddegrees package provides `midfielddegrees`, a tidy data frame with `r obs_degree` observations and `r var_degree` graduation variables, occupying `r size_degree` Mb of memory. Each observation is a unique student. Open the help page by running: 
 
 ```r
 library(midfielddegrees)
 ?midfielddegrees
 ```
     
+## References

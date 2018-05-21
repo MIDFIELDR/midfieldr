@@ -52,10 +52,11 @@ For investigating stickiness
 The sample of the MIDFIELD database that is accessible using midfieldr
 and its data packages includes:
 
-  - `cip` in the midfieldr package. A tidy data frame with `(obs_cip)`
-    observations and `(var_cip)` CIP variables of program codes and
-    names at the 2, 4, and 6-digit levels. Each observation is a unique
-    program. Occupies `(size_cip)` kb of memory.
+  - `cip` in the [midfieldr](https://github.com/MIDFIELDR/midfieldr)
+    package. A tidy data frame with 1544 observations and 6 CIP
+    variables of program codes and names at the 2, 4, and 6-digit
+    levels. Each observation is a unique program. Occupies 362 kb of
+    memory.
 
   - `midfieldstudents` in the
     [midfieldstudents](https://github.com/MIDFIELDR/midfieldstudents)
@@ -78,5 +79,5 @@ and its data packages includes:
   - `midfielddegrees` in the
     [midfielddegrees](https://github.com/MIDFIELDR/midfielddegrees)
     package. A tidy data frame with 97,640 observations and 5 graduation
-    variables. Each observation is a unique student. Of these students,
-    47,499 earned their degrees. Occupies 10 Mb of memory.
+    variables. Each observation is a unique student. Occupies 10 Mb of
+    memory.
