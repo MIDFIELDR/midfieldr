@@ -8,49 +8,35 @@ NULL
 #' universities, including demographic, term, course, and degree information
 #' for 97,640 undergraduate students from 1987 to 2016.
 #'
-#' In our examples illustrating how to use \pkg{midfieldr} tools and datasets,
-#' the findings are generally conditioned by instructional program, student sex,
-#' and student race/ethnicity.  Sex and race/ethnicity categories are limited to
-#' those reported by the US institutions contributing to the MIDFIELD database.
+#' This package provides functions to access, manipulate, and graph student
+#' record data. For example, to examine graduation rates, we use the series of functions:
+#'
+#' \itemize{
+#'   \item \code{cip_filter()} to select programs
+#'   \item \code{gather_start()} to gather students starting in the programs
+#'   \item \code{gather_grad()} to gather unique students graduating from the programs
+#'   \item \code{join_demographics()} to join student sex and race
+#'   \item \code{count_and_fill()} to group and summarize by selected variables
+#'   \item \code{tally_gradrate()} to compute graduation rates for each group
+#'   \item \code{graph_gradrate()} to graph graduation rates for each group
+#' }
+#'
+#' To learn about these and other functions, start with the vignettes:
+#' \code{browseVignettes(package = "midfieldr")}.
+#'
+#' We generally group our findings by instructional
+#' program and student sex and "race" as defined by the participating US
+#' institutions for the years spanned in the sample data.
+#'
+#' Instructional program data is provided in \code{cip}, a data frame of names
+#' and codes of academic programs from the 2010 IPEDS Classification of
+#' Instructional Programs (CIP) by the US Department of Education.
 #'
 #' Student record data is provided in four data packages:
-#' \pkg{midfieldstudents}, \pkg{midfieldcourses}, \pkg{midfieldterms}, and
-#' \pkg{midfielddegrees}.
-#'
-#' @section Data:
-#' \describe{
-#'
-#'   \item{\code{cip}}{A dataset of names and codes of academic programs. Each
-#'   of the 1544 observations is a program described by a 6-digit Classification
-#'   of Instructional Programs (CIP) code defined by the US Department of
-#'   Education in 2010.}
-#'
-#'   \item{\code{midfieldstudents}}{In the \href{https://github.com/MIDFIELDR/midfieldstudents}{\pkg{midfieldstudents}} data package.
-#'  A tidy data frame with 97,640 observations and 15 demographic variables. Each observation is a unique student. Occupies 19 Mb of memory.}
-#'
-#'   \item{\code{midfieldcourses}}{In the \href{https://github.com/MIDFIELDR/midfieldcourses}{\pkg{midfieldcourses}}  data package. A tidy data frame with 3.5 M observations and 12 academic course variables. Each observation is one course in one term for one student. Occupies 348 Mb of memory.}
-#'
-#'   \item{\code{midfieldterms}}{In the \href{https://github.com/MIDFIELDR/midfieldterms}{\pkg{midfieldterms}}  data package.
-#'   A tidy data frame with 729,014 observations and 13 academic term variables. Each observation is one term for one student. Occupies 82 Mb of memory.}
-#'
-#'   \item{\code{midfielddegrees}}{In the \href{https://github.com/MIDFIELDR/midfielddegrees}{\pkg{midfielddegrees}} data package.
-#'   A tidy data frame with 97,640 observations and 5 graduation variables. Each observation is a unique student. Of these students, 47,499 earned their degrees. Occupies 10 Mb of memory.}
-#'
-#' }
-#'
-#' @section Functions:
-#' This package provides functions to access, manipulate, and graph the student
-#' record data.
-#'
-#' \describe{
-#'
-#'   \item{\code{cip_filter()}}{Filter a data frame of Classification of
-#'   Instructional Programs (CIP) codes to return the rows that match conditions.}
-#'
-#'   \item{\code{join_demographics()}}{Add variables \code{sex} and
-#'   \code{race} from the \code{midfieldsstudents} dataset to a data frame.}
-#'
-#' }
+#' \href{https://github.com/MIDFIELDR/midfieldstudents}{midfieldstudents},
+#' \href{https://github.com/MIDFIELDR/midfieldcourses}{midfieldcourses},
+#' \href{https://github.com/MIDFIELDR/midfieldterms}{midfieldterms}, and
+#' \href{https://github.com/MIDFIELDR/midfielddegrees}{midfielddegrees}.
 #'
 #' @source Data provided by the MIDFIELD project:
 #' \url{https://engineering.purdue.edu/MIDFIELD}
@@ -64,6 +50,7 @@ if (getRversion() >= "2.15.1") {
     ".", ".x", "CIP2", "CIP4", "CIP6", "student", "ID",
     "race", "sex", "rcb_colors", "rcb_name", "rcb_code",
     "midfielddegrees", "midfieldstudents",
-    "midfieldterms", "midfieldcourses", "institution"
+    "midfieldterms", "midfieldcourses", "institution",
+    "term_degree", "program", "degree"
   ))
 }

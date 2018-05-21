@@ -47,6 +47,12 @@ For investigating stickiness
   - `tally_stickiness()`
   - `graph_stickiness()`
 
+Helper functions
+
+  - `cip_filter()`
+  - `join_demographics()`
+  - `count_and_fill()`
+
 ## Data
 
 The sample of the MIDFIELD database that is accessible using midfieldr

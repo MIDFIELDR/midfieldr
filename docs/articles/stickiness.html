@@ -99,6 +99,14 @@
     
     
 <p>“Stickiness” is a longitudinal persistence metric that tracks all students who contact an instructional program to determine what percentage “stick” to that program and graduate in it. Stickiness is defined as the ratio of the number of students graduating in a program to the number of students ever enrolled in the program.<span class="citation">(Ohland et al. 2012)</span></p>
+<p>While you may choose your own grouping variables, because our research focuses on intersectionality, we typically group the stickiness data by program, sex, and “race” as defined by the participating US institutions for the years spanned in the data sample. Possible value for sex and race are:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># list unique values for sex and race from student demographics</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(midfieldstudents)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">midfieldstudents[[<span class="st">"sex"</span>]]  <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">unique</span>() <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">sort</span>()</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co">#&gt; [1] "Female"  "Male"    "Unknown"</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">midfieldstudents[[<span class="st">"race"</span>]] <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">unique</span>() <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">sort</span>()</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="co">#&gt; [1] "Asian"           "Black"           "Hispanic"        "International"  </span></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="co">#&gt; [5] "Native American" "Other"           "Unknown"         "White"</span></a></code></pre></div>
 <div id="getting-started" class="section level2">
 <h2 class="hasAnchor">
 <a href="#getting-started" class="anchor"></a>Getting started</h2>
@@ -111,7 +119,6 @@
 <li>compute stickiness</li>
 <li>graph stickiness</li>
 </ul>
-<p>Because our research focuses on intersectionality, we typically disaggregate the data by program, sex, and race/ethnicity.[^2] You may of course choose your own combination of variables to study.</p>
 <p>If you are an R beginner, you can get the most out of this tutorial by</p>
 <ul>
 <li>opening a new R script<br>
@@ -132,14 +139,14 @@
 <li>
 <code>add_column()</code> (a <a href="http://tibble.tidyverse.org">tibble</a> function) to add the user-defined <code>program</code> variable</li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># obtain CIP codes and names</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(dplyr)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(tidyr)</a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">library</span>(tibble)</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">library</span>(midfieldr)</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6">cve &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1408"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">program =</span> <span class="st">"Civil Engineering"</span>)</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7">ele &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1410"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">program =</span> <span class="st">"Electrical Engineering"</span>)</a>
-<a class="sourceLine" id="cb1-8" data-line-number="8">mce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1419"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">program =</span> <span class="st">"Mechanical Engineering"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># obtain CIP codes and names</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">library</span>(dplyr)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw">library</span>(tidyr)</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw">library</span>(tibble)</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="kw">library</span>(midfieldr)</a>
+<a class="sourceLine" id="cb2-6" data-line-number="6">cve &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1408"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">program =</span> <span class="st">"Civil Engineering"</span>)</a>
+<a class="sourceLine" id="cb2-7" data-line-number="7">ele &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1410"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">program =</span> <span class="st">"Electrical Engineering"</span>)</a>
+<a class="sourceLine" id="cb2-8" data-line-number="8">mce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1419"</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">add_column</span>(<span class="dt">program =</span> <span class="st">"Mechanical Engineering"</span>)</a></code></pre></div>
 <p>Assigning a custom label via <code>program</code> is useful when a set of CIP codes does not already have a common name. For example, there is no CIP name for the Humanities group of programs.</p>
 <p>Next we bind the individual program data frames into one data frame. We use two <a href="http://dplyr.tidyverse.org">dplyr</a> functions:</p>
 <ul>
@@ -149,143 +156,126 @@
 <li>
 <code>select()</code> to keep two variables: <code>CIP6</code> for finding the desired student records and <code>program</code> for grouping</li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># bind the four programs</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">study_group &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(cve, ele, mce) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="st">  </span><span class="kw">select</span>(CIP6, program)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># bind the four programs</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">study_group &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(cve, ele, mce) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span><span class="kw">select</span>(CIP6, program)</a></code></pre></div>
 <p>Examine the result: there are 11 CIP codes for these three programs.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># examine the result</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">study_group</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt;      CIP6                program</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; 1  140801      Civil Engineering</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; 2  140802      Civil Engineering</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; 3  140803      Civil Engineering</span></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; 4  140804      Civil Engineering</span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; 5  140805      Civil Engineering</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; 6  140899      Civil Engineering</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; 7  141001 Electrical Engineering</span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; 8  141003 Electrical Engineering</span></a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; 9  141004 Electrical Engineering</span></a>
-<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt; 10 141099 Electrical Engineering</span></a>
-<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; 11 141901 Mechanical Engineering</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># examine the result</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">study_group</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt;      CIP6                program</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; 1  140801      Civil Engineering</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; 2  140802      Civil Engineering</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; 3  140803      Civil Engineering</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt; 4  140804      Civil Engineering</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; 5  140805      Civil Engineering</span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt; 6  140899      Civil Engineering</span></a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt; 7  141001 Electrical Engineering</span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt; 8  141003 Electrical Engineering</span></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt; 9  141004 Electrical Engineering</span></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt; 10 141099 Electrical Engineering</span></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt; 11 141901 Mechanical Engineering</span></a></code></pre></div>
 </div>
-<div id="count-students-ever-enrolled" class="section level2">
+<div id="gather_ever" class="section level2">
 <h2 class="hasAnchor">
-<a href="#count-students-ever-enrolled" class="anchor"></a>Count students ever enrolled</h2>
+<a href="#gather_ever" class="anchor"></a>gather_ever()</h2>
 <p><code><a href="../reference/gather_ever.html">gather_ever()</a></code> extracts a subset of <code>midfieldterms</code> containing all unique students ever enrolled in the programs listed in <code>study_group</code> and joins our user-defined <code>program</code> labels to these data.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># extract unique students from midfieldterms</span></a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">unique_students &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_ever.html">gather_ever</a></span>(midfieldterms, study_group)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># extract unique students from midfieldterms</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">library</span>(midfieldterms)</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">unique_students &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_ever.html">gather_ever</a></span>(midfieldterms, study_group)</a></code></pre></div>
 <p><code>glimpse()</code> the result to check the number of observations and to view the first few values of each variable.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># examine the result</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">glimpse</span>(unique_students)</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt; Observations: 9,389</span></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt; Variables: 4</span></a>
-<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; $ ID          &lt;chr&gt; "MID25783197", "MID25783388", "MID25783441", "MID2...</span></a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt; $ institution &lt;chr&gt; "Institution M", "Institution M", "Institution M",...</span></a>
-<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt; $ CIP6        &lt;chr&gt; "140801", "141901", "140801", "141001", "140801", ...</span></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; $ program     &lt;chr&gt; "Civil Engineering", "Mechanical Engineering", "Ci...</span></a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co"># examine the result</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw">glimpse</span>(unique_students)</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="co">#&gt; Observations: 9,389</span></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co">#&gt; Variables: 4</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#&gt; $ ID          &lt;chr&gt; "MID25783197", "MID25783388", "MID25783441", "MID2...</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; $ institution &lt;chr&gt; "Institution M", "Institution M", "Institution M",...</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; $ CIP6        &lt;chr&gt; "140801", "141901", "140801", "141001", "140801", ...</span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; $ program     &lt;chr&gt; "Civil Engineering", "Mechanical Engineering", "Ci...</span></a></code></pre></div>
+</div>
+<div id="join_demographics" class="section level2">
+<h2 class="hasAnchor">
+<a href="#join_demographics" class="anchor"></a>join_demographics()</h2>
 <p><code><a href="../reference/join_demographics.html">join_demographics()</a></code> joins student race and sex from <code>midfieldstudents</code> to these data.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co"># join demographics from midfieldstudents</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2">unique_students &lt;-<span class="st"> </span><span class="kw"><a href="../reference/join_demographics.html">join_demographics</a></span>(unique_students)</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co"># examine the result</span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw">glimpse</span>(unique_students)</a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; Observations: 9,389</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; Variables: 6</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; $ ID          &lt;chr&gt; "MID25783197", "MID25783388", "MID25783441", "MID2...</span></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; $ institution &lt;chr&gt; "Institution M", "Institution M", "Institution M",...</span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; $ CIP6        &lt;chr&gt; "140801", "141901", "140801", "141001", "140801", ...</span></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; $ program     &lt;chr&gt; "Civil Engineering", "Mechanical Engineering", "Ci...</span></a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; $ race        &lt;chr&gt; "White", "White", "White", "White", "White", "Whit...</span></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; $ sex         &lt;chr&gt; "Male", "Male", "Male", "Male", "Male", "Male", "M...</span></a></code></pre></div>
-<p>Before counting students, we select the variables to use for grouping and summarizing, Here, for example, we select program, race, and sex (thereby omitting ID, CIP6, and institution).</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># select the variables to use for counting</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">unique_students &lt;-<span class="st"> </span>unique_students <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">select</span>(program, sex, race)</a>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># join demographics from midfieldstudents</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw">library</span>(midfieldstudents)</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">unique_students &lt;-<span class="st"> </span><span class="kw"><a href="../reference/join_demographics.html">join_demographics</a></span>(unique_students)</a>
 <a class="sourceLine" id="cb7-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co"># examine the result</span></a>
 <a class="sourceLine" id="cb7-6" data-line-number="6"><span class="kw">glimpse</span>(unique_students)</a>
 <a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; Observations: 9,389</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt; Variables: 3</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt; $ program &lt;chr&gt; "Civil Engineering", "Mechanical Engineering", "Civil ...</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; $ sex     &lt;chr&gt; "Male", "Male", "Male", "Male", "Male", "Male", "Male"...</span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt; $ race    &lt;chr&gt; "White", "White", "White", "White", "White", "White", ...</span></a></code></pre></div>
-<p><code>count_and_fill()</code> counts the number of students grouped by the variables we just selected. If race or sex are in the list, empty entries are assigned a zero.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># count ever enrolled and label the count "ever"</span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">ever_enrolled &lt;-<span class="st"> </span><span class="kw">count_and_fill</span>(unique_students, <span class="st">"ever"</span>)</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co"># examine the result</span></a>
-<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="kw">glimpse</span>(ever_enrolled)</a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt; Observations: 48</span></a>
-<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#&gt; Variables: 4</span></a>
-<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">#&gt; $ program &lt;chr&gt; "Civil Engineering", "Civil Engineering", "Civil Engin...</span></a>
-<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co">#&gt; $ race    &lt;chr&gt; "Asian", "Black", "Hispanic", "International", "Native...</span></a>
-<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#&gt; $ sex     &lt;chr&gt; "Female", "Female", "Female", "Female", "Female", "Fem...</span></a>
-<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="co">#&gt; $ ever    &lt;dbl&gt; 22, 71, 16, 2, 0, 12, 2, 445, 50, 180, 24, 11, 3, 11, ...</span></a></code></pre></div>
-<p>In summary, four function calls are needed to gather and count the numbers of students ever enrolled in a set of programs. We can chain those functions together in one code chunk as follows:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># counting students ever enrolled in a program in one code chain</span></a>
-<a class="sourceLine" id="cb9-2" data-line-number="2">ever_enrolled &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_ever.html">gather_ever</a></span>(midfieldterms, study_group) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/join_demographics.html">join_demographics</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(program, race, sex) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="st">  </span><span class="kw">count_and_fill</span>(., <span class="st">"ever"</span>)</a>
-<a class="sourceLine" id="cb9-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co"># examine the result</span></a>
-<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="kw">glimpse</span>(ever_enrolled)</a>
-<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; Observations: 48</span></a>
-<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt; Variables: 4</span></a>
-<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co">#&gt; $ program &lt;chr&gt; "Civil Engineering", "Civil Engineering", "Civil Engin...</span></a>
-<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="co">#&gt; $ race    &lt;chr&gt; "Asian", "Black", "Hispanic", "International", "Native...</span></a>
-<a class="sourceLine" id="cb9-13" data-line-number="13"><span class="co">#&gt; $ sex     &lt;chr&gt; "Female", "Female", "Female", "Female", "Female", "Fem...</span></a>
-<a class="sourceLine" id="cb9-14" data-line-number="14"><span class="co">#&gt; $ ever    &lt;dbl&gt; 22, 71, 16, 2, 0, 12, 2, 445, 50, 180, 24, 11, 3, 11, ...</span></a></code></pre></div>
-<p>Alternatively, suppose we want to group by program and sex, but ignore race. We duplicate the earlier code chunk, but edit the <code>select()</code> arguments.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># group by program and sex</span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt; Variables: 6</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt; $ ID          &lt;chr&gt; "MID25783197", "MID25783388", "MID25783441", "MID2...</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; $ institution &lt;chr&gt; "Institution M", "Institution M", "Institution M",...</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt; $ CIP6        &lt;chr&gt; "140801", "141901", "140801", "141001", "140801", ...</span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt; $ program     &lt;chr&gt; "Civil Engineering", "Mechanical Engineering", "Ci...</span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt; $ race        &lt;chr&gt; "White", "White", "White", "White", "White", "Whit...</span></a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt; $ sex         &lt;chr&gt; "Male", "Male", "Male", "Male", "Male", "Male", "M...</span></a></code></pre></div>
+</div>
+<div id="count_and_fill" class="section level2">
+<h2 class="hasAnchor">
+<a href="#count_and_fill" class="anchor"></a>count_and_fill()</h2>
+<p>Before counting students, we select the variables to use for grouping and summarizing. Here, for example, we select program, race, and sex (thereby omitting ID, CIP6, and institution).</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># select the variables to use for counting</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">unique_students &lt;-<span class="st"> </span>unique_students <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">select</span>(program, sex, race)</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co"># examine the result</span></a>
+<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="kw">glimpse</span>(unique_students)</a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#&gt; Observations: 9,389</span></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">#&gt; Variables: 3</span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co">#&gt; $ program &lt;chr&gt; "Civil Engineering", "Mechanical Engineering", "Civil ...</span></a>
+<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#&gt; $ sex     &lt;chr&gt; "Male", "Male", "Male", "Male", "Male", "Male", "Male"...</span></a>
+<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="co">#&gt; $ race    &lt;chr&gt; "White", "White", "White", "White", "White", "White", ...</span></a></code></pre></div>
+<p><code><a href="../reference/count_and_fill.html">count_and_fill()</a></code> counts the number of students grouped by the variables we just selected. If program, race, or sex are in the list, missing combinations are filled with a zero.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># count ever enrolled and label the count "ever"</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">ever_enrolled &lt;-<span class="st"> </span><span class="kw"><a href="../reference/count_and_fill.html">count_and_fill</a></span>(unique_students, <span class="st">"ever"</span>)</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co"># examine the result</span></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="kw">glimpse</span>(ever_enrolled)</a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt; Observations: 48</span></a>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; Variables: 4</span></a>
+<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; $ program &lt;chr&gt; "Civil Engineering", "Civil Engineering", "Civil Engin...</span></a>
+<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; $ race    &lt;chr&gt; "Asian", "Black", "Hispanic", "International", "Native...</span></a>
+<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt; $ sex     &lt;chr&gt; "Female", "Female", "Female", "Female", "Female", "Fem...</span></a>
+<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co">#&gt; $ ever    &lt;dbl&gt; 22, 71, 16, 2, 0, 12, 2, 445, 50, 180, 24, 11, 3, 11, ...</span></a></code></pre></div>
+<p>In summary, four functions are needed to gather and count the numbers of students ever enrolled in a set of programs. We can chain those functions together in one code chunk as follows:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># counting students ever enrolled in a program in one code chain</span></a>
 <a class="sourceLine" id="cb10-2" data-line-number="2">ever_enrolled &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_ever.html">gather_ever</a></span>(midfieldterms, study_group) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/join_demographics.html">join_demographics</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(program, sex) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="st">  </span><span class="kw">count_and_fill</span>(., <span class="st">"ever"</span>)</a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(program, race, sex) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../reference/count_and_fill.html">count_and_fill</a></span>(., <span class="st">"ever"</span>)</a>
 <a class="sourceLine" id="cb10-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co"># this set is small enough to view in a table</span></a>
-<a class="sourceLine" id="cb10-8" data-line-number="8">ever_enrolled &lt;-<span class="st"> </span>ever_enrolled <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="st">    </span><span class="kw">arrange</span>(<span class="kw">desc</span>(ever))</a>
-<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="kw">kable</span>(ever_enrolled)</a></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">program</th>
-<th align="left">sex</th>
-<th align="right">ever</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">Mechanical Engineering</td>
-<td align="left">Male</td>
-<td align="right">3331</td>
-</tr>
-<tr class="even">
-<td align="left">Electrical Engineering</td>
-<td align="left">Male</td>
-<td align="right">2500</td>
-</tr>
-<tr class="odd">
-<td align="left">Civil Engineering</td>
-<td align="left">Male</td>
-<td align="right">1836</td>
-</tr>
-<tr class="even">
-<td align="left">Mechanical Engineering</td>
-<td align="left">Female</td>
-<td align="right">626</td>
-</tr>
-<tr class="odd">
-<td align="left">Civil Engineering</td>
-<td align="left">Female</td>
-<td align="right">570</td>
-</tr>
-<tr class="even">
-<td align="left">Electrical Engineering</td>
-<td align="left">Female</td>
-<td align="right">526</td>
-</tr>
-</tbody>
-</table>
+<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co"># examine the result</span></a>
+<a class="sourceLine" id="cb10-8" data-line-number="8"><span class="kw">glimpse</span>(ever_enrolled)</a>
+<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co">#&gt; Observations: 48</span></a>
+<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="co">#&gt; Variables: 4</span></a>
+<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt; $ program &lt;chr&gt; "Civil Engineering", "Civil Engineering", "Civil Engin...</span></a>
+<a class="sourceLine" id="cb10-12" data-line-number="12"><span class="co">#&gt; $ race    &lt;chr&gt; "Asian", "Black", "Hispanic", "International", "Native...</span></a>
+<a class="sourceLine" id="cb10-13" data-line-number="13"><span class="co">#&gt; $ sex     &lt;chr&gt; "Female", "Female", "Female", "Female", "Female", "Fem...</span></a>
+<a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">#&gt; $ ever    &lt;dbl&gt; 22, 71, 16, 2, 0, 12, 2, 445, 50, 180, 24, 11, 3, 11, ...</span></a></code></pre></div>
+</div>
+<div id="gather_grad" class="section level2">
+<h2 class="hasAnchor">
+<a href="#gather_grad" class="anchor"></a>gather_grad()</h2>
+<p><code>gather_grad()</code> extracts a subset of <code>midfielddegrees</code> containing all unique students ever graduating from the programs listed in <code>study_group</code> and joins our user-defined <code>program</code> labels to these data.</p>
+<p>We follow up with the same work flow used previously, with <code><a href="../reference/join_demographics.html">join_demographics()</a></code>, <code>select()</code>, and <code><a href="../reference/count_and_fill.html">count_and_fill()</a></code>. Again, we can chain these functions together in one code chunk as follows:</p>
+<pre><code># count students graduating from a program
+library(midfielddegrees)
+graduating &lt;- gather_grad(midfielddegrees, study_group) %&gt;%
+  join_demographics() %&gt;%
+  select(program, race, sex) %&gt;%
+  count_and_fill(., "grad")
+
+# examine the result
+glimpse(graduating)</code></pre>
+</div>
+<div id="tally_stickiness" class="section level2">
+<h2 class="hasAnchor">
+<a href="#tally_stickiness" class="anchor"></a>tally_stickiness()</h2>
+</div>
+<div id="graph_stickiness" class="section level2">
+<h2 class="hasAnchor">
+<a href="#graph_stickiness" class="anchor"></a>graph_stickiness()</h2>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="hasAnchor">
@@ -305,7 +295,12 @@
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#getting-started">Getting started</a></li>
       <li><a href="#select-the-programs-to-study">Select the programs to study</a></li>
-      <li><a href="#count-students-ever-enrolled">Count students ever enrolled</a></li>
+      <li><a href="#gather_ever">gather_ever()</a></li>
+      <li><a href="#join_demographics">join_demographics()</a></li>
+      <li><a href="#count_and_fill">count_and_fill()</a></li>
+      <li><a href="#gather_grad">gather_grad()</a></li>
+      <li><a href="#tally_stickiness">tally_stickiness()</a></li>
+      <li><a href="#graph_stickiness">graph_stickiness()</a></li>
       <li><a href="#references">References</a></li>
       </ul>
 </div>

@@ -1,9 +1,6 @@
 ---
 title: "Stickiness metric"
-output:
-  rmarkdown::html_vignette: 
-    toc: true
-    toc_depth: 2
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Stickiness metric}
   %\VignetteEncoding{UTF-8}
@@ -30,10 +27,27 @@ knit_hooks$set(inline = function(x) {
 })
 ```
 
+```{r echo = FALSE}
+library(midfieldr)
+library(stringr)
 
+# unpack data bits
+library(midfieldstudents)
+values_sex  <- str_c(sort(unique(midfieldstudents$sex)), collapse = ", ")
+values_race <- str_c(sort(unique(midfieldstudents$race)), collapse = ", ")
+```
 
 
 "Stickiness" is a longitudinal persistence metric that tracks all students who contact an instructional program to determine what percentage “stick” to that program and graduate in it. Stickiness is defined as the ratio of the number of students graduating in a program to the number of students ever enrolled in the program.[@stickiness2012]
+
+While you may choose your own grouping variables, because our research focuses on intersectionality, we typically group the stickiness data by program, sex, and "race" as defined by the participating US institutions for the years spanned in the data sample. Possible value for sex and race are:  
+
+```{r}
+# list unique values for sex and race from student demographics
+library(midfieldstudents)
+midfieldstudents[["sex"]]  %>%  unique() %>%  sort()
+midfieldstudents[["race"]] %>%  unique() %>%  sort()
+```
 
 
 
@@ -47,7 +61,6 @@ In this article, we show you how to use midfieldr functions to compute program s
 - compute stickiness 
 - graph stickiness 
 
-Because our research focuses on intersectionality, we typically disaggregate the data by program, sex, and race/ethnicity.[^2] You may of course choose your own combination of variables to study. 
 
 If you are an R beginner, you can get the most out of this tutorial by 
 
@@ -105,24 +118,13 @@ study_group
 
 
 
-## Count students ever enrolled 
-
-```{r echo = FALSE}
-library(midfieldstudents)
-
-# make this fix to the data package
-midfieldstudents <- rename(midfieldstudents, CIP6 = program)
-
-library(midfieldterms)
-
-# make this fix to the data package
-midfieldterms <- rename(midfieldterms, CIP6 = program)
-```
+## gather_ever()  
 
 `gather_ever()` extracts a subset of `midfieldterms` containing all unique students ever enrolled in the programs listed in `study_group` and joins our user-defined `program` labels to these data. 
 
 ```{r}
 # extract unique students from midfieldterms
+library(midfieldterms)
 unique_students <- gather_ever(midfieldterms, study_group)
 ```
 
@@ -133,17 +135,23 @@ unique_students <- gather_ever(midfieldterms, study_group)
 glimpse(unique_students)
 ```
 
-`join_demographics()` joins student race and sex from `midfieldstudents` to these data. 
+## join_demographics() 
+
+`join_demographics()` joins student race and sex from `midfieldstudents` to these data.  
 
 ```{r}
 # join demographics from midfieldstudents
+library(midfieldstudents)
 unique_students <- join_demographics(unique_students)
 
 # examine the result
 glimpse(unique_students)
 ```
 
-Before counting students, we select the variables to use for grouping and summarizing, Here, for example, we select program, race, and sex (thereby omitting ID, CIP6, and institution). 
+
+## count_and_fill()
+
+Before counting students, we select the variables to use for grouping and summarizing. Here, for example, we select program, race, and sex (thereby omitting ID, CIP6, and institution). 
 
 ```{r}
 # select the variables to use for counting
@@ -154,7 +162,7 @@ unique_students <- unique_students %>%
 glimpse(unique_students)
 ```
 
-`count_and_fill()` counts the number of students grouped by the variables we just selected. If race or sex are in the list, empty entries are assigned a zero. 
+`count_and_fill()` counts the number of students grouped by the variables we just selected. If program, race, or sex are in the list, missing combinations  are filled with a zero. 
 
 ```{r}
 # count ever enrolled and label the count "ever"
@@ -164,7 +172,7 @@ ever_enrolled <- count_and_fill(unique_students, "ever")
 glimpse(ever_enrolled)
 ```
 
-In summary, four function calls are needed to gather and count the numbers of students ever enrolled in a set of programs. We can chain those functions together in one code chunk as follows: 
+In summary, four functions are needed to gather and count the numbers of students ever enrolled in a set of programs. We can chain those functions together in one code chunk as follows: 
 
 ```{r}
 # counting students ever enrolled in a program in one code chain
@@ -177,23 +185,53 @@ ever_enrolled <- gather_ever(midfieldterms, study_group) %>%
 glimpse(ever_enrolled)
 ```
 
-Alternatively, suppose we want to group by program and sex, but ignore race. We duplicate the earlier code chunk, but edit the `select()` arguments. 
+
+
+## gather_grad() 
+
+`gather_grad()` extracts a subset of `midfielddegrees` containing all unique students ever graduating from the programs listed in `study_group` and joins our user-defined `program` labels to these data.
 
 ```{r}
-# group by program and sex
-ever_enrolled <- gather_ever(midfieldterms, study_group) %>%
-  join_demographics() %>%
-  select(program, sex) %>%
-  count_and_fill(., "ever")
+library(midfielddegrees)
+first_degrees <- gather_grad(midfielddegrees, study_group)
 
-# this set is small enough to view in a table
-ever_enrolled <- ever_enrolled %>% 
-	arrange(desc(ever))
-kable(ever_enrolled)
+glimpse(first_degrees)
+```
+
+We follow up with the same work flow used previously, with `join_demographics()`, `select()`, and `count_and_fill()`. Again, we can chain these functions together in one code chunk as follows:
+
+```{r}
+# count students graduating from programs 
+graduated <- first_degrees %>%
+  join_demographics() %>%
+  select(program, race, sex) %>%
+  count_and_fill(., "grad")
+
+# examine the result
+glimpse(graduated)
 ```
 
 
 
+
+
+## tally_stickiness()
+
+`tally_stickiness()` has two arguments: the `ever_enrolled` and  `graduated` data frames we constructed above. 
+
+
+```{r}
+stickiness <- left_join(ever_enrolled, graduated, by = c("program", "race", "sex")) %>% 
+	mutate(stick = round(grad / ever, 3)) %>% 
+	arrange(program, sex, race)
+	
+stickiness[is.na(stickiness)] <- NA
+knitr::kable(stickiness)
+```
+
+
+
+## graph_stickiness()
 
 
 ## References

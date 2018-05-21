@@ -27,9 +27,7 @@ join_demographics <- function(df) {
 
 	# join demographics if number of unique students identical
 	if (dplyr::all_equal(unique(df$ID), demographics$ID)) {
-		df <- dplyr::left_join(df, demographics, by = "ID") %>%
-			dplyr::mutate(sex = stringr::str_replace(sex, "M", "Male")) %>%
-			dplyr::mutate(sex = stringr::str_replace(sex, "F", "Female"))
+		df <- dplyr::left_join(df, demographics, by = "ID")
 	} else {
 		warning("Mismatch between input ID and midfieldstudents data ID")
 	}
