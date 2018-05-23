@@ -87,3 +87,14 @@ and its data packages includes:
     package. A tidy data frame with 97,640 observations and 5 graduation
     variables. Each observation is a unique student. Occupies 10 Mb of
     memory.
+
+## Meta
+
+  - Please [report any issues or
+    bugs](https://github.com/MIDFIELDR/midfieldr/issues).
+  - License: GPL-3
+  - Get citation information for `midfieldr` in R with `citation(package
+    = 'midfieldr')`
+  - Please note that this project is released with a [Contributor Code
+    of Conduct](CONDUCT.md). By participating in this project you agree
+    to abide by its terms.

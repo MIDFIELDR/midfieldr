@@ -20,34 +20,38 @@ NULL
 #' @export
 gather_grad <- function(data, group) {
 
-	# check that necessary variables are present
-	stopifnot(c("ID", "CIP6", "institution", "term_degree") %in% names(data))
-	stopifnot("CIP6" %in% names(group))
+  # check that necessary variables are present
+  stopifnot(c("ID", "CIP6", "institution", "term_degree") %in% names(data))
+  stopifnot("CIP6" %in% names(group))
 
-	# filter the data set using the search series
-	series   <- stringr::str_c(group$CIP6, collapse = "|")
-	students <- data %>%
-		dplyr::filter(stringr::str_detect(CIP6, series))
+  # filter the data set using the search series
+  series <- stringr::str_c(group$CIP6, collapse = "|")
+  students <- data %>%
+    dplyr::filter(stringr::str_detect(CIP6, series))
 
-	# remove NA
-	students <- students %>%
-		dplyr::filter(!is.na(CIP6)) %>%
-		dplyr::filter(!is.na(term_degree))
+  # remove NA
+  students <- students %>%
+    dplyr::filter(!is.na(CIP6)) %>%
+    dplyr::filter(!is.na(term_degree))
 
-	# extract the earliest single term in which a student earns a degree
-	ID_first_term_degree <- students %>%
-		dplyr::select(ID, term_degree) %>%
-		dplyr::arrange(ID, term_degree) %>%
-		dplyr::group_by(ID) %>%
-		dplyr::filter(dplyr::row_number(ID) == 1) %>%
-		dplyr::ungroup()
+  # extract the earliest single term in which a student earns a degree
+  ID_first_term_degree <- students %>%
+    dplyr::select(ID, term_degree) %>%
+    dplyr::arrange(ID, term_degree) %>%
+    dplyr::group_by(ID) %>%
+    dplyr::filter(dplyr::row_number(ID) == 1) %>%
+    dplyr::ungroup()
 
-	# and keep multiple degrees earned in that term (if any)
-	# using left_join(x, y), all combinations bewteen x and y are returned
-	students <- left_join(ID_first_term_degree, students, by = c("ID", "term_degree"))
+  # and keep multiple degrees earned in that term (if any)
+  # using left_join(x, y), all combinations bewteen x and y are returned
+  students <- left_join(
+    ID_first_term_degree,
+    students,
+    by = c("ID", "term_degree")
+  )
 
   # join the group programs
-	students <- dplyr::left_join(students, group, by = "CIP6") %>%
-		select(ID, institution, CIP6, program, degree)
+  students <- dplyr::left_join(students, group, by = "CIP6") %>%
+    select(ID, institution, CIP6, program, degree)
 }
 "gather_grad"

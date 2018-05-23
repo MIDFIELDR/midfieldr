@@ -22,4 +22,6 @@
 #' }
 #' @source Cynthia Brewer (\url{http://colorbrewer2.org}) and RColorBrewer
 #' (\url{https://cran.r-project.org/package=RColorBrewer}).
+#'
+#' @noRd
 "rcb_colors"
