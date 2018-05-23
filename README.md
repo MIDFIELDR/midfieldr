@@ -7,6 +7,8 @@
 Status](https://travis-ci.org/MIDFIELDR/midfieldr.svg?branch=master)](https://travis-ci.org/MIDFIELDR/midfieldr)
 [![License: GPL
 v3](man/figures/License-GPL-v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Coverage
+Status](https://img.shields.io/codecov/c/github/MIDFIELDR/midfieldr/master.svg)](https://codecov.io/github/MIDFIELDR/midfieldr?branch=master)
 
 midfieldr is a package for investigating student record data provided by
 registrars at US universities participating in the MIDFIELD project.
@@ -92,9 +94,8 @@ and its data packages includes:
 
   - Please [report any issues or
     bugs](https://github.com/MIDFIELDR/midfieldr/issues).
-  - License: GPL-3
-  - Get citation information for `midfieldr` in R with `citation(package
-    = 'midfieldr')`
-  - Please note that this project is released with a [Contributor Code
-    of Conduct](CONDUCT.md). By participating in this project you agree
-    to abide by its terms.
+  - License: GPL-3.
+  - Get citation information with `citation(package = 'midfieldr')`.
+  - Please note that this project is released with a [Code of
+    Conduct](CONDUCT.md). If you contribute to this project you agree to
+    abide by its terms.
