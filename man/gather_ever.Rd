@@ -4,21 +4,17 @@
 \alias{gather_ever}
 \title{Gather students ever enrolled in a program}
 \usage{
-gather_ever(data, group)
+gather_ever(program_group)
 }
 \arguments{
-\item{data}{A data frame of term data from \pkg{midfieldterms}.}
-
-\item{group}{A data frame with 6-digit CIP codes (\code{CIP6}) for the programs being studied.}
+\item{program_group}{A data frame that includes 6-digit CIP codes (\code{CIP6}) for the programs being studied.}
 }
 \value{
-A data frame with variables  \code{ID}, \code{institution}, \code{CIP6} from the original \code{midfieldterms} data.
+A data frame extracted from the \code{midfieldterms} dataset with variables \code{ID}, \code{institution}, \code{CIP6}.
 
 Each observation in the resulting tidy data frame is a unique program per
-student. Thus the student identifier (\code{MID}) for students who change
-majors will appear in more than one row, once each per unique program. If
-extant, values \code{TCIP2} and \code{TCIP3} indicate that a student is
-enrolled in more than one program in that term.
+student. Thus the student identifier (\code{ID}) for students who change
+majors will appear in more than one row, once each per unique program.
 }
 \description{
 Filters a data frame to

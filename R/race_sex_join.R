@@ -9,10 +9,10 @@ NULL
 #'
 #' @param df A data frame of student attributes that includes the variable \code{ID}.
 #'
-#' @return The incoming data frame plus two new columns \code{sex} and \code{race}. Other columns are unaffected.
+#' @return The incoming data frame plus two new columns \code{sex} and \code{race} joined by student ID. Other columns are unaffected.
 #'
 #' @export
-join_demographics <- function(df) {
+race_sex_join <- function(df) {
 
 	stopifnot(is.data.frame(df))
 	# check that necessary variables are present
@@ -20,17 +20,16 @@ join_demographics <- function(df) {
 
 	# filter midfieldstudents by IDs in input df
 	series <- stringr::str_c(df$ID, collapse = "|")
-	demographics <- midfieldstudents %>%
+	race_sex <- midfieldstudents %>%
 		dplyr::select(ID, race, sex) %>%
 		dplyr::filter(stringr::str_detect(ID, series)) %>%
 		unique()
 
 	# join demographics if number of unique students identical
-	if (dplyr::all_equal(unique(df$ID), demographics$ID)) {
-		df <- dplyr::left_join(df, demographics, by = "ID")
+	if (dplyr::all_equal(unique(df$ID), race_sex$ID)) {
+		df <- dplyr::left_join(df, race_sex, by = "ID")
 	} else {
-		warning("Mismatch between input ID and midfieldstudents data ID")
+		warning("Unique IDs in input data not equal to unique IDs in midfieldstudents")
 	}
-	return(df)
 }
-"join_demographics"
+"race_sex_join"

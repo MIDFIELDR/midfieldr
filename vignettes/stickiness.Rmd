@@ -12,7 +12,7 @@ bibliography: ../inst/REFERENCES.bib
 library(knitr)
 opts_knit$set(root.dir = "../")
 opts_chunk$set(collapse = TRUE, comment = "#>")
-opts_chunk$set(warning = TRUE, message = TRUE, cache = 0) # 0 FALSE 1 minimal
+opts_chunk$set(warning = FALSE, message = FALSE, cache = 0) # 0 FALSE 1 minimal
 opts_chunk$set(error = TRUE, purl = FALSE)
 opts_chunk$set(fig.width = 6)
 options(tibble.print_min = 10L, tibble.print_max = 10L)
@@ -38,20 +38,23 @@ values_race <- str_c(sort(unique(midfieldstudents$race)), collapse = ", ")
 ```
 
 
-"Stickiness" is a longitudinal persistence metric that tracks all students who contact an instructional program to determine what percentage "stick" to that program and graduate in it. Stickiness is defined as the ratio of the number of students graduating in a program to the number of students ever enrolled in the program.[@stickiness2012]
+"Stickiness" is a longitudinal persistence metric that tracks all students who ever enrolled in an instructional program to determine what percentage "stick" to that program and graduate in it. 
 
-While you may choose your own grouping variables, because our research focuses on intersectionality, we typically group the stickiness data by program, sex, and "race" as defined by the participating US institutions for the years spanned in the data sample. Possible value for sex and race are:  
-
-```{r}
-# list unique values for sex and race from student demographics
-library(midfieldstudents)
-midfieldstudents[["sex"]]  %>%  unique() %>%  sort()
-midfieldstudents[["race"]] %>%  unique() %>%  sort()
-```
-
-
+Stickiness is defined as the ratio of the number of students graduating in a program to the number of students ever enrolled in the program [@stickiness2012]. We typically group the stickiness results by program, sex, and "race" as defined by the participating US institutions.
 
 ## Getting started 
+
+```{r}
+# packages used in this article
+library(midfieldr)
+library(midfieldstudents)
+library(midfieldterms)
+library(midfielddegrees)
+library(dplyr)
+library(tidyr)
+library(tibble)
+```
+
 
 In this article, we show you how to use midfieldr functions to compute program stickiness. Our workflow is: 
 
@@ -81,105 +84,185 @@ For this example, we compare the stickiness of three engineering programs: Civil
 We use:  
 
 - `cip_filter()` to obtain the relevant program codes 
-- `add_column()` (a [tibble](http://tibble.tidyverse.org) function) to add the user-defined `program` variable 
+- `add_column()` (a [tibble](http://tibble.tidyverse.org) function) to add a user-defined `program` variable 
 
 
 ```{r warning = FALSE, message = FALSE}
-# obtain CIP codes and names
-library(dplyr)
-library(tidyr)
-library(tibble)
-library(midfieldr)
+# obtain the CIP codes for three engineering majors and assign our own program label
 cve <- cip_filter("^1408") %>% add_column(program = "Civil Engineering")
 ele <- cip_filter("^1410") %>% add_column(program = "Electrical Engineering")
 mce <- cip_filter("^1419") %>% add_column(program = "Mechanical Engineering")
 ```
 
-
-Assigning a custom label via `program` is useful when a set of CIP codes does not already have a common name. For example, there is no CIP name for the Humanities group of programs.  
+Assigning a custom label via `add_column()` is helpful when a set of CIP codes does not already have a common or brief name. For example, courses we would group together as the humanities do not have a single CIP name.   
 
 Next we bind the individual program data frames into one data frame. We use two [dplyr](http://dplyr.tidyverse.org) functions: 
 
-- `bind_rows()` to bind the programs into one dataframe named `study_group` 
-- `select()` to keep two variables: `CIP6` for finding the desired student records and `program` for grouping 
+- `bind_rows()` to bind the programs into one dataframe named `program_group` 
+- `select()` to keep three variables: `CIP6` for finding the desired student records,  `program` for grouping, and `CIP6name` to check our custom program labels. 
 
 ```{r}
-# bind the four programs
-study_group <- bind_rows(cve, ele, mce) %>%
-  select(CIP6, program)
+# bind the programs
+program_group <- bind_rows(cve, ele, mce) %>%
+  select(CIP6, program, CIP6name)
 ```
 
-Examine the result: there are `r nrow(study_group)` CIP codes for these three programs. 
+Examine the result: there are `r nrow(program_group)` CIP codes for these three programs. Our shorter `program` labels agree with the longer  official `CIP6name` values. 
 
 ```{r}
 # examine the result
-study_group
+program_group
 ```
 
 
 
 ## gather_ever()  
 
-`gather_ever()` extracts a subset of `midfieldterms` containing all unique students ever enrolled in the programs listed in `study_group` and joins our user-defined `program` labels to these data. 
+`gather_ever()` extracts a subset of `midfieldterms` containing all unique students ever enrolled in the programs listed in `program_group` and joins our user-defined `program` labels to these data. 
 
 ```{r}
 # extract unique students from midfieldterms
-library(midfieldterms)
-unique_students <- gather_ever(midfieldterms, study_group)
+students <- gather_ever(program_group)
 ```
 
-`glimpse()` the result to check the number of observations and to view the first few values of each variable. 
+`glimpse()` (a tibble function) the result to check the number of observations and to view the first few values of each variable. 
 
 ```{r}
 # examine the result
-glimpse(unique_students)
+glimpse(students)
 ```
 
-## join_demographics() 
+## race_sex_join() 
 
-`join_demographics()` joins student race and sex from `midfieldstudents` to these data.  
+`race_sex_join()` accepts any data frame with the MIDFIELD student `ID` variable and joins the student race and sex from `midfieldstudents` to these data.  
 
 ```{r}
 # join demographics from midfieldstudents
-library(midfieldstudents)
-unique_students <- join_demographics(unique_students)
+students <- race_sex_join(students)
 
 # examine the result
-glimpse(unique_students)
+glimpse(students)
 ```
 
 
-## count_and_fill()
 
-Before counting students, we select the variables to use for grouping and summarizing. Here, for example, we select program, race, and sex (thereby omitting ID, CIP6, and institution). 
+
+
+
+
+
+
+
+
+
+
+## Count the numbers of students ever enrolled
+
+We will use two [dplyr](http://dplyr.tidyverse.org) functions to group and count the numbers of students ever enrolled in our programs. 
+
+- `group_by()` to select the grouping variables 
+- `summarize()` to count the number of students in each group 
+
+Here, we give the count the variable name `ever`. All variables in `students` not used as groupipng variables are quietly dropped. 
 
 ```{r}
-# select the variables to use for counting
-unique_students <- unique_students %>%
-  select(program, sex, race)
-
-# examine the result
-glimpse(unique_students)
+# count the numbers of students ever in a program 
+ever_enrolled <- students %>%
+	group_by(program, race, sex) %>%
+	summarize(ever = n()) %>% 
+	ungroup()
 ```
 
-`count_and_fill()` counts the number of students grouped by the variables we just selected. If program, race, or sex are in the list, missing combinations  are filled with a zero. 
+A similar chain of `dataframe %>% group_by() %>% summarize() %>% ungroup()`  is used every time we want to count numbers of students in a particular group. You are free to try any of the variables when counting, e.g., you could omit race and use `group_by(program, sex)`.
+
+Before examining a result, it is often useful to use `arrange()` (a dplyr function) to order the rows of the dataframe.  
 
 ```{r}
+# order the rows for viewing
+ever_enrolled <- ever_enrolled %>% 
+	arrange(program, sex, race)
+
+# examine the result
+ever_enrolled
+```
+
+ 
+
+
+
+
+
+
+
+## zero_fill()
+
+This example has 3 programs, 2 sexes, and 8 race values, so we would expect to have $3 \times 2 \times 8 = 48$ rows in our data frame. However, our results above show 47 rows. One of the possible combinations of program, race, and sex (Native American Female in Civil Engineering) is missing. 
+
+`zero_fill()` inserts a count of zero for missing combinations. 
+
+```{r}
+zero_fill_2 <- function(df) {
+	# for gather() and spread() key-value pairs, the "key" is any  
+	# character variable and the "value" is the single numerical variable
+	
+	# must be a df
+	stopifnot(is.data.frame(df))
+	# obtain type of variables to distinguish character fron numeirc
+	var_types <- sapply(df, typeof)
+		# obtain list of symbolic variable names to recover column order
+	var_name_list <- rlang::syms(names(df))
+
+  # must have only one numerical count value
+  value_idx <- var_types[var_types == "double" | var_types == "integer"]
+  value_len <- max(seq_along(value_idx))
+  stopifnot(value_len == 1)
+  
+  # must have at least two character variables for spread/gather
+  key_idx <- var_types[var_types == "character"]
+  key_len <- max(seq_along(key_idx))
+  stopifnot(key_len >= 2)
+  
+  # acquire the names for the "key-value" pair
+  key_names  <- names(key_idx)
+  value_name <- names(value_idx)
+  
+  # select the "key" and "value" variables for spread() and gather() 
+  key   <- rlang::sym(key_names[[1]])
+  value <- rlang::sym(value_name[[1]])
+  
+  # obtain the first and last value of the key for gathering
+  df <- df %>% dplyr::arrange(!!key)
+  key_level_1 <- utils::head(unique(df[[key]]), n = 1)
+  key_level_n <- utils::tail(unique(df[[key]]), n = 1)
+  
+  # spread, creates NA for missing combinations, fill NA with zero, and gather
+  df <- df %>%
+  	tidyr::spread(!!key, !!value, fill = 0) %>%
+  	tidyr::gather(!!key, !!value, key_level_1:key_level_n) %>% 
+  	select(!!!var_name_list)
+}
+```
+
+```{r}
+ever_enrolled
+
 # count ever enrolled and label the count "ever"
-ever_enrolled <- count_and_fill(unique_students, "ever")
+ever_enrolled <- zero_fill_2(ever_enrolled)
 
 # examine the result
-glimpse(ever_enrolled)
+ever_enrolled
 ```
 
-In summary, four functions are needed to gather and count the numbers of students ever enrolled in a set of programs. We can chain those functions together in one code chunk as follows: 
+In summary, the following chain gathers and counts the numbers of students ever enrolled in a set of programs.
 
 ```{r}
 # counting students ever enrolled in a program in one code chain
-ever_enrolled <- gather_ever(midfieldterms, study_group) %>%
-  join_demographics() %>%
-  select(program, race, sex) %>%
-  count_and_fill(., "ever")
+ever_enrolled <- gather_ever(program_group) %>%
+  race_sex_join() %>%
+	group_by(program, race, sex) %>%
+	summarize(ever = n()) %>% 
+	ungroup() %>% 
+  zero_fill_2()
 
 # examine the result
 glimpse(ever_enrolled)
@@ -189,23 +272,23 @@ glimpse(ever_enrolled)
 
 ## gather_grad() 
 
-`gather_grad()` extracts a subset of `midfielddegrees` containing all unique students ever graduating from the programs listed in `study_group` and joins our user-defined `program` labels to these data.
+`gather_grad()` extracts a subset of `midfielddegrees` containing all unique students ever graduating from the programs listed in `program_group` and joins our user-defined `program` labels to these data.
 
 ```{r}
-library(midfielddegrees)
-first_degrees <- gather_grad(midfielddegrees, study_group)
+# obtain graduates from midfielddegrees data
+first_degrees <- gather_grad(midfielddegrees, program_group)
 
 glimpse(first_degrees)
 ```
 
-We follow up with the same work flow used previously, with `join_demographics()`, `select()`, and `count_and_fill()`. Again, we can chain these functions together in one code chunk as follows:
+We follow up with the same work flow used previously, with `race_sex_join()`, `select()`, and `zero_fill()`. Again, we can chain these functions together in one code chunk as follows:
 
 ```{r}
 # count students graduating from programs 
 graduated <- first_degrees %>%
-  join_demographics() %>%
+  race_sex_join() %>%
   select(program, race, sex) %>%
-  count_and_fill(., "grad")
+  zero_fill(., "grad")
 
 # examine the result
 glimpse(graduated)
