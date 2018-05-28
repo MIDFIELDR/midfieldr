@@ -3,20 +3,22 @@
 \docType{data}
 \name{math_stat}
 \alias{math_stat}
-\title{CIP codes for programs in mathematics and statistics}
+\title{CIP codes for mathematics and statistics}
 \format{A character vector.}
 \source{
-NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
+CIP 2010, US National Center for Education Statistics,
+  \url{https://nces.ed.gov/ipeds/cipcode}.
 }
 \usage{
 math_stat
 }
 \description{
-All 6-digit codes from the 2010 CIP 27 series.
+Classification of Instructional Programs (CIP) 6-digit codes for mathematics
+and statistics programs, series 27.
 }
 \examples{
-\dontrun{
- math_stat
-}
+head(math_stat, n = 10L)
+
+print(cip_filter(math_stat))
 }
 \keyword{datasets}

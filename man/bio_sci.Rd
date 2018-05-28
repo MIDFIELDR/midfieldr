@@ -3,20 +3,22 @@
 \docType{data}
 \name{bio_sci}
 \alias{bio_sci}
-\title{CIP codes for programs in biological and biomedical science}
+\title{CIP codes for biological and biomedical sciences}
 \format{A character vector.}
 \source{
-NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
+CIP 2010, US National Center for Education Statistics
+  (\url{https://nces.ed.gov/ipeds/cipcode}).
 }
 \usage{
 bio_sci
 }
 \description{
-All 6-digit codes from the 2010 CIP 26 series.
+Classification of Instructional Programs (CIP) 6-digit codes for biological
+and biomedical science programs, series 26.
 }
 \examples{
-\dontrun{
- bio_sci
-}
+head(bio_sci, n = 10L)
+
+print(cip_filter(bio_sci))
 }
 \keyword{datasets}

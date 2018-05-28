@@ -3,7 +3,7 @@
 \docType{data}
 \name{other_stem}
 \alias{other_stem}
-\title{CIP codes for other programs in STEM}
+\title{CIP codes for other STEM}
 \format{A character vector.}
 \source{
 NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
@@ -12,12 +12,14 @@ NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Docume
 other_stem
 }
 \description{
-All 6-digit codes for STEM programs excluding \code{bio_sci}, \code{engr},
+Classification of Instructional Programs (CIP) 6-digit codes for
+all Science, Technology, Engineering, and Mathematics (STEM) programs not
+included in the midfieldr named series: \code{bio_sci}, \code{engr},
 \code{math_stat}, and \code{phys_sci}.
 }
 \examples{
-\dontrun{
- other_stem
-}
+head(other_stem, n = 10L)
+
+print(cip_filter(other_stem))
 }
 \keyword{datasets}

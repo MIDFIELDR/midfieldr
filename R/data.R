@@ -1,83 +1,97 @@
-#' CIP codes for programs in biological and biomedical science
+#' CIP codes for biological and biomedical sciences
 #'
-#' All 6-digit codes from the 2010 CIP 26 series.
+#' Classification of Instructional Programs (CIP) 6-digit codes for biological
+#' and biomedical science programs, series 26.
 #'
-#' @source NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
 #' @format A character vector.
+#' @source CIP 2010, US National Center for Education Statistics
+#'   (\url{https://nces.ed.gov/ipeds/cipcode}).
 #' @examples
-#' \dontrun{
-#'  bio_sci
-#' }
+#' head(bio_sci, n = 10L)
+#'
+#' print(cip_filter(bio_sci))
 "bio_sci"
 
-#' CIP codes for programs in engineering
+#' CIP codes for engineering
 #'
-#' All 6-digit codes from the 2010 CIP 14 series.
+#' Classification of Instructional Programs (CIP) 6-digit codes for
+#' engineering programs, series 14.
 #'
-#' @source NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
 #' @format A character vector.
+#' @source CIP 2010, US National Center for Education Statistics,
+#'   \url{https://nces.ed.gov/ipeds/cipcode}.
 #' @examples
-#' \dontrun{
-#'  engr
-#' }
+#' head(engr, n = 10L)
+#'
+#' print(cip_filter(engr))
 "engr"
 
-#' CIP codes for programs in mathematics and statistics
+#' CIP codes for mathematics and statistics
 #'
-#' All 6-digit codes from the 2010 CIP 27 series.
+#' Classification of Instructional Programs (CIP) 6-digit codes for mathematics
+#' and statistics programs, series 27.
 #'
-#' @source NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
 #' @format A character vector.
+#' @source CIP 2010, US National Center for Education Statistics,
+#'   \url{https://nces.ed.gov/ipeds/cipcode}.
 #' @examples
-#' \dontrun{
-#'  math_stat
-#' }
+#' head(math_stat, n = 10L)
+#'
+#' print(cip_filter(math_stat))
 "math_stat"
 
-#' CIP codes for programs in physical science
+#' CIP codes for physical sciences
 #'
-#' All 6-digit codes from the 2010 CIP 40 series.
+#' Classification of Instructional Programs (CIP) 6-digit codes for physical
+#' science programs, series 40.
 #'
-#' @source NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
 #' @format A character vector.
+#' @source CIP 2010, US National Center for Education Statistics,
+#'   \url{https://nces.ed.gov/ipeds/cipcode}.
 #' @examples
-#' \dontrun{
-#'  phys_sci
-#' }
+#' head(phys_sci, n = 10L)
+#'
+#' print(cip_filter(phys_sci))
 "phys_sci"
 
-#' CIP codes for other programs in STEM
+#' CIP codes for other STEM
 #'
-#' All 6-digit codes for STEM programs excluding \code{bio_sci}, \code{engr},
+#' Classification of Instructional Programs (CIP) 6-digit codes for
+#' all Science, Technology, Engineering, and Mathematics (STEM) programs not
+#' included in the midfieldr named series: \code{bio_sci}, \code{engr},
 #' \code{math_stat}, and \code{phys_sci}.
 #'
-#' @source NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
 #' @format A character vector.
+#' @source NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
 #' @examples
-#' \dontrun{
-#'  other_stem
-#' }
+#' head(other_stem, n = 10L)
+#'
+#' print(cip_filter(other_stem))
 "other_stem"
 
-#' CIP codes for all programs in STEM
+#' CIP codes for all STEM
 #'
-#' All 6-digit codes for STEM programs. Concatenates all named series:
-#' \code{bio_sci}, \code{engr}, \code{math_stat}, \code{other_stem},
-#' and \code{phys_sci}.
+#' Classification of Instructional Programs (CIP) 6-digit codes for all
+#' Science, Technology, Engineering, and Mathematics (STEM)
+#' programs. Concatenates all the midfieldr named series for STEM programs:
+#' \code{bio_sci}, \code{engr}, \code{math_stat}, \code{other_stem}, and
+#' \code{phys_sci}.
 #'
-#' @source NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
 #' @format A character vector.
+#' @source CIP 2010, US National Center for Education Statistics,
+#'   \url{https://nces.ed.gov/ipeds/cipcode}, and the US National Science
+#'    Foundation (NSF) NSF
+#'   \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
 #' @examples
-#' \dontrun{
-#'  stem
-#' }
+#' head(stem, n = 10L)
+#'
+#' print(cip_filter(stem))
 "stem"
 
 #' Stickiness case data
 #'
-#' An example of stickiness data
+#' An example of program stickiness data grouped by student race and sex.
 #'
-#' @source A pre-processed data frame constructed following the steps described in the \code{stickiness} vignette.
 #' @format A data frame with columns:
 #' \describe{
 #'  \item{program}{Instructional programs selected for study.}
@@ -91,9 +105,7 @@
 #'  graduating from a program to the number ever enrolled in the program.}
 #' }
 #' @examples
-#' \dontrun{
-#'  case_stickiness
-#' }
+#' case_stickiness
 "case_stickiness"
 
 #' Named colors from the ColorBrewer palettes
@@ -107,21 +119,57 @@
 #' levels.
 #'
 #' The color names have the form "level_hue" with 4 saturation levels (dark,
-#' mid, light, pale) and 5 hues (Br, BG, PR, Gn, Gray or Grey). For example,
-#' "dark_Br", "mid_BG", "light_Gn", and "pale_Gray" are all recognized names.
+#' mid, light, pale) and 5 hues (Br, BG, PR, Gn, Gray or Grey).
 #'
-#' The color codes are assigned in an R script using
-#' \code{midfieldr::rcb(name)}.
-#'
-#' @source Cynthia Brewer (\url{http://colorbrewer2.org}) and RColorBrewer
-#' (\url{https://cran.r-project.org/package=RColorBrewer}).
 #' @format A data frame with columns:
 #' \describe{
 #'   \item{rcb_name}{Character variable of names.}
 #'   \item{rcb_code}{Character variable of hex color codes.}
 #' }
+#' @source Cynthia Brewer (\url{http://colorbrewer2.org}) and RColorBrewer
+#' (\url{https://cran.r-project.org/package=RColorBrewer}).
 #' @examples
-#' \dontrun{
-#'  rcb_colors
-#' }
+#' rcb_colors
+#'
+#' rcb("dark_Br")
+#'
+#' rcb("light_Gn")
 "rcb_colors"
+
+#' Classification of Instructional Programs (CIP) data
+#'
+#' A dataset of codes and names for 1544 instructional programs organized on
+#' three levels: a 2-digit series, a 4-digit series, and a 6-digit series.
+#'
+#' 6-digit codes are used in the midfieldr datasets (\code{midfieldstudents},
+#' \code{midfieldcourses}, \code{midfieldterms}, and  \code{midfielddegrees})
+#' to encode program information as reported by the member institutions.
+#'
+#' In addition to the standard codes and names, the midfieldr taxonomy includes
+#' the codes "99", "9999", and "999999", all named
+#' "NonIPEDS - Undecided/Unspecified", for instances in which institutions
+#' reported no program information or that students were not enrolled in a
+#' program (undecided).
+#'
+#' @format A tidy data frame (tibble) with 1544 observations and 6 variables.
+#' All variables are characters. An observation is a unique program.
+#' \describe{
+#'   \item{CIP2}{An instructional program's 2-digit code,  representing "the
+#'   most general groupings of related programs" (US National Center for
+#'   Education Statistics).}
+#'   \item{CIP2name}{Name of a program at the 2-digit level.}
+#'   \item{CIP4}{An instructional program's 4-digit code, representing
+#'   "intermediate groupings of programs that have comparable content and
+#'   objectives".}
+#'   \item{CIP4name}{Name of a program at the 4-digit level.}
+#'   \item{CIP6}{An instructional program's 6-digit code, representing
+#'   "specific instructional programs".}
+#'   \item{CIP6name}{Name of a program at the 6-digit level.}
+#' }
+#' @source Based on the 2010 codes curated by the US National Center for
+#' Education Statistics (\url{https://nces.ed.gov/ipeds/cipcode}).
+#' @examples
+#' cip
+#'
+#' print(cip_filter(series = "^1410", data = cip))
+"cip"

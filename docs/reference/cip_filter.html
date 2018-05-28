@@ -87,6 +87,9 @@ to return the rows that match conditions." />
     <li>
       <a href="../articles/stickiness.html">Stickiness metric</a>
     </li>
+    <li>
+      <a href="../articles/multiways.html">Multiway data and graphs</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -162,184 +165,11 @@ programs.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"490101"</span>, <span class='st'>"490205"</span>))</div><div class='output co'>#&gt;   CIP2                                     CIP2name CIP4
-#&gt; 1   49 Transportation and Materials Moving Services 4901
-#&gt; 2   49 Transportation and Materials Moving Services 4902
-#&gt;                         CIP4name   CIP6
-#&gt; 1    Air Transportation Services 490101
-#&gt; 2 Ground Transportation Services 490205
-#&gt;                                                          CIP6name
-#&gt; 1 Aeronautics/Aviation/Aerospace Science and Technology - General
-#&gt; 2               Truck and Bus Driver/Commercial Vehicle Operation</div><div class='input'><span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"^4901"</span>, <span class='st'>"^4902"</span>))</div><div class='output co'>#&gt;    CIP2                                     CIP2name CIP4
-#&gt; 1    49 Transportation and Materials Moving Services 4901
-#&gt; 2    49 Transportation and Materials Moving Services 4901
-#&gt; 3    49 Transportation and Materials Moving Services 4901
-#&gt; 4    49 Transportation and Materials Moving Services 4901
-#&gt; 5    49 Transportation and Materials Moving Services 4901
-#&gt; 6    49 Transportation and Materials Moving Services 4901
-#&gt; 7    49 Transportation and Materials Moving Services 4901
-#&gt; 8    49 Transportation and Materials Moving Services 4902
-#&gt; 9    49 Transportation and Materials Moving Services 4902
-#&gt; 10   49 Transportation and Materials Moving Services 4902
-#&gt; 11   49 Transportation and Materials Moving Services 4902
-#&gt; 12   49 Transportation and Materials Moving Services 4902
-#&gt; 13   49 Transportation and Materials Moving Services 4902
-#&gt;                          CIP4name   CIP6
-#&gt; 1     Air Transportation Services 490101
-#&gt; 2     Air Transportation Services 490102
-#&gt; 3     Air Transportation Services 490104
-#&gt; 4     Air Transportation Services 490105
-#&gt; 5     Air Transportation Services 490106
-#&gt; 6     Air Transportation Services 490109
-#&gt; 7     Air Transportation Services 490199
-#&gt; 8  Ground Transportation Services 490202
-#&gt; 9  Ground Transportation Services 490205
-#&gt; 10 Ground Transportation Services 490206
-#&gt; 11 Ground Transportation Services 490207
-#&gt; 12 Ground Transportation Services 490208
-#&gt; 13 Ground Transportation Services 490299
-#&gt;                                                           CIP6name
-#&gt; 1  Aeronautics/Aviation/Aerospace Science and Technology - General
-#&gt; 2            Airline/Commercial/Professional Pilot and Flight Crew
-#&gt; 3                        Aviation/Airway Management and Operations
-#&gt; 4                                           Air Traffic Controller
-#&gt; 5                                         Airline Flight Attendant
-#&gt; 6                                                Flight Instructor
-#&gt; 7                              Air Transportation Services - Other
-#&gt; 8     Construction/Heavy Equipment/Earthmoving Equipment Operation
-#&gt; 9                Truck and Bus Driver/Commercial Vehicle Operation
-#&gt; 10                                  Mobil Crane Operation/Operator
-#&gt; 11                                    Flagging and Traffic Control
-#&gt; 12                             Railroad and Railway Transportation
-#&gt; 13                         Vehicle and Equipment Operators - Other</div><div class='input'><span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"^49"</span>, <span class='st'>"^99"</span>))</div><div class='output co'>#&gt;    CIP2                                     CIP2name CIP4
-#&gt; 1    49 Transportation and Materials Moving Services 4901
-#&gt; 2    49 Transportation and Materials Moving Services 4901
-#&gt; 3    49 Transportation and Materials Moving Services 4901
-#&gt; 4    49 Transportation and Materials Moving Services 4901
-#&gt; 5    49 Transportation and Materials Moving Services 4901
-#&gt; 6    49 Transportation and Materials Moving Services 4901
-#&gt; 7    49 Transportation and Materials Moving Services 4901
-#&gt; 8    49 Transportation and Materials Moving Services 4902
-#&gt; 9    49 Transportation and Materials Moving Services 4902
-#&gt; 10   49 Transportation and Materials Moving Services 4902
-#&gt; 11   49 Transportation and Materials Moving Services 4902
-#&gt; 12   49 Transportation and Materials Moving Services 4902
-#&gt; 13   49 Transportation and Materials Moving Services 4902
-#&gt; 14   49 Transportation and Materials Moving Services 4903
-#&gt; 15   49 Transportation and Materials Moving Services 4903
-#&gt; 16   49 Transportation and Materials Moving Services 4903
-#&gt; 17   49 Transportation and Materials Moving Services 4903
-#&gt; 18   49 Transportation and Materials Moving Services 4999
-#&gt; 19   99             NonIPEDS - Undecided/Unspecified 9999
-#&gt;                                              CIP4name   CIP6
-#&gt; 1                         Air Transportation Services 490101
-#&gt; 2                         Air Transportation Services 490102
-#&gt; 3                         Air Transportation Services 490104
-#&gt; 4                         Air Transportation Services 490105
-#&gt; 5                         Air Transportation Services 490106
-#&gt; 6                         Air Transportation Services 490109
-#&gt; 7                         Air Transportation Services 490199
-#&gt; 8                      Ground Transportation Services 490202
-#&gt; 9                      Ground Transportation Services 490205
-#&gt; 10                     Ground Transportation Services 490206
-#&gt; 11                     Ground Transportation Services 490207
-#&gt; 12                     Ground Transportation Services 490208
-#&gt; 13                     Ground Transportation Services 490299
-#&gt; 14                     Marine Transportation Services 490303
-#&gt; 15                     Marine Transportation Services 490304
-#&gt; 16                     Marine Transportation Services 490309
-#&gt; 17                     Marine Transportation Services 490399
-#&gt; 18 Transportation and Materials Moving Services/Other 499999
-#&gt; 19                   NonIPEDS - Undecided/Unspecified 999999
-#&gt;                                                           CIP6name
-#&gt; 1  Aeronautics/Aviation/Aerospace Science and Technology - General
-#&gt; 2            Airline/Commercial/Professional Pilot and Flight Crew
-#&gt; 3                        Aviation/Airway Management and Operations
-#&gt; 4                                           Air Traffic Controller
-#&gt; 5                                         Airline Flight Attendant
-#&gt; 6                                                Flight Instructor
-#&gt; 7                              Air Transportation Services - Other
-#&gt; 8     Construction/Heavy Equipment/Earthmoving Equipment Operation
-#&gt; 9                Truck and Bus Driver/Commercial Vehicle Operation
-#&gt; 10                                  Mobil Crane Operation/Operator
-#&gt; 11                                    Flagging and Traffic Control
-#&gt; 12                             Railroad and Railway Transportation
-#&gt; 13                         Vehicle and Equipment Operators - Other
-#&gt; 14                                              Commercial Fishing
-#&gt; 15                               Diver/Professional and Instructor
-#&gt; 16                          Marine Science/Merchant Marine Officer
-#&gt; 17                          Marine Transportation Services - Other
-#&gt; 18            Transportation and Materials Moving Services - Other
-#&gt; 19                                NonIPEDS - Undecided/Unspecified</div><div class='input'><span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"^54"</span>, <span class='st'>"^4901"</span>, <span class='st'>"490205"</span>))</div><div class='output co'>#&gt;    CIP2                                     CIP2name CIP4
-#&gt; 1    49 Transportation and Materials Moving Services 4901
-#&gt; 2    49 Transportation and Materials Moving Services 4901
-#&gt; 3    49 Transportation and Materials Moving Services 4901
-#&gt; 4    49 Transportation and Materials Moving Services 4901
-#&gt; 5    49 Transportation and Materials Moving Services 4901
-#&gt; 6    49 Transportation and Materials Moving Services 4901
-#&gt; 7    49 Transportation and Materials Moving Services 4901
-#&gt; 8    49 Transportation and Materials Moving Services 4902
-#&gt; 9    54                                      History 5401
-#&gt; 10   54                                      History 5401
-#&gt; 11   54                                      History 5401
-#&gt; 12   54                                      History 5401
-#&gt; 13   54                                      History 5401
-#&gt; 14   54                                      History 5401
-#&gt; 15   54                                      History 5401
-#&gt; 16   54                                      History 5401
-#&gt; 17   54                                      History 5401
-#&gt;                          CIP4name   CIP6
-#&gt; 1     Air Transportation Services 490101
-#&gt; 2     Air Transportation Services 490102
-#&gt; 3     Air Transportation Services 490104
-#&gt; 4     Air Transportation Services 490105
-#&gt; 5     Air Transportation Services 490106
-#&gt; 6     Air Transportation Services 490109
-#&gt; 7     Air Transportation Services 490199
-#&gt; 8  Ground Transportation Services 490205
-#&gt; 9                         History 540101
-#&gt; 10                        History 540102
-#&gt; 11                        History 540103
-#&gt; 12                        History 540104
-#&gt; 13                        History 540105
-#&gt; 14                        History 540106
-#&gt; 15                        History 540107
-#&gt; 16                        History 540108
-#&gt; 17                        History 540199
-#&gt;                                                           CIP6name
-#&gt; 1  Aeronautics/Aviation/Aerospace Science and Technology - General
-#&gt; 2            Airline/Commercial/Professional Pilot and Flight Crew
-#&gt; 3                        Aviation/Airway Management and Operations
-#&gt; 4                                           Air Traffic Controller
-#&gt; 5                                         Airline Flight Attendant
-#&gt; 6                                                Flight Instructor
-#&gt; 7                              Air Transportation Services - Other
-#&gt; 8                Truck and Bus Driver/Commercial Vehicle Operation
-#&gt; 9                                                History - General
-#&gt; 10                                American History (United States)
-#&gt; 11                                                European History
-#&gt; 12                History and Philosophy of Science and Technology
-#&gt; 13              Public/Applied History and Archival Administration
-#&gt; 14                                                   Asian History
-#&gt; 15                                                Canadian History
-#&gt; 16                                                Military History
-#&gt; 17                                                 History - Other</div><div class='input'><span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>seq</span>(<span class='fl'>540102</span>, <span class='fl'>540108</span>))</div><div class='output co'>#&gt;   CIP2 CIP2name CIP4 CIP4name   CIP6
-#&gt; 1   54  History 5401  History 540102
-#&gt; 2   54  History 5401  History 540103
-#&gt; 3   54  History 5401  History 540104
-#&gt; 4   54  History 5401  History 540105
-#&gt; 5   54  History 5401  History 540106
-#&gt; 6   54  History 5401  History 540107
-#&gt; 7   54  History 5401  History 540108
-#&gt;                                             CIP6name
-#&gt; 1                   American History (United States)
-#&gt; 2                                   European History
-#&gt; 3   History and Philosophy of Science and Technology
-#&gt; 4 Public/Applied History and Archival Administration
-#&gt; 5                                      Asian History
-#&gt; 6                                   Canadian History
-#&gt; 7                                   Military History</div><div class='input'>
-</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"490101"</span>, <span class='st'>"490205"</span>))
+<span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"^4901"</span>, <span class='st'>"^4902"</span>))
+<span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"^49"</span>, <span class='st'>"^99"</span>))
+<span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"^54"</span>, <span class='st'>"^4901"</span>, <span class='st'>"490205"</span>))
+<span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>seq</span>(<span class='fl'>540102</span>, <span class='fl'>540108</span>))</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

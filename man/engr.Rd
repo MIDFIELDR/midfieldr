@@ -3,20 +3,22 @@
 \docType{data}
 \name{engr}
 \alias{engr}
-\title{CIP codes for programs in engineering}
+\title{CIP codes for engineering}
 \format{A character vector.}
 \source{
-NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
+CIP 2010, US National Center for Education Statistics,
+  \url{https://nces.ed.gov/ipeds/cipcode}.
 }
 \usage{
 engr
 }
 \description{
-All 6-digit codes from the 2010 CIP 14 series.
+Classification of Instructional Programs (CIP) 6-digit codes for
+engineering programs, series 14.
 }
 \examples{
-\dontrun{
- engr
-}
+head(engr, n = 10L)
+
+print(cip_filter(engr))
 }
 \keyword{datasets}

@@ -27,15 +27,13 @@ diverging brown-bluegreen (BrBG) with 8 levels; diverging purple-green
 levels.
 
 The color names have the form "level_hue" with 4 saturation levels (dark,
-mid, light, pale) and 5 hues (Br, BG, PR, Gn, Gray or Grey). For example,
-"dark_Br", "mid_BG", "light_Gn", and "pale_Gray" are all recognized names.
-
-The color codes are assigned in an R script using
-\code{midfieldr::rcb(name)}.
+mid, light, pale) and 5 hues (Br, BG, PR, Gn, Gray or Grey).
 }
 \examples{
-\dontrun{
- rcb_colors
-}
+rcb_colors
+
+rcb("dark_Br")
+
+rcb("light_Gn")
 }
 \keyword{datasets}

@@ -3,22 +3,27 @@
 \docType{data}
 \name{stem}
 \alias{stem}
-\title{CIP codes for all programs in STEM}
+\title{CIP codes for all STEM}
 \format{A character vector.}
 \source{
-NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
+CIP 2010, US National Center for Education Statistics,
+  \url{https://nces.ed.gov/ipeds/cipcode}, and the US National Science
+   Foundation (NSF) NSF
+  \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
 }
 \usage{
 stem
 }
 \description{
-All 6-digit codes for STEM programs. Concatenates all named series:
-\code{bio_sci}, \code{engr}, \code{math_stat}, \code{other_stem},
-and \code{phys_sci}.
+Classification of Instructional Programs (CIP) 6-digit codes for all
+Science, Technology, Engineering, and Mathematics (STEM)
+programs. Concatenates all the midfieldr named series for STEM programs:
+\code{bio_sci}, \code{engr}, \code{math_stat}, \code{other_stem}, and
+\code{phys_sci}.
 }
 \examples{
-\dontrun{
- stem
-}
+head(stem, n = 10L)
+
+print(cip_filter(stem))
 }
 \keyword{datasets}

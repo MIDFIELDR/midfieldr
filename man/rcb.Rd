@@ -7,7 +7,10 @@
 rcb(pattern)
 }
 \arguments{
-\item{pattern}{A character variable with custom color names of the form "level_hue", for example, "dark_Br", "mid_BG", "light_Gn", and "pale_Gray."}
+\item{pattern}{A character variable of a custom color name of the form
+"level_hue",  with 4 levels (dark, mid, light, pale) and 5 hues
+ (Br, BG, PR, Gn, Gray or Grey). For example, "dark_Br", "mid_BG",
+ "light_Gn", or "pale_Gray."}
 }
 \value{
 A hexadecimal color code in character form "#nnnnnn"

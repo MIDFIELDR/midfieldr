@@ -3,20 +3,22 @@
 \docType{data}
 \name{phys_sci}
 \alias{phys_sci}
-\title{CIP codes for programs in physical science}
+\title{CIP codes for physical sciences}
 \format{A character vector.}
 \source{
-NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
+CIP 2010, US National Center for Education Statistics,
+  \url{https://nces.ed.gov/ipeds/cipcode}.
 }
 \usage{
 phys_sci
 }
 \description{
-All 6-digit codes from the 2010 CIP 40 series.
+Classification of Instructional Programs (CIP) 6-digit codes for physical
+science programs, series 40.
 }
 \examples{
-\dontrun{
- phys_sci
-}
+head(phys_sci, n = 10L)
+
+print(cip_filter(phys_sci))
 }
 \keyword{datasets}

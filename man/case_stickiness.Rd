@@ -16,18 +16,13 @@
  \item{stick}{Program stickiness: the ratio of the number of students
  graduating from a program to the number ever enrolled in the program.}
 }}
-\source{
-A pre-processed data frame constructed following the steps described in the \code{stickiness} vignette.
-}
 \usage{
 case_stickiness
 }
 \description{
-An example of stickiness data
+An example of program stickiness data grouped by student race and sex.
 }
 \examples{
-\dontrun{
- case_stickiness
-}
+case_stickiness
 }
 \keyword{datasets}

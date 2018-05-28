@@ -3,27 +3,27 @@
 #' @importFrom scales trans_breaks trans_format math_format
 NULL
 
-#' Graph functions
+#' Graphics utility functions
 #'
-#' Provides a set of customized layers for graphs created with for \code{ggplot2}.
+#' Provides a set of customized layers for graphs created with for
+#' \code{ggplot2}.
 #'
 #' \describe{
-#'
-#' \item{\code{expon_scale_x_log10()}}{Applies the usual \code{scale_x_log10()}
-#' function with the scale marked with powers of ten in exponential form and the
-#' logarithmic minor grid lines shown.}
-#'
+#' \item{\code{expon_scale_x_log10()}}{Applies the
+#'   \code{ggplot2::scale_x_log10()} function, marks the scale with
+#'   powers of ten in exponential form, and displays the logarithmic minor
+#'   grid lines.}
 #' \item{\code{midfield_theme()}}{Applies \code{theme_minimal()} with some
-#' additional edits.}
+#'   additional edits.}
 #' }
 #'
 #' @return Modifies an existing graph
-#' @name graph_functions
+#' @name utilities-graph
 #' @aliases NULL
 NULL
 
 #' @export
-#' @rdname graph_functions
+#' @rdname utilities-graph
 expon_scale_x_log10 <- function() {
 	scale_x_log10(
 		breaks = trans_breaks("log10", function(x)
@@ -42,7 +42,7 @@ expon_scale_x_log10 <- function() {
 }
 
 #' @export
-#' @rdname graph_functions
+#' @rdname utilities-graph
 midfield_theme <- function() {
 	theme_minimal(base_family = "sans") +
 		theme(

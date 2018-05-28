@@ -2,7 +2,7 @@
 #' @importFrom dplyr filter arrange bind_rows group_by ungroup row_number
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_length str_c str_detect
-#' @importFrom tibble as.tibble
+#' @importFrom tibble as_tibble
 #' @importFrom dplyr enquo select
 NULL
 
@@ -66,5 +66,5 @@ cip_filter <- function(series = NULL, data = NULL) {
 	cip <- unique(cip) %>%
 		arrange(CIP2, CIP4, CIP6)
 
-	return(cip)
+	cip <- as_tibble(cip)
 }
