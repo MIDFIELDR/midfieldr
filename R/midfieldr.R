@@ -15,10 +15,9 @@ NULL
 #'   \item \code{cip_filter()} to select programs
 #'   \item \code{gather_start()} to gather students starting in the programs
 #'   \item \code{gather_grad()} to gather unique students graduating from the programs
-#'   \item \code{join_demographics()} to join student sex and race
-#'   \item \code{count_and_fill()} to group and summarize by selected variables
+#'   \item \code{race_sex_join()} to join student sex and race
+#'   \item \code{zero_fill()} fill zero for missing combinations
 #'   \item \code{tally_gradrate()} to compute graduation rates for each group
-#'   \item \code{graph_gradrate()} to graph graduation rates for each group
 #' }
 #'
 #' To learn about these and other functions, start with the vignettes:

@@ -3,6 +3,7 @@
 #' @importFrom tidyr spread gather
 #' @importFrom rlang sym syms
 #' @importFrom utils head tail
+#' @importFrom purrr map_chr
 NULL
 
 #' Insert a count of zero for missing combinations of categorical variables.
@@ -15,13 +16,11 @@ NULL
 #'
 #' @export
 zero_fill <- function(df) {
-	# for gather() and spread() key-value pairs, the "key" is any
-	# character variable and the "value" is the single numerical variable
-
-	# must be a df
 	stopifnot(is.data.frame(df))
+
 	# obtain type of variables to distinguish character fron numeirc
-	var_types <- sapply(df, typeof)
+	var_types <- purrr::map_chr(df, typeof)
+
 	# obtain list of symbolic variable names to recover column order
 	var_name_list <- rlang::syms(names(df))
 
