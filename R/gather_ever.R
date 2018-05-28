@@ -9,7 +9,7 @@ NULL
 #' return only those students ever enrolled in the programs being studied.
 #' Accounts for students enrolled in more than one program in a term.
 #'
-#' @param program_group A data frame that includes 6-digit CIP codes (\code{CIP6}) for the programs being studied.
+#' @param program_group A data frame that includes 6-digit CIP codes (\code{CIP6}) of the programs being studied.
 #'
 #' @return A data frame extracted from the \code{midfieldterms} dataset with variables \code{ID}, \code{institution}, \code{CIP6}.
 #'
@@ -19,14 +19,14 @@ NULL
 #'
 #' @export
 gather_ever <- function(program_group) {
+	stopifnot(is.data.frame(program_group))
 
 	# check that necessary variables are present
-	students <- midfieldterms
 	stopifnot("CIP6" %in% names(program_group))
 
 	# filter the data set using the search series
 	series   <- stringr::str_c(program_group$CIP6, collapse = "|")
-	students <- students %>%
+	students <- midfieldterms::midfieldterms %>%
 		dplyr::select(ID, institution, CIP6) %>%
 		dplyr::filter(stringr::str_detect(CIP6, series)) %>%
 		unique()

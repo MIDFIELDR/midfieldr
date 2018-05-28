@@ -8,9 +8,7 @@ NULL
 #' Filters a data frame to return those students earning degrees from the
 #' programs being studied.
 #'
-#' @param data A data frame of term data from \pkg{midfielddegrees}
-#'
-#' @param group A data frame with 6-digit CIP codes (\code{CIP6}) for the programs being studied
+#' @param program_group A data frame that includes 6-digit CIP codes (\code{CIP6}) of the programs being studied.
 #'
 #' @return A data frame. Each observation is a unique degree per unique
 #' student. Returns students earning their first degree (including multiple
@@ -18,15 +16,15 @@ NULL
 #' terms.
 #'
 #' @export
-gather_grad <- function(data, group) {
+gather_grad <- function(program_group) {
+	stopifnot(is.data.frame(program_group))
 
   # check that necessary variables are present
-  stopifnot(c("ID", "CIP6", "institution", "term_degree") %in% names(data))
-  stopifnot("CIP6" %in% names(group))
+  stopifnot("CIP6" %in% names(program_group))
 
-  # filter the data set using the search series
-  series <- stringr::str_c(group$CIP6, collapse = "|")
-  students <- data %>%
+  # filter the midfielddegrees data set using the search series
+  series <- stringr::str_c(program_group$CIP6, collapse = "|")
+  students <- midfielddegrees::midfielddegrees %>%
     dplyr::filter(stringr::str_detect(CIP6, series))
 
   # remove NA
@@ -43,7 +41,7 @@ gather_grad <- function(data, group) {
     dplyr::ungroup()
 
   # and keep multiple degrees earned in that term (if any)
-  # using left_join(x, y), all combinations bewteen x and y are returned
+  # using left_join(x, y), all combinations between x and y are returned
   students <- left_join(
     ID_first_term_degree,
     students,
@@ -51,7 +49,7 @@ gather_grad <- function(data, group) {
   )
 
   # join the group programs
-  students <- dplyr::left_join(students, group, by = "CIP6") %>%
+  students <- dplyr::left_join(students, program_group, by = "CIP6") %>%
     select(ID, institution, CIP6, program, degree)
 }
 "gather_grad"

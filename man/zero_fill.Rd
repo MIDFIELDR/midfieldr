@@ -2,15 +2,15 @@
 % Please edit documentation in R/zero_fill.R
 \name{zero_fill}
 \alias{zero_fill}
-\title{Group and summarize a count of students}
+\title{Insert a count of zero for missing combinations of categorical variables.}
 \usage{
 zero_fill(df)
 }
 \arguments{
-\item{df}{A df frame of unique students}
+\item{df}{A tidy data frame with any number of character variables and only one numerical variable.}
 }
 \value{
-df frame with a count of observations at the intersections of all variables in the \code{df} input df frame.
+The same data frame with new rows with a zero count for missing combinations.
 }
 \description{
 Counts the number of students grouped by all the variables in \code{df}. The count is assigned the variable name in \code{count_label}. If the variables \code{sex}, \code{race}, or \code{institution} are present, the function fills a zero for a missing count at every intersection of these variables.

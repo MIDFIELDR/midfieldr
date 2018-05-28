@@ -7,7 +7,7 @@
 gather_ever(program_group)
 }
 \arguments{
-\item{program_group}{A data frame that includes 6-digit CIP codes (\code{CIP6}) for the programs being studied.}
+\item{program_group}{A data frame that includes 6-digit CIP codes (\code{CIP6}) of the programs being studied.}
 }
 \value{
 A data frame extracted from the \code{midfieldterms} dataset with variables \code{ID}, \code{institution}, \code{CIP6}.

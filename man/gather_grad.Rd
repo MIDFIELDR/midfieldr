@@ -4,12 +4,10 @@
 \alias{gather_grad}
 \title{Gather program graduates}
 \usage{
-gather_grad(data, group)
+gather_grad(program_group)
 }
 \arguments{
-\item{data}{A data frame of term data from \pkg{midfielddegrees}}
-
-\item{group}{A data frame with 6-digit CIP codes (\code{CIP6}) for the programs being studied}
+\item{program_group}{A data frame that includes 6-digit CIP codes (\code{CIP6}) of the programs being studied.}
 }
 \value{
 A data frame. Each observation is a unique degree per unique

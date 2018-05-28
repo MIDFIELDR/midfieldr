@@ -37,6 +37,8 @@ cip_filter <- function(series = NULL, data = NULL) {
 	# default cip data set, else coerce to characters
 	if (is.null(data)) {
 		data <- midfieldr::cip
+	} else {
+		stopifnot(is.data.frame(data))
 	}
 
 	if (is.null(series)) {
