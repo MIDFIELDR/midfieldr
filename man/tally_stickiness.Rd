@@ -2,7 +2,7 @@
 % Please edit documentation in R/tally_stickiness.R
 \name{tally_stickiness}
 \alias{tally_stickiness}
-\title{Computes stickiness}
+\title{Compute stickiness}
 \usage{
 tally_stickiness(ever, grad)
 }

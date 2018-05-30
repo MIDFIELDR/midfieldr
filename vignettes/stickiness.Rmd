@@ -14,10 +14,10 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   error = TRUE,
-  purl = FALSE, 
-  fig.width = 6, 
-  fig.asp = 1/1.6, 
-  out.width = "70%",  
+  purl = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
   fig.align = "center"
 )
 knitr::knit_hooks$set(inline = function(x) {
@@ -184,7 +184,7 @@ In summary, the following chain gathers and counts the numbers of students ever 
 ever_enrolled <- gather_ever(program_group) %>%
   race_sex_join() %>%
   group_by(program, race, sex) %>%
-  summarize(ever = n()) %>% 
+  summarize(ever = n()) %>%
   ungroup() %>%
   zero_fill()
 ```
@@ -200,7 +200,7 @@ Similar to gathering the ever enrolled students, we can chain these functions to
 graduated <- gather_grad(program_group) %>%
   race_sex_join() %>%
   group_by(program, race, sex) %>%
-  summarize(grad = n()) %>% 
+  summarize(grad = n()) %>%
   ungroup() %>%
   zero_fill()
 
@@ -227,8 +227,8 @@ Before structuring the data for graphing, we select the populations we are inter
 We use `filter()` (a [dplyr](http://dplyr.tidyverse.org) function) to keep all rows except those in which race is Unknown, International, or Other.  
 
 ```{r}
-stickiness <- stickiness %>% 
-	filter(!race %in% c("Unknown", "International", "Other"))
+stickiness <- stickiness %>%
+  filter(!race %in% c("Unknown", "International", "Other"))
 ```
 
 We structure the stickiness results as *multiway* data by combining student race and sex into a single `race_sex` variable. The [Multiway](multiway.html) article explains multiway data and graphs in detail. 
@@ -240,10 +240,10 @@ We use:
 - `select()` (a [dplyr](http://dplyr.tidyverse.org) function) to keep three variables only 
 
 ```{r}
-# create the race_sex variable 
-stickiness <- stickiness %>% 
-	mutate(race_sex = str_c(race, sex, sep = " ")) %>% 
-	select(program, race_sex, stick)
+# create the race_sex variable
+stickiness <- stickiness %>%
+  mutate(race_sex = str_c(race, sex, sep = " ")) %>%
+  select(program, race_sex, stick)
 
 glimpse(stickiness)
 ```
@@ -254,13 +254,13 @@ glimpse(stickiness)
 # convert the data to a multiway structure
 stickiness <- multiway_order(stickiness)
 
-# multiway data comprise one quantitative and two categorical variables 
+# multiway data comprise one quantitative and two categorical variables
 glimpse(stickiness)
 ```
 
 ## Graphing the multiway
 
-By previously ordering the factor levels, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians. We use conventional ggplot2 functions applied to the `stickiness` data frame: 
+By using `multiway_order()` to condition the data, the rows and panels of the multiway graph will be ordered by the appropriate medians. We use conventional ggplot2 functions applied to the `stickiness` data frame: 
 
 - `stick` is the quantitative x-variable 
 - `race_sex` is the y-variable forming the rows of the panels 
@@ -271,19 +271,12 @@ By previously ordering the factor levels, we have structured the data so that th
 
 ```{r fig.asp = 2/1.6}
 ggplot(stickiness, aes(x = stick, y = race_sex)) +
-	facet_wrap(~ program, ncol = 1, as.table = FALSE) +
-	geom_point(na.rm = TRUE) +
-	labs(x = "Stickiness", y = "") +
-	midfield_theme() 
+  facet_wrap(~program, ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(x = "Stickiness", y = "") +
+  midfield_theme()
 ```
 
 We also apply our own `midfield_theme()` to edit the visual properties of the graph: axes, legends, panels, strips, etc. Learn more about ggplot2 themes [here](http://ggplot2.tidyverse.org/reference/ggtheme.html). 
-
-
-
-
-
-
-
 
 ## References

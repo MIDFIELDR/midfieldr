@@ -2,7 +2,7 @@
 #' @importFrom magrittr %>%
 NULL
 
-#' Computes stickiness
+#' Compute stickiness
 #'
 #' Stickiness is the ratio of the number of students graduating from a program
 #' to the number of students ever enrolled in a program.

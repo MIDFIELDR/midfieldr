@@ -2,20 +2,27 @@
 % Please edit documentation in R/multiway_order.R
 \name{multiway_order}
 \alias{multiway_order}
-\title{Multiway order}
+\title{Prepare multiway data for graphing}
 \usage{
-multiway_order(x)
+multiway_order(x, medians = FALSE)
 }
 \arguments{
 \item{x}{A data frame with one numerical variable and two categorical
 variables.}
+
+\item{medians}{A logical value indicating whether or not the medians
+computed to order the factors should be included in the data frame
+returned. The default is FALSE.}
 }
 \value{
 A data frame with its two categorical variables converted
-to factors and ordered by increasing medians of the numerical variable.
+to factors and ordered by increasing medians of the numerical variable. The
+medians of the quantitative variable for each category are added to the
+data frame if argument \code{medians} is TRUE.
 }
 \description{
-Prepare multiway data for graphing.
+Transforms a data frame such that two categorical variables become factors
+with their levels ordered by medians of the quantitative variable.
 }
 \details{
 In multiway data, there is a single quantitative value (or response) for
@@ -23,4 +30,24 @@ every combination of levels of two categorical variables.
 \code{multiway_order()} converts the categorical variables to factors and
 orders the factors by increasing median values of the levels of the
 categorical variables.
+}
+\examples{
+# construct a data frame with one numeric and two character variables
+set.seed(20150531)
+cat1 <- rep(c("Art", "History", "Math"), each = 2)
+cat2 <- rep(c("Male", "Female"), times = 3)
+x    <- round(runif(6, min = 0.1, max = 0.7), 3)
+df1  <- tibble::data_frame(cat1, cat2, x)
+df1
+
+# convert characters to factors ordered by medians
+df2 <- multiway_order(df1)
+df2 <- dplyr::arrange(df2, cat1, cat2)
+df2
+
+# include the medians in the output
+df3 <- multiway_order(df1, medians = TRUE)
+df3 <- dplyr::arrange(df3, cat1, cat2)
+df3
+
 }

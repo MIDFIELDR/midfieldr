@@ -2,7 +2,7 @@
 % Please edit documentation in R/zero_fill.R
 \name{zero_fill}
 \alias{zero_fill}
-\title{Insert a count of zero for missing combinations of categorical variables.}
+\title{Assign zero to missing combinations}
 \usage{
 zero_fill(df)
 }

@@ -6,7 +6,7 @@
 #' @importFrom purrr map_chr
 NULL
 
-#' Insert a count of zero for missing combinations of categorical variables.
+#' Assign zero to missing combinations
 #'
 #' Counts the number of students grouped by all the variables in \code{df}.
 #' The count is assigned the variable name in \code{count_label}. If the
