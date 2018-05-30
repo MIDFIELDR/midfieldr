@@ -34,37 +34,35 @@ NULL
 #'
 #' @export
 cip_filter <- function(series = NULL, data = NULL) {
-	# default cip data set, else coerce to characters
-	if (is.null(data)) {
-		data <- midfieldr::cip
-	} else {
-		stopifnot(is.data.frame(data))
-	}
+  # default cip data set, else coerce to characters
+  if (is.null(data)) {
+    data <- midfieldr::cip
+  } else {
+    stopifnot(is.data.frame(data))
+  }
 
-	if (is.null(series)) {
-		# default series is the 2-digit main entries
-		cip <- data %>%
-			arrange(CIP6) %>%
-			group_by(CIP2) %>%
-			filter(row_number(CIP2) == 1) %>% # again, keep the first term
-			ungroup()
+  if (is.null(series)) {
+    # default series is the 2-digit main entries
+    cip <- data %>%
+      arrange(CIP6) %>%
+      group_by(CIP2) %>%
+      filter(row_number(CIP2) == 1) %>% # again, keep the first term
+      ungroup()
+  } else {
+    # coerce series to character
+    series <- as.character(series)
+    collapse_series <- str_c(series, collapse = "|")
 
+    # search each column for strings in collapse_series
+    cip <- plyr::ldply(names(data), function(x)
+      paste0("filter(data, str_detect(data$", x, ", collapse_series))") %>%
+        parse(text = .) %>%
+        eval())
+  }
 
-	} else {
-		# coerce series to character
-		series <- as.character(series)
-		collapse_series <- str_c(series, collapse = "|")
+  # omit duplicates (if any) and arrange in order of CIP
+  cip <- unique(cip) %>%
+    arrange(CIP2, CIP4, CIP6)
 
-		# search each column for strings in collapse_series
-		cip <- plyr::ldply(names(data), function(x)
-			paste0("filter(data, str_detect(data$", x, ", collapse_series))")  %>%
-				parse(text = .) %>%
-				eval)
-	}
-
-	# omit duplicates (if any) and arrange in order of CIP
-	cip <- unique(cip) %>%
-		arrange(CIP2, CIP4, CIP6)
-
-	cip <- as_tibble(cip)
+  cip <- as_tibble(cip)
 }

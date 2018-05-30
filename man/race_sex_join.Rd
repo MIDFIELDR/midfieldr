@@ -7,14 +7,20 @@
 race_sex_join(df)
 }
 \arguments{
-\item{df}{A data frame of student attributes that includes the variable \code{ID}.}
+\item{df}{A data frame of student attributes that includes the variable
+\code{ID}.}
 }
 \value{
-The incoming data frame plus three new columns \code{sex}, \code{race}, and the combined string \code{race_sex}, joined by student ID. Other columns are unaffected.
+The incoming data frame plus three new columns \code{sex},
+\code{race}, and the combined string \code{race_sex}, joined by student ID.
+Other columns are unaffected.
 }
 \description{
-Add variables \code{race} and \code{sex} from the \code{midfieldstudents} dataset to a data frame. `dplyr::left_join()` is the joining function and \code{ID} is the join-by variable.
+Add variables \code{race} and \code{sex} from the \code{midfieldstudents}
+dataset to a data frame. `dplyr::left_join()` is the joining function
+and \code{ID} is the join-by variable.
 }
 \details{
-If sex and race variables are already present, the function returns the unchanged data frame and a message.
+If sex and race variables are already present, the function returns the
+unchanged data frame and a message.
 }

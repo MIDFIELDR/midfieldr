@@ -7,11 +7,17 @@
 zero_fill(df)
 }
 \arguments{
-\item{df}{A tidy data frame with any number of character variables and only one numerical variable.}
+\item{df}{A tidy data frame with any number of character variables and
+only one numerical variable.}
 }
 \value{
-The same data frame with new rows with a zero count for missing combinations.
+The same data frame with new rows with a zero count for
+missing combinations.
 }
 \description{
-Counts the number of students grouped by all the variables in \code{df}. The count is assigned the variable name in \code{count_label}. If the variables \code{sex}, \code{race}, or \code{institution} are present, the function fills a zero for a missing count at every intersection of these variables.
+Counts the number of students grouped by all the variables in \code{df}.
+The count is assigned the variable name in \code{count_label}. If the
+variables \code{sex}, \code{race}, or \code{institution} are present,
+the function fills a zero for a missing count at every intersection of
+these variables.
 }

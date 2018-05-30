@@ -8,7 +8,8 @@ NULL
 #' Filters a data frame to return those students earning degrees from the
 #' programs being studied.
 #'
-#' @param program_group A data frame that includes 6-digit CIP codes (\code{CIP6}) of the programs being studied.
+#' @param program_group A data frame that includes 6-digit CIP codes
+#' (\code{CIP6}) of the programs being studied.
 #'
 #' @return A data frame. Each observation is a unique degree per unique
 #' student. Returns students earning their first degree (including multiple
@@ -17,7 +18,7 @@ NULL
 #'
 #' @export
 gather_grad <- function(program_group) {
-	stopifnot(is.data.frame(program_group))
+  stopifnot(is.data.frame(program_group))
 
   # check that necessary variables are present
   stopifnot("CIP6" %in% names(program_group))

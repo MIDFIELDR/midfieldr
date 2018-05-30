@@ -7,15 +7,24 @@
 tally_stickiness(ever, grad)
 }
 \arguments{
-\item{ever}{A data frame}
+\item{ever}{A data frame with at least one categorical variable and a
+numeric variable named \code{ever}}
 
-\item{grad}{A data frame}
+\item{grad}{A data frame with at least one categorical variable and a
+numeric variable named \code{grad}}
 }
 \value{
-A data frame
+A data frame with all the original columns of the two input
+arguments plus a stickiness column.
 
-The two input data frames are joined by the set of variables they have in common.
+The two input data frames are joined by the set of variables they have in
+common.
 }
 \description{
-Given the numbers of students graduating from a program and the number of students ever enrolled in a program, the ratio of the two numbers is stickiness.
+Stickiness is the ratio of the number of students graduating from a program
+to the number of students ever enrolled in a program.
+}
+\details{
+The two input arguments must have at least one categorical variable in
+common for joining.
 }

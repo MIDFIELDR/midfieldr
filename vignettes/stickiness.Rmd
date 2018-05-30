@@ -20,7 +20,6 @@ knitr::opts_chunk$set(
   out.width = "70%",  
   fig.align = "center"
 )
-
 knitr::knit_hooks$set(inline = function(x) {
   if (!is.numeric(x)) {
     x
@@ -30,14 +29,14 @@ knitr::knit_hooks$set(inline = function(x) {
     prettyNum(round(x, 2))
   }
 })
-options(tibble.print_min = 10L, tibble.print_max = 10L)
+options(tibble.print_min = 12L, tibble.print_max = 12L)
 ```
 
-"Stickiness" is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program [@stickiness2012]. 
+Longitudinal "stickiness" is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program [@stickiness2012]. 
 
-Unlike other longitudinal metrics such as graduation rate, stickiness accounts for every student the program had the opportunity to retain and graduate whether or not they started in the program. 
+Thus the stickiness metric accounts for all students a program had the most immediate opportunity to retain and graduate---the students were, after all, enrolled in the program at one time. 
 
-We typically group the stickiness results by program, sex, and "race" as defined by the participating US institutions.
+We typically group stickiness results by program, biological sex (we have no data on gender identity), and "race" as defined by the participating US institutions. 
 
 ## Getting started 
 
@@ -75,10 +74,10 @@ For this example, we compare the stickiness of four engineering programs: Civil,
 We use:  
 
 - `cip_filter()` to obtain the relevant program codes 
-- `add_column()` (a [tibble](http://tibble.tidyverse.org) function) to add a user-defined `program` variable 
+- `add_column()` (a [tibble](http://tibble.tidyverse.org) function) to assign our own program label  
 
 
-```{r warning = FALSE, message = FALSE}
+```{r}
 # obtain 6-digit CIP and assign a custom program label
 cve <- cip_filter("^1408") %>% add_column(program = "Civil Engineering")
 ele <- cip_filter("^1410") %>% add_column(program = "Electrical Engineering")
@@ -86,7 +85,7 @@ mce <- cip_filter("^1419") %>% add_column(program = "Mechanical Engineering")
 ise <- cip_filter("^1435") %>% add_column(program = "Industrial Engineering")
 ```
 
-The custom label is used for grouping programs for graphing and to provide a shorter or common name for groups of programs. 
+The `program` label is used for grouping and summarizing numbers of students. 
 
 Next we bind the individual program data frames into one data frame. We use two [dplyr](http://dplyr.tidyverse.org) functions: 
 
@@ -99,7 +98,7 @@ program_group <- bind_rows(cve, ele, mce, ise) %>%
   select(CIP6, program, CIP6name)
 ```
 
-Examine the result: there are `r nrow(program_group)` CIP codes for these three programs. Our shorter `program` labels agree with the longer  official `CIP6name` values. 
+Examine the result: there are a total of `r nrow(program_group)` CIP codes for these  programs. Our shorter `program` labels agree with the longer official `CIP6name` values. 
 
 ```{r}
 # examine the result
@@ -108,14 +107,14 @@ program_group
 
 ## gather_ever()  
 
-`gather_ever()` extracts a subset of `midfieldterms` containing all unique students ever enrolled in the programs listed in `program_group` and joins our user-defined `program` labels to these data. 
+`gather_ever()` extracts a subset of the `midfieldterms` data containing all unique students ever enrolled in the programs listed in `program_group` and joins our user-defined `program` labels to these data. 
 
 ```{r}
 # extract unique students from midfieldterms
 students <- gather_ever(program_group)
 ```
 
-`glimpse()` (a tibble function) the result to check the number of observations and to view the first few values of each variable. 
+`glimpse()` (a [tibble](http://tibble.tidyverse.org) function) the result to check the number of observations and to view the first few values of each variable. 
 
 ```{r}
 # examine the result
@@ -124,7 +123,7 @@ glimpse(students)
 
 ## race_sex_join() 
 
-`race_sex_join()` accepts any data frame with the MIDFIELD student `ID` variable and joins the student race and sex from `midfieldstudents` to these data. 
+`race_sex_join()` accepts any data frame with the MIDFIELD student `ID` variable and joins the student race and sex from the `midfieldstudents` data to these data. 
 
 ```{r}
 students <- race_sex_join(students)
@@ -132,15 +131,7 @@ students <- race_sex_join(students)
 glimpse(students)
 ```
 
-If the argument to `race_sex_join()` already includes a `sex` or `race` column, that column (or columns) is returned unchanged. For example, let's remove the sex variable from the current `students` data frame and reapply `race_sex_join()`. The output includes a message that `sex` was successfully joined and `race` returned unchanged. 
-
-```{r message = TRUE}
-students <- students %>%
-  select(-sex) %>%
-  race_sex_join()
-
-glimpse(students)
-```
+If the argument to `race_sex_join()` already includes a `sex` or `race` column, that column (or columns) is returned unchanged.
 
 ## Count the numbers of students ever enrolled
 
@@ -150,17 +141,17 @@ We will use [dplyr](http://dplyr.tidyverse.org) functions to group and count the
 - `summarize()` to count the number of students in each group 
 - `ungroup()` to remove the grouping meta-information 
 
-Here, we give the count the variable name `ever`. All variables in `students` not used as grouping variables are quietly dropped. 
+All variables in `students` not used as grouping variables are quietly dropped. The assigned count variable is `ever`.  
 
 ```{r}
 # count the numbers of students ever in a program
 ever_enrolled <- students %>%
   group_by(program, race, sex) %>%
-  summarize(ever = n()) %>% # assign the name "ever" to the count variable
+  summarize(ever = n()) %>%
   ungroup()
 ```
 
-A similar chain of `dataframe %>% group_by() %>% summarize() %>% ungroup()`  is used every time we want to count numbers of students in a particular group. You are free to try any of the variables when counting, e.g., you could omit race and use `group_by(program, sex)`.
+You can change how you group the data by changing the arguments of `group_by()`.  
 
 ## zero_fill()
 
@@ -193,23 +184,23 @@ In summary, the following chain gathers and counts the numbers of students ever 
 ever_enrolled <- gather_ever(program_group) %>%
   race_sex_join() %>%
   group_by(program, race, sex) %>%
-  summarize(ever = n()) %>% # assign the name "ever" to the count variable
+  summarize(ever = n()) %>% 
   ungroup() %>%
   zero_fill()
 ```
 
 ## gather_grad() 
 
-`gather_grad()` extracts a subset of `midfielddegrees` containing all unique students ever graduating from the programs listed in `program_group` and joins our user-defined `program` labels to these data. 
+`gather_grad()` extracts a subset of the `midfielddegrees` data containing the  unique students ever graduating from the programs listed in `program_group` and joins our user-defined `program` labels to these data. 
 
-Similar to gathering the ever enrolled students, we can chain these functions together in one code chunk:
+Similar to gathering the ever enrolled students, we can chain these functions together in one code chunk. Here, the assigned count variable is `grad`.  
 
 ```{r}
 # count students graduating from programs
 graduated <- gather_grad(program_group) %>%
   race_sex_join() %>%
   group_by(program, race, sex) %>%
-  summarize(grad = n()) %>% # assign the name "grad" to the count variable
+  summarize(grad = n()) %>% 
   ungroup() %>%
   zero_fill()
 
@@ -219,17 +210,80 @@ glimpse(graduated)
 
 ## tally_stickiness()
 
-`tally_stickiness()` has two arguments: the `ever_enrolled` and  `graduated` data frames we constructed above. 
+`tally_stickiness()` has two arguments: `ever` and `grad` data frames. The two data frames are joined by the variables they have in common.   
 
-The data frame returned has all the original columns plus the new `stick` variable, a fraction from zero to one, or `NA` if `ever` is 0. 
+The function returns a data frame with all the original variables plus a column for the stickiness variable `stick`. Stickiness is reported as a fraction between 0 and 1, or NA if the ever count for a group is zero.   
 
 ```{r}
-stickiness <- tally_stickiness(ever_enrolled, graduated)
+stickiness <- tally_stickiness(ever = ever_enrolled, grad = graduated)
 
 stickiness
 ```
 
 ## multiway_order() 
+
+Before structuring the data for graphing, we select the populations we are interested in. For example, we might omit students for whom the "race" designation is ambiguous. This step could have been taken earlier, but must be taken (if at all) before using `multiway_order()`. 
+
+We use `filter()` (a [dplyr](http://dplyr.tidyverse.org) function) to keep all rows except those in which race is Unknown, International, or Other.  
+
+```{r}
+stickiness <- stickiness %>% 
+	filter(!race %in% c("Unknown", "International", "Other"))
+```
+
+We structure the stickiness results as *multiway* data by combining student race and sex into a single `race_sex` variable. The [Multiway](multiway.html) article explains multiway data and graphs in detail. 
+
+We use: 
+
+- `mutate()` (a [dplyr](http://dplyr.tidyverse.org) function) to create a new variable 
+- `str_c()` (a [stringr](http://stringr.tidyverse.org) function) to combine the race and sex strings 
+- `select()` (a [dplyr](http://dplyr.tidyverse.org) function) to keep three variables only 
+
+```{r}
+# create the race_sex variable 
+stickiness <- stickiness %>% 
+	mutate(race_sex = str_c(race, sex, sep = " ")) %>% 
+	select(program, race_sex, stick)
+
+glimpse(stickiness)
+```
+
+`multiway_order()` converts the character variables `program` and `race_sex` into *factors* and orders the levels of the two factors by the relevant stickiness medians. `glimpse()` shows that the two categorical variables are now factors.
+
+```{r}
+# convert the data to a multiway structure
+stickiness <- multiway_order(stickiness)
+
+# multiway data comprise one quantitative and two categorical variables 
+glimpse(stickiness)
+```
+
+## Graphing the multiway
+
+By previously ordering the factor levels, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians. We use conventional ggplot2 functions applied to the `stickiness` data frame: 
+
+- `stick` is the quantitative x-variable 
+- `race_sex` is the y-variable forming the rows of the panels 
+- `program` in `facet_wrap()` conditions the panels  
+- `as.table = FALSE` places the panels in ascending order from bottom to top 
+- `geom_point()` creates the data markers; any NA values are removed by `na.rm = TRUE` 
+- `labs()` assign axis labels 
+
+```{r fig.asp = 2/1.6}
+ggplot(stickiness, aes(x = stick, y = race_sex)) +
+	facet_wrap(~ program, ncol = 1, as.table = FALSE) +
+	geom_point(na.rm = TRUE) +
+	labs(x = "Stickiness", y = "") +
+	midfield_theme() 
+```
+
+We also apply our own `midfield_theme()` to edit the visual properties of the graph: axes, legends, panels, strips, etc. Learn more about ggplot2 themes [here](http://ggplot2.tidyverse.org/reference/ggtheme.html). 
+
+
+
+
+
+
 
 
 ## References

@@ -48,7 +48,7 @@ if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
     ".", ".x", "CIP2", "CIP4", "CIP6", "student", "ID",
     "race", "sex", "rcb_colors", "rcb_name", "rcb_code",
-    "midfielddegrees", "midfieldstudents",
+    "midfielddegrees", "midfieldstudents", "med",
     "midfieldterms", "midfieldcourses", "institution",
     "term_degree", "program", "degree"
   ))

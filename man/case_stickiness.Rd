@@ -7,7 +7,7 @@
 \format{A data frame with columns:
 \describe{
  \item{program}{Instructional programs selected for study.}
- \item{race}{Student race from \code{midfieldstudents} data.}
+ \item{race}{Student race and sex from \code{midfieldstudents} data.}
  \item{sex}{Student sex from \code{midfieldstudents} data.}
  \item{ever}{Number of students ever enrolled in a program. Grouped and
  summarized from \code{midfieldterms} data.}
