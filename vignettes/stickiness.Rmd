@@ -79,10 +79,14 @@ We use:
 
 ```{r}
 # obtain 6-digit CIP and assign a custom program label
-cve <- cip_filter("^1408") %>% add_column(program = "Civil Engineering")
-ele <- cip_filter("^1410") %>% add_column(program = "Electrical Engineering")
-mce <- cip_filter("^1419") %>% add_column(program = "Mechanical Engineering")
-ise <- cip_filter("^1435") %>% add_column(program = "Industrial Engineering")
+set1 <- cip_filter(series = "^1408") %>% 
+	add_column(program = "Civil Engineering")
+set2 <- cip_filter(series = "^1410") %>% 
+	add_column(program = "Electrical Engineering")
+set3 <- cip_filter(series = "^1419") %>% 
+	add_column(program = "Mechanical Engineering")
+set4 <- cip_filter(series = "^1435") %>% 
+	add_column(program = "Industrial Engineering")
 ```
 
 The `program` label is used for grouping and summarizing numbers of students. 
@@ -94,7 +98,7 @@ Next we bind the individual program data frames into one data frame. We use two 
 
 ```{r}
 # bind the programs
-program_group <- bind_rows(cve, ele, mce, ise) %>%
+program_group <- bind_rows(set1, set2, set3, set4) %>%
   select(CIP6, program, CIP6name)
 ```
 
@@ -167,11 +171,11 @@ This example has `r n_prog` programs, `r n_sex` sexes, and `r n_race` race value
 
 The missing group, it happens, is Civil Engineering Native American Female. 
 
-`zero_fill()` inserts a count of zero for missing combinations, ensuring that zero data values are not overlooked when printing data tables or constructing graphs. 
+`zero_fill()` inserts a count of zero for missing combinations, ensuring that zero data values are not overlooked when printing data tables or constructing graphs.  The arguments of `zero_fill()` are the same variable names used earlier in `group_by()`. 
 
 ```{r}
-# count ever enrolled and label the count "ever"
-ever_enrolled <- zero_fill(ever_enrolled)
+ever_enrolled <- ever_enrolled %>% 
+	zero_fill(program, race, sex)
 
 # examine the result
 ever_enrolled
@@ -186,7 +190,7 @@ ever_enrolled <- gather_ever(program_group) %>%
   group_by(program, race, sex) %>%
   summarize(ever = n()) %>%
   ungroup() %>%
-  zero_fill()
+  zero_fill(program, race, sex)
 ```
 
 ## gather_grad() 
@@ -202,7 +206,7 @@ graduated <- gather_grad(program_group) %>%
   group_by(program, race, sex) %>%
   summarize(grad = n()) %>%
   ungroup() %>%
-  zero_fill()
+  zero_fill(program, race, sex)
 
 # examine the result
 glimpse(graduated)

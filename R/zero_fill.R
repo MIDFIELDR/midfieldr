@@ -1,62 +1,45 @@
-#' @importFrom dplyr arrange
+#' @importFrom dplyr select quos left_join mutate_if funs
 #' @importFrom magrittr %>%
-#' @importFrom tidyr spread gather
-#' @importFrom rlang sym syms
-#' @importFrom utils head tail
+#' @importFrom tidyr expand
+#' @importFrom rlang syms
 #' @importFrom purrr map_chr
 NULL
 
 #' Assign zero to missing combinations
 #'
-#' Counts the number of students grouped by all the variables in \code{df}.
-#' The count is assigned the variable name in \code{count_label}. If the
-#' variables \code{sex}, \code{race}, or \code{institution} are present,
-#' the function fills a zero for a missing count at every intersection of
-#' these variables.
+#' A wrapper around \code{tidyr::expand()}. Expands a data frame to include
+#' all combinations of values, including those not found in the data. Replaces
+#' NA in numeric columns with zero.
 #'
-#' @param df A tidy data frame with any number of character variables and
-#' only one numerical variable.
+#' @param df A data frame.
+#'
+#' @param ... Specification of columns to expand.
 #'
 #' @return The same data frame with new rows with a zero count for
 #' missing combinations.
 #'
 #' @export
-zero_fill <- function(df) {
-  stopifnot(is.data.frame(df))
+zero_fill <- function(df, ...) {
+	stopifnot(is.data.frame(df))
 
-  # obtain type of variables to distinguish character fron numeirc
-  var_types <- purrr::map_chr(df, typeof)
+	# obtain list of symbolic variable names to recover column order
+	var_name_list <- rlang::syms(names(df))
 
-  # obtain list of symbolic variable names to recover column order
-  var_name_list <- rlang::syms(names(df))
+	# convert multiple bare column names to quosures
+	var_quo <- dplyr::quos(...)
 
-  # must have only one numerical count value
-  value_idx <- var_types[var_types == "double" | var_types == "integer"]
-  value_len <- max(seq_along(value_idx))
-  stopifnot(value_len == 1)
+	# expand the data frame, creating all combinations
+	combinations <- df %>% tidyr::expand(!!!var_quo)
 
-  # must have at least two character variables for spread/gather
-  key_idx <- var_types[var_types == "character"]
-  key_len <- max(seq_along(key_idx))
-  stopifnot(key_len >= 2)
+	# insert NA for combinations missing from the original
+	df <- dplyr::left_join(combinations, df)
 
-  # acquire the names for the "key-value" pair
-  key_names <- names(key_idx)
-  value_name <- names(value_idx)
+	# convert NA in numeric columns to a zero
+	df <- df %>%
+		dplyr::mutate_if(is.numeric, dplyr::funs(replace(., is.na(.), 0)))
 
-  # select the "key" and "value" variables for spread() and gather()
-  key <- rlang::sym(key_names[[1]])
-  value <- rlang::sym(value_name[[1]])
-
-  # obtain the first and last value of the key for gathering
-  df <- df %>% dplyr::arrange(!!key)
-  key_level_1 <- utils::head(unique(df[[key]]), n = 1)
-  key_level_n <- utils::tail(unique(df[[key]]), n = 1)
-
-  # spread, creates NA for missing combinations, fill NA with zero, and gather
-  df <- df %>%
-    tidyr::spread(!!key, !!value, fill = 0) %>%
-    tidyr::gather(!!key, !!value, key_level_1:key_level_n) %>%
-    select(!!!var_name_list)
+	# recover original column order
+	df <- df %>%
+		dplyr::select(!!!var_name_list)
 }
 "zero_fill"

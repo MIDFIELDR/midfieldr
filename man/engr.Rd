@@ -19,6 +19,6 @@ engineering programs, series 14.
 \examples{
 head(engr, n = 10L)
 
-print(cip_filter(engr))
+print(cip_filter(series = engr))
 }
 \keyword{datasets}

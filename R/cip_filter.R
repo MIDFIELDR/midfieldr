@@ -15,13 +15,13 @@ NULL
 #' programs and use the results to obtain the records of students in those
 #' programs.
 #'
-#' @param series The conditions used to filter the data. A character vector
-#' (or coercible to one) of any combination of 2, 4, or 6-digit CIP codes.
-#' If NULL, \code{data} is returned unchanged.
-#'
 #' @param data A data frame of character variables (or coercible to one).
 #' Required variables are \code{CIP2}, \code{CIP4}, and \code{CIP6}. If NULL,
 #' \code{data} is the midfieldr \code{cip} dataset.
+#'
+#' @param series The conditions used to filter the data. A character vector
+#' (or coercible to one) of any combination of 2, 4, or 6-digit CIP codes.
+#' If NULL, \code{data} is returned unchanged.
 #'
 #' @return A data frame: \code{data} filtered by the conditions in \code{series}.
 #'
@@ -33,7 +33,7 @@ NULL
 #' cip_filter(series = seq(540102, 540108))
 #'
 #' @export
-cip_filter <- function(series = NULL, data = NULL) {
+cip_filter <- function(data = NULL, series = NULL) {
   # default cip data set, else coerce to characters
   if (is.null(data)) {
     data <- midfieldr::cip

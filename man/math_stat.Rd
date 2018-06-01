@@ -19,6 +19,6 @@ and statistics programs, series 27.
 \examples{
 head(math_stat, n = 10L)
 
-print(cip_filter(math_stat))
+print(cip_filter(series = math_stat))
 }
 \keyword{datasets}

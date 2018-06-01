@@ -4,16 +4,16 @@
 \alias{cip_filter}
 \title{Filter CIP data}
 \usage{
-cip_filter(series = NULL, data = NULL)
+cip_filter(data = NULL, series = NULL)
 }
 \arguments{
-\item{series}{The conditions used to filter the data. A character vector
-(or coercible to one) of any combination of 2, 4, or 6-digit CIP codes.
-If NULL, \code{data} is returned unchanged.}
-
 \item{data}{A data frame of character variables (or coercible to one).
 Required variables are \code{CIP2}, \code{CIP4}, and \code{CIP6}. If NULL,
 \code{data} is the midfieldr \code{cip} dataset.}
+
+\item{series}{The conditions used to filter the data. A character vector
+(or coercible to one) of any combination of 2, 4, or 6-digit CIP codes.
+If NULL, \code{data} is returned unchanged.}
 }
 \value{
 A data frame: \code{data} filtered by the conditions in \code{series}.

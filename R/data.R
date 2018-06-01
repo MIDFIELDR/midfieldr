@@ -9,7 +9,7 @@
 #' @examples
 #' head(bio_sci, n = 10L)
 #'
-#' print(cip_filter(bio_sci))
+#' print(cip_filter(series = bio_sci))
 "bio_sci"
 
 #' CIP codes for engineering
@@ -23,7 +23,7 @@
 #' @examples
 #' head(engr, n = 10L)
 #'
-#' print(cip_filter(engr))
+#' print(cip_filter(series = engr))
 "engr"
 
 #' CIP codes for mathematics and statistics
@@ -37,7 +37,7 @@
 #' @examples
 #' head(math_stat, n = 10L)
 #'
-#' print(cip_filter(math_stat))
+#' print(cip_filter(series = math_stat))
 "math_stat"
 
 #' CIP codes for physical sciences
@@ -51,7 +51,7 @@
 #' @examples
 #' head(phys_sci, n = 10L)
 #'
-#' print(cip_filter(phys_sci))
+#' print(cip_filter(series = phys_sci))
 "phys_sci"
 
 #' CIP codes for other STEM
@@ -66,7 +66,7 @@
 #' @examples
 #' head(other_stem, n = 10L)
 #'
-#' print(cip_filter(other_stem))
+#' print(cip_filter(series = other_stem))
 "other_stem"
 
 #' CIP codes for all STEM
@@ -85,7 +85,7 @@
 #' @examples
 #' head(stem, n = 10L)
 #'
-#' print(cip_filter(stem))
+#' print(cip_filter(series = stem))
 "stem"
 
 #' Stickiness case data
@@ -171,5 +171,5 @@
 #' @examples
 #' cip
 #'
-#' print(cip_filter(series = "^1410", data = cip))
+#' print(cip_filter(data = cip, series = "^1410"))
 "cip"

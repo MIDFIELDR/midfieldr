@@ -19,6 +19,6 @@ science programs, series 40.
 \examples{
 head(phys_sci, n = 10L)
 
-print(cip_filter(phys_sci))
+print(cip_filter(series = phys_sci))
 }
 \keyword{datasets}

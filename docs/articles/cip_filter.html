@@ -124,10 +124,9 @@
 <p><code><a href="../reference/cip_filter.html">cip_filter()</a></code> filters <code>cip</code> data frame for the programs we wish to study. The function has two arguments:</p>
 <ul>
 <li>
-<code>series</code> <span style="display:inline-block; width: 1mm;"></span> Search terms. A character vector of codes or keywords.<br>
-</li>
-<li>
 <code>data</code> <span style="display:inline-block; width: 5.5mm;"></span>A searchable data frame (<code>cip</code> is the default).</li>
+<li>
+<code>series</code> <span style="display:inline-block; width: 1mm;"></span> Search terms. A character vector of codes or keywords.</li>
 </ul>
 <p><code><a href="../reference/cip_filter.html">cip_filter()</a></code> searches all columns in <code>data</code> for the strings in <code>series</code> and returns a data frame whose rows contain the search terms. Filtering is performed by <code><a href="http://dplyr.tidyverse.org/reference/filter.html">dplyr::filter()</a></code> with pattern detection by <code><a href="http://www.rdocumentation.org/packages/stringr/topics/str_detect">stringr::str_detect()</a></code>.</p>
 <p>With no arguments, <code><a href="../reference/cip_filter.html">cip_filter()</a></code> returns the unique 2-digit series and the first entry of the corresponding 4- and 6-digit series.</p>
@@ -1400,7 +1399,7 @@ Civil Engineering - Other
 </table>
 <p>The 2-digit series represent the most general groupings of related programs. Here, the result includes all History codes and programs.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># 2-digit example</span></a>
-<a class="sourceLine" id="cb11-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^54"</span>)</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"^54"</span>)</a>
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead><tr>
@@ -1608,7 +1607,7 @@ History - Other
 </table>
 <p>The series argument can include any combination of 2, 4, and 6-digit codes.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="co"># a series with 2, 4, and 6-digits specified</span></a>
-<a class="sourceLine" id="cb12-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">c</span>(<span class="st">"^24"</span>, <span class="st">"^4102"</span>, <span class="st">"^450202"</span>))</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"^24"</span>, <span class="st">"^4102"</span>, <span class="st">"^450202"</span>))</a>
 <a class="sourceLine" id="cb12-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead><tr>
@@ -1995,10 +1994,10 @@ Military History
 <h2 class="hasAnchor">
 <a href="#using-a-previous-result-as-a-data-argument" class="anchor"></a>Using a previous result as a data argument</h2>
 <p>A data frame produced by <code><a href="../reference/cip_filter.html">cip_filter()</a></code> can be used as the <code>data</code> argument in a subsequent use of <code><a href="../reference/cip_filter.html">cip_filter()</a></code>.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">df1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^49"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">df1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"^49"</span>)</a></code></pre></div>
 <p>Suppose, after viewing the full “49” series above we decide we only need the “4903” subset. We can use the data frame <code>df1</code> from above as the <code>data</code> argument.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="co"># use a previous result as a data argument</span></a>
-<a class="sourceLine" id="cb16-2" data-line-number="2">df2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"4903"</span>, <span class="dt">data =</span> df1)</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">df2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(df1, <span class="dt">series =</span> <span class="st">"4903"</span>)</a>
 <a class="sourceLine" id="cb16-3" data-line-number="3"><span class="kw">kable</span>(df2)</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead><tr>

@@ -44,6 +44,6 @@ program (undecided).
 \examples{
 cip
 
-print(cip_filter(series = "^1410", data = cip))
+print(cip_filter(data = cip, series = "^1410"))
 }
 \keyword{datasets}

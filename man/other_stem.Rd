@@ -20,6 +20,6 @@ included in the midfieldr named series: \code{bio_sci}, \code{engr},
 \examples{
 head(other_stem, n = 10L)
 
-print(cip_filter(other_stem))
+print(cip_filter(series = other_stem))
 }
 \keyword{datasets}

@@ -24,6 +24,6 @@ programs. Concatenates all the midfieldr named series for STEM programs:
 \examples{
 head(stem, n = 10L)
 
-print(cip_filter(stem))
+print(cip_filter(series = stem))
 }
 \keyword{datasets}

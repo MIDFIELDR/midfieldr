@@ -4,20 +4,19 @@
 \alias{zero_fill}
 \title{Assign zero to missing combinations}
 \usage{
-zero_fill(df)
+zero_fill(df, ...)
 }
 \arguments{
-\item{df}{A tidy data frame with any number of character variables and
-only one numerical variable.}
+\item{df}{A data frame.}
+
+\item{...}{Specification of columns to expand.}
 }
 \value{
 The same data frame with new rows with a zero count for
 missing combinations.
 }
 \description{
-Counts the number of students grouped by all the variables in \code{df}.
-The count is assigned the variable name in \code{count_label}. If the
-variables \code{sex}, \code{race}, or \code{institution} are present,
-the function fills a zero for a missing count at every intersection of
-these variables.
+A wrapper around \code{tidyr::expand()}. Expands a data frame to include
+all combinations of values, including those not found in the data. Replaces
+NA in numeric columns with zero.
 }

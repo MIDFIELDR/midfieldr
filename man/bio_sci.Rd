@@ -19,6 +19,6 @@ and biomedical science programs, series 26.
 \examples{
 head(bio_sci, n = 10L)
 
-print(cip_filter(bio_sci))
+print(cip_filter(series = bio_sci))
 }
 \keyword{datasets}
