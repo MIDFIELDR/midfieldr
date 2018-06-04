@@ -88,8 +88,8 @@ Chemical, Electrical, and Industrial Engineering.
 Begin by using `cip_filter()` to search for engineering codes.
 
 ``` r
-cip_search <- cip_filter(series = "Engineering")
-cip_search
+search_results <- cip_filter(series = "Engineering")
+search_results
 #> # A tibble: 120 x 6
 #>   CIP2  CIP2name    CIP4  CIP4name              CIP6  CIP6name            
 #>   <chr> <chr>       <chr> <chr>                 <chr> <chr>               
@@ -108,10 +108,10 @@ In the CIP data, engineering program codes all start with “14”. We can
 use this to narrow the search.
 
 ``` r
-cip_search <- cip_filter(series = "^14") %>%
+search_results <- cip_filter(series = "^14") %>%
   cip_filter(series = c("Chemical", "Electrical", "Industrial"))
 
-cip_search
+search_results
 #> # A tibble: 8 x 6
 #>   CIP2  CIP2name    CIP4  CIP4name             CIP6  CIP6name             
 #>   <chr> <chr>       <chr> <chr>                <chr> <chr>                
@@ -260,7 +260,7 @@ ggplot(stickiness, aes(x = stick, y = race_sex)) +
   midfield_theme()
 ```
 
-<img src="man/figures/README-graph_stickiness-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-graph-stickiness-1.png" width="70%" style="display: block; margin: auto;" />
 
 ## Meta
 

@@ -1,92 +1,48 @@
-#' CIP codes for biological and biomedical sciences
+#' Named series of 6-digit CIP codes
 #'
-#' Classification of Instructional Programs (CIP) 6-digit codes for biological
-#' and biomedical science programs, series 26.
+#' Collected Classification of Instructional Programs (CIP) 6-digit codes
+#' for groups of programs.
 #'
-#' @format A character vector.
-#' @source CIP 2010, US National Center for Education Statistics
-#'   (\url{https://nces.ed.gov/ipeds/cipcode}).
-#' @examples
-#' head(bio_sci, n = 10L)
+#' @name cip_series
+#' @format A character vector of 6-digit CIP codes.
+#' \describe{
+#' \item{\code{cip_bio_sci}}{Biological and biomedical science programs,
+#'   26 series, e.g., 260001.}
+#' \item{\code{cip_engr}}{Engineering programs, series 14, e.g., 140201.}
+#' \item{\code{cip_math_stat}}{Mathematics and statistics programs, series 27,
+#'   e.g., 270103.}
+#' \item{\code{cip_other_stem}}{Other STEM programs not in \code{cip_bio_sci},
+#'   \code{cip_engr}, \code{cip_math_stat}, or \code{cip_phys_sci}.}
+#' \item{\code{cip_phys_sci}}{Physical science programs, series 40, e.g.
+#'   400202.}
+#' \item{\code{cip_stem}}{All Science, Technology, Engineering, and Mathematics
+#'   (STEM) programs.}
+#' }
+#' @source
+#' NSF STEM programs, \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}
 #'
-#' print(cip_filter(series = bio_sci))
-"bio_sci"
-
-#' CIP codes for engineering
-#'
-#' Classification of Instructional Programs (CIP) 6-digit codes for
-#' engineering programs, series 14.
-#'
-#' @format A character vector.
-#' @source CIP 2010, US National Center for Education Statistics,
+#' CIP 2010, US National Center for Education Statistics,
 #'   \url{https://nces.ed.gov/ipeds/cipcode}.
 #' @examples
-#' head(engr, n = 10L)
+#' head(cip_math_stat, n = 10L)
+#' head(cip_phys_sci, n = 10L)
 #'
-#' print(cip_filter(series = engr))
-"engr"
+#' cip_filter(series = cip_math_stat)
+#' cip_filter(series = cip_phys_sci)
+NULL
 
-#' CIP codes for mathematics and statistics
-#'
-#' Classification of Instructional Programs (CIP) 6-digit codes for mathematics
-#' and statistics programs, series 27.
-#'
-#' @format A character vector.
-#' @source CIP 2010, US National Center for Education Statistics,
-#'   \url{https://nces.ed.gov/ipeds/cipcode}.
-#' @examples
-#' head(math_stat, n = 10L)
-#'
-#' print(cip_filter(series = math_stat))
-"math_stat"
-
-#' CIP codes for physical sciences
-#'
-#' Classification of Instructional Programs (CIP) 6-digit codes for physical
-#' science programs, series 40.
-#'
-#' @format A character vector.
-#' @source CIP 2010, US National Center for Education Statistics,
-#'   \url{https://nces.ed.gov/ipeds/cipcode}.
-#' @examples
-#' head(phys_sci, n = 10L)
-#'
-#' print(cip_filter(series = phys_sci))
-"phys_sci"
-
-#' CIP codes for other STEM
-#'
-#' Classification of Instructional Programs (CIP) 6-digit codes for
-#' all Science, Technology, Engineering, and Mathematics (STEM) programs not
-#' included in the midfieldr named series: \code{bio_sci}, \code{engr},
-#' \code{math_stat}, and \code{phys_sci}.
-#'
-#' @format A character vector.
-#' @source NSF STEM programs: \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
-#' @examples
-#' head(other_stem, n = 10L)
-#'
-#' print(cip_filter(series = other_stem))
-"other_stem"
-
-#' CIP codes for all STEM
-#'
-#' Classification of Instructional Programs (CIP) 6-digit codes for all
-#' Science, Technology, Engineering, and Mathematics (STEM)
-#' programs. Concatenates all the midfieldr named series for STEM programs:
-#' \code{bio_sci}, \code{engr}, \code{math_stat}, \code{other_stem}, and
-#' \code{phys_sci}.
-#'
-#' @format A character vector.
-#' @source CIP 2010, US National Center for Education Statistics,
-#'   \url{https://nces.ed.gov/ipeds/cipcode}, and the US National Science
-#'    Foundation (NSF) NSF
-#'   \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}.
-#' @examples
-#' head(stem, n = 10L)
-#'
-#' print(cip_filter(series = stem))
-"stem"
+#' @rdname cip_series
+"cip_bio_sci"
+#' @rdname cip_series
+"cip_engr"
+#' @rdname cip_series
+"cip_math_stat"
+#' @rdname cip_series
+"cip_other_stem"
+#' @rdname cip_series
+"cip_phys_sci"
+#' @rdname cip_series
+"cip_stem"
 
 #' Stickiness case data
 #'
@@ -169,7 +125,8 @@
 #' @source Based on the 2010 codes curated by the US National Center for
 #' Education Statistics (\url{https://nces.ed.gov/ipeds/cipcode}).
 #' @examples
+#' # view the CIP data
 #' cip
-#'
-#' print(cip_filter(data = cip, series = "^1410"))
+#' # Use the data as an argument for cip_filter()
+#' cip_filter(data = cip, series = "^1410")
 "cip"

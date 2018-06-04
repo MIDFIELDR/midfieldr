@@ -58,14 +58,8 @@ multiway_order <- function(x, medians = FALSE) {
 	# obtain type of variables to distinguish numeric from other
 	var_class <- purrr::map_chr(x, class)
 
-	# must have only three variables
-	var_len <- max(seq_along(var_class))
-	stopifnot(exprs = {
-		var_len == 3
-	})
-
 	# only one numeric value
-	value_idx <- var_class[var_class == "numeric"]
+	value_idx <- var_class[var_class == "numeric" | var_class == "integer" | var_class == "double"]
 	value_len <- max(seq_along(value_idx))
 	stopifnot(exprs = {
 		value_len == 1

@@ -14,16 +14,17 @@ NULL
 #'   powers of ten in exponential form, and displays the logarithmic minor
 #'   grid lines.}
 #' \item{\code{midfield_theme()}}{Applies \code{theme_minimal()} with some
-#'   additional edits.}
+#'   additional edits: font family is "sans"; all text is 10 point; al lines
+#'   are pale gray (#D9D9D9) and size 0.4. }
 #' }
 #'
 #' @return Modifies an existing graph
-#' @name utilities-graph
+#' @name utils_graph
 #' @aliases NULL
 NULL
 
 #' @export
-#' @rdname utilities-graph
+#' @rdname utils_graph
 expon_scale_x_log10 <- function() {
   scale_x_log10(
     breaks = trans_breaks("log10", function(x)
@@ -42,7 +43,7 @@ expon_scale_x_log10 <- function() {
 }
 
 #' @export
-#' @rdname utilities-graph
+#' @rdname utils_graph
 midfield_theme <- function() {
   theme_minimal(base_family = "sans") +
     theme(

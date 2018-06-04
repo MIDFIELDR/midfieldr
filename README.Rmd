@@ -8,18 +8,26 @@ bibliography: inst/REFERENCES.bib
 ```{r setup, echo = FALSE, message = FALSE}
 knitr::opts_knit$set(root.dir = "../")
 knitr::opts_chunk$set(
-  echo = TRUE, # varies from one Rmd to another
-  message = FALSE,
-  warning = FALSE,
+	# these options tend to vary from one Rmd to another
+  echo = TRUE,
+  fig.path = "man/figures/README-", 
+  # these options tend to remain constant
   collapse = TRUE,
   comment = "#>",
-  error = TRUE,
-  purl = FALSE,
+  message = FALSE,
+  warning = FALSE,
   fig.width = 6,
   fig.asp = 1 / 1.6,
   out.width = "70%",
-  fig.align = "center",
-  fig.path = "../man/figures/ABOUT-"
+  fig.align = "center", 
+  # http://r-pkgs.had.co.nz/vignettes.html: error = TRUE captures errors in 
+  # the block and shows them inline. This is useful for demonstrating what 
+  # happens if code throws an error. If you use error = TRUE, set 
+  # purl = FALSE. Vignettes are accompanied by files containing all the
+  # code from the vignette. purl = FALSE prevents the code from being 
+  # inserted into that file
+  error = TRUE,
+  purl = FALSE
 )
 knitr::knit_hooks$set(inline = function(x) {
   if (!is.numeric(x)) {
@@ -117,23 +125,23 @@ We can illustrate some of the functionality of midfieldr by demonstrating how to
 
 Begin by using `cip_filter()` to search for engineering codes. 
 
-```{r first_cip_search}
-cip_search <- cip_filter(series = "Engineering")
-cip_search
+```{r first-cip-search}
+search_results <- cip_filter(series = "Engineering")
+search_results
 ```
 
 In the CIP data, engineering program codes all start with "14". We can use this to narrow the search.  
 
-```{r second_cip_search}
-cip_search <- cip_filter(series = "^14") %>%
+```{r second-cip-search}
+search_results <- cip_filter(series = "^14") %>%
   cip_filter(series = c("Chemical", "Electrical", "Industrial"))
 
-cip_search
+search_results
 ```
 
 Thus, the 4-digit CIP codes we are looking for are 1407 for Chemical Engineering, 1410 for Electrical, and 1435 for Industrial Engineering. We extract the CIP codes for each major and assign our own program label. 
 
-```{r extract_specific_cip}
+```{r extract-cip}
 set1 <- cip_filter(series = "^1407") %>%
   add_column(program = "Chemical Engineering")
 set2 <- cip_filter(series = "^1410") %>%
@@ -144,7 +152,7 @@ set3 <- cip_filter(series = "^1435") %>%
 
 Combine the data frames and retain our custom program label and the 6-digit CIP codes. 
 
-```{r cip_group}
+```{r group-cip}
 cip_group <- bind_rows(set1, set2, set3) %>%
   select(program, CIP6)
 ```
@@ -155,20 +163,20 @@ For additional information, try the help page `?cip_filter()` and the  [Selectin
 
 Use `gather_ever()` to access the `midfieldterms` dataset and extract all students who ever enrolled in these programs. 
 
-```{r gather_ever}
+```{r gather-ever}
 students <- gather_ever(cip_group)
 ```
 
 Use `race_sex_join()` to access the `midfieldstudents` dataset and append students' race and sex to the data frame. 
 
-```{r demographics}
+```{r race-sex-join}
 students <- students %>%
   race_sex_join()
 ```
 
 Count the numbers of students grouped by program, race, and sex using the  dplyr `group_by()` and `summarize()` functions. 
 
-```{r ever_enrolled}
+```{r ever}
 ever_enrolled <- students %>%
   group_by(program, race, sex) %>%
   summarize(ever = n()) %>%
@@ -177,14 +185,14 @@ ever_enrolled <- students %>%
 
 Use `zero_fill()` to expand the data frame to include all missing combinations of variables (if any) and insert a count of zero in the numerical column.  The arguments of `zero_fill()` should be the arguments of `group_by()` above.
 
-```{r zero_fill}
+```{r zero-ill}
 ever_enrolled <- ever_enrolled %>%
   zero_fill(program, race, sex)
 ```
 
 Use `gather_grad()` to access the `midfielddegrees` dataset and extract all students who graduated from in these programs. We group and summarize the counts using `grad` as the new count variable.  
 
-```{r graduated}
+```{r grad}
 graduated <- gather_grad(cip_group) %>%
   race_sex_join() %>%
   group_by(program, race, sex) %>%
@@ -205,7 +213,7 @@ stickiness <- tally_stickiness(ever = ever_enrolled, grad = graduated)
 
 To prepare the stickiness data for graphing, we remove ambiguous race levels (Unknown, International, or Other) and then combine race and sex into a single variable. 
 
-```{r filter_race}
+```{r prep-data}
 stickiness <- stickiness %>%
   filter(!race %in% c("Unknown", "International", "Other")) %>%
   mutate(race_sex = str_c(race, sex, sep = " "))
@@ -215,7 +223,7 @@ We graph these results in a *multiway dot plot*, a display type based on a data 
 
 We select `program` and `race_sex` as the two categorical variables and `stick` as the one quantitative variable. `multiway_order()` converts the two categorical variables to factors and orders their levels by median stickiness.
 
-```{r multiway_order}
+```{r multiway-order}
 stickiness <- stickiness %>%
   select(program, race_sex, stick) %>%
   multiway_order()
@@ -227,19 +235,12 @@ We use conventional ggplot2 functions to graph stickiness in a multiway dot plot
 
 For additional information on multiways, see the [Multiway data, graphs, and tables](multiway.html) vignette. 
 
-```{r ggplot_stickiness, fig.asp = 1.6/1.6, fig.show = "hide"}
+```{r graph-stickiness, fig.asp = 1.6/1.6}
 ggplot(stickiness, aes(x = stick, y = race_sex)) +
   facet_wrap(~program, ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +
   midfield_theme()
-```
-
-
-```{r graph_stickiness, fig.asp = 1.6/1.6, echo = FALSE}
-# previous code chunk saves figure to file 
-# for webpage, this chunk reads figure from file
-knitr::include_graphics("man/figures/README-graph_stickiness-1.png")
 ```
 
 ## Meta

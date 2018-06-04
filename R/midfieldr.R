@@ -50,6 +50,8 @@ if (getRversion() >= "2.15.1") {
     "race", "sex", "rcb_colors", "rcb_name", "rcb_code",
     "midfielddegrees", "midfieldstudents", "med",
     "midfieldterms", "midfieldcourses", "institution",
-    "term_degree", "program", "degree"
+    "term_degree", "program", "degree",
+    "cip", "cip_bio_sci", "cip_engr", "cip_math_stat",
+    "cip_other_stem", "cip_phys_sci", "cip_stem"
   ))
 }

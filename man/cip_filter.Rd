@@ -8,30 +8,39 @@ cip_filter(data = NULL, series = NULL)
 }
 \arguments{
 \item{data}{A data frame of character variables (or coercible to one).
-Required variables are \code{CIP2}, \code{CIP4}, and \code{CIP6}. If NULL,
-\code{data} is the midfieldr \code{cip} dataset.}
+If NULL, \code{data} is the midfieldr \code{cip} dataset.}
 
-\item{series}{The conditions used to filter the data. A character vector
-(or coercible to one) of any combination of 2, 4, or 6-digit CIP codes.
-If NULL, \code{data} is returned unchanged.}
+\item{series}{A character vector (or coercible to one) of search terms. The
+conditions used to filter the data.}
 }
 \value{
-A data frame: \code{data} filtered by the conditions in \code{series}.
+A subset of \code{data} returned as a data frame (tibble) of
+character variables.
 }
 \description{
 Filter a data frame of Classification of Instructional Programs (CIP) codes
-to return the rows that match conditions.
+and return the rows that match conditions.
 }
 \details{
-The purpose of \code{cip_filter()} is to obtain the CIP codes of specific
-programs and use the results to obtain the records of students in those
-programs.
+\code{cip_filter()} is essentially a search tool to filter the data frame
+given by the \code{data} argument and return all rows containing the terms
+specified in the \code{series} argument.
+
+Variables are not altered.
+
+Typical search terms include words and phrases describing academic programs
+or all or part of 2-, 4-, or 6-digit CIP codes. midfieldr provides several
+collections of predefined search terms for groups of programs such as
+Biological Sciences, Engineering, Physical Sciences, etc.
 }
 \examples{
-cip_filter(series = c("490101", "490205"))
-cip_filter(series = c("^4901", "^4902"))
-cip_filter(series = c("^49", "^99"))
-cip_filter(series = c("^54", "^4901", "490205"))
-cip_filter(series = seq(540102, 540108))
+cip_filter()
+cip_filter(series = "History")
+cip_filter(series = c("American", "History"))
+cip_filter(series = "History") \%>\%
+  cip_filter(series = "American")
+cip_filter(series = "^14")
+cip_filter(series = "^14") \%>\%
+  cip_filter(series = "Civil")
 
 }

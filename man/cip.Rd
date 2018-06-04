@@ -42,8 +42,9 @@ reported no program information or that students were not enrolled in a
 program (undecided).
 }
 \examples{
+# view the CIP data
 cip
-
-print(cip_filter(data = cip, series = "^1410"))
+# Use the data as an argument for cip_filter()
+cip_filter(data = cip, series = "^1410")
 }
 \keyword{datasets}
