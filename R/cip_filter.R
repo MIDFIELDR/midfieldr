@@ -64,13 +64,4 @@ cip_filter <- function(data = NULL, series = NULL) {
         dplyr::any_vars(stringr::str_detect(., collapse_series))
       )
   }
-
-  # if duplicate CIP6, keep only the first
-  data <- data
-
-  # %>%
-  # 	dplyr::arrange(CIP6) %>%
-  # 	dplyr::group_by(CIP6) %>%
-  # 	dplyr::filter(dplyr::row_number(CIP6) == 1) %>%
-  # 	dplyr::ungroup()
 }
