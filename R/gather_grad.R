@@ -25,7 +25,7 @@ gather_grad <- function(program_group) {
 
   # filter the midfielddegrees data set using the search series
   series <- stringr::str_c(program_group$CIP6, collapse = "|")
-  students <- midfielddegrees::midfielddegrees %>%
+  students <- midfielddata::midfielddegrees %>%
     dplyr::filter(stringr::str_detect(CIP6, series))
 
   # remove NA

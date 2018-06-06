@@ -33,7 +33,7 @@ race_sex_join <- function(df) {
   stopifnot("ID" %in% names(df))
 
   # extract ID, race, and sex from midfieldstudents data
-  race_sex <- midfieldstudents::midfieldstudents %>%
+  race_sex <- midfielddata::midfieldstudents %>%
     dplyr::select(ID, race, sex)
 
   # if sex OR race already in df, not joined to df

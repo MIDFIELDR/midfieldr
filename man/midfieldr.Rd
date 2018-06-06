@@ -4,7 +4,7 @@
 \name{midfieldr}
 \alias{midfieldr}
 \alias{midfieldr-package}
-\title{Undergraduate Student Records for Longitudinal Research}
+\title{Tools for Undergraduate Student Records Research}
 \source{
 Data provided by the MIDFIELD project:
 \url{https://engineering.purdue.edu/MIDFIELD}
@@ -17,15 +17,20 @@ for 97,640 undergraduate students from 1987 to 2016.
 }
 \details{
 This package provides functions to access, manipulate, and graph student
-record data. For example, to examine graduation rates, we use the series of functions:
+record data. For example, to examine graduation rates, we use the series of
+functions:
 
 \itemize{
   \item \code{cip_filter()} to select programs
-  \item \code{gather_start()} to gather students starting in the programs
-  \item \code{gather_grad()} to gather unique students graduating from the programs
+  \item \code{cip_label()} to add custom program labels
+  \item \code{gather_start()} to gather starting students
+  \item \code{gather_grad()} to gather graduating students
   \item \code{race_sex_join()} to join student sex and race
-  \item \code{zero_fill()} fill zero for missing combinations
-  \item \code{tally_gradrate()} to compute graduation rates for each group
+  \item \code{zero_fill()} to fill zero for missing combinations
+  \item \code{dplyr::group()} and \code{summarize()} to count students
+  \item \code{tally_gradrate()} to compute the metric
+  \item \code{multiway_order()} to prepare the results for graphing
+  \item \code{ggplot2::ggplot()} to graph the metric
 }
 
 To learn about these and other functions, start with the vignettes:

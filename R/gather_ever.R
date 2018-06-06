@@ -28,7 +28,7 @@ gather_ever <- function(program_group) {
 
   # filter the data set using the search series
   series <- stringr::str_c(program_group$CIP6, collapse = "|")
-  students <- midfieldterms::midfieldterms %>%
+  students <- midfielddata::midfieldterms %>%
     dplyr::select(ID, institution, CIP6) %>%
     dplyr::filter(stringr::str_detect(CIP6, series)) %>%
     unique()

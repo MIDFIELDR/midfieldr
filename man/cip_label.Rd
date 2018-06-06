@@ -25,6 +25,14 @@ The input data frame with an added \code{program} variable.
 \description{
 Adds a new character variable named \code{program} to a CIP data frame.
 }
+\details{
+Assigning a custom label to a program or a group of programs provides
+the option of grouping and summarizing CIP data in ways not afforded by
+the default program names in the 2010 CIP data.
+
+With \code{data} as the first argument, \code{cip_label()} is
+compatible with the pipe operator \code{\%>\%}.
+}
 \examples{
 # Extract the Philosophy and Religion programs
 x <- cip_filter(series = "^38")

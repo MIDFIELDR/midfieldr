@@ -280,13 +280,11 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 
 
+<p>This article is written with novice R users in mind, so there is much detail that experienced users can skip.</p>
 <p>Packages used in this article:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(midfieldr)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(dplyr)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(ggplot2)</a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">library</span>(tidyr)</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">library</span>(knitr)</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw">library</span>(stringr)</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(tidyverse)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(knitr)</a></code></pre></div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>Many persistence metrics can be organized as <em>multiway data</em> in which there is is one quantitative variable and two categorical variables. To quote Bill Cleveland <span class="citation">(1993)</span>,</p>
@@ -296,7 +294,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </div>
 <div id="preparing-the-data" class="section level2">
 <h2>Preparing the data</h2>
-<p>We’ll use the <a href="stickiness.html">stickiness metric</a> to illustrate multiway graphs and tables. Stickiness is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program <span class="citation">(Ohland et al. 2012)</span>.</p>
+<p>We’ll use the <a href="stickiness.html">stickiness metric</a> to illustrate multiway graphs and data tables. Stickiness is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program <span class="citation">(Ohland et al. 2012)</span>.</p>
 <p><code>case_stickiness</code> is a sample dataset included with midfieldr:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># an example dataset</span></a>
 <a class="sourceLine" id="cb2-2" data-line-number="2">case_stickiness</a>
@@ -366,10 +364,22 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </div>
 <div id="a-multiway-dot-plot" class="section level2">
 <h2>A multiway dot plot</h2>
-<p>We use conventional ggplot2 functions to create the multiway graphs.</p>
-<p>By previously ordering the levels of the factors, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">ggplot</span>(stickiness, <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> race_sex)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>program, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></a>
+<p>We use conventional ggplot2 functions to create the multiway graphs. By previously ordering the levels of the factors, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians.</p>
+<p>For the novice R user, a brief description of the ggplot2 functions:</p>
+<ul>
+<li><code>aes()</code> assigns <code>stick</code> to the x-axis and <code>race_sex</code> to the y-axis.<br />
+</li>
+<li><code>facet_wrap()</code> conditions the plot by <code>program</code>, creating one panel (facet) per program.<br />
+</li>
+<li><code>as.table = FALSE</code> lays the panels out like a plot with the highest value at the top.<br />
+</li>
+<li><code>geom_point()</code> assigns point data markers.</li>
+<li><code>labs()</code> assigns axis labels.<br />
+</li>
+<li><code>midfield_theme()</code> controls the appearance of the plot, based on a slightly edited <code>theme_minimal()</code>.</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> stickiness, <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> race_sex)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span><span class="st"> </span>program, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb6-4" data-line-number="4"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Stickiness&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;&quot;</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb6-5" data-line-number="5"><span class="st">  </span><span class="kw">midfield_theme</span>()</a></code></pre></div>

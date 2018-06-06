@@ -11,7 +11,7 @@ bibliography: ../inst/REFERENCES.bib
 ```{r setup, echo = FALSE, message = FALSE}
 knitr::opts_knit$set(root.dir = "../")
 knitr::opts_chunk$set(
-	echo = TRUE, # varies from one Rmd to another 
+	echo = TRUE,      # varies from one Rmd to another 
   message = FALSE,
   warning = FALSE, 
   collapse = TRUE,
@@ -37,15 +37,17 @@ options(tibble.print_min = 8L, tibble.print_max = 8L)
 ```
 
 ```{r echo = FALSE}
-library(midfieldr)
 # unpack data bits
-data_bits <- midfieldr:::data_bits_cip
-obs_cip <- round(data_bits$data[data_bits$name == "obs_cip"] / 1e+0, 1)
-var_cip <- data_bits$data[data_bits$name == "var_cip"]
-size_cip <- round(data_bits$data[data_bits$name == "size_cip"] / 1e+3, 0)
+library(midfieldr)
+load("R/sysdata.rda")
+
+# data_bits <- midfieldr:::data_bits
+obs_cip   <- round(data_bits$data[data_bits$name ==  "obs_cip"] / 1e+0, 1)
+var_cip   <-       data_bits$data[data_bits$name ==  "var_cip"]
+size_cip  <- round(data_bits$data[data_bits$name == "size_cip"] / 1e+3, 0)
 ```
 
-The Classification of Instructional Programs (CIP) is a taxonomy of academic  programs curated by an agency of the US Department of Education.[@cip2010]
+The Classification of Instructional Programs (CIP) is a taxonomy of academic programs curated by an agency of the US Department of Education [@cip2010]. 
 
 ```{r}
 # packages used in the vignette
@@ -77,7 +79,7 @@ glimpse(cip)
 
 `cip_filter()` searches all columns in `data` for the strings in `series` and returns a data frame whose rows contain the search terms. Filtering is performed by `dplyr::filter()` with pattern detection by `stringr::str_detect()`. 
 
-With no arguments, `cip_filter()` returns the unique 2-digit series and the first entry of the corresponding 4- and 6-digit series. 
+With no arguments, `cip_filter()` returns the complete `cip` data set. 
 
 ```{r}
 cip_filter()
@@ -220,7 +222,7 @@ kable(df)
 kable(df, "html") %>% kable_styling(font_size = 12)
 ```
 
-A series assigned numerically is coerced to characters. 
+A series assigned numerically is coerced to characters. Invalid codes in the sequence, e.g., 540109 and 540110, are silently ignored. 
 
 ```{r results = "hide"}
 # series as a sequence
@@ -233,7 +235,7 @@ kable(df)
 kable(df, "html") %>% kable_styling(font_size = 12)
 ```
 
-Invalid codes in the sequence, e.g., 540109 and 540110, are silently ignored. 
+
 
 
 
@@ -241,15 +243,15 @@ Invalid codes in the sequence, e.g., 540109 and 540110, are silently ignored.
 
 ## Search by named series
 
-midfieldr includes several datasets of *named series*. A named series is a character vector of 6-digit CIP codes that belong to a group of programs such as Engineering, Physical Sciences, STEM, etc. To see the full set of available named series, type `?named_series`. 
+midfieldr includes several datasets of *named series*. A named series is a character vector of 6-digit CIP codes that belong to a group of programs such as Engineering, Physical Sciences, STEM, etc. To see the full set of available named series, type `?cip_series`. 
 
 A named series is assigned to the series argument in `cip_filter()`. 
 
 ```{r}
 # the engineering series
-engr
+cip_engr
 
-df <- cip_filter(series = engr)
+df <- cip_filter(series = cip_engr)
 glimpse(df)
 ```
 

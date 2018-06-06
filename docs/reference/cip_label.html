@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Filter CIP data — cip_filter • midfieldr</title>
+<title>Add a column of program labels to a CIP data frame — cip_label • midfieldr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,10 +28,9 @@
 
 
 
-<meta property="og:title" content="Filter CIP data — cip_filter" />
+<meta property="og:title" content="Add a column of program labels to a CIP data frame — cip_label" />
 
-<meta property="og:description" content="Filter a data frame of Classification of Instructional Programs (CIP) codes
-and return the rows that match conditions." />
+<meta property="og:description" content="Adds a new character variable named program to a CIP data frame." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -122,61 +121,70 @@ and return the rows that match conditions." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Filter CIP data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/cip_filter.R'><code>R/cip_filter.R</code></a></small>
-    <div class="hidden name"><code>cip_filter.Rd</code></div>
+    <h1>Add a column of program labels to a CIP data frame</h1>
+    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/cip_label.R'><code>R/cip_label.R</code></a></small>
+    <div class="hidden name"><code>cip_label.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Filter a data frame of Classification of Instructional Programs (CIP) codes
-and return the rows that match conditions.</p>
+    <p>Adds a new character variable named <code>program</code> to a CIP data frame.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>cip_filter</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>series</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>cip_label</span>(<span class='no'>data</span>, <span class='kw'>program</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>A data frame of character variables (or coercible to one).
-If NULL, <code>data</code> is the midfieldr <code>cip</code> dataset.</p></td>
+      <td><p>A filtered subset of the midfieldr <code>cip</code> data frame.</p></td>
     </tr>
     <tr>
-      <th>series</th>
-      <td><p>A character vector (or coercible to one) of search terms. The
-conditions used to filter the data.</p></td>
+      <th>program</th>
+      <td><p>An optional character variable. There are four options:</p>
+<p>If NULL, the default, the 6-digit CIP program names are assigned to the new column.</p>
+<p>If NULL, but one of the named <code>cip_series</code> is used to create the <code>data</code> argument, then the series name is assigned to the new column.</p>
+<p>If one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-digit, 4-digit, or 6-digit CIP program names are assigned to the new column.</p>
+<p>Any other string is assigned to the new column.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A subset of <code>data</code> returned as a data frame (tibble) of
-character variables.</p>
+    <p>The input data frame with an added <code>program</code> variable.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>cip_filter()</code> is essentially a search tool to filter the data frame
-given by the <code>data</code> argument and return all rows containing the terms
-specified in the <code>series</code> argument.</p>
-<p>Variables are not altered.</p>
-<p>Typical search terms include words and phrases describing academic programs
-or all or part of 2-, 4-, or 6-digit CIP codes. midfieldr provides several
-collections of predefined search terms for groups of programs such as
-Biological Sciences, Engineering, Physical Sciences, etc.</p>
+    <p>Assigning a custom label to a program or a group of programs provides
+the option of grouping and summarizing CIP data in ways not afforded by
+the default program names in the 2010 CIP data.</p>
+<p>With <code>data</code> as the first argument, <code>cip_label()</code> is
+compatible with the pipe operator <code>%&gt;%</code>.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>cip_filter</span>()
-<span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"History"</span>)
-<span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"American"</span>, <span class='st'>"History"</span>))
-<span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"History"</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"American"</span>)
-<span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"^14"</span>)
-<span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"^14"</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'>cip_filter</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"Civil"</span>)</div></pre>
+    <pre class="examples"><div class='input'><span class='co'># Extract the Philosophy and Religion programs</span>
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cip_filter.html'>cip_filter</a></span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"^38"</span>)
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>cip_label</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>x</span>, <span class='kw'>program</span> <span class='kw'>=</span> <span class='st'>"test label"</span>)
+
+<span class='co'># The function is pipe-compatible</span>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>x</span> <span class='kw'>%&gt;%</span> <span class='fu'>cip_label</span>(<span class='st'>"test label"</span>)
+
+<span class='co'># With no program argument, the 6-digit CIP names are assigned</span>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>x</span> <span class='kw'>%&gt;%</span> <span class='fu'>cip_label</span>()
+
+<span class='co'># Argument options include</span>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>x</span> <span class='kw'>%&gt;%</span> <span class='fu'>cip_label</span>(<span class='kw'>program</span> <span class='kw'>=</span> <span class='st'>"cip6name"</span>)
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>x</span> <span class='kw'>%&gt;%</span> <span class='fu'>cip_label</span>(<span class='kw'>program</span> <span class='kw'>=</span> <span class='st'>"cip4name"</span>)
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>x</span> <span class='kw'>%&gt;%</span> <span class='fu'>cip_label</span>(<span class='kw'>program</span> <span class='kw'>=</span> <span class='st'>"cip2name"</span>)
+
+<span class='co'># When a 4-digit level name is desired</span>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cip_filter.html'>cip_filter</a></span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"^1410"</span>) <span class='kw'>%&gt;%</span> <span class='fu'>cip_label</span>(<span class='st'>"cip4name"</span>)
+
+<span class='co'># But if the result is too long, it can be manually reassigned</span>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cip_filter.html'>cip_filter</a></span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"^1410"</span>) <span class='kw'>%&gt;%</span> <span class='fu'>cip_label</span>(<span class='st'>"Electrical Engineering"</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

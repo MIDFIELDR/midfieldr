@@ -9,11 +9,12 @@ bibliography: ../inst/REFERENCES.bib
 ---
 
 ```{r setup, echo = FALSE, message = FALSE}
-knitr::opts_knit$set(root.dir = "../")
-knitr::opts_chunk$set(
+library(knitr)
+opts_knit$set(root.dir = "../")
+opts_chunk$set(
 	echo = TRUE, # varies from one Rmd to another 
-  message = FALSE,
-  warning = FALSE, 
+  message = TRUE,
+  warning = TRUE, 
   collapse = TRUE,
   comment = "#>",
   error = TRUE,
@@ -24,7 +25,7 @@ knitr::opts_chunk$set(
   fig.align = "center",
   fig.path = "../man/figures/stickiness-"
 )
-knitr::knit_hooks$set(inline = function(x) {
+knit_hooks$set(inline = function(x) {
   if (!is.numeric(x)) {
     x
   } else if (x >= 10000) {
@@ -34,6 +35,16 @@ knitr::knit_hooks$set(inline = function(x) {
   }
 })
 options(tibble.print_min = 8L, tibble.print_max = 8L)
+```
+
+```{r echo = FALSE}
+# unpack data bits
+library(midfieldr)
+load("R/sysdata.rda")
+
+obs_cip  <- round(data_bits$data[data_bits$name ==  "obs_cip"] / 1e+0, 1)
+var_cip  <-       data_bits$data[data_bits$name ==  "var_cip"]
+size_cip <- round(data_bits$data[data_bits$name == "size_cip"] / 1e+3, 0)
 ```
 
 
@@ -115,7 +126,7 @@ We use `bind_rows()`, a [dplyr](http://dplyr.tidyverse.org) function, to bind th
 program_group <- bind_rows(cve, ele, mce, ise)
 ```
 
-Examine the result: there are a total of `r nrow(program_group)` CIP codes for these  programs. Our `program` labels agree with the default `CIP6name` values. 
+Examine the result: there are a total of 12 CIP codes for these programs. Our `program` labels agree with the default `CIP6name` values. 
 
 ```{r}
 # examine the result
@@ -172,15 +183,7 @@ You can change how you group the data by changing the arguments of `group_by()`.
 
 ## zero_fill()
 
-```{r echo = FALSE}
-n_prog <- max(seq_along(unique(ever_enrolled$program)))
-n_sex <- max(seq_along(unique(ever_enrolled$sex)))
-n_race <- max(seq_along(unique(ever_enrolled$race)))
-n_comb <- n_prog * n_sex * n_race
-n_results <- nrow(ever_enrolled)
-```
-
-This example has `r n_prog` programs, `r n_sex` sexes, and `r n_race` race values, so we have `r n_prog` $\times$ `r n_sex` $\times$ `r n_race` = `r n_comb` possible combinations of program, sex, and race, yet our result above has only `r n_results` rows, not the expected `r n_comb`. This outcome tells us that one of the possible combinations is missing. 
+This example has 4 programs, 2 sexes, and 8 race values, so we have 64 possible combinations of program, sex, and race, yet our result above has only 63 rows, not the expected 64. This outcome tells us that one of the possible combinations is missing.
 
 The missing group, it happens, is Civil Engineering Native American Female. 
 
@@ -291,13 +294,13 @@ ggplot(stickiness, aes(x = stick, y = race_sex)) +
   facet_wrap(~program, ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +
-  midfield_theme()
+  theme_midfield()
 ```
 
-We also apply our own `midfield_theme()` to edit the visual properties of the graph: axes, legends, panels, strips, etc. Open the help page by running
+We also apply our own `theme_midfield()` to edit the visual properties of the graph: axes, legends, panels, strips, etc. Open the help page by running
 
 ```r
-?midfield_theme()
+?theme_midfield()
 ```
 
 ## Complete script
@@ -347,7 +350,7 @@ ggplot(stickiness, aes(x = stick, y = race_sex)) +
   facet_wrap(~program, ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +
-  midfield_theme()
+  theme_midfield()
 ```
 
 

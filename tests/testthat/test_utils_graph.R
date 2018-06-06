@@ -15,14 +15,14 @@ context("utils_graph")
 
 test_that("expon scale fun equal to reference", {
 	expect_known_value(
-		expon_scale_x_log10(),
+		scale_x_log10_expon(),
 		file = "ref_expon_scale.rds",
 		update = TRUE)
 })
 
 test_that("midfield theme equal to reference", {
 	expect_known_value(
-		midfield_theme(),
+		theme_midfield(),
 		file = "ref_theme.rds",
 		update = TRUE)
 })

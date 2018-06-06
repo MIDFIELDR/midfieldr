@@ -1,3 +1,55 @@
+#' Classification of Instructional Programs (CIP) data
+#'
+#' A dataset of codes and names for 1546 instructional programs organized on
+#' three levels: a 2-digit series, a 4-digit series, and a 6-digit series.
+#'
+#' 6-digit codes are used in the midfieldr datasets (\code{midfieldstudents},
+#' \code{midfieldcourses}, \code{midfieldterms}, and  \code{midfielddegrees})
+#' to encode program information as reported by the member institutions. In
+#' addition to the standard codes and names, the midfieldr taxonomy includes
+#' three non-IPEDS codes:
+#'
+#' \describe{
+#'   \item{14XXXX}{First-Year Engineering (FYE).}
+#'   \item{14YYYY}{Engineering-Focused Curricula (pseudo-FYE). For instances
+#'   in which a student is eligible for admission to the institution but has
+#'   not been admitted to an engineering program. Some institutions without
+#'   FYE programs use such a designation in lieu of undecided or unspecified.}
+#'   \item{999999}{Undecided or Unspecified. For instances in which
+#'   institutions reported no program information or that students were
+#'   not enrolled in a program.}
+#' }
+#'
+#' @format A tidy data frame (tibble) with 1546 observations and 6 variables.
+#' All variables are characters. An observation is a unique program.
+#' \describe{
+#'   \item{CIP2}{An instructional program's 2-digit code,  representing "the
+#'   most general groupings of related programs" (US National Center for
+#'   Education Statistics).}
+#'   \item{CIP2name}{Name of a program at the 2-digit level.}
+#'   \item{CIP4}{An instructional program's 4-digit code, representing
+#'   "intermediate groupings of programs that have comparable content and
+#'   objectives".}
+#'   \item{CIP4name}{Name of a program at the 4-digit level.}
+#'   \item{CIP6}{An instructional program's 6-digit code, representing
+#'   "specific instructional programs".}
+#'   \item{CIP6name}{Name of a program at the 6-digit level.}
+#' }
+#' @source Based on the 2010 codes curated by the US National Center for
+#' Education Statistics (\url{https://nces.ed.gov/ipeds/cipcode}).
+#' @examples
+#' # View the CIP data
+#' cip
+#'
+#' # View the programs at the top level of the taxonomy
+#' unique(cip[ , 1:2])
+#'
+#' # Use the data as an argument for cip_filter()
+#' cip_filter(data = cip, series = "^1410")
+"cip"
+
+
+
 #' Named series of 6-digit CIP codes
 #'
 #' Collected Classification of Instructional Programs (CIP) 6-digit codes
@@ -44,6 +96,8 @@ NULL
 #' @rdname cip_series
 "cip_stem"
 
+
+
 #' Stickiness case data
 #'
 #' An example of program stickiness data grouped by student race and sex.
@@ -63,6 +117,8 @@ NULL
 #' @examples
 #' case_stickiness
 "case_stickiness"
+
+
 
 #' Named colors from the ColorBrewer palettes
 #'
@@ -92,41 +148,4 @@ NULL
 #' rcb("light_Gn")
 "rcb_colors"
 
-#' Classification of Instructional Programs (CIP) data
-#'
-#' A dataset of codes and names for 1544 instructional programs organized on
-#' three levels: a 2-digit series, a 4-digit series, and a 6-digit series.
-#'
-#' 6-digit codes are used in the midfieldr datasets (\code{midfieldstudents},
-#' \code{midfieldcourses}, \code{midfieldterms}, and  \code{midfielddegrees})
-#' to encode program information as reported by the member institutions.
-#'
-#' In addition to the standard codes and names, the midfieldr taxonomy includes
-#' the codes "99", "9999", and "999999", all named
-#' "NonIPEDS - Undecided/Unspecified", for instances in which institutions
-#' reported no program information or that students were not enrolled in a
-#' program (undecided).
-#'
-#' @format A tidy data frame (tibble) with 1544 observations and 6 variables.
-#' All variables are characters. An observation is a unique program.
-#' \describe{
-#'   \item{CIP2}{An instructional program's 2-digit code,  representing "the
-#'   most general groupings of related programs" (US National Center for
-#'   Education Statistics).}
-#'   \item{CIP2name}{Name of a program at the 2-digit level.}
-#'   \item{CIP4}{An instructional program's 4-digit code, representing
-#'   "intermediate groupings of programs that have comparable content and
-#'   objectives".}
-#'   \item{CIP4name}{Name of a program at the 4-digit level.}
-#'   \item{CIP6}{An instructional program's 6-digit code, representing
-#'   "specific instructional programs".}
-#'   \item{CIP6name}{Name of a program at the 6-digit level.}
-#' }
-#' @source Based on the 2010 codes curated by the US National Center for
-#' Education Statistics (\url{https://nces.ed.gov/ipeds/cipcode}).
-#' @examples
-#' # view the CIP data
-#' cip
-#' # Use the data as an argument for cip_filter()
-#' cip_filter(data = cip, series = "^1410")
-"cip"
+

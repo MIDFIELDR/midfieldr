@@ -36,115 +36,47 @@ knitr::knit_hooks$set(inline = function(x) {
 options(tibble.print_min = 8L, tibble.print_max = 8L)
 ```
 
-```{r echo = FALSE}
-library(midfieldr)
-library(stringr)
-
-# unpack data bits
-data_bits <- midfieldr:::data_bits_cip
-obs_cip <- round(data_bits$data[data_bits$name == "obs_cip"] / 1e+0, 1)
-var_cip <- data_bits$data[data_bits$name == "var_cip"]
-size_cip <- round(data_bits$data[data_bits$name == "size_cip"] / 1e+3, 0)
-
-data_bits <- midfieldstudents:::data_bits_students
-obs_student <- round(data_bits$data[data_bits$name == "obs_student"] / 1e+0, 1)
-size_student <- round(data_bits$data[data_bits$name == "size_student"] / 1e+6, 0)
-var_student <- data_bits$data[data_bits$name == "var_student"]
-year_min <- data_bits$data[data_bits$name == "year_min"]
-
-library(midfieldstudents)
-values_sex <- str_c(sort(unique(midfieldstudents$sex)), collapse = ", ")
-values_race <- str_c(sort(unique(midfieldstudents$race)), collapse = ", ")
-
-data_bits <- midfielddegrees:::data_bits_degrees
-obs_degree <- round(data_bits$data[data_bits$name == "obs_degree"] / 1e+0, 1)
-var_degree <- data_bits$data[data_bits$name == "var_degree"]
-size_degree <- round(data_bits$data[data_bits$name == "size_degree"] / 1e+6, 0)
-award_degree <- round(data_bits$data[data_bits$name == "award_degree"] / 1e+0, 1)
-year_max <- data_bits$data[data_bits$name == "year_max"]
-
-data_bits <- midfieldterms:::data_bits_terms
-obs_term <- round(data_bits$data[data_bits$name == "obs_term"] / 1e+0, 1)
-var_term <- data_bits$data[data_bits$name == "var_term"]
-size_term <- round(data_bits$data[data_bits$name == "size_term"] / 1e+6, 0)
-
-data_bits <- midfieldcourses:::data_bits_courses
-obs_course <- round(data_bits$data[data_bits$name == "obs_course"] / 1e+6, 1)
-var_course <- data_bits$data[data_bits$name == "var_course"]
-size_course <- round(data_bits$data[data_bits$name == "size_course"] / 1e+6, 0)
-```
-
 The midfieldr package includes Classification of Instructional Programs (CIP) data from the US Department of Education [@cip2010].
 
-Separate data packages provide a stratified sample of student record data from the MIDFIELD database. The process of designing, compiling, maintaining, protecting, and sharing the MIDFIELD data is described in [@aee2016]. 
+- `cip` data frame
+- `cip_series` 
 
-## Installing the data packages
+The midfielddata package provides the stratified sample of student record data from the MIDFIELD database. 
 
-To access the CIP data, install midfieldr. 
+- `midfieldstudents` A data frame with 97,640 observations and 15 demographic variables, occupying 19 Mb of memory. Each observation is a unique student.  
+- `midfieldcourses` A data frame with 3.5 M observations and 12 academic course variables, occupying 348 Mb of memory (the largest of the midfielddata datasets). Each observation is one course in one term for one student. 
+- `midfieldterms` A data frame with 729,014 observations and 13 academic term variables, occupying 82 Mb of memory. Each observation is one term for one student.  
+- `midfielddegrees` A data frame with 97,640 observations and 5 graduation variables, occupying 10 Mb of memory. Each observation is a unique student.
+
+The process of designing, compiling, maintaining, protecting, and sharing the MIDFIELD data is described in [@aee2016].
+
+## Installing the packages
+
+midfieldr is not currently available from CRAN. The development version can be installed from GitHub with:
 
 ```r
 # midfieldr package
 devtools::install_github("MIDFIELDR/midfieldr")
-```
 
-To access the stratified sample of student record data, install the four data packages. 
-
-```r
-# data packages
-devtools::install_github("MIDFIELDR/midfieldstudents")
-devtools::install_github("MIDFIELDR/midfieldcourses")
-devtools::install_github("MIDFIELDR/midfieldterms")
-devtools::install_github("MIDFIELDR/midfielddegrees")
-```
-## CIP data 
-
-The midfieldr package includes `cip`, a tidy data frame with `r obs_cip` observations and `r var_cip` Classification of Instructional Programs (CIP)  variables. Each observation is a unique program; the variables are the program codes and names at the 2, 4, and 6-digit levels. This dataset occupies `r size_cip` kb of memory. Open the help page by running: 
-
-```r
+# help pages for data 
 library(midfieldr)
 ?cip
-```
-
-midfieldr also includes data comprising collections of 6-digit CIP codes for specific groups of programs, for example, engineering (`cip_engr`), mathematics and statistics (`cip_math_stat`), or biological and biomedical science programs (`cip_bio_sci`). Open the help page by running 
-
-```r
 ?cip_series
 ```
 
-## Student data
-
-The midfieldstudents package provides `midfieldstudents`, a tidy data frame with `r obs_student` observations and `r var_student` demographic variables, occupying `r size_student` Mb of memory. Each observation is a unique student. Open the help page by running: 
+midfielddata is not currently available from CRAN. The development version can be installed from GitHub with:
 
 ```r
-library(midfieldstudents)
+# midfielddata package
+devtools::install_github("MIDFIELDR/midfielddata")
+
+# help pages for data
+library(midfielddata)
 ?midfieldstudents
-```
-
-## Course  data
-
-The midfieldcourses package provides `midfieldcourses`, a tidy data frame with `r obs_course` M observations and `r var_course` academic course variables, occupying `r size_course` Mb of memory. midfieldcourses is the largest of the midfieldr datasets. Each observation is one course in one term for one student. Open the help page by running: 
-
-```r
-library(midfieldcourses)
 ?midfieldcourses
-```
-
-## Term  data
-
-The midfieldterms package provides `midfieldterms`, a tidy data frame with `r obs_term`  observations and `r var_term` academic term variables, occupying `r size_term` Mb of memory. Each observation is one term for one student. Open the help page by running: 
-
-```r
-library(midfieldterms)
 ?midfieldterms
-```
-
-## Degree  data
-
-The midfielddegrees package provides `midfielddegrees`, a tidy data frame with `r obs_degree` observations and `r var_degree` graduation variables, occupying `r size_degree` Mb of memory. Each observation is a unique student. Open the help page by running: 
-
-```r
-library(midfielddegrees)
 ?midfielddegrees
 ```
+
 
 ## References

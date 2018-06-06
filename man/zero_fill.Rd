@@ -12,8 +12,7 @@ zero_fill(df, ...)
 \item{...}{Specification of columns to expand.}
 }
 \value{
-The same data frame with new rows with a zero count for
-missing combinations.
+Data frame with new rows with count = 0 for missing combinations.
 }
 \description{
 A wrapper around \code{tidyr::expand()}. Expands a data frame to include

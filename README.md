@@ -16,9 +16,8 @@ registrars at US universities participating in the MIDFIELD project.
 
 A stratified sample of the MIDFIELD database is accessible using
 midfieldr. The sample comprises demographic, term, course, and degree
-information for 97,640 undergraduate students from 1987 to 2016. Because
-of their size, the sample datasets are provided in separate data
-packages.
+information for undergraduate students from 1987 to 2016. Because of
+their size, the sample datasets are provided in separate data packages.
 
 midfieldr includes functions for selecting specific fields of study and
 aggregating, computing, and graphing student persistence metrics.
@@ -32,38 +31,31 @@ The development version:
 
 ## Data
 
-The sample of the MIDFIELD database that is accessible using midfieldr
-and its data packages includes:
+The midfieldr package includes:
 
-  - `cip` in the [midfieldr](https://github.com/MIDFIELDR/midfieldr)
-    package. A tidy data frame with 1544 observations and 6 CIP
-    variables of program codes and names at the 2, 4, and 6-digit
-    levels. Each observation is a unique program. Occupies 362 kb of
-    memory.
+  - `cip`. A tidy data frame with 1546 observations and 6 CIP variables
+    of program codes and names at the 2, 4, and 6-digit levels. Each
+    observation is a unique program. Occupies 362 kb of memory.
 
-  - `midfieldstudents` in the
-    [midfieldstudents](https://github.com/MIDFIELDR/midfieldstudents)
-    package. A tidy data frame with 97,640 observations and 15
+The [midfielddata](https://github.com/MIDFIELDR/midfielddata) package
+contains the four datasets that comprise a stratified sample of teh
+MIDFIELD database.
+
+  - `midfieldstudents`. A tidy data frame with observations and
     demographic variables. Each observation is a unique student.
-    Occupies 19 Mb of memory.
+    Occupies Mb of memory.
 
-  - `midfieldcourses` in the
-    [midfieldcourses](https://github.com/MIDFIELDR/midfieldcourses)
-    package. A tidy data frame with 3.5 M observations and 12 academic
-    course variables. Each observation is one course in one term for one
-    student. Occupies 348 Mb of memory.
+  - `midfieldcourses`. A tidy data frame with M observations and
+    academic course variables. Each observation is one course in one
+    term for one student. Occupies Mb of memory.
 
-  - `midfieldterms` in the
-    [midfieldterms](https://github.com/MIDFIELDR/midfieldterms) package.
-    A tidy data frame with 729,014 observations and 13 academic term
-    variables. Each observation is one term for one student. Occupies 82
+  - `midfieldterms`. A tidy data frame with observations and academic
+    term variables. Each observation is one term for one student.
+    Occupies Mb of memory.
+
+  - `midfielddegrees`. A tidy data frame with observations and
+    graduation variables. Each observation is a unique student. Occupies
     Mb of memory.
-
-  - `midfielddegrees` in the
-    [midfielddegrees](https://github.com/MIDFIELDR/midfielddegrees)
-    package. A tidy data frame with 97,640 observations and 5 graduation
-    variables. Each observation is a unique student. Occupies 10 Mb of
-    memory.
 
 ## Usage
 
@@ -90,7 +82,7 @@ Begin by using `cip_filter()` to search for engineering codes.
 ``` r
 search_results <- cip_filter(series = "Engineering")
 search_results
-#> # A tibble: 120 x 6
+#> # A tibble: 122 x 6
 #>   CIP2  CIP2name    CIP4  CIP4name              CIP6  CIP6name            
 #>   <chr> <chr>       <chr> <chr>                 <chr> <chr>               
 #> 1 14    Engineering 1401  Engineering/General   1401~ Engineering - Gener~
@@ -101,7 +93,7 @@ search_results
 #> 6 14    Engineering 1405  Biomedical/Medical E~ 1405~ Biomedical/Medical ~
 #> 7 14    Engineering 1406  Ceramic Sciences and~ 1406~ Ceramic Sciences an~
 #> 8 14    Engineering 1407  Chemical Engineering  1407~ Chemical Engineering
-#> # ... with 112 more rows
+#> # ... with 114 more rows
 ```
 
 In the CIP data, engineering program codes all start with “14”. We can
@@ -258,9 +250,8 @@ ggplot(stickiness, aes(x = stick, y = race_sex)) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +
   midfield_theme()
+#> Error in midfield_theme(): could not find function "midfield_theme"
 ```
-
-<img src="man/figures/README-graph-stickiness-1.png" width="70%" style="display: block; margin: auto;" />
 
 ## Meta
 

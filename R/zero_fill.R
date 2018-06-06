@@ -15,8 +15,7 @@ NULL
 #'
 #' @param ... Specification of columns to expand.
 #'
-#' @return The same data frame with new rows with a zero count for
-#' missing combinations.
+#' @return Data frame with new rows with count = 0 for missing combinations.
 #'
 #' @export
 zero_fill <- function(df, ...) {

@@ -44,13 +44,17 @@ NULL
 cip_filter <- function(data = NULL, series = NULL) {
 
   # default data
-  if (is.null(data)) {data <- midfieldr::cip}
+  if (is.null(data)) {
+    data <- midfieldr::cip
+  }
 
   # tibble required by filter_all()
-  if (!tibble::is_tibble(data)) {data <- tibble::as_tibble(data)}
+  if (!tibble::is_tibble(data)) {
+    data <- tibble::as_tibble(data)
+  }
 
-	# if series not specified, return the data unfiltered,
-	# otherwise, filter all columns by search terms
+  # if series not specified, return the data unfiltered,
+  # otherwise, filter all columns by search terms
   if (is.null(series)) {
     data <- data
   } else {
@@ -61,10 +65,12 @@ cip_filter <- function(data = NULL, series = NULL) {
       )
   }
 
-	# if duplicate CIP6, keep only the first
-	data <- data %>%
-		dplyr::arrange(CIP6) %>%
-		dplyr::group_by(CIP6) %>%
-		dplyr::filter(dplyr::row_number(CIP6) == 1) %>%
-		dplyr::ungroup()
+  # if duplicate CIP6, keep only the first
+  data <- data
+
+  # %>%
+  # 	dplyr::arrange(CIP6) %>%
+  # 	dplyr::group_by(CIP6) %>%
+  # 	dplyr::filter(dplyr::row_number(CIP6) == 1) %>%
+  # 	dplyr::ungroup()
 }

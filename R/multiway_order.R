@@ -56,17 +56,18 @@ multiway_order <- function(x, medians = FALSE) {
 	if(is.null(medians)) medians <- FALSE
 
 	# obtain type of variables to distinguish numeric from other
-	var_class <- purrr::map_chr(x, class)
+	v_class <- purrr::map_chr(x, class)
 
 	# only one numeric value
-	value_idx <- var_class[var_class == "numeric" | var_class == "integer" | var_class == "double"]
+	sel <- v_class == "numeric" | v_class == "integer" | v_class == "double"
+	value_idx <- v_class[sel]
 	value_len <- max(seq_along(value_idx))
 	stopifnot(exprs = {
 		value_len == 1
 	})
 
 	# two categorical variables, either character or factor
-	cat_idx <- var_class[var_class == "character" | var_class == "factor"]
+	cat_idx <- v_class[v_class == "character" | v_class == "factor"]
 	cat_len <- max(seq_along(cat_idx))
 	stopifnot(exprs = {
 		cat_len == 2

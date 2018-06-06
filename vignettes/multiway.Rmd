@@ -36,16 +36,14 @@ knitr::knit_hooks$set(inline = function(x) {
 options(tibble.print_min = 8L, tibble.print_max = 8L)
 ```
 
+This article is written with novice R users in mind, so there is much detail that experienced users can skip.   
 
 Packages used in this article: 
 
 ```{r message = FALSE}
 library(midfieldr)
-library(dplyr)
-library(ggplot2)
-library(tidyr)
+library(tidyverse)
 library(knitr)
-library(stringr)
 ```
 
 ## Introduction
@@ -57,7 +55,7 @@ Many persistence metrics can be organized as *multiway data* in which there is i
 
 ## Preparing the data 
 
-We'll use the [stickiness metric](stickiness.html) to illustrate multiway graphs and tables. Stickiness is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program [@stickiness2012]. 
+We'll use the [stickiness metric](stickiness.html) to illustrate multiway graphs and data tables. Stickiness is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program [@stickiness2012]. 
 
 `case_stickiness` is a sample dataset included with midfieldr: 
 
@@ -111,16 +109,23 @@ These values can be useful in discussion and for adding median reference lines t
 
 ## A multiway dot plot  
 
-We use conventional ggplot2 functions to create the multiway graphs. 
+We use conventional ggplot2 functions to create the multiway graphs. By previously ordering the levels of the factors, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians. 
 
-By previously ordering the levels of the factors, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians. 
+For the novice R user, a brief description of the ggplot2 functions: 
+
+- `aes()` assigns `stick` to the x-axis and `race_sex` to the y-axis.  
+- `facet_wrap()` conditions the plot by `program`, creating one panel (facet) per program.  
+- `as.table = FALSE` lays the panels out like a plot with the highest value at the top.   
+- `geom_point()` assigns point data markers. 
+- `labs()` assigns axis labels.  
+- `theme_midfield()` controls the appearance of the plot, based on a slightly edited  `theme_minimal()`.  
 
 ```{r fig.asp = 2/1.6}
-ggplot(stickiness, aes(x = stick, y = race_sex)) +
-  facet_wrap(~program, ncol = 1, as.table = FALSE) +
+ggplot(data = stickiness, aes(x = stick, y = race_sex)) +
+  facet_wrap(~ program, ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +
-  midfield_theme()
+  theme_midfield()
 ```
 
 As Cleveland notes, "We can more effectively compare values within a panel than values between panels." This graph permits a direct visual comparison of how stickiness varies by race and sex for a particular major. .  
@@ -144,7 +149,7 @@ ggplot(stickiness, aes(x = stick, y = program)) +
   facet_wrap(~race_sex, ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +
-  midfield_theme()
+  theme_midfield()
 ```
 
 This graph permits a direct visual comparison of how stickiness varies by major for one group of students. 

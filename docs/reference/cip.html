@@ -30,7 +30,7 @@
 
 <meta property="og:title" content="Classification of Instructional Programs (CIP) data — cip" />
 
-<meta property="og:description" content="A dataset of codes and names for 1544 instructional programs organized on
+<meta property="og:description" content="A dataset of codes and names for 1546 instructional programs organized on
 three levels: a 2-digit series, a 4-digit series, and a 6-digit series." />
 <meta name="twitter:card" content="summary" />
 
@@ -129,7 +129,7 @@ three levels: a 2-digit series, a 4-digit series, and a 6-digit series." />
 
     <div class="ref-description">
     
-    <p>A dataset of codes and names for 1544 instructional programs organized on
+    <p>A dataset of codes and names for 1546 instructional programs organized on
 three levels: a 2-digit series, a 4-digit series, and a 6-digit series.</p>
     
     </div>
@@ -138,7 +138,7 @@ three levels: a 2-digit series, a 4-digit series, and a 6-digit series.</p>
         
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A tidy data frame (tibble) with 1544 observations and 6 variables.
+    <p>A tidy data frame (tibble) with 1546 observations and 6 variables.
 All variables are characters. An observation is a unique program.</p><dl class='dl-horizontal'>
   <dt>CIP2</dt><dd><p>An instructional program's 2-digit code,  representing "the
   most general groupings of related programs" (US National Center for
@@ -162,16 +162,24 @@ Education Statistics (<a href='https://nces.ed.gov/ipeds/cipcode'>https://nces.e
 
     <p>6-digit codes are used in the midfieldr datasets (<code>midfieldstudents</code>,
 <code>midfieldcourses</code>, <code>midfieldterms</code>, and  <code>midfielddegrees</code>)
-to encode program information as reported by the member institutions.</p>
-<p>In addition to the standard codes and names, the midfieldr taxonomy includes
-the codes "99", "9999", and "999999", all named
-"NonIPEDS - Undecided/Unspecified", for instances in which institutions
-reported no program information or that students were not enrolled in a
-program (undecided).</p>
+to encode program information as reported by the member institutions. In
+addition to the standard codes and names, the midfieldr taxonomy includes
+three non-IPEDS codes:</p>
+<dl class='dl-horizontal'>
+  <dt>14XXXX</dt><dd><p>First-Year Engineering (FYE).</p></dd>
+  <dt>14YYYY</dt><dd><p>Engineering-Focused Curricula (pseudo-FYE). For instances
+  in which a student is eligible for admission to the institution but has
+  not been admitted to an engineering program. Some institutions without
+  FYE programs use such a designation in lieu of undecided or unspecified.</p></dd>
+  <dt>999999</dt><dd><p>Undecided or Unspecified. For instances in which
+  institutions reported no program information or that students were
+  not enrolled in a program.</p></dd>
+</dl>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>cip</span></div><div class='output co'>#&gt; # A tibble: 1,544 x 6
+    <pre class="examples"><div class='input'><span class='co'># View the CIP data</span>
+<span class='no'>cip</span></div><div class='output co'>#&gt; # A tibble: 1,546 x 6
 #&gt;    CIP2  CIP2name              CIP4  CIP4name         CIP6  CIP6name           
 #&gt;    &lt;chr&gt; &lt;chr&gt;                 &lt;chr&gt; &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;              
 #&gt;  1 01    Agriculture/Agricult~ 0100  Agriculture/Gen~ 0100~ Agriculture - Gene~
@@ -184,14 +192,24 @@ program (undecided).</p>
 #&gt;  8 01    Agriculture/Agricult~ 0101  Agricultural Bu~ 0101~ Agricultural Busin~
 #&gt;  9 01    Agriculture/Agricult~ 0102  Agricultural Me~ 0102~ Agricultural Mecha~
 #&gt; 10 01    Agriculture/Agricult~ 0102  Agricultural Me~ 0102~ Agricultural Power~
-#&gt; # ... with 1,534 more rows</div><div class='input'>
-<span class='fu'>print</span>(<span class='fu'><a href='cip_filter.html'>cip_filter</a></span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>cip</span>, <span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"^1410"</span>))</div><div class='output co'>#&gt; # A tibble: 4 x 6
-#&gt;   CIP2  CIP2name    CIP4  CIP4name               CIP6  CIP6name                
-#&gt;   &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;                  &lt;chr&gt; &lt;chr&gt;                   
-#&gt; 1 14    Engineering 1410  Electrical/Electronic~ 1410~ Electrical/Electronics ~
-#&gt; 2 14    Engineering 1410  Electrical/Electronic~ 1410~ Laser and Optical Engin~
-#&gt; 3 14    Engineering 1410  Electrical/Electronic~ 1410~ Telecommunications Engi~
-#&gt; 4 14    Engineering 1410  Electrical/Electronic~ 1410~ Electrical/Electronics ~</div></pre>
+#&gt; # ... with 1,536 more rows</div><div class='input'>
+<span class='co'># View the programs at the top level of the taxonomy</span>
+<span class='fu'>unique</span>(<span class='no'>cip</span>[ , <span class='fl'>1</span>:<span class='fl'>2</span>])</div><div class='output co'>#&gt; # A tibble: 48 x 2
+#&gt;    CIP2  CIP2name                                                
+#&gt;    &lt;chr&gt; &lt;chr&gt;                                                   
+#&gt;  1 01    Agriculture/Agricultural Operations and Related Sciences
+#&gt;  2 03    Natural Resources and Conservation                      
+#&gt;  3 04    Architecture and Related Services                       
+#&gt;  4 05    Area/Ethnic/Cultural and Gender Studies                 
+#&gt;  5 09    Communications/Journalism and Related Programs          
+#&gt;  6 10    Communications Technologies and Support Services        
+#&gt;  7 11    Computer and information Sciences and Support Services  
+#&gt;  8 12    Personal and Culinary Services                          
+#&gt;  9 13    Education                                               
+#&gt; 10 14    Engineering                                             
+#&gt; # ... with 38 more rows</div><div class='input'>
+<span class='co'># Use the data as an argument for cip_filter()</span>
+<span class='fu'><a href='cip_filter.html'>cip_filter</a></span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>cip</span>, <span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"^1410"</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

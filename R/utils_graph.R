@@ -5,27 +5,26 @@ NULL
 
 #' Graphics utility functions
 #'
-#' Provides a set of customized layers for graphs created with for
-#' \code{ggplot2}.
+#' A set of customized layers for ggplot2 graphs.
 #'
 #' \describe{
-#' \item{\code{expon_scale_x_log10()}}{Applies the
+#' \item{\code{scale_x_log10_expon()}}{Applies the
 #'   \code{ggplot2::scale_x_log10()} function, marks the scale with
 #'   powers of ten in exponential form, and displays the logarithmic minor
 #'   grid lines.}
-#' \item{\code{midfield_theme()}}{Applies \code{theme_minimal()} with some
-#'   additional edits: font family is "sans"; all text is 10 point; al lines
-#'   are pale gray (#D9D9D9) and size 0.4. }
+#' \item{\code{theme_midfield()}}{Applies \code{theme_minimal()} with
+#'   additional edits: font family is "sans"; all text is 10 point; all
+#'   lines are pale gray (#D9D9D9) and size 0.4. }
 #' }
 #'
-#' @return Modifies an existing graph
+#' @return Modifies an existing graph.
 #' @name utils_graph
 #' @aliases NULL
 NULL
 
 #' @export
 #' @rdname utils_graph
-expon_scale_x_log10 <- function() {
+scale_x_log10_expon <- function() {
   scale_x_log10(
     breaks = trans_breaks("log10", function(x)
       10^x),
@@ -44,7 +43,7 @@ expon_scale_x_log10 <- function() {
 
 #' @export
 #' @rdname utils_graph
-midfield_theme <- function() {
+theme_midfield <- function() {
   theme_minimal(base_family = "sans") +
     theme(
       plot.title = element_text(size = 10),

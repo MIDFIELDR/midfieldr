@@ -1,7 +1,7 @@
 #' @importFrom Rdpack reprompt
 NULL
 
-#' Undergraduate Student Records for Longitudinal Research
+#' Tools for Undergraduate Student Records Research
 #'
 #' A package for investigating a data sample from the MIDFIELD database.
 #' The data comprise student records from registrars at participating US
@@ -9,15 +9,20 @@ NULL
 #' for 97,640 undergraduate students from 1987 to 2016.
 #'
 #' This package provides functions to access, manipulate, and graph student
-#' record data. For example, to examine graduation rates, we use the series of functions:
+#' record data. For example, to examine graduation rates, we use the series of
+#' functions:
 #'
 #' \itemize{
 #'   \item \code{cip_filter()} to select programs
-#'   \item \code{gather_start()} to gather students starting in the programs
-#'   \item \code{gather_grad()} to gather unique students graduating from the programs
+#'   \item \code{cip_label()} to add custom program labels
+#'   \item \code{gather_start()} to gather starting students
+#'   \item \code{gather_grad()} to gather graduating students
 #'   \item \code{race_sex_join()} to join student sex and race
-#'   \item \code{zero_fill()} fill zero for missing combinations
-#'   \item \code{tally_gradrate()} to compute graduation rates for each group
+#'   \item \code{zero_fill()} to fill zero for missing combinations
+#'   \item \code{dplyr::group()} and \code{summarize()} to count students
+#'   \item \code{tally_gradrate()} to compute the metric
+#'   \item \code{multiway_order()} to prepare the results for graphing
+#'   \item \code{ggplot2::ggplot()} to graph the metric
 #' }
 #'
 #' To learn about these and other functions, start with the vignettes:
@@ -52,6 +57,7 @@ if (getRversion() >= "2.15.1") {
     "midfieldterms", "midfieldcourses", "institution",
     "term_degree", "program", "degree",
     "cip", "cip_bio_sci", "cip_engr", "cip_math_stat",
-    "cip_other_stem", "cip_phys_sci", "cip_stem"
+    "cip_other_stem", "cip_phys_sci", "cip_stem",
+    "n_prog"
   ))
 }

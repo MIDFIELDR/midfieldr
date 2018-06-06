@@ -52,11 +52,11 @@ test_that("Two character variables are converted to factors", {
 })
 
 test_that("Error for incorrect variable number and type", {
-  expect_error(# more than one numeric variable
+  expect_error( # more than one numeric variable
     multiway_order(df3),
     "value_len == 1 is not TRUE"
   )
-  expect_error(# more than two categorical variables
+  expect_error( # more than two categorical variables
     multiway_order(df4),
     "cat_len == 2 is not TRUE"
   )

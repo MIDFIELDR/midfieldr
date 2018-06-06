@@ -12,7 +12,7 @@ NULL
 #' the default program names in the 2010 CIP data.
 #'
 #' With \code{data} as the first argument, \code{cip_label()} is
-#'  compatible with the pipe operator (\code{%>%}).
+#' compatible with the pipe operator \code{\%>\%}.
 #'
 #' @param data A filtered subset of the midfieldr \code{cip} data frame.
 #'

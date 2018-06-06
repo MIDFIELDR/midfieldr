@@ -4,7 +4,7 @@
 \name{cip}
 \alias{cip}
 \title{Classification of Instructional Programs (CIP) data}
-\format{A tidy data frame (tibble) with 1544 observations and 6 variables.
+\format{A tidy data frame (tibble) with 1546 observations and 6 variables.
 All variables are characters. An observation is a unique program.
 \describe{
   \item{CIP2}{An instructional program's 2-digit code,  representing "the
@@ -27,23 +27,34 @@ Education Statistics (\url{https://nces.ed.gov/ipeds/cipcode}).
 cip
 }
 \description{
-A dataset of codes and names for 1544 instructional programs organized on
+A dataset of codes and names for 1546 instructional programs organized on
 three levels: a 2-digit series, a 4-digit series, and a 6-digit series.
 }
 \details{
 6-digit codes are used in the midfieldr datasets (\code{midfieldstudents},
 \code{midfieldcourses}, \code{midfieldterms}, and  \code{midfielddegrees})
-to encode program information as reported by the member institutions.
+to encode program information as reported by the member institutions. In
+addition to the standard codes and names, the midfieldr taxonomy includes
+three non-IPEDS codes:
 
-In addition to the standard codes and names, the midfieldr taxonomy includes
-the codes "99", "9999", and "999999", all named
-"NonIPEDS - Undecided/Unspecified", for instances in which institutions
-reported no program information or that students were not enrolled in a
-program (undecided).
+\describe{
+  \item{14XXXX}{First-Year Engineering (FYE).}
+  \item{14YYYY}{Engineering-Focused Curricula (pseudo-FYE). For instances
+  in which a student is eligible for admission to the institution but has
+  not been admitted to an engineering program. Some institutions without
+  FYE programs use such a designation in lieu of undecided or unspecified.}
+  \item{999999}{Undecided or Unspecified. For instances in which
+  institutions reported no program information or that students were
+  not enrolled in a program.}
+}
 }
 \examples{
-# view the CIP data
+# View the CIP data
 cip
+
+# View the programs at the top level of the taxonomy
+unique(cip[ , 1:2])
+
 # Use the data as an argument for cip_filter()
 cip_filter(data = cip, series = "^1410")
 }
