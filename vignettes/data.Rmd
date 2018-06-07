@@ -9,8 +9,9 @@ bibliography: ../inst/REFERENCES.bib
 ---
 
 ```{r setup, echo = FALSE, message = FALSE}
-knitr::opts_knit$set(root.dir = "../")
-knitr::opts_chunk$set(
+library(knitr)
+opts_knit$set(root.dir = "../")
+opts_chunk$set(
   echo = TRUE, # varies from one Rmd to another
   message = FALSE,
   warning = FALSE,
@@ -24,7 +25,7 @@ knitr::opts_chunk$set(
   fig.align = "center",
   fig.path = "../man/figures/data-"
 )
-knitr::knit_hooks$set(inline = function(x) {
+knit_hooks$set(inline = function(x) {
   if (!is.numeric(x)) {
     x
   } else if (x >= 10000) {
@@ -34,19 +35,52 @@ knitr::knit_hooks$set(inline = function(x) {
   }
 })
 options(tibble.print_min = 8L, tibble.print_max = 8L)
+library(magrittr) # for the pipe %>%
+unpack_data <- function(x = data_bits, bit, power10 = 0, decimals = 0) {
+  x <- x %>%
+    dplyr::filter(name == bit) %>%
+    dplyr::select(data) %>%
+    unlist() %>%
+    unname()
+  x <- round(x / 10^power10, decimals)
+}
+```
+
+```{r echo = FALSE}
+data_bits <- midfieldr:::data_bits # ::: for internal variables
+
+obs_cip <- unpack_data(bit = "obs_cip")
+var_cip <- unpack_data(bit = "var_cip")
+size_cip <- unpack_data(bit = "size_cip")
+
+obs_students <- unpack_data(bit = "obs_students")
+var_students <- unpack_data(bit = "var_students")
+size_students <- unpack_data(bit = "size_students", power10 = 6)
+
+obs_courses <- unpack_data(bit = "obs_courses", power10 = 6, decimals = 1)
+var_courses <- unpack_data(bit = "var_courses")
+size_courses <- unpack_data(bit = "size_courses", power10 = 6)
+
+obs_terms <- unpack_data(bit = "obs_terms")
+var_terms <- unpack_data(bit = "var_terms")
+size_terms <- unpack_data(bit = "size_terms", power10 = 6)
+
+obs_degrees <- unpack_data(bit = "obs_degrees")
+var_degrees <- unpack_data(bit = "var_degrees")
+size_degrees <- unpack_data(bit = "size_degrees", power10 = 6)
 ```
 
 The midfieldr package includes Classification of Instructional Programs (CIP) data from the US Department of Education [@cip2010].
 
-- `cip` data frame
-- `cip_series` 
+- `cip` A data frame with `r obs_cip` observations and `r var_cip` variables of program codes and names at 2, 4, and 6-digit levels. 
+- `cip_series` Vectors of CIP 6-digit codes denoting specific groups of programs. 
 
 The midfielddata package provides the stratified sample of student record data from the MIDFIELD database. 
 
-- `midfieldstudents` A data frame with 97,640 observations and 15 demographic variables, occupying 19 Mb of memory. Each observation is a unique student.  
-- `midfieldcourses` A data frame with 3.5 M observations and 12 academic course variables, occupying 348 Mb of memory (the largest of the midfielddata datasets). Each observation is one course in one term for one student. 
-- `midfieldterms` A data frame with 729,014 observations and 13 academic term variables, occupying 82 Mb of memory. Each observation is one term for one student.  
-- `midfielddegrees` A data frame with 97,640 observations and 5 graduation variables, occupying 10 Mb of memory. Each observation is a unique student.
+- `midfieldstudents` A data frame with `r obs_students` observations and `r var_students` demographic variables, occupying `r size_students` Mb of memory. Each observation is a unique student.  
+- `midfieldcourses` A data frame with `r obs_courses` M observations and `r var_courses` academic course variables, occupying `r size_courses` Mb of memory (the largest of the midfielddata datasets). Each observation is one course in one term for one student. 
+- `midfieldterms` A data frame with `r obs_terms` observations and `r var_terms` academic term variables, occupying `r size_terms` Mb of memory. Each observation is one term for one student.  
+- `midfielddegrees` A data frame with `r obs_degrees` observations and `r var_degrees` graduation variables, occupying `r size_degrees` Mb of memory. Each observation is a unique student.
 
 The process of designing, compiling, maintaining, protecting, and sharing the MIDFIELD data is described in [@aee2016].
 

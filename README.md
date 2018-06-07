@@ -11,13 +11,13 @@ Status](https://travis-ci.org/MIDFIELDR/midfieldr.svg?branch=master)](https://tr
 [![Coverage
 Status](https://img.shields.io/codecov/c/github/MIDFIELDR/midfieldr/master.svg)](https://codecov.io/github/MIDFIELDR/midfieldr?branch=master)
 
-midfieldr is a package for investigating student record data provided by
-registrars at US universities participating in the MIDFIELD project.
+A package for investigating student record data provided by registrars
+at US universities participating in the MIDFIELD project.
 
-A stratified sample of the MIDFIELD database is accessible using
-midfieldr. The sample comprises demographic, term, course, and degree
-information for undergraduate students from 1987 to 2016. Because of
-their size, the sample datasets are provided in separate data packages.
+midfieldr provides tools for accessing and analyizing s stratified
+sample of the MIDFIELD database. The sample comprises demographic, term,
+course, and degree information for 97,640 undergraduate students from
+1987 to 2016. The sample data are provided in a separate data package.
 
 midfieldr includes functions for selecting specific fields of study and
 aggregating, computing, and graphing student persistence metrics.
@@ -38,24 +38,24 @@ The midfieldr package includes:
     observation is a unique program. Occupies 362 kb of memory.
 
 The [midfielddata](https://github.com/MIDFIELDR/midfielddata) package
-contains the four datasets that comprise a stratified sample of teh
+contains the four datasets that comprise a stratified sample of the
 MIDFIELD database.
 
-  - `midfieldstudents`. A tidy data frame with observations and
-    demographic variables. Each observation is a unique student.
-    Occupies Mb of memory.
+  - `midfieldstudents`. A tidy data frame with 97,640 observations and
+    15 demographic variables. Each observation is a unique student.
+    Occupies 19 Mb of memory.
 
-  - `midfieldcourses`. A tidy data frame with M observations and
+  - `midfieldcourses`. A tidy data frame with 3.5 M observations and 12
     academic course variables. Each observation is one course in one
-    term for one student. Occupies Mb of memory.
+    term for one student. Occupies 348 Mb of memory.
 
-  - `midfieldterms`. A tidy data frame with observations and academic
-    term variables. Each observation is one term for one student.
-    Occupies Mb of memory.
+  - `midfieldterms`. A tidy data frame with 729,014 observations and 13
+    academic term variables. Each observation is one term for one
+    student. Occupies 82 Mb of memory.
 
-  - `midfielddegrees`. A tidy data frame with observations and
+  - `midfielddegrees`. A tidy data frame with 97,640 observations and 5
     graduation variables. Each observation is a unique student. Occupies
-    Mb of memory.
+    10 Mb of memory.
 
 ## Usage
 
@@ -67,13 +67,12 @@ library(tidyverse)
 ```
 
 We can illustrate some of the functionality of midfieldr by
-demonstrating how to compute and graph the stickiness metric. Additional
-detail is provided in the [vignettes](articles/index.html).
-
+demonstrating how to compute and graph the stickiness metric.
 “Stickiness” is the ratio of the number of students graduating from a
 program to the number ever enrolled in the program (Ohland et al. 2012).
 In this example we compare the stickiness of three engineering programs:
-Chemical, Electrical, and Industrial Engineering.
+Chemical, Electrical, and Industrial Engineering. (Additional detail is
+provided in the [vignettes](articles/index.html).)
 
 ### Select programs to study
 
@@ -131,12 +130,10 @@ set3 <- cip_filter(series = "^1435") %>%
   add_column(program = "Industrial Engineering")
 ```
 
-Combine the data frames and retain our custom program label and the
-6-digit CIP codes.
+Combine the data frames.
 
 ``` r
-cip_group <- bind_rows(set1, set2, set3) %>%
-  select(program, CIP6)
+cip_group <- bind_rows(set1, set2, set3)
 ```
 
 For additional information, try the help page `?cip_filter()` and the
@@ -180,8 +177,8 @@ ever_enrolled <- ever_enrolled %>%
 ```
 
 Use `gather_grad()` to access the `midfielddegrees` dataset and extract
-all students who graduated from in these programs. We group and
-summarize the counts using `grad` as the new count variable.
+all students who graduated from these programs. We group and summarize
+the counts using `grad` as the new count variable.
 
 ``` r
 graduated <- gather_grad(cip_group) %>%
@@ -249,9 +246,10 @@ ggplot(stickiness, aes(x = stick, y = race_sex)) +
   facet_wrap(~program, ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +
-  midfield_theme()
-#> Error in midfield_theme(): could not find function "midfield_theme"
+  theme_midfield()
 ```
+
+<img src="man/figures/README-fig1-1.png" width="70%" style="display: block; margin: auto;" />
 
 ## Meta
 

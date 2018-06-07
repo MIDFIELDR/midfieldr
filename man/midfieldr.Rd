@@ -4,7 +4,7 @@
 \name{midfieldr}
 \alias{midfieldr}
 \alias{midfieldr-package}
-\title{Tools for Undergraduate Student Records Research}
+\title{Tools for Student Records Research}
 \source{
 Data provided by the MIDFIELD project:
 \url{https://engineering.purdue.edu/MIDFIELD}
@@ -17,12 +17,12 @@ for 97,640 undergraduate students from 1987 to 2016.
 }
 \details{
 This package provides functions to access, manipulate, and graph student
-record data. For example, to examine graduation rates, we use the series of
-functions:
+record data. To illustrate the workflow, we would use these functions in
+sequence to compute and display a graduation rate metric:
 
 \itemize{
-  \item \code{cip_filter()} to select programs
-  \item \code{cip_label()} to add custom program labels
+  \item \code{cip_filter()} to select programs from the CIP data
+  \item \code{cip_label()} to add custom program labels for grouping
   \item \code{gather_start()} to gather starting students
   \item \code{gather_grad()} to gather graduating students
   \item \code{race_sex_join()} to join student sex and race
@@ -33,20 +33,19 @@ functions:
   \item \code{ggplot2::ggplot()} to graph the metric
 }
 
-To learn about these and other functions, start with the vignettes:
-\code{browseVignettes(package = "midfieldr")}.
+To learn about these and other functions in detail, start with the
+vignettes: \code{browseVignettes(package = "midfieldr")}.
+}
+\section{Data}{
 
-We generally group our findings by instructional
-program and student sex and "race" as defined by the participating US
-institutions for the years spanned in the sample data.
 
 Instructional program data is provided in \code{cip}, a data frame of names
 and codes of academic programs from the 2010 IPEDS Classification of
 Instructional Programs (CIP) by the US Department of Education.
 
-Student record data is provided in four data packages:
-\href{https://github.com/MIDFIELDR/midfieldstudents}{midfieldstudents},
-\href{https://github.com/MIDFIELDR/midfieldcourses}{midfieldcourses},
-\href{https://github.com/MIDFIELDR/midfieldterms}{midfieldterms}, and
-\href{https://github.com/MIDFIELDR/midfielddegrees}{midfielddegrees}.
+Student record data is provided in the companion data package,
+\href{https://github.com/MIDFIELDR/midfielddata}{midfielddata}. Data are
+provided in four datasets: \code{midfieldcourses}, \code{midfielddegrees},
+\code{midfieldstudents}, and  \code{midfieldterms}.
 }
+

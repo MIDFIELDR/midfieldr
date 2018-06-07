@@ -11,9 +11,9 @@ bibliography: ../inst/REFERENCES.bib
 ```{r setup, echo = FALSE, message = FALSE}
 knitr::opts_knit$set(root.dir = "../")
 knitr::opts_chunk$set(
-	echo = TRUE,      # varies from one Rmd to another 
+  echo = TRUE, # varies from one Rmd to another
   message = FALSE,
-  warning = FALSE, 
+  warning = FALSE,
   collapse = TRUE,
   comment = "#>",
   error = TRUE,
@@ -24,15 +24,6 @@ knitr::opts_chunk$set(
   fig.align = "center",
   fig.path = "../man/figures/cip-filter-"
 )
-knitr::knit_hooks$set(inline = function(x) {
-  if (!is.numeric(x)) {
-    x
-  } else if (x >= 10000) {
-    prettyNum(round(x, 2), big.mark = ",")
-  } else {
-    prettyNum(round(x, 2))
-  }
-})
 options(tibble.print_min = 8L, tibble.print_max = 8L)
 ```
 
@@ -42,9 +33,9 @@ library(midfieldr)
 load("R/sysdata.rda")
 
 # data_bits <- midfieldr:::data_bits
-obs_cip   <- round(data_bits$data[data_bits$name ==  "obs_cip"] / 1e+0, 1)
-var_cip   <-       data_bits$data[data_bits$name ==  "var_cip"]
-size_cip  <- round(data_bits$data[data_bits$name == "size_cip"] / 1e+3, 0)
+obs_cip <- round(data_bits$data[data_bits$name == "obs_cip"] / 1e+0, 1)
+var_cip <- data_bits$data[data_bits$name == "var_cip"]
+size_cip <- round(data_bits$data[data_bits$name == "size_cip"] / 1e+3, 0)
 ```
 
 The Classification of Instructional Programs (CIP) is a taxonomy of academic programs curated by an agency of the US Department of Education [@cip2010]. 
@@ -72,12 +63,12 @@ Taking a `glimpse()` of `cip` reveals that we have  `r obs_cip` unique observati
 glimpse(cip)
 ```
 
-`cip_filter()` filters `cip` data frame for the programs we wish to study. The function has two arguments:   
+`cip_filter(data, series)` filters `cip` data frame for the programs we wish to study. The function has two arguments:   
 
 - `data` <span style="display:inline-block; width: 5.5mm;"></span>A searchable data frame (`cip` is the default). 
 - `series` <span style="display:inline-block; width: 1mm;"></span> Search terms. A character vector of codes or keywords.  
 
-`cip_filter()` searches all columns in `data` for the strings in `series` and returns a data frame whose rows contain the search terms. Filtering is performed by `dplyr::filter()` with pattern detection by `stringr::str_detect()`. 
+`cip_filter()` searches all columns in `data` for the strings in `series` and returns a data frame whose rows contain the search terms.
 
 With no arguments, `cip_filter()` returns the complete `cip` data set. 
 
@@ -169,20 +160,7 @@ kable(df)
 kable(df, "html") %>% kable_styling(font_size = 12)
 ```
 
-Specifying 4-digit codes yields a data frame with as many rows as there are rows that include the search strings.   
-
-```{r results = "hide"}
-# 4-digit example
-df <- cip_filter(series = c("1407", "1408"))
-kable(df)
-```
-
-```{r echo = FALSE}
-# using kable_styling() for output but conceal from novice user
-kable(df, "html") %>% kable_styling(font_size = 12)
-```
-
-This search, in addition to the desired Engineering programs, returned two Foreign Language programs because their 6-digit codes contain "1407" and "1408". We use the regular expression notation `^` to match the start of the strings.
+Specifying 4-digit codes yields a data frame with as many rows as there are rows that include the search strings. We use the regular expression notation `^` to match the start of the strings.
 
 ```{r results = "hide"}
 # 4-digit example matching the start of the string
@@ -243,7 +221,7 @@ kable(df, "html") %>% kable_styling(font_size = 12)
 
 ## Search by named series
 
-midfieldr includes several datasets of *named series*. A named series is a character vector of 6-digit CIP codes that belong to a group of programs such as Engineering, Physical Sciences, STEM, etc. To see the full set of available named series, type `?cip_series`. 
+midfieldr includes several datasets of *named series*. A named series is a character vector of 6-digit CIP codes that belong to a group of programs such as Engineering, Physical Sciences, STEM, etc. To see the full set of available named series, see the help page `?cip_series`. 
 
 A named series is assigned to the series argument in `cip_filter()`. 
 
@@ -280,6 +258,31 @@ kable(df2)
 kable(df2, "html") %>% kable_styling(font_size = 12)
 ```
 
+`cip_filter()` is compatible with the pipe operator `%>%`. Thus a previously filtered CIP data frame is the `data` argument for the subsequent operation. For example: 
+
+```{r results = "hide"}
+# filtering sequentially
+df <- cip_filter(series = "History") %>%
+  cip_filter(series = "American")
+kable(df)
+```
+
+```{r echo = FALSE}
+# using kable_styling() for output but conceal from novice user
+kable(df, "html") %>% kable_styling(font_size = 12)
+```
+
+```{r results = "hide"}
+# filtering sequentially
+df <- cip_filter(series = "^14") %>%
+  cip_filter(series = "Civil")
+kable(df)
+```
+
+```{r echo = FALSE}
+# using kable_styling() for output but conceal from novice user
+kable(df, "html") %>% kable_styling(font_size = 12)
+```
 
 
 ## References

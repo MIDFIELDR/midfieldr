@@ -52,21 +52,19 @@
 
 #' Named series of 6-digit CIP codes
 #'
-#' Collected Classification of Instructional Programs (CIP) 6-digit codes
-#' for groups of programs.
+#' Each named series is a vector of Classification of Instructional
+#' Programs (CIP) 6-digit codes for groups of programs.
 #'
 #' @name cip_series
 #' @format A character vector of 6-digit CIP codes.
 #' \describe{
 #' \item{\code{cip_bio_sci}}{Biological and biomedical science programs,
-#'   26 series, e.g., 260001.}
-#' \item{\code{cip_engr}}{Engineering programs, series 14, e.g., 140201.}
-#' \item{\code{cip_math_stat}}{Mathematics and statistics programs, series 27,
-#'   e.g., 270103.}
-#' \item{\code{cip_other_stem}}{Other STEM programs not in \code{cip_bio_sci},
-#'   \code{cip_engr}, \code{cip_math_stat}, or \code{cip_phys_sci}.}
-#' \item{\code{cip_phys_sci}}{Physical science programs, series 40, e.g.
-#'   400202.}
+#' series 26.}
+#' \item{\code{cip_engr}}{Engineering programs, series 14.}
+#' \item{\code{cip_math_stat}}{Mathematics and statistics programs,
+#'  series 27.}
+#' \item{\code{cip_phys_sci}}{Physical science programs, series 40.}
+#' \item{\code{cip_other_stem}}{Other STEM programs, not individually named.}
 #' \item{\code{cip_stem}}{All Science, Technology, Engineering, and Mathematics
 #'   (STEM) programs.}
 #' }

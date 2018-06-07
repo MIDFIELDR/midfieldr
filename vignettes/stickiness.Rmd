@@ -6,6 +6,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 bibliography: ../inst/REFERENCES.bib
+resource_files:
+  - ../man/figures/stickiness-fig1-1.png
 ---
 
 ```{r setup, echo = FALSE, message = FALSE}
@@ -35,16 +37,23 @@ knit_hooks$set(inline = function(x) {
   }
 })
 options(tibble.print_min = 8L, tibble.print_max = 8L)
+library(magrittr) # for the pipe %>%
+unpack_data <- function(x = data_bits, bit, power10 = 0, decimals = 0) {
+  x <- x %>%
+    dplyr::filter(name == bit) %>%
+    dplyr::select(data) %>%
+    unlist() %>%
+    unname()
+  x <- round(x / 10^power10, decimals)
+}
 ```
 
 ```{r echo = FALSE}
-# unpack data bits
-library(midfieldr)
-load("R/sysdata.rda")
+data_bits <- midfieldr:::data_bits # ::: for internal variables
 
-obs_cip  <- round(data_bits$data[data_bits$name ==  "obs_cip"] / 1e+0, 1)
-var_cip  <-       data_bits$data[data_bits$name ==  "var_cip"]
-size_cip <- round(data_bits$data[data_bits$name == "size_cip"] / 1e+3, 0)
+obs_cip <- unpack_data(bit = "obs_cip")
+var_cip <- unpack_data(bit = "var_cip")
+size_cip <- unpack_data(bit = "size_cip")
 ```
 
 
@@ -289,7 +298,7 @@ By using `multiway_order()` to condition the data, the rows and panels of the mu
 - `geom_point()` creates the data markers; any NA values are removed by `na.rm = TRUE` 
 - `labs()` assign axis labels 
 
-```{r fig.asp = 2/1.6}
+```{r fig1, fig.asp = 2/1.6}
 ggplot(stickiness, aes(x = stick, y = race_sex)) +
   facet_wrap(~program, ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +

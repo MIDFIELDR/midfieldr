@@ -39,7 +39,15 @@ knitr::knit_hooks$set(inline = function(x) {
   }
 })
 options(tibble.print_min = 8L, tibble.print_max = 8L)
-library(tidyverse)
+library(magrittr) # for the pipe %>%
+unpack_data <- function(x = data_bits, bit, power10 = 0, decimals = 0) {
+  x <- x %>%
+    dplyr::filter(name == bit) %>%
+    dplyr::select(data) %>%
+    unlist() %>%
+    unname()
+  x <- round(x / 10^power10, decimals)
+}
 ```
 
 
@@ -51,44 +59,35 @@ library(tidyverse)
 [![Coverage Status](https://img.shields.io/codecov/c/github/MIDFIELDR/midfieldr/master.svg)](https://codecov.io/github/MIDFIELDR/midfieldr?branch=master)
 
 ```{r databits, echo = FALSE}
-# unpack data bits
-data_bits <- midfieldr:::data_bits
-unpack_data <- function(x = data_bits, bit, div = 1, digits = 0) {
-  x <- x %>% 
-  	filter(name == bit) %>% 
-  	select(data) %>% 
-  	unlist() %>% 
-  	unname()
-  x <- round(x / div, digits)
-}
+data_bits <- midfieldr:::data_bits # ::: for internal variables
 
 obs_cip  <- unpack_data(bit = "obs_cip")
 var_cip  <- unpack_data(bit = "var_cip")
-size_cip <- unpack_data(bit = "size_cip", div =  1e+3)
+size_cip <- unpack_data(bit = "size_cip", power10 = 3)
 
 obs_students  <- unpack_data(bit = "obs_students")
 var_students  <- unpack_data(bit = "var_students")
-size_students <- unpack_data(bit = "size_students", div =  1e+6)
+size_students <- unpack_data(bit = "size_students", power10 = 6)
 
 year_min  <- unpack_data(bit = "year_min")
 year_max  <- unpack_data(bit = "year_max")
 
 obs_degrees  <- unpack_data(bit = "obs_degrees")
 var_degrees  <- unpack_data(bit = "var_degrees")
-size_degrees <- unpack_data(bit = "size_degrees", div =  1e+6)
+size_degrees <- unpack_data(bit = "size_degrees", power10 = 6)
 
 obs_terms  <- unpack_data(bit = "obs_terms")
 var_terms  <- unpack_data(bit = "var_terms")
-size_terms <- unpack_data(bit = "size_terms", div =  1e+6)
+size_terms <- unpack_data(bit = "size_terms", power10 = 6)
 
-obs_courses  <- unpack_data(bit = "obs_courses", div =  1e+6, digits = 1)
+obs_courses  <- unpack_data(bit = "obs_courses", power10 = 6, decimals = 1)
 var_courses  <- unpack_data(bit = "var_courses")
-size_courses <- unpack_data(bit = "size_courses", div =  1e+6)
+size_courses <- unpack_data(bit = "size_courses", power10 = 6)
 ```
 
-midfieldr is a package for investigating student record data provided by registrars at US universities participating in the MIDFIELD project. 
+A package for investigating student record data provided by registrars at US universities participating in the MIDFIELD project. 
 
-A stratified sample of the MIDFIELD database is accessible using midfieldr. The sample comprises demographic, term, course, and degree information for `r obs_students` undergraduate students from `r year_min` to `r year_max`. Because of their size, the sample datasets are provided in separate data packages.
+midfieldr provides tools for accessing and analyizing s stratified sample of the MIDFIELD database. The sample comprises demographic, term, course, and degree information for `r obs_students` undergraduate students from `r year_min` to `r year_max`. The sample data are provided in a separate data package.
 
 midfieldr includes functions for selecting specific fields of study and  aggregating, computing, and graphing student persistence metrics.
 
@@ -125,9 +124,7 @@ library(midfieldr)
 library(tidyverse)
 ```
 
-We can illustrate some of the functionality of midfieldr by demonstrating how to compute and graph the stickiness metric. Additional detail is provided in   the [vignettes](articles/index.html). 
-
-"Stickiness" is the ratio of the number of students graduating from a program to the number ever enrolled in the program [@stickiness2012]. In this example we compare the stickiness of three engineering programs: Chemical, Electrical, and Industrial Engineering.  
+We can illustrate some of the functionality of midfieldr by demonstrating how to compute and graph the stickiness metric. "Stickiness" is the ratio of the number of students graduating from a program to the number ever enrolled in the program [@stickiness2012]. In this example we compare the stickiness of three engineering programs: Chemical, Electrical, and Industrial Engineering. (Additional detail is provided in the [vignettes](articles/index.html).)
 
 ### Select programs to study
 
@@ -197,7 +194,7 @@ ever_enrolled <- ever_enrolled %>%
   zero_fill(program, race, sex)
 ```
 
-Use `gather_grad()` to access the `midfielddegrees` dataset and extract all students who graduated from in these programs. We group and summarize the counts using `grad` as the new count variable.  
+Use `gather_grad()` to access the `midfielddegrees` dataset and extract all students who graduated from these programs. We group and summarize the counts using `grad` as the new count variable.  
 
 ```{r grad}
 graduated <- gather_grad(cip_group) %>%
@@ -242,7 +239,7 @@ We use conventional ggplot2 functions to graph stickiness in a multiway dot plot
 
 For additional information on multiways, see the [Multiway data, graphs, and tables](multiway.html) vignette. 
 
-```{r graph-stickiness, fig.asp = 1.6/1.6}
+```{r fig1, fig.asp = 1.6/1.6}
 ggplot(stickiness, aes(x = stick, y = race_sex)) +
   facet_wrap(~program, ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
