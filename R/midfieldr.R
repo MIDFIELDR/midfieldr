@@ -48,7 +48,7 @@ NULL
 ## addresses R CMD check warning "no visible binding"
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
-    ".", ".x", "CIP2", "CIP4", "CIP6", "student", "ID",
+    ".", ".x", "cip2", "cip4", "cip6", "student", "id",
     "race", "sex", "rcb_colors", "rcb_name", "rcb_code",
     "midfielddegrees", "midfieldstudents", "med",
     "midfieldterms", "midfieldcourses", "institution",

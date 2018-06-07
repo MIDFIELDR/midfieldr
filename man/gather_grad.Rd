@@ -8,7 +8,7 @@ gather_grad(program_group)
 }
 \arguments{
 \item{program_group}{A data frame that includes 6-digit CIP codes
-(\code{CIP6}) of the programs being studied.}
+(\code{cip6}) of the programs being studied.}
 }
 \value{
 A data frame. Each observation is a unique degree per unique

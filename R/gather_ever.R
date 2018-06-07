@@ -10,13 +10,13 @@ NULL
 #' Accounts for students enrolled in more than one program in a term.
 #'
 #' @param program_group A data frame that includes 6-digit CIP codes
-#' (\code{CIP6}) of the programs being studied.
+#' (\code{cip6}) of the programs being studied.
 #'
 #' @return A data frame extracted from the \code{midfieldterms} dataset
-#' with variables \code{ID}, \code{institution}, \code{CIP6}.
+#' with variables \code{id}, \code{institution}, \code{cip6}.
 #'
 #' Each observation in the resulting tidy data frame is a unique program per
-#' student. Thus the student identifier (\code{ID}) for students who change
+#' student. Thus the student identifier (\code{id}) for students who change
 #' majors will appear in more than one row, once each per unique program.
 #'
 #' @export
@@ -24,16 +24,16 @@ gather_ever <- function(program_group) {
   stopifnot(is.data.frame(program_group))
 
   # check that necessary variables are present
-  stopifnot("CIP6" %in% names(program_group))
+  stopifnot("cip6" %in% names(program_group))
 
   # filter the data set using the search series
-  series <- stringr::str_c(program_group$CIP6, collapse = "|")
+  series <- stringr::str_c(program_group$cip6, collapse = "|")
   students <- midfielddata::midfieldterms %>%
-    dplyr::select(ID, institution, CIP6) %>%
-    dplyr::filter(stringr::str_detect(CIP6, series)) %>%
+    dplyr::select(id, institution, cip6) %>%
+    dplyr::filter(stringr::str_detect(cip6, series)) %>%
     unique()
 
   # join the program labels
-  students <- dplyr::left_join(students, program_group, by = "CIP6")
+  students <- dplyr::left_join(students, program_group, by = "cip6")
 }
 "gather_ever"

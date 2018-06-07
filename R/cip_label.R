@@ -59,7 +59,7 @@ cip_label <- function(data, program = NULL) {
 	))
 
 	if (is.null(program)) {# if none given
-		series <- data$CIP6
+		series <- data$cip6
 		if (identical(series, cip_engr)) {# if a named series
 			program <- "Engineering"
 		} else if (identical(series, cip_bio_sci)) {
@@ -73,15 +73,15 @@ cip_label <- function(data, program = NULL) {
 		} else if (identical(series, cip_phys_sci)) {
 			program <- "Physical Sciences"
 		} else {# if not named, use 6-digit names by default
-			program <- data$CIP6name
+			program <- data$cip6name
 		}
 	} else {# program argument is given
 		if (identical(program, "cip2name")) {# use CIP data names
-			program <- data$CIP2name
+			program <- data$cip2name
 		} else if (identical(program, "cip4name")) {
-			program <- data$CIP4name
+			program <- data$cip4name
 		} else if (identical(program, "cip6name")) {
-			program <- data$CIP6name
+			program <- data$cip6name
 		}	else {# otherwise, use the input argument
 			program <- program
 		}

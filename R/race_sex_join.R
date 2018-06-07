@@ -7,13 +7,13 @@ NULL
 #'
 #' Add variables \code{race} and \code{sex} from the \code{midfieldstudents}
 #' dataset to a data frame. `dplyr::left_join()` is the joining function
-#' and \code{ID} is the join-by variable.
+#' and \code{id} is the join-by variable.
 #'
 #' If sex and race variables are already present, the function returns the
 #' unchanged data frame and a message.
 #'
 #' @param df A data frame of student attributes that includes the variable
-#' \code{ID}.
+#' \code{id}.
 #'
 #' @return The incoming data frame plus three new columns \code{sex},
 #' \code{race}, and the combined string \code{race_sex}, joined by student ID.
@@ -30,11 +30,11 @@ race_sex_join <- function(df) {
   }
 
   # check that necessary variable is present
-  stopifnot("ID" %in% names(df))
+  stopifnot("id" %in% names(df))
 
   # extract ID, race, and sex from midfieldstudents data
   race_sex <- midfielddata::midfieldstudents %>%
-    dplyr::select(ID, race, sex)
+    dplyr::select(id, race, sex)
 
   # if sex OR race already in df, not joined to df
   if ("sex" %in% names(df)) {
@@ -48,14 +48,14 @@ race_sex_join <- function(df) {
   }
 
   # filter by series of IDs in the input data frame
-  series <- stringr::str_c(df$ID, collapse = "|")
+  series <- stringr::str_c(df$id, collapse = "|")
   race_sex <- race_sex %>%
-    dplyr::filter(stringr::str_detect(ID, series)) %>%
+    dplyr::filter(stringr::str_detect(id, series)) %>%
     unique()
 
   # join demographics if number of unique students identical
-  stopifnot(dplyr::all_equal(unique(df$ID), race_sex$ID))
+  stopifnot(dplyr::all_equal(unique(df$id), race_sex$id))
 
-  df <- dplyr::left_join(df, race_sex, by = "ID")
+  df <- dplyr::left_join(df, race_sex, by = "id")
 }
 "race_sex_join"
