@@ -8,26 +8,27 @@ vignette: >
 bibliography: ../inst/REFERENCES.bib
 resource_files:
   - ../man/figures/stickiness-fig1-1.png
+editor_options: 
+  chunk_output_type: console
 ---
 
-```{r setup, echo = FALSE, message = FALSE}
-library(knitr)
-opts_knit$set(root.dir = "../")
-opts_chunk$set(
+```{r setup, echo = FALSE, message = FALSE, purl = FALSE}
+knitr::opts_knit$set(root.dir = "../")
+knitr::opts_chunk$set(
 	echo = TRUE, # varies from one Rmd to another 
   message = TRUE,
   warning = TRUE, 
   collapse = TRUE,
   comment = "#>",
   error = TRUE,
-  purl = FALSE,
+  purl = FALSE, 
   fig.width = 6,
   fig.asp = 1 / 1.6,
   out.width = "70%",
   fig.align = "center",
   fig.path = "../man/figures/stickiness-"
 )
-knit_hooks$set(inline = function(x) {
+knitr::knit_hooks$set(inline = function(x) {
   if (!is.numeric(x)) {
     x
   } else if (x >= 10000) {
@@ -37,25 +38,12 @@ knit_hooks$set(inline = function(x) {
   }
 })
 options(tibble.print_min = 8L, tibble.print_max = 8L)
-library(magrittr) # for the pipe %>%
-unpack_data <- function(x = data_bits, bit, power10 = 0, decimals = 0) {
-  x <- x %>%
-    dplyr::filter(name == bit) %>%
-    dplyr::select(data) %>%
-    unlist() %>%
-    unname()
-  x <- round(x / 10^power10, decimals)
-}
+
+# normally, purl is FALSE. But in some code chunks, I want purl = TRUE so that # the code in the vignette is executed to pass R CMD check. These next few 
+# lines set that up. In the code chunk header, add opts.label = 'dopurl'
+knitr::knit_hooks$set(purl = knitr::hook_purl)
+knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
 ```
-
-```{r echo = FALSE}
-data_bits <- midfieldr:::data_bits # ::: for internal variables
-
-obs_cip <- unpack_data(bit = "obs_cip")
-var_cip <- unpack_data(bit = "var_cip")
-size_cip <- unpack_data(bit = "size_cip")
-```
-
 
 Longitudinal "stickiness" is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program [@stickiness2012]. 
 
@@ -69,7 +57,6 @@ We typically group stickiness results by program, biological sex (we have no dat
 # packages used
 library(midfieldr)
 library(tidyverse)
-library(knitr)
 ```
 
 In this article, we show you how to use midfieldr functions to compute program stickiness. Our workflow is: 
@@ -104,7 +91,7 @@ ele <- cip_filter(series = "^1410")
 unique(ele$cip4name)
 ```
 
-In this case, the default program name is inconveniently long. We add a new column to the CIP data frame with our own shorter program label using 
+In this case, the default program name is inconveniently long. We add a new column to the `ele` data frame with our own shorter program label using 
 `cip_label()`. 
 
 ```{r}
@@ -112,7 +99,7 @@ In this case, the default program name is inconveniently long. We add a new colu
 ele <- cip_label(data = ele, program = "Electrical Engineering")
 
 # check the result
-glimpse(ele)
+ele
 ```
 
 For the next three programs, the default 4-digit program name is an acceptable program label. 
@@ -135,10 +122,10 @@ We use `bind_rows()`, a [dplyr](http://dplyr.tidyverse.org) function, to bind th
 program_group <- bind_rows(cve, ele, mce, ise)
 ```
 
-Examine the result: there are a total of 12 CIP codes for these programs. Our `program` labels agree with the default `cip6name` values. 
+Examine the result: there are a total of 12 CIP codes for these programs. We have 7 columns: 6 from the `cip` dataset and the one `program` column of labels we added using `cip_label()`. 
 
 ```{r}
-# examine the result
+# check the result
 program_group
 ```
 
@@ -154,7 +141,7 @@ students <- gather_ever(program_group)
 `glimpse()` (a [tibble](http://tibble.tidyverse.org) function) the result to check the number of observations and to view the first few values of each variable. 
 
 ```{r}
-# examine the result
+# check the result
 glimpse(students)
 ```
 
@@ -165,6 +152,7 @@ glimpse(students)
 ```{r}
 students <- race_sex_join(students)
 
+# check the result
 glimpse(students)
 ```
 
@@ -186,22 +174,40 @@ ever_enrolled <- students %>%
   group_by(program, race, sex) %>%
   summarize(ever = n()) %>%
   ungroup()
+
+# check the result
+ever_enrolled
 ```
 
 You can change how you group the data by changing the arguments of `group_by()`.  
 
 ## zero_fill()
 
-This example has 4 programs, 2 sexes, and 8 race values, so we have 64 possible combinations of program, sex, and race, yet our result above has only 63 rows, not the expected 64. This outcome tells us that one of the possible combinations is missing.
+```{r echo = FALSE, opts.label = 'dopurl'}
+# use the dopurl hook to make these values available for the inline 
+# expressions in the next paragraph during R CMD check. Causes this code 
+# chunk to be written to vignettes/*.R 
+n_prog <- length(unique(ever_enrolled$program))
+n_sex  <- length(unique(ever_enrolled$sex))
+n_race <- length(unique(ever_enrolled$race))
+n_comb <- n_prog * n_sex * n_race
+n_obs  <- dim(ever_enrolled)[[1]]
+```
+
+This example has `r n_prog` programs, `r n_sex` sexes, and `r n_race` race values, yielding `r n_comb` possible combinations. Yet our result above has only `r n_obs` observations, not the expected `r n_comb`. This outcome tells us that one of the possible combinations is missing.
 
 The missing group, it happens, is Civil Engineering Native American Female. 
 
-`zero_fill()` inserts a count of zero for missing combinations, ensuring that zero data values are not overlooked when printing data tables or constructing graphs.  The arguments of `zero_fill()` are the same variable names used earlier in `group_by()`. 
+`zero_fill()` inserts a count of zero for missing combinations, ensuring that zero data values are not overlooked when printing data tables or constructing graphs.  The arguments of `zero_fill()` must be identical to the arguments of `group_by()` used earlier. 
 
 ```{r}
 ever_enrolled <- ever_enrolled %>%
   zero_fill(program, race, sex)
+```
 
+The output message `Joining, by = c("program", "race", "sex")` indicates that data  has been successfully joined to its expanded version containing all combinations of these three variables.   
+
+```{r}
 # examine the result
 ever_enrolled
 ```
@@ -233,8 +239,8 @@ graduated <- gather_grad(program_group) %>%
   ungroup() %>%
   zero_fill(program, race, sex)
 
-# examine the result
-glimpse(graduated)
+# check the result
+graduated
 ```
 
 ## tally_stickiness()
@@ -243,9 +249,11 @@ glimpse(graduated)
 
 The function returns a data frame with all the original variables plus a column for the stickiness variable `stick`. Stickiness is reported as a fraction between 0 and 1, or NA if the ever count for a group is zero.   
 
-```{r}
-stickiness <- tally_stickiness(ever = ever_enrolled, grad = graduated)
+```{r echo = -1}
+options(tibble.print_min = 10L)
+stickiness <- tally_stickiness(ever_enrolled, graduated)
 
+# check the result
 stickiness
 ```
 
@@ -256,7 +264,7 @@ Before structuring the data for graphing, we select the populations we are inter
 We use `filter()` (a [dplyr](http://dplyr.tidyverse.org) function) to keep all rows except those in which race is Unknown, International, or Other.  
 
 ```{r}
-stickiness <- stickiness %>%
+stickiness_multiway <- stickiness %>%
   filter(!race %in% c("Unknown", "International", "Other"))
 ```
 
@@ -270,21 +278,22 @@ We use:
 
 ```{r}
 # create the race_sex variable
-stickiness <- stickiness %>%
+stickiness_multiway <- stickiness_multiway %>%
   mutate(race_sex = str_c(race, sex, sep = " ")) %>%
   select(program, race_sex, stick)
 
-glimpse(stickiness)
+# check the result
+stickiness_multiway
 ```
 
 `multiway_order()` converts the character variables `program` and `race_sex` into *factors* and orders the levels of the two factors by the relevant stickiness medians. `glimpse()` shows that the two categorical variables are now factors.
 
 ```{r}
 # convert the data to a multiway structure
-stickiness <- multiway_order(stickiness)
+stickiness_multiway <- multiway_order(stickiness_multiway)
 
-# multiway data comprise one quantitative and two categorical variables
-glimpse(stickiness)
+# check the result
+stickiness_multiway
 ```
 
 ## Graphing the multiway
@@ -299,8 +308,8 @@ By using `multiway_order()` to condition the data, the rows and panels of the mu
 - `labs()` assign axis labels 
 
 ```{r fig1, fig.asp = 2/1.6}
-ggplot(stickiness, aes(x = stick, y = race_sex)) +
-  facet_wrap(~program, ncol = 1, as.table = FALSE) +
+ggplot(stickiness_multiway, aes(x = stick, y = race_sex)) +
+  facet_wrap(~ program, ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +
   theme_midfield()
@@ -320,7 +329,6 @@ For reference, the complete script for this example is collected below.
 # packages used
 library(midfieldr)
 library(tidyverse)
-library(knitr)
 
 # obtain 6-digit CIPs and assign custom program labels
 cve <- cip_filter(series = "^1408") %>% cip_label(program = "cip4name")
@@ -328,38 +336,41 @@ ele <- cip_filter(series = "^1410") %>% cip_label(program = "Electrical Engineer
 mce <- cip_filter(series = "^1419") %>% cip_label(program = "cip4name")
 ise <- cip_filter(series = "^1435") %>% cip_label(program = "cip4name")
 
-# bind the programs
+# bind the programs in a single data frame 
 program_group <- bind_rows(cve, ele, mce, ise)
 
-# count students ever enrolled
+# count students ever enrolled in programs
 ever_enrolled <- gather_ever(program_group) %>%
-  race_sex_join() %>%
-  group_by(program, race, sex) %>%
-  summarize(ever = n()) %>%
-  ungroup() %>%
-  zero_fill(program, race, sex)
+	race_sex_join() %>%
+	group_by(program, race, sex) %>%
+	summarize(ever = n()) %>%
+	ungroup() %>%
+	zero_fill(program, race, sex)
 
 # count students graduating from programs
 graduated <- gather_grad(program_group) %>%
-  race_sex_join() %>%
-  group_by(program, race, sex) %>%
-  summarize(grad = n()) %>%
-  ungroup() %>%
-  zero_fill(program, race, sex)
+	race_sex_join() %>%
+	group_by(program, race, sex) %>%
+	summarize(grad = n()) %>%
+	ungroup() %>%
+	zero_fill(program, race, sex)
 
-# prepare stickiness data
-stickiness <- tally_stickiness(ever = ever_enrolled, grad = graduated) %>%
-  filter(!race %in% c("Unknown", "International", "Other")) %>%
-  mutate(race_sex = str_c(race, sex, sep = " ")) %>%
-  select(program, race_sex, stick) %>%
-  multiway_order()
+# compute stickiness of programs 
+stickiness <- tally_stickiness(ever_enrolled, graduated)
+
+# prepare the data for graphing in a multiway plot 
+stickiness_multiway <- stickiness %>% 
+	filter(!race %in% c("Unknown", "International", "Other")) %>%
+	mutate(race_sex = str_c(race, sex, sep = " ")) %>%
+	select(program, race_sex, stick) %>%
+	multiway_order()
 
 # create graph
-ggplot(stickiness, aes(x = stick, y = race_sex)) +
-  facet_wrap(~program, ncol = 1, as.table = FALSE) +
-  geom_point(na.rm = TRUE) +
-  labs(x = "Stickiness", y = "") +
-  theme_midfield()
+ggplot(stickiness_multiway, aes(x = stick, y = race_sex)) +
+	facet_wrap(~ program, ncol = 1, as.table = FALSE) +
+	geom_point(na.rm = TRUE) +
+	labs(x = "Stickiness", y = "") +
+	theme_midfield()
 ```
 
 
