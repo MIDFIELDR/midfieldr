@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+<title>Multiway data, graphs, and tables</title>
+
+<script>$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="popover"]').popover();
+});
+</script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Multiway data, graphs, and tables</h1>
+
+
+
+<p>This article is written with novice R users in mind, so there is much detail that experienced users can skip.</p>
+<p>Packages used in this article:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(midfieldr)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(tidyverse)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(knitr)</a></code></pre></div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Many persistence metrics can be organized as <em>multiway data</em> in which there is is one quantitative variable and two categorical variables. To quote Bill Cleveland <span class="citation">(1993)</span>,</p>
+<blockquote>
+<p>the quantitative variable is a response, and the goal is to study how it depends on the categorical variables, which are factors. What distinguishes multiway data is the cross-classification of the categorical variables; there is a value of the response for each combination of levels of the two categorical variables.</p>
+</blockquote>
+</div>
+<div id="preparing-the-data" class="section level2">
+<h2>Preparing the data</h2>
+<p>We’ll use the <a href="stickiness.html">stickiness metric</a> to illustrate multiway graphs and data tables. Stickiness is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program <span class="citation">(Ohland et al. 2012)</span>.</p>
+<p><code>case_stickiness</code> is a sample dataset included with midfieldr:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># an example dataset</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">case_stickiness</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt; # A tibble: 32 x 6</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt;   program           race     sex     ever  grad stick</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;   &lt;chr&gt;             &lt;chr&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; 1 Civil Engineering Asian    Female    22    11 0.5  </span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; 2 Civil Engineering Asian    Male      54    24 0.444</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; 3 Civil Engineering Black    Female    71    21 0.296</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; 4 Civil Engineering Black    Male     132    39 0.295</span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; 5 Civil Engineering Hispanic Female    16     5 0.312</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt; 6 Civil Engineering Hispanic Male      85    30 0.353</span></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt; 7 Civil Engineering White    Female   445   192 0.431</span></a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt; 8 Civil Engineering White    Male    1494   708 0.474</span></a>
+<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt; # ... with 24 more rows</span></a></code></pre></div>
+<p>The stickiness value <code>stick</code> is the quantitative variable we want. One category is the academic <code>program</code> variable. The second category, <code>race_sex</code>, will have to be constructed by combining the <code>race</code> and <code>sex</code> variables.</p>
+<p>We use:</p>
+<ul>
+<li><code>str_c()</code> to combine the two strings</li>
+<li><code>mutate()</code> to add a new column</li>
+<li><code>select()</code> to select only the three columns needed for the multiway</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># combine two variables into one</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">stickiness &lt;-<span class="st"> </span>case_stickiness <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">race_sex =</span> stringr<span class="op">::</span><span class="kw">str_c</span>(race, sex, <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(program, race_sex, stick)</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="kw">glimpse</span>(stickiness)</a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; Observations: 32</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; Variables: 3</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; $ program  &lt;chr&gt; &quot;Civil Engineering&quot;, &quot;Civil Engineering&quot;, &quot;Civil Engi...</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; $ race_sex &lt;chr&gt; &quot;Asian Female&quot;, &quot;Asian Male&quot;, &quot;Black Female&quot;, &quot;Black ...</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; $ stick    &lt;dbl&gt; 0.500, 0.444, 0.296, 0.295, 0.312, 0.353, 0.431, 0.47...</span></a></code></pre></div>
+<p>Our <code>glimpse()</code> of the data frame shows that we have two categorical variables and one quantitative variable, exactly the form needed.</p>
+</div>
+<div id="multiway_order" class="section level2">
+<h2>multiway_order()</h2>
+<p><code>multiway_order()</code> transforms the character variables <code>program</code> and <code>race_sex</code> into factors and orders the levels of the two factors by the relevant medians.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># convert the data to a multiway structure</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">stickiness &lt;-<span class="st"> </span><span class="kw">multiway_order</span>(stickiness)</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="kw">glimpse</span>(stickiness)</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; Observations: 32</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; Variables: 3</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt; $ program  &lt;fct&gt; Civil Engineering, Civil Engineering, Civil Engineeri...</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; $ race_sex &lt;fct&gt; Asian Female, Asian Male, Black Female, Black Male, H...</span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt; $ stick    &lt;dbl&gt; 0.500, 0.444, 0.296, 0.295, 0.312, 0.353, 0.431, 0.47...</span></a></code></pre></div>
+<p><code>glimpse()</code> shows that the two categorical variables are factors.</p>
+<p>Optionally, using the <code>medians</code> argument, the function returns the median values used in ordering the factors. By arranging the rows of the data frame by <code>program</code> and <code>race_sex</code> factors, we can see that they are ordered by the medians shown.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># return the median stickiness value for both categories</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw">multiway_order</span>(stickiness, <span class="dt">medians =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">  </span><span class="kw">arrange</span>(program, race_sex)</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">df</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; # A tibble: 32 x 5</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt;   program                race_sex        stick med_program med_race_sex</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt;   &lt;fct&gt;                  &lt;fct&gt;           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; 1 Mechanical Engineering Hispanic Female 0.25        0.335        0.281</span></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; 2 Mechanical Engineering Black Male      0.325       0.335        0.328</span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co">#&gt; 3 Mechanical Engineering Hispanic Male   0.345       0.335        0.352</span></a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#&gt; 4 Mechanical Engineering Black Female    0.324       0.335        0.362</span></a>
+<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt; 5 Mechanical Engineering White Female    0.325       0.335        0.378</span></a>
+<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="co">#&gt; 6 Mechanical Engineering Asian Female    0.395       0.335        0.44 </span></a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt; 7 Mechanical Engineering White Male      0.447       0.335        0.46 </span></a>
+<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt; 8 Mechanical Engineering Asian Male      0.471       0.335        0.471</span></a>
+<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="co">#&gt; # ... with 24 more rows</span></a></code></pre></div>
+<p>These values can be useful in discussion and for adding median reference lines to a graph.</p>
+</div>
+<div id="a-multiway-dot-plot" class="section level2">
+<h2>A multiway dot plot</h2>
+<p>We use conventional ggplot2 functions to create the multiway graphs. By previously ordering the levels of the factors, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians.</p>
+<p>For the novice R user, a brief description of the ggplot2 functions:</p>
+<ul>
+<li><code>aes()</code> assigns <code>stick</code> to the x-axis and <code>race_sex</code> to the y-axis.<br />
+</li>
+<li><code>facet_wrap()</code> conditions the plot by <code>program</code>, creating one panel (facet) per program.<br />
+</li>
+<li><code>as.table = FALSE</code> lays the panels out like a plot with the highest value at the top.<br />
+</li>
+<li><code>geom_point()</code> assigns point data markers.</li>
+<li><code>labs()</code> assigns axis labels.<br />
+</li>
+<li><code>theme_midfield()</code> controls the appearance of the plot, based on a slightly edited <code>theme_minimal()</code>.</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> stickiness, <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> race_sex)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>program, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Stickiness&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="st">  </span><span class="kw">theme_midfield</span>()</a></code></pre></div>
+<p><img src="data:image/png;base64,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" width="70%" style="display: block; margin: auto;" /></p>
+<p>As Cleveland notes, “We can more effectively compare values within a panel than values between panels.” This graph permits a direct visual comparison of how stickiness varies by race and sex for a particular major. .</p>
+</div>
+<div id="the-dual-multiway-dot-plot" class="section level2">
+<h2>The dual multiway dot plot</h2>
+<p>The previous graph does not facilitate visual comparisons of members of the same race-sex group. As Cleveland says,</p>
+<blockquote>
+<p>Because of this asymmetry, it is often important to explore multiway data by as many multiway dot plots as there are categorical variables, with each variable assigned once to the levels [rows of the panels].</p>
+</blockquote>
+<p>To create the <em>dual multiway</em> graph, we swap the roles of the rows and panels. Where before we had</p>
+<p><code>y = race_sex</code> and <code>facet_wrap(~ program...</code></p>
+<p>now we have</p>
+<p><code>y = program</code> and <code>facet_wrap(~ race_sex...</code></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">ggplot</span>(stickiness, <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> program)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>race_sex, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Stickiness&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="st">  </span><span class="kw">theme_midfield</span>()</a></code></pre></div>
+<p><img src="data:image/png;base64,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" width="70%" style="display: block; margin: auto;" /></p>
+<p>This graph permits a direct visual comparison of how stickiness varies by major for one group of students.</p>
+</div>
+<div id="creating-a-data-table" class="section level2">
+<h2>Creating a data table</h2>
+<p>When discussing the potential stories in multiway data, it is often convenient to have a data table at hand. Such tables facilitate discussion and are occasionally appropriate to include in a publication for editors or reviewers who want to see the exact values underlying the data graphics.</p>
+<p>Starting with the example data, the first thing to do before tabulating is to reduce the significant figure to an easily-read number and arrange the rows to facilitate looking up a number.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">stickiness_table &lt;-<span class="st"> </span>case_stickiness <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">stick =</span> <span class="kw">round</span>(stick, <span class="dv">2</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">arrange</span>(program, sex, race)</a></code></pre></div>
+<p>In many cases we might stop here and print the table for discussion purposes.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">kable</span>(stickiness_table, <span class="dt">caption =</span> <span class="st">&quot;Stickiness metric&quot;</span>)</a></code></pre></div>
+<table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<caption style="font-size: initial !important;">
+Stickiness metric
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+program
+</th>
+<th style="text-align:left;">
+race
+</th>
+<th style="text-align:left;">
+sex
+</th>
+<th style="text-align:right;">
+ever
+</th>
+<th style="text-align:right;">
+grad
+</th>
+<th style="text-align:right;">
+stick
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Asian
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+22
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+0.50
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Black
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+71
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:right;">
+0.30
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Hispanic
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+0.31
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+White
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+445
+</td>
+<td style="text-align:right;">
+192
+</td>
+<td style="text-align:right;">
+0.43
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Asian
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+54
+</td>
+<td style="text-align:right;">
+24
+</td>
+<td style="text-align:right;">
+0.44
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Black
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+132
+</td>
+<td style="text-align:right;">
+39
+</td>
+<td style="text-align:right;">
+0.30
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Hispanic
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+85
+</td>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:right;">
+0.35
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+White
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+1494
+</td>
+<td style="text-align:right;">
+708
+</td>
+<td style="text-align:right;">
+0.47
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Asian
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+50
+</td>
+<td style="text-align:right;">
+22
+</td>
+<td style="text-align:right;">
+0.44
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Black
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+180
+</td>
+<td style="text-align:right;">
+72
+</td>
+<td style="text-align:right;">
+0.40
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Hispanic
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+24
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+0.25
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+White
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+244
+</td>
+<td style="text-align:right;">
+74
+</td>
+<td style="text-align:right;">
+0.30
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Asian
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+255
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+0.47
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Black
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+380
+</td>
+<td style="text-align:right;">
+130
+</td>
+<td style="text-align:right;">
+0.34
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Hispanic
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+91
+</td>
+<td style="text-align:right;">
+32
+</td>
+<td style="text-align:right;">
+0.35
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+White
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+1645
+</td>
+<td style="text-align:right;">
+698
+</td>
+<td style="text-align:right;">
+0.42
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Asian
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+50
+</td>
+<td style="text-align:right;">
+22
+</td>
+<td style="text-align:right;">
+0.44
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Black
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+121
+</td>
+<td style="text-align:right;">
+56
+</td>
+<td style="text-align:right;">
+0.46
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Hispanic
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+0.42
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+White
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+313
+</td>
+<td style="text-align:right;">
+172
+</td>
+<td style="text-align:right;">
+0.55
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Asian
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+88
+</td>
+<td style="text-align:right;">
+47
+</td>
+<td style="text-align:right;">
+0.53
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Black
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+151
+</td>
+<td style="text-align:right;">
+50
+</td>
+<td style="text-align:right;">
+0.33
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Hispanic
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:right;">
+0.54
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+White
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+623
+</td>
+<td style="text-align:right;">
+354
+</td>
+<td style="text-align:right;">
+0.57
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Asian
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+38
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+0.40
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Black
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+105
+</td>
+<td style="text-align:right;">
+34
+</td>
+<td style="text-align:right;">
+0.32
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Hispanic
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+0.25
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+White
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+434
+</td>
+<td style="text-align:right;">
+141
+</td>
+<td style="text-align:right;">
+0.32
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Asian
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+174
+</td>
+<td style="text-align:right;">
+82
+</td>
+<td style="text-align:right;">
+0.47
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Black
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+268
+</td>
+<td style="text-align:right;">
+87
+</td>
+<td style="text-align:right;">
+0.32
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Hispanic
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+113
+</td>
+<td style="text-align:right;">
+39
+</td>
+<td style="text-align:right;">
+0.34
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+White
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+2611
+</td>
+<td style="text-align:right;">
+1166
+</td>
+<td style="text-align:right;">
+0.45
+</td>
+</tr>
+</tbody>
+</table>
+<p>Were to include a table in a publication, we might choose to</p>
+<ul>
+<li>omit the grad and ever columns</li>
+<li>recode the <code>program</code> variable to avoid repeating the term “Engineering”</li>
+<li>capitalize the variable names</li>
+<li>spread the data in wide format</li>
+</ul>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">stickiness_table &lt;-<span class="st"> </span>stickiness_table <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">select</span>(program, race, sex, stick) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">program =</span> <span class="kw">str_replace</span>(program, <span class="st">&quot; Engineering&quot;</span>, <span class="st">&quot;&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(</a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">    <span class="st">&quot;Program&quot;</span> =<span class="st"> </span>program,</a>
+<a class="sourceLine" id="cb10-6" data-line-number="6">    <span class="st">&quot;Race&quot;</span> =<span class="st"> </span>race,</a>
+<a class="sourceLine" id="cb10-7" data-line-number="7">    <span class="st">&quot;Sex&quot;</span> =<span class="st"> </span>sex,</a>
+<a class="sourceLine" id="cb10-8" data-line-number="8">    <span class="st">&quot;Stickiness&quot;</span> =<span class="st"> </span>stick</a>
+<a class="sourceLine" id="cb10-9" data-line-number="9">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="st">  </span><span class="kw">spread</span>(Program, Stickiness) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="st">  </span><span class="kw">arrange</span>(Sex, Race)</a></code></pre></div>
+<p>And print the table to our output document.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">kable</span>(stickiness_table, <span class="dt">caption =</span> <span class="st">&quot;Stickiness metric&quot;</span>)</a></code></pre></div>
+<table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<caption style="font-size: initial !important;">
+Stickiness metric in Engineering
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Race
+</th>
+<th style="text-align:left;">
+Sex
+</th>
+<th style="text-align:right;">
+Civil
+</th>
+<th style="text-align:right;">
+Electrical
+</th>
+<th style="text-align:right;">
+Industrial
+</th>
+<th style="text-align:right;">
+Mechanical
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Asian
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+0.50
+</td>
+<td style="text-align:right;">
+0.44
+</td>
+<td style="text-align:right;">
+0.44
+</td>
+<td style="text-align:right;">
+0.40
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Black
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+0.30
+</td>
+<td style="text-align:right;">
+0.40
+</td>
+<td style="text-align:right;">
+0.46
+</td>
+<td style="text-align:right;">
+0.32
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hispanic
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+0.31
+</td>
+<td style="text-align:right;">
+0.25
+</td>
+<td style="text-align:right;">
+0.42
+</td>
+<td style="text-align:right;">
+0.25
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+White
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:right;">
+0.43
+</td>
+<td style="text-align:right;">
+0.30
+</td>
+<td style="text-align:right;">
+0.55
+</td>
+<td style="text-align:right;">
+0.32
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Asian
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+0.44
+</td>
+<td style="text-align:right;">
+0.47
+</td>
+<td style="text-align:right;">
+0.53
+</td>
+<td style="text-align:right;">
+0.47
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Black
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+0.30
+</td>
+<td style="text-align:right;">
+0.34
+</td>
+<td style="text-align:right;">
+0.33
+</td>
+<td style="text-align:right;">
+0.32
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hispanic
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+0.35
+</td>
+<td style="text-align:right;">
+0.35
+</td>
+<td style="text-align:right;">
+0.54
+</td>
+<td style="text-align:right;">
+0.34
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+White
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:right;">
+0.47
+</td>
+<td style="text-align:right;">
+0.42
+</td>
+<td style="text-align:right;">
+0.57
+</td>
+<td style="text-align:right;">
+0.45
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-cleveland1993">
+<p>Cleveland, William S. 1993. <em>Visualizing Data</em>. Summit, NJ: Hobart Press.</p>
+</div>
+<div id="ref-stickiness2012">
+<p>Ohland, Matthew, Marisa Orr, Richard Layton, Susan Lord, and Russell Long. 2012. “Introducing Stickiness as a Versatile Metric of Engineering Persistence.” In <em>Proceedings of the Frontiers in Education Conference</em>, 1–5.</p>
+</div>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

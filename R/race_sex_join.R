@@ -1,6 +1,6 @@
-#' @importFrom dplyr select filter all_equal left_join mutate
+#' @importFrom dplyr select left_join anti_join
 #' @importFrom magrittr %>%
-#' @importFrom stringr str_detect str_replace str_c
+#' @importFrom stats complete.cases
 NULL
 
 #' Join student demographics to a data frame
@@ -9,53 +9,42 @@ NULL
 #' dataset to a data frame. `dplyr::left_join()` is the joining function
 #' and \code{id} is the join-by variable.
 #'
-#' If sex and race variables are already present, the function returns the
-#' unchanged data frame and a message.
+#' If sex and race variables are already present, they are overwritten by race
+#' and sex data from \code{midfieldstudents}.
 #'
 #' @param df A data frame of student attributes that includes the variable
 #' \code{id}.
 #'
-#' @return The incoming data frame plus three new columns \code{sex},
-#' \code{race}, and the combined string \code{race_sex}, joined by student ID.
-#' Other columns are unaffected.
+#' @return The incoming data frame plus two new columns \code{race} and
+#' \code{sex}, joined by student ID. Other columns are unaffected.
 #'
 #' @export
 race_sex_join <- function(df) {
-  stopifnot(is.data.frame(df))
+	stopifnot(is.data.frame(df))
 
-  # return if race AND sex are already variables
-  if ("sex" %in% names(df) & "race" %in% names(df)) {
-    message("No change to existing variables 'race' and 'sex'.")
-    return(df)
-  }
+	# check that necessary variable is present
+	stopifnot("id" %in% names(df))
 
-  # check that necessary variable is present
-  stopifnot("id" %in% names(df))
+	# extract ID, race, and sex from midfieldstudents data
+	all_students <- midfielddata::midfieldstudents %>%
+		dplyr::select(id, race, sex)
 
-  # extract ID, race, and sex from midfieldstudents data
-  race_sex <- midfielddata::midfieldstudents %>%
-    dplyr::select(id, race, sex)
+	# if sex OR race already in df, delete before join
+	if ("sex"  %in% names(df)) {df <- dplyr::select(df,  -sex)}
+	if ("race" %in% names(df)) {df <- dplyr::select(df, -race)}
 
-  # if sex OR race already in df, not joined to df
-  if ("sex" %in% names(df)) {
-    race_sex <- race_sex %>% dplyr::select(-sex)
-    message("'race' successfully joined; 'sex' returned unchanged.")
-  }
+	# were all IDs matched?
+	# anti_join(): return all rows from x where there are not matching values in
+	# y, keeping just columns from x.
+	check_match <- dplyr::anti_join(df, all_students, by = "id")
+	stopifnot(identical(nrow(check_match), 0L))
 
-  if ("race" %in% names(df)) {
-    race_sex <- race_sex %>% dplyr::select(-race)
-    message("'sex' successfully joined; 'race' returned unchanged.")
-  }
+	# join race and sex to df by id
+	# left_join(): return all rows from x, and all columns from x and y.
+	# Rows in x with no match in y will have NA values in the new columns.
+	# If there are multiple matches between x and y, all combinations of the
+	#  matches are returned.
+	df <- left_join(df, all_students, by = "id")
 
-  # filter by series of IDs in the input data frame
-  series <- stringr::str_c(df$id, collapse = "|")
-  race_sex <- race_sex %>%
-    dplyr::filter(stringr::str_detect(id, series)) %>%
-    unique()
-
-  # join demographics if number of unique students identical
-  stopifnot(dplyr::all_equal(unique(df$id), race_sex$id))
-
-  df <- dplyr::left_join(df, race_sex, by = "id")
 }
 "race_sex_join"
