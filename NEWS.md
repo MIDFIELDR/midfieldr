@@ -1,9 +1,7 @@
 
 ## midfieldr 0.1.0 (2018-05-23)
 
-### New features
-
-  - released to CRAN
+  - made public on GitHub
 
 <!-- ### New features -->
 
