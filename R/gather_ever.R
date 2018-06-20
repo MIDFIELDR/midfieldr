@@ -29,41 +29,41 @@ NULL
 #'
 #' @export
 gather_ever <- function(.data) {
-	if(!(is.data.frame(.data) || dplyr::is.tbl(.data))) {
-		stop("midfieldr::gather_ever() argument must be a data frame or tbl")
-	}
-	if(isFALSE("cip6" %in% names(.data))){
-		stop("midfieldr::gather_ever() data frame must include a `cip6` variable")
-	}
-	if(isFALSE("program" %in% names(.data))){
-		stop("midfieldr::gather_ever() data frame must include a `program` variable")
-	}
+  if (!(is.data.frame(.data) || dplyr::is.tbl(.data))) {
+    stop("midfieldr::gather_ever() argument must be a data frame or tbl")
+  }
+  if (isFALSE("cip6" %in% names(.data))) {
+    stop("midfieldr::gather_ever() data frame must include a `cip6` variable")
+  }
+  if (isFALSE("program" %in% names(.data))) {
+    stop("midfieldr::gather_ever() data frame must include a `program` variable")
+  }
 
-	# from incoming data, use only cip6 and program labels
-	.data <- .data %>%
-		select(cip6, program)
+  # from incoming data, use only cip6 and program labels
+  .data <- .data %>%
+    select(cip6, program)
 
-	# obtain data from midfieldterms
-	series <- stringr::str_c(.data$cip6, collapse = "|")
-	students <- midfielddata::midfieldterms %>%
-		dplyr::filter(stringr::str_detect(cip6, series))
+  # obtain data from midfieldterms
+  series <- stringr::str_c(.data$cip6, collapse = "|")
+  students <- midfielddata::midfieldterms %>%
+    dplyr::filter(stringr::str_detect(cip6, series))
 
-	# remove unnecessary columns and incomplete rows
-	students <- students %>%
-		select(id, cip6, term) %>%
-		arrange(id, cip6, term) %>%
-		drop_na()
+  # remove unnecessary columns and incomplete rows
+  students <- students %>%
+    select(id, cip6, term) %>%
+    arrange(id, cip6, term) %>%
+    drop_na()
 
-	# keep the first term in which a student id is paired with a program
-	students <- students %>%
-		group_by(id, cip6) %>%
-		filter(dplyr::row_number() == 1) %>%
-		ungroup() %>%
-		select(-term)
+  # keep the first term in which a student id is paired with a program
+  students <- students %>%
+    group_by(id, cip6) %>%
+    filter(dplyr::row_number() == 1) %>%
+    ungroup() %>%
+    select(-term)
 
-	# join program names by cip6
-	students <- dplyr::left_join(students, .data, by = "cip6") %>%
-		select(id, cip6, program) %>%
-		arrange(program, cip6, id)
+  # join program names by cip6
+  students <- dplyr::left_join(students, .data, by = "cip6") %>%
+    select(id, cip6, program) %>%
+    arrange(program, cip6, id)
 }
 "gather_ever"

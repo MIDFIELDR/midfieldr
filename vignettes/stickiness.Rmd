@@ -76,10 +76,10 @@ We use `cip_filter()` to obtain the relevant program codes. You can open the hel
 
 ```{r}
 # four data frames of cip codes and names
-cve <- cip_filter(series = "^1408")
-ele <- cip_filter(series = "^1410")
-mce <- cip_filter(series = "^1419")
-ise <- cip_filter(series = "^1435")
+cve <- cip_filter(cip, series = "^1408")
+ele <- cip_filter(cip, series = "^1410")
+mce <- cip_filter(cip, series = "^1419")
+ise <- cip_filter(cip, series = "^1435")
 ```
 
 Next we will use `cip_label()` to assign program names to the distinct programs we want to compare. One possibility is to use the 4-digit program names already available in the data. To view those names:    
@@ -111,21 +111,21 @@ ele <- cip_label(ele, program = "Electrical Engineering")
 We use `bind_rows()`, a [dplyr](http://dplyr.tidyverse.org) function, to bind the individual data frames into one data frame. 
 
 ```{r}
-programs_to_study <- bind_rows(cve, ele, mce, ise)
+cip_group <- bind_rows(cve, ele, mce, ise)
 ```
 
-Examine the result: there are a total of `r length(uniques(programs_to_study[["cip6"]]))` CIP codes for these programs. We have 7 columns: 6 from the `cip` dataset and the one `program` column of labels we added using `cip_label()`. 
+Examine the result: there are a total of `r length(uniques(cip_group[["cip6"]]))` CIP codes for these programs. We have 7 columns: 6 from the `cip` dataset and the one `program` column of labels we added using `cip_label()`. 
 
 ```{r echo = -1}
 options(tibble.print_min = 12L)
 # check the result
-programs_to_study
+cip_group
 ```
 
-When searching the midfielddata datasets for students in these programs, our search functions use the 6-digit CIP codes in the `cip6` variable. To confirm that the search terms are what we expect, we can extract and view the `r length(uniques(programs_to_study[["cip6"]]))` unique codes. 
+When searching the midfielddata datasets for students in these programs, our search functions use the 6-digit CIP codes in the `cip6` variable. To confirm that the search terms are what we expect, we can extract and view the `r length(uniques(cip_group[["cip6"]]))` unique codes. 
 
 ```{r}
-unique(programs_to_study[["cip6"]])
+unique(cip_group[["cip6"]])
 ```
 
 ## gather_ever()  
@@ -134,7 +134,7 @@ unique(programs_to_study[["cip6"]])
 
 ```{r}
 # extract unique students from midfieldterms
-students <- gather_ever(programs_to_study)
+students <- gather_ever(cip_group)
 ```
 
 Use `glimpse()` (a [tibble](http://tibble.tidyverse.org) function) to view the result to check the number of observations and to view the first few values of each variable. We see that we have 10846 students ever enrolled in these programs. 
@@ -167,7 +167,7 @@ grouping_variables <- c("program", "race", "sex")
 
 # count the numbers of students ever in a program
 ever_enrolled <- students %>%
-  group_summarize(grouping_variables, ever = n())
+  group_summarize(., grouping_variables, ever = n())
 
 # check the result
 ever_enrolled
@@ -175,15 +175,15 @@ ever_enrolled
 
 ## gather_grad() 
 
-`gather_grad()` extracts a subset of the `midfielddegrees` data containing the  unique students ever graduating from the programs listed in `programs_to_study ` and joins our user-defined `program` labels to these data. 
+`gather_grad()` extracts a subset of the `midfielddegrees` data containing the  unique students ever graduating from the programs listed in `cip_group ` and joins our user-defined `program` labels to these data. 
 
 Similar to gathering the ever enrolled students, we can chain these functions together in one code chunk. Here, the assigned count variable is `grad`.   Open the help page by running `?gather_grad()`.
 
 ```{r}
 # count students graduating from programs
-graduated <- gather_grad(programs_to_study) %>%
-  race_sex_join() %>%
-  group_summarize(grouping_variables, grad = n())
+graduated <- gather_grad(cip_group) %>%
+  race_sex_join(.) %>%
+  group_summarize(., grouping_variables, grad = n())
 
 # check the result
 graduated
@@ -199,39 +199,20 @@ stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables)
 stickiness
 ```
 
-
-```{r echo = FALSE, opts.label = 'dopurl'}
-# use the dopurl hook to make these values available for the inline
-# expressions in the next paragraph during R CMD check. Causes this code
-# chunk to be written to vignettes/*.R
-n_prog <- length(unique(stickiness$program))
-n_sex <- length(unique(stickiness$sex))
-n_race <- length(unique(stickiness$race))
-n_comb <- n_prog * n_sex * n_race
-n_obs <- dim(stickiness)[[1]]
-```
-
-This example has `r n_prog` programs, `r n_sex` sexes, and `r n_race` race values, yielding `r n_comb` possible combinations. Yet our result above has only `r n_obs` observations, not the expected `r n_comb`. This outcome tells us that one of the possible combinations is missing.
-
-The missing group, it happens, is Civil Engineering Native American Female.
-
-`complete_se()` turns the implicit missing values into explicit missing values, and we can fill the missing counts of `ever`  and `grad` with zero. The completed data frame has the expected `r n_comb` observations. 
+We suggest omitting observations with 5 or fewer students ever enrolled. 
 
 ```{r}
-# fill implicit missing values
 stickiness <- stickiness %>%
-  complete_se(grouping_variables, fill = list(ever = 0, grad = 0))
-
-stickiness
+  filter(., ever > 5)
 ```
 
-Finally, we create `stick`, the ratio of `grad` to `ever`. Stickiness is reported as a fraction between 0 and 1, or `NaN` if the ever count for a group is zero. 
+Finally, we create `stick`, the ratio of `grad` to `ever`. Stickiness is reported as a fraction between 0 and 1. 
 
 ```{r echo = -1}
 options(tibble.print_min = 10L)
 # tally stickiness
 stickiness <- stickiness %>%
-  mutate(stick = round(grad / ever, 3))
+  mutate(., stick = round(grad / ever, 3))
 
 # check the result
 stickiness
@@ -245,8 +226,8 @@ We use `filter()` (a [dplyr](http://dplyr.tidyverse.org) function) to keep all r
 
 ```{r}
 stickiness_multiway <- stickiness %>%
-  filter(!race %in% c("Unknown", "International", "Other")) %>%
-  filter(!sex %in% "Unknown")
+  filter(., !race %in% c("Unknown", "International", "Other")) %>%
+  filter(., !sex %in% "Unknown")
 ```
 
 This example has no "Unknown" values in `sex`, but the larger data set does. For completeness, I've also filtered to remove those observations.   
@@ -262,8 +243,8 @@ We use:
 ```{r}
 # create the race_sex variable
 stickiness_multiway <- stickiness_multiway %>%
-  mutate(race_sex = str_c(race, sex, sep = " ")) %>%
-  select(program, race_sex, stick)
+  mutate(., race_sex = str_c(race, sex, sep = " ")) %>%
+  select(., program, race_sex, stick)
 
 # check the result
 stickiness_multiway
@@ -315,60 +296,48 @@ library(seplyr)
 library(tidyverse)
 
 # collect CIP information for 4 programs and combine into one data frame
-cve <- cip_filter(series = "^1408") %>% cip_label(program = "cip4name")
-ele <- cip_filter(series = "^1410") %>% cip_label(program = "Electrical Engineering")
-mce <- cip_filter(series = "^1419") %>% cip_label(program = "cip4name")
-ise <- cip_filter(series = "^1435") %>% cip_label(program = "cip4name")
-programs_to_study <- bind_rows(cve, ele, mce, ise)
+cve <- cip_filter(cip, series = "^1408") %>%
+  cip_label(., program = "cip4name")
+ele <- cip_filter(cip, series = "^1410") %>%
+  cip_label(., program = "Electrical Engineering")
+mce <- cip_filter(cip, series = "^1419") %>%
+  cip_label(., program = "cip4name")
+ise <- cip_filter(cip, series = "^1435") %>%
+  cip_label(., program = "cip4name")
+cip_group <- bind_rows(cve, ele, mce, ise)
 
-# assign grouping variables
+# assign grouping variables for summarizing and joining
 grouping_variables <- c("program", "race", "sex")
 
-# count students ever enrolled, by group
-ever_enrolled <- gather_ever(programs_to_study) %>%
-	race_sex_join() %>%
-	group_summarize(grouping_variables, ever = n())
+# count students ever enrolled
+ever_enrolled <- gather_ever(cip_group) %>%
+  race_sex_join(.) %>%
+  group_summarize(., grouping_variables, ever = n())
 
-# count students graduating, by group
-graduated <- gather_grad(programs_to_study) %>%
-	race_sex_join() %>%
-	group_summarize(grouping_variables, grad = n())
+# count students graduating
+graduated <- gather_grad(cip_group) %>%
+  race_sex_join(.) %>%
+  group_summarize(., grouping_variables, grad = n())
 
 # tally stickiness, by group
 stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables) %>%
-	ccomplete_se(grouping_variables, fill = list(ever = 0, grad = 0))
-mutate(stick = round(grad / ever, 3))
+  filter(., ever > 5) %>%
+  mutate(., stick = round(grad / ever, 3))
 
 # prepare data for graph
 stickiness_multiway <- stickiness %>%
-	filter(!race %in% c("Unknown", "International", "Other")) %>%
-	filter(!sex %in% "Unknown") %>%
-	mutate(race_sex = str_c(race, sex, sep = " ")) %>%
-	select(program, race_sex, stick) %>%
-	multiway_order()
-
-NA_data <- stickiness_multiway %>%  
-	filter(., is.na(stick)) %>% 
-	mutate(stick = 0)
-NA_data
-
+  filter(., !race %in% c("Unknown", "International", "Other")) %>%
+  filter(., !sex %in% "Unknown") %>%
+  mutate(., race_sex = str_c(race, sex, sep = " ")) %>%
+  select(., program, race_sex, stick) %>%
+  multiway_order(.)
 
 # graph
-base <- ggplot(stickiness_multiway, aes(x = stick, y = race_sex)) +
-	facet_wrap(~program, ncol = 1, as.table = FALSE) +
-	geom_point(na.rm = TRUE) +
-	labs(x = "Stickiness", y = "") +
-	theme_midfield()
-base
-
-base +
-	geom_point(NA_data, aes(label = "N",
-								x = stick, 
-								y = race_sex),
-						hjust = 0, 
-						vjust = 0)
-
-
+ggplot(stickiness_multiway, aes(x = stick, y = race_sex)) +
+  facet_wrap(~program, ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(x = "Stickiness", y = "") +
+  theme_midfield()
 ```
 
 

@@ -11,16 +11,16 @@ get_my_path <- function(filename) {
 
 
 ## for testing scale_x_log10_expon() () ---------------------------
-  # exp_out <- ggplot() + scale_x_log10_expon()
-  # exp_out$plot_env <- NULL
-  # save(exp_out, file = "tests/testthat/testing_data/exp_out_01.rda")
+# exp_out <- ggplot() + scale_x_log10_expon()
+# exp_out$plot_env <- NULL
+# save(exp_out, file = "tests/testthat/testing_data/exp_out_01.rda")
 
 
 
 ## for testing theme_midfield() () ---------------------------
-  # exp_out <- ggplot() + theme_midfield()
-  # exp_out$plot_env <- NULL
-  # save(exp_out, file = "tests/testthat/testing_data/exp_out_02.rda")
+# exp_out <- ggplot() + theme_midfield()
+# exp_out$plot_env <- NULL
+# save(exp_out, file = "tests/testthat/testing_data/exp_out_02.rda")
 
 
 
@@ -246,5 +246,3 @@ get_my_path <- function(filename) {
 # save(my_args, file = "tests/testthat/testing_data/my_args_03.rda")
 # exp_out <- do.call(docxtools::put_axes, my_args)
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_03.rda")
-
-

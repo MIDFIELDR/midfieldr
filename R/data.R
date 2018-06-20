@@ -145,5 +145,3 @@ NULL
 #'
 #' rcb("light_Gn")
 "rcb_colors"
-
-

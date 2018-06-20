@@ -52,40 +52,40 @@ NULL
 #' @export
 cip_label <- function(.data, program = NULL) {
 
-	# .data must match midfieldr cip data structure
-	stopifnot(identical(
-		purrr::map_chr(cip, class),
-		purrr::map_chr(.data, class)
-	))
+  # .data must match midfieldr cip data structure
+  stopifnot(identical(
+    purrr::map_chr(cip, class),
+    purrr::map_chr(.data, class)
+  ))
 
-	if (is.null(program)) {# if none given
-		series <- .data$cip6
-		if (identical(series, cip_engr)) {# if a named series
-			program <- "Engineering"
-		} else if (identical(series, cip_bio_sci)) {
-			program <- "Biological and Biomedical Sciences"
-		} else if (identical(series, cip_math_stat)) {
-			program <- "Mathematics and Statistics"
-		} else if (identical(series, cip_other_stem)) {
-			program <- "Other STEM"
-		} else if (identical(series, cip_stem)) {
-			program <- "STEM"
-		} else if (identical(series, cip_phys_sci)) {
-			program <- "Physical Sciences"
-		} else {# if not named, use 6-digit names by default
-			program <- .data$cip6name
-		}
-	} else {# program argument is given
-		if (identical(program, "cip2name")) {# use CIP data names
-			program <- .data$cip2name
-		} else if (identical(program, "cip4name")) {
-			program <- .data$cip4name
-		} else if (identical(program, "cip6name")) {
-			program <- .data$cip6name
-		}	else {# otherwise, use the input argument
-			program <- program
-		}
-	}
-	# add program name
-	df <- tibble::add_column(.data, program = program)
+  if (is.null(program)) { # if none given
+    series <- sort(.data$cip6)
+    if (identical(series, sort(cip_engr))) { # if a named series
+      program <- "Engineering"
+    } else if (identical(series, sort(cip_bio_sci))) {
+      program <- "Biological and Biomedical Sciences"
+    } else if (identical(series, sort(cip_math_stat))) {
+      program <- "Mathematics and Statistics"
+    } else if (identical(series, sort(cip_other_stem))) {
+      program <- "Other STEM"
+    } else if (identical(series, sort(cip_stem))) {
+      program <- "STEM"
+    } else if (identical(series, sort(cip_phys_sci))) {
+      program <- "Physical Sciences"
+    } else { # if not named, use 6-digit names by default
+      program <- .data$cip6name
+    }
+  } else { # program argument is given
+    if (identical(program, "cip2name")) { # use CIP data names
+      program <- .data$cip2name
+    } else if (identical(program, "cip4name")) {
+      program <- .data$cip4name
+    } else if (identical(program, "cip6name")) {
+      program <- .data$cip6name
+    } else { # otherwise, use the input argument
+      program <- program
+    }
+  }
+  # add program name
+  df <- tibble::add_column(.data, program = program)
 }

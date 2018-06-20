@@ -52,62 +52,62 @@ NULL
 #'
 #' @export
 multiway_order <- function(.data, medians = FALSE) {
-	if(!(is.data.frame(.data) || dplyr::is.tbl(.data))) {
-		stop("midfieldr::multiway_order() argument must be a data frame or tbl")
-	}
+  if (!(is.data.frame(.data) || dplyr::is.tbl(.data))) {
+    stop("midfieldr::multiway_order() argument must be a data frame or tbl")
+  }
 
-	if(is.null(medians)) medians <- FALSE
+  if (is.null(medians)) medians <- FALSE
 
-	# obtain type of variables to distinguish numeric from other
-	v_class <- purrr::map_chr(.data, class)
+  # obtain type of variables to distinguish numeric from other
+  v_class <- purrr::map_chr(.data, class)
 
-	# only one numeric value
-	sel <- v_class == "numeric" | v_class == "integer" | v_class == "double"
-	value_idx <- v_class[sel]
-	value_len <- max(seq_along(value_idx))
-	stopifnot(exprs = {
-		value_len == 1
-	})
+  # only one numeric value
+  sel <- v_class == "numeric" | v_class == "integer" | v_class == "double"
+  value_idx <- v_class[sel]
+  value_len <- max(seq_along(value_idx))
+  stopifnot(exprs = {
+    value_len == 1
+  })
 
-	# two categorical variables, either character or factor
-	cat_idx <- v_class[v_class == "character" | v_class == "factor"]
-	cat_len <- max(seq_along(cat_idx))
-	stopifnot(exprs = {
-		cat_len == 2
-	})
+  # two categorical variables, either character or factor
+  cat_idx <- v_class[v_class == "character" | v_class == "factor"]
+  cat_len <- max(seq_along(cat_idx))
+  stopifnot(exprs = {
+    cat_len == 2
+  })
 
-	# names of the 3 variables as symbols
-	# are used in grouping, summarizing, and joining
-	cat1  <- rlang::sym(names(cat_idx)[[1]])
-	cat2  <- rlang::sym(names(cat_idx)[[2]])
-	value <- rlang::sym(names(value_idx)[[1]])
+  # names of the 3 variables as symbols
+  # are used in grouping, summarizing, and joining
+  cat1 <- rlang::sym(names(cat_idx)[[1]])
+  cat2 <- rlang::sym(names(cat_idx)[[2]])
+  value <- rlang::sym(names(value_idx)[[1]])
 
-	# construct names for the median variables
-	med1  <- rlang::sym(paste0("med_", names(cat_idx)[[1]]))
-	med2  <- rlang::sym(paste0("med_", names(cat_idx)[[2]]))
+  # construct names for the median variables
+  med1 <- rlang::sym(paste0("med_", names(cat_idx)[[1]]))
+  med2 <- rlang::sym(paste0("med_", names(cat_idx)[[2]]))
 
-	# determine medians grouped by first category
-	y <- .data %>%
-		dplyr::group_by(!!cat1) %>%
-		dplyr::summarize(!!med1 := round(median(!!value, na.rm = TRUE), 3)) %>%
-		dplyr::ungroup()
-	# create first factor and order by the median values
-	.data <- dplyr::left_join(.data, y, by = dplyr::quo_name(cat1)) %>%
-		dplyr::mutate(!!cat1 := forcats::fct_reorder(!!cat1, !!med1))
+  # determine medians grouped by first category
+  y <- .data %>%
+    dplyr::group_by(!!cat1) %>%
+    dplyr::summarize(!!med1 := round(median(!!value, na.rm = TRUE), 3)) %>%
+    dplyr::ungroup()
+  # create first factor and order by the median values
+  .data <- dplyr::left_join(.data, y, by = dplyr::quo_name(cat1)) %>%
+    dplyr::mutate(!!cat1 := forcats::fct_reorder(!!cat1, !!med1))
 
-	# determine medians grouped by second category
-	y <- .data %>%
-		dplyr::group_by(!!cat2) %>%
-		dplyr::summarize(!!med2 := round(median(!!value, na.rm = TRUE), 3))
-	# create second factor and order by the median values
-	.data <- dplyr::left_join(.data, y, by = dplyr::quo_name(cat2)) %>%
-		dplyr::mutate(!!cat2 := forcats::fct_reorder(!!cat2, !!med2))
+  # determine medians grouped by second category
+  y <- .data %>%
+    dplyr::group_by(!!cat2) %>%
+    dplyr::summarize(!!med2 := round(median(!!value, na.rm = TRUE), 3))
+  # create second factor and order by the median values
+  .data <- dplyr::left_join(.data, y, by = dplyr::quo_name(cat2)) %>%
+    dplyr::mutate(!!cat2 := forcats::fct_reorder(!!cat2, !!med2))
 
-	# conditional to include the medians in the output
-	if (isTRUE(medians)) {
-		.data <- .data
-	} else {
-		.data <- .data %>% select(!!cat1, !!cat2, !!value)
-	}
+  # conditional to include the medians in the output
+  if (isTRUE(medians)) {
+    .data <- .data
+  } else {
+    .data <- .data %>% select(!!cat1, !!cat2, !!value)
+  }
 }
 "multiway_order"

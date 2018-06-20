@@ -15,14 +15,18 @@ test_that("Two character variables are converted to factors", {
   )
 })
 
-test_that("Median argument returns median columns", {
+test_that("Median argument returns expected values", {
+  expect_equal(
+    names(multiway_order(df1, medians = TRUE)),
+    c("name", "species", "mass", "med_name", "med_species")
+  )
 	expect_equal(
-		names(multiway_order(df1, medians = TRUE)),
-		c("name", "species", "mass", "med_name", "med_species")
-		)
-	})
+		names(multiway_order(df1, medians = NULL)),
+		c("name", "species", "mass")
+	)
+})
 
 test_that("Error produces if argument not a data frame", {
-	x <- runif(10)
-	expect_error(multiway_order(x), "midfieldr::multiway_order() argument must be a data frame or tbl", fixed = TRUE)
+  x <- runif(10)
+  expect_error(multiway_order(x), "midfieldr::multiway_order() argument must be a data frame or tbl", fixed = TRUE)
 })
