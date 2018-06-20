@@ -3,54 +3,65 @@
 #' @importFrom stringr str_c str_detect
 NULL
 
-#' Gather program graduates
+#' Gather students graduating from a set of programs
 #'
-#' Filters a data frame to return those students earning degrees from the
-#' programs being studied.
+#' Filters the \code{midfielddata::midfielddegrees} dataset for all students graduating from a set of programs denoted by their 6-digit CIP codes.
 #'
-#' @param program_group A data frame that includes 6-digit CIP codes
-#' (\code{cip6}) of the programs being studied.
+#' \code{gather_grad()} uses the codes in the \code{cip6} variable to filter the \code{midfielddegrees} dataset, keeping all students who graduate from any of those programs.
 #'
-#' @return A data frame. Each observation is a unique degree per unique
-#' student. Returns students earning their first degree (including multiple
-#' degrees in the same term), but ignores any degrees earned in subsequent
-#' terms.
+#' The data can include students earning degrees in multiple programs in the same term. The function returns a data frame with one observation for each unique pairing between students and programs in the term in which their first degree or degrees are awarded. Degrees earned in later terms are ignored.
+#'
+#' All variables in \code{.data} other than the required \code{cip6} and \code{program} are quietly dropped.
+#'
+#' @param .data A data frame with two required character variables:  \code{cip6} (6-digit CIP codes) and \code{program} (program labels).
+#'
+#' @return A data frame with variables \code{id} (unique MIDFIELD student ID), \code{cip6} (6-digit CIP code), and \code{program} (a program label).
+#'
+#' @seealso \code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes, \code{\link[midfieldr]{cip_label}} for adding a column of program labels
+#'
+#' @examples
+#' d <- cip_filter(cip, series = "540104")
+#' d <- cip_label(d, program = "cip6name")
+#' grad <- gather_grad(d)
+#' head(grad)
 #'
 #' @export
-gather_grad <- function(program_group) {
-  stopifnot(is.data.frame(program_group))
+gather_grad <- function(.data) {
+	if(!(is.data.frame(.data) || dplyr::is.tbl(.data))) {
+		stop("midfieldr::gather_grad() argument must be a data frame or tbl")
+	}
+	if(isFALSE("cip6" %in% names(.data))){
+		stop("midfieldr::gather_grad() data frame must include a `cip6` variable")
+	}
+	if(isFALSE("program" %in% names(.data))){
+		stop("midfieldr::gather_grad() data frame must include a `program` variable")
+	}
 
-  # check that necessary variables are present
-  stopifnot("cip6" %in% names(program_group))
+	# from incoming data, use only cip6 and program labels
+	.data <- .data %>%
+		select(cip6, program)
 
-  # filter the midfielddegrees data set using the search series
-  series <- stringr::str_c(program_group$cip6, collapse = "|")
-  students <- midfielddata::midfielddegrees %>%
-    dplyr::filter(stringr::str_detect(cip6, series))
+	# obtain data from midfieldterms
+	series <- stringr::str_c(.data$cip6, collapse = "|")
+	students <- midfielddata::midfielddegrees %>%
+		dplyr::filter(stringr::str_detect(cip6, series))
 
-  # remove NA
-  students <- students %>%
-    dplyr::filter(!is.na(cip6)) %>%
-    dplyr::filter(!is.na(term_degree))
+	# remove unnecessary columns and incomplete rows
+	students <- students %>%
+		select(id, cip6, term_degree) %>%
+		arrange(id, cip6, term_degree) %>%
+		drop_na()
 
-  # extract the earliest single term in which a student earns a degree
-  id_first_term_degree <- students %>%
-    dplyr::select(id, term_degree) %>%
-    dplyr::arrange(id, term_degree) %>%
-    dplyr::group_by(id) %>%
-    dplyr::filter(dplyr::row_number(id) == 1) %>%
-    dplyr::ungroup()
+	# keep the first term in which a student id is paired with a program
+	students <- students %>%
+		group_by(id, cip6) %>%
+		filter(dplyr::row_number() == 1) %>%
+		ungroup() %>%
+		select(-term_degree)
 
-  # and keep multiple degrees earned in that term (if any)
-  # using left_join(x, y), all combinations between x and y are returned
-  students <- left_join(
-    id_first_term_degree,
-    students,
-    by = c("id", "term_degree")
-  )
-
-  # join the group programs
-  students <- dplyr::left_join(students, program_group, by = "cip6") %>%
-    select(id, institution, cip6, program, degree)
+	# join program names by cip6
+	students <- dplyr::left_join(students, .data, by = "cip6") %>%
+		select(id, cip6, program) %>%
+		arrange(program, cip6, id)
 }
 "gather_grad"

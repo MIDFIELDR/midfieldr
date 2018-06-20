@@ -44,6 +44,9 @@
      
   </a>
 </li>
+<li>
+  <a href="articles/audience.html">Audience</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
@@ -203,28 +206,24 @@
 <a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(program, race, sex) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">ever =</span> <span class="kw">n</span>()) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">  </span><span class="kw">ungroup</span>()</a></code></pre></div>
-<p>Use <code><a href="reference/zero_fill.html">zero_fill()</a></code> to expand the data frame to include all missing combinations of variables (if any) and insert a count of zero in the numerical column. The arguments of <code><a href="reference/zero_fill.html">zero_fill()</a></code> must be identical to the arguments of <code>group_by()</code> above.</p>
+<p>Use <code>zero_fill()</code> to expand the data frame to include all missing combinations of variables (if any) and insert a count of zero in the numerical column. The arguments of <code>zero_fill()</code> must be identical to the arguments of <code>group_by()</code> above.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">ever_enrolled &lt;-<span class="st"> </span>ever_enrolled <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="reference/zero_fill.html">zero_fill</a></span>(program, race, sex)</a></code></pre></div>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span><span class="kw">zero_fill</span>(program, race, sex)</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; Error in zero_fill(., program, race, sex): could not find function "zero_fill"</span></a></code></pre></div>
 <p>Use <code><a href="reference/gather_grad.html">gather_grad()</a></code> to access the <code>midfielddegrees</code> dataset and extract all students who graduated from these programs. We group and summarize the counts using <code>grad</code> as the new count variable.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">graduated &lt;-<span class="st"> </span><span class="kw"><a href="reference/gather_grad.html">gather_grad</a></span>(cip_group) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="reference/race_sex_join.html">race_sex_join</a></span>() <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb12-3" data-line-number="3"><span class="st">  </span><span class="kw">group_by</span>(program, race, sex) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb12-4" data-line-number="4"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">grad =</span> <span class="kw">n</span>()) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb12-5" data-line-number="5"><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="reference/zero_fill.html">zero_fill</a></span>(program, race, sex)</a></code></pre></div>
-<p>The two data frames <code>ever_enrolled</code> and <code>graduated</code> are the arguments for the <code><a href="reference/tally_stickiness.html">tally_stickiness()</a></code> function that joins the two data frames by their common variables and computes stickiness.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">stickiness &lt;-<span class="st"> </span><span class="kw"><a href="reference/tally_stickiness.html">tally_stickiness</a></span>(ever_enrolled, graduated)</a>
-<a class="sourceLine" id="cb13-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="kw">glimpse</span>(stickiness)</a>
-<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="co">#&gt; Observations: 48</span></a>
-<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="co">#&gt; Variables: 6</span></a>
-<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="co">#&gt; $ program &lt;chr&gt; "Chemical Engineering", "Chemical Engineering", "Chemi...</span></a>
-<a class="sourceLine" id="cb13-7" data-line-number="7"><span class="co">#&gt; $ race    &lt;chr&gt; "Asian", "Asian", "Black", "Black", "Hispanic", "Hispa...</span></a>
-<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="co">#&gt; $ sex     &lt;chr&gt; "Female", "Male", "Female", "Male", "Female", "Male", ...</span></a>
-<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="co">#&gt; $ ever    &lt;dbl&gt; 56, 98, 148, 98, 38, 57, 8, 23, 7, 8, 12, 29, 6, 4, 46...</span></a>
-<a class="sourceLine" id="cb13-10" data-line-number="10"><span class="co">#&gt; $ grad    &lt;dbl&gt; 26, 35, 52, 26, 11, 18, 4, 7, 1, 3, 1, 3, 3, 2, 170, 3...</span></a>
-<a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co">#&gt; $ stick   &lt;dbl&gt; 0.464, 0.357, 0.351, 0.265, 0.289, 0.316, 0.500, 0.304...</span></a></code></pre></div>
+<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="st">  </span><span class="kw">zero_fill</span>(program, race, sex)</a>
+<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co">#&gt; Error in zero_fill(., program, race, sex): could not find function "zero_fill"</span></a></code></pre></div>
+<p>The two data frames <code>ever_enrolled</code> and <code>graduated</code> are the arguments for the <code>tally_stickiness()</code> function that joins the two data frames by their common variables and computes stickiness.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">stickiness &lt;-<span class="st"> </span><span class="kw">tally_stickiness</span>(ever_enrolled, graduated)</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="co">#&gt; Error in tally_stickiness(ever_enrolled, graduated): could not find function "tally_stickiness"</span></a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="kw">glimpse</span>(stickiness)</a>
+<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="co">#&gt; Error in glimpse(stickiness): object 'stickiness' not found</span></a></code></pre></div>
 <p>For a discussion of each step in greater detail, see the <a href="stickiness.html">Stickiness metric</a> vignette.</p>
 </div>
 <div id="graph-the-results" class="section level3">
@@ -233,26 +232,24 @@
 <p>To prepare the stickiness data for graphing, we remove ambiguous race levels (Unknown, International, or Other) and then combine race and sex into a single variable.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">stickiness_mw_data &lt;-<span class="st"> </span>stickiness <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb14-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>race <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">race_sex =</span> <span class="kw">str_c</span>(race, sex, <span class="dt">sep =</span> <span class="st">" "</span>))</a></code></pre></div>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">race_sex =</span> <span class="kw">str_c</span>(race, sex, <span class="dt">sep =</span> <span class="st">" "</span>))</a>
+<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="co">#&gt; Error in eval(lhs, parent, parent): object 'stickiness' not found</span></a></code></pre></div>
 <p>We graph these results in a <em>multiway dot plot</em> <span class="citation">(Cleveland 1993)</span>, a display type based on a data structure of two categorical variables (program and race/ethnicity/sex) and one quantitative variable (stickiness).</p>
 <p><code><a href="reference/multiway_order.html">multiway_order()</a></code> converts the two categorical variables to factors and orders their levels by median stickiness.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">stickiness_mw_data &lt;-<span class="st"> </span>stickiness_mw_data <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span><span class="kw">select</span>(program, race_sex, stick) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="reference/multiway_order.html">multiway_order</a></span>()</a>
-<a class="sourceLine" id="cb15-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb15-5" data-line-number="5"><span class="kw">glimpse</span>(stickiness_mw_data)</a>
-<a class="sourceLine" id="cb15-6" data-line-number="6"><span class="co">#&gt; Observations: 30</span></a>
-<a class="sourceLine" id="cb15-7" data-line-number="7"><span class="co">#&gt; Variables: 3</span></a>
-<a class="sourceLine" id="cb15-8" data-line-number="8"><span class="co">#&gt; $ program  &lt;fct&gt; Chemical Engineering, Chemical Engineering, Chemical ...</span></a>
-<a class="sourceLine" id="cb15-9" data-line-number="9"><span class="co">#&gt; $ race_sex &lt;fct&gt; Asian Female, Asian Male, Black Female, Black Male, H...</span></a>
-<a class="sourceLine" id="cb15-10" data-line-number="10"><span class="co">#&gt; $ stick    &lt;dbl&gt; 0.464, 0.357, 0.351, 0.265, 0.289, 0.316, 0.143, 0.37...</span></a></code></pre></div>
+<a class="sourceLine" id="cb15-4" data-line-number="4"><span class="co">#&gt; Error in eval(lhs, parent, parent): object 'stickiness_mw_data' not found</span></a>
+<a class="sourceLine" id="cb15-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb15-6" data-line-number="6"><span class="kw">glimpse</span>(stickiness_mw_data)</a>
+<a class="sourceLine" id="cb15-7" data-line-number="7"><span class="co">#&gt; Error in glimpse(stickiness_mw_data): object 'stickiness_mw_data' not found</span></a></code></pre></div>
 <p>We use conventional ggplot2 functions to graph stickiness in a multiway dot plot. We also apply our own <code>midfield_theme()</code> to edit the visual properties of the graph. For additional information on multiways, see the <a href="multiway.html">Multiway data, graphs, and tables</a> vignette.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">ggplot</span>(stickiness_mw_data, <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> race_sex)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb16-2" data-line-number="2"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span><span class="st"> </span>program, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb16-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb16-4" data-line-number="4"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">"Stickiness"</span>, <span class="dt">y =</span> <span class="st">""</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb16-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="reference/utils_graph.html">theme_midfield</a></span>()</a></code></pre></div>
-<p><img src="reference/figures/README-fig1-1.png" width="70%" style="display: block; margin: auto;"></p>
+<a class="sourceLine" id="cb16-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="reference/utils_graph.html">theme_midfield</a></span>()</a>
+<a class="sourceLine" id="cb16-6" data-line-number="6"><span class="co">#&gt; Error in ggplot(stickiness_mw_data, aes(x = stick, y = race_sex)): object 'stickiness_mw_data' not found</span></a></code></pre></div>
 </div>
 </div>
 <div id="meta" class="section level2">
@@ -303,7 +300,9 @@
 <ul class="list-unstyled">
 <li>Richard Layton <br><small class="roles"> Maintainer, author </small>  </li>
 <li>Russell Long <br><small class="roles"> Data manager, author </small>  </li>
+<li>Matthew Ohland <br><small class="roles"> Author </small>  </li>
 <li>US National Science Foundation <br><small class="roles"> Funder </small>  </li>
+<li><a href="authors.html">All authors...</a></li>
 </ul>
 </div>
 
@@ -323,7 +322,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Richard Layton, Russell Long, US National Science Foundation.</p>
+  <p>Developed by Richard Layton, Russell Long, Matthew Ohland, US National Science Foundation.</p>
 </div>
 
 <div class="pkgdown">

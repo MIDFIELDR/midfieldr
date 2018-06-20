@@ -4,16 +4,16 @@
 \alias{cip_label}
 \title{Add a column of program labels to a CIP data frame}
 \usage{
-cip_label(data, program = NULL)
+cip_label(.data, program = NULL)
 }
 \arguments{
-\item{data}{A filtered subset of the midfieldr \code{cip} data frame.}
+\item{.data}{A filtered subset of the midfieldr \code{cip} data frame.}
 
 \item{program}{An optional character variable. There are four options:
 
 If NULL, the default, the 6-digit CIP program names are assigned to the new column.
 
-If NULL, but one of the named \code{cip_series} is used to create the \code{data} argument, then the series name is assigned to the new column.
+If NULL, but one of the named \code{cip_series} is used to create the \code{.data} argument, then the series name is assigned to the new column.
 
 If one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-digit, 4-digit, or 6-digit CIP program names are assigned to the new column.
 
@@ -30,13 +30,13 @@ Assigning a custom label to a program or a group of programs provides
 the option of grouping and summarizing CIP data in ways not afforded by
 the default program names in the 2010 CIP data.
 
-With \code{data} as the first argument, \code{cip_label()} is
+With \code{.data} as the first argument, \code{cip_label()} is
 compatible with the pipe operator \code{\%>\%}.
 }
 \examples{
 # Extract the Philosophy and Religion programs
 x <- cip_filter(series = "^38")
-y <- cip_label(data = x, program = "test label")
+y <- cip_label(x, program = "test label")
 
 # The function is pipe-compatible
 y <- x \%>\% cip_label("test label")

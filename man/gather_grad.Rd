@@ -2,21 +2,33 @@
 % Please edit documentation in R/gather_grad.R
 \name{gather_grad}
 \alias{gather_grad}
-\title{Gather program graduates}
+\title{Gather students graduating from a set of programs}
 \usage{
-gather_grad(program_group)
+gather_grad(.data)
 }
 \arguments{
-\item{program_group}{A data frame that includes 6-digit CIP codes
-(\code{cip6}) of the programs being studied.}
+\item{.data}{A data frame with two required character variables:  \code{cip6} (6-digit CIP codes) and \code{program} (program labels).}
 }
 \value{
-A data frame. Each observation is a unique degree per unique
-student. Returns students earning their first degree (including multiple
-degrees in the same term), but ignores any degrees earned in subsequent
-terms.
+A data frame with variables \code{id} (unique MIDFIELD student ID), \code{cip6} (6-digit CIP code), and \code{program} (a program label).
 }
 \description{
-Filters a data frame to return those students earning degrees from the
-programs being studied.
+Filters the \code{midfielddata::midfielddegrees} dataset for all students graduating from a set of programs denoted by their 6-digit CIP codes.
+}
+\details{
+\code{gather_grad()} uses the codes in the \code{cip6} variable to filter the \code{midfielddegrees} dataset, keeping all students who graduate from any of those programs.
+
+The data can include students earning degrees in multiple programs in the same term. The function returns a data frame with one observation for each unique pairing between students and programs in the term in which their first degree or degrees are awarded. Degrees earned in later terms are ignored.
+
+All variables in \code{.data} other than the required \code{cip6} and \code{program} are quietly dropped.
+}
+\examples{
+d <- cip_filter(cip, series = "540104")
+d <- cip_label(d, program = "cip6name")
+grad <- gather_grad(d)
+head(grad)
+
+}
+\seealso{
+\code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes, \code{\link[midfieldr]{cip_label}} for adding a column of program labels
 }

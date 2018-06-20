@@ -19,7 +19,7 @@ NULL
 #' orders the factors by increasing median values of the levels of the
 #' categorical variables.
 #'
-#' @param x A data frame with one numerical variable and two categorical
+#' @param .data A data frame with one numerical variable and two categorical
 #' variables.
 #'
 #' @param medians A logical value indicating whether or not the medians
@@ -51,12 +51,15 @@ NULL
 #' df3
 #'
 #' @export
-multiway_order <- function(x, medians = FALSE) {
-	stopifnot(is.data.frame(x))
+multiway_order <- function(.data, medians = FALSE) {
+	if(!(is.data.frame(.data) || dplyr::is.tbl(.data))) {
+		stop("midfieldr::multiway_order() argument must be a data frame or tbl")
+	}
+
 	if(is.null(medians)) medians <- FALSE
 
 	# obtain type of variables to distinguish numeric from other
-	v_class <- purrr::map_chr(x, class)
+	v_class <- purrr::map_chr(.data, class)
 
 	# only one numeric value
 	sel <- v_class == "numeric" | v_class == "integer" | v_class == "double"
@@ -84,27 +87,27 @@ multiway_order <- function(x, medians = FALSE) {
 	med2  <- rlang::sym(paste0("med_", names(cat_idx)[[2]]))
 
 	# determine medians grouped by first category
-	y <- x %>%
+	y <- .data %>%
 		dplyr::group_by(!!cat1) %>%
 		dplyr::summarize(!!med1 := round(median(!!value, na.rm = TRUE), 3)) %>%
 		dplyr::ungroup()
 	# create first factor and order by the median values
-	x <- dplyr::left_join(x, y, by = dplyr::quo_name(cat1)) %>%
+	.data <- dplyr::left_join(.data, y, by = dplyr::quo_name(cat1)) %>%
 		dplyr::mutate(!!cat1 := forcats::fct_reorder(!!cat1, !!med1))
 
 	# determine medians grouped by second category
-	y <- x %>%
+	y <- .data %>%
 		dplyr::group_by(!!cat2) %>%
 		dplyr::summarize(!!med2 := round(median(!!value, na.rm = TRUE), 3))
 	# create second factor and order by the median values
-	x <- dplyr::left_join(x, y, by = dplyr::quo_name(cat2)) %>%
+	.data <- dplyr::left_join(.data, y, by = dplyr::quo_name(cat2)) %>%
 		dplyr::mutate(!!cat2 := forcats::fct_reorder(!!cat2, !!med2))
 
 	# conditional to include the medians in the output
-	if (medians) {
-		x <- x
+	if (isTRUE(medians)) {
+		.data <- .data
 	} else {
-		x <- x %>% select(!!cat1, !!cat2, !!value)
+		.data <- .data %>% select(!!cat1, !!cat2, !!value)
 	}
 }
 "multiway_order"

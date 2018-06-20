@@ -23,5 +23,4 @@ rcb <- function(pattern) {
     filter(str_detect(rcb_name, pattern)) %>%
     select(rcb_code) %>%
     unlist(use.names = FALSE)
-  return(hex_code)
 }

@@ -18,17 +18,16 @@ for 97,640 undergraduate students from 1987 to 2016.
 \details{
 This package provides functions to access, manipulate, and graph student
 record data. To illustrate the workflow, we would use these functions in
-sequence to compute and display a graduation rate metric:
+sequence to compute and display the "stickiness" metric:
 
 \itemize{
   \item \code{cip_filter()} to select programs from the CIP data
   \item \code{cip_label()} to add custom program labels for grouping
-  \item \code{gather_start()} to gather starting students
+  \item \code{gather_ever()} to gather students ever enrolled
   \item \code{gather_grad()} to gather graduating students
   \item \code{race_sex_join()} to join student sex and race
-  \item \code{zero_fill()} to fill zero for missing combinations
-  \item \code{dplyr::group()} and \code{summarize()} to count students
-  \item \code{tally_gradrate()} to compute the metric
+  \item \code{seplyr::group_summarize()} to count students
+  \item \code{dplyr::join()} and \code{mutate()} to compute stickiness
   \item \code{multiway_order()} to prepare the results for graphing
   \item \code{ggplot2::ggplot()} to graph the metric
 }

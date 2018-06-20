@@ -59,21 +59,21 @@ get_my_path <- function(filename) {
 
 
 ## create data for race_sex_join() ---------------------------------------
-# x <- cip_filter(series = "540104") %>%
+# .data  <- cip_filter(series = "540104") %>%
 # 	cip_label(program = NULL) %>%
 # 	gather_grad()
 #
-# my_args <- list(df = x)
+# my_args <- list(.data)
 # save(my_args, file = "tests/testthat/testing_data/my_args_05.rda")
 # (do.call(midfieldr::race_sex_join, my_args))
-# exp_out <- race_sex_join(df = x)
+# exp_out <- race_sex_join(.data)
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_05.rda")
 #
 # # with a race and sex column already present
-# my_args <- list(df = exp_out)
+# my_args <- list(.data  = exp_out)
 # (do.call(midfieldr::race_sex_join, my_args))
 # save(my_args, file = "tests/testthat/testing_data/my_args_06.rda")
-# exp_out <- race_sex_join(df = x)
+# exp_out <- race_sex_join(.data )
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_06.rda")
 
 
@@ -84,45 +84,45 @@ get_my_path <- function(filename) {
 # math_stat <- cip_filter(series = cip_math_stat)
 # phys_sci <- cip_filter(series = cip_phys_sci)
 #
-# my_args <- list(data = engr, program = NULL)
+# my_args <- list(.data = engr, program = NULL)
 # (do.call(midfieldr::cip_label, my_args))
 # save(my_args, file = "tests/testthat/testing_data/my_args_05.rda")
-# exp_out <- cip_label(data = engr, program = NULL)
+# exp_out <- cip_label(.data = engr, program = NULL)
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_05.rda")
 #
-# my_args <- list(data = bio_sci, program = NULL)
+# my_args <- list(.data = bio_sci, program = NULL)
 # save(my_args, file = "tests/testthat/testing_data/my_args_06.rda")
-# exp_out <- cip_label(data = bio_sci, program = NULL)
+# exp_out <- cip_label(.data = bio_sci, program = NULL)
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_06.rda")
 #
-# my_args <- list(data = math_stat, program = NULL)
+# my_args <- list(.data = math_stat, program = NULL)
 # save(my_args, file = "tests/testthat/testing_data/my_args_07.rda")
-# exp_out <- cip_label(data = math_stat, program = NULL)
+# exp_out <- cip_label(.data = math_stat, program = NULL)
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_07.rda")
 #
-# my_args <- list(data = phys_sci, program = NULL)
+# my_args <- list(.data = phys_sci, program = NULL)
 # save(my_args, file = "tests/testthat/testing_data/my_args_10.rda")
-# exp_out <- cip_label(data = phys_sci, program = NULL)
+# exp_out <- cip_label(.data = phys_sci, program = NULL)
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_10.rda")
 #
-# my_args <- list(data = engr, program = "cip2name")
+# my_args <- list(.data = engr, program = "cip2name")
 # save(my_args, file = "tests/testthat/testing_data/my_args_11.rda")
-# exp_out <- cip_label(data = engr, program = "cip2name")
+# exp_out <- cip_label(.data = engr, program = "cip2name")
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_11.rda")
 #
-# my_args <- list(data = engr, program = "cip4name")
+# my_args <- list(.data = engr, program = "cip4name")
 # save(my_args, file = "tests/testthat/testing_data/my_args_12.rda")
-# exp_out <- cip_label(data = engr, program = "cip4name")
+# exp_out <- cip_label(.data = engr, program = "cip4name")
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_12.rda")
 #
-# my_args <- list(data = engr, program = "cip6name")
+# my_args <- list(.data = engr, program = "cip6name")
 # save(my_args, file = "tests/testthat/testing_data/my_args_13.rda")
-# exp_out <- cip_label(data = engr, program = "cip6name")
+# exp_out <- cip_label(.data = engr, program = "cip6name")
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_13.rda")
 #
-# my_args <- list(data = engr, program = "randomname")
+# my_args <- list(.data = engr, program = "randomname")
 # save(my_args, file = "tests/testthat/testing_data/my_args_14.rda")
-# exp_out <- cip_label(data = engr, program = "randomname")
+# exp_out <- cip_label(.data = engr, program = "randomname")
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_14.rda")
 
 
@@ -163,22 +163,46 @@ get_my_path <- function(filename) {
 
 
 
-## practice testing gather_ever() ---------------------------------------
-# x <- cip_filter(series = "540104") %>%
+# # practice testing gather_ever() ---------------------------------------
+# ever <- cip_filter(series = "540104") %>%
 # 	cip_label() %>%
 # 	gather_ever()
-# unique(x$institution)
-# dim(x)
+# unique(ever$institution)
+# dim(ever)
 #
 #
-## practice testing gather_grad() ---------------------------------------
-# x <- cip_filter(series = "540104") %>%
+# # practice testing gather_grad() ---------------------------------------
+# grad <- cip_filter(series = "540104") %>%
 # 	cip_label() %>%
 # 	gather_grad()
-# unique(x$institution)
-# dim(x)
-
-
+# unique(grad$institution)
+# dim(grad)
+#
+# # practice testing tally_stickiness() ---------------------------------
+# program_group <- cip_filter(series = "540104") %>%
+# 	cip_label(program = "cip4name")
+#
+# # count students ever enrolled in programs
+# ever <- gather_ever(program_group) %>%
+# 	race_sex_join() %>%
+# 	group_by(program, race, sex) %>%
+# 	summarize(ever = n()) %>%
+# 	ungroup() %>%
+# 	zero_fill(program, race, sex)
+#
+# # count students graduating from programs
+# grad <- gather_grad(program_group) %>%
+# 	race_sex_join() %>%
+# 	group_by(program, race, sex) %>%
+# 	summarize(grad = n()) %>%
+# 	ungroup() %>%
+# 	zero_fill(program, race, sex)
+#
+# stick <- full_join(ever, grad) %>%
+# 	zero_fill(program, race, sex)
+#
+# # compute stickiness of programs
+# stick <- tally_stickiness(ever, grad)
 
 
 

@@ -45,7 +45,7 @@
 #' unique(cip[ , 1:2])
 #'
 #' # Use the data as an argument for cip_filter()
-#' cip_filter(data = cip, series = "^1410")
+#' cip_filter(cip, series = "^1410")
 "cip"
 
 

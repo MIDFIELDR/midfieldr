@@ -48,13 +48,14 @@ Longitudinal "stickiness" is the ratio of the number of students graduating in a
 
 Thus the stickiness metric accounts for all students a program had the most immediate opportunity to retain and graduate---the students were, after all, enrolled in the program at one time. 
 
-We typically group stickiness results by program, biological sex (we have no data on gender identity), and "race" as defined by the participating US institutions. 
+We typically group stickiness results by program, sex, and "race" as defined by the participating US institutions. 
 
 ## Getting started 
 
 ```{r message = FALSE}
 # packages used
 library(midfieldr)
+library(seplyr)
 library(tidyverse)
 ```
 
@@ -64,80 +65,79 @@ In this article, we show you how to use midfieldr functions to compute program s
 - count the students ever enrolled
 - count the students graduating  
 - compute stickiness 
-- create a graph  
+- create a multiway graph  
 
-If you are an R beginner, you can get the most out of this tutorial by 
-
-- opening a new R script  
-- copying or typing a line of code from the tutorial to your script 
-- running your script after each new line is added 
-- examining the result after each addition   
 
 ## Select the programs to study
 
-For this example, we compare the stickiness of four engineering programs: Civil, Electrical, Industrial, and Mechanical. Their 4-digit CIP codes (1408, 1410, 1419, 1435) were found by keyword search as illustrated in [Selecting CIP codes](cip_filter.html). 
+For this example, we compare the stickiness of four engineering programs: Civil, Electrical, Industrial, and Mechanical. Their 4-digit CIP codes (1408, 1410, 1419, 1435) were found by keyword search as illustrated in [Selecting CIP codes](cip_filter.html).
 
-We use:  
-
-- `cip_filter()` to obtain the relevant program codes 
-- `cip_label()` to assign our own program label  
+We use `cip_filter()` to obtain the relevant program codes. You can open the help page by running `?cip_filter()`.
 
 ```{r}
-# obtain the electrical engineering subset of CIPs
+# four data frames of cip codes and names
+cve <- cip_filter(series = "^1408")
 ele <- cip_filter(series = "^1410")
-
-# check the 4-digit program name
-unique(ele$cip4name)
+mce <- cip_filter(series = "^1419")
+ise <- cip_filter(series = "^1435")
 ```
 
-In this case, the default program name is inconveniently long. We add a new column to the `ele` data frame with our own shorter program label using 
-`cip_label()`. 
+Next we will use `cip_label()` to assign program names to the distinct programs we want to compare. One possibility is to use the 4-digit program names already available in the data. To view those names:    
 
 ```{r}
-# add a shorter program label
-ele <- cip_label(data = ele, program = "Electrical Engineering")
+# view 4-digit program names
+unique(cve[["cip4name"]])
+unique(ele[["cip4name"]])
+unique(mce[["cip4name"]])
+unique(ise[["cip4name"]])
+```
 
+The 4-digit names for Civil, Mechanical, and Industrial Engineering are satisfactory; we'll assign the default names to these programs using the `program = "cip4name"` argument in `cip_label()`. For other options, see the help page by running  `?cip_label()`  
+
+```{r}
+# label the programs with the default 4-digit names
+cve <- cip_label(cve, program = "cip4name")
+mce <- cip_label(mce, program = "cip4name")
+ise <- cip_label(ise, program = "cip4name")
+```
+
+The Electrical Engineering program name is somewhat verbose; we'll assign a custom label to this program as follows: 
+
+```{r}
+# label the program with a custom name
+ele <- cip_label(ele, program = "Electrical Engineering")
+```
+
+We use `bind_rows()`, a [dplyr](http://dplyr.tidyverse.org) function, to bind the individual data frames into one data frame. 
+
+```{r}
+programs_to_study <- bind_rows(cve, ele, mce, ise)
+```
+
+Examine the result: there are a total of `r length(uniques(programs_to_study[["cip6"]]))` CIP codes for these programs. We have 7 columns: 6 from the `cip` dataset and the one `program` column of labels we added using `cip_label()`. 
+
+```{r echo = -1}
+options(tibble.print_min = 12L)
 # check the result
-ele
+programs_to_study
 ```
 
-For the next three programs, the default 4-digit program name is an acceptable program label. 
+When searching the midfielddata datasets for students in these programs, our search functions use the 6-digit CIP codes in the `cip6` variable. To confirm that the search terms are what we expect, we can extract and view the `r length(uniques(programs_to_study[["cip6"]]))` unique codes. 
 
 ```{r}
-# civil engineering
-cve <- cip_filter(series = "^1408") %>% cip_label(program = "cip4name")
-
-# mechanical engineering
-mce <- cip_filter(series = "^1419") %>% cip_label(program = "cip4name")
-
-# industrial and systems engineering
-ise <- cip_filter(series = "^1435") %>% cip_label(program = "cip4name")
-```
-
-We use `bind_rows()`, a [dplyr](http://dplyr.tidyverse.org) function, to bind the programs into one data frame named `program_group`. 
-
-```{r}
-# bind the programs
-program_group <- bind_rows(cve, ele, mce, ise)
-```
-
-Examine the result: there are a total of 12 CIP codes for these programs. We have 7 columns: 6 from the `cip` dataset and the one `program` column of labels we added using `cip_label()`. 
-
-```{r}
-# check the result
-program_group
+unique(programs_to_study[["cip6"]])
 ```
 
 ## gather_ever()  
 
-`gather_ever()` extracts a subset of the `midfieldterms` data containing all unique students ever enrolled in the programs listed in `program_group` and joins our user-defined `program` labels to these data. 
+`gather_ever()` has one argument, a data frame with at least two character variables:  `cip6` and `program`. The function extracts from the `midfieldterms` dataset all students ever enrolled in the programs in `cip6`. Open the help page by running `?gather_ever()`.
 
 ```{r}
 # extract unique students from midfieldterms
-students <- gather_ever(program_group)
+students <- gather_ever(programs_to_study)
 ```
 
-`glimpse()` (a [tibble](http://tibble.tidyverse.org) function) the result to check the number of observations and to view the first few values of each variable. 
+Use `glimpse()` (a [tibble](http://tibble.tidyverse.org) function) to view the result to check the number of observations and to view the first few values of each variable. We see that we have 10846 students ever enrolled in these programs. 
 
 ```{r}
 # check the result
@@ -155,102 +155,83 @@ students <- race_sex_join(students)
 glimpse(students)
 ```
 
-If the argument to `race_sex_join()` already includes a `sex` or `race` column, that column (or columns) is returned unchanged.
+If the argument to `race_sex_join()` already includes a `sex` or `race` column, that column (or columns) is returned unchanged. Open the help page by running `?race_sex_join()`.
 
 ## Count the numbers of students ever enrolled
 
-We will use [dplyr](http://dplyr.tidyverse.org) functions to group and count the numbers of students ever enrolled in our programs. 
-
-- `group_by()` to select the grouping variables 
-- `summarize()` to count the number of students in each group 
-- `ungroup()` to remove the grouping meta-information 
-
-All variables in `students` not used as grouping variables are quietly dropped. The assigned count variable is `ever`.  
+We use `group_summarize()` (an [seplyr](https://winvector.github.io/seplyr/) function) to group and count the numbers of students ever enrolled in our programs.  All variables in `students` not used as grouping variables are quietly dropped. The assigned count variable is `ever`.  
 
 ```{r}
+# select the variables for grouping
+grouping_variables <- c("program", "race", "sex")
+
 # count the numbers of students ever in a program
 ever_enrolled <- students %>%
-  group_by(program, race, sex) %>%
-  summarize(ever = n()) %>%
-  ungroup()
+  group_summarize(grouping_variables, ever = n())
 
 # check the result
 ever_enrolled
 ```
 
-You can change how you group the data by changing the arguments of `group_by()`.  
-
-## zero_fill()
-
-```{r echo = FALSE, opts.label = 'dopurl'}
-# use the dopurl hook to make these values available for the inline
-# expressions in the next paragraph during R CMD check. Causes this code
-# chunk to be written to vignettes/*.R
-n_prog <- length(unique(ever_enrolled$program))
-n_sex <- length(unique(ever_enrolled$sex))
-n_race <- length(unique(ever_enrolled$race))
-n_comb <- n_prog * n_sex * n_race
-n_obs <- dim(ever_enrolled)[[1]]
-```
-
-This example has `r n_prog` programs, `r n_sex` sexes, and `r n_race` race values, yielding `r n_comb` possible combinations. Yet our result above has only `r n_obs` observations, not the expected `r n_comb`. This outcome tells us that one of the possible combinations is missing.
-
-The missing group, it happens, is Civil Engineering Native American Female. 
-
-`zero_fill()` inserts a count of zero for missing combinations, ensuring that zero data values are not overlooked when printing data tables or constructing graphs.  The arguments of `zero_fill()` must be identical to the arguments of `group_by()` used earlier. 
-
-```{r}
-ever_enrolled <- ever_enrolled %>%
-  zero_fill(program, race, sex)
-```
-
-The output message `Joining, by = c("program", "race", "sex")` indicates that data  has been successfully joined to its expanded version containing all combinations of these three variables.   
-
-```{r}
-# examine the result
-ever_enrolled
-```
-
-In summary, the following chain gathers and counts the numbers of students ever enrolled in a set of programs.
-
-```{r eval = FALSE}
-# counting students ever enrolled in a program (using one code chain)
-ever_enrolled <- gather_ever(program_group) %>%
-  race_sex_join() %>%
-  group_by(program, race, sex) %>%
-  summarize(ever = n()) %>%
-  ungroup() %>%
-  zero_fill(program, race, sex)
-```
-
 ## gather_grad() 
 
-`gather_grad()` extracts a subset of the `midfielddegrees` data containing the  unique students ever graduating from the programs listed in `program_group` and joins our user-defined `program` labels to these data. 
+`gather_grad()` extracts a subset of the `midfielddegrees` data containing the  unique students ever graduating from the programs listed in `programs_to_study ` and joins our user-defined `program` labels to these data. 
 
-Similar to gathering the ever enrolled students, we can chain these functions together in one code chunk. Here, the assigned count variable is `grad`.  
+Similar to gathering the ever enrolled students, we can chain these functions together in one code chunk. Here, the assigned count variable is `grad`.   Open the help page by running `?gather_grad()`.
 
 ```{r}
 # count students graduating from programs
-graduated <- gather_grad(program_group) %>%
+graduated <- gather_grad(programs_to_study) %>%
   race_sex_join() %>%
-  group_by(program, race, sex) %>%
-  summarize(grad = n()) %>%
-  ungroup() %>%
-  zero_fill(program, race, sex)
+  group_summarize(grouping_variables, grad = n())
 
 # check the result
 graduated
 ```
 
-## tally_stickiness()
+## Tally stickiness
 
-`tally_stickiness()` has two arguments: `ever` and `grad` data frames. The two data frames are joined by the variables they have in common.   
+To compute stickiness, we use `left_join()` (a dplyr function) to join `graduated` to `ever_enrolled` by program, race, and sex.  
 
-The function returns a data frame with all the original variables plus a column for the stickiness variable `stick`. Stickiness is reported as a fraction between 0 and 1, or NA if the ever count for a group is zero.   
+```{r}
+stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables)
+
+stickiness
+```
+
+
+```{r echo = FALSE, opts.label = 'dopurl'}
+# use the dopurl hook to make these values available for the inline
+# expressions in the next paragraph during R CMD check. Causes this code
+# chunk to be written to vignettes/*.R
+n_prog <- length(unique(stickiness$program))
+n_sex <- length(unique(stickiness$sex))
+n_race <- length(unique(stickiness$race))
+n_comb <- n_prog * n_sex * n_race
+n_obs <- dim(stickiness)[[1]]
+```
+
+This example has `r n_prog` programs, `r n_sex` sexes, and `r n_race` race values, yielding `r n_comb` possible combinations. Yet our result above has only `r n_obs` observations, not the expected `r n_comb`. This outcome tells us that one of the possible combinations is missing.
+
+The missing group, it happens, is Civil Engineering Native American Female.
+
+`complete_se()` turns the implicit missing values into explicit missing values, and we can fill the missing counts of `ever`  and `grad` with zero. The completed data frame has the expected `r n_comb` observations. 
+
+```{r}
+# fill implicit missing values
+stickiness <- stickiness %>%
+  complete_se(grouping_variables, fill = list(ever = 0, grad = 0))
+
+stickiness
+```
+
+Finally, we create `stick`, the ratio of `grad` to `ever`. Stickiness is reported as a fraction between 0 and 1, or `NaN` if the ever count for a group is zero. 
 
 ```{r echo = -1}
 options(tibble.print_min = 10L)
-stickiness <- tally_stickiness(ever_enrolled, graduated)
+# tally stickiness
+stickiness <- stickiness %>%
+  mutate(stick = round(grad / ever, 3))
 
 # check the result
 stickiness
@@ -264,8 +245,11 @@ We use `filter()` (a [dplyr](http://dplyr.tidyverse.org) function) to keep all r
 
 ```{r}
 stickiness_multiway <- stickiness %>%
-  filter(!race %in% c("Unknown", "International", "Other"))
+  filter(!race %in% c("Unknown", "International", "Other")) %>%
+  filter(!sex %in% "Unknown")
 ```
+
+This example has no "Unknown" values in `sex`, but the larger data set does. For completeness, I've also filtered to remove those observations.   
 
 We structure the stickiness results as *multiway* data by combining student race and sex into a single `race_sex` variable. The [Multiway](multiway.html) article explains multiway data and graphs in detail. 
 
@@ -285,7 +269,7 @@ stickiness_multiway <- stickiness_multiway %>%
 stickiness_multiway
 ```
 
-`multiway_order()` converts the character variables `program` and `race_sex` into *factors* and orders the levels of the two factors by the relevant stickiness medians. `glimpse()` shows that the two categorical variables are now factors.
+`multiway_order()` converts the character variables `program` and `race_sex` into *factors* and orders the levels of the two factors by the relevant stickiness medians. `glimpse()` shows that the two categorical variables are now factors. Open the help page by running `?multiway_order()`.
 
 ```{r}
 # convert the data to a multiway structure
@@ -322,54 +306,69 @@ We also apply our own `theme_midfield()` to edit the visual properties of the gr
 
 ## Complete script
 
-For reference, the complete script for this example is collected below. 
+For reference, the complete script for this example is collected below.  
 
 ```{r eval = FALSE}
 # packages used
 library(midfieldr)
+library(seplyr)
 library(tidyverse)
 
-# obtain 6-digit CIPs and assign custom program labels
+# collect CIP information for 4 programs and combine into one data frame
 cve <- cip_filter(series = "^1408") %>% cip_label(program = "cip4name")
 ele <- cip_filter(series = "^1410") %>% cip_label(program = "Electrical Engineering")
 mce <- cip_filter(series = "^1419") %>% cip_label(program = "cip4name")
 ise <- cip_filter(series = "^1435") %>% cip_label(program = "cip4name")
+programs_to_study <- bind_rows(cve, ele, mce, ise)
 
-# bind the programs in a single data frame
-program_group <- bind_rows(cve, ele, mce, ise)
+# assign grouping variables
+grouping_variables <- c("program", "race", "sex")
 
-# count students ever enrolled in programs
-ever_enrolled <- gather_ever(program_group) %>%
-  race_sex_join() %>%
-  group_by(program, race, sex) %>%
-  summarize(ever = n()) %>%
-  ungroup() %>%
-  zero_fill(program, race, sex)
+# count students ever enrolled, by group
+ever_enrolled <- gather_ever(programs_to_study) %>%
+	race_sex_join() %>%
+	group_summarize(grouping_variables, ever = n())
 
-# count students graduating from programs
-graduated <- gather_grad(program_group) %>%
-  race_sex_join() %>%
-  group_by(program, race, sex) %>%
-  summarize(grad = n()) %>%
-  ungroup() %>%
-  zero_fill(program, race, sex)
+# count students graduating, by group
+graduated <- gather_grad(programs_to_study) %>%
+	race_sex_join() %>%
+	group_summarize(grouping_variables, grad = n())
 
-# compute stickiness of programs
-stickiness <- tally_stickiness(ever_enrolled, graduated)
+# tally stickiness, by group
+stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables) %>%
+	ccomplete_se(grouping_variables, fill = list(ever = 0, grad = 0))
+mutate(stick = round(grad / ever, 3))
 
-# prepare the data for graphing in a multiway plot
+# prepare data for graph
 stickiness_multiway <- stickiness %>%
-  filter(!race %in% c("Unknown", "International", "Other")) %>%
-  mutate(race_sex = str_c(race, sex, sep = " ")) %>%
-  select(program, race_sex, stick) %>%
-  multiway_order()
+	filter(!race %in% c("Unknown", "International", "Other")) %>%
+	filter(!sex %in% "Unknown") %>%
+	mutate(race_sex = str_c(race, sex, sep = " ")) %>%
+	select(program, race_sex, stick) %>%
+	multiway_order()
 
-# create graph
-ggplot(stickiness_multiway, aes(x = stick, y = race_sex)) +
-  facet_wrap(~program, ncol = 1, as.table = FALSE) +
-  geom_point(na.rm = TRUE) +
-  labs(x = "Stickiness", y = "") +
-  theme_midfield()
+NA_data <- stickiness_multiway %>%  
+	filter(., is.na(stick)) %>% 
+	mutate(stick = 0)
+NA_data
+
+
+# graph
+base <- ggplot(stickiness_multiway, aes(x = stick, y = race_sex)) +
+	facet_wrap(~program, ncol = 1, as.table = FALSE) +
+	geom_point(na.rm = TRUE) +
+	labs(x = "Stickiness", y = "") +
+	theme_midfield()
+base
+
+base +
+	geom_point(NA_data, aes(label = "N",
+								x = stick, 
+								y = race_sex),
+						hjust = 0, 
+						vjust = 0)
+
+
 ```
 
 

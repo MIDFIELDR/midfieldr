@@ -11,16 +11,16 @@ NULL
 #' the option of grouping and summarizing CIP data in ways not afforded by
 #' the default program names in the 2010 CIP data.
 #'
-#' With \code{data} as the first argument, \code{cip_label()} is
+#' With \code{.data} as the first argument, \code{cip_label()} is
 #' compatible with the pipe operator \code{\%>\%}.
 #'
-#' @param data A filtered subset of the midfieldr \code{cip} data frame.
+#' @param .data A filtered subset of the midfieldr \code{cip} data frame.
 #'
 #' @param program An optional character variable. There are four options:
 #'
 #' If NULL, the default, the 6-digit CIP program names are assigned to the new column.
 #'
-#' If NULL, but one of the named \code{cip_series} is used to create the \code{data} argument, then the series name is assigned to the new column.
+#' If NULL, but one of the named \code{cip_series} is used to create the \code{.data} argument, then the series name is assigned to the new column.
 #'
 #' If one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-digit, 4-digit, or 6-digit CIP program names are assigned to the new column.
 #'
@@ -31,7 +31,7 @@ NULL
 #' @examples
 #' # Extract the Philosophy and Religion programs
 #' x <- cip_filter(series = "^38")
-#' y <- cip_label(data = x, program = "test label")
+#' y <- cip_label(x, program = "test label")
 #'
 #' # The function is pipe-compatible
 #' y <- x %>% cip_label("test label")
@@ -50,16 +50,16 @@ NULL
 #' # But if the result is too long, it can be manually reassigned
 #' y <- cip_filter(series = "^1410") %>% cip_label("Electrical Engineering")
 #' @export
-cip_label <- function(data, program = NULL) {
+cip_label <- function(.data, program = NULL) {
 
-	# data must match midfieldr cip data structure
+	# .data must match midfieldr cip data structure
 	stopifnot(identical(
 		purrr::map_chr(cip, class),
-		purrr::map_chr(data, class)
+		purrr::map_chr(.data, class)
 	))
 
 	if (is.null(program)) {# if none given
-		series <- data$cip6
+		series <- .data$cip6
 		if (identical(series, cip_engr)) {# if a named series
 			program <- "Engineering"
 		} else if (identical(series, cip_bio_sci)) {
@@ -73,19 +73,19 @@ cip_label <- function(data, program = NULL) {
 		} else if (identical(series, cip_phys_sci)) {
 			program <- "Physical Sciences"
 		} else {# if not named, use 6-digit names by default
-			program <- data$cip6name
+			program <- .data$cip6name
 		}
 	} else {# program argument is given
 		if (identical(program, "cip2name")) {# use CIP data names
-			program <- data$cip2name
+			program <- .data$cip2name
 		} else if (identical(program, "cip4name")) {
-			program <- data$cip4name
+			program <- .data$cip4name
 		} else if (identical(program, "cip6name")) {
-			program <- data$cip6name
+			program <- .data$cip6name
 		}	else {# otherwise, use the input argument
 			program <- program
 		}
 	}
 	# add program name
-	df <- tibble::add_column(data, program = program)
+	df <- tibble::add_column(.data, program = program)
 }

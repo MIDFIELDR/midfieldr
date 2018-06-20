@@ -26,7 +26,7 @@ aggregating, computing, and graphing student persistence metrics.
 ## Installation
 
 To use midfieldr, the
-[midfielddata](https://github.com/MIDFIELDR/midfielddata) package should
+[midfielddata](https://midfieldr.github.io/midfielddata) package should
 also be installed. From CRAN,
 
 ``` r
@@ -203,6 +203,7 @@ the arguments of `group_by()` above.
 ``` r
 ever_enrolled <- ever_enrolled %>%
   zero_fill(program, race, sex)
+#> Error in zero_fill(., program, race, sex): could not find function "zero_fill"
 ```
 
 Use `gather_grad()` to access the `midfielddegrees` dataset and extract
@@ -216,6 +217,7 @@ graduated <- gather_grad(cip_group) %>%
   summarize(grad = n()) %>%
   ungroup() %>%
   zero_fill(program, race, sex)
+#> Error in zero_fill(., program, race, sex): could not find function "zero_fill"
 ```
 
 The two data frames `ever_enrolled` and `graduated` are the arguments
@@ -223,17 +225,11 @@ for the `tally_stickiness()` function that joins the two data frames by
 their common variables and computes stickiness.
 
 ``` r
-stickiness <- tally_stickiness(ever = ever_enrolled, grad = graduated)
+stickiness <- tally_stickiness(ever_enrolled, graduated)
+#> Error in tally_stickiness(ever_enrolled, graduated): could not find function "tally_stickiness"
 
 glimpse(stickiness)
-#> Observations: 48
-#> Variables: 6
-#> $ program <chr> "Chemical Engineering", "Chemical Engineering", "Chemi...
-#> $ race    <chr> "Asian", "Asian", "Black", "Black", "Hispanic", "Hispa...
-#> $ sex     <chr> "Female", "Male", "Female", "Male", "Female", "Male", ...
-#> $ ever    <dbl> 56, 98, 148, 98, 38, 57, 8, 23, 7, 8, 12, 29, 6, 4, 46...
-#> $ grad    <dbl> 26, 35, 52, 26, 11, 18, 4, 7, 1, 3, 1, 3, 3, 2, 170, 3...
-#> $ stick   <dbl> 0.464, 0.357, 0.351, 0.265, 0.289, 0.316, 0.500, 0.304...
+#> Error in glimpse(stickiness): object 'stickiness' not found
 ```
 
 For a discussion of each step in greater detail, see the [Stickiness
@@ -249,6 +245,7 @@ into a single variable.
 stickiness_mw_data <- stickiness %>%
   filter(!race %in% c("Unknown", "International", "Other")) %>%
   mutate(race_sex = str_c(race, sex, sep = " "))
+#> Error in eval(lhs, parent, parent): object 'stickiness' not found
 ```
 
 We graph these results in a *multiway dot plot* (Cleveland 1993), a
@@ -263,13 +260,10 @@ orders their levels by median stickiness.
 stickiness_mw_data <- stickiness_mw_data %>%
   select(program, race_sex, stick) %>%
   multiway_order()
+#> Error in eval(lhs, parent, parent): object 'stickiness_mw_data' not found
 
 glimpse(stickiness_mw_data)
-#> Observations: 30
-#> Variables: 3
-#> $ program  <fct> Chemical Engineering, Chemical Engineering, Chemical ...
-#> $ race_sex <fct> Asian Female, Asian Male, Black Female, Black Male, H...
-#> $ stick    <dbl> 0.464, 0.357, 0.351, 0.265, 0.289, 0.316, 0.143, 0.37...
+#> Error in glimpse(stickiness_mw_data): object 'stickiness_mw_data' not found
 ```
 
 We use conventional ggplot2 functions to graph stickiness in a multiway
@@ -283,9 +277,8 @@ ggplot(stickiness_mw_data, aes(x = stick, y = race_sex)) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +
   theme_midfield()
+#> Error in ggplot(stickiness_mw_data, aes(x = stick, y = race_sex)): object 'stickiness_mw_data' not found
 ```
-
-<img src="man/figures/README-fig1-1.png" width="70%" style="display: block; margin: auto;" />
 
 ## Meta
 

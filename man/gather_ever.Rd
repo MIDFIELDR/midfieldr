@@ -2,24 +2,33 @@
 % Please edit documentation in R/gather_ever.R
 \name{gather_ever}
 \alias{gather_ever}
-\title{Gather students ever enrolled in a program}
+\title{Gather students ever enrolled in a set of programs}
 \usage{
-gather_ever(program_group)
+gather_ever(.data)
 }
 \arguments{
-\item{program_group}{A data frame that includes 6-digit CIP codes
-(\code{cip6}) of the programs being studied.}
+\item{.data}{A data frame with two required character variables:  \code{cip6} (6-digit CIP codes) and \code{program} (program labels).}
 }
 \value{
-A data frame extracted from the \code{midfieldterms} dataset
-with variables \code{id}, \code{institution}, \code{cip6}.
-
-Each observation in the resulting tidy data frame is a unique program per
-student. Thus the student identifier (\code{id}) for students who change
-majors will appear in more than one row, once each per unique program.
+A data frame with variables \code{id} (unique MIDFIELD student ID), \code{cip6} (6-digit CIP code), and \code{program} (a program label).
 }
 \description{
-Filters a data frame to
-return only those students ever enrolled in the programs being studied.
-Accounts for students enrolled in more than one program in a term.
+Filters the \code{midfielddata::midfieldterms} dataset for all students ever enrolled in a set of programs denoted by their 6-digit CIP codes.
+}
+\details{
+\code{gather_ever()} uses the codes in the \code{cip6} variable to filter the \code{midfieldterms} dataset, keeping all students who in any term were enrolled in any of those programs.
+
+The data can include students who change programs, who enroll in more than one program in a term, and of course a majority who enroll in the same program over multiple terms. The function returns a data frame with one observation for each unique pairing between student and program.
+
+All variables in \code{.data} other than the required \code{cip6} and \code{program} are quietly dropped.
+}
+\examples{
+d <- cip_filter(cip, series = "540104")
+d <- cip_label(d, program = "cip6name")
+ever <- gather_ever(d)
+head(ever)
+
+}
+\seealso{
+\code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes, \code{\link[midfieldr]{cip_label}} for adding a column of program labels
 }

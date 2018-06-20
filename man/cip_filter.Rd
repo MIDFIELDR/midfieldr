@@ -4,17 +4,17 @@
 \alias{cip_filter}
 \title{Filter CIP data}
 \usage{
-cip_filter(data = NULL, series = NULL)
+cip_filter(.data = NULL, series = NULL)
 }
 \arguments{
-\item{data}{A data frame of character variables (or coercible to one).
-If NULL, \code{data} is the midfieldr \code{cip} dataset.}
+\item{.data}{A data frame of character variables.
+If NULL, \code{.data} is the midfieldr \code{cip} dataset.}
 
 \item{series}{A character vector (or coercible to one) of search terms. The
 conditions used to filter the data.}
 }
 \value{
-A subset of \code{data} returned as a data frame (tibble) of
+A subset of \code{.data} returned as a data frame (tibble) of
 character variables.
 }
 \description{
@@ -23,7 +23,7 @@ and return the rows that match conditions.
 }
 \details{
 \code{cip_filter()} is essentially a search tool to filter the data frame
-given by the \code{data} argument and return all rows containing the terms
+given by the \code{.data} argument and return all rows containing the terms
 specified in the \code{series} argument.
 
 Variables are not altered.

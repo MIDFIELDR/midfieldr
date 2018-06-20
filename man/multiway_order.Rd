@@ -4,10 +4,10 @@
 \alias{multiway_order}
 \title{Prepare multiway data for graphing}
 \usage{
-multiway_order(x, medians = FALSE)
+multiway_order(.data, medians = FALSE)
 }
 \arguments{
-\item{x}{A data frame with one numerical variable and two categorical
+\item{.data}{A data frame with one numerical variable and two categorical
 variables.}
 
 \item{medians}{A logical value indicating whether or not the medians

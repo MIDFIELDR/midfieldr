@@ -21,3 +21,8 @@ test_that("Median argument returns median columns", {
 		c("name", "species", "mass", "med_name", "med_species")
 		)
 	})
+
+test_that("Error produces if argument not a data frame", {
+	x <- runif(10)
+	expect_error(multiway_order(x), "midfieldr::multiway_order() argument must be a data frame or tbl", fixed = TRUE)
+})

@@ -4,22 +4,20 @@
 \alias{race_sex_join}
 \title{Join student demographics to a data frame}
 \usage{
-race_sex_join(df)
+race_sex_join(.data)
 }
 \arguments{
-\item{df}{A data frame of student attributes that includes the variable
-\code{id}.}
+\item{.data}{A data frame of student attributes that includes the variable
+\code{id}}
 }
 \value{
 The incoming data frame plus two new columns \code{race} and
-\code{sex}, joined by student ID. Other columns are unaffected.
+\code{sex}, joined by student ID
 }
 \description{
 Add variables \code{race} and \code{sex} from the \code{midfieldstudents}
-dataset to a data frame. `dplyr::left_join()` is the joining function
-and \code{id} is the join-by variable.
+dataset to a data frame, using \code{id} is the join-by variable.
 }
 \details{
-If sex and race variables are already present, they are overwritten by race
-and sex data from \code{midfieldstudents}.
+If sex or race variables are already present, they are overwritten.
 }
