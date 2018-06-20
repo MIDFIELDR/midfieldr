@@ -46,7 +46,7 @@ devtools::install_github("MIDFIELDR/midfielddata")
 
 The midfieldr package includes:
 
-  - `cip` A data frame with 1585 observations and 6 CIP variables of
+  - `cip` A data frame with 1584 observations and 6 CIP variables of
     program codes and names at the 2, 4, and 6-digit levels. Each
     observation is a unique program. Occupies 364 kb of memory.
 
