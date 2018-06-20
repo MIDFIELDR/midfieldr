@@ -1,5 +1,5 @@
 
-## midfieldr 0.1.0 (2018-05-23)
+## midfieldr 0.1.0 (2018-06-20)
 
   - made public on GitHub
 
