@@ -29,6 +29,13 @@ NULL
 #'
 #' @export
 gather_ever <- function(.data) {
+
+	if(!.pkgglobalenv$has_data){
+		stop(paste("To use this function, you must have the",
+							 "`midfielddata` package installed. See the",
+							 "`midfielddata` package vignette for more details."))
+	}
+
   if (!(is.data.frame(.data) || dplyr::is.tbl(.data))) {
     stop("midfieldr::gather_ever() argument must be a data frame or tbl")
   }
