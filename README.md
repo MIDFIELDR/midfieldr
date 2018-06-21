@@ -25,17 +25,22 @@ aggregating, computing, and graphing student persistence metrics.
 
 ## Installation
 
-To use midfieldr, the
-[midfielddata](https://midfieldr.github.io/midfielddata) package should
-also be installed.
-
-Not yet submitted to CRAN, but development versions can be downloaded
-from GitHub.
+Package not yet submitted to CRAN. Development version can be installed
+from GitHub using:
 
 ``` r
 install.packages("devtools")
 devtools::install_github("MIDFIELDR/midfieldr")
-devtools::install_github("MIDFIELDR/midfielddata")
+```
+
+midfieldr depends on data in a data package (midfielddata) that is
+available through a drat repository on GitHub. To use midfieldr, you
+will need to install midfielddata on your computer.
+
+``` r
+install.packages("drat")
+drat::addRepo("midfieldr")
+install.packages("midfielddata")
 ```
 
 ## Data
