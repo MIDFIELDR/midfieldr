@@ -8,6 +8,9 @@ vignette: >
 editor_options: 
   chunk_output_type: console
 bibliography: ../inst/REFERENCES.bib
+resource_files:
+  - ../man/figures/fye-mice-in-1.png
+  - ../man/figures/fye-mice-out-1.png
 ---
 
 ```{r setup, echo = FALSE, message = FALSE, purl = FALSE}
@@ -62,11 +65,14 @@ Some US institutions have first year engineering (FYE) programs---typically a co
 
 **Starting major**: The degree-granting engineering program---Civil Engineering, Electrical Engineering, Mechanical Engineering, etc.---that we predict the student would have declared had they not been required to enroll in FYE. 
 
-Note that FYE students are neither undecided nor undeclared. Their institutions admitted them as engineering students. We just don't know their preferred major. We have to predict the starting majors of FYE students to make fair comparisons across programs and institutions.   
+ 
+Predicting the starting major of FYE students takes one of two forms. 
 
-Predicting the starting major of FYE students takes one of two forms. In the first instance, we have students who complete an FYE and declare an engineering major. This is the easy case--at the student's first opportunity, they enrolled in an engineering major of their choosing. We use that major as our predicted  starting major.  
+1. In the first instance, we have students who complete an FYE and declare an engineering major. This is the easy case--at the student's first opportunity, they enrolled in an engineering major of their choosing. We use that major as our predicted  starting major. 
 
-In the second instance, we have students who, after FYE, do not declare an engineering major. This is the more complicated case---the data provide no information regarding what engineering major the student would have declared originally had the institution not required them to enroll in FYE. For these students, we treat the starting major as missing data and impute a predicted value. 
+2. In the second instance, we have students who, after FYE, do not declare an engineering major. This is the more complicated case---the data provide no information regarding what engineering major the student would have declared originally had the institution not required them to enroll in FYE. For these students, we treat the starting major as missing data and impute a predicted value. 
+
+Note that FYE students are neither undecided nor undeclared. Their institutions admitted them as engineering students. We just don't know their preferred major. We have to predict the starting majors of FYE students to make fair comparisons across programs and institutions. 
 
 ## We provide an imputed data set 
 
@@ -90,9 +96,7 @@ You may skip the rest of the vignette and simply incorporate the imputed data `c
 
 If the details are of interest to you, we start by conditioning the data to prepare it for imputation. 
 
-**Step 1.** Find all FYE students and terms.  
-
-We extract from `midfieldstudents` the IDs of all students whose matriculation major is FYE.  
+**Step 1.** Extract from `midfieldstudents` the IDs of all students whose matriculation major is FYE.  
 
 ```{r}
 fye_id <- midfieldstudents %>%
@@ -102,11 +106,10 @@ fye_id <- midfieldstudents %>%
   glimpse(.)
 ```
 
-`semi_join()`  return all rows from `midfieldterms` where there are matching values in `fye_id`, keeping just columns from `midfieldterms`.
+Extract from `midfieldterms` all the term data for these students. `semi_join(x, y)` returns all rows from x where there are matching values in y, keeping just columns from x.
 
 ```{r}
-all_fye_terms <- midfieldterms %>%
-  semi_join(., fye_id, by = "id") %>%
+all_fye_terms <- semi_join(midfieldterms, fye_id, by = "id") %>%
   select(., id, cip6, term) %>%
   arrange(., id, term) %>%
   glimpse(.)
@@ -114,7 +117,7 @@ all_fye_terms <- midfieldterms %>%
 
 **Step 2.** Subset the students who declare an engineering major after FYE.
 
-Keeping those terms in which FYE is the declared major, we arrange the rows by ID and descending term. The first row for each student is therefore the final term in which they were enrolled in FYE. 
+Keeping those terms in which FYE is the declared major, we arrange the rows by ID and *descending* term. Then, grouped by ID, each first row is a student's final FYE term, denoted `end_fye`. 
 
 ```{r}
 last_fye_terms <- all_fye_terms %>%
@@ -128,7 +131,7 @@ last_fye_terms <- all_fye_terms %>%
   glimpse(.)
 ```
 
-We add a column of the last FYE term to the `all_fye_terms` data frame and filter to keep only those terms later than that term. Arranging by ID and term, the first row for each student is therefore their first term after FYE. We keep only those students enrolled in engineering (starts with a "14"). 
+We add the column `end_fye` to the `all_fye_terms` data frame and filter to keep only later terms, i.e., `term > end_fye`. Arranging by ID and *ascending*  term and grouped by ID, each first row is a student's first term after FYE. Because this data frame denotes students transitioning to an engineering major, we filter to keep only those whose CIP starts with "14." 
 
 For these students, the predicted starting major is their declared engineering major after FYE. 
 
@@ -206,8 +209,8 @@ The procedure assumes the missing data are "missing at random" (MAR), that is, i
 
 Use `mice::md.pattern()` to see the pattern of missing data. As expected, all the missing values are in the `start` column. 
 
-```{r}
-md.pattern(mi_input)
+```{r mice-in}
+md.pattern(mi_input, plot = TRUE)
 ```
 
 Initialize parameters. 
@@ -257,7 +260,8 @@ load("R/sysdata.rda")
 Construct the data set after imputation, keeping ID and starting major only. Reformat the start major as a character. The data frame, `case_fye`, is the data mentioned previously provided with the midfieldr package if you prefer not to do your own imputation.
 
 ```{r}
-case_fye <- complete(mi_output) %>%
+mi_output_complete <- complete(mi_output)
+case_fye <- mi_output_complete %>%
   select(id, start) %>%
   mutate(., start = as.character(start)) %>%
   glimpse(.)
@@ -267,8 +271,8 @@ case_fye <- complete(mi_output) %>%
 
 Confirm there are no missing values. 
 
-```{r message = FALSE}
-md.pattern(case_fye)
+```{r mice-out, message = FALSE}
+md.pattern(mi_output_complete, plot = TRUE)
 ```
 
 Confirm that the start majors are all in engineering. 
