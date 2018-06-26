@@ -77,7 +77,7 @@ Note that FYE students are neither undecided nor undeclared. Their institutions 
 ## We provide an imputed data set 
 
 We impute these missing values using multiple imputation as 
-implemented in the [mice](https://stefvanbuuren.github.io/mice/) package (multivariate imputation via chained equations). The variables used to predict the missing values are institution, race, sex, and first-term 6-digit CIP codes. The imputed variable is starting major.  
+implemented in the [mice](https://stefvanbuuren.github.io/mice/) package (multivariate imputation via chained equations). The variables used to predict the missing values are institution, race, and sex.  
 
 The process does take time---about 30 seconds for imputing the missing values in our FYE data with 5992 observations, 5 variables, and 5 imputations. 
 
@@ -111,7 +111,6 @@ Extract from `midfieldterms` all the term data for these students. `semi_join(x,
 ```{r}
 all_fye_terms <- semi_join(midfieldterms, fye_id, by = "id") %>%
   select(., id, cip6, term) %>%
-  arrange(., id, term) %>%
   glimpse(.)
 ```
 
@@ -126,38 +125,44 @@ last_fye_terms <- all_fye_terms %>%
   group_by(., id) %>%
   filter(., row_number() == 1) %>%
   ungroup(.) %>%
-  select(., id, term) %>%
-  rename(., end_fye = term) %>%
+  select(., id, end_fye = term) %>%
   glimpse(.)
 ```
 
-We add the column `end_fye` to the `all_fye_terms` data frame and filter to keep only later terms, i.e., `term > end_fye`. Arranging by ID and *ascending*  term and grouped by ID, each first row is a student's first term after FYE. Because this data frame denotes students transitioning to an engineering major, we filter to keep only those whose CIP starts with "14." 
-
-For these students, the predicted starting major is their declared engineering major after FYE. 
+We join the column `end_fye` to the `all_fye_terms` data frame. `left_join(x, y)` returns all rows from x, and all columns from x and y. All multiple matches between x and y are returned.
 
 ```{r}
-fye_to_engr <- all_fye_terms %>%
-  left_join(., last_fye_terms, by = "id") %>%
+fye_to_engr <- left_join(all_fye_terms, last_fye_terms, by = "id")
+```
+
+Arranging by ID and *ascending*  term and grouped by ID, each first row is a student's first term after FYE. 
+
+```{r}
+fye_to_engr <- fye_to_engr %>%
   filter(., term > end_fye) %>%
   arrange(., id, term) %>%
   group_by(., id) %>%
   filter(., row_number() == 1) %>%
-  ungroup(.) %>%
+  ungroup(.)
+```
+
+Because this data frame denotes students transitioning to an engineering major, we filter to keep only those whose CIP starts with "14." For these students, the predicted starting major is their declared engineering major after FYE. 
+
+```{r}
+fye_to_engr <- fye_to_engr %>%
   filter(., str_detect(cip6, "^14")) %>%
-  select(., -term, -end_fye) %>%
-  rename(., start = cip6) %>%
+  select(., id, start = cip6) %>%
   glimpse(.)
 ```
 
 **Step 3.** The remaining FYE students have an unknown starting major. 
 
-Starting with the IDs of all students in FYE and removing the IDs of students who have declared an engineering major after FYE yields the IDs of students whose starting major will have to be imputed. 
+Starting with the IDs of all students in FYE and removing the IDs of students who have declared an engineering major after FYE yields the IDs of students whose starting major will have to be imputed. `anti_join(x, y)` returns all rows from x where there are not matching values in y, keeping just columns from x.
 
 For these students, the predicted starting major after FYE is assumed missing (NA). 
 
 ```{r}
-fye_to_nonengr <- fye_id %>%
-  anti_join(., fye_to_engr, by = "id") %>%
+fye_to_nonengr <- anti_join(fye_id, fye_to_engr, by = "id") %>%
   mutate(start = NA_character_) %>%
   glimpse()
 ```
@@ -171,23 +176,25 @@ fye_start <- bind_rows(fye_to_engr, fye_to_nonengr) %>%
   glimpse()
 ```
 
-We add institution, race, and sex for the imputation. We assume that these variables are appropriate predictors. 
+Extract from `midfieldstudents` the institution names by student ID. `semi_join(x, y)` returns all rows from x where there are matching values in y, keeping just columns from x.
 
 ```{r}
-id_inst <- midfieldstudents %>%
+inst_id <- semi_join(midfieldstudents, fye_start, by = "id") %>%
   select(., id, institution) %>%
   unique(.) %>%
-  semi_join(., fye_start, by = "id") %>%
   glimpse(.)
+```
 
-fye_start <- fye_start %>%
-  left_join(., id_inst, by = "id") %>%
+Join the institutions to the FYE starters data frame and add race and sex using `race_sex_join()`. We assume that these variables are appropriate predictors. 
+
+```{r}
+fye_start <- left_join(fye_start, inst_id, by = "id") %>%
   race_sex_join(.) %>%
   select(id, institution, race, sex, start) %>%
   glimpse(.)
 ```
 
-The variables used for predicting and imputing have to be factors.  The resulting data frame `mi_input` is ready to be operated on by mice. 
+Convert the character variables to factors to use with mice. The resulting data frame `mi_input` is ready to be operated on by mice. 
 
 ```{r}
 mi_input <- fye_start %>%
@@ -216,18 +223,18 @@ md.pattern(mi_input, plot = TRUE)
 Initialize parameters. 
 
 ```{r}
-init <- mice(mi_input, maxit = 0)
-meth <- init$method
+init  <- mice(mi_input, maxit = 0)
+meth  <- init$method
 predM <- init$predictorMatrix
 ```
 
 Identify variables not used as predictors. 
 
 ```{r}
-predM[, c("id")] <- 0
+predM[ , c("id")] <- 0
 ```
 
-Assign variables not imputed. 
+Assign variables not imputed. (In this case, this step could be skipped because a mice default is to not impute variables with zero missing values.) 
 
 ```{r}
 meth[c("id", "institution", "race", "sex")] <- ""
@@ -247,7 +254,7 @@ mi_output <- mice(
   method = meth,
   predictorMatrix = predM,
   m = 5,
-  printFlag = TRUE, 
+  printFlag = TRUE,
   seed = 20180624
 )
 ```
@@ -261,6 +268,7 @@ Construct the data set after imputation, keeping ID and starting major only. Ref
 
 ```{r}
 mi_output_complete <- complete(mi_output)
+
 case_fye <- mi_output_complete %>%
   select(id, start) %>%
   mutate(., start = as.character(start)) %>%
