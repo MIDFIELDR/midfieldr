@@ -204,10 +204,10 @@ The mice package [@vanbuuren2011] implements multivariate imputation by chained 
 
 The procedure assumes the missing data are "missing at random" (MAR), that is, independent of the variables used to impute the missing values. This is the rationale for using data only from FYE institutions to impute the missing values---the existence if the missing data does depend on the institution type, FYE or non-FYE. Within the FYE data itself, however, we assume that the imputed starting majors are missing at random.  
 
-Confirm that data are  missing. 
+Use `mice::md.pattern()` to see the pattern of missing data. As expected, all the missing values are in the `start` column. 
 
 ```{r}
-sapply(mi_input, function(x) sum(is.na(x)))
+md.pattern(mi_input)
 ```
 
 Initialize parameters. 
@@ -239,13 +239,13 @@ meth[c("start")] <- "polyreg"
 Run the multiple (m = 5) imputations. The seed is set for reproducible results.  On my Windows machine, this imputation takes about 30 seconds. 
 
 ```{r warning = FALSE, eval = FALSE}
-set.seed(20180624)
 mi_output <- mice(
   mi_input,
   method = meth,
   predictorMatrix = predM,
   m = 5,
-  printFlag = TRUE
+  printFlag = TRUE, 
+  seed = 20180624
 )
 ```
 
@@ -267,8 +267,8 @@ case_fye <- complete(mi_output) %>%
 
 Confirm there are no missing values. 
 
-```{r}
-sapply(case_fye, function(x) sum(is.na(x)))
+```{r message = FALSE}
+md.pattern(case_fye)
 ```
 
 Confirm that the start majors are all in engineering. 
