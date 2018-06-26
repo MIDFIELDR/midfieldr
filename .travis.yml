@@ -1,26 +1,14 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-language: r
-cache: packages
+language: R
 sudo: false
+cache: packages
 
 r:
-  - oldrel
-  - release
-  - devel
-
-r_packages:
-  - covr
-
-r_github_packages:
-  - codecov/example-r
-  - MIDFIELDR/midfielddata
+- 3.5
+- oldrel
+- release
+- devel
 
 after_success:
-  - Rscript -e "library(covr);codecov()"
-
-env:
-  - TEST_SUITE=units
-  - TEST_SUITE=integration
-
-script: "bundle exec rake test:$TEST_SUITE"
+  - Rscript -e 'covr::codecov()'
