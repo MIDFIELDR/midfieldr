@@ -118,6 +118,22 @@ NULL
 
 
 
+
+#' Imputed starting majors for FYE students
+#'
+#' Some US institutions have first year engineering (FYE) programs---typically a common first year curriculum that is a prerequisite for declaring an engineering major. For some persistence metrics, we have to determine what we call a "starting major" for FYE students---the predicted engineering program such as Civil, Electrical, or Mechanical, the student would have declared had they not been required to enroll in FYE.
+#'
+#' @format A data frame with columns:
+#' \describe{
+#'  \item{id}{Unique, anonymized MIDFIELD student identifier.}
+#'  \item{start}{Imputed starting major (6-digit CIP code) of FYE students. }
+#' }
+#' @examples
+#' case_stickiness
+"case_fye"
+
+
+
 #' Named colors from the ColorBrewer palettes
 #'
 #' Shorthand names are assigned to selected colors from the

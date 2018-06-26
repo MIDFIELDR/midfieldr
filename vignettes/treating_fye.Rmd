@@ -69,20 +69,18 @@ In the second instance, we have students who, after FYE, do not declare an engin
 ## We provide an imputed data set 
 
 We impute these missing values using multiple imputation as 
-implemented in the [mice](https://stefvanbuuren.github.io/mice/) package (multivariate imputation via chained equations). The variables used to predict the missing values are institution, race, sex, and first-term 6-digit CIP codes. The imputed variables are starting major and race, where the race value = "Unknown" is also treated as missing data. 
+implemented in the [mice](https://stefvanbuuren.github.io/mice/) package (multivariate imputation via chained equations). The variables used to predict the missing values are institution, race, sex, and first-term 6-digit CIP codes. The imputed variable is starting major.  
 
 The process does take time---about 30 seconds for imputing the missing values in our FYE data with 5992 observations, 5 variables, and 5 imputations. 
 
-If you are working with the midfieldr datasets, you can skip doing the imputation yourself if you wish. We've done it for you and saved the results. We provide a replacement data set `case_fye` with the the ID and predicted starting major of all FYE students in the midfieldr data sets.  
+If you are working with the midfieldr datasets, you can skip doing the imputation yourself if you wish. We've done it for you and saved the results. We provide a replacement data set `case_fye` with the ID and predicted starting major of all FYE students in the midfieldr data sets.  
 
-To access the data, 
+We use these data in the package vignettes whenever an engineering starting major is required. You can do the same.  To access the data, 
 
 ```{r}
 data("case_fye")
 glimpse(case_fye)
 ```
-
-We use these data in the package vignettes whenever an engineering starting major is required. You can do the same. 
 
 ## Preparing the FYE data for imputation
 
@@ -130,6 +128,7 @@ last_fye_terms <- all_fye_terms %>%
 
 We add a column of the last FYE term to the `all_fye_terms` data frame and filter to keep only those terms later than that term. Arranging by ID and term, the first row for each student is therefore their first term after FYE. We keep only those students enrolled in engineering (starts with a "14"). 
 
+For these students, the predicted starting major is their declared engineering major after FYE. 
 
 ```{r}
 fye_to_engr <- all_fye_terms %>%
@@ -145,11 +144,11 @@ fye_to_engr <- all_fye_terms %>%
   glimpse(.)
 ```
 
-For these students, the predicted starting major is their declared engineering major after FYE. 
-
 **Step 3.** The remaining FYE students have an unknown starting major. 
 
 Starting with the IDs of all students in FYE and removing the IDs of students who have declared an engineering major after FYE yields the IDs of students whose starting major will have to be imputed. 
+
+For these students, the predicted starting major after FYE is assumed missing (NA). 
 
 ```{r}
 fye_to_nonengr <- fye_id %>%
@@ -157,8 +156,6 @@ fye_to_nonengr <- fye_id %>%
   mutate(start = NA_character_) %>%
   glimpse()
 ```
-
-For these students, the predicted starting major after FYE is assumed missing (NA). 
 
 **Step 4.** Combine the two data frames and finish the data preparation.  
 
@@ -185,7 +182,7 @@ fye_start <- fye_start %>%
   glimpse(.)
 ```
 
-The variables used for predicting and imputing have to be factors. 
+The variables used for predicting and imputing have to be factors.  The resulting data frame `mi_input` is ready to be operated on by mice. 
 
 ```{r}
 mi_input <- fye_start %>%
@@ -198,8 +195,6 @@ mi_input <- fye_start %>%
   ) %>%
   glimpse(.)
 ```
-
-The data frame `mi_input` is ready to be operated on by mice. 
 
 ## Imputing missing data
 
@@ -257,20 +252,21 @@ mi_output <- mice(
 load("R/sysdata.rda")
 ```
 
-Construct the data set after imputation, keeping ID and starting major only.
+Construct the data set after imputation, keeping ID and starting major only. Reformat the start major as a character. The data frame, `case_fye`, is the data mentioned previously provided with the midfieldr package if you prefer not to do your own imputation.
 
 ```{r}
 case_fye <- complete(mi_output) %>%
   select(id, start) %>%
-  glimpse()
-```
-
-Reformat the factors as characters. 
-
-```{r}
-case_fye <- case_fye %>%
   mutate(., start = as.character(start)) %>%
   glimpse(.)
+```
+
+## Assessing the imputation. 
+
+Confirm there are no missing values. 
+
+```{r}
+sapply(case_fye, function(x) sum(is.na(x)))
 ```
 
 Confirm that the start majors are all in engineering. 
@@ -282,16 +278,6 @@ case_fye %>%
   unique(.) %>%
   sort(.)
 ```
-
-Confirm there are no missing values. 
-
-```{r}
-sapply(case_fye, function(x) sum(is.na(x)))
-```
-
-This data frame, `case_fye`, is the data mentioned previously in the midfieldr package for use if you prefer not to do your own imputation. 
-
-## Assessing the imputation. 
 
 To assess the imputation, the FYE starting majors with and without the imputed values. 
 
