@@ -225,7 +225,7 @@ Before structuring the data for graphing, we select the populations we are inter
 We use `filter()` (a [dplyr](http://dplyr.tidyverse.org) function) to keep all rows except those in which race is Unknown, International, or Other.  
 
 ```{r}
-stickiness_multiway <- stickiness %>%
+stickiness_mw <- stickiness %>%
   filter(., !race %in% c("Unknown", "International", "Other")) %>%
   filter(., !sex %in% "Unknown")
 ```
@@ -242,22 +242,22 @@ We use:
 
 ```{r}
 # create the race_sex variable
-stickiness_multiway <- stickiness_multiway %>%
+stickiness_mw <- stickiness_mw %>%
   mutate(., race_sex = str_c(race, sex, sep = " ")) %>%
   select(., program, race_sex, stick)
 
 # check the result
-stickiness_multiway
+stickiness_mw
 ```
 
 `multiway_order()` converts the character variables `program` and `race_sex` into *factors* and orders the levels of the two factors by the relevant stickiness medians. `glimpse()` shows that the two categorical variables are now factors. Open the help page by running `?multiway_order()`.
 
 ```{r}
 # convert the data to a multiway structure
-stickiness_multiway <- multiway_order(stickiness_multiway)
+stickiness_mw <- multiway_order(stickiness_mw)
 
 # check the result
-stickiness_multiway
+stickiness_mw
 ```
 
 ## Graphing the multiway
@@ -272,7 +272,7 @@ By using `multiway_order()` to condition the data, the rows and panels of the mu
 - `labs()` assign axis labels 
 
 ```{r fig1, fig.asp = 2/1.6}
-ggplot(stickiness_multiway, aes(x = stick, y = race_sex)) +
+ggplot(stickiness_mw, aes(x = stick, y = race_sex)) +
   facet_wrap(~program, ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +

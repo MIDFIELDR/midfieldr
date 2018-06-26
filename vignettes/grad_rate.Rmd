@@ -1,0 +1,613 @@
+---
+title: "Graduation rate metric"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Graduation rate metric}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: ../inst/REFERENCES.bib
+---
+
+```{r setup, echo = FALSE, message = FALSE, purl = FALSE}
+knitr::opts_knit$set(root.dir = "../")
+knitr::opts_chunk$set(
+  echo = TRUE, # varies from one Rmd to another
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = TRUE,
+  purl = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center",
+  fig.path = "../man/figures/grad-rate-"
+)
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+# options(tibble.print_min = 8L, tibble.print_max = 8L)
+
+# normally, purl is FALSE. But in some code chunks, I want purl = TRUE so that the code in the vignette is executed to pass R CMD check. These next few lines set that up. In the code chunk header, add opts.label = 'dopurl'
+knitr::knit_hooks$set(purl = knitr::hook_purl)
+knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
+```
+
+In the US, the Integrated Postsecondary Education Data System (IPEDS) defines "graduation rate" as the fraction of full-time, first-time, degree/certificate-seeking undergraduate students in a particular year who complete the program in which they matriculate within 150 percent of normal time, i.e., 6 years for a 4-year program [@ipeds2018]. 
+
+The IPEDS definition excludes students who begin college part-time, who enroll mid-year, and who transfer from one institution to another. The American Council on Education (ACE) estimates that this definition of graduation  rate may exclude up to 60% of students at 4-year institutions [@ace2011]. 
+
+So why use the metric? As Cook and Hartle state, 
+
+> So given their complexity, do college graduation rates really matter? In fact, they do because in the eyes of the public, policy makers, and the media, they provide a clear, simple, and logical---if often misleading---number.
+
+So with these caveats in mind, we provide the tools for determining  program graduation rates per the IPEDS definition. 
+
+## First year engineering
+
+Some US institutions have first year engineering (FYE) programs---typically a common first year curriculum that is a prerequisite for declaring an engineering major. To compute graduation rates, we have to predict the engineering major---Civil, Electrical, Mechanical, etc.---a student would have declared in the absence of the FYE prerequisite. Students are then counted among that major's starters.   
+
+Predicting the starting major of FYE students takes one of two forms. 
+
+- Many students, upon completing an FYE program, transition to an engineering major. That major is our "start" major.   
+- The remaining students leave engineering. We treat their starting majors as missing data and impute their values. 
+
+We impute these missing values using the [mice](https://stefvanbuuren.github.io/mice/) package (multivariate imputation via chained equations). The variables used to predict the missing values are   institution, race, sex, and first-term 6-digit CIP codes. The imputed variables  are starting major and race if unknown. 
+
+
+ 
+
+The process can be time consuming so we have provided a 
+
+
+
+
+
+
+<!-- # variables not used as predictors -->
+<!-- predM[ , c("id", "start")] <- 0  -->
+
+<!-- # variables not imputed -->
+<!-- meth[c("institution", "sex", "id", "cip6")] <- "" -->
+
+<!-- # methods for imputing the missing values -->
+<!-- # polyreg for categorical with > 2 levels -->
+<!-- meth[c("race", "start")]  <- "polyreg"   -->
+
+
+
+
+## next
+
+
+```{r}
+# prepare the first term engineering data for imputation
+library(tidyverse)
+library(midfieldr)
+library(midfielddata)
+
+# extract engineering majors from midfieldterms
+# # add race and sex from midfieldstudents
+all_engr <- midfieldterms %>%
+  filter(str_detect(cip6, "^14")) %>%
+  arrange(id, term) %>%
+  select(id, institution, cip6, term) %>%
+  race_sex_join() %>%
+  glimpse()
+
+# FYE unique IDs
+fye_id <- all_engr %>%
+  filter(cip6 %in% c("14XXXX", "14YYYY")) %>%
+  select(id) %>%
+  unique() %>%
+  glimpse()
+
+# FYE term data all terms
+fye <- semi_join(all_engr, fye_id, by = "id") %>%
+  glimpse()
+
+# here are my 160 problems --------------------------------------
+# possibly omit first term if not an FYE (note to russell)
+fye_160_id <- fye %>%
+  arrange(id, term) %>%
+  group_by(id) %>%
+  filter(row_number() == 1) %>%
+  ungroup() %>%
+  filter(!cip6 %in% c("14XXXX", "14YYYY")) %>%
+  select(id)
+
+# find the term in which FYE first appears
+first_fye_term <- semi_join(fye, fye_160_id, by = "id") %>%
+  filter(cip6 %in% c("14XXXX", "14YYYY")) %>%
+  arrange(id, term) %>%
+  group_by(id) %>%
+  filter(row_number() == 1) %>%
+  ungroup() %>%
+  select(id, term) %>%
+  glimpse()
+
+fye_160 <- fye[FALSE, ]
+for (jj in 1:160) {
+  fye_jj <- fye %>%
+    filter(id == first_fye_term[["id"]][jj]) %>%
+    filter(term >= first_fye_term[["term"]][jj])
+  fye_160 <- bind_rows(fye_160, fye_jj)
+}
+glimpse(fye_160)
+
+check_160 <- fye_160 %>%
+  arrange(id, term) %>%
+  group_by(id) %>%
+  filter(row_number() == 1) %>%
+  ungroup() %>%
+  glimpse()
+
+# remove these IDs from FYE then bind new rows
+rev_fye <- anti_join(fye, fye_160_id) %>%
+  bind_rows(., fye_160)
+
+fye <- rev_fye %>%
+  glimpse()
+
+# check first entry for each ID
+# check_fye <- fye %>%
+# 	arrange(id, term) %>%
+# 	group_by(id) %>%
+#   filter(row_number() == 1) %>%
+#   ungroup() %>%
+# 	glimpse()
+# unique(check_fye$cip6)
+
+# -----------------------------------------------------------------
+
+
+
+glimpse(fye)
+case_fye <- fye
+# user data files
+# devtools::use_data(
+# 	case_fye,
+# 	pkg = ".",
+# 	internal  = FALSE,
+# 	overwrite = TRUE,
+# 	compress  = "bzip2")
+```
+
+
+```{r}
+
+# FYE transition to engr, where first cip6 after FYE is engr
+fye_to_engr <- fye %>%
+  filter(!cip6 %in% c("14XXXX", "14YYYY")) %>%
+  arrange(id, term) %>%
+  group_by(id) %>%
+  filter(row_number() == 1) %>%
+  ungroup() %>%
+  filter(str_detect(cip6, "^14")) %>%
+  select(-term) %>%
+  unique() %>%
+  rename(start = cip6) %>%
+  select(id, institution, race, sex, start) %>%
+  glimpse()
+
+# fye who do not transition to engr, start assumed NA to be imputed
+fye_to_engr_id <- fye_to_engr["id"]
+fye_to_nonengr <- anti_join(fye, fye_to_engr_id, by = "id") %>%
+  select(-cip6, -term) %>%
+  unique() %>%
+  mutate(start = NA_character_) %>%
+  glimpse()
+
+# Non-FYE engineering start major is known
+non_fye <- anti_join(all_engr, fye_id, by = "id") %>%
+  arrange(id, term) %>%
+  group_by(id) %>%
+  filter(row_number() == 1) %>%
+  ungroup() %>%
+  filter(str_detect(cip6, "^14")) %>% # ensure first term in engr
+  select(-term) %>%
+  unique() %>%
+  rename(start = cip6) %>%
+  select(id, institution, race, sex, start) %>%
+  glimpse()
+```
+
+
+```{r}
+# bind rows of all engineering starters
+starters <- fye_to_engr %>%
+  bind_rows(., fye_to_nonengr) %>%
+  bind_rows(., non_fye) %>%
+  arrange(institution, start, sex, race, id) %>%
+  glimpse()
+
+
+
+
+# extract first term for every ID with the actual first cip6
+first_term <- all_engr %>%
+  arrange(id, term) %>%
+  group_by(id) %>%
+  filter(row_number() == 1) %>%
+  ungroup() %>%
+  select(-term) %>%
+  select(id, institution, race, sex, cip6) %>%
+  glimpse()
+
+# join starters and first term
+starters <- starters %>%
+  full_join(., first_term, by = c("id", "institution", "race", "sex")) %>%
+  select(id, institution, race, sex, cip6, start)
+
+# race has some unknowns, convert all unknown to NA
+starters <- starters %>%
+  mutate(id = str_replace(id, "Unknown", NA_character_)) %>%
+  mutate(institution = str_replace(institution, "Unknown", NA_character_)) %>%
+  mutate(race = str_replace(race, "Unknown", NA_character_)) %>%
+  mutate(sex = str_replace(sex, "Unknown", NA_character_)) %>%
+  arrange(institution, start, sex, race, id) %>%
+  glimpse()
+
+
+# compre cip6 and start
+cip6 <- starters$cip6
+start <- starters$start
+compare <- which(cip6 != start)
+delta <- starters[compare, ] %>% glimpse()
+unique(delta$cip6)
+unique(delta$start)
+```
+
+Prep for imputing. 
+
+```{r}
+# try removing all non-fye students
+fye_inst_only <- semi_join(starters, fye_id, by = "id") %>%
+  glimpse()
+
+
+# check for missing values
+# dat <- starters
+dat <- fye_inst_only
+sapply(dat, function(x) sum(is.na(x)))
+
+# need factors for imputation
+dat <- dat %>%
+  mutate(
+    institution = as.factor(institution),
+    start = as.factor(start),
+    race = as.factor(race),
+    sex = as.factor(sex)
+  )
+
+dat
+```
+
+
+Try mice to be able to hold on to ID and cip6. 
+
+
+```{r}
+
+library(tictoc)
+tic()
+# Impute and save
+library(mice)
+init <- mice(dat, maxit = 0)
+meth <- init$method
+predM <- init$predictorMatrix
+
+# variables not used as predictors
+predM[, c("id", "start", "institution")] <- 0
+
+# variables not imputed
+meth[c("institution", "sex", "id", "cip6")] <- ""
+
+# methods for imputing the missing values
+# polyreg for categorical with > 2 levels
+meth[c("race", "start")] <- "polyreg"
+
+# run the multiple imputations
+set.seed(20180624)
+mice_start <- mice(
+  dat,
+  method = meth,
+  predictorMatrix = predM,
+  m = 10,
+  printFlag = TRUE
+)
+
+# return the characters
+case_engr_start <- complete(mice_start) %>%
+  mutate(
+    institution = as.character(institution),
+    start = as.character(start),
+    race = as.character(race),
+    sex = as.character(sex)
+  )
+toc()
+# user data files
+# devtools::use_data(
+# 	case_engr_start,
+# 	pkg = ".",
+# 	internal  = FALSE,
+# 	overwrite = TRUE,
+# 	compress  = "bzip2")
+```
+
+
+```{r}
+data(case_engr_start)
+sapply(case_engr_start, function(x) sum(is.na(x)))
+glimpse(case_engr_start)
+```
+
+
+```{r}
+Hmisc::describe(imputed)
+sort(unique(imputed$cip6))
+sort(unique(imputed$start))
+
+
+# compre cip6 and start
+cip6 <- imputed$cip6
+start <- imputed$start
+compare <- which(cip6 != start)
+delta <- imputed[compare, ] %>% glimpse()
+unique(delta$cip6)
+unique(delta$start)
+
+
+
+# FYE term data all terms
+check_results <- semi_join(starters, fye_id, by = "id") %>%
+  filter(cip6 == start) %>%
+  glimpse()
+library(skimr)
+skim(check_results)
+
+check_id <- check_results$id
+check_id
+
+save(check_id, file = "admin/2018-06-24-check-id.rds")
+
+
+
+
+
+for (jj in seq_along(check_id)) {
+  these_students <- fye %>%
+    filter(id == check_id[jj]) %>%
+    arrange(term) %>%
+    print()
+}
+
+jj <- 2
+check_student <- midfieldstudents %>%
+  select(id, institution, cip6, term_enter, transfer, sex, race) %>%
+  filter(id == check_id[jj]) %>%
+  glimpse()
+check_term <- midfieldterms %>%
+  select(id, institution, cip6, term, level, standing) %>%
+  filter(id == check_id[jj]) %>%
+  print()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+library(Hmisc) # aregImpute()
+
+
+# convert to factors for imputation
+starters_fct <- starters %>%
+  arrange(institution, start, sex, race, id) %>%
+  mutate(institution = as.factor(institution)) %>%
+  mutate(start = as.factor(start)) %>%
+  mutate(race = as.factor(race)) %>%
+  mutate(sex = as.factor(sex))
+
+# remove cip6 (not used in MI), convert to factors for MI
+df <- starters_fct %>%
+  select(-cip6)
+
+# imputation using Hmisc::aregImpute()
+impute_out <- aregImpute(
+  ~institution + race + sex + start,
+  data = df,
+  nk = 3,
+  n.impute = 5, # 22 works
+  tlinear = FALSE,
+  x = TRUE, # place the imputed values in the output df
+  pr = FALSE # suppress printing iterations
+)
+
+
+impute_out["call"]
+impute_out["formula"]
+impute_out["match"]
+impute_out["fweighted"]
+impute_out["n"]
+impute_out["p"]
+impute_out["na"]
+impute_out["nna"]
+impute_out["type"]
+impute_out["tlinear"]
+impute_out["nk"]
+impute_out["cat.levels"]
+impute_out["df"]
+impute_out["n.impute"]
+impute_out["imputed"]
+impute_out["x"]
+impute_out["rsq"]
+
+
+# output we want is impute_out$x, convert double to integers
+imputed <- impute_out$x %>%
+  as.tibble() %>%
+  mutate(institution = as.integer(institution)) %>%
+  mutate(race = as.integer(race)) %>%
+  mutate(sex = as.integer(sex)) %>%
+  mutate(start = as.integer(start)) %>%
+  glimpse()
+
+impute_out$cat.levels$institution
+impute_out$cat.levels$race
+impute_out$cat.levels$sex
+impute_out$cat.levels$start
+
+skim(imputed)
+```
+
+```{r}
+library(gdata) # mapLevels()
+
+
+
+# gdata::maplevel() to reassign level to integers
+mapLevels(imputed$institution) <- mapLevels(impute_out$cat.levels$institution)
+mapLevels(imputed$race) <- mapLevels(impute_out$cat.levels$race)
+mapLevels(imputed$sex) <- mapLevels(impute_out$cat.levels$sex)
+mapLevels(imputed$start) <- mapLevels(impute_out$cat.levels$start)
+
+imputed <- imputed %>%
+  arrange(institution, start, sex, race)
+imputed %>% glimpse()
+
+skim(starters)
+skim(df)
+skim(imputed)
+```
+
+
+
+
+
+
+
+
+
+
+```{r}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # back to characters
+# imputed <- imputed %>%
+# 	arrange(institution, start, sex, race)	%>%
+# 	mutate(institution = as.character(institution))%>%
+# 	mutate(race = as.character(race))%>%
+# 	mutate(sex = as.character(sex))%>%
+# 	mutate(start = as.character(start))
+
+# bb <- starters_fct %>%
+# 	arrange(institution, race, sex, start) %>%
+# 	select(id, cip6) %>%
+# 	glimpse()
+# dd <- imputed %>%
+# 	arrange(institution, race, sex, start) %>%
+# 	glimpse()
+# d <- bind_cols(bb, dd) %>%
+# 	mutate(institution = as.character(institution))%>%
+# 	mutate(race = as.character(race)) %>%
+# 	mutate(sex = as.character(sex)) %>%
+# 	mutate(start = as.character(start)) %>%
+# 	select(id, institution, race, sex, cip6, start) %>%
+# 	glimpse()
+#
+#
+#
+# bb <- sort(d$cip6)
+# dd <- sort(d$start)
+# ff <- which(bb != dd)
+# length(ff)
+# d[ff, ]["cip6"] %>%  unique()
+```
+
+
+Possibly I want to leave the variables a factors before joining
+
+```{r}
+glimpse(starters)
+glimpse(imputed)
+
+starters <- starters %>%
+  arrange(institution, race, sex)
+
+imputed <- imputed %>%
+  arrange(institution, race, sex)
+
+
+d_combined <- left_join(starters, imputed, by = c("institution", "race", "sex"))
+d_combined
+str(d_combined)
+```
+
+
+
+
+
+
+<!-- In the `midfielddata` datasets, fye programs have the 6-digit CIP codes "14XXXX" and "14YYYY".  -->
+ 
+
+## Getting started 
+
+```{r message = FALSE}
+# packages used
+library(midfieldr)
+library(seplyr)
+library(tidyverse)
+```
+
+In this article, we show you how to use midfieldr functions to compute program stickiness. Our workflow is: 
+
+- select the programs 
+- count the students ever enrolled
+- count the students graduating  
+- compute stickiness 
+- create a multiway graph  
+
+
+
+
+## References

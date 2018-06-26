@@ -19,6 +19,7 @@
   'install.packages(&quot;midfielddata&quot;, repos = &quot;https://MIDFIELDR.github.io/drat/&quot;, type = &quot;source&quot;)'. 
   The size of the 'midfielddata' package is approximately 31 Mb. This work is  
   supported by a grant from the US National Science Foundation (EEC 1545667). ">
+<meta property="og:image" content="/logo.png">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -105,7 +106,7 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <div id="midfieldr" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#midfieldr" class="anchor"></a>midfieldr <a href="https://engineering.purdue.edu/MIDFIELD" target="blank"><img src="reference/figures/midfieldcut.png" align="right"></a>
+<a href="#midfieldr" class="anchor"></a>midfieldr <img src="reference/figures/logo.png" align="right">
 </h1></div>
 
 <p>A package for investigating student record data provided by registrars at US universities participating in the MIDFIELD project.</p>
@@ -253,17 +254,17 @@
 <h3 class="hasAnchor">
 <a href="#graph-the-results" class="anchor"></a>Graph the results</h3>
 <p>To prepare the stickiness data for graphing, we remove ambiguous race levels (Unknown, International, or Other) and then combine race and sex into a single variable.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">stickiness_mw_data &lt;-<span class="st"> </span>stickiness <span class="op">%&gt;%</span></a>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">stickiness_mw &lt;-<span class="st"> </span>stickiness <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb13-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(., <span class="op">!</span>race <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span>)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb13-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(., <span class="op">!</span>sex <span class="op">%in%</span><span class="st"> "Unknown"</span>) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb13-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>(., <span class="dt">race_sex =</span> <span class="kw">paste</span>(race, sex))</a></code></pre></div>
 <p>We graph these results in a <em>multiway dot plot</em> <span class="citation">(Cleveland 1993)</span>, a display type based on a data structure of two categorical variables (program and race/ethnicity/sex) and one quantitative variable (stickiness).</p>
 <p><code><a href="reference/multiway_order.html">multiway_order()</a></code> converts the two categorical variables to factors and orders their levels by median stickiness.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">stickiness_mw_data &lt;-<span class="st"> </span>stickiness_mw_data <span class="op">%&gt;%</span></a>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">stickiness_mw &lt;-<span class="st"> </span>stickiness_mw <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb14-2" data-line-number="2"><span class="st">  </span><span class="kw">select</span>(., program, race_sex, stick) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb14-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="reference/multiway_order.html">multiway_order</a></span>(.)</a></code></pre></div>
-<p>We use conventional ggplot2 functions to graph stickiness in a multiway dot plot. We also apply our own <code>midfield_theme()</code> to edit the visual properties of the graph.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">ggplot</span>(stickiness_mw_data, <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> race_sex)) <span class="op">+</span></a>
+<p>We use conventional ggplot2 functions to graph stickiness in a multiway dot plot. We also apply our own <code><a href="reference/utils_graph.html">theme_midfield()</a></code> to edit the visual properties of the graph.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">ggplot</span>(stickiness_mw, <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> race_sex)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>program, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb15-4" data-line-number="4"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">"Stickiness"</span>, <span class="dt">y =</span> <span class="st">""</span>) <span class="op">+</span></a>

@@ -84,8 +84,8 @@ We use:
 ```{r}
 # combine two variables into one
 stickiness <- case_stickiness %>%
-  mutate(race_sex = stringr::str_c(race, sex, sep = " ")) %>%
-  select(program, race_sex, stick)
+  mutate(., race_sex = stringr::str_c(race, sex, sep = " ")) %>%
+  select(., program, race_sex, stick)
 
 glimpse(stickiness)
 ```
@@ -110,7 +110,7 @@ Optionally, using the `medians` argument, the function returns the median values
 ```{r}
 # return the median stickiness value for both categories
 df <- multiway_order(stickiness, medians = TRUE) %>%
-  arrange(program, race_sex)
+  arrange(., program, race_sex)
 df
 ```
 
@@ -171,8 +171,8 @@ Starting with the example data, the first thing to do before tabulating is to re
 
 ```{r}
 stickiness_table <- case_stickiness %>%
-  mutate(stick = round(stick, 2)) %>%
-  arrange(program, sex, race)
+  mutate(., stick = round(stick, 2)) %>%
+  arrange(., program, sex, race)
 ```
 
 In many cases we might stop here and print the table for discussion purposes. 
@@ -196,16 +196,16 @@ Were to include a table in a publication, we might choose to
 
 ```{r}
 stickiness_table <- stickiness_table %>%
-  select(program, race, sex, stick) %>%
-  mutate(program = str_replace(program, " Engineering", "")) %>%
-  select(
+  select(., program, race, sex, stick) %>%
+  mutate(., program = str_replace(program, " Engineering", "")) %>%
+  select(.,
     "Program" = program,
     "Race" = race,
     "Sex" = sex,
     "Stickiness" = stick
   ) %>%
-  spread(Program, Stickiness) %>%
-  arrange(Sex, Race)
+  spread(., Program, Stickiness) %>%
+  arrange(., Sex, Race)
 ```
 
 And print the table to our output document. 

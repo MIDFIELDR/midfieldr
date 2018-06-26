@@ -52,7 +52,6 @@ unpack_data <- function(x = data_bits, bit, power10 = 0, decimals = 0) {
 
 # midfieldr <a href="https://engineering.purdue.edu/MIDFIELD" target="blank"><img src="man/figures/midfieldcut.png" align="right"/></a>
 
-
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/midfieldr)](http://cran.r-project.org/package=midfieldr)
 [![Build Status](https://travis-ci.org/MIDFIELDR/midfieldr.svg?branch=master)](https://travis-ci.org/MIDFIELDR/midfieldr)
 [![Coverage Status](https://img.shields.io/codecov/c/github/MIDFIELDR/midfieldr/master.svg)](https://codecov.io/github/MIDFIELDR/midfieldr?branch=master)
@@ -236,7 +235,7 @@ For a discussion of each step in greater detail, see the [Stickiness metric](sti
 To prepare the stickiness data for graphing, we remove ambiguous race levels (Unknown, International, or Other) and then combine race and sex into a single variable. 
 
 ```{r prep-data}
-stickiness_mw_data <- stickiness %>%
+stickiness_mw <- stickiness %>%
   filter(., !race %in% c("Unknown", "International", "Other")) %>%
   filter(., !sex %in% "Unknown") %>%
   mutate(., race_sex = paste(race, sex))
@@ -247,15 +246,15 @@ We graph these results in a *multiway dot plot* [@cleveland1993], a display type
 `multiway_order()` converts the two categorical variables to factors and orders their levels by median stickiness.
 
 ```{r multiway-order}
-stickiness_mw_data <- stickiness_mw_data %>%
+stickiness_mw <- stickiness_mw %>%
   select(., program, race_sex, stick) %>%
   multiway_order(.)
 ```
 
-We use conventional ggplot2 functions to graph stickiness in a multiway dot plot. We also apply our own `midfield_theme()` to edit the visual properties of the graph.
+We use conventional ggplot2 functions to graph stickiness in a multiway dot plot. We also apply our own `theme_midfield()` to edit the visual properties of the graph.
 
 ```{r fig1, fig.asp = 1.6/1.6}
-ggplot(stickiness_mw_data, aes(x = stick, y = race_sex)) +
+ggplot(stickiness_mw, aes(x = stick, y = race_sex)) +
   facet_wrap(~program, ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +

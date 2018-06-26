@@ -252,7 +252,7 @@ levels (Unknown, International, or Other) and then combine race and sex
 into a single variable.
 
 ``` r
-stickiness_mw_data <- stickiness %>%
+stickiness_mw <- stickiness %>%
   filter(., !race %in% c("Unknown", "International", "Other")) %>%
   filter(., !sex %in% "Unknown") %>%
   mutate(., race_sex = paste(race, sex))
@@ -267,17 +267,17 @@ display type based on a data structure of two categorical variables
 orders their levels by median stickiness.
 
 ``` r
-stickiness_mw_data <- stickiness_mw_data %>%
+stickiness_mw <- stickiness_mw %>%
   select(., program, race_sex, stick) %>%
   multiway_order(.)
 ```
 
 We use conventional ggplot2 functions to graph stickiness in a multiway
-dot plot. We also apply our own `midfield_theme()` to edit the visual
+dot plot. We also apply our own `theme_midfield()` to edit the visual
 properties of the graph.
 
 ``` r
-ggplot(stickiness_mw_data, aes(x = stick, y = race_sex)) +
+ggplot(stickiness_mw, aes(x = stick, y = race_sex)) +
   facet_wrap(~program, ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +

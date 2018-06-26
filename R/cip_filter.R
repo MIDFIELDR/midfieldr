@@ -32,13 +32,13 @@ NULL
 #'
 #' @examples
 #' cip_filter()
-#' cip_filter(series = "History")
-#' cip_filter(series = c("American", "History"))
-#' cip_filter(series = "History") %>%
-#'   cip_filter(series = "American")
-#' cip_filter(series = "^14")
-#' cip_filter(series = "^14") %>%
-#'   cip_filter(series = "Civil")
+#' cip_filter(cip, series = "History")
+#' cip_filter(cip, series = c("American", "History"))
+#' cip_filter(cip, series = "History") %>%
+#'   cip_filter(., series = "American")
+#' cip_filter(cip, series = "^14")
+#' cip_filter(cip, series = "^14") %>%
+#'   cip_filter(., series = "Civil")
 #'
 #' @export
 cip_filter <- function(.data = NULL, series = NULL) {

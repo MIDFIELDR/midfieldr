@@ -11,6 +11,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Multiway data, graphs, and tables">
 <meta property="og:description" content="">
+<meta property="og:image" content="/logo.png">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -145,8 +146,8 @@
 </ul>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># combine two variables into one</span></a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">stickiness &lt;-<span class="st"> </span>case_stickiness <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">race_sex =</span> stringr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/stringr/topics/str_c">str_c</a></span>(race, sex, <span class="dt">sep =</span> <span class="st">" "</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(program, race_sex, stick)</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(., <span class="dt">race_sex =</span> stringr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/stringr/topics/str_c">str_c</a></span>(race, sex, <span class="dt">sep =</span> <span class="st">" "</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(., program, race_sex, stick)</a>
 <a class="sourceLine" id="cb3-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb3-6" data-line-number="6"><span class="kw">glimpse</span>(stickiness)</a>
 <a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; Observations: 32</span></a>
@@ -173,7 +174,7 @@
 <p>Optionally, using the <code>medians</code> argument, the function returns the median values used in ordering the factors. By arranging the rows of the data frame by <code>program</code> and <code>race_sex</code> factors, we can see that they are ordered by the medians shown.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># return the median stickiness value for both categories</span></a>
 <a class="sourceLine" id="cb5-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw"><a href="../reference/multiway_order.html">multiway_order</a></span>(stickiness, <span class="dt">medians =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">  </span><span class="kw">arrange</span>(program, race_sex)</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">  </span><span class="kw">arrange</span>(., program, race_sex)</a>
 <a class="sourceLine" id="cb5-4" data-line-number="4">df</a>
 <a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; # A tibble: 32 x 5</span></a>
 <a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt;   program                race_sex        stick med_program med_race_sex</span></a>
@@ -245,8 +246,8 @@
 <p>When discussing the potential stories in multiway data, it is often convenient to have a data table at hand. Such tables facilitate discussion and are occasionally appropriate to include in a publication for editors or reviewers who want to see the exact values underlying the data graphics.</p>
 <p>Starting with the example data, the first thing to do before tabulating is to reduce the significant figure to an easily-read number and arrange the rows to facilitate looking up a number.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">stickiness_table &lt;-<span class="st"> </span>case_stickiness <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">stick =</span> <span class="kw">round</span>(stick, <span class="dv">2</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">arrange</span>(program, sex, race)</a></code></pre></div>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(., <span class="dt">stick =</span> <span class="kw">round</span>(stick, <span class="dv">2</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">arrange</span>(., program, sex, race)</a></code></pre></div>
 <p>In many cases we might stop here and print the table for discussion purposes.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">kable</span>(stickiness_table, <span class="dt">caption =</span> <span class="st">"Stickiness metric"</span>)</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
@@ -924,16 +925,16 @@ Male
 <li>spread the data in wide format</li>
 </ul>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">stickiness_table &lt;-<span class="st"> </span>stickiness_table <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">select</span>(program, race, sex, stick) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">program =</span> <span class="kw">str_replace</span>(program, <span class="st">" Engineering"</span>, <span class="st">""</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">select</span>(., program, race, sex, stick) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(., <span class="dt">program =</span> <span class="kw">str_replace</span>(program, <span class="st">" Engineering"</span>, <span class="st">""</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(., </a>
 <a class="sourceLine" id="cb10-5" data-line-number="5">    <span class="st">"Program"</span> =<span class="st"> </span>program,</a>
 <a class="sourceLine" id="cb10-6" data-line-number="6">    <span class="st">"Race"</span> =<span class="st"> </span>race,</a>
 <a class="sourceLine" id="cb10-7" data-line-number="7">    <span class="st">"Sex"</span> =<span class="st"> </span>sex,</a>
 <a class="sourceLine" id="cb10-8" data-line-number="8">    <span class="st">"Stickiness"</span> =<span class="st"> </span>stick</a>
 <a class="sourceLine" id="cb10-9" data-line-number="9">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="st">  </span><span class="kw">spread</span>(Program, Stickiness) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="st">  </span><span class="kw">arrange</span>(Sex, Race)</a></code></pre></div>
+<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="st">  </span><span class="kw">spread</span>(., Program, Stickiness) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="st">  </span><span class="kw">arrange</span>(., Sex, Race)</a></code></pre></div>
 <p>And print the table to our output document.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">kable</span>(stickiness_table, <span class="dt">caption =</span> <span class="st">"Stickiness metric"</span>)</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
