@@ -54,6 +54,6 @@ if (getRversion() >= "2.15.1") {
     "term_degree", "program", "degree",
     "cip", "cip_bio_sci", "cip_engr", "cip_math_stat",
     "cip_other_stem", "cip_phys_sci", "cip_stem",
-    "n_prog", "term"
+    "n_prog", "term", "start"
   ))
 }

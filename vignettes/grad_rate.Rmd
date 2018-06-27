@@ -52,9 +52,70 @@ So why use the metric? As Cook and Hartle state,
 
 So with these caveats in mind, we provide the tools for determining  program graduation rates per the IPEDS definition. 
 
-## First year engineering
+## Getting started 
+
+Packages used: 
+
+```{r message = FALSE}
+library(tidyverse)
+library(seplyr)
+library(midfieldr)
+library(midfielddata)
+```
+
+In this article, we show you how to use midfieldr functions to compute program stickiness. Our workflow is: 
+
+- select the programs 
+- count the students starting in a program
+- if the programs include engineering, impute starting majors for FYE students 
+- count the students graduating  
+- compute graduation rate 
+- create a multiway graph 
 
 
+## Select the programs to study
+
+The [Selecting programs](selecting_programs.html) vignette describes the  process for obtaining the program codes and names used here. The output of that vignette is saved as a midfieldr case data set, `case_cip_group`.
+
+The programs studied in this example are all Engineering programs: Civil, Electrical, Industrial, and Mechanical. 
+
+You may run the code in "Selecting programs" to obtain these data yourself or you can simply load the saved case data. To load the case data, first load midfieldr (we did that above) and the data frame `case_cip_group` should be available. 
+
+```{r}
+# CIP information saved from an earlier vignette
+cip_group <- case_cip_group 
+```
+
+Examine the result: there are a total of `r length(unique(cip_group[["cip6"]]))` CIP codes for these programs. We have 7 columns: 6 from the `cip` dataset and the one `program` column of labels we added using `cip_label()`. 
+
+```{r echo = -1}
+options(tibble.print_min = 12L)
+# check the result
+cip_group
+```
+
+When searching the midfielddata datasets for students in these programs, our search functions use the 6-digit CIP codes in the `cip6` variable. To confirm that the search terms are what we expect, we can extract and view the `r length(unique(cip_group[["cip6"]]))` unique codes. 
+
+```{r}
+unique(cip_group[["cip6"]])
+```
+
+## gather_start()  
+
+`gather_start(data, programs)` has two arguments: the data set to search (the default is `midfieldstudents`) and the search-term data frame with cip6 and program variables. 
+
+```{r}
+non_fye_starters <- gather_start(cip_group = cip_group, transfer = FALSE) %>% 
+	glimpse(.)
+
+fye_starters <- gather_start(case_fye, cip_group = cip_group, transfer = TRUE) %>% 
+	glimpse(.)
+
+starters <- bind_rows(non_fye_starters, fye_starters) %>% 
+	glimpse(.)
+```
+
+In computing graduation rates, the IPEDS definition omits transfer students. 
 
 
 ## References

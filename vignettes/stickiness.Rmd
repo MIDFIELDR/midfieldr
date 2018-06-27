@@ -52,11 +52,12 @@ We typically group stickiness results by program, sex, and "race" as defined by 
 
 ## Getting started 
 
+Packages used: 
+
 ```{r message = FALSE}
-# packages used
-library(midfieldr)
-library(seplyr)
 library(tidyverse)
+library(seplyr)
+library(midfieldr)
 ```
 
 In this article, we show you how to use midfieldr functions to compute program stickiness. Our workflow is: 
@@ -70,51 +71,18 @@ In this article, we show you how to use midfieldr functions to compute program s
 
 ## Select the programs to study
 
-For this example, we compare the stickiness of four engineering programs: Civil, Electrical, Industrial, and Mechanical. Their 4-digit CIP codes (1408, 1410, 1419, 1435) were found by keyword search as illustrated in [Selecting CIP codes](cip_filter.html).
+The [Selecting programs](selecting_programs.html) vignette describes the  process for obtaining the program codes and names used here. The output of that vignette is saved as a midfieldr case data set, `case_cip_group`.
 
-We use `cip_filter()` to obtain the relevant program codes. You can open the help page by running `?cip_filter()`.
+The programs studied in this example are all Engineering programs: Civil, Electrical, Industrial, and Mechanical. 
 
-```{r}
-# four data frames of cip codes and names
-cve <- cip_filter(cip, series = "^1408")
-ele <- cip_filter(cip, series = "^1410")
-mce <- cip_filter(cip, series = "^1419")
-ise <- cip_filter(cip, series = "^1435")
-```
-
-Next we will use `cip_label()` to assign program names to the distinct programs we want to compare. One possibility is to use the 4-digit program names already available in the data. To view those names:    
+You may run the code in "Selecting programs" to obtain these data yourself or you can simply load the saved case data. To load the case data, first load midfieldr (we did that above) and the data frame `case_cip_group` should be available. 
 
 ```{r}
-# view 4-digit program names
-unique(cve[["cip4name"]])
-unique(ele[["cip4name"]])
-unique(mce[["cip4name"]])
-unique(ise[["cip4name"]])
+# CIP information saved from an earlier vignette
+cip_group <- case_cip_group 
 ```
 
-The 4-digit names for Civil, Mechanical, and Industrial Engineering are satisfactory; we'll assign the default names to these programs using the `program = "cip4name"` argument in `cip_label()`. For other options, see the help page by running  `?cip_label()`  
-
-```{r}
-# label the programs with the default 4-digit names
-cve <- cip_label(cve, program = "cip4name")
-mce <- cip_label(mce, program = "cip4name")
-ise <- cip_label(ise, program = "cip4name")
-```
-
-The Electrical Engineering program name is somewhat verbose; we'll assign a custom label to this program as follows: 
-
-```{r}
-# label the program with a custom name
-ele <- cip_label(ele, program = "Electrical Engineering")
-```
-
-We use `bind_rows()`, a [dplyr](http://dplyr.tidyverse.org) function, to bind the individual data frames into one data frame. 
-
-```{r}
-cip_group <- bind_rows(cve, ele, mce, ise)
-```
-
-Examine the result: there are a total of `r length(uniques(cip_group[["cip6"]]))` CIP codes for these programs. We have 7 columns: 6 from the `cip` dataset and the one `program` column of labels we added using `cip_label()`. 
+Examine the result: there are a total of `r length(unique(cip_group[["cip6"]]))` CIP codes for these programs. We have 7 columns: 6 from the `cip` dataset and the one `program` column of labels we added using `cip_label()`. 
 
 ```{r echo = -1}
 options(tibble.print_min = 12L)
@@ -122,7 +90,7 @@ options(tibble.print_min = 12L)
 cip_group
 ```
 
-When searching the midfielddata datasets for students in these programs, our search functions use the 6-digit CIP codes in the `cip6` variable. To confirm that the search terms are what we expect, we can extract and view the `r length(uniques(cip_group[["cip6"]]))` unique codes. 
+When searching the midfielddata datasets for students in these programs, our search functions use the 6-digit CIP codes in the `cip6` variable. To confirm that the search terms are what we expect, we can extract and view the `r length(unique(cip_group[["cip6"]]))` unique codes. 
 
 ```{r}
 unique(cip_group[["cip6"]])
@@ -291,20 +259,12 @@ For reference, the complete script for this example is collected below.
 
 ```{r eval = FALSE}
 # packages used
-library(midfieldr)
-library(seplyr)
 library(tidyverse)
+library(seplyr)
+library(midfieldr)
 
-# collect CIP information for 4 programs and combine into one data frame
-cve <- cip_filter(cip, series = "^1408") %>%
-  cip_label(., program = "cip4name")
-ele <- cip_filter(cip, series = "^1410") %>%
-  cip_label(., program = "Electrical Engineering")
-mce <- cip_filter(cip, series = "^1419") %>%
-  cip_label(., program = "cip4name")
-ise <- cip_filter(cip, series = "^1435") %>%
-  cip_label(., program = "cip4name")
-cip_group <- bind_rows(cve, ele, mce, ise)
+# CIP information saved from an earlier vignette
+cip_group <- case_cip_group
 
 # assign grouping variables for summarizing and joining
 grouping_variables <- c("program", "race", "sex")
@@ -340,5 +300,9 @@ ggplot(stickiness_multiway, aes(x = stick, y = race_sex)) +
   theme_midfield()
 ```
 
+
+## Issues
+
+- Have to account for "possible graduation in 6 years" (posgrad6) 
 
 ## References

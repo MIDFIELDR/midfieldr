@@ -1,0 +1,143 @@
+---
+title: "Selecting programs"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Selecting programs}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: ../inst/REFERENCES.bib
+---
+
+```{r setup, echo = FALSE, message = FALSE, purl = FALSE}
+knitr::opts_knit$set(root.dir = "../")
+knitr::opts_chunk$set(
+  echo = TRUE, # varies from one Rmd to another
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = TRUE,
+  purl = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center",
+  fig.path = "../man/figures/grad-rate-"
+)
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+# options(tibble.print_min = 8L, tibble.print_max = 8L)
+
+# normally, purl is FALSE. But in some code chunks, I want purl = TRUE so that the code in the vignette is executed to pass R CMD check. These next few lines set that up. In the code chunk header, add opts.label = 'dopurl'
+knitr::knit_hooks$set(purl = knitr::hook_purl)
+knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
+```
+
+In the vignettes illustrating various persistence metrics, the first step is to select the programs to study. We will use the same set of programs in different vignettes, so here we show the details of selecting and labeling those programs.  
+
+The programs we are studying are Civil Engineering, Electrical Engineering, Industrial Engineering, and Mechanical Engineering. 
+
+## Getting started 
+
+```{r message = FALSE}
+# packages used
+library(midfieldr)
+library(dplyr)
+```
+
+## Select the programs to study
+
+We use `cip_filter()` to search the `cip` dataset first for Engineering and then filter the result for Civil, Electrical, Industrial, and Mechanical. 
+ 
+```{r first-cip-search, echo = -1}
+options(tibble.print_min = 15L)
+cip_filter(cip, series = "Engineering") %>%
+  cip_filter(., series = c("Civil", "Electrical", "Industrial", "Mechanical")) %>%
+  head(., n = 15L)
+```
+
+Noting that technology programs are typically not accredited as engineering  programs, the results show that the codes we want are 1408 Civil, 1410 Electrical, 1419 Mechanical, and 1435 Industrial. We individually extract these programs. 
+
+```{r extract-cip}
+cve <- cip_filter(cip, series = "^1408") 
+ele <- cip_filter(cip, series = "^1410") 
+mce <- cip_filter(cip, series = "^1419")
+ise <- cip_filter(cip, series = "^1435")
+```
+
+We will use `cip_label()` to assign program names to these programs. One possibility is to use the 4-digit program names already available in the data. To view those names:    
+
+```{r}
+unique(cve[["cip4name"]])
+unique(ele[["cip4name"]])
+unique(mce[["cip4name"]])
+unique(ise[["cip4name"]])
+```
+
+Except for Electrical Engineering, the default program names are concise. We use `cip_label()` to assign default names to three of the programs and a shorter name for Electrical Engineering. 
+
+```{r}
+cve <- cip_label(cve, program = "cip4name")
+ele <- cip_label(ele, program = "Electrical Engineering")
+mce <- cip_label(mce, program = "cip4name")
+ise <- cip_label(ise, program = "cip4name")
+```
+
+`cip_label()` is pipe-compatible, so these lines could have been combined, for example, 
+
+```{r}
+cve <- cip_filter(cip, series = "^1408") %>% 
+	cip_label(., "cip4name")
+```
+
+We use `bind_rows()`, a [dplyr](http://dplyr.tidyverse.org) function, to bind the individual data frames into one data frame. 
+
+```{r group-cip}
+cip_group <- bind_rows(cve, ele, mce, ise)
+```
+
+Examine the result: there are a total of `r length(unique(cip_group[["cip6"]]))` CIP codes for these programs. We have 7 columns: 6 from the `cip` dataset and the one `program` column of labels we added using `cip_label()`. 
+
+```{r echo = -1}
+options(tibble.print_min = 12L)
+cip_group
+```
+
+When searching the midfielddata datasets for students in these programs, our search functions use the 6-digit CIP codes in the `cip6` variable. To confirm that the search terms are what we expect, we can extract and view the `r length(unique(cip_group[["cip6"]]))` unique codes. 
+
+```{r}
+unique(cip_group[["cip6"]])
+```
+
+For additional information, try the [Selecting CIP codes](cip_filter.html) vignette and the help pages by running `?cip_filter` and `?cip_label`. 
+
+## midfieldr case data includes `case_cip_group`  
+
+```{r echo = FALSE, eval = FALSE}
+# case_cip_group <- cip_group
+# devtools::use_data(
+# 	case_cip_group,
+# 	pkg = ".",
+# 	internal  = FALSE,
+# 	overwrite = TRUE,
+# 	compress  = "bzip2"
+# )
+```
+
+For convenience, both ours and yours, this data frame of engineering CIP codes and program names has been saved as a midfieldr data set. We use this case data  in several vignettes.  
+
+To access the data frame, 
+
+```{r}
+library(midfieldr)
+case_cip_group
+```
