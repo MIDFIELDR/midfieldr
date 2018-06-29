@@ -68,8 +68,8 @@ cip_filter(cip, series = "Engineering") %>%
 Noting that technology programs are typically not accredited as engineering  programs, the results show that the codes we want are 1408 Civil, 1410 Electrical, 1419 Mechanical, and 1435 Industrial. We individually extract these programs. 
 
 ```{r extract-cip}
-cve <- cip_filter(cip, series = "^1408") 
-ele <- cip_filter(cip, series = "^1410") 
+cve <- cip_filter(cip, series = "^1408")
+ele <- cip_filter(cip, series = "^1410")
 mce <- cip_filter(cip, series = "^1419")
 ise <- cip_filter(cip, series = "^1435")
 ```
@@ -95,43 +95,32 @@ ise <- cip_label(ise, program = "cip4name")
 `cip_label()` is pipe-compatible, so these lines could have been combined, for example, 
 
 ```{r}
-cve <- cip_filter(cip, series = "^1408") %>% 
-	cip_label(., "cip4name")
+cve <- cip_filter(cip, series = "^1408") %>%
+  cip_label(., "cip4name")
 ```
 
 We use `bind_rows()`, a [dplyr](http://dplyr.tidyverse.org) function, to bind the individual data frames into one data frame. 
 
 ```{r group-cip}
-cip_group <- bind_rows(cve, ele, mce, ise)
+program_group <- bind_rows(cve, ele, mce, ise)
 ```
 
-Examine the result: there are a total of `r length(unique(cip_group[["cip6"]]))` CIP codes for these programs. We have 7 columns: 6 from the `cip` dataset and the one `program` column of labels we added using `cip_label()`. 
+Examine the result: there are a total of `r length(unique(program_group[["cip6"]]))` CIP codes for these programs. We have 7 columns: 6 from the `cip` dataset and the one `program` column of labels we added using `cip_label()`. 
 
 ```{r echo = -1}
 options(tibble.print_min = 12L)
-cip_group
+program_group
 ```
 
-When searching the midfielddata datasets for students in these programs, our search functions use the 6-digit CIP codes in the `cip6` variable. To confirm that the search terms are what we expect, we can extract and view the `r length(unique(cip_group[["cip6"]]))` unique codes. 
+When searching the midfielddata datasets for students in these programs, our search functions use the 6-digit CIP codes in the `cip6` variable. To confirm that the search terms are what we expect, we can extract and view the `r length(unique(program_group[["cip6"]]))` unique codes. 
 
 ```{r}
-unique(cip_group[["cip6"]])
+unique(program_group[["cip6"]])
 ```
 
 For additional information, try the [Selecting CIP codes](cip_filter.html) vignette and the help pages by running `?cip_filter` and `?cip_label`. 
 
-## midfieldr case data includes `case_cip_group`  
-
-```{r echo = FALSE, eval = FALSE}
-# case_cip_group <- cip_group
-# devtools::use_data(
-# 	case_cip_group,
-# 	pkg = ".",
-# 	internal  = FALSE,
-# 	overwrite = TRUE,
-# 	compress  = "bzip2"
-# )
-```
+## midfieldr case data includes `case_program_group`  
 
 For convenience, both ours and yours, this data frame of engineering CIP codes and program names has been saved as a midfieldr data set. We use this case data  in several vignettes.  
 
@@ -139,5 +128,6 @@ To access the data frame,
 
 ```{r}
 library(midfieldr)
-case_cip_group
+data("case_program_group")
+case_program_group
 ```

@@ -1,31 +1,32 @@
 context("race_sex_join")
 
-.data <- cip_filter(series = "540104") %>%
-  cip_label() %>%
-  gather_ever()
+library(dplyr)
 
-test_that("race_sex_join() produces expected output", {
-  load(file = get_my_path("my_args_05.rda"))
-  load(file = get_my_path("exp_out_05.rda"))
-  expect_equal(do.call(race_sex_join, my_args), exp_out)
+ever1 <- gather_ever(series = "540104") %>%
+	race_sex_join()
+ever2 <- ever1 %>%
+	select(-race) %>%
+	race_sex_join()
+ever3 <- ever1 %>%
+	select(-sex) %>%
+	race_sex_join()
+ever4 <- ever1 %>%
+	race_sex_join()
+ever5 <- ever1 %>%
+	select(-id)
 
-  load(file = get_my_path("my_args_06.rda"))
-  load(file = get_my_path("exp_out_06.rda"))
-  expect_equal(do.call(race_sex_join, my_args), exp_out)
+test_that("race_sex_join() does not overwrite existing race or sex variables", {
+	expect_setequal(ever1$race, ever2$race)
+	expect_setequal(ever1$race, ever3$race)
+	expect_setequal(ever1$race, ever4$race)
+	expect_setequal(ever1$sex, ever2$sex)
+	expect_setequal(ever1$sex, ever3$sex)
+	expect_setequal(ever1$sex, ever4$sex)
 })
 
-
-test_that("Argument is a data frame", {
-  x <- runif(10)
-  expect_error(race_sex_join(x), "midfieldr::race_sex_join() argument must be a data.frame or tbl", fixed = TRUE)
-})
-
-
-test_that("Required variables are present", {
-  .no_id <- select(.data, cip6, program)
-  expect_error(
-    race_sex_join(.no_id),
-    "midfieldr::race_sex_join() data frame must include an `id` variable",
-    fixed = TRUE
-  )
+test_that("check for id produces error", {
+	expect_error(
+		race_sex_join(ever5),
+		"midfieldr::race_sex_join() expects id variable in .data",
+		fixed=TRUE)
 })

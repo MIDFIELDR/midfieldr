@@ -4,13 +4,13 @@ NULL
 
 #' Gather students starting in programs
 #'
-#' Filters a data frame of student IDs and starting majors to keep those starting in specified programs.
+#' Filters a data frame of student matriculation information (ID and starting major) to keep those starting in specified programs.
 #'
 #' \code{gather_start()} uses \code{dplyr::inner_join()} to combine the rows and columns of its two arguments, both data frames. All variables in the two arguments except \code{id}, \code{cip6} or \code{start} and \code{program} are quietly dropped.
 #'
 #' \code{gather_start()} excludes transfer students unless you set \code{transfer = TRUE}. If you are using the result to compute graduation rates per the IPEDS definition, transfer students should be omitted.
 #'
-#' @param .data A data frame with two required character variables:  \code{id} (student ID) and \code{cip6} (6-digit CIP codes). Default is \code{midfieldstudents}.
+#' @param .data A data frame of student matriculation information with two required character variables: student \code{id} and the \code{cip6} code for their starting major. Default is \code{midfieldstudents}.
 #'
 #' @param cip_group A data frame with two required character variables:  \code{cip6} or \code{start} (6-digit CIP codes) and \code{program} (program labels).
 #'
@@ -25,16 +25,13 @@ NULL
 #' head(starters)
 #'
 #' @export
-gather_start <- function(.data = NULL, cip_group, transfer = FALSE) {
+gather_start <- function(.data, cip_group, transfer = FALSE) {
 
-	if (isTRUE(is.null(.data))) {.data <- midfielddata::midfieldstudents}
+	if (isTRUE(missing(.data))) {.data <- midfielddata::midfieldstudents}
 
 	if(!.pkgglobalenv$has_data){
-		stop(paste("To use this function, you must have the",
-							 "`midfielddata` package installed. See the",
-							 "`midfielddata` package vignette for more details."))
+		stop(paste("To use this function, you must have the midfielddata package installed."))
 	}
-
 	if (isFALSE(is.data.frame(.data) || dplyr::is.tbl(.data))) {
 		stop("midfieldr::gather_start() arguments must be a data frame or tbl")
 	}
@@ -44,11 +41,8 @@ gather_start <- function(.data = NULL, cip_group, transfer = FALSE) {
 	if (isFALSE("cip6" %in% names(.data) || "start" %in% names(.data))) {
 		stop("midfieldr::gather_start() data frame must include a `cip6` or 'start' variable")
 	}
-	if (isTRUE("cip6" %in% names(.data) && "start" %in% names(.data))) {
+	if (isTRUE("cip6" %in% names(cip_group) && "start" %in% names(cip_group))) {
 		stop("midfieldr::gather_start() data frame must not include both a `cip6` and 'start' variable")
-	}
-	if (isFALSE("program" %in% names(cip_group))) {
-		stop("midfieldr::gather_start() data frame must include a `program` variable")
 	}
 
 	# if "start" in var names, rename to "cip6"
@@ -67,7 +61,7 @@ gather_start <- function(.data = NULL, cip_group, transfer = FALSE) {
 	students <- students %>% dplyr::select(id, cip6)
 
 	# keep two columns from desired program
-	programs <- cip_group %>% dplyr::select(cip6, program)
+	programs <- cip_group %>% dplyr::select(cip6)
 
 	# inner_join() reminder
 	# return all IDs that match programs in cip_group

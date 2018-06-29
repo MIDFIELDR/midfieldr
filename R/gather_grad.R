@@ -1,74 +1,75 @@
-#' @importFrom dplyr select filter left_join arrange ungroup arrange row_number
-#' @importFrom magrittr %>%
+#' @importFrom dplyr %>% select filter arrange group_by ungroup is.tbl
 #' @importFrom stringr str_c str_detect
+#' @importFrom tidyr drop_na
 NULL
 
-#' Gather students graduating from a set of programs
+#' Gather graduates
 #'
-#' Filters the \code{midfielddata::midfielddegrees} dataset for all students graduating from a set of programs denoted by their 6-digit CIP codes.
+#' Filter academic degree data for students graduating from a set of programs.
 #'
-#' \code{gather_grad()} uses the codes in the \code{cip6} variable to filter the \code{midfielddegrees} dataset, keeping all students who graduate from any of those programs.
+#' To use this function, the \code{midfielddata} package must be installed to provide the default \code{.data} argument, \code{midfielddegrees}.
 #'
-#' The data can include students earning degrees in multiple programs in the same term. The function returns a data frame with one observation for each unique pairing between students and programs in the term in which their first degree or degrees are awarded. Degrees earned in later terms are ignored.
+#' The input data frame must include the three character variables: \code{id}, \code{cip6}, and \code{term_degree}. The default data include every degree a student earned, but only the student's first degree (or multiple degrees if earned in the same term) are retained.
 #'
-#' All variables in \code{.data} other than the required \code{cip6} and \code{program} are quietly dropped.
+#' The \code{series} argument is an atomic character vector of 6-digit CIP codes used to filter the academic degree data frame.
 #'
-#' @param .data A data frame with two required character variables:  \code{cip6} (6-digit CIP codes) and \code{program} (program labels).
+#' The function returns a subset of the input data frame with every unique combination of student ID and CIP of the program(s) in which they earned their first degree(s). Only \code{id} and \code{cip6} are returned; other variables in the input data frame are dropped.
 #'
-#' @return A data frame with variables \code{id} (unique MIDFIELD student ID), \code{cip6} (6-digit CIP code), and \code{program} (a program label).
+#' @param .data Data frame of academic degree data with character variables \code{id}, \code{cip6}, and \code{term_degree}
 #'
-#' @seealso \code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes, \code{\link[midfieldr]{cip_label}} for adding a column of program labels
+#' @param series Atomic character vector of 6-digit CIP codes used to filter the data
+#'
+#' @return Data frame with character variables \code{id} and \code{cip6}
+#'
+#' @seealso \code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes
 #'
 #' @examples
-#' d <- cip_filter(cip, series = "540104")
-#' d <- cip_label(d, program = "cip6name")
-#' grad <- gather_grad(d)
+#' grad <- gather_grad(series = "540104")
 #' head(grad)
 #'
 #' @export
-gather_grad <- function(.data) {
+gather_grad <- function(.data = NULL, series = NULL) {
 
-	if(!.pkgglobalenv$has_data){
-		stop(paste("To use this function, you must have the",
-							 "`midfielddata` package installed. See the",
-							 "`midfielddata` package vignette for more details."))
+	if (is.null(series)) {
+		stop("midfieldr::gather_grad, series missing or incorrectly specified")
 	}
 
-  if (!(is.data.frame(.data) || dplyr::is.tbl(.data))) {
-    stop("midfieldr::gather_grad() argument must be a data frame or tbl")
-  }
-  if (isFALSE("cip6" %in% names(.data))) {
-    stop("midfieldr::gather_grad() data frame must include a `cip6` variable")
-  }
-  if (isFALSE("program" %in% names(.data))) {
-    stop("midfieldr::gather_grad() data frame must include a `program` variable")
-  }
+	if (isFALSE(is.atomic(series))) {
+		stop("midfieldr::gather_grad, series must be an atomic variable")
+	}
 
-  # from incoming data, use only cip6 and program labels
-  .data <- .data %>%
-    select(cip6, program)
+	if(!.pkgglobalenv$has_data){
+		stop(paste(
+			"To use this function, you must have the",
+			"`midfielddata` package installed."))
+	}
 
-  # obtain data from midfieldterms
-  series <- stringr::str_c(.data$cip6, collapse = "|")
-  students <- midfielddata::midfielddegrees %>%
-    dplyr::filter(stringr::str_detect(cip6, series))
+	# assign the default terms dataset
+	if (is.null(.data)) {.data <- midfielddata::midfielddegrees}
 
-  # remove unnecessary columns and incomplete rows
-  students <- students %>%
-    select(id, cip6, term_degree) %>%
-    arrange(id, cip6, term_degree) %>%
-    drop_na()
+	if (!(is.data.frame(.data) || dplyr::is.tbl(.data))) {
+		stop("midfieldr::gather_grad, .data must be a data frame or tbl")
+	}
 
-  # keep the first term in which a student id is paired with a program
-  students <- students %>%
-    group_by(id, cip6) %>%
-    filter(dplyr::row_number() == 1) %>%
-    ungroup() %>%
-    select(-term_degree)
+	# search terms in a single string
+	collapse_series <- stringr::str_c(series, collapse = "|")
 
-  # join program names by cip6
-  students <- dplyr::left_join(students, .data, by = "cip6") %>%
-    select(id, cip6, program) %>%
-    arrange(program, cip6, id)
+	# filter for desired programs in series
+	students <- .data %>%
+		dplyr::select(id, cip6, term_degree) %>%
+		dplyr::filter(stringr::str_detect(cip6, collapse_series))
+
+	# keep the first term of unique combinations of id and cip6
+	students <- students %>%
+		dplyr::arrange(id, cip6, term_degree) %>%
+		dplyr::group_by(id, cip6) %>%
+		dplyr::filter(dplyr::row_number() == 1) %>%
+		dplyr::ungroup()
+
+	# clean up before return
+	students <- students %>%
+		dplyr::select(-term_degree) %>%
+		tidyr::drop_na() %>%
+		unique()
 }
 "gather_grad"

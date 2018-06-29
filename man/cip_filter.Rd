@@ -2,12 +2,12 @@
 % Please edit documentation in R/cip_filter.R
 \name{cip_filter}
 \alias{cip_filter}
-\title{Filter CIP data}
+\title{Filter by CIP data}
 \usage{
 cip_filter(.data = NULL, series = NULL)
 }
 \arguments{
-\item{.data}{A data frame of character variables.
+\item{.data}{A data frame containing at least one column of CIP codes.
 If NULL, \code{.data} is the midfieldr \code{cip} dataset.}
 
 \item{series}{A character vector (or coercible to one) of search terms. The
@@ -18,7 +18,7 @@ A subset of \code{.data} returned as a data frame (tibble) of
 character variables.
 }
 \description{
-Filter a data frame of Classification of Instructional Programs (CIP) codes
+Filter a data frame for Classification of Instructional Programs (CIP) codes
 and return the rows that match conditions.
 }
 \details{

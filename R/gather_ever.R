@@ -1,76 +1,76 @@
-#' @importFrom dplyr select filter left_join
-#' @importFrom magrittr %>%
+#' @importFrom dplyr %>% select filter arrange group_by ungroup is.tbl
 #' @importFrom stringr str_c str_detect
-#' @importFrom stats complete.cases
 #' @importFrom tidyr drop_na
 NULL
 
-#' Gather students ever enrolled in a set of programs
+#' Gather ever-enrolled students
 #'
-#' Filters the \code{midfielddata::midfieldterms} dataset for all students ever enrolled in a set of programs denoted by their 6-digit CIP codes.
+#' Filter academic term data for students ever enrolled in a set of programs.
 #'
-#' \code{gather_ever()} uses the codes in the \code{cip6} variable to filter the \code{midfieldterms} dataset, keeping all students who in any term were enrolled in any of those programs.
+#' To use this function, the \code{midfielddata} package must be installed to provide the default \code{.data} argument, \code{midfieldterms}.
 #'
-#' The data can include students who change programs, who enroll in more than one program in a term, and of course a majority who enroll in the same program over multiple terms. The function returns a data frame with one observation for each unique pairing between student and program.
+#' The input data frame must include the three character variables: \code{id}, \code{cip6}, and \code{term}. The default data include every term for every student, so an ID will be associated with the same program in multiple terms. Students who change majors will have their ID associated with different programs in different terms. Students enrolled in more than one major will have their ID associated with multiple programs in the same term. All unique combinations of ID and program are retained.
 #'
-#' All variables in \code{.data} other than the required \code{cip6} and \code{program} are quietly dropped.
+#' The \code{series} argument is an atomic character vector of 6-digit CIP codes used to filter the academic term data frame.
 #'
-#' @param .data A data frame with two required character variables:  \code{cip6} (6-digit CIP codes) and \code{program} (program labels).
+#' The function returns a subset of the input data frame with every unique combination of student ID and program CIP, representing every student ever enrolled in the set of programs being studied. Only \code{id} and \code{cip6} are returned; other variables in the input data frame are dropped.
 #'
-#' @return A data frame with variables \code{id} (unique MIDFIELD student ID), \code{cip6} (6-digit CIP code), and \code{program} (a program label).
+#' @param .data Data frame of academic term data with character variables \code{id}, \code{cip6}, and \code{term}
 #'
-#' @seealso \code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes, \code{\link[midfieldr]{cip_label}} for adding a column of program labels
+#' @param series Atomic character vector of 6-digit CIP codes used to filter the data
+#'
+#' @return Data frame with character variables \code{id} and \code{cip6}
+#'
+#' @seealso \code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes
 #'
 #' @examples
-#' d <- cip_filter(cip, series = "540104")
-#' d <- cip_label(d, program = "cip6name")
-#' ever <- gather_ever(d)
+#' ever <- gather_ever(series = "540104")
 #' head(ever)
 #'
 #' @export
-gather_ever <- function(.data) {
+gather_ever <- function(.data = NULL, series = NULL) {
+
+	if (is.null(series)) {
+		stop("midfieldr::gather_ever, series missing or incorrectly specified")
+		}
+
+	if (isFALSE(is.atomic(series))) {
+		stop("midfieldr::gather_ever, series must be an atomic variable")
+		}
 
 	if(!.pkgglobalenv$has_data){
-		stop(paste("To use this function, you must have the",
-							 "`midfielddata` package installed. See the",
-							 "`midfielddata` package vignette for more details."))
+		stop(paste(
+			"To use this function, you must have the",
+			"`midfielddata` package installed."))
 	}
 
-  if (!(is.data.frame(.data) || dplyr::is.tbl(.data))) {
-    stop("midfieldr::gather_ever() argument must be a data frame or tbl")
-  }
-  if (isFALSE("cip6" %in% names(.data))) {
-    stop("midfieldr::gather_ever() data frame must include a `cip6` variable")
-  }
-  if (isFALSE("program" %in% names(.data))) {
-    stop("midfieldr::gather_ever() data frame must include a `program` variable")
-  }
+	# assign the default terms dataset
+	if (is.null(.data)) {.data <- midfielddata::midfieldterms}
 
-  # from incoming data, use only cip6 and program labels
-  .data <- .data %>%
-    select(cip6, program)
+	if (!(is.data.frame(.data) || dplyr::is.tbl(.data))) {
+		stop("midfieldr::gather_ever, .data must be a data frame or tbl")
+	}
 
-  # obtain data from midfieldterms
-  series <- stringr::str_c(.data$cip6, collapse = "|")
-  students <- midfielddata::midfieldterms %>%
-    dplyr::filter(stringr::str_detect(cip6, series))
+	# search terms in a single string
+	collapse_series <- stringr::str_c(series, collapse = "|")
 
-  # remove unnecessary columns and incomplete rows
-  students <- students %>%
-    select(id, cip6, term) %>%
-    arrange(id, cip6, term) %>%
-    drop_na()
+	# filter for desired programs in series
+	students <- .data %>%
+		dplyr::select(id, cip6, term) %>%
+		dplyr::filter(stringr::str_detect(cip6, collapse_series))
 
-  # keep the first term in which a student id is paired with a program
-  students <- students %>%
-    group_by(id, cip6) %>%
-    filter(dplyr::row_number() == 1) %>%
-    ungroup() %>%
-    select(-term)
+	# keep the first term of unique combinations of id and cip6
+	students <- students %>%
+		dplyr::arrange(id, term) %>%
+		dplyr::group_by(id, cip6) %>%
+		dplyr::filter(dplyr::row_number() == 1) %>%
+		dplyr::ungroup()
 
-  # join program names by cip6
-  students <- dplyr::left_join(students, .data, by = "cip6") %>%
-    select(id, cip6, program) %>%
-    arrange(program, cip6, id)
+	# clean up before return
+	students <- students %>%
+		dplyr::select(-term) %>%
+		tidyr::drop_na() %>%
+		unique()
+
 }
 "gather_ever"

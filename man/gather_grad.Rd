@@ -2,33 +2,35 @@
 % Please edit documentation in R/gather_grad.R
 \name{gather_grad}
 \alias{gather_grad}
-\title{Gather students graduating from a set of programs}
+\title{Gather graduates}
 \usage{
-gather_grad(.data)
+gather_grad(.data = NULL, series = NULL)
 }
 \arguments{
-\item{.data}{A data frame with two required character variables:  \code{cip6} (6-digit CIP codes) and \code{program} (program labels).}
+\item{.data}{Data frame of academic degree data with character variables \code{id}, \code{cip6}, and \code{term_degree}}
+
+\item{series}{Atomic character vector of 6-digit CIP codes used to filter the data}
 }
 \value{
-A data frame with variables \code{id} (unique MIDFIELD student ID), \code{cip6} (6-digit CIP code), and \code{program} (a program label).
+Data frame with character variables \code{id} and \code{cip6}
 }
 \description{
-Filters the \code{midfielddata::midfielddegrees} dataset for all students graduating from a set of programs denoted by their 6-digit CIP codes.
+Filter academic degree data for students graduating from a set of programs.
 }
 \details{
-\code{gather_grad()} uses the codes in the \code{cip6} variable to filter the \code{midfielddegrees} dataset, keeping all students who graduate from any of those programs.
+To use this function, the \code{midfielddata} package must be installed to provide the default \code{.data} argument, \code{midfielddegrees}.
 
-The data can include students earning degrees in multiple programs in the same term. The function returns a data frame with one observation for each unique pairing between students and programs in the term in which their first degree or degrees are awarded. Degrees earned in later terms are ignored.
+The input data frame must include the three character variables: \code{id}, \code{cip6}, and \code{term_degree}. The default data include every degree a student earned, but only the student's first degree (or multiple degrees if earned in the same term) are retained.
 
-All variables in \code{.data} other than the required \code{cip6} and \code{program} are quietly dropped.
+The \code{series} argument is an atomic character vector of 6-digit CIP codes used to filter the academic degree data frame.
+
+The function returns a subset of the input data frame with every unique combination of student ID and CIP of the program(s) in which they earned their first degree(s). Only \code{id} and \code{cip6} are returned; other variables in the input data frame are dropped.
 }
 \examples{
-d <- cip_filter(cip, series = "540104")
-d <- cip_label(d, program = "cip6name")
-grad <- gather_grad(d)
+grad <- gather_grad(series = "540104")
 head(grad)
 
 }
 \seealso{
-\code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes, \code{\link[midfieldr]{cip_label}} for adding a column of program labels
+\code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes
 }

@@ -75,47 +75,101 @@ In this article, we show you how to use midfieldr functions to compute program s
 
 ## Select the programs to study
 
-The [Selecting programs](selecting_programs.html) vignette describes the  process for obtaining the program codes and names used here. The output of that vignette is saved as a midfieldr case data set, `case_cip_group`.
+The [Selecting programs](selecting_programs.html) vignette describes the  process for obtaining the program codes and names used here. The output of that vignette is saved as a midfieldr case data set, `case_program_group`.
 
 The programs studied in this example are all Engineering programs: Civil, Electrical, Industrial, and Mechanical. 
 
-You may run the code in "Selecting programs" to obtain these data yourself or you can simply load the saved case data. To load the case data, first load midfieldr (we did that above) and the data frame `case_cip_group` should be available. 
+You may run the code in "Selecting programs" to obtain these data yourself or you can simply load the saved case data. To load the case data, first load midfieldr (we did that above) and the data frame `case_program_group` should be available. 
 
 ```{r}
 # CIP information saved from an earlier vignette
-cip_group <- case_cip_group 
+data("case_program_group")
+program_group <- case_program_group
 ```
 
-Examine the result: there are a total of `r length(unique(cip_group[["cip6"]]))` CIP codes for these programs. We have 7 columns: 6 from the `cip` dataset and the one `program` column of labels we added using `cip_label()`. 
+Examine the result: there are a total of `r length(unique(program_group[["cip6"]]))` CIP codes for these programs. We have 7 columns: 6 from the `cip` dataset and the one `program` column of labels we added using `cip_label()`. 
 
 ```{r echo = -1}
 options(tibble.print_min = 12L)
 # check the result
-cip_group
+program_group
 ```
 
-When searching the midfielddata datasets for students in these programs, our search functions use the 6-digit CIP codes in the `cip6` variable. To confirm that the search terms are what we expect, we can extract and view the `r length(unique(cip_group[["cip6"]]))` unique codes. 
+When searching the midfielddata datasets for students in these programs, our search functions use the 6-digit CIP codes in the `cip6` variable. To confirm that the search terms are what we expect, we can extract and view the `r length(unique(program_group[["cip6"]]))` unique codes. 
 
 ```{r}
-unique(cip_group[["cip6"]])
+unique(program_group[["cip6"]])
 ```
 
 ## gather_start()  
 
-`gather_start(data, programs)` has two arguments: the data set to search (the default is `midfieldstudents`) and the search-term data frame with cip6 and program variables. 
+New gather_start() prototype. Keep transfers separate. 
 
 ```{r}
-non_fye_starters <- gather_start(cip_group = cip_group, transfer = FALSE) %>% 
-	glimpse(.)
+gather_start_2 <- function(.data = NULL, series = NULL, ..., imp_data = NULL) {
+  
+	if (length(list(...)) > 0) {
+    stop("midfieldr::gather_start(), unexpected arguments")
+  }
 
-fye_starters <- gather_start(case_fye, cip_group = cip_group, transfer = TRUE) %>% 
-	glimpse(.)
+  if (is.null(series)) {
+    return(.data)
+  }
 
-starters <- bind_rows(non_fye_starters, fye_starters) %>% 
-	glimpse(.)
+  if (is.null(.data)) {
+    .data <- midfielddata::midfieldstudents
+  }
+
+  if (is.null(imp_data)) {
+    imp_data <- case_fye
+  }
+
+  if (isFALSE(is.atomic(series))) {
+    stop("midfieldr::gather_start, series must be an atomic vector")
+  }
+
+  non_imp <- cip_filter(.data, series = series) %>%
+    rename(start = cip6) %>%
+    select(id, start)
+
+  imp <- cip_filter(imp_data, series = series)
+
+  if ("cip6" %in% names(imp)) {
+    imp <- rename(imp, start = cip6)
+  }
+
+  imp <- imp %>%
+    select(id, start)
+
+  # any IDs in imputed set are omitted from non-imputed set
+  starters <- anti_join(non_imp, imp, by = "id") %>%
+    bind_rows(imp)
+}
+
+program_cip6 <- program_group[["cip6"]]
+
+
+starters <- gather_start_2(
+  midfieldstudents,
+  series = program_cip6,
+  imp_data = case_fye
+) %>%
+  glimpse()
+
+starters <- gather_start_2(series = program_cip6) %>%
+  glimpse()
 ```
 
-In computing graduation rates, the IPEDS definition omits transfer students. 
 
+
+
+
+
+
+
+
+
+
+In computing graduation rates, the IPEDS definition omits transfer students.
 
 ## References

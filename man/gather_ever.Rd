@@ -2,33 +2,35 @@
 % Please edit documentation in R/gather_ever.R
 \name{gather_ever}
 \alias{gather_ever}
-\title{Gather students ever enrolled in a set of programs}
+\title{Gather ever-enrolled students}
 \usage{
-gather_ever(.data)
+gather_ever(.data = NULL, series = NULL)
 }
 \arguments{
-\item{.data}{A data frame with two required character variables:  \code{cip6} (6-digit CIP codes) and \code{program} (program labels).}
+\item{.data}{Data frame of academic term data with character variables \code{id}, \code{cip6}, and \code{term}}
+
+\item{series}{Atomic character vector of 6-digit CIP codes used to filter the data}
 }
 \value{
-A data frame with variables \code{id} (unique MIDFIELD student ID), \code{cip6} (6-digit CIP code), and \code{program} (a program label).
+Data frame with character variables \code{id} and \code{cip6}
 }
 \description{
-Filters the \code{midfielddata::midfieldterms} dataset for all students ever enrolled in a set of programs denoted by their 6-digit CIP codes.
+Filter academic term data for students ever enrolled in a set of programs.
 }
 \details{
-\code{gather_ever()} uses the codes in the \code{cip6} variable to filter the \code{midfieldterms} dataset, keeping all students who in any term were enrolled in any of those programs.
+To use this function, the \code{midfielddata} package must be installed to provide the default \code{.data} argument, \code{midfieldterms}.
 
-The data can include students who change programs, who enroll in more than one program in a term, and of course a majority who enroll in the same program over multiple terms. The function returns a data frame with one observation for each unique pairing between student and program.
+The input data frame must include the three character variables: \code{id}, \code{cip6}, and \code{term}. The default data include every term for every student, so an ID will be associated with the same program in multiple terms. Students who change majors will have their ID associated with different programs in different terms. Students enrolled in more than one major will have their ID associated with multiple programs in the same term. All unique combinations of ID and program are retained.
 
-All variables in \code{.data} other than the required \code{cip6} and \code{program} are quietly dropped.
+The \code{series} argument is an atomic character vector of 6-digit CIP codes used to filter the academic term data frame.
+
+The function returns a subset of the input data frame with every unique combination of student ID and program CIP, representing every student ever enrolled in the set of programs being studied. Only \code{id} and \code{cip6} are returned; other variables in the input data frame are dropped.
 }
 \examples{
-d <- cip_filter(cip, series = "540104")
-d <- cip_label(d, program = "cip6name")
-ever <- gather_ever(d)
+ever <- gather_ever(series = "540104")
 head(ever)
 
 }
 \seealso{
-\code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes, \code{\link[midfieldr]{cip_label}} for adding a column of program labels
+\code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes
 }

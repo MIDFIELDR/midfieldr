@@ -4,10 +4,10 @@
 \alias{gather_start}
 \title{Gather students starting in programs}
 \usage{
-gather_start(.data = NULL, cip_group, transfer = FALSE)
+gather_start(.data, cip_group, transfer = FALSE)
 }
 \arguments{
-\item{.data}{A data frame with two required character variables:  \code{id} (student ID) and \code{cip6} (6-digit CIP codes). Default is \code{midfieldstudents}.}
+\item{.data}{A data frame of student matriculation information with two required character variables: student \code{id} and the \code{cip6} code for their starting major. Default is \code{midfieldstudents}.}
 
 \item{cip_group}{A data frame with two required character variables:  \code{cip6} or \code{start} (6-digit CIP codes) and \code{program} (program labels).}
 
@@ -17,7 +17,7 @@ gather_start(.data = NULL, cip_group, transfer = FALSE)
 A data frame with variables \code{id} (unique MIDFIELD student ID), \code{start} (6-digit CIP code), and \code{program} (a program label).
 }
 \description{
-Filters a data frame of student IDs and starting majors to keep those starting in specified programs.
+Filters a data frame of student matriculation information (ID and starting major) to keep those starting in specified programs.
 }
 \details{
 \code{gather_start()} uses \code{dplyr::inner_join()} to combine the rows and columns of its two arguments, both data frames. All variables in the two arguments except \code{id}, \code{cip6} or \code{start} and \code{program} are quietly dropped.

@@ -5,9 +5,9 @@
 #' @importFrom magrittr %>%
 NULL
 
-#' Filter CIP data
+#' Filter by CIP data
 #'
-#' Filter a data frame of Classification of Instructional Programs (CIP) codes
+#' Filter a data frame for Classification of Instructional Programs (CIP) codes
 #' and return the rows that match conditions.
 #'
 #' \code{cip_filter()} is essentially a search tool to filter the data frame
@@ -21,7 +21,7 @@ NULL
 #' collections of predefined search terms for groups of programs such as
 #' Biological Sciences, Engineering, Physical Sciences, etc.
 #'
-#' @param .data A data frame of character variables.
+#' @param .data A data frame containing at least one column of CIP codes.
 #' If NULL, \code{.data} is the midfieldr \code{cip} dataset.
 #'
 #' @param series A character vector (or coercible to one) of search terms. The
@@ -44,9 +44,7 @@ NULL
 cip_filter <- function(.data = NULL, series = NULL) {
 
   # default data
-  if (is.null(.data)) {
-    .data <- midfieldr::cip
-  }
+  if (is.null(.data)) {.data <- midfieldr::cip}
 
   # tibble required by filter_all()
   if (!tibble::is_tibble(.data)) {

@@ -143,7 +143,7 @@ library(dplyr)
 library(ggplot2)
 ```
 
-### Select programs to study
+**Step 1. Select programs to study**
 
 In this example we compare the stickiness of three engineering programs: Chemical, Electrical, and Industrial. 
 
@@ -172,20 +172,34 @@ set3 <- cip_filter(cip, series = "^1435") %>%
 Combine the data frames. 
 
 ```{r group-cip}
-cip_group <- bind_rows(set1, set2, set3)
+program_group <- bind_rows(set1, set2, set3)
 
-cip_group
+program_group
 ```
 
 For additional information, try the help page `?cip_filter()` and the  [Selecting CIP codes](cip_filter.html) vignette. 
 
-### Compute the metric
+**Step 2. Gather the data and compute the metric**
+
+First we extract the 6-digit CIP codes from our program group to use as search terms. 
+
+```{r}
+program_cip6 <- program_group[["cip6"]]
+```
 
 Use `gather_ever()` to access the `midfieldterms` dataset and extract all students who ever enrolled in these programs. Use `race_sex_join()` to access the `midfieldstudents` dataset and append students' race and sex to the data frame. 
 
 ```{r gather-ever}
-students <- gather_ever(cip_group) %>%
+students <- gather_ever(series = program_cip6) %>%
   race_sex_join(.)
+
+students
+```
+
+Next we join our custom program names to the student data.
+
+```{r}
+students <- left_join(students, program_group, by = "cip6")
 
 students
 ```
@@ -194,15 +208,19 @@ We create a vector of grouping variables and use the seplyr `group_summarize()` 
 
 ```{r}
 grouping_variables <- c("program", "race", "sex")
+
 ever_enrolled <- students %>%
   group_summarize(., grouping_variables, ever = n())
+
+ever_enrolled
 ```
 
 Following similar steps, we use `gather_grad()` to access the `midfielddegrees` dataset and extract all students who graduated from these programs. We group and summarize the counts using `grad` as the new count variable. 
 
 ```{r grad}
-graduated <- gather_grad(cip_group) %>%
+graduated <- gather_grad(series = program_cip6) %>%
   race_sex_join(.) %>%
+  left_join(., program_group, by = "cip6") %>%
   group_summarize(., grouping_variables, grad = n())
 ```
 
@@ -230,7 +248,7 @@ stickiness
 
 For a discussion of each step in greater detail, see the [Stickiness metric](stickiness.html) vignette.
 
-### Graph the results 
+**Step 3. Graph the results**
 
 To prepare the stickiness data for graphing, we remove ambiguous race levels (Unknown, International, or Other) and then combine race and sex into a single variable. 
 
@@ -265,15 +283,11 @@ The ordering of the rows and panels of the multiway plot tell us that for these 
 
 Results will vary depending on the programs one compares. Variations can also be expected if one uses the whole population data available to MIDFIELD member institutions. 
 
-For additional information on multiways, see the [Multiway data, graphs, and tables](multiway.html) vignette. 
+For additional information on multiways, see the [Multiway data, graphs, and tables](multiway.html) vignette. For additional midfieldr functionality and metrics see the [vignettes](articles/index.html).  
 
-For additional midfieldr functionality and metrics see the [vignettes](articles/index.html).  
+## Meta
 
-# Meta
-
-- License: [GPL-3](https://www.gnu.org/licenses/gpl-3.0). 
-- Please report any [issues or bugs](https://github.com/MIDFIELDR/midfieldr/issues). 
 - Get citation information with `citation("midfieldr")`. 
 - Please note that this project is released with a [Code of Conduct](CONDUCT.md). If you contribute to this project you agree to abide by its terms. 
 
-# References
+## References

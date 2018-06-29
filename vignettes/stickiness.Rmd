@@ -46,9 +46,9 @@ knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
 
 Longitudinal "stickiness" is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program [@stickiness2012]. 
 
-Thus the stickiness metric accounts for all students a program had the most immediate opportunity to retain and graduate---the students were, after all, enrolled in the program at one time. 
+The stickiness metric accounts for all students in a program. Unlike the graduation rate metric, stickiness includes students who begin college part-time, who enroll mid-year, and who transfer from one institution to another. 
 
-We typically group stickiness results by program, sex, and "race" as defined by the participating US institutions. 
+Every student counted in a program's stickiness metric was enrolled in that program for at least one term. The program succeeded in attracting these students---stickiness tells us how well the program succeeded in retaining them.  
 
 ## Getting started 
 
@@ -69,68 +69,100 @@ In this article, we show you how to use midfieldr functions to compute program s
 - create a multiway graph  
 
 
-## Select the programs to study
+## Choose the programs to study
 
-The [Selecting programs](selecting_programs.html) vignette describes the  process for obtaining the program codes and names used here. The output of that vignette is saved as a midfieldr case data set, `case_cip_group`.
+The [Selecting programs](selecting_programs.html) vignette describes the  process for obtaining the program codes and names for four engineering programs: Civil, Electrical, Industrial, and Mechanical. The output of that vignette is saved as a midfieldr case data set, `case_program_group`. You may 
 
-The programs studied in this example are all Engineering programs: Civil, Electrical, Industrial, and Mechanical. 
+- create the program group by running the code in the vignette 
+- or load the saved case data 
 
-You may run the code in "Selecting programs" to obtain these data yourself or you can simply load the saved case data. To load the case data, first load midfieldr (we did that above) and the data frame `case_cip_group` should be available. 
+To load the case data: 
 
 ```{r}
-# CIP information saved from an earlier vignette
-cip_group <- case_cip_group 
+# information saved from an earlier vignette
+data("case_program_group")
+program_group <- case_program_group
 ```
 
-Examine the result: there are a total of `r length(unique(cip_group[["cip6"]]))` CIP codes for these programs. We have 7 columns: 6 from the `cip` dataset and the one `program` column of labels we added using `cip_label()`. 
+Examine the result: there are a total of `r length(unique(program_group[["cip6"]]))` CIP codes for these programs. We have all six columns from the `cip` dataset and the `program` column we added using `cip_label()`. 
 
 ```{r echo = -1}
 options(tibble.print_min = 12L)
 # check the result
-cip_group
+program_group
 ```
 
-When searching the midfielddata datasets for students in these programs, our search functions use the 6-digit CIP codes in the `cip6` variable. To confirm that the search terms are what we expect, we can extract and view the `r length(unique(cip_group[["cip6"]]))` unique codes. 
 
-```{r}
-unique(cip_group[["cip6"]])
-```
+
 
 ## gather_ever()  
 
-`gather_ever()` has one argument, a data frame with at least two character variables:  `cip6` and `program`. The function extracts from the `midfieldterms` dataset all students ever enrolled in the programs in `cip6`. Open the help page by running `?gather_ever()`.
+We use `gather_ever()` to collect all students ever enrolled in the programs we are studying. `gather_ever()` has two arguments: 
+
+- `.data` data frame of academic term data to be filtered. The default is `midfieldterms` 
+- `series` atomic character vector of 6-digit CIP codes used to filter `.data` 
+
+The `series` argument in this case is an atomic vector of the 6-digit CIP codes in our `program_group`. 
 
 ```{r}
-# extract unique students from midfieldterms
-students <- gather_ever(cip_group)
+program_cip6 <- program_group[["cip6"]] %>%
+  unique() %>%
+  sort()
+
+program_cip6
 ```
 
-Use `glimpse()` (a [tibble](http://tibble.tidyverse.org) function) to view the result to check the number of observations and to view the first few values of each variable. We see that we have 10846 students ever enrolled in these programs. 
+Extract all students from midfieldterms ever enrolled in these programs. 
+
+```{r opts.label = 'dopurl'}
+students <- gather_ever(series = program_cip6)
+```
+
+Use `glimpse()` (a [tibble](http://tibble.tidyverse.org) function) to view the result to check the number of observations and to view the first few values of each variable. We see that we have `r nrow(students)` students ever enrolled in these programs. 
 
 ```{r}
 # check the result
 glimpse(students)
 ```
+
+Open the help page by running `?gather_ever()`.
 
 ## race_sex_join() 
 
 `race_sex_join()` accepts any data frame with the MIDFIELD student `id` variable and joins the student race and sex from the `midfieldstudents` data to these data. 
 
 ```{r}
-students <- race_sex_join(students)
-
-# check the result
-glimpse(students)
+students <- race_sex_join(students) %>%
+  glimpse()
 ```
 
 If the argument to `race_sex_join()` already includes a `sex` or `race` column, that column (or columns) is returned unchanged. Open the help page by running `?race_sex_join()`.
+
+## Assign program names for grouping
+
+Next we join our custom program names to the student data. We use `left_join()` (a dplyr function) to join `program_group` to `students` by the 6-digit CIP code. 
+
+```{r}
+students <- left_join(students, program_group, by = "cip6") %>%
+  glimpse()
+```
+
+Optionally, we can select just the variables we want to work with next. 
+
+```{r}
+students <- students %>%
+  select(program, race, sex) %>%
+  glimpse()
+```
+
+This step is optional because when we group and summarize in the next step, all  variables not used for grouping are dropped anyway. 
 
 ## Count the numbers of students ever enrolled
 
 We use `group_summarize()` (an [seplyr](https://winvector.github.io/seplyr/) function) to group and count the numbers of students ever enrolled in our programs.  All variables in `students` not used as grouping variables are quietly dropped. The assigned count variable is `ever`.  
 
 ```{r}
-# select the variables for grouping
+# assign the variables for grouping
 grouping_variables <- c("program", "race", "sex")
 
 # count the numbers of students ever in a program
@@ -143,23 +175,25 @@ ever_enrolled
 
 ## gather_grad() 
 
-`gather_grad()` extracts a subset of the `midfielddegrees` data containing the  unique students ever graduating from the programs listed in `cip_group ` and joins our user-defined `program` labels to these data. 
+`gather_grad()` extracts a subset of the `midfielddegrees` data containing the  unique students ever graduating from the programs listed in `program_cip6 `. 
 
-Similar to gathering the ever enrolled students, we can chain these functions together in one code chunk. Here, the assigned count variable is `grad`.   Open the help page by running `?gather_grad()`.
+The procedure for gathering graduates is nearly identical to the procedure for gathering the ever-enrolled. We use `gather_grad()` to search the  `midfielddegrees` dataset using the same series argument; we join race, sex, and program in the same way; and when we count students, the totals are assigned to the new variable `grad`.
+
+The functions can be chained in a code chunk of 4 lines. 
 
 ```{r}
 # count students graduating from programs
-graduated <- gather_grad(cip_group) %>%
+graduated <- gather_grad(series = program_cip6) %>%
   race_sex_join(.) %>%
+  left_join(., program_group, by = "cip6") %>%
   group_summarize(., grouping_variables, grad = n())
 
-# check the result
 graduated
 ```
 
 ## Tally stickiness
 
-To compute stickiness, we use `left_join()` (a dplyr function) to join `graduated` to `ever_enrolled` by program, race, and sex.  
+To set up the stickiness calculation, we join `graduated` to `ever_enrolled` by program, race, and sex.  
 
 ```{r}
 stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables)
@@ -264,19 +298,26 @@ library(seplyr)
 library(midfieldr)
 
 # CIP information saved from an earlier vignette
-cip_group <- case_cip_group
+program_group <- case_program_group
 
-# assign grouping variables for summarizing and joining
+# extract the 6-digit CIPs as a search series
+program_cip6 <- program_group[["cip6"]] %>%
+  unique() %>%
+  sort()
+
+# assign the variables for grouping
 grouping_variables <- c("program", "race", "sex")
 
 # count students ever enrolled
-ever_enrolled <- gather_ever(cip_group) %>%
+ever_enrolled <- gather_ever(series = program_cip6) %>%
   race_sex_join(.) %>%
+  left_join(., program_group, by = "cip6") %>%
   group_summarize(., grouping_variables, ever = n())
 
 # count students graduating
-graduated <- gather_grad(cip_group) %>%
+graduated <- gather_grad(series = program_cip6) %>%
   race_sex_join(.) %>%
+  left_join(., program_group, by = "cip6") %>%
   group_summarize(., grouping_variables, grad = n())
 
 # tally stickiness, by group
@@ -285,7 +326,7 @@ stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables) %>%
   mutate(., stick = round(grad / ever, 3))
 
 # prepare data for graph
-stickiness_multiway <- stickiness %>%
+stickiness_mw <- stickiness %>%
   filter(., !race %in% c("Unknown", "International", "Other")) %>%
   filter(., !sex %in% "Unknown") %>%
   mutate(., race_sex = str_c(race, sex, sep = " ")) %>%
@@ -293,16 +334,17 @@ stickiness_multiway <- stickiness %>%
   multiway_order(.)
 
 # graph
-ggplot(stickiness_multiway, aes(x = stick, y = race_sex)) +
+ggplot(stickiness_mw, aes(x = stick, y = race_sex)) +
   facet_wrap(~program, ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +
   theme_midfield()
 ```
 
+## Issue bin
 
-## Issues
-
-- Have to account for "possible graduation in 6 years" (posgrad6) 
+- Add a note regarding the suggested 6-student minimum. 
+- Account for "possible graduation in 6 years" (posgrad6) 
+- Could use mice to impute unknown values of the race and sex variables 
 
 ## References

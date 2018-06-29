@@ -87,7 +87,7 @@ library(dplyr)
 library(ggplot2)
 ```
 
-### Select programs to study
+**Step 1. Select programs to study**
 
 In this example we compare the stickiness of three engineering programs:
 Chemical, Electrical, and Industrial.
@@ -136,9 +136,9 @@ set3 <- cip_filter(cip, series = "^1435") %>%
 Combine the data frames.
 
 ``` r
-cip_group <- bind_rows(set1, set2, set3)
+program_group <- bind_rows(set1, set2, set3)
 
-cip_group
+program_group
 #> # A tibble: 8 x 7
 #>   cip2  cip2name    cip4  cip4name        cip6   cip6name        program  
 #>   <chr> <chr>       <chr> <chr>           <chr>  <chr>           <chr>    
@@ -155,7 +155,14 @@ cip_group
 For additional information, try the help page `?cip_filter()` and the
 [Selecting CIP codes](cip_filter.html) vignette.
 
-### Compute the metric
+**Step 2. Gather the data and compute the metric**
+
+First we extract the 6-digit CIP codes from our program group to use as
+search terms.
+
+``` r
+program_cip6 <- program_group[["cip6"]]
+```
 
 Use `gather_ever()` to access the `midfieldterms` dataset and extract
 all students who ever enrolled in these programs. Use `race_sex_join()`
@@ -163,23 +170,45 @@ to access the `midfieldstudents` dataset and append students’ race and
 sex to the data frame.
 
 ``` r
-students <- gather_ever(cip_group) %>%
+students <- gather_ever(series = program_cip6) %>%
   race_sex_join(.)
 
 students
-#> # A tibble: 6,444 x 5
-#>    id          cip6   program              race  sex   
-#>    <chr>       <chr>  <chr>                <chr> <chr> 
-#>  1 MID25783178 140701 Chemical Engineering Black Male  
-#>  2 MID25783197 140701 Chemical Engineering White Male  
-#>  3 MID25783257 140701 Chemical Engineering White Male  
-#>  4 MID25785896 140701 Chemical Engineering White Male  
-#>  5 MID25786299 140701 Chemical Engineering White Female
-#>  6 MID25786339 140701 Chemical Engineering White Male  
-#>  7 MID25786745 140701 Chemical Engineering White Male  
-#>  8 MID25787174 140701 Chemical Engineering White Male  
-#>  9 MID25787361 140701 Chemical Engineering White Male  
-#> 10 MID25787468 140701 Chemical Engineering White Male  
+#> # A tibble: 6,444 x 4
+#>    id          cip6   race          sex  
+#>    <chr>       <chr>  <chr>         <chr>
+#>  1 MID25783178 140701 Black         Male 
+#>  2 MID25783178 143501 Black         Male 
+#>  3 MID25783197 140701 White         Male 
+#>  4 MID25783257 140701 White         Male 
+#>  5 MID25783491 141001 White         Male 
+#>  6 MID25783606 141001 White         Male 
+#>  7 MID25783912 143501 White         Male 
+#>  8 MID25784118 141001 White         Male 
+#>  9 MID25784209 141001 International Male 
+#> 10 MID25784234 143501 White         Male 
+#> # ... with 6,434 more rows
+```
+
+Next we join our custom program names to the student data.
+
+``` r
+students <- left_join(students, program_group, by = "cip6")
+
+students
+#> # A tibble: 6,444 x 10
+#>    id     cip6  race  sex   cip2  cip2name cip4  cip4name cip6name program
+#>    <chr>  <chr> <chr> <chr> <chr> <chr>    <chr> <chr>    <chr>    <chr>  
+#>  1 MID25~ 1407~ Black Male  14    Enginee~ 1407  Chemica~ Chemica~ Chemic~
+#>  2 MID25~ 1435~ Black Male  14    Enginee~ 1435  Industr~ Industr~ Indust~
+#>  3 MID25~ 1407~ White Male  14    Enginee~ 1407  Chemica~ Chemica~ Chemic~
+#>  4 MID25~ 1407~ White Male  14    Enginee~ 1407  Chemica~ Chemica~ Chemic~
+#>  5 MID25~ 1410~ White Male  14    Enginee~ 1410  Electri~ Electri~ Electr~
+#>  6 MID25~ 1410~ White Male  14    Enginee~ 1410  Electri~ Electri~ Electr~
+#>  7 MID25~ 1435~ White Male  14    Enginee~ 1435  Industr~ Industr~ Indust~
+#>  8 MID25~ 1410~ White Male  14    Enginee~ 1410  Electri~ Electri~ Electr~
+#>  9 MID25~ 1410~ Inte~ Male  14    Enginee~ 1410  Electri~ Electri~ Electr~
+#> 10 MID25~ 1435~ White Male  14    Enginee~ 1435  Industr~ Industr~ Indust~
 #> # ... with 6,434 more rows
 ```
 
@@ -190,8 +219,25 @@ the count.
 
 ``` r
 grouping_variables <- c("program", "race", "sex")
+
 ever_enrolled <- students %>%
   group_summarize(., grouping_variables, ever = n())
+
+ever_enrolled
+#> # A tibble: 48 x 4
+#>    program              race            sex     ever
+#>    <chr>                <chr>           <chr>  <int>
+#>  1 Chemical Engineering Asian           Female    56
+#>  2 Chemical Engineering Asian           Male      98
+#>  3 Chemical Engineering Black           Female   148
+#>  4 Chemical Engineering Black           Male      98
+#>  5 Chemical Engineering Hispanic        Female    38
+#>  6 Chemical Engineering Hispanic        Male      57
+#>  7 Chemical Engineering International   Female     8
+#>  8 Chemical Engineering International   Male      23
+#>  9 Chemical Engineering Native American Female     7
+#> 10 Chemical Engineering Native American Male       8
+#> # ... with 38 more rows
 ```
 
 Following similar steps, we use `gather_grad()` to access the
@@ -200,8 +246,9 @@ these programs. We group and summarize the counts using `grad` as the
 new count variable.
 
 ``` r
-graduated <- gather_grad(cip_group) %>%
+graduated <- gather_grad(series = program_cip6) %>%
   race_sex_join(.) %>%
+  left_join(., program_group, by = "cip6") %>%
   group_summarize(., grouping_variables, grad = n())
 ```
 
@@ -245,7 +292,7 @@ stickiness
 For a discussion of each step in greater detail, see the [Stickiness
 metric](stickiness.html) vignette.
 
-### Graph the results
+**Step 3. Graph the results**
 
 To prepare the stickiness data for graphing, we remove ambiguous race
 levels (Unknown, International, or Other) and then combine race and sex
@@ -299,22 +346,17 @@ also be expected if one uses the whole population data available to
 MIDFIELD member institutions.
 
 For additional information on multiways, see the [Multiway data, graphs,
-and tables](multiway.html) vignette.
+and tables](multiway.html) vignette. For additional midfieldr
+functionality and metrics see the [vignettes](articles/index.html).
 
-For additional midfieldr functionality and metrics see the
-[vignettes](articles/index.html).
+## Meta
 
-# Meta
-
-  - License: [GPL-3](https://www.gnu.org/licenses/gpl-3.0).
-  - Please report any [issues or
-    bugs](https://github.com/MIDFIELDR/midfieldr/issues).
   - Get citation information with `citation("midfieldr")`.
   - Please note that this project is released with a [Code of
     Conduct](CONDUCT.md). If you contribute to this project you agree to
     abide by its terms.
 
-# References
+## References
 
 <div id="refs" class="references">
 

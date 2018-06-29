@@ -121,7 +121,7 @@ NULL
 #'   \item{cip6name}{Name of a program at the 6-digit level}
 #'   \item{program}{A program name.}
 #' }
-"case_cip_group"
+"case_program_group"
 
 
 

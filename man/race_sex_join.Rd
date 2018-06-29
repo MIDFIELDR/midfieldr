@@ -16,8 +16,8 @@ The incoming data frame plus two new columns \code{race} and
 }
 \description{
 Add variables \code{race} and \code{sex} from the \code{midfieldstudents}
-dataset to a data frame, using \code{id} is the join-by variable.
+dataset to a data frame, using \code{id} as the join-by variable.
 }
 \details{
-If sex or race variables are already present, they are overwritten.
+If sex or race variables are already present, they are returned as-is (not overwritten).
 }
