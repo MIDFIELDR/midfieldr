@@ -56,6 +56,9 @@
       <a href="../articles/cip_filter.html">Selecting CIP codes</a>
     </li>
     <li>
+      <a href="../articles/selecting_programs.html">Selecting the case study programs</a>
+    </li>
+    <li>
       <a href="../articles/imputing_fye.html">Imputing starting majors for FYE</a>
     </li>
     <li>
@@ -265,11 +268,11 @@
 #&gt; 2626  1           1    1   1     0    1
 #&gt;       0           0    0   0  2626 2626</code></pre>
 <p>Initialize parameters.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">init  &lt;-<span class="st"> </span><span class="kw"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(mi_input, <span class="dt">maxit =</span> <span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb17-2" data-line-number="2">meth  &lt;-<span class="st"> </span>init<span class="op">$</span>method</a>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">init &lt;-<span class="st"> </span><span class="kw"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(mi_input, <span class="dt">maxit =</span> <span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">meth &lt;-<span class="st"> </span>init<span class="op">$</span>method</a>
 <a class="sourceLine" id="cb17-3" data-line-number="3">predM &lt;-<span class="st"> </span>init<span class="op">$</span>predictorMatrix</a></code></pre></div>
 <p>Identify variables not used as predictors.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">predM[ , <span class="kw">c</span>(<span class="st">"id"</span>)] &lt;-<span class="st"> </span><span class="dv">0</span></a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">predM[, <span class="kw">c</span>(<span class="st">"id"</span>)] &lt;-<span class="st"> </span><span class="dv">0</span></a></code></pre></div>
 <p>Assign variables not imputed. (In this case, this step could be skipped because a mice default is to not impute variables with zero missing values.)</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">meth[<span class="kw">c</span>(<span class="st">"id"</span>, <span class="st">"institution"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>)] &lt;-<span class="st"> ""</span></a></code></pre></div>
 <p>Assign the imputation method. For unordered categorical data with more than two levels, the suggested method is “polyreg” (polytomous regression).</p>
@@ -283,6 +286,11 @@
 <a class="sourceLine" id="cb21-6" data-line-number="6">  <span class="dt">printFlag =</span> <span class="ot">TRUE</span>,</a>
 <a class="sourceLine" id="cb21-7" data-line-number="7">  <span class="dt">seed =</span> <span class="dv">20180624</span></a>
 <a class="sourceLine" id="cb21-8" data-line-number="8">)</a></code></pre></div>
+</div>
+<div id="data-set-case_fye" class="section level2">
+<h2 class="hasAnchor">
+<a href="#data-set-case_fye" class="anchor"></a>Data set: <code>case_fye</code>
+</h2>
 <p>Construct the data set after imputation, keeping ID and starting major only. Reformat the start major as a character. The data frame, <code>case_fye</code>, is the data mentioned previously provided with the midfieldr package if you prefer not to do your own imputation.</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">mi_output_complete &lt;-<span class="st"> </span><span class="kw"><a href="http://stefvanbuuren.github.io/mice/reference/complete.html">complete</a></span>(mi_output)</a>
 <a class="sourceLine" id="cb22-2" data-line-number="2"></a>
@@ -319,55 +327,14 @@
 <a class="sourceLine" id="cb25-6" data-line-number="6"><span class="co">#&gt;  [1] "140201" "140301" "140501" "140601" "140701" "140801" "140901"</span></a>
 <a class="sourceLine" id="cb25-7" data-line-number="7"><span class="co">#&gt;  [8] "141001" "141101" "141801" "141901" "142101" "142301" "142801"</span></a>
 <a class="sourceLine" id="cb25-8" data-line-number="8"><span class="co">#&gt; [15] "143301" "143501" "149999"</span></a></code></pre></div>
-<p>To assess the imputation, the FYE starting majors with and without the imputed values.</p>
-<!-- To assess the imputed start values, we will collect the numbers of all students starting in all institutions, with and without the missing data.  -->
-<!-- We extract from `midfieldstudents` the IDs of all students whose matriculation major is engineering.    -->
-<!-- ```{r} -->
-<!-- engr_id <- midfieldstudents %>%  -->
-<!--    filter(., str_detect(cip6, "^14")) %>% -->
-<!--    select(., id) %>% -->
-<!--    unique(.) %>% -->
-<!--    glimpse(.)  -->
-<!-- ``` -->
-<!-- Keep students from non-FYE institutions.     -->
-<!-- ```{r} -->
-<!-- non_fye_id <- engr_id %>%  -->
-<!--    anti_join(., fye_id, by = "id") %>%  -->
-<!--    glimpse() -->
-<!-- ``` -->
-<!-- From `midfieldstudents`, collect the starting information for these students. -->
-<!-- ```{r} -->
-<!-- non_fye <- midfieldstudents %>%  -->
-<!--    semi_join(., non_fye_id, by = "id") %>% -->
-<!--    select(id, start = cip6) %>%  -->
-<!--    glimpse() -->
-<!-- ``` -->
-<!-- Add a column to categorize FYE and non-FYE students and join the data frames.  -->
-<!-- ```{r} -->
-<!-- non_fye <- non_fye %>%  -->
-<!--    mutate(fye_status = "Non_FYE") -->
-<!-- fye <- as.tibble(case_fye) %>%  -->
-<!--    mutate(fye_status = "FYE")  -->
-<!-- engr <- bind_rows(fye, non_fye) %>%  -->
-<!--    race_sex_join() %>%  -->
-<!--    select(-id) %>%  -->
-<!--    glimpse() -->
-<!-- ``` -->
-<!-- Truncate to the 4-digit CIP -->
-<!-- ```{r} -->
-<!-- engr <- engr %>%  -->
-<!--    mutate(start = str_sub(start, start = 1, end = 4)) %>%  -->
-<!--    glimpse() -->
-<!-- ``` -->
-<!-- Now count by FYE status, race, sex, and major.  -->
-<!-- ```{r} -->
-<!-- library(seplyr) -->
-<!-- engr_count <- engr %>%  -->
-<!--    group_summarise(., c("fye_status", "race", "sex", "start"), n = n()) %>%  -->
-<!--    spread(fye_status, n)  -->
-<!-- engr_count$Total <- rowSums(engr_count[ , c("FYE", "Non_FYE")], na.rm = TRUE) -->
-<!-- knitr::kable(engr_count) -->
-<!-- ``` -->
+</div>
+<div id="issue-bin" class="section level2">
+<h2 class="hasAnchor">
+<a href="#issue-bin" class="anchor"></a>Issue bin</h2>
+<ul>
+<li>To assess the imputation, the FYE starting majors with and without the imputed values.</li>
+</ul>
+<!-- To assess the imputed start values, we will collect the numbers of all students starting in all institutions, with and without the missing data.  --><!-- We extract from `midfieldstudents` the IDs of all students whose matriculation major is engineering.    --><!-- ```{r} --><!-- engr_id <- midfieldstudents %>%  --><!--    filter(., str_detect(cip6, "^14")) %>% --><!--    select(., id) %>% --><!--    unique(.) %>% --><!--    glimpse(.)  --><!-- ``` --><!-- Keep students from non-FYE institutions.     --><!-- ```{r} --><!-- non_fye_id <- engr_id %>%  --><!--    anti_join(., fye_id, by = "id") %>%  --><!--    glimpse() --><!-- ``` --><!-- From `midfieldstudents`, collect the starting information for these students. --><!-- ```{r} --><!-- non_fye <- midfieldstudents %>%  --><!--    semi_join(., non_fye_id, by = "id") %>% --><!--    select(id, start = cip6) %>%  --><!--    glimpse() --><!-- ``` --><!-- Add a column to categorize FYE and non-FYE students and join the data frames.  --><!-- ```{r} --><!-- non_fye <- non_fye %>%  --><!--    mutate(fye_status = "Non_FYE") --><!-- fye <- as.tibble(case_fye) %>%  --><!--    mutate(fye_status = "FYE")  --><!-- engr <- bind_rows(fye, non_fye) %>%  --><!--    race_sex_join() %>%  --><!--    select(-id) %>%  --><!--    glimpse() --><!-- ``` --><!-- Truncate to the 4-digit CIP --><!-- ```{r} --><!-- engr <- engr %>%  --><!--    mutate(start = str_sub(start, start = 1, end = 4)) %>%  --><!--    glimpse() --><!-- ``` --><!-- Now count by FYE status, race, sex, and major.  --><!-- ```{r} --><!-- library(seplyr) --><!-- engr_count <- engr %>%  --><!--    group_summarise(., c("fye_status", "race", "sex", "start"), n = n()) %>%  --><!--    spread(fye_status, n)  --><!-- engr_count$Total <- rowSums(engr_count[ , c("FYE", "Non_FYE")], na.rm = TRUE) --><!-- knitr::kable(engr_count) --><!-- ``` -->
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="hasAnchor">
@@ -395,7 +362,9 @@
       <li><a href="#we-provide-an-imputed-data-set">We provide an imputed data set</a></li>
       <li><a href="#preparing-the-fye-data-for-imputation">Preparing the FYE data for imputation</a></li>
       <li><a href="#imputing-missing-data">Imputing missing data</a></li>
+      <li><a href="#data-set-case_fye">Data set: <code>case_fye</code></a></li>
       <li><a href="#assessing-the-imputation-">Assessing the imputation.</a></li>
+      <li><a href="#issue-bin">Issue bin</a></li>
       <li><a href="#references">References</a></li>
       </ul>
 </div>

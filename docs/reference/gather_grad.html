@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Gather students graduating from a set of programs — gather_grad • midfieldr</title>
+<title>Gather graduates — gather_grad • midfieldr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Gather students graduating from a set of programs — gather_grad" />
+<meta property="og:title" content="Gather graduates — gather_grad" />
 
-<meta property="og:description" content="Filters the midfielddata::midfielddegrees dataset for all students graduating from a set of programs denoted by their 6-digit CIP codes." />
+<meta property="og:description" content="Filter academic degree data for students graduating from a set of programs." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -89,6 +89,9 @@
       <a href="../articles/cip_filter.html">Selecting CIP codes</a>
     </li>
     <li>
+      <a href="../articles/selecting_programs.html">Selecting the case study programs</a>
+    </li>
+    <li>
       <a href="../articles/imputing_fye.html">Imputing starting majors for FYE</a>
     </li>
     <li>
@@ -132,56 +135,59 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Gather students graduating from a set of programs</h1>
+    <h1>Gather graduates</h1>
     <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/gather_grad.R'><code>R/gather_grad.R</code></a></small>
     <div class="hidden name"><code>gather_grad.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Filters the <code><a href='http://www.rdocumentation.org/packages/midfielddata/topics/midfielddegrees'>midfielddata::midfielddegrees</a></code> dataset for all students graduating from a set of programs denoted by their 6-digit CIP codes.</p>
+    <p>Filter academic degree data for students graduating from a set of programs.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>gather_grad</span>(<span class='no'>.data</span>)</pre>
+    <pre class="usage"><span class='fu'>gather_grad</span>(<span class='kw'>.data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>series</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>.data</th>
-      <td><p>A data frame with two required character variables:  <code>cip6</code> (6-digit CIP codes) and <code>program</code> (program labels).</p></td>
+      <td><p>Data frame of academic degree data with character variables <code>id</code>, <code>cip6</code>, and <code>term_degree</code></p></td>
+    </tr>
+    <tr>
+      <th>series</th>
+      <td><p>Atomic character vector of 6-digit CIP codes used to filter the data</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data frame with variables <code>id</code> (unique MIDFIELD student ID), <code>cip6</code> (6-digit CIP code), and <code>program</code> (a program label).</p>
+    <p>Data frame with character variables <code>id</code> and <code>cip6</code></p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>gather_grad()</code> uses the codes in the <code>cip6</code> variable to filter the <code>midfielddegrees</code> dataset, keeping all students who graduate from any of those programs.</p>
-<p>The data can include students earning degrees in multiple programs in the same term. The function returns a data frame with one observation for each unique pairing between students and programs in the term in which their first degree or degrees are awarded. Degrees earned in later terms are ignored.</p>
-<p>All variables in <code>.data</code> other than the required <code>cip6</code> and <code>program</code> are quietly dropped.</p>
+    <p>To use this function, the <code>midfielddata</code> package must be installed to provide the default <code>.data</code> argument, <code>midfielddegrees</code>.</p>
+<p>The input data frame must include the three character variables: <code>id</code>, <code>cip6</code>, and <code>term_degree</code>. The default data include every degree a student earned, but only the student's first degree (or multiple degrees if earned in the same term) are retained.</p>
+<p>The <code>series</code> argument is an atomic character vector of 6-digit CIP codes used to filter the academic degree data frame.</p>
+<p>The function returns a subset of the input data frame with every unique combination of student ID and CIP of the program(s) in which they earned their first degree(s). Only <code>id</code> and <code>cip6</code> are returned; other variables in the input data frame are dropped.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='cip_filter.html'>cip_filter</a></code> for obtaining 6-digit CIP codes, <code><a href='cip_label.html'>cip_label</a></code> for adding a column of program labels</p></div>
+    <div class='dont-index'><p><code><a href='cip_filter.html'>cip_filter</a></code> for obtaining 6-digit CIP codes</p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cip_filter.html'>cip_filter</a></span>(<span class='no'>cip</span>, <span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"540104"</span>)
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cip_label.html'>cip_label</a></span>(<span class='no'>d</span>, <span class='kw'>program</span> <span class='kw'>=</span> <span class='st'>"cip6name"</span>)
-<span class='no'>grad</span> <span class='kw'>&lt;-</span> <span class='fu'>gather_grad</span>(<span class='no'>d</span>)
-<span class='fu'>head</span>(<span class='no'>grad</span>)</div><div class='output co'>#&gt; # A tibble: 6 x 3
-#&gt;   id          cip6   program                                         
-#&gt;   &lt;chr&gt;       &lt;chr&gt;  &lt;chr&gt;                                           
-#&gt; 1 MID26360410 540104 History and Philosophy of Science and Technology
-#&gt; 2 MID26361391 540104 History and Philosophy of Science and Technology
-#&gt; 3 MID26362301 540104 History and Philosophy of Science and Technology
-#&gt; 4 MID26362581 540104 History and Philosophy of Science and Technology
-#&gt; 5 MID26365694 540104 History and Philosophy of Science and Technology
-#&gt; 6 MID26365705 540104 History and Philosophy of Science and Technology</div><div class='input'>
+    <pre class="examples"><div class='input'><span class='no'>grad</span> <span class='kw'>&lt;-</span> <span class='fu'>gather_grad</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"540104"</span>)
+<span class='fu'>head</span>(<span class='no'>grad</span>)</div><div class='output co'>#&gt; # A tibble: 6 x 2
+#&gt;   id          cip6  
+#&gt;   &lt;chr&gt;       &lt;chr&gt; 
+#&gt; 1 MID26360410 540104
+#&gt; 2 MID26361391 540104
+#&gt; 3 MID26362301 540104
+#&gt; 4 MID26362581 540104
+#&gt; 5 MID26365694 540104
+#&gt; 6 MID26365705 540104</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

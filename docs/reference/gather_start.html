@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add a column of program labels to a CIP data frame — cip_label • midfieldr</title>
+<title>Gather students starting in programs — gather_start • midfieldr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Add a column of program labels to a CIP data frame — cip_label" />
+<meta property="og:title" content="Gather students starting in programs — gather_start" />
 
-<meta property="og:description" content="Adds a new character variable named program to a CIP data frame." />
+<meta property="og:description" content="Filters a data frame of student matriculation information (ID and starting major) to keep those starting in specified programs." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -135,70 +135,60 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add a column of program labels to a CIP data frame</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/cip_label.R'><code>R/cip_label.R</code></a></small>
-    <div class="hidden name"><code>cip_label.Rd</code></div>
+    <h1>Gather students starting in programs</h1>
+    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/gather_start.R'><code>R/gather_start.R</code></a></small>
+    <div class="hidden name"><code>gather_start.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Adds a new character variable named <code>program</code> to a CIP data frame.</p>
+    <p>Filters a data frame of student matriculation information (ID and starting major) to keep those starting in specified programs.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>cip_label</span>(<span class='no'>.data</span>, <span class='kw'>program</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>gather_start</span>(<span class='no'>.data</span>, <span class='no'>cip_group</span>, <span class='kw'>transfer</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>.data</th>
-      <td><p>A filtered subset of the midfieldr <code>cip</code> data frame.</p></td>
+      <td><p>A data frame of student matriculation information with two required character variables: student <code>id</code> and the <code>cip6</code> code for their starting major. Default is <code>midfieldstudents</code>.</p></td>
     </tr>
     <tr>
-      <th>program</th>
-      <td><p>An optional character variable. There are four options:</p>
-<p>If NULL, the default, the 6-digit CIP program names are assigned to the new column.</p>
-<p>If NULL, but one of the named <code>cip_series</code> is used to create the <code>.data</code> argument, then the series name is assigned to the new column.</p>
-<p>If one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-digit, 4-digit, or 6-digit CIP program names are assigned to the new column.</p>
-<p>Any other string is assigned to the new column.</p></td>
+      <th>cip_group</th>
+      <td><p>A data frame with two required character variables:  <code>cip6</code> or <code>start</code> (6-digit CIP codes) and <code>program</code> (program labels).</p></td>
+    </tr>
+    <tr>
+      <th>transfer</th>
+      <td><p>Logical to include (TRUE) or exclude (FALSE) transfer students. Default is FALSE.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The input data frame with an added <code>program</code> variable.</p>
+    <p>A data frame with variables <code>id</code> (unique MIDFIELD student ID), <code>start</code> (6-digit CIP code), and <code>program</code> (a program label).</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Assigning a custom label to a program or a group of programs provides
-the option of grouping and summarizing CIP data in ways not afforded by
-the default program names in the 2010 CIP data.</p>
-<p>With <code>.data</code> as the first argument, <code>cip_label()</code> is
-compatible with the pipe operator <code>%&gt;%</code>.</p>
+    <p><code>gather_start()</code> uses <code><a href='http://dplyr.tidyverse.org/reference/join.html'>dplyr::inner_join()</a></code> to combine the rows and columns of its two arguments, both data frames. All variables in the two arguments except <code>id</code>, <code>cip6</code> or <code>start</code> and <code>program</code> are quietly dropped.</p>
+<p><code>gather_start()</code> excludes transfer students unless you set <code>transfer = TRUE</code>. If you are using the result to compute graduation rates per the IPEDS definition, transfer students should be omitted.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Extract the Philosophy and Religion programs</span>
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cip_filter.html'>cip_filter</a></span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"^38"</span>)
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>cip_label</span>(<span class='no'>x</span>, <span class='kw'>program</span> <span class='kw'>=</span> <span class='st'>"test label"</span>)
-
-<span class='co'># The function is pipe-compatible</span>
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>x</span> <span class='kw'>%&gt;%</span> <span class='fu'>cip_label</span>(<span class='st'>"test label"</span>)
-
-<span class='co'># With no program argument, the 6-digit CIP names are assigned</span>
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>x</span> <span class='kw'>%&gt;%</span> <span class='fu'>cip_label</span>()
-
-<span class='co'># Argument options include</span>
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>x</span> <span class='kw'>%&gt;%</span> <span class='fu'>cip_label</span>(<span class='kw'>program</span> <span class='kw'>=</span> <span class='st'>"cip6name"</span>)
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>x</span> <span class='kw'>%&gt;%</span> <span class='fu'>cip_label</span>(<span class='kw'>program</span> <span class='kw'>=</span> <span class='st'>"cip4name"</span>)
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>x</span> <span class='kw'>%&gt;%</span> <span class='fu'>cip_label</span>(<span class='kw'>program</span> <span class='kw'>=</span> <span class='st'>"cip2name"</span>)
-
-<span class='co'># When a 4-digit level name is desired</span>
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cip_filter.html'>cip_filter</a></span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"^1410"</span>) <span class='kw'>%&gt;%</span> <span class='fu'>cip_label</span>(<span class='st'>"cip4name"</span>)
-
-<span class='co'># But if the result is too long, it can be manually reassigned</span>
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cip_filter.html'>cip_filter</a></span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"^1410"</span>) <span class='kw'>%&gt;%</span> <span class='fu'>cip_label</span>(<span class='st'>"Electrical Engineering"</span>)</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>cip_group</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cip_filter.html'>cip_filter</a></span>(<span class='no'>cip</span>, <span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"^54"</span>)
+<span class='no'>cip_group</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cip_label.html'>cip_label</a></span>(<span class='no'>cip_group</span>, <span class='kw'>program</span> <span class='kw'>=</span> <span class='st'>"cip2name"</span>)
+<span class='no'>starters</span> <span class='kw'>&lt;-</span> <span class='fu'>gather_start</span>(<span class='kw'>cip_group</span> <span class='kw'>=</span> <span class='no'>cip_group</span>)
+<span class='fu'>head</span>(<span class='no'>starters</span>)</div><div class='output co'>#&gt; # A tibble: 6 x 2
+#&gt;   id          start 
+#&gt;   &lt;chr&gt;       &lt;chr&gt; 
+#&gt; 1 MID25783780 540101
+#&gt; 2 MID25784804 540101
+#&gt; 3 MID25785329 540101
+#&gt; 4 MID25785903 540101
+#&gt; 5 MID25787024 540101
+#&gt; 6 MID25791292 540101</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

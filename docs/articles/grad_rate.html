@@ -56,6 +56,9 @@
       <a href="../articles/cip_filter.html">Selecting CIP codes</a>
     </li>
     <li>
+      <a href="../articles/selecting_programs.html">Selecting the case study programs</a>
+    </li>
+    <li>
       <a href="../articles/imputing_fye.html">Imputing starting majors for FYE</a>
     </li>
     <li>
@@ -115,9 +118,69 @@
 <p>So given their complexity, do college graduation rates really matter? In fact, they do because in the eyes of the public, policy makers, and the media, they provide a clear, simple, and logical—if often misleading—number.</p>
 </blockquote>
 <p>So with these caveats in mind, we provide the tools for determining program graduation rates per the IPEDS definition.</p>
-<div id="first-year-engineering" class="section level2">
+<div id="getting-started" class="section level2">
 <h2 class="hasAnchor">
-<a href="#first-year-engineering" class="anchor"></a>First year engineering</h2>
+<a href="#getting-started" class="anchor"></a>Getting started</h2>
+<p>Packages used:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(tidyverse)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(seplyr)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(midfieldr)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">library</span>(midfielddata)</a></code></pre></div>
+<p>In this article, we show you how to use midfieldr functions to compute program stickiness. Our workflow is:</p>
+<ul>
+<li>select the programs</li>
+<li>count the students starting in a program</li>
+<li>if the programs include engineering, impute starting majors for FYE students</li>
+<li>count the students graduating<br>
+</li>
+<li>compute graduation rate</li>
+<li>create a multiway graph</li>
+</ul>
+</div>
+<div id="select-the-programs-to-study" class="section level2">
+<h2 class="hasAnchor">
+<a href="#select-the-programs-to-study" class="anchor"></a>Select the programs to study</h2>
+<p>The <a href="selecting_programs.html">Selecting programs</a> vignette describes the process for obtaining the program codes and names used here. The output of that vignette is saved as a midfieldr case data set, <code>case_program_group</code>.</p>
+<p>The programs studied in this example are all Engineering programs: Civil, Electrical, Industrial, and Mechanical.</p>
+<p>You may run the code in “Selecting programs” to obtain these data yourself or you can simply load the saved case data. To load the case data, first load midfieldr (we did that above) and the data frame <code>case_program_group</code> should be available.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># CIP information saved from an earlier vignette</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">data</span>(<span class="st">"case_program_group"</span>)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">program_group &lt;-<span class="st"> </span>case_program_group</a></code></pre></div>
+<p>Examine the result: there are a total of 12 CIP codes for these programs. We have 7 columns: 6 from the <code>cip</code> dataset and the one <code>program</code> column of labels we added using <code><a href="../reference/cip_label.html">cip_label()</a></code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># check the result</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">program_group</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt; # A tibble: 12 x 7</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt;    cip2  cip2name    cip4  cip4name        cip6  cip6name        program  </span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;           &lt;chr&gt; &lt;chr&gt;           &lt;chr&gt;    </span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt;  1 14    Engineering 1408  Civil Engineer~ 1408~ Civil Engineer~ Civil En~</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt;  2 14    Engineering 1408  Civil Engineer~ 1408~ Geotechnical E~ Civil En~</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt;  3 14    Engineering 1408  Civil Engineer~ 1408~ Structural Eng~ Civil En~</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt;  4 14    Engineering 1408  Civil Engineer~ 1408~ Transportation~ Civil En~</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt;  5 14    Engineering 1408  Civil Engineer~ 1408~ Water Resource~ Civil En~</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt;  6 14    Engineering 1408  Civil Engineer~ 1408~ Civil Engineer~ Civil En~</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt;  7 14    Engineering 1410  Electrical, El~ 1410~ Electrical, El~ Electric~</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt;  8 14    Engineering 1410  Electrical, El~ 1410~ Laser and Opti~ Electric~</span></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt;  9 14    Engineering 1410  Electrical, El~ 1410~ Telecommunicat~ Electric~</span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; 10 14    Engineering 1410  Electrical, El~ 1410~ Electrical, El~ Electric~</span></a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; 11 14    Engineering 1419  Mechanical Eng~ 1419~ Mechanical Eng~ Mechanic~</span></a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt; 12 14    Engineering 1435  Industrial Eng~ 1435~ Industrial Eng~ Industri~</span></a></code></pre></div>
+<p>When searching the midfielddata datasets for students in these programs, our search functions use the 6-digit CIP codes in the <code>cip6</code> variable. To confirm that the search terms are what we expect, we can extract and view the 12 unique codes.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">unique</span>(program_group[[<span class="st">"cip6"</span>]])</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt;  [1] "140801" "140802" "140803" "140804" "140805" "140899" "141001"</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt;  [8] "141003" "141004" "141099" "141901" "143501"</span></a></code></pre></div>
+</div>
+<div id="gather_start" class="section level2">
+<h2 class="hasAnchor">
+<a href="#gather_start" class="anchor"></a>gather_start()</h2>
+<p>New gather_start() prototype. Keep transfers separate.</p>
+<p>In computing graduation rates, the IPEDS definition omits transfer students.</p>
+</div>
+<div id="issue-bin" class="section level2">
+<h2 class="hasAnchor">
+<a href="#issue-bin" class="anchor"></a>Issue bin</h2>
+<ul>
+<li>This vignette is still under construction</li>
+</ul>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="hasAnchor">
@@ -138,7 +201,10 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#first-year-engineering">First year engineering</a></li>
+<li><a href="#getting-started">Getting started</a></li>
+      <li><a href="#select-the-programs-to-study">Select the programs to study</a></li>
+      <li><a href="#gather_start">gather_start()</a></li>
+      <li><a href="#issue-bin">Issue bin</a></li>
       <li><a href="#references">References</a></li>
       </ul>
 </div>
