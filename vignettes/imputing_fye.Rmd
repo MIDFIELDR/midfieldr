@@ -38,7 +38,7 @@ knitr::knit_hooks$set(inline = function(x) {
     prettyNum(round(x, 2))
   }
 })
-# options(tibble.print_min = 8L, tibble.print_max = 8L)
+options(tibble.print_min = 8L, tibble.print_max = 8L)
 
 # normally, purl is FALSE. But in some code chunks, I want purl = TRUE so that the code in the vignette is executed to pass R CMD check. These next few lines set that up. In the code chunk header, add opts.label = 'dopurl'
 knitr::knit_hooks$set(purl = knitr::hook_purl)
@@ -49,6 +49,7 @@ Packages used in this article:
 
 ```{r}
 library(tidyverse)
+library(seplyr)
 library(midfieldr)
 library(midfielddata)
 ```
@@ -79,15 +80,20 @@ Note that FYE students are neither undecided nor undeclared. Their institutions 
 We impute these missing values using multiple imputation as 
 implemented in the [mice](https://stefvanbuuren.github.io/mice/) package (multivariate imputation via chained equations). The variables used to predict the missing values are institution, race, and sex.  
 
-The process does take time---about 30 seconds for imputing the missing values in our FYE data with 5992 observations, 5 variables, and 5 imputations. 
+The process is described in detail starting in the subsequent section. The process does take time---about 30 seconds for imputing the missing values in our FYE data with 5992 observations, 5 variables, and 5 imputations. 
 
 You can skip doing the imputation yourself if you wish. We've done it for you and saved the results. We provide a replacement data set `case_fye` with the ID and predicted starting major of all FYE students in the midfieldr data sets.  
 
-We use these data in the package vignettes whenever an engineering starting major is required. You can do the same.  To access the data, 
+We use these data in the package vignettes whenever an engineering starting major is required. You can do the same.
+
+To access the case data, just load midfieldr and assign `case_fye` to a variable. To distinguish the starting major from other 6-digit CIP codes used in this work, the imputed variable is `start` instead of `cip6`. 
 
 ```{r}
-data("case_fye")
-glimpse(case_fye)
+# if midfieldr is loaded, assign the bundled data set to a variable
+df <- case_fye
+
+# examine the result
+glimpse(df)
 ```
 
 ## Preparing the FYE data for imputation
@@ -100,18 +106,18 @@ If the details are of interest to you, we start by conditioning the data to prep
 
 ```{r}
 fye_id <- midfieldstudents %>%
-  filter(., cip6 %in% c("14XXXX", "14YYYY")) %>%
-  select(., id) %>%
-  unique(.) %>%
-  glimpse(.)
+  filter(cip6 %in% c("14XXXX", "14YYYY")) %>%
+  select(id) %>%
+  unique() %>%
+  glimpse()
 ```
 
 Extract from `midfieldterms` all the term data for these students. `semi_join(x, y)` returns all rows from x where there are matching values in y, keeping just columns from x.
 
 ```{r}
 all_fye_terms <- semi_join(midfieldterms, fye_id, by = "id") %>%
-  select(., id, cip6, term) %>%
-  glimpse(.)
+  select(id, cip6, term) %>%
+  glimpse()
 ```
 
 **Step 2.** Subset the students who declare an engineering major after FYE.
@@ -120,13 +126,13 @@ Keeping those terms in which FYE is the declared major, we arrange the rows by I
 
 ```{r}
 last_fye_terms <- all_fye_terms %>%
-  filter(., cip6 %in% c("14XXXX", "14YYYY")) %>%
-  arrange(., id, desc(term)) %>%
-  group_by(., id) %>%
-  filter(., row_number() == 1) %>%
-  ungroup(.) %>%
-  select(., id, end_fye = term) %>%
-  glimpse(.)
+  filter(cip6 %in% c("14XXXX", "14YYYY")) %>%
+  arrange(id, desc(term)) %>%
+  group_by(id) %>%
+  filter(row_number() == 1) %>%
+  ungroup() %>%
+  select(id, end_fye = term) %>%
+  glimpse()
 ```
 
 We join the column `end_fye` to the `all_fye_terms` data frame. `left_join(x, y)` returns all rows from x, and all columns from x and y. All multiple matches between x and y are returned.
@@ -139,20 +145,20 @@ Arranging by ID and *ascending*  term and grouped by ID, each first row is a stu
 
 ```{r}
 fye_to_engr <- fye_to_engr %>%
-  filter(., term > end_fye) %>%
-  arrange(., id, term) %>%
-  group_by(., id) %>%
-  filter(., row_number() == 1) %>%
-  ungroup(.)
+  filter(term > end_fye) %>%
+  arrange(id, term) %>%
+  group_by(id) %>%
+  filter(row_number() == 1) %>%
+  ungroup()
 ```
 
 Because this data frame denotes students transitioning to an engineering major, we filter to keep only those whose CIP starts with "14." For these students, the predicted starting major is their declared engineering major after FYE. 
 
 ```{r}
 fye_to_engr <- fye_to_engr %>%
-  filter(., str_detect(cip6, "^14")) %>%
-  select(., id, start = cip6) %>%
-  glimpse(.)
+  filter(str_detect(cip6, "^14")) %>%
+  select(id, start = cip6) %>%
+  glimpse()
 ```
 
 **Step 3.** The remaining FYE students have an unknown starting major. 
@@ -180,32 +186,32 @@ Extract from `midfieldstudents` the institution names by student ID. `semi_join(
 
 ```{r}
 inst_id <- semi_join(midfieldstudents, fye_start, by = "id") %>%
-  select(., id, institution) %>%
-  unique(.) %>%
-  glimpse(.)
+  select(id, institution) %>%
+  unique() %>%
+  glimpse()
 ```
 
 Join the institutions to the FYE starters data frame and add race and sex using `race_sex_join()`. We assume that these variables are appropriate predictors. 
 
 ```{r}
 fye_start <- left_join(fye_start, inst_id, by = "id") %>%
-  race_sex_join(.) %>%
+  race_sex_join() %>%
   select(id, institution, race, sex, start) %>%
-  glimpse(.)
+  glimpse()
 ```
 
 Convert the character variables to factors to use with mice. The resulting data frame `mi_input` is ready to be operated on by mice. 
 
 ```{r}
 mi_input <- fye_start %>%
-  arrange(., institution, race, sex, start) %>%
-  mutate(.,
+  arrange(institution, race, sex, start) %>%
+  mutate(
     institution = as.factor(institution),
     race = as.factor(race),
     sex = as.factor(sex),
     start = as.factor(start)
   ) %>%
-  glimpse(.)
+  glimpse()
 ```
 
 ## Imputing missing data
@@ -273,8 +279,8 @@ mi_output_complete <- complete(mi_output)
 
 case_fye <- mi_output_complete %>%
   select(id, start) %>%
-  mutate(., start = as.character(start)) %>%
-  glimpse(.)
+  mutate(start = as.character(start)) %>%
+  glimpse()
 ```
 
 ## Assessing the imputation. 
@@ -289,10 +295,10 @@ Confirm that the start majors are all in engineering.
 
 ```{r}
 case_fye %>%
-  select(., start) %>%
-  unlist(.) %>%
-  unique(.) %>%
-  sort(.)
+  select(start) %>%
+  unlist() %>%
+  unique() %>%
+  sort()
 ```
 
 
@@ -303,80 +309,6 @@ case_fye %>%
 
 
 
-
-
-
-<!-- To assess the imputed start values, we will collect the numbers of all students starting in all institutions, with and without the missing data.  -->
-
-<!-- We extract from `midfieldstudents` the IDs of all students whose matriculation major is engineering.    -->
-
-<!-- ```{r} -->
-<!-- engr_id <- midfieldstudents %>%  -->
-<!-- 	filter(., str_detect(cip6, "^14")) %>% -->
-<!-- 	select(., id) %>% -->
-<!-- 	unique(.) %>% -->
-<!-- 	glimpse(.)  -->
-<!-- ``` -->
-
-<!-- Keep students from non-FYE institutions.     -->
-
-<!-- ```{r} -->
-<!-- non_fye_id <- engr_id %>%  -->
-<!-- 	anti_join(., fye_id, by = "id") %>%  -->
-<!-- 	glimpse() -->
-<!-- ``` -->
-
-<!-- From `midfieldstudents`, collect the starting information for these students. -->
-
-<!-- ```{r} -->
-<!-- non_fye <- midfieldstudents %>%  -->
-<!-- 	semi_join(., non_fye_id, by = "id") %>% -->
-<!-- 	select(id, start = cip6) %>%  -->
-<!-- 	glimpse() -->
-<!-- ``` -->
-
-<!-- Add a column to categorize FYE and non-FYE students and join the data frames.  -->
-
-<!-- ```{r} -->
-<!-- non_fye <- non_fye %>%  -->
-<!-- 	mutate(fye_status = "Non_FYE") -->
-
-<!-- fye <- as.tibble(case_fye) %>%  -->
-<!-- 	mutate(fye_status = "FYE")  -->
-
-<!-- engr <- bind_rows(fye, non_fye) %>%  -->
-<!-- 	race_sex_join() %>%  -->
-<!-- 	select(-id) %>%  -->
-<!-- 	glimpse() -->
-<!-- ``` -->
-
-<!-- Truncate to the 4-digit CIP -->
-
-<!-- ```{r} -->
-<!-- engr <- engr %>%  -->
-<!-- 	mutate(start = str_sub(start, start = 1, end = 4)) %>%  -->
-<!-- 	glimpse() -->
-<!-- ``` -->
-
-
-
-<!-- Now count by FYE status, race, sex, and major.  -->
-
-<!-- ```{r} -->
-<!-- library(seplyr) -->
-<!-- engr_count <- engr %>%  -->
-<!-- 	group_summarise(., c("fye_status", "race", "sex", "start"), n = n()) %>%  -->
-<!-- 	spread(fye_status, n)  -->
-
-<!-- engr_count$Total <- rowSums(engr_count[ , c("FYE", "Non_FYE")], na.rm = TRUE) -->
-
-
-
-
-
-<!-- knitr::kable(engr_count) -->
-
-<!-- ``` -->
 
 
 ## References
