@@ -285,57 +285,54 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 
 
-<pre><code>#&gt; Loading required namespace: midfielddata</code></pre>
 <p>The Classification of Instructional Programs (CIP) is a taxonomy of academic programs curated by an agency of the US Department of Education <span class="citation">(“IPEDS Classification of Instructional Programs” 2010)</span>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># packages used in the vignette</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">library</span>(midfieldr)</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw">library</span>(tibble)</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw">library</span>(stringr)</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="kw">library</span>(knitr)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># packages used in the vignette</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(midfieldr)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(dplyr)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">library</span>(stringr)</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">library</span>(knitr)</a></code></pre></div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>Instructional programs are encoded in <code>cip</code>, a midfieldr data frame of character variables listing the 2, 4, and 6-digit CIP codes and program names in the database. To learn more, open the help page by running <code>?cip</code>.</p>
-<p>Using <code>glimpse()</code> (a <a href="https://tibble.tidyverse.org/">tibble</a> function) reveals that <code>cip</code> has 1584 unique observations (6-digit programs) and shows the first few values of the 6 variables.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">glimpse</span>(cip)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt; Observations: 1,584</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt; Variables: 6</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; $ cip2     &lt;chr&gt; &quot;01&quot;, &quot;01&quot;, &quot;01&quot;, &quot;01&quot;, &quot;01&quot;, &quot;01&quot;, &quot;01&quot;, &quot;01&quot;, &quot;01&quot;,...</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; $ cip2name &lt;chr&gt; &quot;Agriculture, Agricultural Operations and Related Sci...</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; $ cip4     &lt;chr&gt; &quot;0100&quot;, &quot;0101&quot;, &quot;0101&quot;, &quot;0101&quot;, &quot;0101&quot;, &quot;0101&quot;, &quot;0101...</span></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; $ cip4name &lt;chr&gt; &quot;Agriculture, General&quot;, &quot;Agricultural Business and Ma...</span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; $ cip6     &lt;chr&gt; &quot;010000&quot;, &quot;010101&quot;, &quot;010102&quot;, &quot;010103&quot;, &quot;010104&quot;, &quot;01...</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; $ cip6name &lt;chr&gt; &quot;Agriculture, General&quot;, &quot;Agricultural Business and Ma...</span></a></code></pre></div>
-<p><code>cip_filter(data, series)</code> filters <code>cip</code> data frame for the programs we wish to study. The function has two arguments:</p>
+<p>Instructional programs are encoded in <code>cip</code>, a data set bundled with midfieldr. <code>cip</code> is a data frame of character variables listing the 2, 4, and 6-digit CIP codes and program names in the database. To learn more, open the help page by running <code>?cip</code>.</p>
+<p>Using <code>glimpse()</code> (a <a href="https://tibble.tidyverse.org/">dplyr/tibble</a> function) reveals that <code>cip</code> has 1584 unique observations (6-digit programs) and shows the first few values of the 6 variables.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">glimpse</span>(cip)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; Observations: 1,584</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt; Variables: 6</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt; $ cip2     &lt;chr&gt; &quot;01&quot;, &quot;01&quot;, &quot;01&quot;, &quot;01&quot;, &quot;01&quot;, &quot;01&quot;, &quot;01&quot;, &quot;01&quot;, &quot;01&quot;,...</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt; $ cip2name &lt;chr&gt; &quot;Agriculture, Agricultural Operations and Related Sci...</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; $ cip4     &lt;chr&gt; &quot;0100&quot;, &quot;0101&quot;, &quot;0101&quot;, &quot;0101&quot;, &quot;0101&quot;, &quot;0101&quot;, &quot;0101...</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; $ cip4name &lt;chr&gt; &quot;Agriculture, General&quot;, &quot;Agricultural Business and Ma...</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; $ cip6     &lt;chr&gt; &quot;010000&quot;, &quot;010101&quot;, &quot;010102&quot;, &quot;010103&quot;, &quot;010104&quot;, &quot;01...</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; $ cip6name &lt;chr&gt; &quot;Agriculture, General&quot;, &quot;Agricultural Business and Ma...</span></a></code></pre></div>
+<p><code>cip_filter()</code> filters a reference data frame (the default is <code>cip</code>) for specified search terms. The two arguments are:</p>
 <ul>
-<li><code>data</code> <span style="display:inline-block; width: 5.5mm;"></span>A data frame (<code>cip</code> is the default) to search.</li>
-<li><code>series</code> <span style="display:inline-block; width: 1mm;"></span> Search terms. A character vector of codes or keywords.</li>
+<li><code>series</code> an atomic character vector of search terms to filter by</li>
+<li><code>reference</code> the data frame to be filtered and returned</li>
 </ul>
-<p><code>cip_filter()</code> searches all columns in <code>data</code> for the strings in <code>series</code> and returns a data frame whose rows contain the search terms.</p>
+<p>For R novices, an “atomic vector” is a one-dimensional, homogeneous data structure, often created using the <code>c()</code> function. For more information on data structures, see <a href="http://adv-r.had.co.nz/Data-structures.html">Advanced R</a>.</p>
 <p>With no arguments, <code>cip_filter()</code> returns the complete <code>cip</code> data set.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(cip)</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co"># same as</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>()</a>
-<a class="sourceLine" id="cb4-4" data-line-number="4">df</a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; # A tibble: 1,584 x 6</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt;   cip2  cip2name             cip4  cip4name       cip6  cip6name          </span></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;                &lt;chr&gt; &lt;chr&gt;          &lt;chr&gt; &lt;chr&gt;             </span></a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; 1 01    Agriculture, Agricu~ 0100  Agriculture, ~ 0100~ Agriculture, Gene~</span></a>
-<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt; 2 01    Agriculture, Agricu~ 0101  Agricultural ~ 0101~ Agricultural Busi~</span></a>
-<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt; 3 01    Agriculture, Agricu~ 0101  Agricultural ~ 0101~ Agribusiness, Agr~</span></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt; 4 01    Agriculture, Agricu~ 0101  Agricultural ~ 0101~ Agricultural Econ~</span></a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt; 5 01    Agriculture, Agricu~ 0101  Agricultural ~ 0101~ Farm, Farm and Ra~</span></a>
-<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt; 6 01    Agriculture, Agricu~ 0101  Agricultural ~ 0101~ Agricultural, Far~</span></a>
-<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt; 7 01    Agriculture, Agricu~ 0101  Agricultural ~ 0101~ Agricultural Busi~</span></a>
-<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt; 8 01    Agriculture, Agricu~ 0101  Agricultural ~ 0101~ Agricultural Busi~</span></a>
-<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt; # ... with 1,576 more rows</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">cip_filter</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">    </span><span class="kw">print</span>()</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt; # A tibble: 1,584 x 6</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt;   cip2  cip2name             cip4  cip4name       cip6  cip6name          </span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;                &lt;chr&gt; &lt;chr&gt;          &lt;chr&gt; &lt;chr&gt;             </span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; 1 01    Agriculture, Agricu~ 0100  Agriculture, ~ 0100~ Agriculture, Gene~</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; 2 01    Agriculture, Agricu~ 0101  Agricultural ~ 0101~ Agricultural Busi~</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; 3 01    Agriculture, Agricu~ 0101  Agricultural ~ 0101~ Agribusiness, Agr~</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; 4 01    Agriculture, Agricu~ 0101  Agricultural ~ 0101~ Agricultural Econ~</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; 5 01    Agriculture, Agricu~ 0101  Agricultural ~ 0101~ Farm, Farm and Ra~</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; 6 01    Agriculture, Agricu~ 0101  Agricultural ~ 0101~ Agricultural, Far~</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; 7 01    Agriculture, Agricu~ 0101  Agricultural ~ 0101~ Agricultural Busi~</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt; 8 01    Agriculture, Agricu~ 0101  Agricultural ~ 0101~ Agricultural Busi~</span></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; # ... with 1,576 more rows</span></a></code></pre></div>
 </div>
 <div id="search-by-keywords" class="section level2">
 <h2>Search by keywords</h2>
-<p>Because <code>cip_filter()</code> searches all columns in <code>data</code>, we can search by keyword to find the CIP codes that match the programs under study. The search is case-sensitive.</p>
+<p>Because <code>cip_filter()</code> searches all columns in <code>reference</code>, we can search by keyword to find the CIP codes that match the programs under study. The search is case-sensitive.</p>
 <p>For example, if we wanted all Civil Engineering programs, we might try keywords “civil” and “Civil”. <code>kable()</code> (a <a href="https://yihui.name/knitr/">knitr</a> function) is used to print the data frame as a table.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># series with a keyword</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(cip, <span class="dt">series =</span> <span class="kw">c</span>(<span class="st">&quot;Civil&quot;</span>, <span class="st">&quot;civil&quot;</span>))</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># series with a keyword</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">&quot;Civil&quot;</span>, <span class="st">&quot;civil&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">    </span><span class="kw">kable</span>()</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -603,9 +600,9 @@ Multi, Interdisciplinary Studies - Ancient Studies, Civilization
 </tbody>
 </table>
 <p>The search returns some programs with Civilization in their names as well as Engineering Technology. If we wanted Civil Engineering only, we should search for CIPs that start with the 4-digit “1408” code. We use the regular expression notation <code>^</code> to match the start of the strings.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co"># series with a 4-digit code</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(cip, <span class="dt">series =</span> <span class="st">&quot;^1408&quot;</span>)</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># series with a 4-digit code</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="st">&quot;^1408&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">    </span><span class="kw">kable</span>()</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -753,9 +750,9 @@ Civil Engineering, Other
 </tbody>
 </table>
 <p>In the next example, suppose we want to study programs relating to German culture, history, politics, language, and literature. Using “German” for the <code>series</code> value yields</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># series with a keyword</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(cip, <span class="dt">series =</span> <span class="kw">c</span>(<span class="st">&quot;German&quot;</span>, <span class="st">&quot;german&quot;</span>))</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co"># series with a keyword</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">&quot;German&quot;</span>, <span class="st">&quot;german&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">    </span><span class="kw">kable</span>()</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -983,9 +980,9 @@ Germanic Languages, Literatures and Linguistics, Other
 </tbody>
 </table>
 <p>From the result we find the specific 6-digit codes we want and refine the search to obtain,</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># series with a 6-digit code</span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">&quot;050125&quot;</span>, <span class="st">&quot;160501&quot;</span>, <span class="st">&quot;160599&quot;</span>))</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># series with a 6-digit code</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">&quot;050125&quot;</span>, <span class="st">&quot;160501&quot;</span>, <span class="st">&quot;160599&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">    </span><span class="kw">kable</span>()</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1075,11 +1072,11 @@ Germanic Languages, Literatures and Linguistics, Other
 </div>
 <div id="search-by-cip-codes" class="section level2">
 <h2>Search by CIP codes</h2>
-<p>As illustrated above, assigning CIP codes to <code>series</code> yields a data frame of all rows from <code>data</code> that contain those character strings. Invalid codes—and valid codes not in the midfieldr <code>cip</code> dataset—are silently ignored.</p>
+<p>As illustrated above, assigning CIP codes to <code>series</code> yields a data frame of all rows from <code>reference</code> that contain those character strings. Invalid codes as well as valid codes not in the midfieldr <code>cip</code> dataset are silently ignored.</p>
 <p>Specifying 6-digit codes yields a data frame with a row for each 6-digit code.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># 6-digit example</span></a>
-<a class="sourceLine" id="cb9-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(cip, <span class="dt">series =</span> <span class="kw">c</span>(<span class="st">&quot;140802&quot;</span>, <span class="st">&quot;140803&quot;</span>))</a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># 6-digit example</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">&quot;140802&quot;</span>, <span class="st">&quot;140803&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">    </span><span class="kw">kable</span>()</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1147,9 +1144,9 @@ Structural Engineering
 </tbody>
 </table>
 <p>Specifying 4-digit codes yields a data frame with as many rows as there are rows that include the search strings. We use the regular expression notation <code>^</code> to match the start of the strings.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># 4-digit example matching the start of the string</span></a>
-<a class="sourceLine" id="cb10-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(cip, <span class="dt">series =</span> <span class="kw">c</span>(<span class="st">&quot;^1407&quot;</span>, <span class="st">&quot;^1408&quot;</span>))</a>
-<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># 4-digit example matching the start of the string</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">&quot;^1407&quot;</span>, <span class="st">&quot;^1408&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">    </span><span class="kw">kable</span>()</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1357,9 +1354,9 @@ Civil Engineering, Other
 </tbody>
 </table>
 <p>The 2-digit series represent the most general groupings of related programs. Here, the result includes all History codes and programs.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># 2-digit example</span></a>
-<a class="sourceLine" id="cb11-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(cip, <span class="dt">series =</span> <span class="st">&quot;^54&quot;</span>)</a>
-<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># 2-digit example</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="st">&quot;^54&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">    </span><span class="kw">kable</span>()</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1567,9 +1564,9 @@ History, Other
 </tbody>
 </table>
 <p>The series argument can include any combination of 2, 4, and 6-digit codes.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="co"># a series with 2, 4, and 6-digits specified</span></a>
-<a class="sourceLine" id="cb12-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(cip, <span class="dt">series =</span> <span class="kw">c</span>(<span class="st">&quot;^24&quot;</span>, <span class="st">&quot;^4102&quot;</span>, <span class="st">&quot;^450202&quot;</span>))</a>
-<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># a series with 2, 4, and 6-digits specified</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">&quot;^24&quot;</span>, <span class="st">&quot;^4102&quot;</span>, <span class="st">&quot;^450202&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="st">    </span><span class="kw">kable</span>()</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1757,9 +1754,9 @@ Physical Anthropology
 </tbody>
 </table>
 <p>A series assigned numerically is coerced to characters. Invalid codes in the sequence, e.g., 540109 and 540110, are silently ignored.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="co"># series as a sequence</span></a>
-<a class="sourceLine" id="cb13-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(cip, <span class="dt">series =</span> <span class="kw">seq</span>(<span class="dv">540102</span>, <span class="dv">540110</span>, <span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="kw">kable</span>(df)</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="co"># series as a sequence</span></a>
+<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="kw">seq</span>(<span class="dv">540102</span>, <span class="dv">540110</span>, <span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="st">  </span><span class="kw">kable</span>()</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1931,37 +1928,37 @@ Military History
 <h2>Search by named series</h2>
 <p>midfieldr includes several datasets of <em>named series</em>. A named series is a character vector of 6-digit CIP codes that belong to a group of programs such as Engineering, Physical Sciences, STEM, etc. To see the full set of available named series, see the help page <code>?cip_series</code>.</p>
 <p>A named series is assigned to the series argument in <code>cip_filter()</code>.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="co"># the engineering series</span></a>
-<a class="sourceLine" id="cb14-2" data-line-number="2">cip_engr</a>
-<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="co">#&gt;  [1] &quot;140101&quot; &quot;140102&quot; &quot;140201&quot; &quot;140301&quot; &quot;140401&quot; &quot;140501&quot; &quot;140601&quot;</span></a>
-<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="co">#&gt;  [8] &quot;140701&quot; &quot;140702&quot; &quot;140799&quot; &quot;140801&quot; &quot;140802&quot; &quot;140803&quot; &quot;140804&quot;</span></a>
-<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="co">#&gt; [15] &quot;140805&quot; &quot;140899&quot; &quot;140901&quot; &quot;140902&quot; &quot;140903&quot; &quot;140999&quot; &quot;141001&quot;</span></a>
-<a class="sourceLine" id="cb14-6" data-line-number="6"><span class="co">#&gt; [22] &quot;141003&quot; &quot;141004&quot; &quot;141099&quot; &quot;141101&quot; &quot;141201&quot; &quot;141301&quot; &quot;141401&quot;</span></a>
-<a class="sourceLine" id="cb14-7" data-line-number="7"><span class="co">#&gt; [29] &quot;141801&quot; &quot;141901&quot; &quot;142001&quot; &quot;142101&quot; &quot;142201&quot; &quot;142301&quot; &quot;142401&quot;</span></a>
-<a class="sourceLine" id="cb14-8" data-line-number="8"><span class="co">#&gt; [36] &quot;142501&quot; &quot;142701&quot; &quot;142801&quot; &quot;143101&quot; &quot;143201&quot; &quot;143301&quot; &quot;143401&quot;</span></a>
-<a class="sourceLine" id="cb14-9" data-line-number="9"><span class="co">#&gt; [43] &quot;143501&quot; &quot;143601&quot; &quot;143701&quot; &quot;143801&quot; &quot;143901&quot; &quot;144001&quot; &quot;144101&quot;</span></a>
-<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co">#&gt; [50] &quot;144201&quot; &quot;144301&quot; &quot;144401&quot; &quot;144501&quot; &quot;149999&quot; &quot;14XXXX&quot; &quot;14YYYY&quot;</span></a>
-<a class="sourceLine" id="cb14-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb14-12" data-line-number="12">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(cip, <span class="dt">series =</span> cip_engr)</a>
-<a class="sourceLine" id="cb14-13" data-line-number="13"><span class="kw">glimpse</span>(df)</a>
-<a class="sourceLine" id="cb14-14" data-line-number="14"><span class="co">#&gt; Observations: 56</span></a>
-<a class="sourceLine" id="cb14-15" data-line-number="15"><span class="co">#&gt; Variables: 6</span></a>
-<a class="sourceLine" id="cb14-16" data-line-number="16"><span class="co">#&gt; $ cip2     &lt;chr&gt; &quot;14&quot;, &quot;14&quot;, &quot;14&quot;, &quot;14&quot;, &quot;14&quot;, &quot;14&quot;, &quot;14&quot;, &quot;14&quot;, &quot;14&quot;,...</span></a>
-<a class="sourceLine" id="cb14-17" data-line-number="17"><span class="co">#&gt; $ cip2name &lt;chr&gt; &quot;Engineering&quot;, &quot;Engineering&quot;, &quot;Engineering&quot;, &quot;Enginee...</span></a>
-<a class="sourceLine" id="cb14-18" data-line-number="18"><span class="co">#&gt; $ cip4     &lt;chr&gt; &quot;1401&quot;, &quot;1401&quot;, &quot;1402&quot;, &quot;1403&quot;, &quot;1404&quot;, &quot;1405&quot;, &quot;1406...</span></a>
-<a class="sourceLine" id="cb14-19" data-line-number="19"><span class="co">#&gt; $ cip4name &lt;chr&gt; &quot;Engineering, General&quot;, &quot;Engineering, General&quot;, &quot;Aero...</span></a>
-<a class="sourceLine" id="cb14-20" data-line-number="20"><span class="co">#&gt; $ cip6     &lt;chr&gt; &quot;140101&quot;, &quot;140102&quot;, &quot;140201&quot;, &quot;140301&quot;, &quot;140401&quot;, &quot;14...</span></a>
-<a class="sourceLine" id="cb14-21" data-line-number="21"><span class="co">#&gt; $ cip6name &lt;chr&gt; &quot;Engineering, General&quot;, &quot;Pre-Engineering&quot;, &quot;Aerospace...</span></a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="co"># the engineering series</span></a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">cip_engr</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="co">#&gt;  [1] &quot;140101&quot; &quot;140102&quot; &quot;140201&quot; &quot;140301&quot; &quot;140401&quot; &quot;140501&quot; &quot;140601&quot;</span></a>
+<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="co">#&gt;  [8] &quot;140701&quot; &quot;140702&quot; &quot;140799&quot; &quot;140801&quot; &quot;140802&quot; &quot;140803&quot; &quot;140804&quot;</span></a>
+<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="co">#&gt; [15] &quot;140805&quot; &quot;140899&quot; &quot;140901&quot; &quot;140902&quot; &quot;140903&quot; &quot;140999&quot; &quot;141001&quot;</span></a>
+<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="co">#&gt; [22] &quot;141003&quot; &quot;141004&quot; &quot;141099&quot; &quot;141101&quot; &quot;141201&quot; &quot;141301&quot; &quot;141401&quot;</span></a>
+<a class="sourceLine" id="cb13-7" data-line-number="7"><span class="co">#&gt; [29] &quot;141801&quot; &quot;141901&quot; &quot;142001&quot; &quot;142101&quot; &quot;142201&quot; &quot;142301&quot; &quot;142401&quot;</span></a>
+<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="co">#&gt; [36] &quot;142501&quot; &quot;142701&quot; &quot;142801&quot; &quot;143101&quot; &quot;143201&quot; &quot;143301&quot; &quot;143401&quot;</span></a>
+<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="co">#&gt; [43] &quot;143501&quot; &quot;143601&quot; &quot;143701&quot; &quot;143801&quot; &quot;143901&quot; &quot;144001&quot; &quot;144101&quot;</span></a>
+<a class="sourceLine" id="cb13-10" data-line-number="10"><span class="co">#&gt; [50] &quot;144201&quot; &quot;144301&quot; &quot;144401&quot; &quot;144501&quot; &quot;149999&quot; &quot;14XXXX&quot; &quot;14YYYY&quot;</span></a>
+<a class="sourceLine" id="cb13-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb13-12" data-line-number="12"><span class="kw">cip_filter</span>(<span class="dt">series =</span> cip_engr) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb13-13" data-line-number="13"><span class="st">    </span><span class="kw">glimpse</span>()</a>
+<a class="sourceLine" id="cb13-14" data-line-number="14"><span class="co">#&gt; Observations: 56</span></a>
+<a class="sourceLine" id="cb13-15" data-line-number="15"><span class="co">#&gt; Variables: 6</span></a>
+<a class="sourceLine" id="cb13-16" data-line-number="16"><span class="co">#&gt; $ cip2     &lt;chr&gt; &quot;14&quot;, &quot;14&quot;, &quot;14&quot;, &quot;14&quot;, &quot;14&quot;, &quot;14&quot;, &quot;14&quot;, &quot;14&quot;, &quot;14&quot;,...</span></a>
+<a class="sourceLine" id="cb13-17" data-line-number="17"><span class="co">#&gt; $ cip2name &lt;chr&gt; &quot;Engineering&quot;, &quot;Engineering&quot;, &quot;Engineering&quot;, &quot;Enginee...</span></a>
+<a class="sourceLine" id="cb13-18" data-line-number="18"><span class="co">#&gt; $ cip4     &lt;chr&gt; &quot;1401&quot;, &quot;1401&quot;, &quot;1402&quot;, &quot;1403&quot;, &quot;1404&quot;, &quot;1405&quot;, &quot;1406...</span></a>
+<a class="sourceLine" id="cb13-19" data-line-number="19"><span class="co">#&gt; $ cip4name &lt;chr&gt; &quot;Engineering, General&quot;, &quot;Engineering, General&quot;, &quot;Aero...</span></a>
+<a class="sourceLine" id="cb13-20" data-line-number="20"><span class="co">#&gt; $ cip6     &lt;chr&gt; &quot;140101&quot;, &quot;140102&quot;, &quot;140201&quot;, &quot;140301&quot;, &quot;140401&quot;, &quot;14...</span></a>
+<a class="sourceLine" id="cb13-21" data-line-number="21"><span class="co">#&gt; $ cip6name &lt;chr&gt; &quot;Engineering, General&quot;, &quot;Pre-Engineering&quot;, &quot;Aerospace...</span></a></code></pre></div>
 <p>The 6-digit codes <code>14XXXX</code> and <code>14YYYY</code> are correct, appearing in the engineering series only. Run <code>?cip</code> for more information.</p>
 </div>
 <div id="using-a-previous-result-as-a-data-argument" class="section level2">
 <h2>Using a previous result as a data argument</h2>
-<p>A data frame produced by <code>cip_filter()</code> can be used as the <code>data</code> argument in a subsequent use of <code>cip_filter()</code>.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">df1 &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(cip, <span class="dt">series =</span> <span class="st">&quot;^49&quot;</span>)</a></code></pre></div>
-<p>Suppose, after viewing the full “49” series above we decide we only need the “4903” subset. We can use the data frame <code>df1</code> from above as the <code>data</code> argument.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="co"># use a previous result as a data argument</span></a>
-<a class="sourceLine" id="cb16-2" data-line-number="2">df2 &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(df1, <span class="dt">series =</span> <span class="st">&quot;4903&quot;</span>)</a>
-<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="kw">kable</span>(df2)</a></code></pre></div>
+<p>A data frame produced by <code>cip_filter()</code> can be used as the <code>reference</code> argument in a subsequent use of <code>cip_filter()</code>. For example, suppose we examine a 2-digit series:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">df1 &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="st">&quot;^49&quot;</span>)</a></code></pre></div>
+<p>The we decide we only need the “4903” subset. We can use the data frame <code>df1</code> from above as the <code>reference</code> argument.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="co"># use a previous result as a data argument</span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="st">&quot;^4903&quot;</span>, <span class="dt">reference =</span> df1) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">    </span><span class="kw">kable</span>()</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2068,11 +2065,11 @@ Marine Transportation Services, Other
 </tr>
 </tbody>
 </table>
-<p><code>cip_filter()</code> is compatible with the pipe operator <code>%&gt;%</code> (a <a href="https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html">magrittr</a> function). Thus a previously filtered CIP data frame is the <code>data</code> argument for the subsequent operation. For example:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="co"># filtering sequentially</span></a>
-<a class="sourceLine" id="cb17-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(cip, <span class="dt">series =</span> <span class="st">&quot;History&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="st">  </span><span class="kw">cip_filter</span>(., <span class="dt">series =</span> <span class="st">&quot;American&quot;</span>)</a>
-<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="kw">kable</span>(df)</a></code></pre></div>
+<p><code>cip_filter()</code> is compatible with the pipe operator <code>%&gt;%</code> (a <a href="https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html">magrittr</a> function). A previously filtered CIP data frame is the <code>reference = .</code> argument for the subsequent operation. For example:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="co"># filtering sequentially</span></a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="st">&quot;History&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="st">  </span><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="st">&quot;American&quot;</span>, <span class="dt">reference =</span> .)</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="kw">kable</span>(df)</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2119,10 +2116,10 @@ American History (United States)
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="co"># filtering sequentially</span></a>
-<a class="sourceLine" id="cb18-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(cip, <span class="dt">series =</span> <span class="st">&quot;^14&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="st">  </span><span class="kw">cip_filter</span>(., <span class="dt">series =</span> <span class="st">&quot;Civil&quot;</span>)</a>
-<a class="sourceLine" id="cb18-4" data-line-number="4"><span class="kw">kable</span>(df)</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="co"># filtering sequentially</span></a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">df &lt;-<span class="st"> </span><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="st">&quot;^14&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="st">  </span><span class="kw">cip_filter</span>(<span class="dt">series =</span> <span class="st">&quot;Civil&quot;</span>, <span class="dt">reference =</span> .)</a>
+<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="kw">kable</span>(df)</a></code></pre></div>
 <table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2269,6 +2266,12 @@ Civil Engineering, Other
 </tr>
 </tbody>
 </table>
+</div>
+<div id="issue-bin" class="section level2">
+<h2>Issue bin</h2>
+<ul>
+<li>Possibly make <code>cip_filter()</code> case-insensitive</li>
+</ul>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2>References</h2>

@@ -1,6 +1,5 @@
 #' @importFrom dplyr group_by summarize left_join mutate select
-#' @importFrom dplyr ungroup quo_name arrange
-#' @importFrom magrittr %>%
+#' @importFrom dplyr ungroup quo_name arrange %>%
 #' @importFrom purrr map_chr
 #' @importFrom forcats fct_reorder
 #' @importFrom rlang sym :=

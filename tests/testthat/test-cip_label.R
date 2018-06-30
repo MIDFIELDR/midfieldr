@@ -21,23 +21,22 @@ test_that("cip_label() uses program argument = cip2name", {
 
 test_that("cip_label() labels named series", {
 
-	# expect_setequal() ignores order and duplicates
+  # expect_setequal() ignores order and duplicates
   df <- midfieldr::cip_filter(cip, series = cip_engr) %>% cip_label()
   expect_setequal(unique(df$program), "Engineering")
 
-  df <- midfieldr::cip_filter(cip, series = cip_bio_sci) %>%  cip_label()
+  df <- midfieldr::cip_filter(cip, series = cip_bio_sci) %>% cip_label()
   expect_setequal(unique(df$program), "Biological and Biomedical Sciences")
 
-  df <- midfieldr::cip_filter(cip, series = cip_math_stat) %>%  cip_label()
+  df <- midfieldr::cip_filter(cip, series = cip_math_stat) %>% cip_label()
   expect_setequal(unique(df$program), "Mathematics and Statistics")
 
   df <- midfieldr::cip_filter(cip, series = cip_phys_sci) %>% cip_label()
   expect_setequal(unique(df$program), "Physical Sciences")
 
-  df <- midfieldr::cip_filter(cip, series = cip_other_stem) %>%  cip_label()
+  df <- midfieldr::cip_filter(cip, series = cip_other_stem) %>% cip_label()
   expect_setequal(unique(df$program), "Other STEM")
 
-  df <- midfieldr::cip_filter(cip, series = cip_stem) %>%  cip_label()
+  df <- midfieldr::cip_filter(cip, series = cip_stem) %>% cip_label()
   expect_setequal(unique(df$program), "STEM")
-
 })

@@ -60,18 +60,18 @@ We use `cip_filter()` to search the `cip` dataset first for Engineering and then
  
 ```{r first-cip-search, echo = -1}
 options(tibble.print_min = 15L)
-cip_filter(cip, series = "Engineering") %>%
-  cip_filter(., series = c("Civil", "Electrical", "Industrial", "Mechanical")) %>%
+cip_filter(series = "Engineering") %>%
+  cip_filter(series = c("Civil", "Electrical", "Industrial", "Mechanical"), reference = .) %>%
   head(., n = 15L)
 ```
 
 Noting that technology programs are typically not accredited as engineering  programs, the results show that the codes we want are 1408 Civil, 1410 Electrical, 1419 Mechanical, and 1435 Industrial. We individually extract these programs. 
 
 ```{r extract-cip}
-cve <- cip_filter(cip, series = "^1408")
-ele <- cip_filter(cip, series = "^1410")
-mce <- cip_filter(cip, series = "^1419")
-ise <- cip_filter(cip, series = "^1435")
+cve <- cip_filter(series = "^1408")
+ele <- cip_filter(series = "^1410")
+mce <- cip_filter(series = "^1419")
+ise <- cip_filter(series = "^1435")
 ```
 
 We will use `cip_label()` to assign program names to these programs. One possibility is to use the 4-digit program names already available in the data. To view those names:    
@@ -95,7 +95,7 @@ ise <- cip_label(ise, program = "cip4name")
 `cip_label()` is pipe-compatible, so these lines could have been combined, for example, 
 
 ```{r}
-cve <- cip_filter(cip, series = "^1408") %>%
+cve <- cip_filter(series = "^1408") %>%
   cip_label(., "cip4name")
 ```
 
@@ -122,12 +122,12 @@ For additional information, try the [Selecting CIP codes](cip_filter.html) vigne
 
 ## Data set: `case_program_group`
 
-For convenience, this data frame of engineering CIP codes and program names has been saved as a midfieldr data set. We use this case data in several vignettes.  
+For convenience, this data frame of engineering CIP codes and program names has been bundled with midfieldr to use vignettes. 
 
-To access the data frame, 
+To access the data frame, just loaf midfieldr and assign the data to a variable. 
 
 ```{r}
 library(midfieldr)
-data("case_program_group")
-case_program_group
+df <- case_program_group
+df
 ```

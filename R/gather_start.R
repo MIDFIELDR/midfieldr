@@ -1,5 +1,4 @@
-#' @importFrom dplyr is.tbl rename select inner_join
-#' @importFrom dplyr %>%
+#' @importFrom dplyr is.tbl rename select inner_join %>%
 NULL
 
 #' Gather students starting in programs
@@ -26,48 +25,49 @@ NULL
 #'
 #' @export
 gather_start <- function(.data, cip_group, transfer = FALSE) {
+  if (isTRUE(missing(.data))) {
+    .data <- midfielddata::midfieldstudents
+  }
 
-	if (isTRUE(missing(.data))) {.data <- midfielddata::midfieldstudents}
+  if (!.pkgglobalenv$has_data) {
+    stop(paste("To use this function, you must have the midfielddata package installed."))
+  }
+  if (isFALSE(is.data.frame(.data) || dplyr::is.tbl(.data))) {
+    stop("midfieldr::gather_start() arguments must be a data frame or tbl")
+  }
+  if (isFALSE(is.data.frame(cip_group) || dplyr::is.tbl(cip_group))) {
+    stop("midfieldr::gather_start() arguments must be a data frame or tbl")
+  }
+  if (isFALSE("cip6" %in% names(.data) || "start" %in% names(.data))) {
+    stop("midfieldr::gather_start() data frame must include a `cip6` or 'start' variable")
+  }
+  if (isTRUE("cip6" %in% names(cip_group) && "start" %in% names(cip_group))) {
+    stop("midfieldr::gather_start() data frame must not include both a `cip6` and 'start' variable")
+  }
 
-	if(!.pkgglobalenv$has_data){
-		stop(paste("To use this function, you must have the midfielddata package installed."))
-	}
-	if (isFALSE(is.data.frame(.data) || dplyr::is.tbl(.data))) {
-		stop("midfieldr::gather_start() arguments must be a data frame or tbl")
-	}
-	if (isFALSE(is.data.frame(cip_group) || dplyr::is.tbl(cip_group))) {
-		stop("midfieldr::gather_start() arguments must be a data frame or tbl")
-	}
-	if (isFALSE("cip6" %in% names(.data) || "start" %in% names(.data))) {
-		stop("midfieldr::gather_start() data frame must include a `cip6` or 'start' variable")
-	}
-	if (isTRUE("cip6" %in% names(cip_group) && "start" %in% names(cip_group))) {
-		stop("midfieldr::gather_start() data frame must not include both a `cip6` and 'start' variable")
-	}
+  # if "start" in var names, rename to "cip6"
+  if (isTRUE("start" %in% names(.data))) {
+    .data <- dplyr::rename(.data, cip6 = start)
+  }
 
-	# if "start" in var names, rename to "cip6"
-	if (isTRUE("start" %in% names(.data))) {
-		.data <- dplyr::rename(.data, cip6 = start)
-	}
+  # keep transfer students if transfer is TRUE
+  if (isTRUE(transfer)) {
+    students <- .data
+  } else {
+    students <- .data %>% dplyr::filter(transfer == "N")
+  }
 
-	# keep transfer students if transfer is TRUE
-	if (isTRUE(transfer)) {
-		students <- .data
-	} else {
-		students <- .data %>% dplyr::filter(transfer == "N")
-	}
+  # keep two columns from data set
+  students <- students %>% dplyr::select(id, cip6)
 
-	# keep two columns from data set
-	students <- students %>% dplyr::select(id, cip6)
+  # keep two columns from desired program
+  programs <- cip_group %>% dplyr::select(cip6)
 
-	# keep two columns from desired program
-	programs <- cip_group %>% dplyr::select(cip6)
-
-	# inner_join() reminder
-	# return all IDs that match programs in cip_group
-	# return columns from both x and y
-	# return all combinations of x and y
-	starters <- dplyr::inner_join(students, programs, by = "cip6") %>%
-		dplyr::rename(start = cip6)
+  # inner_join() reminder
+  # return all IDs that match programs in cip_group
+  # return columns from both x and y
+  # return all combinations of x and y
+  starters <- dplyr::inner_join(students, programs, by = "cip6") %>%
+    dplyr::rename(start = cip6)
 }
 "gather_start"

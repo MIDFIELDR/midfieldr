@@ -151,8 +151,8 @@ We use `cip_filter()` to search the `cip` dataset first for "Engineering" and th
  
 ```{r first-cip-search, echo = -1}
 options(tibble.print_min = 10L)
-cip_filter(cip, series = "Engineering") %>%
-  cip_filter(., series = c("Chemical", "Electrical", "Industrial")) %>%
+cip_filter(series = "Engineering") %>%
+  cip_filter(series = c("Chemical", "Electrical", "Industrial"), reference = .) %>%
   head(., n = 10L)
 ```
 
@@ -161,11 +161,11 @@ The results show that the codes we want are 1407 Chemical Engineering, 1410  Ele
 We extract the series for each major and assign our own program label using `cip_label()`. We can assign the default code name, e.g., using "cip4name" or we can assign our own label. Here for example, I've used "Electrical Engineering" instead of the longer, default 4-digit code name "Electrical/Electronics and Communications Engineering." 
 
 ```{r extract-cip}
-set1 <- cip_filter(cip, series = "^1407") %>%
+set1 <- cip_filter(series = "^1407") %>%
   cip_label(., program = "cip4name")
-set2 <- cip_filter(cip, series = "^1410") %>%
+set2 <- cip_filter(series = "^1410") %>%
   cip_label(., program = "Electrical Engineering")
-set3 <- cip_filter(cip, series = "^1435") %>%
+set3 <- cip_filter(series = "^1435") %>%
   cip_label(., program = "cip4name")
 ```
 

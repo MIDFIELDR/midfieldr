@@ -97,8 +97,8 @@ We use `cip_filter()` to search the `cip` dataset first for
 “Electrical”, and “Industrial”.
 
 ``` r
-cip_filter(cip, series = "Engineering") %>%
-  cip_filter(., series = c("Chemical", "Electrical", "Industrial")) %>%
+cip_filter(series = "Engineering") %>%
+  cip_filter(series = c("Chemical", "Electrical", "Industrial"), reference = .) %>%
   head(., n = 10L)
 #> # A tibble: 10 x 6
 #>    cip2  cip2name               cip4  cip4name       cip6  cip6name       
@@ -125,11 +125,11 @@ using `cip_label()`. We can assign the default code name, e.g., using
 name “Electrical/Electronics and Communications Engineering.”
 
 ``` r
-set1 <- cip_filter(cip, series = "^1407") %>%
+set1 <- cip_filter(series = "^1407") %>%
   cip_label(., program = "cip4name")
-set2 <- cip_filter(cip, series = "^1410") %>%
+set2 <- cip_filter(series = "^1410") %>%
   cip_label(., program = "Electrical Engineering")
-set3 <- cip_filter(cip, series = "^1435") %>%
+set3 <- cip_filter(series = "^1435") %>%
   cip_label(., program = "cip4name")
 ```
 

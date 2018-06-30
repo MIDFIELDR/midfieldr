@@ -32,7 +32,7 @@
 
 <meta property="og:title" content="Gather ever-enrolled students — gather_ever" />
 
-<meta property="og:description" content="Filter academic term data for students ever enrolled in a set of programs." />
+<meta property="og:description" content="Filter academic term data to find all students ever enrolled in specified programs." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -95,9 +95,6 @@
       <a href="../articles/imputing_fye.html">Imputing starting majors for FYE</a>
     </li>
     <li>
-      <a href="../articles/grad_rate.html">Graduation rate metric</a>
-    </li>
-    <li>
       <a href="../articles/stickiness.html">Stickiness metric</a>
     </li>
     <li>
@@ -142,35 +139,52 @@
 
     <div class="ref-description">
     
-    <p>Filter academic term data for students ever enrolled in a set of programs.</p>
+    <p>Filter academic term data to find all students ever enrolled in specified programs.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>gather_ever</span>(<span class='kw'>.data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>series</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>gather_ever</span>(<span class='no'>series</span>, <span class='no'>...</span>, <span class='kw'>reference</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>id</span> <span class='kw'>=</span> <span class='st'>"id"</span>, <span class='kw'>cip6</span> <span class='kw'>=</span> <span class='st'>"cip6"</span>,
+  <span class='kw'>term</span> <span class='kw'>=</span> <span class='st'>"term"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>.data</th>
-      <td><p>Data frame of academic term data with character variables <code>id</code>, <code>cip6</code>, and <code>term</code></p></td>
+      <th>series</th>
+      <td><p>atomic character vector of 6-digit CIP codes specifying the programs to filter by</p></td>
     </tr>
     <tr>
-      <th>series</th>
-      <td><p>Atomic character vector of 6-digit CIP codes used to filter the data</p></td>
+      <th>...</th>
+      <td><p>not used for values, forces later arguments to bind by name</p></td>
+    </tr>
+    <tr>
+      <th>reference</th>
+      <td><p>a reference data frame from which student IDs, academic terms, and CIP codes are obtained, default <code>midfieldterms</code></p></td>
+    </tr>
+    <tr>
+      <th>id</th>
+      <td><p>character column name of the ID variable in <code>reference</code></p></td>
+    </tr>
+    <tr>
+      <th>cip6</th>
+      <td><p>character column name of the CIP code variable in <code>reference</code></p></td>
+    </tr>
+    <tr>
+      <th>term</th>
+      <td><p>character column name of term variable in <code>reference</code></p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Data frame with character variables <code>id</code> and <code>cip6</code></p>
+    <p>Data frame with character variables for student ID and program CIP</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>To use this function, the <code>midfielddata</code> package must be installed to provide the default <code>.data</code> argument, <code>midfieldterms</code>.</p>
-<p>The input data frame must include the three character variables: <code>id</code>, <code>cip6</code>, and <code>term</code>. The default data include every term for every student, so an ID will be associated with the same program in multiple terms. Students who change majors will have their ID associated with different programs in different terms. Students enrolled in more than one major will have their ID associated with multiple programs in the same term. All unique combinations of ID and program are retained.</p>
-<p>The <code>series</code> argument is an atomic character vector of 6-digit CIP codes used to filter the academic term data frame.</p>
-<p>The function returns a subset of the input data frame with every unique combination of student ID and program CIP, representing every student ever enrolled in the set of programs being studied. Only <code>id</code> and <code>cip6</code> are returned; other variables in the input data frame are dropped.</p>
+    <p>To use this function, the <code>midfielddata</code> package must be installed to provide <code>midfieldterms</code>, the default reference data set.</p>
+<p>The <code>series</code> argument is an atomic character vector of 6-digit CIP codes used to filter the reference data set and extract student IDs and terms.</p>
+<p>The function returns a subset of <code>reference</code> with every unique combination of student ID and program CIP, representing every student ever enrolled in the specified programs. Only the student ID and program CIP are returned; other variables in <code>reference</code> are quietly dropped.</p>
+<p>Optional arguments. An alternate reference data set can be assigned via the <code>reference</code> argument. The alternate must have variables for student ID, 6-digit CIP, and terms with the same structure as in <code>midfieldterms</code>. Use the  <code>id</code>, <code>cip6</code>, and <code>term</code> arguments to reassign the variables names, if necessary, to match the variable names in the alternate.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
@@ -178,16 +192,21 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>ever</span> <span class='kw'>&lt;-</span> <span class='fu'>gather_ever</span>(<span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"540104"</span>)
-<span class='fu'>head</span>(<span class='no'>ever</span>)</div><div class='output co'>#&gt; # A tibble: 6 x 2
-#&gt;   id          cip6  
-#&gt;   &lt;chr&gt;       &lt;chr&gt; 
-#&gt; 1 MID26360410 540104
-#&gt; 2 MID26362301 540104
-#&gt; 3 MID26362581 540104
-#&gt; 4 MID26365694 540104
-#&gt; 5 MID26365705 540104
-#&gt; 6 MID26366791 540104</div><div class='input'>
+    <pre class="examples"><div class='input'><span class='no'>ever</span> <span class='kw'>&lt;-</span> <span class='fu'>gather_ever</span>(<span class='st'>"540104"</span>)
+<span class='no'>ever</span></div><div class='output co'>#&gt; # A tibble: 41 x 2
+#&gt;    id          cip6  
+#&gt;    &lt;chr&gt;       &lt;chr&gt; 
+#&gt;  1 MID26360410 540104
+#&gt;  2 MID26362301 540104
+#&gt;  3 MID26362581 540104
+#&gt;  4 MID26365694 540104
+#&gt;  5 MID26365705 540104
+#&gt;  6 MID26366791 540104
+#&gt;  7 MID26367223 540104
+#&gt;  8 MID26368578 540104
+#&gt;  9 MID26368839 540104
+#&gt; 10 MID26370491 540104
+#&gt; # ... with 31 more rows</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

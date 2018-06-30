@@ -20,10 +20,10 @@ test_that("Median argument returns expected values", {
     names(multiway_order(df1, medians = TRUE)),
     c("name", "species", "mass", "med_name", "med_species")
   )
-	expect_equal(
-		names(multiway_order(df1, medians = NULL)),
-		c("name", "species", "mass")
-	)
+  expect_equal(
+    names(multiway_order(df1, medians = NULL)),
+    c("name", "species", "mass")
+  )
 })
 
 test_that("Error produces if argument not a data frame", {

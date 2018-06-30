@@ -62,9 +62,6 @@
       <a href="../articles/imputing_fye.html">Imputing starting majors for FYE</a>
     </li>
     <li>
-      <a href="../articles/grad_rate.html">Graduation rate metric</a>
-    </li>
-    <li>
       <a href="../articles/stickiness.html">Stickiness metric</a>
     </li>
     <li>
@@ -124,8 +121,8 @@
 <h2 class="hasAnchor">
 <a href="#select-the-programs-to-study" class="anchor"></a>Select the programs to study</h2>
 <p>We use <code><a href="../reference/cip_filter.html">cip_filter()</a></code> to search the <code>cip</code> dataset first for Engineering and then filter the result for Civil, Electrical, Industrial, and Mechanical.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(cip, <span class="dt">series =</span> <span class="st">"Engineering"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(., <span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"Civil"</span>, <span class="st">"Electrical"</span>, <span class="st">"Industrial"</span>, <span class="st">"Mechanical"</span>)) <span class="op">%&gt;%</span></a>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"Engineering"</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"Civil"</span>, <span class="st">"Electrical"</span>, <span class="st">"Industrial"</span>, <span class="st">"Mechanical"</span>), <span class="dt">reference =</span> .) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="st">  </span><span class="kw">head</span>(., <span class="dt">n =</span> 15L)</a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt; # A tibble: 15 x 6</span></a>
 <a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;    cip2  cip2name               cip4  cip4name       cip6  cip6name       </span></a>
@@ -146,10 +143,10 @@
 <a class="sourceLine" id="cb2-20" data-line-number="20"><span class="co">#&gt; 14 15    Engineering Technology 1503  Electrical En~ 1503~ Electrical, El~</span></a>
 <a class="sourceLine" id="cb2-21" data-line-number="21"><span class="co">#&gt; 15 15    Engineering Technology 1503  Electrical En~ 1503~ Laser and Opti~</span></a></code></pre></div>
 <p>Noting that technology programs are typically not accredited as engineering programs, the results show that the codes we want are 1408 Civil, 1410 Electrical, 1419 Mechanical, and 1435 Industrial. We individually extract these programs.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">cve &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(cip, <span class="dt">series =</span> <span class="st">"^1408"</span>)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">ele &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(cip, <span class="dt">series =</span> <span class="st">"^1410"</span>)</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">mce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(cip, <span class="dt">series =</span> <span class="st">"^1419"</span>)</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">ise &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(cip, <span class="dt">series =</span> <span class="st">"^1435"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">cve &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"^1408"</span>)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">ele &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"^1410"</span>)</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">mce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"^1419"</span>)</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">ise &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"^1435"</span>)</a></code></pre></div>
 <p>We will use <code><a href="../reference/cip_label.html">cip_label()</a></code> to assign program names to these programs. One possibility is to use the 4-digit program names already available in the data. To view those names:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">unique</span>(cve[[<span class="st">"cip4name"</span>]])</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; [1] "Civil Engineering"</span></a>
@@ -165,7 +162,7 @@
 <a class="sourceLine" id="cb5-3" data-line-number="3">mce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_label.html">cip_label</a></span>(mce, <span class="dt">program =</span> <span class="st">"cip4name"</span>)</a>
 <a class="sourceLine" id="cb5-4" data-line-number="4">ise &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_label.html">cip_label</a></span>(ise, <span class="dt">program =</span> <span class="st">"cip4name"</span>)</a></code></pre></div>
 <p><code><a href="../reference/cip_label.html">cip_label()</a></code> is pipe-compatible, so these lines could have been combined, for example,</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">cve &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(cip, <span class="dt">series =</span> <span class="st">"^1408"</span>) <span class="op">%&gt;%</span></a>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">cve &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"^1408"</span>) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/cip_label.html">cip_label</a></span>(., <span class="st">"cip4name"</span>)</a></code></pre></div>
 <p>We use <code>bind_rows()</code>, a <a href="http://dplyr.tidyverse.org">dplyr</a> function, to bind the individual data frames into one data frame.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">program_group &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(cve, ele, mce, ise)</a></code></pre></div>
@@ -196,11 +193,11 @@
 <h2 class="hasAnchor">
 <a href="#data-set-case_program_group" class="anchor"></a>Data set: <code>case_program_group</code>
 </h2>
-<p>For convenience, this data frame of engineering CIP codes and program names has been saved as a midfieldr data set. We use this case data in several vignettes.</p>
-<p>To access the data frame,</p>
+<p>For convenience, this data frame of engineering CIP codes and program names has been bundled with midfieldr to use vignettes.</p>
+<p>To access the data frame, just loaf midfieldr and assign the data to a variable.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">library</span>(midfieldr)</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="kw">data</span>(<span class="st">"case_program_group"</span>)</a>
-<a class="sourceLine" id="cb10-3" data-line-number="3">case_program_group</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">df &lt;-<span class="st"> </span>case_program_group</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">df</a>
 <a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">#&gt; # A tibble: 12 x 7</span></a>
 <a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt;    cip2  cip2name    cip4  cip4name        cip6  cip6name        program  </span></a>
 <a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;           &lt;chr&gt; &lt;chr&gt;           &lt;chr&gt;    </span></a>

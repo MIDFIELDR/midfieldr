@@ -1,6 +1,6 @@
 #' @importFrom tibble add_column
 #' @importFrom purrr map_chr
-#' @importFrom magrittr %>%
+#' @importFrom dplyr %>%
 NULL
 
 #' Add a column of program labels to a CIP data frame

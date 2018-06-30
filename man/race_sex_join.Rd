@@ -2,22 +2,36 @@
 % Please edit documentation in R/race_sex_join.R
 \name{race_sex_join}
 \alias{race_sex_join}
-\title{Join student demographics to a data frame}
+\title{Join student demographics}
 \usage{
-race_sex_join(.data)
+race_sex_join(data, ..., reference = NULL, id = "id", race = "race",
+  sex = "sex")
 }
 \arguments{
-\item{.data}{A data frame of student attributes that includes the variable
-\code{id}}
+\item{data}{data frame to which race and sex are to be joined by student IDs}
+
+\item{...}{not used for values, forces later optional arguments to bind by name}
+
+\item{reference}{a reference data frame from which student race and sex are obtained, default \code{midfieldstudents}}
+
+\item{id}{character column name of the ID variable in both \code{data} and \code{reference}}
+
+\item{race}{character column name of the race variable in \code{reference}}
+
+\item{sex}{character column name of the sex variable in \code{reference}}
 }
 \value{
-The incoming data frame plus two new columns \code{race} and
-\code{sex}, joined by student ID
+The input data frame is returned with two new columns for race and sex
 }
 \description{
-Add variables \code{race} and \code{sex} from the \code{midfieldstudents}
-dataset to a data frame, using \code{id} as the join-by variable.
+Add student race and sex to a data frame.
 }
 \details{
-If sex or race variables are already present, they are returned as-is (not overwritten).
+To use this function, the \code{midfielddata} package must be installed to provide \code{midfieldstudents}, the default reference data set.
+
+The student IDs in \code{data} are assumed to be a subset of the IDs in  \code{reference} with the same variable name. This name can be changed to match a different reference data set using the optional \code{id} argument.
+
+Race and sex data are obtained from the reference data set. These variable names can also be changed to match a different reference data set using the optional \code{race} and \code{sex} arguments.  These variables are joined to \code{data} using ID as the join-by variable.
+
+If sex or race variables are already present in the input data frame, they are returned unaltered.
 }

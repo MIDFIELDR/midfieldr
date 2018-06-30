@@ -1,5 +1,4 @@
-#' @importFrom dplyr filter select
-#' @importFrom magrittr %>%
+#' @importFrom dplyr filter select %>%
 #' @importFrom stringr str_detect
 NULL
 

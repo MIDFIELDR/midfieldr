@@ -4,43 +4,36 @@
 \alias{cip_filter}
 \title{Filter by CIP data}
 \usage{
-cip_filter(.data = NULL, series = NULL)
+cip_filter(series = NULL, ..., reference = NULL)
 }
 \arguments{
-\item{.data}{A data frame containing at least one column of CIP codes.
-If NULL, \code{.data} is the midfieldr \code{cip} dataset.}
+\item{series}{atomic character vector of search terms to filter by}
 
-\item{series}{A character vector (or coercible to one) of search terms. The
-conditions used to filter the data.}
+\item{...}{not used for values, forces later arguments to bind by name}
+
+\item{reference}{a reference data frame from which 2-digit, 4-digit, and 6-digit CIP codes and program names are obtained, default \code{cip}}
 }
 \value{
-A subset of \code{.data} returned as a data frame (tibble) of
-character variables.
+data frame, subset of \code{reference}
 }
 \description{
-Filter a data frame for Classification of Instructional Programs (CIP) codes
-and return the rows that match conditions.
+Filter a data frame of Classification of Instructional Programs (CIP) codes and return the rows that match conditions.
 }
 \details{
-\code{cip_filter()} is essentially a search tool to filter the data frame
-given by the \code{.data} argument and return all rows containing the terms
-specified in the \code{series} argument.
+The \code{series} argument is an atomic character vector of search terms  used to filter the reference CIP data set. Typical search terms include words and phrases describing academic programs or their CIP codes.
 
-Variables are not altered.
+Several collections of named series are provided to facilitate searching for groups of programs such as Biological Sciences, Engineering, Physical Sciences, etc. For the named series help page, run \code{?cip_series}.
 
-Typical search terms include words and phrases describing academic programs
-or all or part of 2-, 4-, or 6-digit CIP codes. midfieldr provides several
-collections of predefined search terms for groups of programs such as
-Biological Sciences, Engineering, Physical Sciences, etc.
+The function returns a subset of \code{reference} with all rows containing any of the search terms. Variables are not altered.
 }
 \examples{
 cip_filter()
-cip_filter(cip, series = "History")
-cip_filter(cip, series = c("American", "History"))
-cip_filter(cip, series = "History") \%>\%
-  cip_filter(., series = "American")
-cip_filter(cip, series = "^14")
-cip_filter(cip, series = "^14") \%>\%
-  cip_filter(., series = "Civil")
+cip_filter(series = "History")
+cip_filter(series = c("American", "History"))
+cip_filter(series = "History") \%>\%
+  cip_filter(series = "American", reference = .)
+cip_filter(series = "^14")
+cip_filter(series = "^14") \%>\%
+  cip_filter(series = "Civil", reference = .)
 
 }

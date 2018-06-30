@@ -1,13 +1,16 @@
+
+
+
+
 #' Pipe operator
 #'
 #' @name %>%
 #' @rdname pipe
 #' @keywords internal
 #' @export
-#' @importFrom magrittr %>%
+#' @importFrom dplyr %>%
 #' @usage lhs \%>\% rhs
 NULL
-
 
 
 
@@ -19,15 +22,19 @@ NULL
 .pkgglobalenv <- new.env(parent = emptyenv())
 
 .onAttach <- function(libname, pkgname) {
-	has_data_package <- requireNamespace("midfielddata")
-	if(!has_data_package){
-		packageStartupMessage(paste("To use this package, you must install the",
-																"midfielddata package."))
-		packageStartupMessage(paste("To install that package, run",
-																"`install.packages('midfielddata',",
-																"repos = 'https://midfieldr.github.io/drat/',",
-																"type = 'source')`."))
-		packageStartupMessage("See the `midfielddata` vignette for more details.")
-	}
-	assign("has_data", has_data_package, envir = .pkgglobalenv)
+  has_data_package <- requireNamespace("midfielddata")
+  if (!has_data_package) {
+    packageStartupMessage(paste(
+      "To use this package, you must install the",
+      "midfielddata package."
+    ))
+    packageStartupMessage(paste(
+      "To install that package, run",
+      "`install.packages('midfielddata',",
+      "repos = 'https://midfieldr.github.io/drat/',",
+      "type = 'source')`."
+    ))
+    packageStartupMessage("See the `midfielddata` vignette for more details.")
+  }
+  assign("has_data", has_data_package, envir = .pkgglobalenv)
 }

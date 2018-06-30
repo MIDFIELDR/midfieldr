@@ -4,31 +4,40 @@
 \alias{gather_grad}
 \title{Gather graduates}
 \usage{
-gather_grad(.data = NULL, series = NULL)
+gather_grad(series, ..., reference = NULL, id = "id", cip6 = "cip6",
+  term = "term_degree")
 }
 \arguments{
-\item{.data}{Data frame of academic degree data with character variables \code{id}, \code{cip6}, and \code{term_degree}}
+\item{series}{atomic character vector specifying the 6-digit CIP codes of the programs to filter by}
 
-\item{series}{Atomic character vector of 6-digit CIP codes used to filter the data}
+\item{...}{not used for values, forces later arguments to bind by name}
+
+\item{reference}{a reference data frame from which graduating student IDs, CIP codes, and terms are obtained, default \code{midfielddegrees}}
+
+\item{id}{character column name of the ID variable in \code{reference}}
+
+\item{cip6}{character column name of the CIP code variable in \code{reference}}
+
+\item{term}{character column name of term variable in \code{reference}}
 }
 \value{
-Data frame with character variables \code{id} and \code{cip6}
+Data frame with character variables for student ID and program CIP
 }
 \description{
-Filter academic degree data for students graduating from a set of programs.
+Filter academic term data to find all students graduating from specified programs.
 }
 \details{
-To use this function, the \code{midfielddata} package must be installed to provide the default \code{.data} argument, \code{midfielddegrees}.
+To use this function, the \code{midfielddata} package must be installed to provide \code{midfielddegrees}, the default reference data set.
 
-The input data frame must include the three character variables: \code{id}, \code{cip6}, and \code{term_degree}. The default data include every degree a student earned, but only the student's first degree (or multiple degrees if earned in the same term) are retained.
+The \code{series} argument is an atomic character vector of 6-digit CIP codes used to filter the reference data set and extract student IDs and terms.
 
-The \code{series} argument is an atomic character vector of 6-digit CIP codes used to filter the academic degree data frame.
+The function returns a subset of \code{reference} with every unique combination of student ID and CIP of the program(s) in which they earned their first degree(s). Only the student ID and program CIP are returned; other variables in \code{reference} are quietly dropped.
 
-The function returns a subset of the input data frame with every unique combination of student ID and CIP of the program(s) in which they earned their first degree(s). Only \code{id} and \code{cip6} are returned; other variables in the input data frame are dropped.
+Optional arguments. An alternate reference data set can be assigned via the \code{reference} argument. The alternate must have variables for student ID, 6-digit CIP, and terms in which degrees were earned with the same structure as in \code{midfielddegrees}. Use the  \code{id}, \code{cip6}, and \code{term} arguments to reassign the variables names, if necessary, to match the variable names in the alternate.
 }
 \examples{
 grad <- gather_grad(series = "540104")
-head(grad)
+grad
 
 }
 \seealso{
