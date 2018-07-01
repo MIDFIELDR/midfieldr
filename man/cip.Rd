@@ -3,7 +3,7 @@
 \docType{data}
 \name{cip}
 \alias{cip}
-\title{Classification of Instructional Programs (CIP) data}
+\title{Classification of instructional programs (CIP) data}
 \format{A tidy data frame (tibble) with 1546 observations and 6 variables.
 All variables are characters. An observation is a unique program.
 \describe{
@@ -27,7 +27,7 @@ Education Statistics (\url{https://nces.ed.gov/ipeds/cipcode}).
 cip
 }
 \description{
-A dataset of codes and names for 1546 instructional programs organized on
+A dataset of codes and names for 1584 instructional programs organized on
 three levels: a 2-digit series, a 4-digit series, and a 6-digit series.
 }
 \details{
@@ -55,7 +55,7 @@ cip
 # View the programs at the top level of the taxonomy
 unique(cip[ , 1:2])
 
-# Use the data as an argument for cip_filter()
-cip_filter(cip, series = "^1410")
+# As the reference data argument for cip_filter()
+cip_filter(series = "^1410", reference = cip)
 }
 \keyword{datasets}

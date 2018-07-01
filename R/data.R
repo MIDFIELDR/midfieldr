@@ -1,6 +1,6 @@
-#' Classification of Instructional Programs (CIP) data
+#' Classification of instructional programs (CIP) data
 #'
-#' A dataset of codes and names for 1546 instructional programs organized on
+#' A dataset of codes and names for 1584 instructional programs organized on
 #' three levels: a 2-digit series, a 4-digit series, and a 6-digit series.
 #'
 #' 6-digit codes are used in the midfieldr datasets (\code{midfieldstudents},
@@ -44,19 +44,21 @@
 #' # View the programs at the top level of the taxonomy
 #' unique(cip[ , 1:2])
 #'
-#' # Use the data as an argument for cip_filter()
-#' cip_filter(cip, series = "^1410")
+#' # As the reference data argument for cip_filter()
+#' cip_filter(series = "^1410", reference = cip)
 "cip"
+
+
+
 
 
 
 #' Named series of 6-digit CIP codes
 #'
-#' Each named series is a vector of Classification of Instructional
-#' Programs (CIP) 6-digit codes for groups of programs.
+#' Atomic character vectors of 6-digit CIP codes for specified groups of programs.
 #'
 #' @name cip_series
-#' @format A character vector of 6-digit CIP codes.
+#' @format An atomic character vector of 6-digit CIP codes.
 #' \describe{
 #' \item{\code{cip_bio_sci}}{Biological and biomedical science programs,
 #' series 26.}
@@ -99,9 +101,9 @@ NULL
 
 
 
-#' A group of CIPs case data
+#' CIP case data for four programs
 #'
-#' A dataset of codes and names for four engineering programs
+#' An example of CIP codes and names, a subset of \code{cip} data plus an added \code{program} variable for four engineering programs.
 #'
 #' The CIP codes and names plus a user-selected program name for Civil, Electrical, Industrial, and Mechanical Engineering. The "Selecting programs" vignette describes how these data were collected. The data frame is used be several other vignettes as a starting point in selecting programs to study.
 #'
@@ -121,6 +123,7 @@ NULL
 #'   \item{cip6name}{Name of a program at the 6-digit level}
 #'   \item{program}{A program name.}
 #' }
+#' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
 "case_program_group"
 
 
@@ -144,14 +147,15 @@ NULL
 #'  \item{stick}{Program stickiness: the ratio of the number of students
 #'  graduating from a program to the number ever enrolled in the program.}
 #' }
-#' @examples
-#' case_stickiness
+#' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
 "case_stickiness"
 
 
 
 
 #' Imputed starting majors for FYE students
+#'
+#' Imputed starting majors for all first-year engineering (FYE) students in the midfielddata package.
 #'
 #' Some US institutions have first year engineering (FYE) programs---typically a common first year curriculum that is a prerequisite for declaring an engineering major. For some persistence metrics, we have to determine what we call a "starting major" for FYE students---the predicted engineering program such as Civil, Electrical, or Mechanical, the student would have declared had they not been required to enroll in FYE.
 #'
@@ -160,36 +164,28 @@ NULL
 #'  \item{id}{Unique, anonymized MIDFIELD student identifier.}
 #'  \item{start}{Imputed starting major (6-digit CIP code) of FYE students. }
 #' }
-#' @examples
-#' case_stickiness
+#' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
 "case_fye"
+
 
 
 
 #' Named colors from the ColorBrewer palettes
 #'
-#' Shorthand names are assigned to selected colors from the
-#' ColorBrewer palettes.
+#' Shorthand color names assigned to selected colors from the ColorBrewer palettes.
 #'
-#' This dataset provides convenient access to selected ColorBrewer palettes:
-#' diverging brown-bluegreen (BrBG) with 8 levels; diverging purple-green
-#' (PRGn) with 8 levels; and sequential gray (Greys) with the middle four of 6
-#' levels.
+#' This dataset provides convenient access to selected ColorBrewer palettes: diverging brown-bluegreen (BrBG) with 8 levels; diverging purple-green (PRGn) with 8 levels; and sequential gray (Greys) with the middle four of 6 levels.
 #'
-#' The color names have the form "level_hue" with 4 saturation levels (dark,
-#' mid, light, pale) and 5 hues (Br, BG, PR, Gn, Gray or Grey).
+#' The color names have the form "level_hue" with 4 saturation levels (dark, mid, light, pale) and 5 hues (Br, BG, PR, Gn, Gray or Grey).
 #'
 #' @format A data frame with columns:
 #' \describe{
 #'   \item{rcb_name}{Character variable of names.}
 #'   \item{rcb_code}{Character variable of hex color codes.}
 #' }
-#' @source Cynthia Brewer (\url{http://colorbrewer2.org}) and RColorBrewer
-#' (\url{https://cran.r-project.org/package=RColorBrewer}).
+#' @source Cynthia Brewer (\url{http://colorbrewer2.org}) and RColorBrewer  (\url{https://cran.r-project.org/package=RColorBrewer}).
 #' @examples
 #' rcb_colors
-#'
 #' rcb("dark_Br")
-#'
 #' rcb("light_Gn")
 "rcb_colors"

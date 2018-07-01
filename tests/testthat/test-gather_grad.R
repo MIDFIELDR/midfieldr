@@ -30,8 +30,8 @@ test_that("Error if incorrect series argument", {
 
 test_that("Optional data argument returns correct values", {
   expect_setequal(
-  	grad3[["cip6"]],
-  	c("520301", "520201", "520101", "520801", "521099")
-  	)
+    grad3[["cip6"]],
+    c("520301", "520201", "520101", "520801", "521099")
+  )
   expect_equal(dim(grad3), c(12, 2))
 })

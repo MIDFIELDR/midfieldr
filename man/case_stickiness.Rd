@@ -16,13 +16,13 @@
  \item{stick}{Program stickiness: the ratio of the number of students
  graduating from a program to the number ever enrolled in the program.}
 }}
+\source{
+\href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
+}
 \usage{
 case_stickiness
 }
 \description{
 An example of program stickiness data grouped by student race and sex.
-}
-\examples{
-case_stickiness
 }
 \keyword{datasets}

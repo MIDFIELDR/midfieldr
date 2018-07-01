@@ -76,11 +76,10 @@ The [Selecting programs](selecting_programs.html) vignette describes the  proces
 - create the program group by running the code in the vignette 
 - or load the saved case data 
 
-To load the case data: 
+The case data are loaded with midfieldr. Simply assign the data to an object  such as `program_group`.  
 
 ```{r}
 # information saved from an earlier vignette
-data("case_program_group")
 program_group <- case_program_group
 ```
 
@@ -104,9 +103,9 @@ We use `gather_ever()` to collect all students ever enrolled in the programs we 
 The `series` argument in this case is an atomic vector of the 6-digit CIP codes in our `program_group`. The function uses these codes to search `midfieldterms`, the default reference data set. 
 
 ```{r}
-program_cip6 <- program_group[["cip6"]] %>%
-  unique() %>%
-  sort()
+program_cip6 <- program_group[["cip6"]] %.>%
+  unique(.) %.>%
+  sort(.)
 
 program_cip6
 ```
@@ -135,8 +134,8 @@ Open the help page by running
 `race_sex_join()` accepts any data frame with the MIDFIELD student `id` variable and joins the student race and sex from the `midfieldstudents` reference data to these data. 
 
 ```{r}
-students <- race_sex_join(students) %>%
-  glimpse()
+students <- race_sex_join(students) %.>%
+  glimpse(.)
 ```
 
 If the argument to `race_sex_join()` already includes a `sex` or `race` column, that column (or columns) is returned unchanged. Open the help page by running
@@ -150,30 +149,32 @@ If the argument to `race_sex_join()` already includes a `sex` or `race` column, 
 Next we join our custom program names to the student data. We use `left_join()` (a dplyr function) to join `program_group` to `students` by the 6-digit CIP code. 
 
 ```{r}
-students <- left_join(students, program_group, by = "cip6") %>%
-  glimpse()
+students <- left_join(students, program_group, by = "cip6") %.>%
+  glimpse(.)
 ```
 
-Optionally, we can select just the variables we want to work with next. `select_se()` is an [seplyr](https://winvector.github.io/seplyr/) function. 
+We can select just the variables we need at this point. A convenient approach is to define a vector of variable names to select and later for grouping and summarizing. 
 
 ```{r}
-students <- students %>%
-  select_se(., c("program", "race", "sex")) %>%
-  glimpse()
+# variables for group and summarize
+grouping_variables <- c("program", "race", "sex")
 ```
 
-This step is optional because when we group and summarize in the next step, all  variables not used for grouping are dropped anyway. 
+Using `select_se()` (an [seplyr](https://winvector.github.io/seplyr/) function) we can select just the three columns we need. 
+
+```{r}
+students <- students %.>%
+  select_se(., grouping_variables) %.>%
+  glimpse(.)
+```
 
 ## Count the numbers of students ever enrolled
 
 We use `group_summarize()` (an seplyr function) to group and count the numbers of students ever enrolled in our programs.  All variables in `students` not used as grouping variables are quietly dropped. The assigned count variable is `ever`.  
 
 ```{r}
-# assign the variables for grouping
-grouping_variables <- c("program", "race", "sex")
-
 # count the numbers of students ever in a program
-ever_enrolled <- students %>%
+ever_enrolled <- students %.>%
   group_summarize(., grouping_variables, "ever" = n())
 
 # check the result
@@ -190,9 +191,9 @@ The functions can be chained in a code chunk of 4 lines.
 
 ```{r}
 # count students graduating from programs
-graduated <- gather_grad(series = program_cip6) %>%
-  race_sex_join() %>%
-  left_join(., program_group, by = "cip6") %>%
+graduated <- gather_grad(series = program_cip6) %.>%
+  race_sex_join(.) %.>%
+  left_join(., program_group, by = "cip6") %.>%
   group_summarize(., grouping_variables, "grad" = n())
 
 graduated
@@ -216,8 +217,8 @@ stickiness
 We suggest omitting observations with 5 or fewer students ever enrolled. 
 
 ```{r}
-stickiness <- stickiness %>%
-  filter(ever > 5)
+stickiness <- stickiness %.>%
+  filter(., ever > 5)
 ```
 
 Finally, we create `stick`, the ratio of `grad` to `ever`. Stickiness is reported as a fraction between 0 and 1. 
@@ -225,8 +226,8 @@ Finally, we create `stick`, the ratio of `grad` to `ever`. Stickiness is reporte
 ```{r echo = -1}
 options(tibble.print_min = 10L)
 # tally stickiness
-stickiness <- stickiness %>%
-  mutate(stick = round(grad / ever, 3))
+stickiness <- stickiness %.>%
+  mutate(., stick = round(grad / ever, 3))
 
 # check the result
 stickiness
@@ -239,9 +240,9 @@ Before structuring the data for graphing, we select the populations we are inter
 We use `filter()` (a [dplyr](http://dplyr.tidyverse.org) function) to keep all rows except those in which race is Unknown, International, or Other.  
 
 ```{r}
-stickiness_mw <- stickiness %>%
-  filter(!race %in% c("Unknown", "International", "Other")) %>%
-  filter(!sex %in% "Unknown")
+stickiness_mw <- stickiness %.>%
+  filter(., !race %in% c("Unknown", "International", "Other")) %.>%
+  filter(., !sex %in% "Unknown")
 ```
 
 This example has no "Unknown" values in `sex`, but the larger data set does. For completeness, I've also filtered to remove those observations.  
@@ -256,8 +257,8 @@ We use:
 
 ```{r}
 # create the race_sex variable
-stickiness_mw <- stickiness_mw %>%
-  mutate(race_sex = str_c(race, sex, sep = " ")) %>%
+stickiness_mw <- stickiness_mw %.>%
+  mutate(., race_sex = str_c(race, sex, sep = " ")) %.>%
   select_se(., c("program", "race_sex", "stick"))
 
 # check the result
@@ -319,37 +320,37 @@ library(midfieldr)
 program_group <- case_program_group
 
 # extract the 6-digit CIPs as a search series
-program_cip6 <- program_group[["cip6"]] %>%
-  unique() %>%
-  sort()
+program_cip6 <- program_group[["cip6"]] %.>%
+  unique(.) %.>%
+  sort(.)
 
 # assign the variables for grouping
 grouping_variables <- c("program", "race", "sex")
 
 # count students ever enrolled
-ever_enrolled <- gather_ever(series = program_cip6) %>%
-  race_sex_join() %>%
-  left_join(., program_group, by = "cip6") %>%
+ever_enrolled <- gather_ever(series = program_cip6) %.>%
+  race_sex_join(.) %.>%
+  left_join(., program_group, by = "cip6") %.>%
   group_summarize(., grouping_variables, "ever" = n())
 
 # count students graduating
-graduated <- gather_grad(series = program_cip6) %>%
-  race_sex_join() %>%
-  left_join(., program_group, by = "cip6") %>%
+graduated <- gather_grad(series = program_cip6) %.>%
+  race_sex_join(.) %.>%
+  left_join(., program_group, by = "cip6") %.>%
   group_summarize(., grouping_variables, "grad" = n())
 
 # tally stickiness, by group
-stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables) %>%
-  filter(ever > 5) %>%
-  mutate(stick = round(grad / ever, 3))
+stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables) %.>%
+  filter(., ever > 5) %.>%
+  mutate(., stick = round(grad / ever, 3))
 
 # prepare data for graph
-stickiness_mw <- stickiness %>%
-  filter(!race %in% c("Unknown", "International", "Other")) %>%
-  filter(!sex %in% "Unknown") %>%
-  mutate(race_sex = str_c(race, sex, sep = " ")) %>%
-  select_se(., c("program", "race_sex", "stick")) %>%
-  multiway_order()
+stickiness_mw <- stickiness %.>%
+  filter(., !race %in% c("Unknown", "International", "Other")) %.>%
+  filter(., !sex %in% "Unknown") %.>%
+  mutate(., race_sex = str_c(race, sex, sep = " ")) %.>%
+  select_se(., c("program", "race_sex", "stick")) %.>%
+  multiway_order(.)
 
 # graph
 ggplot(stickiness_mw, aes(x = stick, y = race_sex)) +

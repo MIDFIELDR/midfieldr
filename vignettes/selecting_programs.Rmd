@@ -52,6 +52,7 @@ The programs we are studying are Civil Engineering, Electrical Engineering, Indu
 # packages used
 library(midfieldr)
 library(dplyr)
+library(seplyr)
 ```
 
 ## Select the programs to study
@@ -60,8 +61,8 @@ We use `cip_filter()` to search the `cip` dataset first for Engineering and then
  
 ```{r first-cip-search, echo = -1}
 options(tibble.print_min = 15L)
-cip_filter(series = "Engineering") %>%
-  cip_filter(series = c("Civil", "Electrical", "Industrial", "Mechanical"), reference = .) %>%
+cip_filter(series = "Engineering") %.>%
+  cip_filter(series = c("Civil", "Electrical", "Industrial", "Mechanical"), reference = .) %.>%
   head(., n = 15L)
 ```
 
@@ -92,10 +93,10 @@ mce <- cip_label(mce, program = "cip4name")
 ise <- cip_label(ise, program = "cip4name")
 ```
 
-`cip_label()` is pipe-compatible, so these lines could have been combined, for example, 
+`cip_label()` is pipe-compatible, so these lines could have been combined, for example,  
 
 ```{r}
-cve <- cip_filter(series = "^1408") %>%
+cve <- cip_filter("^1408") %.>%
   cip_label(., "cip4name")
 ```
 
@@ -124,10 +125,9 @@ For additional information, try the [Selecting CIP codes](cip_filter.html) vigne
 
 For convenience, this data frame of engineering CIP codes and program names has been bundled with midfieldr to use in vignettes. 
 
-To access the data frame, just load midfieldr and assign the data to a variable. 
+To access the data frame, just load midfieldr and assign the data to an object such as `program_group`. 
 
 ```{r}
-library(midfieldr)
-df <- case_program_group
-df
+program_group <- case_program_group %.>%
+  glimpse(.)
 ```

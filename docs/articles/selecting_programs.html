@@ -115,14 +115,15 @@
 <a href="#getting-started" class="anchor"></a>Getting started</h2>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># packages used</span></a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(midfieldr)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(dplyr)</a></code></pre></div>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(dplyr)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">library</span>(seplyr)</a></code></pre></div>
 </div>
 <div id="select-the-programs-to-study" class="section level2">
 <h2 class="hasAnchor">
 <a href="#select-the-programs-to-study" class="anchor"></a>Select the programs to study</h2>
 <p>We use <code><a href="../reference/cip_filter.html">cip_filter()</a></code> to search the <code>cip</code> dataset first for Engineering and then filter the result for Civil, Electrical, Industrial, and Mechanical.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"Engineering"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"Civil"</span>, <span class="st">"Electrical"</span>, <span class="st">"Industrial"</span>, <span class="st">"Mechanical"</span>), <span class="dt">reference =</span> .) <span class="op">%&gt;%</span></a>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"Engineering"</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="kw">c</span>(<span class="st">"Civil"</span>, <span class="st">"Electrical"</span>, <span class="st">"Industrial"</span>, <span class="st">"Mechanical"</span>), <span class="dt">reference =</span> .) <span class="op">%.&gt;%</span></a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="st">  </span><span class="kw">head</span>(., <span class="dt">n =</span> 15L)</a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt; # A tibble: 15 x 6</span></a>
 <a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;    cip2  cip2name               cip4  cip4name       cip6  cip6name       </span></a>
@@ -162,7 +163,7 @@
 <a class="sourceLine" id="cb5-3" data-line-number="3">mce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_label.html">cip_label</a></span>(mce, <span class="dt">program =</span> <span class="st">"cip4name"</span>)</a>
 <a class="sourceLine" id="cb5-4" data-line-number="4">ise &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_label.html">cip_label</a></span>(ise, <span class="dt">program =</span> <span class="st">"cip4name"</span>)</a></code></pre></div>
 <p><code><a href="../reference/cip_label.html">cip_label()</a></code> is pipe-compatible, so these lines could have been combined, for example,</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">cve &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="dt">series =</span> <span class="st">"^1408"</span>) <span class="op">%&gt;%</span></a>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">cve &lt;-<span class="st"> </span><span class="kw"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="st">"^1408"</span>) <span class="op">%.&gt;%</span></a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/cip_label.html">cip_label</a></span>(., <span class="st">"cip4name"</span>)</a></code></pre></div>
 <p>We use <code>bind_rows()</code>, a <a href="http://dplyr.tidyverse.org">dplyr</a> function, to bind the individual data frames into one data frame.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">program_group &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(cve, ele, mce, ise)</a></code></pre></div>
@@ -194,25 +195,18 @@
 <a href="#data-set-case_program_group" class="anchor"></a>Data set: <code>case_program_group</code>
 </h2>
 <p>For convenience, this data frame of engineering CIP codes and program names has been bundled with midfieldr to use in vignettes.</p>
-<p>To access the data frame, just load midfieldr and assign the data to a variable.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">library</span>(midfieldr)</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2">df &lt;-<span class="st"> </span>case_program_group</a>
-<a class="sourceLine" id="cb10-3" data-line-number="3">df</a>
-<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">#&gt; # A tibble: 12 x 7</span></a>
-<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt;    cip2  cip2name    cip4  cip4name        cip6  cip6name        program  </span></a>
-<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;           &lt;chr&gt; &lt;chr&gt;           &lt;chr&gt;    </span></a>
-<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt;  1 14    Engineering 1408  Civil Engineer~ 1408~ Civil Engineer~ Civil En~</span></a>
-<a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">#&gt;  2 14    Engineering 1408  Civil Engineer~ 1408~ Geotechnical E~ Civil En~</span></a>
-<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co">#&gt;  3 14    Engineering 1408  Civil Engineer~ 1408~ Structural Eng~ Civil En~</span></a>
-<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="co">#&gt;  4 14    Engineering 1408  Civil Engineer~ 1408~ Transportation~ Civil En~</span></a>
-<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt;  5 14    Engineering 1408  Civil Engineer~ 1408~ Water Resource~ Civil En~</span></a>
-<a class="sourceLine" id="cb10-12" data-line-number="12"><span class="co">#&gt;  6 14    Engineering 1408  Civil Engineer~ 1408~ Civil Engineer~ Civil En~</span></a>
-<a class="sourceLine" id="cb10-13" data-line-number="13"><span class="co">#&gt;  7 14    Engineering 1410  Electrical, El~ 1410~ Electrical, El~ Electric~</span></a>
-<a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">#&gt;  8 14    Engineering 1410  Electrical, El~ 1410~ Laser and Opti~ Electric~</span></a>
-<a class="sourceLine" id="cb10-15" data-line-number="15"><span class="co">#&gt;  9 14    Engineering 1410  Electrical, El~ 1410~ Telecommunicat~ Electric~</span></a>
-<a class="sourceLine" id="cb10-16" data-line-number="16"><span class="co">#&gt; 10 14    Engineering 1410  Electrical, El~ 1410~ Electrical, El~ Electric~</span></a>
-<a class="sourceLine" id="cb10-17" data-line-number="17"><span class="co">#&gt; 11 14    Engineering 1419  Mechanical Eng~ 1419~ Mechanical Eng~ Mechanic~</span></a>
-<a class="sourceLine" id="cb10-18" data-line-number="18"><span class="co">#&gt; 12 14    Engineering 1435  Industrial Eng~ 1435~ Industrial Eng~ Industri~</span></a></code></pre></div>
+<p>To access the data frame, just load midfieldr and assign the data to an object such as <code>program_group</code>.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">program_group &lt;-<span class="st"> </span>case_program_group <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">glimpse</span>(.)</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; Observations: 12</span></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">#&gt; Variables: 7</span></a>
+<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt; $ cip2     &lt;chr&gt; "14", "14", "14", "14", "14", "14", "14", "14", "14",...</span></a>
+<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; $ cip2name &lt;chr&gt; "Engineering", "Engineering", "Engineering", "Enginee...</span></a>
+<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt; $ cip4     &lt;chr&gt; "1408", "1408", "1408", "1408", "1408", "1408", "1410...</span></a>
+<a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">#&gt; $ cip4name &lt;chr&gt; "Civil Engineering", "Civil Engineering", "Civil Engi...</span></a>
+<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co">#&gt; $ cip6     &lt;chr&gt; "140801", "140802", "140803", "140804", "140805", "14...</span></a>
+<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="co">#&gt; $ cip6name &lt;chr&gt; "Civil Engineering, General", "Geotechnical Engineeri...</span></a>
+<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt; $ program  &lt;chr&gt; "Civil Engineering", "Civil Engineering", "Civil Engi...</span></a></code></pre></div>
 </div>
   </div>
 

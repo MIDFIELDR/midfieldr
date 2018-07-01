@@ -52,6 +52,7 @@ Packages used in this article:
 ```{r message = FALSE}
 library(midfieldr)
 library(tidyverse)
+library(seplyr)
 library(knitr)
 ```
 
@@ -83,11 +84,10 @@ We use:
 
 ```{r}
 # combine two variables into one
-stickiness <- case_stickiness %>%
-  mutate(., race_sex = stringr::str_c(race, sex, sep = " ")) %>%
-  select(., program, race_sex, stick)
-
-glimpse(stickiness)
+stickiness <- case_stickiness %.>%
+  mutate(., race_sex = stringr::str_c(race, sex, sep = " ")) %.>%
+  select(., program, race_sex, stick) %.>%
+  glimpse(.)
 ```
 
 Our `glimpse()` of the data frame shows that we have two categorical variables and one quantitative variable, exactly the form needed. 
@@ -98,9 +98,8 @@ Our `glimpse()` of the data frame shows that we have two categorical variables a
 
 ```{r}
 # convert the data to a multiway structure
-stickiness <- multiway_order(stickiness)
-
-glimpse(stickiness)
+stickiness <- multiway_order(stickiness) %.>%
+  glimpse(.)
 ```
 
 `glimpse()` shows that the two categorical variables are factors.
@@ -109,7 +108,7 @@ Optionally, using the `medians` argument, the function returns the median values
 
 ```{r}
 # return the median stickiness value for both categories
-df <- multiway_order(stickiness, medians = TRUE) %>%
+df <- multiway_order(stickiness, medians = TRUE) %.>%
   arrange(., program, race_sex)
 df
 ```
@@ -170,8 +169,8 @@ When discussing the potential stories in multiway data, it is often convenient t
 Starting with the example data, the first thing to do before tabulating is to reduce the significant figure to an easily-read number and arrange the rows to facilitate looking up a number. 
 
 ```{r}
-stickiness_table <- case_stickiness %>%
-  mutate(., stick = round(stick, 2)) %>%
+stickiness_table <- case_stickiness %.>%
+  mutate(., stick = round(stick, 2)) %.>%
   arrange(., program, sex, race)
 ```
 
@@ -183,8 +182,8 @@ kable(stickiness_table, caption = "Stickiness metric")
 
 ```{r echo = FALSE}
 # using kable_styling() for output but conceal from novice user
-kableExtra::kable(stickiness_table, format = "html", caption = "Stickiness metric") %>%
-  kableExtra::kable_styling(font_size = 12)
+kableExtra::kable(stickiness_table, format = "html", caption = "Stickiness metric") %.>%
+  kableExtra::kable_styling(., font_size = 12)
 ```
 
 Were to include a table in a publication, we might choose to  
@@ -195,16 +194,16 @@ Were to include a table in a publication, we might choose to
 - spread the data in wide format 
 
 ```{r}
-stickiness_table <- stickiness_table %>%
-  select(., program, race, sex, stick) %>%
-  mutate(., program = str_replace(program, " Engineering", "")) %>%
+stickiness_table <- stickiness_table %.>%
+  select(., program, race, sex, stick) %.>%
+  mutate(., program = str_replace(program, " Engineering", "")) %.>%
   select(.,
     "Program" = program,
     "Race" = race,
     "Sex" = sex,
     "Stickiness" = stick
-  ) %>%
-  spread(., Program, Stickiness) %>%
+  ) %.>%
+  spread(., Program, Stickiness) %.>%
   arrange(., Sex, Race)
 ```
 
@@ -216,8 +215,8 @@ kable(stickiness_table, caption = "Stickiness metric")
 
 ```{r echo = FALSE}
 # using kable_styling() for output but conceal from novice user
-kableExtra::kable(stickiness_table, format = "html", caption = "Stickiness metric in Engineering") %>%
-  kableExtra::kable_styling(font_size = 12)
+kableExtra::kable(stickiness_table, format = "html", caption = "Stickiness metric in Engineering") %.>%
+  kableExtra::kable_styling(., font_size = 12)
 ```
 
 ## References

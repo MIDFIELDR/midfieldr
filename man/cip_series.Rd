@@ -10,7 +10,7 @@
 \alias{cip_phys_sci}
 \alias{cip_stem}
 \title{Named series of 6-digit CIP codes}
-\format{A character vector of 6-digit CIP codes.
+\format{An atomic character vector of 6-digit CIP codes.
 \describe{
 \item{\code{cip_bio_sci}}{Biological and biomedical science programs,
 series 26.}
@@ -42,8 +42,7 @@ cip_phys_sci
 cip_stem
 }
 \description{
-Each named series is a vector of Classification of Instructional
-Programs (CIP) 6-digit codes for groups of programs.
+Atomic character vectors of 6-digit CIP codes for specified groups of programs.
 }
 \examples{
 head(cip_math_stat, n = 10L)

@@ -143,7 +143,7 @@
 <a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; Observations: 5,992</span></a>
 <a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; Variables: 2</span></a>
 <a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; $ id    &lt;chr&gt; "MID25877315", "MID25896490", "MID25916711", "MID2592129...</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; $ start &lt;chr&gt; "140201", "140201", "140801", "140901", "140901", "14070...</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; $ start &lt;chr&gt; "141001", "140901", "140701", "141001", "141801", "14080...</span></a></code></pre></div>
 </div>
 <div id="preparing-the-fye-data-for-imputation" class="section level2">
 <h2 class="hasAnchor">
@@ -151,18 +151,18 @@
 <p>You may skip the rest of the vignette and simply incorporate the imputed data <code>case_fye</code> in your analysis if the details of imputation are not important to you at this time.</p>
 <p>If the details are of interest to you, we start by conditioning the data to prepare it for imputation.</p>
 <p><strong>Step 1.</strong> Extract from <code>midfieldstudents</code> the IDs of all students whose matriculation major is FYE.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">fye_id &lt;-<span class="st"> </span>midfieldstudents <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(cip6 <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">"14XXXX"</span>, <span class="st">"14YYYY"</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">  </span><span class="kw">select</span>(id) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">  </span><span class="kw">unique</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">  </span><span class="kw">glimpse</span>()</a>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">fye_id &lt;-<span class="st"> </span>midfieldstudents <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(., cip6 <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">"14XXXX"</span>, <span class="st">"14YYYY"</span>)) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">  </span><span class="kw">select</span>(., id) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">  </span><span class="kw">unique</span>(.) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">  </span><span class="kw">glimpse</span>(.)</a>
 <a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; Observations: 5,992</span></a>
 <a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt; Variables: 1</span></a>
 <a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; $ id &lt;chr&gt; "MID25783162", "MID25783166", "MID25783167", "MID25783178",...</span></a></code></pre></div>
 <p>Extract from <code>midfieldterms</code> all the term data for these students. <code>semi_join(x, y)</code> returns all rows from x where there are matching values in y, keeping just columns from x.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">all_fye_terms &lt;-<span class="st"> </span><span class="kw">semi_join</span>(midfieldterms, fye_id, <span class="dt">by =</span> <span class="st">"id"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="st">  </span><span class="kw">select</span>(id, cip6, term) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">  </span><span class="kw">glimpse</span>()</a>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">all_fye_terms &lt;-<span class="st"> </span><span class="kw">semi_join</span>(midfieldterms, fye_id, <span class="dt">by =</span> <span class="st">"id"</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="st">  </span><span class="kw">select</span>(., id, cip6, term) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">  </span><span class="kw">glimpse</span>(.)</a>
 <a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt; Observations: 51,625</span></a>
 <a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; Variables: 3</span></a>
 <a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt; $ id   &lt;chr&gt; "MID25783162", "MID25783162", "MID25783162", "MID25783162...</span></a>
@@ -170,14 +170,14 @@
 <a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; $ term &lt;dbl&gt; 19921, 19923, 19931, 19933, 19941, 19943, 19951, 19953, 1...</span></a></code></pre></div>
 <p><strong>Step 2.</strong> Subset the students who declare an engineering major after FYE.</p>
 <p>Keeping those terms in which FYE is the declared major, we arrange the rows by ID and <em>descending</em> term. Then, grouped by ID, each first row is a student’s final FYE term, denoted <code>end_fye</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">last_fye_terms &lt;-<span class="st"> </span>all_fye_terms <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(cip6 <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">"14XXXX"</span>, <span class="st">"14YYYY"</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">  </span><span class="kw">arrange</span>(id, <span class="kw">desc</span>(term)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="st">  </span><span class="kw">group_by</span>(id) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="st">  </span><span class="kw">filter</span>(<span class="kw">row_number</span>() <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="st">  </span><span class="kw">select</span>(id, <span class="dt">end_fye =</span> term) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="st">  </span><span class="kw">glimpse</span>()</a>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">last_fye_terms &lt;-<span class="st"> </span>all_fye_terms <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(., cip6 <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">"14XXXX"</span>, <span class="st">"14YYYY"</span>)) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">  </span><span class="kw">arrange</span>(., id, <span class="kw">desc</span>(term)) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="st">  </span><span class="kw">group_by</span>(., id) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="st">  </span><span class="kw">filter</span>(., <span class="kw">row_number</span>() <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="st">  </span><span class="kw">ungroup</span>(.) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="st">  </span><span class="kw">select</span>(., id, <span class="dt">end_fye =</span> term) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="st">  </span><span class="kw">glimpse</span>(.)</a>
 <a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; Observations: 5,220</span></a>
 <a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; Variables: 2</span></a>
 <a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; $ id      &lt;chr&gt; "MID25783162", "MID25783166", "MID25783167", "MID25783...</span></a>
@@ -185,17 +185,17 @@
 <p>We join the column <code>end_fye</code> to the <code>all_fye_terms</code> data frame. <code>left_join(x, y)</code> returns all rows from x, and all columns from x and y. All multiple matches between x and y are returned.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">fye_to_engr &lt;-<span class="st"> </span><span class="kw">left_join</span>(all_fye_terms, last_fye_terms, <span class="dt">by =</span> <span class="st">"id"</span>)</a></code></pre></div>
 <p>Arranging by ID and <em>ascending</em> term and grouped by ID, each first row is a student’s first term after FYE.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">fye_to_engr &lt;-<span class="st"> </span>fye_to_engr <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(term <span class="op">&gt;</span><span class="st"> </span>end_fye) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">arrange</span>(id, term) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">  </span><span class="kw">group_by</span>(id) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="st">  </span><span class="kw">filter</span>(<span class="kw">row_number</span>() <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="st">  </span><span class="kw">ungroup</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">fye_to_engr &lt;-<span class="st"> </span>fye_to_engr <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(., term <span class="op">&gt;</span><span class="st"> </span>end_fye) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">arrange</span>(., id, term) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">  </span><span class="kw">group_by</span>(., id) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="st">  </span><span class="kw">filter</span>(., <span class="kw">row_number</span>() <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="st">  </span><span class="kw">ungroup</span>(.)</a></code></pre></div>
 <p>Because this data frame denotes students transitioning to an engineering major, we filter to keep only those whose CIP starts with “14.” For these students, the predicted starting major is their declared engineering major after FYE.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">fye_to_engr &lt;-<span class="st"> </span>fye_to_engr <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(<span class="kw">str_detect</span>(cip6, <span class="st">"^14"</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw">select</span>(id, <span class="dt">start =</span> cip6) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">  </span><span class="kw">glimpse</span>()</a>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">fye_to_engr &lt;-<span class="st"> </span>fye_to_engr <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(., <span class="kw">str_detect</span>(cip6, <span class="st">"^14"</span>)) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw">select</span>(., id, <span class="dt">start =</span> cip6) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">  </span><span class="kw">glimpse</span>(.)</a>
 <a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt; Observations: 3,366</span></a>
 <a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt; Variables: 2</span></a>
 <a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; $ id    &lt;chr&gt; "MID25783167", "MID25783178", "MID25783197", "MID2578319...</span></a>
@@ -203,52 +203,53 @@
 <p><strong>Step 3.</strong> The remaining FYE students have an unknown starting major.</p>
 <p>Starting with the IDs of all students in FYE and removing the IDs of students who have declared an engineering major after FYE yields the IDs of students whose starting major will have to be imputed. <code>anti_join(x, y)</code> returns all rows from x where there are not matching values in y, keeping just columns from x.</p>
 <p>For these students, the predicted starting major after FYE is assumed missing (NA).</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">fye_to_nonengr &lt;-<span class="st"> </span><span class="kw">anti_join</span>(fye_id, fye_to_engr, <span class="dt">by =</span> <span class="st">"id"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">start =</span> <span class="ot">NA_character_</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">  </span><span class="kw">glimpse</span>()</a>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">fye_to_nonengr &lt;-<span class="st"> </span><span class="kw">anti_join</span>(fye_id, fye_to_engr, <span class="dt">by =</span> <span class="st">"id"</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(., <span class="dt">start =</span> <span class="ot">NA_character_</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">  </span><span class="kw">glimpse</span>(.)</a>
 <a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">#&gt; Observations: 2,626</span></a>
 <a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt; Variables: 2</span></a>
 <a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; $ id    &lt;chr&gt; "MID25783162", "MID25783166", "MID25783227", "MID2578342...</span></a>
 <a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt; $ start &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...</span></a></code></pre></div>
 <p><strong>Step 4.</strong> Combine the two data frames and finish the data preparation.</p>
 <p>Bind the two data frames.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">fye_start &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(fye_to_engr, fye_to_nonengr) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span><span class="kw">glimpse</span>()</a>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">fye_start &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(fye_to_engr, fye_to_nonengr) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span><span class="kw">glimpse</span>(.)</a>
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; Observations: 5,992</span></a>
 <a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt; Variables: 2</span></a>
 <a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; $ id    &lt;chr&gt; "MID25783167", "MID25783178", "MID25783197", "MID2578319...</span></a>
 <a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; $ start &lt;chr&gt; "140901", "140701", "140701", "140301", "140701", "14050...</span></a></code></pre></div>
 <p>Extract from <code>midfieldstudents</code> the institution names by student ID. <code>semi_join(x, y)</code> returns all rows from x where there are matching values in y, keeping just columns from x.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">inst_id &lt;-<span class="st"> </span><span class="kw">semi_join</span>(midfieldstudents, fye_start, <span class="dt">by =</span> <span class="st">"id"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span><span class="kw">select</span>(id, institution) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="st">  </span><span class="kw">unique</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="st">  </span><span class="kw">glimpse</span>()</a>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">inst_id &lt;-<span class="st"> </span><span class="kw">semi_join</span>(midfieldstudents, fye_start, <span class="dt">by =</span> <span class="st">"id"</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span><span class="kw">select</span>(., id, institution) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="st">  </span><span class="kw">unique</span>(.) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="st">  </span><span class="kw">glimpse</span>(.)</a>
 <a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt; Observations: 5,992</span></a>
 <a class="sourceLine" id="cb12-6" data-line-number="6"><span class="co">#&gt; Variables: 2</span></a>
 <a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co">#&gt; $ id          &lt;chr&gt; "MID25783162", "MID25783166", "MID25783167", "MID2...</span></a>
 <a class="sourceLine" id="cb12-8" data-line-number="8"><span class="co">#&gt; $ institution &lt;chr&gt; "Institution M", "Institution M", "Institution M",...</span></a></code></pre></div>
 <p>Join the institutions to the FYE starters data frame and add race and sex using <code><a href="../reference/race_sex_join.html">race_sex_join()</a></code>. We assume that these variables are appropriate predictors.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">fye_start &lt;-<span class="st"> </span><span class="kw">left_join</span>(fye_start, inst_id, <span class="dt">by =</span> <span class="st">"id"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="st">  </span><span class="kw">select</span>(id, institution, race, sex, start) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="st">  </span><span class="kw">glimpse</span>()</a>
-<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="co">#&gt; Observations: 5,992</span></a>
-<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="co">#&gt; Variables: 5</span></a>
-<a class="sourceLine" id="cb13-7" data-line-number="7"><span class="co">#&gt; $ id          &lt;chr&gt; "MID25783167", "MID25783178", "MID25783197", "MID2...</span></a>
-<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="co">#&gt; $ institution &lt;chr&gt; "Institution M", "Institution M", "Institution M",...</span></a>
-<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="co">#&gt; $ race        &lt;chr&gt; "White", "Black", "White", "White", "White", "Whit...</span></a>
-<a class="sourceLine" id="cb13-10" data-line-number="10"><span class="co">#&gt; $ sex         &lt;chr&gt; "Male", "Male", "Male", "Female", "Male", "Male", ...</span></a>
-<a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co">#&gt; $ start       &lt;chr&gt; "140901", "140701", "140701", "140301", "140701", ...</span></a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">fye_start &lt;-<span class="st"> </span><span class="kw">left_join</span>(fye_start, inst_id, <span class="dt">by =</span> <span class="st">"id"</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/race_sex_join.html">race_sex_join</a></span>(.) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="st">  </span><span class="kw">select</span>(., id, institution, race, sex, start) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="st">  </span><span class="kw">unique</span>(.) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="st">  </span><span class="kw">glimpse</span>(.)</a>
+<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="co">#&gt; Observations: 5,992</span></a>
+<a class="sourceLine" id="cb13-7" data-line-number="7"><span class="co">#&gt; Variables: 5</span></a>
+<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="co">#&gt; $ id          &lt;chr&gt; "MID25783167", "MID25783178", "MID25783197", "MID2...</span></a>
+<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="co">#&gt; $ institution &lt;chr&gt; "Institution M", "Institution M", "Institution M",...</span></a>
+<a class="sourceLine" id="cb13-10" data-line-number="10"><span class="co">#&gt; $ race        &lt;chr&gt; "White", "Black", "White", "White", "White", "Whit...</span></a>
+<a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co">#&gt; $ sex         &lt;chr&gt; "Male", "Male", "Male", "Female", "Male", "Male", ...</span></a>
+<a class="sourceLine" id="cb13-12" data-line-number="12"><span class="co">#&gt; $ start       &lt;chr&gt; "140901", "140701", "140701", "140301", "140701", ...</span></a></code></pre></div>
 <p>Convert the character variables to factors to use with mice. The resulting data frame <code>mi_input</code> is ready to be operated on by mice.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">mi_input &lt;-<span class="st"> </span>fye_start <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="st">  </span><span class="kw">arrange</span>(institution, race, sex, start) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(</a>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">mi_input &lt;-<span class="st"> </span>fye_start <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="st">  </span><span class="kw">arrange</span>(., institution, race, sex, start) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(.,</a>
 <a class="sourceLine" id="cb14-4" data-line-number="4">    <span class="dt">institution =</span> <span class="kw">as.factor</span>(institution),</a>
 <a class="sourceLine" id="cb14-5" data-line-number="5">    <span class="dt">race =</span> <span class="kw">as.factor</span>(race),</a>
 <a class="sourceLine" id="cb14-6" data-line-number="6">    <span class="dt">sex =</span> <span class="kw">as.factor</span>(sex),</a>
 <a class="sourceLine" id="cb14-7" data-line-number="7">    <span class="dt">start =</span> <span class="kw">as.factor</span>(start)</a>
-<a class="sourceLine" id="cb14-8" data-line-number="8">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb14-9" data-line-number="9"><span class="st">  </span><span class="kw">glimpse</span>()</a>
+<a class="sourceLine" id="cb14-8" data-line-number="8">  ) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb14-9" data-line-number="9"><span class="st">  </span><span class="kw">glimpse</span>(.)</a>
 <a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co">#&gt; Observations: 5,992</span></a>
 <a class="sourceLine" id="cb14-11" data-line-number="11"><span class="co">#&gt; Variables: 5</span></a>
 <a class="sourceLine" id="cb14-12" data-line-number="12"><span class="co">#&gt; $ id          &lt;chr&gt; "MID25877315", "MID25896490", "MID25916711", "MID2...</span></a>
@@ -280,55 +281,45 @@
 <p>Assign the imputation method. For unordered categorical data with more than two levels, the suggested method is “polyreg” (polytomous regression).</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">meth[<span class="kw">c</span>(<span class="st">"start"</span>)] &lt;-<span class="st"> "polyreg"</span></a></code></pre></div>
 <p>Run the multiple (m = 5) imputations. The seed is set for reproducible results. On my Windows machine, this imputation takes about 30 seconds.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">mi_output &lt;-<span class="st"> </span><span class="kw"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(</a>
-<a class="sourceLine" id="cb21-2" data-line-number="2">  mi_input,</a>
-<a class="sourceLine" id="cb21-3" data-line-number="3">  <span class="dt">method =</span> meth,</a>
-<a class="sourceLine" id="cb21-4" data-line-number="4">  <span class="dt">predictorMatrix =</span> predM,</a>
-<a class="sourceLine" id="cb21-5" data-line-number="5">  <span class="dt">m =</span> <span class="dv">5</span>,</a>
-<a class="sourceLine" id="cb21-6" data-line-number="6">  <span class="dt">printFlag =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb21-7" data-line-number="7">  <span class="dt">seed =</span> <span class="dv">20180624</span></a>
-<a class="sourceLine" id="cb21-8" data-line-number="8">)</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="co"># mi_output &lt;- mice(</span></a>
+<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="co">#   mi_input,</span></a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="co">#   method = meth,</span></a>
+<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="co">#   predictorMatrix = predM,</span></a>
+<a class="sourceLine" id="cb21-5" data-line-number="5"><span class="co">#   m = 5,</span></a>
+<a class="sourceLine" id="cb21-6" data-line-number="6"><span class="co">#   printFlag = TRUE,</span></a>
+<a class="sourceLine" id="cb21-7" data-line-number="7"><span class="co">#   seed = 20180624</span></a>
+<a class="sourceLine" id="cb21-8" data-line-number="8"><span class="co"># )</span></a></code></pre></div>
 </div>
 <div id="data-set-case_fye" class="section level2">
 <h2 class="hasAnchor">
 <a href="#data-set-case_fye" class="anchor"></a>Data set: <code>case_fye</code>
 </h2>
 <p>Construct the data set after imputation, keeping ID and starting major only. Reformat the start major as a character. The data frame, <code>case_fye</code>, is the data mentioned previously provided with the midfieldr package if you prefer not to do your own imputation.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">mi_output_complete &lt;-<span class="st"> </span><span class="kw"><a href="http://stefvanbuuren.github.io/mice/reference/complete.html">complete</a></span>(mi_output)</a>
-<a class="sourceLine" id="cb22-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb22-3" data-line-number="3">case_fye &lt;-<span class="st"> </span>mi_output_complete <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb22-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(id, start) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">start =</span> <span class="kw">as.character</span>(start)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="st">  </span><span class="kw">glimpse</span>()</a>
-<a class="sourceLine" id="cb22-7" data-line-number="7"><span class="co">#&gt; Observations: 5,992</span></a>
-<a class="sourceLine" id="cb22-8" data-line-number="8"><span class="co">#&gt; Variables: 2</span></a>
-<a class="sourceLine" id="cb22-9" data-line-number="9"><span class="co">#&gt; $ id    &lt;chr&gt; "MID25877315", "MID25896490", "MID25916711", "MID2592129...</span></a>
-<a class="sourceLine" id="cb22-10" data-line-number="10"><span class="co">#&gt; $ start &lt;chr&gt; "140201", "140201", "140801", "140901", "140901", "14070...</span></a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">case_fye &lt;-<span class="st"> </span>mice<span class="op">::</span><span class="kw"><a href="http://stefvanbuuren.github.io/mice/reference/complete.html">complete</a></span>(mi_output) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="st">  </span><span class="kw">select</span>(., id, start) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(., <span class="dt">start =</span> <span class="kw">as.character</span>(start)) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb22-4" data-line-number="4"><span class="st">  </span><span class="kw">unique</span>(.) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="st">  </span><span class="kw">glimpse</span>(.)</a>
+<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="co">#&gt; Observations: 5,992</span></a>
+<a class="sourceLine" id="cb22-7" data-line-number="7"><span class="co">#&gt; Variables: 2</span></a>
+<a class="sourceLine" id="cb22-8" data-line-number="8"><span class="co">#&gt; $ id    &lt;chr&gt; "MID25877315", "MID25896490", "MID25916711", "MID2592129...</span></a>
+<a class="sourceLine" id="cb22-9" data-line-number="9"><span class="co">#&gt; $ start &lt;chr&gt; "141001", "140901", "140701", "141001", "141801", "14080...</span></a></code></pre></div>
 </div>
 <div id="assessing-the-imputation-" class="section level2">
 <h2 class="hasAnchor">
 <a href="#assessing-the-imputation-" class="anchor"></a>Assessing the imputation.</h2>
 <p>Confirm there are no missing values.</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw"><a href="http://stefvanbuuren.github.io/mice/reference/md.pattern.html">md.pattern</a></span>(mi_output_complete, <span class="dt">plot =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb23-2" data-line-number="2"><span class="co">#&gt;  /\     /\</span></a>
-<a class="sourceLine" id="cb23-3" data-line-number="3"><span class="co">#&gt; {  `---'  }</span></a>
-<a class="sourceLine" id="cb23-4" data-line-number="4"><span class="co">#&gt; {  O   O  }</span></a>
-<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; ==&gt;  V &lt;==  No need for mice. This data set is completely observed.</span></a>
-<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="co">#&gt;  \  \|/  /</span></a>
-<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">#&gt;   `-----'</span></a></code></pre></div>
-<p><img src="../man/figures/fye-mice-out-1.png" width="70%" style="display: block; margin: auto;"></p>
-<pre><code>#&gt;      id institution race sex start  
-#&gt; 5992  1           1    1   1     1 0
-#&gt;       0           0    0   0     0 0</code></pre>
+<a class="sourceLine" id="cb23-2" data-line-number="2"><span class="co">#&gt; Error in md.pattern(mi_output_complete, plot = TRUE): object 'mi_output_complete' not found</span></a></code></pre></div>
 <p>Confirm that the start majors are all in engineering.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">case_fye <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="st">  </span><span class="kw">select</span>(start) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb25-3" data-line-number="3"><span class="st">  </span><span class="kw">unlist</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb25-4" data-line-number="4"><span class="st">  </span><span class="kw">unique</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb25-5" data-line-number="5"><span class="st">  </span><span class="kw">sort</span>()</a>
-<a class="sourceLine" id="cb25-6" data-line-number="6"><span class="co">#&gt;  [1] "140201" "140301" "140501" "140601" "140701" "140801" "140901"</span></a>
-<a class="sourceLine" id="cb25-7" data-line-number="7"><span class="co">#&gt;  [8] "141001" "141101" "141801" "141901" "142101" "142301" "142801"</span></a>
-<a class="sourceLine" id="cb25-8" data-line-number="8"><span class="co">#&gt; [15] "143301" "143501" "149999"</span></a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">case_fye <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb24-2" data-line-number="2"><span class="st">  </span><span class="kw">select</span>(., start) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb24-3" data-line-number="3"><span class="st">  </span><span class="kw">unlist</span>(.) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb24-4" data-line-number="4"><span class="st">  </span><span class="kw">unique</span>(.) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb24-5" data-line-number="5"><span class="st">  </span><span class="kw">sort</span>(.)</a>
+<a class="sourceLine" id="cb24-6" data-line-number="6"><span class="co">#&gt;  [1] "140201" "140301" "140501" "140601" "140701" "140801" "140901"</span></a>
+<a class="sourceLine" id="cb24-7" data-line-number="7"><span class="co">#&gt;  [8] "141001" "141101" "141801" "141901" "142101" "142301" "142801"</span></a>
+<a class="sourceLine" id="cb24-8" data-line-number="8"><span class="co">#&gt; [15] "143301" "143501" "149999"</span></a></code></pre></div>
 </div>
 <div id="issue-bin" class="section level2">
 <h2 class="hasAnchor">

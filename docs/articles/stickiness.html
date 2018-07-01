@@ -136,10 +136,9 @@
 <li>create the program group by running the code in the vignette</li>
 <li>or load the saved case data</li>
 </ul>
-<p>To load the case data:</p>
+<p>The case data are loaded with midfieldr. Simply assign the data to an object such as <code>program_group</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># information saved from an earlier vignette</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">data</span>(<span class="st">"case_program_group"</span>)</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">program_group &lt;-<span class="st"> </span>case_program_group</a></code></pre></div>
+<a class="sourceLine" id="cb2-2" data-line-number="2">program_group &lt;-<span class="st"> </span>case_program_group</a></code></pre></div>
 <p>Examine the result: there are a total of 12 CIP codes for these programs. We have all six columns from the <code>cip</code> dataset and the <code>program</code> column we added using <code><a href="../reference/cip_label.html">cip_label()</a></code>.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># check the result</span></a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">program_group</a>
@@ -168,9 +167,9 @@
 <code>series</code> atomic character vector of 6-digit CIP codes</li>
 </ul>
 <p>The <code>series</code> argument in this case is an atomic vector of the 6-digit CIP codes in our <code>program_group</code>. The function uses these codes to search <code>midfieldterms</code>, the default reference data set.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">program_cip6 &lt;-<span class="st"> </span>program_group[[<span class="st">"cip6"</span>]] <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="st">  </span><span class="kw">unique</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">  </span><span class="kw">sort</span>()</a>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">program_cip6 &lt;-<span class="st"> </span>program_group[[<span class="st">"cip6"</span>]] <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="st">  </span><span class="kw">unique</span>(.) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">  </span><span class="kw">sort</span>(.)</a>
 <a class="sourceLine" id="cb4-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb4-5" data-line-number="5">program_cip6</a>
 <a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt;  [1] "140801" "140802" "140803" "140804" "140805" "140899" "141001"</span></a>
@@ -191,8 +190,8 @@
 <h2 class="hasAnchor">
 <a href="#race_sex_join" class="anchor"></a>race_sex_join()</h2>
 <p><code><a href="../reference/race_sex_join.html">race_sex_join()</a></code> accepts any data frame with the MIDFIELD student <code>id</code> variable and joins the student race and sex from the <code>midfieldstudents</code> reference data to these data.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">students &lt;-<span class="st"> </span><span class="kw"><a href="../reference/race_sex_join.html">race_sex_join</a></span>(students) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span><span class="kw">glimpse</span>()</a>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">students &lt;-<span class="st"> </span><span class="kw"><a href="../reference/race_sex_join.html">race_sex_join</a></span>(students) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span><span class="kw">glimpse</span>(.)</a>
 <a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; Observations: 10,846</span></a>
 <a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt; Variables: 4</span></a>
 <a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt; $ id   &lt;chr&gt; "MID25783178", "MID25783197", "MID25783388", "MID25783441...</span></a>
@@ -206,8 +205,8 @@
 <h2 class="hasAnchor">
 <a href="#join-our-program-names-for-grouping" class="anchor"></a>Join our program names for grouping</h2>
 <p>Next we join our custom program names to the student data. We use <code>left_join()</code> (a dplyr function) to join <code>program_group</code> to <code>students</code> by the 6-digit CIP code.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">students &lt;-<span class="st"> </span><span class="kw">left_join</span>(students, program_group, <span class="dt">by =</span> <span class="st">"cip6"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">glimpse</span>()</a>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">students &lt;-<span class="st"> </span><span class="kw">left_join</span>(students, program_group, <span class="dt">by =</span> <span class="st">"cip6"</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">glimpse</span>(.)</a>
 <a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; Observations: 10,846</span></a>
 <a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">#&gt; Variables: 10</span></a>
 <a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt; $ id       &lt;chr&gt; "MID25783178", "MID25783197", "MID25783388", "MID2578...</span></a>
@@ -220,46 +219,45 @@
 <a class="sourceLine" id="cb10-12" data-line-number="12"><span class="co">#&gt; $ cip4name &lt;chr&gt; "Industrial Engineering", "Civil Engineering", "Mecha...</span></a>
 <a class="sourceLine" id="cb10-13" data-line-number="13"><span class="co">#&gt; $ cip6name &lt;chr&gt; "Industrial Engineering", "Civil Engineering, General...</span></a>
 <a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">#&gt; $ program  &lt;chr&gt; "Industrial Engineering", "Civil Engineering", "Mecha...</span></a></code></pre></div>
-<p>Optionally, we can select just the variables we want to work with next. <code>select_se()</code> is an <a href="https://winvector.github.io/seplyr/">seplyr</a> function.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">students &lt;-<span class="st"> </span>students <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span><span class="kw">select_se</span>(., <span class="kw">c</span>(<span class="st">"program"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="st">  </span><span class="kw">glimpse</span>()</a>
-<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt; Observations: 10,846</span></a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; Variables: 3</span></a>
-<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; $ program &lt;chr&gt; "Industrial Engineering", "Civil Engineering", "Mechan...</span></a>
-<a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt; $ race    &lt;chr&gt; "Black", "White", "White", "White", "White", "White", ...</span></a>
-<a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt; $ sex     &lt;chr&gt; "Male", "Male", "Male", "Male", "Male", "Male", "Male"...</span></a></code></pre></div>
-<p>This step is optional because when we group and summarize in the next step, all variables not used for grouping are dropped anyway.</p>
+<p>We can select just the variables we need at this point. A convenient approach is to define a vector of variable names to select and later for grouping and summarizing.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># variables for group and summarize</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">grouping_variables &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"program"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>)</a></code></pre></div>
+<p>Using <code>select_se()</code> (an <a href="https://winvector.github.io/seplyr/">seplyr</a> function) we can select just the three columns we need.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">students &lt;-<span class="st"> </span>students <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span><span class="kw">select_se</span>(., grouping_variables) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="st">  </span><span class="kw">glimpse</span>(.)</a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="co">#&gt; Observations: 10,846</span></a>
+<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt; Variables: 3</span></a>
+<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="co">#&gt; $ program &lt;chr&gt; "Industrial Engineering", "Civil Engineering", "Mechan...</span></a>
+<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co">#&gt; $ race    &lt;chr&gt; "Black", "White", "White", "White", "White", "White", ...</span></a>
+<a class="sourceLine" id="cb12-8" data-line-number="8"><span class="co">#&gt; $ sex     &lt;chr&gt; "Male", "Male", "Male", "Male", "Male", "Male", "Male"...</span></a></code></pre></div>
 </div>
 <div id="count-the-numbers-of-students-ever-enrolled" class="section level2">
 <h2 class="hasAnchor">
 <a href="#count-the-numbers-of-students-ever-enrolled" class="anchor"></a>Count the numbers of students ever enrolled</h2>
 <p>We use <code>group_summarize()</code> (an seplyr function) to group and count the numbers of students ever enrolled in our programs. All variables in <code>students</code> not used as grouping variables are quietly dropped. The assigned count variable is <code>ever</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="co"># assign the variables for grouping</span></a>
-<a class="sourceLine" id="cb12-2" data-line-number="2">grouping_variables &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"program"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>)</a>
-<a class="sourceLine" id="cb12-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="co"># count the numbers of students ever in a program</span></a>
-<a class="sourceLine" id="cb12-5" data-line-number="5">ever_enrolled &lt;-<span class="st"> </span>students <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="st">  </span><span class="kw">group_summarize</span>(., grouping_variables, <span class="st">"ever"</span> =<span class="st"> </span><span class="kw">n</span>())</a>
-<a class="sourceLine" id="cb12-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb12-8" data-line-number="8"><span class="co"># check the result</span></a>
-<a class="sourceLine" id="cb12-9" data-line-number="9">ever_enrolled</a>
-<a class="sourceLine" id="cb12-10" data-line-number="10"><span class="co">#&gt; # A tibble: 63 x 4</span></a>
-<a class="sourceLine" id="cb12-11" data-line-number="11"><span class="co">#&gt;    program           race            sex     ever</span></a>
-<a class="sourceLine" id="cb12-12" data-line-number="12"><span class="co">#&gt;    &lt;chr&gt;             &lt;chr&gt;           &lt;chr&gt;  &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb12-13" data-line-number="13"><span class="co">#&gt;  1 Civil Engineering Asian           Female    22</span></a>
-<a class="sourceLine" id="cb12-14" data-line-number="14"><span class="co">#&gt;  2 Civil Engineering Asian           Male      54</span></a>
-<a class="sourceLine" id="cb12-15" data-line-number="15"><span class="co">#&gt;  3 Civil Engineering Black           Female    71</span></a>
-<a class="sourceLine" id="cb12-16" data-line-number="16"><span class="co">#&gt;  4 Civil Engineering Black           Male     132</span></a>
-<a class="sourceLine" id="cb12-17" data-line-number="17"><span class="co">#&gt;  5 Civil Engineering Hispanic        Female    16</span></a>
-<a class="sourceLine" id="cb12-18" data-line-number="18"><span class="co">#&gt;  6 Civil Engineering Hispanic        Male      85</span></a>
-<a class="sourceLine" id="cb12-19" data-line-number="19"><span class="co">#&gt;  7 Civil Engineering International   Female     2</span></a>
-<a class="sourceLine" id="cb12-20" data-line-number="20"><span class="co">#&gt;  8 Civil Engineering International   Male      22</span></a>
-<a class="sourceLine" id="cb12-21" data-line-number="21"><span class="co">#&gt;  9 Civil Engineering Native American Male       7</span></a>
-<a class="sourceLine" id="cb12-22" data-line-number="22"><span class="co">#&gt; 10 Civil Engineering Other           Female    12</span></a>
-<a class="sourceLine" id="cb12-23" data-line-number="23"><span class="co">#&gt; 11 Civil Engineering Other           Male      32</span></a>
-<a class="sourceLine" id="cb12-24" data-line-number="24"><span class="co">#&gt; 12 Civil Engineering Unknown         Female     2</span></a>
-<a class="sourceLine" id="cb12-25" data-line-number="25"><span class="co">#&gt; # ... with 51 more rows</span></a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="co"># count the numbers of students ever in a program</span></a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">ever_enrolled &lt;-<span class="st"> </span>students <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="st">  </span><span class="kw">group_summarize</span>(., grouping_variables, <span class="st">"ever"</span> =<span class="st"> </span><span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb13-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="co"># check the result</span></a>
+<a class="sourceLine" id="cb13-6" data-line-number="6">ever_enrolled</a>
+<a class="sourceLine" id="cb13-7" data-line-number="7"><span class="co">#&gt; # A tibble: 63 x 4</span></a>
+<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="co">#&gt;    program           race            sex     ever</span></a>
+<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="co">#&gt;    &lt;chr&gt;             &lt;chr&gt;           &lt;chr&gt;  &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb13-10" data-line-number="10"><span class="co">#&gt;  1 Civil Engineering Asian           Female    22</span></a>
+<a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co">#&gt;  2 Civil Engineering Asian           Male      54</span></a>
+<a class="sourceLine" id="cb13-12" data-line-number="12"><span class="co">#&gt;  3 Civil Engineering Black           Female    71</span></a>
+<a class="sourceLine" id="cb13-13" data-line-number="13"><span class="co">#&gt;  4 Civil Engineering Black           Male     132</span></a>
+<a class="sourceLine" id="cb13-14" data-line-number="14"><span class="co">#&gt;  5 Civil Engineering Hispanic        Female    16</span></a>
+<a class="sourceLine" id="cb13-15" data-line-number="15"><span class="co">#&gt;  6 Civil Engineering Hispanic        Male      85</span></a>
+<a class="sourceLine" id="cb13-16" data-line-number="16"><span class="co">#&gt;  7 Civil Engineering International   Female     2</span></a>
+<a class="sourceLine" id="cb13-17" data-line-number="17"><span class="co">#&gt;  8 Civil Engineering International   Male      22</span></a>
+<a class="sourceLine" id="cb13-18" data-line-number="18"><span class="co">#&gt;  9 Civil Engineering Native American Male       7</span></a>
+<a class="sourceLine" id="cb13-19" data-line-number="19"><span class="co">#&gt; 10 Civil Engineering Other           Female    12</span></a>
+<a class="sourceLine" id="cb13-20" data-line-number="20"><span class="co">#&gt; 11 Civil Engineering Other           Male      32</span></a>
+<a class="sourceLine" id="cb13-21" data-line-number="21"><span class="co">#&gt; 12 Civil Engineering Unknown         Female     2</span></a>
+<a class="sourceLine" id="cb13-22" data-line-number="22"><span class="co">#&gt; # ... with 51 more rows</span></a></code></pre></div>
 </div>
 <div id="gather_grad" class="section level2">
 <h2 class="hasAnchor">
@@ -267,88 +265,88 @@
 <p><code><a href="../reference/gather_grad.html">gather_grad()</a></code> extracts a subset of the <code>midfielddegrees</code> data containing the unique students ever graduating from the programs listed in <code>program_cip6</code>.</p>
 <p>The procedure for gathering graduates is nearly identical to the procedure for gathering the ever-enrolled. We use <code><a href="../reference/gather_grad.html">gather_grad()</a></code> to search the <code>midfielddegrees</code> dataset using the same series argument; we join race, sex, and program in the same way; and when we count students, the totals are assigned to the new variable <code>grad</code>.</p>
 <p>The functions can be chained in a code chunk of 4 lines.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="co"># count students graduating from programs</span></a>
-<a class="sourceLine" id="cb13-2" data-line-number="2">graduated &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_grad.html">gather_grad</a></span>(<span class="dt">series =</span> program_cip6) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="st">  </span><span class="kw">left_join</span>(., program_group, <span class="dt">by =</span> <span class="st">"cip6"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="st">  </span><span class="kw">group_summarize</span>(., grouping_variables, <span class="st">"grad"</span> =<span class="st"> </span><span class="kw">n</span>())</a>
-<a class="sourceLine" id="cb13-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb13-7" data-line-number="7">graduated</a>
-<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="co">#&gt; # A tibble: 60 x 4</span></a>
-<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="co">#&gt;    program           race            sex     grad</span></a>
-<a class="sourceLine" id="cb13-10" data-line-number="10"><span class="co">#&gt;    &lt;chr&gt;             &lt;chr&gt;           &lt;chr&gt;  &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co">#&gt;  1 Civil Engineering Asian           Female    11</span></a>
-<a class="sourceLine" id="cb13-12" data-line-number="12"><span class="co">#&gt;  2 Civil Engineering Asian           Male      24</span></a>
-<a class="sourceLine" id="cb13-13" data-line-number="13"><span class="co">#&gt;  3 Civil Engineering Black           Female    21</span></a>
-<a class="sourceLine" id="cb13-14" data-line-number="14"><span class="co">#&gt;  4 Civil Engineering Black           Male      39</span></a>
-<a class="sourceLine" id="cb13-15" data-line-number="15"><span class="co">#&gt;  5 Civil Engineering Hispanic        Female     5</span></a>
-<a class="sourceLine" id="cb13-16" data-line-number="16"><span class="co">#&gt;  6 Civil Engineering Hispanic        Male      30</span></a>
-<a class="sourceLine" id="cb13-17" data-line-number="17"><span class="co">#&gt;  7 Civil Engineering International   Female     1</span></a>
-<a class="sourceLine" id="cb13-18" data-line-number="18"><span class="co">#&gt;  8 Civil Engineering International   Male       5</span></a>
-<a class="sourceLine" id="cb13-19" data-line-number="19"><span class="co">#&gt;  9 Civil Engineering Native American Male       3</span></a>
-<a class="sourceLine" id="cb13-20" data-line-number="20"><span class="co">#&gt; 10 Civil Engineering Other           Female     1</span></a>
-<a class="sourceLine" id="cb13-21" data-line-number="21"><span class="co">#&gt; 11 Civil Engineering Other           Male       8</span></a>
-<a class="sourceLine" id="cb13-22" data-line-number="22"><span class="co">#&gt; 12 Civil Engineering Unknown         Female     1</span></a>
-<a class="sourceLine" id="cb13-23" data-line-number="23"><span class="co">#&gt; # ... with 48 more rows</span></a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="co"># count students graduating from programs</span></a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">graduated &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_grad.html">gather_grad</a></span>(<span class="dt">series =</span> program_cip6) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/race_sex_join.html">race_sex_join</a></span>(.) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="st">  </span><span class="kw">left_join</span>(., program_group, <span class="dt">by =</span> <span class="st">"cip6"</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="st">  </span><span class="kw">group_summarize</span>(., grouping_variables, <span class="st">"grad"</span> =<span class="st"> </span><span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb14-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb14-7" data-line-number="7">graduated</a>
+<a class="sourceLine" id="cb14-8" data-line-number="8"><span class="co">#&gt; # A tibble: 60 x 4</span></a>
+<a class="sourceLine" id="cb14-9" data-line-number="9"><span class="co">#&gt;    program           race            sex     grad</span></a>
+<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co">#&gt;    &lt;chr&gt;             &lt;chr&gt;           &lt;chr&gt;  &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="co">#&gt;  1 Civil Engineering Asian           Female    11</span></a>
+<a class="sourceLine" id="cb14-12" data-line-number="12"><span class="co">#&gt;  2 Civil Engineering Asian           Male      24</span></a>
+<a class="sourceLine" id="cb14-13" data-line-number="13"><span class="co">#&gt;  3 Civil Engineering Black           Female    21</span></a>
+<a class="sourceLine" id="cb14-14" data-line-number="14"><span class="co">#&gt;  4 Civil Engineering Black           Male      39</span></a>
+<a class="sourceLine" id="cb14-15" data-line-number="15"><span class="co">#&gt;  5 Civil Engineering Hispanic        Female     5</span></a>
+<a class="sourceLine" id="cb14-16" data-line-number="16"><span class="co">#&gt;  6 Civil Engineering Hispanic        Male      30</span></a>
+<a class="sourceLine" id="cb14-17" data-line-number="17"><span class="co">#&gt;  7 Civil Engineering International   Female     1</span></a>
+<a class="sourceLine" id="cb14-18" data-line-number="18"><span class="co">#&gt;  8 Civil Engineering International   Male       5</span></a>
+<a class="sourceLine" id="cb14-19" data-line-number="19"><span class="co">#&gt;  9 Civil Engineering Native American Male       3</span></a>
+<a class="sourceLine" id="cb14-20" data-line-number="20"><span class="co">#&gt; 10 Civil Engineering Other           Female     1</span></a>
+<a class="sourceLine" id="cb14-21" data-line-number="21"><span class="co">#&gt; 11 Civil Engineering Other           Male       8</span></a>
+<a class="sourceLine" id="cb14-22" data-line-number="22"><span class="co">#&gt; 12 Civil Engineering Unknown         Female     1</span></a>
+<a class="sourceLine" id="cb14-23" data-line-number="23"><span class="co">#&gt; # ... with 48 more rows</span></a></code></pre></div>
 <p>Open the help page by running</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">?<span class="kw"><a href="../reference/gather_grad.html">gather_grad</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">?<span class="kw"><a href="../reference/gather_grad.html">gather_grad</a></span>()</a></code></pre></div>
 </div>
 <div id="tally-stickiness" class="section level2">
 <h2 class="hasAnchor">
 <a href="#tally-stickiness" class="anchor"></a>Tally stickiness</h2>
 <p>To set up the stickiness calculation, we join <code>graduated</code> to <code>ever_enrolled</code> by program, race, and sex.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">stickiness &lt;-<span class="st"> </span><span class="kw">left_join</span>(ever_enrolled, graduated, <span class="dt">by =</span> grouping_variables)</a>
-<a class="sourceLine" id="cb15-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb15-3" data-line-number="3">stickiness</a>
-<a class="sourceLine" id="cb15-4" data-line-number="4"><span class="co">#&gt; # A tibble: 63 x 5</span></a>
-<a class="sourceLine" id="cb15-5" data-line-number="5"><span class="co">#&gt;    program           race            sex     ever  grad</span></a>
-<a class="sourceLine" id="cb15-6" data-line-number="6"><span class="co">#&gt;    &lt;chr&gt;             &lt;chr&gt;           &lt;chr&gt;  &lt;int&gt; &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb15-7" data-line-number="7"><span class="co">#&gt;  1 Civil Engineering Asian           Female    22    11</span></a>
-<a class="sourceLine" id="cb15-8" data-line-number="8"><span class="co">#&gt;  2 Civil Engineering Asian           Male      54    24</span></a>
-<a class="sourceLine" id="cb15-9" data-line-number="9"><span class="co">#&gt;  3 Civil Engineering Black           Female    71    21</span></a>
-<a class="sourceLine" id="cb15-10" data-line-number="10"><span class="co">#&gt;  4 Civil Engineering Black           Male     132    39</span></a>
-<a class="sourceLine" id="cb15-11" data-line-number="11"><span class="co">#&gt;  5 Civil Engineering Hispanic        Female    16     5</span></a>
-<a class="sourceLine" id="cb15-12" data-line-number="12"><span class="co">#&gt;  6 Civil Engineering Hispanic        Male      85    30</span></a>
-<a class="sourceLine" id="cb15-13" data-line-number="13"><span class="co">#&gt;  7 Civil Engineering International   Female     2     1</span></a>
-<a class="sourceLine" id="cb15-14" data-line-number="14"><span class="co">#&gt;  8 Civil Engineering International   Male      22     5</span></a>
-<a class="sourceLine" id="cb15-15" data-line-number="15"><span class="co">#&gt;  9 Civil Engineering Native American Male       7     3</span></a>
-<a class="sourceLine" id="cb15-16" data-line-number="16"><span class="co">#&gt; 10 Civil Engineering Other           Female    12     1</span></a>
-<a class="sourceLine" id="cb15-17" data-line-number="17"><span class="co">#&gt; 11 Civil Engineering Other           Male      32     8</span></a>
-<a class="sourceLine" id="cb15-18" data-line-number="18"><span class="co">#&gt; 12 Civil Engineering Unknown         Female     2     1</span></a>
-<a class="sourceLine" id="cb15-19" data-line-number="19"><span class="co">#&gt; # ... with 51 more rows</span></a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">stickiness &lt;-<span class="st"> </span><span class="kw">left_join</span>(ever_enrolled, graduated, <span class="dt">by =</span> grouping_variables)</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">stickiness</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="co">#&gt; # A tibble: 63 x 5</span></a>
+<a class="sourceLine" id="cb16-5" data-line-number="5"><span class="co">#&gt;    program           race            sex     ever  grad</span></a>
+<a class="sourceLine" id="cb16-6" data-line-number="6"><span class="co">#&gt;    &lt;chr&gt;             &lt;chr&gt;           &lt;chr&gt;  &lt;int&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb16-7" data-line-number="7"><span class="co">#&gt;  1 Civil Engineering Asian           Female    22    11</span></a>
+<a class="sourceLine" id="cb16-8" data-line-number="8"><span class="co">#&gt;  2 Civil Engineering Asian           Male      54    24</span></a>
+<a class="sourceLine" id="cb16-9" data-line-number="9"><span class="co">#&gt;  3 Civil Engineering Black           Female    71    21</span></a>
+<a class="sourceLine" id="cb16-10" data-line-number="10"><span class="co">#&gt;  4 Civil Engineering Black           Male     132    39</span></a>
+<a class="sourceLine" id="cb16-11" data-line-number="11"><span class="co">#&gt;  5 Civil Engineering Hispanic        Female    16     5</span></a>
+<a class="sourceLine" id="cb16-12" data-line-number="12"><span class="co">#&gt;  6 Civil Engineering Hispanic        Male      85    30</span></a>
+<a class="sourceLine" id="cb16-13" data-line-number="13"><span class="co">#&gt;  7 Civil Engineering International   Female     2     1</span></a>
+<a class="sourceLine" id="cb16-14" data-line-number="14"><span class="co">#&gt;  8 Civil Engineering International   Male      22     5</span></a>
+<a class="sourceLine" id="cb16-15" data-line-number="15"><span class="co">#&gt;  9 Civil Engineering Native American Male       7     3</span></a>
+<a class="sourceLine" id="cb16-16" data-line-number="16"><span class="co">#&gt; 10 Civil Engineering Other           Female    12     1</span></a>
+<a class="sourceLine" id="cb16-17" data-line-number="17"><span class="co">#&gt; 11 Civil Engineering Other           Male      32     8</span></a>
+<a class="sourceLine" id="cb16-18" data-line-number="18"><span class="co">#&gt; 12 Civil Engineering Unknown         Female     2     1</span></a>
+<a class="sourceLine" id="cb16-19" data-line-number="19"><span class="co">#&gt; # ... with 51 more rows</span></a></code></pre></div>
 <p>We suggest omitting observations with 5 or fewer students ever enrolled.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">stickiness &lt;-<span class="st"> </span>stickiness <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(ever <span class="op">&gt;</span><span class="st"> </span><span class="dv">5</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">stickiness &lt;-<span class="st"> </span>stickiness <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(., ever <span class="op">&gt;</span><span class="st"> </span><span class="dv">5</span>)</a></code></pre></div>
 <p>Finally, we create <code>stick</code>, the ratio of <code>grad</code> to <code>ever</code>. Stickiness is reported as a fraction between 0 and 1.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="co"># tally stickiness</span></a>
-<a class="sourceLine" id="cb17-2" data-line-number="2">stickiness &lt;-<span class="st"> </span>stickiness <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">stick =</span> <span class="kw">round</span>(grad <span class="op">/</span><span class="st"> </span>ever, <span class="dv">3</span>))</a>
-<a class="sourceLine" id="cb17-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb17-5" data-line-number="5"><span class="co"># check the result</span></a>
-<a class="sourceLine" id="cb17-6" data-line-number="6">stickiness</a>
-<a class="sourceLine" id="cb17-7" data-line-number="7"><span class="co">#&gt; # A tibble: 54 x 6</span></a>
-<a class="sourceLine" id="cb17-8" data-line-number="8"><span class="co">#&gt;    program           race            sex     ever  grad stick</span></a>
-<a class="sourceLine" id="cb17-9" data-line-number="9"><span class="co">#&gt;    &lt;chr&gt;             &lt;chr&gt;           &lt;chr&gt;  &lt;int&gt; &lt;int&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb17-10" data-line-number="10"><span class="co">#&gt;  1 Civil Engineering Asian           Female    22    11 0.5  </span></a>
-<a class="sourceLine" id="cb17-11" data-line-number="11"><span class="co">#&gt;  2 Civil Engineering Asian           Male      54    24 0.444</span></a>
-<a class="sourceLine" id="cb17-12" data-line-number="12"><span class="co">#&gt;  3 Civil Engineering Black           Female    71    21 0.296</span></a>
-<a class="sourceLine" id="cb17-13" data-line-number="13"><span class="co">#&gt;  4 Civil Engineering Black           Male     132    39 0.295</span></a>
-<a class="sourceLine" id="cb17-14" data-line-number="14"><span class="co">#&gt;  5 Civil Engineering Hispanic        Female    16     5 0.312</span></a>
-<a class="sourceLine" id="cb17-15" data-line-number="15"><span class="co">#&gt;  6 Civil Engineering Hispanic        Male      85    30 0.353</span></a>
-<a class="sourceLine" id="cb17-16" data-line-number="16"><span class="co">#&gt;  7 Civil Engineering International   Male      22     5 0.227</span></a>
-<a class="sourceLine" id="cb17-17" data-line-number="17"><span class="co">#&gt;  8 Civil Engineering Native American Male       7     3 0.429</span></a>
-<a class="sourceLine" id="cb17-18" data-line-number="18"><span class="co">#&gt;  9 Civil Engineering Other           Female    12     1 0.083</span></a>
-<a class="sourceLine" id="cb17-19" data-line-number="19"><span class="co">#&gt; 10 Civil Engineering Other           Male      32     8 0.25 </span></a>
-<a class="sourceLine" id="cb17-20" data-line-number="20"><span class="co">#&gt; # ... with 44 more rows</span></a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="co"># tally stickiness</span></a>
+<a class="sourceLine" id="cb18-2" data-line-number="2">stickiness &lt;-<span class="st"> </span>stickiness <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(., <span class="dt">stick =</span> <span class="kw">round</span>(grad <span class="op">/</span><span class="st"> </span>ever, <span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb18-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb18-5" data-line-number="5"><span class="co"># check the result</span></a>
+<a class="sourceLine" id="cb18-6" data-line-number="6">stickiness</a>
+<a class="sourceLine" id="cb18-7" data-line-number="7"><span class="co">#&gt; # A tibble: 54 x 6</span></a>
+<a class="sourceLine" id="cb18-8" data-line-number="8"><span class="co">#&gt;    program           race            sex     ever  grad stick</span></a>
+<a class="sourceLine" id="cb18-9" data-line-number="9"><span class="co">#&gt;    &lt;chr&gt;             &lt;chr&gt;           &lt;chr&gt;  &lt;int&gt; &lt;int&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb18-10" data-line-number="10"><span class="co">#&gt;  1 Civil Engineering Asian           Female    22    11 0.5  </span></a>
+<a class="sourceLine" id="cb18-11" data-line-number="11"><span class="co">#&gt;  2 Civil Engineering Asian           Male      54    24 0.444</span></a>
+<a class="sourceLine" id="cb18-12" data-line-number="12"><span class="co">#&gt;  3 Civil Engineering Black           Female    71    21 0.296</span></a>
+<a class="sourceLine" id="cb18-13" data-line-number="13"><span class="co">#&gt;  4 Civil Engineering Black           Male     132    39 0.295</span></a>
+<a class="sourceLine" id="cb18-14" data-line-number="14"><span class="co">#&gt;  5 Civil Engineering Hispanic        Female    16     5 0.312</span></a>
+<a class="sourceLine" id="cb18-15" data-line-number="15"><span class="co">#&gt;  6 Civil Engineering Hispanic        Male      85    30 0.353</span></a>
+<a class="sourceLine" id="cb18-16" data-line-number="16"><span class="co">#&gt;  7 Civil Engineering International   Male      22     5 0.227</span></a>
+<a class="sourceLine" id="cb18-17" data-line-number="17"><span class="co">#&gt;  8 Civil Engineering Native American Male       7     3 0.429</span></a>
+<a class="sourceLine" id="cb18-18" data-line-number="18"><span class="co">#&gt;  9 Civil Engineering Other           Female    12     1 0.083</span></a>
+<a class="sourceLine" id="cb18-19" data-line-number="19"><span class="co">#&gt; 10 Civil Engineering Other           Male      32     8 0.25 </span></a>
+<a class="sourceLine" id="cb18-20" data-line-number="20"><span class="co">#&gt; # ... with 44 more rows</span></a></code></pre></div>
 </div>
 <div id="multiway_order" class="section level2">
 <h2 class="hasAnchor">
 <a href="#multiway_order" class="anchor"></a>multiway_order()</h2>
 <p>Before structuring the data for graphing, we select the populations we are interested in. For example, we might omit students for whom the “race” designation is ambiguous. This step could have been taken earlier, but must be taken (if at all) before using <code><a href="../reference/multiway_order.html">multiway_order()</a></code>.</p>
 <p>We use <code>filter()</code> (a <a href="http://dplyr.tidyverse.org">dplyr</a> function) to keep all rows except those in which race is Unknown, International, or Other.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">stickiness_mw &lt;-<span class="st"> </span>stickiness <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>race <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>sex <span class="op">%in%</span><span class="st"> "Unknown"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">stickiness_mw &lt;-<span class="st"> </span>stickiness <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(., <span class="op">!</span>race <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span>)) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb19-3" data-line-number="3"><span class="st">  </span><span class="kw">filter</span>(., <span class="op">!</span>sex <span class="op">%in%</span><span class="st"> "Unknown"</span>)</a></code></pre></div>
 <p>This example has no “Unknown” values in <code>sex</code>, but the larger data set does. For completeness, I’ve also filtered to remove those observations.</p>
 <p>We structure the stickiness results as <em>multiway</em> data by combining student race and sex into a single <code>race_sex</code> variable. The <a href="multiway.html">Multiway</a> article explains multiway data and graphs in detail.</p>
 <p>We use:</p>
@@ -360,49 +358,49 @@
 <li>
 <code>select_se()</code> (an <a href="https://winvector.github.io/seplyr/">seplyr</a> function) to keep three variables only</li>
 </ul>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="co"># create the race_sex variable</span></a>
-<a class="sourceLine" id="cb19-2" data-line-number="2">stickiness_mw &lt;-<span class="st"> </span>stickiness_mw <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb19-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">race_sex =</span> <span class="kw">str_c</span>(race, sex, <span class="dt">sep =</span> <span class="st">" "</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb19-4" data-line-number="4"><span class="st">  </span><span class="kw">select_se</span>(., <span class="kw">c</span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"stick"</span>))</a>
-<a class="sourceLine" id="cb19-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb19-6" data-line-number="6"><span class="co"># check the result</span></a>
-<a class="sourceLine" id="cb19-7" data-line-number="7">stickiness_mw</a>
-<a class="sourceLine" id="cb19-8" data-line-number="8"><span class="co">#&gt; # A tibble: 36 x 3</span></a>
-<a class="sourceLine" id="cb19-9" data-line-number="9"><span class="co">#&gt;    program                race_sex             stick</span></a>
-<a class="sourceLine" id="cb19-10" data-line-number="10"><span class="co">#&gt;    &lt;chr&gt;                  &lt;chr&gt;                &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb19-11" data-line-number="11"><span class="co">#&gt;  1 Civil Engineering      Asian Female         0.5  </span></a>
-<a class="sourceLine" id="cb19-12" data-line-number="12"><span class="co">#&gt;  2 Civil Engineering      Asian Male           0.444</span></a>
-<a class="sourceLine" id="cb19-13" data-line-number="13"><span class="co">#&gt;  3 Civil Engineering      Black Female         0.296</span></a>
-<a class="sourceLine" id="cb19-14" data-line-number="14"><span class="co">#&gt;  4 Civil Engineering      Black Male           0.295</span></a>
-<a class="sourceLine" id="cb19-15" data-line-number="15"><span class="co">#&gt;  5 Civil Engineering      Hispanic Female      0.312</span></a>
-<a class="sourceLine" id="cb19-16" data-line-number="16"><span class="co">#&gt;  6 Civil Engineering      Hispanic Male        0.353</span></a>
-<a class="sourceLine" id="cb19-17" data-line-number="17"><span class="co">#&gt;  7 Civil Engineering      Native American Male 0.429</span></a>
-<a class="sourceLine" id="cb19-18" data-line-number="18"><span class="co">#&gt;  8 Civil Engineering      White Female         0.431</span></a>
-<a class="sourceLine" id="cb19-19" data-line-number="19"><span class="co">#&gt;  9 Civil Engineering      White Male           0.474</span></a>
-<a class="sourceLine" id="cb19-20" data-line-number="20"><span class="co">#&gt; 10 Electrical Engineering Asian Female         0.44 </span></a>
-<a class="sourceLine" id="cb19-21" data-line-number="21"><span class="co">#&gt; # ... with 26 more rows</span></a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="co"># create the race_sex variable</span></a>
+<a class="sourceLine" id="cb20-2" data-line-number="2">stickiness_mw &lt;-<span class="st"> </span>stickiness_mw <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(., <span class="dt">race_sex =</span> <span class="kw">str_c</span>(race, sex, <span class="dt">sep =</span> <span class="st">" "</span>)) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb20-4" data-line-number="4"><span class="st">  </span><span class="kw">select_se</span>(., <span class="kw">c</span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"stick"</span>))</a>
+<a class="sourceLine" id="cb20-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="co"># check the result</span></a>
+<a class="sourceLine" id="cb20-7" data-line-number="7">stickiness_mw</a>
+<a class="sourceLine" id="cb20-8" data-line-number="8"><span class="co">#&gt; # A tibble: 36 x 3</span></a>
+<a class="sourceLine" id="cb20-9" data-line-number="9"><span class="co">#&gt;    program                race_sex             stick</span></a>
+<a class="sourceLine" id="cb20-10" data-line-number="10"><span class="co">#&gt;    &lt;chr&gt;                  &lt;chr&gt;                &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb20-11" data-line-number="11"><span class="co">#&gt;  1 Civil Engineering      Asian Female         0.5  </span></a>
+<a class="sourceLine" id="cb20-12" data-line-number="12"><span class="co">#&gt;  2 Civil Engineering      Asian Male           0.444</span></a>
+<a class="sourceLine" id="cb20-13" data-line-number="13"><span class="co">#&gt;  3 Civil Engineering      Black Female         0.296</span></a>
+<a class="sourceLine" id="cb20-14" data-line-number="14"><span class="co">#&gt;  4 Civil Engineering      Black Male           0.295</span></a>
+<a class="sourceLine" id="cb20-15" data-line-number="15"><span class="co">#&gt;  5 Civil Engineering      Hispanic Female      0.312</span></a>
+<a class="sourceLine" id="cb20-16" data-line-number="16"><span class="co">#&gt;  6 Civil Engineering      Hispanic Male        0.353</span></a>
+<a class="sourceLine" id="cb20-17" data-line-number="17"><span class="co">#&gt;  7 Civil Engineering      Native American Male 0.429</span></a>
+<a class="sourceLine" id="cb20-18" data-line-number="18"><span class="co">#&gt;  8 Civil Engineering      White Female         0.431</span></a>
+<a class="sourceLine" id="cb20-19" data-line-number="19"><span class="co">#&gt;  9 Civil Engineering      White Male           0.474</span></a>
+<a class="sourceLine" id="cb20-20" data-line-number="20"><span class="co">#&gt; 10 Electrical Engineering Asian Female         0.44 </span></a>
+<a class="sourceLine" id="cb20-21" data-line-number="21"><span class="co">#&gt; # ... with 26 more rows</span></a></code></pre></div>
 <p><code><a href="../reference/multiway_order.html">multiway_order()</a></code> converts the character variables <code>program</code> and <code>race_sex</code> into <em>factors</em> and orders the levels of the two factors by the relevant stickiness medians. <code>glimpse()</code> shows that the two categorical variables are now factors.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="co"># convert the data to a multiway structure</span></a>
-<a class="sourceLine" id="cb20-2" data-line-number="2">stickiness_mw &lt;-<span class="st"> </span><span class="kw"><a href="../reference/multiway_order.html">multiway_order</a></span>(stickiness_mw)</a>
-<a class="sourceLine" id="cb20-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb20-4" data-line-number="4"><span class="co"># check the result</span></a>
-<a class="sourceLine" id="cb20-5" data-line-number="5">stickiness_mw</a>
-<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="co">#&gt; # A tibble: 36 x 3</span></a>
-<a class="sourceLine" id="cb20-7" data-line-number="7"><span class="co">#&gt;    program                race_sex             stick</span></a>
-<a class="sourceLine" id="cb20-8" data-line-number="8"><span class="co">#&gt;    &lt;fct&gt;                  &lt;fct&gt;                &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb20-9" data-line-number="9"><span class="co">#&gt;  1 Civil Engineering      Asian Female         0.5  </span></a>
-<a class="sourceLine" id="cb20-10" data-line-number="10"><span class="co">#&gt;  2 Civil Engineering      Asian Male           0.444</span></a>
-<a class="sourceLine" id="cb20-11" data-line-number="11"><span class="co">#&gt;  3 Civil Engineering      Black Female         0.296</span></a>
-<a class="sourceLine" id="cb20-12" data-line-number="12"><span class="co">#&gt;  4 Civil Engineering      Black Male           0.295</span></a>
-<a class="sourceLine" id="cb20-13" data-line-number="13"><span class="co">#&gt;  5 Civil Engineering      Hispanic Female      0.312</span></a>
-<a class="sourceLine" id="cb20-14" data-line-number="14"><span class="co">#&gt;  6 Civil Engineering      Hispanic Male        0.353</span></a>
-<a class="sourceLine" id="cb20-15" data-line-number="15"><span class="co">#&gt;  7 Civil Engineering      Native American Male 0.429</span></a>
-<a class="sourceLine" id="cb20-16" data-line-number="16"><span class="co">#&gt;  8 Civil Engineering      White Female         0.431</span></a>
-<a class="sourceLine" id="cb20-17" data-line-number="17"><span class="co">#&gt;  9 Civil Engineering      White Male           0.474</span></a>
-<a class="sourceLine" id="cb20-18" data-line-number="18"><span class="co">#&gt; 10 Electrical Engineering Asian Female         0.44 </span></a>
-<a class="sourceLine" id="cb20-19" data-line-number="19"><span class="co">#&gt; # ... with 26 more rows</span></a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="co"># convert the data to a multiway structure</span></a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">stickiness_mw &lt;-<span class="st"> </span><span class="kw"><a href="../reference/multiway_order.html">multiway_order</a></span>(stickiness_mw)</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="co"># check the result</span></a>
+<a class="sourceLine" id="cb21-5" data-line-number="5">stickiness_mw</a>
+<a class="sourceLine" id="cb21-6" data-line-number="6"><span class="co">#&gt; # A tibble: 36 x 3</span></a>
+<a class="sourceLine" id="cb21-7" data-line-number="7"><span class="co">#&gt;    program                race_sex             stick</span></a>
+<a class="sourceLine" id="cb21-8" data-line-number="8"><span class="co">#&gt;    &lt;fct&gt;                  &lt;fct&gt;                &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb21-9" data-line-number="9"><span class="co">#&gt;  1 Civil Engineering      Asian Female         0.5  </span></a>
+<a class="sourceLine" id="cb21-10" data-line-number="10"><span class="co">#&gt;  2 Civil Engineering      Asian Male           0.444</span></a>
+<a class="sourceLine" id="cb21-11" data-line-number="11"><span class="co">#&gt;  3 Civil Engineering      Black Female         0.296</span></a>
+<a class="sourceLine" id="cb21-12" data-line-number="12"><span class="co">#&gt;  4 Civil Engineering      Black Male           0.295</span></a>
+<a class="sourceLine" id="cb21-13" data-line-number="13"><span class="co">#&gt;  5 Civil Engineering      Hispanic Female      0.312</span></a>
+<a class="sourceLine" id="cb21-14" data-line-number="14"><span class="co">#&gt;  6 Civil Engineering      Hispanic Male        0.353</span></a>
+<a class="sourceLine" id="cb21-15" data-line-number="15"><span class="co">#&gt;  7 Civil Engineering      Native American Male 0.429</span></a>
+<a class="sourceLine" id="cb21-16" data-line-number="16"><span class="co">#&gt;  8 Civil Engineering      White Female         0.431</span></a>
+<a class="sourceLine" id="cb21-17" data-line-number="17"><span class="co">#&gt;  9 Civil Engineering      White Male           0.474</span></a>
+<a class="sourceLine" id="cb21-18" data-line-number="18"><span class="co">#&gt; 10 Electrical Engineering Asian Female         0.44 </span></a>
+<a class="sourceLine" id="cb21-19" data-line-number="19"><span class="co">#&gt; # ... with 26 more rows</span></a></code></pre></div>
 <p>Open the help page by running</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">?<span class="kw"><a href="../reference/multiway_order.html">multiway_order</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">?<span class="kw"><a href="../reference/multiway_order.html">multiway_order</a></span>()</a></code></pre></div>
 </div>
 <div id="graphing-the-multiway" class="section level2">
 <h2 class="hasAnchor">
@@ -424,66 +422,66 @@
 <li>
 <code>labs()</code> assign axis labels</li>
 </ul>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw">ggplot</span>(stickiness_mw, <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> race_sex)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>program, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-4" data-line-number="4"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">"Stickiness"</span>, <span class="dt">y =</span> <span class="st">""</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../reference/utils_graph.html">theme_midfield</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">ggplot</span>(stickiness_mw, <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> race_sex)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb23-2" data-line-number="2"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>program, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb23-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb23-4" data-line-number="4"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">"Stickiness"</span>, <span class="dt">y =</span> <span class="st">""</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../reference/utils_graph.html">theme_midfield</a></span>()</a></code></pre></div>
 <p><img src="../man/figures/stickiness-fig1-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>We also apply our own <code><a href="../reference/utils_graph.html">theme_midfield()</a></code> to edit the visual properties of the graph: axes, legends, panels, strips, etc. Open the help page by running</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">?<span class="kw"><a href="../reference/utils_graph.html">theme_midfield</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">?<span class="kw"><a href="../reference/utils_graph.html">theme_midfield</a></span>()</a></code></pre></div>
 </div>
 <div id="complete-script" class="section level2">
 <h2 class="hasAnchor">
 <a href="#complete-script" class="anchor"></a>Complete script</h2>
 <p>For reference, the complete script for this example is collected below.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="co"># packages used</span></a>
-<a class="sourceLine" id="cb24-2" data-line-number="2"><span class="kw">library</span>(tidyverse)</a>
-<a class="sourceLine" id="cb24-3" data-line-number="3"><span class="kw">library</span>(seplyr)</a>
-<a class="sourceLine" id="cb24-4" data-line-number="4"><span class="kw">library</span>(midfieldr)</a>
-<a class="sourceLine" id="cb24-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb24-6" data-line-number="6"><span class="co"># CIP information saved from an earlier vignette</span></a>
-<a class="sourceLine" id="cb24-7" data-line-number="7">program_group &lt;-<span class="st"> </span>case_program_group</a>
-<a class="sourceLine" id="cb24-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb24-9" data-line-number="9"><span class="co"># extract the 6-digit CIPs as a search series</span></a>
-<a class="sourceLine" id="cb24-10" data-line-number="10">program_cip6 &lt;-<span class="st"> </span>program_group[[<span class="st">"cip6"</span>]] <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-11" data-line-number="11"><span class="st">  </span><span class="kw">unique</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-12" data-line-number="12"><span class="st">  </span><span class="kw">sort</span>()</a>
-<a class="sourceLine" id="cb24-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb24-14" data-line-number="14"><span class="co"># assign the variables for grouping</span></a>
-<a class="sourceLine" id="cb24-15" data-line-number="15">grouping_variables &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"program"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>)</a>
-<a class="sourceLine" id="cb24-16" data-line-number="16"></a>
-<a class="sourceLine" id="cb24-17" data-line-number="17"><span class="co"># count students ever enrolled</span></a>
-<a class="sourceLine" id="cb24-18" data-line-number="18">ever_enrolled &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_ever.html">gather_ever</a></span>(<span class="dt">series =</span> program_cip6) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-19" data-line-number="19"><span class="st">  </span><span class="kw"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-20" data-line-number="20"><span class="st">  </span><span class="kw">left_join</span>(., program_group, <span class="dt">by =</span> <span class="st">"cip6"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-21" data-line-number="21"><span class="st">  </span><span class="kw">group_summarize</span>(., grouping_variables, <span class="st">"ever"</span> =<span class="st"> </span><span class="kw">n</span>())</a>
-<a class="sourceLine" id="cb24-22" data-line-number="22"></a>
-<a class="sourceLine" id="cb24-23" data-line-number="23"><span class="co"># count students graduating</span></a>
-<a class="sourceLine" id="cb24-24" data-line-number="24">graduated &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_grad.html">gather_grad</a></span>(<span class="dt">series =</span> program_cip6) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-25" data-line-number="25"><span class="st">  </span><span class="kw"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-26" data-line-number="26"><span class="st">  </span><span class="kw">left_join</span>(., program_group, <span class="dt">by =</span> <span class="st">"cip6"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-27" data-line-number="27"><span class="st">  </span><span class="kw">group_summarize</span>(., grouping_variables, <span class="st">"grad"</span> =<span class="st"> </span><span class="kw">n</span>())</a>
-<a class="sourceLine" id="cb24-28" data-line-number="28"></a>
-<a class="sourceLine" id="cb24-29" data-line-number="29"><span class="co"># tally stickiness, by group</span></a>
-<a class="sourceLine" id="cb24-30" data-line-number="30">stickiness &lt;-<span class="st"> </span><span class="kw">left_join</span>(ever_enrolled, graduated, <span class="dt">by =</span> grouping_variables) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-31" data-line-number="31"><span class="st">  </span><span class="kw">filter</span>(ever <span class="op">&gt;</span><span class="st"> </span><span class="dv">5</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-32" data-line-number="32"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">stick =</span> <span class="kw">round</span>(grad <span class="op">/</span><span class="st"> </span>ever, <span class="dv">3</span>))</a>
-<a class="sourceLine" id="cb24-33" data-line-number="33"></a>
-<a class="sourceLine" id="cb24-34" data-line-number="34"><span class="co"># prepare data for graph</span></a>
-<a class="sourceLine" id="cb24-35" data-line-number="35">stickiness_mw &lt;-<span class="st"> </span>stickiness <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-36" data-line-number="36"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>race <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-37" data-line-number="37"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>sex <span class="op">%in%</span><span class="st"> "Unknown"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-38" data-line-number="38"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">race_sex =</span> <span class="kw">str_c</span>(race, sex, <span class="dt">sep =</span> <span class="st">" "</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-39" data-line-number="39"><span class="st">  </span><span class="kw">select_se</span>(., <span class="kw">c</span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"stick"</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-40" data-line-number="40"><span class="st">  </span><span class="kw"><a href="../reference/multiway_order.html">multiway_order</a></span>()</a>
-<a class="sourceLine" id="cb24-41" data-line-number="41"></a>
-<a class="sourceLine" id="cb24-42" data-line-number="42"><span class="co"># graph</span></a>
-<a class="sourceLine" id="cb24-43" data-line-number="43"><span class="kw">ggplot</span>(stickiness_mw, <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> race_sex)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb24-44" data-line-number="44"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>program, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb24-45" data-line-number="45"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb24-46" data-line-number="46"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">"Stickiness"</span>, <span class="dt">y =</span> <span class="st">""</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb24-47" data-line-number="47"><span class="st">  </span><span class="kw"><a href="../reference/utils_graph.html">theme_midfield</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="co"># packages used</span></a>
+<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="kw">library</span>(tidyverse)</a>
+<a class="sourceLine" id="cb25-3" data-line-number="3"><span class="kw">library</span>(seplyr)</a>
+<a class="sourceLine" id="cb25-4" data-line-number="4"><span class="kw">library</span>(midfieldr)</a>
+<a class="sourceLine" id="cb25-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb25-6" data-line-number="6"><span class="co"># CIP information saved from an earlier vignette</span></a>
+<a class="sourceLine" id="cb25-7" data-line-number="7">program_group &lt;-<span class="st"> </span>case_program_group</a>
+<a class="sourceLine" id="cb25-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb25-9" data-line-number="9"><span class="co"># extract the 6-digit CIPs as a search series</span></a>
+<a class="sourceLine" id="cb25-10" data-line-number="10">program_cip6 &lt;-<span class="st"> </span>program_group[[<span class="st">"cip6"</span>]] <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb25-11" data-line-number="11"><span class="st">  </span><span class="kw">unique</span>(.) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb25-12" data-line-number="12"><span class="st">  </span><span class="kw">sort</span>(.)</a>
+<a class="sourceLine" id="cb25-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb25-14" data-line-number="14"><span class="co"># assign the variables for grouping</span></a>
+<a class="sourceLine" id="cb25-15" data-line-number="15">grouping_variables &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"program"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>)</a>
+<a class="sourceLine" id="cb25-16" data-line-number="16"></a>
+<a class="sourceLine" id="cb25-17" data-line-number="17"><span class="co"># count students ever enrolled</span></a>
+<a class="sourceLine" id="cb25-18" data-line-number="18">ever_enrolled &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_ever.html">gather_ever</a></span>(<span class="dt">series =</span> program_cip6) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb25-19" data-line-number="19"><span class="st">  </span><span class="kw"><a href="../reference/race_sex_join.html">race_sex_join</a></span>(.) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb25-20" data-line-number="20"><span class="st">  </span><span class="kw">left_join</span>(., program_group, <span class="dt">by =</span> <span class="st">"cip6"</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb25-21" data-line-number="21"><span class="st">  </span><span class="kw">group_summarize</span>(., grouping_variables, <span class="st">"ever"</span> =<span class="st"> </span><span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb25-22" data-line-number="22"></a>
+<a class="sourceLine" id="cb25-23" data-line-number="23"><span class="co"># count students graduating</span></a>
+<a class="sourceLine" id="cb25-24" data-line-number="24">graduated &lt;-<span class="st"> </span><span class="kw"><a href="../reference/gather_grad.html">gather_grad</a></span>(<span class="dt">series =</span> program_cip6) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb25-25" data-line-number="25"><span class="st">  </span><span class="kw"><a href="../reference/race_sex_join.html">race_sex_join</a></span>(.) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb25-26" data-line-number="26"><span class="st">  </span><span class="kw">left_join</span>(., program_group, <span class="dt">by =</span> <span class="st">"cip6"</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb25-27" data-line-number="27"><span class="st">  </span><span class="kw">group_summarize</span>(., grouping_variables, <span class="st">"grad"</span> =<span class="st"> </span><span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb25-28" data-line-number="28"></a>
+<a class="sourceLine" id="cb25-29" data-line-number="29"><span class="co"># tally stickiness, by group</span></a>
+<a class="sourceLine" id="cb25-30" data-line-number="30">stickiness &lt;-<span class="st"> </span><span class="kw">left_join</span>(ever_enrolled, graduated, <span class="dt">by =</span> grouping_variables) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb25-31" data-line-number="31"><span class="st">  </span><span class="kw">filter</span>(., ever <span class="op">&gt;</span><span class="st"> </span><span class="dv">5</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb25-32" data-line-number="32"><span class="st">  </span><span class="kw">mutate</span>(., <span class="dt">stick =</span> <span class="kw">round</span>(grad <span class="op">/</span><span class="st"> </span>ever, <span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb25-33" data-line-number="33"></a>
+<a class="sourceLine" id="cb25-34" data-line-number="34"><span class="co"># prepare data for graph</span></a>
+<a class="sourceLine" id="cb25-35" data-line-number="35">stickiness_mw &lt;-<span class="st"> </span>stickiness <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb25-36" data-line-number="36"><span class="st">  </span><span class="kw">filter</span>(., <span class="op">!</span>race <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span>)) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb25-37" data-line-number="37"><span class="st">  </span><span class="kw">filter</span>(., <span class="op">!</span>sex <span class="op">%in%</span><span class="st"> "Unknown"</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb25-38" data-line-number="38"><span class="st">  </span><span class="kw">mutate</span>(., <span class="dt">race_sex =</span> <span class="kw">str_c</span>(race, sex, <span class="dt">sep =</span> <span class="st">" "</span>)) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb25-39" data-line-number="39"><span class="st">  </span><span class="kw">select_se</span>(., <span class="kw">c</span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"stick"</span>)) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb25-40" data-line-number="40"><span class="st">  </span><span class="kw"><a href="../reference/multiway_order.html">multiway_order</a></span>(.)</a>
+<a class="sourceLine" id="cb25-41" data-line-number="41"></a>
+<a class="sourceLine" id="cb25-42" data-line-number="42"><span class="co"># graph</span></a>
+<a class="sourceLine" id="cb25-43" data-line-number="43"><span class="kw">ggplot</span>(stickiness_mw, <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> race_sex)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb25-44" data-line-number="44"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>program, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb25-45" data-line-number="45"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb25-46" data-line-number="46"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">"Stickiness"</span>, <span class="dt">y =</span> <span class="st">""</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb25-47" data-line-number="47"><span class="st">  </span><span class="kw"><a href="../reference/utils_graph.html">theme_midfield</a></span>()</a></code></pre></div>
 </div>
 <div id="issue-bin" class="section level2">
 <h2 class="hasAnchor">

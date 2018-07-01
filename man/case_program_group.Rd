@@ -3,7 +3,7 @@
 \docType{data}
 \name{case_program_group}
 \alias{case_program_group}
-\title{A group of CIPs case data}
+\title{CIP case data for four programs}
 \format{A tidy data frame (tibble) with 1546 observations and 6 variables.
 All variables are characters. An observation is a unique program.
 \describe{
@@ -20,11 +20,14 @@ All variables are characters. An observation is a unique program.
   \item{cip6name}{Name of a program at the 6-digit level}
   \item{program}{A program name.}
 }}
+\source{
+\href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
+}
 \usage{
 case_program_group
 }
 \description{
-A dataset of codes and names for four engineering programs
+An example of CIP codes and names, a subset of \code{cip} data plus an added \code{program} variable for four engineering programs.
 }
 \details{
 The CIP codes and names plus a user-selected program name for Civil, Electrical, Industrial, and Mechanical Engineering. The "Selecting programs" vignette describes how these data were collected. The data frame is used be several other vignettes as a starting point in selecting programs to study.

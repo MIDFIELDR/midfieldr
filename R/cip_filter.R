@@ -37,18 +37,18 @@ cip_filter <- function(series = NULL, ..., reference = NULL) {
 
   # default data
   if (is.null(reference)) {
-  	reference <- midfieldr::cip
+    reference <- midfieldr::cip
   }
 
   # tibble required by filter_all()
   if (!tibble::is_tibble(reference)) {
-  	reference <- tibble::as_tibble(reference)
+    reference <- tibble::as_tibble(reference)
   }
 
   # if series not specified, return the data unfiltered,
   # otherwise, filter all columns by search terms
   if (is.null(series)) {
-  	reference <- reference
+    reference <- reference
   } else {
     collapse_series <- stringr::str_c(series, collapse = "|")
     reference <- reference %>%

@@ -54,8 +54,8 @@ size_cip <- round(data_bits$data[data_bits$name == "size_cip"] / 1e+3, 0)
 
 # function to print to html using kable, controll font size
 kable2html <- function(...) {
-   kable(..., "html") %>%  
-   kable_styling(font_size = 12)
+  kable(..., "html") %>%
+    kable_styling(font_size = 12)
 }
 ```
 
@@ -67,6 +67,7 @@ library(midfieldr)
 library(dplyr)
 library(stringr)
 library(knitr)
+library(seplyr)
 ```
 
 ```{r echo = FALSE}
@@ -94,8 +95,8 @@ For R novices, an "atomic vector" is a one-dimensional, homogeneous data structu
 With no arguments, `cip_filter()` returns the complete `cip` data set. 
 
 ```{r}
-cip_filter() %>% 
-	print()
+cip_filter() %.>%
+  print(.)
 ```
 
 ## Search by keywords
@@ -106,8 +107,8 @@ For example, if we wanted all Civil Engineering programs, we might try keywords 
 
 ```{r results = "hide"}
 # series with a keyword
-cip_filter(series = c("Civil", "civil")) %>% 
-	kable()
+cip_filter(series = c("Civil", "civil")) %.>%
+  kable(.)
 ```
 
 ```{r echo = FALSE}
@@ -119,8 +120,8 @@ The search returns some programs with Civilization in their names as well as Eng
 
 ```{r results = "hide"}
 # series with a 4-digit code
-cip_filter(series = "^1408") %>% 
-	kable()
+cip_filter(series = "^1408") %.>%
+  kable(.)
 ```
 
 ```{r echo = FALSE}
@@ -131,8 +132,8 @@ In the next example, suppose we want to study programs relating to German cultur
 
 ```{r results = "hide"}
 # series with a keyword
-cip_filter(series = c("German", "german")) %>% 
-	kable()
+cip_filter(series = c("German", "german")) %.>%
+  kable(.)
 ```
 
 ```{r echo = FALSE}
@@ -143,8 +144,8 @@ From the result we find the specific 6-digit codes we want and refine the search
  
 ```{r results = "hide"}
 # series with a 6-digit code
-cip_filter(series = c("050125", "160501", "160599")) %>% 
-	kable()
+cip_filter(series = c("050125", "160501", "160599")) %.>%
+  kable(.)
 ```
  
 ```{r echo = FALSE}
@@ -159,8 +160,8 @@ Specifying 6-digit codes yields a data frame with a row for each 6-digit code.
 
 ```{r results = "hide"}
 # 6-digit example
-cip_filter(series = c("140802", "140803")) %>% 
-	kable()
+cip_filter(series = c("140802", "140803")) %.>%
+  kable(.)
 ```
 
 ```{r echo = FALSE}
@@ -171,8 +172,8 @@ Specifying 4-digit codes yields a data frame with as many rows as there are rows
 
 ```{r results = "hide"}
 # 4-digit example matching the start of the string
-cip_filter(series = c("^1407", "^1408")) %>% 
-	kable()
+cip_filter(series = c("^1407", "^1408")) %.>%
+  kable(.)
 ```
 
 ```{r echo = FALSE}
@@ -184,8 +185,8 @@ The 2-digit series represent the most general groupings of related programs. Her
 
 ```{r results = "hide"}
 # 2-digit example
-cip_filter(series = "^54") %>% 
-	kable()
+cip_filter(series = "^54") %.>%
+  kable(.)
 ```
 
 ```{r echo = FALSE}
@@ -196,8 +197,8 @@ The series argument can include any combination of 2, 4, and 6-digit codes.
 
 ```{r results = "hide"}
 # a series with 2, 4, and 6-digits specified
-cip_filter(series = c("^24", "^4102", "^450202")) %>% 
-	kable()
+cip_filter(series = c("^24", "^4102", "^450202")) %.>%
+  kable(.)
 ```
 
 ```{r echo = FALSE}
@@ -208,8 +209,8 @@ A series assigned numerically is coerced to characters. Invalid codes in the seq
 
 ```{r results = "hide"}
 # series as a sequence
-cip_filter(series = seq(540102, 540110, 1)) %>% 
-  kable()
+cip_filter(series = seq(540102, 540110, 1)) %.>%
+  kable(.)
 ```
 
 ```{r echo = FALSE}
@@ -226,8 +227,8 @@ A named series is assigned to the series argument in `cip_filter()`.
 # the engineering series
 cip_engr
 
-cip_filter(series = cip_engr) %>% 
-	glimpse()
+cip_filter(series = cip_engr) %.>%
+  glimpse(.)
 ```
 
 The 6-digit codes `14XXXX` and `14YYYY` are correct, appearing in the engineering series only. Run `?cip` for more information.   
@@ -244,8 +245,8 @@ The we decide we only need the "4903" subset. We can use the data frame `df1` fr
 
 ```{r results = "hide"}
 # use a previous result as a data argument
-cip_filter(series = "^4903", reference = df1) %>% 
-	kable()
+cip_filter(series = "^4903", reference = df1) %.>%
+  kable(.)
 ```
 
 ```{r echo = FALSE}
@@ -256,26 +257,30 @@ kable2html(cip_filter(series = "^4903", reference = df1))
 
 ```{r results = "hide"}
 # filtering sequentially
-df <- cip_filter(series = "History") %>%
-  cip_filter(series = "American", reference = .)
-kable(df)
+cip_filter(series = "History") %.>%
+  cip_filter(series = "American", reference = .) %.>%
+  kable(.)
 ```
 
 ```{r echo = FALSE}
 # using kable_styling() for output but conceal from novice user
-kable(df, "html") %>% kable_styling(font_size = 12)
+cip_filter(series = "History") %.>%
+  cip_filter(series = "American", reference = .) %.>%
+  kable2html(.)
 ```
 
 ```{r results = "hide"}
 # filtering sequentially
-df <- cip_filter(series = "^14") %>%
-  cip_filter(series = "Civil", reference = .)
-kable(df)
+cip_filter(series = "^14") %.>%
+  cip_filter(series = "Civil", reference = .) %.>%
+  kable(.)
 ```
 
 ```{r echo = FALSE}
-# using kable_styling() for output but conceal from novice user
-kable(df, "html") %>% kable_styling(font_size = 12)
+# print for html with smaller font
+cip_filter(series = "^14") %.>%
+  cip_filter(series = "Civil", reference = .) %.>%
+  kable2html(.)
 ```
 
 

@@ -39,7 +39,6 @@ NULL
 #'
 #' @export
 gather_ever <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6", term = "term") {
-
   if (!.pkgglobalenv$has_data) {
     stop(paste(
       "To use this function, you must have",
@@ -60,7 +59,7 @@ gather_ever <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6",
 
   # assign the default terms dataset
   if (is.null(reference)) {
-  	reference <- midfielddata::midfieldterms
+    reference <- midfielddata::midfieldterms
   }
 
   if (!(is.data.frame(reference) || dplyr::is.tbl(reference))) {
