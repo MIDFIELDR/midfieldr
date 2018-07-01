@@ -36,8 +36,7 @@ The function returns a subset of \code{reference} with every unique combination 
 Optional arguments. An alternate reference data set can be assigned via the \code{reference} argument. The alternate must have variables for student ID, 6-digit CIP, and terms with the same structure as in \code{midfieldterms}. Use the  \code{id}, \code{cip6}, and \code{term} arguments to reassign the variables names, if necessary, to match the variable names in the alternate.
 }
 \examples{
-ever <- gather_ever("540104")
-ever
+gather_ever(series = "540104")
 
 }
 \seealso{

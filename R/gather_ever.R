@@ -1,8 +1,7 @@
 #' @importFrom dplyr %>%  filter ungroup is.tbl
 #' @importFrom stringr str_c str_detect
 #' @importFrom tidyr drop_na
-#' @importFrom seplyr select_se arrange_se group_by_se
-#' @importFrom wrapr stop_if_dot_args
+#' @importFrom wrapr stop_if_dot_args let
 NULL
 
 #' Gather ever-enrolled students
@@ -34,8 +33,7 @@ NULL
 #' @seealso \code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes
 #'
 #' @examples
-#' ever <- gather_ever("540104")
-#' ever
+#' gather_ever(series = "540104")
 #'
 #' @export
 gather_ever <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6", term = "term") {
@@ -66,25 +64,33 @@ gather_ever <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6",
     stop("midfieldr::gather_ever, reference must be a data frame or tbl")
   }
 
-  # search terms in a single string
-  collapse_series <- stringr::str_c(series, collapse = "|")
+  # avoid the R CMD check binding note
+  ID   <- NULL
+  CIP6 <- NULL
+  TERM <- NULL
 
-  # filter for data for specified programs
-  students <- reference %>%
-    seplyr::select_se(., c(id, cip6, term)) %>%
-    dplyr::filter(., stringr::str_detect(cip6, collapse_series))
+  # use wrapr::let() to allow alternate column names
+  mapping <- c(ID = id, CIP6 = cip6, TERM = term)
+  wrapr::let(alias = mapping,
+  		expr = {
+  			# search terms in a single string
+  			collapse_series <- stringr::str_c(series, collapse = "|")
 
-  # keep the first term of unique combinations of id and cip6
-  students <- students %>%
-    seplyr::arrange_se(., c(id, term)) %>%
-    seplyr::group_by_se(., c(id, cip6)) %>%
-    dplyr::filter(dplyr::row_number() == 1) %>%
-    dplyr::ungroup()
+  			# filter for data for specified programs
+  			students <- dplyr::select(reference, ID, CIP6, TERM)
+  			students <- dplyr::filter(students,
+  																stringr::str_detect(CIP6, collapse_series))
 
-  # clean up before return
-  students <- students %>%
-    seplyr::select_se(., c(id, cip6)) %>%
-    tidyr::drop_na() %>%
-    unique()
+  			# keep the first term of unique combinations of id and cip6
+  			students <- dplyr::arrange(students, ID, TERM)
+  			students <- dplyr::group_by(students, ID, CIP6)
+  			students <- dplyr::filter(students, dplyr::row_number() == 1)
+  			students <- dplyr::ungroup(students)
+
+  			# clean up before return
+  			students <- dplyr::select(students, ID, CIP6)
+  			students <- tidyr::drop_na(students)
+  			students <- unique(students)
+  		})
 }
 "gather_ever"
