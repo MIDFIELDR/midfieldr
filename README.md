@@ -82,7 +82,9 @@ We compare the stickiness of three programs: Chemical Engineering,
 Electrical Engineering, and Industrial Engineering.
 
 For more detail, please see the individual
-[vignettes](articles/index.html).
+[vignettes](https://midfieldr.github.io/midfieldr/articles/index.html).
+
+midfieldr/articles/index.html
 
 Packages to install and load:
 
@@ -359,11 +361,11 @@ MIDFIELD member institutions.
 ## Meta
 
   - Data provided by the
-    [MIDFIELD](%7Bhttps://engineering.purdue.edu/MIDFIELD) project
+    [MIDFIELD](https://engineering.purdue.edu/MIDFIELD) project
   - Get citation information with `citation("midfieldr")`
   - Please note that this project is released with a [Code of
-    Conduct](CONDUCT.md). If you contribute to this project you agree to
-    abide by its terms.
+    Conduct](https://midfieldr.github.io/midfieldr/CONDUCT.html). If you
+    contribute to this project you agree to abide by its terms.
 
 ## References
 
