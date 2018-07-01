@@ -28,7 +28,6 @@ gather_start <- function(.data, cip_group, transfer = FALSE) {
   if (isTRUE(missing(.data))) {
     .data <- midfielddata::midfieldstudents
   }
-
   if (!.pkgglobalenv$has_data) {
     stop(paste("To use this function, you must have the midfielddata package installed."))
   }
@@ -44,6 +43,11 @@ gather_start <- function(.data, cip_group, transfer = FALSE) {
   if (isTRUE("cip6" %in% names(cip_group) && "start" %in% names(cip_group))) {
     stop("midfieldr::gather_start() data frame must not include both a `cip6` and 'start' variable")
   }
+
+	# addresses R CMD check warning "no visible binding"
+	start <- NULL
+	id <- NULL
+	cip6 <- NULL
 
   # if "start" in var names, rename to "cip6"
   if (isTRUE("start" %in% names(.data))) {

@@ -64,7 +64,10 @@ gather_ever <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6",
     stop("midfieldr::gather_ever, reference must be a data frame or tbl")
   }
 
-  # avoid the R CMD check binding note
+  # search terms in a single string
+  collapse_series <- stringr::str_c(series, collapse = "|")
+
+  # addresses R CMD check warning "no visible binding"
   ID   <- NULL
   CIP6 <- NULL
   TERM <- NULL
@@ -73,9 +76,6 @@ gather_ever <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6",
   mapping <- c(ID = id, CIP6 = cip6, TERM = term)
   wrapr::let(alias = mapping,
   		expr = {
-  			# search terms in a single string
-  			collapse_series <- stringr::str_c(series, collapse = "|")
-
   			# filter for data for specified programs
   			students <- dplyr::select(reference, ID, CIP6, TERM)
   			students <- dplyr::filter(students,
@@ -87,7 +87,7 @@ gather_ever <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6",
   			students <- dplyr::filter(students, dplyr::row_number() == 1)
   			students <- dplyr::ungroup(students)
 
-  			# clean up before return
+  			# clean up before return (dop_na and unique just in case)
   			students <- dplyr::select(students, ID, CIP6)
   			students <- tidyr::drop_na(students)
   			students <- unique(students)

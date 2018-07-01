@@ -1,4 +1,4 @@
-#' @importFrom dplyr filter select %>%
+#' @importFrom dplyr filter select
 #' @importFrom stringr str_detect
 NULL
 
@@ -18,8 +18,15 @@ NULL
 #'
 #' @export
 rcb <- function(pattern) {
-  hex_code <- rcb_colors %>%
-    filter(str_detect(rcb_name, pattern)) %>%
-    select(rcb_code) %>%
-    unlist(use.names = FALSE)
+
+	# indicate these are not unbpund symbols, helps with R CMD check
+	rcb_code <- NULL
+	rcb_name <- NULL
+
+	# experimenting with removing pipes
+	x <- rcb_colors
+	x <- filter(x, str_detect(rcb_name, pattern))
+	x <- select(x, rcb_code)
+	x <- unlist(x, use.names = FALSE)
+	hex_code <- x
 }
