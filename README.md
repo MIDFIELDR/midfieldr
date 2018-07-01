@@ -174,7 +174,7 @@ students <- gather_ever(series = program_cip6) %>%
   race_sex_join(.)
 
 students
-#> # A tibble: 6,402 x 4
+#> # A tibble: 6,444 x 4
 #>    id          cip6   race          sex  
 #>    <chr>       <chr>  <chr>         <chr>
 #>  1 MID25783178 140701 Black         Male 
@@ -187,7 +187,7 @@ students
 #>  8 MID25784118 141001 White         Male 
 #>  9 MID25784209 141001 International Male 
 #> 10 MID25784234 143501 White         Male 
-#> # ... with 6,392 more rows
+#> # ... with 6,434 more rows
 ```
 
 Next we join our custom program names to the student data.
@@ -196,7 +196,7 @@ Next we join our custom program names to the student data.
 students <- left_join(students, program_group, by = "cip6")
 
 students
-#> # A tibble: 6,402 x 10
+#> # A tibble: 6,444 x 10
 #>    id     cip6  race  sex   cip2  cip2name cip4  cip4name cip6name program
 #>    <chr>  <chr> <chr> <chr> <chr> <chr>    <chr> <chr>    <chr>    <chr>  
 #>  1 MID25~ 1407~ Black Male  14    Enginee~ 1407  Chemica~ Chemica~ Chemic~
@@ -209,7 +209,7 @@ students
 #>  8 MID25~ 1410~ White Male  14    Enginee~ 1410  Electri~ Electri~ Electr~
 #>  9 MID25~ 1410~ Inte~ Male  14    Enginee~ 1410  Electri~ Electri~ Electr~
 #> 10 MID25~ 1435~ White Male  14    Enginee~ 1435  Industr~ Industr~ Indust~
-#> # ... with 6,392 more rows
+#> # ... with 6,434 more rows
 ```
 
 We create a vector of grouping variables and use the seplyr
@@ -229,9 +229,9 @@ ever_enrolled
 #>    <chr>                <chr>           <chr>  <int>
 #>  1 Chemical Engineering Asian           Female    56
 #>  2 Chemical Engineering Asian           Male      98
-#>  3 Chemical Engineering Black           Female   147
+#>  3 Chemical Engineering Black           Female   148
 #>  4 Chemical Engineering Black           Male      98
-#>  5 Chemical Engineering Hispanic        Female    37
+#>  5 Chemical Engineering Hispanic        Female    38
 #>  6 Chemical Engineering Hispanic        Male      57
 #>  7 Chemical Engineering International   Female     8
 #>  8 Chemical Engineering International   Male      23
@@ -278,9 +278,9 @@ stickiness
 #>    <chr>                <chr>           <chr>  <int> <int> <dbl>
 #>  1 Chemical Engineering Asian           Female    56    26 0.464
 #>  2 Chemical Engineering Asian           Male      98    35 0.357
-#>  3 Chemical Engineering Black           Female   147    52 0.354
+#>  3 Chemical Engineering Black           Female   148    52 0.351
 #>  4 Chemical Engineering Black           Male      98    26 0.265
-#>  5 Chemical Engineering Hispanic        Female    37    11 0.297
+#>  5 Chemical Engineering Hispanic        Female    38    11 0.289
 #>  6 Chemical Engineering Hispanic        Male      57    18 0.316
 #>  7 Chemical Engineering International   Female     8     4 0.5  
 #>  8 Chemical Engineering International   Male      23     7 0.304
