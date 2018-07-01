@@ -15,27 +15,31 @@ v3](man/figures/License-GPL-v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 A package for investigating student record data provided by registrars
 at US universities participating in the MIDFIELD project.
 
-midfieldr provides tools for accessing and analyzing a stratified sample
-of the MIDFIELD database. The sample comprises demographic, term,
-course, and degree information for 97,640 undergraduate students from
-1987 to 2016. The sample data are provided in a separate data package.
+midfieldr provides access to
+[midfielddata](https://midfieldr.github.io/midfielddata/), a data
+package containing a stratified sample of the MIDFIELD database. The
+sample comprises demographic, term, course, and degree information for
+97,640 undergraduate students from 1987 to 2016.
 
-midfieldr includes functions for selecting specific fields of study and
-aggregating, computing, and graphing student persistence metrics.
+midfieldr provides functions for investigating these data to determine
+persistence metrics such as graduation rates or program stickiness and
+for grouping findings by institution, program, sex, and race/ethnicity.
+The goal of the package is to share data, methods, and metrics for
+intersectional research in student persistence.
 
 ## Installation
 
-Package not yet submitted to CRAN. Development version can be installed
-from GitHub using:
+Package not yet submitted to CRAN. The development version can be
+installed from GitHub using:
 
 ``` r
 install.packages("devtools")
 devtools::install_github("MIDFIELDR/midfieldr")
 ```
 
-midfieldr depends on data in a data package (midfielddata) that is
-available through a drat repository on GitHub. To use midfieldr, you
-will need to install midfielddata on your computer.
+midfieldr depends on the midfielddata package in a [drat
+repository](https://midfieldr.github.io/drat/) on GitHub. To use
+midfieldr, you will need to install midfielddata.
 
 ``` r
 install.packages("drat")
@@ -351,7 +355,9 @@ functionality and metrics see the [vignettes](articles/index.html).
 
 ## Meta
 
-  - Get citation information with `citation("midfieldr")`.
+  - Data provided by the
+    [MIDFIELD](%7Bhttps://engineering.purdue.edu/MIDFIELD) project
+  - Get citation information with `citation("midfieldr")`
   - Please note that this project is released with a [Code of
     Conduct](CONDUCT.md). If you contribute to this project you agree to
     abide by its terms.
