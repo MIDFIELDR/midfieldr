@@ -312,8 +312,8 @@ orders their levels by median stickiness.
 ``` r
 stickiness_mw <- stickiness_mw %.>%
   select(., program, race_sex, stick) %.>%
-  multiway_order(., return_medians = TRUE) %>% 
-    print(.)
+  multiway_order(., return_medians = TRUE) %>%
+  print(.)
 #> # A tibble: 27 x 5
 #>    program              race_sex            stick med_program med_race_sex
 #>    <fct>                <fct>               <dbl>       <dbl>        <dbl>

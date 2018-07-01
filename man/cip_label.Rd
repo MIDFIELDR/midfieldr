@@ -4,16 +4,16 @@
 \alias{cip_label}
 \title{Add a column of program labels to a CIP data frame}
 \usage{
-cip_label(.data, program = NULL)
+cip_label(.cip, program = NULL)
 }
 \arguments{
-\item{.data}{A filtered subset of the midfieldr \code{cip} data frame.}
+\item{.cip}{A subset of the midfieldr \code{cip} data frame.}
 
 \item{program}{An optional character variable. There are four options:
 
 If NULL, the default, the 6-digit CIP program names are assigned to the new column.
 
-If NULL, but one of the named \code{cip_series} is used to create the \code{.data} argument, then the series name is assigned to the new column.
+If NULL, but one of the named \code{cip_series} is used to create the \code{.cip} argument, then the series name is assigned to the new column.
 
 If one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-digit, 4-digit, or 6-digit CIP program names are assigned to the new column.
 
@@ -29,29 +29,20 @@ Adds a new character variable named \code{program} to a CIP data frame.
 Assigning a custom label to a program or a group of programs provides
 the option of grouping and summarizing CIP data in ways not afforded by
 the default program names in the 2010 CIP data.
-
-With \code{.data} as the first argument, \code{cip_label()} is
-compatible with the pipe operator \code{\%>\%}.
 }
 \examples{
-# Extract the Philosophy and Religion programs
+# Extract the Philosophy and Religion programs and label
 x <- cip_filter(series = "^38")
-y <- cip_label(x, program = "test label")
+y <- cip_label(x, program = "Phil-Relig")
 
 # The function is pipe-compatible
 y <- x \%>\% cip_label("test label")
 
 # With no program argument, the 6-digit CIP names are assigned
-y <- x \%>\% cip_label()
+y <- cip_label(x)
 
 # Argument options include
-y <- x \%>\% cip_label(program = "cip6name")
-y <- x \%>\% cip_label(program = "cip4name")
-y <- x \%>\% cip_label(program = "cip2name")
-
-# When a 4-digit level name is desired
-y <- cip_filter(series = "^1410") \%>\% cip_label("cip4name")
-
-# But if the result is too long, it can be manually reassigned
-y <- cip_filter(series = "^1410") \%>\% cip_label("Electrical Engineering")
+y <- cip_label(x, program = "cip6name")
+y <- cip_label(x, program = "cip4name")
+y <- cip_label(x, program = "cip2name")
 }

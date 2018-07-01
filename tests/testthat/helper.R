@@ -35,26 +35,7 @@ get_my_path <- function(filename) {
 
 
 
-## create test data for zero_fill() ---------------------------
-# a <- rep(c("A", "B"), each = 3)
-# b <- rep(c("D", "E", "F"), times = 2)
-# n <- 1:6
-# df1 <- data.frame(a, b, n)
-# df2 <- df1[-6, ]
-#
-# ## for df1, no missing combinations
-# my_args <- list(df1, dplyr::quo(a), dplyr::quo(b))
-# (do.call(midfieldr::zero_fill, my_args))
-# save(my_args, file = "tests/testthat/testing_data/my_args_03.rda")
-# exp_out <- zero_fill(df1, a, b)
-# save(exp_out, file = "tests/testthat/testing_data/exp_out_03.rda")
-#
-# ## for df2, missing a combination
-# my_args <- list(df2, dplyr::quo(a), dplyr::quo(b))
-# (do.call(midfieldr::zero_fill, my_args))
-# save(my_args, file = "tests/testthat/testing_data/my_args_04.rda")
-# exp_out <- zero_fill(df2, a, b)
-# save(exp_out, file = "tests/testthat/testing_data/exp_out_04.rda")
+
 
 
 
@@ -78,51 +59,51 @@ get_my_path <- function(filename) {
 
 
 
-## create data for cip_label() ---------------------------------------
+# # create data for cip_label() ---------------------------------------
 # engr <- cip_filter(series = cip_engr)
 # bio_sci <- cip_filter(series = cip_bio_sci)
 # math_stat <- cip_filter(series = cip_math_stat)
 # phys_sci <- cip_filter(series = cip_phys_sci)
 #
-# my_args <- list(.data = engr, program = NULL)
+# my_args <- list(.cip = engr, program = NULL)
 # (do.call(midfieldr::cip_label, my_args))
 # save(my_args, file = "tests/testthat/testing_data/my_args_05.rda")
-# exp_out <- cip_label(.data = engr, program = NULL)
+# exp_out <- cip_label(.cip = engr, program = NULL)
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_05.rda")
 #
-# my_args <- list(.data = bio_sci, program = NULL)
+# my_args <- list(.cip = bio_sci, program = NULL)
 # save(my_args, file = "tests/testthat/testing_data/my_args_06.rda")
-# exp_out <- cip_label(.data = bio_sci, program = NULL)
+# exp_out <- cip_label(.cip = bio_sci, program = NULL)
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_06.rda")
 #
-# my_args <- list(.data = math_stat, program = NULL)
+# my_args <- list(.cip = math_stat, program = NULL)
 # save(my_args, file = "tests/testthat/testing_data/my_args_07.rda")
-# exp_out <- cip_label(.data = math_stat, program = NULL)
+# exp_out <- cip_label(.cip = math_stat, program = NULL)
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_07.rda")
 #
-# my_args <- list(.data = phys_sci, program = NULL)
+# my_args <- list(.cip = phys_sci, program = NULL)
 # save(my_args, file = "tests/testthat/testing_data/my_args_10.rda")
-# exp_out <- cip_label(.data = phys_sci, program = NULL)
+# exp_out <- cip_label(.cip = phys_sci, program = NULL)
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_10.rda")
 #
-# my_args <- list(.data = engr, program = "cip2name")
+# my_args <- list(.cip = engr, program = "cip2name")
 # save(my_args, file = "tests/testthat/testing_data/my_args_11.rda")
-# exp_out <- cip_label(.data = engr, program = "cip2name")
+# exp_out <- cip_label(.cip = engr, program = "cip2name")
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_11.rda")
 #
-# my_args <- list(.data = engr, program = "cip4name")
+# my_args <- list(.cip = engr, program = "cip4name")
 # save(my_args, file = "tests/testthat/testing_data/my_args_12.rda")
-# exp_out <- cip_label(.data = engr, program = "cip4name")
+# exp_out <- cip_label(.cip = engr, program = "cip4name")
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_12.rda")
 #
-# my_args <- list(.data = engr, program = "cip6name")
+# my_args <- list(.cip = engr, program = "cip6name")
 # save(my_args, file = "tests/testthat/testing_data/my_args_13.rda")
-# exp_out <- cip_label(.data = engr, program = "cip6name")
+# exp_out <- cip_label(.cip = engr, program = "cip6name")
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_13.rda")
 #
-# my_args <- list(.data = engr, program = "randomname")
+# my_args <- list(.cip = engr, program = "randomname")
 # save(my_args, file = "tests/testthat/testing_data/my_args_14.rda")
-# exp_out <- cip_label(.data = engr, program = "randomname")
+# exp_out <- cip_label(.cip = engr, program = "randomname")
 # save(exp_out, file = "tests/testthat/testing_data/exp_out_14.rda")
 
 
