@@ -17,11 +17,11 @@ test_that("Two character variables are converted to factors", {
 
 test_that("Median argument returns expected values", {
   expect_equal(
-    names(multiway_order(df1, medians = TRUE)),
+    names(multiway_order(df1, return_medians = TRUE)),
     c("name", "species", "mass", "med_name", "med_species")
   )
   expect_equal(
-    names(multiway_order(df1, medians = NULL)),
+    names(multiway_order(df1, return_medians = NULL)),
     c("name", "species", "mass")
   )
 })

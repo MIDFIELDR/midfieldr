@@ -116,18 +116,18 @@
 </h1></div>
 
 <p>A package for investigating student record data provided by registrars at US universities participating in the MIDFIELD project.</p>
-<p>midfieldr provides tools for accessing and analyzing a stratified sample of the MIDFIELD database. The sample comprises demographic, term, course, and degree information for 97,640 undergraduate students from 1987 to 2016. The sample data are provided in a separate data package.</p>
-<p>midfieldr includes functions for selecting specific fields of study and aggregating, computing, and graphing student persistence metrics.</p>
+<p>midfieldr provides access to <a href="https://midfieldr.github.io/midfielddata/">midfielddata</a>, a data package containing a stratified sample of the MIDFIELD database. The sample comprises demographic, term, course, and degree information for 97,640 undergraduate students from 1987 to 2016.</p>
+<p>midfieldr provides functions for investigating these data to determine persistence metrics such as graduation rates or program stickiness and for grouping findings by institution, program, sex, and race/ethnicity. The goal of the package is to share data, methods, and metrics for intersectional research in student persistence.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>Package not yet submitted to CRAN. Development version can be installed from GitHub using:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"MIDFIELDR/midfieldr"</span>)</a></code></pre></div>
-<p>midfieldr depends on data in a data package (midfielddata) that is available through a drat repository on GitHub. To use midfieldr, you will need to install midfielddata on your computer.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"drat"</span>)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">drat<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/drat/topics/addRepo">addRepo</a></span>(<span class="st">"midfieldr"</span>)</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw">install.packages</span>(<span class="st">"midfielddata"</span>)</a></code></pre></div>
+<p>midfieldr depends on midfielddata, a data package available from a <a href="https://midfieldr.github.io/drat/">drat repository</a> on GitHub. Install midfielddata before installing midfieldr.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"drat"</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">drat<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/drat/topics/addRepo">addRepo</a></span>(<span class="st">"midfieldr"</span>)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">install.packages</span>(<span class="st">"midfielddata"</span>)</a></code></pre></div>
+<p>The development version of midfieldr can be installed from GitHub.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"MIDFIELDR/midfieldr"</span>)</a></code></pre></div>
 </div>
 <div id="data" class="section level2">
 <h2 class="hasAnchor">
@@ -137,7 +137,7 @@
 <li>
 <code>cip</code> A data frame with 1584 observations and 6 CIP variables of program codes and names at the 2, 4, and 6-digit levels. Each observation is a unique program. Occupies 364 kb of memory.</li>
 </ul>
-<p>The <a href="https://midfieldr.github.io/midfielddata">midfielddata</a> package contains the four datasets that comprise a stratified sample of the MIDFIELD database.</p>
+<p>The midfielddata package contains the four datasets that comprise a stratified sample of the MIDFIELD database.</p>
 <ul>
 <li><p><code>midfieldstudents</code> A data frame with 97,640 observations and 15 demographic variables. Each observation is a unique student. Occupies 19 Mb of memory.</p></li>
 <li><p><code>midfieldcourses</code> A data frame with 3.5 M observations and 12 academic course variables. Each observation is one course in one term for one student. Occupies 348 Mb of memory.</p></li>
@@ -148,12 +148,12 @@
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
-<p>We illustrate a number of midfieldr functions by demonstrating how to compute and graph the “stickiness” metric. Stickiness is the ratio of the number of students graduating from a program to the number ever enrolled in the program <span class="citation">(Ohland et al. 2012)</span>.</p>
+<p>To introduce using the package, we show how to determine the “stickiness” of three engineering programs. Stickiness is the ratio of the number of students graduating from a program to the number ever enrolled in the program <span class="citation">(Ohland et al. 2012)</span>. For greater detail, please see the <a href="articles.html">vignettes</a>.</p>
 <p>Packages to install and load:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">library</span>(midfieldr)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">library</span>(seplyr)</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw">library</span>(dplyr)</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="kw">library</span>(ggplot2)</a></code></pre></div>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">library</span>(dplyr)</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw">library</span>(ggplot2)</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="kw">library</span>(seplyr)</a></code></pre></div>
 <p><strong>Step 1. Select programs to study</strong></p>
 <p>In this example we compare the stickiness of three engineering programs: Chemical, Electrical, and Industrial.</p>
 <p>We use <code><a href="reference/cip_filter.html">cip_filter()</a></code> to search the <code>cip</code> dataset first for “Engineering” and then filter the result for “Chemical”, “Electrical”, and “Industrial”.</p>
@@ -314,7 +314,9 @@
 <h2 class="hasAnchor">
 <a href="#meta" class="anchor"></a>Meta</h2>
 <ul>
-<li>Get citation information with <code>citation("midfieldr")</code>.</li>
+<li>Data provided by the <a href="%7Bhttps://engineering.purdue.edu/MIDFIELD">MIDFIELD</a> project</li>
+<li>Get citation information with <code>citation("midfieldr")</code>
+</li>
 <li>Please note that this project is released with a <a href="CONDUCT.html">Code of Conduct</a>. If you contribute to this project you agree to abide by its terms.</li>
 </ul>
 </div>

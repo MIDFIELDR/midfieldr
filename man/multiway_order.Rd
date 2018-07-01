@@ -4,13 +4,13 @@
 \alias{multiway_order}
 \title{Prepare multiway data for graphing}
 \usage{
-multiway_order(.data, medians = FALSE)
+multiway_order(.data, return_medians = FALSE)
 }
 \arguments{
 \item{.data}{A data frame with one numerical variable and two categorical
 variables.}
 
-\item{medians}{A logical value indicating whether or not the medians
+\item{return_medians}{A logical value indicating whether or not the medians
 computed to order the factors should be included in the data frame
 returned. The default is FALSE.}
 }
@@ -46,7 +46,7 @@ df2 <- dplyr::arrange(df2, cat1, cat2)
 df2
 
 # include the medians in the output
-df3 <- multiway_order(df1, medians = TRUE)
+df3 <- multiway_order(df1, return_medians = TRUE)
 df3 <- dplyr::arrange(df3, cat1, cat2)
 df3
 

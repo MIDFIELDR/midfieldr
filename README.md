@@ -29,22 +29,21 @@ intersectional research in student persistence.
 
 ## Installation
 
-Package not yet submitted to CRAN. The development version can be
-installed from GitHub using:
-
-``` r
-install.packages("devtools")
-devtools::install_github("MIDFIELDR/midfieldr")
-```
-
-midfieldr depends on the midfielddata package in a [drat
-repository](https://midfieldr.github.io/drat/) on GitHub. To use
-midfieldr, you will need to install midfielddata.
+midfieldr depends on midfielddata, a data package available from a [drat
+repository](https://midfieldr.github.io/drat/) on GitHub. Install
+midfielddata before installing midfieldr.
 
 ``` r
 install.packages("drat")
 drat::addRepo("midfieldr")
 install.packages("midfielddata")
+```
+
+The development version of midfieldr can be installed from GitHub.
+
+``` r
+install.packages("devtools")
+devtools::install_github("MIDFIELDR/midfieldr")
 ```
 
 ## Data
@@ -55,9 +54,8 @@ The midfieldr package includes:
     program codes and names at the 2, 4, and 6-digit levels. Each
     observation is a unique program. Occupies 364 kb of memory.
 
-The [midfielddata](https://midfieldr.github.io/midfielddata) package
-contains the four datasets that comprise a stratified sample of the
-MIDFIELD database.
+The midfielddata package contains the four datasets that comprise a
+stratified sample of the MIDFIELD database.
 
   - `midfieldstudents` A data frame with 97,640 observations and 15
     demographic variables. Each observation is a unique student.
@@ -77,34 +75,38 @@ MIDFIELD database.
 
 ## Usage
 
-We illustrate a number of midfieldr functions by demonstrating how to
-compute and graph the “stickiness” metric. Stickiness is the ratio of
-the number of students graduating from a program to the number ever
-enrolled in the program (Ohland et al. 2012).
+To introduce using the package, we show how to determine program
+“stickiness,” the ratio of the number of students graduating from a
+program to the number ever enrolled in the program (Ohland et al. 2012).
+We compare the stickiness of three programs: Chemical Engineering,
+Electrical Engineering, and Industrial Engineering.
+
+For more detail, please see the individual
+[vignettes](articles/index.html).
 
 Packages to install and load:
 
 ``` r
-library(midfieldr)
-library(seplyr)
 library(dplyr)
 library(ggplot2)
+library(midfieldr)
+library(seplyr)
 ```
 
 **Step 1. Select programs to study**
-
-In this example we compare the stickiness of three engineering programs:
-Chemical, Electrical, and Industrial.
 
 We use `cip_filter()` to search the `cip` dataset first for
 “Engineering” and then filter the result for “Chemical”,
 “Electrical”, and “Industrial”.
 
 ``` r
-cip_filter(series = "Engineering") %>%
-  cip_filter(series = c("Chemical", "Electrical", "Industrial"), reference = .) %>%
-  head(., n = 10L)
-#> # A tibble: 10 x 6
+cip_filter(series = "Engineering") %.>%
+  cip_filter(
+    series = c("Chemical", "Electrical", "Industrial"),
+    reference = .
+  ) %.>%
+  print(.)
+#> # A tibble: 24 x 6
 #>    cip2  cip2name               cip4  cip4name       cip6  cip6name       
 #>    <chr> <chr>                  <chr> <chr>          <chr> <chr>          
 #>  1 14    Engineering            1407  Chemical Engi~ 1407~ Chemical Engin~
@@ -117,6 +119,7 @@ cip_filter(series = "Engineering") %>%
 #>  8 14    Engineering            1435  Industrial En~ 1435~ Industrial Eng~
 #>  9 15    Engineering Technology 1503  Electrical En~ 1503~ Electrical, El~
 #> 10 15    Engineering Technology 1503  Electrical En~ 1503~ Laser and Opti~
+#> # ... with 14 more rows
 ```
 
 The results show that the codes we want are 1407 Chemical Engineering,
@@ -129,20 +132,19 @@ using `cip_label()`. We can assign the default code name, e.g., using
 name “Electrical/Electronics and Communications Engineering.”
 
 ``` r
-set1 <- cip_filter(series = "^1407") %>%
+set1 <- cip_filter(series = "^1407") %.>%
   cip_label(., program = "cip4name")
-set2 <- cip_filter(series = "^1410") %>%
+set2 <- cip_filter(series = "^1410") %.>%
   cip_label(., program = "Electrical Engineering")
-set3 <- cip_filter(series = "^1435") %>%
+set3 <- cip_filter(series = "^1435") %.>%
   cip_label(., program = "cip4name")
 ```
 
 Combine the data frames.
 
 ``` r
-program_group <- bind_rows(set1, set2, set3)
-
-program_group
+program_group <- bind_rows(set1, set2, set3) %.>%
+  print(.)
 #> # A tibble: 8 x 7
 #>   cip2  cip2name    cip4  cip4name        cip6   cip6name        program  
 #>   <chr> <chr>       <chr> <chr>           <chr>  <chr>           <chr>    
@@ -156,16 +158,13 @@ program_group
 #> 8 14    Engineering 1435  Industrial Eng~ 143501 Industrial Eng~ Industri~
 ```
 
-For additional information, try the help page `?cip_filter()` and the
-[Selecting CIP codes](cip_filter.html) vignette.
-
 **Step 2. Gather the data and compute the metric**
 
 First we extract the 6-digit CIP codes from our program group to use as
 search terms.
 
 ``` r
-program_cip6 <- program_group[["cip6"]]
+program_group_cip6 <- program_group[["cip6"]]
 ```
 
 Use `gather_ever()` to access the `midfieldterms` dataset and extract
@@ -174,10 +173,9 @@ to access the `midfieldstudents` dataset and append students’ race and
 sex to the data frame.
 
 ``` r
-students <- gather_ever(series = program_cip6) %>%
-  race_sex_join(.)
-
-students
+students <- gather_ever(series = program_group_cip6) %.>%
+  race_sex_join(.) %.>%
+  print(.)
 #> # A tibble: 6,444 x 4
 #>    id          cip6   race          sex  
 #>    <chr>       <chr>  <chr>         <chr>
@@ -197,9 +195,8 @@ students
 Next we join our custom program names to the student data.
 
 ``` r
-students <- left_join(students, program_group, by = "cip6")
-
-students
+students <- left_join(students, program_group, by = "cip6") %.>%
+  print(.)
 #> # A tibble: 6,444 x 10
 #>    id     cip6  race  sex   cip2  cip2name cip4  cip4name cip6name program
 #>    <chr>  <chr> <chr> <chr> <chr> <chr>    <chr> <chr>    <chr>    <chr>  
@@ -224,10 +221,9 @@ the count.
 ``` r
 grouping_variables <- c("program", "race", "sex")
 
-ever_enrolled <- students %>%
-  group_summarize(., grouping_variables, ever = n())
-
-ever_enrolled
+ever_enrolled <- students %.>%
+  group_summarize(., grouping_variables, ever = n()) %.>%
+  print(.)
 #> # A tibble: 48 x 4
 #>    program              race            sex     ever
 #>    <chr>                <chr>           <chr>  <int>
@@ -250,9 +246,9 @@ these programs. We group and summarize the counts using `grad` as the
 new count variable.
 
 ``` r
-graduated <- gather_grad(series = program_cip6) %>%
-  race_sex_join(.) %>%
-  left_join(., program_group, by = "cip6") %>%
+graduated <- gather_grad(series = program_group_cip6) %.>%
+  race_sex_join(.) %.>%
+  left_join(., program_group, by = "cip6") %.>%
   group_summarize(., grouping_variables, grad = n())
 ```
 
@@ -266,17 +262,16 @@ stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables)
 We suggest omitting observations with 5 or fewer students ever enrolled.
 
 ``` r
-stickiness <- stickiness %>%
+stickiness <- stickiness %.>%
   filter(., ever > 5)
 ```
 
 And we compute stickiness, the ratio of `grad` to `ever`.
 
 ``` r
-stickiness <- stickiness %>%
-  mutate(., stick = round(grad / ever, 3))
-
-stickiness
+stickiness <- stickiness %.>%
+  mutate(., stick = round(grad / ever, 3)) %.>%
+  print(.)
 #> # A tibble: 41 x 6
 #>    program              race            sex     ever  grad stick
 #>    <chr>                <chr>           <chr>  <int> <int> <dbl>
@@ -293,9 +288,6 @@ stickiness
 #> # ... with 31 more rows
 ```
 
-For a discussion of each step in greater detail, see the [Stickiness
-metric](stickiness.html) vignette.
-
 **Step 3. Graph the results**
 
 To prepare the stickiness data for graphing, we remove ambiguous race
@@ -303,9 +295,9 @@ levels (Unknown, International, or Other) and then combine race and sex
 into a single variable.
 
 ``` r
-stickiness_mw <- stickiness %>%
-  filter(., !race %in% c("Unknown", "International", "Other")) %>%
-  filter(., !sex %in% "Unknown") %>%
+stickiness_mw <- stickiness %.>%
+  filter(., !race %in% c("Unknown", "International", "Other")) %.>%
+  filter(., !sex %in% "Unknown") %.>%
   mutate(., race_sex = paste(race, sex))
 ```
 
@@ -318,9 +310,24 @@ display type based on a data structure of two categorical variables
 orders their levels by median stickiness.
 
 ``` r
-stickiness_mw <- stickiness_mw %>%
-  select(., program, race_sex, stick) %>%
-  multiway_order(.)
+stickiness_mw <- stickiness_mw %.>%
+  select(., program, race_sex, stick) %.>%
+  multiway_order(., return_medians = TRUE) %>% 
+    print(.)
+#> # A tibble: 27 x 5
+#>    program              race_sex            stick med_program med_race_sex
+#>    <fct>                <fct>               <dbl>       <dbl>        <dbl>
+#>  1 Chemical Engineering Asian Female        0.464       0.354        0.44 
+#>  2 Chemical Engineering Asian Male          0.357       0.354        0.471
+#>  3 Chemical Engineering Black Female        0.351       0.354        0.4  
+#>  4 Chemical Engineering Black Male          0.265       0.354        0.331
+#>  5 Chemical Engineering Hispanic Female     0.289       0.354        0.289
+#>  6 Chemical Engineering Hispanic Male       0.316       0.354        0.352
+#>  7 Chemical Engineering Native American Fe~ 0.143       0.354        0.143
+#>  8 Chemical Engineering Native American Ma~ 0.375       0.354        0.229
+#>  9 Chemical Engineering White Female        0.366       0.354        0.366
+#> 10 Chemical Engineering White Male          0.391       0.354        0.424
+#> # ... with 17 more rows
 ```
 
 We use conventional ggplot2 functions to graph stickiness in a multiway
@@ -348,10 +355,6 @@ than expected.
 Results will vary depending on the programs one compares. Variations can
 also be expected if one uses the whole population data available to
 MIDFIELD member institutions.
-
-For additional information on multiways, see the [Multiway data, graphs,
-and tables](multiway.html) vignette. For additional midfieldr
-functionality and metrics see the [vignettes](articles/index.html).
 
 ## Meta
 

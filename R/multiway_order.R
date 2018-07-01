@@ -21,7 +21,7 @@ NULL
 #' @param .data A data frame with one numerical variable and two categorical
 #' variables.
 #'
-#' @param medians A logical value indicating whether or not the medians
+#' @param return_medians A logical value indicating whether or not the medians
 #' computed to order the factors should be included in the data frame
 #' returned. The default is FALSE.
 #'
@@ -45,17 +45,17 @@ NULL
 #' df2
 #'
 #' # include the medians in the output
-#' df3 <- multiway_order(df1, medians = TRUE)
+#' df3 <- multiway_order(df1, return_medians = TRUE)
 #' df3 <- dplyr::arrange(df3, cat1, cat2)
 #' df3
 #'
 #' @export
-multiway_order <- function(.data, medians = FALSE) {
+multiway_order <- function(.data, return_medians = FALSE) {
   if (!(is.data.frame(.data) || dplyr::is.tbl(.data))) {
     stop("midfieldr::multiway_order() argument must be a data frame or tbl")
   }
 
-  if (is.null(medians)) medians <- FALSE
+  if (is.null(return_medians)) return_medians <- FALSE
 
   # obtain type of variables to distinguish numeric from other
   v_class <- purrr::map_chr(.data, class)
@@ -103,10 +103,14 @@ multiway_order <- function(.data, medians = FALSE) {
     dplyr::mutate(!!cat2 := forcats::fct_reorder(!!cat2, !!med2))
 
   # conditional to include the medians in the output
-  if (isTRUE(medians)) {
+  if (isTRUE(return_medians)) {
     .data <- .data
   } else {
     .data <- .data %>% select(!!cat1, !!cat2, !!value)
   }
+
+  # arrange rows by medians
+  # .data <- .data %>%
+  # 	arrange(!!cat1, !!cat2)
 }
 "multiway_order"
