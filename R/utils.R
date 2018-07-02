@@ -25,16 +25,15 @@ NULL
   has_data_package <- requireNamespace("midfielddata")
   if (!has_data_package) {
     packageStartupMessage(paste(
-      "To use this package, you must install the",
-      "midfielddata package."
+      "midfieldr depends on midfielddata,",
+      "a data package available from a drat repository on GitHub.",
+      "Instructions at https://midfieldr.github.io/midfieldr."
     ))
-    packageStartupMessage(paste(
-      "To install that package, run",
-      "`install.packages('midfielddata',",
-      "repos = 'https://midfieldr.github.io/drat/',",
-      "type = 'source')`."
-    ))
-    packageStartupMessage("See the `midfielddata` vignette for more details.")
   }
   assign("has_data", has_data_package, envir = .pkgglobalenv)
 }
+
+
+
+
+

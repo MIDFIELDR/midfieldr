@@ -65,7 +65,7 @@ stratified sample of the MIDFIELD database.
     academic course variables. Each observation is one course in one
     term for one student. Occupies 348 Mb of memory.
 
-  - `midfieldterms` A data frame with 727,369 observations and 13
+  - `midfieldterms` A data frame with 729,014 observations and 13
     academic term variables. Each observation is one term for one
     student. Occupies 82 Mb of memory.
 
@@ -169,13 +169,13 @@ search terms.
 program_group_cip6 <- program_group[["cip6"]]
 ```
 
-Use `gather_ever()` to access the `midfieldterms` dataset and extract
+Use `ever_filter()` to access the `midfieldterms` dataset and extract
 all students who ever enrolled in these programs. Use `race_sex_join()`
 to access the `midfieldstudents` dataset and append students’ race and
 sex to the data frame.
 
 ``` r
-students <- gather_ever(series = program_group_cip6) %.>%
+students <- ever_filter(series = program_group_cip6) %.>%
   race_sex_join(.) %.>%
   print(.)
 #> # A tibble: 6,444 x 4
@@ -242,13 +242,13 @@ ever_enrolled <- students %.>%
 #> # ... with 38 more rows
 ```
 
-Following similar steps, we use `gather_grad()` to access the
+Following similar steps, we use `grad_filter()` to access the
 `midfielddegrees` dataset and extract all students who graduated from
 these programs. We group and summarize the counts using `grad` as the
 new count variable.
 
 ``` r
-graduated <- gather_grad(series = program_group_cip6) %.>%
+graduated <- grad_filter(series = program_group_cip6) %.>%
   race_sex_join(.) %.>%
   left_join(., program_group, by = "cip6") %.>%
   group_summarize(., grouping_variables, grad = n())

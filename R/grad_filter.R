@@ -6,21 +6,34 @@ NULL
 
 #' Gather graduates
 #'
-#' Filter academic term data to find all students graduating from specified programs.
+#' Filter academic term data to find all students graduating from specified
+#' programs.
 #'
-#' To use this function, the \code{midfielddata} package must be installed to provide \code{midfielddegrees}, the default reference data set.
+#' To use this function, the \code{midfielddata} package must be installed to
+#' provide \code{midfielddegrees}, the default reference data set.
 #'
-#' The \code{series} argument is an atomic character vector of 6-digit CIP codes used to filter the reference data set and extract student IDs and terms.
+#' The \code{series} argument is an atomic character vector of 6-digit CIP
+#' codes used to filter the reference data set and extract student IDs and terms.
 #'
-#' The function returns a subset of \code{reference} with every unique combination of student ID and CIP of the program(s) in which they earned their first degree(s). Only the student ID and program CIP are returned; other variables in \code{reference} are quietly dropped.
+#' The function returns a subset of \code{reference} with every unique
+#' combination of student ID and CIP of the program(s) in which they earned
+#' their first degree(s). Only the student ID and program CIP are returned;
+#' other variables in \code{reference} are quietly dropped.
 #'
-#' Optional arguments. An alternate reference data set can be assigned via the \code{reference} argument. The alternate must have variables for student ID, 6-digit CIP, and terms in which degrees were earned with the same structure as in \code{midfielddegrees}. Use the  \code{id}, \code{cip6}, and \code{term} arguments to reassign the variables names, if necessary, to match the variable names in the alternate.
+#' Optional arguments. An alternate reference data set can be assigned
+#' via the \code{reference} argument. The alternate must have variables for
+#' student ID, 6-digit CIP, and terms in which degrees were earned with the
+#' same structure as in \code{midfielddegrees}. Use the  \code{id}, \code{cip6},
+#' and \code{term} arguments to reassign the variables names, if necessary, to
+#' match the variable names in the alternate.
 #'
-#' @param series atomic character vector specifying the 6-digit CIP codes of the programs to filter by
+#' @param series atomic character vector specifying the 6-digit CIP codes of
+#' the programs to filter by
 #'
 #' @param ... not used for values, forces later arguments to bind by name
 #'
-#' @param reference a reference data frame from which graduating student IDs, CIP codes, and terms are obtained, default \code{midfielddegrees}
+#' @param reference a reference data frame from which graduating student IDs,
+#' CIP codes, and terms are obtained, default \code{midfielddegrees}
 #'
 #' @param id character column name of the ID variable in \code{reference}
 #'
@@ -33,11 +46,13 @@ NULL
 #' @seealso \code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes
 #'
 #' @examples
-#' grad <- gather_grad(series = "540104")
+#' grad <- grad_filter(series = "540104")
 #' grad
 #'
 #' @export
-gather_grad <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6", term = "term_degree") {
+grad_filter <- function(
+	series, ..., reference = NULL, id = "id", cip6 = "cip6", term = "term_degree"
+	) {
   if (!.pkgglobalenv$has_data) {
     stop(paste(
       "To use this function, you must have",
@@ -46,14 +61,14 @@ gather_grad <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6",
   }
 
   # force optional arguments to be usable only by name
-  wrapr::stop_if_dot_args(substitute(list(...)), "gather_grad")
+  wrapr::stop_if_dot_args(substitute(list(...)), "grad_filter")
 
   if (is.null(series)) {
-    stop("midfieldr::gather_grad, series missing or incorrectly specified")
+    stop("midfieldr::grad_filter, series missing or incorrectly specified")
   }
 
   if (isFALSE(is.atomic(series))) {
-    stop("midfieldr::gather_grad, series must be an atomic variable")
+    stop("midfieldr::grad_filter, series must be an atomic variable")
   }
 
   # assign the default terms dataset
@@ -62,7 +77,7 @@ gather_grad <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6",
   }
 
   if (!(is.data.frame(reference) || dplyr::is.tbl(reference))) {
-    stop("midfieldr::gather_grad, reference must be a data frame or tbl")
+    stop("midfieldr::grad_filter, reference must be a data frame or tbl")
   }
 
   collapse_series <- stringr::str_c(series, collapse = "|")
@@ -94,4 +109,4 @@ gather_grad <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6",
   		students <- unique(students)
   	})
 }
-"gather_grad"
+"grad_filter"

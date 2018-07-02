@@ -2,7 +2,7 @@ context("race_sex_join")
 
 library(dplyr)
 
-ever <- gather_ever(series = "540104")
+ever <- ever_filter(series = "540104")
 
 ever1 <- ever %>%
   race_sex_join()

@@ -162,7 +162,7 @@ NULL
 #' @format A data frame with columns:
 #' \describe{
 #'  \item{id}{Unique, anonymized MIDFIELD student identifier.}
-#'  \item{start}{Imputed starting major (6-digit CIP code) of FYE students. }
+#'  \item{cip6}{Imputed starting major (6-digit CIP code) of FYE students. }
 #' }
 #' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
 "case_fye"

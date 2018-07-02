@@ -4,27 +4,42 @@
 #' @importFrom wrapr stop_if_dot_args let
 NULL
 
-#' Gather ever-enrolled students
+#' Filter ever-enrolled students
 #'
-#' Filter academic term data to find all students ever enrolled in specified programs.
+#' Filter academic term data to find all students ever enrolled in specified
+#' programs.
 #'
-#' To use this function, the \code{midfielddata} package must be installed to provide \code{midfieldterms}, the default reference data set.
+#' To use this function, the \code{midfielddata} package must be installed to
+#' provide \code{midfieldterms}, the default reference data set.
 #'
-#' The \code{series} argument is an atomic character vector of 6-digit CIP codes used to filter the reference data set and extract student IDs and terms.
+#' The \code{series} argument is an atomic character vector of 6-digit CIP
+#' codes used to filter the reference data set and extract student IDs
+#' and terms.
 #'
-#' The function returns a subset of \code{reference} with every unique combination of student ID and program CIP, representing every student ever enrolled in the specified programs. Only the student ID and program CIP are returned; other variables in \code{reference} are quietly dropped.
+#' The function returns a subset of \code{reference} with every unique
+#' combination of student ID and program CIP, representing every student
+#' ever enrolled in the specified programs. Only the student ID and program
+#' CIP are returned; other variables in \code{reference} are quietly dropped.
 #'
-#' Optional arguments. An alternate reference data set can be assigned via the \code{reference} argument. The alternate must have variables for student ID, 6-digit CIP, and terms with the same structure as in \code{midfieldterms}. Use the  \code{id}, \code{cip6}, and \code{term} arguments to reassign the variables names, if necessary, to match the variable names in the alternate.
+#' Optional arguments. An alternate reference data set can be assigned via
+#' the \code{reference} argument. The alternate must have variables for
+#' student ID, 6-digit CIP, and terms with the same structure as in
+#' \code{midfieldterms}. Use the  \code{id}, \code{cip6}, and \code{term}
+#' arguments to reassign the variables names, if necessary, to match the
+#' variable names in the alternate.
 #'
-#' @param series atomic character vector of 6-digit CIP codes specifying the programs to filter by
+#' @param series atomic character vector of 6-digit CIP codes specifying the
+#' programs to filter by
 #'
 #' @param ... not used for values, forces later arguments to bind by name
 #'
-#' @param reference a reference data frame from which student IDs, academic terms, and CIP codes are obtained, default \code{midfieldterms}
+#' @param reference a reference data frame from which student IDs, academic
+#' terms, and CIP codes are obtained, default \code{midfieldterms}
 #'
 #' @param id character column name of the ID variable in \code{reference}
 #'
-#' @param cip6 character column name of the CIP code variable in \code{reference}
+#' @param cip6 character column name of the CIP code variable
+#' in \code{reference}
 #'
 #' @param term character column name of term variable in \code{reference}
 #'
@@ -33,10 +48,12 @@ NULL
 #' @seealso \code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes
 #'
 #' @examples
-#' gather_ever(series = "540104")
+#' ever_filter(series = "540104")
 #'
 #' @export
-gather_ever <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6", term = "term") {
+ever_filter <- function(
+	series, ..., reference = NULL, id = "id", cip6 = "cip6", term = "term"
+	) {
   if (!.pkgglobalenv$has_data) {
     stop(paste(
       "To use this function, you must have",
@@ -45,14 +62,14 @@ gather_ever <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6",
   }
 
   # force optional arguments to be usable only by name
-  wrapr::stop_if_dot_args(substitute(list(...)), "gather_ever")
+  wrapr::stop_if_dot_args(substitute(list(...)), "ever_filter")
 
   if (is.null(series)) {
-    stop("midfieldr::gather_ever, series cannot be NULL")
+    stop("midfieldr::ever_filter, series cannot be NULL")
   }
 
   if (isFALSE(is.atomic(series))) {
-    stop("midfieldr::gather_ever, series must be an atomic variable")
+    stop("midfieldr::ever_filter, series must be an atomic variable")
   }
 
   # assign the default terms dataset
@@ -61,7 +78,7 @@ gather_ever <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6",
   }
 
   if (!(is.data.frame(reference) || dplyr::is.tbl(reference))) {
-    stop("midfieldr::gather_ever, reference must be a data frame or tbl")
+    stop("midfieldr::ever_filter, reference must be a data frame or tbl")
   }
 
   # search terms in a single string
@@ -93,4 +110,4 @@ gather_ever <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6",
   			students <- unique(students)
   		})
 }
-"gather_ever"
+"ever_filter"

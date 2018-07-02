@@ -1,14 +1,14 @@
-context("gather_ever")
+context("ever_filter")
 
 library(dplyr)
 
-ever1 <- gather_ever("540104")
+ever1 <- ever_filter("540104")
 cip6 <- ever1["cip6"]
-ever2 <- gather_ever("14YYYY")
+ever2 <- ever_filter("14YYYY")
 
 # subset_terms is an internal data set
 library(midfieldr)
-ever3 <- gather_ever("520201", reference = subset_terms)
+ever3 <- ever_filter("520201", reference = subset_terms)
 ref1 <- subset_terms
 ref2 <- subset_terms
 ref2 <- dplyr::rename(ref2, altID = id)
@@ -23,13 +23,13 @@ test_that("Produces expected output", {
 
 test_that("Error if incorrect series argument", {
   expect_error(
-    gather_ever(series = NULL),
-    "midfieldr::gather_ever, series cannot be NULL",
+    ever_filter(series = NULL),
+    "midfieldr::ever_filter, series cannot be NULL",
     fixed = TRUE
   )
   expect_error(
-    gather_ever(series = cip6),
-    "midfieldr::gather_ever, series must be an atomic variable",
+    ever_filter(series = cip6),
+    "midfieldr::ever_filter, series must be an atomic variable",
     fixed = TRUE
   )
 })
@@ -41,12 +41,12 @@ test_that("Optional reference argument returns correct values", {
 
 test_that("Reference data can have different column names", {
 	expect_equal(
-		gather_ever("030506", reference = ref1)[["id"]],
-		gather_ever("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altID"]]
+		ever_filter("030506", reference = ref1)[["id"]],
+		ever_filter("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altID"]]
 		)
 	expect_equal(
-		gather_ever("030506", reference = subset_terms)[["cip6"]],
-		gather_ever("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altCIP6"]]
+		ever_filter("030506", reference = subset_terms)[["cip6"]],
+		ever_filter("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altCIP6"]]
 	)
 
 })
