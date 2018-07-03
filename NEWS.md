@@ -1,11 +1,11 @@
 
-**midfieldr 0.1.0.9000** / 2018-07-03
+## midfieldr 0.1.0.9000 / 2018-07-03
 
 - add starter_filter() 
 - add graduation rate vignette
 
 
-**midfieldr 0.1.0** / 2018-06-20
+## midfieldr 0.1.0 / 2018-06-20
 
   - development version public on GitHub
   
