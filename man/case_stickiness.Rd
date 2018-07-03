@@ -23,6 +23,11 @@
 case_stickiness
 }
 \description{
-An example of program stickiness data grouped by student race and sex.
+An data frame (32 by 6) of stickiness data grouped by student race and sex.
+}
+\details{
+For Civil, Electrical, Industrial, and Mechanical Engineering , the number
+of students ever enrolled, the number of graduates, and the resulting
+stickiness.
 }
 \keyword{datasets}

@@ -27,9 +27,13 @@ All variables are characters. An observation is a unique program.
 case_program_group
 }
 \description{
-An example of CIP codes and names, a subset of \code{cip} data plus an added \code{program} variable for four engineering programs.
+A data frame and subset of [\code{cip}](cip.html) with CIP codes and
+names for four engineering programs.
 }
 \details{
-The CIP codes and names plus a user-selected program name for Civil, Electrical, Industrial, and Mechanical Engineering. The "Selecting programs" vignette describes how these data were collected. The data frame is used be several other vignettes as a starting point in selecting programs to study.
+The CIP codes and names plus a user-selected program name for Civil,
+Electrical, Industrial, and Mechanical Engineering. The "Selecting programs"
+vignette describes how these data were collected. The data frame is used be
+several other vignettes as a starting point in selecting programs to study.
 }
 \keyword{datasets}

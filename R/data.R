@@ -103,9 +103,13 @@ NULL
 
 #' CIP case data for four programs
 #'
-#' An example of CIP codes and names, a subset of \code{cip} data plus an added \code{program} variable for four engineering programs.
+#' A data frame and subset of [\code{cip}](cip.html) with CIP codes and
+#' names for four engineering programs.
 #'
-#' The CIP codes and names plus a user-selected program name for Civil, Electrical, Industrial, and Mechanical Engineering. The "Selecting programs" vignette describes how these data were collected. The data frame is used be several other vignettes as a starting point in selecting programs to study.
+#' The CIP codes and names plus a user-selected program name for Civil,
+#' Electrical, Industrial, and Mechanical Engineering. The "Selecting programs"
+#' vignette describes how these data were collected. The data frame is used be
+#' several other vignettes as a starting point in selecting programs to study.
 #'
 #' @format A tidy data frame (tibble) with 1546 observations and 6 variables.
 #' All variables are characters. An observation is a unique program.
@@ -133,7 +137,11 @@ NULL
 
 #' Stickiness case data
 #'
-#' An example of program stickiness data grouped by student race and sex.
+#' An data frame (32 by 6) of stickiness data grouped by student race and sex.
+#'
+#' For Civil, Electrical, Industrial, and Mechanical Engineering , the number
+#' of students ever enrolled, the number of graduates, and the resulting
+#' stickiness.
 #'
 #' @format A data frame with columns:
 #' \describe{
@@ -155,9 +163,15 @@ NULL
 
 #' Imputed starting majors for FYE students
 #'
-#' Imputed starting majors for all first-year engineering (FYE) students in the midfielddata package.
+#' Imputed starting majors for 6000 first-year engineering (FYE) students in
+#' the midfielddata package.
 #'
-#' Some US institutions have first year engineering (FYE) programs---typically a common first year curriculum that is a prerequisite for declaring an engineering major. For some persistence metrics, we have to determine what we call a "starting major" for FYE students---the predicted engineering program such as Civil, Electrical, or Mechanical, the student would have declared had they not been required to enroll in FYE.
+#' Some US institutions have first year engineering (FYE) programs---typically
+#' a common first year curriculum that is a prerequisite for declaring an
+#' engineering major. For some persistence metrics, we have to determine what
+#' we call a "starting major" for FYE students---the predicted engineering
+#' program such as Civil, Electrical, or Mechanical, the student would have
+#' declared had they not been required to enroll in FYE.
 #'
 #' @format A data frame with columns:
 #' \describe{
