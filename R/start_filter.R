@@ -3,9 +3,10 @@
 #' @importFrom stringr str_c
 NULL
 
-#' Filter student data to find student starting majors
+#' Filter student data for starting students
 #'
-#' Filter student data to find student starting majors
+#' Filter entering student data to find all students starting in specified
+#' programs.
 #'
 #' To use this function, the \code{midfielddata} package must be installed
 #' to provide \code{midfieldstudents}, the default reference data set.

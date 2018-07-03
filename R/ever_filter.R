@@ -4,7 +4,7 @@
 #' @importFrom wrapr stop_if_dot_args let
 NULL
 
-#' Filter ever-enrolled students
+#' Filter term data for enrolled students
 #'
 #' Filter academic term data to find all students ever enrolled in specified
 #' programs.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/grad_filter.R
 \name{grad_filter}
 \alias{grad_filter}
-\title{Gather graduates}
+\title{Filter degree data for graduating students}
 \usage{
 grad_filter(series, ..., reference = NULL, id = "id", cip6 = "cip6",
   term = "term_degree")
@@ -26,7 +26,7 @@ CIP codes, and terms are obtained, default \code{midfielddegrees}}
 Data frame with character variables for student ID and program CIP
 }
 \description{
-Filter academic term data to find all students graduating from specified
+Filter academic degree data to find all students graduating from specified
 programs.
 }
 \details{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/ever_filter.R
 \name{ever_filter}
 \alias{ever_filter}
-\title{Filter ever-enrolled students}
+\title{Filter term data for enrolled students}
 \usage{
 ever_filter(series, ..., reference = NULL, id = "id", cip6 = "cip6",
   term = "term")

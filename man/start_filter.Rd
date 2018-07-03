@@ -2,7 +2,7 @@
 % Please edit documentation in R/start_filter.R
 \name{start_filter}
 \alias{start_filter}
-\title{Filter student data to find student starting majors}
+\title{Filter student data for starting students}
 \usage{
 start_filter(series, ..., reference = NULL, id = "id", cip6 = "cip6")
 }
@@ -25,7 +25,8 @@ Data frame with character variables for student ID and CIP of the
 starting program
 }
 \description{
-Filter student data to find student starting majors
+Filter entering student data to find all students starting in specified
+programs.
 }
 \details{
 To use this function, the \code{midfielddata} package must be installed

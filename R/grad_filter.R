@@ -4,9 +4,9 @@
 #' @importFrom wrapr stop_if_dot_args let
 NULL
 
-#' Gather graduates
+#' Filter degree data for graduating students
 #'
-#' Filter academic term data to find all students graduating from specified
+#' Filter academic degree data to find all students graduating from specified
 #' programs.
 #'
 #' To use this function, the \code{midfielddata} package must be installed to

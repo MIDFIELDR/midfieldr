@@ -8,6 +8,8 @@ vignette: >
 editor_options: 
   chunk_output_type: console
 bibliography: ../inst/REFERENCES.bib
+resource_files:
+  - ../man/figures/grad-rate-fig1-1.png
 ---
 
 ```{r setup, echo = FALSE, message = FALSE, purl = FALSE}
@@ -144,7 +146,7 @@ isTRUE(nrow(started) == length(unique(started[["id"]])))
 
 ## grad_filter()
 
-Next we gather the graduates in out program group, but restrict ourselves to students who graduate in the same program in which they started. 
+Next we gather the graduates in our program group, but restrict ourselves to students who graduate in the same program in which they started. 
 
 We use `grad_filter()` to search the  `midfielddegrees` dataset using the  programs listed in `program_series`.
 
@@ -174,16 +176,16 @@ Before joining, we first change the `cip6` variable to `start` and `grad` in the
 In the join, we keep all starters and we keep only those graduates whose ID is also in the starters. 
 
 ```{r}
-start_series <- started[["id"]] %.>% 
-	glimpse(.)
+start_series <- started[["id"]] %.>%
+  glimpse(.)
 
-collapse_series <- stringr::str_c(start_series, collapse = "|") 
+collapse_series <- stringr::str_c(start_series, collapse = "|")
 
 graduated <- dplyr::filter(
-	graduated,
-	stringr::str_detect(id, collapse_series)
-	) %.>% 
-	print(.)
+  graduated,
+  stringr::str_detect(id, collapse_series)
+) %.>%
+  print(.)
 ```
 
 Join race and sex to both data frames, and the program names.  
@@ -196,13 +198,13 @@ grouping_variables <- c("program", "race", "sex")
 started <- started %.>%
   race_sex_join(.) %.>%
   left_join(., program_group, by = "cip6") %.>%
-  group_summarize(., grouping_variables, "start" = n()) %.>% 
-	print(.)
+  group_summarize(., grouping_variables, "start" = n()) %.>%
+  print(.)
 graduated <- graduated %.>%
   race_sex_join(.) %.>%
   left_join(., program_group, by = "cip6") %.>%
-  group_summarize(., grouping_variables, "grad" = n()) %.>% 
-	print(.)
+  group_summarize(., grouping_variables, "grad" = n()) %.>%
+  print(.)
 ```
 
 And join the two data frames
@@ -211,8 +213,8 @@ And join the two data frames
 # tally stickiness, by group
 grad_rate <- left_join(started, graduated, by = grouping_variables) %.>%
   filter(., start > 5) %.>%
-  mutate(.,  rate = round(grad / start, 2)) %.>% 
-	print(.)
+  mutate(., rate = round(grad / start, 2)) %.>%
+  print(.)
 ```
 
 Graph
