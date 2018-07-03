@@ -1,4 +1,4 @@
-context("start_filter")
+context("starter_filter")
 
 library(dplyr)
 
@@ -14,13 +14,13 @@ ref4 <- rename(case_fye, mid = id, start = cip6)
 test_that("Error if incorrect series argument", {
 
 	expect_error(
-		start_filter(series = NULL),
+		starter_filter(series = NULL),
 		"series cannot be NULL",
 		fixed = TRUE
 	)
 
 	expect_error(
-		start_filter(series = x_cip6_col),
+		starter_filter(series = x_cip6_col),
 		"series must be an atomic variable",
 		fixed = TRUE
 	)
@@ -30,25 +30,25 @@ test_that("Error if incorrect series argument", {
 test_that("error produced if ... incorrectly used", {
 
 	expect_error(
-		start_filter(x_cip6, x_cip6),
-		"gather_ever unexpected arguments")
+		starter_filter(x_cip6, x_cip6),
+		"unexpected arguments")
 
 	})
 
 test_that("reference produces expected results", {
 
 	expect_equal(
-		start_filter(series = x_cip6_atom, reference = ref1),
-		start_filter(series = x_cip6_atom, reference = ref2)
+		starter_filter(series = x_cip6_atom, reference = ref1),
+		starter_filter(series = x_cip6_atom, reference = ref2)
 		)
 
 	expect_error(
-		start_filter(x_cip6_atom, reference = ref3),
+		starter_filter(x_cip6_atom, reference = ref3),
 		"reference must be a data frame or tbl"
 		)
 
 	expect_named(
-		start_filter(series = x_cip6_atom, reference = NULL),
+		starter_filter(series = x_cip6_atom, reference = NULL),
 		c("id", "cip6"),
 		ignore.order = TRUE, ignore.case = FALSE
 		)
@@ -58,13 +58,13 @@ test_that("reference produces expected results", {
 test_that("alternate id and cip6 work", {
 
 	expect_named(
-		start_filter(series = "140201", reference = case_fye),
+		starter_filter(series = "140201", reference = case_fye),
 		expected = c("id", "cip6"),
 		ignore.order = TRUE
 	)
 
 	expect_named(
-		start_filter(
+		starter_filter(
 			series = "140201",
 			reference = ref4,
 			id = "mid",
@@ -75,7 +75,7 @@ test_that("alternate id and cip6 work", {
 	)
 
 	expect_error(
-		start_filter(
+		starter_filter(
 			series = "140201",
 			reference = ref4,
 			cip6 = "start"
@@ -84,7 +84,7 @@ test_that("alternate id and cip6 work", {
 	)
 
 	expect_error(
-		start_filter(
+		starter_filter(
 			series = "140201",
 			reference = ref4,
 			id = "mid"
