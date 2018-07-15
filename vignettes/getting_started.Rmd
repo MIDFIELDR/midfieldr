@@ -1,0 +1,229 @@
+---
+title: "Getting started"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: ../inst/REFERENCES.bib
+---
+
+```{r setup, echo = FALSE, message = FALSE, purl = FALSE}
+knitr::opts_knit$set(root.dir = "../")
+knitr::opts_chunk$set(
+  echo = TRUE, # varies from one Rmd to another
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = TRUE,
+  purl = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center",
+  fig.path = "../man/figures/cip-filter-"
+)
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+options(tibble.print_min = 8L, tibble.print_max = 8L)
+
+# normally, purl is FALSE. But in some code chunks, I want purl = TRUE so that the code in the vignette is executed to pass R CMD check. These next few lines set that up. In the code chunk header, add opts.label = 'dopurl'
+knitr::knit_hooks$set(purl = knitr::hook_purl)
+knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
+```
+
+To introduce using the package, we present a brief but thorough example that starts with student unit-record data and concludes with a graphical comparison of program "stickiness" with students grouped by program, race, and sex. 
+
+Stickiness is the ratio of the number of students graduating from a program to the number ever enrolled in the program [@stickiness2012]. We compare the stickiness of three programs: Chemical Engineering, Electrical Engineering, and Industrial Engineering. 
+
+## Really getting started
+
+To install R and RStudio, try these links for help, 
+
+- [Installing R and RStudio](https://github.com/DSR-RHIT/install-R-and-RStudio), Richard Layton, Rose-Hulman Institute of Technology  
+- [All the R things](http://stat545.com/topics.html), Jenny Bryan, RStudio and University of British Columbia   
+- [R tutorials](http://kbroman.org/pages/tutorials.html), Karl Broman, University of Wisconsin Madison 
+
+To install midfielddata and midfieldr, 
+
+- See our [installation instructions](index.html)  
+
+We recommend you always work within an R Project, 
+
+- [RStudio Project](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects).
+
+With all that overhead out of the way, you are ready to install the following packages 
+
+```{r eval=FALSE}
+install.packages(dplyr)
+install.packages(ggplot2)
+install.packages(seplyr)
+```
+
+
+## Select programs to study
+
+Within your R project, open a new R script and load the packages using 
+
+```{r packages}
+library(dplyr)
+library(ggplot2)
+library(midfieldr)
+library(seplyr)
+```
+
+We use `cip_filter()` to search the `cip` dataset first for "Engineering" and then filter the result for "Chemical", "Electrical", and "Industrial". 
+ 
+```{r first-cip-search, echo = -1}
+options(tibble.print_min = 10L)
+cip_filter(series = "Engineering") %>%
+  cip_filter(
+    series = c("Chemical", "Electrical", "Industrial"),
+    reference = .
+  ) %>%
+  print()
+```
+
+The results show that the codes we want are 1407 Chemical Engineering, 1410  Electrical Engineering, and 1435 Industrial Engineering.
+
+We extract the series for each major and assign our own program label using `cip_label()`. We can assign the default code name, e.g., using "cip4name" or we can assign our own label. Here for example, I've used "Electrical Engineering" instead of the longer, default 4-digit code name "Electrical/Electronics and Communications Engineering." 
+
+```{r extract-cip}
+set1 <- cip_filter(series = "^1407") %>%
+  cip_label(program = "cip4name")
+set2 <- cip_filter(series = "^1410") %>%
+  cip_label(program = "Electrical Engineering")
+set3 <- cip_filter(series = "^1435") %>%
+  cip_label(program = "cip4name")
+```
+
+Combine the data frames. 
+
+```{r group-cip}
+program_group <- bind_rows(set1, set2, set3) %>%
+  print()
+```
+
+
+## Count the students  
+
+First we extract the 6-digit CIP codes from our program group to use as search terms. 
+
+```{r}
+program_group_cip6 <- program_group[["cip6"]]
+```
+
+Use `ever_filter()` to access the `midfieldterms` dataset and extract all students who ever enrolled in these programs. Use `race_sex_join()` to access the `midfieldstudents` dataset and append students' race and sex to the data frame. 
+
+```{r gather-ever}
+students <- ever_filter(series = program_group_cip6) %>%
+  race_sex_join() %>%
+  print()
+```
+
+Next we join our custom program names to the student data.
+
+```{r}
+students <- left_join(students, program_group, by = "cip6") %>%
+  print()
+```
+
+We create a vector of grouping variables and use the seplyr `group_summarize()` function to count the numbers of students ever enrolled in these programs. We define the new variable `ever` to denote the count. 
+
+```{r}
+grouping_variables <- c("program", "race", "sex")
+
+ever_enrolled <- students %>%
+  group_summarize(grouping_variables, ever = n()) %>%
+  print()
+```
+
+Following similar steps, we use `grad_filter()` to access the `midfielddegrees` dataset and extract all students who graduated from these programs. We group and summarize the counts using `grad` as the new count variable. 
+
+```{r grad}
+graduated <- grad_filter(series = program_group_cip6) %>%
+  race_sex_join() %>%
+  left_join(program_group, by = "cip6") %>%
+  group_summarize(grouping_variables, grad = n())
+```
+
+## Compute the metric
+
+We join the two data frames by the grouping variables. 
+
+```{r}
+stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables)
+```
+
+We suggest omitting observations with 5 or fewer students ever enrolled. 
+
+```{r}
+stickiness <- stickiness %>%
+  filter(ever > 5)
+```
+
+And we compute stickiness, the ratio of `grad` to `ever`. 
+
+```{r}
+stickiness <- stickiness %>%
+  mutate(stick = round(grad / ever, 3)) %>%
+  print()
+```
+
+## Graph the results
+
+To prepare the stickiness data for graphing, we remove ambiguous race levels (Unknown, International, or Other) and then combine race and sex into a single variable. 
+
+```{r prep-data}
+stickiness_mw <- stickiness %>%
+  filter(!race %in% c("Unknown", "International", "Other")) %>%
+  filter(!sex %in% "Unknown") %>%
+  mutate(race_sex = paste(race, sex))
+```
+
+We graph these results in a *multiway dot plot* [@cleveland1993], a display type based on a data structure of two categorical variables (program and race/ethnicity/sex) and one quantitative variable (stickiness). 
+
+`multiway_order()` converts the two categorical variables to factors and orders their levels by median stickiness.
+
+```{r multiway-order}
+stickiness_mw <- stickiness_mw %>%
+  select(program, race_sex, stick) %>%
+  multiway_order(return_medians = TRUE) %>%
+  print()
+```
+
+We use conventional ggplot2 functions to graph stickiness in a multiway dot plot. We also apply our own `theme_midfield()` to edit the visual properties of the graph.
+
+```{r fig1, fig.asp = 1.6/1.6}
+ggplot(stickiness_mw, aes(x = stick, y = race_sex)) +
+  facet_wrap(~program, ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(x = "Stickiness", y = "") +
+  theme_midfield()
+```
+
+The ordering of the rows and panels of the multiway plot tell us that for these three engineering majors, Industrial Engineering has the greatest stickiness and Electrical the least; that Asian men have the greatest stickiness and Native American Women the least. The visual anomalies are White women in Electrical with lower stickiness than expected by the ranking overall and Asian men in Chemical, also lower than expected. 
+
+Results will vary depending on the programs one compares. Variations can also be expected if one uses the whole population data available to MIDFIELD member institutions. 
+
+
+## Next steps
+
+The individual [vignettes](https://midfieldr.github.io/midfieldr/articles/index.html) provide a more thorough illustration of each function.  
+
+
+
+
+
+## References
+

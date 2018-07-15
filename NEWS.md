@@ -1,4 +1,10 @@
 
+## midfieldr 0.1.0.9001 / 2018-07-15
+
+- add Getting started vignette 
+- edit Readme 
+
+
 ## midfieldr 0.1.0.9000 / 2018-07-03
 
 - add starter_filter() 

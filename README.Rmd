@@ -50,7 +50,11 @@ unpack_data <- function(x = data_bits, bit, power10 = 0, decimals = 0) {
 ```
 
 
-# midfieldr <a href="https://engineering.purdue.edu/MIDFIELD" target="blank"><img src="man/figures/midfieldcut.png" align="right"/></a>
+# midfieldr <span class="border-wrap"><img src="man/figures/midfieldhex04.png" align="right" height="122" width="106" alt="logo.png"></span>
+
+
+
+
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/midfieldr)](http://cran.r-project.org/package=midfieldr)
 [![Build Status](https://travis-ci.org/MIDFIELDR/midfieldr.svg?branch=master)](https://travis-ci.org/MIDFIELDR/midfieldr)
@@ -89,9 +93,15 @@ size_courses <- unpack_data(bit = "size_courses", power10 = 6)
 
 A package for investigating student record data provided by registrars at US universities participating in the MIDFIELD project. 
 
-midfieldr provides access to [midfielddata](https://midfieldr.github.io/midfielddata/), a data package containing a stratified sample of the MIDFIELD database. The sample comprises demographic, term, course, and degree information for `r obs_students` undergraduate students from `r year_min` to `r year_max`.
+Analytical tools for research in student pathways are generally scarce. midfieldr provides an entry to this type of intersectional research for anyone with basic proficiency in R and familiarity with packages from the tidyverse. 
 
-midfieldr provides functions for investigating these data to determine  persistence metrics such as graduation rates or program stickiness and for grouping findings by institution, program, sex, and race/ethnicity. The goal of the package is to share data, methods, and metrics for intersectional research in student persistence.
+midfieldr provides access to [midfielddata](https://midfieldr.github.io/midfielddata/), a data package containing a stratified sample of the MIDFIELD database. The sample comprises demographic, term, course, and degree information for `r obs_students` undergraduate students from `r year_min` to `r year_max`. The purpose of creating these packages is to share our data, methods, and metrics for intersectional research in student persistence. Potential audiences include:  
+
+- Researchers interested in student persistence metrics, especially if they are R novices 
+- Institutional researchers responsible for reporting student persistence metrics 
+- Statistics instructors looking for new data for their students explore 
+
+
 
 ## Installation
 
@@ -130,154 +140,18 @@ The midfielddata package contains the four datasets that comprise a stratified s
 
 ## Usage
 
-To introduce using the package, we show how to determine program "stickiness,"  the ratio of the number of students graduating from a program to the number ever enrolled in the program [@stickiness2012]. We compare the stickiness of three programs: Chemical Engineering, Electrical Engineering, and Industrial Engineering. 
+It's hard to succinctly describe how midfieldr works because going from raw unit-records to a grouped and summarized persistence metric entails a number of operations. However, in most cases, you start with a metric and a set of academic programs in mind and follow steps something like this, using a combination of functions from the tidyverse and specialized functions from midfieldr: 
 
-For more detail, please see the individual [vignettes](https://midfieldr.github.io/midfieldr/articles/index.html). 
+- cip_filter() to select programs from the CIP data 
+- cip_label() to add custom program labels for grouping 
+- ever_filter(), grad_filter(), etc. to identify students 
+- race_sex_join() to join student sex and race 
+- group_by() and summarize() to count students 
+- join() and mutate() to compute a persistence metric  
+- multiway_order() to prepare the results for graphing 
+- ggplot() to graph the metric 
 
-midfieldr/articles/index.html
-
-Packages to install and load: 
-
-```{r packages}
-library(dplyr)
-library(ggplot2)
-library(midfieldr)
-library(seplyr)
-```
-
-**Step 1. Select programs to study**
-
-We use `cip_filter()` to search the `cip` dataset first for "Engineering" and then filter the result for "Chemical", "Electrical", and "Industrial". 
- 
-```{r first-cip-search, echo = -1}
-options(tibble.print_min = 10L)
-cip_filter(series = "Engineering") %.>%
-  cip_filter(
-    series = c("Chemical", "Electrical", "Industrial"),
-    reference = .
-  ) %.>%
-  print(.)
-```
-
-The results show that the codes we want are 1407 Chemical Engineering, 1410  Electrical Engineering, and 1435 Industrial Engineering.
-
-We extract the series for each major and assign our own program label using `cip_label()`. We can assign the default code name, e.g., using "cip4name" or we can assign our own label. Here for example, I've used "Electrical Engineering" instead of the longer, default 4-digit code name "Electrical/Electronics and Communications Engineering." 
-
-```{r extract-cip}
-set1 <- cip_filter(series = "^1407") %.>%
-  cip_label(., program = "cip4name")
-set2 <- cip_filter(series = "^1410") %.>%
-  cip_label(., program = "Electrical Engineering")
-set3 <- cip_filter(series = "^1435") %.>%
-  cip_label(., program = "cip4name")
-```
-
-Combine the data frames. 
-
-```{r group-cip}
-program_group <- bind_rows(set1, set2, set3) %.>%
-  print(.)
-```
-
-
-**Step 2. Gather the data and compute the metric**
-
-First we extract the 6-digit CIP codes from our program group to use as search terms. 
-
-```{r}
-program_group_cip6 <- program_group[["cip6"]]
-```
-
-Use `ever_filter()` to access the `midfieldterms` dataset and extract all students who ever enrolled in these programs. Use `race_sex_join()` to access the `midfieldstudents` dataset and append students' race and sex to the data frame. 
-
-```{r gather-ever}
-students <- ever_filter(series = program_group_cip6) %.>%
-  race_sex_join(.) %.>%
-  print(.)
-```
-
-Next we join our custom program names to the student data.
-
-```{r}
-students <- left_join(students, program_group, by = "cip6") %.>%
-  print(.)
-```
-
-We create a vector of grouping variables and use the seplyr `group_summarize()` function to count the numbers of students ever enrolled in these programs. We define the new variable `ever` to denote the count. 
-
-```{r}
-grouping_variables <- c("program", "race", "sex")
-
-ever_enrolled <- students %.>%
-  group_summarize(., grouping_variables, ever = n()) %.>%
-  print(.)
-```
-
-Following similar steps, we use `grad_filter()` to access the `midfielddegrees` dataset and extract all students who graduated from these programs. We group and summarize the counts using `grad` as the new count variable. 
-
-```{r grad}
-graduated <- grad_filter(series = program_group_cip6) %.>%
-  race_sex_join(.) %.>%
-  left_join(., program_group, by = "cip6") %.>%
-  group_summarize(., grouping_variables, grad = n())
-```
-
-We join the two data frames by the grouping variables. 
-
-```{r}
-stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables)
-```
-
-We suggest omitting observations with 5 or fewer students ever enrolled. 
-
-```{r}
-stickiness <- stickiness %.>%
-  filter(., ever > 5)
-```
-
-And we compute stickiness, the ratio of `grad` to `ever`. 
-
-```{r}
-stickiness <- stickiness %.>%
-  mutate(., stick = round(grad / ever, 3)) %.>%
-  print(.)
-```
-
-**Step 3. Graph the results**
-
-To prepare the stickiness data for graphing, we remove ambiguous race levels (Unknown, International, or Other) and then combine race and sex into a single variable. 
-
-```{r prep-data}
-stickiness_mw <- stickiness %.>%
-  filter(., !race %in% c("Unknown", "International", "Other")) %.>%
-  filter(., !sex %in% "Unknown") %.>%
-  mutate(., race_sex = paste(race, sex))
-```
-
-We graph these results in a *multiway dot plot* [@cleveland1993], a display type based on a data structure of two categorical variables (program and race/ethnicity/sex) and one quantitative variable (stickiness). 
-
-`multiway_order()` converts the two categorical variables to factors and orders their levels by median stickiness.
-
-```{r multiway-order}
-stickiness_mw <- stickiness_mw %.>%
-  select(., program, race_sex, stick) %.>%
-  multiway_order(., return_medians = TRUE) %>%
-  print(.)
-```
-
-We use conventional ggplot2 functions to graph stickiness in a multiway dot plot. We also apply our own `theme_midfield()` to edit the visual properties of the graph.
-
-```{r fig1, fig.asp = 1.6/1.6}
-ggplot(stickiness_mw, aes(x = stick, y = race_sex)) +
-  facet_wrap(~program, ncol = 1, as.table = FALSE) +
-  geom_point(na.rm = TRUE) +
-  labs(x = "Stickiness", y = "") +
-  theme_midfield()
-```
-
-The ordering of the rows and panels of the multiway plot tell us that for these three engineering majors, Industrial Engineering has the greatest stickiness and Electrical the least; that Asian men have the greatest stickiness and Native American Women the least. The visual anomalies are White women in Electrical with lower stickiness than expected by the ranking overall and Asian men in Chemical, also lower than expected. 
-
-Results will vary depending on the programs one compares. Variations can also be expected if one uses the whole population data available to MIDFIELD member institutions. 
+A short but complete example is provided in the [Getting started](getting_started.html) vignette. 
 
 ## Meta
 
@@ -285,4 +159,4 @@ Results will vary depending on the programs one compares. Variations can also be
 - Get citation information with `citation("midfieldr")` 
 - Please note that this project is released with a [Code of Conduct](https://midfieldr.github.io/midfieldr/CONDUCT.html). If you contribute to this project you agree to abide by its terms. 
 
-## References
+
