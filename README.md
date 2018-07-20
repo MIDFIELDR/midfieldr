@@ -101,7 +101,7 @@ specialized functions from midfieldr:
   - ggplot() to graph the metric
 
 A short but complete example is provided in the [Getting
-started](getting_started.html) vignette.
+started](articles/getting_started.html) vignette.
 
 ## Meta
 
