@@ -53,50 +53,52 @@ race_sex_join <- function(data, ..., reference = NULL, id = "id", race = "race",
     reference <- midfielddata::midfieldstudents
   }
 
-	# addresses R CMD check warning "no visible binding"
-	ID   <- NULL
-	RACE <- NULL
-	SEX  <- NULL
+  # addresses R CMD check warning "no visible binding"
+  ID <- NULL
+  RACE <- NULL
+  SEX <- NULL
 
-	# use wrapr::let() to allow alternate column names
+  # use wrapr::let() to allow alternate column names
 
-	wrapr::let(
-		alias = c(ID = id, RACE = race, SEX = sex),
-		expr = {
-			if (isFALSE(ID%in% names(data))) {
-				stop("midfieldr::race_sex_join, id missing from data")
-			}
+  wrapr::let(
+    alias = c(ID = id, RACE = race, SEX = sex),
+    expr = {
+      if (isFALSE(ID %in% names(data))) {
+        stop("midfieldr::race_sex_join, id missing from data")
+      }
 
-			if (isFALSE(ID %in% names(reference) ||
-									RACE %in% names(reference) ||
-									SEX %in% names(reference))) {
-				stop(paste("midfieldr::race_sex_join, id, race, or sex",
-									 "missing from reference data")
-						 )
-			}
+      if (isFALSE(ID %in% names(reference) ||
+        RACE %in% names(reference) ||
+        SEX %in% names(reference))) {
+        stop(paste(
+          "midfieldr::race_sex_join, id, race, or sex",
+          "missing from reference data"
+        ))
+      }
 
-			# if race and sex both exist, do not overwrite
-			if (isTRUE(SEX %in% names(data)) && isTRUE(RACE %in% names(data))) {
-				return(data)
-			} else {
-				all_id_race_sex <- dplyr::select(reference, ID, RACE, SEX)
-			}
-			if (isTRUE(race %in% names(data))) {
-				all_id_race_sex <- dplyr::select(all_id_race_sex, ID, SEX)
-			}
-			if (isTRUE(sex %in% names(data))) {
-				all_id_race_sex <- dplyr::select(all_id_race_sex, ID, RACE)
-			}
+      # if race and sex both exist, do not overwrite
+      if (isTRUE(SEX %in% names(data)) && isTRUE(RACE %in% names(data))) {
+        return(data)
+      } else {
+        all_id_race_sex <- dplyr::select(reference, ID, RACE, SEX)
+      }
+      if (isTRUE(race %in% names(data))) {
+        all_id_race_sex <- dplyr::select(all_id_race_sex, ID, SEX)
+      }
+      if (isTRUE(sex %in% names(data))) {
+        all_id_race_sex <- dplyr::select(all_id_race_sex, ID, RACE)
+      }
 
-			# were all IDs matched? anti_join(): return all rows from x where there
-			# are not matching values in y, keeping just columns from x.
-			mismatch <- dplyr::anti_join(data, all_id_race_sex, by = ID)
-			if (isFALSE(identical(nrow(mismatch), 0L))) {
-				stop("midfieldr::race_sex_join, id mismatch between data and reference")
-			}
+      # were all IDs matched? anti_join(): return all rows from x where there
+      # are not matching values in y, keeping just columns from x.
+      mismatch <- dplyr::anti_join(data, all_id_race_sex, by = ID)
+      if (isFALSE(identical(nrow(mismatch), 0L))) {
+        stop("midfieldr::race_sex_join, id mismatch between data and reference")
+      }
 
-			# join race and or sex by id
-			data <- dplyr::left_join(data, all_id_race_sex, by = ID)
-		})
+      # join race and or sex by id
+      data <- dplyr::left_join(data, all_id_race_sex, by = ID)
+    }
+  )
 }
 "race_sex_join"

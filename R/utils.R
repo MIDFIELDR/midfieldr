@@ -32,8 +32,3 @@ NULL
   }
   assign("has_data", has_data_package, envir = .pkgglobalenv)
 }
-
-
-
-
-

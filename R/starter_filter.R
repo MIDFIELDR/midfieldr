@@ -44,12 +44,12 @@ NULL
 #'
 #' @export
 starter_filter <- function(series, ..., reference = NULL, id = "id", cip6 = "cip6") {
-	if (!.pkgglobalenv$has_data) {
-		stop(paste(
-			"To use this function, you must have",
-			"the midfielddata package installed."
-		))
-	}
+  if (!.pkgglobalenv$has_data) {
+    stop(paste(
+      "To use this function, you must have",
+      "the midfielddata package installed."
+    ))
+  }
 
   # force optional arguments to be usable only by name
   wrapr::stop_if_dot_args(substitute(list(...)), "gather_ever")
@@ -73,30 +73,32 @@ starter_filter <- function(series, ..., reference = NULL, id = "id", cip6 = "cip
 
   # ensure that the id and cip6 match the names of reference
   if (!id %in% names(reference)) {
-  	stop("midfieldr::start_filter, use the id argument for non-default name")
-  	}
+    stop("midfieldr::start_filter, use the id argument for non-default name")
+  }
   if (!cip6 %in% names(reference)) {
-  	stop("midfieldr::start_filter, use the cip6 argument for non-default name")
+    stop("midfieldr::start_filter, use the cip6 argument for non-default name")
   }
 
   # search terms in a single string
   collapse_series <- stringr::str_c(series, collapse = "|")
 
   # addresses R CMD check warning "no visible binding"
-  ID   <- NULL
+  ID <- NULL
   CIP6 <- NULL
 
   # use wrapr::let() to allow alternate column names
   wrapr::let(
-  	alias = c(ID = id, CIP6 = cip6),
-  	expr = {
+    alias = c(ID = id, CIP6 = cip6),
+    expr = {
 
-  		# filter for data for specified programs
-  		students <- dplyr::select(reference, ID, CIP6)
-  		students <- dplyr::filter(students,
-  															stringr::str_detect(CIP6, collapse_series))
-
-  		})
+      # filter for data for specified programs
+      students <- dplyr::select(reference, ID, CIP6)
+      students <- dplyr::filter(
+        students,
+        stringr::str_detect(CIP6, collapse_series)
+      )
+    }
+  )
   students
 }
 "starter_filter"

@@ -52,8 +52,7 @@ NULL
 #'
 #' @export
 ever_filter <- function(
-	series, ..., reference = NULL, id = "id", cip6 = "cip6", term = "term"
-	) {
+                        series, ..., reference = NULL, id = "id", cip6 = "cip6", term = "term") {
   if (!.pkgglobalenv$has_data) {
     stop(paste(
       "To use this function, you must have",
@@ -85,29 +84,33 @@ ever_filter <- function(
   collapse_series <- stringr::str_c(series, collapse = "|")
 
   # addresses R CMD check warning "no visible binding"
-  ID   <- NULL
+  ID <- NULL
   CIP6 <- NULL
   TERM <- NULL
 
   # use wrapr::let() to allow alternate column names
   mapping <- c(ID = id, CIP6 = cip6, TERM = term)
-  wrapr::let(alias = mapping,
-  		expr = {
-  			# filter for data for specified programs
-  			students <- dplyr::select(reference, ID, CIP6, TERM)
-  			students <- dplyr::filter(students,
-  																stringr::str_detect(CIP6, collapse_series))
+  wrapr::let(
+    alias = mapping,
+    expr = {
+      # filter for data for specified programs
+      students <- dplyr::select(reference, ID, CIP6, TERM)
+      students <- dplyr::filter(
+        students,
+        stringr::str_detect(CIP6, collapse_series)
+      )
 
-  			# keep the first term of unique combinations of id and cip6
-  			students <- dplyr::arrange(students, ID, TERM)
-  			students <- dplyr::group_by(students, ID, CIP6)
-  			students <- dplyr::filter(students, dplyr::row_number() == 1)
-  			students <- dplyr::ungroup(students)
+      # keep the first term of unique combinations of id and cip6
+      students <- dplyr::arrange(students, ID, TERM)
+      students <- dplyr::group_by(students, ID, CIP6)
+      students <- dplyr::filter(students, dplyr::row_number() == 1)
+      students <- dplyr::ungroup(students)
 
-  			# clean up before return (dop_na and unique just in case)
-  			students <- dplyr::select(students, ID, CIP6)
-  			students <- tidyr::drop_na(students)
-  			students <- unique(students)
-  		})
+      # clean up before return (dop_na and unique just in case)
+      students <- dplyr::select(students, ID, CIP6)
+      students <- tidyr::drop_na(students)
+      students <- unique(students)
+    }
+  )
 }
 "ever_filter"

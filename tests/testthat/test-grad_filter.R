@@ -41,13 +41,12 @@ test_that("Optional data argument returns correct values", {
 })
 
 test_that("Reference data can have different column names", {
-	expect_equal(
-		grad_filter("030506", reference = ref1)[["id"]],
-		grad_filter("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altID"]]
-	)
-	expect_equal(
-		grad_filter("030506", reference = subset_degrees)[["cip6"]],
-		grad_filter("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altCIP6"]]
-	)
-
+  expect_equal(
+    grad_filter("030506", reference = ref1)[["id"]],
+    grad_filter("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altID"]]
+  )
+  expect_equal(
+    grad_filter("030506", reference = subset_degrees)[["cip6"]],
+    grad_filter("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altCIP6"]]
+  )
 })

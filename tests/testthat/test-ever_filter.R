@@ -40,13 +40,12 @@ test_that("Optional reference argument returns correct values", {
 })
 
 test_that("Reference data can have different column names", {
-	expect_equal(
-		ever_filter("030506", reference = ref1)[["id"]],
-		ever_filter("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altID"]]
-		)
-	expect_equal(
-		ever_filter("030506", reference = subset_terms)[["cip6"]],
-		ever_filter("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altCIP6"]]
-	)
-
+  expect_equal(
+    ever_filter("030506", reference = ref1)[["id"]],
+    ever_filter("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altID"]]
+  )
+  expect_equal(
+    ever_filter("030506", reference = subset_terms)[["cip6"]],
+    ever_filter("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altCIP6"]]
+  )
 })

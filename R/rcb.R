@@ -19,14 +19,14 @@ NULL
 #' @export
 rcb <- function(pattern) {
 
-	# indicate these are not unbpund symbols, helps with R CMD check
-	rcb_code <- NULL
-	rcb_name <- NULL
+  # indicate these are not unbpund symbols, helps with R CMD check
+  rcb_code <- NULL
+  rcb_name <- NULL
 
-	# experimenting with removing pipes
-	x <- rcb_colors
-	x <- filter(x, str_detect(rcb_name, pattern))
-	x <- select(x, rcb_code)
-	x <- unlist(x, use.names = FALSE)
-	hex_code <- x
+  # experimenting with removing pipes
+  x <- rcb_colors
+  x <- filter(x, str_detect(rcb_name, pattern))
+  x <- select(x, rcb_code)
+  x <- unlist(x, use.names = FALSE)
+  hex_code <- x
 }
