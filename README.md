@@ -38,17 +38,15 @@ include:
 
 ## Installation
 
-midfieldr depends on midfielddata, a data package available from a [drat
-repository](https://midfieldr.github.io/drat/) on GitHub. Install
-midfielddata before installing midfieldr.
+Install midfielddata from our drat repo. The data package is large, so
+this step takes time. Be patient and wait for the Console prompt \> to
+reappear.
 
 ``` r
-install.packages("drat")
-drat::addRepo("midfieldr")
-install.packages("midfielddata")
+install.packages("midfielddata", repos = "https://MIDFIELDR.github.io/drat/", type = "source")
 ```
 
-The development version of midfieldr can be installed from GitHub.
+Use devtools to install midfieldr from its GitHub repo
 
 ``` r
 install.packages("devtools")
