@@ -72,7 +72,7 @@ stratified sample of the MIDFIELD database.
     academic course variables. Each observation is one course in one
     term for one student. Occupies 348 Mb of memory.
 
-  - `midfieldterms` A data frame with 729,014 observations and 13
+  - `midfieldterms` A data frame with 729,104 observations and 13
     academic term variables. Each observation is one term for one
     student. Occupies 82 Mb of memory.
 
