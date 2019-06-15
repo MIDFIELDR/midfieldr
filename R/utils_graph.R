@@ -26,17 +26,16 @@ NULL
 #' @rdname utils_graph
 scale_x_log10_expon <- function() {
   scale_x_log10(
-    breaks = trans_breaks("log10", function(x)
-      10^x),
-    labels = trans_format("log10", math_format(10^.x)),
+    breaks = trans_breaks("log10", function(x) 10 ^ x),
+    labels = trans_format("log10", math_format(10 ^ .x)),
     minor_breaks = c(
-      10^0 * seq(2, 9),
-      10^1 * seq(2, 9),
-      10^2 * seq(2, 9),
-      10^3 * seq(2, 9),
-      10^4 * seq(2, 9),
-      10^5 * seq(2, 9),
-      10^6 * seq(2, 9)
+      10 ^ 0 * seq(2, 9),
+      10 ^ 1 * seq(2, 9),
+      10 ^ 2 * seq(2, 9),
+      10 ^ 3 * seq(2, 9),
+      10 ^ 4 * seq(2, 9),
+      10 ^ 5 * seq(2, 9),
+      10 ^ 6 * seq(2, 9)
     )
   )
 }

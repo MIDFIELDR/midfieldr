@@ -40,10 +40,10 @@
 #' @examples
 #' # View the CIP data
 #' cip
-#'
+#' 
 #' # View the programs at the top level of the taxonomy
-#' unique(cip[ , 1:2])
-#'
+#' unique(cip[, 1:2])
+#' 
 #' # As the reference data argument for cip_filter()
 #' cip_filter(series = "^1410", reference = cip)
 "cip"
@@ -78,7 +78,7 @@
 #' @examples
 #' head(cip_math_stat, n = 10L)
 #' head(cip_phys_sci, n = 10L)
-#'
+#' 
 #' cip_filter(cip, series = cip_math_stat)
 #' cip_filter(cip, series = cip_phys_sci)
 NULL

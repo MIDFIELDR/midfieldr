@@ -29,13 +29,13 @@ NULL
 #' # Extract the Philosophy and Religion programs and label
 #' x <- cip_filter(series = "^38")
 #' y <- cip_label(x, program = "Phil-Relig")
-#'
+#' 
 #' # The function is pipe-compatible
 #' y <- x %>% cip_label("test label")
-#'
+#' 
 #' # With no program argument, the 6-digit CIP names are assigned
 #' y <- cip_label(x)
-#'
+#' 
 #' # Argument options include
 #' y <- cip_label(x, program = "cip6name")
 #' y <- cip_label(x, program = "cip4name")
@@ -49,9 +49,11 @@ cip_label <- function(.cip, program = NULL) {
     purrr::map_chr(.cip, class)
   ))
 
-  if (is.null(program)) { # if none given
+  if (is.null(program)) {
     series <- sort(.cip$cip6)
-    if (identical(series, sort(cip_engr))) { # if a named series
+    # if none given
+    if (identical(series, sort(cip_engr))) {
+      # if a named series
       program <- "Engineering"
     } else if (identical(series, sort(cip_bio_sci))) {
       program <- "Biological and Biomedical Sciences"
@@ -63,20 +65,24 @@ cip_label <- function(.cip, program = NULL) {
       program <- "STEM"
     } else if (identical(series, sort(cip_phys_sci))) {
       program <- "Physical Sciences"
-    } else { # if not named, use 6-digit names by default
+    } else {
+      # if not named, use 6-digit names by default
       program <- .cip$cip6name
     }
-  } else { # program argument is given
-    if (identical(program, "cip2name")) { # use CIP data names
+  } else {
+    # program argument is given
+    if (identical(program, "cip2name")) {
+      # use CIP data names
       program <- .cip$cip2name
     } else if (identical(program, "cip4name")) {
       program <- .cip$cip4name
     } else if (identical(program, "cip6name")) {
       program <- .cip$cip6name
-    } else { # otherwise, use the input argument
+    } else {
+      # otherwise, use the input argument
       program <- program
     }
   }
   # add program name
-  df <- tibble::add_column(.cip, program = program)
+  return(tibble::add_column(.cip, program = program))
 }

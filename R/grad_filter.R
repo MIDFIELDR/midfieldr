@@ -48,10 +48,12 @@ NULL
 #' @examples
 #' grad <- grad_filter(series = "540104")
 #' grad
-#'
 #' @export
-grad_filter <- function(
-                        series, ..., reference = NULL, id = "id", cip6 = "cip6", term = "term_degree") {
+grad_filter <- function(series, ...,
+                        reference = NULL,
+                        id = "id",
+                        cip6 = "cip6",
+                        term = "term_degree") {
   if (!.pkgglobalenv$has_data) {
     stop(paste(
       "To use this function, you must have",

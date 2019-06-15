@@ -36,8 +36,8 @@ categorical variables.
 set.seed(20150531)
 cat1 <- rep(c("Art", "History", "Math"), each = 2)
 cat2 <- rep(c("Male", "Female"), times = 3)
-x    <- round(runif(6, min = 0.1, max = 0.7), 3)
-df1  <- tibble::data_frame(cat1, cat2, x)
+x <- round(runif(6, min = 0.1, max = 0.7), 3)
+df1 <- tibble::tibble(cat1, cat2, x)
 df1
 
 # convert characters to factors ordered by medians
@@ -49,5 +49,4 @@ df2
 df3 <- multiway_order(df1, return_medians = TRUE)
 df3 <- dplyr::arrange(df3, cat1, cat2)
 df3
-
 }

@@ -45,7 +45,6 @@ ID and starting CIP.
 }
 \examples{
 placeholder <- 2 + 3
-
 }
 \seealso{
 \code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes

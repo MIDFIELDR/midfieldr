@@ -4,7 +4,7 @@
 #' @importFrom forcats fct_reorder
 #' @importFrom rlang sym :=
 #' @importFrom stats median
-#' @importFrom tibble data_frame
+#' @importFrom tibble tibble
 NULL
 
 #' Prepare multiway data for graphing
@@ -35,8 +35,8 @@ NULL
 #' set.seed(20150531)
 #' cat1 <- rep(c("Art", "History", "Math"), each = 2)
 #' cat2 <- rep(c("Male", "Female"), times = 3)
-#' x    <- round(runif(6, min = 0.1, max = 0.7), 3)
-#' df1  <- tibble::data_frame(cat1, cat2, x)
+#' x <- round(runif(6, min = 0.1, max = 0.7), 3)
+#' df1 <- tibble::tibble(cat1, cat2, x)
 #' df1
 #'
 #' # convert characters to factors ordered by medians
@@ -48,7 +48,6 @@ NULL
 #' df3 <- multiway_order(df1, return_medians = TRUE)
 #' df3 <- dplyr::arrange(df3, cat1, cat2)
 #' df3
-#'
 #' @export
 multiway_order <- function(mw_data, return_medians = FALSE) {
   if (!(is.data.frame(mw_data) || dplyr::is.tbl(mw_data))) {
@@ -101,16 +100,11 @@ multiway_order <- function(mw_data, return_medians = FALSE) {
   # create second factor and order by the median values
   mw_data <- dplyr::left_join(mw_data, y, by = dplyr::quo_name(cat2)) %>%
     dplyr::mutate(!!cat2 := forcats::fct_reorder(!!cat2, !!med2))
-
   # conditional to include the medians in the output
   if (isTRUE(return_medians)) {
     mw_data <- mw_data
   } else {
     mw_data <- mw_data %>% select(!!cat1, !!cat2, !!value)
   }
-
-  # arrange rows by medians
-  # mw_data <- mw_data %>%
-  # 	arrange(!!cat1, !!cat2)
 }
 "multiway_order"
