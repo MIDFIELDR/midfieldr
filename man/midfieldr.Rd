@@ -3,7 +3,6 @@
 \docType{package}
 \name{midfieldr}
 \alias{midfieldr}
-\alias{midfieldr-package}
 \title{Tools for Student Records Research}
 \source{
 Data provided by the MIDFIELD project:

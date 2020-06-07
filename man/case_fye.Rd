@@ -4,11 +4,13 @@
 \name{case_fye}
 \alias{case_fye}
 \title{Imputed starting majors for FYE students}
-\format{A data frame with columns:
+\format{
+A data frame with columns:
 \describe{
  \item{id}{Unique, anonymized MIDFIELD student identifier.}
  \item{cip6}{Imputed starting major (6-digit CIP code) of FYE students. }
-}}
+}
+}
 \source{
 \href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
 }

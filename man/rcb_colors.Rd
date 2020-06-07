@@ -4,11 +4,13 @@
 \name{rcb_colors}
 \alias{rcb_colors}
 \title{Named colors from the ColorBrewer palettes}
-\format{A data frame with columns:
+\format{
+A data frame with columns:
 \describe{
   \item{rcb_name}{Character variable of names.}
   \item{rcb_code}{Character variable of hex color codes.}
-}}
+}
+}
 \source{
 Cynthia Brewer (\url{http://colorbrewer2.org}) and RColorBrewer  (\url{https://cran.r-project.org/package=RColorBrewer}).
 }

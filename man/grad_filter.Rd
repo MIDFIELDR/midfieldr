@@ -4,8 +4,14 @@
 \alias{grad_filter}
 \title{Filter degree data for graduating students}
 \usage{
-grad_filter(series, ..., reference = NULL, id = "id", cip6 = "cip6",
-  term = "term_degree")
+grad_filter(
+  series,
+  ...,
+  reference = NULL,
+  id = "id",
+  cip6 = "cip6",
+  term = "term_degree"
+)
 }
 \arguments{
 \item{series}{atomic character vector specifying the 6-digit CIP codes of

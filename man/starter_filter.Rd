@@ -4,8 +4,7 @@
 \alias{starter_filter}
 \title{Filter student data for starting students}
 \usage{
-starter_filter(series, ..., reference = NULL, id = "id",
-  cip6 = "cip6")
+starter_filter(series, ..., reference = NULL, id = "id", cip6 = "cip6")
 }
 \arguments{
 \item{series}{atomic character vector of 6-digit CIP codes specifying the

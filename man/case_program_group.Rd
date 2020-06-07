@@ -4,7 +4,8 @@
 \name{case_program_group}
 \alias{case_program_group}
 \title{CIP case data for four programs}
-\format{A tidy data frame (tibble) with 1546 observations and 6 variables.
+\format{
+A tidy data frame (tibble) with 1546 observations and 6 variables.
 All variables are characters. An observation is a unique program.
 \describe{
   \item{cip2}{An instructional program's 2-digit code,  representing "the
@@ -19,7 +20,8 @@ All variables are characters. An observation is a unique program.
   "specific instructional programs".}
   \item{cip6name}{Name of a program at the 6-digit level}
   \item{program}{A program name.}
-}}
+}
+}
 \source{
 \href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
 }

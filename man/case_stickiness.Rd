@@ -4,7 +4,8 @@
 \name{case_stickiness}
 \alias{case_stickiness}
 \title{Stickiness case data}
-\format{A data frame with columns:
+\format{
+A data frame with columns:
 \describe{
  \item{program}{Instructional programs selected for study.}
  \item{race}{Student race and sex from \code{midfieldstudents} data.}
@@ -15,7 +16,8 @@
  summarized from \code{midfielddegrees} data.}
  \item{stick}{Program stickiness: the ratio of the number of students
  graduating from a program to the number ever enrolled in the program.}
-}}
+}
+}
 \source{
 \href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
 }

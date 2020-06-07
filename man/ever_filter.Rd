@@ -4,8 +4,14 @@
 \alias{ever_filter}
 \title{Filter term data for enrolled students}
 \usage{
-ever_filter(series, ..., reference = NULL, id = "id", cip6 = "cip6",
-  term = "term")
+ever_filter(
+  series,
+  ...,
+  reference = NULL,
+  id = "id",
+  cip6 = "cip6",
+  term = "term"
+)
 }
 \arguments{
 \item{series}{atomic character vector of 6-digit CIP codes specifying the

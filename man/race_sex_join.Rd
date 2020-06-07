@@ -4,8 +4,14 @@
 \alias{race_sex_join}
 \title{Join student demographics}
 \usage{
-race_sex_join(data, ..., reference = NULL, id = "id", race = "race",
-  sex = "sex")
+race_sex_join(
+  data,
+  ...,
+  reference = NULL,
+  id = "id",
+  race = "race",
+  sex = "sex"
+)
 }
 \arguments{
 \item{data}{data frame to which race and sex are to be joined by student IDs}

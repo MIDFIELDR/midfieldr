@@ -4,7 +4,8 @@
 \name{cip}
 \alias{cip}
 \title{Classification of instructional programs (CIP) data}
-\format{A tidy data frame (tibble) with 1546 observations and 6 variables.
+\format{
+A tidy data frame (tibble) with 1546 observations and 6 variables.
 All variables are characters. An observation is a unique program.
 \describe{
   \item{cip2}{An instructional program's 2-digit code,  representing "the
@@ -18,7 +19,8 @@ All variables are characters. An observation is a unique program.
   \item{cip6}{An instructional program's 6-digit code, representing
   "specific instructional programs".}
   \item{cip6name}{Name of a program at the 6-digit level.}
-}}
+}
+}
 \source{
 Based on the 2010 codes curated by the US National Center for
 Education Statistics (\url{https://nces.ed.gov/ipeds/cipcode}).
