@@ -35,5 +35,4 @@ cip_filter(series = "History") \%>\%
 cip_filter(series = "^14")
 cip_filter(series = "^14") \%>\%
   cip_filter(series = "Civil", reference = .)
-
 }

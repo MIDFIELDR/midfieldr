@@ -15,11 +15,10 @@ NULL
 #'
 #' @examples
 #' rcb("dark_Br")
-#'
 #' @export
 rcb <- function(pattern) {
 
-  # indicate these are not unbpund symbols, helps with R CMD check
+  # indicate these are not unbound symbols, helps with R CMD check
   rcb_code <- NULL
   rcb_name <- NULL
 
@@ -28,5 +27,5 @@ rcb <- function(pattern) {
   x <- filter(x, str_detect(rcb_name, pattern))
   x <- select(x, rcb_code)
   x <- unlist(x, use.names = FALSE)
-  hex_code <- x
+  return(x)
 }

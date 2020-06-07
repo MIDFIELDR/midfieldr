@@ -2,6 +2,9 @@ context("starter_filter")
 
 library(dplyr)
 
+# get_my_path() in tests/testthat/helper.R
+load(file = get_my_path("subset_students.rda"))
+
 x <- subset_students
 x_cip6_col <- x["cip6"]
 x_cip6_atom <- x[["cip6"]]

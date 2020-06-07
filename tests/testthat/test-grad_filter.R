@@ -3,6 +3,9 @@ context("grad_filter")
 library(dplyr)
 library(tidyr)
 
+# get_my_path() in tests/testthat/helper.R
+load(file = get_my_path("subset_degrees.rda"))
+
 grad1 <- grad_filter(series = "540104")
 cip6 <- grad1["cip6"]
 grad2 <- grad_filter(series = "14YYYY")
@@ -35,7 +38,7 @@ test_that("Error if incorrect series argument", {
 test_that("Optional data argument returns correct values", {
   expect_setequal(
     grad3[["cip6"]],
-    c("520301", "520201", "520101", "520801", "521099")
+    c("520201", "520801", "520601", "521101", "520901", "520301", "521301")
   )
   # expect_equal(dim(grad3), c(12, 2))
 })

@@ -58,7 +58,6 @@ variable names in the alternate.
 }
 \examples{
 ever_filter(series = "540104")
-
 }
 \seealso{
 \code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes

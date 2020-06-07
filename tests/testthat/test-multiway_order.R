@@ -1,7 +1,8 @@
 # run from devtools::test() only
-context("multiway_order")
+context("test-multiway_order")
 
 # test data df1, df2, df3, df4
+# get_my_path() in tests/testthat/helper.R
 load(file = get_my_path("test_df_01.rda"))
 
 test_that("Two character variables are converted to factors", {

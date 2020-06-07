@@ -55,7 +55,7 @@ three non-IPEDS codes:
 cip
 
 # View the programs at the top level of the taxonomy
-unique(cip[ , 1:2])
+unique(cip[, 1:2])
 
 # As the reference data argument for cip_filter()
 cip_filter(series = "^1410", reference = cip)

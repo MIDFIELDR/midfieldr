@@ -12,44 +12,46 @@ Status](https://img.shields.io/codecov/c/github/MIDFIELDR/midfieldr/master.svg)]
 [![License: GPL
 v3](man/figures/License-GPL-v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-A package for investigating student record data provided by registrars
-at US universities participating in the MIDFIELD project.
+## Tools for student records research
 
-Analytical tools for research in student pathways are generally scarce.
-midfieldr provides an entry to this type of intersectional research for
-anyone with basic proficiency in R and familiarity with packages from
-the tidyverse.
+MIDFIELD—the *Multiple-Institution Database for Investigating
+Engineering Longitudinal Development*—is a partnership of US higher
+education institutions with engineering programs. As of June, 2019,
+MIDFIELD contains registrar’s population data for 2.2M undergraduates at
+20 institutions from 1987–2017. The data are organized in four related
+tables: students, courses, terms, and degrees. The MIDFIELD population
+data set is available to partner institutions only
+[(link)](https://engineering.purdue.edu/MIDFIELD).
 
-midfieldr provides access to
-[midfielddata](https://midfieldr.github.io/midfielddata/), a data
-package containing a stratified sample of the MIDFIELD database. The
-sample comprises demographic, term, course, and degree information for
-97,640 undergraduate students from 1987 to 2016. The purpose of creating
-these packages is to share our data, methods, and metrics for
-intersectional research in student persistence. Potential audiences
-include:
+**midfieldr** is an R package that provides tools specialized for the
+midfielddata sample data set.
 
-  - Researchers interested in student persistence metrics, especially if
-    they are R novices
-  - Institutional researchers responsible for reporting student
-    persistence metrics
-  - Statistics instructors looking for new data for their students
-    explore
+**midfielddata** is an R package that provides a stratified sample of
+the MIDFIELD population data set. The sample contains data for 97,640
+undergraduates at 12 institutions from 1987–2016
+[(link)](https://midfieldr.github.io/midfielddata/).
+
+The midfielddata data dictionaries are a subset of the MIDFIELD
+dictionaries. When creating the midfielddata sample data set, some
+MIDFIELD variables were omitted and some were re-coded to preserve
+confidentiality. In general, however, scripts written for the
+midfielddata sample data set will work for the MIDFIELD population data
+set.
 
 ## Installation
 
-Install midfielddata from our drat repo. The data package is large, so
-this step takes time. Be patient and wait for the Console prompt \> to
-reappear.
+The data package is too large for CRAN, so it is stored on GitHub in a
+drat repository. Installation takes time; please be patient and wait for
+the Console prompt \> to reappear. Installation must be in the order
+shown: install midfielddata before midfieldr.
 
 ``` r
 install.packages("midfielddata", repos = "https://MIDFIELDR.github.io/drat/", type = "source")
 ```
 
-Use devtools to install midfieldr from its GitHub repo
+Install the development version of midfieldr from GitHub using:
 
 ``` r
-install.packages("devtools")
 devtools::install_github("MIDFIELDR/midfieldr")
 ```
 
@@ -59,26 +61,32 @@ The midfieldr package includes:
 
   - `cip` A data frame with 1584 observations and 6 CIP variables of
     program codes and names at the 2, 4, and 6-digit levels. Each
-    observation is a unique program. Occupies 364 kb of memory.
+    observation is a unique program. Occupies 364 kb of memory. Data
+    dictionary
+    [(link)](https://midfieldr.github.io/midfieldr/reference/cip.html).
 
 The midfielddata package contains the four datasets that comprise a
 stratified sample of the MIDFIELD database.
 
   - `midfieldstudents` A data frame with 97,640 observations and 15
     demographic variables. Each observation is a unique student.
-    Occupies 19 Mb of memory.
+    Occupies 19 Mb of memory. Data dictionary
+    [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldstudents.html).
 
-  - `midfieldcourses` A data frame with 3.5 M observations and 12
+  - `midfieldcourses` A data frame with 3,540,533 observations and 12
     academic course variables. Each observation is one course in one
-    term for one student. Occupies 348 Mb of memory.
+    term for one student. Occupies 348 Mb of memory. Data dictionary
+    [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldcourses.html).
 
   - `midfieldterms` A data frame with 727,369 observations and 13
     academic term variables. Each observation is one term for one
-    student. Occupies 82 Mb of memory.
+    student. Occupies 82 Mb of memory. Data dictionary
+    [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldterms.html).
 
   - `midfielddegrees` A data frame with 97,640 observations and 5
     graduation variables. Each observation is a unique student. Occupies
-    10 Mb of memory.
+    10 Mb of memory. Data dictionary
+    [(link)](https://midfieldr.github.io/midfielddata/reference/midfielddegrees.html).
 
 ## Usage
 
@@ -89,23 +97,23 @@ and a set of academic programs in mind and follow steps something like
 this, using a combination of functions from the tidyverse and
 specialized functions from midfieldr:
 
-  - cip\_filter() to select programs from the CIP data
-  - cip\_label() to add custom program labels for grouping
-  - ever\_filter(), grad\_filter(), etc. to identify students
-  - race\_sex\_join() to join student sex and race
-  - group\_by() and summarize() to count students
-  - join() and mutate() to compute a persistence metric  
-  - multiway\_order() to prepare the results for graphing
-  - ggplot() to graph the metric
+  - `cip_filter()` to select programs from the CIP data
+  - `cip_label()` to add custom program labels for grouping
+  - `ever_filter()`, `grad_filter()`, etc. to identify students
+  - `race_sex_join()` to join student sex and race
+  - `group_by()` and `summarize()` to count students
+  - `join()` and `mutate()` to compute a persistence metric  
+  - `multiway_order()` to prepare the results for graphing
+  - `ggplot()` to graph the metric
 
-A short but complete example is provided in the [Getting
-started](articles/getting_started.html) vignette.
+A short but complete example is provided in the “Getting started”
+vignette [(link)](articles/getting_started.html).
 
 ## Meta
 
-  - Data provided by the
-    [MIDFIELD](https://engineering.purdue.edu/MIDFIELD) project
+  - Data provided by MIDFIELD
+    [(link)](https://engineering.purdue.edu/MIDFIELD)  
   - Get citation information with `citation("midfieldr")`
-  - Please note that this project is released with a [Code of
-    Conduct](https://midfieldr.github.io/midfieldr/CONDUCT.html). If you
+  - This project is released with a Code of Conduct
+    [(link)](https://midfieldr.github.io/midfieldr/CONDUCT.html). If you
     contribute to this project you agree to abide by its terms.

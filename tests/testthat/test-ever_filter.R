@@ -6,7 +6,9 @@ ever1 <- ever_filter("540104")
 cip6 <- ever1["cip6"]
 ever2 <- ever_filter("14YYYY")
 
-# subset_terms is an internal data set
+# get_my_path() in tests/testthat/helper.R
+load(file = get_my_path("subset_terms.rda"))
+
 library(midfieldr)
 ever3 <- ever_filter("520201", reference = subset_terms)
 ref1 <- subset_terms

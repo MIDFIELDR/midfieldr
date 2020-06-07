@@ -31,7 +31,6 @@ NULL
 #' cip_filter(series = "^14")
 #' cip_filter(series = "^14") %>%
 #'   cip_filter(series = "Civil", reference = .)
-#'
 #' @export
 cip_filter <- function(series = NULL, ..., reference = NULL) {
 

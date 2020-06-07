@@ -1,5 +1,5 @@
 # run from devtools::test() only
-context("cip_filter")
+context("test-cip_filter")
 
 # create test case
 case_engr <- cip_filter(series = cip_engr)

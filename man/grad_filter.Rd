@@ -57,7 +57,6 @@ match the variable names in the alternate.
 \examples{
 grad <- grad_filter(series = "540104")
 grad
-
 }
 \seealso{
 \code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes
