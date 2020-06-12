@@ -4,35 +4,35 @@
 \alias{cip_filter}
 \title{Filter by CIP data}
 \usage{
-cip_filter(series = NULL, ..., reference = NULL)
+cip_filter(data, series = NULL, ..., except = NULL)
 }
 \arguments{
-\item{series}{atomic character vector of search terms to filter by}
+\item{data}{a data frame or tibble of CIP codes}
 
-\item{...}{not used for values, forces later arguments to bind by name}
+\item{series}{character vector used to filter \code{data}, retaining all rows containing any of these terms.}
 
-\item{reference}{a reference data frame from which 2-digit, 4-digit, and 6-digit CIP codes and program names are obtained, default \code{cip}}
+\item{...}{not used for values, forces later optional arguments to bind by name}
+
+\item{except}{character vector used to filter \code{data}, deleting all rows containing any of these terms.}
 }
 \value{
-data frame, subset of \code{reference}
+data frame
 }
 \description{
 Filter a data frame of Classification of Instructional Programs (CIP) codes and return the rows that match conditions.
 }
 \details{
-The \code{series} argument is an atomic character vector of search terms  used to filter the reference CIP data set. Typical search terms include words and phrases describing academic programs or their CIP codes.
+The \code{series} argument is an atomic character vector of search terms  used to filter the CIP data frame. Typical search terms include words and phrases describing academic programs or their CIP codes.
 
 Several collections of named series are provided to facilitate searching for groups of programs such as Biological Sciences, Engineering, Physical Sciences, etc. For the named series help page, run \code{?cip_series}.
 
-The function returns a subset of \code{reference} with all rows containing any of the search terms. Variables are not altered.
+The function returns a subset of \code{data} with all rows containing any of the search terms. Variables are not altered.
 }
 \examples{
-cip_filter()
-cip_filter(series = "History")
-cip_filter(series = c("American", "History"))
-cip_filter(series = "History") \%>\%
-  cip_filter(series = "American", reference = .)
-cip_filter(series = "^14")
-cip_filter(series = "^14") \%>\%
-  cip_filter(series = "Civil", reference = .)
+cip_filter(cip, "History")
+cip_filter(cip, c("American", "History"))
+cip_filter(cip, "History") \%>\%
+  cip_filter(., American")
+cip_filter(cip, ^14") \%>\%
+  cip_filter(., series = "Civil")
 }

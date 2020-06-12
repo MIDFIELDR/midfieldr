@@ -8,9 +8,18 @@ vignette: >
 editor_options: 
   chunk_output_type: console
 bibliography: ../inst/REFERENCES.bib
+link-citations: yes
 resource_files:
   - ../man/figures/getting-started-fig1-1.png
+  - ../man/figures/header-cassiopeias-garden.png
 ---
+
+<img src="../man/figures/header-impressionism.png" width="100%" alt="image.png">
+<small>
+<br>
+<i>Impresssionism</i> by Patrice Ouellet is licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/2.0/">CC BY-NC-ND 2.0</a>
+<br>
+</small>
 
 ```{r setup, echo = FALSE, message = FALSE, purl = FALSE}
 knitr::opts_knit$set(root.dir = "../")
@@ -48,51 +57,48 @@ To introduce using the package, we present a brief but thorough example that sta
 
 Stickiness is the ratio of the number of students graduating from a program to the number ever enrolled in the program [@stickiness2012]. We compare the stickiness of three programs: Chemical Engineering, Electrical Engineering, and Industrial Engineering. 
 
-## Really getting started
+## Contents
 
-To install R and RStudio, try these links for help, 
+[Select programs to study]    
+[Count the students]    
+[Compute the metric]    
+[Graph the results]    
+[Next steps]    
+[References]    
 
-- [Installing R and RStudio](https://github.com/DSR-RHIT/install-R-and-RStudio), Richard Layton, Rose-Hulman Institute of Technology  
-- [All the R things](http://stat545.com/topics.html), Jenny Bryan, RStudio and University of British Columbia   
-- [R tutorials](http://kbroman.org/pages/tutorials.html), Karl Broman, University of Wisconsin Madison 
 
-To install midfielddata and midfieldr, 
 
-- See our [installation instructions](https://midfieldr.github.io/midfieldr/index.html)  
-
-We recommend you always work within an R Project, 
-
-- [RStudio Project](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects).
-
-With all that overhead out of the way, you are ready to install the following packages 
-
-```{r eval=FALSE}
-install.packages(dplyr)
-install.packages(ggplot2)
-install.packages(seplyr)
-```
 
 
 ## Select programs to study
 
-Within your R project, open a new R script and load the packages using 
-
 ```{r packages}
-library(dplyr)
-library(ggplot2)
-library(midfieldr)
-library(seplyr)
+# packages used in the vignette
+library("dplyr")
+library("ggplot2")
+library("midfieldr")
+library("seplyr")
+```
+
+```{r echo = FALSE}
+# for my use, load the following but conceal from novice user
+library("knitr")
+library("kableExtra")
+
+# function to print to html using kable, control font size
+kable2html <- function(...) {
+  kable(..., "html") %>%
+    kable_styling(font_size = 12)
+}
 ```
 
 We use `cip_filter()` to search the `cip` dataset first for "Engineering" and then filter the result for "Chemical", "Electrical", and "Industrial". 
  
 ```{r first-cip-search, echo = -1}
 options(tibble.print_min = 10L)
-cip_filter(series = "Engineering") %>%
-  cip_filter(
-    series = c("Chemical", "Electrical", "Industrial"),
-    reference = .
-  ) %>%
+cip %>% 
+  cip_filter(., series = "Engineering") %>%
+  cip_filter(., series = c("Chemical", "Electrical", "Industrial")) %>%
   print()
 ```
 
@@ -101,11 +107,11 @@ The results show that the codes we want are 1407 Chemical Engineering, 1410  Ele
 We extract the series for each major and assign our own program label using `cip_label()`. We can assign the default code name, e.g., using "cip4name" or we can assign our own label. Here for example, I've used "Electrical Engineering" instead of the longer, default 4-digit code name "Electrical/Electronics and Communications Engineering." 
 
 ```{r extract-cip}
-set1 <- cip_filter(series = "^1407") %>%
+set1 <- cip_filter(cip, series = "^1407") %>%
   cip_label(program = "cip4name")
-set2 <- cip_filter(series = "^1410") %>%
+set2 <- cip_filter(cip, series = "^1410") %>%
   cip_label(program = "Electrical Engineering")
-set3 <- cip_filter(series = "^1435") %>%
+set3 <- cip_filter(cip, series = "^1435") %>%
   cip_label(program = "cip4name")
 ```
 
@@ -116,6 +122,13 @@ program_group <- bind_rows(set1, set2, set3) %>%
   print()
 ```
 
+
+```{r echo = FALSE}
+# using kable_styling() for output but conceal from novice user
+kable2html(program_group)
+```
+
+<br>
 
 ## Count the students  
 

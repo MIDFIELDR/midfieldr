@@ -20,32 +20,32 @@
 #'   not enrolled in a program.}
 #' }
 #'
-#' @format A tidy data frame (tibble) with 1546 observations and 6 variables.
+#' @format A data frame with 1584 observations and 6 variables.
 #' All variables are characters. An observation is a unique program.
 #' \describe{
 #'   \item{cip2}{An instructional program's 2-digit code,  representing "the
 #'   most general groupings of related programs" (US National Center for
 #'   Education Statistics).}
-#'   \item{cip2name}{Name of a program at the 2-digit level.}
+#'   \item{cip2name}{Name of a program grouping at the 2-digit level.}
 #'   \item{cip4}{An instructional program's 4-digit code, representing
 #'   "intermediate groupings of programs that have comparable content and
 #'   objectives".}
-#'   \item{cip4name}{Name of a program at the 4-digit level.}
+#'   \item{cip4name}{Name of a program grouping at the 4-digit level.}
 #'   \item{cip6}{An instructional program's 6-digit code, representing
 #'   "specific instructional programs".}
-#'   \item{cip6name}{Name of a program at the 6-digit level.}
+#'   \item{cip6name}{Name of a specific program at the 6-digit level.}
 #' }
 #' @source Based on the 2010 codes curated by the US National Center for
 #' Education Statistics (\url{https://nces.ed.gov/ipeds/cipcode}).
 #' @examples
 #' # View the CIP data
 #' cip
-#' 
+#'
 #' # View the programs at the top level of the taxonomy
 #' unique(cip[, 1:2])
-#' 
-#' # As the reference data argument for cip_filter()
-#' cip_filter(series = "^1410", reference = cip)
+#'
+#' # As the data argument for cip_filter()
+#' cip_filter(data = cip, series = "^1410")
 "cip"
 
 
@@ -78,7 +78,7 @@
 #' @examples
 #' head(cip_math_stat, n = 10L)
 #' head(cip_phys_sci, n = 10L)
-#' 
+#'
 #' cip_filter(cip, series = cip_math_stat)
 #' cip_filter(cip, series = cip_phys_sci)
 NULL

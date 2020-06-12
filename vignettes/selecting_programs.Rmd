@@ -61,18 +61,18 @@ We use `cip_filter()` to search the `cip` dataset first for Engineering and then
  
 ```{r first-cip-search, echo = -1}
 options(tibble.print_min = 15L)
-cip_filter(series = "Engineering") %.>%
-  cip_filter(series = c("Civil", "Electrical", "Industrial", "Mechanical"), reference = .) %.>%
+cip_filter(cip, series = "Engineering") %.>%
+  cip_filter(., series = c("Civil", "Electrical", "Industrial", "Mechanical")) %.>%
   head(., n = 15L)
 ```
 
 Noting that technology programs are typically not accredited as engineering  programs, the results show that the codes we want are 1408 Civil, 1410 Electrical, 1419 Mechanical, and 1435 Industrial. We individually extract these programs. 
 
 ```{r extract-cip}
-cve <- cip_filter(series = "^1408")
-ele <- cip_filter(series = "^1410")
-mce <- cip_filter(series = "^1419")
-ise <- cip_filter(series = "^1435")
+cve <- cip_filter(cip, series = "^1408")
+ele <- cip_filter(cip, series = "^1410")
+mce <- cip_filter(cip, series = "^1419")
+ise <- cip_filter(cip, series = "^1435")
 ```
 
 We will use `cip_label()` to assign program names to these programs. One possibility is to use the 4-digit program names already available in the data. To view those names:    
@@ -96,7 +96,7 @@ ise <- cip_label(ise, program = "cip4name")
 `cip_label()` is pipe-compatible, so these lines could have been combined, for example,  
 
 ```{r}
-cve <- cip_filter("^1408") %.>%
+cve <- cip_filter(cip, "^1408") %.>%
   cip_label(., "cip4name")
 ```
 
