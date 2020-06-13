@@ -1,3 +1,11 @@
+
+
+## midfieldr 1.0.0.9001 / 2020-06-13
+
+- Re-ordered function arguments such that the data frame being operated on is the first argument 
+- Added `except` argument to `cip_filter()` 
+
+
 ## midfieldr 0.1.0.9003 / 2019-06-14
 
 - Corrected a testing problem. Moved some test data from sysdata to the testhat directory. 
