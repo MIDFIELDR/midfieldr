@@ -1,9 +1,22 @@
 
 
+
+
 ## midfieldr 1.0.0.9001 / 2020-06-13
 
-- Re-ordered function arguments such that the data frame being operated on is the first argument 
-- Added `except` argument to `cip_filter()` 
+The following changes are incompatible with earlier versions. 
+
+- Function arguments are reordered such that the data frame being operated on is the first argument 
+- `cip6_select()` replaces `cip_label()`. The new function removes columns of 2-digit and 4-digit codes and names and, like the original, adds a custom program label. 
+
+Additional improvements 
+
+- `cip_filter()` add the `except` argument
+- `cip6_select()` input data frame can acommodate variable names different from the default `cip` data frame. 
+
+
+
+
 
 
 ## midfieldr 0.1.0.9003 / 2019-06-14

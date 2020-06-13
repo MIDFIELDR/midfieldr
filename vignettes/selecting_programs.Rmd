@@ -1,8 +1,8 @@
 ---
-title: "Selecting groups of programs"
+title: "Select and label programs"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Selecting groups of programs}
+  %\VignetteIndexEntry{Select and label programs}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -44,29 +44,52 @@ knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
 
 In the vignettes illustrating various persistence metrics, the first step is to select the programs to study. We will use the same set of programs in different vignettes, so here we show the details of selecting and labeling those programs.  
 
-The programs we are studying are Civil Engineering, Electrical Engineering, Industrial Engineering, and Mechanical Engineering. 
 
-## Getting started 
+
+
+## Contents 
+
+[Identify CIP codes]    
+[Select and label programs]    
+[A saved data set of programs]    
+
+
+
+
+
+
+## Identify CIP codes 
+
+The programs we are studying are Civil Engineering, Electrical Engineering, Industrial Engineering, and Mechanical Engineering. 
 
 ```{r message = FALSE}
 # packages used
-library(midfieldr)
-library(dplyr)
-library(seplyr)
+library("midfieldr")
+library("dplyr")
 ```
-
-## Select the programs to study
 
 We use `cip_filter()` to search the `cip` dataset first for Engineering and then filter the result for Civil, Electrical, Industrial, and Mechanical. 
  
 ```{r first-cip-search, echo = -1}
 options(tibble.print_min = 15L)
-cip_filter(cip, series = "Engineering") %.>%
-  cip_filter(., series = c("Civil", "Electrical", "Industrial", "Mechanical")) %.>%
-  head(., n = 15L)
+cip_filter(cip, series = "engineering")%>%
+  cip_filter(., series = c("civil", "electrical", "industrial", "mechanical")) %>%
+  print()
 ```
 
-Noting that technology programs are typically not accredited as engineering  programs, the results show that the codes we want are 1408 Civil, 1410 Electrical, 1419 Mechanical, and 1435 Industrial. We individually extract these programs. 
+The results show that the codes we want are at the 4-digit level:  1408, 1410, 1419, and 1435.  
+
+
+
+
+
+
+
+
+
+## Select and label programs
+
+In the next step, we extract these programs individually. 
 
 ```{r extract-cip}
 cve <- cip_filter(cip, series = "^1408")
@@ -75,7 +98,7 @@ mce <- cip_filter(cip, series = "^1419")
 ise <- cip_filter(cip, series = "^1435")
 ```
 
-We will use `cip_label()` to assign program names to these programs. One possibility is to use the 4-digit program names already available in the data. To view those names:    
+We use `cip6_select()` to assign program names to these programs. One possibility is to use the 4-digit program names already available in the data. To view those names:    
 
 ```{r}
 unique(cve[["cip4name"]])
@@ -84,50 +107,54 @@ unique(mce[["cip4name"]])
 unique(ise[["cip4name"]])
 ```
 
-Except for Electrical Engineering, the default program names are concise. We use `cip_label()` to assign default names to three of the programs and a shorter name for Electrical Engineering. 
+Except for Electrical Engineering, the default program names are concise. We use `cip6_select()` to assign default names to three of the programs and a shorter name for Electrical Engineering. 
 
 ```{r}
-cve <- cip_label(cve, program = "cip4name")
-ele <- cip_label(ele, program = "Electrical Engineering")
-mce <- cip_label(mce, program = "cip4name")
-ise <- cip_label(ise, program = "cip4name")
+cve <- cip6_select(cve, program = "cip4name")
+ele <- cip6_select(ele, program = "Electrical Engineering")
+mce <- cip6_select(mce, program = "cip4name")
+ise <- cip6_select(ise, program = "cip4name")
 ```
 
-`cip_label()` is pipe-compatible, so these lines could have been combined, for example,  
+`cip6_select()` is pipe-compatible, so the two previous steps could have been combined, for example,  
 
 ```{r}
-cve <- cip_filter(cip, "^1408") %.>%
-  cip_label(., "cip4name")
+cve <- cip_filter(cip, "^1408") %>%
+  cip6_select(., "cip4name")
 ```
 
-We use `bind_rows()`, a [dplyr](http://dplyr.tidyverse.org) function, to bind the individual data frames into one data frame. 
+We use `dplyr::bind_rows()` to bind the individual data frames into one data frame. 
 
 ```{r group-cip}
 program_group <- bind_rows(cve, ele, mce, ise)
 ```
 
-Examine the result: there are a total of `r length(unique(program_group[["cip6"]]))` CIP codes for these programs. We have 7 columns: 6 from the `cip` dataset and the one `program` column of labels we added using `cip_label()`. 
+Examine the result: there are a total of `r length(unique(program_group[["cip6"]]))` CIP codes for these programs. 
 
 ```{r echo = -1}
 options(tibble.print_min = 12L)
 program_group
 ```
 
-When searching the midfielddata datasets for students in these programs, our search functions use the 6-digit CIP codes in the `cip6` variable. To confirm that the search terms are what we expect, we can extract and view the `r length(unique(program_group[["cip6"]]))` unique codes. 
+For additional information, try the [Identifying program CIP codes](cip_filter.html) vignette and the help pages by running `?cip_filter` and `?cip6_select`. 
 
-```{r}
-unique(program_group[["cip6"]])
-```
 
-For additional information, try the [Selecting CIP codes](cip_filter.html) vignette and the help pages by running `?cip_filter` and `?cip_label`. 
 
-## Data set: `case_program_group`
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+## A saved data set of programs
 
 For convenience, this data frame of engineering CIP codes and program names has been bundled with midfieldr to use in vignettes. 
 
-To access the data frame, just load midfieldr and assign the data to an object such as `program_group`. 
+`case_program_group` is the name of the saved data frame. To access the data frame, load midfieldr and assign the data to an object such as `program_group`. Note that `case_program_group` is identical to the group of programs we created earlier. 
 
 ```{r}
-program_group <- case_program_group %.>%
-  glimpse(.)
+library("midfieldr")
+program_group <- case_program_group %>%
+  print()
 ```

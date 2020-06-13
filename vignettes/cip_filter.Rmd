@@ -1,8 +1,8 @@
 ---
-title: "Filtering programs by CIP codes"
+title: "Identifying program CIP codes"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Filtering programs by CIP codes}
+  %\VignetteIndexEntry{Identifying program CIP codes}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -94,9 +94,9 @@ kable2html <- function(...) {
 
 A "CIP code" is a 6-digit integer representing a specific academic program. For example, 140803 is the CIP code for Structural Engineering and 450202 is the  CIP code for Physical Anthropology. 
 
-The CIP code embeds three levels of program organization: the first 2 digits represent the most general grouping of programs to which the program belongs, loosely analogous to an academic college; the first 4 digits represent an intermediate grouping of programs to which the program belongs, loosely analogous to an academic department; the full 6 digits represent a specific program, loosely analogous to an academic discipline.  For example, 
+The CIP code embeds three levels of program organization: the first 2 digits represent the most general grouping of programs to which the program belongs; the first 4 digits represent an intermediate grouping of programs to which the program belongs; the full 6 digits represent a specific program.  For example, 
 
-- Structural Engineering (140803) is a subset of Civil Engineering (1408) which is a subset of Engineering (14) 
+- Structural Engineering (140803) is a subset of Civil Engineering (1408) which is a subset of Engineering (14).  
 - Physical Anthropology (450202) is a subset of Anthropology (4502) which is a subset of Social Sciences (45) 
 
 The CIP is periodically updated. A 2020 CIP has been released, but MIDFIELD currently uses the 2010 CIP. Read more about the CIP at  [@cip2010]. 
@@ -117,7 +117,6 @@ The CIP is periodically updated. A 2020 CIP has been released, but MIDFIELD curr
 # packages used in the vignette
 library("midfieldr")
 library("dplyr")
-library("stringr")
 ```
 
 `cip` is a data frame bundled with midfieldr containing columns of 2, 4, and 6-digit 2010 CIP codes and program names. All columns are character strings. 
@@ -126,11 +125,42 @@ library("stringr")
 print(cip)
 ```
 
-```{r echo = FALSE}
-cip_ag <- cip_filter(cip, series = "^0101")
-```
+At the 6-digit level, there are `r length(unique(cip$cip6))` instructional   programs. A sample is shown below. 
 
-At the 6-digit level, each of the `r nrow(cip)` rows is a unique program.
+```{r echo=FALSE}
+set.seed(20200617)
+cip %>% 
+  select(cip6, cip6name) %>% 
+  unique() %>% 
+  sample_n(8) %>% 
+  arrange(cip6) %>% 
+  kable2html()
+```
+<br>
+
+At the 4-digit level, the programs are organized into `r length(unique(cip$cip4))` program groupings, for example:  
+
+```{r echo=FALSE}
+cip %>% 
+  select(cip4, cip4name) %>% 
+  unique() %>% 
+  sample_n(8) %>% 
+  arrange(cip4) %>% 
+  kable2html()
+```
+<br>
+
+At the 2-digit level, the programs are organized into `r length(unique(cip$cip2))` program groupings, for example: 
+
+```{r echo=FALSE}
+cip %>% 
+  select(cip2, cip2name) %>% 
+  unique() %>% 
+  sample_n(8) %>% 
+  arrange(cip2) %>% 
+  kable2html()
+```
+<br>
 
 To learn more, open the help page by running `?cip`. 
 
@@ -216,25 +246,29 @@ kable2html(cip_filter(cip, series = "civil"))
 
 The search returns some programs with Civilization in their names as well as Engineering Technology. If we wanted Civil Engineering only, we can use a sequence of function calls, where the outcome of the one operation is assigned to the data argument of the next operation using the dot (`.`) argument. 
 
+The following code chunk could be read as "Start with the `cip` data frame, then filter on 'civil', then filter on 'engineering', then delete 'technology.'"
+
 ```{r results = "hide"}
-cip_filter(data = cip, series = "civil") %>% 
+cip %>%  
+  cip_filter(data = ., series = "civil") %>% 
   cip_filter(data = ., series = "engineering") %>% 
   cip_filter(data = ., except = "technology") %>% 
   print()
 ```
 
-Alternatively, only the `except` argument must be named, so the following yields the same result, 
+Only the `except` argument must be named, so the following code chunk yields the same result, 
 
 ```{r results = "hide"}
-cip_filter(cip, "civil") %>% 
+cip %>% 
+  cip_filter(., "civil") %>% 
   cip_filter(., "engineering") %>% 
   cip_filter(., except = "technology") %>% 
   print()
 ```
 
 ```{r echo = FALSE}
-# using kable_styling() for output but conceal from novice user
-kable2html(cip_filter(cip, "civil") %>% 
+kable2html(cip %>% 
+  cip_filter(., "civil") %>% 
   cip_filter(., "engineering") %>% 
   cip_filter(., except = "technology"))
 ```
@@ -267,7 +301,9 @@ kable2html(cip_filter(cip, series = "german"))
 
 <br>
 
-From the 6-digit program names we find only two that are of interest, German Studies (050125) and German Language and Literature (160501). A character vector of these two codes is the revised series argument. 
+From the 6-digit program names we find only two that are of interest, German Studies (050125) and German Language and Literature (160501). 
+
+Note that the series argument is a vector. 
  
 ```{r results = "hide"}
 cip_filter(cip, series = c("050125", "160501")) %>%
@@ -386,6 +422,12 @@ To see the full set of available named series, see the help page `?cip_series`.
 
 <br>
 <a href="#top">&#9650; top of page</a> 
+
+
+
+## Selecting the 6-digit codes
+
+Once we've found the codes for the programs we want to study, we select the 6-digit codes 
 
  
 
