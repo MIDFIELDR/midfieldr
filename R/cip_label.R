@@ -27,15 +27,15 @@ NULL
 #'
 #' @examples
 #' # Extract the Philosophy and Religion programs and label
-#' x <- cip_filter(series = "^38")
+#' x <- cip_filter(cip, series = "^38")
 #' y <- cip_label(x, program = "Phil-Relig")
-#' 
+#'
 #' # The function is pipe-compatible
 #' y <- x %>% cip_label("test label")
-#' 
+#'
 #' # With no program argument, the 6-digit CIP names are assigned
 #' y <- cip_label(x)
-#' 
+#'
 #' # Argument options include
 #' y <- cip_label(x, program = "cip6name")
 #' y <- cip_label(x, program = "cip4name")

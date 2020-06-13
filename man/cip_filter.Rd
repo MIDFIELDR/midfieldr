@@ -32,7 +32,7 @@ The function returns a subset of \code{data} with all rows containing any of the
 cip_filter(cip, "History")
 cip_filter(cip, c("American", "History"))
 cip_filter(cip, "History") \%>\%
-  cip_filter(., American")
-cip_filter(cip, ^14") \%>\%
+  cip_filter(., "American")
+cip_filter(cip, "^14") \%>\%
   cip_filter(., series = "Civil")
 }

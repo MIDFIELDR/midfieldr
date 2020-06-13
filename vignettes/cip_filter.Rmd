@@ -9,20 +9,13 @@ editor_options:
   chunk_output_type: console
 bibliography: ../inst/REFERENCES.bib
 link-citations: yes
-resource_files:
-  - ../man/figures/header-cassiopeias-garden.png
 ---
 
-<img src="../man/figures/header-cassiopeias-garden.png" width="100%" alt="image.png">
-<small>
-<br>
-<i>Le jardin de Cassiopée</i> (cropped) by Patrice Ouellet is licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/2.0/">CC BY-NC-ND 2.0</a>
-<br>
-</small>
+In analyzing student records, a common first step is filtering the data by academic program. In the US, programs are encoded by 6-digit CIP codes.
 
-<br>
+In midfieldr, the `cip_filter()` function acts on the `cip` data set to help us find the CIP codes of the programs we want to study. 
 
-A common first step in analyzing student-record data is filtering by the academic programs of interest. In the MIDFIELD data sets, programs are encoded using 6-digit CIP codes.
+
 
  
 
@@ -75,16 +68,8 @@ knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
 ```
 
 ```{r echo = FALSE}
-# unpack data bits
-library(midfieldr)
-# load("R/sysdata.rda")
-
-# data_bits <- midfieldr:::data_bits
-obs_cip <- 1584
-var_cip <- 6
-# obs_cip <- round(data_bits$data[data_bits$name == "obs_cip"] / 1e+0, 1)
-# var_cip <- data_bits$data[data_bits$name == "var_cip"]
-# size_cip <- round(data_bits$data[data_bits$name == "size_cip"] / 1e+3, 0)
+# for my use, load the following but conceal from novice user
+library("kableExtra")
 
 # function to print to html using kable, control font size
 kable2html <- function(...) {
@@ -111,8 +96,8 @@ A "CIP code" is a 6-digit integer representing a specific academic program. For 
 
 The CIP code embeds three levels of program organization: the first 2 digits represent the most general grouping of programs to which the program belongs, loosely analogous to an academic college; the first 4 digits represent an intermediate grouping of programs to which the program belongs, loosely analogous to an academic department; the full 6 digits represent a specific program, loosely analogous to an academic discipline.  For example, 
 
-- Engineering (14) subsumes Civil Engineering (1408) which subsumes Structural Engineering (140803). 
-- Social Sciences (45) subsumes Anthropology (4502) which subsumes Physical Anthropology (450202). 
+- Structural Engineering (140803) is a subset of Civil Engineering (1408) which is a subset of Engineering (14) 
+- Physical Anthropology (450202) is a subset of Anthropology (4502) which is a subset of Social Sciences (45) 
 
 The CIP is periodically updated. A 2020 CIP has been released, but MIDFIELD currently uses the 2010 CIP. Read more about the CIP at  [@cip2010]. 
 
@@ -125,26 +110,27 @@ The CIP is periodically updated. A 2020 CIP has been released, but MIDFIELD curr
 
 
 
+
 ## CIP data
 
 ```{r}
 # packages used in the vignette
+library("midfieldr")
 library("dplyr")
 library("stringr")
-library("knitr")
-library("midfieldr")
 ```
 
-```{r echo = FALSE}
-# for my use, load the following but conceal from novice user
-library("kableExtra")
-```
-
-The `cip` data frame bundled with midfieldr contains columns of 2, 4, and 6-digit 2010 CIP codes and program names. All columns are character strings. 
+`cip` is a data frame bundled with midfieldr containing columns of 2, 4, and 6-digit 2010 CIP codes and program names. All columns are character strings. 
 
 ```{r}
 print(cip)
 ```
+
+```{r echo = FALSE}
+cip_ag <- cip_filter(cip, series = "^0101")
+```
+
+At the 6-digit level, each of the `r nrow(cip)` rows is a unique program.
 
 To learn more, open the help page by running `?cip`. 
 
@@ -231,17 +217,25 @@ kable2html(cip_filter(cip, series = "civil"))
 The search returns some programs with Civilization in their names as well as Engineering Technology. If we wanted Civil Engineering only, we can use a sequence of function calls, where the outcome of the one operation is assigned to the data argument of the next operation using the dot (`.`) argument. 
 
 ```{r results = "hide"}
-cip %>%
-  cip_filter(., series = "civil") %>% 
-  cip_filter(., series = "engineering") %>% 
+cip_filter(data = cip, series = "civil") %>% 
+  cip_filter(data = ., series = "engineering") %>% 
+  cip_filter(data = ., except = "technology") %>% 
+  print()
+```
+
+Alternatively, only the `except` argument must be named, so the following yields the same result, 
+
+```{r results = "hide"}
+cip_filter(cip, "civil") %>% 
+  cip_filter(., "engineering") %>% 
   cip_filter(., except = "technology") %>% 
   print()
 ```
 
 ```{r echo = FALSE}
 # using kable_styling() for output but conceal from novice user
-kable2html(cip_filter(cip, series = "civil") %>% 
-  cip_filter(., series = "engineering") %>% 
+kable2html(cip_filter(cip, "civil") %>% 
+  cip_filter(., "engineering") %>% 
   cip_filter(., except = "technology"))
 ```
 
@@ -313,7 +307,7 @@ kable2html(cip_filter(cip, series = seq(540101, 540199, 1)))
 
 <br>
 
-Specifying 4-digit codes yields a data frame with as many rows as there are rows that include the search strings. We use the regular expression notation `^` to match the start of the strings.
+Specifying 4-digit codes yields a data frame all 6-digit programs containing the 4-digit string. We use the regular expression notation `^` to match the start of the strings.
 
 ```{r results = "hide"}
 # 4-digit example matching the start of the string
@@ -370,7 +364,7 @@ kable2html(cip_filter(cip, series = c("^24", "^4102", "^450202")))
 
 midfieldr includes several datasets of *named series*. A named series is a character vector of 6-digit CIP codes that belong to a group of programs such as Engineering, Physical Sciences, STEM, etc. 
 
-To see the full set of available named series, see the help page `?cip_series`. 
+
 
 A named series is assigned to the series argument in `cip_filter()`. 
 
@@ -384,11 +378,9 @@ cip_filter(cip, series = cip_math_stat) %>%
 kable2html(cip_filter(cip, series = cip_math_stat))
 ```
 
+<br>
 
-  
-
-
-
+To see the full set of available named series, see the help page `?cip_series`. 
 
 
 

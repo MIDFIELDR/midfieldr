@@ -27,8 +27,8 @@ NULL
 #' cip_filter(cip, "History")
 #' cip_filter(cip, c("American", "History"))
 #' cip_filter(cip, "History") %>%
-#'   cip_filter(., American")
-#' cip_filter(cip, ^14") %>%
+#'   cip_filter(., "American")
+#' cip_filter(cip, "^14") %>%
 #'   cip_filter(., series = "Civil")
 #' @export
 cip_filter <- function(data, series = NULL, ..., except = NULL) {
@@ -52,10 +52,9 @@ cip_filter <- function(data, series = NULL, ..., except = NULL) {
     if(!(is.character(series) || is.atomic(series))) {
       stop("midfieldr::cip_filter, series argument must be a character vector.")
     }
-
+    # here's the main filter for series
     search_string <- stringr::str_c(series, collapse = "|")
-
-    data <- dplyr::filter(data, any_row(dplyr::across(where(is.character), ~ stringr::str_detect(., regex(search_string, ignore_case = TRUE)))))
+    data <- dplyr::filter(data, any_row(dplyr::across(names(data), ~ stringr::str_detect(., regex(search_string, ignore_case = TRUE)))))
   }
 
   # except: rows to delete
@@ -65,9 +64,9 @@ cip_filter <- function(data, series = NULL, ..., except = NULL) {
       stop("midfieldr::cip_filter, except argument must be a character vector.")
     }
 
+    # here's the main filter for except
     search_string <- stringr::str_c(except, collapse = "|")
-
-    data <- dplyr::filter(data, !any_row(dplyr::across(where(is.character), ~ stringr::str_detect(., regex(search_string, ignore_case = TRUE)))))
+    data <- dplyr::filter(data, !any_row(dplyr::across(names(data), ~ stringr::str_detect(., regex(search_string, ignore_case = TRUE)))))
   }
 
   data <- data

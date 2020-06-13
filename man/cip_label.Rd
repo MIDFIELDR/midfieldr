@@ -32,7 +32,7 @@ the default program names in the 2010 CIP data.
 }
 \examples{
 # Extract the Philosophy and Religion programs and label
-x <- cip_filter(series = "^38")
+x <- cip_filter(cip, series = "^38")
 y <- cip_label(x, program = "Phil-Relig")
 
 # The function is pipe-compatible
