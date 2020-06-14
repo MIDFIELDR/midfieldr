@@ -66,6 +66,7 @@ Before we can compute a persistence metric, we have to select the academic progr
 [Case study program group]    
 [Program label options]  
 [Non-midfieldr CIP variables]    
+[Session information]
 
 
 
@@ -80,6 +81,11 @@ The programs we are studying in this example are Civil Engineering, Electrical E
 library("midfieldr")
 library("dplyr")
 library("stringr")
+```
+
+```{r echo=FALSE}
+# for session_info
+package_string <- "midfieldr|dplyr|stringr"
 ```
 
 We use `cip_filter()` to search the `cip` dataset first for Engineering and then filter the result for Civil, Electrical, Industrial, and Mechanical. Having done this type of search before, we know that we can exclude engineering technology programs. 
@@ -393,6 +399,19 @@ Notes.
 
 
 
+## Session information 
+
+```{r echo = FALSE}
+x        <- sessioninfo::session_info()
+sel      <- stringr::str_detect(x$packages$package, package_string)
+plat     <- x$platform
+pkgs     <- x$packages[sel, ]
+pkgs[11] <- NULL 
+
+
+print(plat)
+print(pkgs)
+```
 
 
 

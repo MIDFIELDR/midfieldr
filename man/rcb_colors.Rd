@@ -5,7 +5,8 @@
 \alias{rcb_colors}
 \title{Named colors from the ColorBrewer palettes}
 \format{
-A data frame with columns:
+A data frame (tibble) with 24 observations and 2 variables.
+
 \describe{
   \item{rcb_name}{Character variable of names.}
   \item{rcb_code}{Character variable of hex color codes.}

@@ -5,7 +5,8 @@
 \alias{case_stickiness}
 \title{Stickiness case data}
 \format{
-A data frame with columns:
+A data frame (tibble) with 32 observations and 6 variables.
+
 \describe{
  \item{program}{Instructional programs selected for study.}
  \item{race}{Student race and sex from \code{midfieldstudents} data.}
@@ -25,10 +26,11 @@ A data frame with columns:
 case_stickiness
 }
 \description{
-An data frame (32 by 6) of stickiness data grouped by student race and sex.
+An data frame of stickiness data grouped by program and student
+race/ethnicity and sex.
 }
 \details{
-For Civil, Electrical, Industrial, and Mechanical Engineering , the number
+For Civil, Electrical, Industrial, and Mechanical Engineering, the number
 of students ever enrolled, the number of graduates, and the resulting
 stickiness.
 }

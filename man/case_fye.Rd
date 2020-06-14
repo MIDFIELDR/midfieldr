@@ -5,7 +5,8 @@
 \alias{case_fye}
 \title{Imputed starting majors for FYE students}
 \format{
-A data frame with columns:
+A data frame (tibble) with 5992 observations and 2 variables.
+
 \describe{
  \item{id}{Unique, anonymized MIDFIELD student identifier.}
  \item{cip6}{Imputed starting major (6-digit CIP code) of FYE students. }
@@ -18,8 +19,8 @@ A data frame with columns:
 case_fye
 }
 \description{
-Imputed starting majors for 6000 first-year engineering (FYE) students in
-the midfielddata package.
+Imputed starting majors for nearly 6000 first-year engineering (FYE) students
+in the midfielddata package.
 }
 \details{
 Some US institutions have first year engineering (FYE) programs---typically

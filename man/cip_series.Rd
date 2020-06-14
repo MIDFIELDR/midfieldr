@@ -12,6 +12,7 @@
 \title{Named series of 6-digit CIP codes}
 \format{
 An atomic character vector of 6-digit CIP codes.
+
 \describe{
 \item{\code{cip_bio_sci}}{Biological and biomedical science programs,
 series 26.}
@@ -62,7 +63,7 @@ Atomic character vectors of 6-digit CIP codes for specified groups of programs.
 head(cip_math_stat, n = 10L)
 head(cip_phys_sci, n = 10L)
 
-cip_filter(cip, series = cip_math_stat)
-cip_filter(cip, series = cip_phys_sci)
+cip_filter(data = cip, series = cip_math_stat)
+cip_filter(data = cip, series = cip_phys_sci)
 }
 \keyword{datasets}

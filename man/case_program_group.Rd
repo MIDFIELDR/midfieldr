@@ -5,21 +5,14 @@
 \alias{case_program_group}
 \title{CIP case data for four programs}
 \format{
-A tidy data frame (tibble) with 1546 observations and 6 variables.
+A data frame (tibble) with 12 observations and 3 variables.
 All variables are characters. An observation is a unique program.
+
 \describe{
-  \item{cip2}{An instructional program's 2-digit code,  representing "the
-  most general groupings of related programs" (US National Center for
-  Education Statistics).}
-  \item{cip2name}{Name of a program at the 2-digit level.}
-  \item{cip4}{An instructional program's 4-digit code, representing
-  "intermediate groupings of programs that have comparable content and
-  objectives".}
-  \item{cip4name}{Name of a program at the 4-digit level.}
   \item{cip6}{An instructional program's 6-digit code, representing
   "specific instructional programs".}
   \item{cip6name}{Name of a program at the 6-digit level}
-  \item{program}{A program name.}
+  \item{program}{A program name used for grouping, summarizing, and graphing.}
 }
 }
 \source{
@@ -29,13 +22,13 @@ All variables are characters. An observation is a unique program.
 case_program_group
 }
 \description{
-A data frame and subset of [\code{cip}](cip.html) with CIP codes and
-names for four engineering programs.
+A subset of the [\code{cip}](cip.html) data frame for four
+engineering programs.
 }
 \details{
-The CIP codes and names plus a user-selected program name for Civil,
-Electrical, Industrial, and Mechanical Engineering. The "Selecting programs"
-vignette describes how these data were collected. The data frame is used be
-several other vignettes as a starting point in selecting programs to study.
+The 6-digit CIP codes and names plus a user-selected program name for Civil,
+Electrical, Industrial, and Mechanical Engineering. The "Select and label
+programs" vignette describes how these data were assembled. The data frame is
+used by several other vignettes as a starting point.
 }
 \keyword{datasets}

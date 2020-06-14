@@ -5,8 +5,9 @@
 \alias{cip}
 \title{Classification of instructional programs (CIP) data}
 \format{
-A data frame with 1584 observations and 6 variables.
+A data frame (tibble) with 1584 observations and 6 variables.
 All variables are characters. An observation is a unique program.
+
 \describe{
   \item{cip2}{An instructional program's 2-digit code,  representing "the
   most general groupings of related programs" (US National Center for
