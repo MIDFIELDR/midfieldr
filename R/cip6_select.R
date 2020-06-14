@@ -16,9 +16,9 @@ NULL
 #'
 #' @param program An optional character variable. There are four options:
 #'
-#' If NULL, the default, the 6-digit CIP program names are assigned to the new column.
+#' If program = NULL, the default, the 4-digit CIP program names are assigned to the new column.
 #'
-#' If NULL, but one of the named \code{cip_series} is used to create the \code{data} argument, then the series name is assigned to the new column.
+#' If program = "named_series", then the series name is assigned to the new column.
 #'
 #' If one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-digit, 4-digit, or 6-digit CIP program names are assigned to the new column.
 #'
@@ -48,6 +48,7 @@ NULL
 #' y <- cip6_select(x, program = "cip6name")
 #' y <- cip6_select(x, program = "cip4name")
 #' y <- cip6_select(x, program = "cip2name")
+#'
 #' @export
 cip6_select <- function(data, program = NULL, ..., cip6 = "cip6", cip6name = "cip6name", cip4name = "cip4name", cip2name = "cip2name") {
 
@@ -72,11 +73,14 @@ cip6_select <- function(data, program = NULL, ..., cip6 = "cip6", cip6name = "ci
   wrapr::let(
     alias = mapping,
     expr = {
-      if (is.null(program)) {
-        series <- sort(data[[CIP6]] )
-        # if none given
+      # use 4-digit names by default
+      if (is.null(program) || identical(program, cip4name)) {
+        program <- data[[CIP4NAME]]
+
+      # named series
+      } else if (identical(program, "named_series"))  {
+        series <- sort(data[[CIP6]])
         if (identical(series, sort(cip_engr))) {
-          # if a named series
           program <- "Engineering"
         } else if (identical(series, sort(cip_bio_sci))) {
           program <- "Biological and Biomedical Sciences"
@@ -89,22 +93,18 @@ cip6_select <- function(data, program = NULL, ..., cip6 = "cip6", cip6name = "ci
         } else if (identical(series, sort(cip_phys_sci))) {
           program <- "Physical Sciences"
         } else {
-          # if not named, use 6-digit names by default
-          program <- data[[CIP6NAME]]
-        }
-      } else {
-        # program argument is given
-        if (identical(program, cip2name)) {
-          # use CIP data names
-          program <- data[[CIP2NAME]]
-        } else if (identical(program, cip4name)) {
+      # named series not recognized
           program <- data[[CIP4NAME]]
-        } else if (identical(program, cip6name)) {
-          program <- data[[CIP6NAME]]
-        } else {
-          # otherwise, use the input argument
-          program <- program
+          warning("cip6_select: No match to named series")
         }
+
+      } else if (identical(program, cip2name)) {
+        program <- data[[CIP2NAME]]
+      } else if (identical(program, cip6name)) {
+        program <- data[[CIP6NAME]]
+      } else {
+      # input string is used
+        program <- program
       }
       data <- tibble::add_column(data, program = program) %>%
         dplyr::select(CIP6, CIP6NAME, program)

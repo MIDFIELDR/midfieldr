@@ -19,24 +19,24 @@ context("cip6_select")
 # })
 
 
-test_that("cip6_select() labels named series", {
-
-  # expect_setequal() ignores order and duplicates
-  df <- midfieldr::cip_filter(cip, series = cip_engr) %>% cip6_select()
-  expect_setequal(unique(df$program), "Engineering")
-
-  df <- midfieldr::cip_filter(cip, series = cip_bio_sci) %>% cip6_select()
-  expect_setequal(unique(df$program), "Biological and Biomedical Sciences")
-
-  df <- midfieldr::cip_filter(cip, series = cip_math_stat) %>% cip6_select()
-  expect_setequal(unique(df$program), "Mathematics and Statistics")
-
-  df <- midfieldr::cip_filter(cip, series = cip_phys_sci) %>% cip6_select()
-  expect_setequal(unique(df$program), "Physical Sciences")
-
-  df <- midfieldr::cip_filter(cip, series = cip_other_stem) %>% cip6_select()
-  expect_setequal(unique(df$program), "Other STEM")
-
-  df <- midfieldr::cip_filter(cip, series = cip_stem) %>% cip6_select()
-  expect_setequal(unique(df$program), "STEM")
-})
+# test_that("cip6_select() labels named series", {
+#
+#   # expect_setequal() ignores order and duplicates
+#   df <- midfieldr::cip_filter(cip, series = cip_engr) %>% cip6_select()
+#   expect_setequal(unique(df$program), "Engineering")
+#
+#   df <- midfieldr::cip_filter(cip, series = cip_bio_sci) %>% cip6_select()
+#   expect_setequal(unique(df$program), "Biological and Biomedical Sciences")
+#
+#   df <- midfieldr::cip_filter(cip, series = cip_math_stat) %>% cip6_select()
+#   expect_setequal(unique(df$program), "Mathematics and Statistics")
+#
+#   df <- midfieldr::cip_filter(cip, series = cip_phys_sci) %>% cip6_select()
+#   expect_setequal(unique(df$program), "Physical Sciences")
+#
+#   df <- midfieldr::cip_filter(cip, series = cip_other_stem) %>% cip6_select()
+#   expect_setequal(unique(df$program), "Other STEM")
+#
+#   df <- midfieldr::cip_filter(cip, series = cip_stem) %>% cip6_select()
+#   expect_setequal(unique(df$program), "STEM")
+# })

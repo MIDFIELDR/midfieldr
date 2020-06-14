@@ -61,10 +61,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/cip_filter.html">Identifying programs by CIP codes</a>
+      <a href="../articles/cip_filter.html">Identifying program CIP codes</a>
     </li>
     <li>
-      <a href="../articles/selecting_programs.html">Selecting groups of programs</a>
+      <a href="../articles/selecting_programs.html">Select and label programs</a>
     </li>
     <li>
       <a href="../articles/imputing_fye.html">Imputing starting majors for FYE students</a>
@@ -163,24 +163,24 @@
 <p>The case data are loaded with midfieldr. Simply assign the data to an object such as <code>program_group</code>.</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># information saved from an earlier vignette</span>
 <span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="no">case_program_group</span></pre></body></html></div>
-<p>Examine the result: there are a total of 12 CIP codes for these programs. We have all six columns from the <code>cip</code> dataset and the <code>program</code> column we added using <code><a href="../reference/cip_label.html">cip_label()</a></code>.</p>
+<p>Examine the result: there are a total of 12 CIP codes for these programs. We have all six columns from the <code>cip</code> dataset and the <code>program</code> column we added using <code><a href="../reference/cip6_select.html">cip6_select()</a></code>.</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># check the result</span>
 <span class="no">program_group</span>
-<span class="co">#&gt; # A tibble: 12 x 7</span>
-<span class="co">#&gt;    cip2  cip2name  cip4  cip4name           cip6  cip6name            program   </span>
-<span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;              &lt;chr&gt; &lt;chr&gt;               &lt;chr&gt;     </span>
-<span class="co">#&gt;  1 14    Engineer~ 1408  Civil Engineering  1408~ Civil Engineering,~ Civil Eng~</span>
-<span class="co">#&gt;  2 14    Engineer~ 1408  Civil Engineering  1408~ Geotechnical Engin~ Civil Eng~</span>
-<span class="co">#&gt;  3 14    Engineer~ 1408  Civil Engineering  1408~ Structural Enginee~ Civil Eng~</span>
-<span class="co">#&gt;  4 14    Engineer~ 1408  Civil Engineering  1408~ Transportation and~ Civil Eng~</span>
-<span class="co">#&gt;  5 14    Engineer~ 1408  Civil Engineering  1408~ Water Resources En~ Civil Eng~</span>
-<span class="co">#&gt;  6 14    Engineer~ 1408  Civil Engineering  1408~ Civil Engineering,~ Civil Eng~</span>
-<span class="co">#&gt;  7 14    Engineer~ 1410  Electrical, Elect~ 1410~ Electrical, Electr~ Electrica~</span>
-<span class="co">#&gt;  8 14    Engineer~ 1410  Electrical, Elect~ 1410~ Laser and Optical ~ Electrica~</span>
-<span class="co">#&gt;  9 14    Engineer~ 1410  Electrical, Elect~ 1410~ Telecommunications~ Electrica~</span>
-<span class="co">#&gt; 10 14    Engineer~ 1410  Electrical, Elect~ 1410~ Electrical, Electr~ Electrica~</span>
-<span class="co">#&gt; 11 14    Engineer~ 1419  Mechanical Engine~ 1419~ Mechanical Enginee~ Mechanica~</span>
-<span class="co">#&gt; 12 14    Engineer~ 1435  Industrial Engine~ 1435~ Industrial Enginee~ Industria~</span></pre></body></html></div>
+<span class="co">#&gt; # A tibble: 12 x 3</span>
+<span class="co">#&gt;    cip6   cip6name                                            program           </span>
+<span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt;                                               &lt;chr&gt;             </span>
+<span class="co">#&gt;  1 140801 Civil Engineering, General                          Civil Engineering </span>
+<span class="co">#&gt;  2 140802 Geotechnical Engineering                            Civil Engineering </span>
+<span class="co">#&gt;  3 140803 Structural Engineering                              Civil Engineering </span>
+<span class="co">#&gt;  4 140804 Transportation and Highway Engineering              Civil Engineering </span>
+<span class="co">#&gt;  5 140805 Water Resources Engineering                         Civil Engineering </span>
+<span class="co">#&gt;  6 140899 Civil Engineering, Other                            Civil Engineering </span>
+<span class="co">#&gt;  7 141001 Electrical, Electronics and Communications Enginee~ Electrical Engine~</span>
+<span class="co">#&gt;  8 141003 Laser and Optical Engineering                       Electrical Engine~</span>
+<span class="co">#&gt;  9 141004 Telecommunications Engineering                      Electrical Engine~</span>
+<span class="co">#&gt; 10 141099 Electrical, Electronics and Communications Enginee~ Electrical Engine~</span>
+<span class="co">#&gt; 11 141901 Mechanical Engineering                              Mechanical Engine~</span>
+<span class="co">#&gt; 12 143501 Industrial Engineering                              Industrial Engine~</span></pre></body></html></div>
 </div>
 <div id="ever_filter" class="section level2">
 <h2 class="hasAnchor">
@@ -231,15 +231,11 @@
 <div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">students</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/reexports.html">left_join</a></span>(<span class="no">students</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%.&gt;%</span>
   <span class="fu">glimpse</span>(<span class="no">.</span>)
 <span class="co">#&gt; Rows: 10,764</span>
-<span class="co">#&gt; Columns: 10</span>
+<span class="co">#&gt; Columns: 6</span>
 <span class="co">#&gt; $ id       &lt;chr&gt; "MID25783178", "MID25783197", "MID25783388", "MID25783441"...</span>
 <span class="co">#&gt; $ cip6     &lt;chr&gt; "143501", "140801", "141901", "140801", "141001", "140801"...</span>
 <span class="co">#&gt; $ race     &lt;chr&gt; "Black", "White", "White", "White", "White", "White", "Whi...</span>
 <span class="co">#&gt; $ sex      &lt;chr&gt; "Male", "Male", "Male", "Male", "Male", "Male", "Male", "M...</span>
-<span class="co">#&gt; $ cip2     &lt;chr&gt; "14", "14", "14", "14", "14", "14", "14", "14", "14", "14"...</span>
-<span class="co">#&gt; $ cip2name &lt;chr&gt; "Engineering", "Engineering", "Engineering", "Engineering"...</span>
-<span class="co">#&gt; $ cip4     &lt;chr&gt; "1435", "1408", "1419", "1408", "1410", "1408", "1410", "1...</span>
-<span class="co">#&gt; $ cip4name &lt;chr&gt; "Industrial Engineering", "Civil Engineering", "Mechanical...</span>
 <span class="co">#&gt; $ cip6name &lt;chr&gt; "Industrial Engineering", "Civil Engineering, General", "M...</span>
 <span class="co">#&gt; $ program  &lt;chr&gt; "Industrial Engineering", "Civil Engineering", "Mechanical...</span></pre></body></html></div>
 <p>We can select just the variables we need at this point. A convenient approach is to define a vector of variable names to select and later for grouping and summarizing.</p>

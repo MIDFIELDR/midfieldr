@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Filtering programs by CIP codes • midfieldr</title>
+<title>Identifying program CIP codes • midfieldr</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Filtering programs by CIP codes">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Identifying program CIP codes">
 <meta property="og:description" content="midfieldr">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -61,10 +61,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/cip_filter.html">Identifying programs by CIP codes</a>
+      <a href="../articles/cip_filter.html">Identifying program CIP codes</a>
     </li>
     <li>
-      <a href="../articles/selecting_programs.html">Selecting groups of programs</a>
+      <a href="../articles/selecting_programs.html">Select and label programs</a>
     </li>
     <li>
       <a href="../articles/imputing_fye.html">Imputing starting majors for FYE students</a>
@@ -122,7 +122,7 @@
       </header><script src="cip_filter_files/kePrint-0.0.1/kePrint.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Filtering programs by CIP codes</h1>
+      <h1 data-toc-skip>Identifying program CIP codes</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/master/vignettes/cip_filter.Rmd"><code>vignettes/cip_filter.Rmd</code></a></small>
@@ -144,9 +144,10 @@
 <a href="#introduction" class="anchor"></a>Introduction</h2>
 <p>“CIP” is the acronym for <em>Classification of Instructional Programs</em>, a taxonomy of academic programs curated by the US Department of Education.</p>
 <p>A “CIP code” is a 6-digit integer representing a specific academic program. For example, 140803 is the CIP code for Structural Engineering and 450202 is the CIP code for Physical Anthropology.</p>
-<p>The CIP code embeds three levels of program organization: the first 2 digits represent the most general grouping of programs to which the program belongs, loosely analogous to an academic college; the first 4 digits represent an intermediate grouping of programs to which the program belongs, loosely analogous to an academic department; the full 6 digits represent a specific program, loosely analogous to an academic discipline. For example,</p>
+<p>The CIP code embeds three levels of program organization: the first 2 digits represent the most general grouping of programs to which the program belongs; the first 4 digits represent an intermediate grouping of programs to which the program belongs; the full 6 digits represent a specific program. For example,</p>
 <ul>
-<li>Structural Engineering (140803) is a subset of Civil Engineering (1408) which is a subset of Engineering (14)</li>
+<li>Structural Engineering (140803) is a subset of Civil Engineering (1408) which is a subset of Engineering (14).<br>
+</li>
 <li>Physical Anthropology (450202) is a subset of Anthropology (4502) which is a subset of Social Sciences (45)</li>
 </ul>
 <p>The CIP is periodically updated. A 2020 CIP has been released, but MIDFIELD currently uses the 2010 CIP. Read more about the CIP at <span class="citation">(“IPEDS Classification of Instructional Programs” <a href="#ref-cip2010" role="doc-biblioref">2010</a>)</span>.</p>
@@ -157,8 +158,7 @@
 <a href="#cip-data" class="anchor"></a>CIP data</h2>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># packages used in the vignette</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"midfieldr"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"dplyr"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"stringr"</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"dplyr"</span>)</pre></body></html></div>
 <p><code>cip</code> is a data frame bundled with midfieldr containing columns of 2, 4, and 6-digit 2010 CIP codes and program names. All columns are character strings.</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">cip</span>)
 <span class="co">#&gt; # A tibble: 1,584 x 6</span>
@@ -173,7 +173,240 @@
 <span class="co">#&gt; 7 01    Agriculture, Agricult~ 0101  Agricultural Bu~ 0101~ Agricultural Busine~</span>
 <span class="co">#&gt; 8 01    Agriculture, Agricult~ 0101  Agricultural Bu~ 0101~ Agricultural Busine~</span>
 <span class="co">#&gt; # ... with 1,576 more rows</span></pre></body></html></div>
-<p>At the 6-digit level, each of the 1584 rows is a unique program.</p>
+<p>At the 6-digit level, there are 1584 instructional programs. A sample is shown below.</p>
+<table class="table table">
+<thead><tr>
+<th style="text-align:left;">
+cip6
+</th>
+<th style="text-align:left;">
+cip6name
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+090100
+</td>
+<td style="text-align:left;">
+Communication, General
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+111005
+</td>
+<td style="text-align:left;">
+Information Technology Project Management
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+150000
+</td>
+<td style="text-align:left;">
+Engineering Technology, General
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+260599
+</td>
+<td style="text-align:left;">
+Microbiological Sciences and Immunology
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+400802
+</td>
+<td style="text-align:left;">
+Atomic, Molecular Physics
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+451099
+</td>
+<td style="text-align:left;">
+Political Science and Government, Other
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+510916
+</td>
+<td style="text-align:left;">
+Health, Medical Physics
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+512312
+</td>
+<td style="text-align:left;">
+Assistive, Augmentative Technology and Rehabiliation Engineering
+</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>At the 4-digit level, the programs are organized into 396 program groupings, for example:</p>
+<table class="table table">
+<thead><tr>
+<th style="text-align:left;">
+cip4
+</th>
+<th style="text-align:left;">
+cip4name
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+0104
+</td>
+<td style="text-align:left;">
+Agricultural and Food Products Processing
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1516
+</td>
+<td style="text-align:left;">
+Nanotechnology
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2201
+</td>
+<td style="text-align:left;">
+Law (LLB, JD)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2304
+</td>
+<td style="text-align:left;">
+English Composition
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3013
+</td>
+<td style="text-align:left;">
+Medieval and Renaissance Studies - Multi, Interdisciplinary Studies
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3601
+</td>
+<td style="text-align:left;">
+Leisure and Recreational Activities
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+4605
+</td>
+<td style="text-align:left;">
+Plumbing and Related Water Supply Services
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5210
+</td>
+<td style="text-align:left;">
+Human Resources Management and Services
+</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>At the 2-digit level, the programs are organized into 46 program groupings, for example:</p>
+<table class="table table">
+<thead><tr>
+<th style="text-align:left;">
+cip2
+</th>
+<th style="text-align:left;">
+cip2name
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+05
+</td>
+<td style="text-align:left;">
+Area, Ethnic, Cultural and Gender and Group Studies
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+28
+</td>
+<td style="text-align:left;">
+Military Science, Leadership and Operational Art
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+29
+</td>
+<td style="text-align:left;">
+Military Technologies
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+38
+</td>
+<td style="text-align:left;">
+Philosophy and Religion
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+39
+</td>
+<td style="text-align:left;">
+Theological Studies and Religious Vocations
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+47
+</td>
+<td style="text-align:left;">
+Mechanic and Repair Technology
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+48
+</td>
+<td style="text-align:left;">
+Precision Production Trades
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+50
+</td>
+<td style="text-align:left;">
+Visual and Performing Arts
+</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
 <p>To learn more, open the help page by running <code><a href="../reference/cip.html">?cip</a></code>.</p>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
@@ -532,12 +765,15 @@ Multi, Interdisciplinary Studies - Ancient Studies, Civilization
 </table>
 <p><br></p>
 <p>The search returns some programs with Civilization in their names as well as Engineering Technology. If we wanted Civil Engineering only, we can use a sequence of function calls, where the outcome of the one operation is assigned to the data argument of the next operation using the dot (<code>.</code>) argument.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">cip</span>, <span class="kw">series</span> <span class="kw">=</span> <span class="st">"civil"</span>) <span class="kw">%&gt;%</span>
+<p>The following code chunk could be read as “Start with the <code>cip</code> data frame, then filter on ‘civil’, then filter on ‘engineering’, then delete ‘technology.’”</p>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">cip</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">.</span>, <span class="kw">series</span> <span class="kw">=</span> <span class="st">"civil"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">.</span>, <span class="kw">series</span> <span class="kw">=</span> <span class="st">"engineering"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">.</span>, <span class="kw">except</span> <span class="kw">=</span> <span class="st">"technology"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()</pre></body></html></div>
-<p>Alternatively, only the <code>except</code> argument must be named, so the following yields the same result,</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="st">"civil"</span>) <span class="kw">%&gt;%</span>
+<p>Only the <code>except</code> argument must be named, so the following code chunk yields the same result,</p>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">cip</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">.</span>, <span class="st">"civil"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">.</span>, <span class="st">"engineering"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">.</span>, <span class="kw">except</span> <span class="kw">=</span> <span class="st">"technology"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()</pre></body></html></div>
@@ -1062,7 +1298,8 @@ Germanic Languages, Literatures and Linguistics, Other
 </tbody>
 </table>
 <p><br></p>
-<p>From the 6-digit program names we find only two that are of interest, German Studies (050125) and German Language and Literature (160501). A character vector of these two codes is the revised series argument.</p>
+<p>From the 6-digit program names we find only two that are of interest, German Studies (050125) and German Language and Literature (160501).</p>
+<p>Note that the series argument is a vector.</p>
 <div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="kw">series</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"050125"</span>, <span class="st">"160501"</span>)) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()</pre></body></html></div>
 <table class="table table">
@@ -2390,6 +2627,11 @@ Mathematics and Statistics, Other
 <p><br></p>
 <p>To see the full set of available named series, see the help page <code><a href="../reference/cip_series.html">?cip_series</a></code>.</p>
 <p><br><a href="#top">▲ top of page</a></p>
+</div>
+<div id="selecting-the-6-digit-codes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#selecting-the-6-digit-codes" class="anchor"></a>Selecting the 6-digit codes</h2>
+<p>Once we’ve found the codes for the programs we want to study, we select the 6-digit codes</p>
 </div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">

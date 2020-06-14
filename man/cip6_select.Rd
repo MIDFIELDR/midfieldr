@@ -19,9 +19,9 @@ cip6_select(
 
 \item{program}{An optional character variable. There are four options:
 
-If NULL, the default, the 6-digit CIP program names are assigned to the new column.
+If program = NULL, the default, the 4-digit CIP program names are assigned to the new column.
 
-If NULL, but one of the named \code{cip_series} is used to create the \code{data} argument, then the series name is assigned to the new column.
+If program = "named_series", then the series name is assigned to the new column.
 
 If one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-digit, 4-digit, or 6-digit CIP program names are assigned to the new column.
 
@@ -60,4 +60,5 @@ y <- cip6_select(x)
 y <- cip6_select(x, program = "cip6name")
 y <- cip6_select(x, program = "cip4name")
 y <- cip6_select(x, program = "cip2name")
+
 }

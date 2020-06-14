@@ -53,9 +53,7 @@ kable2html <- function(...) {
 }
 ```
 
-
-
-In the vignettes illustrating various persistence metrics, the first step is to select the programs to study. We will use the same set of programs in different vignettes, so here we show the details of selecting and labeling those programs.  
+Before we can compute a persistence metric, we have to select the academic programs of the student records we wish to study. Here, we show the details of selecting and labeling a set of programs that we re-use in subsequent vignettes on persistence metrics.  
 
 
 
@@ -64,9 +62,11 @@ In the vignettes illustrating various persistence metrics, the first step is to 
 
 [Identify CIP codes]    
 [Select and label programs]    
+[Optional select and label procedure]  
 [Case study program group]    
 [Program label options]  
 [Non-midfieldr CIP variables]    
+[Optional select and label procedure]    
 
 
 
@@ -80,18 +80,19 @@ The programs we are studying are Civil Engineering, Electrical Engineering, Indu
 # packages used
 library("midfieldr")
 library("dplyr")
+library("stringr")
 ```
 
-We use `cip_filter()` to search the `cip` dataset first for Engineering and then filter the result for Civil, Electrical, Industrial, and Mechanical. 
+We use `cip_filter()` to search the `cip` dataset first for Engineering and then filter the result for Civil, Electrical, Industrial, and Mechanical. The results show that the codes we want are at the 4-digit level:  1408, 1410, 1419, and 1435.
  
 ```{r first-cip-search, echo = -1}
 options(tibble.print_min = 15L)
-cip_filter(cip, series = "engineering")%>%
-  cip_filter(., series = c("civil", "electrical", "industrial", "mechanical")) %>%
+cip_filter(data = cip, series = "engineering") %>%
+  cip_filter(data = ., series = c("civil", "electrical", "industrial", "mechanical")) %>%
   print()
 ```
 
-The results show that the codes we want are at the 4-digit level:  1408, 1410, 1419, and 1435.  
+
 
 
 
@@ -103,55 +104,73 @@ The results show that the codes we want are at the 4-digit level:  1408, 1410, 1
 
 ## Select and label programs
 
-In the next step, we extract these programs individually. 
-
-```{r extract-cip}
-cve <- cip_filter(cip, series = "^1408")
-ele <- cip_filter(cip, series = "^1410")
-mce <- cip_filter(cip, series = "^1419")
-ise <- cip_filter(cip, series = "^1435")
-```
-
-We use `cip6_select()` to assign program names to these programs. One possibility is to use the 4-digit program names already available in the data. To view those names:    
+In the next step, we extract these programs individually so we can label the programs individually.  We'll start with Civil Engineering. 
 
 ```{r}
-unique(cve[["cip4name"]])
-unique(ele[["cip4name"]])
-unique(mce[["cip4name"]])
-unique(ise[["cip4name"]])
+cve <- cip_filter(data = cip, series = "^1408") %>% 
+  print()
 ```
 
-Except for Electrical Engineering, the default program names are concise. We use `cip6_select()` to assign default names to three of the programs and a shorter name for Electrical Engineering. 
+We extract the 6-digit columns with `cip6_select()`. In this case, the default `cip4name` is suitably concise to use as the `program` argument. 
 
 ```{r}
-cve <- cip6_select(cve, program = "cip4name")
-ele <- cip6_select(ele, program = "Electrical Engineering")
-mce <- cip6_select(mce, program = "cip4name")
-ise <- cip6_select(ise, program = "cip4name")
+cve <- cip6_select(data = cve, program = "cip4name") %>% 
+  print()
 ```
 
-`cip6_select()` is pipe-compatible, so the two previous steps could have been combined, for example,  
+
+```{r echo = FALSE}
+ele <- cip_filter(data = cip, series = "^1410")
+```
+
+We repeat for the other three disciplines. For Electrical Engineering, the default 4-digit name is "`r unique(ele[["cip4name"]])`" which we shorten to the more concise "Electrical Engineering" using the `program` argument. 
 
 ```{r}
-cve <- cip_filter(cip, "^1408") %>%
-  cip6_select(., "cip4name")
+ele <- cip_filter(data = cip, series = "^1410") %>% 
+  cip6_select(data = ., program = "Electrical Engineering")
+
+mce <- cip_filter(data = cip, series = "^1419") %>% 
+  cip6_select(data = ., program = "cip4name")
+
+ise <- cip_filter(data = cip, series = "^1435") %>% 
+  cip6_select(data = ., program = "cip4name")
 ```
 
 We use `dplyr::bind_rows()` to bind the individual data frames into one data frame. 
 
 ```{r group-cip}
-program_group <- bind_rows(cve, ele, mce, ise)
+program_group <- bind_rows(cve, ele, mce, ise) %>% 
+  print()
 ```
 
-Examine the result: there are a total of `r length(unique(program_group[["cip6"]]))` CIP codes for these programs. 
+To learn more, open the help pages by running `?cip_filter` or `?cip6_select`. For practice, see the [Identifying program CIP codes](cip_filter.html) vignette.  
 
-```{r echo = -1}
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+## Optional select and label procedure
+
+In the [Select and label programs] section above, the basic procedure is to construct a data frame and label the program for each major then row-bind to assemble the separate data frames into one data frame. Of course this is not the only possible approach, but it is appropriate for R novices. 
+
+An optional and more concise approach that works with one data frame throughout is shown here. The programming content is correspondingly more dense---suitable for more experienced R users. 
+
+- We select the majors all at once and assign the default 4-digit program names.  
+- We use `stringr::str_detect()` to identify `cip6` values starting with 1410 and change the corresponding `program` values to Electrical Engineering, replacing the original "Electrical, Electronics and Communications Engineering." 
+
+```{r echo=-1}
 options(tibble.print_min = 12L)
-program_group
+program_group <- cip_filter(data = cip, series = c("^1408", "^1410", "^1419", "^1435")) %>% 
+  cip6_select(data = ., program = "cip4name") %>% 
+  mutate(program = ifelse(str_detect(cip6, "^1410"), "Electrical Engineering", program)) %>% 
+  print()
 ```
-
-For additional information, try the [Identifying program CIP codes](cip_filter.html) vignette and the help pages by running `?cip_filter` and `?cip6_select`. 
-
 
 
 
@@ -189,7 +208,7 @@ In this section, we explore the arguments of `cip6_select()`. There are four opt
 
 <br>
 
-**Option 1:** When a string of your own choosing is assigned to program.
+**Option 1:** When a string of our own choosing is assigned to `program`, then that string is the value. 
 
 ```{r results = "hide"}
 cip %>% 
@@ -211,7 +230,7 @@ cip %>%
 <br> 
 
 
-**Option 2:** When `program = NULL` (default) and `data`  matches one of the named `cip_series`, then the 6-digit CIP program names are assigned to the new column.
+**Option 2:** When `program = NULL` (default) and `data`  matches one of the named `cip_series`, then the value from the named series is assigned to the new column.
 
 ```{r results = "hide"}
 cip %>% 
@@ -229,7 +248,7 @@ cip %>%
 
 <br>
 
-**Option 3:** When `program` is assigned one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-digit, 4-digit, or 6-digit CIP program names are assigned to the new column.
+**Option 3:** When `program` is assigned one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-, 4-, or 6-digit names from `cip` are  assigned to the new column.
 
 ```{r results = "hide"}
 # 2-digit 
@@ -278,7 +297,7 @@ cip %>%
 
 <br>
 
-**Option 4:** When `program = NULL` (default) and `data` does not match one of the  named `cip_series`, then the 6-digit CIP program names are assigned to the new column. This result is identical to `program = "cip6name"`. 
+**Option 4:** When `program = NULL` (default) and `data` does not match one of the  named `cip_series`, then the 6-digit CIP program name assigned to the new column. This result is identical to `program = "cip6name"`. 
 
 ```{r results = "hide"}
 cip %>% 
@@ -328,7 +347,7 @@ nonstandard_cip %>%
   print() # or View
 ```
 
-**Option 2:** If the non-standard variable names do not have to be kept intact, the simple option is to `rename()` the nonstandard variable names to the standard names, e.g.,  
+**Option 2:** If the non-standard variable names do not have to be kept intact, the simple option is to `dplyr::rename()` the nonstandard variable names to the standard names, e.g.,  
 
 ```{r}
 standard_cip <- nonstandard_cip %>% 
@@ -346,6 +365,12 @@ Similar arguments are made when one has nonstandard column names for  `cip4name`
 
 <br>
 <a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+
 
 
 

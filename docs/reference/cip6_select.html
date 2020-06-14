@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tools for Student Records Research — midfieldr • midfieldr</title>
+<title>Select the 6-digit CIP code and name and add a program label — cip6_select • midfieldr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,11 +46,8 @@
 
 
 
-<meta property="og:title" content="Tools for Student Records Research — midfieldr" />
-<meta property="og:description" content="A package for investigating a data sample from the MIDFIELD database.
-The data comprise student records from registrars at participating US
-universities, including demographic, term, course, and degree information
-for 97,640 undergraduate students from 1987 to 2016." />
+<meta property="og:title" content="Select the 6-digit CIP code and name and add a program label — cip6_select" />
+<meta property="og:description" content="From a CIP data frame, select the columns with the 6-digit codes and names and add a new character variable named program." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -167,56 +164,83 @@ for 97,640 undergraduate students from 1987 to 2016." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Tools for Student Records Research</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/midfieldr.R'><code>R/midfieldr.R</code></a></small>
-    <div class="hidden name"><code>midfieldr.Rd</code></div>
+    <h1>Select the 6-digit CIP code and name and add a program label</h1>
+    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/cip6_select.R'><code>R/cip6_select.R</code></a></small>
+    <div class="hidden name"><code>cip6_select.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A package for investigating a data sample from the MIDFIELD database.
-The data comprise student records from registrars at participating US
-universities, including demographic, term, course, and degree information
-for 97,640 undergraduate students from 1987 to 2016.</p>
+    <p>From a CIP data frame, select the columns with the 6-digit codes and names and add a new character variable named <code>program</code>.</p>
     </div>
 
+    <pre class="usage"><span class='fu'>cip6_select</span>(
+  <span class='no'>data</span>,
+  <span class='kw'>program</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>cip6</span> <span class='kw'>=</span> <span class='st'>"cip6"</span>,
+  <span class='kw'>cip6name</span> <span class='kw'>=</span> <span class='st'>"cip6name"</span>,
+  <span class='kw'>cip4name</span> <span class='kw'>=</span> <span class='st'>"cip4name"</span>,
+  <span class='kw'>cip2name</span> <span class='kw'>=</span> <span class='st'>"cip2name"</span>
+)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>data</th>
+      <td><p>A CIP data frame with the same structure as midfieldr <code>cip</code>.</p></td>
+    </tr>
+    <tr>
+      <th>program</th>
+      <td><p>An optional character variable. There are four options:</p>
+<p>If NULL, the default, the 6-digit CIP program names are assigned to the new column.</p>
+<p>If NULL, but one of the named <code>cip_series</code> is used to create the <code>data</code> argument, then the series name is assigned to the new column.</p>
+<p>If one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-digit, 4-digit, or 6-digit CIP program names are assigned to the new column.</p>
+<p>Any other string fills the new column.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Not used for values, forces later arguments to bind by name</p></td>
+    </tr>
+    <tr>
+      <th>cip6</th>
+      <td><p>Optional argument, the column name in quotes of the 6-digit CIP code variable in <code>data</code>. Default is "cip6".</p></td>
+    </tr>
+    <tr>
+      <th>cip6name</th>
+      <td><p>Optional argument, the column name in quotes of the 6-digit CIP program name variable in <code>data</code>. Default is "cip6name".</p></td>
+    </tr>
+    <tr>
+      <th>cip4name</th>
+      <td><p>Optional argument, the column name in quotes of the 4-digit CIP program name variable in <code>data</code>. Default is "cip4name".</p></td>
+    </tr>
+    <tr>
+      <th>cip2name</th>
+      <td><p>Optional argument, the column name in quotes of the 2-digit CIP program name variable in <code>data</code>. Default is "cip2name".</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Data provided by the MIDFIELD project:
-<a href='https://engineering.purdue.edu/MIDFIELD'>https://engineering.purdue.edu/MIDFIELD</a></p>
+    <p>A data frame with the 6-digit code and name columns from the input data frame with an added <code>program</code> variable.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This package provides functions to access, manipulate, and graph student
-record data. To illustrate the workflow, we would use these functions in
-sequence to compute and display the "stickiness" metric:</p>
-<ul>
-<li><p><code><a href='cip_filter.html'>cip_filter()</a></code> to select programs from the CIP data</p></li>
-<li><p><code>cip_label()</code> to add custom program labels for grouping</p></li>
-<li><p><code>gather_ever()</code> to gather students ever enrolled</p></li>
-<li><p><code>gather_grad()</code> to gather graduating students</p></li>
-<li><p><code><a href='race_sex_join.html'>race_sex_join()</a></code> to join student sex and race</p></li>
-<li><p><code><a href='https://rdrr.io/pkg/seplyr/man/group_summarize.html'>seplyr::group_summarize()</a></code> to count students</p></li>
-<li><p><code><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>dplyr::join()</a></code> and <code>mutate()</code> to compute stickiness</p></li>
-<li><p><code><a href='multiway_order.html'>multiway_order()</a></code> to prepare the results for graphing</p></li>
-<li><p><code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot2::ggplot()</a></code> to graph the metric</p></li>
-</ul>
+    <p>Assigning a custom label to a program or a group of programs provides
+the option of grouping and summarizing CIP data in ways not afforded by
+the default program names in the 2010 CIP data.</p>
 
-<p>To learn about these and other functions in detail, start with the
-vignettes: <code><a href='https://rdrr.io/r/utils/browseVignettes.html'>browseVignettes(package = "midfieldr")</a></code>.</p>
-    <h2 class="hasAnchor" id="data"><a class="anchor" href="#data"></a>Data</h2>
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># Extract the Philosophy and Religion programs and label</span>
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='cip_filter.html'>cip_filter</a></span>(<span class='no'>cip</span>, <span class='kw'>series</span> <span class='kw'>=</span> <span class='st'>"^38"</span>)
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>cip6_select</span>(<span class='no'>x</span>, <span class='kw'>program</span> <span class='kw'>=</span> <span class='st'>"Phil-Relig"</span>)
 
-    
+<span class='co'># With no program argument, the 6-digit CIP names are assigned</span>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>cip6_select</span>(<span class='no'>x</span>)
 
-
-<p>Instructional program data is provided in <code>cip</code>, a data frame of names
-and codes of academic programs from the 2010 IPEDS Classification of
-Instructional Programs (CIP) by the US Department of Education.</p>
-<p>Student record data is provided in the companion data package,
-<a href='https://github.com/MIDFIELDR/midfielddata'>midfielddata</a>. Data are
-provided in four datasets: <code>midfieldcourses</code>, <code>midfielddegrees</code>,
-<code>midfieldstudents</code>, and  <code>midfieldterms</code>.</p>
-
+<span class='co'># Argument options include</span>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>cip6_select</span>(<span class='no'>x</span>, <span class='kw'>program</span> <span class='kw'>=</span> <span class='st'>"cip6name"</span>)
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>cip6_select</span>(<span class='no'>x</span>, <span class='kw'>program</span> <span class='kw'>=</span> <span class='st'>"cip4name"</span>)
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>cip6_select</span>(<span class='no'>x</span>, <span class='kw'>program</span> <span class='kw'>=</span> <span class='st'>"cip2name"</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
