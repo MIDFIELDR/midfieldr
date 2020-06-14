@@ -6,14 +6,15 @@
 
 Changes incompatible with earlier versions. 
 
-- Function arguments are reordered such that the data frame being operated on is the first argument 
-- `cip6_select()` replaces `cip_label()`. The new function removes columns of 2-digit and 4-digit codes and names and, like the original, adds a custom program label. 
+- For functions that operate on a data frame and return a data frame, the data frame is now the first argument---conforming to conventional coding practice and facilitating the use of pipe operators (`%>%`). For example, the new `cip_filter(data = cip, series)` replaces the old `cip_filter(series, reference = cip)`.  
+- `cip6_select()` replaces `cip_label()`. Both functions add a custom program label for grouping, summarizing, and graphing, but the new function removes columns of 2-digit and 4-digit codes and names. 
 
 Additional improvements 
 
-- `cip_filter()` add the `except` argument
-- `cip6_select()` input data frame can accommodate variable names different from the default `cip` data frame. 
-
+- `cip_filter(data, series, except)` includes a new `except` argument to exclude rows that include detected strings. 
+- `cip6_select(data, program)` can accommodate variable names in `data` different from the default `cip`. 
+- `cip6_select(program = NULL)` assigns the `cip4name` values to the `program` variable. The old `cip_label()` NULL result was the 6-digit names. 
+- `cip6_select(program = "named_series")` is a new option for the program argument that assigns the appropriate named series to the `program` values. 
 
 
 

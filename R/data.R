@@ -20,8 +20,9 @@
 #'   not enrolled in a program.}
 #' }
 #'
-#' @format A data frame with 1584 observations and 6 variables.
+#' @format A data frame (tibble) with 1584 observations and 6 variables.
 #' All variables are characters. An observation is a unique program.
+#'
 #' \describe{
 #'   \item{cip2}{An instructional program's 2-digit code,  representing "the
 #'   most general groupings of related programs" (US National Center for
@@ -35,8 +36,10 @@
 #'   "specific instructional programs".}
 #'   \item{cip6name}{Name of a specific program at the 6-digit level.}
 #' }
+#'
 #' @source Based on the 2010 codes curated by the US National Center for
 #' Education Statistics (\url{https://nces.ed.gov/ipeds/cipcode}).
+#'
 #' @examples
 #' # View the CIP data
 #' cip
@@ -58,7 +61,9 @@
 #' Atomic character vectors of 6-digit CIP codes for specified groups of programs.
 #'
 #' @name cip_series
+#'
 #' @format An atomic character vector of 6-digit CIP codes.
+#'
 #' \describe{
 #' \item{\code{cip_bio_sci}}{Biological and biomedical science programs,
 #' series 26.}
@@ -70,17 +75,19 @@
 #' \item{\code{cip_stem}}{All Science, Technology, Engineering, and Mathematics
 #'   (STEM) programs.}
 #' }
+#'
 #' @source
 #' NSF STEM programs, \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}
 #'
 #' CIP 2010, US National Center for Education Statistics,
 #'   \url{https://nces.ed.gov/ipeds/cipcode}.
+#'
 #' @examples
 #' head(cip_math_stat, n = 10L)
 #' head(cip_phys_sci, n = 10L)
 #'
-#' cip_filter(cip, series = cip_math_stat)
-#' cip_filter(cip, series = cip_phys_sci)
+#' cip_filter(data = cip, series = cip_math_stat)
+#' cip_filter(data = cip, series = cip_phys_sci)
 NULL
 
 #' @rdname cip_series
@@ -103,30 +110,24 @@ NULL
 
 #' CIP case data for four programs
 #'
-#' A data frame and subset of [\code{cip}](cip.html) with CIP codes and
-#' names for four engineering programs.
+#' A subset of the [\code{cip}](cip.html) data frame for four
+#' engineering programs.
 #'
-#' The CIP codes and names plus a user-selected program name for Civil,
-#' Electrical, Industrial, and Mechanical Engineering. The "Selecting programs"
-#' vignette describes how these data were collected. The data frame is used be
-#' several other vignettes as a starting point in selecting programs to study.
+#' The 6-digit CIP codes and names plus a user-selected program name for Civil,
+#' Electrical, Industrial, and Mechanical Engineering. The "Select and label
+#' programs" vignette describes how these data were assembled. The data frame is
+#' used by several other vignettes as a starting point.
 #'
-#' @format A tidy data frame (tibble) with 1546 observations and 6 variables.
+#' @format A data frame (tibble) with 12 observations and 3 variables.
 #' All variables are characters. An observation is a unique program.
+#'
 #' \describe{
-#'   \item{cip2}{An instructional program's 2-digit code,  representing "the
-#'   most general groupings of related programs" (US National Center for
-#'   Education Statistics).}
-#'   \item{cip2name}{Name of a program at the 2-digit level.}
-#'   \item{cip4}{An instructional program's 4-digit code, representing
-#'   "intermediate groupings of programs that have comparable content and
-#'   objectives".}
-#'   \item{cip4name}{Name of a program at the 4-digit level.}
 #'   \item{cip6}{An instructional program's 6-digit code, representing
 #'   "specific instructional programs".}
 #'   \item{cip6name}{Name of a program at the 6-digit level}
-#'   \item{program}{A program name.}
+#'   \item{program}{A program name used for grouping, summarizing, and graphing.}
 #' }
+#'
 #' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
 "case_program_group"
 
@@ -137,13 +138,15 @@ NULL
 
 #' Stickiness case data
 #'
-#' An data frame (32 by 6) of stickiness data grouped by student race and sex.
+#' An data frame of stickiness data grouped by program and student
+#' race/ethnicity and sex.
 #'
-#' For Civil, Electrical, Industrial, and Mechanical Engineering , the number
+#' For Civil, Electrical, Industrial, and Mechanical Engineering, the number
 #' of students ever enrolled, the number of graduates, and the resulting
 #' stickiness.
 #'
-#' @format A data frame with columns:
+#' @format A data frame (tibble) with 32 observations and 6 variables.
+#'
 #' \describe{
 #'  \item{program}{Instructional programs selected for study.}
 #'  \item{race}{Student race and sex from \code{midfieldstudents} data.}
@@ -155,16 +158,21 @@ NULL
 #'  \item{stick}{Program stickiness: the ratio of the number of students
 #'  graduating from a program to the number ever enrolled in the program.}
 #' }
+#'
 #' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
 "case_stickiness"
 
 
 
 
+
+
+
+
 #' Imputed starting majors for FYE students
 #'
-#' Imputed starting majors for 6000 first-year engineering (FYE) students in
-#' the midfielddata package.
+#' Imputed starting majors for nearly 6000 first-year engineering (FYE) students
+#' in the midfielddata package.
 #'
 #' Some US institutions have first year engineering (FYE) programs---typically
 #' a common first year curriculum that is a prerequisite for declaring an
@@ -173,11 +181,13 @@ NULL
 #' program such as Civil, Electrical, or Mechanical, the student would have
 #' declared had they not been required to enroll in FYE.
 #'
-#' @format A data frame with columns:
+#' @format A data frame (tibble) with 5992 observations and 2 variables.
+#'
 #' \describe{
 #'  \item{id}{Unique, anonymized MIDFIELD student identifier.}
 #'  \item{cip6}{Imputed starting major (6-digit CIP code) of FYE students. }
 #' }
+#'
 #' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
 "case_fye"
 
@@ -192,12 +202,15 @@ NULL
 #'
 #' The color names have the form "level_hue" with 4 saturation levels (dark, mid, light, pale) and 5 hues (Br, BG, PR, Gn, Gray or Grey).
 #'
-#' @format A data frame with columns:
+#' @format A data frame (tibble) with 24 observations and 2 variables.
+#'
 #' \describe{
 #'   \item{rcb_name}{Character variable of names.}
 #'   \item{rcb_code}{Character variable of hex color codes.}
 #' }
+#'
 #' @source Cynthia Brewer (\url{http://colorbrewer2.org}) and RColorBrewer  (\url{https://cran.r-project.org/package=RColorBrewer}).
+#'
 #' @examples
 #' rcb_colors
 #' rcb("dark_Br")

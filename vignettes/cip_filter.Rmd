@@ -1,8 +1,8 @@
 ---
-title: "Identifying program CIP codes"
+title: "Exploring program CIP codes"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Identifying program CIP codes}
+  %\VignetteIndexEntry{Exploring program CIP codes}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -162,7 +162,15 @@ cip %>%
 ```
 <br>
 
-To learn more, open the help page by running `?cip`. 
+Notes. 
+
+- Instead of `print()`, one can use `View()` for a spreadsheet-style view of a result. 
+- We recommend that you examine the result of every step of your work to help find errors and correct them as you go. 
+- Reminder that is a sequence of operations using the pipe operator (`%>%`), the outcome of the one operation is assigned to the data argument of the next operation using the dot (`.`) argument.
+- To learn more, open the help page by running `? cip`.  
+
+
+
 
 
 
@@ -192,7 +200,7 @@ cip_filter(data = cip, series = "engineering") %>%
   print()
 ```
 
-The first two argument names can be omitted. 
+The first two argument names can be omitted if they are in the correct order. We will generally include argument names for the benefit of R novices though readers are free to omit argument names like these if they wish. 
 
 ```{r}
 cip_filter(cip, "engineering") %>%
@@ -211,7 +219,12 @@ cip_filter(cip, "civil engineering", "technology") %>%
   print()
 ```
 
-In subsequent sections, we examine different strategies for using `cip_filter()`. 
+
+Notes. 
+
+- A function help page will indicate which arguments, if any, must be named. See the help page for this function by running `? cip_filter`. 
+- In subsequent sections, we examine different strategies for using `cip_filter()`.
+
 
 <br>
 <a href="#top">&#9650; top of page</a> 
@@ -225,7 +238,7 @@ In subsequent sections, we examine different strategies for using `cip_filter()`
 Suppose we want to find the CIP codes and names for all programs in Civil Engineering. The search is case-insensitive, so we start with the following code chunk. 
 
 ```{r}
-cip_filter(cip, "civil") %>%
+cip_filter(data = cip, series = "civil") %>%
   print() # View() can be used instead
 ```
 
@@ -239,7 +252,7 @@ Notes on viewing the results:
 
 ```{r echo = FALSE}
 # using kable_styling() for output but conceal from novice user
-kable2html(cip_filter(cip, series = "civil"))
+kable2html(cip_filter(data = cip, series = "civil"))
 ```
 
 <br>
@@ -278,12 +291,12 @@ kable2html(cip %>%
 Seeing that all Civil Engineering programs have the same `cip4name`, we could shorten our search to one line, 
 
 ```{r results = "hide"}
-cip_filter(cip, series = "civil engineering", except = "technology") %>% 
+cip_filter(data = cip, series = "civil engineering", except = "technology") %>% 
   print()
 ```
 
 ```{r echo = FALSE}
-kable2html(cip_filter(cip, series = "civil engineering", except = "technology"))
+kable2html(cip_filter(data = cip, series = "civil engineering", except = "technology"))
 ```
 
 <br>
@@ -291,12 +304,12 @@ kable2html(cip_filter(cip, series = "civil engineering", except = "technology"))
 In the next example, suppose we want to study programs relating to German culture, language, and literature. Using  "german" for the `series` value yields 
 
 ```{r results = "hide"}
-cip_filter(cip, series = "german") %>%
+cip_filter(data = cip, series = "german") %>%
   print()
 ```
 
 ```{r echo = FALSE}
-kable2html(cip_filter(cip, series = "german"))
+kable2html(cip_filter(data = cip, series = "german"))
 ```
 
 <br>

@@ -9,9 +9,9 @@ NULL
 #'
 #' The \code{series} argument is an atomic character vector of search terms  used to filter the CIP data frame. Typical search terms include words and phrases describing academic programs or their CIP codes.
 #'
-#' Several collections of named series are provided to facilitate searching for groups of programs such as Biological Sciences, Engineering, Physical Sciences, etc. For the named series help page, run \code{?cip_series}.
+#' Several collections of named series are provided to facilitate searching for groups of programs such as Biological Sciences, Engineering, Physical Sciences, etc. For the named series help page, run \code{? cip_series}.
 #'
-#' The function returns a subset of \code{data} with all rows containing any of the search terms. Variables are not altered.
+#' The function returns a subset of \code{data}. All columns are retained.
 #'
 #' @param data a data frame or tibble of CIP codes
 #'
