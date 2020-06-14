@@ -18,7 +18,7 @@ NULL
 #'
 #' If NULL, the default, the 6-digit CIP program names are assigned to the new column.
 #'
-#' If NULL, but one of the named \code{cip_series} is used to create the \code{.cip} argument, then the series name is assigned to the new column.
+#' If NULL, but one of the named \code{cip_series} is used to create the \code{data} argument, then the series name is assigned to the new column.
 #'
 #' If one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-digit, 4-digit, or 6-digit CIP program names are assigned to the new column.
 #'
@@ -51,10 +51,10 @@ NULL
 #' @export
 cip6_select <- function(data, program = NULL, ..., cip6 = "cip6", cip6name = "cip6name", cip4name = "cip4name", cip2name = "cip2name") {
 
-  # data must match midfieldr cip data structure
+  # column class must match midfieldr cip
   stopifnot(identical(
-    purrr::map_chr(cip, class),
-    purrr::map_chr(data, class)
+    unname(purrr::map_chr(midfieldr::cip, class)),
+    unname(purrr::map_chr(data, class))
   ))
 
   # force optional arguments to be usable only by name
@@ -94,12 +94,12 @@ cip6_select <- function(data, program = NULL, ..., cip6 = "cip6", cip6name = "ci
         }
       } else {
         # program argument is given
-        if (identical(program, CIP2NAME)) {
+        if (identical(program, cip2name)) {
           # use CIP data names
           program <- data[[CIP2NAME]]
-        } else if (identical(program, CIP4NAME)) {
+        } else if (identical(program, cip4name)) {
           program <- data[[CIP4NAME]]
-        } else if (identical(program, CIP6NAME)) {
+        } else if (identical(program, cip6name)) {
           program <- data[[CIP6NAME]]
         } else {
           # otherwise, use the input argument

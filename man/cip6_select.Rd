@@ -21,7 +21,7 @@ cip6_select(
 
 If NULL, the default, the 6-digit CIP program names are assigned to the new column.
 
-If NULL, but one of the named \code{cip_series} is used to create the \code{.cip} argument, then the series name is assigned to the new column.
+If NULL, but one of the named \code{cip_series} is used to create the \code{data} argument, then the series name is assigned to the new column.
 
 If one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-digit, 4-digit, or 6-digit CIP program names are assigned to the new column.
 

@@ -12,7 +12,7 @@ The following changes are incompatible with earlier versions.
 Additional improvements 
 
 - `cip_filter()` add the `except` argument
-- `cip6_select()` input data frame can acommodate variable names different from the default `cip` data frame. 
+- `cip6_select()` input data frame can accommodate variable names different from the default `cip` data frame. 
 
 
 

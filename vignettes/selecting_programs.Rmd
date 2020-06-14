@@ -35,12 +35,25 @@ knitr::knit_hooks$set(inline = function(x) {
     prettyNum(round(x, 2))
   }
 })
-# options(tibble.print_min = 8L, tibble.print_max = 8L)
+options(tibble.print_min = 8L, tibble.print_max = 8L)
 
 # normally, purl is FALSE. But in some code chunks, I want purl = TRUE so that the code in the vignette is executed to pass R CMD check. These next few lines set that up. In the code chunk header, add opts.label = 'dopurl'
 knitr::knit_hooks$set(purl = knitr::hook_purl)
 knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
 ```
+
+```{r echo = FALSE}
+# for my use, load the following but conceal from novice user
+library("kableExtra")
+
+# function to print to html using kable, control font size
+kable2html <- function(...) {
+  kable(..., "html") %>%
+    kable_styling(font_size = 12)
+}
+```
+
+
 
 In the vignettes illustrating various persistence metrics, the first step is to select the programs to study. We will use the same set of programs in different vignettes, so here we show the details of selecting and labeling those programs.  
 
@@ -51,8 +64,9 @@ In the vignettes illustrating various persistence metrics, the first step is to 
 
 [Identify CIP codes]    
 [Select and label programs]    
-[A saved data set of programs]    
-
+[Case study program group]    
+[Program label options]  
+[Non-midfieldr CIP variables]    
 
 
 
@@ -147,14 +161,195 @@ For additional information, try the [Identifying program CIP codes](cip_filter.h
 
 
 
-## A saved data set of programs
+## Case study program group
 
-For convenience, this data frame of engineering CIP codes and program names has been bundled with midfieldr to use in vignettes. 
+`case_program_group`, a data set identical to the `program_group` data frame above, is bundled in midfieldr for use in subsequent vignettes and example. 
 
-`case_program_group` is the name of the saved data frame. To access the data frame, load midfieldr and assign the data to an object such as `program_group`. Note that `case_program_group` is identical to the group of programs we created earlier. 
+The data are available if midfieldr is loaded. 
 
 ```{r}
 library("midfieldr")
-program_group <- case_program_group %>%
+case_program_group %>%
   print()
 ```
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+## Program label options 
+
+In this section, we explore the arguments of `cip6_select()`. There are four options for `program` argument 
+
+<br>
+
+**Option 1:** When a string of your own choosing is assigned to program.
+
+```{r results = "hide"}
+cip %>% 
+  cip_filter(series = "^31") %>% 
+  cip6_select(program = "Leisure Studies") %>% 
+  print() # or View
+```
+
+```{r echo = FALSE}
+cip %>% 
+  cip_filter(series = "^31") %>% 
+  cip6_select(program = "Leisure Studies") %>% 
+  kable2html()
+```
+
+
+
+
+<br> 
+
+
+**Option 2:** When `program = NULL` (default) and `data`  matches one of the named `cip_series`, then the 6-digit CIP program names are assigned to the new column.
+
+```{r results = "hide"}
+cip %>% 
+  cip_filter(series = cip_math_stat) %>% 
+  cip6_select() %>% 
+  print() # or View
+```
+
+```{r echo = FALSE}
+cip %>% 
+  cip_filter(series = cip_math_stat) %>% 
+  cip6_select() %>% 
+  kable2html()
+```
+
+<br>
+
+**Option 3:** When `program` is assigned one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-digit, 4-digit, or 6-digit CIP program names are assigned to the new column.
+
+```{r results = "hide"}
+# 2-digit 
+cip %>% 
+  cip_filter(series = "^31") %>% 
+  cip6_select(program = "cip2name") %>% 
+  print() # or View
+```
+
+```{r echo = FALSE}
+cip %>% 
+  cip_filter(series = "^31") %>% 
+  cip6_select(program = "cip2name") %>% 
+  kable2html()
+```
+
+```{r results = "hide"}
+# 4-digit 
+cip %>% 
+  cip_filter(series = "^31") %>% 
+  cip6_select(program = "cip4name") %>% 
+  print() # or View
+```
+
+```{r echo = FALSE}
+cip %>% 
+  cip_filter(series = "^31") %>% 
+  cip6_select(program = "cip4name") %>% 
+  kable2html()
+```
+
+```{r results = "hide"}
+# 6-digit 
+cip %>% 
+  cip_filter(series = "^31") %>% 
+  cip6_select(program = "cip6name") %>% 
+  print() # or View
+```
+
+```{r echo = FALSE}
+cip %>% 
+  cip_filter(series = "^31") %>% 
+  cip6_select(program = "cip6name") %>% 
+  kable2html()
+```
+
+<br>
+
+**Option 4:** When `program = NULL` (default) and `data` does not match one of the  named `cip_series`, then the 6-digit CIP program names are assigned to the new column. This result is identical to `program = "cip6name"`. 
+
+```{r results = "hide"}
+cip %>% 
+  cip_filter(series = "^31") %>% 
+  cip6_select() %>% 
+  print() # or View
+```
+
+```{r echo = FALSE}
+cip %>% 
+  cip_filter(series = "^31") %>% 
+  cip6_select() %>% 
+  kable2html()
+```
+
+
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+## Non-midfieldr CIP variables
+
+Optional arguments in `cip6_select()` accommodate the possibility that one uses a CIP data frame with different variable names than those in `midfieldr::cip`. The four columns accommodated are `cip6`, `cip6name`, `cip4name`, and `cip2name`. 
+
+For illustration only, let's create a CIP data frame called `nonstandard_cip` with a different name for the two variables `cip6` and `cip6name`. 
+
+```{r echo=-1}
+options(tibble.print_min = 5L)
+nonstandard_cip <- cip %>% 
+  rename("code_6" = cip6, "name_6" = cip6name) %>% 
+  print() # or View
+```
+
+**Option 1:** If the non-standard variable names must be kept intact, then we use the optional arguments `cip6` and `cip6name` so that `cip6_select()` can operate on the  nonstandard column names.  
+
+```{r}
+nonstandard_cip %>% 
+  cip_filter(series = "^31") %>% 
+  cip6_select(program = "Leisure Studies", cip6 = "code_6", cip6name = "name_6") %>% 
+  print() # or View
+```
+
+**Option 2:** If the non-standard variable names do not have to be kept intact, the simple option is to `rename()` the nonstandard variable names to the standard names, e.g.,  
+
+```{r}
+standard_cip <- nonstandard_cip %>% 
+  cip_filter(series = "^31") %>% 
+  rename("cip6" = code_6, "cip6name" = name_6) %>% 
+  print() # or View
+```
+
+Similar arguments are made when one has nonstandard column names for  `cip4name` and `cip2name`.
+
+
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+## References 
+
+
