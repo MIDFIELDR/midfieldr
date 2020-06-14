@@ -4,7 +4,7 @@
 
 ## midfieldr 1.0.0.9001 / 2020-06-13
 
-The following changes are incompatible with earlier versions. 
+Changes incompatible with earlier versions. 
 
 - Function arguments are reordered such that the data frame being operated on is the first argument 
 - `cip6_select()` replaces `cip_label()`. The new function removes columns of 2-digit and 4-digit codes and names and, like the original, adds a custom program label. 
