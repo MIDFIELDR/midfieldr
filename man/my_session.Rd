@@ -4,10 +4,10 @@
 \alias{my_session}
 \title{Session information}
 \usage{
-my_session(packages)
+my_session(pkg_names)
 }
 \arguments{
-\item{packages}{A character vector of package names}
+\item{pkg_names}{A character vector of package names}
 }
 \description{
 Internal function to print a less verbose session information output for
