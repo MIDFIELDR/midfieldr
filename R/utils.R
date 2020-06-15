@@ -73,7 +73,7 @@ my_session <- function(pkg_names) {
 #' @export
 kable2html <- function(x) {
   knitr::kable(x, "html") %>%
-    kableExtra::kable_styling(font_size = 12)
+    kableExtra::kable_styling(font_size = 10)
 }
 
 
