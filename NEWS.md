@@ -15,6 +15,7 @@ Additional improvements
 - `cip6_select(data, program)` can accommodate variable names in `data` different from the default `cip`. 
 - `cip6_select(program = NULL)` assigns the `cip4name` values to the `program` variable. The old `cip_label()` NULL result was the 6-digit names. 
 - `cip6_select(program = "named_series")` is a new option for the program argument that assigns the appropriate named series to the `program` values. 
+- Content links and session information added to each vignette   
 
 
 
