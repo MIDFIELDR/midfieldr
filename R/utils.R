@@ -33,30 +33,46 @@ NULL
   assign("has_data", has_data_package, envir = .pkgglobalenv)
 }
 
-#' Creates my own shorter version of session_info for vignettes
-#' from the sessioninfo package
-#' @NoRd
-my_session <- function(package_string) {
+
+
+
+
+
+#' Session information
+#'
+#' Internal function to print a less verbose session information output for
+#' vignettes using sessioninfo::session_info
+#'
+#' @param pkg_names A character vector of package names
+#' @keywords internal
+#' @export
+my_session <- function(pkg_names) {
   # platform
-  x <- sessioninfo::platform_info()
-  print(x)
+  print(sessioninfo::platform_info())
   cat("\n")
+
   # packages
+  pkg_str  <- stringr::str_c(pkg_names, collapse = "|")
   y        <- sessioninfo::package_info()
-  sel      <- stringr::str_detect(y$package, package_string)
+  sel      <- stringr::str_detect(y$package, pkg_str)
   pkgs     <- y[sel, ]
   pkgs[11] <- NULL
   print(pkgs)
-  cat("* packages attached to the search path, dependencies not shown")
+  cat("* dependent packages not listed")
 }
 
 
 
-
-#' function to print to html using kable, control font size
-#' @NoRd
-kable2html <- function(...) {
-  knitr::kable(..., "html") %>%
+#' Create table
+#'
+#' Internal function for vignettes to print to html using knitr::kable
+#' and set font size with kableExtra::kable_styling.
+#'
+#' @param x An object to be printed
+#' @keywords internal
+#' @export
+kable2html <- function(x) {
+  knitr::kable(x, "html") %>%
     kableExtra::kable_styling(font_size = 12)
 }
 

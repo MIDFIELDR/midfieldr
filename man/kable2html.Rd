@@ -2,10 +2,15 @@
 % Please edit documentation in R/utils.R
 \name{kable2html}
 \alias{kable2html}
-\title{function to print to html using kable, control font size}
+\title{Create table}
 \usage{
-kable2html(...)
+kable2html(x)
+}
+\arguments{
+\item{x}{An object to be printed}
 }
 \description{
-function to print to html using kable, control font size
+Internal function for vignettes to print to html using knitr::kable
+and set font size with kableExtra::kable_styling.
 }
+\keyword{internal}

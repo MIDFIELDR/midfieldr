@@ -2,12 +2,15 @@
 % Please edit documentation in R/utils.R
 \name{my_session}
 \alias{my_session}
-\title{Creates my own shorter version of session_info for vignettes
-from the sessioninfo package}
+\title{Session information}
 \usage{
-my_session(package_string)
+my_session(packages)
+}
+\arguments{
+\item{packages}{A character vector of package names}
 }
 \description{
-Creates my own shorter version of session_info for vignettes
-from the sessioninfo package
+Internal function to print a less verbose session information output for
+vignettes using sessioninfo::session_info
 }
+\keyword{internal}
