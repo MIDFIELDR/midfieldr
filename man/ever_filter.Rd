@@ -5,29 +5,31 @@
 \title{Filter term data for enrolled students}
 \usage{
 ever_filter(
-  series,
+  data = NULL,
+  filter_by = NULL,
   ...,
-  reference = NULL,
   id = "id",
   cip6 = "cip6",
   term = "term"
 )
 }
 \arguments{
-\item{series}{atomic character vector of 6-digit CIP codes specifying the
-programs to filter by}
+\item{data}{Data frame of student IDs, academic terms, and CIP codes,
+default \code{midfieldterms}.}
 
-\item{...}{not used for values, forces later arguments to bind by name}
+\item{filter_by}{Atomic character vector of 6-digit CIP codes specifying the
+programs to filter by.}
 
-\item{reference}{a reference data frame from which student IDs, academic
-terms, and CIP codes are obtained, default \code{midfieldterms}}
+\item{...}{Not used for values, forces later arguments to bind by name}
 
-\item{id}{character column name of the ID variable in \code{reference}}
+\item{id}{Optional argument, the quoted column name of the student ID
+variable in \code{data}. Default is "id".}
 
-\item{cip6}{character column name of the CIP code variable
-in \code{reference}}
+\item{cip6}{Optional argument, the quoted column name of the 6-digit CIP
+code variable in \code{data}. Default is "cip6".}
 
-\item{term}{character column name of term variable in \code{reference}}
+\item{term}{Optional argument, the quoted column name of the term
+variable in \code{data}. Default is "term".}
 }
 \value{
 Data frame with character variables for student ID and program CIP
@@ -38,27 +40,30 @@ programs.
 }
 \details{
 To use this function, the \code{midfielddata} package must be installed to
-provide \code{midfieldterms}, the default reference data set.
+provide the \code{midfieldterms} data frame as the default value for the
+\code{data} argument.
 
-The \code{series} argument is an atomic character vector of 6-digit CIP
-codes used to filter the reference data set and extract student IDs
-and terms.
+A substitute for \code{midfieldterms} may be used if it has the same structure
+as \code{midfieldterms}.
 
-The function returns a subset of \code{reference} with every unique
+The \code{filter_by} argument is an atomic character vector of 6-digit CIP
+codes used to filter \code{data} and extract student IDs and terms.
+
+The function returns a subset of \code{data} with every unique
 combination of student ID and program CIP, representing every student
 ever enrolled in the specified programs. Only the student ID and program
-CIP are returned; other variables in \code{reference} are quietly dropped.
+CIP are returned; other variables in \code{data} are quietly dropped.
 
-Optional arguments. An alternate reference data set can be assigned via
-the \code{reference} argument. The alternate must have variables for
-student ID, 6-digit CIP, and terms with the same structure as in
-\code{midfieldterms}. Use the  \code{id}, \code{cip6}, and \code{term}
+Optional arguments. Use the  \code{id}, \code{cip6}, and \code{term}
 arguments to reassign the variables names, if necessary, to match the
 variable names in the alternate.
 }
 \examples{
-ever_filter(series = "540104")
+library("midfielddata")
+(ever_filter(filter_by = "540104"))
+
 }
 \seealso{
-\code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes
+\code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP codes
+and naming programs.
 }

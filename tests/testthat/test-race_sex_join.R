@@ -1,12 +1,13 @@
 context("race_sex_join")
 
-library(dplyr)
+library("dplyr")
+library("midfielddata")
 
 # get_my_path() in tests/testthat/helper.R
 load(file = get_my_path("subset_degrees.rda"))
 load(file = get_my_path("subset_students.rda"))
 
-ever <- ever_filter(series = "540104")
+ever <- ever_filter(filter_by = "540104")
 
 ever1 <- ever %>%
   race_sex_join()

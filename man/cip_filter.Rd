@@ -7,16 +7,16 @@
 cip_filter(data, series = NULL, ..., except = NULL)
 }
 \arguments{
-\item{data}{a data frame or tibble of CIP codes}
+\item{data}{Data frame or tibble of CIP codes}
 
-\item{series}{character vector used to filter \code{data}, retaining all rows containing any of these terms.}
+\item{series}{Character vector used to filter \code{data}, retaining all rows containing any of these terms.}
 
-\item{...}{not used for values, forces later optional arguments to bind by name}
+\item{...}{Not used for values, forces later optional arguments to bind by name}
 
-\item{except}{character vector used to filter \code{data}, deleting all rows containing any of these terms.}
+\item{except}{Character vector used to filter \code{data}, deleting all rows containing any of these terms.}
 }
 \value{
-data frame
+Data frame
 }
 \description{
 Filter a data frame of Classification of Instructional Programs (CIP) codes and return the rows that match conditions.

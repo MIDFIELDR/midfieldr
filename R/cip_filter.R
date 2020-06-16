@@ -13,15 +13,15 @@ NULL
 #'
 #' The function returns a subset of \code{data}. All columns are retained.
 #'
-#' @param data a data frame or tibble of CIP codes
+#' @param data Data frame or tibble of CIP codes
 #'
-#' @param series character vector used to filter \code{data}, retaining all rows containing any of these terms.
+#' @param series Character vector used to filter \code{data}, retaining all rows containing any of these terms.
 #'
-#' @param ... not used for values, forces later optional arguments to bind by name
+#' @param ... Not used for values, forces later optional arguments to bind by name
 #'
-#' @param except character vector used to filter \code{data}, deleting all rows containing any of these terms.
+#' @param except Character vector used to filter \code{data}, deleting all rows containing any of these terms.
 #'
-#' @return data frame
+#' @return Data frame
 #'
 #' @examples
 #' cip_filter(cip, "History")

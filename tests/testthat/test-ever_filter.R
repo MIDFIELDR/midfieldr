@@ -1,16 +1,16 @@
 context("ever_filter")
 
-library(dplyr)
+library("dplyr")
+library("midfieldr")
 
-ever1 <- ever_filter("540104")
-cip6 <- ever1["cip6"]
-ever2 <- ever_filter("14YYYY")
+ever1 <- ever_filter(filter_by = "540104")
+cip6  <- ever1["cip6"]
+ever2 <- ever_filter(filter_by = "14YYYY")
 
 # get_my_path() in tests/testthat/helper.R
 load(file = get_my_path("subset_terms.rda"))
 
-library(midfieldr)
-ever3 <- ever_filter("520201", reference = subset_terms)
+ever3 <- ever_filter(subset_terms, "520201")
 ref1 <- subset_terms
 ref2 <- subset_terms
 ref2 <- dplyr::rename(ref2, altID = id)
@@ -23,15 +23,15 @@ test_that("Produces expected output", {
   # expect_equal(dim(ever2), c(659, 2))
 })
 
-test_that("Error if incorrect series argument", {
+test_that("Error if incorrect filter_by argument", {
   expect_error(
-    ever_filter(series = NULL),
-    "midfieldr::ever_filter, series cannot be NULL",
+    ever_filter(),
+    "midfieldr::ever_filter, filter_by cannot be NULL",
     fixed = TRUE
   )
   expect_error(
-    ever_filter(series = cip6),
-    "midfieldr::ever_filter, series must be an atomic variable",
+    ever_filter(filter_by = cip6),
+    "midfieldr::ever_filter, filter_by must be an atomic variable",
     fixed = TRUE
   )
 })
@@ -41,13 +41,13 @@ test_that("Optional reference argument returns correct values", {
   # expect_equal(dim(ever3), c(6, 2))
 })
 
-test_that("Reference data can have different column names", {
+test_that("Input data frame can have different column names", {
   expect_equal(
-    ever_filter("030506", reference = ref1)[["id"]],
-    ever_filter("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altID"]]
+    ever_filter(ref1, "030506")[["id"]],
+    ever_filter(ref2, "030506",  id = "altID", cip6 = "altCIP6")[["altID"]]
   )
   expect_equal(
-    ever_filter("030506", reference = subset_terms)[["cip6"]],
-    ever_filter("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altCIP6"]]
+    ever_filter(subset_terms, "030506")[["cip6"]],
+    ever_filter(ref2, "030506", id = "altID", cip6 = "altCIP6")[["altCIP6"]]
   )
 })

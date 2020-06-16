@@ -8,6 +8,7 @@ Changes incompatible with earlier versions.
 
 - For functions that operate on a data frame and return a data frame, the data frame is now the first argument---conforming to conventional coding practice and facilitating the use of pipe operators (`%>%`). For example, the new `cip_filter(data = cip, series)` replaces the old `cip_filter(series, reference = cip)`.  
 - `cip6_select()` replaces `cip_label()`. Both functions add a custom program label for grouping, summarizing, and graphing, but the new function removes columns of 2-digit and 4-digit codes and names. 
+- `ever_filter(data, filter_by)` revised names for arguments and reordered  
 
 Additional improvements 
 

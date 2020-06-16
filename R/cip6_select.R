@@ -6,17 +6,20 @@ NULL
 
 #' Select the 6-digit CIP code and name and add a program label
 #'
-#' From a CIP data frame, select the columns with the 6-digit codes and names and add a new character variable named \code{program}.
+#' From a CIP data frame, select the columns with the 6-digit codes and names
+#' and add a new character variable named \code{program}.
 #'
 #' Assigning a custom label to a program or a group of programs provides
 #' the option of grouping and summarizing CIP data in ways not afforded by
 #' the default program names in the 2010 CIP data.
 #'
-#' @param data A CIP data frame with the same structure as midfieldr \code{cip}.
+#' @param data Data frame of CIP codes and names with the same structure as
+#' midfieldr \code{cip}.
 #'
-#' @param program An optional character variable. There are four options:
+#' @param program Character variable. There are four options:
 #'
-#' If program = NULL, the default, the 4-digit CIP program names are assigned to the new column.
+#' If program = NULL, the default, the 4-digit CIP program names are assigned
+#' to the new column.
 #'
 #' If program = "named_series", then the series name is assigned to the new column.
 #'
@@ -34,7 +37,10 @@ NULL
 #'
 #' @param cip2name Optional argument, the column name in quotes of the 2-digit CIP program name variable in \code{data}. Default is "cip2name".
 #'
-#' @return A data frame with the 6-digit code and name columns from the input data frame with an added \code{program} variable.
+#' @return A data frame with the 6-digit code and name columns from the input
+#' data frame with an added \code{program} variable.
+#'
+#' @seealso \code{\link[midfieldr]{cip_filter}} for exploring CIP codes.
 #'
 #' @examples
 #' # Extract the Philosophy and Religion programs and label

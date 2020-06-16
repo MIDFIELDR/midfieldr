@@ -79,6 +79,7 @@ We compare the stickiness of three programs: Chemical Engineering, Electrical En
 ```{r packages}
 # packages used in the vignette
 library("midfieldr")
+library("midfielddata")
 library("dplyr")
 library("seplyr")
 library("ggplot2")
@@ -86,7 +87,7 @@ library("ggplot2")
 
 ```{r echo=FALSE}
 # used by my_session() 
-pkg_names <- c("midfieldr", "dplyr", "seplyr", "ggplot2")
+pkg_names <- c("midfieldr", "midfielddata", "dplyr", "seplyr", "ggplot2")
 ```
 
 We use `cip_filter()` to search the `cip` dataset first for "Engineering" and then filter the result for "Chemical", "Electrical", and "Industrial". We use the `except` argument to omit technology programs and biochemical programs. 
@@ -167,6 +168,8 @@ kable2html(program_group)
 
 
 
+
+
 <br>
 <a href="#top">&#9650; top of page</a> 
 
@@ -185,7 +188,7 @@ program_group_cip6 <- program_group[["cip6"]]
 Use `ever_filter()` to access the `midfieldterms` dataset and extract all students who ever enrolled in these programs. Use `race_sex_join()` to access the `midfieldstudents` dataset and append students' race and sex to the data frame. 
 
 ```{r gather-ever}
-students <- ever_filter(series = program_group_cip6) %>%
+students <- ever_filter(data = midfieldterms, filter_by = program_group_cip6) %>%
   race_sex_join() %>%
   print() # or View()
 ```
