@@ -2,7 +2,7 @@
 
 
 
-## midfieldr 1.0.0.9001 / 2020-06-13
+## midfieldr 1.0.0.9001 / 2020-06-15
 
 Changes incompatible with earlier versions. 
 
