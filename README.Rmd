@@ -8,19 +8,24 @@ editor_options:
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r setup, echo = FALSE, message = FALSE}
+library("midfieldr")
+load("R/sysdata.rda")
+
 knitr::opts_chunk$set(
   # these options tend to vary from one Rmd to another
-  echo = TRUE,
+  echo = FALSE,
   fig.path = "man/figures/README-",
+  
   # these options tend to remain constant
   collapse = TRUE,
-  comment = "#>",
-  message = FALSE,
-  warning = FALSE,
+  comment  = "#>",
+  message  = FALSE,
+  warning  = FALSE,
   fig.width = 6,
-  fig.asp = 1 / 1.6,
+  fig.asp   = 1 / 1.6,
   out.width = "70%",
   fig.align = "center",
+  
   # http://r-pkgs.had.co.nz/vignettes.html: error = TRUE captures errors in
   # the block and shows them inline. This is useful for demonstrating what
   # happens if code throws an error. If you use error = TRUE, set
@@ -30,6 +35,7 @@ knitr::opts_chunk$set(
   error = TRUE,
   purl = FALSE
 )
+
 knitr::knit_hooks$set(inline = function(x) {
   if (!is.numeric(x)) {
     x
@@ -39,17 +45,13 @@ knitr::knit_hooks$set(inline = function(x) {
     prettyNum(round(x, 2))
   }
 })
+
 options(tibble.print_min = 8L, tibble.print_max = 8L)
-library(dplyr) # for the pipe %>%
-unpack_data <- function(x = data_bits, bit, power10 = 0, decimals = 0) {
-  x <- x %>%
-    dplyr::filter(name == bit) %>%
-    dplyr::select(data) %>%
-    unlist() %>%
-    unname()
-  x <- round(x / 10^power10, decimals)
-}
 ```
+
+
+
+
 
 
 # midfieldr <span class="border-wrap"><img src="man/figures/logo.png" align="right" height="122" width="106" alt="logo.png"></span>
@@ -62,34 +64,8 @@ unpack_data <- function(x = data_bits, bit, power10 = 0, decimals = 0) {
 [![License: GPL v3](man/figures/License-GPL-v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 
-```{r databits, echo = FALSE}
-library("midfieldr")
-library("midfielddata")
 
-obs_cip  <- nrow(cip) 
-var_cip  <- ncol(cip) 
-size_cip <- "364 kb"
 
-obs_students  <- nrow(midfieldstudents) 
-var_students  <- ncol(midfieldstudents)  
-size_students <- "19 Mb"
-
-obs_courses   <- nrow(midfieldcourses)
-var_courses   <- ncol(midfieldcourses) 
-size_courses  <- "348 Mb"
-
-obs_terms     <- nrow(midfieldterms) 
-var_terms     <- ncol(midfieldterms)
-size_terms    <- "82 Mb"
-
-obs_degrees   <- nrow(midfielddegrees)  
-var_degrees   <- ncol(midfielddegrees)
-size_degrees  <- "10 Mb"
-
-obs_institution <- length(unique(midfieldstudents$institution))
-year_min  <- floor(min(midfieldterms$term) / 10)
-year_max  <- floor(max(midfieldterms$term) / 10)
-```
 
 
 ## Tools for student records research
@@ -115,7 +91,6 @@ The data package is too large for CRAN, so it is stored on GitHub in a drat repo
 install.packages("midfielddata", repos = "https://MIDFIELDR.github.io/drat/", type = "source")
 ```
 
-
 Install the development version of midfieldr from GitHub using: 
 
 ```r
@@ -130,17 +105,19 @@ devtools::install_github("MIDFIELDR/midfieldr")
 
 The midfieldr package includes: 
 
-- `cip`  A data frame with `r obs_cip` observations and `r var_cip` CIP variables of program codes and names at the 2, 4, and 6-digit levels. Each observation is a unique program. Occupies `r size_cip` of memory.  Data dictionary [(link)](https://midfieldr.github.io/midfieldr/reference/cip.html). 
+- `cip`  A data frame with `r obs_cip` observations and `r var_cip` CIP variables of program codes and names at the 2, 4, and 6-digit levels. Each observation is a unique program. Occupies `r round(size_cip/1e3)` kB of memory.  Data dictionary [(link)](https://midfieldr.github.io/midfieldr/reference/cip.html). 
 
 The midfielddata package contains the four datasets that comprise a stratified sample of the MIDFIELD database. 
 
-- `midfieldstudents` A data frame with `r obs_students` observations and `r var_students` demographic variables. Each observation is a unique student. Occupies `r size_students` of memory. Data dictionary   [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldstudents.html). 
+- `midfieldstudents` A data frame with `r obs_students` observations and `r var_students` demographic variables. Each observation is a unique student. Occupies `r round(size_students/1e6)` Mb of memory. Data dictionary   [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldstudents.html). 
 
-- `midfieldcourses` A data frame with `r obs_courses` observations and `r var_courses` academic course variables. Each observation is one course in one term for one student. Occupies `r size_courses` of memory. Data dictionary  [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldcourses.html).
+- `midfieldcourses` A data frame with `r round(obs_courses/1e6, 1)` M observations and `r var_courses` academic course variables. Each observation is one course in one term for one student. Occupies `r round(size_courses/1e6)` Mb of memory. Data dictionary  [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldcourses.html).
 
-- `midfieldterms` A data frame with `r obs_terms` observations and `r var_terms` academic term variables. Each observation is one term for one student. Occupies `r size_terms` of memory. Data dictionary  [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldterms.html).
+- `midfieldterms` A data frame with `r obs_terms` observations and `r var_terms` academic term variables. Each observation is one term for one student. Occupies `r round(size_terms/1e6)` Mb of memory. Data dictionary  [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldterms.html).
 
-- `midfielddegrees` A data frame with `r obs_degrees` observations and `r var_degrees` graduation variables. Each observation is a unique student. Occupies `r size_degrees` of memory. Data dictionary  [(link)](https://midfieldr.github.io/midfielddata/reference/midfielddegrees.html).
+- `midfielddegrees` A data frame with `r obs_degrees` observations and `r var_degrees` graduation variables. Each observation is a unique student. Occupies `r round(size_degrees/1e6)` Mb of memory. Data dictionary  [(link)](https://midfieldr.github.io/midfielddata/reference/midfielddegrees.html).
+
+
 
 
 
@@ -150,20 +127,25 @@ The midfielddata package contains the four datasets that comprise a stratified s
 It's hard to succinctly describe how midfieldr works because going from raw unit-records to a grouped and summarized persistence metric entails a number of operations. However, in most cases, you start with a metric and a set of academic programs in mind and follow steps something like this, using a combination of functions from the tidyverse and specialized functions from midfieldr: 
 
 - `cip_filter()` to select programs from the CIP data 
-- `cip_label()` to add custom program labels for grouping 
+- `cip6_select()` to add custom program labels for grouping 
 - `ever_filter()`, `grad_filter()`, etc. to identify students 
 - `race_sex_join()` to join student sex and race 
-- `group_by()` and `summarize()` to count students 
-- `join()` and `mutate()` to compute a persistence metric  
+- `group_summarize()` from seplyr to count students 
+- `join()` and `mutate()` from dplyr to compute a persistence metric  
 - `multiway_order()` to prepare the results for graphing 
-- `ggplot()` to graph the metric 
+- `ggplot()` from ggplot2 to graph the metric 
 
 A short but complete example is provided in the "Getting started" vignette  [(link)](articles/getting_started.html).   
+
+
+
 
 ## Meta
 
 - Data provided by MIDFIELD [(link)](https://engineering.purdue.edu/MIDFIELD)   
 - Get citation information with `citation("midfieldr")` 
 - This project is released with a Code of Conduct  [(link)](https://midfieldr.github.io/midfieldr/CONDUCT.html). If you contribute to this project you agree to abide by its terms. 
+
+
 
 

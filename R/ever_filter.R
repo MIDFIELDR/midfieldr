@@ -47,18 +47,15 @@ NULL
 #'
 #' @return Data frame with character variables for student ID and program CIP
 #'
-#' @seealso \code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP codes
-#' and naming programs.
+#' @seealso \code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP
+#'  codes and naming programs.
 #'
 #' @examples
 #' library("midfielddata")
 #' (ever_filter(filter_by = "540104"))
 #'
 #' @export
-ever_filter <- function(data = NULL, filter_by = NULL, ...,
-                        id = "id",
-                        cip6 = "cip6",
-                        term = "term") {
+ever_filter <- function(data = NULL, filter_by = NULL, ..., id = "id", cip6 = "cip6", term = "term") {
   if (!.pkgglobalenv$has_data) {
     stop(paste(
       "To use this function, you must have",
@@ -69,6 +66,7 @@ ever_filter <- function(data = NULL, filter_by = NULL, ...,
   # force optional arguments to be usable only by name
   wrapr::stop_if_dot_args(substitute(list(...)), "ever_filter")
 
+  # argument checks
   if (is.null(data)) {
     data <- midfielddata::midfieldterms
   }

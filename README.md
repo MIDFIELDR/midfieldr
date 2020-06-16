@@ -61,7 +61,7 @@ The midfieldr package includes:
 
   - `cip` A data frame with 1584 observations and 6 CIP variables of
     program codes and names at the 2, 4, and 6-digit levels. Each
-    observation is a unique program. Occupies 364 kb of memory. Data
+    observation is a unique program. Occupies 364 kB of memory. Data
     dictionary
     [(link)](https://midfieldr.github.io/midfieldr/reference/cip.html).
 
@@ -73,7 +73,7 @@ stratified sample of the MIDFIELD database.
     Occupies 19 Mb of memory. Data dictionary
     [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldstudents.html).
 
-  - `midfieldcourses` A data frame with 3,540,533 observations and 12
+  - `midfieldcourses` A data frame with 3.5 M observations and 12
     academic course variables. Each observation is one course in one
     term for one student. Occupies 348 Mb of memory. Data dictionary
     [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldcourses.html).
@@ -98,13 +98,13 @@ this, using a combination of functions from the tidyverse and
 specialized functions from midfieldr:
 
   - `cip_filter()` to select programs from the CIP data
-  - `cip_label()` to add custom program labels for grouping
+  - `cip6_select()` to add custom program labels for grouping
   - `ever_filter()`, `grad_filter()`, etc. to identify students
   - `race_sex_join()` to join student sex and race
-  - `group_by()` and `summarize()` to count students
-  - `join()` and `mutate()` to compute a persistence metric  
+  - `group_summarize()` from seplyr to count students
+  - `join()` and `mutate()` from dplyr to compute a persistence metric  
   - `multiway_order()` to prepare the results for graphing
-  - `ggplot()` to graph the metric
+  - `ggplot()` from ggplot2 to graph the metric
 
 A short but complete example is provided in the “Getting started”
 vignette [(link)](articles/getting_started.html).

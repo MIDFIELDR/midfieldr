@@ -78,6 +78,3 @@ kable2html <- function(x) {
 
 
 
-
-
-

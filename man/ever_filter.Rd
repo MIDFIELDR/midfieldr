@@ -64,6 +64,6 @@ library("midfielddata")
 
 }
 \seealso{
-\code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP codes
-and naming programs.
+\code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP
+ codes and naming programs.
 }
