@@ -6,10 +6,10 @@ library(tidyr)
 # get_my_path() in tests/testthat/helper.R
 load(file = get_my_path("subset_degrees.rda"))
 
-grad1 <- grad_filter(series = "540104")
-cip6 <- grad1["cip6"]
-grad2 <- grad_filter(series = "14YYYY")
-grad3 <- grad_filter(series = "^52", reference = subset_degrees)
+grad1 <- grad_filter(filter_by = "540104")
+cip6  <- grad1["cip6"]
+grad2 <- grad_filter(filter_by = "14YYYY")
+grad3 <- grad_filter(subset_degrees, filter_by = "^52")
 
 ref1 <- subset_degrees
 ref2 <- subset_degrees
@@ -22,15 +22,15 @@ test_that("Produces expected output", {
   expect_equal(dim(grad2), c(0, 2))
 })
 
-test_that("Error if incorrect series argument", {
+test_that("Error if incorrect filter_by argument", {
   expect_error(
-    grad_filter(series = NULL),
-    "midfieldr::grad_filter, series missing or incorrectly specified",
+    grad_filter(filter_by = NULL),
+    "midfieldr::grad_filter, filter_by cannot be NULL",
     fixed = TRUE
   )
   expect_error(
-    grad_filter(series = cip6),
-    "midfieldr::grad_filter, series must be an atomic variable",
+    grad_filter(filter_by = cip6),
+    "midfieldr::grad_filter, filter_by must be an atomic variable",
     fixed = TRUE
   )
 })
@@ -45,11 +45,11 @@ test_that("Optional data argument returns correct values", {
 
 test_that("Reference data can have different column names", {
   expect_equal(
-    grad_filter("030506", reference = ref1)[["id"]],
-    grad_filter("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altID"]]
+    grad_filter(ref1, "030506")[["id"]],
+    grad_filter(ref2, "030506", id = "altID", cip6 = "altCIP6")[["altID"]]
   )
   expect_equal(
-    grad_filter("030506", reference = subset_degrees)[["cip6"]],
-    grad_filter("030506", reference = ref2, id = "altID", cip6 = "altCIP6")[["altCIP6"]]
+    grad_filter(subset_degrees, "030506")[["cip6"]],
+    grad_filter(ref2, "030506", id = "altID", cip6 = "altCIP6")[["altCIP6"]]
   )
 })

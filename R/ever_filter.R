@@ -6,49 +6,32 @@ NULL
 
 #' Filter term data for enrolled students
 #'
-#' Filter academic term data to find all students ever enrolled in specified
-#' programs.
+#' Filter academic term data to find all students ever enrolled in specified programs.
 #'
-#' To use this function, the \code{midfielddata} package must be installed to
-#' provide the \code{midfieldterms} data frame as the default value for the
-#' \code{data} argument.
+#' The \code{midfielddata} package must be installed to provide the \code{midfieldterms} data frame as the default value for the \code{data} argument. Optionally, a data frame having the same structure as \code{midfieldterms} may be used as the value for the \code{data} argument.
 #'
-#' A substitute for \code{midfieldterms} may be used if it has the same structure
-#' as \code{midfieldterms}.
+#' The \code{filter_by} argument is an atomic character vector of 6-digit CIP codes used to filter \code{data} and extract student IDs and terms.
 #'
-#' The \code{filter_by} argument is an atomic character vector of 6-digit CIP
-#' codes used to filter \code{data} and extract student IDs and terms.
+#' The function returns a subset of \code{data} with every unique combination of student ID and program CIP, representing every student ever enrolled in the specified programs. Only the student ID and program CIP are returned; other variables in \code{data} are quietly dropped.
 #'
-#' The function returns a subset of \code{data} with every unique
-#' combination of student ID and program CIP, representing every student
-#' ever enrolled in the specified programs. Only the student ID and program
-#' CIP are returned; other variables in \code{data} are quietly dropped.
+#' Optional arguments. Student ID variables in the midfielddata data sets are named "id". If your data frames use a different name, you can either 1) rename your variables to "id", or 2) use the optional \code{id} argument to pass the alternate variable name to the function. The same is true for the \code{cip6} and \code{term} variables.
 #'
-#' Optional arguments. Use the  \code{id}, \code{cip6}, and \code{term}
-#' arguments to reassign the variables names, if necessary, to match the
-#' variable names in the alternate.
 #'
-#' @param data Data frame of student IDs, academic terms, and CIP codes,
-#' default \code{midfieldterms}.
+#' @param data Data frame of student IDs, academic terms, and CIP codes, default \code{midfieldterms}.
 #'
-#' @param filter_by Atomic character vector of 6-digit CIP codes specifying the
-#' programs to filter by.
+#' @param filter_by Atomic character vector of 6-digit CIP codes specifying the programs to filter by.
 #'
 #' @param ... Not used for values, forces later arguments to bind by name
 #'
-#' @param id Optional argument, the quoted column name of the student ID
-#' variable in \code{data}. Default is "id".
+#' @param id Optional argument, the quoted column name of the student ID variable in \code{data}. Default is "id".
 #'
-#' @param cip6 Optional argument, the quoted column name of the 6-digit CIP
-#' code variable in \code{data}. Default is "cip6".
+#' @param cip6 Optional argument, the quoted column name of the 6-digit CIP code variable in \code{data}. Default is "cip6".
 #'
-#' @param term Optional argument, the quoted column name of the term
-#' variable in \code{data}. Default is "term".
+#' @param term Optional argument, the quoted column name of the term variable in \code{data}. Default is "term".
 #'
 #' @return Data frame with character variables for student ID and program CIP
 #'
-#' @seealso \code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP
-#'  codes and naming programs.
+#' @seealso \code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP codes and naming programs.
 #'
 #' @examples
 #' library("midfielddata")

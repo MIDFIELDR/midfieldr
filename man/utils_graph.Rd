@@ -5,9 +5,12 @@
 \alias{theme_midfield}
 \title{Graphics utility functions}
 \usage{
-scale_x_log10_expon()
+scale_x_log10_expon(...)
 
-theme_midfield()
+theme_midfield(...)
+}
+\arguments{
+\item{...}{Arguments that pass to the ggplot2 function}
 }
 \value{
 Modifies an existing graph.
@@ -17,11 +20,11 @@ A set of customized layers for ggplot2 graphs.
 }
 \details{
 \describe{
-\item{\code{scale_x_log10_expon()}}{Applies the
-  \code{ggplot2::scale_x_log10()} function, marks the scale with
+\item{\code{scale_x_log10_expon(...)}}{Applies the
+  \code{ggplot2::scale_x_log10(...)} function, marks the scale with
   powers of ten in exponential form, and displays the logarithmic minor
   grid lines.}
-\item{\code{theme_midfield()}}{Applies \code{theme_minimal()} with
+\item{\code{theme_midfield(...)}}{Applies \code{theme_minimal(...)} with
   additional edits: font family is "sans"; all text is 10 point; all
   lines are pale gray (#D9D9D9) and size 0.4. }
 }

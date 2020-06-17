@@ -42,23 +42,23 @@ test_that("data includes id", {
     fixed = TRUE
   )
   expect_error(
-    race_sex_join(data = id_only1, reference = data1),
-    "midfieldr::race_sex_join, id, race, or sex missing from reference data",
+    race_sex_join(data = id_only1, demographics = data1),
+    "midfieldr::race_sex_join, id, race, or sex missing from demographics",
     fixed = TRUE
   )
 })
 
 test_that("optional reference argument works", {
   expect_equivalent(
-    race_sex_join(data = id_only1, reference = subset_students),
+    race_sex_join(data = id_only1, demographics = subset_students),
     race_sex_join(data = id_only1)
   )
 })
 
 test_that("id mismatch between data and reference throws an error", {
   expect_error(
-    race_sex_join(data = id_only2, reference = subset_students),
-    "midfieldr::race_sex_join, id mismatch between data and reference",
+    race_sex_join(data = id_only2, demographics = subset_students),
+    "midfieldr::race_sex_join, id mismatch between data and demographics",
     fixed = TRUE
   )
 })

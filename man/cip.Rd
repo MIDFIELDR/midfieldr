@@ -5,50 +5,32 @@
 \alias{cip}
 \title{Classification of instructional programs (CIP) data}
 \format{
-A data frame (tibble) with 1584 observations and 6 variables.
-All variables are characters. An observation is a unique program.
+A data frame (tibble) with 1584 observations and 6 variables. All variables are characters. An observation is a unique program.
 
 \describe{
-  \item{cip2}{An instructional program's 2-digit code,  representing "the
-  most general groupings of related programs" (US National Center for
-  Education Statistics).}
+  \item{cip2}{An instructional program's 2-digit code,  representing "the most general groupings of related programs" (US National Center for Education Statistics).}
   \item{cip2name}{Name of a program grouping at the 2-digit level.}
-  \item{cip4}{An instructional program's 4-digit code, representing
-  "intermediate groupings of programs that have comparable content and
-  objectives".}
+  \item{cip4}{An instructional program's 4-digit code, representing "intermediate groupings of programs that have comparable content and objectives".}
   \item{cip4name}{Name of a program grouping at the 4-digit level.}
-  \item{cip6}{An instructional program's 6-digit code, representing
-  "specific instructional programs".}
+  \item{cip6}{An instructional program's 6-digit code, representing "specific instructional programs".}
   \item{cip6name}{Name of a specific program at the 6-digit level.}
 }
 }
 \source{
-Based on the 2010 codes curated by the US National Center for
-Education Statistics (\url{https://nces.ed.gov/ipeds/cipcode}).
+Based on the 2010 codes curated by the US National Center for Education Statistics (\url{https://nces.ed.gov/ipeds/cipcode}).
 }
 \usage{
 cip
 }
 \description{
-A dataset of codes and names for 1584 instructional programs organized on
-three levels: a 2-digit series, a 4-digit series, and a 6-digit series.
+A dataset of codes and names for 1584 instructional programs organized on three levels: a 2-digit series, a 4-digit series, and a 6-digit series.
 }
 \details{
-6-digit codes are used in the midfieldr datasets (\code{midfieldstudents},
-\code{midfieldcourses}, \code{midfieldterms}, and  \code{midfielddegrees})
-to encode program information as reported by the member institutions. In
-addition to the standard codes and names, the midfieldr taxonomy includes
-three non-IPEDS codes:
+6-digit codes are used in the midfieldr datasets (\code{midfieldstudents}, \code{midfieldcourses}, \code{midfieldterms}, and  \code{midfielddegrees}) to encode program information as reported by the member institutions. In addition to the standard codes and names, the midfieldr taxonomy includes three non-IPEDS codes:
 
 \describe{
   \item{14XXXX}{First-Year Engineering (FYE).}
-  \item{14YYYY}{Engineering-Focused Curricula (pseudo-FYE). For instances
-  in which a student is eligible for admission to the institution but has
-  not been admitted to an engineering program. Some institutions without
-  FYE programs use such a designation in lieu of undecided or unspecified.}
-  \item{999999}{Undecided or Unspecified. For instances in which
-  institutions reported no program information or that students were
-  not enrolled in a program.}
+  \item{14YYYY}{Engineering-Focused Curricula (pseudo-FYE). For instances in which a student is eligible for admission to the institution but has not been admitted to an engineering program. Some institutions without FYE programs use such a designation in lieu of undecided or unspecified.} \item{999999}{Undecided or Unspecified. For instances in which institutions reported no program information or that students were not enrolled in a program.}
 }
 }
 \examples{

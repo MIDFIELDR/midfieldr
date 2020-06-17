@@ -5,12 +5,10 @@
 \alias{case_program_group}
 \title{CIP case data for four programs}
 \format{
-A data frame (tibble) with 12 observations and 3 variables.
-All variables are characters. An observation is a unique program.
+A data frame (tibble) with 12 observations and 3 variables. All variables are characters. An observation is a unique program.
 
 \describe{
-  \item{cip6}{An instructional program's 6-digit code, representing
-  "specific instructional programs".}
+  \item{cip6}{An instructional program's 6-digit code, representing "specific instructional programs".}
   \item{cip6name}{Name of a program at the 6-digit level}
   \item{program}{A program name used for grouping, summarizing, and graphing.}
 }
@@ -22,13 +20,9 @@ All variables are characters. An observation is a unique program.
 case_program_group
 }
 \description{
-A subset of the [\code{cip}](cip.html) data frame for four
-engineering programs.
+A subset of the [\code{cip}](cip.html) data frame for four engineering programs.
 }
 \details{
-The 6-digit CIP codes and names plus a user-selected program name for Civil,
-Electrical, Industrial, and Mechanical Engineering. The "Select and label
-programs" vignette describes how these data were assembled. The data frame is
-used by several other vignettes as a starting point.
+The 6-digit CIP codes and names plus a user-selected program name for Civil, Electrical, Industrial, and Mechanical Engineering. The "Select and label programs" vignette describes how these data were assembled. The data frame is used by several other vignettes as a starting point.
 }
 \keyword{datasets}

@@ -19,15 +19,9 @@ A data frame (tibble) with 5992 observations and 2 variables.
 case_fye
 }
 \description{
-Imputed starting majors for nearly 6000 first-year engineering (FYE) students
-in the midfielddata package.
+Imputed starting majors for nearly 6000 first-year engineering (FYE) students in the midfielddata package.
 }
 \details{
-Some US institutions have first year engineering (FYE) programs---typically
-a common first year curriculum that is a prerequisite for declaring an
-engineering major. For some persistence metrics, we have to determine what
-we call a "starting major" for FYE students---the predicted engineering
-program such as Civil, Electrical, or Mechanical, the student would have
-declared had they not been required to enroll in FYE.
+Some US institutions have first year engineering (FYE) programs---typically a common first year curriculum that is a prerequisite for declaring an engineering major. For some persistence metrics, we have to determine what we call a "starting major" for FYE students---the predicted engineering program such as Civil, Electrical, or Mechanical, the student would have declared had they not been required to enroll in FYE.
 }
 \keyword{datasets}

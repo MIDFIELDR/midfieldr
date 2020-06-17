@@ -51,19 +51,7 @@ This vignette presents an example to illustrate a representative sample of midfi
 Functions are used without detailed explanations---for greater detail, see the individual [vignettes](https://midfieldr.github.io/midfieldr/articles/index.html) or see a function's help page by running `? function_name()`, for example, `? cip_filter()`, `? cip6_select`, etc.  
 
 
-
-
-
-
-## Contents
-
-[Identify CIP codes]    
-[Select and label programs]    
-[Group and count students]    
-[Compute the metric]    
-[Graph the results]    
-[Session information]    
-[References]    
+   
 
 
 
@@ -88,6 +76,7 @@ library("ggplot2")
 ```{r echo=FALSE}
 # used by my_session() 
 pkg_names <- c("midfieldr", "midfielddata", "dplyr", "seplyr", "ggplot2")
+# ggplot2::theme_set(theme_midfield())
 ```
 
 We use `cip_filter()` to search the `cip` dataset first for "Engineering" and then filter the result for "Chemical", "Electrical", and "Industrial". We use the `except` argument to omit technology programs and biochemical programs. 
@@ -185,7 +174,7 @@ First we extract the 6-digit CIP codes from our program group to use as search t
 program_group_cip6 <- program_group[["cip6"]]
 ```
 
-Use `ever_filter()` to access the `midfieldterms` dataset and extract all students who ever enrolled in these programs. Use `race_sex_join()` to access the `midfieldstudents` dataset and append students' race and sex to the data frame. 
+Use `ever_filter()` to access the `midfieldterms` dataset and extract all students who ever enrolled in these programs. Use `race_sex_join()` to access the `midfieldstudents` dataset and append students' race and sex to the working data frame. 
 
 ```{r gather-ever}
 students <- ever_filter(data = midfieldterms, filter_by = program_group_cip6) %>%
@@ -216,7 +205,7 @@ ever_enrolled <- students %>%
 Following similar steps, we use `grad_filter()` to access the `midfielddegrees` dataset and extract all students who graduated from these programs. We group and summarize the counts using `grad` as the new count variable. 
 
 ```{r grad}
-graduated <- grad_filter(series = program_group_cip6) %>%
+graduated <- grad_filter(data = midfielddegrees, filter_by = program_group_cip6) %>%
   race_sex_join() %>%
   left_join(program_group, by = "cip6") %>%
   group_summarize(grouping_variables, grad = n())

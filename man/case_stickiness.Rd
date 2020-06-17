@@ -11,12 +11,9 @@ A data frame (tibble) with 32 observations and 6 variables.
  \item{program}{Instructional programs selected for study.}
  \item{race}{Student race and sex from \code{midfieldstudents} data.}
  \item{sex}{Student sex from \code{midfieldstudents} data.}
- \item{ever}{Number of students ever enrolled in a program. Grouped and
- summarized from \code{midfieldterms} data.}
- \item{grad}{Number of students graduating from the program. Grouped and
- summarized from \code{midfielddegrees} data.}
- \item{stick}{Program stickiness: the ratio of the number of students
- graduating from a program to the number ever enrolled in the program.}
+ \item{ever}{Number of students ever enrolled in a program. Grouped and summarized from \code{midfieldterms} data.}
+ \item{grad}{Number of students graduating from the program. Grouped and summarized from \code{midfielddegrees} data.}
+ \item{stick}{Program stickiness: the ratio of the number of students graduating from a program to the number ever enrolled in the program.}
 }
 }
 \source{
@@ -26,12 +23,9 @@ A data frame (tibble) with 32 observations and 6 variables.
 case_stickiness
 }
 \description{
-An data frame of stickiness data grouped by program and student
-race/ethnicity and sex.
+An data frame of stickiness data grouped by program and student race/ethnicity and sex.
 }
 \details{
-For Civil, Electrical, Industrial, and Mechanical Engineering, the number
-of students ever enrolled, the number of graduates, and the resulting
-stickiness.
+For Civil, Electrical, Industrial, and Mechanical Engineering, the number of students ever enrolled, the number of graduates, and the resulting stickiness.
 }
 \keyword{datasets}

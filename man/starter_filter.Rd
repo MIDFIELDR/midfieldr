@@ -4,47 +4,39 @@
 \alias{starter_filter}
 \title{Filter student data for starting students}
 \usage{
-starter_filter(series, ..., reference = NULL, id = "id", cip6 = "cip6")
+starter_filter(data = NULL, filter_by = NULL, ..., id = "id", cip6 = "cip6")
 }
 \arguments{
-\item{series}{atomic character vector of 6-digit CIP codes specifying the
-programs to filter by}
+\item{data}{Data frame of student IDs and CIP codes, default  \code{midfieldterms}.}
 
-\item{...}{not used for values, forces later arguments to bind by name}
+\item{filter_by}{Atomic character vector of 6-digit CIP codes specifying the programs to filter by.}
 
-\item{reference}{a reference data frame from which student IDs, academic
-terms, and CIP codes are obtained, default \code{midfieldterms}}
+\item{...}{Not used for values, forces later arguments to bind by name.}
 
-\item{id}{character column name of the ID variable in \code{reference}}
+\item{id}{Optional argument, the quoted column name of the student ID variable in \code{data}. Default is "id".}
 
-\item{cip6}{character column name of the CIP code variable in
-\code{reference}}
+\item{cip6}{Optional argument, the quoted column name of the 6-digit CIP code variable in \code{data}. Default is "cip6".}
 }
 \value{
-Data frame with character variables for student ID and CIP of the
-starting program
+Data frame with character variables for student ID and CIP of the starting program.
 }
 \description{
 Filter entering student data to find all students starting in specified
 programs.
 }
 \details{
-To use this function, the \code{midfielddata} package must be installed
-to provide \code{midfieldstudents}, the default reference data set.
+The \code{midfielddata} package must be installed to provide the \code{midfieldstudents} data frame as the default value for the \code{data} argument. Optionally, a data frame having the same structure as \code{midfieldstudents} may be used as the value for the \code{data} argument.
 
-The \code{series} argument is an atomic character vector of 6-digit CIP
-codes used to filter the reference data set and extract student IDs.
+The \code{filter_by} argument is an atomic character vector of 6-digit CIP codes used to filter \code{data} and extract student IDs.
 
-The function returns a subset of \code{reference} with the student ID and
-starting major CIP. Other variables in \code{reference} are quietly dropped.
+The function returns a subset of \code{data} with the student ID and starting major CIP. Only the student ID and program CIP are returned; other variables in \code{data} are quietly dropped.
 
-Optional arguments. An alternate reference data set can be assigned via
-the \code{reference} argument. The alternate must have variables for student
-ID and starting CIP.
+Optional arguments. Student ID variables in the midfielddata data sets are named "id". If your data frames use a different name, you can either 1) rename your variables to "id", or 2) use the optional \code{id} argument to pass the alternate variable name to the function. The same is true for the \code{cip6} variable.
 }
 \examples{
 placeholder <- 2 + 3
+
 }
 \seealso{
-\code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes
+\code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP codes and naming programs.
 }

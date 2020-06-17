@@ -1,4 +1,4 @@
-#' @importFrom ggplot2 scale_x_log10 theme_minimal theme element_text
+#' @importFrom ggplot2 scale_x_log10 theme_minimal theme element_text %+replace%
 #' @importFrom ggplot2 element_rect element_line element_blank unit rel
 #' @importFrom scales trans_breaks trans_format math_format
 NULL
@@ -8,24 +8,28 @@ NULL
 #' A set of customized layers for ggplot2 graphs.
 #'
 #' \describe{
-#' \item{\code{scale_x_log10_expon()}}{Applies the
-#'   \code{ggplot2::scale_x_log10()} function, marks the scale with
+#' \item{\code{scale_x_log10_expon(...)}}{Applies the
+#'   \code{ggplot2::scale_x_log10(...)} function, marks the scale with
 #'   powers of ten in exponential form, and displays the logarithmic minor
 #'   grid lines.}
-#' \item{\code{theme_midfield()}}{Applies \code{theme_minimal()} with
+#' \item{\code{theme_midfield(...)}}{Applies \code{theme_minimal(...)} with
 #'   additional edits: font family is "sans"; all text is 10 point; all
 #'   lines are pale gray (#D9D9D9) and size 0.4. }
 #' }
 #'
+#' @param ... Arguments that pass to the ggplot2 function
 #' @return Modifies an existing graph.
 #' @name utils_graph
 #' @aliases NULL
 NULL
 
+
+
+
 #' @export
 #' @rdname utils_graph
-scale_x_log10_expon <- function() {
-  scale_x_log10(
+scale_x_log10_expon <- function(...) {
+  scale_x_log10(...,
     breaks = trans_breaks("log10", function(x) 10 ^ x),
     labels = trans_format("log10", math_format(10 ^ .x)),
     minor_breaks = c(
@@ -40,10 +44,14 @@ scale_x_log10_expon <- function() {
   )
 }
 
+
+
+
+
 #' @export
 #' @rdname utils_graph
-theme_midfield <- function() {
-  theme_minimal(base_family = "sans") +
+theme_midfield <- function(...) {
+  theme_minimal(...) %+replace%
     theme(
       plot.title = element_text(size = 10),
       axis.title = element_text(size = 10),
@@ -63,7 +71,6 @@ theme_midfield <- function() {
         colour = rcb("pale_Gray"),
         fill = NA
       ),
-
       legend.key.height = unit(0.8, "line"),
       legend.text.align = 0
     )

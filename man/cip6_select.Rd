@@ -15,13 +15,11 @@ cip6_select(
 )
 }
 \arguments{
-\item{data}{Data frame of CIP codes and names with the same structure as
-midfieldr \code{cip}.}
+\item{data}{Data frame of CIP codes and names with the same structure as midfieldr \code{cip}.}
 
 \item{program}{Character variable. There are four options:
 
-If program = NULL, the default, the 4-digit CIP program names are assigned
-to the new column.
+If program = NULL, the default, the 4-digit CIP program names are assigned to the new column.
 
 If program = "named_series", then the series name is assigned to the new column.
 
@@ -29,7 +27,7 @@ If one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-digi
 
 Any other string fills the new column.}
 
-\item{...}{Not used for values, forces later arguments to bind by name}
+\item{...}{Not used for values, forces later arguments to bind by name.}
 
 \item{cip6}{Optional argument, the column name in quotes of the 6-digit CIP code variable in \code{data}. Default is "cip6".}
 
@@ -40,17 +38,13 @@ Any other string fills the new column.}
 \item{cip2name}{Optional argument, the column name in quotes of the 2-digit CIP program name variable in \code{data}. Default is "cip2name".}
 }
 \value{
-A data frame with the 6-digit code and name columns from the input
-data frame with an added \code{program} variable.
+A data frame with the 6-digit code and name columns from the input data frame with an added \code{program} variable.
 }
 \description{
-From a CIP data frame, select the columns with the 6-digit codes and names
-and add a new character variable named \code{program}.
+From a CIP data frame, select the columns with the 6-digit codes and names and add a new character variable named \code{program}.
 }
 \details{
-Assigning a custom label to a program or a group of programs provides
-the option of grouping and summarizing CIP data in ways not afforded by
-the default program names in the 2010 CIP data.
+Assigning a custom label to a program or a group of programs provides the option of grouping and summarizing CIP data in ways not afforded by the default program names in the 2010 CIP data.
 }
 \examples{
 # Extract the Philosophy and Religion programs and label

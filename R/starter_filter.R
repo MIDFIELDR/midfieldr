@@ -1,6 +1,6 @@
 #' @importFrom dplyr select is.tbl
 #' @importFrom wrapr stop_if_dot_args let
-#' @importFrom stringr str_c
+#' @importFrom stringr str_c str_detect
 NULL
 
 #' Filter student data for starting students
@@ -8,44 +8,33 @@ NULL
 #' Filter entering student data to find all students starting in specified
 #' programs.
 #'
-#' To use this function, the \code{midfielddata} package must be installed
-#' to provide \code{midfieldstudents}, the default reference data set.
+#' The \code{midfielddata} package must be installed to provide the \code{midfieldstudents} data frame as the default value for the \code{data} argument. Optionally, a data frame having the same structure as \code{midfieldstudents} may be used as the value for the \code{data} argument.
 #'
-#' The \code{series} argument is an atomic character vector of 6-digit CIP
-#' codes used to filter the reference data set and extract student IDs.
+#' The \code{filter_by} argument is an atomic character vector of 6-digit CIP codes used to filter \code{data} and extract student IDs.
 #'
-#' The function returns a subset of \code{reference} with the student ID and
-#' starting major CIP. Other variables in \code{reference} are quietly dropped.
+#' The function returns a subset of \code{data} with the student ID and starting major CIP. Only the student ID and program CIP are returned; other variables in \code{data} are quietly dropped.
 #'
-#' Optional arguments. An alternate reference data set can be assigned via
-#' the \code{reference} argument. The alternate must have variables for student
-#' ID and starting CIP.
+#' Optional arguments. Student ID variables in the midfielddata data sets are named "id". If your data frames use a different name, you can either 1) rename your variables to "id", or 2) use the optional \code{id} argument to pass the alternate variable name to the function. The same is true for the \code{cip6} variable.
 #'
-#' @param series atomic character vector of 6-digit CIP codes specifying the
-#' programs to filter by
+#' @param data Data frame of student IDs and CIP codes, default  \code{midfieldterms}.
 #'
-#' @param ... not used for values, forces later arguments to bind by name
+#' @param filter_by Atomic character vector of 6-digit CIP codes specifying the programs to filter by.
 #'
-#' @param reference a reference data frame from which student IDs, academic
-#' terms, and CIP codes are obtained, default \code{midfieldterms}
+#' @param ... Not used for values, forces later arguments to bind by name.
 #'
-#' @param id character column name of the ID variable in \code{reference}
+#' @param id Optional argument, the quoted column name of the student ID variable in \code{data}. Default is "id".
 #'
-#' @param cip6 character column name of the CIP code variable in
-#' \code{reference}
+#' @param cip6 Optional argument, the quoted column name of the 6-digit CIP code variable in \code{data}. Default is "cip6".
 #'
-#' @return Data frame with character variables for student ID and CIP of the
-#' starting program
+#' @return Data frame with character variables for student ID and CIP of the starting program.
 #'
-#' @seealso \code{\link[midfieldr]{cip_filter}} for obtaining 6-digit CIP codes
+#' @seealso \code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP codes and naming programs.
 #'
 #' @examples
 #' placeholder <- 2 + 3
+#'
 #' @export
-starter_filter <- function(series, ...,
-                           reference = NULL,
-                           id = "id",
-                           cip6 = "cip6") {
+starter_filter <- function(data = NULL, filter_by = NULL, ..., id = "id", cip6 = "cip6") {
   if (!.pkgglobalenv$has_data) {
     stop(paste(
       "To use this function, you must have",
@@ -54,53 +43,41 @@ starter_filter <- function(series, ...,
   }
 
   # force optional arguments to be usable only by name
-  wrapr::stop_if_dot_args(substitute(list(...)), "gather_ever")
+  wrapr::stop_if_dot_args(substitute(list(...)), "starter_filter")
 
-  if (is.null(series)) {
-    stop("midfieldr::start_filter, series cannot be NULL")
+  # argument checks
+  if (is.null(data)) {
+    data <- midfielddata::midfieldstudents
   }
-
-  if (isFALSE(is.atomic(series))) {
-    stop("midfieldr::start_filter, series must be an atomic variable")
+  if (!(is.data.frame(data) || dplyr::is.tbl(data))) {
+    stop("midfieldr::starter_filter, data must be a data frame or tbl")
   }
-
-  # assign the default terms dataset
-  if (is.null(reference)) {
-    reference <- midfielddata::midfieldstudents
+  if (is.null(filter_by)) {
+    stop("midfieldr::starter_filter, filter_by cannot be NULL")
   }
-
-  if (!(is.data.frame(reference) || dplyr::is.tbl(reference))) {
-    stop("midfieldr::start_filter, reference must be a data frame or tbl")
-  }
-
-  # ensure that the id and cip6 match the names of reference
-  if (!id %in% names(reference)) {
-    stop("midfieldr::start_filter, use the id argument for non-default name")
-  }
-  if (!cip6 %in% names(reference)) {
-    stop("midfieldr::start_filter, use the cip6 argument for non-default name")
+  if (isFALSE(is.atomic(filter_by))) {
+    stop("midfieldr::starter_filter, filter_by must be an atomic variable")
   }
 
   # search terms in a single string
-  collapse_series <- stringr::str_c(series, collapse = "|")
+  collapse_series <- stringr::str_c(filter_by, collapse = "|")
 
   # addresses R CMD check warning "no visible binding"
-  ID <- NULL
+  ID   <- NULL
   CIP6 <- NULL
 
-  # use wrapr::let() to allow alternate column names
+# use wrapr::let() to allow alternate column names
+  mapping <- c(ID = id, CIP6 = cip6)
   wrapr::let(
-    alias = c(ID = id, CIP6 = cip6),
+    alias = mapping,
     expr = {
-
       # filter for data for specified programs
-      students <- dplyr::select(reference, ID, CIP6)
+      students <- dplyr::select(data, ID, CIP6)
       students <- dplyr::filter(
         students,
         stringr::str_detect(CIP6, collapse_series)
       )
     }
   )
-  students
 }
 "starter_filter"

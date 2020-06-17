@@ -46,27 +46,6 @@ knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
 
 In this vignette, we demonstrate computing the "stickiness" persistence metric using Civil, Electrical, Industrial, and Mechanical Engineering as our example programs. 
 
-
-## Contents
-
-[Introduction]    
-[Choose programs]    
-[Filter students ever enrolled]    
-[Group and summarize ever enrolled]    
-[Repeat for graduating students]    
-[Tally stickiness]    
-[Prepare the data in multiway form]    
-[Graph the multiway]  
-[References]    
-
-*Appendices*    
-
-[Issue bin]    
-[Complete script]    
-[Session information]    
-
-
-
 ## Introduction 
 
 Longitudinal "stickiness" is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program [@stickiness2012]. 
@@ -77,7 +56,7 @@ Every student counted in a program's stickiness metric was enrolled in that prog
 
 The workflow is: 
 
-- select the programs 
+- choose the programs to study
 - count the students ever enrolled
 - count the students graduating  
 - compute stickiness 
@@ -219,10 +198,10 @@ Open the help page by running
 
 ## Group and summarize ever enrolled
 
-`race_sex_join()` accepts any data frame with the MIDFIELD student `id` variable and joins the student race and sex from the `midfieldstudents` reference data to these data. 
+`race_sex_join()` accepts any data frame with the MIDFIELD student `id` variable and joins the student race and sex from the `midfieldstudents` reference data to these data. If using the default reference data, the `demographics` argument can be omitted. 
 
 ```{r}
-students <- race_sex_join(students) %>%
+students <- race_sex_join(data = students, demographics = midfieldstudents) %>%
         print()
 ```
 
@@ -269,7 +248,7 @@ Reminder that in a sequence of operations using the pipe operator (`%>%`), the o
 
 ```{r}
 # count students graduating from programs
-graduated <- grad_filter(series = program_series) %>%
+graduated <- grad_filter(filter_by = program_series) %>%
         race_sex_join() %>% 
         left_join(program_group, by = "cip6") %>%
         group_summarize(., grouping_variables, "grad" = n()) %>%
@@ -284,7 +263,7 @@ Notes.
 - If keeping track of when you need a dot and when you don't is a cognitive burden, you can always use a dot to represent the incoming object explicitly. For example, the code chunk above could be written, 
 
 ```{r results = "hide"}
-graduated <- grad_filter(series = program_series) %>%
+graduated <- grad_filter(filter_by = program_series) %>%
         race_sex_join(.) %>% 
         left_join(., program_group, by = "cip6") %>%
         group_summarize(., grouping_variables, "grad" = n()) %>%
@@ -497,7 +476,7 @@ ever_enrolled <- ever_filter(midfieldterms, filter_by = program_series) %>%
         group_summarize(., grouping_variables, "ever" = n())
 
 # count students graduating from programs
-graduated <- grad_filter(series = program_series) %>%
+graduated <- grad_filter(midfielddegrees, filter_by = program_series) %>%
         race_sex_join() %>%
         left_join(., program_group, by = "cip6") %>%
         group_summarize(., grouping_variables, "grad" = n())
