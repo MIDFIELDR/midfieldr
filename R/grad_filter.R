@@ -62,6 +62,7 @@ grad_filter <- function(data = NULL, filter_by = NULL, ..., id = "id", cip6 = "c
     stop("midfieldr::grad_filter, filter_by must be an atomic variable")
   }
 
+
   # search terms in a single string
   collapse_series <- stringr::str_c(filter_by, collapse = "|")
 
