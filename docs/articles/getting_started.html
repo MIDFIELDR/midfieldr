@@ -137,11 +137,6 @@
     
 <p>This vignette presents an example to illustrate a representative sample of midfieldr functions.</p>
 <p>Functions are used without detailed explanations—for greater detail, see the individual <a href="https://midfieldr.github.io/midfieldr/articles/index.html">vignettes</a> or see a function’s help page by running <code>? function_name()</code>, for example, <code>? cip_filter()</code>, <code><a href="../reference/cip6_select.html">? cip6_select</a></code>, etc.</p>
-<div id="contents" class="section level2">
-<h2 class="hasAnchor">
-<a href="#contents" class="anchor"></a>Contents</h2>
-<p><a href="#identify-cip-codes">Identify CIP codes</a><br><a href="#select-and-label-programs">Select and label programs</a><br><a href="#group-and-count-students">Group and count students</a><br><a href="#compute-the-metric">Compute the metric</a><br><a href="#graph-the-results">Graph the results</a><br><a href="#session-information">Session information</a><br><a href="#references">References</a></p>
-</div>
 <div id="identify-cip-codes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#identify-cip-codes" class="anchor"></a>Identify CIP codes</h2>
@@ -474,7 +469,7 @@ Industrial Engineering
 <a href="#group-and-count-students" class="anchor"></a>Group and count students</h2>
 <p>First we extract the 6-digit CIP codes from our program group to use as search terms to identify students in these programs.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">program_group_cip6</span> <span class="kw">&lt;-</span> <span class="no">program_group</span><span class="kw">[[</span><span class="st">"cip6"</span>]]</pre></body></html></div>
-<p>Use <code><a href="../reference/ever_filter.html">ever_filter()</a></code> to access the <code>midfieldterms</code> dataset and extract all students who ever enrolled in these programs. Use <code><a href="../reference/race_sex_join.html">race_sex_join()</a></code> to access the <code>midfieldstudents</code> dataset and append students’ race and sex to the data frame.</p>
+<p>Use <code><a href="../reference/ever_filter.html">ever_filter()</a></code> to access the <code>midfieldterms</code> dataset and extract all students who ever enrolled in these programs. Use <code><a href="../reference/race_sex_join.html">race_sex_join()</a></code> to access the <code>midfieldstudents</code> dataset and append students’ race and sex to the working data frame.</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">students</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ever_filter.html">ever_filter</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldterms</span>, <span class="kw">filter_by</span> <span class="kw">=</span> <span class="no">program_group_cip6</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>() <span class="co"># or View()</span>
@@ -532,7 +527,7 @@ Industrial Engineering
 <span class="co">#&gt; 10 Chemical Engineering Native American Male       8</span>
 <span class="co">#&gt; # ... with 38 more rows</span></pre></body></html></div>
 <p>Following similar steps, we use <code><a href="../reference/grad_filter.html">grad_filter()</a></code> to access the <code>midfielddegrees</code> dataset and extract all students who graduated from these programs. We group and summarize the counts using <code>grad</code> as the new count variable.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">graduated</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/grad_filter.html">grad_filter</a></span>(<span class="kw">series</span> <span class="kw">=</span> <span class="no">program_group_cip6</span>) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">graduated</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/grad_filter.html">grad_filter</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfielddegrees</span>, <span class="kw">filter_by</span> <span class="kw">=</span> <span class="no">program_group_cip6</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize</a></span>(<span class="no">grouping_variables</span>, <span class="kw">grad</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>())</pre></body></html></div>
@@ -609,7 +604,7 @@ Industrial Engineering
 <h2 class="hasAnchor">
 <a href="#session-information" class="anchor"></a>Session information</h2>
 <pre><code> setting  value                       
- version  R version 4.0.0 (2020-04-24)
+ version  R version 4.0.1 (2020-06-06)
  os       Windows 10 x64              
  system   x86_64, mingw32             
  ui       RTerm                       
@@ -617,13 +612,13 @@ Industrial Engineering
  collate  English_United States.1252  
  ctype    English_United States.1252  
  tz       America/New_York            
- date     2020-06-15                  
+ date     2020-06-17                  
 
  package      * version    date       lib source        
  dplyr        * 1.0.0      2020-05-29 []  CRAN (R 4.0.0)
  ggplot2      * 3.3.1      2020-05-28 []  CRAN (R 4.0.0)
  midfielddata * 0.1.0      2020-06-06 []  local         
- midfieldr    * 1.0.0.9001 2020-06-16 []  local         
+ midfieldr    * 1.0.0.9001 2020-06-17 []  local         
  seplyr       * 0.8.8      2020-05-24 []  CRAN (R 4.0.0)
 
 * dependent packages not listed</code></pre>

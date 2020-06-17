@@ -179,10 +179,10 @@
 <code>select()</code> to select only the three columns needed for the multiway</li>
 </ul>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># combine two variables into one</span>
-<span class="no">stickiness</span> <span class="kw">&lt;-</span> <span class="no">case_stickiness</span> <span class="kw">%.&gt;%</span>
-  <span class="fu">mutate</span>(<span class="no">.</span>, <span class="kw">race_sex</span> <span class="kw">=</span> <span class="kw pkg">stringr</span><span class="kw ns">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_c.html">str_c</a></span>(<span class="no">race</span>, <span class="no">sex</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">" "</span>)) <span class="kw">%.&gt;%</span>
-  <span class="fu">select</span>(<span class="no">.</span>, <span class="no">program</span>, <span class="no">race_sex</span>, <span class="no">stick</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu">glimpse</span>(<span class="no">.</span>)
+<span class="no">stickiness</span> <span class="kw">&lt;-</span> <span class="no">case_stickiness</span> <span class="kw">%&gt;%</span>
+  <span class="fu">mutate</span>(<span class="kw">race_sex</span> <span class="kw">=</span> <span class="kw pkg">stringr</span><span class="kw ns">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_c.html">str_c</a></span>(<span class="no">race</span>, <span class="no">sex</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">" "</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu">select</span>(<span class="no">program</span>, <span class="no">race_sex</span>, <span class="no">stick</span>) <span class="kw">%&gt;%</span>
+  <span class="fu">glimpse</span>()
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 3</span>
 <span class="co">#&gt; $ program  &lt;chr&gt; "Civil Engineering", "Civil Engineering", "Civil Engineeri...</span>
@@ -195,8 +195,8 @@
 <a href="#multiway_order" class="anchor"></a>multiway_order()</h2>
 <p><code><a href="../reference/multiway_order.html">multiway_order()</a></code> transforms the character variables <code>program</code> and <code>race_sex</code> into factors and orders the levels of the two factors by the relevant medians.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># convert the data to a multiway structure</span>
-<span class="no">stickiness</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/multiway_order.html">multiway_order</a></span>(<span class="no">stickiness</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu">glimpse</span>(<span class="no">.</span>)
+<span class="no">stickiness</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/multiway_order.html">multiway_order</a></span>(<span class="no">stickiness</span>) <span class="kw">%&gt;%</span>
+  <span class="fu">glimpse</span>()
 <span class="co">#&gt; Rows: 32</span>
 <span class="co">#&gt; Columns: 3</span>
 <span class="co">#&gt; $ program  &lt;fct&gt; Civil Engineering, Civil Engineering, Civil Engineering, C...</span>
@@ -205,9 +205,9 @@
 <p><code>glimpse()</code> shows that the two categorical variables are factors.</p>
 <p>Optionally, using the <code>return_medians</code> argument, the function returns the median values used in ordering the factors. By arranging the rows of the data frame by <code>program</code> and <code>race_sex</code> factors, we can see that they are ordered by the medians.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># return the median stickiness value for both categories</span>
-<span class="no">df</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/multiway_order.html">multiway_order</a></span>(<span class="no">stickiness</span>, <span class="kw">return_medians</span> <span class="kw">=</span> <span class="fl">TRUE</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu">arrange</span>(<span class="no">.</span>, <span class="no">program</span>, <span class="no">race_sex</span>)
-<span class="no">df</span>
+<span class="no">df</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/multiway_order.html">multiway_order</a></span>(<span class="no">stickiness</span>, <span class="kw">return_medians</span> <span class="kw">=</span> <span class="fl">TRUE</span>) <span class="kw">%&gt;%</span>
+  <span class="fu">arrange</span>(<span class="no">program</span>, <span class="no">race_sex</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
 <span class="co">#&gt; # A tibble: 32 x 5</span>
 <span class="co">#&gt;   program                race_sex        stick med_program med_race_sex</span>
 <span class="co">#&gt;   &lt;fct&gt;                  &lt;fct&gt;           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;</span>
@@ -246,7 +246,7 @@
 <code><a href="../reference/utils_graph.html">theme_midfield()</a></code> controls the appearance of the plot, based on a slightly edited <code>theme_minimal()</code>.</li>
 </ul>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu">ggplot</span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">stickiness</span>, <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">stick</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">race_sex</span>)) +
-  <span class="fu">facet_wrap</span>(~<span class="no">program</span>, <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
+  <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(<span class="no">program</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
   <span class="fu">geom_point</span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
   <span class="fu">labs</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Stickiness"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>) +
   <span class="fu"><a href="../reference/utils_graph.html">theme_midfield</a></span>()</pre></body></html></div>
@@ -265,7 +265,7 @@
 <p>now we have</p>
 <p><code>y = program</code> and <code>facet_wrap(~ race_sex...</code></p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu">ggplot</span>(<span class="no">stickiness</span>, <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">stick</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">program</span>)) +
-  <span class="fu">facet_wrap</span>(~<span class="no">race_sex</span>, <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
+  <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(<span class="no">race_sex</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
   <span class="fu">geom_point</span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
   <span class="fu">labs</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Stickiness"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>) +
   <span class="fu"><a href="../reference/utils_graph.html">theme_midfield</a></span>()</pre></body></html></div>
@@ -277,9 +277,9 @@
 <a href="#creating-a-data-table" class="anchor"></a>Creating a data table</h2>
 <p>When discussing the potential stories in multiway data, it is often convenient to have a data table at hand. Such tables facilitate discussion and are occasionally appropriate to include in a publication for editors or reviewers who want to see the exact values underlying the data graphics.</p>
 <p>Starting with the example data, the first thing to do before tabulating is to reduce the significant figure to an easily-read number and arrange the rows to facilitate looking up a number.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">stickiness_table</span> <span class="kw">&lt;-</span> <span class="no">case_stickiness</span> <span class="kw">%.&gt;%</span>
-  <span class="fu">mutate</span>(<span class="no">.</span>, <span class="kw">stick</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="no">stick</span>, <span class="fl">2</span>)) <span class="kw">%.&gt;%</span>
-  <span class="fu">arrange</span>(<span class="no">.</span>, <span class="no">program</span>, <span class="no">sex</span>, <span class="no">race</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">stickiness_table</span> <span class="kw">&lt;-</span> <span class="no">case_stickiness</span> <span class="kw">%&gt;%</span>
+  <span class="fu">mutate</span>(<span class="kw">stick</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="no">stick</span>, <span class="fl">2</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu">arrange</span>(<span class="no">program</span>, <span class="no">sex</span>, <span class="no">race</span>)</pre></body></html></div>
 <p>In many cases we might stop here and print the table for discussion purposes.</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="no">stickiness_table</span>, <span class="kw">caption</span> <span class="kw">=</span> <span class="st">"Stickiness metric"</span>)</pre></body></html></div>
 <table class="table table">
@@ -956,17 +956,16 @@ Male
 <li>capitalize the variable names</li>
 <li>spread the data in wide format</li>
 </ul>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">stickiness_table</span> <span class="kw">&lt;-</span> <span class="no">stickiness_table</span> <span class="kw">%.&gt;%</span>
-  <span class="fu">select</span>(<span class="no">.</span>, <span class="no">program</span>, <span class="no">race</span>, <span class="no">sex</span>, <span class="no">stick</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu">mutate</span>(<span class="no">.</span>, <span class="kw">program</span> <span class="kw">=</span> <span class="fu">str_replace</span>(<span class="no">program</span>, <span class="st">" Engineering"</span>, <span class="st">""</span>)) <span class="kw">%.&gt;%</span>
-  <span class="fu">select</span>(<span class="no">.</span>,
-    <span class="st">"Program"</span> <span class="kw">=</span> <span class="no">program</span>,
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">stickiness_table</span> <span class="kw">&lt;-</span> <span class="no">stickiness_table</span> <span class="kw">%&gt;%</span>
+  <span class="fu">select</span>(<span class="no">program</span>, <span class="no">race</span>, <span class="no">sex</span>, <span class="no">stick</span>) <span class="kw">%&gt;%</span>
+  <span class="fu">mutate</span>(<span class="kw">program</span> <span class="kw">=</span> <span class="fu">str_replace</span>(<span class="no">program</span>, <span class="st">" Engineering"</span>, <span class="st">""</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu">select</span>(<span class="st">"Program"</span> <span class="kw">=</span> <span class="no">program</span>,
     <span class="st">"Race"</span> <span class="kw">=</span> <span class="no">race</span>,
     <span class="st">"Sex"</span> <span class="kw">=</span> <span class="no">sex</span>,
     <span class="st">"Stickiness"</span> <span class="kw">=</span> <span class="no">stick</span>
-  ) <span class="kw">%.&gt;%</span>
-  <span class="fu">spread</span>(<span class="no">.</span>, <span class="no">Program</span>, <span class="no">Stickiness</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu">arrange</span>(<span class="no">.</span>, <span class="no">Sex</span>, <span class="no">Race</span>)</pre></body></html></div>
+  ) <span class="kw">%&gt;%</span>
+  <span class="fu">spread</span>(<span class="no">Program</span>, <span class="no">Stickiness</span>) <span class="kw">%&gt;%</span>
+  <span class="fu">arrange</span>(<span class="no">Sex</span>, <span class="no">Race</span>)</pre></body></html></div>
 <p>And print the table to our output document.</p>
 <div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="no">stickiness_table</span>, <span class="kw">caption</span> <span class="kw">=</span> <span class="st">"Stickiness metric"</span>)</pre></body></html></div>
 <table class="table table">
@@ -1161,7 +1160,7 @@ Male
 <h2 class="hasAnchor">
 <a href="#session-information" class="anchor"></a>Session information</h2>
 <pre><code> setting  value                       
- version  R version 4.0.0 (2020-04-24)
+ version  R version 4.0.1 (2020-06-06)
  os       Windows 10 x64              
  system   x86_64, mingw32             
  ui       RTerm                       
@@ -1169,11 +1168,11 @@ Male
  collate  English_United States.1252  
  ctype    English_United States.1252  
  tz       America/New_York            
- date     2020-06-15                  
+ date     2020-06-17                  
 
  package   * version    date       lib source        
  knitr     * 1.28       2020-02-06 []  CRAN (R 4.0.0)
- midfieldr * 1.0.0.9001 2020-06-16 []  local         
+ midfieldr * 1.0.0.9001 2020-06-17 []  local         
  seplyr    * 0.8.8      2020-05-24 []  CRAN (R 4.0.0)
  tidyverse * 1.3.0      2019-11-21 []  CRAN (R 4.0.0)
 
