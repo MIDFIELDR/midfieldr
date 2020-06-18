@@ -91,12 +91,13 @@ library("midfieldr")
 library("midfielddata")
 library("dplyr")
 library("stringr")
+library("ggplot2")
 library("seplyr")
 ```
 
 ```{r echo=FALSE}
 # used by my_session() 
-pkg_names <- c("midfieldr", "midfielddata", "dplyr", "stringr", "seplyr")
+pkg_names <- c("midfieldr", "midfielddata", "dplyr", "stringr", "seplyr", "ggplot2")
 ```
  
 The [Selecting and labeling programs](selecting_programs.html) vignette describes how to obtain the program codes and names for these programs. Their  6-digit CIP codes and names are in the midfieldr data set `case_program_group`. 
@@ -151,11 +152,11 @@ program_series <- program_group[["cip6"]]
 We use `starter_filter()` to extract students from `case_fye` data who start in  one of the programs in `program_series`. The `starter_filter()` function has two main arguments:
 
 - `data` data frame with ID and 6-digit CIP codes
-- `filter_by` atomic character vector of 6-digit CIP codes
+- `codes` atomic character vector of 6-digit CIP codes
 
 ```{r}
 # extract starters from FYE
-fye <- starter_filter(data = case_fye, filter_by = program_series) %>%
+fye <- starter_filter(data = case_fye, codes = program_series) %>%
   print()
 ```
 
@@ -169,10 +170,10 @@ We use `starter_filter()` again on the `midfieldterms` data to obtain non-FYE st
 
 ```{r}
 # explicit value for the data argument 
-non_fye <- starter_filter(data = midfieldterms, filter_by = program_series)
+non_fye <- starter_filter(data = midfieldterms, codes = program_series)
 
 # implicit value for the data argument is midfieldterms
-non_fye <- starter_filter(filter_by = program_series)
+non_fye <- starter_filter(codes = program_series)
 
 print(non_fye)
 ```
@@ -189,7 +190,7 @@ print(non_fye)
 
 We use `starter_filter()` to collect all students starting in the programs we are studying. 
 
-The `filter_by` argument in this case is an atomic vector of the 6-digit CIP codes in our `program_group`. The function uses these codes to search `midfieldstudents`, the default data set. Use `print()` to check the result.  
+The `codes` argument in this case is an atomic vector of the 6-digit CIP codes in our `program_group`. The function uses these codes to search `midfieldstudents`, the default data set. Use `print()` to check the result.  
 
 ```{r}
 program_series <- program_group[["cip6"]] %>%
@@ -201,7 +202,7 @@ program_series <- program_group[["cip6"]] %>%
 Extract all students from `midfieldstudents` starting in these programs. 
 
 ```{r}
-students <- starter_filter(filter_by = program_series) %>%
+students <- starter_filter(codes = program_series) %>%
   print()
 ```
 
@@ -215,7 +216,7 @@ When studying engineering programs, we must account for the [imputed starting ma
 For the data in this package, the imputed values are saved in the `case_fye` data set. Use `starter_filter()` again with `case_fye` as the `data` argument. 
 
 ```{r}
-fye <- starter_filter(data = case_fye, filter_by = program_series) %>%
+fye <- starter_filter(data = case_fye, codes = program_series) %>%
   print()
 ```
 
@@ -252,7 +253,7 @@ We use `grad_filter()` to search the  `midfielddegrees` dataset using the  progr
 
 ```{r}
 # count students graduating from programs
-graduated <- grad_filter(filter_by = program_series) %>%
+graduated <- grad_filter(codes = program_series) %>%
   print()
 ```
 

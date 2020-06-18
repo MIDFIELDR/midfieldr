@@ -15,15 +15,15 @@ A package for investigating a data sample from the MIDFIELD database. The data c
 This package provides functions to access, manipulate, and graph student record data. To illustrate the workflow, we would use these functions in sequence to compute and display the "stickiness" metric:
 
 \itemize{
-  \item \code{cip_filter()} to select programs from the CIP data
-  \item \code{cip_label()} to add custom program labels for grouping
+  \item \code{cip_filter()} to filter programs from the CIP data
+  \item \code{cip6_select()} to select 6-digit CIPs and add custom label
   \item \code{gather_ever()} to gather students ever enrolled
   \item \code{gather_grad()} to gather graduating students
   \item \code{race_sex_join()} to join student sex and race
   \item \code{seplyr::group_summarize()} to count students
   \item \code{dplyr::join()} and \code{mutate()} to compute stickiness
   \item \code{multiway_order()} to prepare the results for graphing
-  \item \code{ggplot2::ggplot()} to graph the metric
+  \item \code{ggplot2::ggplot()} to graph metrics
 }
 
 To learn about these and other functions in detail, start with the vignettes: \code{browseVignettes(package = "midfieldr")}.

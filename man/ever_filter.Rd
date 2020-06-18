@@ -6,7 +6,7 @@
 \usage{
 ever_filter(
   data = NULL,
-  filter_by = NULL,
+  codes = NULL,
   ...,
   id = "id",
   cip6 = "cip6",
@@ -16,15 +16,15 @@ ever_filter(
 \arguments{
 \item{data}{Data frame of student IDs, academic terms, and CIP codes, default \code{midfieldterms}.}
 
-\item{filter_by}{Atomic character vector of 6-digit CIP codes specifying the programs to filter by.}
+\item{codes}{Atomic character vector of 6-digit CIP codes specifying the programs to filter by.}
 
 \item{...}{Not used for values, forces later arguments to bind by name}
 
-\item{id}{Optional argument, the quoted column name of the student ID variable in \code{data}. Default is "id".}
+\item{id}{The column name in quotes of the student ID variable in \code{data}. Default is "id".}
 
-\item{cip6}{Optional argument, the quoted column name of the 6-digit CIP code variable in \code{data}. Default is "cip6".}
+\item{cip6}{The column name in quotes of the 6-digit CIP code variable in \code{data}. Default is "cip6".}
 
-\item{term}{Optional argument, the quoted column name of the term variable in \code{data}. Default is "term".}
+\item{term}{The column name in quotes of the term variable in \code{data}. Default is "term".}
 }
 \value{
 Data frame with character variables for student ID and program CIP
@@ -35,7 +35,7 @@ Filter academic term data to find all students ever enrolled in specified progra
 \details{
 The \code{midfielddata} package must be installed to provide the \code{midfieldterms} data frame as the default value for the \code{data} argument. Optionally, a data frame having the same structure as \code{midfieldterms} may be used as the value for the \code{data} argument.
 
-The \code{filter_by} argument is an atomic character vector of 6-digit CIP codes used to filter \code{data} and extract student IDs and terms.
+The \code{codes} argument is an atomic character vector of 6-digit CIP codes used to filter \code{data} and extract student IDs and terms.
 
 The function returns a subset of \code{data} with every unique combination of student ID and program CIP, representing every student ever enrolled in the specified programs. Only the student ID and program CIP are returned; other variables in \code{data} are quietly dropped.
 
@@ -43,7 +43,7 @@ Optional arguments. Student ID variables in the midfielddata data sets are named
 }
 \examples{
 library("midfielddata")
-(ever_filter(filter_by = "540104"))
+(ever_filter(codes = "540104"))
 
 }
 \seealso{

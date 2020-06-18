@@ -3,9 +3,9 @@ context("ever_filter")
 library("dplyr")
 library("midfieldr")
 
-ever1 <- ever_filter(filter_by = "540104")
+ever1 <- ever_filter(codes = "540104")
 cip6  <- ever1["cip6"]
-ever2 <- ever_filter(filter_by = "14YYYY")
+ever2 <- ever_filter(codes = "14YYYY")
 
 # get_my_path() in tests/testthat/helper.R
 load(file = get_my_path("subset_terms.rda"))
@@ -23,15 +23,15 @@ test_that("Produces expected output", {
   # expect_equal(dim(ever2), c(659, 2))
 })
 
-test_that("Error if incorrect filter_by argument", {
+test_that("Error if incorrect codes argument", {
   expect_error(
     ever_filter(),
-    "midfieldr::ever_filter, filter_by cannot be NULL",
+    "midfieldr::ever_filter, codes cannot be NULL",
     fixed = TRUE
   )
   expect_error(
-    ever_filter(filter_by = cip6),
-    "midfieldr::ever_filter, filter_by must be an atomic variable",
+    ever_filter(codes = cip6),
+    "midfieldr::ever_filter, codes must be an atomic variable",
     fixed = TRUE
   )
 })

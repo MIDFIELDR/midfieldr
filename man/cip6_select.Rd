@@ -48,7 +48,7 @@ Assigning a custom label to a program or a group of programs provides the option
 }
 \examples{
 # Extract the Philosophy and Religion programs and label
-x <- cip_filter(cip, series = "^38")
+x <- cip_filter(cip, keep_any = "^38")
 y <- cip6_select(x, program = "Phil-Relig")
 
 # With no program argument, the 6-digit CIP names are assigned

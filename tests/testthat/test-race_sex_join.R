@@ -7,7 +7,7 @@ library("midfielddata")
 load(file = get_my_path("subset_degrees.rda"))
 load(file = get_my_path("subset_students.rda"))
 
-ever <- ever_filter(filter_by = "540104")
+ever <- ever_filter(codes = "540104")
 
 ever1 <- ever %>%
   race_sex_join()

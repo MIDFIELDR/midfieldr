@@ -2,7 +2,7 @@
 context("test-cip_filter")
 
 # create test case
-case_engr <- cip_filter(cip, series = cip_engr)
+case_engr <- cip_filter(cip, keep_any = cip_engr)
 
 # test_that(".data argument NULL", {
 #   expect_equal(cip_filter(reference = NULL), cip_filter(reference = cip))
@@ -22,14 +22,14 @@ case_engr <- cip_filter(cip, series = cip_engr)
 
 test_that("Numeric terms are coverted to strings", {
   expect_equal(
-    cip_filter(cip, series = 140801),
-    cip_filter(cip, series = "140801")
+    cip_filter(cip, keep_any = 140801),
+    cip_filter(cip, keep_any = "140801")
   )
 })
 
 test_that("Invalid series are quietly ignored", {
   expect_equal(
-    cip_filter(cip, series = seq(140800, 140899)),
-    cip_filter(cip, series = "^1408")
+    cip_filter(cip, keep_any = seq(140800, 140899)),
+    cip_filter(cip, keep_any = "^1408")
   )
 })

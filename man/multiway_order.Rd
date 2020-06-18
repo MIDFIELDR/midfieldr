@@ -4,10 +4,10 @@
 \alias{multiway_order}
 \title{Prepare multiway data for graphing}
 \usage{
-multiway_order(mw_data, return_medians = FALSE)
+multiway_order(data, return_medians = FALSE)
 }
 \arguments{
-\item{mw_data}{Data frame with one numerical variable and two categorical variables.}
+\item{data}{Data frame with one numerical variable and two categorical variables.}
 
 \item{return_medians}{Logical value indicating whether or not the medians computed to order the factors should be included in the data frame returned. The default is FALSE.}
 }

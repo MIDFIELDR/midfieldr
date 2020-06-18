@@ -150,9 +150,9 @@ grouping_variables <- c("program", "race", "sex")
 We use `ever_filter()` to collect all students ever enrolled in the programs we are studying. `ever_filter()` has two required arguments:
 
 - `data` data frame of term information, default `midfieldterms` 
-- `filter_by` atomic character vector of 6-digit CIP codes
+- `codes` atomic character vector of 6-digit CIP codes
 
-The `filter_by` argument in this case is an atomic vector of the 6-digit CIP codes in our `program_group`. The function uses these codes to search `midfieldterms`, the default reference data set. Use `print()` to check the result. 
+The `codes` argument in this case is an atomic vector of the 6-digit CIP codes in our `program_group`. The function uses these codes to search `midfieldterms`, the default reference data set. Use `print()` to check the result. 
 
 ```{r}
 # extract the 6-digit CIPs as a search series
@@ -165,14 +165,14 @@ program_series <- program_group[["cip6"]] %>%
 Extract all students from midfieldterms ever enrolled in these programs. 
 
 ```{r opts.label = 'dopurl'}
-students <- ever_filter(data = midfieldterms, filter_by = program_series) %>% 
+students <- ever_filter(data = midfieldterms, codes = program_series) %>% 
         print()
 ```
 
 If one is working strictly with the data sets in midfielddata, then the data argument can be omitted because if `data` is NULL, its default assignment is `midfielddata::midfieldterms`.  Thus, the following code yields the same result as the one above. 
 
 ```{r}
-students <- ever_filter(filter_by = program_series) %>% 
+students <- ever_filter(codes = program_series) %>% 
         print()
 ```
 
@@ -242,13 +242,13 @@ ever_enrolled <- group_summarize(students, grouping_variables, "ever" = n()) %>%
 
 `grad_filter()` extracts a subset of the `midfielddegrees` data containing the  unique students ever graduating from the programs listed in `program_series `. 
 
-The procedure for gathering graduates is nearly identical to the procedure for gathering the ever-enrolled. We use `grad_filter()` to search the  `midfielddegrees` dataset using the same `filter_by` argument; we join race, sex, and program in the same way; and when we count students, the totals are assigned to the new variable `grad`.
+The procedure for gathering graduates is nearly identical to the procedure for gathering the ever-enrolled. We use `grad_filter()` to search the  `midfielddegrees` dataset using the same `codes` argument; we join race, sex, and program in the same way; and when we count students, the totals are assigned to the new variable `grad`.
 
 Reminder that in a sequence of operations using the pipe operator (`%>%`), the outcome of the one operation is assigned to the first argument of the next operation using the dot (`.`) argument. 
 
 ```{r}
 # count students graduating from programs
-graduated <- grad_filter(filter_by = program_series) %>%
+graduated <- grad_filter(codes = program_series) %>%
         race_sex_join() %>% 
         left_join(program_group, by = "cip6") %>%
         group_summarize(., grouping_variables, "grad" = n()) %>%
@@ -263,7 +263,7 @@ Notes.
 - If keeping track of when you need a dot and when you don't is a cognitive burden, you can always use a dot to represent the incoming object explicitly. For example, the code chunk above could be written, 
 
 ```{r results = "hide"}
-graduated <- grad_filter(filter_by = program_series) %>%
+graduated <- grad_filter(codes = program_series) %>%
         race_sex_join(.) %>% 
         left_join(., program_group, by = "cip6") %>%
         group_summarize(., grouping_variables, "grad" = n()) %>%
@@ -447,7 +447,7 @@ We also apply our own `theme_midfield()` to edit the visual properties of the gr
 
 ## Complete script
 
-For reference, the complete script for this example is collected below. We've omitted intermediate exploratory steps and retained only the minimum code required to obtain the results graph. 
+For reference, the complete script for this example is collected below. We've omitted intermediate exploratory steps, retaining the minimum code required to obtain the results graph. 
 
 ```{r eval = FALSE}
 # packages used 
@@ -470,13 +470,13 @@ program_series <- program_group[["cip6"]] %>%
         sort()
 
 # count students ever enrolled in programs
-ever_enrolled <- ever_filter(midfieldterms, filter_by = program_series) %>%
+ever_enrolled <- ever_filter(midfieldterms, codes = program_series) %>%
         race_sex_join() %>% 
         left_join(., program_group, by = "cip6") %>%
         group_summarize(., grouping_variables, "ever" = n())
 
 # count students graduating from programs
-graduated <- grad_filter(midfielddegrees, filter_by = program_series) %>%
+graduated <- grad_filter(midfielddegrees, codes = program_series) %>%
         race_sex_join() %>%
         left_join(., program_group, by = "cip6") %>%
         group_summarize(., grouping_variables, "grad" = n())

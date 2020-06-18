@@ -66,8 +66,8 @@ The results show that the codes we want are at the 4-digit level:  1408, 1410, 1
  
 ```{r first-cip-search, echo = -1}
 options(tibble.print_min = 15L)
-cip_filter(data = cip, series = "engineering", except = "technology") %>%
-  cip_filter(data = ., series = c("civil", "electrical", "industrial", "mechanical")) %>%
+cip_filter(data = cip, keep_any = "engineering", drop_any = "technology") %>%
+  cip_filter(data = ., keep_any = c("civil", "electrical", "industrial", "mechanical")) %>%
   print() # or View() 
 ```
 
@@ -94,7 +94,7 @@ Notes.
 In the next step, we extract these programs individually so we can label the programs individually.  We'll start with Civil Engineering. 
 
 ```{r}
-cve <- cip_filter(data = cip, series = "^1408") %>% 
+cve <- cip_filter(data = cip, keep_any = "^1408") %>% 
   print() # or View() 
 ```
 
@@ -107,7 +107,7 @@ cve <- cip6_select(data = cve, program = "cip4name") %>%
 
 ```{r echo = FALSE}
 # silent, to use inline R code below
-ele <- cip_filter(data = cip, series = "^1410")
+ele <- cip_filter(data = cip, keep_any = "^1410")
 ```
 
 We repeat for the other three disciplines. 
@@ -116,13 +116,13 @@ We repeat for the other three disciplines.
 - For the other two disciplines, the `cip4name` value is used for `program`. 
 
 ```{r}
-ele <- cip_filter(data = cip, series = "^1410") %>% 
+ele <- cip_filter(data = cip, keep_any = "^1410") %>% 
   cip6_select(data = ., program = "Electrical Engineering")
 
-mce <- cip_filter(data = cip, series = "^1419") %>% 
+mce <- cip_filter(data = cip, keep_any = "^1419") %>% 
   cip6_select(data = ., program = "cip4name")
 
-ise <- cip_filter(data = cip, series = "^1435") %>% 
+ise <- cip_filter(data = cip, keep_any = "^1435") %>% 
   cip6_select(data = ., program = "cip4name")
 ```
 
@@ -156,7 +156,7 @@ In this optional section, we rewrite the procedure used above to illustrate a mo
 
 ```{r echo=-1}
 options(tibble.print_min = 12L)
-program_group <- cip_filter(data = cip, series = c("^1408", "^1410", "^1419", "^1435")) %>% 
+program_group <- cip_filter(data = cip, keep_any = c("^1408", "^1410", "^1419", "^1435")) %>% 
   cip6_select(data = ., program = "cip4name") %>% 
   mutate(program = ifelse(str_detect(cip6, "^1410"), "Electrical Engineering", program)) %>% 
   print() # or View() 
@@ -208,14 +208,14 @@ In this section, we explore the arguments of `cip6_select()`. There are four opt
 
 ```{r results = "hide"}
 cip %>% 
-  cip_filter(data = ., series = "^31") %>% 
+  cip_filter(data = ., keep_any = "^31") %>% 
   cip6_select(data = ., program = "Leisure Studies") %>% 
   print() # or View()
 ```
 
 ```{r echo = FALSE}
 cip %>% 
-  cip_filter(data = ., series = "^31") %>% 
+  cip_filter(data = ., keep_any = "^31") %>% 
   cip6_select(data = ., program = "Leisure Studies") %>% 
   kable2html()
 ```
@@ -230,14 +230,14 @@ cip %>%
 
 ```{r results = "hide"}
 cip %>% 
-  cip_filter(data = ., series = cip_math_stat) %>% 
+  cip_filter(data = ., keep_any = cip_math_stat) %>% 
   cip6_select(data = ., program = "named_series") %>% 
   print() # or View()
 ```
 
 ```{r echo = FALSE}
 cip %>% 
-  cip_filter(data = ., series = cip_math_stat) %>% 
+  cip_filter(data = ., keep_any = cip_math_stat) %>% 
   cip6_select(data = ., program = "named_series") %>% 
   kable2html()
 ```
@@ -249,14 +249,14 @@ cip %>%
 ```{r results = "hide"}
 # 2-digit 
 cip %>% 
-  cip_filter(data = ., series = "^31") %>% 
+  cip_filter(data = ., keep_any = "^31") %>% 
   cip6_select(data = ., program = "cip2name") %>% 
   print() # or View()
 ```
 
 ```{r echo = FALSE}
 cip %>% 
-  cip_filter(data = ., series = "^31") %>% 
+  cip_filter(data = ., keep_any = "^31") %>% 
   cip6_select(data = ., program = "cip2name") %>% 
   kable2html()
 ```
@@ -264,14 +264,14 @@ cip %>%
 ```{r results = "hide"}
 # 4-digit 
 cip %>% 
-  cip_filter(data = ., series = "^31") %>% 
+  cip_filter(data = ., keep_any = "^31") %>% 
   cip6_select(data = ., program = "cip4name") %>% 
   print() # or View() 
 ```
 
 ```{r echo = FALSE}
 cip %>% 
-  cip_filter(data = ., series = "^31") %>% 
+  cip_filter(data = ., keep_any = "^31") %>% 
   cip6_select(data = ., program = "cip4name") %>% 
   kable2html()
 ```
@@ -279,14 +279,14 @@ cip %>%
 ```{r results = "hide"}
 # 6-digit 
 cip %>% 
-  cip_filter(data = ., series = "^31") %>% 
+  cip_filter(data = ., keep_any = "^31") %>% 
   cip6_select(data = ., program = "cip6name") %>% 
   print() # or View() 
 ```
 
 ```{r echo = FALSE}
 cip %>% 
-  cip_filter(data = ., series = "^31") %>% 
+  cip_filter(data = ., keep_any = "^31") %>% 
   cip6_select(data = ., program = "cip6name") %>% 
   kable2html()
 ```
@@ -298,14 +298,14 @@ cip %>%
 ```{r results = "hide"}
 # program is NULL
 cip %>% 
-  cip_filter(data = ., series = "^31") %>% 
+  cip_filter(data = ., keep_any = "^31") %>% 
   cip6_select(data = .) %>% 
   print() # or View()
 ```
 
 ```{r echo = FALSE}
 cip %>% 
-  cip_filter(data = ., series = "^31") %>% 
+  cip_filter(data = ., keep_any = "^31") %>% 
   cip6_select(data = .) %>% 
   kable2html()
 ```
@@ -339,7 +339,7 @@ nonstandard_cip <- cip %>%
 
 ```{r}
 nonstandard_cip %>% 
-  cip_filter(data = ., series = "^31") %>% 
+  cip_filter(data = ., keep_any = "^31") %>% 
   cip6_select(program = "Leisure Studies", cip6 = "code_6", cip6name = "name_6") %>% 
   print() # or View() 
 ```
@@ -348,7 +348,7 @@ nonstandard_cip %>%
 
 ```{r}
 standard_cip <- nonstandard_cip %>% 
-  cip_filter(data = ., series = "^31") %>% 
+  cip_filter(data = ., keep_any = "^31") %>% 
   rename("cip6" = code_6, "cip6name" = name_6) %>% 
   print() # or View() 
 ```

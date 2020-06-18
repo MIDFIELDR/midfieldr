@@ -13,7 +13,7 @@ NULL
 #'
 #' In multiway data, there is a single quantitative value (or response) for every combination of levels of two categorical variables. \code{multiway_order()} converts the categorical variables to factors and orders the factors by increasing median values of the levels of the categorical variables.
 #'
-#' @param mw_data Data frame with one numerical variable and two categorical variables.
+#' @param data Data frame with one numerical variable and two categorical variables.
 #'
 #' @param return_medians Logical value indicating whether or not the medians computed to order the factors should be included in the data frame returned. The default is FALSE.
 #'
@@ -39,15 +39,15 @@ NULL
 #' df3
 #'
 #' @export
-multiway_order <- function(mw_data, return_medians = FALSE) {
-  if (!(is.data.frame(mw_data) || dplyr::is.tbl(mw_data))) {
+multiway_order <- function(data, return_medians = FALSE) {
+  if (!(is.data.frame(data) || dplyr::is.tbl(data))) {
     stop("midfieldr::multiway_order() argument must be a data frame or tbl")
   }
 
   if (is.null(return_medians)) return_medians <- FALSE
 
   # obtain type of variables to distinguish numeric from other
-  v_class <- purrr::map_chr(mw_data, class)
+  v_class <- purrr::map_chr(data, class)
 
   # only one numeric value
   sel <- v_class == "numeric" | v_class == "integer" | v_class == "double"
@@ -75,26 +75,26 @@ multiway_order <- function(mw_data, return_medians = FALSE) {
   med2 <- rlang::sym(paste0("med_", names(cat_idx)[[2]]))
 
   # determine medians grouped by first category
-  y <- mw_data %>%
+  y <- data %>%
     dplyr::group_by(!!cat1) %>%
     dplyr::summarize(!!med1 := round(median(!!value, na.rm = TRUE), 3)) %>%
     dplyr::ungroup()
   # create first factor and order by the median values
-  mw_data <- dplyr::left_join(mw_data, y, by = dplyr::quo_name(cat1)) %>%
+  data <- dplyr::left_join(data, y, by = dplyr::quo_name(cat1)) %>%
     dplyr::mutate(!!cat1 := forcats::fct_reorder(!!cat1, !!med1))
 
   # determine medians grouped by second category
-  y <- mw_data %>%
+  y <- data %>%
     dplyr::group_by(!!cat2) %>%
     dplyr::summarize(!!med2 := round(median(!!value, na.rm = TRUE), 3))
   # create second factor and order by the median values
-  mw_data <- dplyr::left_join(mw_data, y, by = dplyr::quo_name(cat2)) %>%
+  data <- dplyr::left_join(data, y, by = dplyr::quo_name(cat2)) %>%
     dplyr::mutate(!!cat2 := forcats::fct_reorder(!!cat2, !!med2))
   # conditional to include the medians in the output
   if (isTRUE(return_medians)) {
-    mw_data <- mw_data
+    data <- data
   } else {
-    mw_data <- mw_data %>% select(!!cat1, !!cat2, !!value)
+    data <- data %>% select(!!cat1, !!cat2, !!value)
   }
 }
 "multiway_order"

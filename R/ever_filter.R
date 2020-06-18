@@ -10,7 +10,7 @@ NULL
 #'
 #' The \code{midfielddata} package must be installed to provide the \code{midfieldterms} data frame as the default value for the \code{data} argument. Optionally, a data frame having the same structure as \code{midfieldterms} may be used as the value for the \code{data} argument.
 #'
-#' The \code{filter_by} argument is an atomic character vector of 6-digit CIP codes used to filter \code{data} and extract student IDs and terms.
+#' The \code{codes} argument is an atomic character vector of 6-digit CIP codes used to filter \code{data} and extract student IDs and terms.
 #'
 #' The function returns a subset of \code{data} with every unique combination of student ID and program CIP, representing every student ever enrolled in the specified programs. Only the student ID and program CIP are returned; other variables in \code{data} are quietly dropped.
 #'
@@ -19,15 +19,15 @@ NULL
 #'
 #' @param data Data frame of student IDs, academic terms, and CIP codes, default \code{midfieldterms}.
 #'
-#' @param filter_by Atomic character vector of 6-digit CIP codes specifying the programs to filter by.
+#' @param codes Atomic character vector of 6-digit CIP codes specifying the programs to filter by.
 #'
 #' @param ... Not used for values, forces later arguments to bind by name
 #'
-#' @param id Optional argument, the quoted column name of the student ID variable in \code{data}. Default is "id".
+#' @param id The column name in quotes of the student ID variable in \code{data}. Default is "id".
 #'
-#' @param cip6 Optional argument, the quoted column name of the 6-digit CIP code variable in \code{data}. Default is "cip6".
+#' @param cip6 The column name in quotes of the 6-digit CIP code variable in \code{data}. Default is "cip6".
 #'
-#' @param term Optional argument, the quoted column name of the term variable in \code{data}. Default is "term".
+#' @param term The column name in quotes of the term variable in \code{data}. Default is "term".
 #'
 #' @return Data frame with character variables for student ID and program CIP
 #'
@@ -35,10 +35,10 @@ NULL
 #'
 #' @examples
 #' library("midfielddata")
-#' (ever_filter(filter_by = "540104"))
+#' (ever_filter(codes = "540104"))
 #'
 #' @export
-ever_filter <- function(data = NULL, filter_by = NULL, ..., id = "id", cip6 = "cip6", term = "term") {
+ever_filter <- function(data = NULL, codes = NULL, ..., id = "id", cip6 = "cip6", term = "term") {
   if (!.pkgglobalenv$has_data) {
     stop(paste(
       "To use this function, you must have",
@@ -56,15 +56,15 @@ ever_filter <- function(data = NULL, filter_by = NULL, ..., id = "id", cip6 = "c
   if (!(is.data.frame(data) || dplyr::is.tbl(data))) {
     stop("midfieldr::ever_filter, data must be a data frame or tbl")
   }
-  if (is.null(filter_by)) {
-    stop("midfieldr::ever_filter, filter_by cannot be NULL")
+  if (is.null(codes)) {
+    stop("midfieldr::ever_filter, codes cannot be NULL")
   }
-  if (isFALSE(is.atomic(filter_by))) {
-    stop("midfieldr::ever_filter, filter_by must be an atomic variable")
+  if (isFALSE(is.atomic(codes))) {
+    stop("midfieldr::ever_filter, codes must be an atomic variable")
   }
 
   # search terms in a single string
-  collapse_series <- stringr::str_c(filter_by, collapse = "|")
+  collapse_series <- stringr::str_c(codes, collapse = "|")
 
   # addresses R CMD check warning "no visible binding"
   ID   <- NULL

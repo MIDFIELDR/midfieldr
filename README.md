@@ -106,8 +106,8 @@ specialized functions from midfieldr:
   - `multiway_order()` to prepare the results for graphing
   - `ggplot()` from ggplot2 to graph the metric
 
-A short but complete example is provided in the “Getting started”
-vignette [(link)](articles/getting_started.html).
+A short but complete example is provided in the “Workflow example”
+vignette [(link)](articles/workflow_example.html).
 
 ## Meta
 

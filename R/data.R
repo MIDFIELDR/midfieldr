@@ -30,7 +30,7 @@
 #' unique(cip[, 1:2])
 #'
 #' # As the data argument for cip_filter()
-#' cip_filter(data = cip, series = "^1410")
+#' cip_filter(data = cip, keep_any = "^1410")
 "cip"
 
 
@@ -64,8 +64,8 @@
 #' head(cip_math_stat, n = 10L)
 #' head(cip_phys_sci, n = 10L)
 #'
-#' cip_filter(data = cip, series = cip_math_stat)
-#' cip_filter(data = cip, series = cip_phys_sci)
+#' cip_filter(data = cip, keep_any = cip_math_stat)
+#' cip_filter(data = cip, keep_any = cip_phys_sci)
 NULL
 
 #' @rdname cip_series

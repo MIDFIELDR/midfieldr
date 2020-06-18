@@ -2,18 +2,18 @@
 % Please edit documentation in R/cip_filter.R
 \name{cip_filter}
 \alias{cip_filter}
-\title{Filter by CIP data}
+\title{Filter CIP data}
 \usage{
-cip_filter(data, series = NULL, ..., except = NULL)
+cip_filter(data = NULL, keep_any = NULL, ..., drop_any = NULL)
 }
 \arguments{
-\item{data}{Data frame or tibble of CIP codes}
+\item{data}{Data frame or tibble of CIP codes, default \code{midfieldr::cip}.}
 
-\item{series}{Character vector used to filter \code{data}, retaining all rows containing any of these terms.}
+\item{keep_any}{Character vector used to filter \code{data}, keeping all rows in which any matches or partial matches are detected.}
 
 \item{...}{Not used for values, forces later optional arguments to bind by name}
 
-\item{except}{Character vector used to filter \code{data}, deleting all rows containing any of these terms.}
+\item{drop_any}{Character vector used to filter \code{data}, dropping all rows in which any matches or partial matches are detected.}
 }
 \value{
 Data frame
@@ -22,7 +22,7 @@ Data frame
 Filter a data frame of Classification of Instructional Programs (CIP) codes and return the rows that match conditions.
 }
 \details{
-The \code{series} argument is an atomic character vector of search terms  used to filter the CIP data frame. Typical search terms include words and phrases describing academic programs or their CIP codes.
+The \code{keep_any} argument is an atomic character vector of search terms  used to filter the CIP data frame. Typical search terms include words and phrases describing academic programs or their CIP codes.
 
 Several collections of named series are provided to facilitate searching for groups of programs such as Biological Sciences, Engineering, Physical Sciences, etc. For the named series help page, run \code{? cip_series}.
 
@@ -32,7 +32,7 @@ The function returns a subset of \code{data}. All columns are retained.
 cip_filter(cip, "History")
 cip_filter(cip, c("American", "History"))
 cip_filter(cip, "History") \%>\%
-  cip_filter(., "American")
+  cip_filter("American")
 cip_filter(cip, "^14") \%>\%
-  cip_filter(., series = "Civil")
+  cip_filter(keep_any = "Civil")
 }
