@@ -51,7 +51,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/getting_started.html">Getting started</a>
+  <a href="../articles/workflow_example.html">Workflow example</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -209,9 +209,9 @@
 <code>data</code> data frame of term information, default <code>midfieldterms</code>
 </li>
 <li>
-<code>filter_by</code> atomic character vector of 6-digit CIP codes</li>
+<code>codes</code> atomic character vector of 6-digit CIP codes</li>
 </ul>
-<p>The <code>filter_by</code> argument in this case is an atomic vector of the 6-digit CIP codes in our <code>program_group</code>. The function uses these codes to search <code>midfieldterms</code>, the default reference data set. Use <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> to check the result.</p>
+<p>The <code>codes</code> argument in this case is an atomic vector of the 6-digit CIP codes in our <code>program_group</code>. The function uses these codes to search <code>midfieldterms</code>, the default reference data set. Use <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> to check the result.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># extract the 6-digit CIPs as a search series</span>
 <span class="no">program_series</span> <span class="kw">&lt;-</span> <span class="no">program_group</span><span class="kw">[[</span><span class="st">"cip6"</span>]] <span class="kw">%&gt;%</span>
         <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>() <span class="kw">%&gt;%</span>
@@ -220,7 +220,7 @@
 <span class="co">#&gt;  [1] "140801" "140802" "140803" "140804" "140805" "140899" "141001" "141003"</span>
 <span class="co">#&gt;  [9] "141004" "141099" "141901" "143501"</span></pre></body></html></div>
 <p>Extract all students from midfieldterms ever enrolled in these programs.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">students</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ever_filter.html">ever_filter</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldterms</span>, <span class="kw">filter_by</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">students</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ever_filter.html">ever_filter</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldterms</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
         <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
 <span class="co">#&gt; # A tibble: 10,764 x 2</span>
 <span class="co">#&gt;    id          cip6  </span>
@@ -239,7 +239,7 @@
 <span class="co">#&gt; 12 MID25784056 141901</span>
 <span class="co">#&gt; # ... with 10,752 more rows</span></pre></body></html></div>
 <p>If one is working strictly with the data sets in midfielddata, then the data argument can be omitted because if <code>data</code> is NULL, its default assignment is <code><a href="https://rdrr.io/pkg/midfielddata/man/midfieldterms.html">midfielddata::midfieldterms</a></code>. Thus, the following code yields the same result as the one above.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">students</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ever_filter.html">ever_filter</a></span>(<span class="kw">filter_by</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">students</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ever_filter.html">ever_filter</a></span>(<span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
         <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
 <span class="co">#&gt; # A tibble: 10,764 x 2</span>
 <span class="co">#&gt;    id          cip6  </span>
@@ -331,10 +331,10 @@
 <h2 class="hasAnchor">
 <a href="#repeat-for-graduating-students" class="anchor"></a>Repeat for graduating students</h2>
 <p><code><a href="../reference/grad_filter.html">grad_filter()</a></code> extracts a subset of the <code>midfielddegrees</code> data containing the unique students ever graduating from the programs listed in <code>program_series</code>.</p>
-<p>The procedure for gathering graduates is nearly identical to the procedure for gathering the ever-enrolled. We use <code><a href="../reference/grad_filter.html">grad_filter()</a></code> to search the <code>midfielddegrees</code> dataset using the same <code>filter_by</code> argument; we join race, sex, and program in the same way; and when we count students, the totals are assigned to the new variable <code>grad</code>.</p>
+<p>The procedure for gathering graduates is nearly identical to the procedure for gathering the ever-enrolled. We use <code><a href="../reference/grad_filter.html">grad_filter()</a></code> to search the <code>midfielddegrees</code> dataset using the same <code>codes</code> argument; we join race, sex, and program in the same way; and when we count students, the totals are assigned to the new variable <code>grad</code>.</p>
 <p>Reminder that in a sequence of operations using the pipe operator (<code><a href="../reference/pipe.html">%&gt;%</a></code>), the outcome of the one operation is assigned to the first argument of the next operation using the dot (<code>.</code>) argument.</p>
 <div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># count students graduating from programs</span>
-<span class="no">graduated</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/grad_filter.html">grad_filter</a></span>(<span class="kw">filter_by</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
+<span class="no">graduated</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/grad_filter.html">grad_filter</a></span>(<span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
         <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="kw">%&gt;%</span>
         <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
         <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize</a></span>(<span class="no">.</span>, <span class="no">grouping_variables</span>, <span class="st">"grad"</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span>
@@ -361,7 +361,7 @@
 <li>In contrast, <code><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize()</a></code> from the seplyr package requires explicit arguments, hence the dot placeholder to represent the incoming data frame.</li>
 <li>If keeping track of when you need a dot and when you don’t is a cognitive burden, you can always use a dot to represent the incoming object explicitly. For example, the code chunk above could be written,</li>
 </ul>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">graduated</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/grad_filter.html">grad_filter</a></span>(<span class="kw">filter_by</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">graduated</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/grad_filter.html">grad_filter</a></span>(<span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
         <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>(<span class="no">.</span>) <span class="kw">%&gt;%</span>
         <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">.</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
         <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize</a></span>(<span class="no">.</span>, <span class="no">grouping_variables</span>, <span class="st">"grad"</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span>
@@ -530,7 +530,7 @@
 <div id="complete-script" class="section level2">
 <h2 class="hasAnchor">
 <a href="#complete-script" class="anchor"></a>Complete script</h2>
-<p>For reference, the complete script for this example is collected below. We’ve omitted intermediate exploratory steps and retained only the minimum code required to obtain the results graph.</p>
+<p>For reference, the complete script for this example is collected below. We’ve omitted intermediate exploratory steps, retaining the minimum code required to obtain the results graph.</p>
 <div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="co"># packages used </span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"midfieldr"</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"midfielddata"</span>)
@@ -551,13 +551,13 @@
         <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>()
 
 <span class="co"># count students ever enrolled in programs</span>
-<span class="no">ever_enrolled</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ever_filter.html">ever_filter</a></span>(<span class="no">midfieldterms</span>, <span class="kw">filter_by</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
+<span class="no">ever_enrolled</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ever_filter.html">ever_filter</a></span>(<span class="no">midfieldterms</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
         <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="kw">%&gt;%</span>
         <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">.</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
         <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize</a></span>(<span class="no">.</span>, <span class="no">grouping_variables</span>, <span class="st">"ever"</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>())
 
 <span class="co"># count students graduating from programs</span>
-<span class="no">graduated</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/grad_filter.html">grad_filter</a></span>(<span class="no">midfielddegrees</span>, <span class="kw">filter_by</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
+<span class="no">graduated</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/grad_filter.html">grad_filter</a></span>(<span class="no">midfielddegrees</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
         <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="kw">%&gt;%</span>
         <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">.</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
         <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize</a></span>(<span class="no">.</span>, <span class="no">grouping_variables</span>, <span class="st">"grad"</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>())
@@ -595,13 +595,13 @@
  collate  English_United States.1252  
  ctype    English_United States.1252  
  tz       America/New_York            
- date     2020-06-17                  
+ date     2020-06-18                  
 
  package      * version    date       lib source        
  dplyr        * 1.0.0      2020-05-29 []  CRAN (R 4.0.0)
  ggplot2      * 3.3.1      2020-05-28 []  CRAN (R 4.0.0)
  midfielddata * 0.1.0      2020-06-06 []  local         
- midfieldr    * 1.0.0.9001 2020-06-17 []  local         
+ midfieldr    * 1.0.0.9001 2020-06-18 []  local         
  seplyr       * 0.8.8      2020-05-24 []  CRAN (R 4.0.0)
  stringr      * 1.4.0      2019-02-10 []  CRAN (R 4.0.0)
 

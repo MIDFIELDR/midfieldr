@@ -51,7 +51,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/getting_started.html">Getting started</a>
+  <a href="../articles/workflow_example.html">Workflow example</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -181,18 +181,18 @@
 <p>You may skip the rest of the vignette and simply incorporate the imputed data <code>case_fye</code> in your analysis if the details of imputation are not important to you at this time.</p>
 <p>If the details are of interest to you, we start by conditioning the data to prepare it for imputation.</p>
 <p><strong>Step 1.</strong> Extract from <code>midfieldstudents</code> the IDs of all students whose matriculation major is FYE.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">fye_id</span> <span class="kw">&lt;-</span> <span class="no">midfieldstudents</span> <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">.</span>, <span class="no">cip6</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"14XXXX"</span>, <span class="st">"14YYYY"</span>)) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">.</span>, <span class="no">id</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">.</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>(<span class="no">.</span>)
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">fye_id</span> <span class="kw">&lt;-</span> <span class="no">midfieldstudents</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">cip6</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"14XXXX"</span>, <span class="st">"14YYYY"</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">id</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>() <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>()
 <span class="co">#&gt; Rows: 5,992</span>
 <span class="co">#&gt; Columns: 1</span>
 <span class="co">#&gt; $ id &lt;chr&gt; "MID25783162", "MID25783166", "MID25783167", "MID25783178", "MID...</span></pre></body></html></div>
 <p>Extract from <code>midfieldterms</code> all the term data for these students. <code><a href="https://dplyr.tidyverse.org/reference/filter-joins.html">semi_join(x, y)</a></code> returns all rows from x where there are matching values in y, keeping just columns from x.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">all_fye_terms</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter-joins.html">semi_join</a></span>(<span class="no">midfieldterms</span>, <span class="no">fye_id</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">.</span>, <span class="no">id</span>, <span class="no">cip6</span>, <span class="no">term</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>(<span class="no">.</span>)
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">all_fye_terms</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter-joins.html">semi_join</a></span>(<span class="no">midfieldterms</span>, <span class="no">fye_id</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">id</span>, <span class="no">cip6</span>, <span class="no">term</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>()
 <span class="co">#&gt; Rows: 51,391</span>
 <span class="co">#&gt; Columns: 3</span>
 <span class="co">#&gt; $ id   &lt;chr&gt; "MID25783162", "MID25783162", "MID25783162", "MID25783162", "M...</span>
@@ -200,14 +200,14 @@
 <span class="co">#&gt; $ term &lt;dbl&gt; 19921, 19923, 19931, 19933, 19941, 19943, 19951, 19953, 19961,...</span></pre></body></html></div>
 <p><strong>Step 2.</strong> Subset the students who declare an engineering major after FYE.</p>
 <p>Keeping those terms in which FYE is the declared major, we arrange the rows by ID and <em>descending</em> term. Then, grouped by ID, each first row is a student’s final FYE term, denoted <code>end_fye</code>.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">last_fye_terms</span> <span class="kw">&lt;-</span> <span class="no">all_fye_terms</span> <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">.</span>, <span class="no">cip6</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"14XXXX"</span>, <span class="st">"14YYYY"</span>)) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="no">.</span>, <span class="no">id</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span>(<span class="no">term</span>)) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">.</span>, <span class="no">id</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">.</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/ranking.html">row_number</a></span>() <span class="kw">==</span> <span class="fl">1</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span>(<span class="no">.</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">.</span>, <span class="no">id</span>, <span class="kw">end_fye</span> <span class="kw">=</span> <span class="no">term</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>(<span class="no">.</span>)
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">last_fye_terms</span> <span class="kw">&lt;-</span> <span class="no">all_fye_terms</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">cip6</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"14XXXX"</span>, <span class="st">"14YYYY"</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="no">id</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span>(<span class="no">term</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">id</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="fu"><a href="https://dplyr.tidyverse.org/reference/ranking.html">row_number</a></span>() <span class="kw">==</span> <span class="fl">1</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span>() <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">id</span>, <span class="kw">end_fye</span> <span class="kw">=</span> <span class="no">term</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>()
 <span class="co">#&gt; Rows: 5,220</span>
 <span class="co">#&gt; Columns: 2</span>
 <span class="co">#&gt; $ id      &lt;chr&gt; "MID25783162", "MID25783166", "MID25783167", "MID25783178",...</span>
@@ -215,17 +215,17 @@
 <p>We join the column <code>end_fye</code> to the <code>all_fye_terms</code> data frame. <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join(x, y)</a></code> returns all rows from x, and all columns from x and y. All multiple matches between x and y are returned.</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">fye_to_engr</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">all_fye_terms</span>, <span class="no">last_fye_terms</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>)</pre></body></html></div>
 <p>Arranging by ID and <em>ascending</em> term and grouped by ID, each first row is a student’s first term after FYE.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">fye_to_engr</span> <span class="kw">&lt;-</span> <span class="no">fye_to_engr</span> <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">.</span>, <span class="no">term</span> <span class="kw">&gt;</span> <span class="no">end_fye</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="no">.</span>, <span class="no">id</span>, <span class="no">term</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">.</span>, <span class="no">id</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">.</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/ranking.html">row_number</a></span>() <span class="kw">==</span> <span class="fl">1</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span>(<span class="no">.</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">fye_to_engr</span> <span class="kw">&lt;-</span> <span class="no">fye_to_engr</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">term</span> <span class="kw">&gt;</span> <span class="no">end_fye</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="no">id</span>, <span class="no">term</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">id</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="fu"><a href="https://dplyr.tidyverse.org/reference/ranking.html">row_number</a></span>() <span class="kw">==</span> <span class="fl">1</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span>()</pre></body></html></div>
 <p>Because this data frame denotes students transitioning to an engineering major, we filter to keep only those whose CIP starts with “14.” For these students, the predicted starting major is their declared engineering major after FYE.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">fye_to_engr</span> <span class="kw">&lt;-</span> <span class="no">fye_to_engr</span> <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">.</span>, <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html">str_detect</a></span>(<span class="no">cip6</span>, <span class="st">"^14"</span>)) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">.</span>, <span class="no">id</span>, <span class="no">cip6</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>(<span class="no">.</span>)
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">fye_to_engr</span> <span class="kw">&lt;-</span> <span class="no">fye_to_engr</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html">str_detect</a></span>(<span class="no">cip6</span>, <span class="st">"^14"</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">id</span>, <span class="no">cip6</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>()
 <span class="co">#&gt; Rows: 3,368</span>
 <span class="co">#&gt; Columns: 2</span>
 <span class="co">#&gt; $ id   &lt;chr&gt; "MID25783167", "MID25783178", "MID25783197", "MID25783199", "M...</span>
@@ -233,36 +233,36 @@
 <p><strong>Step 3.</strong> The remaining FYE students have an unknown starting major.</p>
 <p>Starting with the IDs of all students in FYE and removing the IDs of students who have declared an engineering major after FYE yields the IDs of students whose starting major will have to be imputed. <code><a href="https://dplyr.tidyverse.org/reference/filter-joins.html">anti_join(x, y)</a></code> returns all rows from x where there are not matching values in y, keeping just columns from x.</p>
 <p>For these students, the predicted starting major after FYE is assumed missing (NA).</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">fye_to_nonengr</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter-joins.html">anti_join</a></span>(<span class="no">fye_id</span>, <span class="no">fye_to_engr</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="no">.</span>, <span class="kw">cip6</span> <span class="kw">=</span> <span class="fl">NA_character_</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>(<span class="no">.</span>)
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">fye_to_nonengr</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter-joins.html">anti_join</a></span>(<span class="no">fye_id</span>, <span class="no">fye_to_engr</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">cip6</span> <span class="kw">=</span> <span class="fl">NA_character_</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>()
 <span class="co">#&gt; Rows: 2,624</span>
 <span class="co">#&gt; Columns: 2</span>
 <span class="co">#&gt; $ id   &lt;chr&gt; "MID25783162", "MID25783166", "MID25783227", "MID25783428", "M...</span>
 <span class="co">#&gt; $ cip6 &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span></pre></body></html></div>
 <p><strong>Step 4.</strong> Combine the two data frames and finish the data preparation.</p>
 <p>Bind the two data frames.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">fye_start</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span>(<span class="no">fye_to_engr</span>, <span class="no">fye_to_nonengr</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>(<span class="no">.</span>)
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">fye_start</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span>(<span class="no">fye_to_engr</span>, <span class="no">fye_to_nonengr</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>()
 <span class="co">#&gt; Rows: 5,992</span>
 <span class="co">#&gt; Columns: 2</span>
 <span class="co">#&gt; $ id   &lt;chr&gt; "MID25783167", "MID25783178", "MID25783197", "MID25783199", "M...</span>
 <span class="co">#&gt; $ cip6 &lt;chr&gt; "140901", "140701", "140701", "140301", "140701", "140501", "1...</span></pre></body></html></div>
 <p>Extract from <code>midfieldstudents</code> the institution names by student ID. <code><a href="https://dplyr.tidyverse.org/reference/filter-joins.html">semi_join(x, y)</a></code> returns all rows from x where there are matching values in y, keeping just columns from x.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">inst_id</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter-joins.html">semi_join</a></span>(<span class="no">midfieldstudents</span>, <span class="no">fye_start</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">.</span>, <span class="no">id</span>, <span class="no">institution</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">.</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>(<span class="no">.</span>)
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">inst_id</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter-joins.html">semi_join</a></span>(<span class="no">midfieldstudents</span>, <span class="no">fye_start</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">id</span>, <span class="no">institution</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>() <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>()
 <span class="co">#&gt; Rows: 5,992</span>
 <span class="co">#&gt; Columns: 2</span>
 <span class="co">#&gt; $ id          &lt;chr&gt; "MID25783162", "MID25783166", "MID25783167", "MID257831...</span>
 <span class="co">#&gt; $ institution &lt;chr&gt; "Institution M", "Institution M", "Institution M", "Ins...</span></pre></body></html></div>
 <p>Join the institutions to the FYE starters data frame and add race and sex using <code><a href="../reference/race_sex_join.html">race_sex_join()</a></code>. We assume that these variables are appropriate predictors.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">fye_start</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">fye_start</span>, <span class="no">inst_id</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>(<span class="no">.</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">.</span>, <span class="no">id</span>, <span class="no">institution</span>, <span class="no">race</span>, <span class="no">sex</span>, <span class="no">cip6</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">.</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>(<span class="no">.</span>)
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">fye_start</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">fye_start</span>, <span class="no">inst_id</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">id</span>, <span class="no">institution</span>, <span class="no">race</span>, <span class="no">sex</span>, <span class="no">cip6</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>() <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>()
 <span class="co">#&gt; Rows: 5,992</span>
 <span class="co">#&gt; Columns: 5</span>
 <span class="co">#&gt; $ id          &lt;chr&gt; "MID25783167", "MID25783178", "MID25783197", "MID257831...</span>
@@ -271,15 +271,13 @@
 <span class="co">#&gt; $ sex         &lt;chr&gt; "Male", "Male", "Male", "Female", "Male", "Male", "Male...</span>
 <span class="co">#&gt; $ cip6        &lt;chr&gt; "140901", "140701", "140701", "140301", "140701", "1405...</span></pre></body></html></div>
 <p>Convert the character variables to factors to use with mice. The resulting data frame <code>mi_input</code> is ready to be operated on by mice.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">mi_input</span> <span class="kw">&lt;-</span> <span class="no">fye_start</span> <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="no">.</span>, <span class="no">institution</span>, <span class="no">race</span>, <span class="no">sex</span>, <span class="no">cip6</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="no">.</span>,
-    <span class="kw">institution</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="no">institution</span>),
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">mi_input</span> <span class="kw">&lt;-</span> <span class="no">fye_start</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="no">institution</span>, <span class="no">race</span>, <span class="no">sex</span>, <span class="no">cip6</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">institution</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="no">institution</span>),
     <span class="kw">race</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="no">race</span>),
     <span class="kw">sex</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="no">sex</span>),
-    <span class="kw">cip6</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="no">cip6</span>)
-  ) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>(<span class="no">.</span>)
+    <span class="kw">cip6</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="no">cip6</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>()
 <span class="co">#&gt; Rows: 5,992</span>
 <span class="co">#&gt; Columns: 5</span>
 <span class="co">#&gt; $ id          &lt;chr&gt; "MID25877315", "MID25896490", "MID25916711", "MID259212...</span>
@@ -297,8 +295,8 @@
 <div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="http://visdat.njtierney.com//reference/vis_miss.html">vis_miss</a></span>(<span class="no">mi_input</span>, <span class="kw">cluster</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">sort_miss</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
 <p><img src="../man/figures/fye-mice-in-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>Initialize parameters.</p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">init</span> <span class="kw">&lt;-</span> <span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(<span class="no">mi_input</span>, <span class="kw">maxit</span> <span class="kw">=</span> <span class="fl">0</span>)
-<span class="no">meth</span> <span class="kw">&lt;-</span> <span class="no">init</span>$<span class="no">method</span>
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">init</span>  <span class="kw">&lt;-</span> <span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(<span class="no">mi_input</span>, <span class="kw">maxit</span> <span class="kw">=</span> <span class="fl">0</span>)
+<span class="no">meth</span>  <span class="kw">&lt;-</span> <span class="no">init</span>$<span class="no">method</span>
 <span class="no">predM</span> <span class="kw">&lt;-</span> <span class="no">init</span>$<span class="no">predictorMatrix</span></pre></body></html></div>
 <p>Identify variables not used as predictors.</p>
 <div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">predM</span>[, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>)] <span class="kw">&lt;-</span> <span class="fl">0</span></pre></body></html></div>
@@ -321,11 +319,11 @@
 <a href="#data-set-case_fye" class="anchor"></a>Data set: <code>case_fye</code>
 </h2>
 <p>Construct the data set after imputation, keeping ID and starting major only. Reformat the start major as a character. The data frame, <code>case_fye</code>, is the data mentioned previously provided with the midfieldr package if you prefer not to do your own imputation.</p>
-<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="no">case_fye</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/complete.mids.html">complete</a></span>(<span class="no">mi_output</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">.</span>, <span class="no">id</span>, <span class="no">cip6</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="no">.</span>, <span class="kw">cip6</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">cip6</span>)) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">.</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>(<span class="no">.</span>)
+<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="no">case_fye</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/complete.mids.html">complete</a></span>(<span class="no">mi_output</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">id</span>, <span class="no">cip6</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">cip6</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">cip6</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>() <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>()
 <span class="co">#&gt; Rows: 5,992</span>
 <span class="co">#&gt; Columns: 2</span>
 <span class="co">#&gt; $ id   &lt;chr&gt; "MID25877315", "MID25896490", "MID25916711", "MID25921297", "M...</span>
@@ -339,12 +337,12 @@
 <div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="http://visdat.njtierney.com//reference/vis_dat.html">vis_dat</a></span>(<span class="no">case_fye</span>, <span class="kw">palette</span> <span class="kw">=</span> <span class="st">"cb_safe"</span>)</pre></body></html></div>
 <p><img src="../man/figures/fye-mice-out-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>Examine to what majors and in what numbers the FYE students were assigned.</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">case_fye</span> <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarise</a></span>(<span class="no">.</span>, <span class="st">"cip6"</span>, <span class="kw">N</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="no">.</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span>(<span class="no">N</span>)) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">.</span>, <span class="no">cip</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">.</span>, <span class="no">cip4</span>, <span class="no">cip4name</span>, <span class="no">N</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="no">.</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">case_fye</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarise</a></span>(<span class="no">.</span>, <span class="st">"cip6"</span>, <span class="kw">N</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span>(<span class="no">N</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">.</span>, <span class="no">cip</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">cip4</span>, <span class="no">cip4name</span>, <span class="no">N</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
 <table class="table table">
 <thead><tr>
 <th style="text-align:left;">
@@ -560,14 +558,14 @@ Engineering, Other
  collate  English_United States.1252  
  ctype    English_United States.1252  
  tz       America/New_York            
- date     2020-06-17                  
+ date     2020-06-18                  
 
  package      * version    date       lib source        
  dplyr        * 1.0.0      2020-05-29 []  CRAN (R 4.0.0)
  knitr        * 1.28       2020-02-06 []  CRAN (R 4.0.0)
  mice         * 3.9.0      2020-05-14 []  CRAN (R 4.0.0)
  midfielddata * 0.1.0      2020-06-06 []  local         
- midfieldr    * 1.0.0.9001 2020-06-17 []  local         
+ midfieldr    * 1.0.0.9001 2020-06-18 []  local         
  seplyr       * 0.8.8      2020-05-24 []  CRAN (R 4.0.0)
  stringr      * 1.4.0      2019-02-10 []  CRAN (R 4.0.0)
  visdat       * 0.5.3      2019-02-15 []  CRAN (R 4.0.0)
