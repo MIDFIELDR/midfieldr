@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Explore the workflow • midfieldr</title>
+<title>Using midfieldr • midfieldr</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Explore the workflow">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Using midfieldr">
 <meta property="og:description" content="midfieldr">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -125,7 +125,7 @@
       </header><script src="using_midfieldr_files/kePrint-0.0.1/kePrint.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Explore the workflow</h1>
+      <h1 data-toc-skip>Using midfieldr</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/master/vignettes/using_midfieldr.Rmd"><code>vignettes/using_midfieldr.Rmd</code></a></small>
@@ -135,41 +135,24 @@
 
     
     
-<p>This vignette presents an example to illustrate a representative sample of midfieldr functions.</p>
-<p>Functions are used without detailed explanations—for greater detail, see the individual <a href="https://midfieldr.github.io/midfieldr/articles/index.html">vignettes</a> or see a function’s help page by running <code>? function_name()</code>, for example, <code>? cip_filter()</code>, <code><a href="../reference/cip6_select.html">? cip6_select</a></code>, etc.</p>
-<div id="identify-cip-codes" class="section level2">
+<p>This exercise illustrates a typical workflow for computing a persistence metric, starting with student record data and ending with a multiway graph.</p>
+<p>Our metric in this case is “stickiness”, the ratio of the number of students graduating from a program to the number ever enrolled in the program <span class="citation">(Ohland et al. <a href="#ref-stickiness2012" role="doc-biblioref">2012</a>)</span>. We compare the stickiness of three engineering programs with students grouped by program, race, and sex.</p>
+<p>In this introductory example, conveying <em>what</em> is more important than <em>how</em>. Thus, instead of explaining how the code works, we explain what the steps are and how they fit together. For explanations of how the code works, see the other <a href="https://midfieldr.github.io/midfieldr/articles/index.html">vignettes</a>.</p>
+<div id="gather-program-data" class="section level2">
 <h2 class="hasAnchor">
-<a href="#identify-cip-codes" class="anchor"></a>Identify CIP codes</h2>
-<p>To introduce midfieldr, we present a brief example that starts with student unit-record data and concludes with a graphical comparison of program “stickiness” with students grouped by program, race, and sex.</p>
-<p>Stickiness is the ratio of the number of students graduating from a program to the number ever enrolled in the program <span class="citation">(Ohland et al. <a href="#ref-stickiness2012" role="doc-biblioref">2012</a>)</span>.</p>
-<p>We compare the stickiness of three programs: Chemical Engineering, Electrical Engineering, and Industrial Engineering.</p>
+<a href="#gather-program-data" class="anchor"></a>Gather program data</h2>
+<p>We wish to compare the stickiness of three programs: Chemical Engineering, Electrical Engineering, and Industrial Engineering with students grouped by program, race, and sex.</p>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># packages used in the vignette</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"midfieldr"</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"midfielddata"</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"dplyr"</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"seplyr"</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"ggplot2"</span>)</pre></body></html></div>
-<p>We use <code><a href="../reference/cip_filter.html">cip_filter()</a></code> to search the <code>cip</code> dataset first for “Engineering” and then filter the result for “Chemical”, “Electrical”, and “Industrial”. We use the <code>drop_any</code> argument to omit technology programs and biochemical programs.</p>
+<p>Search the <code>cip</code> data set for the programs we want. The results show that the 4-digit codes we want are 1407, 1410, and 1435.</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">cip</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"engineering"</span>, <span class="kw">drop_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"tech"</span>, <span class="st">"bio"</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"chemical"</span>, <span class="st">"electrical"</span>, <span class="st">"industrial"</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>() <span class="co"># or View()</span>
-<span class="co">#&gt; # A tibble: 7 x 6</span>
-<span class="co">#&gt;   cip2  cip2name  cip4  cip4name                 cip6  cip6name                 </span>
-<span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;                    &lt;chr&gt; &lt;chr&gt;                    </span>
-<span class="co">#&gt; 1 14    Engineer~ 1407  Chemical Engineering     1407~ Chemical Engineering     </span>
-<span class="co">#&gt; 2 14    Engineer~ 1407  Chemical Engineering     1407~ Chemical Engineering, Ot~</span>
-<span class="co">#&gt; 3 14    Engineer~ 1410  Electrical, Electronics~ 1410~ Electrical, Electronics ~</span>
-<span class="co">#&gt; 4 14    Engineer~ 1410  Electrical, Electronics~ 1410~ Laser and Optical Engine~</span>
-<span class="co">#&gt; 5 14    Engineer~ 1410  Electrical, Electronics~ 1410~ Telecommunications Engin~</span>
-<span class="co">#&gt; 6 14    Engineer~ 1410  Electrical, Electronics~ 1410~ Electrical, Electronics ~</span>
-<span class="co">#&gt; 7 14    Engineer~ 1435  Industrial Engineering   1435~ Industrial Engineering</span></pre></body></html></div>
-<p>Notes on viewing the results:</p>
-<ul>
-<li>As seen above, the <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> function sends an abbreviated view of the results to the Console.</li>
-<li>In the remaining code chunks, we’ll leave <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> in place but you are welcome to replace it with <code><a href="https://rdrr.io/r/utils/View.html">View()</a></code> to invoke a spreadsheet-like data viewer.</li>
-</ul>
-<p>For clarity, shorter data frames are printed in the vignette as HTML tables, as shown below.</p>
+        <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"engineering"</span>, <span class="kw">drop_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"tech"</span>, <span class="st">"bio"</span>)) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"chemical"</span>, <span class="st">"electrical"</span>, <span class="st">"industrial"</span>)) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()</pre></body></html></div>
 <table class="table table">
 <thead><tr>
 <th style="text-align:left;">
@@ -334,30 +317,25 @@ Industrial Engineering
 </tr>
 </tbody>
 </table>
-<p><br></p>
-<p>The results show that the 4-digit codes we want are 1407, 1410, and 1435.</p>
-<p><br><a href="#top">▲ top of page</a></p>
-</div>
-<div id="select-and-label-programs" class="section level2">
-<h2 class="hasAnchor">
-<a href="#select-and-label-programs" class="anchor"></a>Select and label programs</h2>
-<p>In the MIDFIELD data sets, programs are identified by 6-digit CIP codes.</p>
-<p>Knowing the programs we want (in this example, 1407, 1410, and 1435) we use <code><a href="../reference/cip6_select.html">cip6_select()</a></code> to extract all 6-digit codes and names associated with these three groupings (Chemical, Electrical, and Industrial Engineering).</p>
-<p>At the same time, we assign a new program variable with deliberately selected program names that are later used for grouping and summarizing the data.</p>
+<p>Knowing the programs we want (in this example, 1407, 1410, and 1435) we extract their 6-digit codes and assign a concise program name.</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># chemical engineering </span>
-<span class="no">set1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1407"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="../reference/cip6_select.html">cip6_select</a></span>(<span class="kw">program</span> <span class="kw">=</span> <span class="st">"Chemical Engineering"</span>)
+<span class="no">che</span> <span class="kw">&lt;-</span> <span class="no">cip</span> <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1407"</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/cip6_select.html">cip6_select</a></span>(<span class="kw">program</span> <span class="kw">=</span> <span class="st">"Chemical Engineering"</span>)
 
 <span class="co"># electrical engineering </span>
-<span class="no">set2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1410"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="../reference/cip6_select.html">cip6_select</a></span>(<span class="kw">program</span> <span class="kw">=</span> <span class="st">"Electrical Engineering"</span>)
+<span class="no">ece</span> <span class="kw">&lt;-</span> <span class="no">cip</span> <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1410"</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/cip6_select.html">cip6_select</a></span>(<span class="kw">program</span> <span class="kw">=</span> <span class="st">"Electrical Engineering"</span>)
 
 <span class="co"># industrial engineering</span>
-<span class="no">set3</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1435"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="../reference/cip6_select.html">cip6_select</a></span>(<span class="kw">program</span> <span class="kw">=</span> <span class="st">"Industrial Engineering"</span>)</pre></body></html></div>
-<p>Combine the data frames. The <code><a href="../reference/cip6_select.html">cip6_select()</a></code> function retains the original 6-digit program names so that one can confirm that the new <code>program</code> variable is consistent with the original program name.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span>(<span class="no">set1</span>, <span class="no">set2</span>, <span class="no">set3</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>() <span class="co"># or View()</span></pre></body></html></div>
+<span class="no">ise</span> <span class="kw">&lt;-</span> <span class="no">cip</span> <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1435"</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/cip6_select.html">cip6_select</a></span>(<span class="kw">program</span> <span class="kw">=</span> <span class="st">"Industrial Engineering"</span>)</pre></body></html></div>
+<p>We combine the three programs into one data frame.</p>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># three programs in one data frame </span>
+<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span>(<span class="no">che</span>, <span class="no">ece</span>, <span class="no">ise</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()</pre></body></html></div>
 <table class="table table">
 <thead><tr>
 <th style="text-align:left;">
@@ -462,17 +440,38 @@ Industrial Engineering
 </tbody>
 </table>
 <p><br></p>
+<p>Finally, we extract the 6-digit CIP codes from our program group to use as search terms to identify students in these programs.</p>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># for filtering operations </span>
+<span class="no">program_group_cip6</span> <span class="kw">&lt;-</span> <span class="no">program_group</span><span class="kw">[[</span><span class="st">"cip6"</span>]] <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
+<span class="co">#&gt; [1] "140701" "140702" "140799" "141001" "141003" "141004" "141099" "143501"</span></pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
-<div id="group-and-count-students" class="section level2">
+<div id="gather-student-data" class="section level2">
 <h2 class="hasAnchor">
-<a href="#group-and-count-students" class="anchor"></a>Group and count students</h2>
-<p>First we extract the 6-digit CIP codes from our program group to use as search terms to identify students in these programs.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">program_group_cip6</span> <span class="kw">&lt;-</span> <span class="no">program_group</span><span class="kw">[[</span><span class="st">"cip6"</span>]]</pre></body></html></div>
-<p>Use <code><a href="../reference/ever_filter.html">ever_filter()</a></code> to access the <code>midfieldterms</code> dataset and extract all students who ever enrolled in these programs. Use <code><a href="../reference/race_sex_join.html">race_sex_join()</a></code> to access the <code>midfieldstudents</code> dataset and append students’ race and sex to the working data frame.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">students</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ever_filter.html">ever_filter</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldterms</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_group_cip6</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>() <span class="co"># or View()</span>
+<a href="#gather-student-data" class="anchor"></a>Gather student data</h2>
+<p>Use access the <code>midfieldterms</code> dataset and extract all students who ever enrolled in these programs.</p>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">students</span> <span class="kw">&lt;-</span> <span class="no">midfieldterms</span> <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/ever_filter.html">ever_filter</a></span>(<span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_group_cip6</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
+<span class="co">#&gt; # A tibble: 6,402 x 2</span>
+<span class="co">#&gt;    id          cip6  </span>
+<span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt; </span>
+<span class="co">#&gt;  1 MID25783178 140701</span>
+<span class="co">#&gt;  2 MID25783178 143501</span>
+<span class="co">#&gt;  3 MID25783197 140701</span>
+<span class="co">#&gt;  4 MID25783257 140701</span>
+<span class="co">#&gt;  5 MID25783491 141001</span>
+<span class="co">#&gt;  6 MID25783606 141001</span>
+<span class="co">#&gt;  7 MID25783912 143501</span>
+<span class="co">#&gt;  8 MID25784118 141001</span>
+<span class="co">#&gt;  9 MID25784209 141001</span>
+<span class="co">#&gt; 10 MID25784234 143501</span>
+<span class="co">#&gt; # ... with 6,392 more rows</span></pre></body></html></div>
+<p>Use access the <code>midfieldstudents</code> dataset and append students’ race and sex to the working data frame.</p>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">students</span> <span class="kw">&lt;-</span> <span class="no">students</span> <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
 <span class="co">#&gt; # A tibble: 6,402 x 4</span>
 <span class="co">#&gt;    id          cip6   race          sex  </span>
 <span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt;  &lt;chr&gt;         &lt;chr&gt;</span>
@@ -487,9 +486,9 @@ Industrial Engineering
 <span class="co">#&gt;  9 MID25784209 141001 International Male </span>
 <span class="co">#&gt; 10 MID25784234 143501 White         Male </span>
 <span class="co">#&gt; # ... with 6,392 more rows</span></pre></body></html></div>
-<p>Next we join our custom program names to the student data.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">students</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">students</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>() <span class="co"># or View()</span>
+<p>We join our custom program names to the student data.</p>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">students</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">students</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
 <span class="co">#&gt; # A tibble: 6,402 x 6</span>
 <span class="co">#&gt;    id       cip6   race      sex   cip6name                       program       </span>
 <span class="co">#&gt;    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;                          &lt;chr&gt;         </span>
@@ -504,14 +503,14 @@ Industrial Engineering
 <span class="co">#&gt;  9 MID2578~ 141001 Internat~ Male  Electrical, Electronics and C~ Electrical En~</span>
 <span class="co">#&gt; 10 MID2578~ 143501 White     Male  Industrial Engineering         Industrial En~</span>
 <span class="co">#&gt; # ... with 6,392 more rows</span></pre></body></html></div>
-<p>We create a vector of grouping variables and use the seplyr <code><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize()</a></code> function to count the numbers of students ever enrolled in these programs.</p>
-<p>At this point, by grouping and summarizing, we lose all but the three grouping variables and add the new variable <code>ever</code> to denote the count.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># grouping variables for summarizing and later for joining </span>
-<span class="no">grouping_variables</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>)
-
+<p>We create a vector of variable names to be used for grouping, summarizing, and joining.</p>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># for group, summarize, and join operations</span>
+<span class="no">grouping_variables</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>)</pre></body></html></div>
+<p>We count the number of students ever enrolled grouped by program, race/ethnicity, and sex.</p>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># count students ever enrolled </span>
 <span class="no">ever_enrolled</span> <span class="kw">&lt;-</span> <span class="no">students</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize</a></span>(<span class="no">grouping_variables</span>, <span class="kw">ever</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>() <span class="co"># or View()</span>
+        <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize</a></span>(<span class="no">grouping_variables</span>, <span class="kw">ever</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
 <span class="co">#&gt; # A tibble: 48 x 4</span>
 <span class="co">#&gt;    program              race            sex     ever</span>
 <span class="co">#&gt;    &lt;chr&gt;                &lt;chr&gt;           &lt;chr&gt;  &lt;int&gt;</span>
@@ -526,26 +525,57 @@ Industrial Engineering
 <span class="co">#&gt;  9 Chemical Engineering Native American Female     7</span>
 <span class="co">#&gt; 10 Chemical Engineering Native American Male       8</span>
 <span class="co">#&gt; # ... with 38 more rows</span></pre></body></html></div>
-<p>Following similar steps, we use <code><a href="../reference/grad_filter.html">grad_filter()</a></code> to access the <code>midfielddegrees</code> dataset and extract all students who graduated from these programs. We group and summarize the counts using <code>grad</code> as the new count variable.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">graduated</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/grad_filter.html">grad_filter</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfielddegrees</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_group_cip6</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize</a></span>(<span class="no">grouping_variables</span>, <span class="kw">grad</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>())</pre></body></html></div>
+<p>We repeat the process to group and summarize graduates from our three programs.</p>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># count students graduating </span>
+<span class="no">graduated</span> <span class="kw">&lt;-</span> <span class="no">midfielddegrees</span> <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/grad_filter.html">grad_filter</a></span>(<span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_group_cip6</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize</a></span>(<span class="no">grouping_variables</span>, <span class="kw">grad</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
+<span class="co">#&gt; # A tibble: 45 x 4</span>
+<span class="co">#&gt;    program              race            sex     grad</span>
+<span class="co">#&gt;    &lt;chr&gt;                &lt;chr&gt;           &lt;chr&gt;  &lt;int&gt;</span>
+<span class="co">#&gt;  1 Chemical Engineering Asian           Female    26</span>
+<span class="co">#&gt;  2 Chemical Engineering Asian           Male      35</span>
+<span class="co">#&gt;  3 Chemical Engineering Black           Female    52</span>
+<span class="co">#&gt;  4 Chemical Engineering Black           Male      26</span>
+<span class="co">#&gt;  5 Chemical Engineering Hispanic        Female    11</span>
+<span class="co">#&gt;  6 Chemical Engineering Hispanic        Male      18</span>
+<span class="co">#&gt;  7 Chemical Engineering International   Female     4</span>
+<span class="co">#&gt;  8 Chemical Engineering International   Male       7</span>
+<span class="co">#&gt;  9 Chemical Engineering Native American Female     1</span>
+<span class="co">#&gt; 10 Chemical Engineering Native American Male       3</span>
+<span class="co">#&gt; # ... with 35 more rows</span></pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 <div id="compute-the-metric" class="section level2">
 <h2 class="hasAnchor">
 <a href="#compute-the-metric" class="anchor"></a>Compute the metric</h2>
 <p>We join the two data frames by the grouping variables.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">stickiness</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">ever_enrolled</span>, <span class="no">graduated</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="no">grouping_variables</span>)</pre></body></html></div>
-<p>We suggest omitting observations with 5 or fewer students ever enrolled.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">stickiness</span> <span class="kw">&lt;-</span> <span class="no">stickiness</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">5</span>)</pre></body></html></div>
-<p>And we compute stickiness, the ratio of <code>grad</code> to <code>ever</code>.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">stickiness</span> <span class="kw">&lt;-</span> <span class="no">stickiness</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">stick</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="no">grad</span> / <span class="no">ever</span>, <span class="fl">3</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>() <span class="co"># or View()</span>
-<span class="co">#&gt; # A tibble: 41 x 6</span>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">stickiness</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">ever_enrolled</span>, <span class="no">graduated</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="no">grouping_variables</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
+<span class="co">#&gt; # A tibble: 48 x 5</span>
+<span class="co">#&gt;    program              race            sex     ever  grad</span>
+<span class="co">#&gt;    &lt;chr&gt;                &lt;chr&gt;           &lt;chr&gt;  &lt;int&gt; &lt;int&gt;</span>
+<span class="co">#&gt;  1 Chemical Engineering Asian           Female    56    26</span>
+<span class="co">#&gt;  2 Chemical Engineering Asian           Male      98    35</span>
+<span class="co">#&gt;  3 Chemical Engineering Black           Female   147    52</span>
+<span class="co">#&gt;  4 Chemical Engineering Black           Male      98    26</span>
+<span class="co">#&gt;  5 Chemical Engineering Hispanic        Female    37    11</span>
+<span class="co">#&gt;  6 Chemical Engineering Hispanic        Male      57    18</span>
+<span class="co">#&gt;  7 Chemical Engineering International   Female     8     4</span>
+<span class="co">#&gt;  8 Chemical Engineering International   Male      23     7</span>
+<span class="co">#&gt;  9 Chemical Engineering Native American Female     7     1</span>
+<span class="co">#&gt; 10 Chemical Engineering Native American Male       8     3</span>
+<span class="co">#&gt; # ... with 38 more rows</span></pre></body></html></div>
+<p>We omit rows with zero students ever enrolled so we can compute stickiness, the ratio of <code>grad</code> to <code>ever</code>.</p>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># compute the metric</span>
+<span class="no">stickiness</span> <span class="kw">&lt;-</span> <span class="no">stickiness</span> <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">0</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">stick</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="no">grad</span> / <span class="no">ever</span>, <span class="fl">3</span>)) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
+<span class="co">#&gt; # A tibble: 48 x 6</span>
 <span class="co">#&gt;    program              race            sex     ever  grad stick</span>
 <span class="co">#&gt;    &lt;chr&gt;                &lt;chr&gt;           &lt;chr&gt;  &lt;int&gt; &lt;int&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt;  1 Chemical Engineering Asian           Female    56    26 0.464</span>
@@ -558,43 +588,242 @@ Industrial Engineering
 <span class="co">#&gt;  8 Chemical Engineering International   Male      23     7 0.304</span>
 <span class="co">#&gt;  9 Chemical Engineering Native American Female     7     1 0.143</span>
 <span class="co">#&gt; 10 Chemical Engineering Native American Male       8     3 0.375</span>
-<span class="co">#&gt; # ... with 31 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # ... with 38 more rows</span></pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 <div id="graph-the-results" class="section level2">
 <h2 class="hasAnchor">
 <a href="#graph-the-results" class="anchor"></a>Graph the results</h2>
-<p>To prepare the stickiness data for graphing, we remove ambiguous levels of race/ethnicity (Unknown, International, or Other) and then combine race and sex into a single variable.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">stickiness_mw</span> <span class="kw">&lt;-</span> <span class="no">stickiness</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(!<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(!<span class="no">sex</span> <span class="kw">%in%</span> <span class="st">"Unknown"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">race_sex</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="no">race</span>, <span class="no">sex</span>))</pre></body></html></div>
-<p>We graph these results in a <em>multiway dot plot</em> <span class="citation">(Cleveland <a href="#ref-cleveland1993" role="doc-biblioref">1993</a>)</span>, a display type based on a data structure of two categorical variables (program and race/ethnicity/sex) and one quantitative variable (stickiness).</p>
-<p><code><a href="../reference/multiway_order.html">multiway_order()</a></code> converts the two categorical variables to factors and orders their levels by median stickiness.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">stickiness_mw</span> <span class="kw">&lt;-</span> <span class="no">stickiness_mw</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">program</span>, <span class="no">race_sex</span>, <span class="no">stick</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="../reference/multiway_order.html">multiway_order</a></span>(<span class="kw">return_medians</span> <span class="kw">=</span> <span class="fl">TRUE</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>() <span class="co"># or View()</span>
-<span class="co">#&gt; # A tibble: 27 x 5</span>
-<span class="co">#&gt;    program              race_sex               stick med_program med_race_sex</span>
-<span class="co">#&gt;    &lt;fct&gt;                &lt;fct&gt;                  &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 Chemical Engineering Asian Female           0.464       0.356        0.449</span>
-<span class="co">#&gt;  2 Chemical Engineering Asian Male             0.357       0.356        0.474</span>
-<span class="co">#&gt;  3 Chemical Engineering Black Female           0.354       0.356        0.4  </span>
-<span class="co">#&gt;  4 Chemical Engineering Black Male             0.265       0.356        0.331</span>
-<span class="co">#&gt;  5 Chemical Engineering Hispanic Female        0.297       0.356        0.297</span>
-<span class="co">#&gt;  6 Chemical Engineering Hispanic Male          0.316       0.356        0.36 </span>
-<span class="co">#&gt;  7 Chemical Engineering Native American Female 0.143       0.356        0.143</span>
-<span class="co">#&gt;  8 Chemical Engineering Native American Male   0.375       0.356        0.229</span>
-<span class="co">#&gt;  9 Chemical Engineering White Female           0.368       0.356        0.368</span>
-<span class="co">#&gt; 10 Chemical Engineering White Male             0.395       0.356        0.427</span>
+<p>To prepare the stickiness data for graphing, we remove ambiguous levels of race/ethnicity and sex.</p>
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co"># prepare data for graphing </span>
+<span class="no">mw_data</span> <span class="kw">&lt;-</span> <span class="no">stickiness</span> <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(!<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span>)) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(!<span class="no">sex</span> <span class="kw">%in%</span> <span class="st">"Unknown"</span>)</pre></body></html></div>
+<p>To protect confidentiality, we omit observations with 5 or fewer students ever enrolled.</p>
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="co"># protect confidentiality of small populations </span>
+<span class="no">mw_data</span> <span class="kw">&lt;-</span> <span class="no">mw_data</span> <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">5</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
+<span class="co">#&gt; # A tibble: 27 x 6</span>
+<span class="co">#&gt;    program              race            sex     ever  grad stick</span>
+<span class="co">#&gt;    &lt;chr&gt;                &lt;chr&gt;           &lt;chr&gt;  &lt;int&gt; &lt;int&gt; &lt;dbl&gt;</span>
+<span class="co">#&gt;  1 Chemical Engineering Asian           Female    56    26 0.464</span>
+<span class="co">#&gt;  2 Chemical Engineering Asian           Male      98    35 0.357</span>
+<span class="co">#&gt;  3 Chemical Engineering Black           Female   147    52 0.354</span>
+<span class="co">#&gt;  4 Chemical Engineering Black           Male      98    26 0.265</span>
+<span class="co">#&gt;  5 Chemical Engineering Hispanic        Female    37    11 0.297</span>
+<span class="co">#&gt;  6 Chemical Engineering Hispanic        Male      57    18 0.316</span>
+<span class="co">#&gt;  7 Chemical Engineering Native American Female     7     1 0.143</span>
+<span class="co">#&gt;  8 Chemical Engineering Native American Male       8     3 0.375</span>
+<span class="co">#&gt;  9 Chemical Engineering White           Female   462   170 0.368</span>
+<span class="co">#&gt; 10 Chemical Engineering White           Male     896   354 0.395</span>
 <span class="co">#&gt; # ... with 17 more rows</span></pre></body></html></div>
-<p>We use conventional ggplot2 functions to graph stickiness in a multiway dot plot. We also apply our own <code><a href="../reference/utils_graph.html">theme_midfield()</a></code> to edit the visual properties of the graph.</p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">stickiness_mw</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">stick</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">race_sex</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="fu"><a href="https://dplyr.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">program</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Stickiness"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>) +
-  <span class="fu"><a href="../reference/utils_graph.html">theme_midfield</a></span>()</pre></body></html></div>
+<p>To prepare the data in multiway form, we combine race and sex into a single variable.</p>
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">mw_data</span> <span class="kw">&lt;-</span> <span class="no">mw_data</span> <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">race_sex</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="no">race</span>, <span class="no">sex</span>)) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
+<span class="co">#&gt; # A tibble: 27 x 7</span>
+<span class="co">#&gt;    program            race           sex    ever  grad stick race_sex           </span>
+<span class="co">#&gt;    &lt;chr&gt;              &lt;chr&gt;          &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;              </span>
+<span class="co">#&gt;  1 Chemical Engineer~ Asian          Fema~    56    26 0.464 Asian Female       </span>
+<span class="co">#&gt;  2 Chemical Engineer~ Asian          Male     98    35 0.357 Asian Male         </span>
+<span class="co">#&gt;  3 Chemical Engineer~ Black          Fema~   147    52 0.354 Black Female       </span>
+<span class="co">#&gt;  4 Chemical Engineer~ Black          Male     98    26 0.265 Black Male         </span>
+<span class="co">#&gt;  5 Chemical Engineer~ Hispanic       Fema~    37    11 0.297 Hispanic Female    </span>
+<span class="co">#&gt;  6 Chemical Engineer~ Hispanic       Male     57    18 0.316 Hispanic Male      </span>
+<span class="co">#&gt;  7 Chemical Engineer~ Native Americ~ Fema~     7     1 0.143 Native American Fe~</span>
+<span class="co">#&gt;  8 Chemical Engineer~ Native Americ~ Male      8     3 0.375 Native American Ma~</span>
+<span class="co">#&gt;  9 Chemical Engineer~ White          Fema~   462   170 0.368 White Female       </span>
+<span class="co">#&gt; 10 Chemical Engineer~ White          Male    896   354 0.395 White Male         </span>
+<span class="co">#&gt; # ... with 17 more rows</span></pre></body></html></div>
+<p>We select the three multiway variables: academic program, student race/sex, and stickiness.</p>
+<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">mw_data</span> <span class="kw">&lt;-</span> <span class="no">mw_data</span> <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">program</span>, <span class="no">race_sex</span>, <span class="no">stick</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
+<span class="co">#&gt; # A tibble: 27 x 3</span>
+<span class="co">#&gt;    program              race_sex               stick</span>
+<span class="co">#&gt;    &lt;chr&gt;                &lt;chr&gt;                  &lt;dbl&gt;</span>
+<span class="co">#&gt;  1 Chemical Engineering Asian Female           0.464</span>
+<span class="co">#&gt;  2 Chemical Engineering Asian Male             0.357</span>
+<span class="co">#&gt;  3 Chemical Engineering Black Female           0.354</span>
+<span class="co">#&gt;  4 Chemical Engineering Black Male             0.265</span>
+<span class="co">#&gt;  5 Chemical Engineering Hispanic Female        0.297</span>
+<span class="co">#&gt;  6 Chemical Engineering Hispanic Male          0.316</span>
+<span class="co">#&gt;  7 Chemical Engineering Native American Female 0.143</span>
+<span class="co">#&gt;  8 Chemical Engineering Native American Male   0.375</span>
+<span class="co">#&gt;  9 Chemical Engineering White Female           0.368</span>
+<span class="co">#&gt; 10 Chemical Engineering White Male             0.395</span>
+<span class="co">#&gt; # ... with 17 more rows</span></pre></body></html></div>
+<p>We convert the categorical variables to factors and order the levels of the categories by the median stickiness.</p>
+<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="no">mw_data</span> <span class="kw">&lt;-</span> <span class="no">mw_data</span> <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/multiway_order.html">multiway_order</a></span>()</pre></body></html></div>
+<p>Tabulating the final results yields:</p>
+<table class="table table">
+<thead><tr>
+<th style="text-align:left;">
+race_sex
+</th>
+<th style="text-align:right;">
+Chemical Engineering
+</th>
+<th style="text-align:right;">
+Electrical Engineering
+</th>
+<th style="text-align:right;">
+Industrial Engineering
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+0.464
+</td>
+<td style="text-align:right;">
+0.440
+</td>
+<td style="text-align:right;">
+0.449
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+0.357
+</td>
+<td style="text-align:right;">
+0.474
+</td>
+<td style="text-align:right;">
+0.534
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+0.354
+</td>
+<td style="text-align:right;">
+0.400
+</td>
+<td style="text-align:right;">
+0.463
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+0.265
+</td>
+<td style="text-align:right;">
+0.343
+</td>
+<td style="text-align:right;">
+0.331
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hispanic Female
+</td>
+<td style="text-align:right;">
+0.297
+</td>
+<td style="text-align:right;">
+0.250
+</td>
+<td style="text-align:right;">
+0.417
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hispanic Male
+</td>
+<td style="text-align:right;">
+0.316
+</td>
+<td style="text-align:right;">
+0.360
+</td>
+<td style="text-align:right;">
+0.559
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Native American Female
+</td>
+<td style="text-align:right;">
+0.143
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Native American Male
+</td>
+<td style="text-align:right;">
+0.375
+</td>
+<td style="text-align:right;">
+0.083
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+White Female
+</td>
+<td style="text-align:right;">
+0.368
+</td>
+<td style="text-align:right;">
+0.303
+</td>
+<td style="text-align:right;">
+0.551
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+White Male
+</td>
+<td style="text-align:right;">
+0.395
+</td>
+<td style="text-align:right;">
+0.427
+</td>
+<td style="text-align:right;">
+0.574
+</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>We use conventional ggplot2 functions to graph stickiness in a multiway dot plot.</p>
+<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="co"># graph results</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">mw_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">stick</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">race_sex</span>)) +
+        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="fu"><a href="https://dplyr.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">program</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
+        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
+        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Stickiness"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>) +
+        <span class="fu"><a href="../reference/utils_graph.html">theme_midfield</a></span>()</pre></body></html></div>
 <p><img src="../man/figures/getting-started-fig1-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>The ordering of the rows and panels of the multiway plot tell us that for these three engineering majors, Industrial Engineering has the greatest stickiness and Electrical the least; that Asian men have the greatest stickiness and Native American Women the least. The visual anomalies are White women in Electrical with lower stickiness than expected by the ranking overall and Asian men in Chemical, also lower than expected.</p>
 <p>Results will vary depending on the programs one compares. Variations can also be expected if one uses the whole population data available to MIDFIELD member institutions.</p>
@@ -604,54 +833,74 @@ Industrial Engineering
 <h2 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h2>
 <div id="refs">
-<div id="ref-cleveland1993">
-<p>Cleveland, William S. 1993. <em>Visualizing Data</em>. Summit, NJ: Hobart Press.</p>
-</div>
 <div id="ref-stickiness2012">
 <p>Ohland, Matthew, Marisa Orr, Richard Layton, Susan Lord, and Russell Long. 2012. “Introducing Stickiness as a Versatile Metric of Engineering Persistence.” In <em>Proceedings of the Frontiers in Education Conference</em>, 1–5.</p>
 </div>
 </div>
-<p><br><a href="#top">▲ top of page</a></p>
 </div>
-<div id="issue-bin" class="section level2">
+<div id="appendix" class="section level2">
 <h2 class="hasAnchor">
-<a href="#issue-bin" class="anchor"></a>Issue bin</h2>
-<ul>
-<li>TBD</li>
-</ul>
-<p><br><a href="#top">▲ top of page</a></p>
-</div>
-<div id="complete-script" class="section level2">
-<h2 class="hasAnchor">
-<a href="#complete-script" class="anchor"></a>Complete script</h2>
-<p>For reference, the complete script for this example is collected below. We’ve omitted intermediate exploratory steps, retaining the minimum code required to obtain the results graph.</p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"># complete vignette script
-# TBD</pre></body></html></div>
-<p><br><a href="#top">▲ top of page</a></p>
-</div>
-<div id="session-information" class="section level2">
-<h2 class="hasAnchor">
-<a href="#session-information" class="anchor"></a>Session information</h2>
-<pre><code> setting  value                       
- version  R version 4.0.1 (2020-06-06)
- os       Windows 10 x64              
- system   x86_64, mingw32             
- ui       RTerm                       
- language (EN)                        
- collate  English_United States.1252  
- ctype    English_United States.1252  
- tz       America/New_York            
- date     2020-06-19                  
+<a href="#appendix" class="anchor"></a>Appendix</h2>
+<div id="complete-script" class="section level3">
+<h3 class="hasAnchor">
+<a href="#complete-script" class="anchor"></a>Complete script</h3>
+<p>In response to requests from some of our workshop attendees, we collect the vignette code chunks in one script. We condense the script by omitting exploratory steps so we can focus on the steps that produce the results.</p>
+<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="co"># packages used in the vignette</span>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"midfieldr"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"midfielddata"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"dplyr"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"seplyr"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"ggplot2"</span>)
 
- package      * version    date       lib source        
- dplyr        * 1.0.0      2020-05-29 []  CRAN (R 4.0.0)
- ggplot2      * 3.3.1      2020-05-28 []  CRAN (R 4.0.0)
- midfielddata * 0.1.0      2020-06-06 []  local         
- midfieldr    * 1.0.0.9001 2020-06-19 []  local         
- seplyr       * 0.8.8      2020-05-24 []  CRAN (R 4.0.0)
+<span class="co"># three programs in one data frame </span>
+<span class="no">che</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1407"</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/cip6_select.html">cip6_select</a></span>(<span class="kw">program</span> <span class="kw">=</span> <span class="st">"Chemical Engineering"</span>)
+<span class="no">ece</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1410"</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/cip6_select.html">cip6_select</a></span>(<span class="kw">program</span> <span class="kw">=</span> <span class="st">"Electrical Engineering"</span>)
+<span class="no">ise</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1435"</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/cip6_select.html">cip6_select</a></span>(<span class="kw">program</span> <span class="kw">=</span> <span class="st">"Industrial Engineering"</span>)
+<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span>(<span class="no">che</span>, <span class="no">ece</span>, <span class="no">ise</span>)
 
-* dependent packages not listed</code></pre>
+<span class="co"># for filtering operations </span>
+<span class="no">program_group_cip6</span> <span class="kw">&lt;-</span> <span class="no">program_group</span><span class="kw">[[</span><span class="st">"cip6"</span>]]
+
+<span class="co"># for group, summarize, and join operations</span>
+<span class="no">grouping_variables</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>)
+
+<span class="co"># count students ever enrolled </span>
+<span class="no">ever_enrolled</span><span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ever_filter.html">ever_filter</a></span>(<span class="no">midfieldterms</span> , <span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_group_cip6</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize</a></span>(<span class="no">grouping_variables</span>, <span class="kw">ever</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>())
+
+<span class="co"># count students graduating </span>
+<span class="no">graduated</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/grad_filter.html">grad_filter</a></span>(<span class="no">midfielddegrees</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_group_cip6</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize</a></span>(<span class="no">grouping_variables</span>, <span class="kw">grad</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>())
+
+<span class="co"># compute the metric</span>
+<span class="no">stickiness</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">ever_enrolled</span>, <span class="no">graduated</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="no">grouping_variables</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">0</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">stick</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="no">grad</span> / <span class="no">ever</span>, <span class="fl">3</span>))
+
+<span class="co"># prepare data for graphing </span>
+<span class="no">mw_data</span> <span class="kw">&lt;-</span> <span class="no">stickiness</span> <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(!<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span>)) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(!<span class="no">sex</span> <span class="kw">%in%</span> <span class="st">"Unknown"</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">5</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">race_sex</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="no">race</span>, <span class="no">sex</span>)) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">program</span>, <span class="no">race_sex</span>, <span class="no">stick</span>) <span class="kw">%&gt;%</span>
+        <span class="fu"><a href="../reference/multiway_order.html">multiway_order</a></span>()
+
+<span class="co"># graph results</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">mw_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">stick</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">race_sex</span>)) +
+        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="fu"><a href="https://dplyr.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">program</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
+        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
+        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Stickiness"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>) +
+        <span class="fu"><a href="../reference/utils_graph.html">theme_midfield</a></span>()</pre></body></html></div>
 <p><br><a href="#top">▲ top of page </a><br><a href="../index.html">◁ main page </a></p>
+</div>
 </div>
   </div>
 
