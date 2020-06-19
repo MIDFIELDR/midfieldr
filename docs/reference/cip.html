@@ -93,7 +93,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/workflow_example.html">Workflow example</a>
+  <a href="../articles/using_midfieldr.html">Using midfieldr</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -103,25 +103,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/exploring_cip.html">Exploring program CIP codes</a>
+      <a href="../articles/explore_cip.html">Explore program CIP codes</a>
     </li>
     <li>
-      <a href="../articles/selecting_programs.html">Selecting and labeling programs</a>
+      <a href="../articles/gather_program_data.html">Gather program data</a>
     </li>
     <li>
-      <a href="../articles/grad_window.html">Applying the graduation window</a>
+      <a href="../articles/apply_grad_window.html">Apply the graduation window</a>
     </li>
     <li>
-      <a href="../articles/stickiness.html">Computing stickiness</a>
+      <a href="../articles/compute_stickiness.html">Compute stickiness</a>
     </li>
     <li>
-      <a href="../articles/imputing_fye.html">Imputing FYE starting majors</a>
+      <a href="../articles/impute_fye.html">Impute FYE starting majors</a>
     </li>
     <li>
-      <a href="../articles/grad_rate.html">Computing graduation rate</a>
+      <a href="../articles/compute_grad_rate.html">Compute graduation rate</a>
     </li>
     <li>
-      <a href="../articles/multiway.html">Multiway data, graphs, and tables</a>
+      <a href="../articles/explore_multiway.html">Explore multiway data</a>
     </li>
   </ul>
 </li>
@@ -197,17 +197,23 @@
     <p>Based on the 2010 codes curated by the US National Center for Education Statistics (<a href='https://nces.ed.gov/ipeds/cipcode'>https://nces.ed.gov/ipeds/cipcode</a>).</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>6-digit codes are used in the midfieldr datasets (<code>midfieldstudents</code>, <code>midfieldcourses</code>, <code>midfieldterms</code>, and  <code>midfielddegrees</code>) to encode program information as reported by the member institutions. In addition to the standard codes and names, the midfieldr taxonomy includes three non-IPEDS codes:</p>
+    <p>6-digit codes are used in the <span class="pkg">midfielddata</span> datasets (<code>midfieldstudents</code>,  <code>midfieldcourses</code>,  <code>midfieldterms</code>, and  <code>midfielddegrees</code>) to encode program information as reported by the member institutions.</p>
+<p>In addition to the standard codes and names, the <span class="pkg">midfielddata</span> taxonomy includes following three non-IPEDS codes:</p>
 <dl'>
   <dt>14XXXX</dt><dd><p>First-Year Engineering (FYE).</p></dd>
-  <dt>14YYYY</dt><dd><p>Engineering-Focused Curricula (pseudo-FYE). For instances in which a student is eligible for admission to the institution but has not been admitted to an engineering program. Some institutions without FYE programs use such a designation in lieu of undecided or unspecified.</p></dd> <dt>999999</dt><dd><p>Undecided or Unspecified. For instances in which institutions reported no program information or that students were not enrolled in a program.</p></dd>
+  <dt>14YYYY</dt><dd><p>Engineering-Focused Curricula (pseudo-FYE). For instances in which a student is eligible for admission to the institution but has not been admitted to an engineering program. Some institutions without FYE programs use such a designation in lieu of undecided or unspecified.</p></dd>
+  <dt>999999</dt><dd><p>Undecided or Unspecified. For instances in which institutions reported no program information or that students were not enrolled in a program.</p></dd>
 
 </dl>
 
+<p>First-Year Engineering (FYE) students are neither undecided nor undeclared. Their institutions admitted them as engineering students. We just don't know what their engineering starting major would have been had they not been required to enroll in the FYE program.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>The <span class="pkg">midfieldr</span> vignette "Imputing FYE starting majors" describes a procedure for imputing the starting majors for FYE students, treating the FYE CIP codes as missing data.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># View the CIP data</span>
-<span class='no'>cip</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1,584 x 6</span><span>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>cip</span>)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1,584 x 6</span><span>
 #&gt;    cip2  cip2name               cip4  cip4name        cip6  cip6name            
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>           </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>               
 #&gt; </span><span style='color: #555555;'> 1</span><span> 01    Agriculture, Agricult~ 0100  Agriculture, G~ 0100~ Agriculture, General
@@ -222,7 +228,7 @@
 #&gt; </span><span style='color: #555555;'>10</span><span> 01    Agriculture, Agricult~ 0102  Agricultural M~ 0102~ Agricultural Power ~
 #&gt; </span><span style='color: #555555;'># ... with 1,574 more rows</span><span></div><div class='input'>
 <span class='co'># View the programs at the top level of the taxonomy</span>
-<span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span>(<span class='no'>cip</span>[, <span class='fl'>1</span>:<span class='fl'>2</span>])</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 46 x 2</span><span>
+<span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span>(<span class='no'>cip</span>[ , <span class='fl'>1</span>:<span class='fl'>2</span>])</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 46 x 2</span><span>
 #&gt;    cip2  cip2name                                                 
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                                                    
 #&gt; </span><span style='color: #555555;'> 1</span><span> 01    Agriculture, Agricultural Operations and Related Sciences
@@ -237,7 +243,7 @@
 #&gt; </span><span style='color: #555555;'>10</span><span> 14    Engineering                                              
 #&gt; </span><span style='color: #555555;'># ... with 36 more rows</span><span></div><div class='input'>
 <span class='co'># As the data argument for cip_filter()</span>
-<span class='fu'><a href='cip_filter.html'>cip_filter</a></span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>cip</span>, <span class='kw'>keep_any</span> <span class='kw'>=</span> <span class='st'>"^1410"</span>)</div></span></pre>
+<span class='fu'><a href='cip_filter.html'>cip_filter</a></span>(<span class='no'>cip</span>, <span class='st'>"^1410"</span>)</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
