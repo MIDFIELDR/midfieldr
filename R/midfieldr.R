@@ -5,18 +5,17 @@ NULL
 #'
 #' A package for investigating a data sample from the MIDFIELD database. The data comprise student records from registrars at participating US universities, including demographic, term, course, and degree information for 97,640 undergraduate students from 1987 to 2016.
 #'
-#' This package provides functions to access, manipulate, and graph student record data. To illustrate the workflow, we would use these functions in sequence to compute and display the "stickiness" metric:
+#' This package provides functions to access, manipulate, and graph student record data. To illustrate the workflow, we would use these functions to compute and display a persistence metric such as "stickiness":
 #'
 #' \itemize{
-#'   \item \code{cip_filter()} to filter programs from the CIP data
-#'   \item \code{cip6_select()} to select 6-digit CIPs and add custom label
-#'   \item \code{gather_ever()} to gather students ever enrolled
-#'   \item \code{gather_grad()} to gather graduating students
-#'   \item \code{race_sex_join()} to join student sex and race
-#'   \item \code{seplyr::group_summarize()} to count students
-#'   \item \code{dplyr::join()} and \code{mutate()} to compute stickiness
-#'   \item \code{multiway_order()} to prepare the results for graphing
-#'   \item \code{ggplot2::ggplot()} to graph metrics
+#'   \item \code{cip_filter()} to filter programs from the CIP data.
+#'   \item \code{cip6_select()} to select 6-digit CIPs and add custom labels.
+#'   \item \code{gather_ever()} to gather students ever enrolled.
+#'   \item \code{gather_grad()} to gather graduating students.
+#'   \item \code{race_sex_join()} to join student sex and race/ethnicity.
+#'   \item dplyr package (or equivalent) to group, summarize, join, and compute a persistence metric.
+#'   \item \code{multiway_order()} to prepare the results for graphing.
+#'   \item ggplot2 package (or equivalent) to graph the results.
 #' }
 #'
 #' To learn about these and other functions in detail, start with the vignettes: \code{browseVignettes(package = "midfieldr")}.

@@ -8,7 +8,9 @@ NULL
 #'
 #' From a CIP data frame, select the columns with the 6-digit codes and names and add a new character variable named \code{program}.
 #'
-#' Assigning a custom label to a program or a group of programs provides the option of grouping and summarizing CIP data in ways not afforded by the default program names in the 2010 CIP data.
+#' The 2-digit and 4-digit codes and names are silently dropped.
+#'
+#'  Assigning a custom label to a program or a group of programs provides the option of grouping, summarizing, and joining data in ways not afforded by the default CIP data. We can also create program names that are less verbose than the default names.
 #'
 #' @param data Data frame of CIP codes and names with the same structure as midfieldr \code{cip}.
 #'
@@ -94,10 +96,8 @@ cip6_select <- function(data, program = NULL, ..., cip6 = "cip6", cip6name = "ci
           program <- "Physical Sciences"
         } else {
       # named series not recognized
-          program <- data[[CIP4NAME]]
-          warning("cip6_select: No match to named series")
+          stop("cip6_select: Error in named series")
         }
-
       } else if (identical(program, cip2name)) {
         program <- data[[CIP2NAME]]
       } else if (identical(program, cip6name)) {

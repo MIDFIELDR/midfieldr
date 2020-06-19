@@ -85,9 +85,9 @@ We use:
 ```{r}
 # combine two variables into one
 stickiness <- case_stickiness %>%
-  mutate(race_sex = stringr::str_c(race, sex, sep = " ")) %>%
-  select(program, race_sex, stick) %>%
-  glimpse()
+        mutate(race_sex = stringr::str_c(race, sex, sep = " ")) %>%
+        select(program, race_sex, stick) %>%
+        glimpse()
 ```
 
 Our `glimpse()` of the data frame shows that we have two categorical variables and one quantitative variable, exactly the form needed. 
@@ -99,7 +99,7 @@ Our `glimpse()` of the data frame shows that we have two categorical variables a
 ```{r}
 # convert the data to a multiway structure
 stickiness <- multiway_order(stickiness) %>%
-  glimpse()
+        glimpse()
 ```
 
 `glimpse()` shows that the two categorical variables are factors.
@@ -109,8 +109,8 @@ Optionally, using the `return_medians` argument, the function returns the median
 ```{r}
 # return the median stickiness value for both categories
 df <- multiway_order(stickiness, return_medians = TRUE) %>%
-  arrange(program, race_sex) %>% 
-  print()
+        arrange(program, race_sex) %>% 
+        print()
 ```
 
 These values can be useful in discussion and for adding median reference lines to a graph.  
@@ -130,10 +130,10 @@ For the novice R user, a brief description of the ggplot2 functions:
 
 ```{r fig1, fig.asp = 2/1.6}
 ggplot(data = stickiness, aes(x = stick, y = race_sex)) +
-  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  geom_point(na.rm = TRUE) +
-  labs(x = "Stickiness", y = "") +
-  theme_midfield()
+        facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+        geom_point(na.rm = TRUE) +
+        labs(x = "Stickiness", y = "") +
+        theme_midfield()
 ```
 
 As Cleveland notes, "We can more effectively compare values within a panel than values between panels." This graph permits a direct visual comparison of how stickiness varies by race and sex for a particular major. .  
@@ -154,10 +154,10 @@ now we have
 
 ```{r fig1-dual, fig.asp = 2.5/1.6}
 ggplot(stickiness, aes(x = stick, y = program)) +
-  facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
-  geom_point(na.rm = TRUE) +
-  labs(x = "Stickiness", y = "") +
-  theme_midfield()
+        facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
+        geom_point(na.rm = TRUE) +
+        labs(x = "Stickiness", y = "") +
+        theme_midfield()
 ```
 
 This graph permits a direct visual comparison of how stickiness varies by major for one group of students. 
@@ -170,8 +170,8 @@ Starting with the example data, the first thing to do before tabulating is to re
 
 ```{r}
 stickiness_table <- case_stickiness %>%
-  mutate(stick = round(stick, 2)) %>%
-  arrange(program, sex, race)
+        mutate(stick = round(stick, 2)) %>%
+        arrange(program, sex, race)
 ```
 
 In many cases we might stop here and print the table for discussion purposes. 
@@ -183,7 +183,7 @@ kable(stickiness_table, caption = "Stickiness metric")
 ```{r echo = FALSE}
 # using kable_styling() for output but conceal from novice user
 kableExtra::kable(stickiness_table, format = "html", caption = "Stickiness metric") %>%
-  kableExtra::kable_styling(., font_size = 12)
+        kableExtra::kable_styling(., font_size = 12)
 ```
 
 Were to include a table in a publication, we might choose to  
@@ -195,15 +195,11 @@ Were to include a table in a publication, we might choose to
 
 ```{r}
 stickiness_table <- stickiness_table %>%
-  select(program, race, sex, stick) %>%
-  mutate(program = str_replace(program, " Engineering", "")) %>%
-  select("Program" = program,
-    "Race" = race,
-    "Sex" = sex,
-    "Stickiness" = stick
-  ) %>%
-  spread(Program, Stickiness) %>%
-  arrange(Sex, Race)
+        select(program, race, sex, stick) %>%
+        mutate(program = str_replace(program, " Engineering", "")) %>%
+        select("Program" = program, "Race" = race, "Sex" = sex, "Stickiness" = stick) %>%
+        spread(Program, Stickiness) %>%
+        arrange(Sex, Race)
 ```
 
 And print the table to our output document. 
@@ -215,7 +211,7 @@ kable(stickiness_table, caption = "Stickiness metric")
 ```{r echo = FALSE}
 # using kable_styling() for output but conceal from novice user
 kableExtra::kable(stickiness_table, format = "html", caption = "Stickiness metric in Engineering") %>%
-  kableExtra::kable_styling(., font_size = 12)
+        kableExtra::kable_styling(., font_size = 12)
 ```
 
 ## References

@@ -98,11 +98,11 @@ At the 6-digit level, there are `r length(unique(cip$cip6))` instructional   pro
 ```{r echo=FALSE}
 set.seed(20200617)
 cip %>% 
-  select(cip6, cip6name) %>% 
-  unique() %>% 
-  sample_n(8) %>% 
-  arrange(cip6) %>% 
-  kable2html()
+        select(cip6, cip6name) %>% 
+        unique() %>% 
+        sample_n(8) %>% 
+        arrange(cip6) %>% 
+        kable2html()
 ```
 <br>
 
@@ -110,11 +110,11 @@ At the 4-digit level, the programs are organized into `r length(unique(cip$cip4)
 
 ```{r echo=FALSE}
 cip %>% 
-  select(cip4, cip4name) %>% 
-  unique() %>% 
-  sample_n(8) %>% 
-  arrange(cip4) %>% 
-  kable2html()
+        select(cip4, cip4name) %>% 
+        unique() %>% 
+        sample_n(8) %>% 
+        arrange(cip4) %>% 
+        kable2html()
 ```
 <br>
 
@@ -122,11 +122,11 @@ At the 2-digit level, the programs are organized into `r length(unique(cip$cip2)
 
 ```{r echo=FALSE}
 cip %>% 
-  select(cip2, cip2name) %>% 
-  unique() %>% 
-  sample_n(8) %>% 
-  arrange(cip2) %>% 
-  kable2html()
+        select(cip2, cip2name) %>% 
+        unique() %>% 
+        sample_n(8) %>% 
+        arrange(cip2) %>% 
+        kable2html()
 ```
 <br>
 
@@ -165,14 +165,14 @@ For example, to filter the CIP data for all programs containing the word "engine
 
 ```{r}
 cip_filter(data = cip, keep_any = "engineering") %>%
-  print()
+        print()
 ```
 
-The first two argument names can be omitted if they are in the correct order. We will generally include argument names for the benefit of R novices though readers are free to omit argument names like these if they wish. 
+The first two argument names can be omitted if they are in the correct order. We will generally omit argument names for the first one or two arguments unless disallowed by the function. 
 
 ```{r}
 cip_filter(cip, "engineering") %>%
-  print()
+        print()
 ```
 
 If the optional `drop_any` argument is used, it must be named, 
@@ -180,11 +180,11 @@ If the optional `drop_any` argument is used, it must be named,
 ```{r}
 # correct
 cip_filter(cip, "civil engineering", drop_any = "technology") %>%
-  print()
+        print()
 
 # incorrect
 cip_filter(cip, "civil engineering", "technology") %>%
-  print()
+        print()
 ```
 
 
@@ -206,8 +206,15 @@ Notes.
 Suppose we want to find the CIP codes and names for all programs in Civil Engineering. The search is case-insensitive, so we start with the following code chunk. 
 
 ```{r}
+cip_filter(cip, "civil") %>%
+        print() # View() can be used instead
+```
+
+Again, for the R novice who prefers to name each argument, the same result is obtained with this code chunk: 
+
+```{r results = "hide"}
 cip_filter(data = cip, keep_any = "civil") %>%
-  print() # View() can be used instead
+        print()
 ```
 
 Notes on viewing the results:
@@ -231,27 +238,27 @@ The following code chunk could be read as "Start with the `cip` data frame, then
 
 ```{r results = "hide"}
 cip %>%  
-  cip_filter(data = ., keep_any = "civil") %>% 
-  cip_filter(data = ., keep_any = "engineering") %>% 
-  cip_filter(data = ., drop_any = "technology") %>% 
-  print()
+        cip_filter(keep_any = "civil") %>% 
+        cip_filter(keep_any = "engineering") %>% 
+        cip_filter(drop_any = "technology") %>% 
+        print()
 ```
 
 Only the `drop_any` argument must be named, so the following code chunk yields the same result, 
 
 ```{r results = "hide"}
 cip %>% 
-  cip_filter(., "civil") %>% 
-  cip_filter(., "engineering") %>% 
-  cip_filter(., drop_any = "technology") %>% 
-  print()
+        cip_filter("civil") %>% 
+        cip_filter("engineering") %>% 
+        cip_filter(drop_any = "technology") %>% 
+        print()
 ```
 
 ```{r echo = FALSE}
 kable2html(cip %>% 
-  cip_filter(., "civil") %>% 
-  cip_filter(., "engineering") %>% 
-  cip_filter(., drop_any = "technology"))
+        cip_filter("civil") %>% 
+        cip_filter("engineering") %>% 
+        cip_filter(drop_any = "technology"))
 ```
 
 <br>
@@ -259,12 +266,12 @@ kable2html(cip %>%
 Seeing that all Civil Engineering programs have the same `cip4name`, we could shorten our search to one line, 
 
 ```{r results = "hide"}
-cip_filter(data = cip, keep_any = "civil engineering", drop_any = "technology") %>% 
-  print()
+cip_filter(cip, "civil engineering", drop_any = "technology") %>% 
+        print()
 ```
 
 ```{r echo = FALSE}
-kable2html(cip_filter(data = cip, keep_any = "civil engineering", drop_any = "technology"))
+kable2html(cip_filter(cip, "civil engineering", drop_any = "technology"))
 ```
 
 <br>
@@ -272,12 +279,12 @@ kable2html(cip_filter(data = cip, keep_any = "civil engineering", drop_any = "te
 In the next example, suppose we want to study programs relating to German culture, language, and literature. Using  "german" for the `keep_any` value yields 
 
 ```{r results = "hide"}
-cip_filter(data = cip, keep_any = "german") %>%
-  print()
+cip_filter(cip, "german") %>%
+        print()
 ```
 
 ```{r echo = FALSE}
-kable2html(cip_filter(data = cip, keep_any = "german"))
+kable2html(cip_filter(cip, "german"))
 ```
 
 <br>
@@ -287,12 +294,12 @@ From the 6-digit program names we find only two that are of interest, German Stu
 Note that the keep_any argument is a vector. 
  
 ```{r results = "hide"}
-cip_filter(cip, keep_any = c("050125", "160501")) %>%
-  print()
+cip_filter(cip, c("050125", "160501")) %>%
+        print()
 ```
 
 ```{r echo = FALSE}
-kable2html(cip_filter(cip, keep_any = c("050125", "160501")))
+kable2html(cip_filter(cip, c("050125", "160501")))
 ```
 
 <br>
@@ -300,12 +307,12 @@ kable2html(cip_filter(cip, keep_any = c("050125", "160501")))
 If the 6-digit codes are entered as integers, they are coerced to characters and used as search terms as above.
  
 ```{r results = "hide"}
-cip_filter(cip, keep_any = c(050125, 160501)) %>%
-  print()
+cip_filter(cip, c(050125, 160501)) %>%
+        print()
 ```
 
 ```{r echo = FALSE}
-kable2html(cip_filter(cip, keep_any = c(050125, 160501)))
+kable2html(cip_filter(cip, c(050125, 160501)))
 ```
 
 <br>
@@ -314,12 +321,12 @@ Because integers are coerced to characters, we can use a numerical sequence as a
 
 ```{r results = "hide"}
 # series as a sequence
-cip_filter(cip, keep_any = seq(540101, 540199, 1)) %>%
-  print()
+cip_filter(cip, kseq(540101, 540199, 1)) %>%
+        print()
 ```
 
 ```{r echo = FALSE}
-kable2html(cip_filter(cip, keep_any = seq(540101, 540199, 1)))
+kable2html(cip_filter(cip, kseq(540101, 540199, 1)))
 ```
 
 <br>
@@ -328,12 +335,12 @@ Specifying 4-digit codes yields a data frame all 6-digit programs containing the
 
 ```{r results = "hide"}
 # 4-digit example matching the start of the string
-cip_filter(cip, keep_any = c("^1407", "^1408")) %>%
-  print()
+cip_filter(cip, c("^1407", "^1408")) %>%
+        print()
 ```
 
 ```{r echo = FALSE}
-kable2html(cip_filter(cip, keep_any = c("^1407", "^1408")))
+kable2html(cip_filter(cip, c("^1407", "^1408")))
 ```
 
 <br>
@@ -342,12 +349,12 @@ The 2-digit series represent the most general groupings of related programs. Her
 
 ```{r results = "hide"}
 # 2-digit example
-cip_filter(cip, keep_any = "^54") %>%
-  print()
+cip_filter(cip, "^54") %>%
+        print()
 ```
 
 ```{r echo = FALSE}
-kable2html(cip_filter(cip, keep_any = "^54"))
+kable2html(cip_filter(cip, "^54"))
 ```
 
 <br>
@@ -356,12 +363,12 @@ The series argument can include any combination of 2, 4, and 6-digit codes.
 
 ```{r results = "hide"}
 # a series with 2, 4, and 6-digits specified
-cip_filter(cip, keep_any = c("^24", "^4102", "^450202")) %>%
-  print()
+cip_filter(cip, c("^24", "^4102", "^450202")) %>%
+        print()
 ```
 
 ```{r echo = FALSE}
-kable2html(cip_filter(cip, keep_any = c("^24", "^4102", "^450202")))
+kable2html(cip_filter(cip, c("^24", "^4102", "^450202")))
 ```
 
 
@@ -388,7 +395,7 @@ A named series is assigned to the series argument in `cip_filter()`.
 ```{r results = "hide"}
 # the math and statistics series
 cip_filter(cip, keep_any = cip_math_stat) %>%
-  print()
+        print()
 ```
 
 ```{r echo = FALSE}
@@ -416,11 +423,11 @@ Once we've identified the codes for all the programs we want to study, we extrac
 For example, if we were studying History, we filter CIPs using `"^54"`. Then we use the R `[[]]` notation to extract the vector of values in the `cip6` variable (column). 
 
 ```{r}
-my_programs <- cip_filter(data = cip, keep_any = "^54") %>% 
-  print()
+my_programs <- cip_filter(cip, "^54") %>% 
+        print()
 
 my_cip6 <- my_programs[["cip6"]] %>% 
-  print()
+        print()
 ```
 
 A vector like this is used later to find student-record data associated with these programs. 

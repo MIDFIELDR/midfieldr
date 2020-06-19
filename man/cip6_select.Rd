@@ -44,7 +44,9 @@ A data frame with the 6-digit code and name columns from the input data frame wi
 From a CIP data frame, select the columns with the 6-digit codes and names and add a new character variable named \code{program}.
 }
 \details{
-Assigning a custom label to a program or a group of programs provides the option of grouping and summarizing CIP data in ways not afforded by the default program names in the 2010 CIP data.
+The 2-digit and 4-digit codes and names are silently dropped.
+
+ Assigning a custom label to a program or a group of programs provides the option of grouping, summarizing, and joining data in ways not afforded by the default CIP data. We can also create program names that are less verbose than the default names.
 }
 \examples{
 # Extract the Philosophy and Religion programs and label
