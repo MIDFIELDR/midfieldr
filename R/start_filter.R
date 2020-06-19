@@ -34,7 +34,7 @@ NULL
 #' placeholder <- 2 + 3
 #'
 #' @export
-starter_filter <- function(data = NULL, codes = NULL, ..., id = "id", cip6 = "cip6") {
+start_filter <- function(data = NULL, codes = NULL, ..., id = "id", cip6 = "cip6") {
   if (!.pkgglobalenv$has_data) {
     stop(paste(
       "To use this function, you must have",
@@ -80,4 +80,4 @@ starter_filter <- function(data = NULL, codes = NULL, ..., id = "id", cip6 = "ci
     }
   )
 }
-"starter_filter"
+"start_filter"
