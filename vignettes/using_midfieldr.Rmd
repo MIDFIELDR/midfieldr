@@ -1,8 +1,8 @@
 ---
-title: "Explore the workflow"
+title: "Using midfieldr"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Explore the workflow}
+  %\VignetteIndexEntry{Using midfieldr}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -46,23 +46,18 @@ knitr::knit_hooks$set(purl = knitr::hook_purl)
 knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
 ```
 
-This vignette presents an example to illustrate a representative sample of midfieldr functions. 
+This exercise illustrates a typical workflow for computing a persistence metric, starting with student record data and ending with a multiway graph. 
 
-Functions are used without detailed explanations---for greater detail, see the individual [vignettes](https://midfieldr.github.io/midfieldr/articles/index.html) or see a function's help page by running `? function_name()`, for example, `? cip_filter()`, `? cip6_select`, etc.  
+Our metric in this case is "stickiness", the ratio of the number of students graduating from a program to the number ever enrolled in the program [@stickiness2012]. We compare the stickiness of three engineering programs with students grouped by program, race, and sex. 
+
+In this introductory example, conveying *what* is more important than *how*. Thus, instead of explaining how the code works, we explain what the steps are and how they fit together. For explanations of how the code works, see the other  [vignettes](https://midfieldr.github.io/midfieldr/articles/index.html). 
+
+ 
 
 
-   
+## Gather program data 
 
-
-
-
-## Identify CIP codes
-
-To introduce midfieldr, we present a brief example that starts with student unit-record data and concludes with a graphical comparison of program "stickiness" with students grouped by program, race, and sex. 
-
-Stickiness is the ratio of the number of students graduating from a program to the number ever enrolled in the program [@stickiness2012]. 
-
-We compare the stickiness of three programs: Chemical Engineering, Electrical Engineering, and Industrial Engineering. 
+We wish to compare the stickiness of three programs: Chemical Engineering, Electrical Engineering, and Industrial Engineering with students grouped by program, race, and sex. 
 
 ```{r packages}
 # packages used in the vignette
@@ -73,80 +68,48 @@ library("seplyr")
 library("ggplot2")
 ```
 
-```{r echo=FALSE}
-# used by my_session() 
-pkg_names <- c("midfieldr", "midfielddata", "dplyr", "seplyr", "ggplot2")
-# ggplot2::theme_set(theme_midfield())
-```
-
-We use `cip_filter()` to search the `cip` dataset first for "Engineering" and then filter the result for "Chemical", "Electrical", and "Industrial". We use the `drop_any` argument to omit technology programs and biochemical programs. 
+Search the `cip` data set for the programs we want. The results show that the 4-digit codes we want are 1407, 1410, and 1435. 
  
-```{r first-cip-search, echo = -1}
+```{r first-cip-search, echo = -1, results = "hide"}
 options(tibble.print_min = 10L)
 cip %>% 
-  cip_filter(keep_any = "engineering", drop_any = c("tech", "bio")) %>%
-  cip_filter(keep_any = c("chemical", "electrical", "industrial")) %>%
-  print() # or View()
+        cip_filter(keep_any = "engineering", drop_any = c("tech", "bio")) %>%
+        cip_filter(keep_any = c("chemical", "electrical", "industrial")) %>%
+        print()
 ```
-
-Notes on viewing the results:
-
-- As seen above, the `print()` function sends an abbreviated view of the results to the Console. 
-- In the remaining code chunks, we'll leave `print()` in place but you are welcome to replace it with `View()` to invoke a spreadsheet-like data viewer.
-
-
-For clarity, shorter data frames are printed in the vignette as HTML tables, as shown below.  
 
 ```{r echo=FALSE}
 cip %>% 
-  cip_filter(keep_any = "engineering", drop_any = c("tech", "bio")) %>%
-  cip_filter(keep_any = c("chemical", "electrical", "industrial")) %>%
-  kable2html()
+        cip_filter(keep_any = "engineering", drop_any = c("tech", "bio")) %>%
+        cip_filter(keep_any = c("chemical", "electrical", "industrial")) %>%
+        kable2html()
 ```
 
-
-<br>
-
-The results show that the 4-digit codes we want are 1407, 1410, and 1435. 
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
-
-
-## Select and label programs  
-
-
-In the MIDFIELD data sets, programs are identified by 6-digit CIP codes. 
-
-Knowing the programs we want (in this example, 1407, 1410, and 1435) we use `cip6_select()` to extract all 6-digit codes and names associated with these three groupings (Chemical, Electrical, and Industrial Engineering). 
-
-At the same time, we assign a new program variable with deliberately selected program names that are later used for grouping and summarizing the data. 
+Knowing the programs we want (in this example, 1407, 1410, and 1435) we extract their 6-digit codes and assign a concise program name. 
 
 ```{r extract-cip}
 # chemical engineering 
-set1 <- cip_filter(keep_any = "^1407") %>%
-  cip6_select(program = "Chemical Engineering")
+che <- cip %>% 
+        cip_filter(keep_any = "^1407") %>%
+        cip6_select(program = "Chemical Engineering")
 
 # electrical engineering 
-set2 <- cip_filter(keep_any = "^1410") %>%
-  cip6_select(program = "Electrical Engineering")
+ece <- cip %>% 
+        cip_filter(keep_any = "^1410") %>%
+        cip6_select(program = "Electrical Engineering")
 
 # industrial engineering
-set3 <- cip_filter(keep_any = "^1435") %>%
-  cip6_select(program = "Industrial Engineering")
+ise <- cip %>% 
+        cip_filter(keep_any = "^1435") %>%
+        cip6_select(program = "Industrial Engineering")
 ```
 
-Combine the data frames. The `cip6_select()` function retains the original 6-digit program names so that one can confirm that the new `program` variable is consistent with the original program name. 
+We combine the three programs into one data frame.
 
 ```{r group-cip, results = "hide"}
-program_group <- bind_rows(set1, set2, set3) %>%
-  print() # or View()
+# three programs in one data frame 
+program_group <- bind_rows(che, ece, ise) %>%
+        print()
 ```
 
 ```{r echo = FALSE}
@@ -155,6 +118,13 @@ kable2html(program_group)
 
 <br>
 
+Finally, we extract the 6-digit CIP codes from our program group to use as search terms to identify students in these programs. 
+
+```{r}
+# for filtering operations 
+program_group_cip6 <- program_group[["cip6"]] %>% 
+        print()
+```
 
 
 
@@ -166,49 +136,57 @@ kable2html(program_group)
 
 
 
-## Group and count students
+## Gather student data
 
-First we extract the 6-digit CIP codes from our program group to use as search terms to identify students in these programs. 
-
-```{r}
-program_group_cip6 <- program_group[["cip6"]]
-```
-
-Use `ever_filter()` to access the `midfieldterms` dataset and extract all students who ever enrolled in these programs. Use `race_sex_join()` to access the `midfieldstudents` dataset and append students' race and sex to the working data frame. 
+Use access the `midfieldterms` dataset and extract all students who ever enrolled in these programs. 
 
 ```{r gather-ever}
-students <- ever_filter(data = midfieldterms, codes = program_group_cip6) %>%
-  race_sex_join() %>%
-  print() # or View()
+students <- midfieldterms %>% 
+        ever_filter(codes = program_group_cip6) %>%
+        print()
 ```
 
-Next we join our custom program names to the student data.
+Use access the `midfieldstudents` dataset and append students' race and sex to the working data frame. 
+
+```{r}
+students <- students %>%
+        race_sex_join() %>%
+        print()
+```
+
+We join our custom program names to the student data.
 
 ```{r}
 students <- left_join(students, program_group, by = "cip6") %>%
-  print() # or View()
+        print()
 ```
 
-We create a vector of grouping variables and use the seplyr `group_summarize()` function to count the numbers of students ever enrolled in these programs. 
-
-At this point, by grouping and summarizing, we lose all but the three grouping variables and add the new variable `ever` to denote the count. 
+We create a vector of variable names to be used for grouping, summarizing, and joining. 
 
 ```{r}
-# grouping variables for summarizing and later for joining 
+# for group, summarize, and join operations
 grouping_variables <- c("program", "race", "sex")
-
-ever_enrolled <- students %>%
-  group_summarize(grouping_variables, ever = n()) %>%
-  print() # or View()
 ```
 
-Following similar steps, we use `grad_filter()` to access the `midfielddegrees` dataset and extract all students who graduated from these programs. We group and summarize the counts using `grad` as the new count variable. 
+We count the number of students ever enrolled grouped by program, race/ethnicity, and sex.  
+
+```{r}
+# count students ever enrolled 
+ever_enrolled <- students %>%
+        group_summarize(grouping_variables, ever = n()) %>%
+        print()
+```
+
+We repeat the process to group and summarize graduates from our three programs.   
 
 ```{r grad}
-graduated <- grad_filter(data = midfielddegrees, codes = program_group_cip6) %>%
-  race_sex_join() %>%
-  left_join(program_group, by = "cip6") %>%
-  group_summarize(grouping_variables, grad = n())
+# count students graduating 
+graduated <- midfielddegrees %>% 
+        grad_filter(codes = program_group_cip6) %>%
+        race_sex_join() %>%
+        left_join(program_group, by = "cip6") %>%
+        group_summarize(grouping_variables, grad = n()) %>% 
+        print()
 ```
 
 
@@ -225,22 +203,18 @@ graduated <- grad_filter(data = midfielddegrees, codes = program_group_cip6) %>%
 We join the two data frames by the grouping variables. 
 
 ```{r}
-stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables)
+stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables) %>%
+        print() 
 ```
 
-We suggest omitting observations with 5 or fewer students ever enrolled. 
+We omit rows with zero students ever enrolled so we can compute stickiness, the ratio of `grad` to `ever`. 
 
 ```{r}
+# compute the metric
 stickiness <- stickiness %>%
-  filter(ever > 5)
-```
-
-And we compute stickiness, the ratio of `grad` to `ever`. 
-
-```{r}
-stickiness <- stickiness %>%
-  mutate(stick = round(grad / ever, 3)) %>%
-  print() # or View()
+        filter(ever > 0) %>% 
+        mutate(stick = round(grad / ever, 3)) %>%
+        print()
 ```
 
 
@@ -254,34 +228,67 @@ stickiness <- stickiness %>%
 
 ## Graph the results
 
-To prepare the stickiness data for graphing, we remove ambiguous levels of race/ethnicity (Unknown, International, or Other) and then combine race and sex into a single variable. 
+To prepare the stickiness data for graphing, we remove ambiguous levels of race/ethnicity  and sex. 
 
 ```{r prep-data}
-stickiness_mw <- stickiness %>%
-  filter(!race %in% c("Unknown", "International", "Other")) %>%
-  filter(!sex %in% "Unknown") %>%
-  mutate(race_sex = paste(race, sex))
+# prepare data for graphing 
+mw_data <- stickiness %>%
+        filter(!race %in% c("Unknown", "International", "Other")) %>%
+        filter(!sex %in% "Unknown")
 ```
 
-We graph these results in a *multiway dot plot* [@cleveland1993], a display type based on a data structure of two categorical variables (program and race/ethnicity/sex) and one quantitative variable (stickiness). 
+To protect confidentiality, we omit observations with 5 or fewer students ever enrolled.
 
-`multiway_order()` converts the two categorical variables to factors and orders their levels by median stickiness.
-
-```{r multiway-order}
-stickiness_mw <- stickiness_mw %>%
-  select(program, race_sex, stick) %>%
-  multiway_order(return_medians = TRUE) %>%
-  print() # or View()
+```{r}
+# protect confidentiality of small populations 
+mw_data <- mw_data %>% 
+        filter(ever > 5) %>% 
+        print()
 ```
 
-We use conventional ggplot2 functions to graph stickiness in a multiway dot plot. We also apply our own `theme_midfield()` to edit the visual properties of the graph.
+To prepare the data in multiway form, we combine race and sex into a single variable. 
+
+```{r}
+mw_data <- mw_data %>% 
+        mutate(race_sex = paste(race, sex)) %>% 
+        print()
+```
+
+We select the three multiway variables: academic program, student race/sex, and stickiness. 
+
+```{r}
+mw_data <- mw_data %>% 
+        select(program, race_sex, stick) %>% 
+        print() 
+```
+
+We convert the categorical variables to factors and order the levels of the categories by the median stickiness.
+
+```{r multiway-order, results = "hide"}
+mw_data <- mw_data %>% 
+        multiway_order() 
+```
+
+Tabulating the final results yields:  
+
+```{r echo=FALSE}
+mw_table <- mw_data %>% 
+  tidyr::pivot_wider(names_from = program, values_from = stick)
+  
+kable2html(mw_table)
+```
+
+<br>
+
+We use conventional ggplot2 functions to graph stickiness in a multiway dot plot. 
 
 ```{r fig1, fig.asp = 1.6/1.6}
-ggplot(stickiness_mw, aes(x = stick, y = race_sex)) +
-  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  geom_point(na.rm = TRUE) +
-  labs(x = "Stickiness", y = "") +
-  theme_midfield()
+# graph results
+ggplot(mw_data, aes(x = stick, y = race_sex)) +
+        facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+        geom_point(na.rm = TRUE) +
+        labs(x = "Stickiness", y = "") +
+        theme_midfield()
 ```
 
 The ordering of the rows and panels of the multiway plot tell us that for these three engineering majors, Industrial Engineering has the greatest stickiness and Electrical the least; that Asian men have the greatest stickiness and Native American Women the least. The visual anomalies are White women in Electrical with lower stickiness than expected by the ranking overall and Asian men in Chemical, also lower than expected. 
@@ -303,45 +310,69 @@ Results will vary depending on the programs one compares. Variations can also be
 
 <div id="refs"></div>
 
-<br>
-<a href="#top">&#9650; top of page</a>   
 
+## Appendix
 
+### Complete script
 
+In response to requests from some of our workshop attendees, we collect the vignette code chunks in one script. We condense the script by omitting exploratory steps so we can focus on the steps that produce the results. 
 
-## Issue bin
+```{r eval=FALSE}
+# packages used in the vignette
+library("midfieldr")
+library("midfielddata")
+library("dplyr")
+library("seplyr")
+library("ggplot2")
 
-- TBD
+# three programs in one data frame 
+che <- cip_filter(cip, keep_any = "^1407") %>%
+        cip6_select(program = "Chemical Engineering")
+ece <- cip_filter(cip, keep_any = "^1410") %>%
+        cip6_select(program = "Electrical Engineering")
+ise <- cip_filter(cip, keep_any = "^1435") %>%
+        cip6_select(program = "Industrial Engineering")
+program_group <- bind_rows(che, ece, ise)
 
-<br>
-<a href="#top">&#9650; top of page</a>   
+# for filtering operations 
+program_group_cip6 <- program_group[["cip6"]]
 
+# for group, summarize, and join operations
+grouping_variables <- c("program", "race", "sex")
 
+# count students ever enrolled 
+ever_enrolled<- ever_filter(midfieldterms , codes = program_group_cip6) %>%
+        race_sex_join() %>%
+        left_join(program_group, by = "cip6") %>%
+        group_summarize(grouping_variables, ever = n())
 
+# count students graduating 
+graduated <- grad_filter(midfielddegrees, codes = program_group_cip6) %>%
+        race_sex_join() %>%
+        left_join(program_group, by = "cip6") %>%
+        group_summarize(grouping_variables, grad = n())
 
-## Complete script
+# compute the metric
+stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables) %>% 
+        filter(ever > 0) %>% 
+        mutate(stick = round(grad / ever, 3))
 
-For reference, the complete script for this example is collected below. We've omitted intermediate exploratory steps, retaining the minimum code required to obtain the results graph. 
+# prepare data for graphing 
+mw_data <- stickiness %>%
+        filter(!race %in% c("Unknown", "International", "Other")) %>%
+        filter(!sex %in% "Unknown") %>%
+        filter(ever > 5) %>% 
+        mutate(race_sex = paste(race, sex)) %>% 
+        select(program, race_sex, stick) %>% 
+        multiway_order()  
 
-```{r}
-# complete vignette script
-# TBD
+# graph results
+ggplot(mw_data, aes(x = stick, y = race_sex)) +
+        facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+        geom_point(na.rm = TRUE) +
+        labs(x = "Stickiness", y = "") +
+        theme_midfield()
 ```
-
-
-<br>
-<a href="#top">&#9650; top of page</a>   
-
-
-
-
-## Session information 
-
-```{r echo = FALSE, comment = NA}
-# internal function for session information
-my_session(pkg_names)
-```
-
 
 <br>
 <a href="#top"         >&#9650;     top of page </a>     
