@@ -14,25 +14,13 @@
 An atomic character vector of 6-digit CIP codes.
 
 \describe{
-\item{\code{cip_bio_sci}}{Biological and biomedical science programs, series 26.}
-\item{\code{cip_engr}}{Engineering programs, series 14.}
-\item{\code{cip_math_stat}}{Mathematics and statistics programs, series 27.}
-\item{\code{cip_phys_sci}}{Physical science programs, series 40.}
+\item{\code{cip_bio_sci}}{Biological and biomedical science programs (2-digit CIP 26).}
+\item{\code{cip_engr}}{Engineering programs (2-digit CIP 14)}
+\item{\code{cip_math_stat}}{Mathematics and statistics programs (2-digit CIP 27).}
 \item{\code{cip_other_stem}}{Other STEM programs, not individually named.}
-\item{\code{cip_stem}}{All Science, Technology, Engineering, and Mathematics (STEM) programs.}
+\item{\code{cip_phys_sci}}{Physical science programs (2-digit CIP 40).}
+\item{\code{cip_stem}}{All Science, Technology, Engineering, and Mathematics (STEM) programs. Collects all the named STEM series into one character vector.}
 }
-
-An object of class \code{character} of length 101.
-
-An object of class \code{character} of length 56.
-
-An object of class \code{character} of length 17.
-
-An object of class \code{character} of length 218.
-
-An object of class \code{character} of length 43.
-
-An object of class \code{character} of length 435.
 }
 \source{
 NSF STEM programs, \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}
@@ -59,7 +47,7 @@ Atomic character vectors of 6-digit CIP codes for specified groups of programs.
 head(cip_math_stat, n = 10L)
 head(cip_phys_sci, n = 10L)
 
-cip_filter(data = cip, keep_any = cip_math_stat)
-cip_filter(data = cip, keep_any = cip_phys_sci)
+cip_filter(cip, cip_math_stat)
+cip_filter(cip, cip_phys_sci)
 }
 \keyword{datasets}

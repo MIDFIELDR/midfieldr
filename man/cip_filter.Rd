@@ -22,17 +22,17 @@ Data frame
 Filter a data frame of Classification of Instructional Programs (CIP) codes and return the rows that match conditions.
 }
 \details{
-The \code{keep_any} argument is an atomic character vector of search terms  used to filter the CIP data frame. Typical search terms include words and phrases describing academic programs or their CIP codes.
+The \code{keep_any} argument is an atomic character vector of search terms  used to filter the CIP data frame. Typical search terms include words and phrases describing academic programs or their CIP codes. The optional \code{drop_any} argument is similar except it drops rows instead of keeping them.
 
-Several collections of named series are provided to facilitate searching for groups of programs such as Biological Sciences, Engineering, Physical Sciences, etc. For the named series help page, run \code{? cip_series}.
+Several named series are provided as possible values for \code{keep_any} to facilitate searching for groups of programs such as Biological Sciences, Engineering, Physical Sciences, etc. For the named series help page, run \code{? cip_series}.
 
 The function returns a subset of \code{data}. All columns are retained.
 }
 \examples{
 cip_filter(cip, "History")
-cip_filter(cip, c("American", "History"))
+cip_filter(cip, "History", drop_any = c("^04", "^13", "^50"))
 cip_filter(cip, "History") \%>\%
   cip_filter("American")
-cip_filter(cip, "^14") \%>\%
-  cip_filter(keep_any = "Civil")
+cip_filter(cip, cip_engr) \%>\%
+  cip_filter("Civil")
 }

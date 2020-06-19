@@ -26,21 +26,29 @@ cip
 A dataset of codes and names for 1584 instructional programs organized on three levels: a 2-digit series, a 4-digit series, and a 6-digit series.
 }
 \details{
-6-digit codes are used in the midfieldr datasets (\code{midfieldstudents}, \code{midfieldcourses}, \code{midfieldterms}, and  \code{midfielddegrees}) to encode program information as reported by the member institutions. In addition to the standard codes and names, the midfieldr taxonomy includes three non-IPEDS codes:
+6-digit codes are used in the \pkg{midfielddata} datasets (\code{midfieldstudents},  \code{midfieldcourses},  \code{midfieldterms}, and  \code{midfielddegrees}) to encode program information as reported by the member institutions.
+
+In addition to the standard codes and names, the \pkg{midfielddata} taxonomy includes following three non-IPEDS codes:
 
 \describe{
   \item{14XXXX}{First-Year Engineering (FYE).}
-  \item{14YYYY}{Engineering-Focused Curricula (pseudo-FYE). For instances in which a student is eligible for admission to the institution but has not been admitted to an engineering program. Some institutions without FYE programs use such a designation in lieu of undecided or unspecified.} \item{999999}{Undecided or Unspecified. For instances in which institutions reported no program information or that students were not enrolled in a program.}
+  \item{14YYYY}{Engineering-Focused Curricula (pseudo-FYE). For instances in which a student is eligible for admission to the institution but has not been admitted to an engineering program. Some institutions without FYE programs use such a designation in lieu of undecided or unspecified.}
+  \item{999999}{Undecided or Unspecified. For instances in which institutions reported no program information or that students were not enrolled in a program.}
 }
+
+First-Year Engineering (FYE) students are neither undecided nor undeclared. Their institutions admitted them as engineering students. We just don't know what their engineering starting major would have been had they not been required to enroll in the FYE program.
 }
 \examples{
 # View the CIP data
-cip
+print(cip)
 
 # View the programs at the top level of the taxonomy
-unique(cip[, 1:2])
+unique(cip[ , 1:2])
 
 # As the data argument for cip_filter()
-cip_filter(data = cip, keep_any = "^1410")
+cip_filter(cip, "^1410")
+}
+\seealso{
+The \pkg{midfieldr} vignette "Imputing FYE starting majors" describes a procedure for imputing the starting majors for FYE students, treating the FYE CIP codes as missing data.
 }
 \keyword{datasets}

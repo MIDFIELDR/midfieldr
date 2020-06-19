@@ -2,7 +2,7 @@
 
 
 
-## midfieldr 1.0.0.9001 / 2020-06-18
+## midfieldr 1.0.0.9001 / 2020-06-19
 
 Changes incompatible with earlier versions. 
 
@@ -21,6 +21,7 @@ Additional improvements
 - Content links and session information added to each vignette   
 - Added internal data bits, e.g., dimensions and memory requirements of midfielddata data frames, for use in vignettes and README 
 - Vignettes updated with function revisions and improvements 
+- Updated tests
 
 
 

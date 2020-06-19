@@ -7,9 +7,9 @@ NULL
 #'
 #' Filter a data frame of Classification of Instructional Programs (CIP) codes and return the rows that match conditions.
 #'
-#' The \code{keep_any} argument is an atomic character vector of search terms  used to filter the CIP data frame. Typical search terms include words and phrases describing academic programs or their CIP codes.
+#' The \code{keep_any} argument is an atomic character vector of search terms  used to filter the CIP data frame. Typical search terms include words and phrases describing academic programs or their CIP codes. The optional \code{drop_any} argument is similar except it drops rows instead of keeping them.
 #'
-#' Several collections of named series are provided to facilitate searching for groups of programs such as Biological Sciences, Engineering, Physical Sciences, etc. For the named series help page, run \code{? cip_series}.
+#' Several named series are provided as possible values for \code{keep_any} to facilitate searching for groups of programs such as Biological Sciences, Engineering, Physical Sciences, etc. For the named series help page, run \code{? cip_series}.
 #'
 #' The function returns a subset of \code{data}. All columns are retained.
 #'
@@ -25,11 +25,11 @@ NULL
 #'
 #' @examples
 #' cip_filter(cip, "History")
-#' cip_filter(cip, c("American", "History"))
+#' cip_filter(cip, "History", drop_any = c("^04", "^13", "^50"))
 #' cip_filter(cip, "History") %>%
 #'   cip_filter("American")
-#' cip_filter(cip, "^14") %>%
-#'   cip_filter(keep_any = "Civil")
+#' cip_filter(cip, cip_engr) %>%
+#'   cip_filter("Civil")
 #' @export
 cip_filter <- function(data = NULL, keep_any = NULL, ..., drop_any = NULL) {
 
@@ -46,32 +46,26 @@ cip_filter <- function(data = NULL, keep_any = NULL, ..., drop_any = NULL) {
   if(!(is.data.frame(data) || dplyr::is.tbl(data))) {
     stop("midfieldr::cip_filter, first argument must be a data.frame or tbl.")
   }
-  if (is.null(data)) {
-    stop("midfieldr::cip_filter, data cannot be NULL")
-  }
 
   # keep_any: rows to keep. Note that length(NULL) = 0.
   if (length(keep_any) > 0) {
-
     if(!(is.character(keep_any) || is.atomic(keep_any))) {
       stop("midfieldr::cip_filter, keep_any argument must be a character vector.")
     }
-    # here's the main filter for keep_any
+    # filter for keep_any
     search_string <- stringr::str_c(keep_any, collapse = "|")
     data <- dplyr::filter(data, any_row(dplyr::across(names(data), ~ stringr::str_detect(., regex(search_string, ignore_case = TRUE)))))
   }
 
   # drop_any: rows to delete
   if (length(drop_any) > 0) {
-
     if(!(is.character(drop_any) || is.atomic(drop_any))) {
       stop("midfieldr::cip_filter, drop_any argument must be a character vector.")
     }
-
-    # here's the main filter for drop_any
+    # filter for drop_any
     search_string <- stringr::str_c(drop_any, collapse = "|")
     data <- dplyr::filter(data, !any_row(dplyr::across(names(data), ~ stringr::str_detect(., regex(search_string, ignore_case = TRUE)))))
   }
-
   data <- data
 }
+"cip_filter"
