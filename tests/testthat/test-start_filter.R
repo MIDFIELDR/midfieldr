@@ -28,13 +28,6 @@ test_that("Error if incorrect series argument", {
   )
 })
 
-# test_that("error produced if ... incorrectly used", {
-#   expect_error(
-#     start_filter(x_cip6, x_cip6),
-#     "unexpected arguments"
-#   )
-# })
-
 test_that("reference produces expected results", {
   expect_equal(
     start_filter(data = ref1, codes = x_cip6_atom),
@@ -58,30 +51,5 @@ test_that("alternate id and cip6 work", {
     expected = c("id", "cip6"),
     ignore.order = TRUE
   )
-  # expect_named(
-  #   start_filter(
-  #     data      = ref4,
-  #     codes = "140201",
-  #     id        = "mid",
-  #     cip6      = "start"
-  #   ),
-  #   expected = c("mid", "start"),
-  #   ignore.order = TRUE
-  # )
-  # expect_error(
-  #   start_filter(
-  #     data      = ref4,
-  #     codes = "140201",
-  #     cip6      = "start"
-  #   ),
-  #   "use the id argument for non-default name"
-  # )
-  # expect_error(
-  #   start_filter(
-  #     data      = ref4,
-  #     codes = "140201",
-  #     id        = "mid"
-  #   ),
-  #   "use the cip6 argument for non-default name"
-  # )
 })
+

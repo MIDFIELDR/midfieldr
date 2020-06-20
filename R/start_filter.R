@@ -36,10 +36,7 @@ NULL
 #' @export
 start_filter <- function(data = NULL, codes = NULL, ..., id = "id", cip6 = "cip6") {
   if (!.pkgglobalenv$has_data) {
-    stop(paste(
-      "To use this function, you must have",
-      "the midfielddata package installed."
-    ))
+    stop("The midfielddata package must be installed.")
   }
 
   # force optional arguments to be usable only by name

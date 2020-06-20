@@ -8,13 +8,8 @@ NULL
 #' A set of customized layers for ggplot2 graphs.
 #'
 #' \describe{
-#' \item{\code{scale_x_log10_expon(...)}}{Applies the
-#'   \code{ggplot2::scale_x_log10(...)} function, marks the scale with
-#'   powers of ten in exponential form, and displays the logarithmic minor
-#'   grid lines.}
-#' \item{\code{theme_midfield(...)}}{Applies \code{theme_minimal(...)} with
-#'   additional edits: font family is "sans"; all text is 10 point; all
-#'   lines are pale gray (#D9D9D9) and size 0.4. }
+#' \item{\code{scale_x_log10_expon(...)}}{Applies the \code{scale_x_log10(...)} function from ggplot2 with the scale marked in exponential form powers of ten and with logarithmic minor grid lines.}
+#' \item{\code{theme_midfield(...)}}{Applies \code{theme_minimal(...)} from ggplot2 with replacements: all text is 10 pt; lines are light gray (#D9D9D9) and size 0.4.}
 #' }
 #'
 #' @param ... Arguments that pass to the ggplot2 function
@@ -22,9 +17,6 @@ NULL
 #' @name utils_graph
 #' @aliases NULL
 NULL
-
-
-
 
 #' @export
 #' @rdname utils_graph
@@ -43,10 +35,6 @@ scale_x_log10_expon <- function(...) {
     )
   )
 }
-
-
-
-
 
 #' @export
 #' @rdname utils_graph
