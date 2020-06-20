@@ -92,7 +92,7 @@ stratified sample of the MIDFIELD database.
 
 This package provides functions to access, manipulate, and graph student
 record data. To illustrate the workflow, we would use these functions to
-compute and display a persistence metric such as “stickiness”:
+compute and display the “stickiness” persistence metric:
 
   - `cip_filter()` to filter programs from the CIP data.
   - `cip6_select()` to select 6-digit CIPs and add custom labels.
