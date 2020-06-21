@@ -41,7 +41,7 @@ In addition to the standard codes and names, the midfielddata taxonomy includes 
 print(cip)
 
 # View the programs at the top level of the taxonomy
-unique(cip[ , 1:2])
+unique(cip[, 1:2])
 
 # As the data argument for cip_filter()
 cip_filter(cip, "^1410")

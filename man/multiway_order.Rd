@@ -38,5 +38,4 @@ df2
 df3 <- multiway_order(df1, return_medians = TRUE)
 df3 <- dplyr::arrange(df3, cat1, cat2)
 df3
-
 }

@@ -44,7 +44,6 @@ Optional arguments. Student ID variables in the midfielddata data sets are named
 \examples{
 library("midfielddata")
 (ever_filter(codes = "540104"))
-
 }
 \seealso{
 \code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP codes and naming programs.

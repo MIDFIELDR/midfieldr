@@ -35,7 +35,6 @@ Optional arguments. Student ID variables in the midfielddata data sets are named
 }
 \examples{
 placeholder <- 2 + 3
-
 }
 \seealso{
 \code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP codes and naming programs.

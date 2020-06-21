@@ -97,35 +97,37 @@ NULL
 
 
 
-#' CIP case data for four programs
+#' Example program data
 #'
-#' A subset of the [\code{cip}](cip.html) data frame for four engineering programs.
+#' Data for a case study.
 #'
-#' The 6-digit CIP codes and names plus a user-selected program name for Civil, Electrical, Industrial, and Mechanical Engineering. The data frame is used by several other vignettes as a starting point.
+#' The 6-digit CIP codes and names plus assigned program names for Civil, Electrical, Industrial, and Mechanical Engineering. The data frame is used in  several vignettes.
 #'
 #' @format A data frame (tibble) with 12 observations and 3 variables. All variables are characters. An observation is a unique program.
 #'
 #' \describe{
 #'   \item{cip6}{An instructional program's 6-digit code, representing "specific instructional programs".}
 #'   \item{cip6name}{Name of a program at the 6-digit level}
-#'   \item{program}{A program name used for grouping, summarizing, and joining.}
+#'   \item{program}{A program name assigned for grouping, summarizing, and joining.}
 #' }
 #'
 #' @seealso The "Gather program data" vignette.
 #'
 #' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
-"case_program_group"
+#' @examples
+#' exa_programs
+"exa_programs"
 
 
 
 
 
 
-#' Stickiness case data
+#' Example stickiness data
 #'
-#' An data frame of stickiness data grouped by program and student race/ethnicity and sex.
+#' Data for a case study.
 #'
-#' For Civil, Electrical, Industrial, and Mechanical Engineering, the number of students ever enrolled, the number of graduates, and the resulting stickiness.
+#' An data frame of stickiness data grouped by program and student race/ethnicity and sex. The number of students ever enrolled, the number of graduates, and the resulting stickiness for Civil, Electrical, Industrial, and Mechanical Engineering.
 #'
 #' @format A data frame (tibble) with 32 observations and 6 variables.
 #'
@@ -141,7 +143,9 @@ NULL
 #' @seealso The "Compute stickiness" vignette.
 #'
 #' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
-"case_stickiness"
+#' @examples
+#' exa_stickiness
+"exa_stickiness"
 
 
 
@@ -166,7 +170,7 @@ NULL
 #' @seealso The "Impute FYE starting majors" vignette.
 #'
 #' @source \href{https://midfieldr.github.io/midfielddata/}{\pkg{midfielddata} package}
-"case_fye"
+"cip_fye"
 
 
 

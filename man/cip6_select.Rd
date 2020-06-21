@@ -60,7 +60,6 @@ y <- cip6_select(x)
 y <- cip6_select(x, program = "cip6name")
 y <- cip6_select(x, program = "cip4name")
 y <- cip6_select(x, program = "cip2name")
-
 }
 \seealso{
 \code{\link[midfieldr]{cip_filter}} for exploring CIP codes.

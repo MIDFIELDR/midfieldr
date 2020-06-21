@@ -85,15 +85,15 @@ implemented in the [mice](https://stefvanbuuren.github.io/mice/) package (multiv
 
 The process is described in detail starting in the subsequent section. The process does take time---about 30 seconds for imputing the missing values in our FYE data with 5992 observations, 5 variables, and 5 imputations. 
 
-You can skip doing the imputation yourself if you wish. We've done it for you and saved the results. We provide a replacement data set `case_fye` with the ID and predicted starting major of all FYE students in the midfieldr data sets.  
+You can skip doing the imputation yourself if you wish. We've done it for you and saved the results. We provide a replacement data set `cip_fye` with the ID and predicted starting major of all FYE students in the midfieldr data sets.  
 
 We use these data in the package vignettes whenever an engineering starting major is required. You can do the same.
 
-To access the case data, just load midfieldr and assign `case_fye` to a variable. To distinguish the starting major from other 6-digit CIP codes used in this work, the imputed variable is `start` instead of `cip6`. 
+To access the case data, just load midfieldr and assign `cip_fye` to a variable. To distinguish the starting major from other 6-digit CIP codes used in this work, the imputed variable is `start` instead of `cip6`. 
 
 ```{r}
 # if midfieldr is loaded, assign the bundled data set to a variable
-df <- case_fye
+df <- cip_fye
 
 # examine the result
 glimpse(df)
@@ -101,7 +101,7 @@ glimpse(df)
 
 ## Preparing the FYE data for imputation
 
-You may skip the rest of the vignette and simply incorporate the imputed data `case_fye` in your analysis if the details of imputation are not important to you at this time. 
+You may skip the rest of the vignette and simply incorporate the imputed data `cip_fye` in your analysis if the details of imputation are not important to you at this time. 
 
 If the details are of interest to you, we start by conditioning the data to prepare it for imputation. 
 
@@ -280,19 +280,19 @@ load("R/sysdata.rda")
 mi_output <- mi_output
 ```
 
-## Data set: `case_fye`
+## Data set: `cip_fye`
 
-Construct the data set after imputation, keeping ID and starting major only. Reformat the start major as a character. The data frame, `case_fye`, is the data mentioned previously provided with the midfieldr package if you prefer not to do your own imputation.
+Construct the data set after imputation, keeping ID and starting major only. Reformat the start major as a character. The data frame, `cip_fye`, is the data mentioned previously provided with the midfieldr package if you prefer not to do your own imputation.
 
 ```{r}
-case_fye <- mice::complete(mi_output) %>%
+cip_fye <- mice::complete(mi_output) %>%
   select(id, cip6) %>%
   mutate(cip6 = as.character(cip6)) %>%
   unique() %>%
   glimpse()
 ```
 
-Total number of FYE students in `midfieldstudents` is `r dim(case_fye)[1]`. 
+Total number of FYE students in `midfieldstudents` is `r dim(cip_fye)[1]`. 
 
 ## Assessing the imputation. 
 
@@ -300,17 +300,17 @@ Confirm there are no missing values using `vis_dat::vis_dat()`. The result shows
 
 ```{r echo = FALSE, eval = FALSE}
 # using mice
-# md.pattern(case_fye, plot = TRUE)
+# md.pattern(cip_fye, plot = TRUE)
 ```
 
 ```{r mice-out, message = FALSE}
-vis_dat(case_fye, palette = "cb_safe")
+vis_dat(cip_fye, palette = "cb_safe")
 ```
 
 Examine to what majors and in what numbers the FYE students were assigned. 
 
 ```{r results = "hide"}
-case_fye %>%
+cip_fye %>%
   group_summarise(., "cip6", N = n()) %>%
   arrange(desc(N)) %>%
   left_join(., cip, by = "cip6") %>%
@@ -321,7 +321,7 @@ case_fye %>%
 
 ```{r echo = FALSE}
 # using kable_styling() for output but conceal from novice user
-case_fye %>%
+cip_fye %>%
   group_summarise(., "cip6", N = n()) %>%
   arrange(desc(N)) %>%
   left_join(., cip, by = "cip6") %>%

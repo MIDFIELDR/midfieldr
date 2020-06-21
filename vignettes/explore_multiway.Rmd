@@ -67,11 +67,11 @@ Many persistence metrics can be organized as *multiway data* in which there is i
 
 We'll use the [stickiness metric](compute_stickiness.html) to illustrate multiway graphs and data tables. Stickiness is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program [@stickiness2012]. 
 
-`case_stickiness` is a sample dataset included with midfieldr: 
+`exa_stickiness` is a sample dataset included with midfieldr: 
 
 ```{r}
 # an example dataset
-case_stickiness
+exa_stickiness
 ```
 
 The stickiness value `stick` is the quantitative variable we want. One  category is the academic `program` variable. The second category, `race_sex`,  will have to be constructed by combining the `race` and `sex` variables. 
@@ -84,7 +84,7 @@ We use:
 
 ```{r}
 # combine two variables into one
-stickiness <- case_stickiness %>%
+stickiness <- exa_stickiness %>%
   mutate(race_sex = stringr::str_c(race, sex, sep = " ")) %>%
   select(program, race_sex, stick) %>%
   glimpse()
@@ -169,7 +169,7 @@ When discussing the potential stories in multiway data, it is often convenient t
 Starting with the example data, the first thing to do before tabulating is to reduce the significant figure to an easily-read number and arrange the rows to facilitate looking up a number. 
 
 ```{r}
-stickiness_table <- case_stickiness %>%
+stickiness_table <- exa_stickiness %>%
   mutate(stick = round(stick, 2)) %>%
   arrange(program, sex, race)
 ```

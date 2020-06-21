@@ -17,5 +17,4 @@ Accesses the \code{midfieldr::rcb_colors} dataset and returns a hex color code.
 }
 \examples{
 rcb("dark_Br")
-
 }
