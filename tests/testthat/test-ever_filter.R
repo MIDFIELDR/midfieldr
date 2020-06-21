@@ -4,7 +4,7 @@ library("dplyr")
 library("midfieldr")
 
 ever1 <- ever_filter(codes = "540104")
-cip6  <- ever1["cip6"]
+cip6 <- ever1["cip6"]
 ever2 <- ever_filter(codes = "14YYYY")
 
 # get_my_path() in tests/testthat/helper.R
@@ -44,7 +44,7 @@ test_that("Optional reference argument returns correct values", {
 test_that("Input data frame can have different column names", {
   expect_equal(
     ever_filter(ref1, "030506")[["id"]],
-    ever_filter(ref2, "030506",  id = "altID", cip6 = "altCIP6")[["altID"]]
+    ever_filter(ref2, "030506", id = "altID", cip6 = "altCIP6")[["altID"]]
   )
   expect_equal(
     ever_filter(subset_terms, "030506")[["cip6"]],

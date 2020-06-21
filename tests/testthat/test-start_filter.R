@@ -6,7 +6,7 @@ library(dplyr)
 load(file = get_my_path("subset_students.rda"))
 
 x <- subset_students
-x_cip6_col  <- x["cip6"]
+x_cip6_col <- x["cip6"]
 x_cip6_atom <- x[["cip6"]]
 
 ref1 <- subset_students
@@ -52,4 +52,3 @@ test_that("alternate id and cip6 work", {
     ignore.order = TRUE
   )
 })
-

@@ -7,7 +7,7 @@ library(tidyr)
 load(file = get_my_path("subset_degrees.rda"))
 
 grad1 <- grad_filter(codes = "540104")
-cip6  <- grad1["cip6"]
+cip6 <- grad1["cip6"]
 grad2 <- grad_filter(codes = "14YYYY")
 grad3 <- grad_filter(subset_degrees, codes = "^52")
 
