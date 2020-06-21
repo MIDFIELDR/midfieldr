@@ -31,19 +31,21 @@ the MIDFIELD population data set. The sample contains data for 97,640
 undergraduates at 12 institutions from 1987–2016
 [(link)](https://midfieldr.github.io/midfielddata/).
 
-The midfielddata data dictionaries are a subset of the MIDFIELD
-dictionaries. When creating the midfielddata sample data set, some
-MIDFIELD variables were omitted and some were re-coded to preserve
-confidentiality. In general, however, scripts written for the
-midfielddata sample data set will work for the MIDFIELD population data
-set.
+For members of MIDFIELD partner institutions: The midfielddata data
+dictionaries are a subset of the MIDFIELD data dictionaries. When
+creating the midfielddata sample data set, some MIDFIELD variables were
+omitted and some were re-coded to preserve confidentiality. In general,
+however, scripts written for the midfielddata sample data set will work
+for the MIDFIELD population data set.
 
 ## Installation
 
 The data package is too large for CRAN, so it is stored on GitHub in a
 drat repository. Installation takes time; please be patient and wait for
-the Console prompt \> to reappear. Installation must be in the order
-shown: install midfielddata before midfieldr.
+the Console prompt \> to reappear.
+
+Installation must be in the order shown: install midfielddata before
+midfieldr.
 
 ``` r
 install.packages("midfielddata", repos = "https://MIDFIELDR.github.io/drat/", type = "source")
@@ -53,6 +55,13 @@ Install the development version of midfieldr from GitHub using:
 
 ``` r
 devtools::install_github("MIDFIELDR/midfieldr")
+```
+
+Once midfieldr is available on CRAN (planned for the summer of 2020),
+use:
+
+``` r
+install.packages("midfieldr")
 ```
 
 ## Data

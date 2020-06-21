@@ -32,7 +32,7 @@
 #' print(cip)
 #'
 #' # View the programs at the top level of the taxonomy
-#' unique(cip[ , 1:2])
+#' unique(cip[, 1:2])
 #'
 #' # As the data argument for cip_filter()
 #' cip_filter(cip, "^1410")
@@ -193,15 +193,3 @@ NULL
 #' rcb("dark_Br")
 #' rcb("light_Gn")
 "rcb_colors"
-
-
-
-
-
-
-
-
-
-
-
-

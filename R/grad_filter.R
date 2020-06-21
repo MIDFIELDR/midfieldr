@@ -35,7 +35,6 @@ NULL
 #' @examples
 #' library("midfielddata")
 #' (grad_filter(codes = "540104"))
-#'
 #' @export
 grad_filter <- function(data = NULL, codes = NULL, ..., id = "id", cip6 = "cip6", term = "term_degree") {
   if (!.pkgglobalenv$has_data) {
@@ -67,7 +66,7 @@ grad_filter <- function(data = NULL, codes = NULL, ..., id = "id", cip6 = "cip6"
   collapse_series <- stringr::str_c(codes, collapse = "|")
 
   # addresses R CMD check warning "no visible binding"
-  ID   <- NULL
+  ID <- NULL
   CIP6 <- NULL
   TERM <- NULL
 

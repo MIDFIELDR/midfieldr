@@ -12,7 +12,6 @@ NULL
 #'
 #' @examples
 #' rcb("dark_Br")
-#'
 #' @export
 rcb <- function(pattern) {
 

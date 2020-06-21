@@ -18,7 +18,7 @@ Additional improvements
 - `cip6_select(data, program)` can accommodate custom variable names in `data` different from the default `cip` variable names. 
 - `cip6_select(program = NULL)` assigns the `cip4name` values to the `program` variable. The old `cip_label()` NULL result was the 6-digit names. 
 - `cip6_select(program = "named_series")` is a new option for the program argument that assigns the appropriate named series to the `program` values. 
-- Content links and session information added to each vignette.  
+- Session information added.   
 - Added internal data bits, e.g., dimensions and memory requirements of midfielddata data frames, for use in vignettes and README. 
 - Vignettes updated with function revisions and improvements in response to feedback from workshop attendees. 
 - Updated tests.
@@ -32,19 +32,16 @@ Additional improvements
 - Corrected a testing problem. Moved some test data from sysdata to the testhat directory. 
 - Edit README per workshop feedback 
 
-## midfieldr 0.1.0.9002 / 2018-07-20
-
-- Add logo to README page 
 
 ## midfieldr 0.1.0.9001 / 2018-07-15
 
-- Add Getting started vignette 
-- Edit Readme 
+- Using midfieldr vignette 
+
 
 ## midfieldr 0.1.0.9000 / 2018-07-03
 
-- Add starter_filter() 
-- Add graduation rate vignette
+- starter_filter() 
+- Graduation rate vignette
 
 
 ## midfieldr 0.1.0 / 2018-06-20

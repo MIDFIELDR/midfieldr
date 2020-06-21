@@ -43,13 +43,13 @@ cip_filter <- function(data = NULL, keep_any = NULL, ..., drop_any = NULL) {
   if (is.null(data)) {
     data <- midfieldr::cip
   }
-  if(!(is.data.frame(data) || dplyr::is.tbl(data))) {
+  if (!(is.data.frame(data) || dplyr::is.tbl(data))) {
     stop("midfieldr::cip_filter, first argument must be a data.frame or tbl.")
   }
 
   # keep_any: rows to keep. Note that length(NULL) = 0.
   if (length(keep_any) > 0) {
-    if(!(is.character(keep_any) || is.atomic(keep_any))) {
+    if (!(is.character(keep_any) || is.atomic(keep_any))) {
       stop("midfieldr::cip_filter, keep_any argument must be a character vector.")
     }
     # filter for keep_any
@@ -59,7 +59,7 @@ cip_filter <- function(data = NULL, keep_any = NULL, ..., drop_any = NULL) {
 
   # drop_any: rows to delete
   if (length(drop_any) > 0) {
-    if(!(is.character(drop_any) || is.atomic(drop_any))) {
+    if (!(is.character(drop_any) || is.atomic(drop_any))) {
       stop("midfieldr::cip_filter, drop_any argument must be a character vector.")
     }
     # filter for drop_any

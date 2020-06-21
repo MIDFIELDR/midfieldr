@@ -50,7 +50,6 @@ NULL
 #' y <- cip6_select(x, program = "cip6name")
 #' y <- cip6_select(x, program = "cip4name")
 #' y <- cip6_select(x, program = "cip2name")
-#'
 #' @export
 cip6_select <- function(data, program = NULL, ..., cip6 = "cip6", cip6name = "cip6name", cip4name = "cip4name", cip2name = "cip2name") {
 
@@ -79,8 +78,8 @@ cip6_select <- function(data, program = NULL, ..., cip6 = "cip6", cip6name = "ci
       if (is.null(program) || identical(program, cip4name)) {
         program <- data[[CIP4NAME]]
 
-      # named series
-      } else if (identical(program, "named_series"))  {
+        # named series
+      } else if (identical(program, "named_series")) {
         series <- sort(data[[CIP6]])
         if (identical(series, sort(cip_engr))) {
           program <- "Engineering"
@@ -95,7 +94,7 @@ cip6_select <- function(data, program = NULL, ..., cip6 = "cip6", cip6name = "ci
         } else if (identical(series, sort(cip_phys_sci))) {
           program <- "Physical Sciences"
         } else {
-      # named series not recognized
+          # named series not recognized
           stop("cip6_select: Error in named series")
         }
       } else if (identical(program, cip2name)) {
@@ -103,7 +102,7 @@ cip6_select <- function(data, program = NULL, ..., cip6 = "cip6", cip6name = "ci
       } else if (identical(program, cip6name)) {
         program <- data[[CIP6NAME]]
       } else {
-      # input string is used
+        # input string is used
         program <- program
       }
       data <- tibble::add_column(data, program = program) %>%

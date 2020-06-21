@@ -32,7 +32,7 @@ NULL
 #' @return The input data frame is returned with two new columns for race and sex.
 #'
 #' @export
-race_sex_join <- function(data = NULL, demographics = NULL, ..., id = "id", race = "race",  sex = "sex") {
+race_sex_join <- function(data = NULL, demographics = NULL, ..., id = "id", race = "race", sex = "sex") {
 
   # force optional arguments to be usable only by name
   wrapr::stop_if_dot_args(substitute(list(...)), "race_sex_join")
@@ -56,9 +56,9 @@ race_sex_join <- function(data = NULL, demographics = NULL, ..., id = "id", race
   }
 
   # addresses R CMD check warning "no visible binding"
-  ID   <- NULL
+  ID <- NULL
   RACE <- NULL
-  SEX  <- NULL
+  SEX <- NULL
 
   # use wrapr::let() to allow alternate column names
 

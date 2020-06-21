@@ -36,7 +36,6 @@ NULL
 #' @examples
 #' library("midfielddata")
 #' (ever_filter(codes = "540104"))
-#'
 #' @export
 ever_filter <- function(data = NULL, codes = NULL, ..., id = "id", cip6 = "cip6", term = "term") {
   if (!.pkgglobalenv$has_data) {
@@ -67,7 +66,7 @@ ever_filter <- function(data = NULL, codes = NULL, ..., id = "id", cip6 = "cip6"
   collapse_series <- stringr::str_c(codes, collapse = "|")
 
   # addresses R CMD check warning "no visible binding"
-  ID   <- NULL
+  ID <- NULL
   CIP6 <- NULL
   TERM <- NULL
 

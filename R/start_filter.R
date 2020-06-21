@@ -32,7 +32,6 @@ NULL
 #'
 #' @examples
 #' placeholder <- 2 + 3
-#'
 #' @export
 start_filter <- function(data = NULL, codes = NULL, ..., id = "id", cip6 = "cip6") {
   if (!.pkgglobalenv$has_data) {
@@ -60,10 +59,10 @@ start_filter <- function(data = NULL, codes = NULL, ..., id = "id", cip6 = "cip6
   collapse_series <- stringr::str_c(codes, collapse = "|")
 
   # addresses R CMD check warning "no visible binding"
-  ID   <- NULL
+  ID <- NULL
   CIP6 <- NULL
 
-# use wrapr::let() to allow alternate column names
+  # use wrapr::let() to allow alternate column names
   mapping <- c(ID = id, CIP6 = cip6)
   wrapr::let(
     alias = mapping,

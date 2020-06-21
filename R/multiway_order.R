@@ -37,7 +37,6 @@ NULL
 #' df3 <- multiway_order(df1, return_medians = TRUE)
 #' df3 <- dplyr::arrange(df3, cat1, cat2)
 #' df3
-#'
 #' @export
 multiway_order <- function(data, return_medians = FALSE) {
   if (!(is.data.frame(data) || dplyr::is.tbl(data))) {
