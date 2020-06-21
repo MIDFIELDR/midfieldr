@@ -28,4 +28,7 @@ An data frame of stickiness data grouped by program and student race/ethnicity a
 \details{
 For Civil, Electrical, Industrial, and Mechanical Engineering, the number of students ever enrolled, the number of graduates, and the resulting stickiness.
 }
+\seealso{
+The "Compute stickiness" vignette.
+}
 \keyword{datasets}

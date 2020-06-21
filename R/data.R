@@ -2,32 +2,30 @@
 #'
 #' A dataset of codes and names for 1584 instructional programs organized on three levels: a 2-digit series, a 4-digit series, and a 6-digit series.
 #'
-#' 6-digit codes are used in the \pkg{midfielddata} datasets (\code{midfieldstudents},  \code{midfieldcourses},  \code{midfieldterms}, and  \code{midfielddegrees}) to encode program information as reported by the member institutions.
+#' 6-digit codes are used in the midfielddata datasets (\code{midfieldstudents},  \code{midfieldcourses},  \code{midfieldterms}, and  \code{midfielddegrees}) to encode program information as reported by the member institutions.
 #'
-#' In addition to the standard codes and names, the \pkg{midfielddata} taxonomy includes following three non-IPEDS codes:
+#' In addition to the standard codes and names, the midfielddata taxonomy includes following three non-IPEDS codes:
 #'
 #' \describe{
-#'   \item{14XXXX}{First-Year Engineering (FYE).}
+#'   \item{14XXXX}{First-Year Engineering (FYE). First-Year Engineering students are neither undecided nor undeclared. Their institutions admitted them as engineering students. We just don't know what their engineering starting major would have been had they not been required to enroll in the FYE program.}
 #'   \item{14YYYY}{Engineering-Focused Curricula (pseudo-FYE). For instances in which a student is eligible for admission to the institution but has not been admitted to an engineering program. Some institutions without FYE programs use such a designation in lieu of undecided or unspecified.}
 #'   \item{999999}{Undecided or Unspecified. For instances in which institutions reported no program information or that students were not enrolled in a program.}
 #' }
 #'
-#' First-Year Engineering (FYE) students are neither undecided nor undeclared. Their institutions admitted them as engineering students. We just don't know what their engineering starting major would have been had they not been required to enroll in the FYE program.
-#'
 #' @format A data frame (tibble) with 1584 observations and 6 variables. All variables are characters. An observation is a unique program.
 #'
 #' \describe{
-#'   \item{cip2}{An instructional program's 2-digit code,  representing "the most general groupings of related programs" (US National Center for Education Statistics).}
-#'   \item{cip2name}{Name of a program grouping at the 2-digit level.}
-#'   \item{cip4}{An instructional program's 4-digit code, representing "intermediate groupings of programs that have comparable content and objectives".}
-#'   \item{cip4name}{Name of a program grouping at the 4-digit level.}
-#'   \item{cip6}{An instructional program's 6-digit code, representing "specific instructional programs".}
+#'   \item{cip6}{An instructional program's 6-digit code, representing "specific instructional programs" (US National Center for Education Statistics).}
 #'   \item{cip6name}{Name of a specific program at the 6-digit level.}
+#'   \item{cip4}{The first 4 digits of \code{cip6} are an instructional program's 4-digit code, representing "intermediate groupings of programs that have comparable content and objectives".}
+#'   \item{cip4name}{Name of a program grouping at the 4-digit level.}
+#'   \item{cip2}{The first 2 digits of \code{cip6} are an instructional program's 2-digit code, representing "the most general groupings of related programs".}
+#'   \item{cip2name}{Name of a program grouping at the 2-digit level.}
 #' }
 #'
-#' @seealso The \pkg{midfieldr} vignette "Imputing FYE starting majors" describes a procedure for imputing the starting majors for FYE students, treating the FYE CIP codes as missing data.
+#' @seealso The "Explore program CIP codes" vignette.
 #'
-#' @source Based on the 2010 codes curated by the US National Center for Education Statistics (\url{https://nces.ed.gov/ipeds/cipcode}).
+#' @source US National Center for Education Statistics (NCES), Integrated Postsecondary Education Data System (IPEDS), 2020 CIP (\url{https://nces.ed.gov/ipeds/cipcode}).
 #'
 #' @examples
 #' # View the CIP data
@@ -103,15 +101,17 @@ NULL
 #'
 #' A subset of the [\code{cip}](cip.html) data frame for four engineering programs.
 #'
-#' The 6-digit CIP codes and names plus a user-selected program name for Civil, Electrical, Industrial, and Mechanical Engineering. The "Select and label programs" vignette describes how these data were assembled. The data frame is used by several other vignettes as a starting point.
+#' The 6-digit CIP codes and names plus a user-selected program name for Civil, Electrical, Industrial, and Mechanical Engineering. The data frame is used by several other vignettes as a starting point.
 #'
 #' @format A data frame (tibble) with 12 observations and 3 variables. All variables are characters. An observation is a unique program.
 #'
 #' \describe{
 #'   \item{cip6}{An instructional program's 6-digit code, representing "specific instructional programs".}
 #'   \item{cip6name}{Name of a program at the 6-digit level}
-#'   \item{program}{A program name used for grouping, summarizing, and graphing.}
+#'   \item{program}{A program name used for grouping, summarizing, and joining.}
 #' }
+#'
+#' @seealso The "Gather program data" vignette.
 #'
 #' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
 "case_program_group"
@@ -138,6 +138,8 @@ NULL
 #'  \item{stick}{Program stickiness: the ratio of the number of students graduating from a program to the number ever enrolled in the program.}
 #' }
 #'
+#' @seealso The "Compute stickiness" vignette.
+#'
 #' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
 "case_stickiness"
 
@@ -160,6 +162,8 @@ NULL
 #'  \item{id}{Unique, anonymized MIDFIELD student identifier.}
 #'  \item{cip6}{Imputed starting major (6-digit CIP code) of FYE students. }
 #' }
+#'
+#' @seealso The "Impute FYE starting majors" vignette.
 #'
 #' @source \href{https://midfieldr.github.io/midfielddata/}{\pkg{midfielddata} package}
 "case_fye"

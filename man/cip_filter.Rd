@@ -13,7 +13,7 @@ cip_filter(data = NULL, keep_any = NULL, ..., drop_any = NULL)
 
 \item{...}{Not used for values, forces later optional arguments to bind by name}
 
-\item{drop_any}{Character vector used to filter \code{data}, dropping all rows in which any matches or partial matches are detected.}
+\item{drop_any}{Character vector, optional argument. The output of the \code{keep_any} filter is the input to the \code{drop_any} filter, dropping all rows in which any matches or partial matches are detected.}
 }
 \value{
 Data frame

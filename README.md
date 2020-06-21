@@ -16,9 +16,9 @@ v3](man/figures/License-GPL-v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 MIDFIELD—the *Multiple-Institution Database for Investigating
 Engineering Longitudinal Development*—is a partnership of US higher
-education institutions with engineering programs. As of June, 2019,
-MIDFIELD contains registrar’s population data for 2.2M undergraduates at
-20 institutions from 1987–2017. The data are organized in four related
+education institutions with engineering programs. As of June, 2020,
+MIDFIELD contains registrar’s population data for 1.7M undergraduates at
+19 institutions from 1987–2019. The data are organized in four related
 tables: students, courses, terms, and degrees. The MIDFIELD population
 data set is available to partner institutions only
 [(link)](https://engineering.purdue.edu/MIDFIELD).

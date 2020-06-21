@@ -11,10 +11,6 @@ bibliography: ../inst/REFERENCES.bib
 link-citations: yes
 ---
 
-In analyzing student records, a common first step is filtering the data by academic program. In the US, programs are encoded by 6-digit CIP codes.
-
-In midfieldr, the `cip_filter()` function acts on the `cip` data set to help us find the CIP codes of the programs we want to study. 
-
 ```{r setup, echo = FALSE, message = FALSE, purl = FALSE}
 # knitr::opts_knit$set(root.dir = "../")
 knitr::opts_chunk$set(
@@ -47,35 +43,16 @@ knitr::knit_hooks$set(purl = knitr::hook_purl)
 knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
 ```
 
-
-
-
-
-   
-
-
-
-
 ## Introduction
 
-"CIP" is the acronym for *Classification of Instructional Programs*, a taxonomy of academic programs curated by the US Department of Education.  
+In studying student records, a common first step is to filter the data, retaining some instructional programs and dropping others. 
 
-A "CIP code" is a 6-digit integer representing a specific academic program. For example, 140803 is the CIP code for Structural Engineering and 450202 is the  CIP code for Physical Anthropology. 
+Programs in the US are encoded by "CIP" codes. CIP is the acronym for *Classification of Instructional Programs*, a taxonomy of academic programs curated by the US Department of Education [@cip2010].  
 
-The CIP code embeds three levels of program organization: the first 2 digits represent the most general grouping of programs to which the program belongs; the first 4 digits represent an intermediate grouping of programs to which the program belongs; the full 6 digits represent a specific program.  For example, 
-
-- Structural Engineering (140803) is a subset of Civil Engineering (1408) which is a subset of Engineering (14).  
-- Physical Anthropology (450202) is a subset of Anthropology (4502) which is a subset of Social Sciences (45) 
-
-The CIP is periodically updated. A 2020 CIP has been released, but MIDFIELD currently uses the 2010 CIP. Read more about the CIP at  [@cip2010]. 
-
-
-
-
+A CIP code is a 6-digit integer assigned to an instructional program. The 2010 CIP codes are included with midfieldr in the data set `cip`. To find the codes we need, we search `cip` using the `cip_filter()` function.
 
 <br>
 <a href="#top">&#9650; top of page</a>
-
 
 
 
@@ -87,59 +64,74 @@ library("midfieldr")
 library("dplyr")
 ```
 
-`cip` is a data frame bundled with midfieldr containing columns of 2, 4, and 6-digit 2010 CIP codes and program names. All columns are character strings. 
+The midfieldr package includes a data set called `cip` that provides the 2010 CIP codes and names for `r nrow(cip)` programs, one program per row. Every program has three codes: 
+
+- 6-digit code, a specific program
+- 4-digit code, a group of 6-digit programs of comparable content 
+- 2-digit code, a grouping of 4-digit groups of related content 
+
+`cip` can be viewed by running
 
 ```{r}
+# CIP data
 print(cip)
 ```
 
-At the 6-digit level, there are `r length(unique(cip$cip6))` instructional   programs. A sample is shown below. 
+```{r echo = FALSE}
+# x     <- cip_filter(cip, c(110103, 141003, 260911, 400604, 500916, 450204))
+# xcip6 <- x$cip6
+# nr    <- nrow(x)
+# y     <- cip_filter(cip, xcip6) %>% arrange(cip2)  
+# y[nr+1, c(1, 3, 5)] <- ""
+# y[nr+1, c(2, 4, 6)] <- "$\\vdots$"
+# kable2html(y)
+
+df     <- cip_filter(cip, "^41")
+n41    <- df %>% nrow()
+n4102  <- df %>% cip_filter("^4102") %>% nrow()
+n4103  <- df %>% cip_filter("^4103") %>% nrow()
+name41 <- df %>% select(cip2name) %>% unique()
+
+df24   <- cip  %>% cip_filter("^24")
+n24    <- df24 %>% nrow()
+name24 <- df24 %>% select(cip2name) %>% unique()
+
+df51   <- cip  %>% cip_filter("^51")
+n51    <- df51 %>% nrow()
+name51 <- df51 %>% select(cip2name) %>% unique()
+
+df1313   <- cip    %>% cip_filter("^1313")
+n1313    <- df1313 %>% nrow()
+name1313 <- df1313 %>% select(cip2name) %>% unique()
+```
+
+To illustrate how 6-, 4-, and 2-digit CIP codes are related, we tabulate below the programs in `r name41` (CIP code 41). We find `r n41` programs at the 6-digit level (codes 410000, 410101, ...) sorted into `r length(unique(df$cip4))` groups at the 4-digit level (codes 4100, 4101, ...) and one grouping  at the 2-digit level (code 41).  
 
 ```{r echo=FALSE}
-set.seed(20200617)
-cip %>% 
-        select(cip6, cip6name) %>% 
-        unique() %>% 
-        sample_n(8) %>% 
-        arrange(cip6) %>% 
+cip %>% cip_filter("^41") %>% 
         kable2html()
 ```
 <br>
 
-At the 4-digit level, the programs are organized into `r length(unique(cip$cip4))` program groupings, for example:  
+Higher-level groups comprise different numbers of lower-level groups. As shown above, codes 4102 and 4103  include `r n4103` programs each but codes 4100, 4101, and 4199 include only one program each. At the 2-digit level, code 41 comprises N = `r n41` programs total. 
 
-```{r echo=FALSE}
-cip %>% 
-        select(cip4, cip4name) %>% 
+In `cip` overall, the number of programs in a 2-digit grouping ranges from N = `r n24` (code 24, `r name24`) to N = `r n51` (code 51, `r name51`). Similarly, the number of programs in a 4-digit grouping ranges from N = 1, e.g., codes 4100, 4101, and 4199 shown above, to N = `r n1313` (code 1313, `r name1313`). 
+
+To see the full set of 2-digit codes, run: 
+
+```{r echo = -1}
+options(tibble.print_min = 12L)
+# all 2-digit CIP codes
+cip %>% select(cip2, cip2name) %>% 
         unique() %>% 
-        sample_n(8) %>% 
-        arrange(cip4) %>% 
-        kable2html()
+        print()
 ```
-<br>
 
-At the 2-digit level, the programs are organized into `r length(unique(cip$cip2))` program groupings, for example: 
+To learn more, open the help page by running 
 
-```{r echo=FALSE}
-cip %>% 
-        select(cip2, cip2name) %>% 
-        unique() %>% 
-        sample_n(8) %>% 
-        arrange(cip2) %>% 
-        kable2html()
+```r
+? cip
 ```
-<br>
-
-Notes. 
-
-- Instead of `print()`, one can use `View()` for a spreadsheet-style view of a result. 
-- We recommend that you examine the result of every step of your work to help find errors and correct them as you go. 
-- Reminder that is a sequence of operations using the pipe operator (`%>%`), the outcome of the one operation is assigned to the data argument of the next operation using the dot (`.`) argument.
-- To learn more, open the help page by running `? cip`.  
-
-
-
-
 
 
 
@@ -153,24 +145,32 @@ Notes.
 
 ## Filtering basics
 
+The variables in `cip` are all characters, facilitating filtering using character search terms. 
 
-`cip_filter()` filters a data frame by specified search terms. The arguments are: 
+```{r echo = -1}
+options(tibble.print_min = 5L)
+print(cip)
+```
 
-- `data` data frame of character strings of CIP codes and names   
-- `keep_any` character vector used to filter `data`, retaining rows containing any of these terms.
-- `drop_any` optional argument, character vector used to filter `data`, deleting rows containing any of these terms. 
+`cip_filter()` filters a data frame using character search terms. The arguments are: 
+
+- `data`: data frame of CIP codes and names    
+- `keep_any`: character vector used to filter `data`, retaining rows containing any of these terms.
+- `drop_any`: character vector, optional argument. The output of the `keep_any` filter is the input to the `drop_any` filter, dropping all rows in which any matches or partial matches are detected.
 
 
-For example, to filter the CIP data for all programs containing the word "engineering",
+For example, filtering the CIP data for all programs containing the word "engineering" yields `r nrow(cip_filter(cip, "engineering"))` observations. 
 
 ```{r}
+# filter basics
 cip_filter(data = cip, keep_any = "engineering") %>%
         print()
 ```
 
-The first two argument names can be omitted if they are in the correct order. We will generally omit argument names for the first one or two arguments unless disallowed by the function. 
+The first two argument names can be omitted if they are in the correct order. 
 
 ```{r}
+# argument names omitted
 cip_filter(cip, "engineering") %>%
         print()
 ```
@@ -178,20 +178,22 @@ cip_filter(cip, "engineering") %>%
 If the optional `drop_any` argument is used, it must be named, 
 
 ```{r}
-# correct
-cip_filter(cip, "civil engineering", drop_any = "technology") %>%
+# incorrect drop_any argument
+cip_filter(cip, "civil engineering", "technology") %>%
         print()
 
-# incorrect
-cip_filter(cip, "civil engineering", "technology") %>%
+# correct drop_any argument
+cip_filter(cip, "civil engineering", drop_any = "technology") %>%
         print()
 ```
 
 
-Notes. 
 
-- A function help page will indicate which arguments, if any, must be named. See the help page for this function by running `? cip_filter`. 
-- In subsequent sections, we examine different strategies for using `cip_filter()`.
+To learn more, open the help page by running 
+
+```r
+? cip_filter()
+```
 
 
 <br>
@@ -201,55 +203,34 @@ Notes.
 
 
 
-## Filtering using keywords
+## CIP filtering examples
+
+### Example 1. Filter by keywords
 
 Suppose we want to find the CIP codes and names for all programs in Civil Engineering. The search is case-insensitive, so we start with the following code chunk. 
 
 ```{r}
+# example 1 filter by keywords
 cip_filter(cip, "civil") %>%
         print() # View() can be used instead
 ```
 
-Again, for the R novice who prefers to name each argument, the same result is obtained with this code chunk: 
-
-```{r results = "hide"}
-cip_filter(data = cip, keep_any = "civil") %>%
-        print()
-```
-
-Notes on viewing the results:
-
-- The `print()` function sends an abbreviated view of the results to the Console. 
-- In the remaining code chunks, I'll leave `print()` in place but you are welcome to replace it with `View()` to invoke a spreadsheet-like data viewer.
-- For clarity on this vignette page, shorter data frames are printed as HTML tables, for example: 
-
-<br>
+For clarity on this vignette page, data frames are sometimes printed as HTML tables. For example, the previous code chunk yields this table:
 
 ```{r echo = FALSE}
 # using kable_styling() for output but conceal from novice user
 kable2html(cip_filter(data = cip, keep_any = "civil"))
 ```
-
 <br>
 
-The search returns some programs with Civilization in their names as well as Engineering Technology. If we wanted Civil Engineering only, we can use a sequence of function calls, where the outcome of the one operation is assigned to the data argument of the next operation using the dot (`.`) argument. 
+The search returns some programs with Civilization in their names as well as Engineering Technology. If we wanted Civil Engineering only, we can use a sequence of function calls, where the outcome of the one operation is assigned to the first argument of the next operation via the pipe `%>%` operator.  
 
-The following code chunk could be read as "Start with the `cip` data frame, then filter on 'civil', then filter on 'engineering', then delete 'technology.'"
+The following code chunk could be read as, "Start with the `cip` data frame, then keep any rows in which 'civil' is detected, then keep any rows in which 'engineering' is detected, then drop any rows in which 'technology' is detected."
 
 ```{r results = "hide"}
 cip %>%  
         cip_filter(keep_any = "civil") %>% 
         cip_filter(keep_any = "engineering") %>% 
-        cip_filter(drop_any = "technology") %>% 
-        print()
-```
-
-Only the `drop_any` argument must be named, so the following code chunk yields the same result, 
-
-```{r results = "hide"}
-cip %>% 
-        cip_filter("civil") %>% 
-        cip_filter("engineering") %>% 
         cip_filter(drop_any = "technology") %>% 
         print()
 ```
@@ -260,7 +241,6 @@ kable2html(cip %>%
         cip_filter("engineering") %>% 
         cip_filter(drop_any = "technology"))
 ```
-
 <br>
 
 Seeing that all Civil Engineering programs have the same `cip4name`, we could shorten our search to one line, 
@@ -274,11 +254,20 @@ cip_filter(cip, "civil engineering", drop_any = "technology") %>%
 kable2html(cip_filter(cip, "civil engineering", drop_any = "technology"))
 ```
 
-<br>
 
-In the next example, suppose we want to study programs relating to German culture, language, and literature. Using  "german" for the `keep_any` value yields 
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+### Example 2. Filter by codes
+
+Suppose we want to study programs relating to German culture, language, and literature. Using  "german" for the `keep_any` value yields 
 
 ```{r results = "hide"}
+# example 2 filter by codes
 cip_filter(cip, "german") %>%
         print()
 ```
@@ -289,9 +278,7 @@ kable2html(cip_filter(cip, "german"))
 
 <br>
 
-From the 6-digit program names we find only two that are of interest, German Studies (050125) and German Language and Literature (160501). 
-
-Note that the keep_any argument is a vector. 
+From the 6-digit program names we find only two that are of interest, German Studies (050125) and German Language and Literature (160501). We use a character vector to assign these two codes to the `keep_any` argument. 
  
 ```{r results = "hide"}
 cip_filter(cip, c("050125", "160501")) %>%
@@ -301,35 +288,39 @@ cip_filter(cip, c("050125", "160501")) %>%
 ```{r echo = FALSE}
 kable2html(cip_filter(cip, c("050125", "160501")))
 ```
-
 <br>
 
-If the 6-digit codes are entered as integers, they are coerced to characters and used as search terms as above.
+If the 6-digit codes are entered as integers, they are coerced to characters and used as search terms as above, yielding the same result. 
  
 ```{r results = "hide"}
 cip_filter(cip, c(050125, 160501)) %>%
         print()
 ```
 
-```{r echo = FALSE}
-kable2html(cip_filter(cip, c(050125, 160501)))
-```
-
-<br>
-
 Because integers are coerced to characters, we can use a numerical sequence as a series using `seq()`. Here, the sequence is from 540101 to 540199. Invalid codes, e.g., from 540109--540198, are silently ignored. 
 
 ```{r results = "hide"}
 # series as a sequence
-cip_filter(cip, kseq(540101, 540199, 1)) %>%
+cip_filter(cip, seq(540101, 540199, 1)) %>%
         print()
 ```
 
 ```{r echo = FALSE}
-kable2html(cip_filter(cip, kseq(540101, 540199, 1)))
+kable2html(cip_filter(cip, seq(540101, 540199, 1)))
 ```
 
+
+
+
+
 <br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+### Example 3. Filter with regular expressions
 
 Specifying 4-digit codes yields a data frame all 6-digit programs containing the 4-digit string. We use the regular expression notation `^` to match the start of the strings.
 
@@ -377,6 +368,9 @@ kable2html(cip_filter(cip, c("^24", "^4102", "^450202")))
 
 
 
+
+
+
 <br>
 <a href="#top">&#9650; top of page</a> 
 
@@ -384,11 +378,10 @@ kable2html(cip_filter(cip, c("^24", "^4102", "^450202")))
 
 
 
-## Filtering using named series
+
+### Example 4. Filter using named series
 
 midfieldr includes several datasets of *named series*. A named series is a character vector of 6-digit CIP codes that belong to a group of programs such as Engineering, Physical Sciences, STEM, etc. 
-
-
 
 A named series is assigned to the series argument in `cip_filter()`. 
 
@@ -404,7 +397,13 @@ kable2html(cip_filter(cip, keep_any = cip_math_stat))
 
 <br>
 
-To see the full set of available named series, see the help page `?cip_series`. 
+To see the full set of available named series, see the help page by running 
+
+```r
+? cip_series
+```
+
+
 
 
 
@@ -416,16 +415,26 @@ To see the full set of available named series, see the help page `?cip_series`.
 
 
 
-## Selecting the 6-digit codes
 
-Once we've identified the codes for all the programs we want to study, we extract the 6-digit CIP codes from our program group to use as search terms to identify students in these programs. 
 
-For example, if we were studying History, we filter CIPs using `"^54"`. Then we use the R `[[]]` notation to extract the vector of values in the `cip6` variable (column). 
+
+
+
+## Conclusion 
+
+Once we've identified all the programs we want to study, we extract a vector of 6-digit CIP codes to use later to identify students in these programs. 
+
+For example, if we were studying History, we filter CIPs using `"^54"`. 
 
 ```{r}
+# conclusion: extracting the 6-digit codes and names
 my_programs <- cip_filter(cip, "^54") %>% 
         print()
+```
 
+Then we use the R `[[]]` notation to extract the vector of values in the `cip6` variable (column). 
+
+```{r}
 my_cip6 <- my_programs[["cip6"]] %>% 
         print()
 ```
@@ -450,6 +459,10 @@ A vector like this is used later to find student-record data associated with the
 <div id="refs"></div>
 
 
+
+
+
+
 ## Appendix
 
 ### Complete script
@@ -457,7 +470,45 @@ A vector like this is used later to find student-record data associated with the
 In response to requests from some of our workshop attendees, we collect the vignette code chunks in one script. We condense the script by omitting exploratory steps so we can focus on the steps that produce the results. 
 
 ```{r eval=FALSE}
-# TBD
+# packages used in the vignette
+library("midfieldr")
+library("dplyr")
+
+# CIP data
+print(cip)
+
+# all 2-digit CIP codes
+cip %>% select(cip2, cip2name) %>% 
+        unique()
+
+# filter basics
+cip_filter(data = cip, keep_any = "engineering")
+cip_filter(cip, "engineering")
+cip_filter(cip, "civil engineering", drop_any = "technology")
+
+# example 1 filter by keywords
+cip_filter(cip, "civil")
+cip %>% cip_filter(keep_any = "civil") %>% 
+        cip_filter(keep_any = "engineering") %>% 
+        cip_filter(drop_any = "technology")
+
+# example 2 filter by codes
+cip_filter(cip, "german")
+cip_filter(cip, c("050125", "160501"))
+cip_filter(cip, c(050125, 160501))
+cip_filter(cip, seq(540101, 540199, 1))
+
+# example 3 filter with regular expressions
+cip_filter(cip, c("^1407", "^1408"))
+cip_filter(cip, "^54")
+cip_filter(cip, c("^24", "^4102", "^450202"))
+
+# example 3 filter using named series
+cip_filter(cip, keep_any = cip_math_stat)
+
+# conclusion: extracting the 6-digit codes and names 
+my_programs <- cip_filter(cip, "^54")
+my_cip6 <- my_programs[["cip6"]]
 ```
 
 <br>
