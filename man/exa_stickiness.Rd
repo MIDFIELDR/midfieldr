@@ -6,11 +6,10 @@
 \title{Example stickiness data}
 \format{
 A data frame (tibble) with 32 observations and 6 variables.
-
 \describe{
- \item{program}{Instructional programs selected for study.}
- \item{race}{Student race and sex from \code{midfieldstudents} data.}
- \item{sex}{Student sex from \code{midfieldstudents} data.}
+ \item{program}{Instructional programs selected for study. Character variable.}
+ \item{race}{Student race and sex from \code{midfieldstudents} data.  Character variable.}
+ \item{sex}{Student sex from \code{midfieldstudents} data.  Character variable.}
  \item{ever}{Number of students ever enrolled in a program. Grouped and summarized from \code{midfieldterms} data.}
  \item{grad}{Number of students graduating from the program. Grouped and summarized from \code{midfielddegrees} data.}
  \item{stick}{Program stickiness: the ratio of the number of students graduating from a program to the number ever enrolled in the program.}

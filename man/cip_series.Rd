@@ -12,7 +12,6 @@
 \title{Named series of 6-digit CIP codes}
 \format{
 An atomic character vector of 6-digit CIP codes.
-
 \describe{
 \item{\code{cip_bio_sci}}{Biological and biomedical science programs (2-digit CIP 26).}
 \item{\code{cip_engr}}{Engineering programs (2-digit CIP 14)}

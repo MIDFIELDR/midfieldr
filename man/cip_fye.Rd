@@ -5,8 +5,7 @@
 \alias{cip_fye}
 \title{Imputed starting majors for FYE students}
 \format{
-A data frame (tibble) with 5992 observations and 2 variables.
-
+A data frame (tibble) with 5992 observations and 2 variables. All variables are characters.
 \describe{
  \item{id}{Unique, anonymized MIDFIELD student identifier.}
  \item{cip6}{Imputed starting major (6-digit CIP code) of FYE students. }

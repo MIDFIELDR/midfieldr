@@ -29,7 +29,6 @@ A dataset of codes and names for 1584 instructional programs organized on three 
 6-digit codes are used in the midfielddata datasets (\code{midfieldstudents},  \code{midfieldcourses},  \code{midfieldterms}, and  \code{midfielddegrees}) to encode program information as reported by the member institutions.
 
 In addition to the standard codes and names, the midfielddata taxonomy includes following three non-IPEDS codes:
-
 \describe{
   \item{14XXXX}{First-Year Engineering (FYE). First-Year Engineering students are neither undecided nor undeclared. Their institutions admitted them as engineering students. We just don't know what their engineering starting major would have been had they not been required to enroll in the FYE program.}
   \item{14YYYY}{Engineering-Focused Curricula (pseudo-FYE). For instances in which a student is eligible for admission to the institution but has not been admitted to an engineering program. Some institutions without FYE programs use such a designation in lieu of undecided or unspecified.}

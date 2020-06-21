@@ -6,10 +6,9 @@
 \title{Example program data}
 \format{
 A data frame (tibble) with 12 observations and 3 variables. All variables are characters. An observation is a unique program.
-
 \describe{
-  \item{cip6}{An instructional program's 6-digit code, representing "specific instructional programs".}
-  \item{cip6name}{Name of a program at the 6-digit level}
+  \item{cip6}{An instructional program's 6-digit code, representing "specific instructional programs" (US National Center for Education Statistics).}
+  \item{cip6name}{Name of a specific program at the 6-digit level.}
   \item{program}{A program name assigned for grouping, summarizing, and joining.}
 }
 }
