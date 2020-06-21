@@ -161,13 +161,13 @@
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"midfieldr"</span>)</pre></body></html></div>
 <p>We want <code>midfieldstudents</code> for their starting term and transfer status; `<code>midfieldterms</code> for their first and last recorded terms, standing, and level; and <code>midfielddegrees</code> for the term they are awarded a degree if any.</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">students</span> <span class="kw">&lt;-</span> <span class="no">midfieldstudents</span> <span class="kw">%&gt;%</span>
-    <span class="fu">select</span>(<span class="no">id</span>, <span class="no">institution</span>, <span class="no">term_enter</span>, <span class="no">transfer</span>)
+  <span class="fu">select</span>(<span class="no">id</span>, <span class="no">institution</span>, <span class="no">term_enter</span>, <span class="no">transfer</span>)
 
 <span class="no">terms</span> <span class="kw">&lt;-</span> <span class="no">midfieldterms</span> <span class="kw">%&gt;%</span>
-    <span class="fu">select</span>(<span class="no">id</span>, <span class="no">institution</span>, <span class="no">term</span>, <span class="no">level</span>, <span class="no">standing</span>)
+  <span class="fu">select</span>(<span class="no">id</span>, <span class="no">institution</span>, <span class="no">term</span>, <span class="no">level</span>, <span class="no">standing</span>)
 
 <span class="no">degrees</span> <span class="kw">&lt;-</span> <span class="no">midfielddegrees</span> <span class="kw">%&gt;%</span>
-    <span class="fu">select</span>(<span class="no">id</span>, <span class="no">institution</span>, <span class="no">term_degree</span>)</pre></body></html></div>
+  <span class="fu">select</span>(<span class="no">id</span>, <span class="no">institution</span>, <span class="no">term_degree</span>)</pre></body></html></div>
 <p>Review</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu">glimpse</span>(<span class="no">students</span>)
 <span class="co">#&gt; Rows: 97,640</span>
@@ -193,12 +193,12 @@
 <p>Using terms, find the min and max terms in the data for each institution</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">tibble.print_min</span> <span class="kw">=</span> <span class="fl">12L</span>)
 <span class="no">this_group</span> <span class="kw">&lt;-</span> <span class="fu">group_by</span>(<span class="no">terms</span>, <span class="no">institution</span>)
-<span class="no">inst_span</span>  <span class="kw">&lt;-</span> <span class="fu">summarize</span>(
-    <span class="no">this_group</span>,
-    <span class="kw">inst_min</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(<span class="no">term</span>),
-    <span class="kw">inst_max</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(<span class="no">term</span>)
-    ) <span class="kw">%&gt;%</span>
-    <span class="fu">arrange</span>(<span class="no">inst_min</span>)
+<span class="no">inst_span</span> <span class="kw">&lt;-</span> <span class="fu">summarize</span>(
+  <span class="no">this_group</span>,
+  <span class="kw">inst_min</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(<span class="no">term</span>),
+  <span class="kw">inst_max</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(<span class="no">term</span>)
+) <span class="kw">%&gt;%</span>
+  <span class="fu">arrange</span>(<span class="no">inst_min</span>)
 <span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 
 <span class="no">inst_span</span>
@@ -220,12 +220,12 @@
 <p>For the 6-year span at the end of an institution’s data span, all graduates can be counted—the non-graduates must be checked for pos-grad-6.</p>
 <p>Separate grads from non-grads.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">pos_grad6_id</span> <span class="kw">&lt;-</span> <span class="no">degrees</span> <span class="kw">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">term_degree</span>)) <span class="kw">%&gt;%</span>
-    <span class="fu">select</span>(<span class="no">id</span>)
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">term_degree</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu">select</span>(<span class="no">id</span>)
 
 <span class="no">non_grads</span> <span class="kw">&lt;-</span> <span class="no">degrees</span> <span class="kw">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">term_degree</span>)) <span class="kw">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>()</pre></body></html></div>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">term_degree</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>()</pre></body></html></div>
 <p>Confirm that the student IDs are unique.</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu">glimpse</span>(<span class="no">pos_grad6_id</span>)
 <span class="co">#&gt; Rows: 47,499</span>
@@ -244,10 +244,10 @@
 <span class="co">#&gt; [1] 50141</span></pre></body></html></div>
 <p>Join the student’s entering term and transfer status and the institution’s last term with the non-grads.</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">non_grads</span> <span class="kw">&lt;-</span> <span class="no">non_grads</span> <span class="kw">%&gt;%</span>
-    <span class="fu">left_join</span>(<span class="no">.</span>, <span class="no">students</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"institution"</span>)) <span class="kw">%&gt;%</span>
-    <span class="fu">left_join</span>(<span class="no">.</span>, <span class="no">inst_span</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"institution"</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">select</span>(<span class="no">id</span>, <span class="no">institution</span>, <span class="no">transfer</span>, <span class="no">inst_max</span>, <span class="no">term_enter</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">mutate</span>(<span class="kw">delta</span> <span class="kw">=</span> <span class="no">inst_max</span> - <span class="no">term_enter</span>)
+  <span class="fu">left_join</span>(<span class="no">.</span>, <span class="no">students</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"institution"</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu">left_join</span>(<span class="no">.</span>, <span class="no">inst_span</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"institution"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu">select</span>(<span class="no">id</span>, <span class="no">institution</span>, <span class="no">transfer</span>, <span class="no">inst_max</span>, <span class="no">term_enter</span>) <span class="kw">%&gt;%</span>
+  <span class="fu">mutate</span>(<span class="kw">delta</span> <span class="kw">=</span> <span class="no">inst_max</span> - <span class="no">term_enter</span>)
 
 <span class="no">non_grads</span>
 <span class="co">#&gt; # A tibble: 50,141 x 6</span>
@@ -278,8 +278,8 @@
 <span class="co">#&gt; [127] 241 243 250 251</span></pre></body></html></div>
 <p>If the <span class="math inline">\(\Delta \geq 60\)</span> then clearly it was possible for a student to graduate in 6 years. Add the keepers to the pos-grad-6 set of IDs.</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">keepers</span> <span class="kw">&lt;-</span> <span class="no">non_grads</span> <span class="kw">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">delta</span> <span class="kw">&gt;=</span> <span class="fl">60</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">select</span>(<span class="no">id</span>)
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">delta</span> <span class="kw">&gt;=</span> <span class="fl">60</span>) <span class="kw">%&gt;%</span>
+  <span class="fu">select</span>(<span class="no">id</span>)
 
 <span class="no">pos_grad6_id</span> <span class="kw">&lt;-</span> <span class="fu">bind_rows</span>(<span class="no">pos_grad6_id</span>, <span class="no">keepers</span>)
 <span class="fu">glimpse</span>(<span class="no">pos_grad6_id</span>)
@@ -288,7 +288,7 @@
 <span class="co">#&gt; $ id &lt;chr&gt; "MID25783162", "MID25783178", "MID25783188", "MID25783195", "MID...</span></pre></body></html></div>
 <p>The group of non-grads that remains needs further study</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">study_group</span> <span class="kw">&lt;-</span> <span class="no">non_grads</span> <span class="kw">%&gt;%</span>
-        <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">delta</span> <span class="kw">&lt;</span> <span class="fl">60</span>)
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">delta</span> <span class="kw">&lt;</span> <span class="fl">60</span>)
 
 <span class="no">study_group</span>
 <span class="co">#&gt; # A tibble: 26,451 x 6</span>
@@ -309,7 +309,7 @@
 <span class="co">#&gt; # ... with 26,439 more rows</span></pre></body></html></div>
 <p>Let’s start by separating transfers and non-transfers. Non-transfers with <span class="math inline">\(\Delta &lt; 60\)</span> will be assumed to not satisfy pos-grad-6. Their IDs will be excluded from further analysis.</p>
 <div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">non_transfer</span> <span class="kw">&lt;-</span> <span class="no">study_group</span> <span class="kw">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">transfer</span> <span class="kw">==</span> <span class="st">"N"</span>)
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">transfer</span> <span class="kw">==</span> <span class="st">"N"</span>)
 
 <span class="no">exclude_id</span> <span class="kw">&lt;-</span> <span class="no">non_transfer</span>
 <span class="no">exclude_id</span>
@@ -331,9 +331,9 @@
 <span class="co">#&gt; # ... with 23,039 more rows</span></pre></body></html></div>
 <p>For the transfer students, the length of time from their entering term to the last term in the institution data depends on their entering status. Join level and standing from terms data.</p>
 <div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">transfer</span> <span class="kw">&lt;-</span> <span class="no">study_group</span> <span class="kw">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">transfer</span> <span class="kw">==</span> <span class="st">"Y"</span>) <span class="kw">%&gt;%</span>
-    <span class="fu">left_join</span>(<span class="no">.</span>, <span class="no">terms</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"institution"</span>)) <span class="kw">%&gt;%</span>
-    <span class="fu">select</span>(<span class="no">id</span>, <span class="no">delta</span>, <span class="no">term_enter</span>, <span class="no">term</span>, <span class="no">level</span>, <span class="no">standing</span>)
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">transfer</span> <span class="kw">==</span> <span class="st">"Y"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu">left_join</span>(<span class="no">.</span>, <span class="no">terms</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"institution"</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu">select</span>(<span class="no">id</span>, <span class="no">delta</span>, <span class="no">term_enter</span>, <span class="no">term</span>, <span class="no">level</span>, <span class="no">standing</span>)
 
 <span class="no">transfer</span>
 <span class="co">#&gt; # A tibble: 13,524 x 6</span>
@@ -364,11 +364,10 @@
 </li>
 </ul>
 <div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">keepers</span> <span class="kw">&lt;-</span> <span class="no">transfer</span> <span class="kw">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>((<span class="no">level</span> <span class="kw">==</span> <span class="st">"Freshman"</span>   <span class="kw">&amp;</span> <span class="no">delta</span> <span class="kw">&gt;</span> <span class="fl">50</span>) <span class="kw">|</span>
-                    (<span class="no">level</span> <span class="kw">==</span> <span class="st">"Sophomore"</span> <span class="kw">&amp;</span> <span class="no">delta</span> <span class="kw">&gt;</span> <span class="fl">40</span>) <span class="kw">|</span>
-                    (<span class="no">level</span> <span class="kw">==</span> <span class="st">"Junior"</span>    <span class="kw">&amp;</span> <span class="no">delta</span> <span class="kw">&gt;</span> <span class="fl">30</span>) <span class="kw">|</span>
-                    (<span class="no">level</span> <span class="kw">==</span> <span class="st">"Senior"</span>    <span class="kw">&amp;</span> <span class="no">delta</span> <span class="kw">&gt;</span> <span class="fl">20</span>)
-                 )
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>((<span class="no">level</span> <span class="kw">==</span> <span class="st">"Freshman"</span> <span class="kw">&amp;</span> <span class="no">delta</span> <span class="kw">&gt;</span> <span class="fl">50</span>) <span class="kw">|</span>
+    (<span class="no">level</span> <span class="kw">==</span> <span class="st">"Sophomore"</span> <span class="kw">&amp;</span> <span class="no">delta</span> <span class="kw">&gt;</span> <span class="fl">40</span>) <span class="kw">|</span>
+    (<span class="no">level</span> <span class="kw">==</span> <span class="st">"Junior"</span> <span class="kw">&amp;</span> <span class="no">delta</span> <span class="kw">&gt;</span> <span class="fl">30</span>) <span class="kw">|</span>
+    (<span class="no">level</span> <span class="kw">==</span> <span class="st">"Senior"</span> <span class="kw">&amp;</span> <span class="no">delta</span> <span class="kw">&gt;</span> <span class="fl">20</span>))
 
 <span class="no">keepers</span>
 <span class="co">#&gt; # A tibble: 0 x 6</span>
