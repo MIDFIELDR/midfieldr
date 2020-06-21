@@ -109,18 +109,18 @@ If the details are of interest to you, we start by conditioning the data to prep
 
 ```{r}
 fye_id <- midfieldstudents %>%
-        filter(cip6 %in% c("14XXXX", "14YYYY")) %>%
-        select(id) %>%
-        unique() %>%
-        glimpse()
+  filter(cip6 %in% c("14XXXX", "14YYYY")) %>%
+  select(id) %>%
+  unique() %>%
+  glimpse()
 ```
 
 Extract from `midfieldterms` all the term data for these students. `semi_join(x, y)` returns all rows from x where there are matching values in y, keeping just columns from x.
 
 ```{r}
 all_fye_terms <- semi_join(midfieldterms, fye_id, by = "id") %>%
-        select(id, cip6, term) %>%
-        glimpse()
+  select(id, cip6, term) %>%
+  glimpse()
 ```
 
 **Step 2.** Subset the students who declare an engineering major after FYE.
@@ -129,13 +129,13 @@ Keeping those terms in which FYE is the declared major, we arrange the rows by I
 
 ```{r}
 last_fye_terms <- all_fye_terms %>%
-        filter(cip6 %in% c("14XXXX", "14YYYY")) %>%
-        arrange(id, desc(term)) %>%
-        group_by(id) %>%
-        filter(row_number() == 1) %>%
-        ungroup() %>%
-        select(id, end_fye = term) %>%
-        glimpse()
+  filter(cip6 %in% c("14XXXX", "14YYYY")) %>%
+  arrange(id, desc(term)) %>%
+  group_by(id) %>%
+  filter(row_number() == 1) %>%
+  ungroup() %>%
+  select(id, end_fye = term) %>%
+  glimpse()
 ```
 
 We join the column `end_fye` to the `all_fye_terms` data frame. `left_join(x, y)` returns all rows from x, and all columns from x and y. All multiple matches between x and y are returned.
@@ -148,20 +148,20 @@ Arranging by ID and *ascending*  term and grouped by ID, each first row is a stu
 
 ```{r}
 fye_to_engr <- fye_to_engr %>%
-        filter(term > end_fye) %>%
-        arrange(id, term) %>%
-        group_by(id) %>%
-        filter(row_number() == 1) %>%
-        ungroup()
+  filter(term > end_fye) %>%
+  arrange(id, term) %>%
+  group_by(id) %>%
+  filter(row_number() == 1) %>%
+  ungroup()
 ```
 
 Because this data frame denotes students transitioning to an engineering major, we filter to keep only those whose CIP starts with "14." For these students, the predicted starting major is their declared engineering major after FYE. 
 
 ```{r}
 fye_to_engr <- fye_to_engr %>%
-        filter(str_detect(cip6, "^14")) %>%
-        select(id, cip6) %>%
-        glimpse()
+  filter(str_detect(cip6, "^14")) %>%
+  select(id, cip6) %>%
+  glimpse()
 ```
 
 **Step 3.** The remaining FYE students have an unknown starting major. 
@@ -172,8 +172,8 @@ For these students, the predicted starting major after FYE is assumed missing (N
 
 ```{r}
 fye_to_nonengr <- anti_join(fye_id, fye_to_engr, by = "id") %>%
-        mutate(cip6 = NA_character_) %>%
-        glimpse()
+  mutate(cip6 = NA_character_) %>%
+  glimpse()
 ```
 
 **Step 4.** Combine the two data frames and finish the data preparation.  
@@ -182,38 +182,40 @@ Bind the two data frames.
 
 ```{r}
 fye_start <- bind_rows(fye_to_engr, fye_to_nonengr) %>%
-        glimpse()
+  glimpse()
 ```
 
 Extract from `midfieldstudents` the institution names by student ID. `semi_join(x, y)` returns all rows from x where there are matching values in y, keeping just columns from x.
 
 ```{r}
 inst_id <- semi_join(midfieldstudents, fye_start, by = "id") %>%
-        select(id, institution) %>%
-        unique() %>%
-        glimpse()
+  select(id, institution) %>%
+  unique() %>%
+  glimpse()
 ```
 
 Join the institutions to the FYE starters data frame and add race and sex using `race_sex_join()`. We assume that these variables are appropriate predictors. 
 
 ```{r}
 fye_start <- left_join(fye_start, inst_id, by = "id") %>%
-        race_sex_join() %>%
-        select(id, institution, race, sex, cip6) %>%
-        unique() %>%
-        glimpse()
+  race_sex_join() %>%
+  select(id, institution, race, sex, cip6) %>%
+  unique() %>%
+  glimpse()
 ```
 
 Convert the character variables to factors to use with mice. The resulting data frame `mi_input` is ready to be operated on by mice. 
 
 ```{r}
 mi_input <- fye_start %>%
-        arrange(institution, race, sex, cip6) %>%
-        mutate(institution = as.factor(institution),
-                race = as.factor(race),
-                sex = as.factor(sex),
-                cip6 = as.factor(cip6)) %>%
-        glimpse()
+  arrange(institution, race, sex, cip6) %>%
+  mutate(
+    institution = as.factor(institution),
+    race = as.factor(race),
+    sex = as.factor(sex),
+    cip6 = as.factor(cip6)
+  ) %>%
+  glimpse()
 ```
 
 ## Imputing missing data
@@ -236,8 +238,8 @@ vis_miss(mi_input, cluster = TRUE, sort_miss = TRUE)
 Initialize parameters. 
 
 ```{r}
-init  <- mice(mi_input, maxit = 0)
-meth  <- init$method
+init <- mice(mi_input, maxit = 0)
+meth <- init$method
 predM <- init$predictorMatrix
 ```
 
@@ -263,12 +265,12 @@ Run the multiple (m = 5) imputations. The seed is set for reproducible results. 
 
 ```{r warning = FALSE, eval = FALSE}
 mi_output <- mice(
-        mi_input,
-        method = meth,
-        predictorMatrix = predM,
-        m = 5,
-        printFlag = TRUE,
-        seed = 20180624
+  mi_input,
+  method = meth,
+  predictorMatrix = predM,
+  m = 5,
+  printFlag = TRUE,
+  seed = 20180624
 )
 ```
 
@@ -284,10 +286,10 @@ Construct the data set after imputation, keeping ID and starting major only. Ref
 
 ```{r}
 case_fye <- mice::complete(mi_output) %>%
-        select(id, cip6) %>%
-        mutate(cip6 = as.character(cip6)) %>%
-        unique() %>%
-        glimpse()
+  select(id, cip6) %>%
+  mutate(cip6 = as.character(cip6)) %>%
+  unique() %>%
+  glimpse()
 ```
 
 Total number of FYE students in `midfieldstudents` is `r dim(case_fye)[1]`. 
@@ -309,22 +311,22 @@ Examine to what majors and in what numbers the FYE students were assigned.
 
 ```{r results = "hide"}
 case_fye %>%
-        group_summarise(., "cip6", N = n()) %>%
-        arrange(desc(N)) %>%
-        left_join(., cip, by = "cip6") %>%
-        select(cip4, cip4name, N) %>%
-        kable()
+  group_summarise(., "cip6", N = n()) %>%
+  arrange(desc(N)) %>%
+  left_join(., cip, by = "cip6") %>%
+  select(cip4, cip4name, N) %>%
+  kable()
 ```
 
 
 ```{r echo = FALSE}
 # using kable_styling() for output but conceal from novice user
 case_fye %>%
-        group_summarise(., "cip6", N = n()) %>%
-        arrange(desc(N)) %>%
-        left_join(., cip, by = "cip6") %>%
-        select(cip4, cip4name, N) %>%
-        kable2html()
+  group_summarise(., "cip6", N = n()) %>%
+  arrange(desc(N)) %>%
+  left_join(., cip, by = "cip6") %>%
+  select(cip4, cip4name, N) %>%
+  kable2html()
 ```
 
 

@@ -36,7 +36,7 @@ knitr::knit_hooks$set(inline = function(x) {
   } else {
     prettyNum(round(x, 2))
   }
-  })
+})
 options(tibble.print_min = 8L, tibble.print_max = 8L)
 
 # normally, purl is FALSE. But in some code chunks, I want purl = TRUE so that the code in the vignette is executed to pass R CMD check. These next few lines set that up. In the code chunk header, add opts.label = 'dopurl'
@@ -84,7 +84,7 @@ The workflow is:
 ## Choose programs
 
 ```{r message = FALSE}
-# packages used 
+# packages used
 library("midfieldr")
 library("midfielddata")
 library("dplyr")
@@ -119,7 +119,7 @@ As part of the problem setup, we define a vector of variable names that will be 
 - `left_join()` from dplyr 
 
 ```{r}
-# variable names for grouping, summarizing, and joining 
+# variable names for grouping, summarizing, and joining
 grouping_variables <- c("program", "race", "sex")
 ```
 
@@ -152,23 +152,23 @@ The `codes` argument in this case is an atomic vector of the 6-digit CIP codes i
 ```{r}
 # extract the 6-digit CIPs as a search series
 program_series <- program_group[["cip6"]] %>%
-        unique() %>%
-        sort() %>%
-        print()
+  unique() %>%
+  sort() %>%
+  print()
 ```
 
 Extract all students from midfieldterms ever enrolled in these programs. 
 
 ```{r opts.label = 'dopurl'}
-students <- ever_filter(data = midfieldterms, codes = program_series) %>% 
-        print()
+students <- ever_filter(data = midfieldterms, codes = program_series) %>%
+  print()
 ```
 
 If one is working strictly with the data sets in midfielddata, then the data argument can be omitted because if `data` is NULL, its default assignment is `midfielddata::midfieldterms`.  Thus, the following code yields the same result as the one above. 
 
 ```{r}
-students <- ever_filter(codes = program_series) %>% 
-        print()
+students <- ever_filter(codes = program_series) %>%
+  print()
 ```
 
 View the result to check the number of observations and to view the first few values of each variable. We see that we have `r nrow(students)` students ever enrolled in these programs. 
@@ -197,7 +197,7 @@ Open the help page by running
 
 ```{r}
 students <- race_sex_join(data = students, demographics = midfieldstudents) %>%
-        print()
+  print()
 ```
 
 If the argument to `race_sex_join()` already includes a `sex` or `race` column, that column (or columns) is returned unchanged. Open the help page by running
@@ -210,7 +210,7 @@ Next we join our custom program names to the student data. We use `left_join()` 
 
 ```{r}
 students <- left_join(students, program_group, by = "cip6") %>%
-        print()
+  print()
 ```
 
 We use `group_summarize()` (an seplyr function) to group and count the numbers of students ever enrolled in our programs.  All variables in `students` not used as grouping variables are quietly dropped. The assigned count variable is `ever`. 
@@ -218,7 +218,7 @@ We use `group_summarize()` (an seplyr function) to group and count the numbers o
 ```{r}
 # count students ever enrolled in programs
 ever_enrolled <- group_summarize(students, grouping_variables, "ever" = n()) %>%
-        print()
+  print()
 ```
 
 
@@ -244,10 +244,10 @@ Reminder that in a sequence of operations using the pipe operator (`%>%`), the o
 ```{r}
 # count students graduating from programs
 graduated <- grad_filter(codes = program_series) %>%
-        race_sex_join() %>% 
-        left_join(program_group, by = "cip6") %>%
-        group_summarize(., grouping_variables, "grad" = n()) %>%
-        print()
+  race_sex_join() %>%
+  left_join(program_group, by = "cip6") %>%
+  group_summarize(., grouping_variables, "grad" = n()) %>%
+  print()
 ```
 
 
@@ -259,10 +259,10 @@ Notes.
 
 ```{r results = "hide"}
 graduated <- grad_filter(codes = program_series) %>%
-        race_sex_join(.) %>% 
-        left_join(., program_group, by = "cip6") %>%
-        group_summarize(., grouping_variables, "grad" = n()) %>%
-        print(.)
+  race_sex_join(.) %>%
+  left_join(., program_group, by = "cip6") %>%
+  group_summarize(., grouping_variables, "grad" = n()) %>%
+  print(.)
 ```
 
 
@@ -291,7 +291,7 @@ To set up the stickiness calculation, we join `graduated` to `ever_enrolled` by 
 
 ```{r}
 stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables) %>%
-        print()
+  print()
 ```
 
 We suggest omitting observations with 5 or fewer students ever enrolled. 
@@ -306,8 +306,8 @@ Finally, we create `stick`, the ratio of `grad` to `ever`. Stickiness is reporte
 options(tibble.print_min = 10L)
 # tally stickiness
 stickiness <- stickiness %>%
-        mutate(stick = round(grad / ever, 3)) %>%
-        print()
+  mutate(stick = round(grad / ever, 3)) %>%
+  print()
 ```
 
 
@@ -331,8 +331,8 @@ We use `filter()` (a [dplyr](http://dplyr.tidyverse.org) function) to keep all r
 ```{r}
 # prepare data for graph
 stickiness_mw <- stickiness %>%
-        filter(!race %in% c("Unknown", "International", "Other")) %>%
-        filter(!sex %in% "Unknown")
+  filter(!race %in% c("Unknown", "International", "Other")) %>%
+  filter(!sex %in% "Unknown")
 ```
 
 This example has no "Unknown" values in `sex`, but the larger data set does have a few. For completeness, I've also filtered to remove those observations.  
@@ -348,9 +348,9 @@ We use:
 ```{r}
 # create the race_sex variable
 stickiness_mw <- stickiness_mw %>%
-        mutate(race_sex = str_c(race, sex, sep = " ")) %>%
-        select(program, race_sex, stick) %>%
-        print()
+  mutate(race_sex = str_c(race, sex, sep = " ")) %>%
+  select(program, race_sex, stick) %>%
+  print()
 ```
 
 `multiway_order()` converts the character variables `program` and `race_sex` into *factors* and orders the levels of the two factors by the relevant stickiness medians. `glimpse()` shows that the two categorical variables are now factors. 
@@ -358,7 +358,7 @@ stickiness_mw <- stickiness_mw %>%
 ```{r}
 # convert the data to a multiway structure
 stickiness_mw <- multiway_order(stickiness_mw) %>%
-        print()
+  print()
 ```
 
 Open the help page by running 
@@ -392,10 +392,10 @@ By using `multiway_order()` to condition the data, the rows and panels of the mu
 
 ```{r fig1, fig.asp = 2/1.6}
 ggplot(stickiness_mw, aes(x = stick, y = race_sex)) +
-        facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-        geom_point(na.rm = TRUE) +
-        labs(x = "Stickiness", y = "") +
-        theme_midfield()
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(x = "Stickiness", y = "") +
+  theme_midfield()
 ```
 
 We also apply our own `theme_midfield()` to edit the visual properties of the graph: axes, legends, panels, strips, etc. Open the help page by running

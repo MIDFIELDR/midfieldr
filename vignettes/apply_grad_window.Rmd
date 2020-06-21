@@ -64,14 +64,14 @@ library("midfieldr")
 We want `midfieldstudents` for their starting term and transfer status; ``midfieldterms` for their first and last recorded terms, standing, and level; and `midfielddegrees` for the term they are awarded a degree if any.  
 
 ```{r}
-students <- midfieldstudents %>% 
-	select(id, institution, term_enter, transfer)
+students <- midfieldstudents %>%
+  select(id, institution, term_enter, transfer)
 
-terms <- midfieldterms %>% 
-	select(id, institution, term, level, standing)
+terms <- midfieldterms %>%
+  select(id, institution, term, level, standing)
 
-degrees <- midfielddegrees %>% 
-	select(id, institution, term_degree)
+degrees <- midfielddegrees %>%
+  select(id, institution, term_degree)
 ```
 
 Review
@@ -87,12 +87,12 @@ Using terms, find the min and max terms in the data for each institution
 ```{r}
 options(tibble.print_min = 12L)
 this_group <- group_by(terms, institution)
-inst_span  <- summarize(
-	this_group, 
-	inst_min = min(term), 
-	inst_max = max(term)
-	) %>% 
-	arrange(inst_min)
+inst_span <- summarize(
+  this_group,
+  inst_min = min(term),
+  inst_max = max(term)
+) %>%
+  arrange(inst_min)
 
 inst_span
 ```
@@ -102,13 +102,13 @@ For the 6-year span at the end of an institution's data span, all graduates can 
 Separate grads from non-grads. 
 
 ```{r}
-pos_grad6_id <- degrees %>% 
-	filter(!is.na(term_degree)) %>% 
-	select(id)
+pos_grad6_id <- degrees %>%
+  filter(!is.na(term_degree)) %>%
+  select(id)
 
-non_grads <- degrees %>% 
-	filter(is.na(term_degree)) %>% 
-	unique()
+non_grads <- degrees %>%
+  filter(is.na(term_degree)) %>%
+  unique()
 ```
 
 Confirm that the student IDs are unique. 
@@ -124,11 +124,11 @@ length(unique(non_grads$id))
 Join the student's entering term and transfer status and the institution's last term with the non-grads. 
 
 ```{r}
-non_grads <- non_grads %>% 
-	left_join(., students, by = c("id", "institution")) %>% 
-	left_join(., inst_span, by = "institution") %>% 
-	select(id, institution, transfer, inst_max, term_enter) %>% 
-	mutate(delta = inst_max - term_enter)
+non_grads <- non_grads %>%
+  left_join(., students, by = c("id", "institution")) %>%
+  left_join(., inst_span, by = "institution") %>%
+  select(id, institution, transfer, inst_max, term_enter) %>%
+  mutate(delta = inst_max - term_enter)
 
 non_grads
 
@@ -138,9 +138,9 @@ sort(unique(non_grads$delta))
 If the $\Delta \geq 60$ then clearly it was possible for a student to graduate in 6 years. Add the keepers to the pos-grad-6 set of IDs.
 
 ```{r}
-keepers <- non_grads %>% 
-	filter(delta >= 60) %>% 
-	select(id) 
+keepers <- non_grads %>%
+  filter(delta >= 60) %>%
+  select(id)
 
 pos_grad6_id <- bind_rows(pos_grad6_id, keepers)
 glimpse(pos_grad6_id)
@@ -149,8 +149,8 @@ glimpse(pos_grad6_id)
 The group of non-grads that remains needs further study
 
 ```{r}
-study_group <- non_grads %>% 
-		filter(delta < 60)
+study_group <- non_grads %>%
+  filter(delta < 60)
 
 study_group
 ```
@@ -158,8 +158,8 @@ study_group
 Let's start by separating transfers and non-transfers. Non-transfers with $\Delta < 60$ will be assumed to not satisfy pos-grad-6. Their IDs will be excluded from further analysis. 
 
 ```{r}
-non_transfer <- study_group %>% 
-	filter(transfer == "N")
+non_transfer <- study_group %>%
+  filter(transfer == "N")
 
 exclude_id <- non_transfer
 exclude_id
@@ -168,10 +168,10 @@ exclude_id
 For the transfer students, the length of time from their entering term to the last term in the institution data depends on their entering status. Join level and standing from terms data. 
  
 ```{r}
-transfer <- study_group %>% 
-	filter(transfer == "Y") %>% 
-	left_join(., terms, by = c("id", "institution")) %>% 
-	select(id, delta, term_enter, term, level, standing) 
+transfer <- study_group %>%
+  filter(transfer == "Y") %>%
+  left_join(., terms, by = c("id", "institution")) %>%
+  select(id, delta, term_enter, term, level, standing)
 
 transfer
 ```
@@ -184,12 +184,11 @@ Transfers meeting any of these criteria satisfy the pos-grad-6 condition.
 - level is Senior and $\Delta >= 25$ 
 
 ```{r}
-keepers <- transfer %>% 
-	filter((level == "Freshman"   & delta > 50) | 
-				 	(level == "Sophomore" & delta > 40) |
-				 	(level == "Junior"    & delta > 30) |
-				 	(level == "Senior"    & delta > 20)
-				 )
+keepers <- transfer %>%
+  filter((level == "Freshman" & delta > 50) |
+    (level == "Sophomore" & delta > 40) |
+    (level == "Junior" & delta > 30) |
+    (level == "Senior" & delta > 20))
 
 keepers
 ```
