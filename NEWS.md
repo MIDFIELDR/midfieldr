@@ -29,7 +29,7 @@ Additional improvements
 
 ## midfieldr 0.1.0.9003 / 2019-06-14
 
-- Corrected a testing problem. Moved some test data from sysdata to the testhat directory. 
+- Corrected a testing problem. Moved some test data from sysdata to the testthat directory. 
 - Edit README per workshop feedback 
 
 
