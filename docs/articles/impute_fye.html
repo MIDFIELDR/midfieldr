@@ -165,11 +165,11 @@
 <a href="#we-provide-an-imputed-data-set" class="anchor"></a>We provide an imputed data set</h2>
 <p>We impute these missing values using multiple imputation as implemented in the <a href="https://stefvanbuuren.github.io/mice/">mice</a> package (multivariate imputation via chained equations). The variables used to predict the missing values are institution, race, and sex.</p>
 <p>The process is described in detail starting in the subsequent section. The process does take time—about 30 seconds for imputing the missing values in our FYE data with 5992 observations, 5 variables, and 5 imputations.</p>
-<p>You can skip doing the imputation yourself if you wish. We’ve done it for you and saved the results. We provide a replacement data set <code>case_fye</code> with the ID and predicted starting major of all FYE students in the midfieldr data sets.</p>
+<p>You can skip doing the imputation yourself if you wish. We’ve done it for you and saved the results. We provide a replacement data set <code>cip_fye</code> with the ID and predicted starting major of all FYE students in the midfieldr data sets.</p>
 <p>We use these data in the package vignettes whenever an engineering starting major is required. You can do the same.</p>
-<p>To access the case data, just load midfieldr and assign <code>case_fye</code> to a variable. To distinguish the starting major from other 6-digit CIP codes used in this work, the imputed variable is <code>start</code> instead of <code>cip6</code>.</p>
+<p>To access the case data, just load midfieldr and assign <code>cip_fye</code> to a variable. To distinguish the starting major from other 6-digit CIP codes used in this work, the imputed variable is <code>start</code> instead of <code>cip6</code>.</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># if midfieldr is loaded, assign the bundled data set to a variable</span>
-<span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">case_fye</span>
+<span class="no">df</span> <span class="kw">&lt;-</span> <span class="no">cip_fye</span>
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">glimpse</a></span>(<span class="no">df</span>)
@@ -181,7 +181,7 @@
 <div id="preparing-the-fye-data-for-imputation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#preparing-the-fye-data-for-imputation" class="anchor"></a>Preparing the FYE data for imputation</h2>
-<p>You may skip the rest of the vignette and simply incorporate the imputed data <code>case_fye</code> in your analysis if the details of imputation are not important to you at this time.</p>
+<p>You may skip the rest of the vignette and simply incorporate the imputed data <code>cip_fye</code> in your analysis if the details of imputation are not important to you at this time.</p>
 <p>If the details are of interest to you, we start by conditioning the data to prepare it for imputation.</p>
 <p><strong>Step 1.</strong> Extract from <code>midfieldstudents</code> the IDs of all students whose matriculation major is FYE.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">fye_id</span> <span class="kw">&lt;-</span> <span class="no">midfieldstudents</span> <span class="kw">%&gt;%</span>
@@ -319,12 +319,12 @@
   <span class="kw">seed</span> <span class="kw">=</span> <span class="fl">20180624</span>
 )</pre></body></html></div>
 </div>
-<div id="data-set-case_fye" class="section level2">
+<div id="data-set-cip_fye" class="section level2">
 <h2 class="hasAnchor">
-<a href="#data-set-case_fye" class="anchor"></a>Data set: <code>case_fye</code>
+<a href="#data-set-cip_fye" class="anchor"></a>Data set: <code>cip_fye</code>
 </h2>
-<p>Construct the data set after imputation, keeping ID and starting major only. Reformat the start major as a character. The data frame, <code>case_fye</code>, is the data mentioned previously provided with the midfieldr package if you prefer not to do your own imputation.</p>
-<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="no">case_fye</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/complete.mids.html">complete</a></span>(<span class="no">mi_output</span>) <span class="kw">%&gt;%</span>
+<p>Construct the data set after imputation, keeping ID and starting major only. Reformat the start major as a character. The data frame, <code>cip_fye</code>, is the data mentioned previously provided with the midfieldr package if you prefer not to do your own imputation.</p>
+<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="no">cip_fye</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/complete.mids.html">complete</a></span>(<span class="no">mi_output</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">id</span>, <span class="no">cip6</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">cip6</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">cip6</span>)) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>() <span class="kw">%&gt;%</span>
@@ -339,10 +339,10 @@
 <h2 class="hasAnchor">
 <a href="#assessing-the-imputation-" class="anchor"></a>Assessing the imputation.</h2>
 <p>Confirm there are no missing values using <code>vis_dat::vis_dat()</code>. The result shows that all variables are characters and there are no missing values.</p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="http://visdat.njtierney.com//reference/vis_dat.html">vis_dat</a></span>(<span class="no">case_fye</span>, <span class="kw">palette</span> <span class="kw">=</span> <span class="st">"cb_safe"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="http://visdat.njtierney.com//reference/vis_dat.html">vis_dat</a></span>(<span class="no">cip_fye</span>, <span class="kw">palette</span> <span class="kw">=</span> <span class="st">"cb_safe"</span>)</pre></body></html></div>
 <p><img src="../man/figures/fye-mice-out-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>Examine to what majors and in what numbers the FYE students were assigned.</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">case_fye</span> <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">cip_fye</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarise</a></span>(<span class="no">.</span>, <span class="st">"cip6"</span>, <span class="kw">N</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span>(<span class="no">N</span>)) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">.</span>, <span class="no">cip</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
