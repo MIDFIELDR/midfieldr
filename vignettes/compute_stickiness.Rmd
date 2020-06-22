@@ -9,7 +9,7 @@ editor_options:
   chunk_output_type: console
 bibliography: ../inst/REFERENCES.bib
 resource_files:
-  - ../man/figures/stickiness-fig1-1.png
+  - ../man/figures/compute-stickiness-fig1-1.png
 ---
 
 ```{r setup, echo = FALSE, message = FALSE, purl = FALSE}
@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
   fig.asp = 1 / 1.6,
   out.width = "70%",
   fig.align = "center",
-  fig.path = "../man/figures/stickiness-"
+  fig.path = "../man/figures/compute-stickiness-"
 )
 knitr::knit_hooks$set(inline = function(x) {
   if (!is.numeric(x)) {
@@ -93,24 +93,24 @@ library("ggplot2")
 library("seplyr")
 ```
 
-The [Gather program data](gather_program_data.html) vignette describes the  process for obtaining the program codes and names for four engineering programs: Civil, Electrical, Industrial, and Mechanical. The output of that vignette is saved as a midfieldr case data set, `exa_programs`. You may 
+The [Gather program data](gather_program_data.html) vignette describes the  process for obtaining the program codes and names for four engineering programs: Civil, Electrical, Industrial, and Mechanical. The output of that vignette is saved as a midfieldr case data set, `exa_program_group`. You may 
 
 - create the program group by running the code in the vignette 
 - or load the saved case data 
 
-The case data are loaded with midfieldr. Simply assign the data to an object  such as `program_group`.  
+The case data are loaded with midfieldr. Simply assign the data to an object  such as `exa_program_group`.  
 
 ```{r}
 # CIP information saved from an earlier vignette
-program_group <- exa_programs
+exa_program_group <- exa_program_group
 ```
 
-Examine the result: there are a total of `r length(unique(program_group[["cip6"]]))` CIP codes for these programs. We have  two columns from the `cip` dataset and the `program` column we added using `cip6_select()`. 
+Examine the result: there are a total of `r length(unique(exa_program_group[["cip6"]]))` CIP codes for these programs. We have  two columns from the `cip` dataset and the `program` column we added using `cip6_select()`. 
 
 ```{r echo = -1}
 options(tibble.print_min = 12L)
 # check the result
-print(program_group)
+print(exa_program_group)
 ```
 
 As part of the problem setup, we define a vector of variable names that will be used later for grouping, summarizing, and joining. `grouping_variables` is used by 
@@ -147,11 +147,11 @@ We use `ever_filter()` to collect all students ever enrolled in the programs we 
 - `data` data frame of term information, default `midfieldterms` 
 - `codes` atomic character vector of 6-digit CIP codes
 
-The `codes` argument in this case is an atomic vector of the 6-digit CIP codes in our `program_group`. The function uses these codes to search `midfieldterms`, the default reference data set. Use `print()` to check the result. 
+The `codes` argument in this case is an atomic vector of the 6-digit CIP codes in our `exa_program_group`. The function uses these codes to search `midfieldterms`, the default reference data set. Use `print()` to check the result. 
 
 ```{r}
 # extract the 6-digit CIPs as a search series
-program_series <- program_group[["cip6"]] %>%
+program_series <- exa_program_group[["cip6"]] %>%
   unique() %>%
   sort() %>%
   print()
@@ -206,10 +206,10 @@ If the argument to `race_sex_join()` already includes a `sex` or `race` column, 
 ? race_sex_join()
 ```
 
-Next we join our custom program names to the student data. We use `left_join()` (a dplyr function) to join `program_group` to `students` by the 6-digit CIP code. 
+Next we join our custom program names to the student data. We use `left_join()` (a dplyr function) to join `exa_program_group` to `students` by the 6-digit CIP code. 
 
 ```{r}
-students <- left_join(students, program_group, by = "cip6") %>%
+students <- left_join(students, exa_program_group, by = "cip6") %>%
   print()
 ```
 
@@ -245,7 +245,7 @@ Reminder that in a sequence of operations using the pipe operator (`%>%`), the o
 # count students graduating from programs
 graduated <- grad_filter(codes = program_series) %>%
   race_sex_join() %>%
-  left_join(program_group, by = "cip6") %>%
+  left_join(exa_program_group, by = "cip6") %>%
   group_summarize(., grouping_variables, "grad" = n()) %>%
   print()
 ```
@@ -260,7 +260,7 @@ Notes.
 ```{r results = "hide"}
 graduated <- grad_filter(codes = program_series) %>%
   race_sex_join(.) %>%
-  left_join(., program_group, by = "cip6") %>%
+  left_join(., exa_program_group, by = "cip6") %>%
   group_summarize(., grouping_variables, "grad" = n()) %>%
   print(.)
 ```

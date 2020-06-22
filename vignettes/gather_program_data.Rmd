@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
   fig.asp = 1 / 1.6,
   out.width = "70%",
   fig.align = "center",
-  fig.path = "../man/figures/selecting-programs-"
+  fig.path = "../man/figures/gather-program-data-"
 )
 knitr::knit_hooks$set(inline = function(x) {
   if (!is.numeric(x)) {
@@ -42,11 +42,28 @@ knitr::knit_hooks$set(purl = knitr::hook_purl)
 knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
 ```
 
-Before we can compute a persistence metric, we have to select the academic programs we wish to study. Here, we show the details of selecting and labeling a set of programs that we re-use in subsequent vignettes. 
+## Introduction 
 
-## Explore CIP codes 
+In the vignette "Explore program CIP codes", we show how to explore the `cip` data set using the `cip_filter()` function to filter the data, retaining some instructional programs and dropping others. 
 
-The programs we are studying in this example are Civil Engineering, Electrical Engineering, Industrial Engineering, and Mechanical Engineering. We start by assuming we do not know the CIP codes for these disciplines. 
+In the student-record database, programs are encoded using 6-digit CIP codes. Thus, to find the student records affiliated with the programs we are studying, we isolate their 6-digit CIP codes.  
+
+Also, to prepare the data for eventual grouping, summarizing, and joining, we want to add a custom program label.  
+
+We use `cip6_select()` to accomplish both steps. We apply these steps to the vignette case study as well as exploring optional values for the arguments. 
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+## Custom program names
+
+The case study programs are Civil, Electrical, Industrial, and Mechanical Engineering.
 
 ```{r message = FALSE}
 # packages used
@@ -55,228 +72,162 @@ library("dplyr")
 library("stringr")
 ```
 
-We use `cip_filter()` to search the `cip` dataset first for Engineering and then filter the result for Civil, Electrical, Industrial, and Mechanical. Having done this type of search before, we know that we can exclude engineering technology programs. 
-
-The results show that the codes we want are at the 4-digit level:  1408, 1410, 1419, and 1435.
- 
-```{r first-cip-search, echo = -1}
-options(tibble.print_min = 15L)
-cip_filter(data = cip, keep_any = "engineering", drop_any = "technology") %>%
-  cip_filter(data = ., keep_any = c("civil", "electrical", "industrial", "mechanical")) %>%
-  print() # or View()
-```
-
-Notes. 
-
-- Instead of `print()`, one can use `View()` for a spreadsheet-style view of a result. 
-- We recommend that you examine the result of every step of your work to help find errors and correct them as you go.  
-- Reminder that is a sequence of operations using the pipe operator (`%>%`), the outcome of the one operation is assigned to the data argument of the next operation using the dot (`.`) argument.
-- For more practice using `cip_filter()`, see the vignette [Exploring program CIP codes](explore_cip.html).  
-- To learn more, open the help page by running `? cip_filter`.   
-
-
-
-
-
-
-
-
-
-
-
-## Select and label programs
-
-In the next step, we extract these programs individually so we can label the programs individually.  We'll start with Civil Engineering. 
+The data frame `exa_cip` (one of the midfieldr built-in datasets) contains the full CIP information for these four programs. 
 
 ```{r}
-cve <- cip_filter(data = cip, keep_any = "^1408") %>%
-  print() # or View()
+print(exa_cip)
 ```
 
-We extract the 6-digit columns with `cip6_select()`. In this case, the default `cip4name` is suitably concise to use as the `program` argument. 
+In these data, the program names at the 4-digit level are those associated with accredited engineering departments. To see the names in full, 
 
 ```{r}
-cve <- cip6_select(data = cve, program = "cip4name") %>%
-  print() # or View()
+exa_cip %>% 
+  select(cip4, cip4name) %>% 
+  unique() %>% 
+  print()
 ```
 
-```{r echo = FALSE}
-# silent, to use inline R code below
-ele <- cip_filter(data = cip, keep_any = "^1410")
-```
+Three of these names are concise enough for using in faceted graphs (also called a lattice or small multiples). The electrical engineering default program name can be shortened, however. 
 
-We repeat for the other three disciplines. 
+Two approaches to editing the program labels are shown below. 
 
-- For Electrical Engineering, the default 4-digit name is "`r unique(ele[["cip4name"]])`" which we shorten to the more concise "Electrical Engineering" using the `program` argument. 
-- For the other two disciplines, the `cip4name` value is used for `program`. 
+### 1. Work with programs one at a time
+
+To work with the programs one at a time, we separate `exa_cip` into four data frames, one for each program. 
 
 ```{r}
-ele <- cip_filter(data = cip, keep_any = "^1410") %>%
-  cip6_select(data = ., program = "Electrical Engineering")
-
-mce <- cip_filter(data = cip, keep_any = "^1419") %>%
-  cip6_select(data = ., program = "cip4name")
-
-ise <- cip_filter(data = cip, keep_any = "^1435") %>%
-  cip6_select(data = ., program = "cip4name")
+# working with one program at a time 
+cve <- cip_filter(exa_cip, keep_any = "^1408") %>%
+  print()
 ```
 
-We use `dplyr::bind_rows()` to bind the individual data frames into one data frame. 
+Then we use `cip6_select()` to extract the 6-digit columns and add a new `program` variable. 
 
-```{r group-cip}
-program_group <- bind_rows(cve, ele, mce, ise) %>%
-  print() # or View()
+```{r}
+cve <- cip6_select(cve, program = "Civil Engineering") %>% 
+  print()
 ```
 
-To learn more, open the help page by running `? cip6_select`. 
+Repeat for electrical engineering and combine the two steps using the pipe operator, 
 
+```{r}
+ele <- cip_filter(exa_cip, keep_any = "^1410") %>%
+  cip6_select(program = "Electrical Engineering") %>% 
+  print()
+```
 
+An option for the program argument is `program = "cip4name"` to use the default 4-digit name. 
 
+```{r}
+ise <- cip_filter(exa_cip, keep_any = "^1435") %>%
+  cip6_select(program = "cip4name")
 
-<br>
-<a href="#top">&#9650; top of page</a> 
+mce <- cip_filter(exa_cip, keep_any = "^1419") %>%
+  cip6_select(program = "cip4name")
+```
 
+We have 4 data frames that we combine row-wise using `bind_rows()`. 
 
+```{r echo = -1}
+options(tibble.print_min = 12L)
+exa_program_group <- bind_rows(cve, ele, ise, mce) %>%
+  print()
+```
 
+### 2. Work with one data frame 
 
+As a rule, the midfieldr vignettes are written for the R novice. We attempt to facilitate the reader's understanding by reducing the density of the programming by using more and simpler lines of code than strictly necessary. 
 
-## Optional select and label procedure
+In this optional section, we rewrite the procedure used above to illustrate a more concise approach that simply operates on one data frame throughout. 
 
-As a rule, the midfieldr vignettes are written for the R novice. We attempt to facilitate the reader's understanding by reducing the programming information density and using more and simpler lines of code than strictly necessary. 
-
-In this optional section, we rewrite the procedure used above to illustrate a more concise approach that eliminates the row-binding of several data frames and simply operates on one data frame throughout. The programming content is correspondingly more dense---suitable for readers with some programming experience. 
-
-- We select the majors all at once and assign the default 4-digit program names.  
-- We use `stringr::str_detect()` to identify `cip6` values starting with 1410 and use `mutate()` to change the corresponding `program` values to Electrical Engineering, replacing the original, longer program name.  
+- We assign the default 4-digit program names to all programs.
+- We then use `stringr::str_detect()` to identify `cip6` values starting with 1410 and use `mutate()` to change the corresponding `program` values to Electrical Engineering, leaving the other program names intact.   
 
 ```{r echo=-1}
 options(tibble.print_min = 12L)
-program_group <- cip_filter(data = cip, keep_any = c("^1408", "^1410", "^1419", "^1435")) %>%
-  cip6_select(data = ., program = "cip4name") %>%
+# working with one data frame 
+exa_program_group <- exa_cip %>%
+  cip6_select(program = "cip4name") %>%
   mutate(program = ifelse(str_detect(cip6, "^1410"), "Electrical Engineering", program)) %>%
-  print() # or View()
+  print()
 ```
 
 Thus we have 3 lines of code producing the same result as we obtained earlier with 9 lines (excluding the print functions). 
 
 
 
-
-
-
-
 <br>
 <a href="#top">&#9650; top of page</a> 
 
 
 
+## Options for the program argument
 
-## Case study program group
+In this section, we explore four options for `program` argument in `cip6_select()`. 
 
-`exa_programs`, a data set identical to the `program_group` data frame above, is bundled in midfieldr for use in subsequent vignettes and example. 
+### Option 1. Assign any value
 
-The data are available if midfieldr is loaded. 
-
-```{r}
-library("midfieldr")
-exa_programs %>%
-  print() # or View()
-```
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
-
-
-## Program label options 
-
-In this section, we explore the arguments of `cip6_select()`. There are four options for `program` argument 
-
-<br>
-
-**Option 1:** When a string of our own choosing is assigned to `program`, then that string is the value. 
+When a string of our own choosing is assigned to `program`, then that string is the value assigned to every observation. 
 
 ```{r results = "hide"}
+# program argument any value
 cip %>%
-  cip_filter(data = ., keep_any = "^31") %>%
-  cip6_select(data = ., program = "Leisure Studies") %>%
-  print() # or View()
+  cip_filter(keep_any = "^31") %>%
+  cip6_select(program = "Leisure Studies") %>%
+  print() 
 ```
 
 ```{r echo = FALSE}
 cip %>%
-  cip_filter(data = ., keep_any = "^31") %>%
-  cip6_select(data = ., program = "Leisure Studies") %>%
+  cip_filter(keep_any = "^31") %>%
+  cip6_select(program = "Leisure Studies") %>%
   kable2html()
 ```
 
+### Option 2. Named series value
 
-
-
-<br> 
-
-
-**Option 2:** When `program = "named_series"` and `data`  matches one of the named `cip_series`, then the value from the named series is assigned to the new column.
+When `program = "named_series"` and `data`  matches one of the named `cip_series`, then the value from the named series is assigned to the new column.
 
 ```{r results = "hide"}
+# program argument a named series
 cip %>%
-  cip_filter(data = ., keep_any = cip_math_stat) %>%
-  cip6_select(data = ., program = "named_series") %>%
-  print() # or View()
+  cip_filter(keep_any = cip_math_stat) %>%
+  cip6_select(program = "named_series") %>%
+  print()
 ```
 
 ```{r echo = FALSE}
 cip %>%
-  cip_filter(data = ., keep_any = cip_math_stat) %>%
-  cip6_select(data = ., program = "named_series") %>%
+  cip_filter(keep_any = cip_math_stat) %>%
+  cip6_select(program = "named_series") %>%
   kable2html()
 ```
 
-<br>
+### Option 3. Default CIP value
 
-**Option 3:** When `program` is assigned one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-, 4-, or 6-digit names from `cip` are  assigned to the new column.
+When `program` is assigned one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-, 4-, or 6-digit names from `cip` are  assigned to the new column. We saw the 4-digit name used earlier. 
 
 ```{r results = "hide"}
-# 2-digit
+# program argument the 2-digit name
 cip %>%
-  cip_filter(data = ., keep_any = "^31") %>%
-  cip6_select(data = ., program = "cip2name") %>%
-  print() # or View()
+  cip_filter(keep_any = "^31") %>%
+  cip6_select(program = "cip2name") %>%
+  print()
 ```
 
 ```{r echo = FALSE}
 cip %>%
-  cip_filter(data = ., keep_any = "^31") %>%
-  cip6_select(data = ., program = "cip2name") %>%
+  cip_filter(keep_any = "^31") %>%
+  cip6_select(program = "cip2name") %>%
   kable2html()
 ```
 
 ```{r results = "hide"}
-# 4-digit
+# program argument the 6-digit name
 cip %>%
-  cip_filter(data = ., keep_any = "^31") %>%
-  cip6_select(data = ., program = "cip4name") %>%
-  print() # or View()
-```
-
-```{r echo = FALSE}
-cip %>%
-  cip_filter(data = ., keep_any = "^31") %>%
-  cip6_select(data = ., program = "cip4name") %>%
-  kable2html()
-```
-
-```{r results = "hide"}
-# 6-digit
-cip %>%
-  cip_filter(data = ., keep_any = "^31") %>%
-  cip6_select(data = ., program = "cip6name") %>%
-  print() # or View()
+  cip_filter(keep_any = "^31") %>%
+  cip6_select(program = "cip6name") %>%
+  print()
 ```
 
 ```{r echo = FALSE}
@@ -286,38 +237,34 @@ cip %>%
   kable2html()
 ```
 
-<br>
+### Option 4. NULL value
 
-**Option 4:** When `program = NULL` (default), then the 4-digit CIP program name assigned to the new column. This result is identical to `program = "cip4name"`. 
+When `program = NULL`, then the 4-digit CIP program name is used. This result is identical to `program = "cip4name"`. 
 
 ```{r results = "hide"}
-# program is NULL
+# program argument NULL
 cip %>%
-  cip_filter(data = ., keep_any = "^31") %>%
-  cip6_select(data = .) %>%
-  print() # or View()
+  cip_filter(keep_any = "^31") %>%
+  cip6_select() %>%
+  print()
 ```
 
 ```{r echo = FALSE}
 cip %>%
-  cip_filter(data = ., keep_any = "^31") %>%
-  cip6_select(data = .) %>%
+  cip_filter(keep_any = "^31") %>%
+  cip6_select() %>%
   kable2html()
 ```
 
 
 
-
-
-
-<br>
 <a href="#top">&#9650; top of page</a> 
 
 
 
 
 
-## Non-midfieldr CIP variables
+## CIP variables with non-standard names
 
 Optional arguments in `cip6_select()` accommodate the possibility that one uses a CIP data frame with different variable names than those in `midfieldr::cip`. The four columns accommodated are `cip6`, `cip6name`, `cip4name`, and `cip2name`. 
 
@@ -325,35 +272,45 @@ For illustration only, let's create a CIP data frame called `nonstandard_cip` wi
 
 ```{r echo=-1}
 options(tibble.print_min = 5L)
-nonstandard_cip <- cip %>%
-  rename("code_6" = cip6, "name_6" = cip6name) %>%
-  print() # or View()
+# create CIP data frame with non-standard variable names
+nonstandard_cip <- exa_cip %>%
+  rename("CODE_6" = cip6, "NAME_6" = cip6name) %>%
+  print()
 ```
 
-**Option 1:** If the non-standard variable names must be kept intact, then we use the optional arguments `cip6` and `cip6name` so that `cip6_select()` can operate on the  nonstandard column names.  
+### Option 1. Non-standard names kept intact
 
-```{r}
+If the non-standard variable names must be kept intact, then we use the optional arguments `cip6` and `cip6name` so that `cip6_select()` can operate on the nonstandard column names.  
+
+```r
+# incorrect
 nonstandard_cip %>%
-  cip_filter(data = ., keep_any = "^31") %>%
-  cip6_select(program = "Leisure Studies", cip6 = "code_6", cip6name = "name_6") %>%
-  print() # or View()
+  cip6_select(program = "Civil Engineering") %>%
+  print()
+#> Error: Can't subset columns that don't exist.
+#> Column `cip6` doesn't exist
 ```
-
-**Option 2:** If the non-standard variable names do not have to be kept intact, the simple option is to `dplyr::rename()` the nonstandard variable names to the standard names, e.g.,  
 
 ```{r}
-standard_cip <- nonstandard_cip %>%
-  cip_filter(data = ., keep_any = "^31") %>%
-  rename("cip6" = code_6, "cip6name" = name_6) %>%
-  print() # or View()
+# correct using optional arguments
+nonstandard_cip %>%
+  cip6_select(program = "Civil Engineering", cip6 = "CODE_6", cip6name = "NAME_6") %>%
+  print()
 ```
 
 
-Notes. 
 
-- Similar arguments are made when one has nonstandard column names for  `cip4name` and `cip2name`.
-- To learn more about the optional arguments, open the help page by running `? cip6_select`. 
+### Option 2. Non-standard names can be revised
 
+If the non-standard variable names do not have to be kept intact, the simple option is to `dplyr::rename()` the nonstandard variable names to the standard names, e.g.,  
+
+```{r}
+# rename the variables 
+standard_cip <- nonstandard_cip %>%
+  rename("cip6" = CODE_6, "cip6name" = NAME_6) %>%
+  cip6_select(program = "Civil Engineering") %>%
+  print()
+```
 
 
 
@@ -363,6 +320,30 @@ Notes.
 <a href="#top">&#9650; top of page</a> 
 
 
+
+
+
+
+## Case study
+
+The data frame `exa_program_group`, developed in the first half of the vignette, is also one of the midfieldr built-in datasets for use in the continuing case study.   
+
+To see the data set help page, run  
+
+```r
+? exa_program_group
+```
+
+To learn more about `cip6_select()`, open the help page by running 
+
+```r
+? cip6_select
+```
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
 
 
 ## References
@@ -377,7 +358,68 @@ Notes.
 In response to requests from some of our workshop attendees, we collect the vignette code chunks in one script. We condense the script by omitting exploratory steps so we can focus on the steps that produce the results. 
 
 ```{r eval=FALSE}
-# TBD
+# packages used
+library("midfieldr")
+library("dplyr")
+library("stringr")
+
+# working with one program at a time 
+cve <- cip_filter(exa_cip, keep_any = "^1408") %>%
+  cip6_select(program = "Civil Engineering")
+
+ele <- cip_filter(exa_cip, keep_any = "^1410") %>%
+  cip6_select(program = "Electrical Engineering")
+
+ise <- cip_filter(exa_cip, keep_any = "^1435") %>%
+  cip6_select(program = "cip4name")
+
+mce <- cip_filter(exa_cip, keep_any = "^1419") %>%
+  cip6_select(program = "cip4name")
+
+exa_program_group <- bind_rows(cve, ele, ise, mce)
+
+# working with one data frame 
+exa_program_group <- exa_cip %>%
+  cip6_select(program = "cip4name") %>%
+  mutate(program = ifelse(str_detect(cip6, "^1410"), "Electrical Engineering", program))
+
+# program argument any value
+cip %>%
+  cip_filter(keep_any = "^31") %>%
+  cip6_select(program = "Leisure Studies")
+
+# program argument a named series
+cip %>%
+  cip_filter(keep_any = cip_math_stat) %>%
+  cip6_select(program = "named_series")
+
+# program argument the 2-digit name
+cip %>%
+  cip_filter(keep_any = "^31") %>%
+  cip6_select(program = "cip2name")
+
+# program argument the 6-digit name
+cip %>%
+  cip_filter(keep_any = "^31") %>%
+  cip6_select(program = "cip6name")
+
+# program argument NULL
+cip %>%
+  cip_filter(keep_any = "^31") %>%
+  cip6_select()
+
+# create CIP data frame with non-standard variable names
+nonstandard_cip <- exa_cip %>%
+  rename("CODE_6" = cip6, "NAME_6" = cip6name)
+
+# correct using optional arguments
+nonstandard_cip %>%
+  cip6_select(program = "Civil Engineering", cip6 = "CODE_6", cip6name = "NAME_6")
+
+# rename the variables 
+standard_cip <- nonstandard_cip %>%
+  rename("cip6" = CODE_6, "cip6name" = NAME_6) %>%
+  cip6_select(program = "Civil Engineering")
 ```
 
 <br>

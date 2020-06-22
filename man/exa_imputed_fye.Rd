@@ -36,7 +36,8 @@ student would have declared had they not been required to enroll in FYE.
 The "Impute FYE starting majors" vignette.
 
 Other example_data: 
-\code{\link{exa_programs}},
+\code{\link{exa_cip}},
+\code{\link{exa_program_group}},
 \code{\link{exa_stickiness}}
 }
 \concept{example_data}

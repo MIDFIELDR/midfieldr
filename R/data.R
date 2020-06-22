@@ -117,33 +117,60 @@ NULL
 
 
 
+#' Example CIP excerpt
+#'
+#' Excerpt of CIP data for a case study.
+#'
+#' An excerpt from the \code{cip} data set for Civil, Electrical,
+#' Industrial, and Mechanical Engineering. The data are an intermediate
+#' result in a case study developed in the midfieldr vignettes.
+#'
+#' @format A data frame (tibble) with 12 observations and 6 variables. The variables are characters.
+#' \describe{
+#'   \item{cip6}{6-digit program code.}
+#'   \item{cip6name}{6-digit program name.}
+#'   \item{cip4}{4-digit program code.}
+#'   \item{cip4name}{4-digit program name.}
+#'   \item{cip2}{2-digit program code.}
+#'   \item{cip2name}{2-digit program name.}
+#' }
+#' @family example_data
+#' @seealso \code{cip} and the "Explore CIP" vignette.
+#' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata}
+#'  package
+#' @examples
+#' exa_cip
+#' cip6_select(data = exa_cip, program = "cip4name")
+"exa_cip"
 
 
-#' Example program data
+
+
+#' Example program group
 #'
-#' Data for a case study.
+#' Intermediate result in a case study.
 #'
-#' The 6-digit CIP codes and names plus assigned program names for Civil,
-#'  Electrical, Industrial, and Mechanical Engineering. The data frame is
-#'  used in  several vignettes.
+#' The 6-digit CIP codes and names for Civil, Electrical, Industrial,
+#' and Mechanical Engineering plus a column of custom program names
+#' for grouping, summarizing, and joining. The data are an intermediate
+#' result in a case study developed in the midfieldr vignettes.
 #'
 #' @format A data frame (tibble) with 12 observations and 3 variables.
 #' All variables are characters. An observation is a unique program.
 #' \describe{
-#'   \item{cip6}{An instructional program's 6-digit code, representing
-#'   "specific instructional programs" (US National Center for
-#'   Education Statistics).}
-#'   \item{cip6name}{Name of a specific program at the 6-digit level.}
-#'   \item{program}{A program name assigned for grouping, summarizing,
-#'   and joining.}
+#'   \item{cip6}{6-digit program code.}
+#'   \item{cip6name}{6-digit program name.}
+#'   \item{program}{A short program name assigned for grouping,
+#'   summarizing, and joining.}
 #' }
 #' @family example_data
 #' @seealso The "Gather program data" vignette.
 #' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata}
 #'  package
 #' @examples
-#' exa_programs
-"exa_programs"
+#' x <- unique(exa_program_group[["cip6"]])
+#' y <- unique(exa_program_group[["program"]])
+"exa_program_group"
 
 
 

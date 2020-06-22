@@ -1,6 +1,7 @@
-#' @importFrom dplyr filter across %>%
+#' @importFrom dplyr filter across
 #' @importFrom stringr str_c str_detect regex
 #' @importFrom wrapr stop_if_dot_args
+#' @importFrom magrittr %>%
 NULL
 
 #' Filter CIP data frame

@@ -10,7 +10,7 @@ editor_options:
 bibliography: ../inst/REFERENCES.bib
 link-citations: yes
 resource_files:
-  - ../man/figures/grad-rate-fig1-1.png
+  - ../man/figures/compute-grad-rate-fig1-1.png
 ---
 
 ```{r setup, echo = FALSE, message = FALSE, purl = FALSE}
@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
   fig.asp = 1 / 1.6,
   out.width = "70%",
   fig.align = "center",
-  fig.path = "../man/figures/grad-rate-"
+  fig.path = "../man/figures/compute-grad-rate-"
 )
 knitr::knit_hooks$set(inline = function(x) {
   if (!is.numeric(x)) {
@@ -95,15 +95,15 @@ library("ggplot2")
 library("seplyr")
 ```
 
-The [Gather program data](gather_program_data.html) vignette describes how to obtain the program codes and names for these programs. Their  6-digit CIP codes and names are in the midfieldr data set `exa_programs`. 
+The [Gather program data](gather_program_data.html) vignette describes how to obtain the program codes and names for these programs. Their  6-digit CIP codes and names are in the midfieldr data set `exa_program_group`. 
 
 ```{r}
 # information saved from an earlier vignette
-program_group <- exa_programs %>%
+exa_program_group <- exa_program_group %>%
   print()
 ```
 
-There are a total of `r length(unique(program_group[["cip6"]]))` CIP codes for these programs. We have two columns from the `cip` dataset and the `program` column we added using `cip6_select()`. 
+There are a total of `r length(unique(exa_program_group[["cip6"]]))` CIP codes for these programs. We have two columns from the `cip` dataset and the `program` column we added using `cip6_select()`. 
 
 
 
@@ -141,7 +141,7 @@ We extract the vector of 6-digit CIP codes for our programs.
 
 ```{r}
 # obtain the cip6 codes
-program_series <- program_group[["cip6"]]
+program_series <- exa_program_group[["cip6"]]
 ```
 
 We use `start_filter()` to extract students from `exa_imputed_fye` data who start in  one of the programs in `program_series`. The `start_filter()` function has two main arguments:
@@ -185,10 +185,10 @@ print(non_fye)
 
 We use `start_filter()` to collect all students starting in the programs we are studying. 
 
-The `codes` argument in this case is an atomic vector of the 6-digit CIP codes in our `program_group`. The function uses these codes to search `midfieldstudents`, the default data set. Use `print()` to check the result.  
+The `codes` argument in this case is an atomic vector of the 6-digit CIP codes in our `exa_program_group`. The function uses these codes to search `midfieldstudents`, the default data set. Use `print()` to check the result.  
 
 ```{r}
-program_series <- program_group[["cip6"]] %>%
+program_series <- exa_program_group[["cip6"]] %>%
   unique() %>%
   sort() %>%
   print()
@@ -226,7 +226,7 @@ started <- bind_rows(students, fye) %>%
 Confirm that the CIPs are the ones we expect and that no student ID has been inadvertently duplicated. 
 
 ```{r}
-# should be a subset of the program_group CIP we started with
+# should be a subset of the exa_program_group CIP we started with
 sort(unique(started[["cip6"]]))
 
 # should match the dimension of starters
@@ -299,13 +299,13 @@ grouping_variables <- c("program", "race", "sex")
 # count students
 started <- started %>%
   race_sex_join() %>%
-  left_join(., program_group, by = "cip6") %>%
+  left_join(., exa_program_group, by = "cip6") %>%
   group_summarize(., grouping_variables, "start" = n()) %>%
   print()
 
 graduated <- graduated %>%
   race_sex_join() %>%
-  left_join(., program_group, by = "cip6") %>%
+  left_join(., exa_program_group, by = "cip6") %>%
   group_summarize(., grouping_variables, "grad" = n()) %>%
   print()
 ```

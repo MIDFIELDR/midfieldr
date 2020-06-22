@@ -1,7 +1,8 @@
 #' @importFrom tibble add_column
 #' @importFrom purrr map_chr
-#' @importFrom dplyr %>% select
+#' @importFrom dplyr select
 #' @importFrom wrapr stop_if_dot_args let
+#' @importFrom magrittr %>%
 NULL
 
 #' Select 6-digit CIPs and add program labels

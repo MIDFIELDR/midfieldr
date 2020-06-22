@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
   fig.asp = 1 / 1.6,
   out.width = "70%",
   fig.align = "center",
-  fig.path = "../man/figures/cip-filter-"
+  fig.path = "../man/figures/explore-cip-"
 )
 knitr::knit_hooks$set(inline = function(x) {
   if (!is.numeric(x)) {
@@ -49,7 +49,13 @@ In studying student records, a common first step is to filter the data, retainin
 
 Programs in the US are encoded by "CIP" codes. CIP is the acronym for *Classification of Instructional Programs*, a taxonomy of academic programs curated by the US Department of Education [@cip2010].  
 
-A CIP code is a 6-digit integer assigned to an instructional program. The 2010 CIP codes are included with midfieldr in the data set `cip`. To find the codes we need, we search `cip` using the `cip_filter()` function.
+A CIP code is a 6-digit integer assigned to an instructional program. The 2010 CIP codes are included with midfieldr in the data set `cip`. 
+
+We explore the `cip` data set using the `cip_filter()` function. We illustrate several search strategies and we conclude by constructing an example data set used in subsequent vignettes. 
+
+
+
+
 
 <br>
 <a href="#top">&#9650; top of page</a>
@@ -62,6 +68,7 @@ A CIP code is a 6-digit integer assigned to an instructional program. The 2010 C
 # packages used in the vignette
 library("midfieldr")
 library("dplyr")
+library("stringr")
 ```
 
 The midfieldr package includes a data set called `cip` that provides the 2010 CIP codes and names for `r nrow(cip)` programs, one program per row. Every program has three codes: 
@@ -217,9 +224,9 @@ To learn more, open the help page by running
 
 
 
-## CIP filtering examples
+## Filtering examples
 
-### Example 1. Filter by keywords
+### 1. Using keywords and phrases
 
 Suppose we want to find the CIP codes and names for all programs in Civil Engineering. The search is case-insensitive, so we start with the following code chunk. 
 
@@ -276,7 +283,7 @@ kable2html(cip_filter(cip, "civil engineering", drop_any = "technology"))
 
 
 
-### Example 2. Filter by codes
+### 2. Using numerical codes
 
 Suppose we want to study programs relating to German culture, language, and literature. Using  "german" for the `keep_any` value yields 
 
@@ -334,7 +341,7 @@ kable2html(cip_filter(cip, seq(540101, 540199, 1)))
 
 
 
-### Example 3. Filter with regular expressions
+### 3. Using regular expressions
 
 Specifying 4-digit codes yields a data frame all 6-digit programs containing the 4-digit string. We use the regular expression notation `^` to match the start of the strings.
 
@@ -393,7 +400,7 @@ kable2html(cip_filter(cip, c("^24", "^4102", "^450202")))
 
 
 
-### Example 4. Filter using named series
+### 4. Using named series
 
 midfieldr includes several datasets of *named series*. A named series is a character vector of 6-digit CIP codes that belong to a group of programs such as Engineering, Physical Sciences, STEM, etc. 
 
@@ -429,42 +436,42 @@ To see the full set of available named series, see the help page by running
 
 
 
+## Case study  
 
+In the midfieldr vignettes, we use a case study of four programs (Civil, Electrical, Industrial, and Mechanical Engineering) to illustrate our process of computing persistence metrics. 
 
+The case study begins here, by extracting CIP data for the four engineering programs. 
 
-
-
-## Conclusion 
-
-Once we've identified all the programs we want to study, we extract a vector of 6-digit CIP codes to use later to identify students in these programs. 
-
-For example, if we were studying History, we filter CIPs using `"^54"`. 
-
-```{r}
-# conclusion: extracting the 6-digit codes and names
-my_programs <- cip_filter(cip, "^54") %>%
+```{r echo = -1}
+options(tibble.print_min = 15L)
+cip_filter(cip, keep_any = "engineering", drop_any = "technology") %>%
+  cip_filter(keep_any = c("civil", "electrical", "industrial", "mechanical")) %>%
   print()
 ```
 
-Then we use the R `[[]]` notation to extract the vector of values in the `cip6` variable (column). 
+The results show that the codes we want are at the 4-digit level:  1408, 1410, 1419, and 1435. We use these codes as search strings to filter `cip` and assign the result to the object `exa_cip`. 
+
 
 ```{r}
-my_cip6 <- my_programs[["cip6"]] %>%
+# example CIP excerpt for case study
+exa_cip <- cip_filter(cip, c("^1408", "^1410", "^1419", "^1435")) %>% 
   print()
 ```
 
-A vector like this is used later to find student-record data associated with these programs. 
+Because we'll be using these data again, it would be useful to write them to file, e.g., by running `saveRDS(exa_cip, "data/exa_cip")`. 
 
+However, for convenience, `exa_cip` has been included in midfieldr.  Loading midfieldr makes the data available, for example, 
 
-<br>
-<a href="#top">&#9650; top of page</a> 
+```{r}
+library(midfieldr)
+x <- exa_cip
+```
 
+To see the help page, run
 
-
-
-
-
-
+```r
+? exa_cip
+```
 
 
 
@@ -481,7 +488,7 @@ A vector like this is used later to find student-record data associated with the
 
 ### Complete script
 
-In response to requests from some of our workshop attendees, we collect the vignette code chunks in one script. We condense the script by omitting exploratory steps so we can focus on the steps that produce the results. 
+In response to requests from some of our workshop attendees, we collect the vignette code chunks in one script. We condense the script by omitting exploratory steps to focus on the steps that produce the results. 
 
 ```{r eval=FALSE}
 # packages used in the vignette
@@ -501,30 +508,29 @@ cip_filter(data = cip, keep_any = "engineering")
 cip_filter(cip, "engineering")
 cip_filter(cip, "civil engineering", drop_any = "technology")
 
-# example 1 filter by keywords
+# example 1 filter using keywords
 cip_filter(cip, "civil")
 cip %>%
   cip_filter(keep_any = "civil") %>%
   cip_filter(keep_any = "engineering") %>%
   cip_filter(drop_any = "technology")
 
-# example 2 filter by codes
+# example 2 filter using numerical codes
 cip_filter(cip, "german")
 cip_filter(cip, c("050125", "160501"))
 cip_filter(cip, c(050125, 160501))
 cip_filter(cip, seq(540101, 540199, 1))
 
-# example 3 filter with regular expressions
+# example 3 filter using regular expressions
 cip_filter(cip, c("^1407", "^1408"))
 cip_filter(cip, "^54")
 cip_filter(cip, c("^24", "^4102", "^450202"))
 
-# example 3 filter using named series
+# example 4 filter using named series
 cip_filter(cip, keep_any = cip_math_stat)
 
-# conclusion: extracting the 6-digit codes and names
-my_programs <- cip_filter(cip, "^54")
-my_cip6 <- my_programs[["cip6"]]
+# example CIP excerpt for case study
+exa_cip <- cip_filter(cip, c("^1408", "^1410", "^1419", "^1435"))
 ```
 
 <br>

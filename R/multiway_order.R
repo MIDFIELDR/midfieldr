@@ -1,10 +1,11 @@
 #' @importFrom dplyr group_by summarize left_join mutate select
-#' @importFrom dplyr ungroup quo_name arrange %>%
+#' @importFrom dplyr ungroup quo_name arrange
 #' @importFrom purrr map_chr
 #' @importFrom forcats fct_reorder
 #' @importFrom rlang sym :=
 #' @importFrom stats median
 #' @importFrom tibble tibble
+#' @importFrom magrittr %>%
 NULL
 
 #' Prepare multiway data for graphing

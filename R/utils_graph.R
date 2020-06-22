@@ -12,7 +12,7 @@ NULL
 #'  function from ggplot2 with the scale marked in exponential form powers of
 #'  ten and with logarithmic minor grid lines.}
 #' \item{\code{theme_midfield(...)}}{Applies \code{theme_minimal(...)} from
-#'  gplot2 with replacements: all text is 10 pt; lines are light gray (#D9D9D9)
+#'  ggplot2 with replacements: all text is 10 pt; lines are light gray (#D9D9D9)
 #'   and size 0.4.}
 #' }
 #'

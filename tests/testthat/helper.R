@@ -194,11 +194,11 @@ get_my_path <- function(filename) {
 # dim(grad)
 #
 # # practice testing tally_stickiness() ---------------------------------
-# program_group <- cip_filter(series = "540104") %>%
+# exa_program_group <- cip_filter(series = "540104") %>%
 # 	cip_label(program = "cip4name")
 #
 # # count students ever enrolled in programs
-# ever <- gather_ever(program_group) %>%
+# ever <- gather_ever(exa_program_group) %>%
 # 	race_sex_join() %>%
 # 	group_by(program, race, sex) %>%
 # 	summarize(ever = n()) %>%
@@ -206,7 +206,7 @@ get_my_path <- function(filename) {
 # 	zero_fill(program, race, sex)
 #
 # # count students graduating from programs
-# grad <- gather_grad(program_group) %>%
+# grad <- gather_grad(exa_program_group) %>%
 # 	race_sex_join() %>%
 # 	group_by(program, race, sex) %>%
 # 	summarize(grad = n()) %>%
