@@ -172,9 +172,9 @@
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"stringr"</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"ggplot2"</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"seplyr"</span>)</pre></body></html></div>
-<p>The <a href="gather_program_data.html">Gather program data</a> vignette describes how to obtain the program codes and names for these programs. Their 6-digit CIP codes and names are in the midfieldr data set <code>exa_programs</code>.</p>
+<p>The <a href="gather_program_data.html">Gather program data</a> vignette describes how to obtain the program codes and names for these programs. Their 6-digit CIP codes and names are in the midfieldr data set <code>exa_program_group</code>.</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># information saved from an earlier vignette</span>
-<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="no">exa_programs</span> <span class="kw">%&gt;%</span>
+<span class="no">exa_program_group</span> <span class="kw">&lt;-</span> <span class="no">exa_program_group</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
 <span class="co">#&gt; # A tibble: 12 x 3</span>
 <span class="co">#&gt;    cip6   cip6name                                            program           </span>
@@ -217,7 +217,7 @@
 <a href="#gather-starters" class="anchor"></a>Gather starters</h2>
 <p>We extract the vector of 6-digit CIP codes for our programs.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># obtain the cip6 codes</span>
-<span class="no">program_series</span> <span class="kw">&lt;-</span> <span class="no">program_group</span><span class="kw">[[</span><span class="st">"cip6"</span>]]</pre></body></html></div>
+<span class="no">program_series</span> <span class="kw">&lt;-</span> <span class="no">exa_program_group</span><span class="kw">[[</span><span class="st">"cip6"</span>]]</pre></body></html></div>
 <p>We use <code><a href="../reference/start_filter.html">start_filter()</a></code> to extract students from <code>exa_imputed_fye</code> data who start in one of the programs in <code>program_series</code>. The <code><a href="../reference/start_filter.html">start_filter()</a></code> function has two main arguments:</p>
 <ul>
 <li>
@@ -261,8 +261,8 @@
 <h2 class="hasAnchor">
 <a href="#start_filter" class="anchor"></a>start_filter()</h2>
 <p>We use <code><a href="../reference/start_filter.html">start_filter()</a></code> to collect all students starting in the programs we are studying.</p>
-<p>The <code>codes</code> argument in this case is an atomic vector of the 6-digit CIP codes in our <code>program_group</code>. The function uses these codes to search <code>midfieldstudents</code>, the default data set. Use <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> to check the result.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">program_series</span> <span class="kw">&lt;-</span> <span class="no">program_group</span><span class="kw">[[</span><span class="st">"cip6"</span>]] <span class="kw">%&gt;%</span>
+<p>The <code>codes</code> argument in this case is an atomic vector of the 6-digit CIP codes in our <code>exa_program_group</code>. The function uses these codes to search <code>midfieldstudents</code>, the default data set. Use <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> to check the result.</p>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">program_series</span> <span class="kw">&lt;-</span> <span class="no">exa_program_group</span><span class="kw">[[</span><span class="st">"cip6"</span>]] <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>() <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>() <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
@@ -307,7 +307,7 @@
 <span class="co">#&gt; 5 MID25808049 140801</span>
 <span class="co">#&gt; # ... with 8,864 more rows</span></pre></body></html></div>
 <p>Confirm that the CIPs are the ones we expect and that no student ID has been inadvertently duplicated.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># should be a subset of the program_group CIP we started with</span>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># should be a subset of the exa_program_group CIP we started with</span>
 <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">started</span><span class="kw">[[</span><span class="st">"cip6"</span>]]))
 <span class="co">#&gt; [1] "140801" "141001" "141901" "143501"</span>
 
@@ -369,7 +369,7 @@
 <span class="co"># count students</span>
 <span class="no">started</span> <span class="kw">&lt;-</span> <span class="no">started</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">.</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">.</span>, <span class="no">exa_program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize</a></span>(<span class="no">.</span>, <span class="no">grouping_variables</span>, <span class="st">"start"</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
 <span class="co">#&gt; # A tibble: 63 x 4</span>
@@ -384,7 +384,7 @@
 
 <span class="no">graduated</span> <span class="kw">&lt;-</span> <span class="no">graduated</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">.</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">.</span>, <span class="no">exa_program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize</a></span>(<span class="no">.</span>, <span class="no">grouping_variables</span>, <span class="st">"grad"</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
 <span class="co">#&gt; # A tibble: 59 x 4</span>
@@ -431,7 +431,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Graduation rate (IPEDS definition)"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>) +
   <span class="fu"><a href="../reference/utils_graph.html">theme_midfield</a></span>()</pre></body></html></div>
-<p><img src="../man/figures/grad-rate-fig1-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../man/figures/compute-grad-rate-fig1-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 <div id="references" class="section level2">

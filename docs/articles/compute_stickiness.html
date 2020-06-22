@@ -166,17 +166,17 @@
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"stringr"</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"ggplot2"</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"seplyr"</span>)</pre></body></html></div>
-<p>The <a href="gather_program_data.html">Gather program data</a> vignette describes the process for obtaining the program codes and names for four engineering programs: Civil, Electrical, Industrial, and Mechanical. The output of that vignette is saved as a midfieldr case data set, <code>exa_programs</code>. You may</p>
+<p>The <a href="gather_program_data.html">Gather program data</a> vignette describes the process for obtaining the program codes and names for four engineering programs: Civil, Electrical, Industrial, and Mechanical. The output of that vignette is saved as a midfieldr case data set, <code>exa_program_group</code>. You may</p>
 <ul>
 <li>create the program group by running the code in the vignette</li>
 <li>or load the saved case data</li>
 </ul>
-<p>The case data are loaded with midfieldr. Simply assign the data to an object such as <code>program_group</code>.</p>
+<p>The case data are loaded with midfieldr. Simply assign the data to an object such as <code>exa_program_group</code>.</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># CIP information saved from an earlier vignette</span>
-<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="no">exa_programs</span></pre></body></html></div>
+<span class="no">exa_program_group</span> <span class="kw">&lt;-</span> <span class="no">exa_program_group</span></pre></body></html></div>
 <p>Examine the result: there are a total of 12 CIP codes for these programs. We have two columns from the <code>cip</code> dataset and the <code>program</code> column we added using <code><a href="../reference/cip6_select.html">cip6_select()</a></code>.</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># check the result</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">program_group</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">exa_program_group</span>)
 <span class="co">#&gt; # A tibble: 12 x 3</span>
 <span class="co">#&gt;    cip6   cip6name                                            program           </span>
 <span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt;                                               &lt;chr&gt;             </span>
@@ -214,9 +214,9 @@
 <li>
 <code>codes</code> atomic character vector of 6-digit CIP codes</li>
 </ul>
-<p>The <code>codes</code> argument in this case is an atomic vector of the 6-digit CIP codes in our <code>program_group</code>. The function uses these codes to search <code>midfieldterms</code>, the default reference data set. Use <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> to check the result.</p>
+<p>The <code>codes</code> argument in this case is an atomic vector of the 6-digit CIP codes in our <code>exa_program_group</code>. The function uses these codes to search <code>midfieldterms</code>, the default reference data set. Use <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> to check the result.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># extract the 6-digit CIPs as a search series</span>
-<span class="no">program_series</span> <span class="kw">&lt;-</span> <span class="no">program_group</span><span class="kw">[[</span><span class="st">"cip6"</span>]] <span class="kw">%&gt;%</span>
+<span class="no">program_series</span> <span class="kw">&lt;-</span> <span class="no">exa_program_group</span><span class="kw">[[</span><span class="st">"cip6"</span>]] <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>() <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>() <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
@@ -289,8 +289,8 @@
 <span class="co">#&gt; # ... with 10,752 more rows</span></pre></body></html></div>
 <p>If the argument to <code><a href="../reference/race_sex_join.html">race_sex_join()</a></code> already includes a <code>sex</code> or <code>race</code> column, that column (or columns) is returned unchanged. Open the help page by running</p>
 <div class="sourceCode" id="cb10"><html><body><pre class="r">? <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>()</pre></body></html></div>
-<p>Next we join our custom program names to the student data. We use <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join()</a></code> (a dplyr function) to join <code>program_group</code> to <code>students</code> by the 6-digit CIP code.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">students</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">students</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
+<p>Next we join our custom program names to the student data. We use <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join()</a></code> (a dplyr function) to join <code>exa_program_group</code> to <code>students</code> by the 6-digit CIP code.</p>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">students</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">students</span>, <span class="no">exa_program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
 <span class="co">#&gt; # A tibble: 10,764 x 6</span>
 <span class="co">#&gt;    id        cip6  race  sex   cip6name                          program        </span>
@@ -339,7 +339,7 @@
 <div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># count students graduating from programs</span>
 <span class="no">graduated</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/grad_filter.html">grad_filter</a></span>(<span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>() <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">exa_program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize</a></span>(<span class="no">.</span>, <span class="no">grouping_variables</span>, <span class="st">"grad"</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
 <span class="co">#&gt; # A tibble: 60 x 4</span>
@@ -366,7 +366,7 @@
 </ul>
 <div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">graduated</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/grad_filter.html">grad_filter</a></span>(<span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/race_sex_join.html">race_sex_join</a></span>(<span class="no">.</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">.</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span>(<span class="no">.</span>, <span class="no">exa_program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/pkg/seplyr/man/group_summarize.html">group_summarize</a></span>(<span class="no">.</span>, <span class="no">grouping_variables</span>, <span class="st">"grad"</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">.</span>)</pre></body></html></div>
 <p>Open the help page by running</p>
@@ -504,7 +504,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Stickiness"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>) +
   <span class="fu"><a href="../reference/utils_graph.html">theme_midfield</a></span>()</pre></body></html></div>
-<p><img src="../man/figures/stickiness-fig1-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../man/figures/compute-stickiness-fig1-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>We also apply our own <code><a href="../reference/utils_graph.html">theme_midfield()</a></code> to edit the visual properties of the graph: axes, legends, panels, strips, etc. Open the help page by running</p>
 <div class="sourceCode" id="cb24"><html><body><pre class="r">? <span class="fu"><a href="../reference/utils_graph.html">theme_midfield</a></span>()</pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>

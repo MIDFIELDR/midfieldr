@@ -143,7 +143,8 @@
 <a href="#introduction" class="anchor"></a>Introduction</h2>
 <p>In studying student records, a common first step is to filter the data, retaining some instructional programs and dropping others.</p>
 <p>Programs in the US are encoded by “CIP” codes. CIP is the acronym for <em>Classification of Instructional Programs</em>, a taxonomy of academic programs curated by the US Department of Education <span class="citation">(“IPEDS Classification of Instructional Programs” <a href="#ref-cip2010" role="doc-biblioref">2010</a>)</span>.</p>
-<p>A CIP code is a 6-digit integer assigned to an instructional program. The 2010 CIP codes are included with midfieldr in the data set <code>cip</code>. To find the codes we need, we search <code>cip</code> using the <code><a href="../reference/cip_filter.html">cip_filter()</a></code> function.</p>
+<p>A CIP code is a 6-digit integer assigned to an instructional program. The 2010 CIP codes are included with midfieldr in the data set <code>cip</code>.</p>
+<p>We explore the <code>cip</code> data set using the <code><a href="../reference/cip_filter.html">cip_filter()</a></code> function. We illustrate several search strategies and we conclude by constructing an example data set used in subsequent vignettes.</p>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 <div id="cip-data" class="section level2">
@@ -151,7 +152,8 @@
 <a href="#cip-data" class="anchor"></a>CIP data</h2>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># packages used in the vignette</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"midfieldr"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"dplyr"</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"dplyr"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"stringr"</span>)</pre></body></html></div>
 <p>The midfieldr package includes a data set called <code>cip</code> that provides the 2010 CIP codes and names for 1584 programs, one program per row. Every program has three codes:</p>
 <ul>
 <li>6-digit code, a specific program</li>
@@ -479,12 +481,12 @@ Science Technologies, Technicians, Other
 <div class="sourceCode" id="cb9"><html><body><pre class="r">? <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>()</pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
-<div id="cip-filtering-examples" class="section level2">
+<div id="filtering-examples" class="section level2">
 <h2 class="hasAnchor">
-<a href="#cip-filtering-examples" class="anchor"></a>CIP filtering examples</h2>
-<div id="example-1--filter-by-keywords" class="section level3">
+<a href="#filtering-examples" class="anchor"></a>Filtering examples</h2>
+<div id="using-keywords-and-phrases" class="section level3">
 <h3 class="hasAnchor">
-<a href="#example-1--filter-by-keywords" class="anchor"></a>Example 1. Filter by keywords</h3>
+<a href="#using-keywords-and-phrases" class="anchor"></a>1. Using keywords and phrases</h3>
 <p>Suppose we want to find the CIP codes and names for all programs in Civil Engineering. The search is case-insensitive, so we start with the following code chunk.</p>
 <div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># example 1 filter by keywords</span>
 <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="st">"civil"</span>) <span class="kw">%&gt;%</span>
@@ -1065,9 +1067,9 @@ Civil Engineering, Other
 </table>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
-<div id="example-2--filter-by-codes" class="section level3">
+<div id="using-numerical-codes" class="section level3">
 <h3 class="hasAnchor">
-<a href="#example-2--filter-by-codes" class="anchor"></a>Example 2. Filter by codes</h3>
+<a href="#using-numerical-codes" class="anchor"></a>2. Using numerical codes</h3>
 <p>Suppose we want to study programs relating to German culture, language, and literature. Using “german” for the <code>keep_any</code> value yields</p>
 <div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># example 2 filter by codes</span>
 <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="st">"german"</span>) <span class="kw">%&gt;%</span>
@@ -1578,9 +1580,9 @@ History, Other
 </table>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
-<div id="example-3--filter-with-regular-expressions" class="section level3">
+<div id="using-regular-expressions" class="section level3">
 <h3 class="hasAnchor">
-<a href="#example-3--filter-with-regular-expressions" class="anchor"></a>Example 3. Filter with regular expressions</h3>
+<a href="#using-regular-expressions" class="anchor"></a>3. Using regular expressions</h3>
 <p>Specifying 4-digit codes yields a data frame all 6-digit programs containing the 4-digit string. We use the regular expression notation <code><a href="https://rdrr.io/r/base/Arithmetic.html">^</a></code> to match the start of the strings.</p>
 <div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="co"># 4-digit example matching the start of the string</span>
 <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^1407"</span>, <span class="st">"^1408"</span>)) <span class="kw">%&gt;%</span>
@@ -2189,9 +2191,9 @@ Physical Anthropology
 </table>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
-<div id="example-4--filter-using-named-series" class="section level3">
+<div id="using-named-series" class="section level3">
 <h3 class="hasAnchor">
-<a href="#example-4--filter-using-named-series" class="anchor"></a>Example 4. Filter using named series</h3>
+<a href="#using-named-series" class="anchor"></a>4. Using named series</h3>
 <p>midfieldr includes several datasets of <em>named series</em>. A named series is a character vector of 6-digit CIP codes that belong to a group of programs such as Engineering, Physical Sciences, STEM, etc.</p>
 <p>A named series is assigned to the series argument in <code><a href="../reference/cip_filter.html">cip_filter()</a></code>.</p>
 <div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="co"># the math and statistics series</span>
@@ -2567,30 +2569,55 @@ Mathematics and Statistics, Other
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 </div>
-<div id="conclusion" class="section level2">
+<div id="case-study" class="section level2">
 <h2 class="hasAnchor">
-<a href="#conclusion" class="anchor"></a>Conclusion</h2>
-<p>Once we’ve identified all the programs we want to study, we extract a vector of 6-digit CIP codes to use later to identify students in these programs.</p>
-<p>For example, if we were studying History, we filter CIPs using <code>"^54"</code>.</p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="co"># conclusion: extracting the 6-digit codes and names</span>
-<span class="no">my_programs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="st">"^54"</span>) <span class="kw">%&gt;%</span>
+<a href="#case-study" class="anchor"></a>Case study</h2>
+<p>In the midfieldr vignettes, we use a case study of four programs (Civil, Electrical, Industrial, and Mechanical Engineering) to illustrate our process of computing persistence metrics.</p>
+<p>The case study begins here, by extracting CIP data for the four engineering programs.</p>
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"engineering"</span>, <span class="kw">drop_any</span> <span class="kw">=</span> <span class="st">"technology"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"civil"</span>, <span class="st">"electrical"</span>, <span class="st">"industrial"</span>, <span class="st">"mechanical"</span>)) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
-<span class="co">#&gt; # A tibble: 9 x 6</span>
-<span class="co">#&gt;   cip2  cip2name cip4  cip4name cip6   cip6name                                 </span>
-<span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;                                    </span>
-<span class="co">#&gt; 1 54    History  5401  History  540101 History, General                         </span>
-<span class="co">#&gt; 2 54    History  5401  History  540102 American History (United States)         </span>
-<span class="co">#&gt; 3 54    History  5401  History  540103 European History                         </span>
-<span class="co">#&gt; 4 54    History  5401  History  540104 History and Philosophy of Science and Te~</span>
-<span class="co">#&gt; 5 54    History  5401  History  540105 Public, Applied History and Archival Adm~</span>
-<span class="co">#&gt; # ... with 4 more rows</span></pre></body></html></div>
-<p>Then we use the R <code>[[]]</code> notation to extract the vector of values in the <code>cip6</code> variable (column).</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">my_cip6</span> <span class="kw">&lt;-</span> <span class="no">my_programs</span><span class="kw">[[</span><span class="st">"cip6"</span>]] <span class="kw">%&gt;%</span>
+<span class="co">#&gt; # A tibble: 13 x 6</span>
+<span class="co">#&gt;    cip2  cip2name  cip4  cip4name                cip6   cip6name                </span>
+<span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;                   &lt;chr&gt;  &lt;chr&gt;                   </span>
+<span class="co">#&gt;  1 14    Engineer~ 1408  Civil Engineering       140801 Civil Engineering, Gene~</span>
+<span class="co">#&gt;  2 14    Engineer~ 1408  Civil Engineering       140802 Geotechnical Engineering</span>
+<span class="co">#&gt;  3 14    Engineer~ 1408  Civil Engineering       140803 Structural Engineering  </span>
+<span class="co">#&gt;  4 14    Engineer~ 1408  Civil Engineering       140804 Transportation and High~</span>
+<span class="co">#&gt;  5 14    Engineer~ 1408  Civil Engineering       140805 Water Resources Enginee~</span>
+<span class="co">#&gt;  6 14    Engineer~ 1408  Civil Engineering       140899 Civil Engineering, Other</span>
+<span class="co">#&gt;  7 14    Engineer~ 1410  Electrical, Electronic~ 141001 Electrical, Electronics~</span>
+<span class="co">#&gt;  8 14    Engineer~ 1410  Electrical, Electronic~ 141003 Laser and Optical Engin~</span>
+<span class="co">#&gt;  9 14    Engineer~ 1410  Electrical, Electronic~ 141004 Telecommunications Engi~</span>
+<span class="co">#&gt; 10 14    Engineer~ 1410  Electrical, Electronic~ 141099 Electrical, Electronics~</span>
+<span class="co">#&gt; 11 14    Engineer~ 1419  Mechanical Engineering  141901 Mechanical Engineering  </span>
+<span class="co">#&gt; 12 14    Engineer~ 1435  Industrial Engineering  143501 Industrial Engineering  </span>
+<span class="co">#&gt; 13 14    Engineer~ 1441  Electromechanical Engi~ 144101 Electromechanical Engin~</span></pre></body></html></div>
+<p>The results show that the codes we want are at the 4-digit level: 1408, 1410, 1419, and 1435. We use these codes as search strings to filter <code>cip</code> and assign the result to the object <code>exa_cip</code>.</p>
+<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="co"># example CIP excerpt for case study</span>
+<span class="no">exa_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1435"</span>)) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
-<span class="co">#&gt; [1] "540101" "540102" "540103" "540104" "540105" "540106" "540107" "540108"</span>
-<span class="co">#&gt; [9] "540199"</span></pre></body></html></div>
-<p>A vector like this is used later to find student-record data associated with these programs.</p>
-<p><br><a href="#top">▲ top of page</a></p>
+<span class="co">#&gt; # A tibble: 12 x 6</span>
+<span class="co">#&gt;    cip2  cip2name  cip4  cip4name                cip6   cip6name                </span>
+<span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;                   &lt;chr&gt;  &lt;chr&gt;                   </span>
+<span class="co">#&gt;  1 14    Engineer~ 1408  Civil Engineering       140801 Civil Engineering, Gene~</span>
+<span class="co">#&gt;  2 14    Engineer~ 1408  Civil Engineering       140802 Geotechnical Engineering</span>
+<span class="co">#&gt;  3 14    Engineer~ 1408  Civil Engineering       140803 Structural Engineering  </span>
+<span class="co">#&gt;  4 14    Engineer~ 1408  Civil Engineering       140804 Transportation and High~</span>
+<span class="co">#&gt;  5 14    Engineer~ 1408  Civil Engineering       140805 Water Resources Enginee~</span>
+<span class="co">#&gt;  6 14    Engineer~ 1408  Civil Engineering       140899 Civil Engineering, Other</span>
+<span class="co">#&gt;  7 14    Engineer~ 1410  Electrical, Electronic~ 141001 Electrical, Electronics~</span>
+<span class="co">#&gt;  8 14    Engineer~ 1410  Electrical, Electronic~ 141003 Laser and Optical Engin~</span>
+<span class="co">#&gt;  9 14    Engineer~ 1410  Electrical, Electronic~ 141004 Telecommunications Engi~</span>
+<span class="co">#&gt; 10 14    Engineer~ 1410  Electrical, Electronic~ 141099 Electrical, Electronics~</span>
+<span class="co">#&gt; 11 14    Engineer~ 1419  Mechanical Engineering  141901 Mechanical Engineering  </span>
+<span class="co">#&gt; 12 14    Engineer~ 1435  Industrial Engineering  143501 Industrial Engineering</span></pre></body></html></div>
+<p>Because we’ll be using these data again, it would be useful to write them to file, e.g., by running <code><a href="https://rdrr.io/r/base/readRDS.html">saveRDS(exa_cip, "data/exa_cip")</a></code>.</p>
+<p>However, for convenience, <code>exa_cip</code> has been included in midfieldr. Loading midfieldr makes the data available, for example,</p>
+<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
+<span class="no">x</span> <span class="kw">&lt;-</span> <span class="no">exa_cip</span></pre></body></html></div>
+<p>To see the help page, run</p>
+<div class="sourceCode" id="cb25"><html><body><pre class="r">? <span class="no">exa_cip</span></pre></body></html></div>
 </div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
@@ -2607,8 +2634,8 @@ Mathematics and Statistics, Other
 <div id="complete-script" class="section level3">
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor"></a>Complete script</h3>
-<p>In response to requests from some of our workshop attendees, we collect the vignette code chunks in one script. We condense the script by omitting exploratory steps so we can focus on the steps that produce the results.</p>
-<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="co"># packages used in the vignette</span>
+<p>In response to requests from some of our workshop attendees, we collect the vignette code chunks in one script. We condense the script by omitting exploratory steps to focus on the steps that produce the results.</p>
+<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="co"># packages used in the vignette</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"midfieldr"</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"dplyr"</span>)
 
@@ -2625,30 +2652,29 @@ Mathematics and Statistics, Other
 <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="st">"engineering"</span>)
 <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="st">"civil engineering"</span>, <span class="kw">drop_any</span> <span class="kw">=</span> <span class="st">"technology"</span>)
 
-<span class="co"># example 1 filter by keywords</span>
+<span class="co"># example 1 filter using keywords</span>
 <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="st">"civil"</span>)
 <span class="no">cip</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"civil"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"engineering"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="kw">drop_any</span> <span class="kw">=</span> <span class="st">"technology"</span>)
 
-<span class="co"># example 2 filter by codes</span>
+<span class="co"># example 2 filter using numerical codes</span>
 <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="st">"german"</span>)
 <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"050125"</span>, <span class="st">"160501"</span>))
 <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">050125</span>, <span class="fl">160501</span>))
 <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">540101</span>, <span class="fl">540199</span>, <span class="fl">1</span>))
 
-<span class="co"># example 3 filter with regular expressions</span>
+<span class="co"># example 3 filter using regular expressions</span>
 <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^1407"</span>, <span class="st">"^1408"</span>))
 <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="st">"^54"</span>)
 <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^24"</span>, <span class="st">"^4102"</span>, <span class="st">"^450202"</span>))
 
-<span class="co"># example 3 filter using named series</span>
+<span class="co"># example 4 filter using named series</span>
 <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="no">cip_math_stat</span>)
 
-<span class="co"># conclusion: extracting the 6-digit codes and names</span>
-<span class="no">my_programs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="st">"^54"</span>)
-<span class="no">my_cip6</span> <span class="kw">&lt;-</span> <span class="no">my_programs</span><span class="kw">[[</span><span class="st">"cip6"</span>]]</pre></body></html></div>
+<span class="co"># example CIP excerpt for case study</span>
+<span class="no">exa_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/cip_filter.html">cip_filter</a></span>(<span class="no">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1435"</span>))</pre></body></html></div>
 <p><br><a href="#top">▲ top of page </a><br><a href="../index.html">◁ main page </a></p>
 </div>
 </div>
