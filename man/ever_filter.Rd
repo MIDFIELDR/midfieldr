@@ -14,37 +14,56 @@ ever_filter(
 )
 }
 \arguments{
-\item{data}{Data frame of student IDs, academic terms, and CIP codes, default \code{midfieldterms}.}
+\item{data}{Data frame of student IDs, academic terms, and CIP codes,
+default \code{midfieldterms}.}
 
-\item{codes}{Atomic character vector of 6-digit CIP codes specifying the programs to filter by.}
+\item{codes}{Atomic character vector of 6-digit CIP codes specifying
+the programs to filter by.}
 
 \item{...}{Not used for values, forces later arguments to bind by name}
 
-\item{id}{The column name in quotes of the student ID variable in \code{data}. Default is "id".}
+\item{id}{The column name in quotes of the student ID variable in
+\code{data}. Default is "id".}
 
-\item{cip6}{The column name in quotes of the 6-digit CIP code variable in \code{data}. Default is "cip6".}
+\item{cip6}{The column name in quotes of the 6-digit CIP code variable
+in \code{data}. Default is "cip6".}
 
-\item{term}{The column name in quotes of the term variable in \code{data}. Default is "term".}
+\item{term}{The column name in quotes of the term variable in
+\code{data}. Default is "term".}
 }
 \value{
 Data frame with character variables for student ID and program CIP
 }
 \description{
-Filter academic term data to find all students ever enrolled in specified programs.
+Filter academic term data to find all students ever enrolled in
+specified programs.
 }
 \details{
-The \code{midfielddata} package must be installed to provide the \code{midfieldterms} data frame as the default value for the \code{data} argument. Optionally, a data frame having the same structure as \code{midfieldterms} may be used as the value for the \code{data} argument.
+The \code{midfielddata} package must be installed to provide the
+ \code{midfieldterms} data frame as the default value for the
+ \code{data} argument. Optionally, a data frame having the same structure
+ as \code{midfieldterms} may be used as the value for the \code{data}
+ argument.
 
-The \code{codes} argument is an atomic character vector of 6-digit CIP codes used to filter \code{data} and extract student IDs and terms.
+The \code{codes} argument is an atomic character vector of 6-digit CIP
+codes used to filter \code{data} and extract student IDs and terms.
 
-The function returns a subset of \code{data} with every unique combination of student ID and program CIP, representing every student ever enrolled in the specified programs. Only the student ID and program CIP are returned; other variables in \code{data} are quietly dropped.
+The function returns a subset of \code{data} with every unique combination
+of student ID and program CIP, representing every student ever enrolled in
+the specified programs. Only the student ID and program CIP are returned;
+ other variables in \code{data} are quietly dropped.
 
-Optional arguments. Student ID variables in the midfielddata data sets are named "id". If your data frames use a different name, you can either 1) rename your variables to "id", or 2) use the optional \code{id} argument to pass the alternate variable name to the function. The same is true for the \code{cip6} and \code{term} variables.
+Optional arguments. Student ID variables in the midfielddata data sets
+are named "id". If your data frames use a different name, you can either
+1) rename your variables to "id", or 2) use the optional \code{id} argument
+to pass the alternate variable name to the function. The same is true for
+the \code{cip6} and \code{term} variables.
 }
 \examples{
 library("midfielddata")
 (ever_filter(codes = "540104"))
 }
 \seealso{
-\code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP codes and naming programs.
+\code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP
+codes and naming programs.
 }

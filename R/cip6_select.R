@@ -6,35 +6,49 @@ NULL
 
 #' Select the 6-digit CIP code and name and add a program label
 #'
-#' From a CIP data frame, select the columns with the 6-digit codes and names and add a new character variable named \code{program}.
+#' From a CIP data frame, select the columns with the 6-digit codes and names
+#' and add a new character variable named \code{program}.
 #'
 #' The 2-digit and 4-digit codes and names are silently dropped.
 #'
-#'  Assigning a custom label to a program or a group of programs provides the option of grouping, summarizing, and joining data in ways not afforded by the default CIP data. We can also create program names that are less verbose than the default names.
+#'  Assigning a custom label to a program or a group of programs provides
+#'  the option of grouping, summarizing, and joining data in ways not afforded
+#'  by the default CIP data. We can also create program names that are
+#'  less verbose than the default names.
 #'
-#' @param data Data frame of CIP codes and names with the same structure as midfieldr \code{cip}.
+#' @param data Data frame of CIP codes and names with the same structure
+#' as midfieldr \code{cip}.
 #'
 #' @param program Character variable. There are four options:
 #'
-#' If program = NULL, the default, the 4-digit CIP program names are assigned to the new column.
+#' If program = NULL, the default, the 4-digit CIP program names are assigned
+#' to the new column.
 #'
-#' If program = "named_series", then the series name is assigned to the new column.
+#' If program = "named_series", then the series name is assigned to the
+#' new column.
 #'
-#' If one of three strings ("cip2name", "cip4name", or "cip6name"), then the 2-digit, 4-digit, or 6-digit CIP program names are assigned to the new column.
+#' If one of three strings ("cip2name", "cip4name", or "cip6name"), then the
+#' 2-digit, 4-digit, or 6-digit CIP program names are assigned to the new
+#' column.
 #'
 #' Any other string fills the new column.
 #'
 #' @param ... Not used for values, forces later arguments to bind by name.
 #'
-#' @param cip6 Optional argument, the column name in quotes of the 6-digit CIP code variable in \code{data}. Default is "cip6".
+#' @param cip6 Optional argument, the column name in quotes of the 6-digit
+#' CIP code variable in \code{data}. Default is "cip6".
 #'
-#' @param cip6name Optional argument, the column name in quotes of the 6-digit CIP program name variable in \code{data}. Default is "cip6name".
+#' @param cip6name Optional argument, the column name in quotes of the
+#' 6-digit CIP program name variable in \code{data}. Default is "cip6name".
 #'
-#' @param cip4name Optional argument, the column name in quotes of the 4-digit CIP program name variable in \code{data}. Default is "cip4name".
+#' @param cip4name Optional argument, the column name in quotes of the
+#' 4-digit CIP program name variable in \code{data}. Default is "cip4name".
 #'
-#' @param cip2name Optional argument, the column name in quotes of the 2-digit CIP program name variable in \code{data}. Default is "cip2name".
+#' @param cip2name Optional argument, the column name in quotes of the
+#' 2-digit CIP program name variable in \code{data}. Default is "cip2name".
 #'
-#' @return A data frame with the 6-digit code and name columns from the input data frame with an added \code{program} variable.
+#' @return A data frame with the 6-digit code and name columns from the
+#' input data frame with an added \code{program} variable.
 #'
 #' @seealso \code{\link[midfieldr]{cip_filter}} for exploring CIP codes.
 #'
@@ -51,7 +65,9 @@ NULL
 #' y <- cip6_select(x, program = "cip4name")
 #' y <- cip6_select(x, program = "cip2name")
 #' @export
-cip6_select <- function(data, program = NULL, ..., cip6 = "cip6", cip6name = "cip6name", cip4name = "cip4name", cip2name = "cip2name") {
+cip6_select <- function(data, program = NULL, ..., cip6 = "cip6",
+                        cip6name = "cip6name", cip4name = "cip4name",
+                        cip2name = "cip2name") {
 
   # column class must match midfieldr cip
   stopifnot(identical(
@@ -70,7 +86,10 @@ cip6_select <- function(data, program = NULL, ..., cip6 = "cip6", cip6name = "ci
 
   # add program name and select 6-digit code and name
   # use wrapr::let() to allow alternate column names
-  mapping <- c(CIP6 = cip6, CIP6NAME = cip6name, CIP4NAME = cip4name, CIP2NAME = cip2name)
+  mapping <- c(
+    CIP6 = cip6, CIP6NAME = cip6name, CIP4NAME = cip4name,
+    CIP2NAME = cip2name
+  )
   wrapr::let(
     alias = mapping,
     expr = {

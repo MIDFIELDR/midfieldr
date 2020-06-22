@@ -9,22 +9,34 @@ cip_filter(data = NULL, keep_any = NULL, ..., drop_any = NULL)
 \arguments{
 \item{data}{Data frame or tibble of CIP codes, default \code{midfieldr::cip}.}
 
-\item{keep_any}{Character vector used to filter \code{data}, keeping all rows in which any matches or partial matches are detected.}
+\item{keep_any}{Character vector used to filter \code{data}, keeping all
+rows in which any matches or partial matches are detected.}
 
-\item{...}{Not used for values, forces later optional arguments to bind by name}
+\item{...}{Not used for values, forces later optional arguments to bind
+by name}
 
-\item{drop_any}{Character vector, optional argument. The output of the \code{keep_any} filter is the input to the \code{drop_any} filter, dropping all rows in which any matches or partial matches are detected.}
+\item{drop_any}{Character vector, optional argument. The output of
+the \code{keep_any} filter is the input to the \code{drop_any} filter,
+dropping all rows in which any matches or partial matches are detected.}
 }
 \value{
 Data frame
 }
 \description{
-Filter a data frame of Classification of Instructional Programs (CIP) codes and return the rows that match conditions.
+Filter a data frame of Classification of Instructional Programs (CIP) codes
+and return the rows that match conditions.
 }
 \details{
-The \code{keep_any} argument is an atomic character vector of search terms  used to filter the CIP data frame. Typical search terms include words and phrases describing academic programs or their CIP codes. The optional \code{drop_any} argument is similar except it drops rows instead of keeping them.
+The \code{keep_any} argument is an atomic character vector of search
+terms  used to filter the CIP data frame. Typical search terms include
+words and phrases describing academic programs or their CIP codes. The
+optional \code{drop_any} argument is similar except it drops rows instead
+of keeping them.
 
-Several named series are provided as possible values for \code{keep_any} to facilitate searching for groups of programs such as Biological Sciences, Engineering, Physical Sciences, etc. For the named series help page, run \code{? cip_series}.
+Several named series are provided as possible values for \code{keep_any}
+to facilitate searching for groups of programs such as Biological
+Sciences, Engineering, Physical Sciences, etc. For the named series help
+page, run \code{? cip_series}.
 
 The function returns a subset of \code{data}. All columns are retained.
 }

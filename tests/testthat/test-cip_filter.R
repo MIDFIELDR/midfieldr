@@ -11,9 +11,18 @@ test_that("data argument NULL", {
 })
 
 test_that("cip_filter() gives meaningful errors", {
-  expect_error(cip_filter(cip_engr), "midfieldr::cip_filter, first argument must be a data.frame or tbl.")
-  expect_error(cip_filter(case_engr, keep_any = case_engr), "midfieldr::cip_filter, keep_any argument must be a character vector.")
-  expect_error(cip_filter(case_engr, keep_any = "^1410", drop_any = case_engr), "midfieldr::cip_filter, drop_any argument must be a character vector.")
+  expect_error(
+    cip_filter(cip_engr),
+    "cip_filter, first argument must be a data.frame or tbl."
+  )
+  expect_error(
+    cip_filter(case_engr, keep_any = case_engr),
+    "cip_filter, keep_any argument must be a character vector."
+  )
+  expect_error(
+    cip_filter(case_engr, keep_any = "^1410", drop_any = case_engr),
+    "cip_filter, drop_any argument must be a character vector."
+  )
 })
 
 test_that("Numeric terms are coverted to strings", {

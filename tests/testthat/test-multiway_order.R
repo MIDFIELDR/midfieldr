@@ -29,5 +29,8 @@ test_that("Median argument returns expected values", {
 
 test_that("Error produces if argument not a data frame", {
   x <- runif(10)
-  expect_error(multiway_order(x), "midfieldr::multiway_order() argument must be a data frame or tbl", fixed = TRUE)
+  expect_error(multiway_order(x),
+    "multiway_order() argument must be a data frame or tbl",
+    fixed = TRUE
+  )
 })

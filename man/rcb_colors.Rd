@@ -12,18 +12,24 @@ A data frame (tibble) with 24 observations and 2 variables.
 }
 }
 \source{
-Cynthia Brewer (\url{http://colorbrewer2.org}) and RColorBrewer  (\url{https://cran.r-project.org/package=RColorBrewer}).
+Cynthia Brewer (\url{http://colorbrewer2.org}) and
+RColorBrewer  (\url{https://cran.r-project.org/package=RColorBrewer}).
 }
 \usage{
 rcb_colors
 }
 \description{
-Shorthand color names assigned to selected colors from the ColorBrewer palettes.
+Shorthand color names assigned to selected colors from the
+ColorBrewer palettes.
 }
 \details{
-This dataset provides convenient access to selected ColorBrewer palettes: diverging brown-bluegreen (BrBG) with 8 levels; diverging purple-green (PRGn) with 8 levels; and sequential gray (Greys) with the middle four of 6 levels.
+This dataset provides convenient access to selected ColorBrewer
+palettes: diverging brown-bluegreen (BrBG) with 8 levels; diverging
+purple-green (PRGn) with 8 levels; and sequential gray (Greys) with the
+middle four of 6 levels.
 
-The color names have the form "level_hue" with 4 saturation levels (dark, mid, light, pale) and 5 hues (Br, BG, PR, Gn, Gray or Grey).
+The color names have the form "level_hue" with 4 saturation levels (dark,
+mid, light, pale) and 5 hues (Br, BG, PR, Gn, Gray or Grey).
 }
 \examples{
 rcb_colors

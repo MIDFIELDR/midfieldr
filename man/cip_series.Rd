@@ -13,18 +13,23 @@
 \format{
 An atomic character vector of 6-digit CIP codes.
 \describe{
-\item{\code{cip_bio_sci}}{Biological and biomedical science programs (2-digit CIP 26).}
+\item{\code{cip_bio_sci}}{Biological and biomedical science programs
+(2-digit CIP 26).}
 \item{\code{cip_engr}}{Engineering programs (2-digit CIP 14)}
-\item{\code{cip_math_stat}}{Mathematics and statistics programs (2-digit CIP 27).}
+\item{\code{cip_math_stat}}{Mathematics and statistics programs
+(2-digit CIP 27).}
 \item{\code{cip_other_stem}}{Other STEM programs, not individually named.}
 \item{\code{cip_phys_sci}}{Physical science programs (2-digit CIP 40).}
-\item{\code{cip_stem}}{All Science, Technology, Engineering, and Mathematics (STEM) programs. Collects all the named STEM series into one character vector.}
+\item{\code{cip_stem}}{All Science, Technology, Engineering, and
+Mathematics (STEM) programs. Collects all the named STEM series into
+one character vector.}
 }
 }
 \source{
-NSF STEM programs, \url{https://www.ice.gov/sites/default/files/documents/Document/2016/stem-list.pdf}
+NSF STEM programs, \url{https://tinyurl.com/jrnbu7u}
 
-CIP 2010, US National Center for Education Statistics, \url{https://nces.ed.gov/ipeds/cipcode}.
+CIP 2010, US National Center for Education Statistics,
+\url{https://nces.ed.gov/ipeds/cipcode}.
 }
 \usage{
 cip_bio_sci
@@ -40,7 +45,8 @@ cip_phys_sci
 cip_stem
 }
 \description{
-Atomic character vectors of 6-digit CIP codes for specified groups of programs.
+Atomic character vectors of 6-digit CIP codes for specified groups of
+programs.
 }
 \examples{
 head(cip_math_stat, n = 10L)

@@ -7,18 +7,29 @@
 multiway_order(data, return_medians = FALSE)
 }
 \arguments{
-\item{data}{Data frame with one numerical variable and two categorical variables.}
+\item{data}{Data frame with one numerical variable and two
+categorical variables.}
 
-\item{return_medians}{Logical value indicating whether or not the medians computed to order the factors should be included in the data frame returned. The default is FALSE.}
+\item{return_medians}{Logical value indicating whether or not the
+medians computed to order the factors should be included in the data
+frame returned. The default is FALSE.}
 }
 \value{
-Data frame with its two categorical variables converted to factors and ordered by increasing medians of the numerical variable. The medians of the quantitative variable for each category are added to the data frame if argument \code{medians} is TRUE.
+Data frame with its two categorical variables converted to factors
+and ordered by increasing medians of the numerical variable. The medians
+of the quantitative variable for each category are added to the data frame
+if argument \code{medians} is TRUE.
 }
 \description{
-Transforms a data frame such that two categorical variables become factors with their levels ordered by medians of the quantitative variable.
+Transforms a data frame such that two categorical variables become
+factors with their levels ordered by medians of the quantitative variable.
 }
 \details{
-In multiway data, there is a single quantitative value (or response) for every combination of levels of two categorical variables. \code{multiway_order()} converts the categorical variables to factors and orders the factors by increasing median values of the levels of the categorical variables.
+In multiway data, there is a single quantitative value (or response) for
+every combination of levels of two categorical variables.
+\code{multiway_order()} converts the categorical variables to factors
+and orders the factors by increasing median values of the levels of
+the categorical variables.
 }
 \examples{
 # construct a data frame with one numeric and two character variables

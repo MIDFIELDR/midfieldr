@@ -25,12 +25,12 @@ test_that("Produces expected output", {
 test_that("Error if incorrect codes argument", {
   expect_error(
     grad_filter(codes = NULL),
-    "midfieldr::grad_filter, codes cannot be NULL",
+    "grad_filter, codes cannot be NULL",
     fixed = TRUE
   )
   expect_error(
     grad_filter(codes = cip6),
-    "midfieldr::grad_filter, codes must be an atomic variable",
+    "grad_filter, codes must be an atomic variable",
     fixed = TRUE
   )
 })

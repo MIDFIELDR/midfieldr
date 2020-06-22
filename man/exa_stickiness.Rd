@@ -7,16 +7,24 @@
 \format{
 A data frame (tibble) with 32 observations and 6 variables.
 \describe{
- \item{program}{Instructional programs selected for study. Character variable.}
- \item{race}{Student race and sex from \code{midfieldstudents} data.  Character variable.}
- \item{sex}{Student sex from \code{midfieldstudents} data.  Character variable.}
- \item{ever}{Number of students ever enrolled in a program. Grouped and summarized from \code{midfieldterms} data.}
- \item{grad}{Number of students graduating from the program. Grouped and summarized from \code{midfielddegrees} data.}
- \item{stick}{Program stickiness: the ratio of the number of students graduating from a program to the number ever enrolled in the program.}
+ \item{program}{Instructional programs selected for study. Character
+ variable.}
+ \item{race}{Student race and sex from \code{midfieldstudents} data.
+  Character variable.}
+ \item{sex}{Student sex from \code{midfieldstudents} data.  Character
+ variable.}
+ \item{ever}{Number of students ever enrolled in a program. Grouped
+ and summarized from \code{midfieldterms} data.}
+ \item{grad}{Number of students graduating from the program. Grouped
+ and summarized from \code{midfielddegrees} data.}
+ \item{stick}{Program stickiness: the ratio of the number of
+ students graduating from a program to the number ever enrolled in the
+ program.}
 }
 }
 \source{
-\href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
+\href{https://midfieldr.github.io/midfielddata/}{midfielddata}
+ package
 }
 \usage{
 exa_stickiness
@@ -25,12 +33,19 @@ exa_stickiness
 Data for a case study.
 }
 \details{
-An data frame of stickiness data grouped by program and student race/ethnicity and sex. The number of students ever enrolled, the number of graduates, and the resulting stickiness for Civil, Electrical, Industrial, and Mechanical Engineering.
+An data frame of stickiness data grouped by program and student
+race/ethnicity and sex. The number of students ever enrolled, the number
+of graduates, and the resulting stickiness for Civil, Electrical,
+Industrial, and Mechanical Engineering.
 }
 \examples{
 exa_stickiness
 }
 \seealso{
 The "Compute stickiness" vignette.
+
+Other example_data: 
+\code{\link{exa_programs}}
 }
+\concept{example_data}
 \keyword{datasets}

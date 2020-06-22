@@ -29,7 +29,12 @@ test_that("cip6_select yields correct program name", {
   expect_equal("Other STEM", unique(df5$program))
   expect_equal("STEM", unique(df6$program))
 
-  expect_error(cip6_select(cip_filter(cip, "cip_stm"), "named_series"), "cip6_select: Error in named series")
+  expect_error(
+    cip6_select(
+      cip_filter(cip, "cip_stm"), "named_series"
+    ),
+    "cip6_select: Error in named series"
+  )
 })
 
 

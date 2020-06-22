@@ -9,15 +9,26 @@ NULL
 
 #' Prepare multiway data for graphing
 #'
-#' Transforms a data frame such that two categorical variables become factors with their levels ordered by medians of the quantitative variable.
+#' Transforms a data frame such that two categorical variables become
+#' factors with their levels ordered by medians of the quantitative variable.
 #'
-#' In multiway data, there is a single quantitative value (or response) for every combination of levels of two categorical variables. \code{multiway_order()} converts the categorical variables to factors and orders the factors by increasing median values of the levels of the categorical variables.
+#' In multiway data, there is a single quantitative value (or response) for
+#' every combination of levels of two categorical variables.
+#' \code{multiway_order()} converts the categorical variables to factors
+#' and orders the factors by increasing median values of the levels of
+#' the categorical variables.
 #'
-#' @param data Data frame with one numerical variable and two categorical variables.
+#' @param data Data frame with one numerical variable and two
+#' categorical variables.
 #'
-#' @param return_medians Logical value indicating whether or not the medians computed to order the factors should be included in the data frame returned. The default is FALSE.
+#' @param return_medians Logical value indicating whether or not the
+#' medians computed to order the factors should be included in the data
+#' frame returned. The default is FALSE.
 #'
-#' @return Data frame with its two categorical variables converted to factors and ordered by increasing medians of the numerical variable. The medians of the quantitative variable for each category are added to the data frame if argument \code{medians} is TRUE.
+#' @return Data frame with its two categorical variables converted to factors
+#' and ordered by increasing medians of the numerical variable. The medians
+#' of the quantitative variable for each category are added to the data frame
+#' if argument \code{medians} is TRUE.
 #'
 #' @examples
 #' # construct a data frame with one numeric and two character variables
@@ -40,7 +51,7 @@ NULL
 #' @export
 multiway_order <- function(data, return_medians = FALSE) {
   if (!(is.data.frame(data) || dplyr::is.tbl(data))) {
-    stop("midfieldr::multiway_order() argument must be a data frame or tbl")
+    stop("multiway_order() argument must be a data frame or tbl")
   }
 
   if (is.null(return_medians)) return_medians <- FALSE

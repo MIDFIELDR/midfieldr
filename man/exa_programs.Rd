@@ -5,15 +5,20 @@
 \alias{exa_programs}
 \title{Example program data}
 \format{
-A data frame (tibble) with 12 observations and 3 variables. All variables are characters. An observation is a unique program.
+A data frame (tibble) with 12 observations and 3 variables.
+All variables are characters. An observation is a unique program.
 \describe{
-  \item{cip6}{An instructional program's 6-digit code, representing "specific instructional programs" (US National Center for Education Statistics).}
+  \item{cip6}{An instructional program's 6-digit code, representing
+  "specific instructional programs" (US National Center for
+  Education Statistics).}
   \item{cip6name}{Name of a specific program at the 6-digit level.}
-  \item{program}{A program name assigned for grouping, summarizing, and joining.}
+  \item{program}{A program name assigned for grouping, summarizing,
+  and joining.}
 }
 }
 \source{
-\href{https://midfieldr.github.io/midfielddata/}{midfielddata} package
+\href{https://midfieldr.github.io/midfielddata/}{midfielddata}
+ package
 }
 \usage{
 exa_programs
@@ -22,12 +27,18 @@ exa_programs
 Data for a case study.
 }
 \details{
-The 6-digit CIP codes and names plus assigned program names for Civil, Electrical, Industrial, and Mechanical Engineering. The data frame is used in  several vignettes.
+The 6-digit CIP codes and names plus assigned program names for Civil,
+ Electrical, Industrial, and Mechanical Engineering. The data frame is
+ used in  several vignettes.
 }
 \examples{
 exa_programs
 }
 \seealso{
 The "Gather program data" vignette.
+
+Other example_data: 
+\code{\link{exa_stickiness}}
 }
+\concept{example_data}
 \keyword{datasets}

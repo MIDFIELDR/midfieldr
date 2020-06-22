@@ -16,30 +16,47 @@ race_sex_join(
 \arguments{
 \item{data}{Data frame to which race and sex are to be joined by student IDs}
 
-\item{demographics}{A data frame from which student race and sex are obtained, default \code{midfieldstudents}}
+\item{demographics}{A data frame from which student race and sex are
+obtained, default \code{midfieldstudents}}
 
-\item{...}{Not used for values, forces later optional arguments to bind by name.}
+\item{...}{Not used for values, forces later optional arguments to bind
+by name.}
 
-\item{id}{Optional character column name of the ID variable in both \code{data} and \code{demographics}.}
+\item{id}{Optional character column name of the ID variable in
+both \code{data} and \code{demographics}.}
 
-\item{race}{Optional character column name of the race variable in \code{demographics}.}
+\item{race}{Optional character column name of the race variable
+in \code{demographics}.}
 
-\item{sex}{Optional character column name of the sex variable in \code{demographics}.}
+\item{sex}{Optional character column name of the sex variable
+in \code{demographics}.}
 }
 \value{
-The input data frame is returned with two new columns for race and sex.
+The input data frame is returned with two new columns for race and
+sex.
 }
 \description{
 Add student race/ethnicity and sex variables to a data frame.
 }
 \details{
-The \code{data} argument is a data frame to which student race/ethnicity and sex data are to be joined and returned.
+The \code{data} argument is a data frame to which student race/ethnicity
+and sex data are to be joined and returned.
 
-Student race/ethnicity and sex information are obtained from the \code{demographics} data frame with a default value of  \code{midfieldstudents} from the midfielddata package. Optionally, any data frame having the same structure as \code{midfieldstudents} can be used.
+Student race/ethnicity and sex information are obtained from the
+ \code{demographics} data frame with a default value of
+ \code{midfieldstudents} from the midfielddata package. Optionally, any data
+ frame having the same structure as \code{midfieldstudents} can be used.
 
-The student ID variables in \code{data} and \code{demographics} must have the same column name. The values of the ID variable in \code{data} are assumed to be a subset of the values in \code{demographics}.
+The student ID variables in \code{data} and \code{demographics} must have
+the same column name. The values of the ID variable in \code{data} are
+assumed to be a subset of the values in \code{demographics}.
 
-If  \code{data} already contains \code{race} and \code{sex} variables, a join does not take place and \code{data} is returned unaltered.
+If  \code{data} already contains \code{race} and \code{sex} variables, a
+join does not take place and \code{data} is returned unaltered.
 
-Optional arguments. Student ID variables in the midfielddata data sets are named "id". If your data frames use a different name, you can either 1) rename your variables to "id", or 2) use the optional \code{id} argument to pass the alternate variable name to the function. The same is true for the \code{race} and \code{sex} variables.
+Optional arguments. Student ID variables in the midfielddata data sets
+are named "id". If your data frames use a different name, you can either
+1) rename your variables to "id", or 2) use the optional \code{id} argument
+to pass the alternate variable name to the function. The same is true for
+the \code{race} and \code{sex} variables.
 }

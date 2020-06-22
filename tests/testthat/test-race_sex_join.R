@@ -38,12 +38,12 @@ test_that("race_sex_join() does not overwrite existing race or sex variables", {
 test_that("data includes id", {
   expect_error(
     race_sex_join(data1),
-    "midfieldr::race_sex_join, id missing from data",
+    "race_sex_join, id missing from data",
     fixed = TRUE
   )
   expect_error(
     race_sex_join(data = id_only1, demographics = data1),
-    "midfieldr::race_sex_join, id, race, or sex missing from demographics",
+    "race_sex_join, id, race, or sex missing from demographics",
     fixed = TRUE
   )
 })
@@ -58,7 +58,7 @@ test_that("optional reference argument works", {
 test_that("id mismatch between data and reference throws an error", {
   expect_error(
     race_sex_join(data = id_only2, demographics = subset_students),
-    "midfieldr::race_sex_join, id mismatch between data and demographics",
+    "race_sex_join, id mismatch between data and demographics",
     fixed = TRUE
   )
 })

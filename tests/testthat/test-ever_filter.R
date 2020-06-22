@@ -26,12 +26,12 @@ test_that("Produces expected output", {
 test_that("Error if incorrect codes argument", {
   expect_error(
     ever_filter(),
-    "midfieldr::ever_filter, codes cannot be NULL",
+    "ever_filter, codes cannot be NULL",
     fixed = TRUE
   )
   expect_error(
     ever_filter(codes = cip6),
-    "midfieldr::ever_filter, codes must be an atomic variable",
+    "ever_filter, codes must be an atomic variable",
     fixed = TRUE
   )
 })

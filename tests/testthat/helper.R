@@ -27,7 +27,8 @@ get_my_path <- function(filename) {
 # subset_terms    <- gather_data_subset(midfielddata::midfieldterms)
 # subset_courses  <- gather_data_subset(midfielddata::midfieldcourses)
 # subset_degrees  <- gather_data_subset(midfielddata::midfielddegrees)
-# save(subset_students, file = "tests/testthat/testing-data/subset_students.rda")
+# save(subset_students,
+# file = "tests/testthat/testing-data/subset_students.rda")
 # save(subset_terms, file = "tests/testthat/testing-data/subset_terms.rda")
 # save(subset_courses, file = "tests/testthat/testing-data/subset_courses.rda")
 # save(subset_degrees, file = "tests/testthat/testing-data/subset_degrees.rda")
@@ -63,7 +64,8 @@ get_my_path <- function(filename) {
 #   	drop_na()
 #   df4 <- dplyr::select(starwars, name, species, gender, mass) %>%
 #   	drop_na()
-#   save(df1, df2, df3, df4, file = "tests/testthat/testing-data/test_df_01.rda")
+#   save(df1, df2, df3, df4,
+#   file = "tests/testthat/testing-data/test_df_01.rda")
 
 
 
