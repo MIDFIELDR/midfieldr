@@ -19,6 +19,7 @@ NULL
 #' @param ... Arguments that pass to the ggplot2 function
 #' @return Modifies an existing graph.
 #' @name utils_graph
+#' @family graph_helper
 #' @aliases NULL
 NULL
 

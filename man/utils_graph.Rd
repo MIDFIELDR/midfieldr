@@ -28,3 +28,8 @@ A set of customized layers for ggplot2 graphs.
   and size 0.4.}
 }
 }
+\seealso{
+Other graph_helper: 
+\code{\link{rcb_colors}}
+}
+\concept{graph_helper}

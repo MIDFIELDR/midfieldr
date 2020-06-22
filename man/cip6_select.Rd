@@ -77,4 +77,13 @@ y <- cip6_select(x, program = "cip2name")
 }
 \seealso{
 \code{\link[midfieldr]{cip_filter}} for exploring CIP codes.
+
+Other data_carpentry: 
+\code{\link{cip_filter}()},
+\code{\link{ever_filter}()},
+\code{\link{grad_filter}()},
+\code{\link{multiway_order}()},
+\code{\link{race_sex_join}()},
+\code{\link{start_filter}()}
 }
+\concept{data_carpentry}

@@ -29,7 +29,7 @@ NULL
 #' and ordered by increasing medians of the numerical variable. The medians
 #' of the quantitative variable for each category are added to the data frame
 #' if argument \code{medians} is TRUE.
-#'
+#' @family data_carpentry
 #' @examples
 #' # construct a data frame with one numeric and two character variables
 #' set.seed(20150531)

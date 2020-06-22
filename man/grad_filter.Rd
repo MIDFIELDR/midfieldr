@@ -66,4 +66,13 @@ library("midfielddata")
 \seealso{
 \code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP
 codes and naming programs.
+
+Other data_carpentry: 
+\code{\link{cip6_select}()},
+\code{\link{cip_filter}()},
+\code{\link{ever_filter}()},
+\code{\link{multiway_order}()},
+\code{\link{race_sex_join}()},
+\code{\link{start_filter}()}
 }
+\concept{data_carpentry}

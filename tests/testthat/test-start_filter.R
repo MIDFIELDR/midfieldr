@@ -12,7 +12,7 @@ x_cip6_atom <- x[["cip6"]]
 ref1 <- subset_students
 ref2 <- subset_students[, 1:3]
 ref3 <- unlist(ref1)[1:100]
-ref4 <- rename(cip_fye, mid = id, start = cip6)
+ref4 <- rename(exa_imputed_fye, mid = id, start = cip6)
 
 test_that("Error if incorrect series argument", {
   expect_error(
@@ -47,7 +47,7 @@ test_that("reference produces expected results", {
 
 test_that("alternate id and cip6 work", {
   expect_named(
-    start_filter(data = cip_fye, codes = "140201"),
+    start_filter(data = exa_imputed_fye, codes = "140201"),
     expected = c("id", "cip6"),
     ignore.order = TRUE
   )

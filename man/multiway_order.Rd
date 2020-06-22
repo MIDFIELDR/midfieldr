@@ -50,3 +50,13 @@ df3 <- multiway_order(df1, return_medians = TRUE)
 df3 <- dplyr::arrange(df3, cat1, cat2)
 df3
 }
+\seealso{
+Other data_carpentry: 
+\code{\link{cip6_select}()},
+\code{\link{cip_filter}()},
+\code{\link{ever_filter}()},
+\code{\link{grad_filter}()},
+\code{\link{race_sex_join}()},
+\code{\link{start_filter}()}
+}
+\concept{data_carpentry}

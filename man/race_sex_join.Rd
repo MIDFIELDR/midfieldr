@@ -60,3 +60,13 @@ are named "id". If your data frames use a different name, you can either
 to pass the alternate variable name to the function. The same is true for
 the \code{race} and \code{sex} variables.
 }
+\seealso{
+Other data_carpentry: 
+\code{\link{cip6_select}()},
+\code{\link{cip_filter}()},
+\code{\link{ever_filter}()},
+\code{\link{grad_filter}()},
+\code{\link{multiway_order}()},
+\code{\link{start_filter}()}
+}
+\concept{data_carpentry}

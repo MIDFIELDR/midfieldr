@@ -34,7 +34,7 @@ NULL
 #' dropping all rows in which any matches or partial matches are detected.
 #'
 #' @return Data frame
-#'
+#' @family data_carpentry
 #' @examples
 #' cip_filter(cip, "History")
 #' cip_filter(cip, "History", drop_any = c("^04", "^13", "^50"))

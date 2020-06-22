@@ -43,7 +43,7 @@ NULL
 #'
 #' @return Data frame with character variables for student ID and CIP of
 #' the starting program.
-#'
+#' @family data_carpentry
 #' @seealso \code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP
 #' codes and naming programs.
 #'

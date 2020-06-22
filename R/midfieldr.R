@@ -42,6 +42,7 @@ NULL
 #' \url{https://engineering.purdue.edu/MIDFIELD}
 #' @docType package
 #' @name midfieldr
+#' @family package
 NULL
 
 ## addresses R CMD check warning "no visible binding"

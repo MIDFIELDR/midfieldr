@@ -49,7 +49,7 @@ NULL
 #'
 #' @return A data frame with the 6-digit code and name columns from the
 #' input data frame with an added \code{program} variable.
-#'
+#' @family data_carpentry
 #' @seealso \code{\link[midfieldr]{cip_filter}} for exploring CIP codes.
 #'
 #' @examples

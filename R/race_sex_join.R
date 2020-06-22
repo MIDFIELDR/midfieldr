@@ -47,7 +47,7 @@ NULL
 #'
 #' @return The input data frame is returned with two new columns for race and
 #' sex.
-#'
+#' @family data_carpentry
 #' @export
 race_sex_join <- function(data = NULL, demographics = NULL, ..., id = "id",
                           race = "race", sex = "sex") {

@@ -38,6 +38,7 @@ exa_programs
 The "Gather program data" vignette.
 
 Other example_data: 
+\code{\link{exa_imputed_fye}},
 \code{\link{exa_stickiness}}
 }
 \concept{example_data}

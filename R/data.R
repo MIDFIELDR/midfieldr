@@ -41,6 +41,7 @@
 #'   related programs".}
 #'   \item{cip2name}{Name of a program grouping at the 2-digit level.}
 #' }
+#' @family cip_data
 #' @seealso The "Explore program CIP codes" vignette.
 #' @source US National Center for Education Statistics (NCES),
 #' Integrated Postsecondary Education Data System (IPEDS), 2020 CIP
@@ -67,6 +68,7 @@
 #' programs.
 #'
 #' @name cip_series
+#' @family cip_data
 #' @format An atomic character vector of 6-digit CIP codes.
 #' \describe{
 #' \item{\code{cip_bio_sci}}{Biological and biomedical science programs
@@ -188,7 +190,7 @@ NULL
 
 
 
-#' Imputed starting majors for FYE students
+#' FYE students and imputed starting majors
 #'
 #' Imputed starting majors for nearly 6000 first-year engineering (FYE)
 #' students in the \pkg{midfielddata} package.
@@ -199,16 +201,20 @@ NULL
 #' what we call a "starting major" for FYE students---the predicted
 #' engineering program such as Civil, Electrical, or Mechanical, the
 #' student would have declared had they not been required to enroll in FYE.
+#'
 #' @format A data frame (tibble) with 5992 observations and 2 variables.
 #' All variables are characters.
+#'
 #' \describe{
 #'  \item{id}{Unique, anonymized MIDFIELD student identifier.}
 #'  \item{cip6}{Imputed starting major (6-digit CIP code) of FYE students. }
 #' }
+#'
+#' @family example_data
 #' @seealso The "Impute FYE starting majors" vignette.
 #' @source \href{https://midfieldr.github.io/midfielddata/}{\pkg{midfielddata}
 #'  package}
-"cip_fye"
+"exa_imputed_fye"
 
 
 
@@ -232,6 +238,7 @@ NULL
 #' }
 #' @source Cynthia Brewer (\url{http://colorbrewer2.org}) and
 #' RColorBrewer  (\url{https://cran.r-project.org/package=RColorBrewer}).
+#' @family graph_helper
 #' @examples
 #' rcb_colors
 #' rcb("dark_Br")

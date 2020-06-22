@@ -45,6 +45,7 @@ exa_stickiness
 The "Compute stickiness" vignette.
 
 Other example_data: 
+\code{\link{exa_imputed_fye}},
 \code{\link{exa_programs}}
 }
 \concept{example_data}

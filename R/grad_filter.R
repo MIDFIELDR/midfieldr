@@ -47,7 +47,7 @@ NULL
 #' \code{data}. Default is "term".
 #'
 #' @return Data frame with character variables for student ID and program CIP
-#'
+#' @family data_carpentry
 #' @seealso \code{\link[midfieldr]{cip6_select}} for selecting 6-digit CIP
 #' codes and naming programs.
 #'

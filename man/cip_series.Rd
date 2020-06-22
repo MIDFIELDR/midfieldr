@@ -55,4 +55,9 @@ head(cip_phys_sci, n = 10L)
 cip_filter(cip, cip_math_stat)
 cip_filter(cip, cip_phys_sci)
 }
+\seealso{
+Other cip_data: 
+\code{\link{cip}}
+}
+\concept{cip_data}
 \keyword{datasets}

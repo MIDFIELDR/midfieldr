@@ -70,5 +70,9 @@ cip_filter(cip, "^1410")
 }
 \seealso{
 The "Explore program CIP codes" vignette.
+
+Other cip_data: 
+\code{\link{cip_series}}
 }
+\concept{cip_data}
 \keyword{datasets}

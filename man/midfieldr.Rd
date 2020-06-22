@@ -47,3 +47,4 @@ are provided in four datasets: \code{midfieldcourses},
 \code{midfielddegrees}, \code{midfieldstudents}, and  \code{midfieldterms}.
 }
 
+\concept{package}

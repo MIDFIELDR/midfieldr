@@ -48,3 +48,13 @@ cip_filter(cip, "History") \%>\%
 cip_filter(cip, cip_engr) \%>\%
   cip_filter("Civil")
 }
+\seealso{
+Other data_carpentry: 
+\code{\link{cip6_select}()},
+\code{\link{ever_filter}()},
+\code{\link{grad_filter}()},
+\code{\link{multiway_order}()},
+\code{\link{race_sex_join}()},
+\code{\link{start_filter}()}
+}
+\concept{data_carpentry}
