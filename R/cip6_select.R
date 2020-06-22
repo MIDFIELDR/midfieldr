@@ -4,7 +4,7 @@
 #' @importFrom wrapr stop_if_dot_args let
 NULL
 
-#' Select the 6-digit CIP code and name and add a program label
+#' Select 6-digit CIPs and add program labels
 #'
 #' From a CIP data frame, select the columns with the 6-digit codes and names
 #' and add a new character variable named \code{program}.

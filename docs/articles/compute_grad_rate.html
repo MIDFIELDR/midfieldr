@@ -199,8 +199,8 @@
 <a href="#impute-starting-majors-for-fye-students" class="anchor"></a>Impute starting majors for FYE students</h2>
 <p>Some US institutions have first year engineering (FYE) programs—typically a common first year curriculum that is a prerequisite for declaring an engineering major. Because students matriculating in FYE cannot graduate in FYE, they cannot be included in a graduation rate metric without special treatment.</p>
 <p>Note that FYE students are neither undecided nor undeclared. Their institutions admitted them as engineering students. We define their “starting major” as the degree-granting engineering program—Civil, Electrical, Mechanical, etc.—that we predict they would have declared had they not been required to enroll in FYE.</p>
-<p>The prediction process is described in the vignette <a href="impute_fye.html">Impute FYE starting majors</a>. The results are available in the midfieldr data set <code>cip_fye</code>. The data frame has two columns: the student ID of all FYE students in the midfielddata, and the 6-digit CIP of their imputed starting engineering major.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">cip_fye</span>)
+<p>The prediction process is described in the vignette <a href="impute_fye.html">Impute FYE starting majors</a>. The results are available in the midfieldr data set <code>exa_imputed_fye</code>. The data frame has two columns: the student ID of all FYE students in the midfielddata, and the 6-digit CIP of their imputed starting engineering major.</p>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">exa_imputed_fye</span>)
 <span class="co">#&gt; # A tibble: 5,992 x 2</span>
 <span class="co">#&gt;   id          cip6  </span>
 <span class="co">#&gt;   &lt;chr&gt;       &lt;chr&gt; </span>
@@ -218,7 +218,7 @@
 <p>We extract the vector of 6-digit CIP codes for our programs.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># obtain the cip6 codes</span>
 <span class="no">program_series</span> <span class="kw">&lt;-</span> <span class="no">program_group</span><span class="kw">[[</span><span class="st">"cip6"</span>]]</pre></body></html></div>
-<p>We use <code><a href="../reference/start_filter.html">start_filter()</a></code> to extract students from <code>cip_fye</code> data who start in one of the programs in <code>program_series</code>. The <code><a href="../reference/start_filter.html">start_filter()</a></code> function has two main arguments:</p>
+<p>We use <code><a href="../reference/start_filter.html">start_filter()</a></code> to extract students from <code>exa_imputed_fye</code> data who start in one of the programs in <code>program_series</code>. The <code><a href="../reference/start_filter.html">start_filter()</a></code> function has two main arguments:</p>
 <ul>
 <li>
 <code>data</code> data frame with ID and 6-digit CIP codes</li>
@@ -226,7 +226,7 @@
 <code>codes</code> atomic character vector of 6-digit CIP codes</li>
 </ul>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># extract starters from FYE</span>
-<span class="no">fye</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/start_filter.html">start_filter</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">cip_fye</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
+<span class="no">fye</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/start_filter.html">start_filter</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">exa_imputed_fye</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
 <span class="co">#&gt; # A tibble: 3,843 x 2</span>
 <span class="co">#&gt;   id          cip6  </span>
@@ -282,8 +282,8 @@
 <span class="co">#&gt; # ... with 5,021 more rows</span></pre></body></html></div>
 <p>Open the help page by running</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r">? <span class="fu"><a href="../reference/start_filter.html">start_filter</a></span>()</pre></body></html></div>
-<p>When studying engineering programs, we must account for the <a href="impute_fye.html">imputed starting majors</a> of students at institutions with a required first year engineering (FYE) program. For the data in this package, the imputed values are saved in the <code>cip_fye</code> data set. Use <code><a href="../reference/start_filter.html">start_filter()</a></code> again with <code>cip_fye</code> as the <code>data</code> argument. `</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">fye</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/start_filter.html">start_filter</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">cip_fye</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
+<p>When studying engineering programs, we must account for the <a href="impute_fye.html">imputed starting majors</a> of students at institutions with a required first year engineering (FYE) program. For the data in this package, the imputed values are saved in the <code>exa_imputed_fye</code> data set. Use <code><a href="../reference/start_filter.html">start_filter()</a></code> again with <code>exa_imputed_fye</code> as the <code>data</code> argument. `</p>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">fye</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/start_filter.html">start_filter</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">exa_imputed_fye</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">program_series</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>()
 <span class="co">#&gt; # A tibble: 3,843 x 2</span>
 <span class="co">#&gt;   id          cip6  </span>

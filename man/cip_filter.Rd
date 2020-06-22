@@ -2,7 +2,7 @@
 % Please edit documentation in R/cip_filter.R
 \name{cip_filter}
 \alias{cip_filter}
-\title{Filter CIP data}
+\title{Filter CIP data frame}
 \usage{
 cip_filter(data = NULL, keep_any = NULL, ..., drop_any = NULL)
 }

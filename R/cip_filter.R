@@ -3,7 +3,7 @@
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
-#' Filter CIP data
+#' Filter CIP data frame
 #'
 #' Filter a data frame of Classification of Instructional Programs (CIP) codes
 #' and return the rows that match conditions.

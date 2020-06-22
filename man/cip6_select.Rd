@@ -2,7 +2,7 @@
 % Please edit documentation in R/cip6_select.R
 \name{cip6_select}
 \alias{cip6_select}
-\title{Select the 6-digit CIP code and name and add a program label}
+\title{Select 6-digit CIPs and add program labels}
 \usage{
 cip6_select(
   data,
