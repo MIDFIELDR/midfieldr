@@ -14,10 +14,12 @@ Changes incompatible with earlier versions.
 
 Additional improvements 
 
+- Added functions accounting for feasible completion 
 - `cip_filter(data, keep_any, drop_any)` includes a new `drop_any` argument to  drop rows in which any matches or partial matches are detected.
 - `cip6_select(data, program)` can accommodate custom variable names in `data` different from the default `cip` variable names. 
 - `cip6_select(program = NULL)` assigns the `cip4name` values to the `program` variable. The old `cip_label()` NULL result was the 6-digit names. 
 - `cip6_select(program = "named_series")` is a new option for the program argument that assigns the appropriate named series to the `program` values. 
+- Edited `theme_midfield()` 
 - Session information added.   
 - Added internal data bits, e.g., dimensions and memory requirements of midfielddata data frames, for use in vignettes and README. 
 - Vignettes updated with function revisions and improvements in response to feedback from workshop attendees. 

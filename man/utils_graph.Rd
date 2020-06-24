@@ -7,10 +7,27 @@
 \usage{
 scale_x_log10_expon(...)
 
-theme_midfield(...)
+theme_midfield(
+  font_size = NULL,
+  font_color = NULL,
+  line_size = NULL,
+  line_color = NULL
+)
 }
 \arguments{
 \item{...}{Arguments that pass to the ggplot2 function}
+
+\item{font_size}{The size assigned to all text in the figure.
+The default is 10 pt.}
+
+\item{font_color}{The color assigned to all text in the figure.
+The default is black.}
+
+\item{line_size}{The size assigned to all lines in the figure.
+The default is 0.3.}
+
+\item{line_color}{The color assigned to all lines in the figure.
+The default is a light gray (#BDBDBD).}
 }
 \value{
 Modifies an existing graph.
@@ -21,11 +38,11 @@ A set of customized layers for ggplot2 graphs.
 \details{
 \describe{
 \item{\code{scale_x_log10_expon(...)}}{Applies the \code{scale_x_log10(...)}
- function from ggplot2 with the scale marked in exponential form powers of
- ten and with logarithmic minor grid lines.}
+       function from ggplot2 with the scale marked in exponential form
+       powers of ten and with logarithmic minor grid lines.}
 \item{\code{theme_midfield(...)}}{Applies \code{theme_minimal(...)} from
- ggplot2 with replacements: all text is 10 pt; lines are light gray (#D9D9D9)
-  and size 0.4.}
+       ggplot2 with replacements: all text is 10 pt; lines are light
+       gray (#D9D9D9) and size 0.4.}
 }
 }
 \seealso{

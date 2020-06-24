@@ -5,7 +5,8 @@
 \alias{exa_cip}
 \title{Example CIP excerpt}
 \format{
-A data frame (tibble) with 12 observations and 6 variables. The variables are characters.
+A data frame (tibble) with 12 observations and 6 variables.
+The variables are characters.
 \describe{
   \item{cip6}{6-digit program code.}
   \item{cip6name}{6-digit program name.}

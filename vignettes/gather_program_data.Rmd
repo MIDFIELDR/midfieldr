@@ -8,6 +8,7 @@ vignette: >
 editor_options: 
   chunk_output_type: console
 bibliography: ../inst/REFERENCES.bib
+link-citations: yes
 ---
 
 ```{r setup, echo = FALSE, message = FALSE, purl = FALSE}
@@ -81,9 +82,9 @@ print(exa_cip)
 In these data, the program names at the 4-digit level are those associated with accredited engineering departments. To see the names in full, 
 
 ```{r}
-exa_cip %>% 
-  select(cip4, cip4name) %>% 
-  unique() %>% 
+exa_cip %>%
+  select(cip4, cip4name) %>%
+  unique() %>%
   print()
 ```
 
@@ -96,7 +97,7 @@ Two approaches to editing the program labels are shown below.
 To work with the programs one at a time, we separate `exa_cip` into four data frames, one for each program. 
 
 ```{r}
-# working with one program at a time 
+# working with one program at a time
 cve <- cip_filter(exa_cip, keep_any = "^1408") %>%
   print()
 ```
@@ -104,7 +105,7 @@ cve <- cip_filter(exa_cip, keep_any = "^1408") %>%
 Then we use `cip6_select()` to extract the 6-digit columns and add a new `program` variable. 
 
 ```{r}
-cve <- cip6_select(cve, program = "Civil Engineering") %>% 
+cve <- cip6_select(cve, program = "Civil Engineering") %>%
   print()
 ```
 
@@ -112,7 +113,7 @@ Repeat for electrical engineering and combine the two steps using the pipe opera
 
 ```{r}
 ele <- cip_filter(exa_cip, keep_any = "^1410") %>%
-  cip6_select(program = "Electrical Engineering") %>% 
+  cip6_select(program = "Electrical Engineering") %>%
   print()
 ```
 
@@ -145,7 +146,7 @@ In this optional section, we rewrite the procedure used above to illustrate a mo
 
 ```{r echo=-1}
 options(tibble.print_min = 12L)
-# working with one data frame 
+# working with one data frame
 exa_program_group <- exa_cip %>%
   cip6_select(program = "cip4name") %>%
   mutate(program = ifelse(str_detect(cip6, "^1410"), "Electrical Engineering", program)) %>%
@@ -174,7 +175,7 @@ When a string of our own choosing is assigned to `program`, then that string is 
 cip %>%
   cip_filter(keep_any = "^31") %>%
   cip6_select(program = "Leisure Studies") %>%
-  print() 
+  print()
 ```
 
 ```{r echo = FALSE}
@@ -305,7 +306,7 @@ nonstandard_cip %>%
 If the non-standard variable names do not have to be kept intact, the simple option is to `dplyr::rename()` the nonstandard variable names to the standard names, e.g.,  
 
 ```{r}
-# rename the variables 
+# rename the variables
 standard_cip <- nonstandard_cip %>%
   rename("cip6" = CODE_6, "cip6name" = NAME_6) %>%
   cip6_select(program = "Civil Engineering") %>%
@@ -363,7 +364,7 @@ library("midfieldr")
 library("dplyr")
 library("stringr")
 
-# working with one program at a time 
+# working with one program at a time
 cve <- cip_filter(exa_cip, keep_any = "^1408") %>%
   cip6_select(program = "Civil Engineering")
 
@@ -378,7 +379,7 @@ mce <- cip_filter(exa_cip, keep_any = "^1419") %>%
 
 exa_program_group <- bind_rows(cve, ele, ise, mce)
 
-# working with one data frame 
+# working with one data frame
 exa_program_group <- exa_cip %>%
   cip6_select(program = "cip4name") %>%
   mutate(program = ifelse(str_detect(cip6, "^1410"), "Electrical Engineering", program))
@@ -416,7 +417,7 @@ nonstandard_cip <- exa_cip %>%
 nonstandard_cip %>%
   cip6_select(program = "Civil Engineering", cip6 = "CODE_6", cip6name = "NAME_6")
 
-# rename the variables 
+# rename the variables
 standard_cip <- nonstandard_cip %>%
   rename("cip6" = CODE_6, "cip6name" = NAME_6) %>%
   cip6_select(program = "Civil Engineering")

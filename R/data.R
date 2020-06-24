@@ -125,7 +125,8 @@ NULL
 #' Industrial, and Mechanical Engineering. The data are an intermediate
 #' result in a case study developed in the midfieldr vignettes.
 #'
-#' @format A data frame (tibble) with 12 observations and 6 variables. The variables are characters.
+#' @format A data frame (tibble) with 12 observations and 6 variables.
+#' The variables are characters.
 #' \describe{
 #'   \item{cip6}{6-digit program code.}
 #'   \item{cip6name}{6-digit program name.}
