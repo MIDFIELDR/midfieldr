@@ -50,7 +50,8 @@ This exercise illustrates a typical workflow for computing a persistence metric,
 
 Our metric in this case is "stickiness", the ratio of the number of students graduating from a program to the number ever enrolled in the program [@stickiness2012]. We compare the stickiness of three engineering programs with students grouped by program, race, and sex. 
 
-In this introductory example, conveying *what* is more important than *how*. Thus, instead of explaining how the code works, we explain what the steps are and how they fit together. For explanations of how the code works, see the other  [vignettes](https://midfieldr.github.io/midfieldr/articles/index.html). 
+In this introductory example, conveying *what* is more important than *how*. We explain what the steps are and how they fit together instead of explaining the details of how the functions work. For those details, see the  [vignettes](https://midfieldr.github.io/midfieldr/articles/index.html).  
+
 
  
 
@@ -68,7 +69,7 @@ library("seplyr")
 library("ggplot2")
 ```
 
-Search the `cip` data set for the programs we want. The results show that the 4-digit codes we want are 1407, 1410, and 1435. 
+We start by searching the `cip` data set for the programs we want. The results show that the 4-digit codes we want are 1407, 1410, and 1435. 
  
 ```{r first-cip-search, echo = -1, results = "hide"}
 options(tibble.print_min = 10L)
@@ -85,21 +86,23 @@ cip %>%
   kable2html()
 ```
 
-Knowing the programs we want (in this example, 1407, 1410, and 1435) we extract their 6-digit codes and assign a concise program name. 
+<br> 
+
+Knowing the programs we want, we use  `cip_filter()` to extract their 6-digit codes and assign our own program names.
 
 ```{r extract-cip}
 # chemical engineering
-che <- cip %>%
+che <- cip %>% 
   cip_filter(keep_any = "^1407") %>%
   cip6_select(program = "Chemical Engineering")
 
 # electrical engineering
-ece <- cip %>%
+ece <- cip %>% 
   cip_filter(keep_any = "^1410") %>%
   cip6_select(program = "Electrical Engineering")
 
 # industrial engineering
-ise <- cip %>%
+ise <- cip %>% 
   cip_filter(keep_any = "^1435") %>%
   cip6_select(program = "Industrial Engineering")
 ```
@@ -116,16 +119,6 @@ program_group <- bind_rows(che, ece, ise) %>%
 kable2html(program_group)
 ```
 
-<br>
-
-Finally, we extract the 6-digit CIP codes from our program group to use as search terms to identify students in these programs. 
-
-```{r}
-# for filtering operations
-program_group_cip6 <- program_group[["cip6"]] %>%
-  print()
-```
-
 
 
 
@@ -138,23 +131,29 @@ program_group_cip6 <- program_group[["cip6"]] %>%
 
 ## Gather student data
 
-Use access the `midfieldterms` dataset and extract all students who ever enrolled in these programs. 
-
-```{r gather-ever}
-students <- midfieldterms %>%
-  ever_filter(codes = program_group_cip6) %>%
-  print()
-```
-
-Use access the `midfieldstudents` dataset and append students' race and sex to the working data frame. 
+We extract the `cip6` column from our group of programs to use as a character vector of search terms. 
 
 ```{r}
-students <- students %>%
-  race_sex_join() %>%
+# for filtering operations
+program_codes <- program_group[["cip6"]] %>%
   print()
 ```
 
-We join our custom program names to the student data.
+`ever_filter()`  accesses the `midfieldterms` dataset to extract all students who ever enrolled in the `program_codes` programs. 
+
+```{r gather-ever}
+students <- ever_filter(midfieldterms, codes = program_codes) %>%
+  print()
+```
+
+`race_sex_join()` accesses the `midfieldstudents` dataset to append students' race and sex to the working data frame. 
+
+```{r}
+students <- race_sex_join(students, demographics = midfieldstudents) %>%
+  print()
+```
+
+To our working data frame, we join the program names in `program_group` that we created earlier.  
 
 ```{r}
 students <- left_join(students, program_group, by = "cip6") %>%
@@ -172,23 +171,22 @@ We count the number of students ever enrolled grouped by program, race/ethnicity
 
 ```{r}
 # count students ever enrolled
-ever_enrolled <- students %>%
-  group_summarize(grouping_variables, ever = n()) %>%
+ever_enrolled <- group_summarize(students, groupingVars = grouping_variables, ever = n()) %>%
   print()
 ```
 
-We repeat the process to group and summarize graduates from our three programs.   
+A similar process is used to group and summarize our graduates. We start with `grad_filter()` to access the `midfielddegrees` data. 
 
 ```{r grad}
 # count students graduating
-graduated <- midfielddegrees %>%
-  grad_filter(codes = program_group_cip6) %>%
+graduated <- grad_filter(codes = program_codes) %>%
   race_sex_join() %>%
   left_join(program_group, by = "cip6") %>%
-  group_summarize(grouping_variables, grad = n()) %>%
+  group_summarize(groupingVars = grouping_variables, grad = n()) %>% 
   print()
 ```
 
+This code is slightly more compact than the code for the ever-enrolled calculation because we've omitted explicit statements of default arguments.   
 
 
 
@@ -200,20 +198,20 @@ graduated <- midfielddegrees %>%
 
 ## Compute the metric
 
-We join the two data frames by the grouping variables. 
+We join the two data frames by program, race/ethnicity, and sex, producing a data frame with `ever` and `grad` for each group. 
 
 ```{r}
-stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables) %>%
+sticki_data <- left_join(ever_enrolled, graduated, by = grouping_variables) %>%
   print()
 ```
 
-We omit rows with zero students ever enrolled so we can compute stickiness, the ratio of `grad` to `ever`. 
+We omit rows with zero students ever enrolled (to avoid dividing by zero) then divide `grad` by `ever` to compute stickiness.  
 
 ```{r}
 # compute the metric
-stickiness <- stickiness %>%
+sticki_data <- sticki_data %>%
   filter(ever > 0) %>%
-  mutate(stick = round(grad / ever, 3)) %>%
+  mutate(stickiness = round(grad / ever, 3)) %>%
   print()
 ```
 
@@ -230,8 +228,8 @@ stickiness <- stickiness %>%
 To prepare the stickiness data for graphing, we remove ambiguous levels of race/ethnicity  and sex. 
 
 ```{r prep-data}
-# prepare data for graphing
-mw_data <- stickiness %>%
+# prepare data for multiway graph
+prep_data <- sticki_data %>%
   filter(!race %in% c("Unknown", "International", "Other")) %>%
   filter(!sex %in% "Unknown")
 ```
@@ -240,39 +238,39 @@ To protect confidentiality, we omit observations with 5 or fewer students ever e
 
 ```{r}
 # protect confidentiality of small populations
-mw_data <- mw_data %>%
+prep_data <- prep_data %>%
   filter(ever > 5) %>%
   print()
 ```
 
-To prepare the data in multiway form, we combine race and sex into a single variable. 
+
+We plan to display these data in a multiway graph, characterized by a single quantitative response variable (stickiness) for each combination of levels of the two categorical variables (program and race/ethnicity/sex).
+
+The race/ethnicity/sex category is created by uniting `race` and `sex`. 
 
 ```{r}
-mw_data <- mw_data %>%
-  mutate(race_sex = paste(race, sex)) %>%
+prep_data <- prep_data %>%
+  mutate(race_sex = paste(race, sex)) %>% 
   print()
 ```
 
-We select the three multiway variables: academic program, student race/sex, and stickiness. 
+To structure the data in multiway form, we select the three multiway variables and use  `multiway_order()` to convert the categorical variables to factors and order the levels of the categories by the median stickiness. 
 
-```{r}
-mw_data <- mw_data %>%
-  select(program, race_sex, stick) %>%
+```{r results = "hide"}
+multiway_data  <- prep_data %>%
+  select(program, race_sex, stickiness) %>%
+  multiway_order() %>% 
   print()
 ```
 
-We convert the categorical variables to factors and order the levels of the categories by the median stickiness.
-
-```{r multiway-order, results = "hide"}
-mw_data <- mw_data %>%
-  multiway_order()
-```
-
-Tabulating the final results yields:  
+Results are tabulated below. For programs having fewer than 5 students ever enrolled, stickiness is NA. Rows of the table are ordered by descending median stickiness of the race/ethnicity/sex groups.  
 
 ```{r echo=FALSE}
-mw_table <- mw_data %>%
-  tidyr::pivot_wider(names_from = program, values_from = stick)
+mw_table  <- multiway_data %>% 
+  tidyr::pivot_wider(names_from = program, 
+                     values_from = stickiness, 
+                     names_sort = TRUE) %>% 
+  arrange(desc(race_sex))
 
 kable2html(mw_table)
 ```
@@ -286,20 +284,60 @@ kable2html(mw_table)
 
 ## Graph the results
 
-We use conventional ggplot2 functions to graph stickiness in a multiway dot plot. 
+We use conventional ggplot2 functions to graph stickiness in a multiway dot plot. Rows and panels, from top to bottom, are ordered by decreasing median stickiness.  
 
-```{r fig1, fig.asp = 1.6/1.6}
+```{r eval = FALSE}
 # graph results
-ggplot(mw_data, aes(x = stick, y = race_sex)) +
+ggplot(multiway_data, aes(x = stickiness, y = race_sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +
   theme_midfield()
 ```
 
-The ordering of the rows and panels of the multiway plot tell us that for these three engineering majors, Industrial Engineering has the greatest stickiness and Electrical the least; that Asian men have the greatest stickiness and Native American Women the least. The visual anomalies are White women in Electrical with lower stickiness than expected by the ranking overall and Asian men in Chemical, also lower than expected. 
+```{r fig1, fig.asp = 1.6/1.6, echo = FALSE}
+# for annotation
+pt1 <- multiway_data %>% 
+  filter(program == "Electrical Engineering") %>% 
+  filter(race_sex == "White Female")
+pt2 <- multiway_data %>% 
+  filter(program == "Chemical Engineering") %>% 
+  filter(race_sex == "Asian Male")
+pt3 <- multiway_data %>% 
+  filter(program == "Chemical Engineering") %>% 
+  filter(race_sex == "Native American Male")
+df <- bind_rows(pt1, pt2, pt3)
 
-Results will vary depending on the programs one compares. Variations can also be expected if one uses the whole population data available to MIDFIELD member institutions. 
+ggplot(multiway_data, aes(x = stickiness, y = race_sex)) +
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(x = "Stickiness", y = "") +
+  theme_midfield() + 
+  geom_point(data = df, mapping = aes(x = stickiness, y = race_sex), 
+             color = "red", shape = 1, size = 4)
+```
+
+A multiway design reveals patterns and anomalies in the results. For example, among these programs for this sample population, 
+
+Patterns 
+
+- For students in these sex/race/ethnicity groups, Industrial engineering is the stickiest program 
+- Chemical engineering is the least sticky program  
+- For these programs, Asian men and women stick the most   
+- Native American men and women stick the least   
+
+Anomalies, circled in red. 
+
+- Electrical engineering stickiness is less than expected for White women  
+- Chemical engineering stickiness is less than expected for Asian men 
+- Chemical engineering stickiness is more than expected for Native American men 
+
+Displays, like this one, of longitudinal student-record data reveal patterns and anomalies that raise questions unanswerable using student-record data alone---questions leading to further research in, for example, institutional polices, the cultures of professional disciplines, and student experiences in   the undergraduate ecosystem. 
+
+
+ 
+
+
 
 
 
@@ -328,6 +366,7 @@ In response to requests from some of our workshop attendees, we collect the vign
 library("midfieldr")
 library("midfielddata")
 library("dplyr")
+library("tidyr")
 library("seplyr")
 library("ggplot2")
 
@@ -341,39 +380,39 @@ ise <- cip_filter(cip, keep_any = "^1435") %>%
 program_group <- bind_rows(che, ece, ise)
 
 # for filtering operations
-program_group_cip6 <- program_group[["cip6"]]
+program_codes <- program_group[["cip6"]]
 
 # for group, summarize, and join operations
 grouping_variables <- c("program", "race", "sex")
 
 # count students ever enrolled
-ever_enrolled <- ever_filter(midfieldterms, codes = program_group_cip6) %>%
+ever_enrolled <- ever_filter(midfieldterms, codes = program_codes) %>%
   race_sex_join() %>%
   left_join(program_group, by = "cip6") %>%
   group_summarize(grouping_variables, ever = n())
 
 # count students graduating
-graduated <- grad_filter(midfielddegrees, codes = program_group_cip6) %>%
+graduated <- grad_filter(midfielddegrees, codes = program_codes) %>%
   race_sex_join() %>%
   left_join(program_group, by = "cip6") %>%
   group_summarize(grouping_variables, grad = n())
 
 # compute the metric
-stickiness <- left_join(ever_enrolled, graduated, by = grouping_variables) %>%
+sticki_data  <- left_join(ever_enrolled, graduated, by = grouping_variables) %>%
   filter(ever > 0) %>%
-  mutate(stick = round(grad / ever, 3))
+  mutate(stickiness = round(grad / ever, 3))
 
-# prepare data for graphing
-mw_data <- stickiness %>%
+# prepare data in multiway form for graphing
+multiway_data  <- sticki_data  %>%
   filter(!race %in% c("Unknown", "International", "Other")) %>%
   filter(!sex %in% "Unknown") %>%
   filter(ever > 5) %>%
-  mutate(race_sex = paste(race, sex)) %>%
-  select(program, race_sex, stick) %>%
+  mutate(race_sex = paste(race, sex)) %>% 
+  select(program, race_sex, stickiness) %>%
   multiway_order()
 
 # graph results
-ggplot(mw_data, aes(x = stick, y = race_sex)) +
+ggplot(multiway_data, aes(x = stickiness, y = race_sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +

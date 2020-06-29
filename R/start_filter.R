@@ -21,11 +21,11 @@ NULL
 #' starting major CIP. Only the student ID and program CIP are returned;
 #' other variables in \code{data} are quietly dropped.
 #'
-#' Optional arguments. Student ID variables in the midfielddata data sets
-#' are named "id". If your data frames use a different name, you can either 1)
-#'  rename your variables to "id", or 2) use the optional \code{id} argument
-#'  to pass the alternate variable name to the function. The same is true for
-#'  the \code{cip6} variable.
+#' The default values of the optional arguments are the column names
+#' \code{"id"} and \code{"cip6"}.
+#' If using a data frame with different column names, you can rename
+#' your variables to match the defaults or use the optional arguments to
+#' pass your variable name(s) to the function.
 #'
 #' @param data Data frame of student IDs and CIP codes, default
 #'  \code{midfieldterms}.
@@ -33,13 +33,14 @@ NULL
 #' @param codes Atomic character vector of 6-digit CIP codes specifying the
 #'  programs to filter by.
 #'
-#' @param ... Not used for values, forces later arguments to bind by name.
+#' @param ... Not used for values. Forces the subsequent optional arguments
+#' to only be usable by name.
 #'
-#' @param id The column name in quotes of the student ID variable in
-#' \code{data}. Default is "id".
+#' @param id Column name in quotes of the student ID variable in
+#' \code{data}. Default is "id". Optional argument.
 #'
-#' @param cip6 The column name in quotes of the 6-digit CIP code variable
-#' in \code{data}. Default is "cip6".
+#' @param cip6 Column name in quotes of the 6-digit CIP code variable in
+#' \code{data}. Default is "cip6". Optional argument.
 #'
 #' @return Data frame with character variables for student ID and CIP of
 #' the starting program.
@@ -52,25 +53,22 @@ NULL
 #' @export
 start_filter <- function(data = NULL, codes = NULL, ..., id = "id",
                          cip6 = "cip6") {
-  if (!.pkgglobalenv$has_data) {
-    stop("The midfielddata package must be installed.")
-  }
 
   # force optional arguments to be usable only by name
-  wrapr::stop_if_dot_args(substitute(list(...)), "starter_filter")
+  wrapr::stop_if_dot_args(substitute(list(...)), "start_filter")
 
   # argument checks
   if (is.null(data)) {
     data <- midfielddata::midfieldstudents
   }
   if (!(is.data.frame(data) || dplyr::is.tbl(data))) {
-    stop("starter_filter, data must be a data frame or tbl")
+    stop("start_filter data argument must be a data frame or tbl")
   }
   if (is.null(codes)) {
-    stop("starter_filter, codes cannot be NULL")
+    stop("start_filter, codes cannot be NULL")
   }
   if (isFALSE(is.atomic(codes))) {
-    stop("starter_filter, codes must be an atomic variable")
+    stop("start_filter, codes must be an atomic variable")
   }
 
   # search terms in a single string

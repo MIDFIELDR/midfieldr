@@ -15,8 +15,8 @@ link-citations: yes
 # knitr::opts_knit$set(root.dir = "../")
 knitr::opts_chunk$set(
   echo = TRUE, # varies from one Rmd to another
-  message = FALSE,
-  warning = FALSE,
+  message = TRUE,
+  warning = TRUE,
   collapse = TRUE,
   comment = "#>",
   error = TRUE,
@@ -233,7 +233,7 @@ Suppose we want to find the CIP codes and names for all programs in Civil Engine
 ```{r}
 # example 1 filter by keywords
 cip_filter(cip, "civil") %>%
-  print() # View() can be used instead
+  print()
 ```
 
 For clarity on this vignette page, data frames are sometimes printed as HTML tables. For example, the previous code chunk yields this table:
@@ -311,24 +311,18 @@ kable2html(cip_filter(cip, c("050125", "160501")))
 ```
 <br>
 
-If the 6-digit codes are entered as integers, they are coerced to characters and used as search terms as above, yielding the same result. 
+If the 6-digit codes are entered as integers, they produce an error. 
  
 ```{r results = "hide"}
-cip_filter(cip, c(050125, 160501)) %>%
-  print()
+cip_filter(cip, c(050125, 160501))
 ```
 
-Because integers are coerced to characters, we can use a numerical sequence as a series using `seq()`. Here, the sequence is from 540101 to 540199. Invalid codes, e.g., from 540109--540198, are silently ignored. 
+Searching for codes that do not exist in the CIP data also produces an error. 
 
-```{r results = "hide"}
-# series as a sequence
-cip_filter(cip, seq(540101, 540199, 1)) %>%
-  print()
+```{r}
+cip_filter(cip, keep_any = "111111")
 ```
 
-```{r echo = FALSE}
-kable2html(cip_filter(cip, seq(540101, 540199, 1)))
-```
 
 
 
@@ -384,45 +378,6 @@ kable2html(cip_filter(cip, c("^24", "^4102", "^450202")))
 ```
 
 
-
-
-
-
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
-
-
-
-### 4. Using named series
-
-midfieldr includes several datasets of *named series*. A named series is a character vector of 6-digit CIP codes that belong to a group of programs such as Engineering, Physical Sciences, STEM, etc. 
-
-A named series is assigned to the series argument in `cip_filter()`. 
-
-```{r results = "hide"}
-# the math and statistics series
-cip_filter(cip, keep_any = cip_math_stat) %>%
-  print()
-```
-
-```{r echo = FALSE}
-kable2html(cip_filter(cip, keep_any = cip_math_stat))
-```
-
-<br>
-
-To see the full set of available named series, see the help page by running 
-
-```r
-? cip_series
-```
 
 
 
@@ -518,16 +473,11 @@ cip %>%
 # example 2 filter using numerical codes
 cip_filter(cip, "german")
 cip_filter(cip, c("050125", "160501"))
-cip_filter(cip, c(050125, 160501))
-cip_filter(cip, seq(540101, 540199, 1))
 
 # example 3 filter using regular expressions
 cip_filter(cip, c("^1407", "^1408"))
 cip_filter(cip, "^54")
 cip_filter(cip, c("^24", "^4102", "^450202"))
-
-# example 4 filter using named series
-cip_filter(cip, keep_any = cip_math_stat)
 
 # example CIP excerpt for case study
 exa_cip <- cip_filter(cip, c("^1408", "^1410", "^1419", "^1435"))

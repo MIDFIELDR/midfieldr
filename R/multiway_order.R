@@ -5,7 +5,6 @@
 #' @importFrom rlang sym :=
 #' @importFrom stats median
 #' @importFrom tibble tibble
-#' @importFrom magrittr %>%
 NULL
 
 #' Prepare multiway data for graphing
@@ -51,8 +50,10 @@ NULL
 #' df3
 #' @export
 multiway_order <- function(data, return_medians = FALSE) {
+
+  # argument checks
   if (!(is.data.frame(data) || dplyr::is.tbl(data))) {
-    stop("multiway_order() argument must be a data frame or tbl")
+    stop("multiway_order data argument must be a data frame or tbl")
   }
 
   if (is.null(return_medians)) return_medians <- FALSE

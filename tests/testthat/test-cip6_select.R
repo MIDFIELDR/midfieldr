@@ -1,82 +1,55 @@
 context("cip6_select")
+library("midfieldr")
 
-# testing data frames
-ece <- cip_filter(cip, "^1410")
-ece_prog1 <- cip6_select(ece, "ECE")
-ece_prog2 <- cip6_select(ece, "cip2name")
-ece_prog4 <- cip6_select(ece, "cip4name")
-ece_prog6 <- cip6_select(ece, "cip6name")
-ece_prog7 <- cip6_select(ece, program = NULL)
+ece <- cip_filter(cip, keep_any = "^1410")
 
-df1 <- cip6_select(cip_filter(cip, cip_phys_sci), "named_series")
-df2 <- cip6_select(cip_filter(cip, cip_engr), "named_series")
-df3 <- cip6_select(cip_filter(cip, cip_bio_sci), "named_series")
-df4 <- cip6_select(cip_filter(cip, cip_math_stat), "named_series")
-df5 <- cip6_select(cip_filter(cip, cip_other_stem), "named_series")
-df6 <- cip6_select(cip_filter(cip, cip_stem), "named_series")
+test_that("Pipe correctly passes the data argument", {
+  expect_equal(ece %>% cip6_select(program = "ECE"),
+               cip6_select(ece, program = "ECE"))
+})
 
-test_that("cip6_select yields correct program name", {
-  expect_equal("ECE", unique(ece_prog1$program))
-  expect_equal(ece$cip2name, ece_prog2$program)
-  expect_equal(ece$cip4name, ece_prog4$program)
-  expect_equal(ece$cip6name, ece_prog6$program)
-  expect_equal(ece$cip4name, ece_prog7$program)
-
-  expect_equal("Physical Sciences", unique(df1$program))
-  expect_equal("Engineering", unique(df2$program))
-  expect_equal("Biological and Biomedical Sciences", unique(df3$program))
-  expect_equal("Mathematics and Statistics", unique(df4$program))
-  expect_equal("Other STEM", unique(df5$program))
-  expect_equal("STEM", unique(df6$program))
-
-  expect_error(
-    cip6_select(
-      cip_filter(cip, "cip_stm"), "named_series"
-    ),
-    "cip6_select: Error in named series"
+test_that("Data argument present and in correct form", {
+  expect_error(cip6_select(data = NULL, program = "ECE"),
+               paste("cip6_select. Explicit data argument required",
+                     "unless passed by a pipe.")
   )
+  expect_error(cip6_select(data = "ECE", program = "ECE"),
+               "cip6_select. Data argument must be a data frame or tbl."
+  )
+  expect_error(cip6_select(data = TRUE, program = "ECE"),
+               "cip6_select. Data argument must be a data frame or tbl."
+  )
+})
+
+test_that("Variables in data have correct names and class", {
+  alt    <- ece
+  alt[1] <- FALSE
+  expect_error(
+    cip6_select(alt),
+    "cip6_select. Variables in data must be character class only.")
+  alt <- ece
+  names(alt)[1] <- "code2"
+  expect_error(
+    cip6_select(alt),
+    "cip6_select. Variable names in data must match names in cip."
+  )
+})
+
+test_that("Error if program argument is not a scalar character only", {
+  expect_error(cip6_select(ece, program = c("ECE", "CVE")),
+               "Argument program must a scalar character or NULL.")
+  expect_error(cip6_select(ece, program = TRUE),
+               "Argument program must a scalar character or NULL.")
+})
+
+test_that("Options for the program argument produce expected results", {
+  expect_equal(cip6_select(ece, program = "cip2name"),
+               cip6_select(ece, program = "Engineering"))
+  expect_equal(cip6_select(ece, program = "cip4name"),
+               cip6_select(ece, program = NULL))
+  expect_equal(cip6_select(ece, program = "cip6name")["cip6name"],
+               ece["cip6name"])
 })
 
 
 
-
-# test_that("cip6_select() uses program argument = cip2name", {
-#   load(file = get_my_path("my_args_11.rda"))
-#   load(file = get_my_path("exp_out_11.rda"))
-#   expect_equal(do.call(cip6_select, my_args), exp_out)
-
-# load(file = get_my_path("my_args_12.rda"))
-# load(file = get_my_path("exp_out_12.rda"))
-# expect_equal(do.call(cip6_select, my_args), exp_out)
-#
-# load(file = get_my_path("my_args_13.rda"))
-# load(file = get_my_path("exp_out_13.rda"))
-# expect_equal(do.call(cip6_select, my_args), exp_out)
-#
-# load(file = get_my_path("my_args_14.rda"))
-# load(file = get_my_path("exp_out_14.rda"))
-# expect_equal(do.call(cip6_select, my_args), exp_out)
-# })
-
-
-# test_that("cip6_select() labels named series", {
-#
-#   # expect_setequal() ignores order and duplicates
-#   df <- midfieldr::cip_filter(cip, series = cip_engr) %>% cip6_select()
-#   expect_setequal(unique(df$program), "Engineering")
-#
-#   df <- midfieldr::cip_filter(cip, series = cip_bio_sci) %>% cip6_select()
-#   expect_setequal(unique(df$program), "Biological and Biomedical Sciences")
-#
-#   df <- midfieldr::cip_filter(cip, series = cip_math_stat) %>% cip6_select()
-#   expect_setequal(unique(df$program), "Mathematics and Statistics")
-#
-#   df <- midfieldr::cip_filter(cip, series = cip_phys_sci) %>% cip6_select()
-#   expect_setequal(unique(df$program), "Physical Sciences")
-#
-#   df <- midfieldr::cip_filter(cip, series = cip_other_stem) %>% cip6_select()
-#   expect_setequal(unique(df$program), "Other STEM")
-#
-#   df <- midfieldr::cip_filter(cip, series = cip_stem) %>% cip6_select()
-#   expect_setequal(unique(df$program), "STEM")
-# })

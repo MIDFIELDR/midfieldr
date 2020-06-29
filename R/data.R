@@ -24,7 +24,7 @@
 #'   institutions reported no program information or that students were
 #'   not enrolled in a program.}
 #' }
-#' @format A data frame (tibble) with 1584 observations and 6 variables.
+#' @format Data frame (tibble) with 1584 observations and 6 variables.
 #' All variables are characters. An observation is a unique program.
 #'
 #' \describe{
@@ -56,63 +56,6 @@
 #' # As the data argument for cip_filter()
 #' cip_filter(cip, "^1410")
 "cip"
-
-
-
-
-
-
-#' Named series of 6-digit CIP codes
-#'
-#' Atomic character vectors of 6-digit CIP codes for specified groups of
-#' programs.
-#'
-#' @name cip_series
-#' @family cip_data
-#' @format An atomic character vector of 6-digit CIP codes.
-#' \describe{
-#' \item{\code{cip_bio_sci}}{Biological and biomedical science programs
-#' (2-digit CIP 26).}
-#' \item{\code{cip_engr}}{Engineering programs (2-digit CIP 14)}
-#' \item{\code{cip_math_stat}}{Mathematics and statistics programs
-#' (2-digit CIP 27).}
-#' \item{\code{cip_other_stem}}{Other STEM programs, not individually named.}
-#' \item{\code{cip_phys_sci}}{Physical science programs (2-digit CIP 40).}
-#' \item{\code{cip_stem}}{All Science, Technology, Engineering, and
-#' Mathematics (STEM) programs. Collects all the named STEM series into
-#' one character vector.}
-#' }
-#' @source
-#' NSF STEM programs, \url{https://tinyurl.com/jrnbu7u}
-#'
-#' CIP 2010, US National Center for Education Statistics,
-#' \url{https://nces.ed.gov/ipeds/cipcode}.
-#' @examples
-#' head(cip_math_stat, n = 10L)
-#' head(cip_phys_sci, n = 10L)
-#'
-#' cip_filter(cip, cip_math_stat)
-#' cip_filter(cip, cip_phys_sci)
-NULL
-
-#' @rdname cip_series
-#' @format NULL
-"cip_bio_sci"
-#' @rdname cip_series
-#' @format NULL
-"cip_engr"
-#' @rdname cip_series
-#' @format NULL
-"cip_math_stat"
-#' @rdname cip_series
-#' @format NULL
-"cip_other_stem"
-#' @rdname cip_series
-#' @format NULL
-"cip_phys_sci"
-#' @rdname cip_series
-#' @format NULL
-"cip_stem"
 
 
 

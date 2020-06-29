@@ -57,6 +57,7 @@ Other data_carpentry:
 \code{\link{ever_filter}()},
 \code{\link{grad_filter}()},
 \code{\link{race_sex_join}()},
-\code{\link{start_filter}()}
+\code{\link{start_filter}()},
+\code{\link{term_summarize}()}
 }
 \concept{data_carpentry}

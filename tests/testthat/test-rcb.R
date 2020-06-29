@@ -1,4 +1,5 @@
 context("rcb")
+library("midfieldr")
 
 test_that("produces expected hex color code", {
   expect_equal(rcb("dark_Br"), "#8C510A")

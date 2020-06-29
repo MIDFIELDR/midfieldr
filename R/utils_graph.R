@@ -16,13 +16,13 @@ NULL
 #'        gray (#D9D9D9) and size 0.4.}
 #' }
 #' @param ... Arguments that pass to the ggplot2 function
-#' @param font_size The size assigned to all text in the figure.
+#' @param font_size Size assigned to all text in the figure.
 #'        The default is 10 pt.
-#' @param font_color The color assigned to all text in the figure.
+#' @param font_color Color assigned to all text in the figure.
 #'        The default is black.
-#' @param line_size The size assigned to all lines in the figure.
+#' @param line_size Size assigned to all lines in the figure.
 #'        The default is 0.3.
-#' @param line_color The color assigned to all lines in the figure.
+#' @param line_color Color assigned to all lines in the figure.
 #'        The default is a light gray (#BDBDBD).
 #' @return Modifies an existing graph.
 #' @name utils_graph

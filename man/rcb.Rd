@@ -7,13 +7,13 @@
 rcb(pattern)
 }
 \arguments{
-\item{pattern}{A character variable of a custom color name of the form
+\item{pattern}{Character variable of a custom color name of the form
 "level_hue",  with 4 levels (dark, mid, light, pale) and 5 hues (Br, BG, PR,
 Gn, Gray or Grey). For example, "dark_Br", "mid_BG", "light_Gn", or
 "pale_Gray."}
 }
 \value{
-A hexadecimal color code in character form "#nnnnnn"
+Hexadecimal color code in character form "#nnnnnn"
 }
 \description{
 Accesses the \code{midfieldr::rcb_colors} dataset and returns a hex color
@@ -22,3 +22,9 @@ code.
 \examples{
 rcb("dark_Br")
 }
+\seealso{
+Other graph_helper: 
+\code{\link{rcb_colors}},
+\code{\link{scale_x_log10_expon}()}
+}
+\concept{graph_helper}

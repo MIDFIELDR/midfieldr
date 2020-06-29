@@ -1,7 +1,5 @@
-#' @importFrom dplyr filter across
-#' @importFrom stringr str_c str_detect regex
+#' @importFrom dplyr if_else is.tbl near
 #' @importFrom wrapr stop_if_dot_args
-#' @importFrom magrittr %>%
 NULL
 
 #' Filter CIP data frame
@@ -9,93 +7,107 @@ NULL
 #' Filter a data frame of Classification of Instructional Programs (CIP) codes
 #' and return the rows that match conditions.
 #'
+#' The variable names and class in \code{data} must match the variable names
+#' and class in the \code{cip} data set.
+#'
 #' The \code{keep_any} argument is an atomic character vector of search
-#' terms  used to filter the CIP data frame. Typical search terms include
-#' words and phrases describing academic programs or their CIP codes. The
-#' optional \code{drop_any} argument is similar except it drops rows instead
-#' of keeping them.
+#' terms used to filter the CIP data frame. Typical search terms include
+#' words and phrases describing academic programs or their CIP codes.
 #'
-#' Several named series are provided as possible values for \code{keep_any}
-#' to facilitate searching for groups of programs such as Biological
-#' Sciences, Engineering, Physical Sciences, etc. For the named series help
-#' page, run \code{? cip_series}.
+#' The optional \code{drop_any} argument is similar except it drops rows
+#' instead of keeping them.
 #'
-#' The function returns a subset of \code{data}. All columns are retained.
+#' Errors are produced if search terms do not exist in \code{data}. An error
+#' is also produced if the filter result is empty.
 #'
-#' @param data Data frame or tibble of CIP codes, default \code{midfieldr::cip}.
+#' @param data Data frame or tibble with character variables for CIP codes
+#' and program names. Default is \code{cip}.
 #'
 #' @param keep_any Character vector used to filter \code{data}, keeping all
 #' rows in which any matches or partial matches are detected.
 #'
-#' @param ... Not used for values, forces later optional arguments to bind
-#' by name
+#' @param ... Not used for values. Forces the subsequent optional arguments
+#' to only be usable by name.
 #'
 #' @param drop_any Character vector, optional argument. The output of
 #' the \code{keep_any} filter is the input to the \code{drop_any} filter,
 #' dropping all rows in which any matches or partial matches are detected.
 #'
-#' @return Data frame
+#' @return Data frame with all columns of \code{data} and of subset of its rows.
 #' @family data_carpentry
 #' @examples
-#' cip_filter(cip, "History")
-#' cip_filter(cip, "History", drop_any = c("^04", "^13", "^50"))
-#' cip_filter(cip, "History") %>%
-#'   cip_filter("American")
-#' cip_filter(cip, cip_engr) %>%
-#'   cip_filter("Civil")
+#' cip_filter(cip, keep_any = c("^1407", "^1410"))
+#' cip_filter(cip, keep_any = "civil engineering", drop_any = "technology")
+#' cip_filter(cip, keep_any = "History") %>%
+#'   cip_filter(keep_any = "American")
+#' \dontrun{
+#' # result is empty
+#' cip_filter(cip, keep_any = "engineering", drop_any = "engineering")
+#' # argument doesn't exist or is misspelled
+#' cip_filter(cip, keep_any = "enginerring")
+#' }
 #' @export
 cip_filter <- function(data = NULL, keep_any = NULL, ..., drop_any = NULL) {
-
-  # force optional arguments to be usable only by name
+  # force arguments after ... to be usable only by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
-    "cip_filter, optional arguments must be named."
+    "cip_filter. Arguments after ... must be named."
   )
-
-  # for use with dplyr::across()
-  any_row <- function(x) rowSums(x) > 0
-
   # argument checks
   if (is.null(data)) {
     data <- midfieldr::cip
   }
   if (!(is.data.frame(data) || dplyr::is.tbl(data))) {
-    stop("cip_filter, first argument must be a data.frame or tbl.")
+    dplyr::if_else(is_atomic_character(data),
+            stop(paste("cip_filter. Explicit data argument required",
+                       "unless passed by a pipe."),
+                 call. = FALSE),
+            stop("cip_filter. Data argument must be a data frame or tbl.",
+                 call. = FALSE))
+  }
+  if(!identical(sort(names(data)), sort(names(cip))))   {
+    stop("cip_filter. Variable names in data must match names in cip.",
+         call. = FALSE)
+  }
+  if(!identical(rep("character", 6),
+                unname(unlist(lapply(data, function(x) class(x)))))){
+    stop("cip_filter. Variables in data must be character class only.",
+         call. = FALSE)
+  }
+  if(!is.null(keep_any) && !is_atomic_character(keep_any)){
+    stop("cip_filter. Argument keep_any must be an atomic character vector.",
+         call. = FALSE)
+  }
+  if(!is.null(drop_any) && !is_atomic_character(drop_any)){
+    stop("cip_filter. Argument drop_any must be an atomic character vector.",
+         call. = FALSE)
   }
 
-  # keep_any: rows to keep. Note that length(NULL) = 0.
-  if (length(keep_any) > 0) {
-    if (!(is.character(keep_any) || is.atomic(keep_any))) {
-      stop("cip_filter, keep_any argument must be a character vector.")
-    }
-    # filter for keep_any
-    search_string <- stringr::str_c(keep_any, collapse = "|")
-    data <- dplyr::filter(data, any_row(
-      dplyr::across(
-        names(data),
-        ~ stringr::str_detect(
-          ., regex(search_string, ignore_case = TRUE)
-        )
-      )
-    ))
+  # filtering to keep specific rows
+  if (length(keep_any) > 0) {# NULL keep_any has length 0.
+    keep_string <- paste(keep_any, collapse = "|")
+    idx_to_keep <- lapply(data,
+                          function(x) grep(keep_string, x, ignore.case = TRUE))
+    idx <- sort(unique(unname(unlist(idx_to_keep))))
+    data <- data[idx, ]
   }
-
-  # drop_any: rows to delete
-  if (length(drop_any) > 0) {
-    if (!(is.character(drop_any) || is.atomic(drop_any))) {
-      stop("cip_filter, drop_any argument must be a character vector.")
+  # filtering to drop specific rows
+  if (length(drop_any) > 0) {# NULL drop_any has length 0.
+    drop_string <- paste(drop_any, collapse = "|")
+    idx_to_drop <- lapply(data,
+                          function(x) grep(drop_string, x, ignore.case = TRUE))
+    idx <- sort(unique(unname(unlist(idx_to_drop))))
+    if (dplyr::near(sum(idx), 0)) { # search terms do not exist
+      stop("cip_filter. Argument drop_any misspelled or does not exist.",
+           call. = FALSE)
+    } else {
+      data <- data[-idx, ]
     }
-    # filter for drop_any
-    search_string <- stringr::str_c(drop_any, collapse = "|")
-    data <- dplyr::filter(data, !any_row(
-      dplyr::across(
-        names(data),
-        ~ stringr::str_detect(
-          ., regex(search_string, ignore_case = TRUE)
-        )
-      )
-    ))
   }
-  data <- data
+  if (dplyr::near(0, nrow(data))) {
+    stop("cip_filter. No programs satisfy the filter criteria.",
+         call. = FALSE)
+  }
+  return(data)
 }
 "cip_filter"

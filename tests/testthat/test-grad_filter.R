@@ -1,9 +1,11 @@
 context("grad_filter")
+library("midfieldr")
+library("midfielddata")
 
-library(dplyr)
-library(tidyr)
-
-# get_my_path() in tests/testthat/helper.R
+# get_my_path() internal function in tests/testthat/helper.R
+# load(file = get_my_path("subset_students.rda"))
+# load(file = get_my_path("subset_courses.rda"))
+# load(file = get_my_path("subset_terms.rda"))
 load(file = get_my_path("subset_degrees.rda"))
 
 grad1 <- grad_filter(codes = "540104")
@@ -16,10 +18,24 @@ ref2 <- subset_degrees
 ref2 <- dplyr::rename(ref2, altID = id)
 ref2 <- dplyr::rename(ref2, altCIP6 = cip6)
 
+test_that("Data argument is a data frame or tbl", {
+  expect_error(
+    grad_filter(data = runif(10), codes = "540104"),
+    "grad_filter data argument must be a data frame or tbl"
+  )
+})
+
 test_that("Produces expected output", {
   expect_setequal(grad1[["cip6"]], "540104")
   expect_equal(dim(grad1), c(24, 2))
   expect_equal(dim(grad2), c(0, 2))
+})
+
+test_that("Default data set used when data is NULL", {
+  expect_equal(
+    grad_filter(data = NULL, codes = "540104"),
+    grad_filter(data = midfielddegrees, codes = "540104")
+  )
 })
 
 test_that("Error if incorrect codes argument", {

@@ -38,6 +38,7 @@ rcb("light_Gn")
 }
 \seealso{
 Other graph_helper: 
+\code{\link{rcb}()},
 \code{\link{scale_x_log10_expon}()}
 }
 \concept{graph_helper}

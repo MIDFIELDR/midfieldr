@@ -7,46 +7,51 @@
 cip_filter(data = NULL, keep_any = NULL, ..., drop_any = NULL)
 }
 \arguments{
-\item{data}{Data frame or tibble of CIP codes, default \code{midfieldr::cip}.}
+\item{data}{Data frame or tibble with character variables for CIP codes
+and program names. Default is \code{cip}.}
 
 \item{keep_any}{Character vector used to filter \code{data}, keeping all
 rows in which any matches or partial matches are detected.}
 
-\item{...}{Not used for values, forces later optional arguments to bind
-by name}
+\item{...}{Not used for values. Forces the subsequent optional arguments
+to only be usable by name.}
 
 \item{drop_any}{Character vector, optional argument. The output of
 the \code{keep_any} filter is the input to the \code{drop_any} filter,
 dropping all rows in which any matches or partial matches are detected.}
 }
 \value{
-Data frame
+Data frame with all columns of \code{data} and of subset of its rows.
 }
 \description{
 Filter a data frame of Classification of Instructional Programs (CIP) codes
 and return the rows that match conditions.
 }
 \details{
+The variable names and class in \code{data} must match the variable names
+and class in the \code{cip} data set.
+
 The \code{keep_any} argument is an atomic character vector of search
-terms  used to filter the CIP data frame. Typical search terms include
-words and phrases describing academic programs or their CIP codes. The
-optional \code{drop_any} argument is similar except it drops rows instead
-of keeping them.
+terms used to filter the CIP data frame. Typical search terms include
+words and phrases describing academic programs or their CIP codes.
 
-Several named series are provided as possible values for \code{keep_any}
-to facilitate searching for groups of programs such as Biological
-Sciences, Engineering, Physical Sciences, etc. For the named series help
-page, run \code{? cip_series}.
+The optional \code{drop_any} argument is similar except it drops rows
+instead of keeping them.
 
-The function returns a subset of \code{data}. All columns are retained.
+Errors are produced if search terms do not exist in \code{data}. An error
+is also produced if the filter result is empty.
 }
 \examples{
-cip_filter(cip, "History")
-cip_filter(cip, "History", drop_any = c("^04", "^13", "^50"))
-cip_filter(cip, "History") \%>\%
-  cip_filter("American")
-cip_filter(cip, cip_engr) \%>\%
-  cip_filter("Civil")
+cip_filter(cip, keep_any = c("^1407", "^1410"))
+cip_filter(cip, keep_any = "civil engineering", drop_any = "technology")
+cip_filter(cip, keep_any = "History") \%>\%
+  cip_filter(keep_any = "American")
+\dontrun{
+# result is empty
+cip_filter(cip, keep_any = "engineering", drop_any = "engineering")
+# argument doesn't exist or is misspelled
+cip_filter(cip, keep_any = "enginerring")
+}
 }
 \seealso{
 Other data_carpentry: 
@@ -55,6 +60,7 @@ Other data_carpentry:
 \code{\link{grad_filter}()},
 \code{\link{multiway_order}()},
 \code{\link{race_sex_join}()},
-\code{\link{start_filter}()}
+\code{\link{start_filter}()},
+\code{\link{term_summarize}()}
 }
 \concept{data_carpentry}

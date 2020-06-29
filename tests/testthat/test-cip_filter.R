@@ -1,47 +1,97 @@
-# run from devtools::test() only
-context("test-cip_filter")
+context("cip_filter")
+library("midfieldr")
 
 # create test cases
-case_engr <- cip_filter(cip, keep_any = cip_engr)
-chem_engr <- cip_filter(cip, keep_any = "^1407")
+engr     <- cip_filter(cip, keep_any = "^14")
+chem_ece <- cip_filter(engr, keep_any = c("^1407", "^1410"))
+ece      <- cip_filter(chem_ece, drop_any = "Chemical")
 
-test_that("data argument NULL", {
+test_that("Function works as expected", {
+  expect_equal(c("1407", "1410"), unique(chem_ece[["cip4"]]))
+  expect_equal("1410", unique(ece[["cip4"]]))
+  expect_equal(cip, cip_filter())
+  expect_equal(cip_filter(engr, keep_any = "tech"),
+               cip_filter(engr, "tech"))
+  expect_equal(engr %>% cip_filter("tech"),
+               cip_filter(engr, "tech"))
+  expect_equal(dim(cip_filter(as.data.frame(engr), "tech")),
+               dim(cip_filter(engr, "tech")))
+})
+
+test_that("Data argument correct when NULL", {
   expect_equal(cip_filter(data = NULL), cip_filter(data = cip))
-  expect_equal(cip_filter(keep_any = cip_engr), cip_filter(keep_any = "^14"))
 })
 
-test_that("cip_filter() gives meaningful errors", {
+test_that("Problems with data argument produce errors", {
   expect_error(
-    cip_filter(cip_engr),
-    "cip_filter, first argument must be a data.frame or tbl."
+    cip_filter(c("^1407", "^1410")),
+    "cip_filter. Explicit data argument required unless passed by a pipe."
+  )
+  alt    <- ece
+  alt[1] <- FALSE
+  expect_error(cip_filter(alt, keep_any = "electrical"),
+               "cip_filter. Variables in data must be character class only.")
+  alt <- ece
+  names(alt)[1] <- "code2"
+  expect_error(
+    cip_filter(alt),
+    "cip_filter. Variable names in data must match names in cip."
   )
   expect_error(
-    cip_filter(case_engr, keep_any = case_engr),
-    "cip_filter, keep_any argument must be a character vector."
+    cip_filter(data = TRUE),
+    paste("cip_filter. Explicit data argument required",
+          "unless passed by a pipe.")
   )
   expect_error(
-    cip_filter(case_engr, keep_any = "^1410", drop_any = case_engr),
-    "cip_filter, drop_any argument must be a character vector."
+    cip_filter(data = NA),
+    paste("cip_filter. Explicit data argument required",
+          "unless passed by a pipe.")
   )
 })
 
-test_that("Numeric terms are coverted to strings", {
-  expect_equal(
-    cip_filter(cip, keep_any = 140801),
-    cip_filter(cip, keep_any = "140801")
+test_that("Problems with arguments of wrong class", {
+  expect_error(
+    cip_filter(engr, "engineering", drop_any = TRUE),
+    "cip_filter. Argument drop_any must be an atomic character vector."
+  )
+  expect_error(
+    cip_filter(engr, keep_any = TRUE),
+    "cip_filter. Argument keep_any must be an atomic character vector."
   )
 })
 
-test_that("Invalid series are quietly ignored", {
-  expect_equal(
-    cip_filter(cip, keep_any = seq(140800, 140899)),
-    cip_filter(cip, keep_any = "^1408")
+test_that("Problems with keep_any arguments produce errors", {
+  expect_error(
+    cip_filter(engr, keep_any = "111111"),
+    "cip_filter. No programs satisfy the filter criteria."
+  )
+  expect_error(
+    cip_filter(engr, keep_any = "arctic explorer"),
+    "cip_filter. No programs satisfy the filter criteria."
   )
 })
 
-test_that("drop_any() yields expected result", {
-  expect_equal(
-    chem_engr[c(1, 3), ],
-    cip_filter(chem_engr, keep_any = "14", drop_any = "Bio")
+test_that("Problems with drop_any arguments produce errors", {
+  expect_error(
+    cip_filter(engr, drop_any = "111111"),
+    "cip_filter. Argument drop_any misspelled or does not exist."
+  )
+  expect_error(
+    cip_filter(engr, drop_any = "enginerr"),
+    "cip_filter. Argument drop_any misspelled or does not exist."
+  )
+  expect_error(
+    cip_filter(engr, keep_any = "engineer", drop_any = "engineer"),
+    "cip_filter. No programs satisfy the filter criteria."
+  )
+  expect_error(
+    cip_filter(engr, keep_any = "engineer", "mechanical"),
+    paste("Arguments after ... must be named.",
+          "unexpected arguments: 'mechanical'")
+  )
+  expect_error(
+    cip_filter(engr, "engineer", "mechanical"),
+    paste("Arguments after ... must be named.",
+          "unexpected arguments: 'mechanical'")
   )
 })

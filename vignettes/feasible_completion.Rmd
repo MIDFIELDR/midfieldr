@@ -38,31 +38,129 @@ knitr::knit_hooks$set(inline = function(x) {
     prettyNum(round(x, 2))
   }
 })
-options(tibble.print_min = 8L, tibble.print_max = 8L)
+options(tibble.print_min = 12L)
 
 # normally, purl is FALSE. But in some code chunks, I want purl = TRUE so that the code in the vignette is executed to pass R CMD check. These next few lines set that up. In the code chunk header, add opts.label = 'dopurl'
 knitr::knit_hooks$set(purl = knitr::hook_purl)
 knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
 ```
 
+
+```{r functions, echo = FALSE}
+
+fc_round_term <- function(data, col = "col") {
+
+  # addresses R CMD check warning "no visible binding"
+  COL <- NULL
+
+  # use wrapr::let() to allow alternate column names
+  mapping <- c(
+    COL = col
+  )
+
+  wrapr::let(
+    alias = mapping,
+    expr = {
+      # stop if COL not integers between 1 and 6
+      df <- data %>%
+        mutate(COL = if_else(COL >= 3, 3, 1))
+    }
+  )
+}
+
+fc_matric_lim <- function(data = NULL, ..., fc_span = 6) {
+  if (is.null(data)) {
+    data <- midfieldterms
+  }
+
+  institution <- "institution"
+  range_max <- "range_max"
+  range_max_term <- paste0(range_max, "_term")
+  range_max_year <- paste0(range_max, "_year")
+
+  # addresses R CMD check warning "no visible binding"
+  INSTITUTION <- NULL
+  RANGE_MAX <- NULL
+  RANGE_MAX_TERM <- NULL
+  RANGE_MAX_YEAR <- NULL
+
+  # use wrapr::let() to allow alternate column names
+  mapping <- c(
+    INSTITUTION = institution,
+    RANGE_MAX = range_max,
+    RANGE_MAX_TERM = range_max_term,
+    RANGE_MAX_YEAR = range_max_year
+  )
+
+  wrapr::let(
+    alias = mapping,
+    expr = {
+
+      # creates range_min, range_max columns
+      data_range <- term_summarize(data = data)
+
+      # separates the term value to year and term
+      df <- term_separate(data_range, col = RANGE_MAX)
+
+      # normalizes summer to 3, winter to 1.
+      df <- fc_round_term(df, col = RANGE_MAX_TERM)
+
+      # new cols enter_term and enter_year are internal variables
+      df <- df %>%
+        mutate(enter_term = if_else(RANGE_MAX_TERM > 2, 1, 3)) %>%
+        mutate(enter_year = if_else(
+          RANGE_MAX_TERM > 2,
+          range_max_year - fc_span + 1,
+          range_max_year - fc_span
+        )) %>%
+        mutate(matric_lim = 10 * enter_year + enter_term) %>%
+        select(matric_lim, RANGE_MAX) %>%
+        unique()
+
+
+      df <- left_join(data_range, df, by = range_max) %>%
+        select(INSTITUTION, matric_lim)
+    }
+  )
+}
+```
+
+
+```{r}
+# library(midfieldr)
+# library(midfielddata)
+# library(dplyr)
+# library(tidyr)
+# term_separate(midfieldstudents, "term_enter") %>% 
+#   select(term_enter, term_enter_year, term_enter_term) %>% 
+#   print()
+```
+
+
+
 ## Introduction
 
 Persistence metrics often include a criterion that students complete their programs within $x$ years (typically 6 years, based on 150% of the "normal" time to completion). See, for example, [@ipeds2018]. 
 
-However, for student records near the upper limit of an institution's data range, a student's completion status can be ambiguous. Consider a case in which:
+In longitudinal research, this completion criterion requires special care. For student records near the upper limit of an institution's data range, a student's completion status can be ambiguous. Consider a case in which:
 
-- a student matriculates in 2012 
+- a student matriculates in 2012 and graduates in 2017
 - their institution's data range ends in 2016  
-- the student completes their program in 2017
 
-Under these conditions, the student's degree status in the data is NA. The data limit prevents us from finding that the student satisfies the completion criterion a year beyond the data range. 
+The student satisfies the completion criterion, but their recorded degree status is NA because their degree term exceeds the data range. 
 
-In computing a persistence metric, counting such a student among the non-graduates would adversely and unfairly affect the result.  In such cases, therefore, we filter for completion feasibility using the `feasible_completion_filter()` function. 
+Without special care, such students would add to the count of non-graduates, adversely and unfairly affecting the value of a persistence metric. Therefore, if completing their program is not feasible given the range of data available, students with a degree status of NA are excluded from the analysis.
 
 feasible completion
-: An instructional program can be feasibly completed if the time span from student matriculation to the end of the data range is at least $x$ years (typically 6 years). If not, and the student's degree status is NA, they are removed from the analysis. 
+: An instructional program can be feasibly completed if the time span from student matriculation to the end of the data range is at least $x$ years (typically 6 years).
 
-For students entering an institution with transfer credits equivalent to $n$ terms of study, the feasible completion time span $x$ can be shortened by $n$ terms. 
+`feasible_completion_filter()`
+: midfieldr function that returns a vector of IDs of students for whom program completion is feasible. 
+
+Notes. 
+
+- Satisfying the feasible completion criterion says nothing about whether the student graduated in $x$ years---only that graduating in $x$ years was feasible. 
+- For students entering an institution with transfer credits equivalent to $n$ terms of study, the feasible completion time span $x$ can be shortened by $n$ terms. 
 
 
 
@@ -77,547 +175,375 @@ library("dplyr")
 library("tidyr")
 ```
 
-Different institutions have different data ranges. We can extract the minimum and maximum terms for each institution in the data using `inst_term_summarize()`. 
-
-```{r echo = FALSE}
-options(tibble.print_min = 12L)
-inst_term_summarize <- function(data = NULL, institution = "institution", term = "term") {
-  if (is.null(data)) {data <- midfieldterms}
-  grouping_variables = c(institution)
-  data_range <- seplyr::group_summarize(
-    data, grouping_variables, range_min = min(term), range_max = max(term)
-    )
-}
-```
+Different institutions have different data ranges. We can extract the minimum and maximum terms for each institution in the data using `term_summarize()`. 
 
 ```{r}
-data_range <- inst_term_summarize(data = midfieldterms) %>% 
+data_range <- term_summarize(midfieldterms) %>%
   print()
 ```
 
 term data
-: Term data in midfieldr is encoded numerically as `YYYYT`, where `YYYY` is the year that starts the academic year and `T` is the term. Fall `T` = 1 and Spring `T` = 3. For quarter system only, Winter `T` = 2. Summer terms, depending on the type of sessions, are encoded `T`= 4, 5, or 6.
+: Term data in midfieldr is encoded numerically as `YYYYT`, where `YYYY` is the year that starts the academic year and `T` is the term. Fall `T` = 1 and Spring `T` = 3. For quarter systems only, Winter `T` = 2. Summer terms, depending on the  session type, are encoded `T`= 4, 5, or 6.
 
 For example, for Institution A above, 
 
 - range minimum `YYYY` = `1987`, representing academic year 1987--88, and `T` = `1` for the Fall term. 
 - range maximum `YYYY` = `2003`, representing academic year 2003--04, and `T` = `4` for a Summer term. 
 
+To learn more, see the help page by running, 
 
 
+```r
+? term_summarize
+```
 
-## Feasible completion entry bound
+
+## Matriculation limit for feasible completion
+
+The chronological relationships between a representative institution's data range and the time span for feasible program completion are illustrated in the figure. 
+
+- the range of data is finite and varies by institution 
+- the matriculation limit for completion feasibility is $x$ years (typically 6) before an institution's data limit 
+- entering no later than the matriculation limit satisfies the feasible completion criterion 
 
 ```{r relationships, echo = FALSE, fig.asp = 5/10}
 library("midfieldr")
-yyyyt <- c(1988, 2005, 2010) %>% 
-  unique() %>% 
+yyyyt <- c(1988, 2005, 2010) %>%
+  unique() %>%
   sort()
 
 df <- data.frame(yyyyt = yyyyt, y = 1)
 
 library("ggplot2")
 callout_color <- rcb("mid_Gray")
-callout_line_size = 0.3
-anno_size = 3.5 # 3.5 approx 10 point
+callout_line_size <- 0.3
+anno_size <- 3.5 # 3.5 approx 10 point
+vert_baseline <- 1.07
 
 ggplot(df, aes(x = yyyyt, y = y)) +
-  
+
   # vertical dimension lines
-  geom_segment(aes(x = 2005, xend = 2005, y = 0.92, yend = 1.3), 
-               color = callout_color, size = callout_line_size) +
-  geom_segment(aes(x = 1988, xend = 1988, y = 0.92, yend = 1.55), 
-               color = callout_color, size = callout_line_size) +
-  
-  
-  annotate("text", x = 2010, y = 0.88, size = anno_size,
-           label = "last term in data", hjust = 0, vjust = 1) +
-  geom_segment(aes(x = 2010, xend = 2010, y = 0.92, yend = 1.55), 
-               color = callout_color, size = callout_line_size) +
-  
-  
-  annotate("text", x = 2000, y = 1.55, size = anno_size, 
-           label = "range of institution's data") +
-  geom_segment(aes(x = 1988,  xend = 2010, y = 1.5, yend = 1.5), 
-               color = callout_color, 
-               size  = callout_line_size, 
-               arrow = arrow(type = "closed", 
-                             ends = "both", 
-                             length = unit(2, "mm")), 
-               arrow.fill = callout_color) +
-  geom_line(color = callout_color, size = callout_line_size) +
-  
-  
-  annotate("text", x = 2007.5, y = 1.3, size = anno_size,
-           label = "6 years") +
-  geom_segment(aes(x = 2005,  xend = 2010, y = 1.25, yend = 1.25), 
-               color = callout_color, 
-               size = callout_line_size, 
-               arrow = arrow(type = "closed", 
-                             ends = "both", 
-                             length = unit(2, "mm")), 
-               arrow.fill = callout_color) +
-  
-  
-  annotate("text", x = 1996.5, y = 1.3, size = anno_size, 
-           label = "satisfactory entry terms") +
-  annotate("text", x = 2005, y = 0.88, size = anno_size,
-           label = "last term of entry", hjust = 1, vjust = 1) +
-  geom_segment(aes(x = 1988,  xend = 2005, y = 1.25, yend = 1.25), 
-               color = callout_color, 
-               size = callout_line_size, 
-               arrow = arrow(type = "closed", 
-                             ends = "both", 
-                             length = unit(2, "mm")), 
-               arrow.fill = callout_color) +
-  
+  geom_segment(aes(x = 1988, xend = 1988, y = vert_baseline, yend = 1.55),
+    color = callout_color, size = callout_line_size
+  ) +
+  annotate("text",
+    x = 2005, y = 0.89, size = anno_size,
+    label = "matriculation limit", hjust = 1, vjust = 0
+  ) +
+  geom_segment(aes(x = 2005, xend = 2005, y = vert_baseline, yend = 1.3),
+    color = callout_color, size = callout_line_size
+  ) +
+  annotate("text",
+    x = 2010, y = 0.89, size = anno_size,
+    label = "data limit", hjust = 0, vjust = 0
+  ) +
+  geom_segment(aes(x = 2010, xend = 2010, y = vert_baseline, yend = 1.55),
+    color = callout_color, size = callout_line_size
+  ) +
+
+  # horiz arrows
+  annotate("text",
+    x = 2000, y = 1.55, size = anno_size,
+    label = "range of institution's data"
+  ) +
+  geom_segment(aes(x = 1988, xend = 2010, y = 1.5, yend = 1.5),
+    color = callout_color,
+    size = callout_line_size,
+    arrow = arrow(
+      type = "closed",
+      ends = "both",
+      length = unit(2, "mm")
+    ),
+    arrow.fill = callout_color
+  ) +
+  annotate("text",
+    x = 1996.5, y = 1.3, size = anno_size,
+    label = "entry terms for feasibility"
+  ) +
+  geom_segment(aes(x = 1988, xend = 2005, y = 1.25, yend = 1.25),
+    color = callout_color,
+    size = callout_line_size,
+    arrow = arrow(
+      type = "closed",
+      ends = "both",
+      length = unit(2, "mm")
+    ),
+    arrow.fill = callout_color
+  ) +
+  annotate("text",
+    x = 2007.5, y = 1.3, size = anno_size,
+    label = "x years"
+  ) +
+  geom_segment(aes(x = 2005, xend = 2010, y = 1.25, yend = 1.25),
+    color = callout_color,
+    size = callout_line_size,
+    arrow = arrow(
+      type = "closed",
+      ends = "both",
+      length = unit(2, "mm")
+    ),
+    arrow.fill = callout_color
+  ) +
+
+  # geom_line(color = callout_color, size = callout_line_size) +
   geom_point(size = 2) +
-  scale_x_continuous(limits = c(1980, 2020), breaks = seq(1980, 2020, 10)) + 
+  scale_x_continuous(limits = c(1980, 2020), breaks = seq(1980, 2020, 10)) +
   scale_y_continuous(limits = c(0.7, 1.7)) +
-  labs(y = "", 
-       x = "Start of academic year", 
-       title = "Student entry terms satisfying the feasible completion criterion") + 
+  labs(
+    y = "",
+    x = "Start of academic year",
+    title = "A representative timeline for feasible completion"
+  ) +
   theme_midfield() +
-  theme(axis.text.y = element_blank(), 
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank()
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
   )
 ```
 
-When considering feasible completion, summer terms can be neglected
+<br>
 
-The upper limit of the data range for some institutions is a Summer term (T > 3). We change that to the immediate prior Spring term (T = 3) for determining the span of years for feasible completion. 
+Institutions have their own matriculation limits based on the last term in their data. We determine the matriculation limit from the `midfieldterms` data set using the `fc_matric_lim()` function. The function has two arguments:
 
-In similar fashion, if the upper limit of the data range for an institution on a quarter system were a Winter term (T = 2), we change it to Fall (T = 1)
-
-```{r echo = FALSE}
-yyyyt_separate <- function(data, col = "col") {
-  
-  col_year <- paste0(col, "_year")
-  col_term <- paste0(col, "_term")
-  
-  # addresses R CMD check warning "no visible binding"
-  COL <- NULL
-  COL_YEAR <- NULL
-  COL_TERM <- NULL
-  
-  # use wrapr::let() to allow alternate column names
-  mapping <- c(
-    COL = col,
-    COL_YEAR = col_year,
-    COL_TERM = col_term
-  )
-  
-  wrapr::let(
-    alias = mapping,
-    expr = {
-      df <- data %>% 
-        mutate(yyyyt = as.character(COL)) %>%
-        separate(yyyyt, into = c(col_year, col_term), sep = 4) %>% 
-        mutate(COL_YEAR = round(as.double(COL_YEAR))) %>% 
-        mutate(COL_TERM = round(as.double(COL_TERM)))
-    }
-  )
-} 
-```
-
+- `data` a data frame with a structure identical to `midfieldterms` 
+- `fc_span` optional argument for time span $x$ in years to complete a program, default is 6 years. 
 
 ```{r}
-df <- yyyyt_separate(data = data_range, col = "range_max") %>% 
-  print()
-```
-
-```{r echo = FALSE}
-fc_round_term <- function(data, col = "col"){
-  
-  # addresses R CMD check warning "no visible binding"
-  COL <- NULL
-  
-  # use wrapr::let() to allow alternate column names
-  mapping <- c(
-    COL = col
-  )
-  
-  wrapr::let(
-    alias = mapping,
-    expr = {
-      df <- data %>% 
-        mutate(COL = if_else(COL >= 3, 3, 1))
-    }
-  )
-}
-
-
-```
-
-```{r}
-df <- fc_round_term(data = df, col = "range_max_term") %>% 
-  print()
-```
-
-Six academic years that end in 20063 start in 20011, so 2001 = 2006 - 5. 
-
-Six academic years that end in 20071 start in 20013, so 2001 = 2007 - 6. 
-
-```{r echo = FALSE}
-gather_enter_lim <- function(data, ..., grad_x = 6){
-  
-  if(is.null(data)) {data = midfieldterms}
-  
-  range_max = "range_max"
-  range_max_term <- paste0(range_max, "_term")
-  range_max_year <- paste0(range_max, "_year")
-  
-  # addresses R CMD check warning "no visible binding"
-  RANGE_MAX <- NULL
-  RANGE_MAX_TERM <- NULL
-  RANGE_MAX_YEAR <- NULL
-  
-  # use wrapr::let() to allow alternate column names
-  mapping <- c(
-    RANGE_MAX = range_max, 
-    RANGE_MAX_TERM = range_max_term, 
-    RANGE_MAX_YEAR = range_max_year
-  )
-  
-  wrapr::let(
-    alias = mapping,
-    expr = {
-      data_range <- inst_term_summarize(data = data)
-      df <- yyyyt_separate(data_range, col = RANGE_MAX)
-      df <- fc_round_term(df, col = RANGE_MAX_TERM) 
-      
-     # new cols enter_term and enter_year are internal variables
-      df <- df %>% 
-        mutate(enter_term = if_else(RANGE_MAX_TERM > 2, 1, 3)) %>% 
-        mutate(enter_year = if_else(
-          RANGE_MAX_TERM > 2, 
-          range_max_year - grad_x + 1, 
-          range_max_year - grad_x
-        )) %>% 
-        mutate(enter_lim = 10 * enter_year + enter_term) %>% 
-        select(enter_lim, RANGE_MAX) %>% 
-        unique()
-    }
-  )
-}
-```
-
-
-
-```{r}
-fc_limit <- gather_enter_lim(midfieldterms) %>% 
-  print()
-
-data_range <- left_join(data_range, fc_limit, by = "range_max") %>% 
+matric_limits <- fc_matric_lim(data = midfieldterms, fc_span = 6) %>%
   print()
 ```
 
 
 
 
-## ----- holding -----
- 
+
+
+## Next
+
+Start with group of programs 
+
+- program group
+- get students ever in those programs
+- vector of IDs
+
+Feasible completion 
+
+- input IDs
+- obtain degree status from degrees
+- degree NA change to FALSE
+- degree obtained change to TRUE
+- keep ID, degree status, and inst 
+- fc_matric_lim(), then join matriculation limit by institution
+- from students, join start term, TF status, TF credit hours
+- for TF students only, adjust matriculation limit based on credit hour term equivalent
+- for nongrads only (degree status = FALSE), filter for start term < matriculation limit 
+- select(ID)
+- return vector of IDs
 
 
 
+
+
+
+
+## Start with a set of students
+
+Here we continue the case study with Civil, Electrical, Industrial, and Mechanical Engineering.
+
+We obtain our program group as described in the "Gather program data" vignette. Those results are stored in midfieldr as the `exa_program_group` data set, 
 
 ```{r}
-# data <- midfieldterms
-# 
-# grouping_variables = c("institution", "term")
-# end_year <- seplyr::group_summarize(data, grouping_variables) %>% 
-#   mutate(end_year = round(term / 10)) %>% 
-#   group_by(institution) %>% 
-#   filter(term == max(term)) %>% 
-#   mutate(threshhold = end_year - 1) %>% 
-#   select(-term) %>% 
-#   print()
-# 
-# df <- data %>%
-#   select(institution, term) %>% 
-#   left_join(end_year, by = "institution") %>% 
-#   mutate(year = round(term / 10)) %>% 
-#   filter(year >= threshhold) %>% 
-#   print()
-# 
-# quarter_systems <- df %>% 
-#   mutate(iterm = as.integer(sapply(strsplit(as.character(term/10), "\\."), "[", 2))) %>% 
-#   filter(iterm == 2L) %>% 
-#   select(institution) %>% 
-#   unique() %>% 
-#   unlist() %>% 
-#   unname() %>% 
-#   print()
-# 
-# 
-# 
-# 
-#   # df <- data %>%     
-#   #   mutate(term_type = if_else(institution %in% quarter_systems, "qtr", "sem")) %>% 
-#   #   select(institution, term_type) %>% 
-#   #   unique() %>% 
-#   #   arrange(institution)
-# 
-# 
-# print(quarter_systems)
+# examine the example programs
+exa_program_group %>%
+  print()
+```
+
+Extract a vector of 6-digit CIP codes for these programs. 
+
+```{r}
+# extract the 6-digit CIP codes
+program_codes <- exa_program_group[["cip6"]] %>%
+  unique() %>%
+  sort() %>%
+  print()
+```
+
+Use the CIP codes to extract the student ID of all students ever enrolled in these programs.
+
+```{r}
+students <- ever_filter(data = midfieldterms, codes = program_codes) %>%
+  print()
+```
+
+Extract the vector of IDs. In this case, we have `r students[["id"]] %>% unique() %>% length()` unique students ever enrolled in our case-study programs. 
+
+```{r}
+student_id <- students[["id"]] %>%
+  unique() %>%
+  glimpse()
 ```
 
 
 
 
 
+## Filter for completion feasibility 
 
+`feasible_completion_filter()` input is a vector of student IDs; its output is a subset of the input, retaining students for whom program completion is feasible. The function accesses three datasets:  
 
+- `midfieldegrees` for degree status
+- `midfieldterms` for determining institution matriculation limits 
+- `midfieldstudents` for start term, transfer status, and transfer credit hours 
 
+```{r}
+# How it works
 
-To be useful in computing time intervals, the term data `YYYYT` are decoded into separate year and term columns using `inst_range_gather()`. 
+# input
+input_id <- student_id
+fc_span  <- 6
 
-```{r echo = FALSE}
-# inst_range_gather <- function(data) {
-#   inst_range <- data %>% 
-#     seplyr::group_summarize("institution", 
-#                             min_term = min(term), 
-#                             end_term = max(term)) %>% 
-#     mutate(min_term = as.character(min_term)) %>% 
-#     mutate(end_term = as.character(end_term)) %>% 
-#     separate(min_term, into = c("min_year", "min_term"), sep = 4) %>% 
-#     separate(end_term, into = c("end_year", "end_term"), sep = 4) %>% 
-#     mutate(min_year = as.integer(min_year), 
-#            min_term = as.integer(min_term), 
-#            end_year = as.integer(end_year), 
-#            end_term = as.integer(end_term))
+# # internal function
+# extract_by_id <- function(data = NULL, input_id = NULL, ..., id = "id") {
+#   # required arguments not NULL
+#   stopifnot(!is.null(data), !is.null(input_id))
+#   # optional arguments are named
+#   wrapr::stop_if_dot_args(substitute(list(...)), "extract_by_id")
+#
+#   # addresses "no visible binding" in R CMD check
+#   ID <- NULL
+#
+#   # use wrapr::let() to allow alternate column names
+#   mapping <- c(ID = id)
+#   wrapr::let(
+#     alias = mapping,
+#     expr = {
+#       df <- filter(data, ID %in% input_id)
+#     }
+#   )
 # }
-# 
-# try_again <- function(data) {
-#   grouping_variables = c("institution", "term")
-#   df <- seplyr::group_summarize(data, grouping_variables) %>% 
-#     unique() %>% 
-#     mutate(year = floor(term / 10)) %>%
-#     mutate(year = as.integer(year)) %>% 
-#     mutate(iterm = as.integer(round(term - 10 * year)))
-#   
-#   dfsem <- df %>% 
-#     filter(!iterm == 2L) %>% 
-#     mutate(type = "sem") %>% 
-#     select(institution, type) %>% 
-#     unique() 
-#   
-#   qtr_inst <- df %>% 
-#     filter(iterm == 2L) %>% 
-#     mutate(type = "qtr") %>% 
-#     select(institution) %>% 
-#     unique() %>% 
-#     unlist() %>% 
-#     unname()
-#   
-#   df <- qtr_inst
-# }
+
+# test_df <- midfieldstudents %>%
+#   rename("student_id" = "id")
+# extract these students from the three data sets
+from_students <- id_filter(midfieldstudents, input_id, id = "id") %>%
+  print()
+from_terms <- id_filter(midfieldterms, input_id) %>%
+  print()
+from_degrees <- id_filter(midfielddegrees, input_id) %>%
+  print()
 ```
 
 
 ```{r}
-# term_type <- function(data) {
-#   
-#   grouping_variables = c("institution", "term")
-#   quarter_systems <- seplyr::group_summarize(data, grouping_variables) %>% 
-#     mutate(iterm = as.integer(sapply(strsplit(as.character(term/10), "\\."), "[", 2))) %>% 
-#     filter(iterm == 2L) %>% 
-#     select(institution) %>% 
-#     unique() %>% 
-#     unlist() %>% 
-#     unname()
-#   
-#   df <- data %>%     
-#     mutate(term_type = if_else(institution %in% quarter_systems, "qtr", "sem")) %>% 
-#     select(institution, term_type) %>% 
-#     unique() %>% 
-#     arrange(institution)
-# }
-# 
-# inst_type <- term_type(midfieldterms) %>% 
+
+# ensure only first degree term is used
+working_data <- from_degrees %>%
+  group_by(id) %>%
+  arrange(id, term_degree) %>%
+  filter(row_number() == 1) %>%
+  ungroup() %>%
+  glimpse()
+
+# create status T/F variable
+working_data <- working_data %>%
+  mutate(get_deg = if_else(is.na(degree), FALSE, TRUE)) %>%
+  select(id, institution, get_deg) %>%
+  print()
+
+# join matriculation limits
+matric_lim <- fc_matric_lim(from_terms, fc_span = fc_span) %>%
+  print()
+
+working_data <- left_join(working_data, matric_lim, by = "institution") %>%
+  select(id, institution, get_deg, matric_lim) %>%
+  print()
+
+# from students, join start term, TF status, TF credit hours
+matric_info <- from_students %>%
+  select(id, term_enter, transfer, hours_transfer) %>%
+  print()
+
+working_data <- left_join(working_data, matric_info, by = "id") %>%
+  mutate(hours_transfer = ifelse(is.na(hours_transfer), 0, hours_transfer)) %>%
+  print()
+
+# find the median hours/term by institution
+grads <- working_data %>%
+  filter(get_deg == TRUE) %>%
+  select(id) %>%
+  print()
+grads_id <- grads[["id"]]
+hours_term <- from_terms %>%
+  select(id, institution, hours_term) %>%
+  filter(id %in% grads_id) %>%
+  group_by(institution) %>%
+  summarize(med_hr_term = median(hours_term), .groups = "drop") %>%
+  print()
+
+# join to working data, convert transfer hours to terms
+working_data <- left_join(working_data, hours_term, by = "institution") %>%
+  mutate(terms_transfer = floor(hours_transfer / med_hr_term)) %>%
+  select(id, institution, get_deg, matric_lim, term_enter, terms_transfer) %>%
+  print()
+
+# increase matriculation limit by number of transfer terms
+# matriculation limit year increases by terms_transfer %/% 2
+# if terms_transfer is odd, then T switches from 1 to 3 or from 3 to 1
+working_data <- term_separate(working_data, col = "matric_lim") %>%
+  arrange(desc(terms_transfer)) %>%
+  mutate(iY = matric_lim_year + terms_transfer %/% 2) %>%
+  mutate(type_T = if_else(near(terms_transfer %% 2, 0), "even", "odd")) %>%
+  mutate(iT = if_else(type_T == "even", matric_lim_term,
+    if_else(near(matric_lim_term, 1), 3, 1)
+  )) %>%
+  mutate(new_lim = round(10 * iY + iT)) %>%
+  select(-matric_lim_year, -matric_lim_term, -iY, -iT, -type_T) %>%
+  print()
+
+# data_range <- term_summarize(midfieldterms) %>%
+#   select(institution, range_max) %>%
 #   print()
-```
-
-
-```{r}
-
-# 
-# inst_range_gather <- function(data, inst_qtr) {
-#   grouping_variables = c("institution", "term")
-#   df <- seplyr::group_summarize(data, grouping_variables) %>% 
-#     mutate(year = floor(term / 10)) %>%
-#     mutate(year = as.integer(year)) %>% 
-#     mutate(iterm = as.integer(round(term - 10 * year))) %>% 
-#     mutate(type = if_else(institution %in% inst_qtr, "qtr", "sem")) %>% 
-#     select(institution, type) %>% 
-#     unique()
-#   
-#   
-# }
-# 
-# 
-# 
-# df <- inst_range_gather(midfieldterms, inst_qtr) %>% 
+# working_data <- left_join(working_data, data_range, by = "institution") %>%
 #   print()
+
+output_id <- working_data %>%
+  mutate(matric_lim = new_lim) %>%
+  filter(term_enter <= matric_lim) %>%
+  select(id) %>%
+  unlist() %>%
+  unname() %>%
+  glimpse()
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-For transfer students, the window is reduced by the approximate number of terms $y$ warranted by their transfer credit hours. 
-
-
-
-
-
-
-
-## Examine the data 
+Check grad status
 
 ```{r}
+fc_satisfied <- midfielddegrees %>%
+  filter(id %in% output_id) %>%
+  select(degree)
 
+(nrow(fc_satisfied))
+table(fc_satisfied, useNA = "ifany")
 ```
 
-We want `midfieldstudents` for their starting term and transfer status; ``midfieldterms` for their first and last recorded terms, standing, and level; and `midfielddegrees` for the term they are awarded a degree if any.  
 
-```{r}
-students <- midfieldstudents %>%
-  select(id, institution, term_enter, transfer)
 
-terms <- midfieldterms %>%
-  select(id, institution, term, level, standing)
 
-degrees <- midfielddegrees %>%
-  select(id, institution, term_degree)
-```
 
-Review
 
-```{r}
-glimpse(students)
-glimpse(terms)
-glimpse(degrees)
-```
 
-Using terms, find the min and max terms in the data for each institution
 
-```{r}
-options(tibble.print_min = 12L)
-this_group <- group_by(terms, institution)
-inst_span <- summarize(
-  this_group,
-  inst_min = min(term),
-  inst_max = max(term)
-) %>%
-  arrange(inst_min)
 
-inst_span
-```
 
-For the 6-year span at the end of an institution's data span, all graduates can be counted---the non-graduates must be checked for pos-grad-6. 
 
-Separate grads from non-grads. 
 
-```{r}
-pos_grad6_id <- degrees %>%
-  filter(!is.na(term_degree)) %>%
-  select(id)
 
-non_grads <- degrees %>%
-  filter(is.na(term_degree)) %>%
-  unique()
-```
 
-Confirm that the student IDs are unique. 
 
-```{r}
-glimpse(pos_grad6_id)
-length(unique(pos_grad6_id$id))
 
-glimpse(non_grads)
-length(unique(non_grads$id))
-```
 
-Join the student's entering term and transfer status and the institution's last term with the non-grads. 
-
-```{r}
-non_grads <- non_grads %>%
-  left_join(., students, by = c("id", "institution")) %>%
-  left_join(., inst_span, by = "institution") %>%
-  select(id, institution, transfer, inst_max, term_enter) %>%
-  mutate(delta = inst_max - term_enter)
-
-non_grads
-
-sort(unique(non_grads$delta))
-```
- 
-If the $\Delta \geq 60$ then clearly it was possible for a student to graduate in 6 years. Add the keepers to the pos-grad-6 set of IDs.
-
-```{r}
-keepers <- non_grads %>%
-  filter(delta >= 60) %>%
-  select(id)
-
-pos_grad6_id <- bind_rows(pos_grad6_id, keepers)
-glimpse(pos_grad6_id)
-```
-
-The group of non-grads that remains needs further study
-
-```{r}
-study_group <- non_grads %>%
-  filter(delta < 60)
-
-study_group
-```
-
-Let's start by separating transfers and non-transfers. Non-transfers with $\Delta < 60$ will be assumed to not satisfy pos-grad-6. Their IDs will be excluded from further analysis. 
-
-```{r}
-non_transfer <- study_group %>%
-  filter(transfer == "N")
-
-exclude_id <- non_transfer
-exclude_id
-```
-
-For the transfer students, the length of time from their entering term to the last term in the institution data depends on their entering status. Join level and standing from terms data. 
- 
-```{r}
-transfer <- study_group %>%
-  filter(transfer == "Y") %>%
-  left_join(., terms, by = c("id", "institution")) %>%
-  select(id, delta, term_enter, term, level, standing)
-
-transfer
-```
-
-Transfers meeting any of these criteria satisfy the pos-grad-6 condition. 
-
-- level is Freshman and $\Delta >= 55$ 
-- level is Sophomore and $\Delta >= 45$ 
-- level is Junior and $\Delta >= 35$ 
-- level is Senior and $\Delta >= 25$ 
-
-```{r}
-keepers <- transfer %>%
-  filter((level == "Freshman" & delta > 50) |
-    (level == "Sophomore" & delta > 40) |
-    (level == "Junior" & delta > 30) |
-    (level == "Senior" & delta > 20))
-
-keepers
-```
 
 
 

@@ -5,7 +5,7 @@
 \alias{cip}
 \title{Classification of instructional programs (CIP) data}
 \format{
-A data frame (tibble) with 1584 observations and 6 variables.
+Data frame (tibble) with 1584 observations and 6 variables.
 All variables are characters. An observation is a unique program.
 
 \describe{
@@ -70,9 +70,6 @@ cip_filter(cip, "^1410")
 }
 \seealso{
 The "Explore program CIP codes" vignette.
-
-Other cip_data: 
-\code{\link{cip_series}}
 }
 \concept{cip_data}
 \keyword{datasets}

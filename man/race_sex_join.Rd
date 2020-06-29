@@ -16,23 +16,23 @@ race_sex_join(
 \arguments{
 \item{data}{Data frame to which race and sex are to be joined by student IDs}
 
-\item{demographics}{A data frame from which student race and sex are
+\item{demographics}{Data frame from which student race and sex are
 obtained, default \code{midfieldstudents}}
 
-\item{...}{Not used for values, forces later optional arguments to bind
-by name.}
+\item{...}{Not used for values. Forces the subsequent optional arguments
+to only be usable by name.}
 
-\item{id}{Optional character column name of the ID variable in
-both \code{data} and \code{demographics}.}
+\item{id}{Column name in quotes of the student ID variable in
+\code{data} and  \code{demographics}. Default is "id". Optional argument.}
 
-\item{race}{Optional character column name of the race variable
-in \code{demographics}.}
+\item{race}{Column name in quotes of the student race/ethnicity
+variable in \code{demographics}. Default is "race". Optional argument.}
 
-\item{sex}{Optional character column name of the sex variable
-in \code{demographics}.}
+\item{sex}{Column name in quotes of the student sex
+variable in \code{demographics}. Default is "sex". Optional argument.}
 }
 \value{
-The input data frame is returned with two new columns for race and
+Input data frame is returned with new columns for race and
 sex.
 }
 \description{
@@ -54,11 +54,11 @@ assumed to be a subset of the values in \code{demographics}.
 If  \code{data} already contains \code{race} and \code{sex} variables, a
 join does not take place and \code{data} is returned unaltered.
 
-Optional arguments. Student ID variables in the midfielddata data sets
-are named "id". If your data frames use a different name, you can either
-1) rename your variables to "id", or 2) use the optional \code{id} argument
-to pass the alternate variable name to the function. The same is true for
-the \code{race} and \code{sex} variables.
+The default values of the optional arguments are the column names
+\code{"id"}, \code{"race"}, and \code{"sex"}.
+If using a data frame with different column names, you can rename
+your variables to match the defaults or use the optional arguments to
+pass your variable name(s) to the function.
 }
 \seealso{
 Other data_carpentry: 
@@ -67,6 +67,7 @@ Other data_carpentry:
 \code{\link{ever_filter}()},
 \code{\link{grad_filter}()},
 \code{\link{multiway_order}()},
-\code{\link{start_filter}()}
+\code{\link{start_filter}()},
+\code{\link{term_summarize}()}
 }
 \concept{data_carpentry}

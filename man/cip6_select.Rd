@@ -4,51 +4,26 @@
 \alias{cip6_select}
 \title{Select 6-digit CIPs and add program labels}
 \usage{
-cip6_select(
-  data,
-  program = NULL,
-  ...,
-  cip6 = "cip6",
-  cip6name = "cip6name",
-  cip4name = "cip4name",
-  cip2name = "cip2name"
-)
+cip6_select(data = NULL, program = NULL)
 }
 \arguments{
-\item{data}{Data frame of CIP codes and names with the same structure
-as midfieldr \code{cip}.}
+\item{data}{Data frame or tibble with character variables for CIP codes
+and program names, typically a filtered subset of \code{cip}.}
 
-\item{program}{Character variable. There are four options:
+\item{program}{Scalar character, that is, of length 1. There are
+three options:
 
-If program = NULL, the default, the 4-digit CIP program names are assigned
-to the new column.
+If program is NULL, the default, the 4-digit CIP program names
+fill the new column.
 
-If program = "named_series", then the series name is assigned to the
-new column.
+If program is "cip2name", "cip4name", or "cip6name", the
+2-digit, 4-digit, or 6-digit CIP program name fills the new column.
 
-If one of three strings ("cip2name", "cip4name", or "cip6name"), then the
-2-digit, 4-digit, or 6-digit CIP program names are assigned to the new
-column.
-
-Any other string fills the new column.}
-
-\item{...}{Not used for values, forces later arguments to bind by name.}
-
-\item{cip6}{Optional argument, the column name in quotes of the 6-digit
-CIP code variable in \code{data}. Default is "cip6".}
-
-\item{cip6name}{Optional argument, the column name in quotes of the
-6-digit CIP program name variable in \code{data}. Default is "cip6name".}
-
-\item{cip4name}{Optional argument, the column name in quotes of the
-4-digit CIP program name variable in \code{data}. Default is "cip4name".}
-
-\item{cip2name}{Optional argument, the column name in quotes of the
-2-digit CIP program name variable in \code{data}. Default is "cip2name".}
+If program is any other string, that string fills the new column.}
 }
 \value{
-A data frame with the 6-digit code and name columns from the
-input data frame with an added \code{program} variable.
+A data frame with 6-digit CIP codes and names and the
+assigned program label.
 }
 \description{
 From a CIP data frame, select the columns with the 6-digit codes and names
@@ -57,23 +32,22 @@ and add a new character variable named \code{program}.
 \details{
 The 2-digit and 4-digit codes and names are silently dropped.
 
- Assigning a custom label to a program or a group of programs provides
- the option of grouping, summarizing, and joining data in ways not afforded
- by the default CIP data. We can also create program names that are
- less verbose than the default names.
+Assigning a custom label to a program or a group of programs provides
+the option of grouping, summarizing, and joining data in ways not afforded
+by the default program names in CIP data. We can also create program names
+that are less verbose than the default names.
+
+The variable names and class in \code{data} must match the variable names
+and class in the \code{cip} data set.
 }
 \examples{
-# Extract the Philosophy and Religion programs and label
-x <- cip_filter(cip, keep_any = "^38")
-y <- cip6_select(x, program = "Phil-Relig")
+ece <- cip_filter(cip, keep_any = "^1410")
+cip6_select(ece, program = "ECE")
+cip6_select(ece, program = "cip2name")
+cip6_select(ece, program = "cip6name")
+ece \%>\% cip6_select(program = "ECE")
+ece \%>\% cip6_select()
 
-# With no program argument, the 6-digit CIP names are assigned
-y <- cip6_select(x)
-
-# Argument options include
-y <- cip6_select(x, program = "cip6name")
-y <- cip6_select(x, program = "cip4name")
-y <- cip6_select(x, program = "cip2name")
 }
 \seealso{
 \code{\link[midfieldr]{cip_filter}} for exploring CIP codes.
@@ -84,6 +58,7 @@ Other data_carpentry:
 \code{\link{grad_filter}()},
 \code{\link{multiway_order}()},
 \code{\link{race_sex_join}()},
-\code{\link{start_filter}()}
+\code{\link{start_filter}()},
+\code{\link{term_summarize}()}
 }
 \concept{data_carpentry}

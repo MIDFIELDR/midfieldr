@@ -1,11 +1,11 @@
 context("race_sex_join")
+library("midfieldr")
 
-library("dplyr")
-library("midfielddata")
-
-# get_my_path() in tests/testthat/helper.R
-load(file = get_my_path("subset_degrees.rda"))
+# get_my_path() internal function in tests/testthat/helper.R
 load(file = get_my_path("subset_students.rda"))
+# load(file = get_my_path("subset_courses.rda"))
+# load(file = get_my_path("subset_terms.rda"))
+load(file = get_my_path("subset_degrees.rda"))
 
 ever <- ever_filter(codes = "540104")
 
@@ -25,6 +25,24 @@ data1 <- subset_degrees %>%
 
 id_only1 <- subset_students["id"]
 id_only2 <- ever["id"]
+
+test_that("Data argument is a data frame or tbl", {
+  expect_error(
+    race_sex_join(data = runif(10)),
+    "race_sex_join data argument must be a data frame or tbl"
+  )
+  expect_error(
+    race_sex_join(data = NULL),
+    "race_sex_join data argument must be a data frame or tbl"
+  )
+})
+
+test_that("Default data set used when demographics is NULL", {
+  expect_equal(
+    race_sex_join(data = ever, demographics = NULL),
+    race_sex_join(data = ever, demographics = midfieldstudents)
+  )
+})
 
 test_that("race_sex_join() does not overwrite existing race or sex variables", {
   expect_setequal(ever1$race, ever2$race)

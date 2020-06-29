@@ -1,5 +1,5 @@
-# run from devtools::test() only
-context("test-multiway_order")
+context("multiway_order")
+library("midfieldr")
 
 # test data df1, df2, df3, df4
 # get_my_path() in tests/testthat/helper.R
@@ -27,10 +27,13 @@ test_that("Median argument returns expected values", {
   )
 })
 
-test_that("Error produces if argument not a data frame", {
-  x <- runif(10)
-  expect_error(multiway_order(x),
-    "multiway_order() argument must be a data frame or tbl",
-    fixed = TRUE
+test_that("Error if data argument not a data frame", {
+  expect_error(
+    multiway_order(data = runif(10)),
+    "multiway_order data argument must be a data frame or tbl"
+  )
+  expect_error(
+    multiway_order(data = NULL),
+    "multiway_order data argument must be a data frame or tbl"
   )
 })

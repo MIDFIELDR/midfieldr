@@ -50,6 +50,7 @@ if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
     ".", ".x", "rcb_colors", "midfielddegrees", "midfieldstudents",
     "midfieldterms", "midfieldcourses", "cip", "cip_bio_sci", "cip_engr",
-    "cip_math_stat", "cip_other_stem", "cip_phys_sci", "cip_stem"
+    "cip_math_stat", "cip_other_stem", "cip_phys_sci", "cip_stem", "yyyyt",
+    "n_digits"
   ))
 }

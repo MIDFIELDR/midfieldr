@@ -21,31 +21,30 @@ NULL
 #' If  \code{data} already contains \code{race} and \code{sex} variables, a
 #' join does not take place and \code{data} is returned unaltered.
 #'
-#' Optional arguments. Student ID variables in the midfielddata data sets
-#' are named "id". If your data frames use a different name, you can either
-#' 1) rename your variables to "id", or 2) use the optional \code{id} argument
-#' to pass the alternate variable name to the function. The same is true for
-#' the \code{race} and \code{sex} variables.
+#' The default values of the optional arguments are the column names
+#' \code{"id"}, \code{"race"}, and \code{"sex"}.
+#' If using a data frame with different column names, you can rename
+#' your variables to match the defaults or use the optional arguments to
+#' pass your variable name(s) to the function.
 #'
 #' @param data Data frame to which race and sex are to be joined by student IDs
 #'
-#' @param demographics A data frame from which student race and sex are
+#' @param demographics Data frame from which student race and sex are
 #' obtained, default \code{midfieldstudents}
 #'
+#' @param ... Not used for values. Forces the subsequent optional arguments
+#' to only be usable by name.
 #'
-#' @param ... Not used for values, forces later optional arguments to bind
-#' by name.
+#' @param id Column name in quotes of the student ID variable in
+#' \code{data} and  \code{demographics}. Default is "id". Optional argument.
 #'
-#' @param id Optional character column name of the ID variable in
-#' both \code{data} and \code{demographics}.
+#' @param race Column name in quotes of the student race/ethnicity
+#' variable in \code{demographics}. Default is "race". Optional argument.
 #'
-#' @param race Optional character column name of the race variable
-#' in \code{demographics}.
+#' @param sex Column name in quotes of the student sex
+#' variable in \code{demographics}. Default is "sex". Optional argument.
 #'
-#' @param sex Optional character column name of the sex variable
-#' in \code{demographics}.
-#'
-#' @return The input data frame is returned with two new columns for race and
+#' @return Input data frame is returned with new columns for race and
 #' sex.
 #' @family data_carpentry
 #' @export
@@ -55,22 +54,12 @@ race_sex_join <- function(data = NULL, demographics = NULL, ..., id = "id",
   # force optional arguments to be usable only by name
   wrapr::stop_if_dot_args(substitute(list(...)), "race_sex_join")
 
-  if (!.pkgglobalenv$has_data) {
-    stop(paste(
-      "To use this function, you must have",
-      "the midfielddata package installed."
-    ))
-  }
-
   # argument checks
   if (is.null(demographics)) {
     demographics <- midfielddata::midfieldstudents
   }
   if (!(is.data.frame(data) || dplyr::is.tbl(data))) {
-    stop("race_sex_join() data argument must be a data.frame or tbl")
-  }
-  if (is.null(data)) {
-    stop("race_sex_join, data cannot be NULL")
+    stop("race_sex_join data argument must be a data frame or tbl")
   }
 
   # addresses R CMD check warning "no visible binding"

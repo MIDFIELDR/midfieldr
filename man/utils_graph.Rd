@@ -17,16 +17,16 @@ theme_midfield(
 \arguments{
 \item{...}{Arguments that pass to the ggplot2 function}
 
-\item{font_size}{The size assigned to all text in the figure.
+\item{font_size}{Size assigned to all text in the figure.
 The default is 10 pt.}
 
-\item{font_color}{The color assigned to all text in the figure.
+\item{font_color}{Color assigned to all text in the figure.
 The default is black.}
 
-\item{line_size}{The size assigned to all lines in the figure.
+\item{line_size}{Size assigned to all lines in the figure.
 The default is 0.3.}
 
-\item{line_color}{The color assigned to all lines in the figure.
+\item{line_color}{Color assigned to all lines in the figure.
 The default is a light gray (#BDBDBD).}
 }
 \value{
@@ -47,6 +47,7 @@ A set of customized layers for ggplot2 graphs.
 }
 \seealso{
 Other graph_helper: 
-\code{\link{rcb_colors}}
+\code{\link{rcb_colors}},
+\code{\link{rcb}()}
 }
 \concept{graph_helper}
