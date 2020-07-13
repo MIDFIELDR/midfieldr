@@ -1,6 +1,3 @@
-# helper functions for testing
-library("midfieldr")
-
 # for using rprojroot
 get_my_path <- function(filename) {
   rprojroot::find_testthat_root_file(

@@ -65,11 +65,14 @@ print(cip)
 # View the programs at the top level of the taxonomy
 unique(cip[, 1:2])
 
-# As the data argument for cip_filter()
-cip_filter(cip, "^1410")
+# As the data argument for get_cip()
+get_cip(cip, "^1410")
 }
 \seealso{
 The "Explore program CIP codes" vignette.
+
+Other cip_data: 
+\code{\link{midfield_fye}}
 }
 \concept{cip_data}
 \keyword{datasets}

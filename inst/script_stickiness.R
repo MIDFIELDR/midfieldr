@@ -18,13 +18,13 @@ program_series <- program_group[["cip6"]] %>%
         sort()
 
 # count students ever enrolled in programs
-ever_enrolled <- ever_filter(midfieldterms, codes = program_series) %>%
+ever_enrolled <- get_enrollees(midfieldterms, codes = program_series) %>%
 	race_sex_join() %>%
 	left_join(., program_group, by = "cip6") %>%
 	group_summarize(., grouping_variables, "ever" = n())
 
 # count students graduating from programs
-graduated <- grad_filter(midfielddegrees, codes = program_series) %>%
+graduated <- get_graduates(midfielddegrees, codes = program_series) %>%
 	race_sex_join() %>%
 	left_join(., program_group, by = "cip6") %>%
 	group_summarize(., grouping_variables, "grad" = n())
@@ -40,7 +40,7 @@ stickiness_mw <- stickiness %>%
 	filter(!sex %in% "Unknown") %>%
 	mutate(race_sex = str_c(race, sex, sep = " ")) %>%
 	select(program, race_sex, stick) %>%
-	multiway_order()
+	order_multiway()
 
 # graph
 ggplot(stickiness_mw, aes(x = stick, y = race_sex)) +

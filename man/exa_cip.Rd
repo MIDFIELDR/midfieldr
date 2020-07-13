@@ -3,7 +3,7 @@
 \docType{data}
 \name{exa_cip}
 \alias{exa_cip}
-\title{Example CIP excerpt}
+\title{Example CIP codes and names}
 \format{
 A data frame (tibble) with 12 observations and 6 variables.
 The variables are characters.
@@ -24,23 +24,18 @@ The variables are characters.
 exa_cip
 }
 \description{
-Excerpt of CIP data for a case study.
-}
-\details{
-An excerpt from the \code{cip} data set for Civil, Electrical,
-Industrial, and Mechanical Engineering. The data are an intermediate
-result in a case study developed in the midfieldr vignettes.
+Subset of the \code{cip} data set. CIP codes and names for Civil,
+Electrical, Industrial, and Mechanical Engineering. Used in a case
+study in the vignettes.
 }
 \examples{
 exa_cip
-cip6_select(data = exa_cip, program = "cip4name")
+label_programs(data = exa_cip, label = "cip4name")
 }
 \seealso{
-\code{cip} and the "Explore CIP" vignette.
-
 Other example_data: 
-\code{\link{exa_imputed_fye}},
-\code{\link{exa_program_group}},
+\code{\link{exa_group}},
+\code{\link{exa_id}},
 \code{\link{exa_stickiness}}
 }
 \concept{example_data}

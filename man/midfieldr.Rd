@@ -9,30 +9,32 @@ Data provided by the MIDFIELD project:
 \url{https://engineering.purdue.edu/MIDFIELD}
 }
 \description{
-A package for investigating a data sample from the MIDFIELD database. The
-data comprise student records from registrars at participating US
-universities, including demographic, term, course, and degree information
-for 97,640 undergraduate students from 1987 to 2016.
+A package for investigating data from the MIDFIELD database. Provides
+functions for manipulating student record data such as those provided in
+the midfielddata package, which provides a sample of student records from
+registrars at participating US universities, including demographic, term,
+course, and degree information for 97,640 undergraduate students from 1987
+to 2016.
 }
 \details{
-This package provides functions to access, manipulate, and graph student
+Provides functions to access and manipulate student
 record data. To illustrate the workflow, we would use these functions
 to compute and display a persistence metric such as "stickiness":
 
 \itemize{
-  \item \code{cip_filter()} to filter programs from the CIP data.
-  \item \code{cip6_select()} to select 6-digit CIPs and add custom labels.
-  \item \code{gather_ever()} to gather students ever enrolled.
-  \item \code{gather_grad()} to gather graduating students.
-  \item \code{race_sex_join()} to join student sex and race/ethnicity.
-  \item dplyr package (or equivalent) to group, summarize, join, and
-  compute a persistence metric.
-  \item \code{multiway_order()} to prepare the results for graphing.
-  \item ggplot2 package (or equivalent) to graph the results.
+  \item \code{get_cip()} to find the CIP codes of programs we
+  want to study
+  \item \code{label_programs()} to isolate and label the 6-digit CIPs
+  \item \code{get_enrollees()} to gather students ever enrolled
+  \item \code{get_graduates()} to gather graduating students
+  \item \code{get_race_sex()} to gather student sex and race/ethnicity
+  \item \code{order_multiway()} to condition the multiway data for graphing
 }
 
-To learn about these and other functions in detail, start with the
-vignettes: \code{browseVignettes(package = "midfieldr")}.
+Operations such subsetting, joining, and grouping and summarizing
+are performed using one's preferred tools in base R or packages such
+as dplyr or data.table. In our examples, we use base R functions for
+data carpentry and ggplot2 for graphing.
 }
 \section{Data}{
 

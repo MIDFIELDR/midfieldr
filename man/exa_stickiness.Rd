@@ -30,13 +30,10 @@ A data frame (tibble) with 32 observations and 6 variables.
 exa_stickiness
 }
 \description{
-Data for a case study.
-}
-\details{
-An data frame of stickiness data grouped by program and student
-race/ethnicity and sex. The number of students ever enrolled, the number
-of graduates, and the resulting stickiness for Civil, Electrical,
-Industrial, and Mechanical Engineering.
+Stickiness metric results for Civil, Electrical, Industrial, and
+Mechanical Engineering. Data are grouped by program, student
+race/ethnicity, and sex. Used for graphing the results in a case study
+in the vignettes.
 }
 \examples{
 exa_stickiness
@@ -46,8 +43,8 @@ The "Compute stickiness" vignette.
 
 Other example_data: 
 \code{\link{exa_cip}},
-\code{\link{exa_imputed_fye}},
-\code{\link{exa_program_group}}
+\code{\link{exa_group}},
+\code{\link{exa_id}}
 }
 \concept{example_data}
 \keyword{datasets}

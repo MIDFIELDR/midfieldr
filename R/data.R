@@ -53,20 +53,18 @@
 #' # View the programs at the top level of the taxonomy
 #' unique(cip[, 1:2])
 #'
-#' # As the data argument for cip_filter()
-#' cip_filter(cip, "^1410")
+#' # As the data argument for get_cip()
+#' get_cip(cip, "^1410")
 "cip"
 
 
 
 
-#' Example CIP excerpt
+#' Example CIP codes and names
 #'
-#' Excerpt of CIP data for a case study.
-#'
-#' An excerpt from the \code{cip} data set for Civil, Electrical,
-#' Industrial, and Mechanical Engineering. The data are an intermediate
-#' result in a case study developed in the midfieldr vignettes.
+#' Subset of the \code{cip} data set. CIP codes and names for Civil,
+#' Electrical, Industrial, and Mechanical Engineering. Used in a case
+#' study in the vignettes.
 #'
 #' @format A data frame (tibble) with 12 observations and 6 variables.
 #' The variables are characters.
@@ -79,12 +77,11 @@
 #'   \item{cip2name}{2-digit program name.}
 #' }
 #' @family example_data
-#' @seealso \code{cip} and the "Explore CIP" vignette.
 #' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata}
 #'  package
 #' @examples
 #' exa_cip
-#' cip6_select(data = exa_cip, program = "cip4name")
+#' label_programs(data = exa_cip, label = "cip4name")
 "exa_cip"
 
 
@@ -92,12 +89,9 @@
 
 #' Example program group
 #'
-#' Intermediate result in a case study.
-#'
-#' The 6-digit CIP codes and names for Civil, Electrical, Industrial,
-#' and Mechanical Engineering plus a column of custom program names
-#' for grouping, summarizing, and joining. The data are an intermediate
-#' result in a case study developed in the midfieldr vignettes.
+#' Six-digit CIP codes and names plus a custom program name for
+#' Civil, Electrical, Industrial, and Mechanical Engineering. Used for
+#' grouping, summarizing, and joining in a case study in the vignettes.
 #'
 #' @format A data frame (tibble) with 12 observations and 3 variables.
 #' All variables are characters. An observation is a unique program.
@@ -112,9 +106,46 @@
 #' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata}
 #'  package
 #' @examples
-#' x <- unique(exa_program_group[["cip6"]])
-#' y <- unique(exa_program_group[["program"]])
-"exa_program_group"
+#' x <- unique(exa_group[["cip6"]])
+#' y <- unique(exa_group[["program"]])
+"exa_group"
+
+
+
+
+
+
+
+#' Example student IDs
+#'
+#' Students IDs from midfielddata for Civil, Electrical, Industrial,
+#' and Mechanical Engineering. Used in a case study in the vignettes.
+#'
+#' \describe{
+#' \item{\code{exa_ever}}{IDs of students ever enrolled in the example
+#' programs.}
+#' \item{\code{exa_grad}}{IDs of students graduating from the example
+#' programs.}
+#' }
+#' @family example_data
+#' @name exa_id
+#' @format Character vector of student IDs.
+#' @source \href{https://midfieldr.github.io/midfielddata/}{midfielddata}
+#'  package
+#' @examples
+#' library(midfielddata)
+#' midfieldstudents[midfieldstudents[["id"]] %in% exa_ever, ]
+#' midfieldstudents[midfieldstudents[["id"]] %in% exa_grad, ]
+NULL
+
+#' @rdname exa_id
+#' @format NULL
+"exa_ever"
+#' @rdname exa_id
+#' @format NULL
+"exa_grad"
+
+
 
 
 
@@ -123,12 +154,10 @@
 
 #' Example stickiness data
 #'
-#' Data for a case study.
-#'
-#' An data frame of stickiness data grouped by program and student
-#' race/ethnicity and sex. The number of students ever enrolled, the number
-#' of graduates, and the resulting stickiness for Civil, Electrical,
-#' Industrial, and Mechanical Engineering.
+#' Stickiness metric results for Civil, Electrical, Industrial, and
+#' Mechanical Engineering. Data are grouped by program, student
+#' race/ethnicity, and sex. Used for graphing the results in a case study
+#' in the vignettes.
 #'
 #' @format A data frame (tibble) with 32 observations and 6 variables.
 #' \describe{
@@ -177,41 +206,17 @@
 #' All variables are characters.
 #'
 #' \describe{
-#'  \item{id}{Unique, anonymized MIDFIELD student identifier.}
-#'  \item{cip6}{Imputed starting major (6-digit CIP code) of FYE students. }
+#'    \item{id}{unique, anonymized MIDFIELD student identifier}
+#'    \item{cip6}{imputed starting major (6-digit CIP code) of FYE students}
 #' }
 #'
-#' @family example_data
+#' @family cip_data
 #' @seealso The "Impute FYE starting majors" vignette.
 #' @source \href{https://midfieldr.github.io/midfielddata/}{\pkg{midfielddata}
 #'  package}
-"exa_imputed_fye"
+"midfield_fye"
 
 
 
 
-#' Named colors from the ColorBrewer palettes
-#'
-#' Shorthand color names assigned to selected colors from the
-#' ColorBrewer palettes.
-#'
-#' This dataset provides convenient access to selected ColorBrewer
-#' palettes: diverging brown-bluegreen (BrBG) with 8 levels; diverging
-#' purple-green (PRGn) with 8 levels; and sequential gray (Greys) with the
-#' middle four of 6 levels.
-#'
-#' The color names have the form "level_hue" with 4 saturation levels (dark,
-#' mid, light, pale) and 5 hues (Br, BG, PR, Gn, Gray or Grey).
-#' @format A data frame (tibble) with 24 observations and 2 variables.
-#' \describe{
-#'   \item{rcb_name}{Character variable of names.}
-#'   \item{rcb_code}{Character variable of hex color codes.}
-#' }
-#' @source Cynthia Brewer (\url{http://colorbrewer2.org}) and
-#' RColorBrewer  (\url{https://cran.r-project.org/package=RColorBrewer}).
-#' @family graph_helper
-#' @examples
-#' rcb_colors
-#' rcb("dark_Br")
-#' rcb("light_Gn")
-"rcb_colors"
+

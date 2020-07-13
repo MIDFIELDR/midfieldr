@@ -16,6 +16,14 @@ Status](https://img.shields.io/codecov/c/github/MIDFIELDR/midfieldr/master.svg)]
 has not yet been a stable, usable release suitable for the
 public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 
+## Undergoing major revision
+
+Based on feedback from workshop attendees, the package is undergoing
+major revision to the vignettes and the underlying functionality.
+
+While in this ambiguous state, the package should be used experimentally
+only. We hope to have the update complete by the end of August 2020.
+
 ## Tools for student records research
 
 MIDFIELD—the *Multiple-Institution Database for Investigating
@@ -107,14 +115,14 @@ This package provides functions to access, manipulate, and graph student
 record data. To illustrate the workflow, we would use these functions to
 compute and display the “stickiness” persistence metric:
 
-  - `cip_filter()` to filter programs from the CIP data.
-  - `cip6_select()` to select 6-digit CIPs and add custom labels.
+  - `search_cip()` to filter programs from the CIP data.
+  - `get_programs()` to select 6-digit CIPs and add custom labels.
   - `gather_ever()` to gather students ever enrolled.
   - `gather_grad()` to gather graduating students.
   - `race_sex_join()` to join student sex and race/ethnicity.
   - dplyr package (or equivalent) to group, summarize, join, and compute
     a persistence metric.
-  - `multiway_order()` to prepare the results for graphing.
+  - `order_multiway()` to prepare the results for graphing.
   - ggplot2 package (or equivalent) to graph the results.
 
 A short but complete example is provided in the “Using midfieldr”
