@@ -81,9 +81,11 @@ We refine the result by operating on the `sub_cip` data frame we just created.
 
 ```{r}
 # second pass
-sub_cip2 <- get_cip(data = sub_cip,
-                  keep_any = c("chemical", "electrical", "industrial"), 
-                  drop_any = "technolog")
+sub_cip2 <- get_cip(
+  data = sub_cip,
+  keep_any = c("chemical", "electrical", "industrial"),
+  drop_any = "technolog"
+)
 
 # examine the result at the 4-digit level
 unique(sub_cip2[, c("cip4", "cip4name")])
@@ -201,13 +203,14 @@ str(enrollees)
 To frame our results in terms of program, race/ethnicity, and sex, we group by these variables and count the number of students in each grouping. The count is assigned to the new `ever` column.  
 
 ```{r}
-# initialize the variable `ever` to hold the count 
+# initialize the variable `ever` to hold the count
 enrollees$ever <- 0
 
-# group by the framing variables and count 
-grouped_enrollees <- aggregate(ever ~ race + sex + program, 
-                  data = enrollees, 
-                  function(x) ever = length(x))
+# group by the framing variables and count
+grouped_enrollees <- aggregate(ever ~ race + sex + program,
+  data = enrollees,
+  function(x) ever <- length(x)
+)
 
 # examine the result
 str(grouped_enrollees)
@@ -219,19 +222,20 @@ A similar process is used to group and summarize our graduates. We start with `g
 
 ```{r}
 # gather individual graduating students
-graduates    <- get_graduates(data = midfielddegrees, codes = group_codes)
-ids_we_seek  <- graduates$id
+graduates <- get_graduates(data = midfielddegrees, codes = group_codes)
+ids_we_seek <- graduates$id
 demographics <- get_race_sex(data = midfieldstudents, keep_id = ids_we_seek)
-graduates    <- merge(graduates, demographics, all.x = TRUE)
-graduates    <- merge(graduates, program_group, all.x = TRUE)
+graduates <- merge(graduates, demographics, all.x = TRUE)
+graduates <- merge(graduates, program_group, all.x = TRUE)
 
-# initialize the grad count column 
+# initialize the grad count column
 graduates$grad <- 0
 
-# group by the framing variables 
-grouped_graduates <- aggregate(grad ~ race + sex + program, 
-                  data = graduates, 
-                  function(x) grad = length(x))
+# group by the framing variables
+grouped_graduates <- aggregate(grad ~ race + sex + program,
+  data = graduates,
+  function(x) grad <- length(x)
+)
 
 # examine the result
 str(grouped_graduates)
@@ -253,7 +257,7 @@ Note that we have `r nrow(grouped_enrollees)` groupings of enrollees but only `r
 We join the two data frames by our framing variables (program, race/ethnicity, and sex), producing a data frame with `ever` and `grad` for each group.  
 
 ```{r}
-# join graduates to ever enrolled 
+# join graduates to ever enrolled
 metric <- merge(grouped_enrollees, grouped_graduates, all.x = TRUE)
 
 # examine the result, ordered by program
@@ -264,7 +268,7 @@ There are `r nrow(grouped_enrollees) - nrow(grouped_graduates)` NA entries in th
 
 ```{r}
 rows_with_degree_NA <- is.na(metric$grad)
-metric[rows_with_degree_NA, , drop = FALSE] 
+metric[rows_with_degree_NA, , drop = FALSE]
 ```
 
 We convert the NA values in the `grad` column to zero.
@@ -274,7 +278,7 @@ We convert the NA values in the `grad` column to zero.
 metric$grad[rows_with_degree_NA] <- 0
 
 # examine the result
-metric[rows_with_degree_NA, , drop = FALSE] 
+metric[rows_with_degree_NA, , drop = FALSE]
 ```
 
 We omit rows with zero students ever enrolled, if any, to avoid dividing by zero, then divide `grad` by `ever` to compute stickiness.  
@@ -309,13 +313,13 @@ To prepare the results for graphing, we construct a "pre-multiway" version of th
 pre_mw <- metric
 
 # remove an ambiguous level of sex
-rows_we_keep <- !pre_mw$sex  %in% c("Unknown")
+rows_we_keep <- !pre_mw$sex %in% c("Unknown")
 pre_mw <- pre_mw[rows_we_keep, , drop = FALSE]
 
 # examine the result
 unique(pre_mw$sex)
 
-# remove ambiguous levels of race/ethnicity 
+# remove ambiguous levels of race/ethnicity
 rows_we_keep <- !pre_mw$race %in% c("Unknown", "International", "Other")
 pre_mw <- pre_mw[rows_we_keep, , drop = FALSE]
 
@@ -339,9 +343,9 @@ We plan to display these data in a multiway graph, characterized by a single qua
 The race/ethnicity/sex category is created by uniting `race` and `sex`. 
 
 ```{r}
-# create a new combined framing variables 
+# create a new combined framing variables
 pre_mw$race_sex <- paste(pre_mw$race, pre_mw$sex, sep = " ")
-  
+
 # examine the result
 str(pre_mw)
 ```
@@ -353,10 +357,10 @@ To structure the data in multiway form, we select the three multiway variables a
 data_mw <- pre_mw
 
 # complete the transformation to multiway form
-columns_we_keep <- c("program", "race_sex", "stick") 
+columns_we_keep <- c("program", "race_sex", "stick")
 data_mw <- data_mw[, columns_we_keep, drop = FALSE]
 data_mw <- order_multiway(data_mw)
-  
+
 # examine the result
 str(data_mw)
 ```
@@ -398,14 +402,14 @@ ggplot(data = data_mw, mapping = aes(x = stick, y = race_sex)) +
 
 ```{r fig1, fig.asp = 1.8/1.6, echo = FALSE}
 # for annotation
-rows_we_keep <- data_mw$program  %in% "Electrical Engineering" &    
-                data_mw$race_sex %in% "White Female"
+rows_we_keep <- data_mw$program %in% "Electrical Engineering" &
+  data_mw$race_sex %in% "White Female"
 pt1 <- data_mw[rows_we_keep, , drop = FALSE]
-rows_we_keep <- data_mw$program  %in% "Chemical Engineering" &    
-                data_mw$race_sex %in% "Asian Male"
+rows_we_keep <- data_mw$program %in% "Chemical Engineering" &
+  data_mw$race_sex %in% "Asian Male"
 pt2 <- data_mw[rows_we_keep, , drop = FALSE]
-rows_we_keep <- data_mw$program  %in% "Industrial Engineering" &    
-                data_mw$race_sex %in% "Hispanic Male"
+rows_we_keep <- data_mw$program %in% "Industrial Engineering" &
+  data_mw$race_sex %in% "Hispanic Male"
 pt3 <- data_mw[rows_we_keep, , drop = FALSE]
 df <- rbind(pt1, pt2, pt3)
 
@@ -413,11 +417,13 @@ ggplot(data_mw, aes(x = stick, y = race_sex)) +
   facet_wrap(facets = vars(program), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "") +
-  geom_point(data = df, 
-             mapping = aes(x = stick, y = race_sex),
-             color = "red", 
-             shape = 1, 
-             size = 4)
+  geom_point(
+    data = df,
+    mapping = aes(x = stick, y = race_sex),
+    color = "red",
+    shape = 1,
+    size = 4
+  )
 ```
 
 A multiway design reveals patterns and anomalies in the results. For example, among these programs for this sample population:  
@@ -465,11 +471,11 @@ library(ggplot2)
 
 # gather the three programs
 che_cip <- get_cip(data = cip, keep_any = "^1407")
-che     <- label_programs(data = che_cip, label = "Chemical Engineering")
+che <- label_programs(data = che_cip, label = "Chemical Engineering")
 ece_cip <- get_cip(data = cip, keep_any = "^1410")
-ece     <- label_programs(data = ece_cip, label = "Electrical Engineering")
+ece <- label_programs(data = ece_cip, label = "Electrical Engineering")
 ise_cip <- get_cip(data = cip, keep_any = "^1435")
-ise     <- label_programs(data = ise_cip, label = "Industrial Engineering")
+ise <- label_programs(data = ise_cip, label = "Industrial Engineering")
 program_group <- rbind(che, ece, ise)
 program_group$cip6name <- NULL
 
@@ -477,51 +483,53 @@ program_group$cip6name <- NULL
 group_codes <- program_group$cip6
 
 # gather individual students ever enrolled
-enrollees    <- get_enrollees(data = midfieldterms, codes = group_codes)
-ids_we_seek  <- enrollees$id
+enrollees <- get_enrollees(data = midfieldterms, codes = group_codes)
+ids_we_seek <- enrollees$id
 demographics <- get_race_sex(data = midfieldstudents, keep_id = ids_we_seek)
-enrollees    <- merge(enrollees, demographics, all.x = TRUE)
-enrollees    <- merge(enrollees, program_group, all.x = TRUE)
+enrollees <- merge(enrollees, demographics, all.x = TRUE)
+enrollees <- merge(enrollees, program_group, all.x = TRUE)
 
-# group by the framing variables 
-enrollees$ever    <- 0
-grouped_enrollees <- aggregate(ever ~ race + sex + program, 
-                  data = enrollees, 
-                  function(x) ever = length(x))
+# group by the framing variables
+enrollees$ever <- 0
+grouped_enrollees <- aggregate(ever ~ race + sex + program,
+  data = enrollees,
+  function(x) ever <- length(x)
+)
 
 # gather individual graduating students
-graduates    <- get_graduates(data = midfielddegrees, codes = group_codes)
-ids_we_seek  <- graduates$id
+graduates <- get_graduates(data = midfielddegrees, codes = group_codes)
+ids_we_seek <- graduates$id
 demographics <- get_race_sex(data = midfieldstudents, keep_id = ids_we_seek)
-graduates    <- merge(graduates, demographics, all.x = TRUE)
-graduates    <- merge(graduates, program_group, all.x = TRUE)
+graduates <- merge(graduates, demographics, all.x = TRUE)
+graduates <- merge(graduates, program_group, all.x = TRUE)
 
-# group by the framing variables 
-graduates$grad    <- 0
-grouped_graduates <- aggregate(grad ~ race + sex + program, 
-                  data = graduates, 
-                  function(x) grad = length(x))
+# group by the framing variables
+graduates$grad <- 0
+grouped_graduates <- aggregate(grad ~ race + sex + program,
+  data = graduates,
+  function(x) grad <- length(x)
+)
 
-# compute the metric 
-metric       <- merge(grouped_enrollees, grouped_graduates, all.x = TRUE)
-degree_NA    <- is.na(metric$grad)
+# compute the metric
+metric <- merge(grouped_enrollees, grouped_graduates, all.x = TRUE)
+degree_NA <- is.na(metric$grad)
 metric$grad[degree_NA] <- 0
 rows_we_keep <- metric$ever > 0
-metric       <- metric[rows_we_keep, , drop = FALSE]
+metric <- metric[rows_we_keep, , drop = FALSE]
 metric$stick <- round(metric$grad / metric$ever, 3)
 
 # prepare data for multiway graph
-rows_we_keep    <- !metric$race %in% c("Unknown", "International", "Other") &    
-  !metric$sex  %in% "Unknown"
-pre_mw          <- metric[rows_we_keep, , drop = FALSE]
-rows_we_keep    <- pre_mw$ever > 5
-pre_mw          <- pre_mw[rows_we_keep, , drop = FALSE]
+rows_we_keep <- !metric$race %in% c("Unknown", "International", "Other") &
+  !metric$sex %in% "Unknown"
+pre_mw <- metric[rows_we_keep, , drop = FALSE]
+rows_we_keep <- pre_mw$ever > 5
+pre_mw <- pre_mw[rows_we_keep, , drop = FALSE]
 pre_mw$race_sex <- paste(pre_mw$race, pre_mw$sex, sep = " ")
 
 # complete the transformation to multiway form
-columns_we_keep <- c("program", "race_sex", "stick") 
-pre_mw          <- pre_mw[, columns_we_keep, drop = FALSE]
-data_mw         <- order_multiway(pre_mw)
+columns_we_keep <- c("program", "race_sex", "stick")
+pre_mw <- pre_mw[, columns_we_keep, drop = FALSE]
+data_mw <- order_multiway(pre_mw)
 
 # graph results
 ggplot(data = data_mw, mapping = aes(x = stick, y = race_sex)) +

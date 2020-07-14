@@ -43,7 +43,6 @@ NULL
 #' music_codes <- c("500901", "500903", "500913")
 #' x <- get_graduates(codes = music_codes)
 #' str(x)
-#'
 #' @export
 get_graduates <- function(data = NULL, codes = NULL) {
 
@@ -51,6 +50,7 @@ get_graduates <- function(data = NULL, codes = NULL) {
   data <- data %||% midfielddata::midfielddegrees
 
   # check arguments
+  assert_explicit(codes)
   assert_class(data, "data.frame")
   assert_class(codes, "character")
 
@@ -64,7 +64,10 @@ get_graduates <- function(data = NULL, codes = NULL) {
   DT <- data[, .(id, cip6, term_degree)]
   stats::na.omit(DT)
   DT <- DT[cip6 %chin% codes][
-    , .(cip6, term_degree = min(term_degree)), by = id][
-      , .(id, cip6)]
+    , .(cip6, term_degree = min(term_degree)),
+    by = id
+  ][
+    , .(id, cip6)
+  ]
   data.table::setDF(DT)
 }

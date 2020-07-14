@@ -36,14 +36,12 @@ are required by name.
 \examples{
 music_codes <- c("500901", "500903", "500913")
 music_grads <- get_graduates(codes = music_codes)
-grads_id    <- music_grads$id
-grads       <- get_race_sex(keep_id = grads_id)
+grads_id <- music_grads$id
+grads <- get_race_sex(keep_id = grads_id)
 str(grads)
-
 }
 \seealso{
 Other data_carpentry: 
-\code{\link{filter_char_frame}()},
 \code{\link{get_cip}()},
 \code{\link{get_enrollees}()},
 \code{\link{get_graduates}()},

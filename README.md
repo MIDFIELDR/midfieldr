@@ -115,8 +115,8 @@ This package provides functions to access, manipulate, and graph student
 record data. To illustrate the workflow, we would use these functions to
 compute and display the “stickiness” persistence metric:
 
-  - `search_cip()` to filter programs from the CIP data.
-  - `get_programs()` to select 6-digit CIPs and add custom labels.
+  - `get_cip()` to filter programs from the CIP data.
+  - `label_programs()` to select 6-digit CIPs and add custom labels.
   - `gather_ever()` to gather students ever enrolled.
   - `gather_grad()` to gather graduating students.
   - `race_sex_join()` to join student sex and race/ethnicity.

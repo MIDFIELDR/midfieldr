@@ -30,26 +30,21 @@ dropping rows}
 Subset the rows of a data frame by matching character patterns. The data
 are CIP attributes with 2-, 4-, and 6-digit codes and names in character
 columns (\code{\link[midfieldr]{cip}} or equivalent). Rows are subset by
-matching or partially matching patterns.
+matching or partially matching patterns. The search is not case-sensitive.
 }
 \details{
 The default \code{data} argument is \code{cip}, accessed by name or
 by leaving the \code{data} argument vacant. Any other \code{data}
 argument should be a subset of \code{cip} or equivalent.
-
-\code{get_cip()} wraps the \code{\link{filter_char_frame}} operation.
-The search is not case-sensitive.
 }
 \examples{
 get_cip(cip, keep_any = c("^1407", "^1410"))
 get_cip(cip, keep_any = "civil engineering", drop_any = "technology")
 get_cip(cip, keep_any = "History") \%>\%
   get_cip(keep_any = "American")
-
 }
 \seealso{
 Other data_carpentry: 
-\code{\link{filter_char_frame}()},
 \code{\link{get_enrollees}()},
 \code{\link{get_graduates}()},
 \code{\link{get_race_sex}()},

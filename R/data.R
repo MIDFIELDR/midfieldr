@@ -215,8 +215,3 @@ NULL
 #' @source \href{https://midfieldr.github.io/midfielddata/}{\pkg{midfielddata}
 #'  package}
 "midfield_fye"
-
-
-
-
-

@@ -54,9 +54,9 @@ test_that("Results are correct", {
   r1 <- label_programs(data = music_cip, label = "Music")
   data.table::setDT(r1)
   r1 <- r1[order(cip6)][
-    1:10]
+    1:10
+  ]
   data.table::setDF(r1)
-
   # cat(wrapr::draw_frame(r1))
   r2 <- wrapr::build_frame(
     "cip6"    , "cip6name"                            , "program" |
@@ -74,11 +74,11 @@ test_that("Results are correct", {
   expect_equal(r1, r2)
 })
 test_that("Extra columns in data have no effect", {
-  alt_cip       <- music_cip
+  alt_cip <- music_cip
   alt_cip$extra <- "extra"
   expect_equal(
     label_programs(music_cip, label = "Music"),
-    label_programs(alt_cip,   label = "Music")
+    label_programs(alt_cip, label = "Music")
   )
 })
 test_that("label argument options create expected results", {
@@ -92,7 +92,7 @@ test_that("label argument options create expected results", {
   )
 })
 test_that("Error if program variable already exists", {
-  alt_cip         <- music_cip
+  alt_cip <- music_cip
   alt_cip$program <- "Music"
   expect_error(
     label_programs(data = alt_cip, label = "Music"),
@@ -116,21 +116,27 @@ test_that("Required columns are present", {
   alt_cip["cip2name"] <- NULL
   expect_error(
     label_programs(alt_cip, label = "cip2name"),
-    paste("`data` must include column `cip2name`",
-      "when `label` argument is `cip2name`")
+    paste(
+      "`data` must include column `cip2name`",
+      "when `label` argument is `cip2name`"
+    )
   )
   alt_cip <- music_cip
   alt_cip["cip4name"] <- NULL
   expect_error(
     label_programs(alt_cip, label = "cip4name"),
-    paste("`data` must include column `cip4name`",
-      "when `label` argument is `cip4name` or NULL.")
+    paste(
+      "`data` must include column `cip4name`",
+      "when `label` argument is `cip4name` or NULL."
+    )
   )
   alt_cip <- music_cip
   alt_cip["cip4name"] <- NULL
   expect_error(
     label_programs(alt_cip, label = NULL),
-    paste("`data` must include column `cip4name`",
-          "when `label` argument is `cip4name` or NULL.")
+    paste(
+      "`data` must include column `cip4name`",
+      "when `label` argument is `cip4name` or NULL."
+    )
   )
 })

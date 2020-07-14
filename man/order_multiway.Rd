@@ -42,11 +42,9 @@ catg2 <- rep(c("men", "women"), times = 4)
 value <- c(0.22, 0.14, 0.43, 0.58, 0.81, 0.46, 0.15, 0.20)
 mw_df <- data.frame(catg1, catg2, value)
 order_multiway(mw_df)
-
 }
 \seealso{
 Other data_carpentry: 
-\code{\link{filter_char_frame}()},
 \code{\link{get_cip}()},
 \code{\link{get_enrollees}()},
 \code{\link{get_graduates}()},

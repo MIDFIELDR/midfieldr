@@ -51,22 +51,17 @@ NULL
 #' label_programs(ece_cip, label = "ECE")
 #' label_programs(ece_cip, label = "cip2name")
 #' label_programs(ece_cip, label = "cip6name")
-#'
 #' @export
 label_programs <- function(data = NULL, label = NULL) {
 
   # check arguments
+  assert_explicit(data)
   assert_class(data, "data.frame")
   assert_class(label, "character")
 
-  if (is.null(data)) {
-    stop("Explicit `data` argument required",
-         call. = FALSE
-    )
-  }
   if (isTRUE("program" %in% names(data))) {
     stop("`data` may not include an existing `program` column",
-    call. = FALSE
+      call. = FALSE
     )
   }
   if (isFALSE(all(c("cip6", "cip6name") %in% names(data)))) {
@@ -77,7 +72,7 @@ label_programs <- function(data = NULL, label = NULL) {
     if (isFALSE(identical(class(data$cip6), "character")) ||
       isFALSE(identical(class(data$cip6name), "character"))) {
       stop("Columns `cip6` and `cip6name` must be character class",
-      call. = FALSE
+        call. = FALSE
       )
     }
   }
@@ -88,8 +83,7 @@ label_programs <- function(data = NULL, label = NULL) {
   # do the work
   data.table::setDF(data)
   if (isTRUE(is.null(label)) ||
-      isTRUE(identical(label, "cip4name"))) {
-
+    isTRUE(identical(label, "cip4name"))) {
     if (isFALSE(all("cip4name" %in% names(data)))) {
       stop(paste(
         "`data` must include column `cip4name`",
@@ -97,19 +91,15 @@ label_programs <- function(data = NULL, label = NULL) {
       ),
       call. = FALSE
       )
-
     } else if (isFALSE(identical(class(data$cip4name), "character"))) {
       stop("Column `cip4name` must be character class",
-      call. = FALSE
+        call. = FALSE
       )
-
     } else {
       # labels are 4-digit CIP names
       temp <- data$cip4name
     }
-
   } else if (isTRUE(identical(label, "cip2name"))) {
-
     if (isFALSE(all("cip2name" %in% names(data)))) {
       stop(paste(
         "`data` must include column `cip2name`",
@@ -117,30 +107,22 @@ label_programs <- function(data = NULL, label = NULL) {
       ),
       call. = FALSE
       )
-
     } else if (isFALSE(identical(class(data$cip2name), "character"))) {
       stop("Column `cip2name` must be character class",
-      call. = FALSE
+        call. = FALSE
       )
-
     } else {
       # labels are 2-digit CIP names
       temp <- data$cip2name
     }
-
   } else if (isTRUE(identical(label, "cip6name"))) {
     # labels are 6-digit CIP names
     temp <- data$cip6name
-
   } else {
     # labels are the user-supplied string
     temp <- label
-
   }
   # ready to go
   data$program <- temp
-
-
-
   data <- data[, c("cip6", "cip6name", "program"), drop = FALSE]
 }

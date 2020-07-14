@@ -56,11 +56,9 @@ ece_cip <- get_cip(cip, keep_any = "^1410")
 label_programs(ece_cip, label = "ECE")
 label_programs(ece_cip, label = "cip2name")
 label_programs(ece_cip, label = "cip6name")
-
 }
 \seealso{
 Other data_carpentry: 
-\code{\link{filter_char_frame}()},
 \code{\link{get_cip}()},
 \code{\link{get_enrollees}()},
 \code{\link{get_graduates}()},

@@ -39,78 +39,74 @@ NULL
 #' value <- c(0.22, 0.14, 0.43, 0.58, 0.81, 0.46, 0.15, 0.20)
 #' mw_df <- data.frame(catg1, catg2, value)
 #' order_multiway(mw_df)
-#'
 #' @export
 order_multiway <- function(data = NULL) {
 
+  # argument checks
+  assert_explicit(data)
+  assert_class(data, c("data.frame", "data.table"))
+
+  if (isFALSE(ncol(data) == 3)) {
+    stop("`data` must have exactly three columns")
+  }
+
   # for checking column class
   get_col_type <- function(data) {
-    col_class            <- sapply(data, FUN = class)
-    col_class            <- as.data.frame(col_class)
-    col_class$col_name   <- row.names(col_class)
+    col_class <- sapply(data, FUN = class)
+    col_class <- as.data.frame(col_class)
+    col_class$col_name <- row.names(col_class)
     row.names(col_class) <- NULL
     col_type <- col_class
   }
-  # argument checks
-  if (isTRUE(is.null(data))) {
-    stop("Explicit `data` argument required",
-         call. = FALSE
-    )
-  }
-  assert_class(data, c("data.frame", "data.table"))
-
-
-
-  # if (isFALSE(is.data.frame(data))) {
-  #   stop("`data` must be a data.frame",
-  #        call. = FALSE)
-  # }
-  if(isFALSE(ncol(data) == 3)){
-    stop("`data` must have exactly three columns")
-  }
   # factors to characters
   col_type <- get_col_type(data)
-  if("factor" %in% col_type$col_class){
-    idx_fct       <- col_type$col_class == "factor"
+  if ("factor" %in% col_type$col_class) {
+    idx_fct <- col_type$col_class == "factor"
     data[idx_fct] <- lapply(data[idx_fct], as.character)
   }
   # one numeric and 2 character
   col_type <- get_col_type(data)
-  if(isFALSE(identical(sort(col_type$col_class),
-                       c("character", "character", "numeric")))){
-    stop(paste("`data` must have one numeric column",
-               "and two character columns"))
+  if (isFALSE(identical(
+    sort(col_type$col_class),
+    c("character", "character", "numeric")
+  ))) {
+    stop(paste(
+      "`data` must have one numeric column",
+      "and two character columns"
+    ))
   }
 
   # bind names
   VALUE <- NULL
-  CAT1  <- NULL
-  CAT2  <- NULL
-  MED1  <- NULL
-  MED2  <- NULL
+  CAT1 <- NULL
+  CAT2 <- NULL
+  MED1 <- NULL
+  MED2 <- NULL
 
   # do the work
   DT <- data.table::setDT(data)
 
   # one quantitative variable
   idx_num <- col_type$col_class == "numeric"
-  value   <- col_type$col_name[idx_num]
+  value <- col_type$col_name[idx_num]
 
   # two categorical variables
   cat_var <- col_type$col_name[!idx_num]
-  cat1    <- cat_var[1]
-  cat2    <- cat_var[2]
-  med1    <- paste0("med_", cat1)
-  med2    <- paste0("med_", cat2)
+  cat1 <- cat_var[1]
+  cat2 <- cat_var[2]
+  med1 <- paste0("med_", cat1)
+  med2 <- paste0("med_", cat2)
 
   # wrapr::let for parameterized column names
   # https://winvector.github.io/wrapr/reference/let.html
   wrapr::let(
-    alias = c(VALUE = value,
-              CAT1 = cat1,
-              CAT2 = cat2,
-              MED1 = med1,
-              MED2 = med2),
+    alias = c(
+      VALUE = value,
+      CAT1 = cat1,
+      CAT2 = cat2,
+      MED1 = med1,
+      MED2 = med2
+    ),
     expr = {
       DT[, MED1 := stats::median(VALUE, na.rm = TRUE), by = CAT1]
       DT[, MED2 := stats::median(VALUE, na.rm = TRUE), by = CAT2]

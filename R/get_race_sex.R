@@ -31,10 +31,9 @@ NULL
 #' @examples
 #' music_codes <- c("500901", "500903", "500913")
 #' music_grads <- get_graduates(codes = music_codes)
-#' grads_id    <- music_grads$id
-#' grads       <- get_race_sex(keep_id = grads_id)
+#' grads_id <- music_grads$id
+#' grads <- get_race_sex(keep_id = grads_id)
 #' str(grads)
-#'
 #' @export
 get_race_sex <- function(data = NULL, keep_id = NULL) {
 
@@ -42,22 +41,20 @@ get_race_sex <- function(data = NULL, keep_id = NULL) {
   data <- data %||% midfielddata::midfieldstudents
 
   # check arguments
+  assert_explicit(keep_id)
   assert_class(data, "data.frame")
   assert_class(keep_id, "character")
-  if(isFALSE(length(keep_id) > 0)) {
-    stop("Can't find a `keep_id` argument",
-         call. = FALSE)
-  }
 
   # bind names
-  id   <- NULL
+  id <- NULL
   race <- NULL
-  sex  <- NULL
+  sex <- NULL
 
   # do the work
   data.table::setDT(data)
-  DT <- data[, .(id, race, sex)]
-  DT <- DT[id %chin% keep_id, ]
+  DT <- data[, .(id, race, sex)][
+    id %chin% keep_id
+  ]
   unique(DT)
   data.table::setDF(DT)
 }

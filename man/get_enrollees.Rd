@@ -44,11 +44,9 @@ str(x)
 music_codes <- c("500903", "500913")
 x <- get_enrollees(codes = music_codes)
 str(x)
-
 }
 \seealso{
 Other data_carpentry: 
-\code{\link{filter_char_frame}()},
 \code{\link{get_cip}()},
 \code{\link{get_graduates}()},
 \code{\link{get_race_sex}()},

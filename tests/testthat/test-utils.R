@@ -1,12 +1,20 @@
 context("utils")
 
-# kable2html() ------------------------------------
+# kable2html()
 test_that("kable2html() output has expected attributes", {
   x <- midfieldr::cip[1, ]
   y <- kable2html(x)
   z <- attributes(y)
   expect_equal(z$format, "html")
   expect_true(all(z$class %in% c("kableExtra", "knitr_kable")))
+})
+
+# filter_char_frame
+test_that("filter_char_frame() error if data is NULL", {
+  expect_error(
+    filter_char_frame(data = NULL),
+    "Explicit `data` argument required"
+  )
 })
 
 
@@ -99,7 +107,3 @@ test_that("kable2html() output has expected attributes", {
 #   )
 # })
 #
-
-
-
-

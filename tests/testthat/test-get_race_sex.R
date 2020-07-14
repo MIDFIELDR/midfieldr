@@ -17,7 +17,7 @@ test_that("Inputs exist and are are correct class", {
   )
   expect_error(
     get_race_sex(data = subset_students, keep_id = NULL),
-    "Can't find a `keep_id` argument"
+    "Explicit `keep_id` argument required"
   )
 })
 test_that("Pipe correctly passes the data argument", {
@@ -33,12 +33,12 @@ test_that("Results are correct", {
   data.table::setDF(r1)
   # cat(wrapr::draw_frame(r1))
   r2 <- wrapr::build_frame(
-    "id"           , "race" , "sex"    |
-      "MID25869596", "White", "Female" |
-      "MID25912621", "White", "Female" |
-      "MID25974990", "White", "Male"   |
-      "MID26369225", "Asian", "Male"   |
-      "MID26372096", "Black", "Male"   )
+    "id"         , "race" , "sex"    |
+    "MID25869596", "White", "Female" |
+    "MID25912621", "White", "Female" |
+    "MID25974990", "White", "Male"   |
+    "MID26369225", "Asian", "Male"   |
+    "MID26372096", "Black", "Male"   )
   data.table::setDF(r2)
   expect_equal(r1, r2)
 })

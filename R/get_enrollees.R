@@ -40,7 +40,6 @@ NULL
 #' music_codes <- c("500903", "500913")
 #' x <- get_enrollees(codes = music_codes)
 #' str(x)
-#'
 #' @export
 get_enrollees <- function(data = NULL, codes = NULL) {
 
@@ -48,11 +47,12 @@ get_enrollees <- function(data = NULL, codes = NULL) {
   data <- data %||% midfielddata::midfieldterms
 
   # check arguments
+  assert_explicit(codes)
   assert_class(data, "data.frame")
   assert_class(codes, "character")
 
   # bind names
-  id   <- NULL
+  id <- NULL
   cip6 <- NULL
 
   # do the work
