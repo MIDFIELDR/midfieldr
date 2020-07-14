@@ -29,8 +29,8 @@
 #' @export
 kable2html <- function(x, font_size = NULL) {
   font_size <- font_size %||% 11
-  kable_input <- knitr::kable(x, "html")
-  kableExtra::kable_styling(kable_input = kable_input, font_size = font_size)
+  kable_in <- knitr::kable(x, "html")
+  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
 }
 
 #' Check argument class
@@ -78,7 +78,6 @@ assert_explicit <- function(x) {
 #' @param data data frame of character variables
 #' @param keep_any character vector of search patterns for retaining rows
 #' @param drop_any character vector of search patterns for dropping rows
-#'
 #' @noRd
 filter_char_frame <- function(data = NULL, keep_any = NULL, drop_any = NULL) {
 
