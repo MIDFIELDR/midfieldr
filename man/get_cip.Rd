@@ -44,11 +44,9 @@ get_cip(cip, keep_any = "History") \%>\%
   get_cip(keep_any = "American")
 }
 \seealso{
-Other data_carpentry: 
+Other data_query: 
 \code{\link{get_enrollees}()},
 \code{\link{get_graduates}()},
-\code{\link{get_race_sex}()},
-\code{\link{label_programs}()},
-\code{\link{order_multiway}()}
+\code{\link{get_race_sex}()}
 }
-\concept{data_carpentry}
+\concept{data_query}

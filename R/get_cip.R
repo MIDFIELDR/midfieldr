@@ -30,7 +30,7 @@ NULL
 #'   \item Data frame extension attributes, e.g., tibble, are not preserved
 #' }
 #'
-#' @family data_carpentry
+#' @family data_query
 #'
 #' @examples
 #' get_cip(cip, keep_any = c("^1407", "^1410"))

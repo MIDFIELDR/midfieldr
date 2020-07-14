@@ -49,11 +49,9 @@ x <- get_graduates(codes = music_codes)
 str(x)
 }
 \seealso{
-Other data_carpentry: 
+Other data_query: 
 \code{\link{get_cip}()},
 \code{\link{get_enrollees}()},
-\code{\link{get_race_sex}()},
-\code{\link{label_programs}()},
-\code{\link{order_multiway}()}
+\code{\link{get_race_sex}()}
 }
-\concept{data_carpentry}
+\concept{data_query}

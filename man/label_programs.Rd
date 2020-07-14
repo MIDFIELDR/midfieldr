@@ -59,10 +59,6 @@ label_programs(ece_cip, label = "cip6name")
 }
 \seealso{
 Other data_carpentry: 
-\code{\link{get_cip}()},
-\code{\link{get_enrollees}()},
-\code{\link{get_graduates}()},
-\code{\link{get_race_sex}()},
 \code{\link{order_multiway}()}
 }
 \concept{data_carpentry}

@@ -29,7 +29,7 @@ NULL
 #'   \item Data frame extension attributes, e.g., tibble, are not preserved
 #' }
 #'
-#' @family data_carpentry
+#' @family data_query
 #'
 #' @examples
 #' music_programs <- get_cip(cip, "^5009")

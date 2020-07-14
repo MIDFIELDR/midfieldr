@@ -45,10 +45,6 @@ order_multiway(mw_df)
 }
 \seealso{
 Other data_carpentry: 
-\code{\link{get_cip}()},
-\code{\link{get_enrollees}()},
-\code{\link{get_graduates}()},
-\code{\link{get_race_sex}()},
 \code{\link{label_programs}()}
 }
 \concept{data_carpentry}

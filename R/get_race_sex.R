@@ -26,7 +26,7 @@ NULL
 #'   \item Data frame extension attributes, e.g., tibble, are not preserved
 #' }
 #'
-#' @family data_carpentry
+#' @family data_query
 #'
 #' @examples
 #' music_codes <- c("500901", "500903", "500913")

@@ -41,11 +41,9 @@ grads <- get_race_sex(keep_id = grads_id)
 str(grads)
 }
 \seealso{
-Other data_carpentry: 
+Other data_query: 
 \code{\link{get_cip}()},
 \code{\link{get_enrollees}()},
-\code{\link{get_graduates}()},
-\code{\link{label_programs}()},
-\code{\link{order_multiway}()}
+\code{\link{get_graduates}()}
 }
-\concept{data_carpentry}
+\concept{data_query}
