@@ -50,6 +50,8 @@ get_enrollees <- function(data = NULL, codes = NULL) {
   assert_explicit(codes)
   assert_class(data, "data.frame")
   assert_class(codes, "character")
+  assert_required_column(data, "id")
+  assert_required_column(data, "cip6")
 
   # bind names
   id <- NULL

@@ -14,6 +14,6 @@ kable2html(x, font_size = NULL)
 \description{
 Prints a data frame as an HTML table in a vignette. Uses knitr::kable
 and kableExtra::kable_styling to adjust font size. Function is exported
-so it can be used in vignettes.
+to simplify use in vignettes.
 }
 \keyword{internal}

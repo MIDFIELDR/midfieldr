@@ -59,6 +59,8 @@ label_programs(ece_cip, label = "cip6name")
 }
 \seealso{
 Other data_carpentry: 
-\code{\link{order_multiway}()}
+\code{\link{feasible_completion}()},
+\code{\link{order_multiway}()},
+\code{\link{term_addition}()}
 }
 \concept{data_carpentry}

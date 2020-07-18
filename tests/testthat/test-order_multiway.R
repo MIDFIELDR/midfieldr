@@ -1,5 +1,7 @@
 context("order_multiway")
 
+# ctrl-shift-L to load internal functions
+
 # to create df, paste into test
 # set.seed(20200710)
 # cat1 <- rep(c("urban", "rural", "suburb", "village"), each = 2)

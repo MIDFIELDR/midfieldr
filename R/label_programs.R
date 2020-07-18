@@ -58,23 +58,19 @@ label_programs <- function(data = NULL, label = NULL) {
   assert_explicit(data)
   assert_class(data, "data.frame")
   assert_class(label, "character")
+  assert_required_column(data, "cip6")
+  assert_required_column(data, "cip6name")
 
   if (isTRUE("program" %in% names(data))) {
     stop("`data` may not include an existing `program` column",
-      call. = FALSE
+         call. = FALSE
     )
   }
-  if (isFALSE(all(c("cip6", "cip6name") %in% names(data)))) {
-    stop("`data` must include columns `cip6` and `cip6name`",
-      call. = FALSE
-    )
-  } else {
-    if (isFALSE(identical(class(data$cip6), "character")) ||
+  if (isFALSE(identical(class(data$cip6), "character")) ||
       isFALSE(identical(class(data$cip6name), "character"))) {
-      stop("Columns `cip6` and `cip6name` must be character class",
-        call. = FALSE
-      )
-    }
+    stop("Columns `cip6` and `cip6name` must be character class",
+         call. = FALSE
+    )
   }
 
   # bind names
@@ -85,11 +81,8 @@ label_programs <- function(data = NULL, label = NULL) {
   if (isTRUE(is.null(label)) ||
     isTRUE(identical(label, "cip4name"))) {
     if (isFALSE(all("cip4name" %in% names(data)))) {
-      stop(paste(
-        "`data` must include column `cip4name`",
-        "when `label` argument is `cip4name` or NULL."
-      ),
-      call. = FALSE
+      stop("Column name `cip4name` required when `label = cip4name` or NULL",
+           call. = FALSE
       )
     } else if (isFALSE(identical(class(data$cip4name), "character"))) {
       stop("Column `cip4name` must be character class",
@@ -101,10 +94,7 @@ label_programs <- function(data = NULL, label = NULL) {
     }
   } else if (isTRUE(identical(label, "cip2name"))) {
     if (isFALSE(all("cip2name" %in% names(data)))) {
-      stop(paste(
-        "`data` must include column `cip2name`",
-        "when `label` argument is `cip2name`"
-      ),
+      stop("Column name `cip2name` required when `label = cip2name`",
       call. = FALSE
       )
     } else if (isFALSE(identical(class(data$cip2name), "character"))) {

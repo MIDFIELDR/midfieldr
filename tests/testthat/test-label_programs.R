@@ -1,5 +1,7 @@
 context("label_programs")
 
+# ctrl-shift-L to load internal functions
+
 music_cip <- get_cip(cip, "^5009")
 
 test_that("Inputs are correct class", {
@@ -99,44 +101,35 @@ test_that("Error if program variable already exists", {
     "`data` may not include an existing `program` column"
   )
 })
-test_that("Required columns are present", {
-  alt_cip <- music_cip
-  alt_cip["cip6name"] <- NULL
+test_that("Required variables are present", {
+  alt <- music_cip
+  alt$cip6 <- NULL
   expect_error(
-    label_programs(alt_cip, label = "cip6name"),
-    "`data` must include columns `cip6` and `cip6name`"
+    label_programs(data = alt, label = "Music"),
+    "Column name `cip6` required"
   )
-  alt_cip <- music_cip
-  alt_cip["cip6"] <- NULL
+  alt <- music_cip
+  alt$cip6name <- NULL
   expect_error(
-    label_programs(alt_cip, label = "cip6name"),
-    "`data` must include columns `cip6` and `cip6name`"
+    label_programs(data = alt, label = "Music"),
+    "Column name `cip6name` required"
   )
-  alt_cip <- music_cip
-  alt_cip["cip2name"] <- NULL
+  alt <- music_cip
+  alt$cip2name <- NULL
   expect_error(
-    label_programs(alt_cip, label = "cip2name"),
-    paste(
-      "`data` must include column `cip2name`",
-      "when `label` argument is `cip2name`"
-    )
+    label_programs(data = alt, label = "cip2name"),
+    "Column name `cip2name` required when `label = cip2name`"
   )
-  alt_cip <- music_cip
-  alt_cip["cip4name"] <- NULL
+  alt <- music_cip
+  alt$cip4name <- NULL
   expect_error(
-    label_programs(alt_cip, label = "cip4name"),
-    paste(
-      "`data` must include column `cip4name`",
-      "when `label` argument is `cip4name` or NULL."
-    )
+    label_programs(data = alt, label = "cip4name"),
+    "Column name `cip4name` required when `label = cip4name` or NULL"
   )
-  alt_cip <- music_cip
-  alt_cip["cip4name"] <- NULL
+  alt <- music_cip
+  alt$cip4name <- NULL
   expect_error(
-    label_programs(alt_cip, label = NULL),
-    paste(
-      "`data` must include column `cip4name`",
-      "when `label` argument is `cip4name` or NULL."
-    )
+    label_programs(data = alt, label = NULL),
+    "Column name `cip4name` required when `label = cip4name` or NULL"
   )
 })

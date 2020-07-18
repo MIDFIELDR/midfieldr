@@ -1,7 +1,6 @@
 context("get_race_sex")
 
-# for interactive use only
-# load("tests/testthat/testing-data/subset_students.rda")
+# ctrl-shift-L to load internal functions
 
 load(file = get_my_path("subset_students.rda"))
 subset_id <- subset_students$id[1:5]
@@ -26,6 +25,26 @@ test_that("Pipe correctly passes the data argument", {
     get_race_sex(subset_students, keep_id = subset_id)
   )
 })
+test_that("Required variables are present", {
+  alt <- subset_students
+  alt$id <- NULL
+  expect_error(
+    get_race_sex(data = alt, keep_id = subset_id),
+    "Column name `id` required"
+  )
+  alt <- subset_students
+  alt$race <- NULL
+  expect_error(
+    get_race_sex(data = alt, keep_id = subset_id),
+    "Column name `race` required"
+  )
+  alt <- subset_students
+  alt$sex <- NULL
+  expect_error(
+    get_race_sex(data = alt, keep_id = subset_id),
+    "Column name `sex` required"
+  )
+})
 test_that("Results are correct", {
   r1 <- get_race_sex(keep_id = subset_id)
   data.table::setDT(r1)
@@ -45,37 +64,3 @@ test_that("Results are correct", {
 
 
 
-
-
-
-
-# music_codes <- get_cip(cip, "^5009")[["cip6"]]
-# student_id  <- get_enrollees(codes = music_codes)[["id"]]
-# subset_id   <- sort(subset_students$id)[1:20]
-#
-
-
-# test_that("data must be data frame", {
-#   expect_error(
-#     get_race_sex(data = music_codes),
-#     "`data` must be a data.frame"
-#   )
-# })
-# test_that("keep_id is an atomic character vector", {
-#   expect_error(
-#     get_race_sex(keep_id = list("MID25853762", "MID25854314")),
-#     "`keep_id` must be a character vector"
-#   )
-#   expect_error(
-#     get_race_sex(keep_id = 500903),
-#     "`keep_id` must be a character vector"
-#   )
-#   expect_error(
-#     get_race_sex(keep_id = list("500903")),
-#     "`keep_id` must be a character vector"
-#   )
-#   expect_error(
-#     get_race_sex(),
-#     "Can't find a `keep_id` argument"
-#   )
-# })

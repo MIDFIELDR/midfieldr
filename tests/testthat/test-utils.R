@@ -1,5 +1,7 @@
 context("utils")
 
+# ctrl-shift-L to load internal functions
+#
 # kable2html()
 test_that("kable2html() output has expected attributes", {
   x <- midfieldr::cip[1, ]

@@ -1,5 +1,7 @@
 context("get_cip")
 
+# ctrl-shift-L to load internal functions
+
 music_cip <- get_cip(data = cip, keep_any = "^5009")
 music_codes <- music_cip$cip6
 

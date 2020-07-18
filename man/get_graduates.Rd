@@ -52,6 +52,10 @@ str(x)
 Other data_query: 
 \code{\link{get_cip}()},
 \code{\link{get_enrollees}()},
-\code{\link{get_race_sex}()}
+\code{\link{get_institution_hours_term}()},
+\code{\link{get_institution_limits}()},
+\code{\link{get_race_sex}()},
+\code{\link{get_status_degrees}()},
+\code{\link{get_status_transfers}()}
 }
 \concept{data_query}

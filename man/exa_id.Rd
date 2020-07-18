@@ -5,6 +5,7 @@
 \alias{exa_id}
 \alias{exa_ever}
 \alias{exa_grad}
+\alias{exa_ever_fc}
 \title{Example student IDs}
 \format{
 Character vector of student IDs.
@@ -17,6 +18,8 @@ Character vector of student IDs.
 exa_ever
 
 exa_grad
+
+exa_ever_fc
 }
 \description{
 Students IDs from midfielddata for Civil, Electrical, Industrial,
@@ -26,6 +29,8 @@ and Mechanical Engineering. Used in a case study in the vignettes.
 \describe{
 \item{\code{exa_ever}}{IDs of students ever enrolled in the example
 programs.}
+\item{\code{exa_ever_fc}}{A subset of \code{exa_ever} with program
+completion feasible.}
 \item{\code{exa_grad}}{IDs of students graduating from the example
 programs.}
 }

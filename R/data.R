@@ -124,6 +124,8 @@
 #' \describe{
 #' \item{\code{exa_ever}}{IDs of students ever enrolled in the example
 #' programs.}
+#' \item{\code{exa_ever_fc}}{A subset of \code{exa_ever} with program
+#' completion feasible.}
 #' \item{\code{exa_grad}}{IDs of students graduating from the example
 #' programs.}
 #' }
@@ -144,7 +146,9 @@ NULL
 #' @rdname exa_id
 #' @format NULL
 "exa_grad"
-
+#' @rdname exa_id
+#' @format NULL
+"exa_ever_fc"
 
 
 

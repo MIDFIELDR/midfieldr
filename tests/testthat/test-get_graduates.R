@@ -1,7 +1,6 @@
 context("get_graduates")
 
-# for interactive use only
-# load("tests/testthat/testing-data/subset_degrees.rda")
+# ctrl-shift-L to load internal functions
 
 load(file = get_my_path("subset_degrees.rda"))
 
@@ -28,6 +27,26 @@ test_that("Pipe correctly passes the data argument", {
   expect_equal(
     subset_degrees %>% get_graduates(codes = subset_codes),
     get_graduates(subset_degrees, codes = subset_codes)
+  )
+})
+test_that("Required variables are present", {
+  alt <- subset_degrees
+  alt$id <- NULL
+  expect_error(
+    get_graduates(data = alt, codes = subset_codes),
+    "Column name `id` required"
+  )
+  alt <- subset_degrees
+  alt$cip6 <- NULL
+  expect_error(
+    get_graduates(data = alt, codes = subset_codes),
+    "Column name `cip6` required"
+  )
+  alt <- subset_degrees
+  alt$term_degree <- NULL
+  expect_error(
+    get_graduates(data = alt, codes = subset_codes),
+    "Column name `term_degree` required"
   )
 })
 test_that("results are correct", {

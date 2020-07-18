@@ -49,5 +49,5 @@ NULL
 
 # binding
 if (getRversion() >= "2.15.1") {
-  utils::globalVariables(c(".", ":="))
+  utils::globalVariables(c(".", ":=" ,"..cols_we_want"))
 }

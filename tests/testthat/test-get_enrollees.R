@@ -1,7 +1,6 @@
 context("get_enrollees")
 
-# for interactive use only
-# load("tests/testthat/testing-data/subset_terms.rda")
+# ctrl-shift-L to load internal functions
 
 load(file = get_my_path("subset_terms.rda"))
 music_codes <- get_cip(cip, "^5009")[["cip6"]]
@@ -21,6 +20,20 @@ test_that("inputs are explicit", {
   expect_error(
     get_enrollees(data = subset_terms, codes = NULL),
     "Explicit `codes` argument required"
+  )
+})
+test_that("Required variables are present", {
+  alt <- subset_terms
+  alt$id <- NULL
+  expect_error(
+    get_enrollees(data = alt, codes = music_codes),
+    "Column name `id` required"
+  )
+  alt <- subset_terms
+  alt$cip6 <- NULL
+  expect_error(
+    get_enrollees(data = alt, codes = music_codes),
+    "Column name `cip6` required"
   )
 })
 test_that("Pipe correctly passes the data argument", {
