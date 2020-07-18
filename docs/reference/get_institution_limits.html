@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Order levels of multiway data — order_multiway • midfieldr</title>
+<title>Get limits on feasible completion by institution — get_institution_limits • midfieldr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,10 +46,13 @@
 
 
 
-<meta property="og:title" content="Order levels of multiway data — order_multiway" />
-<meta property="og:description" content="Transform a data frame such that two categorical variables are factors
-with levels ordered by medians of the quantitative variable. Rows and
-columns of the data frame are otherwise unaffected." />
+<meta property="og:title" content="Get limits on feasible completion by institution — get_institution_limits" />
+<meta property="og:description" content="Determine the data limit and matriculation limit for program completion
+feasibility by institution. The data are term attributes keyed by
+institution and term (midfieldterms
+or equivalent). Rows are subset by the latest term in the data set
+(the data limit) by institution. Results are the institutions,
+matriculation limits, and data limits." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -154,62 +157,66 @@ columns of the data frame are otherwise unaffected." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Order levels of multiway data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/order_multiway.R'><code>R/order_multiway.R</code></a></small>
-    <div class="hidden name"><code>order_multiway.Rd</code></div>
+    <h1>Get limits on feasible completion by institution</h1>
+    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/get_institution_limits.R'><code>R/get_institution_limits.R</code></a></small>
+    <div class="hidden name"><code>get_institution_limits.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Transform a data frame such that two categorical variables are factors
-with levels ordered by medians of the quantitative variable. Rows and
-columns of the data frame are otherwise unaffected.</p>
+    <p>Determine the data limit and matriculation limit for program completion
+feasibility by institution. The data are term attributes keyed by
+institution and term (<code><a href='https://rdrr.io/pkg/midfielddata/man/midfieldterms.html'>midfieldterms</a></code>
+or equivalent). Rows are subset by the latest term in the data set
+(the data limit) by institution. Results are the institutions,
+matriculation limits, and data limits.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>order_multiway</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>get_institution_limits</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>span</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>data frame of multiway data</p></td>
+      <td><p>data frame of term attributes</p></td>
+    </tr>
+    <tr>
+      <th>span</th>
+      <td><p>number of years for feasible completion</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p><code>data.frame</code> with the following properties:</p><ul>
-<li><p>Rows are not modified</p></li>
-<li><p>Quantitative column is not modified</p></li>
-<li><p>Categorical columns are factors with levels ordered by
-median quantitative values</p></li>
+<li><p>One row per institution</p></li>
+<li><p>Columns <code>institution</code>, <code>matric_limit</code>,
+  and <code>data_limit</code></p></li>
 <li><p>Grouping structures, if any, are not preserved</p></li>
 <li><p>Data frame extension attributes, e.g., tibble, are not preserved</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>In multiway data, there is a single quantitative value (or response)
-for every combination of levels of two categorical variables.
-<code>order_multiway()</code> converts the columns of categorical variables
-to factors and orders the factor levels by increasing medians of the
-quantitative response variable.</p>
-<p>The <code>data</code> argument, therefore, must have three columns only. One
-column is a quantitative variable (type numeric) and two columns are
-categorical variables (type character or factor).</p>
+    <p>The default <code>data</code> argument is <code>midfieldterms</code>, accessed by
+name or by leaving the <code>data</code> argument vacant. Any other
+<code>data</code> argument should be a subset of <code>midfieldterms</code>
+or equivalent. Character columns <code>institution</code> and <code>term</code> are
+required by name.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other data_carpentry: 
-<code><a href='feasible_completion.html'>feasible_completion</a>()</code>,
-<code><a href='label_programs.html'>label_programs</a>()</code>,
-<code><a href='term_addition.html'>term_addition</a>()</code></p></div>
+    <div class='dont-index'><p>Other data_query: 
+<code><a href='get_cip.html'>get_cip</a>()</code>,
+<code><a href='get_enrollees.html'>get_enrollees</a>()</code>,
+<code><a href='get_graduates.html'>get_graduates</a>()</code>,
+<code><a href='get_institution_hours_term.html'>get_institution_hours_term</a>()</code>,
+<code><a href='get_race_sex.html'>get_race_sex</a>()</code>,
+<code><a href='get_status_degrees.html'>get_status_degrees</a>()</code>,
+<code><a href='get_status_transfers.html'>get_status_transfers</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>catg1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"urban"</span>, <span class='st'>"rural"</span>, <span class='st'>"suburb"</span>, <span class='st'>"village"</span>), <span class='kw'>each</span> <span class='kw'>=</span> <span class='fl'>2</span>)
-<span class='no'>catg2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"men"</span>, <span class='st'>"women"</span>), <span class='kw'>times</span> <span class='kw'>=</span> <span class='fl'>4</span>)
-<span class='no'>value</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.22</span>, <span class='fl'>0.14</span>, <span class='fl'>0.43</span>, <span class='fl'>0.58</span>, <span class='fl'>0.81</span>, <span class='fl'>0.46</span>, <span class='fl'>0.15</span>, <span class='fl'>0.20</span>)
-<span class='no'>mw_df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='no'>catg1</span>, <span class='no'>catg2</span>, <span class='no'>value</span>)
-<span class='fu'>order_multiway</span>(<span class='no'>mw_df</span>)</div></pre>
+    <pre class="examples"><div class='input'># placeholder
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

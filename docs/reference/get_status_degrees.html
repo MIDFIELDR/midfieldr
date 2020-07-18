@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Order levels of multiway data — order_multiway • midfieldr</title>
+<title>Get degree status of students by ID — get_status_degrees • midfieldr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,10 +46,11 @@
 
 
 
-<meta property="og:title" content="Order levels of multiway data — order_multiway" />
-<meta property="og:description" content="Transform a data frame such that two categorical variables are factors
-with levels ordered by medians of the quantitative variable. Rows and
-columns of the data frame are otherwise unaffected." />
+<meta property="og:title" content="Get degree status of students by ID — get_status_degrees" />
+<meta property="og:description" content="Subset the rows of a data frame by student ID. The data are student
+degree attributes keyed by student ID
+(midfielddegrees or equivalent). Results are
+student ID, institution, and degree." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -154,62 +155,68 @@ columns of the data frame are otherwise unaffected." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Order levels of multiway data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/order_multiway.R'><code>R/order_multiway.R</code></a></small>
-    <div class="hidden name"><code>order_multiway.Rd</code></div>
+    <h1>Get degree status of students by ID</h1>
+    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/get_status_degrees.R'><code>R/get_status_degrees.R</code></a></small>
+    <div class="hidden name"><code>get_status_degrees.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Transform a data frame such that two categorical variables are factors
-with levels ordered by medians of the quantitative variable. Rows and
-columns of the data frame are otherwise unaffected.</p>
+    <p>Subset the rows of a data frame by student ID. The data are student
+degree attributes keyed by student ID
+(<code><a href='https://rdrr.io/pkg/midfielddata/man/midfielddegrees.html'>midfielddegrees</a></code> or equivalent). Results are
+student ID, institution, and degree.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>order_multiway</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>get_status_degrees</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>keep_id</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>data frame of multiway data</p></td>
+      <td><p>data frame of degree attributes</p></td>
+    </tr>
+    <tr>
+      <th>keep_id</th>
+      <td><p>character vector of student IDs</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p><code>data.frame</code> with the following properties:</p><ul>
-<li><p>Rows are not modified</p></li>
-<li><p>Quantitative column is not modified</p></li>
-<li><p>Categorical columns are factors with levels ordered by
-median quantitative values</p></li>
+<li><p>Rows for which student ID is in <code>keep_id</code></p></li>
+<li><p>Columns <code>id</code>, <code>institution</code>, and <code>degree</code></p></li>
 <li><p>Grouping structures, if any, are not preserved</p></li>
 <li><p>Data frame extension attributes, e.g., tibble, are not preserved</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>In multiway data, there is a single quantitative value (or response)
-for every combination of levels of two categorical variables.
-<code>order_multiway()</code> converts the columns of categorical variables
-to factors and orders the factor levels by increasing medians of the
-quantitative response variable.</p>
-<p>The <code>data</code> argument, therefore, must have three columns only. One
-column is a quantitative variable (type numeric) and two columns are
-categorical variables (type character or factor).</p>
+    <p>The default <code>data</code> argument is <code>midfielddegrees</code>, accessed by
+name or by leaving the <code>data</code> argument vacant. Any other
+<code>data</code> argument should be a subset of <code>midfielddegrees</code>
+or equivalent. Character columns <code>id</code>, <code>institution</code>, and
+<code>degree</code> are required by name.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other data_carpentry: 
-<code><a href='feasible_completion.html'>feasible_completion</a>()</code>,
-<code><a href='label_programs.html'>label_programs</a>()</code>,
-<code><a href='term_addition.html'>term_addition</a>()</code></p></div>
+    <div class='dont-index'><p>Other data_query: 
+<code><a href='get_cip.html'>get_cip</a>()</code>,
+<code><a href='get_enrollees.html'>get_enrollees</a>()</code>,
+<code><a href='get_graduates.html'>get_graduates</a>()</code>,
+<code><a href='get_institution_hours_term.html'>get_institution_hours_term</a>()</code>,
+<code><a href='get_institution_limits.html'>get_institution_limits</a>()</code>,
+<code><a href='get_race_sex.html'>get_race_sex</a>()</code>,
+<code><a href='get_status_transfers.html'>get_status_transfers</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>catg1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"urban"</span>, <span class='st'>"rural"</span>, <span class='st'>"suburb"</span>, <span class='st'>"village"</span>), <span class='kw'>each</span> <span class='kw'>=</span> <span class='fl'>2</span>)
-<span class='no'>catg2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"men"</span>, <span class='st'>"women"</span>), <span class='kw'>times</span> <span class='kw'>=</span> <span class='fl'>4</span>)
-<span class='no'>value</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.22</span>, <span class='fl'>0.14</span>, <span class='fl'>0.43</span>, <span class='fl'>0.58</span>, <span class='fl'>0.81</span>, <span class='fl'>0.46</span>, <span class='fl'>0.15</span>, <span class='fl'>0.20</span>)
-<span class='no'>mw_df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='no'>catg1</span>, <span class='no'>catg2</span>, <span class='no'>value</span>)
-<span class='fu'>order_multiway</span>(<span class='no'>mw_df</span>)</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>music_codes</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"500901"</span>, <span class='st'>"500903"</span>, <span class='st'>"500913"</span>)
+<span class='no'>students</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='get_enrollees.html'>get_enrollees</a></span>(<span class='kw'>codes</span> <span class='kw'>=</span> <span class='no'>music_codes</span>)
+<span class='no'>students</span> <span class='kw'>&lt;-</span> <span class='fu'>get_status_degrees</span>(<span class='kw'>keep_id</span> <span class='kw'>=</span> <span class='no'>students</span>$<span class='no'>id</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>students</span>)</div><div class='output co'>#&gt; 'data.frame':	745 obs. of  3 variables:
+#&gt;  $ id         : chr  "MID25853762" "MID25854314" "MID25855043" "MID25857363" ...
+#&gt;  $ institution: chr  "Institution B" "Institution B" "Institution B" "Institution B" ...
+#&gt;  $ degree     : chr  NA "Bachelor's Degree" "Bachelor's Degree" "Bachelor's Degree" ...</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

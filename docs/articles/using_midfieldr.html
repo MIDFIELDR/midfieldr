@@ -146,7 +146,7 @@
 <span class="co">#&gt;  $ cip6name: chr  "Engineering, General" "Pre-Engineering" "Aerospace, Aeronautical and Astronautical, Space Engineering" "Agricultural, Biological Engineering and Bioengineering" ...</span>
 
 <span class="co"># examine the result at the 2-digit level</span>
-<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">sub_cip</span>[, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"cip2"</span>, <span class="st">"cip2name"</span>)])
+<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">sub_cip</span>[, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"cip2"</span>, <span class="st">"cip2name"</span>), <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>])
 <span class="co">#&gt;     cip2                                         cip2name</span>
 <span class="co">#&gt; 1     14                                      Engineering</span>
 <span class="co">#&gt; 57    15                           Engineering Technology</span>
@@ -161,7 +161,7 @@
 )
 
 <span class="co"># examine the result at the 4-digit level</span>
-<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">sub_cip2</span>[, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"cip4"</span>, <span class="st">"cip4name"</span>)])
+<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">sub_cip2</span>[, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"cip4"</span>, <span class="st">"cip4name"</span>), <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>])
 <span class="co">#&gt;   cip4                                               cip4name</span>
 <span class="co">#&gt; 1 1407                                   Chemical Engineering</span>
 <span class="co">#&gt; 4 1410 Electrical, Electronics and Communications Engineering</span>
@@ -246,45 +246,54 @@
 <span class="co">#&gt; 'data.frame':    6402 obs. of  2 variables:</span>
 <span class="co">#&gt;  $ id  : chr  "MID25783178" "MID25783178" "MID25783197" "MID25783257" ...</span>
 <span class="co">#&gt;  $ cip6: chr  "140701" "143501" "140701" "140701" ...</span></pre></body></html></div>
-<p><br></p>
-<p><strong>feasible completion here</strong></p>
-<p><br><br></p>
+<p>For some of these students, completing their program may not be feasible given the range of data available. <code><a href="../reference/feasible_completion.html">feasible_completion()</a></code> subsets the student IDs, retaining those who matriculate at least six years before the last term in the data.</p>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># apply the feasible completion filter </span>
+<span class="no">ids_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/feasible_completion.html">feasible_completion</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">enrollees</span>$<span class="no">id</span>)
+
+<span class="co"># subset the enrollees</span>
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>$<span class="no">id</span> <span class="kw">%in%</span> <span class="no">ids_we_want</span>
+<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="no">enrollees</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+
+<span class="co"># examine the result</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">enrollees</span>)
+<span class="co">#&gt; 'data.frame':    5195 obs. of  2 variables:</span>
+<span class="co">#&gt;  $ id  : chr  "MID25783178" "MID25783178" "MID25783197" "MID25783491" ...</span>
+<span class="co">#&gt;  $ cip6: chr  "140701" "143501" "140701" "141001" ...</span></pre></body></html></div>
 <p>We use <code><a href="../reference/get_race_sex.html">get_race_sex()</a></code> to obtain the race/ethnicity of each enrollee. The default data argument is <code>midfieldstudents</code>.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># get student race/ethnicity and sex</span>
-<span class="no">ids_we_seek</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>$<span class="no">id</span>
-<span class="no">demographics</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_race_sex.html">get_race_sex</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldstudents</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">ids_we_seek</span>)
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># get student race/ethnicity and sex</span>
+<span class="no">demographics</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_race_sex.html">get_race_sex</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldstudents</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">ids_we_want</span>)
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">demographics</span>)
-<span class="co">#&gt; 'data.frame':    6190 obs. of  3 variables:</span>
-<span class="co">#&gt;  $ id  : chr  "MID25783178" "MID25783197" "MID25783257" "MID25783491" ...</span>
+<span class="co">#&gt; 'data.frame':    5010 obs. of  3 variables:</span>
+<span class="co">#&gt;  $ id  : chr  "MID25783178" "MID25783197" "MID25783491" "MID25783606" ...</span>
 <span class="co">#&gt;  $ race: chr  "Black" "White" "White" "White" ...</span>
 <span class="co">#&gt;  $ sex : chr  "Male" "Male" "Male" "Male" ...</span></pre></body></html></div>
 <p>Now we can join the race/ethnicity and sex data frame to the enrollees data frame.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># join the two data frames</span>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># join the two data frames</span>
 <span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">demographics</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">enrollees</span>)
-<span class="co">#&gt; 'data.frame':    6402 obs. of  4 variables:</span>
-<span class="co">#&gt;  $ id  : chr  "MID25783178" "MID25783178" "MID25783197" "MID25783257" ...</span>
-<span class="co">#&gt;  $ cip6: chr  "140701" "143501" "140701" "140701" ...</span>
+<span class="co">#&gt; 'data.frame':    5195 obs. of  4 variables:</span>
+<span class="co">#&gt;  $ id  : chr  "MID25783178" "MID25783178" "MID25783197" "MID25783491" ...</span>
+<span class="co">#&gt;  $ cip6: chr  "140701" "143501" "140701" "141001" ...</span>
 <span class="co">#&gt;  $ race: chr  "Black" "Black" "White" "White" ...</span>
 <span class="co">#&gt;  $ sex : chr  "Male" "Male" "Male" "Male" ...</span></pre></body></html></div>
 <p>We join the program names from <code>program_group</code> to our working data frame so we can count by groups in the next step.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># join the program names</span>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># join the program names</span>
 <span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">program_group</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">enrollees</span>)
-<span class="co">#&gt; 'data.frame':    6402 obs. of  5 variables:</span>
+<span class="co">#&gt; 'data.frame':    5195 obs. of  5 variables:</span>
 <span class="co">#&gt;  $ cip6   : chr  "140701" "140701" "140701" "140701" ...</span>
-<span class="co">#&gt;  $ id     : chr  "MID25783178" "MID26457912" "MID25783197" "MID25783257" ...</span>
-<span class="co">#&gt;  $ race   : chr  "Black" "White" "White" "White" ...</span>
-<span class="co">#&gt;  $ sex    : chr  "Male" "Male" "Male" "Male" ...</span>
+<span class="co">#&gt;  $ id     : chr  "MID25783178" "MID26186168" "MID25783197" "MID25861283" ...</span>
+<span class="co">#&gt;  $ race   : chr  "Black" "Hispanic" "White" "Asian" ...</span>
+<span class="co">#&gt;  $ sex    : chr  "Male" "Female" "Male" "Male" ...</span>
 <span class="co">#&gt;  $ program: chr  "Chemical Engineering" "Chemical Engineering" "Chemical Engineering" "Chemical Engineering" ...</span></pre></body></html></div>
 <p>To frame our results in terms of program, race/ethnicity, and sex, we group by these variables and count the number of students in each grouping. The count is assigned to the new <code>ever</code> column.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># initialize the variable `ever` to hold the count</span>
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co"># initialize the variable `ever` to hold the count</span>
 <span class="no">enrollees</span>$<span class="no">ever</span> <span class="kw">&lt;-</span> <span class="fl">0</span>
 
 <span class="co"># group by the framing variables and count</span>
@@ -299,15 +308,15 @@
 <span class="co">#&gt;  $ race   : chr  "Asian" "Black" "Hispanic" "International" ...</span>
 <span class="co">#&gt;  $ sex    : chr  "Female" "Female" "Female" "Female" ...</span>
 <span class="co">#&gt;  $ program: chr  "Chemical Engineering" "Chemical Engineering" "Chemical Engineering" "Chemical Engineering" ...</span>
-<span class="co">#&gt;  $ ever   : int  56 147 37 8 7 11 6 462 98 98 ...</span></pre></body></html></div>
-<p>Note the change in the size of the data frame, from 6402 in <code>enrollees</code> where every row is a student to 48 in the <code>grouped_enrollees</code> below where every row is a group.</p>
+<span class="co">#&gt;  $ ever   : int  42 128 26 6 2 6 6 374 74 77 ...</span></pre></body></html></div>
+<p>Note the change in the size of the data frame, from 5195 in <code>enrollees</code> where every row is a student to 48 in the <code>grouped_enrollees</code> below where every row is a group.</p>
 <p>A similar process is used to group and summarize our graduates. We start with <code><a href="../reference/get_graduates.html">get_graduates()</a></code> with a default data argument of <code>midfielddegrees</code>. For graduates, the question of completion feasibility is moot—graduation itself establishes feasibility. Thus we omit the the feasible completion filter in this step.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co"># gather individual graduating students</span>
-<span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_graduates.html">get_graduates</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfielddegrees</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">group_codes</span>)
-<span class="no">ids_we_seek</span> <span class="kw">&lt;-</span> <span class="no">graduates</span>$<span class="no">id</span>
-<span class="no">demographics</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_race_sex.html">get_race_sex</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldstudents</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">ids_we_seek</span>)
-<span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">demographics</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">program_group</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="co"># gather individual graduating students</span>
+<span class="no">graduates</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_graduates.html">get_graduates</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfielddegrees</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">group_codes</span>)
+<span class="no">ids_we_want</span>  <span class="kw">&lt;-</span> <span class="no">graduates</span>$<span class="no">id</span>
+<span class="no">demographics</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_race_sex.html">get_race_sex</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldstudents</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">ids_we_want</span>)
+<span class="no">graduates</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">demographics</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">graduates</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">program_group</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># initialize the grad count column</span>
 <span class="no">graduates</span>$<span class="no">grad</span> <span class="kw">&lt;-</span> <span class="fl">0</span>
@@ -332,69 +341,69 @@
 <h2 class="hasAnchor">
 <a href="#compute-the-metric" class="anchor"></a>Compute the metric</h2>
 <p>We join the two data frames by our framing variables (program, race/ethnicity, and sex), producing a data frame with <code>ever</code> and <code>grad</code> for each group.</p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="co"># join graduates to ever enrolled</span>
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="co"># join graduates to ever enrolled</span>
 <span class="no">metric</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">grouped_enrollees</span>, <span class="no">grouped_graduates</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># examine the result, ordered by program</span>
 <span class="no">metric</span>[<span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span>(<span class="no">metric</span>$<span class="no">program</span>), , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 <span class="co">#&gt;               race    sex                program ever grad</span>
-<span class="co">#&gt; 1            Asian Female   Chemical Engineering   56   26</span>
-<span class="co">#&gt; 4            Asian   Male   Chemical Engineering   98   35</span>
-<span class="co">#&gt; 7            Black Female   Chemical Engineering  147   52</span>
-<span class="co">#&gt; 10           Black   Male   Chemical Engineering   98   26</span>
-<span class="co">#&gt; 13        Hispanic Female   Chemical Engineering   37   11</span>
-<span class="co">#&gt; 16        Hispanic   Male   Chemical Engineering   57   18</span>
-<span class="co">#&gt; 19   International Female   Chemical Engineering    8    4</span>
-<span class="co">#&gt; 22   International   Male   Chemical Engineering   23    7</span>
-<span class="co">#&gt; 25 Native American Female   Chemical Engineering    7    1</span>
-<span class="co">#&gt; 28 Native American   Male   Chemical Engineering    8    3</span>
-<span class="co">#&gt; 31           Other Female   Chemical Engineering   11    1</span>
-<span class="co">#&gt; 34           Other   Male   Chemical Engineering   28    3</span>
+<span class="co">#&gt; 1            Asian Female   Chemical Engineering   42   26</span>
+<span class="co">#&gt; 4            Asian   Male   Chemical Engineering   74   35</span>
+<span class="co">#&gt; 7            Black Female   Chemical Engineering  128   52</span>
+<span class="co">#&gt; 10           Black   Male   Chemical Engineering   77   26</span>
+<span class="co">#&gt; 13        Hispanic Female   Chemical Engineering   26   11</span>
+<span class="co">#&gt; 16        Hispanic   Male   Chemical Engineering   34   18</span>
+<span class="co">#&gt; 19   International Female   Chemical Engineering    6    4</span>
+<span class="co">#&gt; 22   International   Male   Chemical Engineering   17    7</span>
+<span class="co">#&gt; 25 Native American Female   Chemical Engineering    2    1</span>
+<span class="co">#&gt; 28 Native American   Male   Chemical Engineering    6    3</span>
+<span class="co">#&gt; 31           Other Female   Chemical Engineering    6    1</span>
+<span class="co">#&gt; 34           Other   Male   Chemical Engineering   12    3</span>
 <span class="co">#&gt; 37         Unknown Female   Chemical Engineering    6    3</span>
 <span class="co">#&gt; 40         Unknown   Male   Chemical Engineering    4    2</span>
-<span class="co">#&gt; 43           White Female   Chemical Engineering  462  170</span>
-<span class="co">#&gt; 46           White   Male   Chemical Engineering  896  354</span>
-<span class="co">#&gt; 2            Asian Female Electrical Engineering   50   22</span>
-<span class="co">#&gt; 5            Asian   Male Electrical Engineering  253  120</span>
-<span class="co">#&gt; 8            Black Female Electrical Engineering  180   72</span>
-<span class="co">#&gt; 11           Black   Male Electrical Engineering  379  130</span>
-<span class="co">#&gt; 14        Hispanic Female Electrical Engineering   24    6</span>
-<span class="co">#&gt; 17        Hispanic   Male Electrical Engineering   89   32</span>
-<span class="co">#&gt; 20   International Female Electrical Engineering   11    4</span>
-<span class="co">#&gt; 23   International   Male Electrical Engineering   83   46</span>
+<span class="co">#&gt; 43           White Female   Chemical Engineering  374  170</span>
+<span class="co">#&gt; 46           White   Male   Chemical Engineering  692  354</span>
+<span class="co">#&gt; 2            Asian Female Electrical Engineering   42   22</span>
+<span class="co">#&gt; 5            Asian   Male Electrical Engineering  204  120</span>
+<span class="co">#&gt; 8            Black Female Electrical Engineering  156   72</span>
+<span class="co">#&gt; 11           Black   Male Electrical Engineering  304  130</span>
+<span class="co">#&gt; 14        Hispanic Female Electrical Engineering   14    6</span>
+<span class="co">#&gt; 17        Hispanic   Male Electrical Engineering   69   32</span>
+<span class="co">#&gt; 20   International Female Electrical Engineering    8    4</span>
+<span class="co">#&gt; 23   International   Male Electrical Engineering   72   46</span>
 <span class="co">#&gt; 26 Native American Female Electrical Engineering    3    1</span>
-<span class="co">#&gt; 29 Native American   Male Electrical Engineering   12    1</span>
-<span class="co">#&gt; 32           Other Female Electrical Engineering   11    3</span>
-<span class="co">#&gt; 35           Other   Male Electrical Engineering   23    7</span>
+<span class="co">#&gt; 29 Native American   Male Electrical Engineering    8    1</span>
+<span class="co">#&gt; 32           Other Female Electrical Engineering    7    3</span>
+<span class="co">#&gt; 35           Other   Male Electrical Engineering   18    7</span>
 <span class="co">#&gt; 38         Unknown Female Electrical Engineering    3    1</span>
 <span class="co">#&gt; 41         Unknown   Male Electrical Engineering   11    4</span>
-<span class="co">#&gt; 44           White Female Electrical Engineering  244   74</span>
-<span class="co">#&gt; 47           White   Male Electrical Engineering 1636  698</span>
-<span class="co">#&gt; 3            Asian Female Industrial Engineering   49   22</span>
-<span class="co">#&gt; 6            Asian   Male Industrial Engineering   88   47</span>
-<span class="co">#&gt; 9            Black Female Industrial Engineering  121   56</span>
-<span class="co">#&gt; 12           Black   Male Industrial Engineering  151   50</span>
-<span class="co">#&gt; 15        Hispanic Female Industrial Engineering   12    5</span>
-<span class="co">#&gt; 18        Hispanic   Male Industrial Engineering   34   19</span>
-<span class="co">#&gt; 21   International Female Industrial Engineering    7    4</span>
-<span class="co">#&gt; 24   International   Male Industrial Engineering   30   18</span>
+<span class="co">#&gt; 44           White Female Electrical Engineering  209   74</span>
+<span class="co">#&gt; 47           White   Male Electrical Engineering 1418  698</span>
+<span class="co">#&gt; 3            Asian Female Industrial Engineering   39   22</span>
+<span class="co">#&gt; 6            Asian   Male Industrial Engineering   67   47</span>
+<span class="co">#&gt; 9            Black Female Industrial Engineering   95   56</span>
+<span class="co">#&gt; 12           Black   Male Industrial Engineering  100   50</span>
+<span class="co">#&gt; 15        Hispanic Female Industrial Engineering    7    5</span>
+<span class="co">#&gt; 18        Hispanic   Male Industrial Engineering   26   19</span>
+<span class="co">#&gt; 21   International Female Industrial Engineering    6    4</span>
+<span class="co">#&gt; 24   International   Male Industrial Engineering   24   18</span>
 <span class="co">#&gt; 27 Native American Female Industrial Engineering    1   NA</span>
 <span class="co">#&gt; 30 Native American   Male Industrial Engineering    1   NA</span>
-<span class="co">#&gt; 33           Other Female Industrial Engineering    8    4</span>
-<span class="co">#&gt; 36           Other   Male Industrial Engineering   10    4</span>
+<span class="co">#&gt; 33           Other Female Industrial Engineering    4    4</span>
+<span class="co">#&gt; 36           Other   Male Industrial Engineering    4    4</span>
 <span class="co">#&gt; 39         Unknown Female Industrial Engineering    2   NA</span>
 <span class="co">#&gt; 42         Unknown   Male Industrial Engineering    1    1</span>
-<span class="co">#&gt; 45           White Female Industrial Engineering  312  172</span>
-<span class="co">#&gt; 48           White   Male Industrial Engineering  617  354</span></pre></body></html></div>
+<span class="co">#&gt; 45           White Female Industrial Engineering  252  172</span>
+<span class="co">#&gt; 48           White   Male Industrial Engineering  514  354</span></pre></body></html></div>
 <p>There are 3 NA entries in the <code>grad</code> column where we have enrollees but no graduates. To see them more directly:</p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">rows_with_degree_NA</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">metric</span>$<span class="no">grad</span>)
+<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">rows_with_degree_NA</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">metric</span>$<span class="no">grad</span>)
 <span class="no">metric</span>[<span class="no">rows_with_degree_NA</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 <span class="co">#&gt;               race    sex                program ever grad</span>
 <span class="co">#&gt; 27 Native American Female Industrial Engineering    1   NA</span>
 <span class="co">#&gt; 30 Native American   Male Industrial Engineering    1   NA</span>
 <span class="co">#&gt; 39         Unknown Female Industrial Engineering    2   NA</span></pre></body></html></div>
 <p>We convert the NA values in the <code>grad</code> column to zero.</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="co"># convert grad NA to zero</span>
+<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="co"># convert grad NA to zero</span>
 <span class="no">metric</span>$<span class="no">grad</span>[<span class="no">rows_with_degree_NA</span>] <span class="kw">&lt;-</span> <span class="fl">0</span>
 
 <span class="co"># examine the result</span>
@@ -404,9 +413,9 @@
 <span class="co">#&gt; 30 Native American   Male Industrial Engineering    1    0</span>
 <span class="co">#&gt; 39         Unknown Female Industrial Engineering    2    0</span></pre></body></html></div>
 <p>We omit rows with zero students ever enrolled, if any, to avoid dividing by zero, then divide <code>grad</code> by <code>ever</code> to compute stickiness.</p>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="co"># prevent division by zero</span>
-<span class="no">rows_we_keep</span> <span class="kw">&lt;-</span> <span class="no">metric</span>$<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">0</span>
-<span class="no">metric</span> <span class="kw">&lt;-</span> <span class="no">metric</span>[<span class="no">rows_we_keep</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="co"># prevent division by zero</span>
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">metric</span>$<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">0</span>
+<span class="no">metric</span> <span class="kw">&lt;-</span> <span class="no">metric</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 
 <span class="co"># compute stickiness</span>
 <span class="no">metric</span>$<span class="no">stick</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="no">metric</span>$<span class="no">grad</span> / <span class="no">metric</span>$<span class="no">ever</span>, <span class="fl">3</span>)
@@ -417,9 +426,9 @@
 <span class="co">#&gt;  $ race   : chr  "Asian" "Asian" "Asian" "Asian" ...</span>
 <span class="co">#&gt;  $ sex    : chr  "Female" "Female" "Female" "Male" ...</span>
 <span class="co">#&gt;  $ program: chr  "Chemical Engineering" "Electrical Engineering" "Industrial Engineering" "Chemical Engineering" ...</span>
-<span class="co">#&gt;  $ ever   : int  56 50 49 98 253 88 147 180 121 98 ...</span>
+<span class="co">#&gt;  $ ever   : int  42 42 39 74 204 67 128 156 95 77 ...</span>
 <span class="co">#&gt;  $ grad   : num  26 22 22 35 120 47 52 72 56 26 ...</span>
-<span class="co">#&gt;  $ stick  : num  0.464 0.44 0.449 0.357 0.474 0.534 0.354 0.4 0.463 0.265 ...</span></pre></body></html></div>
+<span class="co">#&gt;  $ stick  : num  0.619 0.524 0.564 0.473 0.588 0.701 0.406 0.462 0.589 0.338 ...</span></pre></body></html></div>
 <p>This completes the data manipulation for obtaining the persistence metric.</p>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
@@ -427,87 +436,86 @@
 <h2 class="hasAnchor">
 <a href="#prepare-the-results-for-display" class="anchor"></a>Prepare the results for display</h2>
 <p>To prepare the results for graphing, we construct a “pre-multiway” version of the data frame. We begin by removing ambiguous levels of race/ethnicity and sex.</p>
-<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="co"># initialize the pre-multiway data frame</span>
+<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="co"># initialize the pre-multiway data frame</span>
 <span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">metric</span>
 
 <span class="co"># remove an ambiguous level of sex</span>
-<span class="no">rows_we_keep</span> <span class="kw">&lt;-</span> !<span class="no">pre_mw</span>$<span class="no">sex</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Unknown"</span>)
-<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_keep</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> !<span class="no">pre_mw</span>$<span class="no">sex</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Unknown"</span>)
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">pre_mw</span>$<span class="no">sex</span>)
 <span class="co">#&gt; [1] "Female" "Male"</span>
 
 <span class="co"># remove ambiguous levels of race/ethnicity</span>
-<span class="no">rows_we_keep</span> <span class="kw">&lt;-</span> !<span class="no">pre_mw</span>$<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span>)
-<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_keep</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> !<span class="no">pre_mw</span>$<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span>)
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">pre_mw</span>$<span class="no">race</span>)
 <span class="co">#&gt; [1] "Asian"           "Black"           "Hispanic"        "Native American"</span>
 <span class="co">#&gt; [5] "White"</span></pre></body></html></div>
 <p>To protect confidentiality, we omit observations with 5 or fewer students ever enrolled.</p>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="co"># protect confidentiality of small populations</span>
-<span class="no">rows_we_keep</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>$<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">5</span>
-<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_keep</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="co"># protect confidentiality of small populations</span>
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>$<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">5</span>
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">pre_mw</span>)
-<span class="co">#&gt; 'data.frame':    27 obs. of  6 variables:</span>
+<span class="co">#&gt; 'data.frame':    26 obs. of  6 variables:</span>
 <span class="co">#&gt;  $ race   : chr  "Asian" "Asian" "Asian" "Asian" ...</span>
 <span class="co">#&gt;  $ sex    : chr  "Female" "Female" "Female" "Male" ...</span>
 <span class="co">#&gt;  $ program: chr  "Chemical Engineering" "Electrical Engineering" "Industrial Engineering" "Chemical Engineering" ...</span>
-<span class="co">#&gt;  $ ever   : int  56 50 49 98 253 88 147 180 121 98 ...</span>
+<span class="co">#&gt;  $ ever   : int  42 42 39 74 204 67 128 156 95 77 ...</span>
 <span class="co">#&gt;  $ grad   : num  26 22 22 35 120 47 52 72 56 26 ...</span>
-<span class="co">#&gt;  $ stick  : num  0.464 0.44 0.449 0.357 0.474 0.534 0.354 0.4 0.463 0.265 ...</span></pre></body></html></div>
+<span class="co">#&gt;  $ stick  : num  0.619 0.524 0.564 0.473 0.588 0.701 0.406 0.462 0.589 0.338 ...</span></pre></body></html></div>
 <p>We plan to display these data in a multiway graph, characterized by a single quantitative response variable (stickiness) for each combination of levels of the two categorical variables (program and race/ethnicity/sex).</p>
 <p>The race/ethnicity/sex category is created by uniting <code>race</code> and <code>sex</code>.</p>
-<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="co"># create a new combined framing variables</span>
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="co"># create a new combined framing variables</span>
 <span class="no">pre_mw</span>$<span class="no">race_sex</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="no">pre_mw</span>$<span class="no">race</span>, <span class="no">pre_mw</span>$<span class="no">sex</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">" "</span>)
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">pre_mw</span>)
-<span class="co">#&gt; 'data.frame':    27 obs. of  7 variables:</span>
+<span class="co">#&gt; 'data.frame':    26 obs. of  7 variables:</span>
 <span class="co">#&gt;  $ race    : chr  "Asian" "Asian" "Asian" "Asian" ...</span>
 <span class="co">#&gt;  $ sex     : chr  "Female" "Female" "Female" "Male" ...</span>
 <span class="co">#&gt;  $ program : chr  "Chemical Engineering" "Electrical Engineering" "Industrial Engineering" "Chemical Engineering" ...</span>
-<span class="co">#&gt;  $ ever    : int  56 50 49 98 253 88 147 180 121 98 ...</span>
+<span class="co">#&gt;  $ ever    : int  42 42 39 74 204 67 128 156 95 77 ...</span>
 <span class="co">#&gt;  $ grad    : num  26 22 22 35 120 47 52 72 56 26 ...</span>
-<span class="co">#&gt;  $ stick   : num  0.464 0.44 0.449 0.357 0.474 0.534 0.354 0.4 0.463 0.265 ...</span>
+<span class="co">#&gt;  $ stick   : num  0.619 0.524 0.564 0.473 0.588 0.701 0.406 0.462 0.589 0.338 ...</span>
 <span class="co">#&gt;  $ race_sex: chr  "Asian Female" "Asian Female" "Asian Female" "Asian Male" ...</span></pre></body></html></div>
 <p>To structure the data in multiway form, we select the three multiway variables and use <code><a href="../reference/order_multiway.html">order_multiway()</a></code> to convert the categorical variables to factors and order the levels of the categories by the median stickiness.</p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="co"># initialize the multiway data frame</span>
+<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="co"># initialize the multiway data frame</span>
 <span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>
 
 <span class="co"># complete the transformation to multiway form</span>
-<span class="no">columns_we_keep</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"stick"</span>)
-<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">data_mw</span>[, <span class="no">columns_we_keep</span>, <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">columns_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"stick"</span>)
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">data_mw</span>[, <span class="no">columns_we_want</span>, <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 <span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span>(<span class="no">data_mw</span>)
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">data_mw</span>)
-<span class="co">#&gt; 'data.frame':    27 obs. of  3 variables:</span>
-<span class="co">#&gt;  $ program : Factor w/ 3 levels "Chemical Engineering",..: 1 2 3 1 2 3 1 2 3 1 ...</span>
-<span class="co">#&gt;  $ race_sex: Factor w/ 10 levels "Native American Female",..: 9 9 9 10 10 10 7 7 7 4 ...</span>
-<span class="co">#&gt;  $ stick   : num  0.464 0.44 0.449 0.357 0.474 0.534 0.354 0.4 0.463 0.265 ...</span></pre></body></html></div>
+<span class="co">#&gt; 'data.frame':    26 obs. of  3 variables:</span>
+<span class="co">#&gt;  $ program : Factor w/ 3 levels "Electrical Engineering",..: 2 1 3 2 1 3 2 1 3 2 ...</span>
+<span class="co">#&gt;  $ race_sex: Factor w/ 9 levels "Native American Male",..: 8 8 8 9 9 9 5 5 5 2 ...</span>
+<span class="co">#&gt;  $ stick   : num  0.619 0.524 0.564 0.473 0.588 0.701 0.406 0.462 0.589 0.338 ...</span></pre></body></html></div>
 <p>Notice the categorical variables that were character variables are now factors. The levels of the factors are ordered by the stickiness median. For example, the programs are ordered from 1 (least sticky) to 3 (most sticky).</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="co"># ordered levels of program by median stickiness</span>
+<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="co"># ordered levels of program by median stickiness</span>
 <span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span>(<span class="no">data_mw</span>$<span class="no">program</span>)
-<span class="co">#&gt; [1] "Chemical Engineering"   "Electrical Engineering" "Industrial Engineering"</span></pre></body></html></div>
-<p>While the student groupings levels are ordered from 1 (least sticky) to 10 (most sticky).</p>
-<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="co"># ordered levels of student group by median stickiness</span>
+<span class="co">#&gt; [1] "Electrical Engineering" "Chemical Engineering"   "Industrial Engineering"</span></pre></body></html></div>
+<p>While the student groupings levels are ordered from 1 (least sticky) to 9 (most sticky).</p>
+<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="co"># ordered levels of student group by median stickiness</span>
 <span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span>(<span class="no">data_mw</span>$<span class="no">race_sex</span>)
-<span class="co">#&gt;  [1] "Native American Female" "Native American Male"   "Hispanic Female"       </span>
-<span class="co">#&gt;  [4] "Black Male"             "Hispanic Male"          "White Female"          </span>
-<span class="co">#&gt;  [7] "Black Female"           "White Male"             "Asian Female"          </span>
-<span class="co">#&gt; [10] "Asian Male"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "Native American Male" "Black Male"           "Hispanic Female"     </span>
+<span class="co">#&gt; [4] "White Female"         "Black Female"         "White Male"          </span>
+<span class="co">#&gt; [7] "Hispanic Male"        "Asian Female"         "Asian Male"</span></pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 <div id="graph-the-results" class="section level2">
 <h2 class="hasAnchor">
 <a href="#graph-the-results" class="anchor"></a>Graph the results</h2>
 <p>We use conventional ggplot2 functions to graph stickiness in a multiway dot plot. Rows and panels, from top to bottom, are ordered by decreasing median stickiness <span class="citation">(Cleveland <a href="#ref-cleveland1993" role="doc-biblioref">1993</a>)</span>.</p>
-<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="co"># graph results</span>
+<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="co"># graph results</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data_mw</span>, <span class="kw">mapping</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">stick</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">race_sex</span>)) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="kw">facets</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">program</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
@@ -516,7 +524,7 @@
 <p>A multiway design reveals patterns and anomalies in the results. For example, among these programs for this sample population:</p>
 <p>Visual anomalies, circled in red</p>
 <ul>
-<li>Hispanic men have a higher stickiness in Industrial engineering than would be expected from their overall stickiness</li>
+<li>Hispanic women have a higher stickiness in Industrial engineering than would be expected from their overall stickiness</li>
 <li>White women have a lower stickiness in Electrical engineering than expected</li>
 <li>Asian men have a lower stickiness in Chemical engineering than expected</li>
 </ul>
@@ -551,71 +559,77 @@
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor"></a>Complete script</h3>
 <p>In response to requests from some of our workshop attendees, we collect the vignette code chunks in one script. We condense the script by omitting exploratory steps so we can focus on the steps that produce the results.</p>
-<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="co"># load packages</span>
+<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="co"># load packages</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfielddata</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
 
 <span class="co"># gather the three programs</span>
 <span class="no">che_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1407"</span>)
-<span class="no">che</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">che_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Chemical Engineering"</span>)
+<span class="no">che</span>     <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">che_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Chemical Engineering"</span>)
 <span class="no">ece_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1410"</span>)
-<span class="no">ece</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">ece_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Electrical Engineering"</span>)
+<span class="no">ece</span>     <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">ece_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Electrical Engineering"</span>)
 <span class="no">ise_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1435"</span>)
-<span class="no">ise</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">ise_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Industrial Engineering"</span>)
+<span class="no">ise</span>     <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">ise_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Industrial Engineering"</span>)
 <span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="no">che</span>, <span class="no">ece</span>, <span class="no">ise</span>)
 <span class="no">program_group</span>$<span class="no">cip6name</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
 
 <span class="co"># extract a vector of 6-digit CIP codes</span>
 <span class="no">group_codes</span> <span class="kw">&lt;-</span> <span class="no">program_group</span>$<span class="no">cip6</span>
 
-<span class="co"># gather individual students ever enrolled</span>
-<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_enrollees.html">get_enrollees</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldterms</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">group_codes</span>)
-<span class="no">ids_we_seek</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>$<span class="no">id</span>
-<span class="no">demographics</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_race_sex.html">get_race_sex</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldstudents</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">ids_we_seek</span>)
-<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">demographics</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">program_group</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="co"># gather students ever enrolled with feasible program completion </span>
+<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_enrollees.html">get_enrollees</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldterms</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">group_codes</span>)
+<span class="no">ids_we_want</span>  <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/feasible_completion.html">feasible_completion</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">enrollees</span>$<span class="no">id</span>)
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>$<span class="no">id</span> <span class="kw">%in%</span> <span class="no">ids_we_want</span>
+<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="no">enrollees</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">demographics</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_race_sex.html">get_race_sex</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldstudents</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">ids_we_want</span>)
+<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">demographics</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">program_group</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># group by the framing variables</span>
-<span class="no">enrollees</span>$<span class="no">ever</span> <span class="kw">&lt;-</span> <span class="fl">0</span>
+<span class="no">enrollees</span>$<span class="no">ever</span>    <span class="kw">&lt;-</span> <span class="fl">0</span>
 <span class="no">grouped_enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span>(<span class="no">ever</span> ~ <span class="no">race</span> + <span class="no">sex</span> + <span class="no">program</span>,
   <span class="kw">data</span> <span class="kw">=</span> <span class="no">enrollees</span>,
   <span class="kw">function</span>(<span class="no">x</span>) <span class="no">ever</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">x</span>)
 )
 
 <span class="co"># gather individual graduating students</span>
-<span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_graduates.html">get_graduates</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfielddegrees</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">group_codes</span>)
-<span class="no">ids_we_seek</span> <span class="kw">&lt;-</span> <span class="no">graduates</span>$<span class="no">id</span>
-<span class="no">demographics</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_race_sex.html">get_race_sex</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldstudents</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">ids_we_seek</span>)
-<span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">demographics</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">program_group</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">graduates</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_graduates.html">get_graduates</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfielddegrees</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">group_codes</span>)
+<span class="no">ids_we_want</span>  <span class="kw">&lt;-</span> <span class="no">graduates</span>$<span class="no">id</span>
+<span class="no">demographics</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_race_sex.html">get_race_sex</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldstudents</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">ids_we_want</span>)
+<span class="no">graduates</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">demographics</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">graduates</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">program_group</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># group by the framing variables</span>
-<span class="no">graduates</span>$<span class="no">grad</span> <span class="kw">&lt;-</span> <span class="fl">0</span>
+<span class="no">graduates</span>$<span class="no">grad</span>    <span class="kw">&lt;-</span> <span class="fl">0</span>
 <span class="no">grouped_graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span>(<span class="no">grad</span> ~ <span class="no">race</span> + <span class="no">sex</span> + <span class="no">program</span>,
   <span class="kw">data</span> <span class="kw">=</span> <span class="no">graduates</span>,
   <span class="kw">function</span>(<span class="no">x</span>) <span class="no">grad</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">x</span>)
 )
 
 <span class="co"># compute the metric</span>
-<span class="no">metric</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">grouped_enrollees</span>, <span class="no">grouped_graduates</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">degree_NA</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">metric</span>$<span class="no">grad</span>)
-<span class="no">metric</span>$<span class="no">grad</span>[<span class="no">degree_NA</span>] <span class="kw">&lt;-</span> <span class="fl">0</span>
-<span class="no">rows_we_keep</span> <span class="kw">&lt;-</span> <span class="no">metric</span>$<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">0</span>
-<span class="no">metric</span> <span class="kw">&lt;-</span> <span class="no">metric</span>[<span class="no">rows_we_keep</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">metric</span>       <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">grouped_enrollees</span>, <span class="no">grouped_graduates</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">rows_with_degree_NA</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">metric</span>$<span class="no">grad</span>)
+<span class="no">metric</span>$<span class="no">grad</span>[<span class="no">rows_with_degree_NA</span>] <span class="kw">&lt;-</span> <span class="fl">0</span>
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">metric</span>$<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">0</span>
+<span class="no">metric</span>       <span class="kw">&lt;-</span> <span class="no">metric</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 <span class="no">metric</span>$<span class="no">stick</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="no">metric</span>$<span class="no">grad</span> / <span class="no">metric</span>$<span class="no">ever</span>, <span class="fl">3</span>)
 
 <span class="co"># prepare data for multiway graph</span>
-<span class="no">rows_we_keep</span> <span class="kw">&lt;-</span> !<span class="no">metric</span>$<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span>) <span class="kw">&amp;</span>
-  !<span class="no">metric</span>$<span class="no">sex</span> <span class="kw">%in%</span> <span class="st">"Unknown"</span>
-<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">metric</span>[<span class="no">rows_we_keep</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
-<span class="no">rows_we_keep</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>$<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">5</span>
-<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_keep</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">pre_mw</span>       <span class="kw">&lt;-</span> <span class="no">metric</span>
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> !<span class="no">pre_mw</span>$<span class="no">sex</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Unknown"</span>)
+<span class="no">pre_mw</span>       <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> !<span class="no">pre_mw</span>$<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span>)
+<span class="no">pre_mw</span>       <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>$<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">5</span>
+<span class="no">pre_mw</span>       <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 <span class="no">pre_mw</span>$<span class="no">race_sex</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="no">pre_mw</span>$<span class="no">race</span>, <span class="no">pre_mw</span>$<span class="no">sex</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">" "</span>)
 
 <span class="co"># complete the transformation to multiway form</span>
-<span class="no">columns_we_keep</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"stick"</span>)
-<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[, <span class="no">columns_we_keep</span>, <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
-<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span>(<span class="no">pre_mw</span>)
+<span class="no">data_mw</span>         <span class="kw">&lt;-</span> <span class="no">pre_mw</span>
+<span class="no">columns_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"stick"</span>)
+<span class="no">data_mw</span>         <span class="kw">&lt;-</span> <span class="no">data_mw</span>[, <span class="no">columns_we_want</span>, <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">data_mw</span>         <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span>(<span class="no">data_mw</span>)
 
 <span class="co"># graph results</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data_mw</span>, <span class="kw">mapping</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">stick</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">race_sex</span>)) +

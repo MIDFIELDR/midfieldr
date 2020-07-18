@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Order levels of multiway data — order_multiway • midfieldr</title>
+<title>Subset IDs for feasible completion — feasible_completion • midfieldr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,10 +46,9 @@
 
 
 
-<meta property="og:title" content="Order levels of multiway data — order_multiway" />
-<meta property="og:description" content="Transform a data frame such that two categorical variables are factors
-with levels ordered by medians of the quantitative variable. Rows and
-columns of the data frame are otherwise unaffected." />
+<meta property="og:title" content="Subset IDs for feasible completion — feasible_completion" />
+<meta property="og:description" content="Subset a vector of student IDs, retaining students for whom program
+completion is feasible within a designated time limit." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -154,62 +153,101 @@ columns of the data frame are otherwise unaffected." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Order levels of multiway data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/order_multiway.R'><code>R/order_multiway.R</code></a></small>
-    <div class="hidden name"><code>order_multiway.Rd</code></div>
+    <h1>Subset IDs for feasible completion</h1>
+    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/feasible_completion.R'><code>R/feasible_completion.R</code></a></small>
+    <div class="hidden name"><code>feasible_completion.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Transform a data frame such that two categorical variables are factors
-with levels ordered by medians of the quantitative variable. Rows and
-columns of the data frame are otherwise unaffected.</p>
+    <p>Subset a vector of student IDs, retaining students for whom program
+completion is feasible within a designated time limit.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>order_multiway</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>feasible_completion</span>(
+  <span class='kw'>id</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>span</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>terms_transfer_max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>data_students</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>data_terms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>data_degrees</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>data frame of multiway data</p></td>
+      <th>id</th>
+      <td><p>character vector of student IDs</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>not used for values. Forces optional arguments to be usable
+by name only.</p></td>
+    </tr>
+    <tr>
+      <th>span</th>
+      <td><p>numeric scalar, number of years to define feasibility, default
+is 6 years</p></td>
+    </tr>
+    <tr>
+      <th>terms_transfer_max</th>
+      <td><p>numeric scalar, the term equivalent of the
+maximum number of transfer credit hours, default is 4 terms</p></td>
+    </tr>
+    <tr>
+      <th>data_students</th>
+      <td><p>data frame of student attributes</p></td>
+    </tr>
+    <tr>
+      <th>data_terms</th>
+      <td><p>data frame of term attributes</p></td>
+    </tr>
+    <tr>
+      <th>data_degrees</th>
+      <td><p>data frame of degree attributes</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>data.frame</code> with the following properties:</p><ul>
-<li><p>Rows are not modified</p></li>
-<li><p>Quantitative column is not modified</p></li>
-<li><p>Categorical columns are factors with levels ordered by
-median quantitative values</p></li>
-<li><p>Grouping structures, if any, are not preserved</p></li>
-<li><p>Data frame extension attributes, e.g., tibble, are not preserved</p></li>
-</ul>
-
+    <p>character vector of student IDs, a subset of the input</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>In multiway data, there is a single quantitative value (or response)
-for every combination of levels of two categorical variables.
-<code>order_multiway()</code> converts the columns of categorical variables
-to factors and orders the factor levels by increasing medians of the
-quantitative response variable.</p>
-<p>The <code>data</code> argument, therefore, must have three columns only. One
-column is a quantitative variable (type numeric) and two columns are
-categorical variables (type character or factor).</p>
+    <p>To count a non-graduating student in a persistence metric, completing
+their instructional program must have been feasible. Completion feasibility
+depends on the range of data from the institution, the student's
+matriculation term, and a designated time limit (typically 6 years).
+The relevant terminology is:</p>
+<dl'>
+  <dt>data range</dt><dd><p>The span of terms for which student-record data
+  are available. Varies by institution.</p></dd>
+  <dt>completion feasibility</dt><dd><p>A student may complete their program
+  within the limits of the data range.</p></dd>
+  <dt>matriculation limit</dt><dd><p>The last term a student can matriculate
+  and feasibly complete their program  within a designated time limit
+  (typically 6 years). Transfer credits can advance the matriculation
+  limit.</p></dd>
+
+</dl>
+
+<p>The subsetting condition is that a student has graduated, or if not, that
+their matriculation term is no later than the matriculation limit,
+adjusted for transfer credits if any, up to a maximum of 4 terms equivalent.</p>
+<p>The function accesses three of the midfielddata data sets:
+<code><a href='https://rdrr.io/pkg/midfielddata/man/midfieldstudents.html'>midfieldstudents</a></code>,
+<code><a href='https://rdrr.io/pkg/midfielddata/man/midfieldterms.html'>midfieldterms</a></code>, and
+<code><a href='https://rdrr.io/pkg/midfielddata/man/midfielddegrees.html'>midfielddegrees</a></code> or their equivalents.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other data_carpentry: 
-<code><a href='feasible_completion.html'>feasible_completion</a>()</code>,
 <code><a href='label_programs.html'>label_programs</a>()</code>,
+<code><a href='order_multiway.html'>order_multiway</a>()</code>,
 <code><a href='term_addition.html'>term_addition</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>catg1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"urban"</span>, <span class='st'>"rural"</span>, <span class='st'>"suburb"</span>, <span class='st'>"village"</span>), <span class='kw'>each</span> <span class='kw'>=</span> <span class='fl'>2</span>)
-<span class='no'>catg2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"men"</span>, <span class='st'>"women"</span>), <span class='kw'>times</span> <span class='kw'>=</span> <span class='fl'>4</span>)
-<span class='no'>value</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.22</span>, <span class='fl'>0.14</span>, <span class='fl'>0.43</span>, <span class='fl'>0.58</span>, <span class='fl'>0.81</span>, <span class='fl'>0.46</span>, <span class='fl'>0.15</span>, <span class='fl'>0.20</span>)
-<span class='no'>mw_df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='no'>catg1</span>, <span class='no'>catg2</span>, <span class='no'>value</span>)
-<span class='fu'>order_multiway</span>(<span class='no'>mw_df</span>)</div></pre>
+    <pre class="examples"><div class='input'># placeholder
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
