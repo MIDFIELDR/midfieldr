@@ -1,5 +1,6 @@
 context("order_multiway")
 
+# get_my_path() for data in the testing directory
 # ctrl-shift-L to load internal functions
 
 # to create df, paste into test
@@ -19,7 +20,13 @@ df1 <- wrapr::build_frame(
     "suburb" , "women", 0.46  |
     "village", "men"  , 0.15  |
     "village", "women", 0.2   )
-
+test_that("Integer values are accepted", {
+  df2 <- df1
+  df2$val <- as.integer(seq(1, 8))
+  df3 <- df2
+  df3$val <- as.double(df3$val)
+  expect_equal(order_multiway(df2), order_multiway(df3))
+})
 test_that("Pipe correctly passes the data argument", {
   expect_equal(
     df1 %>% order_multiway(),

@@ -1,32 +1,33 @@
 #' @importFrom data.table setDT setDF
 NULL
 
-#' Add terms
+#' Add semesters to an encoded academic term
 #'
-#' Term arithmetic
+#' Add a whole number of semesters to an academic term encoded \code{YYYYT}
 #'
 #' @param data data frame
-#' @param ... not used for values. Forces optional arguments to be usable
-#' by name only.
-#' @param term_col character scalar, name of a term column, numeric format YYYYT
-#' @param add_col character scalar, name of a column of terms to add, numeric
-#' format T
+#' @param term_col character name of a numeric column of terms
+#' encoded YYYYT
+#' @param add_col character name of a numeric column of the whole number
+#' of semesters to add to YYYYT
 #'
 #' @return \code{data.frame}
-#' @family data_carpentry
+#'
 #' @examples
 #' # placeholder
 #'
+#' @family data_carpentry
+#'
 #' @export
-term_addition <- function(data = NULL, ..., term_col = NULL, add_col = NULL) {
-
+#'
+term_addition <- function(data = NULL, term_col = NULL, add_col = NULL) {
   DT <- data.table::as.data.table(data)
 
   # bind names
   iterm <- NULL
   jterm <- NULL
   jyear <- NULL
-  year  <- NULL
+  year <- NULL
 
   # advance matriculation limit by transfer terms
   split_matric <- data.table::as.data.table(split_term(DT, term_col))

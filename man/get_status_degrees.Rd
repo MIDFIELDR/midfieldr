@@ -38,6 +38,7 @@ music_codes <- c("500901", "500903", "500913")
 students <- get_enrollees(codes = music_codes)
 students <- get_status_degrees(keep_id = students$id)
 str(students)
+
 }
 \seealso{
 Other data_query: 

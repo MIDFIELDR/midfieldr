@@ -2,26 +2,24 @@
 % Please edit documentation in R/term_addition.R
 \name{term_addition}
 \alias{term_addition}
-\title{Add terms}
+\title{Add semesters to an encoded academic term}
 \usage{
-term_addition(data = NULL, ..., term_col = NULL, add_col = NULL)
+term_addition(data = NULL, term_col = NULL, add_col = NULL)
 }
 \arguments{
 \item{data}{data frame}
 
-\item{...}{not used for values. Forces optional arguments to be usable
-by name only.}
+\item{term_col}{character name of a numeric column of terms
+encoded YYYYT}
 
-\item{term_col}{character scalar, name of a term column, numeric format YYYYT}
-
-\item{add_col}{character scalar, name of a column of terms to add, numeric
-format T}
+\item{add_col}{character name of a numeric column of the whole number
+of semesters to add to YYYYT}
 }
 \value{
 \code{data.frame}
 }
 \description{
-Term arithmetic
+Add a whole number of semesters to an academic term encoded \code{YYYYT}
 }
 \examples{
 # placeholder
@@ -29,7 +27,7 @@ Term arithmetic
 }
 \seealso{
 Other data_carpentry: 
-\code{\link{feasible_completion}()},
+\code{\link{completion_feasible}()},
 \code{\link{label_programs}()},
 \code{\link{order_multiway}()}
 }

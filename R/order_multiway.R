@@ -31,15 +31,17 @@ NULL
 #'   \item Data frame extension attributes, e.g., tibble, are not preserved
 #' }
 #'
-#' @family data_carpentry
-#'
 #' @examples
 #' catg1 <- rep(c("urban", "rural", "suburb", "village"), each = 2)
 #' catg2 <- rep(c("men", "women"), times = 4)
 #' value <- c(0.22, 0.14, 0.43, 0.58, 0.81, 0.46, 0.15, 0.20)
 #' mw_df <- data.frame(catg1, catg2, value)
 #' order_multiway(mw_df)
+#'
+#' @family data_carpentry
+#'
 #' @export
+#'
 order_multiway <- function(data = NULL) {
 
   # argument checks
@@ -51,23 +53,32 @@ order_multiway <- function(data = NULL) {
   }
 
   # for checking column class
-  get_col_type <- function(data) {
+  get_col_class <- function(data) {
     col_class <- sapply(data, FUN = class)
     col_class <- as.data.frame(col_class)
     col_class$col_name <- row.names(col_class)
     row.names(col_class) <- NULL
-    col_type <- col_class
+    col_class <- col_class
   }
+
+  col_class <- get_col_class(data)
+
   # factors to characters
-  col_type <- get_col_type(data)
-  if ("factor" %in% col_type$col_class) {
-    idx_fct <- col_type$col_class == "factor"
-    data[idx_fct] <- lapply(data[idx_fct], as.character)
+  if ("factor" %in% col_class$col_class) {
+    idx <- col_class$col_class == "factor"
+    data[idx] <- lapply(data[idx], as.character)
   }
+  # integer to double
+  if ("integer" %in% col_class$col_class) {
+    idx <- col_class$col_class == "integer"
+    data[idx] <- lapply(data[idx], as.double)
+  }
+
+  col_class <- get_col_class(data)
+
   # one numeric and 2 character
-  col_type <- get_col_type(data)
   if (isFALSE(identical(
-    sort(col_type$col_class),
+    sort(col_class$col_class),
     c("character", "character", "numeric")
   ))) {
     stop(paste(
@@ -87,11 +98,11 @@ order_multiway <- function(data = NULL) {
   DT <- data.table::setDT(data)
 
   # one quantitative variable
-  idx_num <- col_type$col_class == "numeric"
-  value <- col_type$col_name[idx_num]
+  idx_num <- col_class$col_class == "numeric"
+  value <- col_class$col_name[idx_num]
 
   # two categorical variables
-  cat_var <- col_type$col_name[!idx_num]
+  cat_var <- col_class$col_name[!idx_num]
   cat1 <- cat_var[1]
   cat2 <- cat_var[2]
   med1 <- paste0("med_", cat1)

@@ -5,42 +5,35 @@
 \alias{exa_stickiness}
 \title{Example stickiness data}
 \format{
-A data frame (tibble) with 32 observations and 6 variables.
+\code{data.frame} with 32 rows and 6 columns keyed by
+program, race/ethnicity, and sex. The variables are:
 \describe{
- \item{program}{Instructional programs selected for study. Character
- variable.}
- \item{race}{Student race and sex from \code{midfieldstudents} data.
-  Character variable.}
- \item{sex}{Student sex from \code{midfieldstudents} data.  Character
- variable.}
- \item{ever}{Number of students ever enrolled in a program. Grouped
- and summarized from \code{midfieldterms} data.}
- \item{grad}{Number of students graduating from the program. Grouped
- and summarized from \code{midfielddegrees} data.}
- \item{stick}{Program stickiness: the ratio of the number of
- students graduating from a program to the number ever enrolled in the
- program.}
+ \item{program}{instructional programs selected for study}
+ \item{race}{student race/ethnicity}
+ \item{sex}{student sex}
+ \item{ever}{number of students ever enrolled in a program and completion
+ is feasible}
+ \item{grad}{number of students graduating from the program}
+ \item{stick}{program stickiness, a persistence metric}
 }
-}
-\source{
-\href{https://midfieldr.github.io/midfielddata/}{midfielddata}
- package
 }
 \usage{
 exa_stickiness
 }
 \description{
-Stickiness metric results for Civil, Electrical, Industrial, and
-Mechanical Engineering. Data are grouped by program, student
-race/ethnicity, and sex. Used for graphing the results in a case study
-in the vignettes.
+Stickiness metric results for a case study of Civil, Electrical,
+Industrial, and Mechanical Engineering programs in
+\href{https://midfieldr.github.io/midfielddata/}{midfielddata}. Results
+are grouped by program, race/ethnicity, and sex.
 }
 \examples{
-exa_stickiness
+# prepare data for multiway graph
+exa_stickiness$race_sex <- paste(exa_stickiness$race, exa_stickiness$sex)
+columns_we_want <- c("program", "race_sex", "stick")
+pre_mw <- exa_stickiness[, columns_we_want, drop = FALSE]
+
 }
 \seealso{
-The "Compute stickiness" vignette.
-
 Other example_data: 
 \code{\link{exa_cip}},
 \code{\link{exa_group}},

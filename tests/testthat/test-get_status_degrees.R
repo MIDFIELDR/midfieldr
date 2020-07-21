@@ -1,5 +1,6 @@
 context("get_status_degrees")
 
+# get_my_path() for data in the testing directory
 # ctrl-shift-L to load internal functions
 
 load(file = get_my_path("subset_degrees.rda"))

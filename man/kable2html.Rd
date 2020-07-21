@@ -4,12 +4,14 @@
 \alias{kable2html}
 \title{Vignette table}
 \usage{
-kable2html(x, font_size = NULL)
+kable2html(x, font_size = NULL, caption = NULL)
 }
 \arguments{
 \item{x}{data frame}
 
 \item{font_size}{(optional) in points, 11 pt default}
+
+\item{caption}{(optional) character}
 }
 \description{
 Prints a data frame as an HTML table in a vignette. Uses knitr::kable

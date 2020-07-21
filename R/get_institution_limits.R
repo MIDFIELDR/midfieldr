@@ -17,7 +17,6 @@ NULL
 #' required by name.
 #'
 #' @param data data frame of term attributes
-#'
 #' @param span number of years for feasible completion
 #'
 #' @return \code{data.frame} with the following properties:
@@ -29,12 +28,14 @@ NULL
 #'   \item Data frame extension attributes, e.g., tibble, are not preserved
 #' }
 #'
-#' @family data_query
-#'
 #' @examples
 #' # placeholder
+#'
+#' @family data_query
+#'
 #' @export
-get_institution_limits <- function(data = NULL, span = NULL){
+#'
+get_institution_limits <- function(data = NULL, span = NULL) {
 
   # defaults
   data <- data %||% midfielddata::midfieldterms
@@ -47,14 +48,14 @@ get_institution_limits <- function(data = NULL, span = NULL){
   assert_required_column(data, "term")
 
   # bind names
-  institution  <- NULL
-  term         <- NULL
-  data_limit   <- NULL
-  iterm        <- NULL
-  enter_y      <- NULL
-  enter_t      <- NULL
+  institution <- NULL
+  term <- NULL
+  data_limit <- NULL
+  iterm <- NULL
+  enter_y <- NULL
+  enter_t <- NULL
   matric_limit <- NULL
-  year         <- NULL
+  year <- NULL
 
   # do the work
   DT <- data.table::as.data.table(data)
@@ -68,7 +69,7 @@ get_institution_limits <- function(data = NULL, span = NULL){
   inst_data_limit <- DT # save for later merge
 
   # split term to create year and iterm
-  DT[, year  := as.double(substr(data_limit, 1, 4))]
+  DT[, year := as.double(substr(data_limit, 1, 4))]
   DT[, iterm := as.double(substr(data_limit, 5, 5))]
 
   # select
@@ -79,9 +80,9 @@ get_institution_limits <- function(data = NULL, span = NULL){
 
   # determine matric_limit
   DT[, enter_y := ifelse(iterm > 2,
-                           year - span + 1,
-                           year - span)
-  ][
+    year - span + 1,
+    year - span
+  )][
     , enter_t := ifelse(iterm > 2, 1, 3)
   ][
     , matric_limit := 10 * enter_y + enter_t
@@ -92,11 +93,14 @@ get_institution_limits <- function(data = NULL, span = NULL){
 
   # join
   inst_limits <- merge(inst_data_limit,
-                       inst_matric_limit,
-                       all.x = TRUE,
-                       by = "data_limit")
+    inst_matric_limit,
+    all.x = TRUE,
+    by = "data_limit"
+  )
   # select
-  inst_limits <- inst_limits[order(institution),
-                             .(institution, matric_limit, data_limit)]
+  inst_limits <- inst_limits[
+    order(institution),
+    .(institution, matric_limit, data_limit)
+  ]
   data.table::setDF(inst_limits)
 }

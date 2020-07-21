@@ -32,7 +32,6 @@ NULL
 #' }
 #'
 #' @param data data frame of CIP codes and names
-#'
 #' @param label scalar character string
 #'
 #' @return \code{data.frame} with the following properties:
@@ -44,14 +43,16 @@ NULL
 #'   \item Data frame extension attributes, e.g., tibble, are not preserved
 #' }
 #'
-#' @family data_carpentry
-#'
 #' @examples
 #' ece_cip <- get_cip(cip, keep_any = "^1410")
 #' label_programs(ece_cip, label = "ECE")
 #' label_programs(ece_cip, label = "cip2name")
 #' label_programs(ece_cip, label = "cip6name")
+#'
+#' @family data_carpentry
+#'
 #' @export
+#'
 label_programs <- function(data = NULL, label = NULL) {
 
   # check arguments
@@ -63,13 +64,13 @@ label_programs <- function(data = NULL, label = NULL) {
 
   if (isTRUE("program" %in% names(data))) {
     stop("`data` may not include an existing `program` column",
-         call. = FALSE
+      call. = FALSE
     )
   }
   if (isFALSE(identical(class(data$cip6), "character")) ||
-      isFALSE(identical(class(data$cip6name), "character"))) {
+    isFALSE(identical(class(data$cip6name), "character"))) {
     stop("Columns `cip6` and `cip6name` must be character class",
-         call. = FALSE
+      call. = FALSE
     )
   }
 
@@ -82,7 +83,7 @@ label_programs <- function(data = NULL, label = NULL) {
     isTRUE(identical(label, "cip4name"))) {
     if (isFALSE(all("cip4name" %in% names(data)))) {
       stop("Column name `cip4name` required when `label = cip4name` or NULL",
-           call. = FALSE
+        call. = FALSE
       )
     } else if (isFALSE(identical(class(data$cip4name), "character"))) {
       stop("Column `cip4name` must be character class",
@@ -95,7 +96,7 @@ label_programs <- function(data = NULL, label = NULL) {
   } else if (isTRUE(identical(label, "cip2name"))) {
     if (isFALSE(all("cip2name" %in% names(data)))) {
       stop("Column name `cip2name` required when `label = cip2name`",
-      call. = FALSE
+        call. = FALSE
       )
     } else if (isFALSE(identical(class(data$cip2name), "character"))) {
       stop("Column `cip2name` must be character class",

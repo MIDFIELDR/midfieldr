@@ -16,7 +16,6 @@ NULL
 #' by name.
 #'
 #' @param data data frame of student attributes
-#'
 #' @param keep_id character vector of student IDs
 #'
 #' @return \code{data.frame} with the following properties:
@@ -27,15 +26,17 @@ NULL
 #'   \item Data frame extension attributes, e.g., tibble, are not preserved
 #' }
 #'
-#' @family data_query
-#'
 #' @examples
 #' music_codes <- c("500901", "500903", "500913")
 #' music_enrollees <- get_enrollees(codes = music_codes)
 #' enrollees_id <- music_enrollees$id
 #' enrollees <- get_status_transfers(keep_id = enrollees_id)
 #' str(enrollees)
+#'
+#' @family data_query
+#'
 #' @export
+#'
 get_status_transfers <- function(data = NULL, keep_id = NULL) {
 
   # default data if NULL
@@ -53,7 +54,6 @@ get_status_transfers <- function(data = NULL, keep_id = NULL) {
   # bind names
   id <- NULL
   term_enter <- NULL
-  # transfer <- NULL
   hours_transfer <- NULL
 
   # do the work

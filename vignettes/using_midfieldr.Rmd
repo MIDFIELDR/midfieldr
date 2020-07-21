@@ -8,6 +8,7 @@ vignette: >
 editor_options: 
   chunk_output_type: console
 bibliography: ../inst/REFERENCES.bib
+csl: ../inst/chicago-author-date.csl
 link-citations: yes
 resource_files:
   - ../man/figures/vign-using-midfieldr-fig1-1.png
@@ -43,7 +44,7 @@ knitr::knit_hooks$set(purl = knitr::hook_purl)
 knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
 ```
 
-This exercise illustrates a typical workflow for computing a persistence metric, starting with student record data from MIDFIELD [@aee2016] and ending with a multiway graph. 
+This exercise illustrates a typical workflow for computing a persistence metric, starting with student record data from MIDFIELD [@Ohland+Long:2016] and ending with a multiway graph. 
 
 Our metric in this case is "stickiness", the ratio of the number of students graduating from a program to the number ever enrolled in the program [@stickiness2012]. We compare the stickiness of three engineering programs with students grouped by program, race/ethnicity, and sex. 
 
@@ -163,15 +164,15 @@ enrollees <- get_enrollees(data = midfieldterms, codes = group_codes)
 str(enrollees)
 ```
 
-For some of these students, completing their program may not be feasible given the range of data available. `feasible_completion()` subsets the student IDs, retaining those who matriculate at least six years before the last term in the data. 
+For some of these students, completing their program may not be feasible given the range of data available. `completion_feasible()` subsets the student IDs, retaining those who matriculate at least six years before the last term in the data. 
 
 ```{r}
-# apply the feasible completion filter 
-ids_we_want <- feasible_completion(id = enrollees$id)
+# apply the feasible completion filter
+ids_we_want <- completion_feasible(id = enrollees$id)
 
 # subset the enrollees
 rows_we_want <- enrollees$id %in% ids_we_want
-enrollees    <- enrollees[rows_we_want, , drop = FALSE]
+enrollees <- enrollees[rows_we_want, , drop = FALSE]
 
 # examine the result
 str(enrollees)
@@ -216,7 +217,7 @@ enrollees$ever <- 0
 # group by the framing variables and count
 grouped_enrollees <- aggregate(ever ~ race + sex + program,
   data = enrollees,
-  function(x) ever <- length(x)
+  FUN = function(x) ever = sum(!is.na(x))
 )
 
 # examine the result
@@ -229,11 +230,11 @@ A similar process is used to group and summarize our graduates. We start with `g
 
 ```{r}
 # gather individual graduating students
-graduates    <- get_graduates(data = midfielddegrees, codes = group_codes)
-ids_we_want  <- graduates$id
+graduates <- get_graduates(data = midfielddegrees, codes = group_codes)
+ids_we_want <- graduates$id
 demographics <- get_race_sex(data = midfieldstudents, keep_id = ids_we_want)
-graduates    <- merge(graduates, demographics, all.x = TRUE)
-graduates    <- merge(graduates, program_group, all.x = TRUE)
+graduates <- merge(graduates, demographics, all.x = TRUE)
+graduates <- merge(graduates, program_group, all.x = TRUE)
 
 # initialize the grad count column
 graduates$grad <- 0
@@ -241,7 +242,7 @@ graduates$grad <- 0
 # group by the framing variables
 grouped_graduates <- aggregate(grad ~ race + sex + program,
   data = graduates,
-  function(x) grad <- length(x)
+  FUN = function(x) ever = sum(!is.na(x))
 )
 
 # examine the result
@@ -313,7 +314,7 @@ This completes the data manipulation for obtaining the persistence metric.
 
 ## Prepare the results for display
 
-To prepare the results for graphing, we construct a "pre-multiway" version of the data frame. We begin by removing ambiguous levels of race/ethnicity  and sex. 
+To prepare the results for graphing, we construct a "pre-multiway" version of the data frame. We begin by removing ambiguous levels of race/ethnicity and sex. 
 
 ```{r}
 # initialize the pre-multiway data frame
@@ -479,70 +480,70 @@ library(ggplot2)
 
 # gather the three programs
 che_cip <- get_cip(data = cip, keep_any = "^1407")
-che     <- label_programs(data = che_cip, label = "Chemical Engineering")
+che <- label_programs(data = che_cip, label = "Chemical Engineering")
 ece_cip <- get_cip(data = cip, keep_any = "^1410")
-ece     <- label_programs(data = ece_cip, label = "Electrical Engineering")
+ece <- label_programs(data = ece_cip, label = "Electrical Engineering")
 ise_cip <- get_cip(data = cip, keep_any = "^1435")
-ise     <- label_programs(data = ise_cip, label = "Industrial Engineering")
+ise <- label_programs(data = ise_cip, label = "Industrial Engineering")
 program_group <- rbind(che, ece, ise)
 program_group$cip6name <- NULL
 
 # extract a vector of 6-digit CIP codes
 group_codes <- program_group$cip6
 
-# gather students ever enrolled with feasible program completion 
-enrollees    <- get_enrollees(data = midfieldterms, codes = group_codes)
-ids_we_want  <- feasible_completion(id = enrollees$id)
+# gather students ever enrolled with feasible program completion
+enrollees <- get_enrollees(data = midfieldterms, codes = group_codes)
+ids_we_want <- completion_feasible(id = enrollees$id)
 rows_we_want <- enrollees$id %in% ids_we_want
-enrollees    <- enrollees[rows_we_want, , drop = FALSE]
+enrollees <- enrollees[rows_we_want, , drop = FALSE]
 demographics <- get_race_sex(data = midfieldstudents, keep_id = ids_we_want)
-enrollees    <- merge(enrollees, demographics, all.x = TRUE)
-enrollees    <- merge(enrollees, program_group, all.x = TRUE)
+enrollees <- merge(enrollees, demographics, all.x = TRUE)
+enrollees <- merge(enrollees, program_group, all.x = TRUE)
 
 # group by the framing variables
-enrollees$ever    <- 0
+enrollees$ever <- 0
 grouped_enrollees <- aggregate(ever ~ race + sex + program,
   data = enrollees,
-  function(x) ever <- length(x)
+  FUN = function(x) ever = sum(!is.na(x))
 )
 
 # gather individual graduating students
-graduates    <- get_graduates(data = midfielddegrees, codes = group_codes)
-ids_we_want  <- graduates$id
+graduates <- get_graduates(data = midfielddegrees, codes = group_codes)
+ids_we_want <- graduates$id
 demographics <- get_race_sex(data = midfieldstudents, keep_id = ids_we_want)
-graduates    <- merge(graduates, demographics, all.x = TRUE)
-graduates    <- merge(graduates, program_group, all.x = TRUE)
+graduates <- merge(graduates, demographics, all.x = TRUE)
+graduates <- merge(graduates, program_group, all.x = TRUE)
 
 # group by the framing variables
-graduates$grad    <- 0
+graduates$grad <- 0
 grouped_graduates <- aggregate(grad ~ race + sex + program,
   data = graduates,
-  function(x) grad <- length(x)
+  FUN = function(x) ever = sum(!is.na(x))
 )
 
 # compute the metric
-metric       <- merge(grouped_enrollees, grouped_graduates, all.x = TRUE)
+metric <- merge(grouped_enrollees, grouped_graduates, all.x = TRUE)
 rows_with_degree_NA <- is.na(metric$grad)
 metric$grad[rows_with_degree_NA] <- 0
 rows_we_want <- metric$ever > 0
-metric       <- metric[rows_we_want, , drop = FALSE]
+metric <- metric[rows_we_want, , drop = FALSE]
 metric$stick <- round(metric$grad / metric$ever, 3)
 
 # prepare data for multiway graph
-pre_mw       <- metric
+pre_mw <- metric
 rows_we_want <- !pre_mw$sex %in% c("Unknown")
-pre_mw       <- pre_mw[rows_we_want, , drop = FALSE]
+pre_mw <- pre_mw[rows_we_want, , drop = FALSE]
 rows_we_want <- !pre_mw$race %in% c("Unknown", "International", "Other")
-pre_mw       <- pre_mw[rows_we_want, , drop = FALSE]
+pre_mw <- pre_mw[rows_we_want, , drop = FALSE]
 rows_we_want <- pre_mw$ever > 5
-pre_mw       <- pre_mw[rows_we_want, , drop = FALSE]
+pre_mw <- pre_mw[rows_we_want, , drop = FALSE]
 pre_mw$race_sex <- paste(pre_mw$race, pre_mw$sex, sep = " ")
 
 # complete the transformation to multiway form
-data_mw         <- pre_mw
+data_mw <- pre_mw
 columns_we_want <- c("program", "race_sex", "stick")
-data_mw         <- data_mw[, columns_we_want, drop = FALSE]
-data_mw         <- order_multiway(data_mw)
+data_mw <- data_mw[, columns_we_want, drop = FALSE]
+data_mw <- order_multiway(data_mw)
 
 # graph results
 ggplot(data = data_mw, mapping = aes(x = stick, y = race_sex)) +

@@ -40,6 +40,7 @@ music_enrollees <- get_enrollees(codes = music_codes)
 enrollees_id <- music_enrollees$id
 enrollees <- get_status_transfers(keep_id = enrollees_id)
 str(enrollees)
+
 }
 \seealso{
 Other data_query: 

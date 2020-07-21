@@ -17,7 +17,6 @@ NULL
 #' by name.
 #'
 #' @param data data frame of term attributes
-#'
 #' @param codes character vector of 6-digit CIP codes
 #'
 #' @return \code{data.frame} with the following properties:
@@ -29,8 +28,6 @@ NULL
 #'   \item Data frame extension attributes, e.g., tibble, are not preserved
 #' }
 #'
-#' @family data_query
-#'
 #' @examples
 #' music_programs <- get_cip(cip, "^5009")
 #' music_codes <- music_programs$cip6
@@ -40,7 +37,11 @@ NULL
 #' music_codes <- c("500903", "500913")
 #' x <- get_enrollees(codes = music_codes)
 #' str(x)
+#'
+#' @family data_query
+#'
 #' @export
+#'
 get_enrollees <- function(data = NULL, codes = NULL) {
 
   # default data

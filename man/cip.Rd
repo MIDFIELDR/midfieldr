@@ -5,44 +5,33 @@
 \alias{cip}
 \title{Classification of instructional programs (CIP) data}
 \format{
-Data frame (tibble) with 1584 observations and 6 variables.
-All variables are characters. An observation is a unique program.
-
+\code{data.frame} with 1584 rows and 6 columns keyed by the
+6-digit CIP code. The variables are:
 \describe{
-  \item{cip6}{An instructional program's 6-digit code, representing
-  "specific instructional programs" (US National Center for Education
-   Statistics).}
-  \item{cip6name}{Name of a specific program at the 6-digit level.}
-  \item{cip4}{The first 4 digits of \code{cip6} are an instructional
-  program's 4-digit code, representing "intermediate groupings of
-  programs that have comparable content and objectives".}
-  \item{cip4name}{Name of a program grouping at the 4-digit level.}
-  \item{cip2}{The first 2 digits of \code{cip6} are an instructional
-  program's 2-digit code, representing "the most general groupings of
-  related programs".}
-  \item{cip2name}{Name of a program grouping at the 2-digit level.}
+  \item{cip6}{character 6-digit code representing "specific
+  instructional programs" (US National Center for Education Statistics)}
+  \item{cip6name}{character program name at the 6-digit level}
+  \item{cip4}{character 4-digit code (the first 4 digits of \code{cip6})
+  representing "intermediate groupings of programs that have
+  comparable content and objectives"}
+  \item{cip4name}{character program name at the 4-digit level}
+  \item{cip2}{character 2-digit code (the first 2 digits of \code{cip6})
+  representing "the most general groupings of related programs"}
+  \item{cip2name}{character program name at the 2-digit level}
 }
-}
-\source{
-US National Center for Education Statistics (NCES),
-Integrated Postsecondary Education Data System (IPEDS), 2020 CIP
-(\url{https://nces.ed.gov/ipeds/cipcode}).
 }
 \usage{
 cip
 }
 \description{
-A dataset of codes and names for 1584 instructional programs organized
-on three levels: a 2-digit series, a 4-digit series, and a 6-digit series.
+A dataset based on the US National Center for Education Statistics
+(NCES), Integrated Postsecondary Education Data System (IPEDS), 2020
+CIP, \url{https://nces.ed.gov/ipeds/cipcode}. The data are codes and
+names for 1584 instructional programs organized on three levels: a
+2-digit series, a 4-digit series, and a 6-digit series.
 }
 \details{
-6-digit codes are used in the midfielddata datasets
-(\code{midfieldstudents},  \code{midfieldcourses},  \code{midfieldterms},
-and  \code{midfielddegrees}) to encode program information as reported by
-the member institutions.
-
-In addition to the standard codes and names, the midfielddata
-taxonomy includes following three non-IPEDS codes:
+The midfielddata taxonomy includes three non-IPEDS codes:
 \describe{
   \item{14XXXX}{First-Year Engineering (FYE). First-Year Engineering
   students are neither undecided nor undeclared. Their institutions
@@ -59,18 +48,18 @@ taxonomy includes following three non-IPEDS codes:
 }
 }
 \examples{
-# View the CIP data
-print(cip)
+# overview
+str(cip)
 
-# View the programs at the top level of the taxonomy
-unique(cip[, 1:2])
+# top level of the taxonomy
+columns_we_want <- c("cip2", "cip2name")
+unique(cip[, columns_we_want, drop = FALSE])
 
-# As the data argument for get_cip()
-get_cip(cip, "^1410")
+# get_cip() argument
+get_cip(data = cip, keep_any = "^1410")
+
 }
 \seealso{
-The "Explore program CIP codes" vignette.
-
 Other cip_data: 
 \code{\link{midfield_fye}}
 }

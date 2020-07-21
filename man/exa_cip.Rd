@@ -5,32 +5,36 @@
 \alias{exa_cip}
 \title{Example CIP codes and names}
 \format{
-A data frame (tibble) with 12 observations and 6 variables.
-The variables are characters.
+\code{data.frame} with 12 rows and 6 columns keyed by the
+6-digit CIP code. The variables are:
 \describe{
-  \item{cip6}{6-digit program code.}
-  \item{cip6name}{6-digit program name.}
-  \item{cip4}{4-digit program code.}
-  \item{cip4name}{4-digit program name.}
-  \item{cip2}{2-digit program code.}
-  \item{cip2name}{2-digit program name.}
+  \item{cip6}{character 6-digit code representing "specific
+  instructional programs" (US National Center for Education Statistics)}
+  \item{cip6name}{character program name at the 6-digit level}
+  \item{cip4}{character 4-digit code (the first 4 digits of \code{cip6})
+  representing "intermediate groupings of programs that have
+  comparable content and objectives"}
+  \item{cip4name}{character program name at the 4-digit level}
+  \item{cip2}{character 2-digit code (the first 2 digits of \code{cip6})
+  representing "the most general groupings of related programs"}
+  \item{cip2name}{character program name at the 2-digit level}
 }
-}
-\source{
-\href{https://midfieldr.github.io/midfielddata/}{midfielddata}
- package
 }
 \usage{
 exa_cip
 }
 \description{
-Subset of the \code{cip} data set. CIP codes and names for Civil,
-Electrical, Industrial, and Mechanical Engineering. Used in a case
-study in the vignettes.
+A subset of the \code{cip} data set containing CIP codes and names for a
+case study of Civil, Electrical, Industrial, and Mechanical Engineering
+programs in \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 }
 \examples{
-exa_cip
-label_programs(data = exa_cip, label = "cip4name")
+program_group <- label_programs(data = exa_cip, label = "cip4name")
+program_group$cip6name <- NULL
+rows_to_edit <- startsWith(program_group$cip6, "1410")
+program_group$program[rows_to_edit] <- "Electrical Engineering"
+program_group
+
 }
 \seealso{
 Other example_data: 

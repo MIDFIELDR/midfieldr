@@ -38,6 +38,7 @@ required by name.
 }
 \examples{
 # placeholder
+
 }
 \seealso{
 Other data_query: 

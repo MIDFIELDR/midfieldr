@@ -5,36 +5,41 @@
 \alias{midfield_fye}
 \title{FYE students and imputed starting majors}
 \format{
-A data frame (tibble) with 5992 observations and 2 variables.
-All variables are characters.
-
+\code{data.frame} with 5992 rows and 2 columns keyed by student ID.
+The variables are:
 \describe{
-   \item{id}{unique, anonymized MIDFIELD student identifier}
-   \item{cip6}{imputed starting major (6-digit CIP code) of FYE students}
+   \item{id}{unique anonymized MIDFIELD student identifier}
+   \item{cip6}{imputed starting major of FYE students}
 }
-}
-\source{
-\href{https://midfieldr.github.io/midfielddata/}{\pkg{midfielddata}
- package}
 }
 \usage{
 midfield_fye
 }
 \description{
-Imputed starting majors for nearly 6000 first-year engineering (FYE)
-students in the \pkg{midfielddata} package.
+Imputed starting majors for all first-year engineering (FYE) students in
+\href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 }
 \details{
 Some US institutions have first year engineering (FYE) programs---typically
 a common first year curriculum that is a prerequisite for declaring
 an engineering major. For some persistence metrics, we have to determine
 what we call a "starting major" for FYE students---the predicted
-engineering program such as Civil, Electrical, or Mechanical, the
-student would have declared had they not been required to enroll in FYE.
+engineering program such as Civil, Electrical, or Mechanical, for example,
+the student would have declared had they not been required to enroll in FYE.
+}
+\examples{
+# examine the data
+str(midfield_fye)
+
+# degree status of FYE students
+library(midfielddata)
+ids_we_want <- midfield_fye$id
+rows_we_want <- midfielddegrees$id \%in\% ids_we_want &
+  !is.na(midfielddegrees$degree)
+fye_grads <- midfielddegrees[rows_we_want, , drop = FALSE]
+
 }
 \seealso{
-The "Impute FYE starting majors" vignette.
-
 Other cip_data: 
 \code{\link{cip}}
 }

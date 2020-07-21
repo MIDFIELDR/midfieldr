@@ -42,6 +42,7 @@ get_cip(cip, keep_any = c("^1407", "^1410"))
 get_cip(cip, keep_any = "civil engineering", drop_any = "technology")
 get_cip(cip, keep_any = "History") \%>\%
   get_cip(keep_any = "American")
+
 }
 \seealso{
 Other data_query: 

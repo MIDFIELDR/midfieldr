@@ -44,6 +44,7 @@ str(x)
 music_codes <- c("500903", "500913")
 x <- get_enrollees(codes = music_codes)
 str(x)
+
 }
 \seealso{
 Other data_query: 

@@ -1,5 +1,6 @@
 context("get_race_sex")
 
+# get_my_path() for data in the testing directory
 # ctrl-shift-L to load internal functions
 
 load(file = get_my_path("subset_students.rda"))

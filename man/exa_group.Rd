@@ -5,34 +5,39 @@
 \alias{exa_group}
 \title{Example program group}
 \format{
-A data frame (tibble) with 12 observations and 3 variables.
-All variables are characters. An observation is a unique program.
+\code{data.frame} with 12 rows and 2 columns keyed by the
+6-digit CIP code. The variables are:
 \describe{
-  \item{cip6}{6-digit program code.}
-  \item{cip6name}{6-digit program name.}
-  \item{program}{A short program name assigned for grouping,
-  summarizing, and joining.}
+  \item{cip6}{6-digit program code}
+  \item{program}{program name assigned for grouping, summarizing,
+  and joining}
 }
-}
-\source{
-\href{https://midfieldr.github.io/midfielddata/}{midfielddata}
- package
 }
 \usage{
 exa_group
 }
 \description{
-Six-digit CIP codes and names plus a custom program name for
-Civil, Electrical, Industrial, and Mechanical Engineering. Used for
-grouping, summarizing, and joining in a case study in the vignettes.
+Six-digit CIP codes and custom program names for a case study of Civil,
+Electrical, Industrial, and Mechanical Engineering programs in
+\href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 }
 \examples{
-x <- unique(exa_group[["cip6"]])
-y <- unique(exa_group[["program"]])
+library(midfielddata)
+
+# attributes of students matriculating in programs
+cips_we_want <- exa_group$cip6
+rows_we_want <- midfieldstudents$cip6 \%in\% cips_we_want
+matriculants <- midfieldstudents[rows_we_want, , drop = FALSE]
+str(matriculants)
+
+# attributes of students graduating in programs
+cips_we_want <- exa_group$cip6
+rows_we_want <- midfielddegrees$cip6 \%in\% cips_we_want
+graduates <- midfielddegrees[rows_we_want, , drop = FALSE]
+str(graduates)
+
 }
 \seealso{
-The "Gather program data" vignette.
-
 Other example_data: 
 \code{\link{exa_cip}},
 \code{\link{exa_id}},

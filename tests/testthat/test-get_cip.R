@@ -1,5 +1,6 @@
 context("get_cip")
 
+# get_my_path() for data in the testing directory
 # ctrl-shift-L to load internal functions
 
 music_cip <- get_cip(data = cip, keep_any = "^5009")

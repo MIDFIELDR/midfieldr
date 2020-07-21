@@ -20,7 +20,6 @@ NULL
 #' if earned in the first degree term, are retained.
 #'
 #' @param data data frame of degree attributes
-#'
 #' @param codes character vector of 6-digit CIP codes
 #'
 #' @return \code{data.frame} with the following properties:
@@ -32,8 +31,6 @@ NULL
 #'   \item Data frame extension attributes, e.g., tibble, are not preserved
 #' }
 #'
-#' @family data_query
-#'
 #' @examples
 #' music_programs <- get_cip(cip, "^5009")
 #' music_codes <- music_programs$cip6
@@ -43,7 +40,11 @@ NULL
 #' music_codes <- c("500901", "500903", "500913")
 #' x <- get_graduates(codes = music_codes)
 #' str(x)
+#'
+#' @family data_query
+#'
 #' @export
+#'
 get_graduates <- function(data = NULL, codes = NULL) {
 
   # default data

@@ -56,10 +56,11 @@ ece_cip <- get_cip(cip, keep_any = "^1410")
 label_programs(ece_cip, label = "ECE")
 label_programs(ece_cip, label = "cip2name")
 label_programs(ece_cip, label = "cip6name")
+
 }
 \seealso{
 Other data_carpentry: 
-\code{\link{feasible_completion}()},
+\code{\link{completion_feasible}()},
 \code{\link{order_multiway}()},
 \code{\link{term_addition}()}
 }

@@ -6,13 +6,17 @@
 \alias{exa_ever}
 \alias{exa_grad}
 \alias{exa_ever_fc}
-\title{Example student IDs}
+\title{Collections of student IDs}
 \format{
-Character vector of student IDs.
+character vector. The names of the available data vectors are:
+\describe{
+\item{exa_ever}{IDs of unique students ever enrolled in
+  the example programs}
+\item{exa_ever_fc}{subset of \code{exa_ever} for whom
+  program completion is feasible in 6 years}
+\item{exa_grad}{IDs of unique students graduating from
+  the example programs}
 }
-\source{
-\href{https://midfieldr.github.io/midfielddata/}{midfielddata}
- package
 }
 \usage{
 exa_ever
@@ -22,23 +26,23 @@ exa_grad
 exa_ever_fc
 }
 \description{
-Students IDs from midfielddata for Civil, Electrical, Industrial,
-and Mechanical Engineering. Used in a case study in the vignettes.
-}
-\details{
-\describe{
-\item{\code{exa_ever}}{IDs of students ever enrolled in the example
-programs.}
-\item{\code{exa_ever_fc}}{A subset of \code{exa_ever} with program
-completion feasible.}
-\item{\code{exa_grad}}{IDs of students graduating from the example
-programs.}
-}
+Character vectors of student IDs at different points in a case study of
+Civil, Electrical, Industrial, and Mechanical Engineering programs in
+\href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 }
 \examples{
 library(midfielddata)
-midfieldstudents[midfieldstudents[["id"]] \%in\% exa_ever, ]
-midfieldstudents[midfieldstudents[["id"]] \%in\% exa_grad, ]
+
+# ever enrolled
+rows_we_want <- midfieldstudents$id \%in\% exa_ever
+enrollees <- midfieldstudents[rows_we_want, ]
+head(enrollees)
+
+# graduates
+rows_we_want <- midfieldstudents$id \%in\% exa_grad
+graduates <- midfieldstudents[rows_we_want, ]
+head(graduates)
+
 }
 \seealso{
 Other example_data: 

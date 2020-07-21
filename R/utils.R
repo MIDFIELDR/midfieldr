@@ -1,3 +1,5 @@
+# all internal (utility) functions
+
 # ------------------------------------------------------------------------
 
 #' Vignette table
@@ -8,12 +10,47 @@
 #'
 #' @param x data frame
 #' @param font_size (optional) in points, 11 pt default
+#' @param caption (optional) character
 #' @keywords internal
 #' @export
-kable2html <- function(x, font_size = NULL) {
+kable2html <- function(x, font_size = NULL, caption = NULL) {
   font_size <- font_size %||% 11
-  kable_in <- knitr::kable(x, "html")
+  kable_in <- knitr::kable(x, format = "html", caption = caption)
   kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
+}
+
+# ------------------------------------------------------------------------
+#' @importFrom utils capture.output object.size
+NULL
+
+#' Obtain the traits of a data frame
+#'
+#' Returns a list with number of observations (rows), number of variables
+#' (columns), and size of the file (bytes). The return object is a list named
+#' components n_obs, n_var, n_bytes, n_inst, and year_limits.  Function is
+#' exported to simplify use in vignettes.
+#'
+#' @param data data frame
+#' @keywords internal
+#' @export
+data_traits <- function(data) {
+  n_obs   <- nrow(data)
+  n_var   <- ncol(data)
+  n_bytes <- utils::capture.output(print(utils::object.size(data),
+                                  units = "auto",
+                                  standard = "SI"))
+
+  n_inst <- nrow(get_institution_limits())
+
+  terms  <- unique(midfielddata::midfieldterms$term)
+  years  <- sort(floor(terms / 10))
+  year_limits <- c(min(years), max(years))
+
+  output  <- list(n_obs = n_obs,
+                  n_var = n_var,
+                  n_bytes = n_bytes,
+                  n_inst = n_inst,
+                  year_limits = year_limits)
 }
 
 # ------------------------------------------------------------------------
@@ -60,7 +97,7 @@ assert_required_column <- function(data, col) {
   assert_class(col, "character")
   if (!col %in% names(data)) {
     stop("Column name `", col, "` required",
-         call. = FALSE
+      call. = FALSE
     )
   }
 }
@@ -118,39 +155,6 @@ filter_char_frame <- function(data = NULL, keep_any = NULL, drop_any = NULL) {
 
 # ------------------------------------------------------------------------
 
-#' Get first and last term in data by institution
-#'
-#' @param data data frame of term attributes
-#' @noRd
-inst_data_limits <- function(data = NULL){
-
-  # default
-  data <- data %||% midfielddata::midfieldterms
-
-  # check arguments
-  assert_class(data, "data.frame")
-  assert_required_column(data, "institution")
-  assert_required_column(data, "term")
-
-  # bind names
-  term         <- NULL
-  institution  <- NULL
-  first_record <- NULL
-  data_limit   <- NULL
-
-  # do the work
-  DT <- data.table::as.data.table(data)
-  DT <- DT[, .(institution, term)]
-  DT[, first_record := max(term), by = institution]
-  DT[, data_limit   := max(term), by = institution]
-  DT <- DT[, .(institution, first_record, data_limit)]
-  DT <- unique(DT)
-  DT <- DT[order(institution)]
-  data.table::setDF(DT)
-}
-
-# ------------------------------------------------------------------------
-
 #' Split term into two columns
 #'
 #' @param data data frame with a term column
@@ -164,15 +168,15 @@ split_term <- function(data, term_col) {
   assert_required_column(data, term_col)
 
   # bind names
-  term         <- NULL
-  year         <- NULL
-  iterm        <- NULL
+  term <- NULL
+  year <- NULL
+  iterm <- NULL
   cols_we_want <- NULL
 
   # do the work
   DT <- data.table::as.data.table(data)
-  DT[, term  := get(term_col)]
-  DT[, year  := as.double(substr(term, 1, 4))]
+  DT[, term := get(term_col)]
+  DT[, year := as.double(substr(term, 1, 4))]
   DT[, iterm := as.double(substr(term, 5, 5))]
 
   cols_we_want <- c(term_col, "year", "iterm")
@@ -201,50 +205,6 @@ round_term <- function(data, iterm_col) {
   data.table::setDF(DT)
 }
 
-# ------------------------------------------------------------------------
-
-#' Matriculation limit from data limit
-#'
-#' Does term arithmetic, subtracting years from data limit
-#'
-#' @param data data frame with columns data_limit, year, iterm
-#' @param span typically 6 years
-#' @noRd
-construct_limits <- function(data, span = NULL){
-
-  # default
-  span <- span %||% 6
-
-  # check arguments
-  assert_class(data, "data.frame")
-  assert_class(span, "numeric")
-  assert_required_column(data, "data_limit")
-  assert_required_column(data, "year")
-  assert_required_column(data, "iterm")
-
-  # bind names
-  enter_y      <- NULL
-  iterm        <- NULL
-  year         <- NULL
-  enter_t      <- NULL
-  matric_limit <- NULL
-  data_limit   <- NULL
-
-  # do the work
-  DT <- data.table::as.data.table(data)
-  DT[, enter_y := ifelse(iterm > 2,
-                           year - span + 1,
-                           year - span)
-  ][
-    , enter_t := ifelse(iterm > 2, 1, 3)
-  ][
-    , matric_limit := 10 * enter_y + enter_t
-  ]
-  DT <- unique(DT[, .(matric_limit, data_limit)])
-  data.table::setDF(DT)
-}
-
-# ------------------------------------------------------------------------
 
 
 

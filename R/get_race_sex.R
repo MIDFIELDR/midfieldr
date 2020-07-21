@@ -15,7 +15,6 @@ NULL
 #' are required by name.
 #'
 #' @param data data frame of student attributes
-#'
 #' @param keep_id character vector of student IDs
 #'
 #' @return \code{data.frame} with the following properties:
@@ -26,15 +25,17 @@ NULL
 #'   \item Data frame extension attributes, e.g., tibble, are not preserved
 #' }
 #'
-#' @family data_query
-#'
 #' @examples
 #' music_codes <- c("500901", "500903", "500913")
 #' music_grads <- get_graduates(codes = music_codes)
 #' grads_id <- music_grads$id
 #' grads <- get_race_sex(keep_id = grads_id)
 #' str(grads)
+#'
+#' @family data_query
+#'
 #' @export
+#'
 get_race_sex <- function(data = NULL, keep_id = NULL) {
 
   # default data if NULL

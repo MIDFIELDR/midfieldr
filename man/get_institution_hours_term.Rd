@@ -33,10 +33,11 @@ name or by leaving the \code{data} argument vacant. Any other
 or equivalent. Character columns \code{id}, \code{institution} and
 \code{hours_term} are required by name.
 
-The default `keep_id` argument is the set of IDs in `data`.
+The default \code{keep_id} argument is the set of IDs in \code{data}.
 }
 \examples{
 # placeholder
+
 }
 \seealso{
 Other data_query: 

@@ -1,0 +1,360 @@
+---
+title: "Explore multiway data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Explore multiway data}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/chicago-author-date.csl
+link-citations: yes
+resource_files:
+  - ../man/figures/explore-multiway-fig1-1.png
+  - ../man/figures/explore-multiway-fig1-dual-1.png
+---
+
+```{r setup, echo = FALSE, message = FALSE, purl = FALSE}
+knitr::opts_knit$set(root.dir = "../")
+knitr::opts_chunk$set(
+  echo = TRUE, # varies from one Rmd to another
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = TRUE,
+  purl = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center",
+  fig.path = "../man/figures/explore-multiway-"
+)
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+# normally, purl is FALSE. But in some code chunks, I want purl = TRUE so that the code in the vignette is executed to pass R CMD check. These next few lines set that up. In the code chunk header, add opts.label = 'dopurl'
+knitr::knit_hooks$set(purl = knitr::hook_purl)
+knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
+```
+
+## Introduction
+
+Many persistence metrics can be organized as *multiway data* in which there is is one quantitative variable and two categorical variables. To quote Bill Cleveland [-@cleveland1993], 
+
+> ... the quantitative variable is a response, and the goal is to study how it depends on the categorical variables, which are factors. What distinguishes multiway data is the cross-classification of the categorical variables; there is a value of the response for each combination of levels of the two categorical variables. 
+
+
+
+
+
+## Preparing the multiway data 
+
+We'll use the "stickiness" metric to illustrate multiway graphs and data tables. Stickiness is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program [@stickiness2012]. 
+
+`exa_stickiness` is a sample dataset included with midfieldr. 
+
+```{r}
+# packages
+library(midfieldr)
+library(ggplot2)
+
+# load stickiness data from case study
+pre_mw <- exa_stickiness
+
+# examine the result
+str(pre_mw)
+```
+
+To protect confidentiality and prevent identification of individuals or institutions with small sub-populations, we typically omit rows with a small population. Using the larger MIDFIELD database, we usually set this limit to 10. Here, using the midfielddata sample, we'll use 5. 
+
+```{r}
+# prepare rows
+rows_we_want <- pre_mw$ever >= 5
+pre_mw <- pre_mw[rows_we_want, , drop = FALSE]
+
+# examine the result
+str(pre_mw)
+```
+
+We typically delete ambiguous levels of race/ethnicity. And because of its sparse representation in the data, we often omit the Native American population as well. 
+
+```{r}
+# remove rows of ambiguous or underrepresented populations 
+rows_we_want <- !pre_mw$race %in% c("Unknown", 
+                                    "International", 
+                                    "Other", 
+                                    "Native American")
+pre_mw <- pre_mw[rows_we_want, , drop = FALSE]
+
+# examine the result
+unique(pre_mw$race)
+```
+
+We combine the race/ethnicity and sex column to create one of the multiway categorical variables. 
+
+```{r}
+# prepare columns
+pre_mw$race_sex <- paste(pre_mw$race, pre_mw$sex, sep = " ")
+
+# examine the result
+str(pre_mw)
+```
+
+To complete the transformation to multiway form, we select the three multiway variables.  
+
+```{r}
+# select the multiway variables
+pre_mw$race_sex <- paste(pre_mw$race, pre_mw$sex, sep = " ")
+columns_we_want <- c("program", "race_sex", "stick")
+pre_mw <- pre_mw[, columns_we_want, drop = FALSE]
+
+# examine the result
+str(pre_mw)
+```
+
+Then we use `order_multiway()` to convert the character columns to factors ordered by the median stickiness.
+
+```{r}
+# transform characters to factors ordered by median stickiness
+data_mw <- order_multiway(pre_mw)
+
+# examine the result
+str(data_mw)
+```
+
+
+
+
+
+## A multiway dot plot  
+
+```{r echo = FALSE}
+nlevel1 <- nlevels(data_mw$program)
+nlevel2 <- nlevels(data_mw$race_sex)
+r <- nlevel1 * nlevel2
+q <- 32
+asp_ratio1 <- (r + 2 * nlevel1) / q
+asp_ratio2 <- (r + 2 * nlevel2) / q
+```
+
+
+We use conventional ggplot2 functions to create the multiway graphs. By previously ordering the levels of the factors, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians. 
+
+```{r fig1, fig.asp = asp_ratio1}
+# create one multiway graph 
+ggplot(data = data_mw, aes(x = stick, y = race_sex)) +
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(x = "Stickiness", y = "")
+```
+
+<br>
+
+This graph permits a direct visual comparison of how stickiness varies by race and sex within a particular major. 
+
+Reading a multiway graph
+
+- We can more effectively compare values within a panel than between panels.
+- Because rows are ordered, one expects a generally increasing trend within a panel. A response greater or smaller than expected creates a visual asymmetry. The interesting stories are often in these visual anomalies.
+- To explore the comparison between panels, we swap the row and panel categories, creating the dual multiway.
+
+
+
+
+## The dual multiway dot plot 
+
+The previous graph does not facilitate visual comparisons of members of the same race-sex group. As Cleveland says,
+
+> Because of this asymmetry, it is often important to explore multiway data by as many multiway dot plots as there are categorical variables, with each variable assigned once to the levels.
+
+To create the *dual multiway* graph, we swap the roles of the rows and panels. 
+
+- `y = race_sex` becomes `y = program`
+- `facet_wrap(vars(program) ...`  becomes `facet_wrap(vars(race_sex) ...` 
+
+```{r fig1-dual, fig.asp = asp_ratio2}
+# create the dual multiway graph 
+ggplot(data = data_mw, aes(x = stick, y = program)) +
+  facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(x = "Stickiness", y = "")
+```
+
+<br>
+
+This graph permits a direct visual comparison of how stickiness varies by major for one group of students. 
+
+Both multiways should be created for discussion. Usually one or the other will convey a more compelling visual story that gets included in the published findings. 
+
+
+
+
+
+## Creating a data table
+
+Data tables are useful in discussions with one's research team and are often included in publications for editors or reviewers who want to see the values underlying the data graphics. The first thing to do before tabulating is to limit the significant figures of floating-point numbers. 
+
+```{r results = "hide"}
+# tabulate data in block record ("long") form
+blockf <- data_mw
+
+# limit significant digits
+blockf$stick <- round(blockf$stick, 2)
+
+# examine the result
+blockf
+```
+
+These data are laid out in "block record" form [@Mount+Zumel:2019:fluid-data], where the `race_sex` key and the `program` key are both in columns and the finding is in the last column. This layout is also called "tidy data"  [@Wickham+Grolemund:2017]. 
+
+The graphing package we use, ggplot2, is designed to work most effectively with block-record data, thus the block-record ("long") form is the default layout in midfieldr. 
+
+<br>
+
+```{r echo = FALSE}
+kable2html(blockf, caption = "Table 1: Stickiness (block records)")
+```
+
+<br>
+
+However, the visual convention preferred by publishers and readers is a row-record ("wide") form, as illustrated by Table 2. The `race_sex` key is in the left column and the `program key` is in the column names. The stickiness findings lie at the row-column intersections. 
+
+<br>
+
+```{r echo = FALSE}
+temp <- reshape(data = blockf,
+                 idvar     = "race_sex",  # rowKeyColumns
+                 timevar   = "program",   # columnToTakeKeysFrom
+                 v.names   = "stick",     # columnToTakeValuesFrom
+                 direction = "wide")
+row.names(temp) <- NULL
+names(temp) <- c("Group", 
+                  "Civil", 
+                  "Electrical", 
+                  "Industrial", 
+                  "Mechanical")
+kable2html(temp, caption = "Table 2: Stickiness (row records)")
+```
+
+<br>
+
+Depending on your software background, you may have encountered a block-record/row-record transformation using any of these function pairs---a list adapted from [@Mount+Zumel:2019:fluid-data]. 
+
+- pivot / anti-pivot or crosstab / shred (databases)
+- pivot_to_rowrecs / unpivot_to_blocks (cdata)
+- reshape "wide" / reshape "long" (R)
+- pivot_wider / pivot_longer (tidyr)
+- pivot / unpivot (Microsoft Excel)
+- cast / melt (reshape2)
+
+
+In base R, using `reshape()`, the block-record form is transformed to row-record form to create Table 2 as follows. Both table layouts are useful. Choosing one or the other depends on one's audience and rhetorical goals. 
+
+```{r}
+# tabulate data in row record ("wide") form
+rowf <- reshape(data = blockf,
+                idvar     = "race_sex", # column of row keys to copy 
+                timevar   = "program",  # column to take keys from
+                v.names   = "stick",    # column to take values from
+                direction = "wide")
+
+# reset the row numbers
+row.names(rowf) <- NULL
+
+# edit columns names
+names(rowf) <- c("Group", "Civil", "Electrical", "Industrial", "Mechanical")
+
+# examine the result
+rowf
+```
+
+
+
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+
+
+
+## Appendix
+
+### Complete script
+
+In response to requests from some of our workshop attendees, we collect the vignette code chunks in one script. We condense the script by omitting exploratory steps so we can focus on the steps that produce the results. 
+
+```{r eval=FALSE}
+# packages
+library(midfieldr)
+library(ggplot2)
+
+# load stickiness data from case study
+pre_mw <- exa_stickiness
+
+# prepare rows
+rows_we_want <- pre_mw$ever >= 5 & 
+  !pre_mw$race %in% c("Unknown", 
+                      "International", 
+                      "Other", 
+                      "Native American")
+pre_mw <- pre_mw[rows_we_want, , drop = FALSE]
+
+# prepare columns
+pre_mw$race_sex <- paste(pre_mw$race, pre_mw$sex, sep = " ")
+columns_we_want <- c("program", "race_sex", "stick")
+pre_mw <- pre_mw[, columns_we_want, drop = FALSE]
+
+# transform characters to factors ordered by median stickiness
+data_mw <- order_multiway(pre_mw)
+
+# create one multiway graph 
+ggplot(data = data_mw, aes(x = stick, y = race_sex)) +
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(x = "Stickiness", y = "")
+
+# create the dual multiway graph 
+ggplot(data = data_mw, aes(x = stick, y = program)) +
+  facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(x = "Stickiness", y = "")
+
+# tabulate data in block record ("long") form
+blockf <- data_mw
+blockf$stick <- round(blockf$stick, 2)
+columns_we_want <- c("race_sex", "program", "stick")
+blockf <- blockf[, columns_we_want, drop = FALSE]
+blockf
+
+# tabulate data in row record ("wide") form
+rowf <- reshape(data = blockf,
+                idvar     = "race_sex", # column of row keys to copy 
+                timevar   = "program",  # column to take keys from
+                v.names   = "stick",    # column to take values from
+                direction = "wide")
+row.names(rowf) <- NULL
+names(rowf) <- c("Group", "Civil", "Electrical", "Industrial", "Mechanical")
+rowf
+```
+
+<br>
+<a href="#top"         >&#9650;     top of page </a>     
+<a href="../index.html">&#9665;       main page </a> 
+
+
+

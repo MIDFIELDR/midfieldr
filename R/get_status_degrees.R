@@ -15,7 +15,6 @@ NULL
 #' \code{degree} are required by name.
 #'
 #' @param data data frame of degree attributes
-#'
 #' @param keep_id character vector of student IDs
 #'
 #' @return \code{data.frame} with the following properties:
@@ -26,14 +25,16 @@ NULL
 #'   \item Data frame extension attributes, e.g., tibble, are not preserved
 #' }
 #'
-#' @family data_query
-#'
 #' @examples
 #' music_codes <- c("500901", "500903", "500913")
 #' students <- get_enrollees(codes = music_codes)
 #' students <- get_status_degrees(keep_id = students$id)
 #' str(students)
+#'
+#' @family data_query
+#'
 #' @export
+#'
 get_status_degrees <- function(data = NULL, keep_id = NULL) {
 
   # default data if NULL

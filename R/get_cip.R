@@ -13,12 +13,9 @@ NULL
 #' argument should be a subset of \code{cip} or equivalent.
 #'
 #' @param data data frame of CIP codes and names
-#'
 #' @param keep_any character vector of search patterns for retaining rows
-#'
 #' @param ... not used for values. Forces optional arguments to be usable
 #' by name only.
-#'
 #' @param drop_any (optional) character vector of search patterns for
 #' dropping rows
 #'
@@ -30,14 +27,16 @@ NULL
 #'   \item Data frame extension attributes, e.g., tibble, are not preserved
 #' }
 #'
-#' @family data_query
-#'
 #' @examples
 #' get_cip(cip, keep_any = c("^1407", "^1410"))
 #' get_cip(cip, keep_any = "civil engineering", drop_any = "technology")
 #' get_cip(cip, keep_any = "History") %>%
 #'   get_cip(keep_any = "American")
+#'
+#' @family data_query
+#'
 #' @export
+#'
 get_cip <- function(data = NULL, keep_any = NULL, ..., drop_any = NULL) {
   wrapr::stop_if_dot_args(
     substitute(list(...)), "Arguments after ... must be named,"
@@ -93,6 +92,5 @@ get_cip <- function(data = NULL, keep_any = NULL, ..., drop_any = NULL) {
       paste(names(not_found), collapse = ", ")
     ))
   }
-
   return(data)
 }

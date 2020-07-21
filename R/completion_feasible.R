@@ -43,47 +43,47 @@ NULL
 #' @param data_students data frame of student attributes
 #' @param data_terms data frame of term attributes
 #' @param data_degrees data frame of degree attributes
+#'
 #' @return character vector of student IDs, a subset of the input
-#' @family data_carpentry
+#'
 #' @examples
 #' # placeholder
+#'
+#' @family data_carpentry
+#'
 #' @export
-feasible_completion <- function (id = NULL,
-                                 ...,
-                                 span = NULL,
-                                 terms_transfer_max = NULL,
-                                 data_students = NULL,
-                                 data_terms = NULL,
-                                 data_degrees = NULL) {
-
+#'
+completion_feasible <- function(id = NULL,
+                                ...,
+                                span = NULL,
+                                terms_transfer_max = NULL,
+                                data_students = NULL,
+                                data_terms = NULL,
+                                data_degrees = NULL) {
   wrapr::stop_if_dot_args(
     substitute(list(...)), "Arguments after ... must be named,"
   )
-
-  # for debugging
-  # id   <- exa_ever
-  # span <- data_students <- data_terms <- data_degrees <- NULL
 
   # default data sets and constants
   span <- span %||% 6
   terms_transfer_max <- terms_transfer_max %||% 4
   data_students <- data_students %||% midfielddata::midfieldstudents
-  data_terms    <- data_terms    %||% midfielddata::midfieldterms
-  data_degrees  <- data_degrees  %||% midfielddata::midfielddegrees
+  data_terms <- data_terms %||% midfielddata::midfieldterms
+  data_degrees <- data_degrees %||% midfielddata::midfielddegrees
 
   # check arguments
   assert_class(id, "character")
   assert_class(span, "numeric")
   assert_class(data_students, "data.frame")
-  assert_class(data_terms,    "data.frame")
-  assert_class(data_degrees,  "data.frame")
+  assert_class(data_terms, "data.frame")
+  assert_class(data_degrees, "data.frame")
 
   # bind names
-  terms_transfer     <- NULL
-  hours_transfer     <- NULL
+  terms_transfer <- NULL
+  hours_transfer <- NULL
   median_hr_per_term <- NULL
-  matric_limit       <- NULL
-  term_enter         <- NULL
+  matric_limit <- NULL
+  term_enter <- NULL
 
   # gather degree data
   degree_data <- get_status_degrees(data = data_degrees, keep_id = id)
@@ -91,14 +91,16 @@ feasible_completion <- function (id = NULL,
 
   # separate the grads from nongrads
   nongrad_rows <- is.na(degree_data$degree)
-  nongrads     <- degree_data[nongrad_rows]
-  nongrads_id  <- nongrads$id
-  grads        <- degree_data[!nongrad_rows]
-  grads_id     <- grads$id
+  nongrads <- degree_data[nongrad_rows]
+  nongrads_id <- nongrads$id
+  grads <- degree_data[!nongrad_rows]
+  grads_id <- grads$id
 
   # transfers
-  transfer_data <- get_status_transfers(data = data_students,
-                                        keep_id = nongrads_id)
+  transfer_data <- get_status_transfers(
+    data = data_students,
+    keep_id = nongrads_id
+  )
   data.table::setDT(transfer_data)
   nongrads <- merge(nongrads, transfer_data, all.x = TRUE, by = "id")
 
@@ -107,44 +109,49 @@ feasible_completion <- function (id = NULL,
   data.table::setDT(inst_limits)
 
   # get median hours per term of graduates by institution
-  hr_per_term <- get_institution_hours_term(data = data_terms,
-                                            keep_id = grads_id)
+  hr_per_term <- get_institution_hours_term(
+    data = data_terms,
+    keep_id = grads_id
+  )
   data.table::setDT(hr_per_term)
 
   # join the inst data
   institutions <- merge(inst_limits,
-                        hr_per_term,
-                        all.x = TRUE,
-                        by = "institution")
+    hr_per_term,
+    all.x = TRUE,
+    by = "institution"
+  )
   data.table::setDT(institutions)
 
   # join student and institution data
   fc_data <- merge(nongrads, institutions, all.x = TRUE, by = "institution")
   data.table::setDT(fc_data)
   data.table::setnafill(fc_data,
-                        type = "const",
-                        fill = 0,
-
-                        cols = c("hours_transfer"))
+    type = "const",
+    fill = 0,
+    cols = c("hours_transfer")
+  )
 
   # convert transfer hours to terms
   fc_data[, terms_transfer := floor(hours_transfer / median_hr_per_term)]
 
   # max transfer of 4 terms
-  fc_data[terms_transfer > terms_transfer_max,
-          terms_transfer := terms_transfer_max]
+  fc_data[
+    terms_transfer > terms_transfer_max,
+    terms_transfer := terms_transfer_max
+  ]
 
   # advance matriculation limit by transfer terms
   fc_data <- term_addition(fc_data,
-                           term_col = "matric_limit",
-                           add_col = "terms_transfer")
+    term_col = "matric_limit",
+    add_col = "terms_transfer"
+  )
   data.table::setDT(fc_data)
 
   # filter
-  nongrad_fc    <- fc_data[matric_limit >= term_enter]
+  nongrad_fc <- fc_data[matric_limit >= term_enter]
   nongrad_fc_id <- nongrad_fc$id
 
   # ID vector output
-  feasible_id   <- sort(unique(c(grads_id, nongrad_fc_id)))
-
+  feasible_id <- sort(unique(c(grads_id, nongrad_fc_id)))
 }

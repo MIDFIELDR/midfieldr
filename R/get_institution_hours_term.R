@@ -15,10 +15,9 @@ NULL
 #' or equivalent. Character columns \code{id}, \code{institution} and
 #' \code{hours_term} are required by name.
 #'
-#' The default `keep_id` argument is the set of IDs in `data`.
+#' The default \code{keep_id} argument is the set of IDs in \code{data}.
 #'
 #' @param data data frame of term attributes
-#'
 #' @param keep_id character vector of student IDs
 #'
 #' @return \code{data.frame} with the following properties:
@@ -29,12 +28,14 @@ NULL
 #'   \item Data frame extension attributes, e.g., tibble, are not preserved
 #' }
 #'
-#' @family data_query
-#'
 #' @examples
 #' # placeholder
+#'
+#' @family data_query
+#'
 #' @export
-get_institution_hours_term <- function(data = NULL, keep_id = NULL){
+#'
+get_institution_hours_term <- function(data = NULL, keep_id = NULL) {
 
   # defaults
   data <- data %||% midfielddata::midfieldterms
@@ -48,22 +49,16 @@ get_institution_hours_term <- function(data = NULL, keep_id = NULL){
   assert_required_column(data, "hours_term")
 
   # bind names
-  id            <- NULL
-  institution   <- NULL
-  hours_term    <- NULL
-  term          <- NULL
-  data_limit    <- NULL
-  year          <- NULL
-  iterm         <- NULL
-  enter_y       <- NULL
-  enter_t       <- NULL
-  matric_limit  <- NULL
+  id <- NULL
+  institution <- NULL
+  hours_term <- NULL
 
   # do the work
   data.table::setDT(data)
   data <- data[id %in% keep_id, .(institution, hours_term)]
   hr_per_term <- data[order(institution),
-                       .(median_hr_per_term = stats::median(hours_term)),
-                       by = institution]
+    .(median_hr_per_term = stats::median(hours_term)),
+    by = institution
+  ]
   data.table::setDF(hr_per_term)
 }

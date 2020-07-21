@@ -39,6 +39,7 @@ music_grads <- get_graduates(codes = music_codes)
 grads_id <- music_grads$id
 grads <- get_race_sex(keep_id = grads_id)
 str(grads)
+
 }
 \seealso{
 Other data_query: 

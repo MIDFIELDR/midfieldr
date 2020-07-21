@@ -1,5 +1,6 @@
 context("label_programs")
 
+# get_my_path() for data in the testing directory
 # ctrl-shift-L to load internal functions
 
 music_cip <- get_cip(cip, "^5009")
