@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Filter for feasible completion • midfieldr</title>
+<title>Filter for program completion feasibility • midfieldr</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Filter for feasible completion">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Filter for program completion feasibility">
 <meta property="og:description" content="midfieldr">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -62,6 +62,15 @@
   <ul class="dropdown-menu" role="menu">
 <li>
       <a href="../articles/explore_cip.html">Explore program CIP codes</a>
+    </li>
+    <li>
+      <a href="../articles/get_programs.html">Gather programs</a>
+    </li>
+    <li>
+      <a href="../articles/feasible_completion.html">Filter for program completion feasibility</a>
+    </li>
+    <li>
+      <a href="../articles/explore_multiway.html">Explore multiway data</a>
     </li>
   </ul>
 </li>
@@ -110,7 +119,7 @@
       </header><script src="feasible_completion_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Filter for feasible completion</h1>
+      <h1 data-toc-skip>Filter for program completion feasibility</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/master/vignettes/feasible_completion.Rmd"><code>vignettes/feasible_completion.Rmd</code></a></small>
@@ -164,9 +173,9 @@
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">enrollees_id</span>)
 <span class="co">#&gt;  chr [1:10135] "MID25783178" "MID25783197" "MID25783388" "MID25783441" ...</span></pre></body></html></div>
-<p>This vector of IDs is the input to <code><a href="../reference/feasible_completion.html">feasible_completion()</a></code>, which performs the subsetting for completion feasibility in one call.</p>
+<p>This vector of IDs is the input to <code><a href="../reference/completion_feasible.html">completion_feasible()</a></code>, which performs the subsetting for completion feasibility in one call.</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># subset IDs for feasible completion</span>
-<span class="no">enrollees_fc</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/feasible_completion.html">feasible_completion</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">enrollees_id</span>)
+<span class="no">enrollees_fc</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/completion_feasible.html">completion_feasible</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">enrollees_id</span>)
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">enrollees_fc</span>)
@@ -178,12 +187,12 @@
 <div id="what-the-function-is-doing" class="section level2">
 <h2 class="hasAnchor">
 <a href="#what-the-function-is-doing" class="anchor"></a>What the function is doing</h2>
-<p>The remainder of the vignette describes the inner workings of <code><a href="../reference/feasible_completion.html">feasible_completion()</a></code>.</p>
+<p>The remainder of the vignette describes the inner workings of <code><a href="../reference/completion_feasible.html">completion_feasible()</a></code>.</p>
 <div id="gather-student-degree-status" class="section level3">
 <h3 class="hasAnchor">
 <a href="#gather-student-degree-status" class="anchor"></a>1. Gather student degree status</h3>
 <p>We obtain the degree data for the enrollees using <code><a href="../reference/get_status_degrees.html">get_status_degrees()</a></code> to subset the student degree data (<code>midfielddegrees</code> or equivalent) and return the student degree keyed by ID. The values of <code>degree</code> are character, e.g., “Bachelor of Science”, or NA for no degree.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># gather student data for feasible completion </span>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># gather student data for feasible completion</span>
 <span class="no">degree_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_status_degrees.html">get_status_degrees</a></span>(<span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">enrollees_id</span>)
 
 <span class="co"># examine the result</span>
@@ -193,14 +202,14 @@
 <span class="co">#&gt;  $ institution: chr  "Institution M" "Institution M" "Institution M" "Institution M" ...</span>
 <span class="co">#&gt;  $ degree     : chr  "Bachelor of Science" "Bachelor of Science" NA "Bachelor of Science" ...</span></pre></body></html></div>
 <p>Students with degrees have demonstrated that completing their programs before the data limits was feasible. We can extract their IDs (to be used later) and continue the completion feasibility study with the smaller non-graduate student subset.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># subset the grads </span>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># subset the grads</span>
 <span class="no">grad_rows</span> <span class="kw">&lt;-</span> !<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">degree_data</span>$<span class="no">degree</span>)
-<span class="no">grads</span>     <span class="kw">&lt;-</span> <span class="no">degree_data</span>[<span class="no">grad_rows</span>, ]
-<span class="no">grads_id</span>  <span class="kw">&lt;-</span> <span class="no">grads</span>$<span class="no">id</span>
+<span class="no">grads</span> <span class="kw">&lt;-</span> <span class="no">degree_data</span>[<span class="no">grad_rows</span>, ]
+<span class="no">grads_id</span> <span class="kw">&lt;-</span> <span class="no">grads</span>$<span class="no">id</span>
 
 <span class="co"># subset the nongrads</span>
-<span class="no">nongrads</span>     <span class="kw">&lt;-</span> <span class="no">degree_data</span>[!<span class="no">grad_rows</span>, ]
-<span class="no">nongrads_id</span>  <span class="kw">&lt;-</span> <span class="no">nongrads</span>$<span class="no">id</span>
+<span class="no">nongrads</span> <span class="kw">&lt;-</span> <span class="no">degree_data</span>[!<span class="no">grad_rows</span>, ]
+<span class="no">nongrads_id</span> <span class="kw">&lt;-</span> <span class="no">nongrads</span>$<span class="no">id</span>
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">grads_id</span>)
@@ -212,7 +221,7 @@
 <h3 class="hasAnchor">
 <a href="#gather-transfer-status-of-non-graduates" class="anchor"></a>2. Gather transfer status of non-graduates</h3>
 <p>We call <code><a href="../reference/get_status_transfers.html">get_status_transfers()</a></code> for the non-graduates to subset the student attributes data (<code>midfieldstudents</code> or equivalent) and return the student matriculation term and transfer credit hours keyed by ID. The values of <code>hours_transfer</code> are numerical or NA for no transfer hours.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># gather student data for feasible completion </span>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># gather student data for feasible completion</span>
 <span class="no">transfer_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_status_transfers.html">get_status_transfers</a></span>(<span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">nongrads_id</span>)
 
 <span class="co"># examine the result</span>
@@ -222,7 +231,7 @@
 <span class="co">#&gt;  $ term_enter    : num  19871 20021 20011 20071 20011 ...</span>
 <span class="co">#&gt;  $ hours_transfer: num  NA NA NA NA NA NA NA NA NA NA ...</span></pre></body></html></div>
 <p>Joining <code>transfer_data</code> to <code>nongrads</code> (by <code>id</code>) yields the complete student information we need.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># join the student data for feasible completion </span>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># join the student data for feasible completion</span>
 <span class="no">nongrads</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">nongrads</span>, <span class="no">transfer_data</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># examine the result</span>
@@ -243,7 +252,7 @@
 <li>calculates <code>matriculation limit = data limit - span</code> (default <code>span</code> is 6 years)</li>
 </ul>
 <p>Some data limits are “rounded down” before computing matriculation limits. Summer term data limits are rounded to the preceding Spring; Winter term data limits (institutions on quarter systems) are rounded to the preceding Fall.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># gather institution data for feasible completion </span>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># gather institution data for feasible completion</span>
 <span class="no">institution_limits</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_institution_limits.html">get_institution_limits</a></span>()
 
 <span class="co"># examine the result</span>
@@ -266,7 +275,7 @@
 <h3 class="hasAnchor">
 <a href="#gather-institution-hours-per-term" class="anchor"></a>4. Gather institution hours per term</h3>
 <p>We determine the median number of credit-hours per term by institution. We use only students with degrees.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># for graduating students, find median hours per term </span>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># for graduating students, find median hours per term</span>
 <span class="no">hr_per_term</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_institution_hours_term.html">get_institution_hours_term</a></span>(<span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">grads_id</span>)
 <span class="no">hr_per_term</span>
 <span class="co">#&gt;      institution median_hr_per_term</span>
@@ -304,7 +313,7 @@
 <a href="#advance-matriculation-limit" class="anchor"></a>5. Advance matriculation limit</h3>
 <p>Joining <code>nongrads</code> and <code>institution_limits</code> (by <code>institution</code>) yields the essential elements we need to advance an institution’s matriculation limit by the term-equivalent of any transfer credit hours.</p>
 <div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># join student and institution data for feasible completion</span>
-<span class="no">fc_data</span>  <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">nongrads</span>, <span class="no">institutions</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">fc_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">nongrads</span>, <span class="no">institutions</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">fc_data</span>)
@@ -333,8 +342,8 @@
 <span class="co">#&gt;  $ data_limit        : num  20034 20034 20034 20034 20034 ...</span>
 <span class="co">#&gt;  $ median_hr_per_term: num  14 14 14 14 14 14 14 14 14 14 ...</span></pre></body></html></div>
 <p>Now we convert transfer credit hours to their term equivalent.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># estimate the term-equivalent of transfer credit hours </span>
-<span class="no">numerator</span>   <span class="kw">&lt;-</span> <span class="no">fc_data</span>$<span class="no">hours_transfer</span>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># estimate the term-equivalent of transfer credit hours</span>
+<span class="no">numerator</span> <span class="kw">&lt;-</span> <span class="no">fc_data</span>$<span class="no">hours_transfer</span>
 <span class="no">denominator</span> <span class="kw">&lt;-</span> <span class="no">fc_data</span>$<span class="no">median_hr_per_term</span>
 <span class="no">fc_data</span>$<span class="no">terms_transfer</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="no">numerator</span> / <span class="no">denominator</span>)
 
@@ -351,7 +360,7 @@
 <span class="co">#&gt;  $ median_hr_per_term: num  14 14 14 14 14 14 14 14 14 14 ...</span>
 <span class="co">#&gt;  $ terms_transfer    : num  0 0 0 0 0 0 0 0 0 0 ...</span></pre></body></html></div>
 <p>There are several columns we are finished with that we can drop for clarity.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co"># omit columns we are finished using </span>
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co"># omit columns we are finished using</span>
 <span class="no">fc_data</span>$<span class="no">degree</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
 <span class="no">fc_data</span>$<span class="no">data_limit</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
 <span class="no">fc_data</span>$<span class="no">institution</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
@@ -372,8 +381,9 @@
 <span class="no">fc_data</span>$<span class="no">terms_transfer</span>[<span class="no">rows_to_limit</span>] <span class="kw">&lt;-</span> <span class="fl">4</span></pre></body></html></div>
 <p>Next we perform some “term arithmetic” to advance the matriculation limit by the number of terms of credit hours transferred. <code><a href="../reference/term_addition.html">term_addition()</a></code> adds the number of terms T in the <code>add_col</code> argument to the terms YYYYT in the <code>term_col</code> argument.</p>
 <div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">fc_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/term_addition.html">term_addition</a></span>(<span class="no">fc_data</span>,
-                      <span class="kw">term_col</span> <span class="kw">=</span> <span class="st">"matric_limit"</span>,
-                      <span class="kw">add_col</span> <span class="kw">=</span> <span class="st">"terms_transfer"</span>)
+  <span class="kw">term_col</span> <span class="kw">=</span> <span class="st">"matric_limit"</span>,
+  <span class="kw">add_col</span> <span class="kw">=</span> <span class="st">"terms_transfer"</span>
+)
 
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">fc_data</span>)
 <span class="co">#&gt; 'data.frame':    4023 obs. of  4 variables:</span>
@@ -385,9 +395,9 @@
 <div id="filter-for-feasible-completion" class="section level3">
 <h3 class="hasAnchor">
 <a href="#filter-for-feasible-completion" class="anchor"></a>6. Filter for feasible completion</h3>
-<p>Finally, se subset the non-graduates, retaining those whose matriculation term is no later than the matriculation limit.</p>
+<p>Finally, we subset the non-graduates, retaining those whose matriculation term is no later than the matriculation limit.</p>
 <div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">fc_data</span>$<span class="no">term_enter</span> <span class="kw">&lt;=</span> <span class="no">fc_data</span>$<span class="no">matric_limit</span>
-<span class="no">nongrad_fc</span>   <span class="kw">&lt;-</span> <span class="no">fc_data</span>[<span class="no">rows_we_want</span>, ]
+<span class="no">nongrad_fc</span> <span class="kw">&lt;-</span> <span class="no">fc_data</span>[<span class="no">rows_we_want</span>, ]
 
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">nongrad_fc</span>)
 <span class="co">#&gt; 'data.frame':    1931 obs. of  4 variables:</span>
@@ -397,10 +407,10 @@
 <span class="co">#&gt;  $ terms_transfer: num  0 0 0 0 0 0 0 0 0 0 ...</span></pre></body></html></div>
 <p>We combine the IDs of these non-grads withe the IDs of the grads saved earlier. The result is the vector of IDs of students from the original pool for whom program completion is feasible.</p>
 <div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="no">nongrad_fc_id</span> <span class="kw">&lt;-</span> <span class="no">nongrad_fc</span>$<span class="no">id</span>
-<span class="no">feasible_id</span>   <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">grads_id</span>, <span class="no">nongrad_fc_id</span>)))
+<span class="no">feasible_id</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">grads_id</span>, <span class="no">nongrad_fc_id</span>)))
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">feasible_id</span>)
 <span class="co">#&gt;  chr [1:8043] "MID25783178" "MID25783197" "MID25783388" "MID25783441" ...</span></pre></body></html></div>
-<p>This result is identical to the result obtained earlier using <code><a href="../reference/feasible_completion.html">feasible_completion()</a></code>.</p>
+<p>This result is identical to the result obtained earlier using <code><a href="../reference/completion_feasible.html">completion_feasible()</a></code>.</p>
 </div>
 </div>
 <div id="references" class="section level2">

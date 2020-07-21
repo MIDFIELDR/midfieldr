@@ -71,6 +71,15 @@
 <li>
       <a href="articles/explore_cip.html">Explore program CIP codes</a>
     </li>
+    <li>
+      <a href="articles/get_programs.html">Gather programs</a>
+    </li>
+    <li>
+      <a href="articles/feasible_completion.html">Filter for program completion feasibility</a>
+    </li>
+    <li>
+      <a href="articles/explore_multiway.html">Explore multiway data</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -131,21 +140,31 @@
 <div id="tools-for-student-records-research" class="section level2">
 <h2 class="hasAnchor">
 <a href="#tools-for-student-records-research" class="anchor"></a>Tools for student records research</h2>
-<p>MIDFIELD—the <em>Multiple-Institution Database for Investigating Engineering Longitudinal Development</em>—is a partnership of US higher education institutions with engineering programs. As of June, 2020, MIDFIELD contains registrar’s population data for 1.7M undergraduates at 19 institutions from 1987–2019. The data are organized in four related tables: students, courses, terms, and degrees. The MIDFIELD population data set is available to partner institutions only <a href="https://engineering.purdue.edu/MIDFIELD">(link)</a>.</p>
+<p>MIDFIELD—the <em>Multiple-Institution Database for Investigating Engineering Longitudinal Development</em>—is a partnership of US higher education institutions with engineering programs <a href="https://engineering.purdue.edu/MIDFIELD">(link)</a>. As of June, 2020, MIDFIELD contains registrar’s population data for 1.7M undergraduates at 19 institutions from 1987–2019. The data are organized in four related tables: students, courses, terms, and degrees. A sample of the MIDFIELD data is provided by the midfielddata package.</p>
 <p><strong>midfieldr</strong> is an R package that provides tools specialized for the midfielddata sample data set.</p>
 <p><strong>midfielddata</strong> is an R package that provides a stratified sample of the MIDFIELD population data set. The sample contains data for 97,640 undergraduates at 12 institutions from 1987–2016 <a href="https://midfieldr.github.io/midfielddata/">(link)</a>.</p>
-<p>For members of MIDFIELD partner institutions: The midfielddata data dictionaries are a subset of the MIDFIELD data dictionaries. When creating the midfielddata sample data set, some MIDFIELD variables were omitted and some were re-coded to preserve confidentiality. In general, however, scripts written for the midfielddata sample data set will work for the MIDFIELD population data set.</p>
+<p>For members of MIDFIELD partner institutions: data dictionaries for midfielddata are a subset of those for MIDFIELD. When creating midfielddata, some MIDFIELD variables were omitted and some were re-coded to preserve confidentiality. In general, however, scripts written for the midfielddata sample data set will work for the MIDFIELD population data set.</p>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>The data package is too large for CRAN, so it is stored on GitHub in a drat repository. Installation takes time; please be patient and wait for the Console prompt &gt; to reappear.</p>
-<p>Installation must be in the order shown: install midfielddata before midfieldr.</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"midfielddata"</span>, <span class="kw">repos</span> <span class="kw">=</span> <span class="st">"https://MIDFIELDR.github.io/drat/"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"source"</span>)</pre></div>
-<p>Install the development version of midfieldr from GitHub using:</p>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"MIDFIELDR/midfieldr"</span>)</pre></div>
-<p>Once midfieldr is available on CRAN (planned for the summer of 2020), use:</p>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"midfieldr"</span>)</pre></div>
+<p>Install midfielddata first.</p>
+<p>Because of its size, the data package is stored in a drat repository. Installation takes time; please be patient and wait for the Console prompt “&gt;” to reappear.</p>
+<div class="sourceCode" id="cb1"><pre class="r"><span class="co"># install midfielddata first </span>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"midfielddata"</span>,
+                 <span class="kw">repos</span> <span class="kw">=</span> <span class="st">"https://MIDFIELDR.github.io/drat/"</span>,
+                 <span class="kw">type</span> <span class="kw">=</span> <span class="st">"source"</span>)</pre></div>
+<p>To confirm a successful installation, run the following to view the data package help page. A portion of the help page is shown below.</p>
+<div class="sourceCode" id="cb2"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfielddata</span>)
+? <span class="no">midfielddata</span></pre></div>
+<p><img src="reference/figures/README-fig0-midfielddata-help-page2.png" alt="midfielddata help page" class="center" width="80%"></p>
+<p>Once the midfielddata installation is confirmed successful, install midfieldr. The package should be submitted to CRAN by September 2020.</p>
+<div class="sourceCode" id="cb3"><pre class="r"><span class="co"># install from CRAN (when available)</span>
+<span class="co"># install.packages("midfieldr")</span>
+
+<span class="co"># or install the development version from GitHub (available now)</span>
+<span class="co"># install.packages("devtools")</span>
+<span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"MIDFIELDR/midfieldr"</span>)</pre></div>
 </div>
 <div id="data" class="section level2">
 <h2 class="hasAnchor">
@@ -153,37 +172,172 @@
 <p>The midfieldr package includes:</p>
 <ul>
 <li>
-<code>cip</code> A data frame with 1584 observations and 6 CIP variables of program codes and names at the 2, 4, and 6-digit levels. Each observation is a unique program. Occupies 364 kB of memory. Data dictionary <a href="https://midfieldr.github.io/midfieldr/reference/cip.html">(link)</a>.</li>
+<code>cip</code> A data frame with 1584 observations and 6 CIP variables of program codes and names at the 2, 4, and 6-digit levels. Each observation is a unique program keyed by a 6-digit CIP code. Occupies 379.9 kB of memory. Data dictionary <a href="https://midfieldr.github.io/midfieldr/reference/cip.html">(link)</a>.</li>
 </ul>
-<p>The midfielddata package contains the four datasets that comprise a stratified sample of the MIDFIELD database.</p>
+<p>The midfielddata package contains the four datasets that comprengr a stratified sample of the MIDFIELD database.</p>
 <ul>
-<li><p><code>midfieldstudents</code> A data frame with 97,640 observations and 15 demographic variables. Each observation is a unique student. Occupies 19 Mb of memory. Data dictionary <a href="https://midfieldr.github.io/midfielddata/reference/midfieldstudents.html">(link)</a>.</p></li>
-<li><p><code>midfieldcourses</code> A data frame with 3.5 M observations and 12 academic course variables. Each observation is one course in one term for one student. Occupies 348 Mb of memory. Data dictionary <a href="https://midfieldr.github.io/midfielddata/reference/midfieldcourses.html">(link)</a>.</p></li>
-<li><p><code>midfieldterms</code> A data frame with 727,369 observations and 13 academic term variables. Each observation is one term for one student. Occupies 82 Mb of memory. Data dictionary <a href="https://midfieldr.github.io/midfielddata/reference/midfieldterms.html">(link)</a>.</p></li>
-<li><p><code>midfielddegrees</code> A data frame with 97,640 observations and 5 graduation variables. Each observation is a unique student. Occupies 10 Mb of memory. Data dictionary <a href="https://midfieldr.github.io/midfielddata/reference/midfielddegrees.html">(link)</a>.</p></li>
+<li><p><code>midfieldstudents</code> A data frame with 97,640 observations and 15 demographic variables. Each observation is a unique student keyed by student ID. Occupies 19 MB of memory. Data dictionary <a href="https://midfieldr.github.io/midfielddata/reference/midfieldstudents.html">(link)</a>.</p></li>
+<li><p><code>midfieldcourses</code> A data frame with 3.5 M observations and 12 academic course variables keyed by student ID, term, and course. Each observation is one course in one term for one student. Occupies 348.5 MB of memory. Data dictionary <a href="https://midfieldr.github.io/midfielddata/reference/midfieldcourses.html">(link)</a>.</p></li>
+<li><p><code>midfieldterms</code> A data frame with 727,369 observations and 13 academic term variables keyed by student ID and term. Each observation is one term for one student. Occupies 81.8 MB of memory. Data dictionary <a href="https://midfieldr.github.io/midfielddata/reference/midfieldterms.html">(link)</a>.</p></li>
+<li><p><code>midfielddegrees</code> A data frame with 97,640 observations and 5 graduation variables keyed by student ID. Each observation is a unique student. Occupies 10.2 MB of memory. Data dictionary <a href="https://midfieldr.github.io/midfielddata/reference/midfielddegrees.html">(link)</a>.</p></li>
 </ul>
 </div>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
-<p>This package provides functions to access, manipulate, and graph student record data. To illustrate the workflow, we would use these functions to compute and display the “stickiness” persistence metric:</p>
+<p><strong>data manipulation ecosystem</strong> We use base R in the examples. A user who prefers a dplyr or data.table ecosystem should find the translation to be straightforward.</p>
+<p><strong>data frames</strong> midfieldr functions do not preserve data frame extensions such as tibble or data.table. Data frames returned by midfieldr functions are always base R <code>data.frame</code> objects.</p>
+<p><strong>graphs</strong> We use ggplot2 in the examples. A translation to lattice or base R graphics should be easily managed by users familiar with those systems.</p>
+<p><strong>midfieldr functions</strong> are designed to work with MIDFIELD-structured data to access and manipulate student records. A typical workflow might include:</p>
 <ul>
 <li>
-<code><a href="reference/get_cip.html">get_cip()</a></code> to filter programs from the CIP data.</li>
+<code><a href="reference/get_cip.html">get_cip()</a></code> search the CIP data set for program codes<br>
+</li>
 <li>
-<code><a href="reference/label_programs.html">label_programs()</a></code> to select 6-digit CIPs and add custom labels.</li>
+<code><a href="reference/label_programs.html">label_programs()</a></code> isolate and label specific programs to study<br>
+</li>
 <li>
-<code>gather_ever()</code> to gather students ever enrolled.</li>
+<code><a href="reference/get_enrollees.html">get_enrollees()</a></code> gather students ever enrolled in the programs</li>
 <li>
-<code>gather_grad()</code> to gather graduating students.</li>
+<code>feasible_completion()</code> subset students for 6-year completion feasibility</li>
 <li>
-<code>race_sex_join()</code> to join student sex and race/ethnicity.</li>
-<li>dplyr package (or equivalent) to group, summarize, join, and compute a persistence metric.</li>
+<code><a href="reference/get_race_sex.html">get_race_sex()</a></code> obtain student sex and race/ethnicity</li>
 <li>
-<code><a href="reference/order_multiway.html">order_multiway()</a></code> to prepare the results for graphing.</li>
-<li>ggplot2 package (or equivalent) to graph the results.</li>
+<code><a href="reference/order_multiway.html">order_multiway()</a></code> condition multiway data for graphing</li>
 </ul>
-<p>A short but complete example is provided in the “Using midfieldr” vignette <a href="articles/using_midfieldr.html">(link)</a>.</p>
+<p><strong>examples</strong> A complete example that starts with program selection and concludes with a persistence metric is given in the <a href="articles/using_midfieldr.html">vignette (“Using midfieldr”)</a>.</p>
+<p>A short example below illustrates applying of some of these functions. Suppose we want to graph the number of students ever enrolled in Engineering, grouped by sex and race/ethnicity, for whom graduation is feasible within the range of data available.</p>
+<p>We start with the CIP code—Engineering CIPs start with 14. <code><a href="reference/get_cip.html">get_cip()</a></code> accesses the <code>cip</code> dataset.</p>
+<div class="sourceCode" id="cb4"><pre class="r"><span class="co"># packages used</span>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
+
+<span class="co"># gather the program CIPs</span>
+<span class="no">engr_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/get_cip.html">get_cip</a></span>(<span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^14"</span>)
+<span class="no">engr</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/label_programs.html">label_programs</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">engr_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Engineering"</span>)
+
+<span class="co"># examine the result</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">engr</span>)
+<span class="co">#&gt; 'data.frame':    56 obs. of  3 variables:</span>
+<span class="co">#&gt;  $ cip6    : chr  "140101" "140102" "140201" "140301" ...</span>
+<span class="co">#&gt;  $ cip6name: chr  "Engineering, General" "Pre-Engineering" "Aerospace, Aeronautical and Astronautical, Space Engineering" "Agricultural, Biological Engineering and Bioengineering" ...</span>
+<span class="co">#&gt;  $ program : chr  "Engineering" "Engineering" "Engineering" "Engineering" ...</span></pre></div>
+<p><code><a href="reference/get_enrollees.html">get_enrollees()</a></code> accesses the <code>midfieldterms</code> dataset using the <code>engr</code> 6-digit CIP column to obtain the IDs of all students ever enrolled in these programs.</p>
+<div class="sourceCode" id="cb5"><pre class="r"><span class="co"># extract students ever enrolled</span>
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/get_enrollees.html">get_enrollees</a></span>(<span class="kw">codes</span> <span class="kw">=</span> <span class="no">engr</span>$<span class="no">cip6</span>)
+
+<span class="co"># examine the result</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">enrollees</span>)
+<span class="co">#&gt; 'data.frame':    26042 obs. of  2 variables:</span>
+<span class="co">#&gt;  $ id  : chr  "MID25783162" "MID25783166" "MID25783167" "MID25783167" ...</span>
+<span class="co">#&gt;  $ cip6: chr  "14XXXX" "14XXXX" "14XXXX" "140901" ...</span></pre></div>
+<p><code>feasible_completion()</code> accesses the students, terms, and degrees datasets to filter for feasible program completion within the limits of the data.</p>
+<div class="sourceCode" id="cb6"><pre class="r"><span class="co"># apply the feasible completion filter</span>
+<span class="no">ids_we_want</span>  <span class="kw">&lt;-</span> <span class="fu">feasible_completion</span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">enrollees</span>$<span class="no">id</span>)
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>$<span class="no">id</span> <span class="kw">%in%</span> <span class="no">ids_we_want</span>
+<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="no">enrollees</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+
+<span class="co"># examine the result</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">enrollees</span>)
+<span class="co">#&gt; 'data.frame':    19970 obs. of  2 variables:</span>
+<span class="co">#&gt;  $ id  : chr  "MID25783162" "MID25783178" "MID25783178" "MID25783178" ...</span>
+<span class="co">#&gt;  $ cip6: chr  "14XXXX" "14XXXX" "140701" "143501" ...</span></pre></div>
+<p><code><a href="reference/get_race_sex.html">get_race_sex()</a></code> accesses the <code>midfieldstudents</code> dataset using the enrollees IDs.</p>
+<div class="sourceCode" id="cb7"><pre class="r"><span class="co"># get student demographics </span>
+<span class="no">demographics</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/get_race_sex.html">get_race_sex</a></span>(<span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">ids_we_want</span>)
+
+<span class="co"># examine the result</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">demographics</span>)
+<span class="co">#&gt; 'data.frame':    14241 obs. of  3 variables:</span>
+<span class="co">#&gt;  $ id  : chr  "MID25783162" "MID25783178" "MID25783197" "MID25783259" ...</span>
+<span class="co">#&gt;  $ race: chr  "White" "Black" "White" "White" ...</span>
+<span class="co">#&gt;  $ sex : chr  "Male" "Male" "Male" "Male" ...</span></pre></div>
+<p>To the working data frame, join the student race/ethnicity and sex and the program names.</p>
+<div class="sourceCode" id="cb8"><pre class="r"><span class="co"># join demographics and program labels to working data frame </span>
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">demographics</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">engr</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+
+<span class="co"># examine the result</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">enrollees</span>)
+<span class="co">#&gt; 'data.frame':    19970 obs. of  6 variables:</span>
+<span class="co">#&gt;  $ cip6    : chr  "140101" "140101" "140101" "140101" ...</span>
+<span class="co">#&gt;  $ id      : chr  "MID26523480" "MID25942292" "MID25976639" "MID26239077" ...</span>
+<span class="co">#&gt;  $ race    : chr  "White" "White" "White" "White" ...</span>
+<span class="co">#&gt;  $ sex     : chr  "Male" "Male" "Female" "Male" ...</span>
+<span class="co">#&gt;  $ cip6name: chr  "Engineering, General" "Engineering, General" "Engineering, General" "Engineering, General" ...</span>
+<span class="co">#&gt;  $ program : chr  "Engineering" "Engineering" "Engineering" "Engineering" ...</span></pre></div>
+<p>Group and summarize by race/ethnicity and sex.</p>
+<div class="sourceCode" id="cb9"><pre class="r"><span class="co"># initialize the summarizing column</span>
+<span class="no">enrollees</span>$<span class="no">ever</span> <span class="kw">&lt;-</span> <span class="fl">0</span>
+
+<span class="co"># group and summarize</span>
+<span class="no">grouped_enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span>(<span class="no">ever</span> ~ <span class="no">race</span> + <span class="no">sex</span>,
+  <span class="kw">data</span> <span class="kw">=</span> <span class="no">enrollees</span>,
+  <span class="kw">FUN</span> <span class="kw">=</span> <span class="kw">function</span>(<span class="no">x</span>) <span class="no">ever</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">x</span>))
+)
+
+<span class="co"># examine the result</span>
+<span class="no">grouped_enrollees</span>
+<span class="co">#&gt;               race    sex  ever</span>
+<span class="co">#&gt; 1            Asian Female   302</span>
+<span class="co">#&gt; 2            Black Female   775</span>
+<span class="co">#&gt; 3         Hispanic Female   138</span>
+<span class="co">#&gt; 4    International Female    56</span>
+<span class="co">#&gt; 5  Native American Female    21</span>
+<span class="co">#&gt; 6            Other Female    51</span>
+<span class="co">#&gt; 7          Unknown Female    23</span>
+<span class="co">#&gt; 8            White Female  2985</span>
+<span class="co">#&gt; 9            Asian   Male  1045</span>
+<span class="co">#&gt; 10           Black   Male  1241</span>
+<span class="co">#&gt; 11        Hispanic   Male   498</span>
+<span class="co">#&gt; 12   International   Male   346</span>
+<span class="co">#&gt; 13 Native American   Male    76</span>
+<span class="co">#&gt; 14           Other   Male   229</span>
+<span class="co">#&gt; 15         Unknown   Male    52</span>
+<span class="co">#&gt; 16           White   Male 12132</span></pre></div>
+<p>Prepare data for graphing.</p>
+<div class="sourceCode" id="cb10"><pre class="r"><span class="co"># remove ambiguous levels of race/ethnicity</span>
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">grouped_enrollees</span>
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> !<span class="no">pre_mw</span>$<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"International"</span>, <span class="st">"Other"</span>, <span class="st">"Unknown"</span>)
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+
+<span class="co"># complete the transformation to multiway form</span>
+<span class="no">columns_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"race"</span>, <span class="st">"sex"</span>, <span class="st">"ever"</span>)
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[, <span class="no">columns_we_want</span>, <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+
+<span class="co"># examine the result</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">pre_mw</span>)
+<span class="co">#&gt; 'data.frame':    10 obs. of  3 variables:</span>
+<span class="co">#&gt;  $ race: chr  "Asian" "Black" "Hispanic" "Native American" ...</span>
+<span class="co">#&gt;  $ sex : chr  "Female" "Female" "Female" "Female" ...</span>
+<span class="co">#&gt;  $ ever: int  302 775 138 21 2985 1045 1241 498 76 12132</span></pre></div>
+<p><code><a href="reference/order_multiway.html">order_multiway()</a></code> converts the categorical variables to factors and orders the levels by the median of the quantitative variable.</p>
+<div class="sourceCode" id="cb11"><pre class="r"><span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/order_multiway.html">order_multiway</a></span>(<span class="no">pre_mw</span>)
+
+<span class="co"># examine the result</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">data_mw</span>)
+<span class="co">#&gt; 'data.frame':    10 obs. of  3 variables:</span>
+<span class="co">#&gt;  $ race: Factor w/ 5 levels "Native American",..: 3 4 2 1 5 3 4 2 1 5</span>
+<span class="co">#&gt;  $ sex : Factor w/ 2 levels "Female","Male": 1 1 1 1 1 2 2 2 2 2</span>
+<span class="co">#&gt;  $ ever: num  302 775 138 21 2985 ...</span>
+
+<span class="co"># total number of students for graph subtitle</span>
+<span class="no">n_ever</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">data_mw</span>$<span class="no">ever</span>)
+<span class="no">n_ever</span>
+<span class="co">#&gt; [1] 19213</span></pre></div>
+<p>And we’re ready to graph the results.</p>
+<div class="sourceCode" id="cb12"><pre class="r"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data_mw</span>, <span class="kw">mapping</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">ever</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">race</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="kw">facets</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">sex</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span>(<span class="kw">trans</span> <span class="kw">=</span> <span class="st">'log2'</span>, <span class="kw">breaks</span> <span class="kw">=</span> <span class="fl">2</span>^<span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0</span>, <span class="fl">15</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Number of students, log-2 scale"</span>,
+       <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>,
+       <span class="kw">title</span> <span class="kw">=</span> <span class="st">"Ever enrolled in Engineering"</span>,
+       <span class="kw">subtitle</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/bquote.html">bquote</a></span>(<span class="no">N</span> <span class="kw">==</span> <span class="fu">.</span>(<span class="no">n_ever</span>)),
+       <span class="kw">caption</span> <span class="kw">=</span> <span class="st">"Source: midfielddata"</span>
+       ) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="kw">panel.grid.minor.x</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>())</pre></div>
+<p><img src="reference/figures/README-fig1-1.png" width="70%" style="display: block; margin: auto;"></p>
 </div>
 <div id="meta" class="section level2">
 <h2 class="hasAnchor">
@@ -213,7 +367,7 @@
 <h2>License</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a> | file <a href="LICENSE-text.html">LICENSE</a>
+<a href="https://www.r-project.org/Licenses/GPL-2">GPL-2</a> | <a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a> | file <a href="LICENSE-text.html">LICENSE</a>
 </li>
 </ul>
 </div>

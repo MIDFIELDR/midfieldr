@@ -47,9 +47,9 @@
 
 
 <meta property="og:title" content="Example CIP codes and names — exa_cip" />
-<meta property="og:description" content="Subset of the cip data set. CIP codes and names for Civil,
-Electrical, Industrial, and Mechanical Engineering. Used in a case
-study in the vignettes." />
+<meta property="og:description" content="A subset of the cip data set containing CIP codes and names for a
+case study of Civil, Electrical, Industrial, and Mechanical Engineering
+programs in midfielddata." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -107,6 +107,15 @@ study in the vignettes." />
     <li>
       <a href="../articles/explore_cip.html">Explore program CIP codes</a>
     </li>
+    <li>
+      <a href="../articles/get_programs.html">Gather programs</a>
+    </li>
+    <li>
+      <a href="../articles/feasible_completion.html">Filter for program completion feasibility</a>
+    </li>
+    <li>
+      <a href="../articles/explore_multiway.html">Explore multiway data</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -160,9 +169,9 @@ study in the vignettes." />
     </div>
 
     <div class="ref-description">
-    <p>Subset of the <code>cip</code> data set. CIP codes and names for Civil,
-Electrical, Industrial, and Mechanical Engineering. Used in a case
-study in the vignettes.</p>
+    <p>A subset of the <code>cip</code> data set containing CIP codes and names for a
+case study of Civil, Electrical, Industrial, and Mechanical Engineering
+programs in <a href='https://midfieldr.github.io/midfielddata/'>midfielddata</a>.</p>
     </div>
 
     <pre class="usage"><span class='no'>exa_cip</span></pre>
@@ -170,21 +179,21 @@ study in the vignettes.</p>
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A data frame (tibble) with 12 observations and 6 variables.
-The variables are characters.</p><dl'>
-  <dt>cip6</dt><dd><p>6-digit program code.</p></dd>
-  <dt>cip6name</dt><dd><p>6-digit program name.</p></dd>
-  <dt>cip4</dt><dd><p>4-digit program code.</p></dd>
-  <dt>cip4name</dt><dd><p>4-digit program name.</p></dd>
-  <dt>cip2</dt><dd><p>2-digit program code.</p></dd>
-  <dt>cip2name</dt><dd><p>2-digit program name.</p></dd>
+    <p><code>data.frame</code> with 12 rows and 6 columns keyed by the
+6-digit CIP code. The variables are:</p><dl'>
+  <dt>cip6</dt><dd><p>character 6-digit code representing "specific
+  instructional programs" (US National Center for Education Statistics)</p></dd>
+  <dt>cip6name</dt><dd><p>character program name at the 6-digit level</p></dd>
+  <dt>cip4</dt><dd><p>character 4-digit code (the first 4 digits of <code>cip6</code>)
+  representing "intermediate groupings of programs that have
+  comparable content and objectives"</p></dd>
+  <dt>cip4name</dt><dd><p>character program name at the 4-digit level</p></dd>
+  <dt>cip2</dt><dd><p>character 2-digit code (the first 2 digits of <code>cip6</code>)
+  representing "the most general groupings of related programs"</p></dd>
+  <dt>cip2name</dt><dd><p>character program name at the 2-digit level</p></dd>
 
 </dl>
 
-    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
-
-    <p><a href='https://midfieldr.github.io/midfielddata/'>midfielddata</a>
- package</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other example_data: 
@@ -193,32 +202,24 @@ The variables are characters.</p><dl'>
 <code><a href='exa_stickiness.html'>exa_stickiness</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>exa_cip</span></div><div class='output co'>#&gt;    cip2    cip2name cip4                                               cip4name
-#&gt; 1    14 Engineering 1408                                      Civil Engineering
-#&gt; 2    14 Engineering 1408                                      Civil Engineering
-#&gt; 3    14 Engineering 1408                                      Civil Engineering
-#&gt; 4    14 Engineering 1408                                      Civil Engineering
-#&gt; 5    14 Engineering 1408                                      Civil Engineering
-#&gt; 6    14 Engineering 1408                                      Civil Engineering
-#&gt; 7    14 Engineering 1410 Electrical, Electronics and Communications Engineering
-#&gt; 8    14 Engineering 1410 Electrical, Electronics and Communications Engineering
-#&gt; 9    14 Engineering 1410 Electrical, Electronics and Communications Engineering
-#&gt; 10   14 Engineering 1410 Electrical, Electronics and Communications Engineering
-#&gt; 11   14 Engineering 1419                                 Mechanical Engineering
-#&gt; 12   14 Engineering 1435                                 Industrial Engineering
-#&gt;      cip6                                                      cip6name
-#&gt; 1  140801                                    Civil Engineering, General
-#&gt; 2  140802                                      Geotechnical Engineering
-#&gt; 3  140803                                        Structural Engineering
-#&gt; 4  140804                        Transportation and Highway Engineering
-#&gt; 5  140805                                   Water Resources Engineering
-#&gt; 6  140899                                      Civil Engineering, Other
-#&gt; 7  141001        Electrical, Electronics and Communications Engineering
-#&gt; 8  141003                                 Laser and Optical Engineering
-#&gt; 9  141004                                Telecommunications Engineering
-#&gt; 10 141099 Electrical, Electronics and Communications Engineering, Other
-#&gt; 11 141901                                        Mechanical Engineering
-#&gt; 12 143501                                        Industrial Engineering</div><div class='input'><span class='fu'><a href='label_programs.html'>label_programs</a></span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>exa_cip</span>, <span class='kw'>label</span> <span class='kw'>=</span> <span class='st'>"cip4name"</span>)</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>program_group</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='label_programs.html'>label_programs</a></span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>exa_cip</span>, <span class='kw'>label</span> <span class='kw'>=</span> <span class='st'>"cip4name"</span>)
+<span class='no'>program_group</span>$<span class='no'>cip6name</span> <span class='kw'>&lt;-</span> <span class='kw'>NULL</span>
+<span class='no'>rows_to_edit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/startsWith.html'>startsWith</a></span>(<span class='no'>program_group</span>$<span class='no'>cip6</span>, <span class='st'>"1410"</span>)
+<span class='no'>program_group</span>$<span class='no'>program</span>[<span class='no'>rows_to_edit</span>] <span class='kw'>&lt;-</span> <span class='st'>"Electrical Engineering"</span>
+<span class='no'>program_group</span></div><div class='output co'>#&gt;      cip6                program
+#&gt; 1  140801      Civil Engineering
+#&gt; 2  140802      Civil Engineering
+#&gt; 3  140803      Civil Engineering
+#&gt; 4  140804      Civil Engineering
+#&gt; 5  140805      Civil Engineering
+#&gt; 6  140899      Civil Engineering
+#&gt; 7  141001 Electrical Engineering
+#&gt; 8  141003 Electrical Engineering
+#&gt; 9  141004 Electrical Engineering
+#&gt; 10 141099 Electrical Engineering
+#&gt; 11 141901 Mechanical Engineering
+#&gt; 12 143501 Industrial Engineering</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
