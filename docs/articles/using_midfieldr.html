@@ -63,6 +63,15 @@
 <li>
       <a href="../articles/explore_cip.html">Explore program CIP codes</a>
     </li>
+    <li>
+      <a href="../articles/get_programs.html">Gather programs</a>
+    </li>
+    <li>
+      <a href="../articles/feasible_completion.html">Filter for program completion feasibility</a>
+    </li>
+    <li>
+      <a href="../articles/explore_multiway.html">Explore multiway data</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -120,7 +129,7 @@
 
     
     
-<p>This exercise illustrates a typical workflow for computing a persistence metric, starting with student record data from MIDFIELD <span class="citation">(Ohland and Long <a href="#ref-aee2016" role="doc-biblioref">2016</a>)</span> and ending with a multiway graph.</p>
+<p>This exercise illustrates a typical workflow for computing a persistence metric, starting with student record data from MIDFIELD <span class="citation">(Ohland and Long <a href="#ref-Ohland+Long:2016" role="doc-biblioref">2016</a>)</span> and ending with a multiway graph.</p>
 <p>Our metric in this case is “stickiness”, the ratio of the number of students graduating from a program to the number ever enrolled in the program <span class="citation">(Ohland et al. <a href="#ref-stickiness2012" role="doc-biblioref">2012</a>)</span>. We compare the stickiness of three engineering programs with students grouped by program, race/ethnicity, and sex.</p>
 <p>In this introductory example, conveying <em>what</em> is more important than <em>how</em>. We focus on what the steps are and how they fit together. How the code works is explained in greater detail in the vignettes <a href="index.html">(link)</a>.</p>
 <div id="gather-program-data" class="section level2">
@@ -246,13 +255,13 @@
 <span class="co">#&gt; 'data.frame':    6402 obs. of  2 variables:</span>
 <span class="co">#&gt;  $ id  : chr  "MID25783178" "MID25783178" "MID25783197" "MID25783257" ...</span>
 <span class="co">#&gt;  $ cip6: chr  "140701" "143501" "140701" "140701" ...</span></pre></body></html></div>
-<p>For some of these students, completing their program may not be feasible given the range of data available. <code><a href="../reference/feasible_completion.html">feasible_completion()</a></code> subsets the student IDs, retaining those who matriculate at least six years before the last term in the data.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># apply the feasible completion filter </span>
-<span class="no">ids_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/feasible_completion.html">feasible_completion</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">enrollees</span>$<span class="no">id</span>)
+<p>For some of these students, completing their program may not be feasible given the range of data available. <code><a href="../reference/completion_feasible.html">completion_feasible()</a></code> subsets the student IDs, retaining those who matriculate at least six years before the last term in the data.</p>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># apply the feasible completion filter</span>
+<span class="no">ids_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/completion_feasible.html">completion_feasible</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">enrollees</span>$<span class="no">id</span>)
 
 <span class="co"># subset the enrollees</span>
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>$<span class="no">id</span> <span class="kw">%in%</span> <span class="no">ids_we_want</span>
-<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="no">enrollees</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">enrollees</span>)
@@ -299,7 +308,7 @@
 <span class="co"># group by the framing variables and count</span>
 <span class="no">grouped_enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span>(<span class="no">ever</span> ~ <span class="no">race</span> + <span class="no">sex</span> + <span class="no">program</span>,
   <span class="kw">data</span> <span class="kw">=</span> <span class="no">enrollees</span>,
-  <span class="kw">function</span>(<span class="no">x</span>) <span class="no">ever</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">x</span>)
+  <span class="kw">FUN</span> <span class="kw">=</span> <span class="kw">function</span>(<span class="no">x</span>) <span class="no">ever</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">x</span>))
 )
 
 <span class="co"># examine the result</span>
@@ -312,11 +321,11 @@
 <p>Note the change in the size of the data frame, from 5195 in <code>enrollees</code> where every row is a student to 48 in the <code>grouped_enrollees</code> below where every row is a group.</p>
 <p>A similar process is used to group and summarize our graduates. We start with <code><a href="../reference/get_graduates.html">get_graduates()</a></code> with a default data argument of <code>midfielddegrees</code>. For graduates, the question of completion feasibility is moot—graduation itself establishes feasibility. Thus we omit the the feasible completion filter in this step.</p>
 <div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="co"># gather individual graduating students</span>
-<span class="no">graduates</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_graduates.html">get_graduates</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfielddegrees</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">group_codes</span>)
-<span class="no">ids_we_want</span>  <span class="kw">&lt;-</span> <span class="no">graduates</span>$<span class="no">id</span>
+<span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_graduates.html">get_graduates</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfielddegrees</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">group_codes</span>)
+<span class="no">ids_we_want</span> <span class="kw">&lt;-</span> <span class="no">graduates</span>$<span class="no">id</span>
 <span class="no">demographics</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_race_sex.html">get_race_sex</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldstudents</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">ids_we_want</span>)
-<span class="no">graduates</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">demographics</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">graduates</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">program_group</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">demographics</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">program_group</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># initialize the grad count column</span>
 <span class="no">graduates</span>$<span class="no">grad</span> <span class="kw">&lt;-</span> <span class="fl">0</span>
@@ -324,7 +333,7 @@
 <span class="co"># group by the framing variables</span>
 <span class="no">grouped_graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span>(<span class="no">grad</span> ~ <span class="no">race</span> + <span class="no">sex</span> + <span class="no">program</span>,
   <span class="kw">data</span> <span class="kw">=</span> <span class="no">graduates</span>,
-  <span class="kw">function</span>(<span class="no">x</span>) <span class="no">grad</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">x</span>)
+  <span class="kw">FUN</span> <span class="kw">=</span> <span class="kw">function</span>(<span class="no">x</span>) <span class="no">ever</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">x</span>))
 )
 
 <span class="co"># examine the result</span>
@@ -547,8 +556,8 @@
 <div id="ref-stickiness2012">
 <p>Ohland, Matthew, Marisa Orr, Richard Layton, Susan Lord, and Russell Long. 2012. “Introducing Stickiness as a Versatile Metric of Engineering Persistence.” In <em>Proceedings of the Frontiers in Education Conference</em>, 1–5.</p>
 </div>
-<div id="ref-aee2016">
-<p>Ohland, Matthew W., and Russell A. Long. 2016. “The Multiple-Institution Database for Investigating Engineering Longitudinal Development: An Experiential Case Study of Data Sharing and Reuse.” <em>Advances in Engineering Education</em> 5 (2).</p>
+<div id="ref-Ohland+Long:2016">
+<p>Ohland, Matthew W., and Russell A. Long. 2016. “The Multiple-Institution Database for Investigating Engineering Longitudinal Development: An experiential case study of data sharing and reuse.” <em>Advances in Engineering Education</em> 5 (2): 398–404. <a href="http://advances.asee.org/wp-content/uploads/vol05/issue02/Papers/AEE-18-Ohland.pdf">http://advances.asee.org/wp-content/uploads/vol05/issue02/Papers/AEE-18-Ohland.pdf</a>.</p>
 </div>
 </div>
 </div>
@@ -566,70 +575,70 @@
 
 <span class="co"># gather the three programs</span>
 <span class="no">che_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1407"</span>)
-<span class="no">che</span>     <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">che_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Chemical Engineering"</span>)
+<span class="no">che</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">che_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Chemical Engineering"</span>)
 <span class="no">ece_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1410"</span>)
-<span class="no">ece</span>     <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">ece_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Electrical Engineering"</span>)
+<span class="no">ece</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">ece_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Electrical Engineering"</span>)
 <span class="no">ise_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1435"</span>)
-<span class="no">ise</span>     <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">ise_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Industrial Engineering"</span>)
+<span class="no">ise</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">ise_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Industrial Engineering"</span>)
 <span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="no">che</span>, <span class="no">ece</span>, <span class="no">ise</span>)
 <span class="no">program_group</span>$<span class="no">cip6name</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
 
 <span class="co"># extract a vector of 6-digit CIP codes</span>
 <span class="no">group_codes</span> <span class="kw">&lt;-</span> <span class="no">program_group</span>$<span class="no">cip6</span>
 
-<span class="co"># gather students ever enrolled with feasible program completion </span>
-<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_enrollees.html">get_enrollees</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldterms</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">group_codes</span>)
-<span class="no">ids_we_want</span>  <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/feasible_completion.html">feasible_completion</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">enrollees</span>$<span class="no">id</span>)
+<span class="co"># gather students ever enrolled with feasible program completion</span>
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_enrollees.html">get_enrollees</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldterms</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">group_codes</span>)
+<span class="no">ids_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/completion_feasible.html">completion_feasible</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">enrollees</span>$<span class="no">id</span>)
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>$<span class="no">id</span> <span class="kw">%in%</span> <span class="no">ids_we_want</span>
-<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="no">enrollees</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 <span class="no">demographics</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_race_sex.html">get_race_sex</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldstudents</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">ids_we_want</span>)
-<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">demographics</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">program_group</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">demographics</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">program_group</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># group by the framing variables</span>
-<span class="no">enrollees</span>$<span class="no">ever</span>    <span class="kw">&lt;-</span> <span class="fl">0</span>
+<span class="no">enrollees</span>$<span class="no">ever</span> <span class="kw">&lt;-</span> <span class="fl">0</span>
 <span class="no">grouped_enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span>(<span class="no">ever</span> ~ <span class="no">race</span> + <span class="no">sex</span> + <span class="no">program</span>,
   <span class="kw">data</span> <span class="kw">=</span> <span class="no">enrollees</span>,
-  <span class="kw">function</span>(<span class="no">x</span>) <span class="no">ever</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">x</span>)
+  <span class="kw">FUN</span> <span class="kw">=</span> <span class="kw">function</span>(<span class="no">x</span>) <span class="no">ever</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">x</span>))
 )
 
 <span class="co"># gather individual graduating students</span>
-<span class="no">graduates</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_graduates.html">get_graduates</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfielddegrees</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">group_codes</span>)
-<span class="no">ids_we_want</span>  <span class="kw">&lt;-</span> <span class="no">graduates</span>$<span class="no">id</span>
+<span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_graduates.html">get_graduates</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfielddegrees</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">group_codes</span>)
+<span class="no">ids_we_want</span> <span class="kw">&lt;-</span> <span class="no">graduates</span>$<span class="no">id</span>
 <span class="no">demographics</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_race_sex.html">get_race_sex</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">midfieldstudents</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">ids_we_want</span>)
-<span class="no">graduates</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">demographics</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">graduates</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">program_group</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">demographics</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">program_group</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># group by the framing variables</span>
-<span class="no">graduates</span>$<span class="no">grad</span>    <span class="kw">&lt;-</span> <span class="fl">0</span>
+<span class="no">graduates</span>$<span class="no">grad</span> <span class="kw">&lt;-</span> <span class="fl">0</span>
 <span class="no">grouped_graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span>(<span class="no">grad</span> ~ <span class="no">race</span> + <span class="no">sex</span> + <span class="no">program</span>,
   <span class="kw">data</span> <span class="kw">=</span> <span class="no">graduates</span>,
-  <span class="kw">function</span>(<span class="no">x</span>) <span class="no">grad</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">x</span>)
+  <span class="kw">FUN</span> <span class="kw">=</span> <span class="kw">function</span>(<span class="no">x</span>) <span class="no">ever</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">x</span>))
 )
 
 <span class="co"># compute the metric</span>
-<span class="no">metric</span>       <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">grouped_enrollees</span>, <span class="no">grouped_graduates</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">metric</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">grouped_enrollees</span>, <span class="no">grouped_graduates</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 <span class="no">rows_with_degree_NA</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">metric</span>$<span class="no">grad</span>)
 <span class="no">metric</span>$<span class="no">grad</span>[<span class="no">rows_with_degree_NA</span>] <span class="kw">&lt;-</span> <span class="fl">0</span>
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">metric</span>$<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">0</span>
-<span class="no">metric</span>       <span class="kw">&lt;-</span> <span class="no">metric</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">metric</span> <span class="kw">&lt;-</span> <span class="no">metric</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 <span class="no">metric</span>$<span class="no">stick</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="no">metric</span>$<span class="no">grad</span> / <span class="no">metric</span>$<span class="no">ever</span>, <span class="fl">3</span>)
 
 <span class="co"># prepare data for multiway graph</span>
-<span class="no">pre_mw</span>       <span class="kw">&lt;-</span> <span class="no">metric</span>
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">metric</span>
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> !<span class="no">pre_mw</span>$<span class="no">sex</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Unknown"</span>)
-<span class="no">pre_mw</span>       <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> !<span class="no">pre_mw</span>$<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span>)
-<span class="no">pre_mw</span>       <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>$<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">5</span>
-<span class="no">pre_mw</span>       <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 <span class="no">pre_mw</span>$<span class="no">race_sex</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="no">pre_mw</span>$<span class="no">race</span>, <span class="no">pre_mw</span>$<span class="no">sex</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">" "</span>)
 
 <span class="co"># complete the transformation to multiway form</span>
-<span class="no">data_mw</span>         <span class="kw">&lt;-</span> <span class="no">pre_mw</span>
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>
 <span class="no">columns_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"stick"</span>)
-<span class="no">data_mw</span>         <span class="kw">&lt;-</span> <span class="no">data_mw</span>[, <span class="no">columns_we_want</span>, <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
-<span class="no">data_mw</span>         <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span>(<span class="no">data_mw</span>)
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">data_mw</span>[, <span class="no">columns_we_want</span>, <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span>(<span class="no">data_mw</span>)
 
 <span class="co"># graph results</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data_mw</span>, <span class="kw">mapping</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">stick</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">race_sex</span>)) +
