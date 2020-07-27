@@ -21,7 +21,7 @@ test_that("Inputs exist and are are correct class", {
   )
 })
 test_that("Pipe correctly passes the data argument", {
-  expect_equal(
+  expect_equivalent(
     subset_students %>% get_race_sex(keep_id = subset_id),
     get_race_sex(subset_students, keep_id = subset_id)
   )
@@ -48,18 +48,15 @@ test_that("Required variables are present", {
 })
 test_that("Results are correct", {
   r1 <- get_race_sex(keep_id = subset_id)
-  data.table::setDT(r1)
-  r1 <- r1[order(id)]
-  data.table::setDF(r1)
   # cat(wrapr::draw_frame(r1))
   r2 <- wrapr::build_frame(
     "id"         , "race" , "sex"    |
-    "MID25869596", "White", "Female" |
-    "MID25912621", "White", "Female" |
-    "MID25974990", "White", "Male"   |
-    "MID26369225", "Asian", "Male"   |
-    "MID26372096", "Black", "Male"   )
-  data.table::setDF(r2)
+    "MID25855262", "White", "Male" |
+    "MID25860597", "White", "Male" |
+    "MID25864174", "White", "Male"   |
+    "MID25869725", "White", "Male"   |
+    "MID25875576", "White", "Female"   )
+  data.table::setDT(r2)
   expect_equal(r1, r2)
 })
 

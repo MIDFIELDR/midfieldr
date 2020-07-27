@@ -1,4 +1,4 @@
-#' @importFrom data.table setDT setDF '%chin%'
+#' @importFrom data.table setDT setDF '%chin%' as.data.table
 NULL
 
 #' Get transfer status of students by ID
@@ -23,7 +23,7 @@ NULL
 #'   \item Rows for which student ID is in \code{keep_id}
 #'   \item Columns \code{id}, \code{term_enter}, and \code{hours_transfer}
 #'   \item Grouping structures, if any, are not preserved
-#'   \item Data frame extension attributes, e.g., tibble, are not preserved
+#'   \item Data frame extensions \code{tbl} or \code{data.table} are preserved
 #' }
 #'
 #' @examples
@@ -47,23 +47,24 @@ get_status_transfers <- function(data = NULL, keep_id = NULL) {
   assert_class(data, "data.frame")
   assert_class(keep_id, "character")
   assert_required_column(data, "id")
-  # assert_required_column(data, "transfer")
   assert_required_column(data, "term_enter")
   assert_required_column(data, "hours_transfer")
 
   # bind names
-  id <- NULL
-  term_enter <- NULL
   hours_transfer <- NULL
+  term_enter <- NULL
+  id <- NULL
+
+  # to preserve data.frame, data.table, or tibble
+  dat_class <- get_df_class(data)
+  DT <- data.table::as.data.table(data)
 
   # do the work
-  data.table::setDT(data)
-  DT <- data[, .(id, term_enter, hours_transfer)][
+  columns <- c("id", "term_enter", "hours_transfer")
+  DT <- DT[, ..columns][
     id %chin% keep_id
   ]
-  # DT <- data[, .(id, term_enter, transfer, hours_transfer)][
-  #   id %chin% keep_id
-  # ]
-  unique(DT)
-  data.table::setDF(DT)
+  DT <- dt_unique_rows(DT, columns)
+
+  revive_class(DT, dat_class)
 }

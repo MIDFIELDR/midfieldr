@@ -20,20 +20,33 @@ df1 <- wrapr::build_frame(
     "suburb" , "women", 0.46  |
     "village", "men"  , 0.15  |
     "village", "women", 0.2   )
+
+test_that("Class of data frame is preserved", {
+  # data.frame
+  df2 <- df1
+  data.table::setDF(df2)
+  expect_equivalent(sort(class(df2)), sort(class(order_multiway(df2))))
+  # data.table
+  df2 <- df1
+  data.table::setDT(df2)
+  expect_equivalent(sort(class(df2)), sort(class(order_multiway(df2))))
+  # tibble
+  df2 <- df1
+  data.table::setattr(df2, "class", c("tbl", "tbl_df", "data.frame"))
+  expect_equivalent(sort(class(df2)), sort(class(order_multiway(df2))))
+})
 test_that("Integer values are accepted", {
   df2 <- df1
   df2$val <- as.integer(seq(1, 8))
   df3 <- df2
   df3$val <- as.double(df3$val)
-  expect_equal(order_multiway(df2), order_multiway(df3))
+  df2 <- order_multiway(df2)
+  df3 <- order_multiway(df3)
+  expect_equivalent(df2, df3)
 })
 test_that("Pipe correctly passes the data argument", {
-  expect_equal(
+  expect_equivalent(
     df1 %>% order_multiway(),
-    order_multiway(df1)
-  )
-  expect_equal(
-    df1 %>% order_multiway() %>% order_multiway(),
     order_multiway(df1)
   )
 })

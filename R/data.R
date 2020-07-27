@@ -24,7 +24,7 @@
 #'   not enrolled in a program.}
 #' }
 #'
-#' @format \code{data.frame} with 1584 rows and 6 columns keyed by the
+#' @format \code{data.table} with 1584 rows and 6 columns keyed by the
 #' 6-digit CIP code. The variables are:
 #' \describe{
 #'   \item{cip6}{character 6-digit code representing "specific
@@ -43,10 +43,6 @@
 #' # overview
 #' str(cip)
 #'
-#' # top level of the taxonomy
-#' columns_we_want <- c("cip2", "cip2name")
-#' unique(cip[, columns_we_want, drop = FALSE])
-#'
 #' # get_cip() argument
 #' get_cip(data = cip, keep_any = "^1410")
 #'
@@ -62,7 +58,7 @@
 #' case study of Civil, Electrical, Industrial, and Mechanical Engineering
 #' programs in \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 #'
-#' @format \code{data.frame} with 12 rows and 6 columns keyed by the
+#' @format \code{data.table} with 12 rows and 6 columns keyed by the
 #' 6-digit CIP code. The variables are:
 #' \describe{
 #'   \item{cip6}{character 6-digit code representing "specific
@@ -80,8 +76,6 @@
 #' @examples
 #' program_group <- label_programs(data = exa_cip, label = "cip4name")
 #' program_group$cip6name <- NULL
-#' rows_to_edit <- startsWith(program_group$cip6, "1410")
-#' program_group$program[rows_to_edit] <- "Electrical Engineering"
 #' program_group
 #'
 #' @family example_data
@@ -96,7 +90,7 @@
 #' Electrical, Industrial, and Mechanical Engineering programs in
 #' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 #'
-#' @format \code{data.frame} with 12 rows and 2 columns keyed by the
+#' @format \code{data.table} with 12 rows and 2 columns keyed by the
 #' 6-digit CIP code. The variables are:
 #' \describe{
 #'   \item{cip6}{6-digit program code}
@@ -110,13 +104,13 @@
 #' # attributes of students matriculating in programs
 #' cips_we_want <- exa_group$cip6
 #' rows_we_want <- midfieldstudents$cip6 %in% cips_we_want
-#' matriculants <- midfieldstudents[rows_we_want, , drop = FALSE]
+#' matriculants <- midfieldstudents[rows_we_want]
 #' str(matriculants)
 #'
 #' # attributes of students graduating in programs
 #' cips_we_want <- exa_group$cip6
 #' rows_we_want <- midfielddegrees$cip6 %in% cips_we_want
-#' graduates <- midfielddegrees[rows_we_want, , drop = FALSE]
+#' graduates <- midfielddegrees[rows_we_want]
 #' str(graduates)
 #'
 #' @family example_data
@@ -146,12 +140,12 @@
 #'
 #' # ever enrolled
 #' rows_we_want <- midfieldstudents$id %in% exa_ever
-#' enrollees <- midfieldstudents[rows_we_want, ]
+#' enrollees <- midfieldstudents[rows_we_want]
 #' head(enrollees)
 #'
 #' # graduates
 #' rows_we_want <- midfieldstudents$id %in% exa_grad
-#' graduates <- midfieldstudents[rows_we_want, ]
+#' graduates <- midfieldstudents[rows_we_want]
 #' head(graduates)
 #'
 #' @family example_data
@@ -178,7 +172,7 @@ NULL
 #' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}. Results
 #' are grouped by program, race/ethnicity, and sex.
 #'
-#' @format \code{data.frame} with 32 rows and 6 columns keyed by
+#' @format \code{data.table} with 32 rows and 6 columns keyed by
 #' program, race/ethnicity, and sex. The variables are:
 #' \describe{
 #'  \item{program}{instructional programs selected for study}
@@ -194,7 +188,7 @@ NULL
 #' # prepare data for multiway graph
 #' exa_stickiness$race_sex <- paste(exa_stickiness$race, exa_stickiness$sex)
 #' columns_we_want <- c("program", "race_sex", "stick")
-#' pre_mw <- exa_stickiness[, columns_we_want, drop = FALSE]
+#' pre_mw <- exa_stickiness[, ..columns_we_want]
 #'
 #' @family example_data
 #'
@@ -230,7 +224,7 @@ NULL
 #' ids_we_want <- midfield_fye$id
 #' rows_we_want <- midfielddegrees$id %in% ids_we_want &
 #'   !is.na(midfielddegrees$degree)
-#' fye_grads <- midfielddegrees[rows_we_want, , drop = FALSE]
+#' fye_grads <- midfielddegrees[rows_we_want]
 #'
 #' @family cip_data
 #'

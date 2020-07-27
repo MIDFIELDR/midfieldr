@@ -1,4 +1,4 @@
-#' @importFrom data.table setDT setDF
+#' @importFrom data.table setDT setDF as.data.table
 #' @importFrom stats median
 NULL
 
@@ -15,7 +15,8 @@ NULL
 #' or equivalent. Character columns \code{id}, \code{institution} and
 #' \code{hours_term} are required by name.
 #'
-#' The default \code{keep_id} argument is the set of IDs in \code{data}.
+#' If the \code{keep_id} argument is NULL, all IDs in \code{data} are used
+#' by default.
 #'
 #' @param data data frame of term attributes
 #' @param keep_id character vector of student IDs
@@ -25,7 +26,7 @@ NULL
 #'   \item One row per institution
 #'   \item Columns \code{institution} and \code{median_hr_per_term}
 #'   \item Grouping structures, if any, are not preserved
-#'   \item Data frame extension attributes, e.g., tibble, are not preserved
+#'   \item Data frame extensions \code{tbl} or \code{data.table} are preserved
 #' }
 #'
 #' @examples
@@ -39,9 +40,9 @@ get_institution_hours_term <- function(data = NULL, keep_id = NULL) {
 
   # defaults
   data <- data %||% midfielddata::midfieldterms
+  keep_id <- keep_id %||% unique(midfielddata::midfieldterms$id)
 
   # check arguments
-  assert_explicit(keep_id)
   assert_class(data, "data.frame")
   assert_class(keep_id, "character")
   assert_required_column(data, "id")
@@ -49,16 +50,19 @@ get_institution_hours_term <- function(data = NULL, keep_id = NULL) {
   assert_required_column(data, "hours_term")
 
   # bind names
-  id <- NULL
   institution <- NULL
   hours_term <- NULL
+  id <- NULL
+
+  # to preserve data.frame, data.table, or tibble
+  dat_class <- get_df_class(data)
+  DT <- data.table::as.data.table(data)
 
   # do the work
-  data.table::setDT(data)
-  data <- data[id %in% keep_id, .(institution, hours_term)]
-  hr_per_term <- data[order(institution),
+  DT <- DT[id %in% keep_id, .(institution, hours_term)]
+  hr_per_term <- DT[order(institution),
     .(median_hr_per_term = stats::median(hours_term)),
-    by = institution
-  ]
-  data.table::setDF(hr_per_term)
+    by = institution]
+
+  revive_class(hr_per_term, dat_class)
 }

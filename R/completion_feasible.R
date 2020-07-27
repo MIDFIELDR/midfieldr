@@ -68,8 +68,8 @@ completion_feasible <- function(id = NULL,
   span <- span %||% 6
   terms_transfer_max <- terms_transfer_max %||% 4
   data_students <- data_students %||% midfielddata::midfieldstudents
-  data_terms <- data_terms %||% midfielddata::midfieldterms
-  data_degrees <- data_degrees %||% midfielddata::midfielddegrees
+  data_terms    <- data_terms %||% midfielddata::midfieldterms
+  data_degrees  <- data_degrees %||% midfielddata::midfielddegrees
 
   # check arguments
   assert_class(id, "character")
@@ -79,15 +79,20 @@ completion_feasible <- function(id = NULL,
   assert_class(data_degrees, "data.frame")
 
   # bind names
+  median_hr_per_term <- NULL
   terms_transfer <- NULL
   hours_transfer <- NULL
-  median_hr_per_term <- NULL
   matric_limit <- NULL
+  institution <- NULL
   term_enter <- NULL
+  hours_term <- NULL
+  degree <- NULL
+
+  # does not require preservation of data frame extension
+  # because the function returns a vector
 
   # gather degree data
   degree_data <- get_status_degrees(data = data_degrees, keep_id = id)
-  data.table::setDT(degree_data)
 
   # separate the grads from nongrads
   nongrad_rows <- is.na(degree_data$degree)
@@ -96,62 +101,76 @@ completion_feasible <- function(id = NULL,
   grads <- degree_data[!nongrad_rows]
   grads_id <- grads$id
 
-  # transfers
-  transfer_data <- get_status_transfers(
-    data = data_students,
-    keep_id = nongrads_id
-  )
-  data.table::setDT(transfer_data)
-  nongrads <- merge(nongrads, transfer_data, all.x = TRUE, by = "id")
+  if (length(nongrads_id) > 0){
 
-  # gather institution data for feasible completion
-  inst_limits <- get_institution_limits(data = data_terms, span = span)
-  data.table::setDT(inst_limits)
+    # transfers
+    transfer_data <- get_status_transfers(
+      data = data_students,
+      keep_id = nongrads_id
+    )
 
-  # get median hours per term of graduates by institution
-  hr_per_term <- get_institution_hours_term(
-    data = data_terms,
-    keep_id = grads_id
-  )
-  data.table::setDT(hr_per_term)
+    # join
+    nongrads <- transfer_data[nongrads, on = "id"]
 
-  # join the inst data
-  institutions <- merge(inst_limits,
-    hr_per_term,
-    all.x = TRUE,
-    by = "institution"
-  )
-  data.table::setDT(institutions)
+    # get median hours per term of graduates by institution
+    institution_nongrads <- nongrads[, .(institution)]
+    institution_nongrads <- unique(institution_nongrads)
+    keep_institution     <- institution_nongrads$institution
 
-  # join student and institution data
-  fc_data <- merge(nongrads, institutions, all.x = TRUE, by = "institution")
-  data.table::setDT(fc_data)
-  data.table::setnafill(fc_data,
-    type = "const",
-    fill = 0,
-    cols = c("hours_transfer")
-  )
+    # gather institution data for feasible completion
+    data_terms_specific_inst <- data_terms[institution %chin% keep_institution]
+    inst_limits <- get_institution_limits(data = data_terms_specific_inst,
+                                          span = span)
 
-  # convert transfer hours to terms
-  fc_data[, terms_transfer := floor(hours_transfer / median_hr_per_term)]
+    # get institution hours per term
+    # IDs are ALL grads in the institutions in keep_institution
+    institution_all_grad <- data_degrees[
+      !is.na(degree) & institution %chin% keep_institution, .(id)
+    ]
+    all_grad_id <- institution_all_grad$id
 
-  # max transfer of 4 terms
-  fc_data[
-    terms_transfer > terms_transfer_max,
-    terms_transfer := terms_transfer_max
-  ]
+    # now go to terms with these IDs
+    all_grad <- data_terms[id %in% all_grad_id, .(institution, hours_term)]
+    hr_per_term <- all_grad[order(institution),
+                            .(median_hr_per_term = stats::median(hours_term)),
+                            by = institution]
 
-  # advance matriculation limit by transfer terms
-  fc_data <- term_addition(fc_data,
-    term_col = "matric_limit",
-    add_col = "terms_transfer"
-  )
-  data.table::setDT(fc_data)
+    # join the inst data
+    institutions <- hr_per_term[inst_limits, on = "institution"]
 
-  # filter
-  nongrad_fc <- fc_data[matric_limit >= term_enter]
-  nongrad_fc_id <- nongrad_fc$id
+    # join student and institution data
+    fc_data <- institutions[nongrads, on = "institution"]
+    data.table::setnafill(fc_data,
+                          type = "const",
+                          fill = 0,
+                          cols = c("hours_transfer")
+    )
 
-  # ID vector output
-  feasible_id <- sort(unique(c(grads_id, nongrad_fc_id)))
+    # convert transfer hours to terms
+    fc_data[, terms_transfer := floor(hours_transfer / median_hr_per_term)]
+
+    # max transfer of 4 terms
+    fc_data[
+      terms_transfer > terms_transfer_max,
+      terms_transfer := terms_transfer_max
+    ]
+
+    # advance matriculation limit by transfer terms
+    fc_data <- term_addition(fc_data,
+                             term_col = "matric_limit",
+                             add_col = "terms_transfer"
+    )
+
+    # filter
+    nongrad_fc <- fc_data[matric_limit >= term_enter]
+    nongrad_fc_id <- nongrad_fc$id
+
+    # output if we have any nongrads
+    feasible_id <- sort(unique(c(grads_id, nongrad_fc_id)))
+
+  } else {
+
+    # output when we have grads only
+    feasible_id <- sort(unique(grads_id))
+  }
 }

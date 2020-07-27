@@ -4,7 +4,36 @@ context("label_programs")
 # ctrl-shift-L to load internal functions
 
 music_cip <- get_cip(cip, "^5009")
+exp_result <- music_cip[, c("cip6", "cip6name")]
+exp_result$program <- "Music"
 
+test_that("Class of data frame is preserved", {
+  u0 <- music_cip
+  y0 <- label_programs(u0, label = "Music")
+  # data.frame
+  u1 <- as.data.frame(u0)
+  y1 <- as.data.frame(y0)
+  expect_setequal(
+    class(label_programs(u1, label = "Music")),
+    class(y1)
+  )
+  # data.table
+  u2 <- data.table::as.data.table(u0)
+  y2 <- data.table::as.data.table(y0)
+  expect_setequal(
+    class(label_programs(u2, label = "Music")),
+    class(y2)
+  )
+  # tibble
+  u3 <- as.data.frame(u0)
+  y3 <- as.data.frame(y0)
+  data.table::setattr(u3, "class", c("tbl", "tbl_df", "data.frame"))
+  data.table::setattr(y3, "class", c("tbl", "tbl_df", "data.frame"))
+  expect_setequal(
+    class(label_programs(u3, label = "Music")),
+    class(y3)
+  )
+})
 test_that("Inputs are correct class", {
   expect_error(
     label_programs(data = NULL, label = "Music"),
@@ -48,7 +77,7 @@ test_that("Inputs are correct class", {
   )
 })
 test_that("Pipe correctly passes the data argument", {
-  expect_equal(
+  expect_equivalent(
     music_cip %>% label_programs(label = "Music"),
     label_programs(music_cip, label = "Music")
   )
@@ -90,8 +119,8 @@ test_that("label argument options create expected results", {
     label_programs(music_cip, label = "Visual and Performing Arts")
   )
   expect_equal(
-    label_programs(music_cip, label = "cip6name")["cip6name"],
-    music_cip["cip6name"]
+    label_programs(music_cip, label = "cip6name")[["cip6name"]],
+    music_cip[["cip6name"]]
   )
 })
 test_that("Error if program variable already exists", {

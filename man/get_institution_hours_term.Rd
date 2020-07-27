@@ -17,7 +17,7 @@ get_institution_hours_term(data = NULL, keep_id = NULL)
   \item One row per institution
   \item Columns \code{institution} and \code{median_hr_per_term}
   \item Grouping structures, if any, are not preserved
-  \item Data frame extension attributes, e.g., tibble, are not preserved
+  \item Data frame extensions \code{tbl} or \code{data.table} are preserved
 }
 }
 \description{
@@ -33,7 +33,8 @@ name or by leaving the \code{data} argument vacant. Any other
 or equivalent. Character columns \code{id}, \code{institution} and
 \code{hours_term} are required by name.
 
-The default \code{keep_id} argument is the set of IDs in \code{data}.
+If the \code{keep_id} argument is NULL, all IDs in \code{data} are used
+by default.
 }
 \examples{
 # placeholder

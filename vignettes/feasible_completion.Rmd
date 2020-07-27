@@ -14,38 +14,22 @@ resource_files:
   - ../man/figures/feasible-completion-relationships-1.png
 ---
 
-```{r setup, echo = FALSE, message = FALSE, purl = FALSE}
+```{r setup, echo = FALSE}
 knitr::opts_knit$set(root.dir = "../")
 knitr::opts_chunk$set(
-  echo = TRUE, # varies from one Rmd to another
-  message = TRUE,
-  warning = TRUE,
+  echo = TRUE,
+  error = TRUE, 
+  message = FALSE,
+  warning = FALSE,
   collapse = TRUE,
   comment = "#>",
-  error = TRUE,
-  purl = FALSE,
   fig.width = 6,
   fig.asp = 1 / 1.6,
   out.width = "70%",
   fig.align = "center",
-  fig.path = "../man/figures/feasible-completion-"
+  fig.path = "../man/figures/vign-feasible-completion-"
 )
-knitr::knit_hooks$set(inline = function(x) {
-  if (!is.numeric(x)) {
-    x
-  } else if (x >= 10000) {
-    prettyNum(round(x, 2), big.mark = ",")
-  } else {
-    prettyNum(round(x, 2))
-  }
-})
-# normally, purl is FALSE. But in some code chunks, I want purl = TRUE so that the code in the vignette is executed to pass R CMD check. These next few lines set that up. In the code chunk header, add opts.label = 'dopurl'
-knitr::knit_hooks$set(purl = knitr::hook_purl)
-knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
 ```
-
-
-
 
 
 ## Introduction
@@ -202,7 +186,8 @@ matriculation limit
 
 ```{r message = FALSE}
 # packages used in the vignette
-library("midfieldr")
+library(midfieldr)
+library(midfielddata)
 ```
 
 A vector of student IDs is required to begin the feasible completion analysis. We choose the set of students ever enrolled in the study programs as the largest possible pool.  
@@ -262,7 +247,7 @@ We obtain the degree data for the enrollees using `get_status_degrees()` to subs
 ```{r}
 # gather student degree data 
 enrollees_id <- exa_ever
-degree_data  <- get_status_degrees(keep_id = enrollees_id)
+degree_data  <- get_status_degrees(midfielddegrees, keep_id = enrollees_id)
 
 # examine the result
 str(degree_data)
@@ -273,8 +258,8 @@ Students with degrees have demonstrated that completing their programs before th
 ```{r}
 # subset students with degrees and without
 grad_rows <- !is.na(degree_data$degree)
-grads     <- degree_data[grad_rows, ]
-nongrads  <- degree_data[!grad_rows, ]
+grads     <- degree_data[grad_rows]
+nongrads  <- degree_data[!grad_rows]
 
 # extract the IDs
 grads_id    <- grads$id
@@ -292,12 +277,14 @@ str(nongrads_id)
 
 ### 2. Gather transfer data
 
-We call `get_status_transfers()` for the non-graduates to subset the student attributes data (`midfieldstudents` or equivalent) and return the student matriculation term and transfer credit hours keyed by ID. The values of 
+If the vector of non-grad IDs is empty, the rest of the algorithm is skipped and we return the vector of grad IDs as the complete set of IDs for feasible completion. 
+
+Otherwise, we continue by calling `get_status_transfers()` for the non-graduates to subset the student attributes data (`midfieldstudents` or equivalent) and return the student matriculation term and transfer credit hours keyed by ID. The values of 
 `hours_transfer` are numerical or NA for no transfer hours. 
 
 ```{r}
 # gather transfer data for non-grads
-transfer_data <- get_status_transfers(keep_id = nongrads_id)
+transfer_data <- get_status_transfers(midfieldstudents, keep_id = nongrads_id)
 
 # examine the result
 str(transfer_data)
@@ -307,7 +294,7 @@ Joining `transfer_data` to `nongrads` (by `id`) yields the complete student info
 
 ```{r}
 # join transfer data to non-grads
-nongrads <- merge(nongrads, transfer_data, all.x = TRUE)
+nongrads <- merge(nongrads, transfer_data, by = "id", all.x = TRUE)
 
 # examine the result
 str(nongrads)
@@ -332,7 +319,7 @@ Some data limits are "rounded down" before computing matriculation limits. Summe
 
 ```{r}
 # gather data limits and matriculation limits
-institution_limits <- get_institution_limits()
+institution_limits <- get_institution_limits(midfieldterms)
 
 # examine the result
 institution_limits
@@ -342,7 +329,7 @@ We determine the median number of credit-hours per term by institution. We use o
 
 ```{r}
 # find median hours per term of students with degrees
-hr_per_term <- get_institution_hours_term(keep_id = grads_id)
+hr_per_term <- get_institution_hours_term(midfieldterms, keep_id = grads_id)
 
 # examine the result
 hr_per_term
@@ -352,7 +339,10 @@ And we join `hr_per_term` to `institution_limits` (by `institution`) to conclude
 
 ```{r}
 # join the two sets of institution data 
-institutions <- merge(institution_limits, hr_per_term, all.x = TRUE)
+institutions <- merge(institution_limits, 
+                      hr_per_term, 
+                      by = "institution", 
+                      all.x = TRUE)
 
 # examine the result
 institutions
@@ -362,7 +352,7 @@ Next we join `nongrads` and `institution_limits` (by `institution`).
 
 ```{r}
 # join student and institution data
-fc_data <- merge(nongrads, institutions, all.x = TRUE)
+fc_data <- merge(nongrads, institutions, by = "institution", all.x = TRUE)
 
 # examine the result
 str(fc_data)
@@ -373,7 +363,7 @@ We set NA values of `hours_transfer` to zero so that later, term addition avoids
 ```{r}
 # set NA transfer hours to zero
 rows_to_zero <- is.na(fc_data$hours_transfer)
-fc_data$hours_transfer[rows_to_zero] <- 0
+fc_data[rows_to_zero, hours_transfer := 0]
 
 # examine the result
 str(fc_data)
@@ -392,9 +382,7 @@ We convert transfer-credit hours to their equivalent transfer-credit terms.
 
 ```{r}
 # estimate the term-equivalent of transfer credit hours
-numerator <- fc_data$hours_transfer
-denominator <- fc_data$median_hr_per_term
-fc_data$terms_transfer <- floor(numerator / denominator)
+fc_data[, terms_transfer := floor(hours_transfer / median_hr_per_term )]
 
 # examine the result
 str(fc_data)
@@ -419,7 +407,7 @@ Students are typically required to complete at least the final 30-60 credits (ab
 ```{r}
 # transfer terms limited to a maximum of 4
 rows_to_limit <- fc_data$terms_transfer > 4
-fc_data$terms_transfer[rows_to_limit] <- 4
+fc_data[rows_to_limit, terms_transfer := 4]
 ```
 
 Next we perform some "term arithmetic" to advance the matriculation limit by the number of terms of credit hours transferred. `term_addition()` adds the number of terms T in the `add_col` argument to the terms YYYYT in the `term_col` argument. 
@@ -445,18 +433,21 @@ Finally, we subset the non-graduates, retaining those whose matriculation term i
 # completion is feasible if the entry term does not exceed 
 # the matriculation limit
 rows_we_want <- fc_data$term_enter <= fc_data$matric_limit
-nongrad_fc <- fc_data[rows_we_want, ]
+nongrad_fc <- fc_data[rows_we_want]
 
 # examine the result
 str(nongrad_fc)
 ```
 
-We combine the IDs of these non-grads withe the IDs of the grads saved earlier. The result is the vector of IDs of students from the original pool for whom program completion is feasible. 
+If the non-grad ID vector is not empty, we combine it with the grads ID vector we set aside earlier. The result is the vector of IDs of students from the original pool for whom program completion is feasible. 
 
 ```{r}
 # gather the IDs of all students with completion feasible 
 nongrad_fc_id <- nongrad_fc$id
-feasible_id <- sort(unique(c(grads_id, nongrad_fc_id)))
+
+# concatenate
+feasible_id <- c(grads_id, nongrad_fc_id)
+feasible_id <- sort(unique(feasible_id))
 
 # examine the result
 str(feasible_id)
@@ -507,42 +498,47 @@ enrollees_fc <- completion_feasible(id = enrollees_id)
 The rest of the script shows the details of what happens inside `completion_feasible()`. 
 
 ```{r}
-library("midfieldr")
+library(midfieldr)
+library(midfielddata)
 
 # subset students with and without degrees 
 enrollees_id <- exa_ever
-degree_data  <- get_status_degrees(keep_id = enrollees_id)
+degree_data  <- get_status_degrees(midfielddegrees, keep_id = enrollees_id)
 grad_rows    <- !is.na(degree_data$degree)
-grads        <- degree_data[grad_rows, ]
-nongrads     <- degree_data[!grad_rows, ]
+grads        <- degree_data[grad_rows]
+nongrads     <- degree_data[!grad_rows]
 grads_id     <- grads$id
 nongrads_id  <- nongrads$id
 
 # gather transfer data
-transfer_data <- get_status_transfers(keep_id = nongrads_id)
-nongrads      <- merge(nongrads, transfer_data, all.x = TRUE)
+transfer_data <- get_status_transfers(midfieldstudents, keep_id = nongrads_id)
+nongrads      <- merge(nongrads, transfer_data, by = "id", all.x = TRUE)
 
 # gather institution variables
-inst_limits  <- get_institution_limits()
-hr_per_term  <- get_institution_hours_term(keep_id = grads_id)
-institutions <- merge(inst_limits, hr_per_term, all.x = TRUE)
-fc_data      <- merge(nongrads, institutions, all.x = TRUE)
+inst_limits  <- get_institution_limits(midfieldterms)
+hr_per_term  <- get_institution_hours_term(midfieldterms, keep_id = grads_id)
+institutions <- merge(inst_limits, 
+                      hr_per_term, 
+                      by = "institution", 
+                      all.x = TRUE)
+fc_data      <- merge(nongrads, 
+                      institutions, 
+                      by = "institution", 
+                      all.x = TRUE)
 rows_to_zero <- is.na(fc_data$hours_transfer)
-fc_data$hours_transfer[rows_to_zero] <- 0
+fc_data[rows_to_zero, hours_transfer := 0]
 
 # advance the matriculation limit
-numerator <- fc_data$hours_transfer
-denominator <- fc_data$median_hr_per_term
-fc_data$terms_transfer <- floor(numerator / denominator)
+fc_data[, terms_transfer := floor(hours_transfer / median_hr_per_term)]
 rows_to_limit <- fc_data$terms_transfer > 4
-fc_data$terms_transfer[rows_to_limit] <- 4
+fc_data[rows_to_limit, terms_transfer := 4]
 fc_data <- term_addition(fc_data,
                          term_col = "matric_limit",
                          add_col = "terms_transfer")
 
 # return the completion-feasible subset of student IDs 
 rows_we_want  <- fc_data$term_enter <= fc_data$matric_limit
-nongrad_fc    <- fc_data[rows_we_want, ]
+nongrad_fc    <- fc_data[rows_we_want]
 nongrad_fc_id <- nongrad_fc$id
 feasible_id   <- sort(unique(c(grads_id, nongrad_fc_id)))
 ```
@@ -552,3 +548,6 @@ feasible_id   <- sort(unique(c(grads_id, nongrad_fc_id)))
 <br>
 <a href="#top"         >&#9650;     top of page </a>     
 <a href="../index.html">&#9665;       main page </a> 
+
+
+

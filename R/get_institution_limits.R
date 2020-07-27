@@ -1,4 +1,4 @@
-#' @importFrom data.table setDT setDF
+#' @importFrom data.table setDT setDF as.data.table
 NULL
 
 #' Get limits on feasible completion by institution
@@ -25,7 +25,7 @@ NULL
 #'   \item Columns \code{institution}, \code{matric_limit},
 #'   and \code{data_limit}
 #'   \item Grouping structures, if any, are not preserved
-#'   \item Data frame extension attributes, e.g., tibble, are not preserved
+#'   \item Data frame extensions \code{tbl} or \code{data.table} are preserved
 #' }
 #'
 #' @examples
@@ -48,24 +48,29 @@ get_institution_limits <- function(data = NULL, span = NULL) {
   assert_required_column(data, "term")
 
   # bind names
+  matric_limit <- NULL
   institution <- NULL
-  term <- NULL
   data_limit <- NULL
-  iterm <- NULL
   enter_y <- NULL
   enter_t <- NULL
-  matric_limit <- NULL
+  iterm <- NULL
   year <- NULL
+  term <- NULL
 
-  # do the work
+  # to preserve data.frame, data.table, or tibble
+  dat_class <- get_df_class(data)
   DT <- data.table::as.data.table(data)
 
   # find data_limit for each institution
-  DT <- DT[, .(institution, term)]
+  columns <- c("institution", "term")
+  DT <- DT[, ..columns]
+  DT <- dt_unique_rows(DT, columns)
   DT[, data_limit := max(term), by = institution]
 
   # select
-  DT <- unique(DT[, .(institution, data_limit)])
+  columns <- c("institution", "data_limit")
+  DT <- DT[, ..columns]
+  DT <- dt_unique_rows(DT, columns)
   inst_data_limit <- DT # save for later merge
 
   # split term to create year and iterm
@@ -73,7 +78,9 @@ get_institution_limits <- function(data = NULL, span = NULL) {
   DT[, iterm := as.double(substr(data_limit, 5, 5))]
 
   # select
-  DT <- unique(DT[, .(data_limit, year, iterm)])
+  columns <- c("data_limit", "year", "iterm")
+  DT <- DT[, ..columns]
+  DT <- dt_unique_rows(DT, columns)
 
   # round summer and second quarter
   DT[, iterm := ifelse(iterm >= 3, 3, 1)]
@@ -89,18 +96,21 @@ get_institution_limits <- function(data = NULL, span = NULL) {
   ]
 
   # select
-  inst_matric_limit <- unique(DT[, .(matric_limit, data_limit)])
+  columns <- c("matric_limit", "data_limit")
+  inst_matric_limit <- DT[, ..columns]
+  inst_matric_limit <- dt_unique_rows(inst_matric_limit, columns)
 
   # join
   inst_limits <- merge(inst_data_limit,
     inst_matric_limit,
-    all.x = TRUE,
-    by = "data_limit"
+    by = "data_limit",
+    all.x = TRUE
   )
   # select
   inst_limits <- inst_limits[
     order(institution),
     .(institution, matric_limit, data_limit)
   ]
-  data.table::setDF(inst_limits)
+
+  revive_class(inst_limits, dat_class)
 }

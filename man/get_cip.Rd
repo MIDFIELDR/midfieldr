@@ -23,7 +23,7 @@ dropping rows}
   \item Rows are a subset of the input in the same order
   \item Columns are not modified
   \item Grouping structures, if any, are not preserved
-  \item Data frame extension attributes, e.g., tibble, are not preserved
+  \item Data frame extensions \code{tbl} or \code{data.table} are preserved
 }
 }
 \description{

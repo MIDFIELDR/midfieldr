@@ -5,7 +5,7 @@
 \alias{cip}
 \title{Classification of instructional programs (CIP) data}
 \format{
-\code{data.frame} with 1584 rows and 6 columns keyed by the
+\code{data.table} with 1584 rows and 6 columns keyed by the
 6-digit CIP code. The variables are:
 \describe{
   \item{cip6}{character 6-digit code representing "specific
@@ -50,10 +50,6 @@ The midfielddata taxonomy includes three non-IPEDS codes:
 \examples{
 # overview
 str(cip)
-
-# top level of the taxonomy
-columns_we_want <- c("cip2", "cip2name")
-unique(cip[, columns_we_want, drop = FALSE])
 
 # get_cip() argument
 get_cip(data = cip, keep_any = "^1410")

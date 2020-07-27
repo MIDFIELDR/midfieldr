@@ -16,7 +16,7 @@ test_that("Inputs are correct class", {
   )
 })
 test_that("Pipe correctly passes the data argument", {
-  expect_equal(
+  expect_equivalent(
     subset_terms %>% get_institution_limits(span = 6),
     get_institution_limits(data = subset_terms, span = 6)
   )
@@ -40,17 +40,10 @@ test_that("Results are correct", {
   # create r2, paste into test
   # cat(wrapr::draw_frame(r1))
   r2 <- wrapr::build_frame(
-    "institution"    , "matric_limit", "data_limit" |
-      "Institution B", 20013     , 20071    |
-      "Institution C", 20091     , 20143    |
-      "Institution E", 19971     , 20024    |
-      "Institution F", 19931     , 19983    |
-      "Institution G", 19991     , 20045    |
-      "Institution H", 19981     , 20033    |
-      "Institution J", 20041     , 20093    |
-      "Institution K", 19981     , 20033    |
-      "Institution L", 20063     , 20121    |
-      "Institution M", 20001     , 20056    )
-  data.table::setDF(r2)
+    "institution"     , "matric_limit", "data_limit" |
+      "Institution B" , 20041         , 20093        |
+      "Institution C" , 20091         , 20143        |
+      "Institution F" , 19991         , 20044        )
+  data.table::setDT(r2)
   expect_equal(r1, r2)
 })

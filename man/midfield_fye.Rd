@@ -36,7 +36,7 @@ library(midfielddata)
 ids_we_want <- midfield_fye$id
 rows_we_want <- midfielddegrees$id \%in\% ids_we_want &
   !is.na(midfielddegrees$degree)
-fye_grads <- midfielddegrees[rows_we_want, , drop = FALSE]
+fye_grads <- midfielddegrees[rows_we_want]
 
 }
 \seealso{

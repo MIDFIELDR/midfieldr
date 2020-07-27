@@ -35,12 +35,12 @@ library(midfielddata)
 
 # ever enrolled
 rows_we_want <- midfieldstudents$id \%in\% exa_ever
-enrollees <- midfieldstudents[rows_we_want, ]
+enrollees <- midfieldstudents[rows_we_want]
 head(enrollees)
 
 # graduates
 rows_we_want <- midfieldstudents$id \%in\% exa_grad
-graduates <- midfieldstudents[rows_we_want, ]
+graduates <- midfieldstudents[rows_we_want]
 head(graduates)
 
 }

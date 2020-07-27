@@ -21,7 +21,7 @@ test_that("Inputs exist and are are correct class", {
   )
 })
 test_that("Pipe correctly passes the data argument", {
-  expect_equal(
+  expect_equivalent(
     subset_students %>% get_status_transfers(keep_id = subset_id),
     get_status_transfers(subset_students, keep_id = subset_id)
   )
@@ -48,18 +48,15 @@ test_that("Required variables are present", {
 })
 test_that("Results are correct", {
   r1 <- get_status_transfers(keep_id = subset_id)
-  data.table::setDT(r1)
-  r1 <- r1[order(id)]
-  data.table::setDF(r1)
   # cat(wrapr::draw_frame(r1))
   r2 <- wrapr::build_frame(
     "id"         , "term_enter", "hours_transfer" |
-    "MID25869596", 19911       , 89               |
-    "MID25912621", 19951       , 63               |
-    "MID25974990", 19931       , 15               |
-    "MID26369225", 20001       , 20               |
-    "MID26372096", 20031       , 59               )
-  data.table::setDF(r2)
-  expect_equal(r1, r2)
+    "MID25855262", 20041       , 30               |
+    "MID25860597", 20041       , 33               |
+    "MID25864174", 20051       , 30               |
+    "MID25869725", 19911       , 51               |
+    "MID25875576", 19971       , 62               )
+  data.table::setDT(r2)
+  expect_equivalent(r1, r2)
 })
 

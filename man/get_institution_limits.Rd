@@ -18,7 +18,7 @@ get_institution_limits(data = NULL, span = NULL)
   \item Columns \code{institution}, \code{matric_limit},
   and \code{data_limit}
   \item Grouping structures, if any, are not preserved
-  \item Data frame extension attributes, e.g., tibble, are not preserved
+  \item Data frame extensions \code{tbl} or \code{data.table} are preserved
 }
 }
 \description{

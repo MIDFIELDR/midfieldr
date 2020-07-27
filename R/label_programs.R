@@ -1,4 +1,4 @@
-#' @importFrom data.table setDT setDF
+#' @importFrom data.table setDT setDF setattr as.data.table
 NULL
 
 #' Label programs and extract 6-digit CIP columns
@@ -40,7 +40,7 @@ NULL
 #'   \item The 6-digit code and name columns are not modified. Other
 #'    columns are dropped and a \code{program} column is added.
 #'   \item Grouping structures, if any, are not preserved
-#'   \item Data frame extension attributes, e.g., tibble, are not preserved
+#'   \item Data frame extensions \code{tbl} or \code{data.table} are preserved
 #' }
 #'
 #' @examples
@@ -75,45 +75,53 @@ label_programs <- function(data = NULL, label = NULL) {
   }
 
   # bind names
-  # NA
+  cip6name <- NULL
+  program <- NULL
+  cip6 <- NULL
+
+  # to preserve data.frame, data.table, or tibble
+  dat_class <- get_df_class(data)
+  DT <- data.table::as.data.table(data)
 
   # do the work
-  data.table::setDF(data)
   if (isTRUE(is.null(label)) ||
     isTRUE(identical(label, "cip4name"))) {
-    if (isFALSE(all("cip4name" %in% names(data)))) {
+    if (isFALSE(all("cip4name" %in% names(DT)))) {
       stop("Column name `cip4name` required when `label = cip4name` or NULL",
         call. = FALSE
       )
-    } else if (isFALSE(identical(class(data$cip4name), "character"))) {
+    } else if (isFALSE(identical(class(DT$cip4name), "character"))) {
       stop("Column `cip4name` must be character class",
         call. = FALSE
       )
     } else {
       # labels are 4-digit CIP names
-      temp <- data$cip4name
+      temp <- DT$cip4name
     }
   } else if (isTRUE(identical(label, "cip2name"))) {
-    if (isFALSE(all("cip2name" %in% names(data)))) {
+    if (isFALSE(all("cip2name" %in% names(DT)))) {
       stop("Column name `cip2name` required when `label = cip2name`",
         call. = FALSE
       )
-    } else if (isFALSE(identical(class(data$cip2name), "character"))) {
+    } else if (isFALSE(identical(class(DT$cip2name), "character"))) {
       stop("Column `cip2name` must be character class",
         call. = FALSE
       )
     } else {
       # labels are 2-digit CIP names
-      temp <- data$cip2name
+      temp <- DT$cip2name
     }
   } else if (isTRUE(identical(label, "cip6name"))) {
     # labels are 6-digit CIP names
-    temp <- data$cip6name
+    temp <- DT$cip6name
   } else {
     # labels are the user-supplied string
     temp <- label
   }
   # ready to go
-  data$program <- temp
-  data <- data[, c("cip6", "cip6name", "program"), drop = FALSE]
+  DT$program <- temp
+  DT <- DT[, .(cip6, cip6name, program)]
+
+  # works by reference
+  revive_class(DT, dat_class)
 }

@@ -16,7 +16,8 @@ encoded YYYYT}
 of semesters to add to YYYYT}
 }
 \value{
-\code{data.frame}
+\code{data.frame} with \code{tbl} or \code{data.table}
+extensions preserved
 }
 \description{
 Add a whole number of semesters to an academic term encoded \code{YYYYT}

@@ -8,6 +8,33 @@ load(file = get_my_path("subset_degrees.rda"))
 music_codes <- get_cip(cip, "^5009")[["cip6"]]
 subset_codes <- sort(subset_degrees$cip6)[1:20]
 
+test_that("Class of data frame is preserved", {
+  u0 <- subset_degrees
+  y0 <- get_graduates(data = u0, codes = subset_codes)
+  # data.frame
+  u1 <- as.data.frame(u0)
+  y1 <- as.data.frame(y0)
+  expect_setequal(
+    class(get_graduates(data = u1, codes = subset_codes)),
+    class(y1)
+  )
+  # data.table
+  u2 <- data.table::as.data.table(u0)
+  y2 <- data.table::as.data.table(y0)
+  expect_setequal(
+    class(get_graduates(data = u2, codes = subset_codes)),
+    class(y2)
+  )
+  # tibble
+  u3 <- as.data.frame(u0)
+  y3 <- as.data.frame(y0)
+  data.table::setattr(u3, "class", c("tbl", "tbl_df", "data.frame"))
+  data.table::setattr(y3, "class", c("tbl", "tbl_df", "data.frame"))
+  expect_setequal(
+    class(get_graduates(data = u3, codes = subset_codes)),
+    class(y3)
+  )
+})
 test_that("inputs are correct class", {
   expect_error(
     get_graduates(data = music_codes, codes = music_codes),
@@ -25,7 +52,7 @@ test_that("inputs are explicit", {
   )
 })
 test_that("Pipe correctly passes the data argument", {
-  expect_equal(
+  expect_equivalent(
     subset_degrees %>% get_graduates(codes = subset_codes),
     get_graduates(subset_degrees, codes = subset_codes)
   )

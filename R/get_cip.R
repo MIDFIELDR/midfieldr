@@ -1,3 +1,4 @@
+#' @importFrom data.table as.data.table
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
@@ -24,7 +25,7 @@ NULL
 #'   \item Rows are a subset of the input in the same order
 #'   \item Columns are not modified
 #'   \item Grouping structures, if any, are not preserved
-#'   \item Data frame extension attributes, e.g., tibble, are not preserved
+#'   \item Data frame extensions \code{tbl} or \code{data.table} are preserved
 #' }
 #'
 #' @examples
@@ -46,7 +47,7 @@ get_cip <- function(data = NULL, keep_any = NULL, ..., drop_any = NULL) {
   data <- data %||% midfieldr::cip
 
   # check arguments
-  assert_class(data, c("data.frame", "data.table"))
+  assert_class(data, "data.frame")
   assert_class(keep_any, "character")
   assert_class(drop_any, "character")
 
@@ -57,28 +58,31 @@ get_cip <- function(data = NULL, keep_any = NULL, ..., drop_any = NULL) {
   # bind names
   # NA
 
+  # to preserve data.frame, data.table, or tibble
+  dat_class <- get_df_class(data)
+  DT <- data.table::as.data.table(data)
+
   # do the work
-  data.table::setDF(data)
-  data <- filter_char_frame(
-    data = data,
+  DT <- filter_char_frame(
+    data = DT,
     keep_any = keep_any,
     drop_any = drop_any
   )
-  setDF(data)
 
   # stop if all rows have been eliminated
-  if (abs(nrow(data) - 0) < .Machine$double.eps^0.5) {
+  if (abs(nrow(DT) - 0) < .Machine$double.eps^0.5) {
+    revive_class(DT, dat_class)
     stop("No CIPs satisfy the search criteria", call. = FALSE)
   }
 
   # message if a search term was not found
   # data frame with as many columns as there are keep_any terms
   # as many rows as there are being searched in data
-  df <- data.frame(matrix("", nrow = nrow(data), ncol = length(keep_any)))
+  df <- data.frame(matrix("", nrow = nrow(DT), ncol = length(keep_any)))
   names(df) <- keep_any
 
   for (j in seq_along(keep_any)) {
-    df[, j] <- apply(data, 1, function(i) {
+    df[, j] <- apply(DT, 1, function(i) {
       any(grepl(keep_any[j], i, ignore.case = TRUE))
     })
   }
@@ -92,5 +96,6 @@ get_cip <- function(data = NULL, keep_any = NULL, ..., drop_any = NULL) {
       paste(names(not_found), collapse = ", ")
     ))
   }
-  return(data)
+
+  revive_class(DT, dat_class)
 }

@@ -5,7 +5,7 @@
 \alias{exa_cip}
 \title{Example CIP codes and names}
 \format{
-\code{data.frame} with 12 rows and 6 columns keyed by the
+\code{data.table} with 12 rows and 6 columns keyed by the
 6-digit CIP code. The variables are:
 \describe{
   \item{cip6}{character 6-digit code representing "specific
@@ -31,8 +31,6 @@ programs in \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 \examples{
 program_group <- label_programs(data = exa_cip, label = "cip4name")
 program_group$cip6name <- NULL
-rows_to_edit <- startsWith(program_group$cip6, "1410")
-program_group$program[rows_to_edit] <- "Electrical Engineering"
 program_group
 
 }

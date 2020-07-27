@@ -5,7 +5,7 @@
 \alias{exa_group}
 \title{Example program group}
 \format{
-\code{data.frame} with 12 rows and 2 columns keyed by the
+\code{data.table} with 12 rows and 2 columns keyed by the
 6-digit CIP code. The variables are:
 \describe{
   \item{cip6}{6-digit program code}
@@ -27,13 +27,13 @@ library(midfielddata)
 # attributes of students matriculating in programs
 cips_we_want <- exa_group$cip6
 rows_we_want <- midfieldstudents$cip6 \%in\% cips_we_want
-matriculants <- midfieldstudents[rows_we_want, , drop = FALSE]
+matriculants <- midfieldstudents[rows_we_want]
 str(matriculants)
 
 # attributes of students graduating in programs
 cips_we_want <- exa_group$cip6
 rows_we_want <- midfielddegrees$cip6 \%in\% cips_we_want
-graduates <- midfielddegrees[rows_we_want, , drop = FALSE]
+graduates <- midfielddegrees[rows_we_want]
 str(graduates)
 
 }

@@ -18,7 +18,7 @@ label_programs(data = NULL, label = NULL)
   \item The 6-digit code and name columns are not modified. Other
    columns are dropped and a \code{program} column is added.
   \item Grouping structures, if any, are not preserved
-  \item Data frame extension attributes, e.g., tibble, are not preserved
+  \item Data frame extensions \code{tbl} or \code{data.table} are preserved
 }
 }
 \description{

@@ -1,3 +1,4 @@
+
 # all internal (utility) functions
 
 # ------------------------------------------------------------------------
@@ -20,40 +21,6 @@ kable2html <- function(x, font_size = NULL, caption = NULL) {
 }
 
 # ------------------------------------------------------------------------
-#' @importFrom utils capture.output object.size
-NULL
-
-#' Obtain the traits of a data frame
-#'
-#' Returns a list with number of observations (rows), number of variables
-#' (columns), and size of the file (bytes). The return object is a list named
-#' components n_obs, n_var, n_bytes, n_inst, and year_limits.  Function is
-#' exported to simplify use in vignettes.
-#'
-#' @param data data frame
-#' @keywords internal
-#' @export
-data_traits <- function(data) {
-  n_obs   <- nrow(data)
-  n_var   <- ncol(data)
-  n_bytes <- utils::capture.output(print(utils::object.size(data),
-                                  units = "auto",
-                                  standard = "SI"))
-
-  n_inst <- nrow(get_institution_limits())
-
-  terms  <- unique(midfielddata::midfieldterms$term)
-  years  <- sort(floor(terms / 10))
-  year_limits <- c(min(years), max(years))
-
-  output  <- list(n_obs = n_obs,
-                  n_var = n_var,
-                  n_bytes = n_bytes,
-                  n_inst = n_inst,
-                  year_limits = year_limits)
-}
-
-# ------------------------------------------------------------------------
 
 #' Verify class of argument
 #'
@@ -62,7 +29,7 @@ data_traits <- function(data) {
 #' @noRd
 assert_class <- function(x, y) {
   if (!is.null(x)) {
-    if (!inherits(x, y)) {
+    if (!inherits(x, what = y)) {
       stop("`", deparse(substitute(x)), "` must be of class ",
         paste0(y, collapse = ", "),
         call. = FALSE
@@ -132,7 +99,8 @@ filter_char_frame <- function(data = NULL, keep_any = NULL, drop_any = NULL) {
   assert_class(keep_any, "character")
   assert_class(drop_any, "character")
 
-  # do the work
+  # to preserve data.frame, data.table, or tibble
+  dat_class <- get_df_class(data)
   DT <- data.table::as.data.table(data)
 
   # filter to keep rows
@@ -150,7 +118,9 @@ filter_char_frame <- function(data = NULL, keep_any = NULL, drop_any = NULL) {
       !any(grepl(drop_any, j, ignore.case = TRUE))
     }), ]
   }
-  data.table::setDF(DT)
+
+  # works by reference
+  revive_class(DT, dat_class)
 }
 
 # ------------------------------------------------------------------------
@@ -173,16 +143,24 @@ split_term <- function(data, term_col) {
   iterm <- NULL
   cols_we_want <- NULL
 
-  # do the work
+  # to preserve data.frame, data.table, or tibble
+  dat_class <- get_df_class(data)
   DT <- data.table::as.data.table(data)
+
+  # do the work
   DT[, term := get(term_col)]
   DT[, year := as.double(substr(term, 1, 4))]
   DT[, iterm := as.double(substr(term, 5, 5))]
 
   cols_we_want <- c(term_col, "year", "iterm")
   DT <- DT[, ..cols_we_want]
-  DT <- unique(DT)
-  data.table::setDF(DT)
+
+  # set keys for fast unique()
+  data.table::setkeyv(DT, cols_we_want)
+  DT <- subset(unique(DT))
+  data.table::setkey(DT, NULL)
+
+  revive_class(DT, dat_class)
 }
 
 # ------------------------------------------------------------------------
@@ -199,13 +177,82 @@ round_term <- function(data, iterm_col) {
   assert_class(iterm_col, "character")
   assert_required_column(data, iterm_col)
 
-  # do the work
+  # to preserve data.frame, data.table, or tibble
+  dat_class <- get_df_class(data)
   DT <- data.table::as.data.table(data)
+
+  # do the work
   DT[, (iterm_col) := ifelse(get(iterm_col) >= 3, 3, 1)]
-  data.table::setDF(DT)
+
+  # works by reference
+  revive_class(DT, dat_class)
 }
 
+# ------------------------------------------------------------------------
 
+#' Get the class of a data frame
+#'
+#' Used as argument in revive_class()
+#'
+#' @param x data.frame, tibble, or data.table
+#' @noRd
+get_df_class <- function(x){
+  class_x <- class(x)
+  if(sum(class_x %in% "data.table") > 0){
+    df_class <- "data.table"
+  } else if(sum(class_x %in% c("tbl_df", "tbl")) > 0) {
+    df_class <- "tbl"
+  } else {
+    df_class <- "data.frame"
+  }
+  return(df_class)
+}
 
+# ------------------------------------------------------------------------
 
+#' Revive the class of a data frame
+#'
+#' In midfieldr functions, resets the class of a data frame: tibble,
+#' data.frame, or data.table
+#'
+#' @param x data.frame, tibble, or data.table
+#' @param df_class character "data.frame", "tbl", or "data.table"
+#' @noRd
+revive_class <- function (x, df_class){
+  if(df_class == "tbl"){
+    data.table::setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
+  } else if (df_class == "data.table"){
+    x <- data.table::as.data.table(x)
+  } else {
+    x <- as.data.frame(x)
+  }
+  return(x)
+}
+
+# ------------------------------------------------------------------------
+
+#' Get the class of a data frame column
+#'
+#' @param x data.frame, tibble, or data.table
+#' @noRd
+get_col_class <- function(x) {
+  col_class <- sapply(x, FUN = class)
+  col_class <- as.data.frame(col_class)
+  col_class$col_name <- row.names(col_class)
+  row.names(col_class) <- NULL
+  return(col_class)
+}
+
+# ------------------------------------------------------------------------
+
+#' Unique rows in a data.table using keys
+#'
+#' @param DT data.table
+#' @param cols character vector of column names as keys
+#' @noRd
+dt_unique_rows <- function(DT, cols) {
+  data.table::setkeyv(DT, cols)
+  DT <- subset(unique(DT))
+  data.table::setkey(DT, NULL)
+}
 

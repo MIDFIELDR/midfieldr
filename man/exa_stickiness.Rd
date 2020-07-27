@@ -5,7 +5,7 @@
 \alias{exa_stickiness}
 \title{Example stickiness data}
 \format{
-\code{data.frame} with 32 rows and 6 columns keyed by
+\code{data.table} with 32 rows and 6 columns keyed by
 program, race/ethnicity, and sex. The variables are:
 \describe{
  \item{program}{instructional programs selected for study}
@@ -30,7 +30,7 @@ are grouped by program, race/ethnicity, and sex.
 # prepare data for multiway graph
 exa_stickiness$race_sex <- paste(exa_stickiness$race, exa_stickiness$sex)
 columns_we_want <- c("program", "race_sex", "stick")
-pre_mw <- exa_stickiness[, columns_we_want, drop = FALSE]
+pre_mw <- exa_stickiness[, ..columns_we_want]
 
 }
 \seealso{

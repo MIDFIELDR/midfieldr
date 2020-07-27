@@ -1,4 +1,4 @@
-#' @importFrom data.table setDT setDF
+#' @importFrom data.table setDT setDF as.data.table
 NULL
 
 #' Add semesters to an encoded academic term
@@ -11,7 +11,8 @@ NULL
 #' @param add_col character name of a numeric column of the whole number
 #' of semesters to add to YYYYT
 #'
-#' @return \code{data.frame}
+#' @return \code{data.frame} with \code{tbl} or \code{data.table}
+#' extensions preserved
 #'
 #' @examples
 #' # placeholder
@@ -21,17 +22,29 @@ NULL
 #' @export
 #'
 term_addition <- function(data = NULL, term_col = NULL, add_col = NULL) {
-  DT <- data.table::as.data.table(data)
+
+  # check arguments
+  assert_class(data, "data.frame")
+  assert_class(term_col, "character")
+  assert_class(add_col, "character")
+
+  # to preserve data.frame, data.table, or tibble
+  dat_class <- get_df_class(data)
 
   # bind names
   iterm <- NULL
   jterm <- NULL
   jyear <- NULL
-  year <- NULL
+  year  <- NULL
 
-  # advance matriculation limit by transfer terms
-  split_matric <- data.table::as.data.table(split_term(DT, term_col))
-  DT <- merge(DT, split_matric, all.x = TRUE, by = term_col)
+  # do the work
+  DT <- data.table::as.data.table(data)
+
+  # split the YYYYT to prep for term addition
+  split_matric <- split_term(DT, term_col)
+
+  # left join split_matric to DT
+  DT <- split_matric[DT, on = "matric_limit"]
 
   # advance a Fall term, n %% 2 = 0 for n even
   fc_data_1 <- DT[iterm < 2]
@@ -43,12 +56,14 @@ term_addition <- function(data = NULL, term_col = NULL, add_col = NULL) {
   fc_data_3[, jterm := ifelse(get(add_col) %% 2 == 0, 3, 1)]
   fc_data_3[, jyear := year + (get(add_col) + 1) %/% 2]
 
-  # rbind is insensitive to empty data frames
+  # bind
   DT <- rbind(fc_data_1, fc_data_3)
-  DT <- DT[, (term_col) := 10 * jyear + jterm]
-  DT$year <- NULL
+  DT[, (term_col) := 10 * jyear + jterm]
+  DT$year  <- NULL
   DT$iterm <- NULL
   DT$jterm <- NULL
   DT$jyear <- NULL
-  df <- data.table::setDF(DT)
+
+  # by reference,
+  revive_class(DT, dat_class)
 }

@@ -6,8 +6,35 @@ context("get_cip")
 music_cip <- get_cip(data = cip, keep_any = "^5009")
 music_codes <- music_cip$cip6
 
+test_that("Class of data frame is preserved", {
+  u0 <- cip
+  y0 <- get_cip(data = u0, keep_any = "^5009")
+  # data.frame
+  u1 <- as.data.frame(u0)
+  y1 <- as.data.frame(y0)
+  expect_setequal(
+    class(get_cip(data = u1, keep_any = "^5009")),
+    class(y1)
+  )
+  # data.table
+  u2 <- data.table::as.data.table(u0)
+  y2 <- data.table::as.data.table(y0)
+  expect_setequal(
+    class(get_cip(data = u2, keep_any = "^5009")),
+    class(y2)
+  )
+  # tibble
+  u3 <- as.data.frame(u0)
+  y3 <- as.data.frame(y0)
+  data.table::setattr(u3, "class", c("tbl", "tbl_df", "data.frame"))
+  data.table::setattr(y3, "class", c("tbl", "tbl_df", "data.frame"))
+  expect_setequal(
+    class(get_cip(data = u3, keep_any = "^5009")),
+    class(y3)
+  )
+})
 test_that("Pipe correctly passes the data argument", {
-  expect_equal(
+  expect_equivalent(
     cip %>% get_cip(keep_any = c("^1407", "^1410")),
     get_cip(cip, keep_any = c("^1407", "^1410"))
   )

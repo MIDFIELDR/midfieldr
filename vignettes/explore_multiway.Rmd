@@ -15,34 +15,21 @@ resource_files:
   - ../man/figures/explore-multiway-fig1-dual-1.png
 ---
 
-```{r setup, echo = FALSE, message = FALSE, purl = FALSE}
+```{r setup, echo = FALSE}
 knitr::opts_knit$set(root.dir = "../")
 knitr::opts_chunk$set(
-  echo = TRUE, # varies from one Rmd to another
+  echo = TRUE,
+  error = TRUE, 
   message = FALSE,
   warning = FALSE,
   collapse = TRUE,
   comment = "#>",
-  error = TRUE,
-  purl = FALSE,
   fig.width = 6,
   fig.asp = 1 / 1.6,
   out.width = "70%",
   fig.align = "center",
-  fig.path = "../man/figures/explore-multiway-"
+  fig.path = "../man/figures/vign-explore-multiway-"
 )
-knitr::knit_hooks$set(inline = function(x) {
-  if (!is.numeric(x)) {
-    x
-  } else if (x >= 10000) {
-    prettyNum(round(x, 2), big.mark = ",")
-  } else {
-    prettyNum(round(x, 2))
-  }
-})
-# normally, purl is FALSE. But in some code chunks, I want purl = TRUE so that the code in the vignette is executed to pass R CMD check. These next few lines set that up. In the code chunk header, add opts.label = 'dopurl'
-knitr::knit_hooks$set(purl = knitr::hook_purl)
-knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
 ```
 
 ## Introduction
@@ -66,11 +53,14 @@ We'll use the "stickiness" metric to illustrate multiway graphs and data tables.
 library(midfieldr)
 library(ggplot2)
 
+# data.table printing options
+options(datatable.print.nrows = 20, datatable.print.topn = 5)
+
 # load stickiness data from case study
 pre_mw <- exa_stickiness
 
 # examine the result
-str(pre_mw)
+pre_mw
 ```
 
 To protect confidentiality and prevent identification of individuals or institutions with small sub-populations, we typically omit rows with a small population. Using the larger MIDFIELD database, we usually set this limit to 10. Here, using the midfielddata sample, we'll use 5. 
@@ -78,10 +68,10 @@ To protect confidentiality and prevent identification of individuals or institut
 ```{r}
 # prepare rows
 rows_we_want <- pre_mw$ever >= 5
-pre_mw <- pre_mw[rows_we_want, , drop = FALSE]
+pre_mw <- pre_mw[rows_we_want]
 
 # examine the result
-str(pre_mw)
+pre_mw
 ```
 
 We typically delete ambiguous levels of race/ethnicity. And because of its sparse representation in the data, we often omit the Native American population as well. 
@@ -92,7 +82,7 @@ rows_we_want <- !pre_mw$race %in% c("Unknown",
                                     "International", 
                                     "Other", 
                                     "Native American")
-pre_mw <- pre_mw[rows_we_want, , drop = FALSE]
+pre_mw <- pre_mw[rows_we_want]
 
 # examine the result
 unique(pre_mw$race)
@@ -101,33 +91,35 @@ unique(pre_mw$race)
 We combine the race/ethnicity and sex column to create one of the multiway categorical variables. 
 
 ```{r}
-# prepare columns
-pre_mw$race_sex <- paste(pre_mw$race, pre_mw$sex, sep = " ")
+# complete the transformation to multiway form
+data_mw <- pre_mw
+
+# create a new combined framing variable
+data_mw[, race_sex := paste(race, sex, sep = " ")]
 
 # examine the result
-str(pre_mw)
+data_mw
 ```
 
 To complete the transformation to multiway form, we select the three multiway variables.  
 
 ```{r}
 # select the multiway variables
-pre_mw$race_sex <- paste(pre_mw$race, pre_mw$sex, sep = " ")
 columns_we_want <- c("program", "race_sex", "stick")
-pre_mw <- pre_mw[, columns_we_want, drop = FALSE]
+data_mw <- data_mw[, ..columns_we_want]
 
 # examine the result
-str(pre_mw)
+data_mw
 ```
 
 Then we use `order_multiway()` to convert the character columns to factors ordered by the median stickiness.
 
 ```{r}
 # transform characters to factors ordered by median stickiness
-data_mw <- order_multiway(pre_mw)
+data_mw <- order_multiway(data_mw)
 
 # examine the result
-str(data_mw)
+data_mw
 ```
 
 
@@ -193,7 +185,6 @@ ggplot(data = data_mw, aes(x = stick, y = program)) +
 This graph permits a direct visual comparison of how stickiness varies by major for one group of students. 
 
 Both multiways should be created for discussion. Usually one or the other will convey a more compelling visual story that gets included in the published findings. 
-
 
 
 

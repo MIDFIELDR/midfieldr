@@ -17,7 +17,7 @@ get_status_transfers(data = NULL, keep_id = NULL)
   \item Rows for which student ID is in \code{keep_id}
   \item Columns \code{id}, \code{term_enter}, and \code{hours_transfer}
   \item Grouping structures, if any, are not preserved
-  \item Data frame extension attributes, e.g., tibble, are not preserved
+  \item Data frame extensions \code{tbl} or \code{data.table} are preserved
 }
 }
 \description{

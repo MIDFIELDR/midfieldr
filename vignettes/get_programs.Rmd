@@ -12,34 +12,21 @@ csl: ../inst/chicago-author-date.csl
 link-citations: yes
 ---
 
-```{r setup, echo = FALSE, message = FALSE, purl = FALSE}
+```{r setup, echo = FALSE}
 knitr::opts_knit$set(root.dir = "../")
 knitr::opts_chunk$set(
-  echo = TRUE, # varies from one Rmd to another
-  message = TRUE,
-  warning = TRUE,
+  echo = TRUE,
+  error = TRUE, 
+  message = FALSE,
+  warning = FALSE,
   collapse = TRUE,
   comment = "#>",
-  error = TRUE,
-  purl = FALSE,
   fig.width = 6,
   fig.asp = 1 / 1.6,
   out.width = "70%",
   fig.align = "center",
-  fig.path = "../man/figures/get-programs-"
+  fig.path = "../man/figures/vign-get-programs-"
 )
-knitr::knit_hooks$set(inline = function(x) {
-  if (!is.numeric(x)) {
-    x
-  } else if (x >= 10000) {
-    prettyNum(round(x, 2), big.mark = ",")
-  } else {
-    prettyNum(round(x, 2))
-  }
-})
-# normally, purl is FALSE. But in some code chunks, I want purl = TRUE so that the code in the vignette is executed to pass R CMD check. These next few lines set that up. In the code chunk header, add opts.label = 'dopurl'
-knitr::knit_hooks$set(purl = knitr::hook_purl)
-knitr::opts_template$set(dopurl = list(purl = TRUE, error = FALSE))
 ```
 
 ## Introduction 
@@ -75,7 +62,7 @@ In the example data, the program names at the 4-digit level are those associated
 ```{r}
 # case study CIP subset
 columns_we_want <- c("cip4", "cip4name")
-exa_cip4 <- exa_cip[, columns_we_want, drop = FALSE]
+exa_cip4 <- exa_cip[, ..columns_we_want]
 
 # examine the result
 exa_cip4
@@ -92,7 +79,7 @@ We separate `exa_cip` into four data frames, one for each program.
 ```{r}
 # work with programs one at a time and bind
 # get civil engineering
-cve_cip <- get_cip(data = exa_cip, keep_any = "^1408")
+cve_cip <- get_cip(exa_cip, keep_any = "^1408")
 cve_cip
 ```
 
@@ -100,7 +87,7 @@ We operate on the result with `label_programs()` to extract its 6-digit columns.
 
 ```{r}
 # keep the 6-digit CIP and add a program label
-cve <- label_programs(data = cve_cip, label = "Civil Engineering")
+cve <- label_programs(cve_cip, label = "Civil Engineering")
 cve
 ```
 
@@ -108,8 +95,8 @@ Repeat for electrical engineering.
 
 ```{r}
 # get electrical  engineering
-ele_cip <- get_cip(data = exa_cip, keep_any = "^1410")
-ele <- label_programs(data = ele_cip, label = "Electrical Engineering")
+ele_cip <- get_cip(exa_cip, keep_any = "^1410")
+ele <- label_programs(ele_cip, label = "Electrical Engineering")
 ele
 ```
 
@@ -117,13 +104,13 @@ For industrial and mechanical engineering, we assign the default 4-digit CIP nam
 
 ```{r}
 # get mechanical  engineering
-mce_cip <- get_cip(data = exa_cip, keep_any = "^1419")
-mce <- label_programs(data = mce_cip, label = "cip4name")
+mce_cip <- get_cip(exa_cip, keep_any = "^1419")
+mce <- label_programs(mce_cip, label = "cip4name")
 mce
 
 # get industrial engineering
-ise_cip <- get_cip(data = exa_cip, keep_any = "^1435")
-ise <- label_programs(data = ise_cip, label = "cip4name")
+ise_cip <- get_cip(exa_cip, keep_any = "^1435")
+ise <- label_programs(ise_cip, label = "cip4name")
 ise
 ```
 
@@ -146,7 +133,7 @@ Alternatively, we can operate on one data frame throughout. We assign the 4-digi
 
 ```{r}
 # work with programs all in one data frame
-program_group <- label_programs(data = exa_cip, label = "cip4name")
+program_group <- label_programs(exa_cip, label = "cip4name")
 
 # delete the verbose column
 program_group$cip6name <- NULL
@@ -192,8 +179,8 @@ Here we use this option for CIP code 31 programs: Parks, Recreation, Leisure and
 
 ```{r}
 # assign an arbitrary program name
-sub_cip <- get_cip(data = cip, keep_any = "^31")
-program_group <- label_programs(data = sub_cip, label = "Leisure Studies")
+sub_cip <- get_cip(cip, keep_any = "^31")
+program_group <- label_programs(sub_cip, label = "Leisure Studies")
 ```
 
 ```{r echo = FALSE}
@@ -212,7 +199,7 @@ Using these options for CIP code 31 programs yields:
 
 ```{r}
 # assign the 2-digit level name
-program_group <- label_programs(data = sub_cip, label = "cip2name")
+program_group <- label_programs(sub_cip, label = "cip2name")
 ```
 
 ```{r echo = FALSE}
@@ -223,7 +210,7 @@ kable2html(program_group)
 
 ```{r}
 # assign the 6-digit level name
-program_group <- label_programs(data = sub_cip, label = "cip6name")
+program_group <- label_programs(sub_cip, label = "cip6name")
 ```
 
 ```{r echo = FALSE}
@@ -236,7 +223,7 @@ When `label_programs = NULL`, then the 4-digit CIP program name is used. This re
 
 ```{r}
 # label argument NULL same as 4-digit level name
-program_group <- label_programs(data = sub_cip)
+program_group <- label_programs(sub_cip)
 ```
 
 ```{r echo = FALSE}
@@ -295,39 +282,39 @@ The vignette code chunks are collected below in a single, condensed script.
 library("midfieldr")
 
 # work with programs one at a time and bind
-cve_cip <- get_cip(data = exa_cip, keep_any = "^1408")
-cve <- label_programs(data = cve_cip, label = "Civil Engineering")
+cve_cip <- get_cip(exa_cip, keep_any = "^1408")
+cve <- label_programs(cve_cip, label = "Civil Engineering")
 
-ele_cip <- get_cip(data = exa_cip, keep_any = "^1410")
-ele <- label_programs(data = ele_cip, label = "Electrical Engineering")
+ele_cip <- get_cip(exa_cip, keep_any = "^1410")
+ele <- label_programs(ele_cip, label = "Electrical Engineering")
 
-mce_cip <- get_cip(data = exa_cip, keep_any = "^1419")
-mce <- label_programs(data = mce_cip, label = "cip4name")
+mce_cip <- get_cip(exa_cip, keep_any = "^1419")
+mce <- label_programs(mce_cip, label = "cip4name")
 
-ise_cip <- get_cip(data = exa_cip, keep_any = "^1435")
-ise <- label_programs(data = ise_cip, label = "cip4name")
+ise_cip <- get_cip(exa_cip, keep_any = "^1435")
+ise <- label_programs(ise_cip, label = "cip4name")
 
 program_group <- rbind(cve, ele, ise, mce)
 program_group$cip6name <- NULL
 
 # work with programs all in one data frame
-program_group <- label_programs(data = exa_cip, label = "cip4name")
+program_group <- label_programs(exa_cip, label = "cip4name")
 program_group$cip6name <- NULL
 rows_to_edit <- startsWith(program_group$cip6, "1410")
 program_group$program[rows_to_edit] <- "Electrical Engineering"
 
 # assign an arbitrary program name
-sub_cip <- get_cip(data = cip, keep_any = "^31")
-program_group <- label_programs(data = sub_cip, label = "Leisure Studies")
+sub_cip <- get_cip(cip, keep_any = "^31")
+program_group <- label_programs(sub_cip, label = "Leisure Studies")
 
 # assign the 2-digit level name
-program_group <- label_programs(data = sub_cip, label = "cip2name")
+program_group <- label_programs(sub_cip, label = "cip2name")
 
 # assign the 6-digit level name
-program_group <- label_programs(data = sub_cip, label = "cip6name")
+program_group <- label_programs(sub_cip, label = "cip6name")
 
 # label argument NULL same as 4-digit level name
-program_group <- label_programs(data = sub_cip)
+program_group <- label_programs(sub_cip)
 
 # name and class of variables (columns) in cip
 cip_variables <- lapply(cip, function(col) class(col))

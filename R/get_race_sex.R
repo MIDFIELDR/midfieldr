@@ -1,4 +1,4 @@
-#' @importFrom data.table setDT setDF '%chin%'
+#' @importFrom data.table setDT setDF '%chin%' as.data.table
 NULL
 
 #' Get race/ethnicity and sex of students by ID
@@ -22,7 +22,7 @@ NULL
 #'   \item Rows for which student ID is in \code{keep_id}
 #'   \item Columns \code{id}, \code{race}, and \code{sex}
 #'   \item Grouping structures, if any, are not preserved
-#'   \item Data frame extension attributes, e.g., tibble, are not preserved
+#'   \item Data frame extensions \code{tbl} or \code{data.table} are preserved
 #' }
 #'
 #' @examples
@@ -50,15 +50,19 @@ get_race_sex <- function(data = NULL, keep_id = NULL) {
   assert_required_column(data, "sex")
 
   # bind names
-  id <- NULL
   race <- NULL
   sex <- NULL
+  id <- NULL
+
+  # to preserve data.frame, data.table, or tibble
+  dat_class <- get_df_class(data)
+  DT <- data.table::as.data.table(data)
 
   # do the work
-  data.table::setDT(data)
-  DT <- data[, .(id, race, sex)][
-    id %chin% keep_id
-  ]
-  unique(DT)
-  data.table::setDF(DT)
+  columns <-  c("id", "race", "sex")
+  DT <- DT[id %chin% keep_id, ..columns]
+  DT <- dt_unique_rows(DT, columns)
+
+  # works by reference
+  revive_class(DT, dat_class)
 }

@@ -15,13 +15,9 @@ test_that("Inputs exist and are are correct class", {
     get_status_degrees(data = subset_degrees, keep_id = as.factor(subset_id)),
     "`keep_id` must be of class character"
   )
-  expect_error(
-    get_status_degrees(data = subset_degrees, keep_id = NULL),
-    "Explicit `keep_id` argument required"
-  )
 })
 test_that("Pipe correctly passes the data argument", {
-  expect_equal(
+  expect_equivalent(
     subset_degrees %>% get_status_degrees(keep_id = subset_id),
     get_status_degrees(subset_degrees, keep_id = subset_id)
   )
@@ -48,18 +44,15 @@ test_that("Required variables are present", {
 })
 test_that("Results are correct", {
   r1 <- get_status_degrees(keep_id = subset_id)
-  data.table::setDT(r1)
-  r1 <- r1[order(id)]
-  data.table::setDF(r1)
   # cat(wrapr::draw_frame(r1))
   r2 <- wrapr::build_frame(
-    "id"           , "institution"  , "degree"              |
-      "MID25869596", "Institution B", "Bachelor's Degree"   |
-      "MID26057424", "Institution C", "Bachelor of Arts"    |
-      "MID26682769", "Institution L", "Bachelor of Science" |
-      "MID26686782", "Institution L", "Bachelor of Science" |
-      "MID26687287", "Institution L", "Bachelor of Science" )
-  data.table::setDF(r2)
+    "id"           , "institution"  , "degree"            |
+      "MID25855262", "Institution B", "Bachelor's Degree" |
+      "MID25860597", "Institution B", "Bachelor's Degree" |
+      "MID25864174", "Institution B", "Bachelor's Degree" |
+      "MID25869725", "Institution B", "Bachelor's Degree" |
+      "MID25875576", "Institution B", "Bachelor's Degree" )
+  data.table::setDT(r2)
   expect_equal(r1, r2)
 })
 

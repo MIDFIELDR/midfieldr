@@ -1,4 +1,4 @@
-#' @importFrom data.table setDT setDF  '%chin%'
+#' @importFrom data.table setDT setDF  '%chin%' as.data.table
 #' @importFrom stats na.omit
 NULL
 
@@ -25,7 +25,7 @@ NULL
 #'   pairings are unique
 #'   \item Columns \code{id} and \code{cip6}
 #'   \item Grouping structures, if any, are not preserved
-#'   \item Data frame extension attributes, e.g., tibble, are not preserved
+#'   \item Data frame extensions \code{tbl} or \code{data.table} are preserved
 #' }
 #'
 #' @examples
@@ -55,14 +55,17 @@ get_enrollees <- function(data = NULL, codes = NULL) {
   assert_required_column(data, "cip6")
 
   # bind names
-  id <- NULL
   cip6 <- NULL
+  id <- NULL
+
+  # to preserve data.frame, data.table, or tibble
+  dat_class <- get_df_class(data)
+  DT <- data.table::as.data.table(data)
 
   # do the work
-  data.table::setDT(data)
-  DT <- data[, .(id, cip6)]
-  stats::na.omit(DT)
+  DT <- DT[, .(id, cip6)]
+  DT <- stats::na.omit(DT)
   DT <- DT[cip6 %chin% codes]
-  DT <- unique(DT)
-  data.table::setDF(DT)
+  DT <- dt_unique_rows(DT, c("id", "cip6"))
+  revive_class(DT, dat_class)
 }

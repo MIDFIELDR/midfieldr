@@ -17,7 +17,7 @@ get_status_degrees(data = NULL, keep_id = NULL)
   \item Rows for which student ID is in \code{keep_id}
   \item Columns \code{id}, \code{institution}, and \code{degree}
   \item Grouping structures, if any, are not preserved
-  \item Data frame extension attributes, e.g., tibble, are not preserved
+  \item Data frame extensions \code{tbl} or \code{data.table} are preserved
 }
 }
 \description{
@@ -32,6 +32,9 @@ name or by leaving the \code{data} argument vacant. Any other
 \code{data} argument should be a subset of \code{midfielddegrees}
 or equivalent. Character columns \code{id}, \code{institution}, and
 \code{degree} are required by name.
+
+If the \code{keep_id} argument is NULL, all IDs in \code{data} are used
+by default.
 }
 \examples{
 music_codes <- c("500901", "500903", "500913")

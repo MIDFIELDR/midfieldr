@@ -1,4 +1,4 @@
-#' @importFrom data.table setDT setDF  '%chin%'
+#' @importFrom data.table setDT setDF  '%chin%' as.data.table
 #' @importFrom stats na.omit
 NULL
 
@@ -28,7 +28,7 @@ NULL
 #'   observed, i.e., the value of \code{term_degree} is not NA
 #'   \item Columns \code{id} and \code{cip6}
 #'   \item Grouping structures, if any, are not preserved
-#'   \item Data frame extension attributes, e.g., tibble, are not preserved
+#'   \item Data frame extensions \code{tbl} or \code{data.table} are preserved
 #' }
 #'
 #' @examples
@@ -59,19 +59,24 @@ get_graduates <- function(data = NULL, codes = NULL) {
   assert_required_column(data, "term_degree")
 
   # bind names
-  id <- NULL
-  cip6 <- NULL
   term_degree <- NULL
+  cip6 <- NULL
+  id <- NULL
+
+  # to preserve data.frame, data.table, or tibble
+  dat_class <- get_df_class(data)
+  DT <- data.table::as.data.table(data)
 
   # do the work
-  data.table::setDT(data)
-  DT <- data[, .(id, cip6, term_degree)]
-  stats::na.omit(DT)
+  DT <- DT[, .(id, cip6, term_degree)]
+  DT <- stats::na.omit(DT)
   DT <- DT[cip6 %chin% codes][
     , .(cip6, term_degree = min(term_degree)),
     by = id
   ][
     , .(id, cip6)
   ]
-  data.table::setDF(DT)
+  columns <- c("id", "cip6")
+  DT <- dt_unique_rows(DT, columns)
+  revive_class(DT, dat_class)
 }

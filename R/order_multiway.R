@@ -1,4 +1,4 @@
-#' @importFrom data.table setDT setDF
+#' @importFrom data.table setDT setDF as.data.table
 #' @importFrom stats median reorder
 #' @importFrom wrapr let
 NULL
@@ -28,7 +28,7 @@ NULL
 #'   \item Categorical columns are factors with levels ordered by
 #' median quantitative values
 #'   \item Grouping structures, if any, are not preserved
-#'   \item Data frame extension attributes, e.g., tibble, are not preserved
+#'   \item Data frame extensions \code{tbl} or \code{data.table} are preserved
 #' }
 #'
 #' @examples
@@ -52,33 +52,39 @@ order_multiway <- function(data = NULL) {
     stop("`data` must have exactly three columns")
   }
 
-  # for checking column class
-  get_col_class <- function(data) {
-    col_class <- sapply(data, FUN = class)
-    col_class <- as.data.frame(col_class)
-    col_class$col_name <- row.names(col_class)
-    row.names(col_class) <- NULL
-    col_class <- col_class
-  }
+  # to preserve data.frame, data.table, or tibble
+  dat_class <- get_df_class(data)
 
+  # to manage multiway column classes
   col_class <- get_col_class(data)
+  mw_names <- col_class$col_name
+  mw_class <- col_class$col_class
+  # typical result
+  #     col_class     col_name
+  # 1   character     cat1
+  # 2   character     cat2
+  # 3   numeric       val
+
+  # do the work in data.table
+  DT <- data.table::as.data.table(data)
 
   # factors to characters
-  if ("factor" %in% col_class$col_class) {
-    idx <- col_class$col_class == "factor"
-    data[idx] <- lapply(data[idx], as.character)
+  if ("factor" %in% mw_class) {
+    idx  <- which(mw_class == "factor")
+    cols <- mw_names[idx]
+    DT[, (cols) := lapply(.SD, as.character), .SDcols = cols]
   }
   # integer to double
-  if ("integer" %in% col_class$col_class) {
-    idx <- col_class$col_class == "integer"
-    data[idx] <- lapply(data[idx], as.double)
+  if ("integer" %in% mw_class) {
+   idx  <- which(mw_class == "integer")
+   cols <- mw_names[idx]
+   DT[, (cols) := lapply(.SD, as.double), .SDcols = cols]
   }
-
-  col_class <- get_col_class(data)
-
   # one numeric and 2 character
+  col_class <- get_col_class(DT) # again
+  mw_class <- col_class$col_class
   if (isFALSE(identical(
-    sort(col_class$col_class),
+    sort(mw_class),
     c("character", "character", "numeric")
   ))) {
     stop(paste(
@@ -93,9 +99,6 @@ order_multiway <- function(data = NULL) {
   CAT2 <- NULL
   MED1 <- NULL
   MED2 <- NULL
-
-  # do the work
-  DT <- data.table::setDT(data)
 
   # one quantitative variable
   idx_num <- col_class$col_class == "numeric"
@@ -131,9 +134,10 @@ order_multiway <- function(data = NULL) {
       DT <- DT[, .(CAT1, CAT2, VALUE)]
 
       # for consistency with data.frame structure
-      attr(DT[[cat1]], "scores") <- NULL
-      attr(DT[[cat2]], "scores") <- NULL
+      # attr(DT[[cat1]], "scores") <- NULL
+      # attr(DT[[cat2]], "scores") <- NULL
     }
   )
-  data <- data.table::setDF(DT)
+  # works by reference
+  revive_class(DT, dat_class)
 }
