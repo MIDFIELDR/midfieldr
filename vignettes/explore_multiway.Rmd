@@ -11,26 +11,18 @@ bibliography: ../inst/REFERENCES.bib
 csl: ../inst/chicago-author-date.csl
 link-citations: yes
 resource_files:
-  - ../man/figures/explore-multiway-fig1-1.png
-  - ../man/figures/explore-multiway-fig1-dual-1.png
+  - ../man/figures/vignette-explore-multiway-fig1-1.png
+  - ../man/figures/vignette-explore-multiway-fig1-dual-1.png
 ---
 
-```{r setup, echo = FALSE}
-knitr::opts_knit$set(root.dir = "../")
-knitr::opts_chunk$set(
-  echo = TRUE,
-  error = TRUE,
-  message = FALSE,
-  warning = FALSE,
-  collapse = TRUE,
-  comment = "#>",
-  fig.width = 6,
-  fig.asp = 1 / 1.6,
-  out.width = "70%",
-  fig.align = "center",
-  fig.path = "../man/figures/vign-explore-multiway-"
-)
+```{r setup, include = FALSE}
+source("vignette-knitr-opts.R")
+knitr::opts_chunk$set(fig.path = "../man/figures/vignette-explore-multiway-")
 ```
+
+
+`order_multiway()` is used to transform multiway data such that the two categorical variables are factors with levels ordered by the third, quantitative variable. In this vignette we explore its arguments and continue the ongoing case study in four engineering programs.
+
 
 ## Introduction
 
@@ -252,16 +244,15 @@ Depending on your software background, you may have encountered a block-record/r
 - pivot / unpivot (Microsoft Excel)
 - cast / melt (reshape2)
 
-
-In base R, using `reshape()`, the block-record form is transformed to row-record form to create Table 2 as follows. Both table layouts are useful. Choosing one or the other depends on one's audience and rhetorical goals. 
+In base R, using `reshape()`, the block-record form is transformed to row-record form to create Table 2 as follows. 
 
 ```{r}
-# tabulate data in row record ("wide") form
+# tabulate data in row-record ("wide") form
 rowf <- reshape(
-  data = blockf,
-  idvar = "race_sex", # column of row keys to copy
-  timevar = "program", # column to take keys from
-  v.names = "stick", # column to take values from
+  blockf,
+  idvar = "race_sex",  # remains a column
+  timevar = "program", # becomes new column headings
+  v.names = "stick",   # fills the table cells
   direction = "wide"
 )
 
@@ -275,10 +266,7 @@ names(rowf) <- c("Group", "Civil", "Electrical", "Industrial", "Mechanical")
 rowf
 ```
 
-
-
-
-
+While we used the base R `reshape()` function in this example, there are good reshaping tools in other packages such as cdata  [@Mount+Zumel:2020:cdata] or tidyr [@Wickham+Henry:2020:tidyr]. 
 
 
 

@@ -266,7 +266,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">program</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Stickiness"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>)</pre></body></html></div>
-<p><img src="../man/figures/vign-explore-multiway-fig1-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../man/figures/vignette-explore-multiway-fig1-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p><br></p>
 <p>This graph permits a direct visual comparison of how stickiness varies by race and sex within a particular major.</p>
 <p>Reading a multiway graph</p>
@@ -297,7 +297,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">race_sex</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Stickiness"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>)</pre></body></html></div>
-<p><img src="../man/figures/vign-explore-multiway-fig1-dual-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../man/figures/vignette-explore-multiway-fig1-dual-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p><br></p>
 <p>This graph permits a direct visual comparison of how stickiness varies by major for one group of students.</p>
 <p>Both multiways should be created for discussion. Usually one or the other will convey a more compelling visual story that gets included in the published findings.</p>
@@ -860,13 +860,13 @@ White Male
 <li>pivot / unpivot (Microsoft Excel)</li>
 <li>cast / melt (reshape2)</li>
 </ul>
-<p>In base R, using <code><a href="https://rdrr.io/r/stats/reshape.html">reshape()</a></code>, the block-record form is transformed to row-record form to create Table 2 as follows. Both table layouts are useful. Choosing one or the other depends on one’s audience and rhetorical goals.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># tabulate data in row record ("wide") form</span>
+<p>In base R, using <code><a href="https://rdrr.io/r/stats/reshape.html">reshape()</a></code>, the block-record form is transformed to row-record form to create Table 2 as follows.</p>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># tabulate data in row-record ("wide") form</span>
 <span class="no">rowf</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/reshape.html">reshape</a></span>(
-  <span class="kw">data</span> <span class="kw">=</span> <span class="no">blockf</span>,
-  <span class="kw">idvar</span> <span class="kw">=</span> <span class="st">"race_sex"</span>, <span class="co"># column of row keys to copy</span>
-  <span class="kw">timevar</span> <span class="kw">=</span> <span class="st">"program"</span>, <span class="co"># column to take keys from</span>
-  <span class="kw">v.names</span> <span class="kw">=</span> <span class="st">"stick"</span>, <span class="co"># column to take values from</span>
+  <span class="no">blockf</span>,
+  <span class="kw">idvar</span> <span class="kw">=</span> <span class="st">"race_sex"</span>,  <span class="co"># remains a column</span>
+  <span class="kw">timevar</span> <span class="kw">=</span> <span class="st">"program"</span>, <span class="co"># becomes new column headings</span>
+  <span class="kw">v.names</span> <span class="kw">=</span> <span class="st">"stick"</span>,   <span class="co"># fills the table cells</span>
   <span class="kw">direction</span> <span class="kw">=</span> <span class="st">"wide"</span>
 )
 
@@ -887,6 +887,7 @@ White Male
 <span class="co">#&gt; 6:   Hispanic Male  0.49       0.46       0.73       0.49</span>
 <span class="co">#&gt; 7:    White Female  0.56       0.35       0.68       0.45</span>
 <span class="co">#&gt; 8:      White Male  0.59       0.49       0.69       0.57</span></pre></body></html></div>
+<p>While we used the base R <code><a href="https://rdrr.io/r/stats/reshape.html">reshape()</a></code> function in this example, there are good reshaping tools in other packages such as cdata <span class="citation">(Mount and Zumel <a href="#ref-Mount+Zumel:2020:cdata" role="doc-biblioref">2020</a>)</span> or tidyr <span class="citation">(Wickham and Henry <a href="#ref-Wickham+Henry:2020:tidyr" role="doc-biblioref">2020</a>)</span>.</p>
 </div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
@@ -896,13 +897,19 @@ White Male
 <p>Cleveland, William S. 1993. <em>Visualizing Data</em>. Summit, NJ: Hobart Press.</p>
 </div>
 <div id="ref-Mount+Zumel:2019:fluid-data">
-<p>Mount, John, and Nina Zumel. 2019. <em>Coordinatized data: A fluid data specification</em>. Win Vector LLC. <a href="http://winvector.github.io/FluidData/RowsAndColumns.html">http://winvector.github.io/FluidData/RowsAndColumns.html</a>.</p>
+<p>Mount, John, and Nina Zumel. 2019. “Coordinatized data: A fluid data specification.” Win Vector LLC. <a href="http://winvector.github.io/FluidData/RowsAndColumns.html">http://winvector.github.io/FluidData/RowsAndColumns.html</a>.</p>
+</div>
+<div id="ref-Mount+Zumel:2020:cdata">
+<p>———. 2020. <em>cdata: Fluid Data Transformations</em>. R package version 1.1.6. <a href="https://CRAN.R-project.org/package=cdata">https://CRAN.R-project.org/package=cdata</a>.</p>
 </div>
 <div id="ref-Ohland+Orr+others:2012">
 <p>Ohland, Matthew, Marisa Orr, Richard Layton, Susan Lord, and Russell Long. 2012. “Introducing stickiness as a versatile metric of engineering persistence.” In <em>Proceedings of the Frontiers in Education Conference</em>, 1–5.</p>
 </div>
 <div id="ref-Wickham+Grolemund:2017">
 <p>Wickham, Hadley, and Garrett Grolemund. 2017. <em>R for Data Science</em>. Sebastopol, CA: O’Reilly Media, Inc. <a href="https://r4ds.had.co.nz/">https://r4ds.had.co.nz/</a>.</p>
+</div>
+<div id="ref-Wickham+Henry:2020:tidyr">
+<p>Wickham, Hadley, and Lionel Henry. 2020. <em>tidyr: Tidy Messy Data</em>. R package version 1.1.0. <a href="https://CRAN.R-project.org/package=tidyr">https://CRAN.R-project.org/package=tidyr</a>.</p>
 </div>
 </div>
 </div>
