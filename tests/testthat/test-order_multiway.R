@@ -20,7 +20,13 @@ df1 <- wrapr::build_frame(
     "suburb" , "women", 0.46  |
     "village", "men"  , 0.15  |
     "village", "women", 0.2   )
-
+test_that("Incoming factors are converted", {
+  df3 <- df1
+  data.table::setDT(df3)
+  df4 <- df3
+  df4[, cat1 := as.factor(cat1)]
+  expect_equal(order_multiway(df3), order_multiway(df4))
+})
 test_that("Class of data frame is preserved", {
   # data.frame
   df2 <- df1
