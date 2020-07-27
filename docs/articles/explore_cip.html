@@ -152,13 +152,14 @@
 <p>View the internal structure of <code>cip</code> using <code><a href="https://rdrr.io/r/utils/str.html">str()</a></code>.</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># examine variable types</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">cip</span>)
-<span class="co">#&gt; 'data.frame':    1584 obs. of  6 variables:</span>
+<span class="co">#&gt; Classes 'data.table' and 'data.frame':   1584 obs. of  6 variables:</span>
 <span class="co">#&gt;  $ cip2    : chr  "01" "01" "01" "01" ...</span>
 <span class="co">#&gt;  $ cip2name: chr  "Agriculture, Agricultural Operations and Related Sciences" "Agriculture, Agricultural Operations and Related Sciences" "Agriculture, Agricultural Operations and Related Sciences" "Agriculture, Agricultural Operations and Related Sciences" ...</span>
 <span class="co">#&gt;  $ cip4    : chr  "0100" "0101" "0101" "0101" ...</span>
 <span class="co">#&gt;  $ cip4name: chr  "Agriculture, General" "Agricultural Business and Management" "Agricultural Business and Management" "Agricultural Business and Management" ...</span>
 <span class="co">#&gt;  $ cip6    : chr  "010000" "010101" "010102" "010103" ...</span>
-<span class="co">#&gt;  $ cip6name: chr  "Agriculture, General" "Agricultural Business and Management, General" "Agribusiness, Agricultural Business Operations" "Agricultural Economics" ...</span></pre></body></html></div>
+<span class="co">#&gt;  $ cip6name: chr  "Agriculture, General" "Agricultural Business and Management, General" "Agribusiness, Agricultural Business Operations" "Agricultural Economics" ...</span>
+<span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt;</span></pre></body></html></div>
 <p>If you prefer to see a spreadsheet-like array of the data, run</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span>(<span class="no">cip</span>)</pre></body></html></div>
 <p>In the table below, we show all programs associated with the 2-digit code “41”, for “Science Technologies, Technicians” programs. We find</p>
@@ -385,14 +386,9 @@ Science Technologies, Technicians, Other
 <a href="#filtering-basics" class="anchor"></a>Filtering basics</h2>
 <p>The variables in <code>cip</code> are all characters, facilitating filtering using character search terms.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># examine variable types</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">cip</span>)
-<span class="co">#&gt; 'data.frame':    1584 obs. of  6 variables:</span>
-<span class="co">#&gt;  $ cip2    : chr  "01" "01" "01" "01" ...</span>
-<span class="co">#&gt;  $ cip2name: chr  "Agriculture, Agricultural Operations and Related Sciences" "Agriculture, Agricultural Operations and Related Sciences" "Agriculture, Agricultural Operations and Related Sciences" "Agriculture, Agricultural Operations and Related Sciences" ...</span>
-<span class="co">#&gt;  $ cip4    : chr  "0100" "0101" "0101" "0101" ...</span>
-<span class="co">#&gt;  $ cip4name: chr  "Agriculture, General" "Agricultural Business and Management" "Agricultural Business and Management" "Agricultural Business and Management" ...</span>
-<span class="co">#&gt;  $ cip6    : chr  "010000" "010101" "010102" "010103" ...</span>
-<span class="co">#&gt;  $ cip6name: chr  "Agriculture, General" "Agricultural Business and Management, General" "Agribusiness, Agricultural Business Operations" "Agricultural Economics" ...</span></pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="no">cip</span>, <span class="kw">FUN</span> <span class="kw">=</span> <span class="no">class</span>)
+<span class="co">#&gt;        cip2    cip2name        cip4    cip4name        cip6    cip6name </span>
+<span class="co">#&gt; "character" "character" "character" "character" "character" "character"</span></pre></body></html></div>
 <p><code><a href="../reference/get_cip.html">get_cip()</a></code> filters a data frame using character search terms. The arguments are:</p>
 <ul>
 <li>
@@ -404,33 +400,34 @@ Science Technologies, Technicians, Other
 </ul>
 <p>For example, filtering the CIP data for all programs containing the word “engineering” yields 121 observations.</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># filter basics</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"engineering"</span>)
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"engineering"</span>)
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">sub_cip</span>)
-<span class="co">#&gt; 'data.frame':    121 obs. of  6 variables:</span>
+<span class="co">#&gt; Classes 'data.table' and 'data.frame':   121 obs. of  6 variables:</span>
 <span class="co">#&gt;  $ cip2    : chr  "14" "14" "14" "14" ...</span>
 <span class="co">#&gt;  $ cip2name: chr  "Engineering" "Engineering" "Engineering" "Engineering" ...</span>
 <span class="co">#&gt;  $ cip4    : chr  "1401" "1401" "1402" "1403" ...</span>
 <span class="co">#&gt;  $ cip4name: chr  "Engineering, General" "Engineering, General" "Aerospace, Aeronautical and Astronautical Engineering" "Agricultural, Biological Engineering and Bioengineering" ...</span>
 <span class="co">#&gt;  $ cip6    : chr  "140101" "140102" "140201" "140301" ...</span>
-<span class="co">#&gt;  $ cip6name: chr  "Engineering, General" "Pre-Engineering" "Aerospace, Aeronautical and Astronautical, Space Engineering" "Agricultural, Biological Engineering and Bioengineering" ...</span></pre></body></html></div>
+<span class="co">#&gt;  $ cip6name: chr  "Engineering, General" "Pre-Engineering" "Aerospace, Aeronautical and Astronautical, Space Engineering" "Agricultural, Biological Engineering and Bioengineering" ...</span>
+<span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt;</span></pre></body></html></div>
 <p>The first two argument names can be omitted if they are in the correct order. If the optional <code>drop_any</code> argument is used, it must be named,</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># only the drop_any argument must be named</span>
 <span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">cip</span>, <span class="st">"civil engineering"</span>, <span class="kw">drop_any</span> <span class="kw">=</span> <span class="st">"technology"</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">sub_cip</span>)
-<span class="co">#&gt;   cip2    cip2name cip4          cip4name   cip6</span>
-<span class="co">#&gt; 1   14 Engineering 1408 Civil Engineering 140801</span>
-<span class="co">#&gt; 2   14 Engineering 1408 Civil Engineering 140802</span>
-<span class="co">#&gt; 3   14 Engineering 1408 Civil Engineering 140803</span>
-<span class="co">#&gt; 4   14 Engineering 1408 Civil Engineering 140804</span>
-<span class="co">#&gt; 5   14 Engineering 1408 Civil Engineering 140805</span>
-<span class="co">#&gt; 6   14 Engineering 1408 Civil Engineering 140899</span>
-<span class="co">#&gt;                                 cip6name</span>
-<span class="co">#&gt; 1             Civil Engineering, General</span>
-<span class="co">#&gt; 2               Geotechnical Engineering</span>
-<span class="co">#&gt; 3                 Structural Engineering</span>
-<span class="co">#&gt; 4 Transportation and Highway Engineering</span>
-<span class="co">#&gt; 5            Water Resources Engineering</span>
-<span class="co">#&gt; 6               Civil Engineering, Other</span></pre></body></html></div>
+<span class="co">#&gt;    cip2    cip2name cip4          cip4name   cip6</span>
+<span class="co">#&gt; 1:   14 Engineering 1408 Civil Engineering 140801</span>
+<span class="co">#&gt; 2:   14 Engineering 1408 Civil Engineering 140802</span>
+<span class="co">#&gt; 3:   14 Engineering 1408 Civil Engineering 140803</span>
+<span class="co">#&gt; 4:   14 Engineering 1408 Civil Engineering 140804</span>
+<span class="co">#&gt; 5:   14 Engineering 1408 Civil Engineering 140805</span>
+<span class="co">#&gt; 6:   14 Engineering 1408 Civil Engineering 140899</span>
+<span class="co">#&gt;                                  cip6name</span>
+<span class="co">#&gt; 1:             Civil Engineering, General</span>
+<span class="co">#&gt; 2:               Geotechnical Engineering</span>
+<span class="co">#&gt; 3:                 Structural Engineering</span>
+<span class="co">#&gt; 4: Transportation and Highway Engineering</span>
+<span class="co">#&gt; 5:            Water Resources Engineering</span>
+<span class="co">#&gt; 6:               Civil Engineering, Other</span></pre></body></html></div>
 <p>To learn more, open the help page by running</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r">? <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>()</pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
@@ -446,45 +443,45 @@ Science Technologies, Technicians, Other
 <span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"civil"</span>)
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">sub_cip</span>)
-<span class="co">#&gt;    cip2                                            cip2name cip4</span>
-<span class="co">#&gt; 1    05 Area, Ethnic, Cultural and Gender and Group Studies 0501</span>
-<span class="co">#&gt; 2    05 Area, Ethnic, Cultural and Gender and Group Studies 0501</span>
-<span class="co">#&gt; 3    05 Area, Ethnic, Cultural and Gender and Group Studies 0501</span>
-<span class="co">#&gt; 4    14                                         Engineering 1408</span>
-<span class="co">#&gt; 5    14                                         Engineering 1408</span>
-<span class="co">#&gt; 6    14                                         Engineering 1408</span>
-<span class="co">#&gt; 7    14                                         Engineering 1408</span>
-<span class="co">#&gt; 8    14                                         Engineering 1408</span>
-<span class="co">#&gt; 9    14                                         Engineering 1408</span>
-<span class="co">#&gt; 10   15                              Engineering Technology 1502</span>
-<span class="co">#&gt; 11   15                              Engineering Technology 1513</span>
-<span class="co">#&gt; 12   30                     Muti, Interdisciplinary Studies 3022</span>
-<span class="co">#&gt;                                                                      cip4name</span>
-<span class="co">#&gt; 1                                                                Area Studies</span>
-<span class="co">#&gt; 2                                                                Area Studies</span>
-<span class="co">#&gt; 3                                                                Area Studies</span>
-<span class="co">#&gt; 4                                                           Civil Engineering</span>
-<span class="co">#&gt; 5                                                           Civil Engineering</span>
-<span class="co">#&gt; 6                                                           Civil Engineering</span>
-<span class="co">#&gt; 7                                                           Civil Engineering</span>
-<span class="co">#&gt; 8                                                           Civil Engineering</span>
-<span class="co">#&gt; 9                                                           Civil Engineering</span>
-<span class="co">#&gt; 10                                Civil Engineering Technologies, Technicians</span>
-<span class="co">#&gt; 11                     Drafting, Design Engineering Technologies, Technicians</span>
-<span class="co">#&gt; 12 Classical and Ancient, Oriental Studies - Multi, Interdisciplinary Studies</span>
-<span class="co">#&gt;      cip6                                                         cip6name</span>
-<span class="co">#&gt; 1  050102                    American, United States Studies, Civilization</span>
-<span class="co">#&gt; 2  050103                                      Asian Studies, Civilization</span>
-<span class="co">#&gt; 3  050106                                   European Studies, Civilization</span>
-<span class="co">#&gt; 4  140801                                       Civil Engineering, General</span>
-<span class="co">#&gt; 5  140802                                         Geotechnical Engineering</span>
-<span class="co">#&gt; 6  140803                                           Structural Engineering</span>
-<span class="co">#&gt; 7  140804                           Transportation and Highway Engineering</span>
-<span class="co">#&gt; 8  140805                                      Water Resources Engineering</span>
-<span class="co">#&gt; 9  140899                                         Civil Engineering, Other</span>
-<span class="co">#&gt; 10 150201                         Civil Engineering Technology, Technician</span>
-<span class="co">#&gt; 11 151304                   Civil Drafting and Civil Engineering CAD, CADD</span>
-<span class="co">#&gt; 12 302201 Multi, Interdisciplinary Studies - Ancient Studies, Civilization</span></pre></body></html></div>
+<span class="co">#&gt;     cip2                                            cip2name cip4</span>
+<span class="co">#&gt;  1:   05 Area, Ethnic, Cultural and Gender and Group Studies 0501</span>
+<span class="co">#&gt;  2:   05 Area, Ethnic, Cultural and Gender and Group Studies 0501</span>
+<span class="co">#&gt;  3:   05 Area, Ethnic, Cultural and Gender and Group Studies 0501</span>
+<span class="co">#&gt;  4:   14                                         Engineering 1408</span>
+<span class="co">#&gt;  5:   14                                         Engineering 1408</span>
+<span class="co">#&gt;  6:   14                                         Engineering 1408</span>
+<span class="co">#&gt;  7:   14                                         Engineering 1408</span>
+<span class="co">#&gt;  8:   14                                         Engineering 1408</span>
+<span class="co">#&gt;  9:   14                                         Engineering 1408</span>
+<span class="co">#&gt; 10:   15                              Engineering Technology 1502</span>
+<span class="co">#&gt; 11:   15                              Engineering Technology 1513</span>
+<span class="co">#&gt; 12:   30                     Muti, Interdisciplinary Studies 3022</span>
+<span class="co">#&gt;                                                                       cip4name</span>
+<span class="co">#&gt;  1:                                                               Area Studies</span>
+<span class="co">#&gt;  2:                                                               Area Studies</span>
+<span class="co">#&gt;  3:                                                               Area Studies</span>
+<span class="co">#&gt;  4:                                                          Civil Engineering</span>
+<span class="co">#&gt;  5:                                                          Civil Engineering</span>
+<span class="co">#&gt;  6:                                                          Civil Engineering</span>
+<span class="co">#&gt;  7:                                                          Civil Engineering</span>
+<span class="co">#&gt;  8:                                                          Civil Engineering</span>
+<span class="co">#&gt;  9:                                                          Civil Engineering</span>
+<span class="co">#&gt; 10:                                Civil Engineering Technologies, Technicians</span>
+<span class="co">#&gt; 11:                     Drafting, Design Engineering Technologies, Technicians</span>
+<span class="co">#&gt; 12: Classical and Ancient, Oriental Studies - Multi, Interdisciplinary Studies</span>
+<span class="co">#&gt;       cip6                                                         cip6name</span>
+<span class="co">#&gt;  1: 050102                    American, United States Studies, Civilization</span>
+<span class="co">#&gt;  2: 050103                                      Asian Studies, Civilization</span>
+<span class="co">#&gt;  3: 050106                                   European Studies, Civilization</span>
+<span class="co">#&gt;  4: 140801                                       Civil Engineering, General</span>
+<span class="co">#&gt;  5: 140802                                         Geotechnical Engineering</span>
+<span class="co">#&gt;  6: 140803                                           Structural Engineering</span>
+<span class="co">#&gt;  7: 140804                           Transportation and Highway Engineering</span>
+<span class="co">#&gt;  8: 140805                                      Water Resources Engineering</span>
+<span class="co">#&gt;  9: 140899                                         Civil Engineering, Other</span>
+<span class="co">#&gt; 10: 150201                         Civil Engineering Technology, Technician</span>
+<span class="co">#&gt; 11: 151304                   Civil Drafting and Civil Engineering CAD, CADD</span>
+<span class="co">#&gt; 12: 302201 Multi, Interdisciplinary Studies - Ancient Studies, Civilization</span></pre></body></html></div>
 <p>The same information is tabulated below to help you see the structure. In the examples that follow, we show a table like this one instead of the R output.</p>
 <table class="table table">
 <thead><tr>
@@ -1974,15 +1971,15 @@ Physical Anthropology
 
 <span class="co"># but the successful terms are returned</span>
 <span class="no">sub_cip</span>
-<span class="co">#&gt;   cip2                                            cip2name cip4</span>
-<span class="co">#&gt; 1   05 Area, Ethnic, Cultural and Gender and Group Studies 0501</span>
-<span class="co">#&gt; 2   16      Foreign Languages, Literatures and Linguistics 1605</span>
-<span class="co">#&gt;                                      cip4name   cip6</span>
-<span class="co">#&gt; 1                                Area Studies 050125</span>
-<span class="co">#&gt; 2 Germanic Languages, Literatures Linguistics 160501</span>
-<span class="co">#&gt;                         cip6name</span>
-<span class="co">#&gt; 1                 German Studies</span>
-<span class="co">#&gt; 2 German Language and Literature</span></pre></body></html></div>
+<span class="co">#&gt;    cip2                                            cip2name cip4</span>
+<span class="co">#&gt; 1:   05 Area, Ethnic, Cultural and Gender and Group Studies 0501</span>
+<span class="co">#&gt; 2:   16      Foreign Languages, Literatures and Linguistics 1605</span>
+<span class="co">#&gt;                                       cip4name   cip6</span>
+<span class="co">#&gt; 1:                                Area Studies 050125</span>
+<span class="co">#&gt; 2: Germanic Languages, Literatures Linguistics 160501</span>
+<span class="co">#&gt;                          cip6name</span>
+<span class="co">#&gt; 1:                 German Studies</span>
+<span class="co">#&gt; 2: German Language and Literature</span></pre></body></html></div>
 <p>However, as seen earlier, if none of the search terms are found, an error occurs.</p>
 <div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"111111"</span>, <span class="st">"Bogus"</span>, <span class="st">"^55"</span>))
 <span class="co">#&gt; Error: No CIPs satisfy the search criteria</span></pre></body></html></div>
@@ -2564,7 +2561,7 @@ Industrial Engineering
 <div id="complete-script" class="section level3">
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor"></a>Complete script</h3>
-<p>In response to requests from some of our workshop attendees, we collect the vignette code chunks in one script. We condense the script by omitting exploratory steps to focus on the steps that produce the results.</p>
+<p>The vignette code chunks are collected below in a single, condensed script.</p>
 <div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="co"># load packages</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"midfieldr"</span>)
 
@@ -2572,7 +2569,7 @@ Industrial Engineering
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">cip</span>)
 
 <span class="co"># filter basics</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"engineering"</span>)
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"engineering"</span>)
 <span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">cip</span>, <span class="st">"civil engineering"</span>, <span class="kw">drop_any</span> <span class="kw">=</span> <span class="st">"technology"</span>)
 
 <span class="co"># example 1 filter using keywords</span>

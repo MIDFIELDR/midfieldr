@@ -132,7 +132,7 @@
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>Many persistence metrics can be organized as <em>multiway data</em> in which there is is one quantitative variable and two categorical variables. To quote Bill Cleveland <span class="citation">(<a href="#ref-cleveland1993" role="doc-biblioref">1993</a>)</span>,</p>
+<p>Many persistence metrics can be organized as <em>multiway data</em> in which there is is one quantitative variable and two categorical variables. To quote Bill Cleveland <span class="citation">(<a href="#ref-Cleveland:1993" role="doc-biblioref">1993</a>)</span>,</p>
 <blockquote>
 <p>… the quantitative variable is a response, and the goal is to study how it depends on the categorical variables, which are factors. What distinguishes multiway data is the cross-classification of the categorical variables; there is a value of the response for each combination of levels of the two categorical variables.</p>
 </blockquote>
@@ -140,96 +140,133 @@
 <div id="preparing-the-multiway-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#preparing-the-multiway-data" class="anchor"></a>Preparing the multiway data</h2>
-<p>We’ll use the “stickiness” metric to illustrate multiway graphs and data tables. Stickiness is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program <span class="citation">(Ohland et al. <a href="#ref-stickiness2012" role="doc-biblioref">2012</a>)</span>.</p>
+<p>We’ll use the “stickiness” metric to illustrate multiway graphs and data tables. Stickiness is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program <span class="citation">(Ohland et al. <a href="#ref-Ohland+Orr+others:2012" role="doc-biblioref">2012</a>)</span>.</p>
 <p><code>exa_stickiness</code> is a sample dataset included with midfieldr.</p>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># packages</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
 
+<span class="co"># data.table printing options</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">datatable.print.nrows</span> <span class="kw">=</span> <span class="fl">20</span>, <span class="kw">datatable.print.topn</span> <span class="kw">=</span> <span class="fl">5</span>)
+
 <span class="co"># load stickiness data from case study</span>
 <span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">exa_stickiness</span>
 
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">pre_mw</span>)
-<span class="co">#&gt; 'data.frame':    63 obs. of  6 variables:</span>
-<span class="co">#&gt;  $ race   : chr  "Asian" "Asian" "Asian" "Asian" ...</span>
-<span class="co">#&gt;  $ sex    : chr  "Female" "Female" "Female" "Female" ...</span>
-<span class="co">#&gt;  $ program: chr  "Civil Engineering" "Electrical Engineering" "Industrial Engineering" "Mechanical Engineering" ...</span>
-<span class="co">#&gt;  $ ever   : int  18 42 39 24 42 204 67 126 55 156 ...</span>
-<span class="co">#&gt;  $ grad   : num  11 22 22 15 24 120 47 82 21 72 ...</span>
-<span class="co">#&gt;  $ stick  : num  0.611 0.524 0.564 0.625 0.571 0.588 0.701 0.651 0.382 0.462 ...</span></pre></body></html></div>
+<span class="no">pre_mw</span>
+<span class="co">#&gt;                    program     race    sex ever grad stick</span>
+<span class="co">#&gt;  1:      Civil Engineering    Asian Female   18   11 0.611</span>
+<span class="co">#&gt;  2:      Civil Engineering    Asian   Male   42   24 0.571</span>
+<span class="co">#&gt;  3:      Civil Engineering    Black Female   55   21 0.382</span>
+<span class="co">#&gt;  4:      Civil Engineering    Black   Male  102   39 0.382</span>
+<span class="co">#&gt;  5:      Civil Engineering Hispanic Female   11    5 0.455</span>
+<span class="co">#&gt; ---                                                       </span>
+<span class="co">#&gt; 59: Mechanical Engineering    Other   Male   47   28 0.596</span>
+<span class="co">#&gt; 60: Mechanical Engineering  Unknown Female    5    3 0.600</span>
+<span class="co">#&gt; 61: Mechanical Engineering  Unknown   Male   15    9 0.600</span>
+<span class="co">#&gt; 62: Mechanical Engineering    White Female  313  141 0.450</span>
+<span class="co">#&gt; 63: Mechanical Engineering    White   Male 2035 1166 0.573</span></pre></body></html></div>
 <p>To protect confidentiality and prevent identification of individuals or institutions with small sub-populations, we typically omit rows with a small population. Using the larger MIDFIELD database, we usually set this limit to 10. Here, using the midfielddata sample, we’ll use 5.</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># prepare rows</span>
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>$<span class="no">ever</span> <span class="kw">&gt;=</span> <span class="fl">5</span>
-<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>]
 
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">pre_mw</span>)
-<span class="co">#&gt; 'data.frame':    51 obs. of  6 variables:</span>
-<span class="co">#&gt;  $ race   : chr  "Asian" "Asian" "Asian" "Asian" ...</span>
-<span class="co">#&gt;  $ sex    : chr  "Female" "Female" "Female" "Female" ...</span>
-<span class="co">#&gt;  $ program: chr  "Civil Engineering" "Electrical Engineering" "Industrial Engineering" "Mechanical Engineering" ...</span>
-<span class="co">#&gt;  $ ever   : int  18 42 39 24 42 204 67 126 55 156 ...</span>
-<span class="co">#&gt;  $ grad   : num  11 22 22 15 24 120 47 82 21 72 ...</span>
-<span class="co">#&gt;  $ stick  : num  0.611 0.524 0.564 0.625 0.571 0.588 0.701 0.651 0.382 0.462 ...</span></pre></body></html></div>
+<span class="no">pre_mw</span>
+<span class="co">#&gt;                    program     race    sex ever grad stick</span>
+<span class="co">#&gt;  1:      Civil Engineering    Asian Female   18   11 0.611</span>
+<span class="co">#&gt;  2:      Civil Engineering    Asian   Male   42   24 0.571</span>
+<span class="co">#&gt;  3:      Civil Engineering    Black Female   55   21 0.382</span>
+<span class="co">#&gt;  4:      Civil Engineering    Black   Male  102   39 0.382</span>
+<span class="co">#&gt;  5:      Civil Engineering Hispanic Female   11    5 0.455</span>
+<span class="co">#&gt; ---                                                       </span>
+<span class="co">#&gt; 47: Mechanical Engineering    Other   Male   47   28 0.596</span>
+<span class="co">#&gt; 48: Mechanical Engineering  Unknown Female    5    3 0.600</span>
+<span class="co">#&gt; 49: Mechanical Engineering  Unknown   Male   15    9 0.600</span>
+<span class="co">#&gt; 50: Mechanical Engineering    White Female  313  141 0.450</span>
+<span class="co">#&gt; 51: Mechanical Engineering    White   Male 2035 1166 0.573</span></pre></body></html></div>
 <p>We typically delete ambiguous levels of race/ethnicity. And because of its sparse representation in the data, we often omit the Native American population as well.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># remove rows of ambiguous or underrepresented populations </span>
-<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> !<span class="no">pre_mw</span>$<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Unknown"</span>,
-                                    <span class="st">"International"</span>,
-                                    <span class="st">"Other"</span>,
-                                    <span class="st">"Native American"</span>)
-<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># remove rows of ambiguous or underrepresented populations</span>
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> !<span class="no">pre_mw</span>$<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+  <span class="st">"Unknown"</span>,
+  <span class="st">"International"</span>,
+  <span class="st">"Other"</span>,
+  <span class="st">"Native American"</span>
+)
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>]
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">pre_mw</span>$<span class="no">race</span>)
 <span class="co">#&gt; [1] "Asian"    "Black"    "Hispanic" "White"</span></pre></body></html></div>
 <p>We combine the race/ethnicity and sex column to create one of the multiway categorical variables.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># prepare columns</span>
-<span class="no">pre_mw</span>$<span class="no">race_sex</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="no">pre_mw</span>$<span class="no">race</span>, <span class="no">pre_mw</span>$<span class="no">sex</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">" "</span>)
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># complete the transformation to multiway form</span>
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>
+
+<span class="co"># create a new combined framing variable</span>
+<span class="no">data_mw</span>[, <span class="no">race_sex</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="no">race</span>, <span class="no">sex</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">" "</span>)]
 
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">pre_mw</span>)
-<span class="co">#&gt; 'data.frame':    32 obs. of  7 variables:</span>
-<span class="co">#&gt;  $ race    : chr  "Asian" "Asian" "Asian" "Asian" ...</span>
-<span class="co">#&gt;  $ sex     : chr  "Female" "Female" "Female" "Female" ...</span>
-<span class="co">#&gt;  $ program : chr  "Civil Engineering" "Electrical Engineering" "Industrial Engineering" "Mechanical Engineering" ...</span>
-<span class="co">#&gt;  $ ever    : int  18 42 39 24 42 204 67 126 55 156 ...</span>
-<span class="co">#&gt;  $ grad    : num  11 22 22 15 24 120 47 82 21 72 ...</span>
-<span class="co">#&gt;  $ stick   : num  0.611 0.524 0.564 0.625 0.571 0.588 0.701 0.651 0.382 0.462 ...</span>
-<span class="co">#&gt;  $ race_sex: chr  "Asian Female" "Asian Female" "Asian Female" "Asian Female" ...</span></pre></body></html></div>
+<span class="no">data_mw</span>
+<span class="co">#&gt;                    program     race    sex ever grad stick        race_sex</span>
+<span class="co">#&gt;  1:      Civil Engineering    Asian Female   18   11 0.611    Asian Female</span>
+<span class="co">#&gt;  2:      Civil Engineering    Asian   Male   42   24 0.571      Asian Male</span>
+<span class="co">#&gt;  3:      Civil Engineering    Black Female   55   21 0.382    Black Female</span>
+<span class="co">#&gt;  4:      Civil Engineering    Black   Male  102   39 0.382      Black Male</span>
+<span class="co">#&gt;  5:      Civil Engineering Hispanic Female   11    5 0.455 Hispanic Female</span>
+<span class="co">#&gt; ---                                                                       </span>
+<span class="co">#&gt; 28: Mechanical Engineering    Black   Male  211   87 0.412      Black Male</span>
+<span class="co">#&gt; 29: Mechanical Engineering Hispanic Female   13    5 0.385 Hispanic Female</span>
+<span class="co">#&gt; 30: Mechanical Engineering Hispanic   Male   80   39 0.488   Hispanic Male</span>
+<span class="co">#&gt; 31: Mechanical Engineering    White Female  313  141 0.450    White Female</span>
+<span class="co">#&gt; 32: Mechanical Engineering    White   Male 2035 1166 0.573      White Male</span></pre></body></html></div>
 <p>To complete the transformation to multiway form, we select the three multiway variables.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># select the multiway variables</span>
-<span class="no">pre_mw</span>$<span class="no">race_sex</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="no">pre_mw</span>$<span class="no">race</span>, <span class="no">pre_mw</span>$<span class="no">sex</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">" "</span>)
 <span class="no">columns_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"stick"</span>)
-<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[, <span class="no">columns_we_want</span>, <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">data_mw</span>[, <span class="no">..columns_we_want</span>]
 
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">pre_mw</span>)
-<span class="co">#&gt; 'data.frame':    32 obs. of  3 variables:</span>
-<span class="co">#&gt;  $ program : chr  "Civil Engineering" "Electrical Engineering" "Industrial Engineering" "Mechanical Engineering" ...</span>
-<span class="co">#&gt;  $ race_sex: chr  "Asian Female" "Asian Female" "Asian Female" "Asian Female" ...</span>
-<span class="co">#&gt;  $ stick   : num  0.611 0.524 0.564 0.625 0.571 0.588 0.701 0.651 0.382 0.462 ...</span></pre></body></html></div>
+<span class="no">data_mw</span>
+<span class="co">#&gt;                    program        race_sex stick</span>
+<span class="co">#&gt;  1:      Civil Engineering    Asian Female 0.611</span>
+<span class="co">#&gt;  2:      Civil Engineering      Asian Male 0.571</span>
+<span class="co">#&gt;  3:      Civil Engineering    Black Female 0.382</span>
+<span class="co">#&gt;  4:      Civil Engineering      Black Male 0.382</span>
+<span class="co">#&gt;  5:      Civil Engineering Hispanic Female 0.455</span>
+<span class="co">#&gt; ---                                             </span>
+<span class="co">#&gt; 28: Mechanical Engineering      Black Male 0.412</span>
+<span class="co">#&gt; 29: Mechanical Engineering Hispanic Female 0.385</span>
+<span class="co">#&gt; 30: Mechanical Engineering   Hispanic Male 0.488</span>
+<span class="co">#&gt; 31: Mechanical Engineering    White Female 0.450</span>
+<span class="co">#&gt; 32: Mechanical Engineering      White Male 0.573</span></pre></body></html></div>
 <p>Then we use <code><a href="../reference/order_multiway.html">order_multiway()</a></code> to convert the character columns to factors ordered by the median stickiness.</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># transform characters to factors ordered by median stickiness</span>
-<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span>(<span class="no">pre_mw</span>)
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span>(<span class="no">data_mw</span>)
 
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">data_mw</span>)
-<span class="co">#&gt; 'data.frame':    32 obs. of  3 variables:</span>
-<span class="co">#&gt;  $ program : Factor w/ 4 levels "Electrical Engineering",..: 3 1 4 2 3 1 4 2 3 1 ...</span>
-<span class="co">#&gt;  $ race_sex: Factor w/ 8 levels "Black Male","Black Female",..: 7 7 7 7 8 8 8 8 2 2 ...</span>
-<span class="co">#&gt;  $ stick   : num  0.611 0.524 0.564 0.625 0.571 0.588 0.701 0.651 0.382 0.462 ...</span></pre></body></html></div>
+<span class="no">data_mw</span>
+<span class="co">#&gt;                    program        race_sex stick</span>
+<span class="co">#&gt;  1:      Civil Engineering    Asian Female 0.611</span>
+<span class="co">#&gt;  2:      Civil Engineering      Asian Male 0.571</span>
+<span class="co">#&gt;  3:      Civil Engineering    Black Female 0.382</span>
+<span class="co">#&gt;  4:      Civil Engineering      Black Male 0.382</span>
+<span class="co">#&gt;  5:      Civil Engineering Hispanic Female 0.455</span>
+<span class="co">#&gt; ---                                             </span>
+<span class="co">#&gt; 28: Mechanical Engineering      Black Male 0.412</span>
+<span class="co">#&gt; 29: Mechanical Engineering Hispanic Female 0.385</span>
+<span class="co">#&gt; 30: Mechanical Engineering   Hispanic Male 0.488</span>
+<span class="co">#&gt; 31: Mechanical Engineering    White Female 0.450</span>
+<span class="co">#&gt; 32: Mechanical Engineering      White Male 0.573</span></pre></body></html></div>
 </div>
 <div id="a-multiway-dot-plot" class="section level2">
 <h2 class="hasAnchor">
 <a href="#a-multiway-dot-plot" class="anchor"></a>A multiway dot plot</h2>
 <p>We use conventional ggplot2 functions to create the multiway graphs. By previously ordering the levels of the factors, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># create one multiway graph </span>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># create one multiway graph</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data_mw</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">stick</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">race_sex</span>)) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">program</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Stickiness"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>)</pre></body></html></div>
-<p><img src="../man/figures/explore-multiway-fig1-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../man/figures/vign-explore-multiway-fig1-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p><br></p>
 <p>This graph permits a direct visual comparison of how stickiness varies by race and sex within a particular major.</p>
 <p>Reading a multiway graph</p>
@@ -255,12 +292,12 @@
 <code>facet_wrap(vars(program) ...</code> becomes <code>facet_wrap(vars(race_sex) ...</code>
 </li>
 </ul>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># create the dual multiway graph </span>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># create the dual multiway graph</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data_mw</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">stick</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">program</span>)) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">race_sex</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Stickiness"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>)</pre></body></html></div>
-<p><img src="../man/figures/explore-multiway-fig1-dual-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../man/figures/vign-explore-multiway-fig1-dual-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p><br></p>
 <p>This graph permits a direct visual comparison of how stickiness varies by major for one group of students.</p>
 <p>Both multiways should be created for discussion. Usually one or the other will convey a more compelling visual story that gets included in the published findings.</p>
@@ -309,39 +346,6 @@ Asian Female
 </tr>
 <tr>
 <td style="text-align:left;">
-Electrical Engineering
-</td>
-<td style="text-align:left;">
-Asian Female
-</td>
-<td style="text-align:right;">
-0.52
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial Engineering
-</td>
-<td style="text-align:left;">
-Asian Female
-</td>
-<td style="text-align:right;">
-0.56
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical Engineering
-</td>
-<td style="text-align:left;">
-Asian Female
-</td>
-<td style="text-align:right;">
-0.62
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 Civil Engineering
 </td>
 <td style="text-align:left;">
@@ -353,39 +357,6 @@ Asian Male
 </tr>
 <tr>
 <td style="text-align:left;">
-Electrical Engineering
-</td>
-<td style="text-align:left;">
-Asian Male
-</td>
-<td style="text-align:right;">
-0.59
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial Engineering
-</td>
-<td style="text-align:left;">
-Asian Male
-</td>
-<td style="text-align:right;">
-0.70
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical Engineering
-</td>
-<td style="text-align:left;">
-Asian Male
-</td>
-<td style="text-align:right;">
-0.65
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 Civil Engineering
 </td>
 <td style="text-align:left;">
@@ -393,39 +364,6 @@ Black Female
 </td>
 <td style="text-align:right;">
 0.38
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical Engineering
-</td>
-<td style="text-align:left;">
-Black Female
-</td>
-<td style="text-align:right;">
-0.46
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial Engineering
-</td>
-<td style="text-align:left;">
-Black Female
-</td>
-<td style="text-align:right;">
-0.59
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical Engineering
-</td>
-<td style="text-align:left;">
-Black Female
-</td>
-<td style="text-align:right;">
-0.39
 </td>
 </tr>
 <tr>
@@ -441,39 +379,6 @@ Black Male
 </tr>
 <tr>
 <td style="text-align:left;">
-Electrical Engineering
-</td>
-<td style="text-align:left;">
-Black Male
-</td>
-<td style="text-align:right;">
-0.43
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial Engineering
-</td>
-<td style="text-align:left;">
-Black Male
-</td>
-<td style="text-align:right;">
-0.50
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical Engineering
-</td>
-<td style="text-align:left;">
-Black Male
-</td>
-<td style="text-align:right;">
-0.41
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 Civil Engineering
 </td>
 <td style="text-align:left;">
@@ -485,73 +390,7 @@ Hispanic Female
 </tr>
 <tr>
 <td style="text-align:left;">
-Electrical Engineering
-</td>
-<td style="text-align:left;">
-Hispanic Female
-</td>
-<td style="text-align:right;">
-0.43
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial Engineering
-</td>
-<td style="text-align:left;">
-Hispanic Female
-</td>
-<td style="text-align:right;">
-0.71
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical Engineering
-</td>
-<td style="text-align:left;">
-Hispanic Female
-</td>
-<td style="text-align:right;">
-0.38
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 Civil Engineering
-</td>
-<td style="text-align:left;">
-Hispanic Male
-</td>
-<td style="text-align:right;">
-0.49
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical Engineering
-</td>
-<td style="text-align:left;">
-Hispanic Male
-</td>
-<td style="text-align:right;">
-0.46
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial Engineering
-</td>
-<td style="text-align:left;">
-Hispanic Male
-</td>
-<td style="text-align:right;">
-0.73
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical Engineering
 </td>
 <td style="text-align:left;">
 Hispanic Male
@@ -569,6 +408,83 @@ White Female
 </td>
 <td style="text-align:right;">
 0.56
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+White Male
+</td>
+<td style="text-align:right;">
+0.59
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+0.52
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+0.59
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+0.46
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+0.43
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Female
+</td>
+<td style="text-align:right;">
+0.43
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Male
+</td>
+<td style="text-align:right;">
+0.46
 </td>
 </tr>
 <tr>
@@ -584,39 +500,6 @@ White Female
 </tr>
 <tr>
 <td style="text-align:left;">
-Industrial Engineering
-</td>
-<td style="text-align:left;">
-White Female
-</td>
-<td style="text-align:right;">
-0.68
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical Engineering
-</td>
-<td style="text-align:left;">
-White Female
-</td>
-<td style="text-align:right;">
-0.45
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Civil Engineering
-</td>
-<td style="text-align:left;">
-White Male
-</td>
-<td style="text-align:right;">
-0.59
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 Electrical Engineering
 </td>
 <td style="text-align:left;">
@@ -631,10 +514,164 @@ White Male
 Industrial Engineering
 </td>
 <td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+0.56
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+0.70
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+0.59
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+0.50
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Female
+</td>
+<td style="text-align:right;">
+0.71
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Male
+</td>
+<td style="text-align:right;">
+0.73
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+White Female
+</td>
+<td style="text-align:right;">
+0.68
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
 White Male
 </td>
 <td style="text-align:right;">
 0.69
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+0.62
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+0.65
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+0.39
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+0.41
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Female
+</td>
+<td style="text-align:right;">
+0.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Male
+</td>
+<td style="text-align:right;">
+0.49
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+White Female
+</td>
+<td style="text-align:right;">
+0.45
 </td>
 </tr>
 <tr>
@@ -825,11 +862,13 @@ White Male
 </ul>
 <p>In base R, using <code><a href="https://rdrr.io/r/stats/reshape.html">reshape()</a></code>, the block-record form is transformed to row-record form to create Table 2 as follows. Both table layouts are useful. Choosing one or the other depends on one’s audience and rhetorical goals.</p>
 <div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># tabulate data in row record ("wide") form</span>
-<span class="no">rowf</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/reshape.html">reshape</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">blockf</span>,
-                <span class="kw">idvar</span>     <span class="kw">=</span> <span class="st">"race_sex"</span>, <span class="co"># column of row keys to copy </span>
-                <span class="kw">timevar</span>   <span class="kw">=</span> <span class="st">"program"</span>,  <span class="co"># column to take keys from</span>
-                <span class="kw">v.names</span>   <span class="kw">=</span> <span class="st">"stick"</span>,    <span class="co"># column to take values from</span>
-                <span class="kw">direction</span> <span class="kw">=</span> <span class="st">"wide"</span>)
+<span class="no">rowf</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/reshape.html">reshape</a></span>(
+  <span class="kw">data</span> <span class="kw">=</span> <span class="no">blockf</span>,
+  <span class="kw">idvar</span> <span class="kw">=</span> <span class="st">"race_sex"</span>, <span class="co"># column of row keys to copy</span>
+  <span class="kw">timevar</span> <span class="kw">=</span> <span class="st">"program"</span>, <span class="co"># column to take keys from</span>
+  <span class="kw">v.names</span> <span class="kw">=</span> <span class="st">"stick"</span>, <span class="co"># column to take values from</span>
+  <span class="kw">direction</span> <span class="kw">=</span> <span class="st">"wide"</span>
+)
 
 <span class="co"># reset the row numbers</span>
 <span class="fu"><a href="https://rdrr.io/r/base/row.names.html">row.names</a></span>(<span class="no">rowf</span>) <span class="kw">&lt;-</span> <span class="kw">NULL</span>
@@ -839,28 +878,28 @@ White Male
 
 <span class="co"># examine the result</span>
 <span class="no">rowf</span>
-<span class="co">#&gt;             Group Civil Electrical Industrial Mechanical</span>
-<span class="co">#&gt; 1    Asian Female  0.61       0.52       0.56       0.62</span>
-<span class="co">#&gt; 2      Asian Male  0.57       0.59       0.70       0.65</span>
-<span class="co">#&gt; 3    Black Female  0.38       0.46       0.59       0.39</span>
-<span class="co">#&gt; 4      Black Male  0.38       0.43       0.50       0.41</span>
-<span class="co">#&gt; 5 Hispanic Female  0.46       0.43       0.71       0.38</span>
-<span class="co">#&gt; 6   Hispanic Male  0.49       0.46       0.73       0.49</span>
-<span class="co">#&gt; 7    White Female  0.56       0.35       0.68       0.45</span>
-<span class="co">#&gt; 8      White Male  0.59       0.49       0.69       0.57</span></pre></body></html></div>
+<span class="co">#&gt;              Group Civil Electrical Industrial Mechanical</span>
+<span class="co">#&gt; 1:    Asian Female  0.61       0.52       0.56       0.62</span>
+<span class="co">#&gt; 2:      Asian Male  0.57       0.59       0.70       0.65</span>
+<span class="co">#&gt; 3:    Black Female  0.38       0.46       0.59       0.39</span>
+<span class="co">#&gt; 4:      Black Male  0.38       0.43       0.50       0.41</span>
+<span class="co">#&gt; 5: Hispanic Female  0.46       0.43       0.71       0.38</span>
+<span class="co">#&gt; 6:   Hispanic Male  0.49       0.46       0.73       0.49</span>
+<span class="co">#&gt; 7:    White Female  0.56       0.35       0.68       0.45</span>
+<span class="co">#&gt; 8:      White Male  0.59       0.49       0.69       0.57</span></pre></body></html></div>
 </div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h2>
 <div id="refs">
-<div id="ref-cleveland1993">
+<div id="ref-Cleveland:1993">
 <p>Cleveland, William S. 1993. <em>Visualizing Data</em>. Summit, NJ: Hobart Press.</p>
 </div>
 <div id="ref-Mount+Zumel:2019:fluid-data">
 <p>Mount, John, and Nina Zumel. 2019. <em>Coordinatized data: A fluid data specification</em>. Win Vector LLC. <a href="http://winvector.github.io/FluidData/RowsAndColumns.html">http://winvector.github.io/FluidData/RowsAndColumns.html</a>.</p>
 </div>
-<div id="ref-stickiness2012">
-<p>Ohland, Matthew, Marisa Orr, Richard Layton, Susan Lord, and Russell Long. 2012. “Introducing Stickiness as a Versatile Metric of Engineering Persistence.” In <em>Proceedings of the Frontiers in Education Conference</em>, 1–5.</p>
+<div id="ref-Ohland+Orr+others:2012">
+<p>Ohland, Matthew, Marisa Orr, Richard Layton, Susan Lord, and Russell Long. 2012. “Introducing stickiness as a versatile metric of engineering persistence.” In <em>Proceedings of the Frontiers in Education Conference</em>, 1–5.</p>
 </div>
 <div id="ref-Wickham+Grolemund:2017">
 <p>Wickham, Hadley, and Garrett Grolemund. 2017. <em>R for Data Science</em>. Sebastopol, CA: O’Reilly Media, Inc. <a href="https://r4ds.had.co.nz/">https://r4ds.had.co.nz/</a>.</p>
@@ -873,7 +912,7 @@ White Male
 <div id="complete-script" class="section level3">
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor"></a>Complete script</h3>
-<p>In response to requests from some of our workshop attendees, we collect the vignette code chunks in one script. We condense the script by omitting exploratory steps so we can focus on the steps that produce the results.</p>
+<p>The vignette code chunks are collected below in a single, condensed script.</p>
 <div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># packages</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
@@ -883,10 +922,12 @@ White Male
 
 <span class="co"># prepare rows</span>
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>$<span class="no">ever</span> <span class="kw">&gt;=</span> <span class="fl">5</span> <span class="kw">&amp;</span>
-  !<span class="no">pre_mw</span>$<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Unknown"</span>,
-                      <span class="st">"International"</span>,
-                      <span class="st">"Other"</span>,
-                      <span class="st">"Native American"</span>)
+  !<span class="no">pre_mw</span>$<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+    <span class="st">"Unknown"</span>,
+    <span class="st">"International"</span>,
+    <span class="st">"Other"</span>,
+    <span class="st">"Native American"</span>
+  )
 <span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>, , <span class="kw">drop</span> <span class="kw">=</span> <span class="fl">FALSE</span>]
 
 <span class="co"># prepare columns</span>
@@ -897,13 +938,13 @@ White Male
 <span class="co"># transform characters to factors ordered by median stickiness</span>
 <span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span>(<span class="no">pre_mw</span>)
 
-<span class="co"># create one multiway graph </span>
+<span class="co"># create one multiway graph</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data_mw</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">stick</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">race_sex</span>)) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">program</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Stickiness"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>)
 
-<span class="co"># create the dual multiway graph </span>
+<span class="co"># create the dual multiway graph</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data_mw</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">stick</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">program</span>)) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">race_sex</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
@@ -917,11 +958,13 @@ White Male
 <span class="no">blockf</span>
 
 <span class="co"># tabulate data in row record ("wide") form</span>
-<span class="no">rowf</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/reshape.html">reshape</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">blockf</span>,
-                <span class="kw">idvar</span>     <span class="kw">=</span> <span class="st">"race_sex"</span>, <span class="co"># column of row keys to copy </span>
-                <span class="kw">timevar</span>   <span class="kw">=</span> <span class="st">"program"</span>,  <span class="co"># column to take keys from</span>
-                <span class="kw">v.names</span>   <span class="kw">=</span> <span class="st">"stick"</span>,    <span class="co"># column to take values from</span>
-                <span class="kw">direction</span> <span class="kw">=</span> <span class="st">"wide"</span>)
+<span class="no">rowf</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/reshape.html">reshape</a></span>(
+  <span class="kw">data</span> <span class="kw">=</span> <span class="no">blockf</span>,
+  <span class="kw">idvar</span> <span class="kw">=</span> <span class="st">"race_sex"</span>, <span class="co"># column of row keys to copy</span>
+  <span class="kw">timevar</span> <span class="kw">=</span> <span class="st">"program"</span>, <span class="co"># column to take keys from</span>
+  <span class="kw">v.names</span> <span class="kw">=</span> <span class="st">"stick"</span>, <span class="co"># column to take values from</span>
+  <span class="kw">direction</span> <span class="kw">=</span> <span class="st">"wide"</span>
+)
 <span class="fu"><a href="https://rdrr.io/r/base/row.names.html">row.names</a></span>(<span class="no">rowf</span>) <span class="kw">&lt;-</span> <span class="kw">NULL</span>
 <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">rowf</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Group"</span>, <span class="st">"Civil"</span>, <span class="st">"Electrical"</span>, <span class="st">"Industrial"</span>, <span class="st">"Mechanical"</span>)
 <span class="no">rowf</span></pre></body></html></div>
