@@ -18,7 +18,7 @@ resource_files:
 knitr::opts_knit$set(root.dir = "../")
 knitr::opts_chunk$set(
   echo = TRUE,
-  error = TRUE, 
+  error = TRUE,
   message = FALSE,
   warning = FALSE,
   collapse = TRUE,
@@ -190,7 +190,7 @@ Note that the midfielddata package must be loaded to assign one of its datasets 
 We use `get_enrollees()` to extract the IDs of all students who ever enrolled in the programs listed in `group_codes`. The default data argument is `midfieldterms`.
 
 ```{r}
-# students ever enrolled in programs  
+# students ever enrolled in programs
 enrollees <- get_enrollees(midfieldterms, codes = group_codes)
 
 # examine the result
@@ -214,7 +214,7 @@ enrollees
 We use `get_race_sex()` to obtain the race/ethnicity of each enrollee. The default data argument is `midfieldstudents`. 
 
 ```{r}
-# obtain race/ethnicity and sex at matriculation 
+# obtain race/ethnicity and sex at matriculation
 demographics <- get_race_sex(midfieldstudents, keep_id = feasible_ids)
 
 # examine the result
@@ -259,12 +259,12 @@ Note the change in the size of the data frame, from `r nrow(enrollees)` in `enro
 A similar process is used to group and summarize our graduates. We start with `get_graduates()` with a default data argument of `midfielddegrees`. For graduates, the question of completion feasibility is moot---graduation itself establishes feasibility. Thus we omit the the feasible completion filter in this step. 
 
 ```{r}
-# students graduating from programs 
-graduates    <- get_graduates(midfielddegrees, codes = group_codes)
-ids_we_want  <- graduates$id
+# students graduating from programs
+graduates <- get_graduates(midfielddegrees, codes = group_codes)
+ids_we_want <- graduates$id
 demographics <- get_race_sex(midfieldstudents, keep_id = ids_we_want)
-graduates    <- merge(graduates, demographics, by = "id", all.x = TRUE)
-graduates    <- merge(graduates, program_group, by = "cip6", all.x = TRUE)
+graduates <- merge(graduates, demographics, by = "id", all.x = TRUE)
+graduates <- merge(graduates, program_group, by = "cip6", all.x = TRUE)
 grouped_graduates <- graduates[, .(grad = .N), by = grouping_variables]
 
 # examine the result
@@ -288,10 +288,11 @@ We join the two data frames by our framing variables (program, race/ethnicity, a
 
 ```{r}
 # left-join graduates to enrollees
-metric <- merge(grouped_enrollees, 
-                grouped_graduates, 
-                by = grouping_variables, 
-                all.x = TRUE)
+metric <- merge(grouped_enrollees,
+  grouped_graduates,
+  by = grouping_variables,
+  all.x = TRUE
+)
 
 # examine the result, ordered by program
 metric[order(program)]
@@ -400,10 +401,10 @@ sapply(data_mw, FUN = attributes)
 x <- attributes(data_mw$program)
 level_medians <- x$scores
 
-low_median   <- round(min(level_medians), 2)
-high_median  <- round(max(level_medians), 2)
+low_median <- round(min(level_medians), 2)
+high_median <- round(max(level_medians), 2)
 
-low_level  <- levels(data_mw$program)[1]
+low_level <- levels(data_mw$program)[1]
 high_level <- levels(data_mw$program)[nlevels(data_mw$program)]
 ```
 
@@ -413,10 +414,10 @@ The categorical variables are factors. The levels of `program` are ordered by in
 x <- attributes(data_mw$race_sex)
 level_medians <- x$scores
 
-low_median   <- round(min(level_medians), 2)
-high_median  <- round(max(level_medians), 2)
+low_median <- round(min(level_medians), 2)
+high_median <- round(max(level_medians), 2)
 
-low_level  <- levels(data_mw$race_sex)[1]
+low_level <- levels(data_mw$race_sex)[1]
 high_level <- levels(data_mw$race_sex)[nlevels(data_mw$race_sex)]
 ```
 
@@ -526,31 +527,32 @@ program_group$cip6name <- NULL
 group_codes <- program_group$cip6
 
 # gather students ever enrolled with feasible program completion
-enrollees    <- get_enrollees(midfieldterms, codes = group_codes)
+enrollees <- get_enrollees(midfieldterms, codes = group_codes)
 feasible_ids <- completion_feasible(id = enrollees$id)
 rows_we_want <- enrollees$id %in% feasible_ids
-enrollees    <- enrollees[rows_we_want]
+enrollees <- enrollees[rows_we_want]
 demographics <- get_race_sex(midfieldstudents, keep_id = feasible_ids)
-enrollees    <- merge(enrollees, demographics, by = "id", all.x = TRUE)
-enrollees    <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
+enrollees <- merge(enrollees, demographics, by = "id", all.x = TRUE)
+enrollees <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
 
 # assign variables to aggregate by
 grouping_variables <- c("program", "race", "sex")
 grouped_enrollees <- enrollees[, .(ever = .N), by = grouping_variables]
 
-# gather graduates from programs  
-graduates    <- get_graduates(midfielddegrees, codes = group_codes)
-ids_we_want  <- graduates$id
+# gather graduates from programs
+graduates <- get_graduates(midfielddegrees, codes = group_codes)
+ids_we_want <- graduates$id
 demographics <- get_race_sex(midfieldstudents, keep_id = ids_we_want)
-graduates    <- merge(graduates, demographics, by = "id", all.x = TRUE)
-graduates    <- merge(graduates, program_group, by = "cip6", all.x = TRUE)
+graduates <- merge(graduates, demographics, by = "id", all.x = TRUE)
+graduates <- merge(graduates, program_group, by = "cip6", all.x = TRUE)
 grouped_graduates <- graduates[, .(grad = .N), by = grouping_variables]
 
 # compute the metric
-metric <- merge(grouped_enrollees, 
-                grouped_graduates, 
-                by = grouping_variables, 
-                all.x = TRUE)
+metric <- merge(grouped_enrollees,
+  grouped_graduates,
+  by = grouping_variables,
+  all.x = TRUE
+)
 rows_with_degree_NA <- is.na(metric$grad)
 metric[rows_with_degree_NA, grad := 0]
 rows_we_want <- metric$ever > 0
