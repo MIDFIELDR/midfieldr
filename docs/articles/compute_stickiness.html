@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Computing the stickiness metric • midfieldr</title>
+<title>Compute the stickiness metric • midfieldr</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Computing the stickiness metric">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Compute the stickiness metric">
 <meta property="og:description" content="midfieldr">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -51,7 +51,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/using_midfieldr.html">Using midfieldr</a>
+  <a href="../articles/getting_started.html">Getting started</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -70,22 +70,16 @@
       <a href="../articles/get_programs.html">Gather programs</a>
     </li>
     <li>
-      <a href="../articles/gather_student_data.html">Gather student data</a>
-    </li>
-    <li>
-      <a href="../articles/gather_institution_data.html">Gather institution data</a>
+      <a href="../articles/compute_stickiness.html">Compute stickiness</a>
     </li>
     <li>
       <a href="../articles/feasible_completion.html">Filter for program completion feasibility</a>
     </li>
     <li>
-      <a href="../articles/compute_stickiness.html">Compute stickiness</a>
+      <a href="../articles/compute_grad_rate.html">Compute graduation rate</a>
     </li>
     <li>
       <a href="../articles/impute_fye.html">Impute FYE starting majors</a>
-    </li>
-    <li>
-      <a href="../articles/compute_grad_rate.html">Compute graduation rate</a>
     </li>
   </ul>
 </li>
@@ -134,7 +128,7 @@
       </header><script src="compute_stickiness_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Computing the stickiness metric</h1>
+      <h1 data-toc-skip>Compute the stickiness metric</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/master/vignettes/compute_stickiness.Rmd"><code>vignettes/compute_stickiness.Rmd</code></a></small>
@@ -144,38 +138,361 @@
 
     
     
-<p>In this vignette, we demonstrate computing the “stickiness” persistence metric in the ongoing case study in four engineering programs.</p>
+<p>Focus on midfieldr functions:</p>
+<ul>
+<li>
+<code><a href="../reference/get_enrollees.html">get_enrollees()</a></code><br>
+</li>
+<li><code><a href="../reference/get_graduates.html">get_graduates()</a></code></li>
+<li><code><a href="../reference/get_race_sex.html">get_race_sex()</a></code></li>
+</ul>
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>Longitudinal “stickiness” is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program <span class="citation">(Ohland et al. <a href="#ref-Ohland+Orr+others:2012" role="doc-biblioref">2012</a>)</span>.</p>
+<p>Longitudinal “stickiness” is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program <span class="citation">(Ohland and others, <a href="#ref-Ohland+Orr+others:2012" role="doc-biblioref">2012</a>)</span>.</p>
 <p>The stickiness metric accounts for all students in a program. Unlike the graduation rate metric, stickiness includes students who begin college part-time, who enroll mid-year, and who switch majors or transfer between institutions.</p>
 <p>Every student counted in a program’s stickiness metric was enrolled in that program for at least one term. The program succeeded in attracting these students—stickiness tells us how well the program succeeded in retaining them.</p>
-<p>The workflow is:</p>
-<ul>
-<li>choose the programs to study</li>
-<li>count the students ever enrolled</li>
-<li>count the students graduating<br>
-</li>
-<li>compute stickiness</li>
-<li>graph the multiway</li>
-</ul>
-</div>
-<div id="students-ever-enrolled-in-a-group-of-programs" class="section level2">
-<h2 class="hasAnchor">
-<a href="#students-ever-enrolled-in-a-group-of-programs" class="anchor"></a>Students ever enrolled in a group of programs</h2>
-<p>In other vignettes, we describe in detail the process of choosing the programs to study, counting the students ever enrolled (??), and subsetting for completion feasibility.</p>
-<p>We have a built-in data set <code>exa_ever_fc</code> of the 8043 student IDs ever enrolled in our case study programs for whom program completion within 6 years is feasible. The vignette starts with these students.</p>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># packages used</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfielddata</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
 
-<span class="co"># ever enrolled and completion feasible</span>
-<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="no">exa_ever_fc</span>
+<span class="co"># data.table, print max 20 rows, otherwise 5 rows head/tail</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">datatable.print.nrows</span> <span class="kw">=</span> <span class="fl">20</span>, <span class="kw">datatable.print.topn</span> <span class="kw">=</span> <span class="fl">5</span>)</pre></body></html></div>
+<p><br><a href="#top">▲ top of page</a></p>
+</div>
+<div id="choose-the-programs-to-study" class="section level2">
+<h2 class="hasAnchor">
+<a href="#choose-the-programs-to-study" class="anchor"></a>Choose the programs to study</h2>
+<p>In the <em>Gather programs</em> vignette <a href="get_programs.html">(link)</a>, we create the program group of 6-digit codes and user-defined program names for the engineering case study. These data are included with midfieldr as the built-in data set <code>exa_group</code>. View its help page by running</p>
+<div class="sourceCode" id="cb2"><html><body><pre class="r">? <span class="no">exa_group</span></pre></body></html></div>
+<p>The data are loaded with midfieldr.</p>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># view the example program group</span>
+<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="no">exa_group</span>
+<span class="no">program_group</span>
+<span class="co">#&gt;       cip6                program</span>
+<span class="co">#&gt;  1: 140801      Civil Engineering</span>
+<span class="co">#&gt;  2: 140802      Civil Engineering</span>
+<span class="co">#&gt;  3: 140803      Civil Engineering</span>
+<span class="co">#&gt;  4: 140804      Civil Engineering</span>
+<span class="co">#&gt;  5: 140805      Civil Engineering</span>
+<span class="co">#&gt;  6: 140899      Civil Engineering</span>
+<span class="co">#&gt;  7: 141001 Electrical Engineering</span>
+<span class="co">#&gt;  8: 141003 Electrical Engineering</span>
+<span class="co">#&gt;  9: 141004 Electrical Engineering</span>
+<span class="co">#&gt; 10: 141099 Electrical Engineering</span>
+<span class="co">#&gt; 11: 141901 Mechanical Engineering</span>
+<span class="co">#&gt; 12: 143501 Industrial Engineering</span></pre></body></html></div>
+<p>We extract the <code>cip6</code> column as a character vector to gather student data.</p>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># extract a vector of 6-digit CIP codes</span>
+<span class="no">group_codes</span> <span class="kw">&lt;-</span> <span class="no">program_group</span>$<span class="no">cip6</span>
 
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">enrollees</span>)
-<span class="co">#&gt;  chr [1:8043] "MID25783178" "MID25783197" "MID25783388" "MID25783441" ...</span></pre></body></html></div>
-<p>gather ever in this vignette??</p>
+<span class="no">group_codes</span>
+<span class="co">#&gt;  [1] "140801" "140802" "140803" "140804" "140805" "140899" "141001" "141003"</span>
+<span class="co">#&gt;  [9] "141004" "141099" "141901" "143501"</span></pre></body></html></div>
+<p><br><a href="#top">▲ top of page</a></p>
+</div>
+<div id="gather-the-students-ever-enrolled" class="section level2">
+<h2 class="hasAnchor">
+<a href="#gather-the-students-ever-enrolled" class="anchor"></a>Gather the students ever enrolled</h2>
+<p>We use <code><a href="../reference/get_enrollees.html">get_enrollees()</a></code> to extract the IDs of all students who ever enrolled in the programs listed in <code>group_codes</code>. The default data argument is <code>midfieldterms</code>.</p>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># students ever enrolled in programs</span>
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_enrollees.html">get_enrollees</a></span>(<span class="no">midfieldterms</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">group_codes</span>)
+
+<span class="co"># examine the result</span>
+<span class="no">enrollees</span>
+<span class="co">#&gt;                 id   cip6</span>
+<span class="co">#&gt;     1: MID25783178 143501</span>
+<span class="co">#&gt;     2: MID25783197 140801</span>
+<span class="co">#&gt;     3: MID25783388 141901</span>
+<span class="co">#&gt;     4: MID25783441 140801</span>
+<span class="co">#&gt;     5: MID25783491 141001</span>
+<span class="co">#&gt;    ---                   </span>
+<span class="co">#&gt; 10760: MID26696967 141901</span>
+<span class="co">#&gt; 10761: MID26696979 141901</span>
+<span class="co">#&gt; 10762: MID26697163 141901</span>
+<span class="co">#&gt; 10763: MID26697444 141901</span>
+<span class="co">#&gt; 10764: MID26697447 141001</span></pre></body></html></div>
+<p>For convenience, the IDs of these enrollees are included in midfieldr as the built-in character vector <code>exa_ever</code>. View its help page by running</p>
+<div class="sourceCode" id="cb6"><html><body><pre class="r">? <span class="no">exa_ever</span></pre></body></html></div>
+<p>For some of these students, completing their program may not be feasible given the range of data available. <code><a href="../reference/completion_feasible.html">completion_feasible()</a></code> subsets the student IDs, retaining those who matriculate at least six years before the last term in the data.</p>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># apply the feasible completion filter</span>
+<span class="no">feasible_ids</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/completion_feasible.html">completion_feasible</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">enrollees</span>$<span class="no">id</span>)</pre></body></html></div>
+<p>See the <em>Filter for program completion feasibility</em> vignette <a href="feasible_completion.html">(link)</a> for a detailed explanation of how completion feasibility is determined.</p>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># subset the enrollees</span>
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>$<span class="no">id</span> <span class="kw">%in%</span> <span class="no">feasible_ids</span>
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>[<span class="no">rows_we_want</span>]
+
+<span class="co"># examine the result</span>
+<span class="no">enrollees</span>
+<span class="co">#&gt;                id   cip6</span>
+<span class="co">#&gt;    1: MID25783178 143501</span>
+<span class="co">#&gt;    2: MID25783197 140801</span>
+<span class="co">#&gt;    3: MID25783388 141901</span>
+<span class="co">#&gt;    4: MID25783441 140801</span>
+<span class="co">#&gt;    5: MID25783491 141001</span>
+<span class="co">#&gt;   ---                   </span>
+<span class="co">#&gt; 8583: MID26696958 141901</span>
+<span class="co">#&gt; 8584: MID26696967 141901</span>
+<span class="co">#&gt; 8585: MID26697163 141901</span>
+<span class="co">#&gt; 8586: MID26697444 141901</span>
+<span class="co">#&gt; 8587: MID26697447 141001</span></pre></body></html></div>
+<p>We use <code><a href="../reference/get_race_sex.html">get_race_sex()</a></code> to obtain the race/ethnicity of each enrollee. The default data argument is <code>midfieldstudents</code>.</p>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># obtain race/ethnicity and sex at matriculation</span>
+<span class="no">demographics</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_race_sex.html">get_race_sex</a></span>(<span class="no">midfieldstudents</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">feasible_ids</span>)
+
+<span class="co"># examine the result</span>
+<span class="no">demographics</span>
+<span class="co">#&gt;                id     race  sex</span>
+<span class="co">#&gt;    1: MID25783178    Black Male</span>
+<span class="co">#&gt;    2: MID25783197    White Male</span>
+<span class="co">#&gt;    3: MID25783388    White Male</span>
+<span class="co">#&gt;    4: MID25783441    White Male</span>
+<span class="co">#&gt;    5: MID25783491    White Male</span>
+<span class="co">#&gt;   ---                          </span>
+<span class="co">#&gt; 8039: MID26696958    White Male</span>
+<span class="co">#&gt; 8040: MID26696967    White Male</span>
+<span class="co">#&gt; 8041: MID26697163 Hispanic Male</span>
+<span class="co">#&gt; 8042: MID26697444    White Male</span>
+<span class="co">#&gt; 8043: MID26697447    Asian Male</span></pre></body></html></div>
+<p>Now we can join the race/ethnicity and sex data frame to the enrollees data frame.</p>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># left-join demographics to enrollees</span>
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">demographics</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+
+<span class="co"># examine the result</span>
+<span class="no">enrollees</span>
+<span class="co">#&gt;                id   cip6     race  sex</span>
+<span class="co">#&gt;    1: MID25783178 143501    Black Male</span>
+<span class="co">#&gt;    2: MID25783197 140801    White Male</span>
+<span class="co">#&gt;    3: MID25783388 141901    White Male</span>
+<span class="co">#&gt;    4: MID25783441 140801    White Male</span>
+<span class="co">#&gt;    5: MID25783491 141001    White Male</span>
+<span class="co">#&gt;   ---                                 </span>
+<span class="co">#&gt; 8583: MID26696958 141901    White Male</span>
+<span class="co">#&gt; 8584: MID26696967 141901    White Male</span>
+<span class="co">#&gt; 8585: MID26697163 141901 Hispanic Male</span>
+<span class="co">#&gt; 8586: MID26697444 141901    White Male</span>
+<span class="co">#&gt; 8587: MID26697447 141001    Asian Male</span></pre></body></html></div>
+<p>We join the program names from <code>program_group</code> to our working data frame so we can aggregate by groups in a future step.</p>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># left-join program_group to enrollees</span>
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+
+<span class="co"># examine the result</span>
+<span class="no">enrollees</span>
+<span class="co">#&gt;         cip6          id          race    sex                program</span>
+<span class="co">#&gt;    1: 140801 MID25783197         White   Male      Civil Engineering</span>
+<span class="co">#&gt;    2: 140801 MID25783441         White   Male      Civil Engineering</span>
+<span class="co">#&gt;    3: 140801 MID25783553         White   Male      Civil Engineering</span>
+<span class="co">#&gt;    4: 140801 MID25784209 International   Male      Civil Engineering</span>
+<span class="co">#&gt;    5: 140801 MID25784489         Asian Female      Civil Engineering</span>
+<span class="co">#&gt;   ---                                                               </span>
+<span class="co">#&gt; 8583: 143501 MID26693368         White   Male Industrial Engineering</span>
+<span class="co">#&gt; 8584: 143501 MID26695188         White   Male Industrial Engineering</span>
+<span class="co">#&gt; 8585: 143501 MID26695626         White   Male Industrial Engineering</span>
+<span class="co">#&gt; 8586: 143501 MID26696116         White Female Industrial Engineering</span>
+<span class="co">#&gt; 8587: 143501 MID26696429         White Female Industrial Engineering</span></pre></body></html></div>
+<p><br><a href="#top">▲ top of page</a></p>
+</div>
+<div id="gather-the-students-graduating" class="section level2">
+<h2 class="hasAnchor">
+<a href="#gather-the-students-graduating" class="anchor"></a>Gather the students graduating</h2>
+<p>A similar process is used to group and summarize our graduates. We start with <code><a href="../reference/get_graduates.html">get_graduates()</a></code> with a default data argument of <code>midfielddegrees</code>. For graduates, the question of completion feasibility is moot—graduation itself establishes feasibility. Thus we omit the the feasible completion filter in this step.</p>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># students graduating from programs</span>
+<span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_graduates.html">get_graduates</a></span>(<span class="no">midfielddegrees</span>, <span class="kw">codes</span> <span class="kw">=</span> <span class="no">group_codes</span>)
+<span class="no">ids_we_want</span> <span class="kw">&lt;-</span> <span class="no">graduates</span>$<span class="no">id</span>
+<span class="no">demographics</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_race_sex.html">get_race_sex</a></span>(<span class="no">midfieldstudents</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">ids_we_want</span>)
+<span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">demographics</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">graduates</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+
+<span class="co"># examine the result</span>
+<span class="no">graduates</span>
+<span class="co">#&gt;         cip6          id  race    sex                program</span>
+<span class="co">#&gt;    1: 140801 MID25783197 White   Male      Civil Engineering</span>
+<span class="co">#&gt;    2: 140801 MID25783441 White   Male      Civil Engineering</span>
+<span class="co">#&gt;    3: 140801 MID25784334 White Female      Civil Engineering</span>
+<span class="co">#&gt;    4: 140801 MID25784418 White   Male      Civil Engineering</span>
+<span class="co">#&gt;    5: 140801 MID25784489 Asian Female      Civil Engineering</span>
+<span class="co">#&gt;   ---                                                       </span>
+<span class="co">#&gt; 4672: 143501 MID26689274 White   Male Industrial Engineering</span>
+<span class="co">#&gt; 4673: 143501 MID26692926 White   Male Industrial Engineering</span>
+<span class="co">#&gt; 4674: 143501 MID26695626 White   Male Industrial Engineering</span>
+<span class="co">#&gt; 4675: 143501 MID26696116 White Female Industrial Engineering</span>
+<span class="co">#&gt; 4676: 143501 MID26696429 White Female Industrial Engineering</span></pre></body></html></div>
+<p>For convenience, the IDs of these graduates are included in midfieldr as the built-in character vector <code>exa_grad</code>. View its help page by running</p>
+<div class="sourceCode" id="cb13"><html><body><pre class="r">? <span class="no">exa_grad</span></pre></body></html></div>
+<p><br><a href="#top">▲ top of page</a></p>
+</div>
+<div id="group-summarize-and-join" class="section level2">
+<h2 class="hasAnchor">
+<a href="#group-summarize-and-join" class="anchor"></a>Group, summarize, and join</h2>
+<p>To frame our results in terms of program, race/ethnicity, and sex, we assign these variables as our grouping variables.</p>
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co"># assign variables to aggregate by</span>
+<span class="no">grouping_variables</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>)</pre></body></html></div>
+<p>We count the number of students in each grouping. The count is assigned to the new <code>ever</code> column.</p>
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="co"># aggregation</span>
+<span class="no">grouped_enrollees</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>[, <span class="fu">.</span>(<span class="kw">ever</span> <span class="kw">=</span> <span class="no">.N</span>), <span class="kw">by</span> <span class="kw">=</span> <span class="no">grouping_variables</span>]
+
+<span class="co"># examine the result</span>
+<span class="no">grouped_enrollees</span>
+<span class="co">#&gt;                    program            race    sex ever</span>
+<span class="co">#&gt;  1:      Civil Engineering           White   Male 1191</span>
+<span class="co">#&gt;  2:      Civil Engineering   International   Male   14</span>
+<span class="co">#&gt;  3:      Civil Engineering           Asian Female   18</span>
+<span class="co">#&gt;  4:      Civil Engineering           White Female  346</span>
+<span class="co">#&gt;  5:      Civil Engineering           Black   Male  102</span>
+<span class="co">#&gt; ---                                                   </span>
+<span class="co">#&gt; 59: Industrial Engineering Native American   Male    1</span>
+<span class="co">#&gt; 60: Industrial Engineering           Other Female    4</span>
+<span class="co">#&gt; 61: Industrial Engineering         Unknown   Male    1</span>
+<span class="co">#&gt; 62: Industrial Engineering         Unknown Female    2</span>
+<span class="co">#&gt; 63: Industrial Engineering Native American Female    1</span></pre></body></html></div>
+<p>Note the change in the size of the data frame, from 8587 in <code>enrollees</code> where every row is a student to 63 in the <code>grouped_enrollees</code> below where every row is a group.</p>
+<p>Repeat for the graduates, creating the new <code>grad</code> column.</p>
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="co"># aggregation</span>
+<span class="no">grouped_graduates</span> <span class="kw">&lt;-</span> <span class="no">graduates</span>[, <span class="fu">.</span>(<span class="kw">grad</span> <span class="kw">=</span> <span class="no">.N</span>), <span class="kw">by</span> <span class="kw">=</span> <span class="no">grouping_variables</span>]
+
+<span class="co"># examine the result</span>
+<span class="no">grouped_graduates</span>
+<span class="co">#&gt;                    program          race    sex grad</span>
+<span class="co">#&gt;  1:      Civil Engineering         White   Male  708</span>
+<span class="co">#&gt;  2:      Civil Engineering         White Female  192</span>
+<span class="co">#&gt;  3:      Civil Engineering         Asian Female   11</span>
+<span class="co">#&gt;  4:      Civil Engineering         Black   Male   39</span>
+<span class="co">#&gt;  5:      Civil Engineering         Asian   Male   24</span>
+<span class="co">#&gt; ---                                                 </span>
+<span class="co">#&gt; 56: Industrial Engineering         Asian Female   22</span>
+<span class="co">#&gt; 57: Industrial Engineering         Other   Male    4</span>
+<span class="co">#&gt; 58: Industrial Engineering International Female    4</span>
+<span class="co">#&gt; 59: Industrial Engineering         Other Female    4</span>
+<span class="co">#&gt; 60: Industrial Engineering       Unknown   Male    1</span></pre></body></html></div>
+<p>We join the two data frames by our grouping variables, producing a data frame with <code>ever</code> and <code>grad</code> for each group. Note that we have 63 groupings of enrollees but only 60 groupings of graduates. Some enrollee groups have no graduates.</p>
+<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="co"># left-join graduates to enrollees</span>
+<span class="no">stickiness</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">grouped_enrollees</span>,
+  <span class="no">grouped_graduates</span>,
+  <span class="kw">by</span> <span class="kw">=</span> <span class="no">grouping_variables</span>,
+  <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>
+)
+
+<span class="co"># examine the result, ordered by program</span>
+<span class="no">stickiness</span>[<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html">order</a></span>(<span class="no">program</span>)]
+<span class="co">#&gt;                    program     race    sex ever grad</span>
+<span class="co">#&gt;  1:      Civil Engineering    Asian Female   18   11</span>
+<span class="co">#&gt;  2:      Civil Engineering    Asian   Male   42   24</span>
+<span class="co">#&gt;  3:      Civil Engineering    Black Female   55   21</span>
+<span class="co">#&gt;  4:      Civil Engineering    Black   Male  102   39</span>
+<span class="co">#&gt;  5:      Civil Engineering Hispanic Female   11    5</span>
+<span class="co">#&gt; ---                                                 </span>
+<span class="co">#&gt; 59: Mechanical Engineering    Other   Male   47   28</span>
+<span class="co">#&gt; 60: Mechanical Engineering  Unknown Female    5    3</span>
+<span class="co">#&gt; 61: Mechanical Engineering  Unknown   Male   15    9</span>
+<span class="co">#&gt; 62: Mechanical Engineering    White Female  313  141</span>
+<span class="co">#&gt; 63: Mechanical Engineering    White   Male 2035 1166</span></pre></body></html></div>
+<p>There are 3 NA entries in the <code>grad</code> column where we have enrollees but no graduates. To see them more directly:</p>
+<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="no">rows_with_degree_NA</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">stickiness</span>$<span class="no">grad</span>)
+<span class="no">stickiness</span>[<span class="no">rows_with_degree_NA</span>]
+<span class="co">#&gt;                   program            race    sex ever grad</span>
+<span class="co">#&gt; 1: Industrial Engineering Native American Female    1   NA</span>
+<span class="co">#&gt; 2: Industrial Engineering Native American   Male    1   NA</span>
+<span class="co">#&gt; 3: Industrial Engineering         Unknown Female    2   NA</span></pre></body></html></div>
+<p>We convert the NA values in the <code>grad</code> column to zero.</p>
+<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="co"># convert grad NA to zero</span>
+<span class="no">stickiness</span>[<span class="no">rows_with_degree_NA</span>, <span class="no">grad</span> <span class="kw">:=</span> <span class="fl">0</span>]
+
+<span class="co"># examine the result</span>
+<span class="no">stickiness</span>[<span class="no">rows_with_degree_NA</span>]
+<span class="co">#&gt;                   program            race    sex ever grad</span>
+<span class="co">#&gt; 1: Industrial Engineering Native American Female    1    0</span>
+<span class="co">#&gt; 2: Industrial Engineering Native American   Male    1    0</span>
+<span class="co">#&gt; 3: Industrial Engineering         Unknown Female    2    0</span></pre></body></html></div>
+<p>This completes the data manipulation for obtaining the persistence metric.</p>
+<p><br><a href="#top">▲ top of page</a></p>
+</div>
+<div id="compute-stickiness" class="section level2">
+<h2 class="hasAnchor">
+<a href="#compute-stickiness" class="anchor"></a>Compute stickiness</h2>
+<p>We omit rows with zero students ever enrolled, if any, to avoid dividing by zero.</p>
+<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="co"># prevent division by zero</span>
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">stickiness</span>$<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">0</span>
+<span class="no">stickiness</span> <span class="kw">&lt;-</span> <span class="no">stickiness</span>[<span class="no">rows_we_want</span>]</pre></body></html></div>
+<p>Divide <code>grad</code> by <code>ever</code> to compute stickiness.</p>
+<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="co"># compute stickiness</span>
+<span class="no">stickiness</span>[, <span class="no">stick</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="no">grad</span> / <span class="no">ever</span>, <span class="fl">3</span>)]
+
+<span class="co"># examine the result</span>
+<span class="no">stickiness</span>
+<span class="co">#&gt;                    program     race    sex ever grad stick</span>
+<span class="co">#&gt;  1:      Civil Engineering    Asian Female   18   11 0.611</span>
+<span class="co">#&gt;  2:      Civil Engineering    Asian   Male   42   24 0.571</span>
+<span class="co">#&gt;  3:      Civil Engineering    Black Female   55   21 0.382</span>
+<span class="co">#&gt;  4:      Civil Engineering    Black   Male  102   39 0.382</span>
+<span class="co">#&gt;  5:      Civil Engineering Hispanic Female   11    5 0.455</span>
+<span class="co">#&gt; ---                                                       </span>
+<span class="co">#&gt; 59: Mechanical Engineering    Other   Male   47   28 0.596</span>
+<span class="co">#&gt; 60: Mechanical Engineering  Unknown Female    5    3 0.600</span>
+<span class="co">#&gt; 61: Mechanical Engineering  Unknown   Male   15    9 0.600</span>
+<span class="co">#&gt; 62: Mechanical Engineering    White Female  313  141 0.450</span>
+<span class="co">#&gt; 63: Mechanical Engineering    White   Male 2035 1166 0.573</span></pre></body></html></div>
+<p>To see the class of each column:</p>
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="co"># name and class of variables (columns)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="no">stickiness</span>, <span class="kw">FUN</span> <span class="kw">=</span> <span class="no">class</span>)
+<span class="co">#&gt;     program        race         sex        ever        grad       stick </span>
+<span class="co">#&gt; "character" "character" "character"   "integer"   "integer"   "numeric"</span></pre></body></html></div>
+<p>For convenience, this data frame is included in midfieldr as the built-in data set <code>exa_stickiness</code>. View its help page by running</p>
+<div class="sourceCode" id="cb23"><html><body><pre class="r">? <span class="no">exa_stickiness</span></pre></body></html></div>
+<p><br><a href="#top">▲ top of page</a></p>
+</div>
+<div id="condition-the-data-for-display" class="section level2">
+<h2 class="hasAnchor">
+<a href="#condition-the-data-for-display" class="anchor"></a>Condition the data for display</h2>
+<p>Before graphing, we isolate the three multiway variables (program, combined race and sex, and stickiness) and transform the categorical variables into factors with levels that are ordered by median stickiness.</p>
+<p>In the <em>Explore multiway data</em> vignette <a href="explore_multiway.html">(link)</a>, we describe this transformation in detail. The transformed multiway data are included with midfieldr as the built-in data set <code>exa_stickiness_mw</code>. View its help page by running</p>
+<div class="sourceCode" id="cb24"><html><body><pre class="r">? <span class="no">exa_stickiness_mw</span></pre></body></html></div>
+<p>The data are loaded with midfieldr.</p>
+<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="co"># view the example CIP</span>
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">exa_stickiness_mw</span>
+<span class="no">data_mw</span>
+<span class="co">#&gt;                    program        race_sex stick</span>
+<span class="co">#&gt;  1:      Civil Engineering    Asian Female 0.611</span>
+<span class="co">#&gt;  2:      Civil Engineering      Asian Male 0.571</span>
+<span class="co">#&gt;  3:      Civil Engineering    Black Female 0.382</span>
+<span class="co">#&gt;  4:      Civil Engineering      Black Male 0.382</span>
+<span class="co">#&gt;  5:      Civil Engineering Hispanic Female 0.455</span>
+<span class="co">#&gt; ---                                             </span>
+<span class="co">#&gt; 28: Mechanical Engineering      Black Male 0.412</span>
+<span class="co">#&gt; 29: Mechanical Engineering Hispanic Female 0.385</span>
+<span class="co">#&gt; 30: Mechanical Engineering   Hispanic Male 0.488</span>
+<span class="co">#&gt; 31: Mechanical Engineering    White Female 0.450</span>
+<span class="co">#&gt; 32: Mechanical Engineering      White Male 0.573</span></pre></body></html></div>
+<p>To see that the categorical variables are factors and not characters:</p>
+<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="co"># name and class of variables (columns)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="no">data_mw</span>, <span class="kw">FUN</span> <span class="kw">=</span> <span class="no">class</span>)
+<span class="co">#&gt;   program  race_sex     stick </span>
+<span class="co">#&gt;  "factor"  "factor" "numeric"</span></pre></body></html></div>
+<p>To view the levels of the two categories in order of increasing median stickiness:</p>
+<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="co"># levels of the program category</span>
+<span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span>(<span class="no">data_mw</span>$<span class="no">program</span>)
+<span class="co">#&gt; [1] "Electrical Engineering" "Mechanical Engineering" "Civil Engineering"     </span>
+<span class="co">#&gt; [4] "Industrial Engineering"</span>
+
+<span class="co"># levels of the race/ethnicity/sex category</span>
+<span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span>(<span class="no">data_mw</span>$<span class="no">race_sex</span>)
+<span class="co">#&gt; [1] "Black Male"      "Black Female"    "Hispanic Female" "Hispanic Male"  </span>
+<span class="co">#&gt; [5] "White Female"    "White Male"      "Asian Female"    "Asian Male"</span></pre></body></html></div>
+<p><br><a href="#top">▲ top of page</a></p>
+</div>
+<div id="graph-the-metric" class="section level2">
+<h2 class="hasAnchor">
+<a href="#graph-the-metric" class="anchor"></a>Graph the metric</h2>
+<p>We use conventional ggplot2 functions to graph the multiway.</p>
+<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="co"># graph results</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data_mw</span>, <span class="kw">mapping</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">stick</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">race_sex</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="kw">facets</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">program</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Stickiness"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>)</pre></body></html></div>
+<p><img src="../man/figures/vignette-compute-stickiness-fig1-1.png" width="70%" style="display: block; margin: auto;"><br></p>
+<p>For more information on multiway data and interpreting multiway graphs, see the <em>Explore multiway data</em> vignette <a href="explore_multiway.html">(link)</a>.</p>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 <div id="references" class="section level2">
@@ -183,27 +500,18 @@
 <a href="#references" class="anchor"></a>References</h2>
 <div id="refs">
 <div id="ref-Ohland+Orr+others:2012">
-<p>Ohland, Matthew, Marisa Orr, Richard Layton, Susan Lord, and Russell Long. 2012. “Introducing stickiness as a versatile metric of engineering persistence.” In <em>Proceedings of the Frontiers in Education Conference</em>, 1–5.</p>
+<p>Ohland M, Orr M, Layton R, Lord S and Long R (2012) Introducing stickiness as a versatile metric of engineering persistence. <em>Proceedings of the Frontiers in Education Conference</em>. 1–5</p>
 </div>
 </div>
 </div>
 <div id="appendix" class="section level2">
 <h2 class="hasAnchor">
 <a href="#appendix" class="anchor"></a>Appendix</h2>
-<div id="issue-bin" class="section level3">
-<h3 class="hasAnchor">
-<a href="#issue-bin" class="anchor"></a>Issue bin</h3>
-<ul>
-<li>Add a note regarding the suggested 6-student minimum.</li>
-<li>Account for “possible graduation in 6 years”</li>
-<li>Could use mice to impute unknown values of the race and sex variables</li>
-</ul>
-</div>
 <div id="complete-script" class="section level3">
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor"></a>Complete script</h3>
 <p>The vignette code chunks are collected below in a single, condensed script.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"># TBD</pre></body></html></div>
+<div class="sourceCode" id="cb29"><html><body><pre class="r"># TBD</pre></body></html></div>
 <p><br><a href="#top">▲ top of page </a><br><a href="../index.html">◁ main page </a></p>
 </div>
 </div>

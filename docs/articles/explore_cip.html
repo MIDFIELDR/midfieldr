@@ -51,7 +51,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/using_midfieldr.html">Using midfieldr</a>
+  <a href="../articles/getting_started.html">Getting started</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -70,22 +70,16 @@
       <a href="../articles/get_programs.html">Gather programs</a>
     </li>
     <li>
-      <a href="../articles/gather_student_data.html">Gather student data</a>
-    </li>
-    <li>
-      <a href="../articles/gather_institution_data.html">Gather institution data</a>
+      <a href="../articles/compute_stickiness.html">Compute stickiness</a>
     </li>
     <li>
       <a href="../articles/feasible_completion.html">Filter for program completion feasibility</a>
     </li>
     <li>
-      <a href="../articles/compute_stickiness.html">Compute stickiness</a>
+      <a href="../articles/compute_grad_rate.html">Compute graduation rate</a>
     </li>
     <li>
       <a href="../articles/impute_fye.html">Impute FYE starting majors</a>
-    </li>
-    <li>
-      <a href="../articles/compute_grad_rate.html">Compute graduation rate</a>
     </li>
   </ul>
 </li>
@@ -144,45 +138,80 @@
 
     
     
-<p><code><a href="../reference/get_cip.html">get_cip()</a></code> is used to search for the CIP codes of programs one wishes to study. In this vignette we explore its arguments and we collect the codes for a case study of four engineering programs used in subsequent vignettes.</p>
+<p>Focus on midfieldr functions:</p>
+<ul>
+<li><code><a href="../reference/get_cip.html">get_cip()</a></code></li>
+</ul>
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
 <p>In studying student records, a common first step is to subset the data, retaining some instructional programs and dropping others.</p>
-<p>Programs in the US are encoded by “CIP” codes. CIP is the acronym for <em>Classification of Instructional Programs</em>, a taxonomy of academic programs curated by the US Department of Education <span class="citation">(NCES <a href="#ref-NCES:2010" role="doc-biblioref">2010</a>)</span>.</p>
+<p>Instructional programs in the US are encoded by “CIP” codes. CIP is the acronym for <em>Classification of Instructional Programs</em>, a taxonomy of academic programs curated by the US Department of Education <span class="citation">(NCES, <a href="#ref-NCES:2010" role="doc-biblioref">2010</a>)</span>.</p>
 <p>A CIP code is a 6-digit integer assigned to an instructional program. The 2010 CIP codes are included with midfieldr in the data set <code>cip</code>.</p>
 <p>We explore the <code>cip</code> data set using the <code><a href="../reference/get_cip.html">get_cip()</a></code> function. We illustrate several search strategies and we conclude by constructing an example data set used in subsequent vignettes.</p>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># packages used</span>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>)
+
+<span class="co"># data.table, print max 20 rows, otherwise 5 rows head/tail</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">datatable.print.nrows</span> <span class="kw">=</span> <span class="fl">20</span>, <span class="kw">datatable.print.topn</span> <span class="kw">=</span> <span class="fl">5</span>)</pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 <div id="cip-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cip-data" class="anchor"></a>CIP data</h2>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># load packages</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"midfieldr"</span>)</pre></body></html></div>
 <p>The midfieldr package includes a data set called <code>cip</code> that provides the 2010 CIP codes and names for 1584 programs, one program per row. Every program has three codes:</p>
 <ul>
 <li>6-digit code, a specific program</li>
 <li>4-digit code, a group of 6-digit programs of comparable content</li>
 <li>2-digit code, a grouping of 4-digit groups of related content</li>
 </ul>
-<p>View the internal structure of <code>cip</code> using <code><a href="https://rdrr.io/r/utils/str.html">str()</a></code>.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># examine variable types</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">cip</span>)
-<span class="co">#&gt; Classes 'data.table' and 'data.frame':   1584 obs. of  6 variables:</span>
-<span class="co">#&gt;  $ cip2    : chr  "01" "01" "01" "01" ...</span>
-<span class="co">#&gt;  $ cip2name: chr  "Agriculture, Agricultural Operations and Related Sciences" "Agriculture, Agricultural Operations and Related Sciences" "Agriculture, Agricultural Operations and Related Sciences" "Agriculture, Agricultural Operations and Related Sciences" ...</span>
-<span class="co">#&gt;  $ cip4    : chr  "0100" "0101" "0101" "0101" ...</span>
-<span class="co">#&gt;  $ cip4name: chr  "Agriculture, General" "Agricultural Business and Management" "Agricultural Business and Management" "Agricultural Business and Management" ...</span>
-<span class="co">#&gt;  $ cip6    : chr  "010000" "010101" "010102" "010103" ...</span>
-<span class="co">#&gt;  $ cip6name: chr  "Agriculture, General" "Agricultural Business and Management, General" "Agribusiness, Agricultural Business Operations" "Agricultural Economics" ...</span>
-<span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt;</span></pre></body></html></div>
+<p>Examine the values in the data set.</p>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># examine the data</span>
+<span class="no">cip</span>
+<span class="co">#&gt;       cip2                                                  cip2name cip4</span>
+<span class="co">#&gt;    1:   01 Agriculture, Agricultural Operations and Related Sciences 0100</span>
+<span class="co">#&gt;    2:   01 Agriculture, Agricultural Operations and Related Sciences 0101</span>
+<span class="co">#&gt;    3:   01 Agriculture, Agricultural Operations and Related Sciences 0101</span>
+<span class="co">#&gt;    4:   01 Agriculture, Agricultural Operations and Related Sciences 0101</span>
+<span class="co">#&gt;    5:   01 Agriculture, Agricultural Operations and Related Sciences 0101</span>
+<span class="co">#&gt;   ---                                                                    </span>
+<span class="co">#&gt; 1580:   54                                                   History 5401</span>
+<span class="co">#&gt; 1581:   54                                                   History 5401</span>
+<span class="co">#&gt; 1582:   54                                                   History 5401</span>
+<span class="co">#&gt; 1583:   54                                                   History 5401</span>
+<span class="co">#&gt; 1584:   99                         NonIPEDS - Undecided, Unspecified 9999</span>
+<span class="co">#&gt;                                   cip4name   cip6</span>
+<span class="co">#&gt;    1:                 Agriculture, General 010000</span>
+<span class="co">#&gt;    2: Agricultural Business and Management 010101</span>
+<span class="co">#&gt;    3: Agricultural Business and Management 010102</span>
+<span class="co">#&gt;    4: Agricultural Business and Management 010103</span>
+<span class="co">#&gt;    5: Agricultural Business and Management 010104</span>
+<span class="co">#&gt;   ---                                            </span>
+<span class="co">#&gt; 1580:                              History 540106</span>
+<span class="co">#&gt; 1581:                              History 540107</span>
+<span class="co">#&gt; 1582:                              History 540108</span>
+<span class="co">#&gt; 1583:                              History 540199</span>
+<span class="co">#&gt; 1584:    NonIPEDS - Undecided, Unspecified 999999</span>
+<span class="co">#&gt;                                             cip6name</span>
+<span class="co">#&gt;    1:                           Agriculture, General</span>
+<span class="co">#&gt;    2:  Agricultural Business and Management, General</span>
+<span class="co">#&gt;    3: Agribusiness, Agricultural Business Operations</span>
+<span class="co">#&gt;    4:                         Agricultural Economics</span>
+<span class="co">#&gt;    5:                Farm, Farm and Ranch Management</span>
+<span class="co">#&gt;   ---                                               </span>
+<span class="co">#&gt; 1580:                                  Asian History</span>
+<span class="co">#&gt; 1581:                               Canadian History</span>
+<span class="co">#&gt; 1582:                               Military History</span>
+<span class="co">#&gt; 1583:                                 History, Other</span>
+<span class="co">#&gt; 1584:              NonIPEDS - Undecided, Unspecified</span></pre></body></html></div>
 <p>If you prefer to see a spreadsheet-like array of the data, run</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span>(<span class="no">cip</span>)</pre></body></html></div>
 <p>In the table below, we show all programs associated with the 2-digit code “41”, for “Science Technologies, Technicians” programs. We find</p>
 <ul>
-<li>one grouping at the 2-digit level (code 41), that contains…<br>
+<li>one grouping at the 2-digit level (code 41)<br>
 </li>
-<li>5 groups at the 4-digit level (codes 4100, 4101, …), that contain…</li>
+<li>5 groups at the 4-digit level (codes 4100, 4101, …)</li>
 <li>9 programs at the 6-digit level (codes 410000, 410101, …)</li>
 </ul>
 <p>The 6-digit codes and names represent distinct instructional programs.</p>
@@ -417,19 +446,51 @@ Science Technologies, Technicians, Other
 <p>For example, filtering the CIP data for all programs containing the word “engineering” yields 121 observations.</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># filter basics</span>
 <span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"engineering"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">sub_cip</span>)
-<span class="co">#&gt; Classes 'data.table' and 'data.frame':   121 obs. of  6 variables:</span>
-<span class="co">#&gt;  $ cip2    : chr  "14" "14" "14" "14" ...</span>
-<span class="co">#&gt;  $ cip2name: chr  "Engineering" "Engineering" "Engineering" "Engineering" ...</span>
-<span class="co">#&gt;  $ cip4    : chr  "1401" "1401" "1402" "1403" ...</span>
-<span class="co">#&gt;  $ cip4name: chr  "Engineering, General" "Engineering, General" "Aerospace, Aeronautical and Astronautical Engineering" "Agricultural, Biological Engineering and Bioengineering" ...</span>
-<span class="co">#&gt;  $ cip6    : chr  "140101" "140102" "140201" "140301" ...</span>
-<span class="co">#&gt;  $ cip6name: chr  "Engineering, General" "Pre-Engineering" "Aerospace, Aeronautical and Astronautical, Space Engineering" "Agricultural, Biological Engineering and Bioengineering" ...</span>
-<span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt;</span></pre></body></html></div>
+
+<span class="co"># examine the result</span>
+<span class="no">sub_cip</span>
+<span class="co">#&gt;      cip2                                         cip2name cip4</span>
+<span class="co">#&gt;   1:   14                                      Engineering 1401</span>
+<span class="co">#&gt;   2:   14                                      Engineering 1401</span>
+<span class="co">#&gt;   3:   14                                      Engineering 1402</span>
+<span class="co">#&gt;   4:   14                                      Engineering 1403</span>
+<span class="co">#&gt;   5:   14                                      Engineering 1404</span>
+<span class="co">#&gt;  ---                                                           </span>
+<span class="co">#&gt; 117:   15                           Engineering Technology 1516</span>
+<span class="co">#&gt; 118:   15                           Engineering Technology 1599</span>
+<span class="co">#&gt; 119:   29                            Military Technologies 2903</span>
+<span class="co">#&gt; 120:   29                            Military Technologies 2903</span>
+<span class="co">#&gt; 121:   51 Health Professions and Related Clinical Sciences 5123</span>
+<span class="co">#&gt;                                                     cip4name   cip6</span>
+<span class="co">#&gt;   1:                                    Engineering, General 140101</span>
+<span class="co">#&gt;   2:                                    Engineering, General 140102</span>
+<span class="co">#&gt;   3:   Aerospace, Aeronautical and Astronautical Engineering 140201</span>
+<span class="co">#&gt;   4: Agricultural, Biological Engineering and Bioengineering 140301</span>
+<span class="co">#&gt;   5:                               Architectural Engineering 140401</span>
+<span class="co">#&gt;  ---                                                               </span>
+<span class="co">#&gt; 117:                                          Nanotechnology 151601</span>
+<span class="co">#&gt; 118:    Engineering-Related Technologies, Technicians, Other 159999</span>
+<span class="co">#&gt; 119:                               Military Applied Sciences 290301</span>
+<span class="co">#&gt; 120:                               Military Applied Sciences 290303</span>
+<span class="co">#&gt; 121:              Rehabilitation and Therapeutic Professions 512312</span>
+<span class="co">#&gt;                                                              cip6name</span>
+<span class="co">#&gt;   1:                                             Engineering, General</span>
+<span class="co">#&gt;   2:                                                  Pre-Engineering</span>
+<span class="co">#&gt;   3:     Aerospace, Aeronautical and Astronautical, Space Engineering</span>
+<span class="co">#&gt;   4:          Agricultural, Biological Engineering and Bioengineering</span>
+<span class="co">#&gt;   5:                                        Architectural Engineering</span>
+<span class="co">#&gt;  ---                                                                 </span>
+<span class="co">#&gt; 117:                                                   Nanotechnology</span>
+<span class="co">#&gt; 118:             Engineering Related Technologies, Technicians, Other</span>
+<span class="co">#&gt; 119:                                       Combat Systems Engineering</span>
+<span class="co">#&gt; 120:                                            Engineering Acoustics</span>
+<span class="co">#&gt; 121: Assistive, Augmentative Technology and Rehabiliation Engineering</span></pre></body></html></div>
 <p>The first two argument names can be omitted if they are in the correct order. If the optional <code>drop_any</code> argument is used, it must be named,</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># only the drop_any argument must be named</span>
 <span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">cip</span>, <span class="st">"civil engineering"</span>, <span class="kw">drop_any</span> <span class="kw">=</span> <span class="st">"technology"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">sub_cip</span>)
+
+<span class="co"># examine the result</span>
+<span class="no">sub_cip</span>
 <span class="co">#&gt;    cip2    cip2name cip4          cip4name   cip6</span>
 <span class="co">#&gt; 1:   14 Engineering 1408 Civil Engineering 140801</span>
 <span class="co">#&gt; 2:   14 Engineering 1408 Civil Engineering 140802</span>
@@ -457,8 +518,9 @@ Science Technologies, Technicians, Other
 <p>Suppose we want to find the CIP codes and names for all programs in Civil Engineering. The search is case-insensitive, so we start with the following code chunk.</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># example 1 filter using keywords</span>
 <span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"civil"</span>)
+
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">sub_cip</span>)
+<span class="no">sub_cip</span>
 <span class="co">#&gt;     cip2                                            cip2name cip4</span>
 <span class="co">#&gt;  1:   05 Area, Ethnic, Cultural and Gender and Group Studies 0501</span>
 <span class="co">#&gt;  2:   05 Area, Ethnic, Cultural and Gender and Group Studies 0501</span>
@@ -768,8 +830,10 @@ Multi, Interdisciplinary Studies - Ancient Studies, Civilization
 <p>The following code chunk could be read as, “Start with the <code>cip</code> data frame, then keep any rows in which ‘civil’ is detected, then keep any rows in which ‘engineering’ is detected, then drop any rows in which ‘technology’ is detected.”</p>
 <div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># first pass</span>
 <span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"civil"</span>)
+
 <span class="co"># refine the search</span>
 <span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">sub_cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"engineering"</span>)
+
 <span class="co"># refine further</span>
 <span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">sub_cip</span>, <span class="kw">drop_any</span> <span class="kw">=</span> <span class="st">"technology"</span>)</pre></body></html></div>
 <table class="table table">
@@ -2293,6 +2357,7 @@ Electromechanical Engineering
 </tr>
 </tbody>
 </table>
+<p><br></p>
 <p>The results show that the codes we want are at the 4-digit level: 1408, 1410, 1419, and 1435.</p>
 <div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="no">exa_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1435"</span>))</pre></body></html></div>
 <table class="table table">
@@ -2559,6 +2624,7 @@ Industrial Engineering
 </tr>
 </tbody>
 </table>
+<p><br></p>
 <p>For convenience, <code>exa_cip</code> is included in midfieldr as a built-in data set. View its help page by running</p>
 <div class="sourceCode" id="cb22"><html><body><pre class="r">? <span class="no">exa_cip</span></pre></body></html></div>
 </div>
@@ -2567,7 +2633,7 @@ Industrial Engineering
 <a href="#references" class="anchor"></a>References</h2>
 <div id="refs">
 <div id="ref-NCES:2010">
-<p>NCES. 2010. “IPEDS Classification of Instructional Programs (CIP).” National Center for Education Statistics. <a href="https://nces.ed.gov/ipeds/cipcode/">https://nces.ed.gov/ipeds/cipcode/</a>.</p>
+<p>NCES (2010) IPEDS Classification of Instructional Programs (CIP). <a href="https://nces.ed.gov/ipeds/cipcode/">https://nces.ed.gov/ipeds/cipcode/</a></p>
 </div>
 </div>
 </div>

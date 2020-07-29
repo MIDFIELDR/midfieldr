@@ -51,7 +51,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/using_midfieldr.html">Using midfieldr</a>
+  <a href="../articles/getting_started.html">Getting started</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -70,22 +70,16 @@
       <a href="../articles/get_programs.html">Gather programs</a>
     </li>
     <li>
-      <a href="../articles/gather_student_data.html">Gather student data</a>
-    </li>
-    <li>
-      <a href="../articles/gather_institution_data.html">Gather institution data</a>
+      <a href="../articles/compute_stickiness.html">Compute stickiness</a>
     </li>
     <li>
       <a href="../articles/feasible_completion.html">Filter for program completion feasibility</a>
     </li>
     <li>
-      <a href="../articles/compute_stickiness.html">Compute stickiness</a>
+      <a href="../articles/compute_grad_rate.html">Compute graduation rate</a>
     </li>
     <li>
       <a href="../articles/impute_fye.html">Impute FYE starting majors</a>
-    </li>
-    <li>
-      <a href="../articles/compute_grad_rate.html">Compute graduation rate</a>
     </li>
   </ul>
 </li>
@@ -144,15 +138,28 @@
 
     
     
-<p><code><a href="../reference/label_programs.html">label_programs()</a></code> is used to create a data frame with 6-digit CIP codes and a user-supplied program label for grouping, summarizing, and joining. In this vignette we explore its arguments and continue the ongoing case study in four engineering programs.</p>
+<p>Focus on midfieldr functions:</p>
+<ul>
+<li><code><a href="../reference/label_programs.html">label_programs()</a></code></li>
+</ul>
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>The CIP subset for these programs is a built-in dataset <code>exa_cip</code>. We show how these data were obtained in the <a href="explore_cip.html">vignette (“Explore program CIP codes”)</a>.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># load packages</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"midfieldr"</span>)
+<p>While CIP data include 2-, 4-, and 6-digit program codes and names, all program data in MIDFIELD is encoded using only the 6-digit codes. Thus, once we have identified the 6-digit CIP codes for the programs we wish to study, we collect them and label them with program names suitable for grouping, summarizing, and joining operations.</p>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># packages used</span>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>)
 
-<span class="co"># view the example CIP</span>
+<span class="co"># data.table, print max 20 rows, otherwise 5 rows head/tail</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">datatable.print.nrows</span> <span class="kw">=</span> <span class="fl">20</span>, <span class="kw">datatable.print.topn</span> <span class="kw">=</span> <span class="fl">5</span>)</pre></body></html></div>
+</div>
+<div id="determine-the-cip-subset" class="section level2">
+<h2 class="hasAnchor">
+<a href="#determine-the-cip-subset" class="anchor"></a>Determine the CIP subset</h2>
+<p>In the <em>Explore program CIP codes</em> vignette <a href="explore_cip.html">(link)</a>, we obtain the subset of CIP codes and names for the engineering case study. These data are included with midfieldr as the built-in data set <code>exa_cip</code>. View its help page by loading midfieldr and running</p>
+<div class="sourceCode" id="cb2"><html><body><pre class="r">? <span class="no">exa_cip</span></pre></body></html></div>
+<p>The data are loaded with midfieldr.</p>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># view the example CIP</span>
 <span class="no">exa_cip</span>
 <span class="co">#&gt;     cip2    cip2name cip4</span>
 <span class="co">#&gt;  1:   14 Engineering 1408</span>
@@ -193,14 +200,14 @@
 <span class="co">#&gt; 10: Electrical, Electronics and Communications Engineering, Other</span>
 <span class="co">#&gt; 11:                                        Mechanical Engineering</span>
 <span class="co">#&gt; 12:                                        Industrial Engineering</span></pre></body></html></div>
-<p>Next, we use <code><a href="../reference/label_programs.html">label_programs()</a></code> to extract 6-digit codes (and names) and to label groups of programs to suit our purposes. The result is used to filter the student-record data sets (students, courses, terms, or degrees) for the analysis at hand.</p>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 <div id="extract-and-label-programs" class="section level2">
 <h2 class="hasAnchor">
 <a href="#extract-and-label-programs" class="anchor"></a>Extract and label programs</h2>
+<p><code><a href="../reference/label_programs.html">label_programs()</a></code> is used to to extract 6-digit codes (and names) and to label groups of programs to suit our purposes. The result is used to filter the student-record data sets (students, courses, terms, or degrees) for the analysis at hand.</p>
 <p>In the example data, the program names at the 4-digit level are those associated with accredited engineering departments. To see the names in full,</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># case study CIP subset</span>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># case study CIP subset</span>
 <span class="no">columns_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"cip4"</span>, <span class="st">"cip4name"</span>)
 <span class="no">exa_cip4</span> <span class="kw">&lt;-</span> <span class="no">exa_cip</span>[, <span class="no">..columns_we_want</span>]
 
@@ -225,7 +232,7 @@
 <h3 class="hasAnchor">
 <a href="#work-with-one-program-one-at-a-time" class="anchor"></a>1. Work with one program one at a time</h3>
 <p>We separate <code>exa_cip</code> into four data frames, one for each program.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># work with programs one at a time and bind</span>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># work with programs one at a time and bind</span>
 <span class="co"># get civil engineering</span>
 <span class="no">cve_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">exa_cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1408"</span>)
 <span class="no">cve_cip</span>
@@ -244,7 +251,7 @@
 <span class="co">#&gt; 5:            Water Resources Engineering</span>
 <span class="co">#&gt; 6:               Civil Engineering, Other</span></pre></body></html></div>
 <p>We operate on the result with <code><a href="../reference/label_programs.html">label_programs()</a></code> to extract its 6-digit columns. The <code>label</code> argument creates the label in a new column called <code>program</code>, used later for grouping, summarizing, and joining.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># keep the 6-digit CIP and add a program label</span>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># keep the 6-digit CIP and add a program label</span>
 <span class="no">cve</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="no">cve_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Civil Engineering"</span>)
 <span class="no">cve</span>
 <span class="co">#&gt;      cip6                               cip6name           program</span>
@@ -255,7 +262,7 @@
 <span class="co">#&gt; 5: 140805            Water Resources Engineering Civil Engineering</span>
 <span class="co">#&gt; 6: 140899               Civil Engineering, Other Civil Engineering</span></pre></body></html></div>
 <p>Repeat for electrical engineering.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># get electrical  engineering</span>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># get electrical  engineering</span>
 <span class="no">ele_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">exa_cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1410"</span>)
 <span class="no">ele</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="no">ele_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Electrical Engineering"</span>)
 <span class="no">ele</span>
@@ -270,7 +277,7 @@
 <span class="co">#&gt; 3: Electrical Engineering</span>
 <span class="co">#&gt; 4: Electrical Engineering</span></pre></body></html></div>
 <p>For industrial and mechanical engineering, we assign the default 4-digit CIP name using the option <code>label = "cip4name"</code>.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># get mechanical  engineering</span>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># get mechanical  engineering</span>
 <span class="no">mce_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">exa_cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1419"</span>)
 <span class="no">mce</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="no">mce_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"cip4name"</span>)
 <span class="no">mce</span>
@@ -284,11 +291,11 @@
 <span class="co">#&gt;      cip6               cip6name                program</span>
 <span class="co">#&gt; 1: 143501 Industrial Engineering Industrial Engineering</span></pre></body></html></div>
 <p>We have 4 data frames that we combine row-wise. We can see that our custom program names are consistent with the default 6-digit CIP names, so we can dispense with the <code>cip6names</code> column.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># gather the programs in the study</span>
-<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="no">cve</span>, <span class="no">ele</span>, <span class="no">ise</span>, <span class="no">mce</span>)
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># gather the programs in the study</span>
+<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html">rbind</a></span>(<span class="no">cve</span>, <span class="no">ele</span>, <span class="no">ise</span>, <span class="no">mce</span>)
 
 <span class="co"># delete the verbose column</span>
-<span class="no">program_group</span>$<span class="no">cip6name</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
+<span class="no">program_group</span>[, <span class="no">cip6name</span> <span class="kw">:=</span> <span class="kw">NULL</span>]
 
 <span class="co"># examine the result</span>
 <span class="no">program_group</span>
@@ -310,11 +317,11 @@
 <h3 class="hasAnchor">
 <a href="#work-with-all-programs-in-one-data-frame" class="anchor"></a>2. Work with all programs in one data frame</h3>
 <p>Alternatively, we can operate on one data frame throughout. We assign the 4-digit name as our preliminary program label.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># work with programs all in one data frame</span>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># work with programs all in one data frame</span>
 <span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="no">exa_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"cip4name"</span>)
 
 <span class="co"># delete the verbose column</span>
-<span class="no">program_group</span>$<span class="no">cip6name</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
+<span class="no">program_group</span>[, <span class="no">cip6name</span> <span class="kw">:=</span> <span class="kw">NULL</span>]
 
 <span class="co"># examine the result</span>
 <span class="no">program_group</span>
@@ -332,11 +339,11 @@
 <span class="co">#&gt; 11: 141901                                 Mechanical Engineering</span>
 <span class="co">#&gt; 12: 143501                                 Industrial Engineering</span></pre></body></html></div>
 <p>Then we edit the electrical programs only.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># identify the CIP rows that start with 1410</span>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># identify the CIP rows that start with 1410</span>
 <span class="no">rows_to_edit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/startsWith.html">startsWith</a></span>(<span class="no">program_group</span>$<span class="no">cip6</span>, <span class="st">"1410"</span>)
 
 <span class="co"># relabel the electrical programs</span>
-<span class="no">program_group</span>$<span class="no">program</span>[<span class="no">rows_to_edit</span>] <span class="kw">&lt;-</span> <span class="st">"Electrical Engineering"</span>
+<span class="no">program_group</span>[<span class="no">rows_to_edit</span>, <span class="no">program</span> <span class="kw">:=</span> <span class="st">"Electrical Engineering"</span>]
 
 <span class="co"># examine the result</span>
 <span class="no">program_group</span>
@@ -353,8 +360,8 @@
 <span class="co">#&gt; 10: 141099 Electrical Engineering</span>
 <span class="co">#&gt; 11: 141901 Mechanical Engineering</span>
 <span class="co">#&gt; 12: 143501 Industrial Engineering</span></pre></body></html></div>
-<p>For convenience, <code>exa_group</code> is included in midfieldr as a built-in data set. View its help page by running</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r">? <span class="no">exa_group</span></pre></body></html></div>
+<p>For convenience, this program group is included in midfieldr as the built-in data set <code>exa_group</code>. View its help page by running</p>
+<div class="sourceCode" id="cb12"><html><body><pre class="r">? <span class="no">exa_group</span></pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 </div>
@@ -367,7 +374,7 @@
 <a href="#option-1--assign-any-string" class="anchor"></a>Option 1. Assign any string</h3>
 <p>When a string of our own choosing is assigned to <code>program</code>, then that string (with some exceptions) is the value assigned to every observation. In the previous example, we used this option for Electrical Engineering.</p>
 <p>Here we use this option for CIP code 31 programs: Parks, Recreation, Leisure and Fitness Studies.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># assign an arbitrary program name</span>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># assign an arbitrary program name</span>
 <span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^31"</span>)
 <span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="no">sub_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"Leisure Studies"</span>)</pre></body></html></div>
 <table class="table table">
@@ -525,7 +532,7 @@ Leisure Studies
 <a href="#option-2--default-cip-strings" class="anchor"></a>Option 2. Default CIP strings</h3>
 <p>When the <code>program</code> argument is “cip2name”, “cip4name”, or “cip6name”, then the 2-, 4-, or 6-digit names from <code>cip</code> are assigned to the new column. In the previous example, we used this option for Industrial and Mechanical Engineering.</p>
 <p>Using these options for CIP code 31 programs yields:</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># assign the 2-digit level name</span>
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co"># assign the 2-digit level name</span>
 <span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="no">sub_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"cip2name"</span>)</pre></body></html></div>
 <table class="table table">
 <thead><tr>
@@ -675,7 +682,7 @@ Parks, Recreation, Leisure and Fitness Studies
 </tbody>
 </table>
 <p><br></p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># assign the 6-digit level name</span>
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="co"># assign the 6-digit level name</span>
 <span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="no">sub_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"cip6name"</span>)</pre></body></html></div>
 <table class="table table">
 <thead><tr>
@@ -829,7 +836,7 @@ Parks, Recreation, Leisure and Fitness Studies, Other
 <h3 class="hasAnchor">
 <a href="#option-3--null-value" class="anchor"></a>Option 3. NULL value</h3>
 <p>When <code>label_programs = NULL</code>, then the 4-digit CIP program name is used. This result is identical to <code>label_programs = "cip4name"</code>.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co"># label argument NULL same as 4-digit level name</span>
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="co"># label argument NULL same as 4-digit level name</span>
 <span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="no">sub_cip</span>)</pre></body></html></div>
 <table class="table table">
 <thead><tr>
@@ -980,7 +987,7 @@ Parks, Recreation, Leisure and Fitness Studies, Other
 </table>
 <p><br></p>
 <p>To learn more about <code><a href="../reference/label_programs.html">label_programs()</a></code>, open the help page by running</p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r">? <span class="no">label_programs</span></pre></body></html></div>
+<div class="sourceCode" id="cb17"><html><body><pre class="r">? <span class="no">label_programs</span></pre></body></html></div>
 <p><a href="#top">▲ top of page</a></p>
 </div>
 </div>
@@ -988,18 +995,11 @@ Parks, Recreation, Leisure and Fitness Studies, Other
 <h2 class="hasAnchor">
 <a href="#cip-data-from-another-source" class="anchor"></a>CIP data from another source</h2>
 <p>If you use a CIP data set from another source, it must have the same structure as <code>cip</code>. Reshaping data frames is a conventional bit of R data carpentry. If you need help, consult any convenient R resource.</p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="co"># name and class of variables (columns) in cip</span>
-<span class="no">cip_variables</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="no">cip</span>, <span class="kw">function</span>(<span class="no">col</span>) <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span>(<span class="no">col</span>))
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">cip_variables</span>)
-<span class="co">#&gt; List of 6</span>
-<span class="co">#&gt;  $ cip2    : chr "character"</span>
-<span class="co">#&gt;  $ cip2name: chr "character"</span>
-<span class="co">#&gt;  $ cip4    : chr "character"</span>
-<span class="co">#&gt;  $ cip4name: chr "character"</span>
-<span class="co">#&gt;  $ cip6    : chr "character"</span>
-<span class="co">#&gt;  $ cip6name: chr "character"</span></pre></body></html></div>
+<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="co"># name and class of variables (columns) in cip</span>
+<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="no">cip</span>, <span class="kw">FUN</span> <span class="kw">=</span> <span class="no">class</span>)
+<span class="co">#&gt;        cip2    cip2name        cip4    cip4name        cip6    cip6name </span>
+<span class="co">#&gt; "character" "character" "character" "character" "character" "character"</span></pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
-<p>`</p>
 </div>
 <div id="appendix" class="section level2">
 <h2 class="hasAnchor">
@@ -1008,8 +1008,9 @@ Parks, Recreation, Leisure and Fitness Studies, Other
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor"></a>Complete script</h3>
 <p>The vignette code chunks are collected below in a single, condensed script.</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="co"># load packages</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"midfieldr"</span>)
+<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="co"># packages used</span>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>)
 
 <span class="co"># work with programs one at a time and bind</span>
 <span class="no">cve_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">exa_cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1408"</span>)
@@ -1024,14 +1025,14 @@ Parks, Recreation, Leisure and Fitness Studies, Other
 <span class="no">ise_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">exa_cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^1435"</span>)
 <span class="no">ise</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="no">ise_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"cip4name"</span>)
 
-<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="no">cve</span>, <span class="no">ele</span>, <span class="no">ise</span>, <span class="no">mce</span>)
-<span class="no">program_group</span>$<span class="no">cip6name</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
+<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html">rbind</a></span>(<span class="no">cve</span>, <span class="no">ele</span>, <span class="no">ise</span>, <span class="no">mce</span>)
+<span class="no">program_group</span>[, <span class="no">cip6name</span> <span class="kw">:=</span> <span class="kw">NULL</span>]
 
 <span class="co"># work with programs all in one data frame</span>
 <span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="no">exa_cip</span>, <span class="kw">label</span> <span class="kw">=</span> <span class="st">"cip4name"</span>)
-<span class="no">program_group</span>$<span class="no">cip6name</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
+<span class="no">program_group</span>[, <span class="no">cip6name</span> <span class="kw">:=</span> <span class="kw">NULL</span>]
 <span class="no">rows_to_edit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/startsWith.html">startsWith</a></span>(<span class="no">program_group</span>$<span class="no">cip6</span>, <span class="st">"1410"</span>)
-<span class="no">program_group</span>$<span class="no">program</span>[<span class="no">rows_to_edit</span>] <span class="kw">&lt;-</span> <span class="st">"Electrical Engineering"</span>
+<span class="no">program_group</span>[<span class="no">rows_to_edit</span>, <span class="no">program</span> <span class="kw">:=</span> <span class="st">"Electrical Engineering"</span>]
 
 <span class="co"># assign an arbitrary program name</span>
 <span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_cip.html">get_cip</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^31"</span>)
@@ -1047,8 +1048,7 @@ Parks, Recreation, Leisure and Fitness Studies, Other
 <span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/label_programs.html">label_programs</a></span>(<span class="no">sub_cip</span>)
 
 <span class="co"># name and class of variables (columns) in cip</span>
-<span class="no">cip_variables</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="no">cip</span>, <span class="kw">function</span>(<span class="no">col</span>) <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span>(<span class="no">col</span>))
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">cip_variables</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="no">cip</span>, <span class="kw">FUN</span> <span class="kw">=</span> <span class="no">class</span>)</pre></body></html></div>
 <p><br><a href="#top">▲ top of page </a><br><a href="../index.html">◁ main page </a></p>
 </div>
 </div>
