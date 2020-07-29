@@ -8,7 +8,7 @@ vignette: >
 editor_options: 
   chunk_output_type: console
 bibliography: ../inst/REFERENCES.bib
-csl: ../inst/chicago-author-date.csl
+csl: ../inst/journal-of-glaciology.csl
 link-citations: yes
 ---
 
@@ -17,30 +17,47 @@ source("vignette-knitr-opts.R")
 knitr::opts_chunk$set(fig.path = "../man/figures/vignette-get-programs-")
 ```
 
-`label_programs()` is used to create a data frame with 6-digit CIP codes and a user-supplied program label for grouping, summarizing, and joining. In this vignette we explore its arguments and continue the ongoing case study in four engineering programs.  
+Focus on midfieldr functions:
 
- 
+- `label_programs()` 
 
 ## Introduction 
 
-The CIP subset for these programs is a built-in dataset `exa_cip`. We show how these data were obtained in the [vignette ("Explore program CIP codes")](explore_cip.html). 
+While CIP data include 2-, 4-, and 6-digit program codes and names, all program data in MIDFIELD is encoded using only the 6-digit codes. Thus, once we have identified the 6-digit CIP codes for the programs we wish to study, we collect them and label them with program names suitable for grouping, summarizing, and joining operations. 
 
-```{r message = FALSE}
-# load packages
-library("midfieldr")
+```{r}
+# packages used
+library(midfieldr)
+library(data.table)
 
+# data.table, print max 20 rows, otherwise 5 rows head/tail
+options(datatable.print.nrows = 20, datatable.print.topn = 5)
+```
+
+
+
+
+## Determine the CIP subset
+
+In the *Explore program CIP codes* vignette [(link)](explore_cip.html), we obtain the subset of CIP codes and names for the engineering case study. These data are included with midfieldr as the built-in data set `exa_cip`. View its help page by loading midfieldr and running
+
+```r
+? exa_cip 
+```
+
+The data are loaded with midfieldr. 
+
+```{r}
 # view the example CIP
 exa_cip
 ```
-
-Next, we use `label_programs()` to extract 6-digit codes (and names) and to label groups of programs to suit our purposes. The result is used to filter the student-record data sets (students, courses, terms, or degrees) for the analysis at hand.
 
 
 
 
 
 <br>
-<a href="#top">&#9650; top of page</a> 
+<a href="#top">&#9650; top of page</a>  
 
 
 
@@ -48,6 +65,7 @@ Next, we use `label_programs()` to extract 6-digit codes (and names) and to labe
 
 ## Extract and label programs
 
+`label_programs()` is used to to extract 6-digit codes (and names) and to label groups of programs to suit our purposes. The result is used to filter the student-record data sets (students, courses, terms, or degrees) for the analysis at hand.
 
 In the example data, the program names at the 4-digit level are those associated with accredited engineering departments. To see the names in full, 
 
@@ -113,7 +131,7 @@ We have 4 data frames that we combine row-wise. We can see that our custom progr
 program_group <- rbind(cve, ele, ise, mce)
 
 # delete the verbose column
-program_group$cip6name <- NULL
+program_group[, cip6name := NULL]
 
 # examine the result
 program_group
@@ -128,7 +146,7 @@ Alternatively, we can operate on one data frame throughout. We assign the 4-digi
 program_group <- label_programs(exa_cip, label = "cip4name")
 
 # delete the verbose column
-program_group$cip6name <- NULL
+program_group[, cip6name := NULL]
 
 # examine the result
 program_group
@@ -141,13 +159,13 @@ Then we edit the electrical programs only.
 rows_to_edit <- startsWith(program_group$cip6, "1410")
 
 # relabel the electrical programs
-program_group$program[rows_to_edit] <- "Electrical Engineering"
+program_group[rows_to_edit, program := "Electrical Engineering"]
 
 # examine the result
 program_group
 ```
 
-For convenience, `exa_group` is included in midfieldr as a built-in data set. View its help page by running
+For convenience, this program group is included in midfieldr as the built-in data set `exa_group`. View its help page by running
 
 ```r
 ? exa_group
@@ -244,8 +262,7 @@ If you use a CIP data set from another source, it must have the same structure a
 
 ```{r}
 # name and class of variables (columns) in cip
-cip_variables <- lapply(cip, function(col) class(col))
-str(cip_variables)
+sapply(cip, FUN = class)
 ```
 
  
@@ -256,7 +273,6 @@ str(cip_variables)
 <br>
 <a href="#top">&#9650; top of page</a> 
 
-`
 
 
 
@@ -269,9 +285,10 @@ str(cip_variables)
 
 The vignette code chunks are collected below in a single, condensed script.
 
-```{r eval=FALSE}
-# load packages
-library("midfieldr")
+```{r eval = FALSE}
+# packages used
+library(midfieldr)
+library(data.table)
 
 # work with programs one at a time and bind
 cve_cip <- get_cip(exa_cip, keep_any = "^1408")
@@ -287,13 +304,13 @@ ise_cip <- get_cip(exa_cip, keep_any = "^1435")
 ise <- label_programs(ise_cip, label = "cip4name")
 
 program_group <- rbind(cve, ele, ise, mce)
-program_group$cip6name <- NULL
+program_group[, cip6name := NULL]
 
 # work with programs all in one data frame
 program_group <- label_programs(exa_cip, label = "cip4name")
-program_group$cip6name <- NULL
+program_group[, cip6name := NULL]
 rows_to_edit <- startsWith(program_group$cip6, "1410")
-program_group$program[rows_to_edit] <- "Electrical Engineering"
+program_group[rows_to_edit, program := "Electrical Engineering"]
 
 # assign an arbitrary program name
 sub_cip <- get_cip(cip, keep_any = "^31")
@@ -309,8 +326,7 @@ program_group <- label_programs(sub_cip, label = "cip6name")
 program_group <- label_programs(sub_cip)
 
 # name and class of variables (columns) in cip
-cip_variables <- lapply(cip, function(col) class(col))
-str(cip_variables)
+sapply(cip, FUN = class)
 ```
 
 

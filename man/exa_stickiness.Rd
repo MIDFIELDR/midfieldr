@@ -5,16 +5,16 @@
 \alias{exa_stickiness}
 \title{Example stickiness data}
 \format{
-\code{data.table} with 32 rows and 6 columns keyed by
+\code{data.table} with 63 rows and 6 columns keyed by
 program, race/ethnicity, and sex. The variables are:
 \describe{
- \item{program}{instructional programs selected for study}
- \item{race}{student race/ethnicity}
- \item{sex}{student sex}
- \item{ever}{number of students ever enrolled in a program and completion
+ \item{program}{character, instructional programs selected for study}
+ \item{race}{character, student race/ethnicity}
+ \item{sex}{character, student sex}
+ \item{ever}{numerical, number of students ever enrolled in a program and completion
  is feasible}
- \item{grad}{number of students graduating from the program}
- \item{stick}{program stickiness, a persistence metric}
+ \item{grad}{numerical, number of students graduating from the program}
+ \item{stick}{numerical, program stickiness, a persistence metric}
 }
 }
 \usage{
@@ -37,7 +37,8 @@ pre_mw <- exa_stickiness[, ..columns_we_want]
 Other example_data: 
 \code{\link{exa_cip}},
 \code{\link{exa_group}},
-\code{\link{exa_id}}
+\code{\link{exa_id}},
+\code{\link{exa_stickiness_mw}}
 }
 \concept{example_data}
 \keyword{datasets}

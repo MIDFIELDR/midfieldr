@@ -4,7 +4,9 @@
 # midfieldr <span class="border-wrap"><img src="man/figures/logo.png" align="right" height="122" width="106" alt="logo.png"></span>
 
 [![License: GPL
-v3](man/figures/License-GPL-v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+[![License: GPL
+v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/midfieldr)](https://cran.r-project.org/package=midfieldr)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/midfieldr)](http://cran.r-project.org/package=midfieldr)
 [![Build
@@ -37,7 +39,7 @@ provided in the midfielddata package.
 
 **midfielddata** [(link)](https://midfieldr.github.io/midfielddata/) A
 stratified sample of MIDFIELD data. Contains data for 97,640
-undergraduates at 12 institutions from 1987–2016 in four datasets:
+undergraduates at 12 institutions from 1987–2016 in four data sets:
 `midfieldstudents`, `midfieldcourses`, `midfieldterms`, and
 `midfielddegrees`.
 
@@ -107,7 +109,7 @@ The midfieldr package includes:
     Occupies 380 kB of memory. Data dictionary
     [(link)](https://midfieldr.github.io/midfieldr/reference/cip.html).
 
-The midfielddata package contains four datasets that constitute a
+The midfielddata package contains four data sets that constitute a
 stratified sample of the MIDFIELD database.
 
   - `midfieldstudents` Data frame with 97,640 observations and 15
@@ -135,20 +137,6 @@ stratified sample of the MIDFIELD database.
 
 ## Usage
 
-**R ecosystem** midfieldr uses data.table functions and syntax and its
-datasets are class `data.table` and `data.frame`. However, midfieldr
-functions attempt to preserve data frame extensions (`tbl` for example)
-assigned by the user. Thus users who prefer a different ecosystem such
-as dplyr should find that the package is compatible with their
-preference. In general the midfieldr vignettes use the following
-packages:
-
-  - midfieldr
-  - midfielddata
-  - data.table (Dowle and Srinivasan
-    [2020](#ref-Dowle+Srinivasan:2020:data.table))
-  - ggplot2 (Wickham [2016](#ref-Wickham:2016:ggplot2))
-
 **midfieldr functions** are designed to work with MIDFIELD-structured
 data to access and manipulate student records. A typical workflow might
 include:
@@ -161,295 +149,25 @@ include:
   - `get_race_sex()` obtain student sex and race/ethnicity
   - `order_multiway()` condition multiway data for graphing
 
-**example** Suppose we want to graph the number of students ever
-enrolled in Engineering, grouped by sex and race/ethnicity, for whom
-6-year graduation is feasible within the range of data available.
+**R ecosystem**. midfieldr uses data.table functions and syntax.
+midfielddata data sets are class `data.table` and `data.frame`. However,
+midfieldr functions attempt to preserve data frame extensions assigned
+by the user (`tbl` for example). Thus users who prefer a different
+ecosystem such as dplyr should find that the package is compatible with
+their preference.
 
-``` r
-# packages used
-library(midfieldr)
-library(midfielddata)
-library(data.table)
-library(ggplot2)
+In general the midfieldr vignettes use the following packages:
 
-# data.table printing options
-options(datatable.print.nrows = 20, datatable.print.topn = 5)
-```
+  - midfieldr
+  - midfielddata
+  - data.table (Dowle and Srinivasan,
+    [2020](#ref-Dowle+Srinivasan:2020:data.table))
+  - ggplot2 (Wickham, [2016](#ref-Wickham:2016:ggplot2))
 
-We start with the CIP code—engineering CIP codes all start with 14.
-`get_cip()` accesses the `cip` dataset. The output shows that 56
-engineering programs are defined.
-
-``` r
-# gather the program CIPs
-engr_cip <- get_cip(cip, keep_any = "^14")
-engr <- label_programs(engr_cip, label = "Engineering")
-
-# examine the result
-engr
-#>       cip6                                                     cip6name
-#>  1: 140101                                         Engineering, General
-#>  2: 140102                                              Pre-Engineering
-#>  3: 140201 Aerospace, Aeronautical and Astronautical, Space Engineering
-#>  4: 140301      Agricultural, Biological Engineering and Bioengineering
-#>  5: 140401                                    Architectural Engineering
-#> ---                                                                    
-#> 52: 144401                                        Engineering Chemistry
-#> 53: 144501                           Biological, Biosystems Engineering
-#> 54: 149999                                           Engineering, Other
-#> 55: 14XXXX                    NonIPEDS - First-Year Engineering Program
-#> 56: 14YYYY                          NonIPEDS - Undesignated Engineering
-#>         program
-#>  1: Engineering
-#>  2: Engineering
-#>  3: Engineering
-#>  4: Engineering
-#>  5: Engineering
-#> ---            
-#> 52: Engineering
-#> 53: Engineering
-#> 54: Engineering
-#> 55: Engineering
-#> 56: Engineering
-```
-
-The 6-digit CIP name is no longer needed.
-
-``` r
-# the 6-digit name can be omitted
-engr[, cip6name := NULL]
-
-# examine the result
-engr
-#>       cip6     program
-#>  1: 140101 Engineering
-#>  2: 140102 Engineering
-#>  3: 140201 Engineering
-#>  4: 140301 Engineering
-#>  5: 140401 Engineering
-#> ---                   
-#> 52: 144401 Engineering
-#> 53: 144501 Engineering
-#> 54: 149999 Engineering
-#> 55: 14XXXX Engineering
-#> 56: 14YYYY Engineering
-```
-
-`get_enrollees()` accesses the `midfieldterms` dataset using the `engr`
-6-digit CIP column to obtain the IDs of all students ever enrolled in
-these programs. The output shows that we have 26,042 unique combinations
-of student and program.
-
-``` r
-# extract students ever enrolled
-enrollees <- get_enrollees(midfieldterms, codes = engr$cip6)
-
-# examine the result
-enrollees
-#>                 id   cip6
-#>     1: MID25783162 14XXXX
-#>     2: MID25783166 14XXXX
-#>     3: MID25783167 140901
-#>     4: MID25783167 14XXXX
-#>     5: MID25783178 140701
-#>    ---                   
-#> 26038: MID26697298 142501
-#> 26039: MID26697367 142501
-#> 26040: MID26697444 141901
-#> 26041: MID26697447 140701
-#> 26042: MID26697447 141001
-```
-
-In this example, all students are in the same program (Engineering), so
-we can delete the CIP code and delete duplicated IDs due to students
-changing majors.
-
-``` r
-# one program, omit duplicate IDs
-enrollees[, cip6 := NULL]
-enrollees <- unique(enrollees)
-
-# examine the result
-enrollees
-#>                 id
-#>     1: MID25783162
-#>     2: MID25783166
-#>     3: MID25783167
-#>     4: MID25783178
-#>     5: MID25783197
-#>    ---            
-#> 19032: MID26697295
-#> 19033: MID26697298
-#> 19034: MID26697367
-#> 19035: MID26697444
-#> 19036: MID26697447
-```
-
-We now have 19,036 unique students. `completion_feasible()` accesses the
-students, terms, and degrees datasets to filter for feasible program
-completion within the limits of the data. The output shows we have
-14,241 students for whom program completion is feasible.
-
-``` r
-# apply the feasible completion filter
-feasible_ids <- completion_feasible(enrollees$id)
-rows_we_want <- enrollees$id %in% feasible_ids
-enrollees <- enrollees[rows_we_want]
-
-# examine the result
-enrollees
-#>                 id
-#>     1: MID25783162
-#>     2: MID25783178
-#>     3: MID25783197
-#>     4: MID25783259
-#>     5: MID25783388
-#>    ---            
-#> 14237: MID26697295
-#> 14238: MID26697298
-#> 14239: MID26697367
-#> 14240: MID26697444
-#> 14241: MID26697447
-```
-
-`get_race_sex()` accesses the `midfieldstudents` dataset using the
-enrollees IDs.
-
-``` r
-# get student demographics
-demographics <- get_race_sex(midfieldstudents, keep_id = feasible_ids)
-
-# examine the result
-demographics
-#>                 id     race  sex
-#>     1: MID25783162    White Male
-#>     2: MID25783178    Black Male
-#>     3: MID25783197    White Male
-#>     4: MID25783259    White Male
-#>     5: MID25783388    White Male
-#>    ---                          
-#> 14237: MID26697295    White Male
-#> 14238: MID26697298    Asian Male
-#> 14239: MID26697367 Hispanic Male
-#> 14240: MID26697444    White Male
-#> 14241: MID26697447    Asian Male
-```
-
-Routinely we would join the demographics data to the enrollees data.
-However, this example illustrates students in one program only, so the
-information in `demographics` is all we need.
-
-Group and summarize by race/ethnicity. For viewing the data, we order
-the rows by sex and race.
-
-``` r
-# aggregate
-grouped_enrollees <- demographics[, .(ever = .N), by = c("sex", "race")]
-
-# examine the result
-grouped_enrollees[order(sex, race)]
-#>        sex            race ever
-#>  1: Female           Asian  217
-#>  2: Female           Black  615
-#>  3: Female        Hispanic  110
-#>  4: Female   International   42
-#>  5: Female Native American   16
-#>  6: Female           Other   38
-#>  7: Female         Unknown   21
-#>  8: Female           White 2169
-#>  9:   Male           Asian  724
-#> 10:   Male           Black  966
-#> 11:   Male        Hispanic  374
-#> 12:   Male   International  238
-#> 13:   Male Native American   58
-#> 14:   Male           Other  161
-#> 15:   Male         Unknown   45
-#> 16:   Male           White 8447
-```
-
-Prepare data for graphing.
-
-``` r
-# remove ambiguous levels of race/ethnicity
-race_to_drop <- c("International", "Other", "Unknown")
-rows_we_want <- !grouped_enrollees$race %in% race_to_drop
-columns_we_want <- c("sex", "race", "ever")
-
-# complete the transformation to multiway form
-pre_mw <- grouped_enrollees[rows_we_want, ..columns_we_want]
-
-# examine the result
-pre_mw[order(sex, race)]
-#>        sex            race ever
-#>  1: Female           Asian  217
-#>  2: Female           Black  615
-#>  3: Female        Hispanic  110
-#>  4: Female Native American   16
-#>  5: Female           White 2169
-#>  6:   Male           Asian  724
-#>  7:   Male           Black  966
-#>  8:   Male        Hispanic  374
-#>  9:   Male Native American   58
-#> 10:   Male           White 8447
-```
-
-`order_multiway()` converts the categorical variables to factors and
-orders the levels by the median of the quantitative variable. `str()`
-reveals that the previous character variables are now factors.
-
-``` r
-# multiway data
-data_mw <- order_multiway(pre_mw)
-
-# examine the result
-data_mw[order(sex, race)]
-#>        sex            race ever
-#>  1: Female Native American   16
-#>  2: Female        Hispanic  110
-#>  3: Female           Asian  217
-#>  4: Female           Black  615
-#>  5: Female           White 2169
-#>  6:   Male Native American   58
-#>  7:   Male        Hispanic  374
-#>  8:   Male           Asian  724
-#>  9:   Male           Black  966
-#> 10:   Male           White 8447
-
-# total number of students for graph subtitle
-n_ever <- sum(data_mw$ever)
-n_ever
-#> [1] 13696
-```
-
-We graph the results. We use a logarithmic scale to compare numbers that
-differ by orders of magnitude and a log-2 scale in particular because a
-grid line represents a doubling of the previous grid line.
-
-``` r
-ggplot(data = data_mw, mapping = aes(x = ever, y = race)) +
-  facet_wrap(facets = vars(sex), ncol = 1, as.table = FALSE) +
-  geom_point(na.rm = TRUE) +
-  scale_x_continuous(trans = "log2", breaks = 2^seq(0, 15)) +
-  labs(
-    x = "Number of students, log-2 scale",
-    y = "",
-    title = "Ever enrolled in Engineering",
-    subtitle = bquote(N == .(n_ever)),
-    caption = "Source: midfielddata"
-  ) +
-  theme(panel.grid.minor.x = element_blank())
-```
-
-<img src="man/figures/README-fig1-1.png" width="80%" style="display: block; margin: auto;" />
-
-## Vignettes
-
-[vignette (“Using midfieldr”)](articles/using_midfieldr.html)
-illustrates a complete example that starts with program selection and
-concludes with a persistence metric.
-
-Additional vignettes go into even more detail
-[(link)](articles/index.html).
+**example**. The *Getting started* vignette
+[(link)](getting_started.html) introduces some of the basic midfieldr
+functions and the midfielddata data sets. Additional vignettes develop
+the material in more detail.
 
 ## Meta
 
@@ -466,17 +184,16 @@ Additional vignettes go into even more detail
 
 <div id="ref-Dowle+Srinivasan:2020:data.table">
 
-Dowle, Matt, and Arun Srinivasan. 2020. *Data.table: Extension of
-‘Data.frame‘*. R package version 1.13.0.
-<https://CRAN.R-project.org/package=data.table>.
+Dowle M and Srinivasan A (2020) *data.table: Extension of ‘data.frame‘.*
+R package version 1.13.0 <https://CRAN.R-project.org/package=data.table>
 
 </div>
 
 <div id="ref-Wickham:2016:ggplot2">
 
-Wickham, Hadley. 2016. *ggplot2: Elegant Graphics for Data Analysis*.
-ISBN 978-3-319-24277-4; Springer-Verlag New York.
-<https://ggplot2.tidyverse.org>.
+Wickham H (2016) *ggplot2: Elegant Graphics for Data Analysis.* ISBN
+978-3-319-24277-4; Springer-Verlag New York
+<https://ggplot2.tidyverse.org>
 
 </div>
 

@@ -1,20 +1,15 @@
-
 knitr::opts_chunk$set(
-  fig.align = "center",
-  fig.show = "hold",
-  out.width = "70%",
-  fig.width = 6,
-  fig.asp = 0.7,
   echo = TRUE,
   message = FALSE,
   warning = FALSE,
   collapse = TRUE,
   comment = "#>",
-  error = TRUE,
-  purl = FALSE
-  # see note in README or error/purl settings
+  error = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
 )
-
 knitr::knit_hooks$set(inline = function(x) {
   if (!is.numeric(x)) {
     x
@@ -24,3 +19,4 @@ knitr::knit_hooks$set(inline = function(x) {
     prettyNum(round(x, 2))
   }
 })
+

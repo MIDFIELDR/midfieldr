@@ -48,6 +48,7 @@ head(graduates)
 Other example_data: 
 \code{\link{exa_cip}},
 \code{\link{exa_group}},
+\code{\link{exa_stickiness_mw}},
 \code{\link{exa_stickiness}}
 }
 \concept{example_data}

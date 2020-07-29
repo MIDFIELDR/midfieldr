@@ -24,7 +24,7 @@
 cip
 }
 \description{
-A dataset based on the US National Center for Education Statistics
+A data set based on the US National Center for Education Statistics
 (NCES), Integrated Postsecondary Education Data System (IPEDS), 2020
 CIP, \url{https://nces.ed.gov/ipeds/cipcode}. The data are codes and
 names for 1584 instructional programs organized on three levels: a

@@ -3,7 +3,7 @@ output: github_document
 editor_options: 
   chunk_output_type: console
 bibliography: inst/REFERENCES.bib
-csl: inst/chicago-author-date.csl
+csl: inst/journal-of-glaciology.csl
 link-citations: yes
 resource_files:
   - man/figures/README-midfielddata-help-page-2.png
@@ -12,42 +12,16 @@ resource_files:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r setup, echo = FALSE, message = FALSE}
-knitr::opts_chunk$set(
-  fig.path = "man/figures/README-",
-  fig.align = "center",
-  fig.show = "hold", 
-  out.width = "80%",
-  fig.width = 6,
-  fig.asp = 0.7,
-  echo = TRUE,
-  message = FALSE,
-  warning = FALSE,
-  collapse = TRUE,
-  comment = "#>",
-  error = TRUE,
-  purl = FALSE
-  # http://r-pkgs.had.co.nz/vignettes.html: error = TRUE captures errors in
-  # the block and shows them inline. This is useful for demonstrating what
-  # happens if code throws an error. If you use error = TRUE, set
-  # purl = FALSE. Vignettes are accompanied by files containing all the
-  # code from the vignette. purl = FALSE prevents the code from being
-  # inserted into that file
-)
-knitr::knit_hooks$set(inline = function(x) {
-  if (!is.numeric(x)) {
-    x
-  } else if (x >= 10000) {
-    prettyNum(round(x, 2), big.mark = ",")
-  } else {
-    prettyNum(round(x, 2))
-  }
-})
+
+```{r setup, include = FALSE}
+source("vignettes/vignette-knitr-opts.R")
+knitr::opts_chunk$set(fig.path = "man/figures/vignette-explore-multiway-")
 ```
 
 # midfieldr <span class="border-wrap"><img src="man/figures/logo.png" align="right" height="122" width="106" alt="logo.png"></span>
 
-[![License: GPL v3](man/figures/License-GPL-v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/midfieldr)](https://cran.r-project.org/package=midfieldr)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/midfieldr)](http://cran.r-project.org/package=midfieldr)
 [![Build Status](https://travis-ci.org/MIDFIELDR/midfieldr.svg?branch=master)](https://travis-ci.org/MIDFIELDR/midfieldr)
@@ -57,7 +31,7 @@ knitr::knit_hooks$set(inline = function(x) {
 
 
 ```{r, echo = FALSE}
-# constants from the datasets
+# constants from the data sets
 
 # cip
 obs_cip <- 1584
@@ -101,7 +75,7 @@ While in this ambiguous state, the package should be used experimentally only. W
 
 The *Multiple-Institution Database for Investigating Engineering Longitudinal Development* [(MIDFIELD)](https://engineering.purdue.edu/MIDFIELD) is a partnership of US higher education institutions with engineering programs. MIDFIELD contains registrar's data for 1.7M undergraduates in all majors at 19 institutions from 1987--2019. The data are organized in four related tables: students, courses, terms, and degrees. A MIDFIELD sample is provided in the midfielddata package.   
 
-**midfielddata** [(link)](https://midfieldr.github.io/midfielddata/) A  stratified sample of MIDFIELD data. Contains data for `r obs_students` undergraduates at `r n_inst` institutions from `r year_limits[1]`--`r year_limits[2]` in four datasets: `midfieldstudents`, `midfieldcourses`, `midfieldterms`, and `midfielddegrees`.  
+**midfielddata** [(link)](https://midfieldr.github.io/midfielddata/) A  stratified sample of MIDFIELD data. Contains data for `r obs_students` undergraduates at `r n_inst` institutions from `r year_limits[1]`--`r year_limits[2]` in four data sets: `midfieldstudents`, `midfieldcourses`, `midfieldterms`, and `midfielddegrees`.  
 
 **midfieldr**  Tools for studying student records from midfielddata or the larger MIDFIELD database. Enables research in the intersectionality of race/ethnicity, sex, and discipline with metrics such as stickiness (retention by a discipline), migrator graduation rate, and migration yield (attraction of a discipline).
 
@@ -165,7 +139,7 @@ The midfieldr package includes:
 
 - `cip`  Data frame with `r obs_cip` observations and `r var_cip` CIP variables of program codes and names at the 2, 4, and 6-digit levels. Each observation is a unique program keyed by a 6-digit CIP code. Occupies `r size_cip` of memory.  Data dictionary [(link)](https://midfieldr.github.io/midfieldr/reference/cip.html). 
 
-The midfielddata package contains four datasets that constitute a stratified sample of the MIDFIELD database. 
+The midfielddata package contains four data sets that constitute a stratified sample of the MIDFIELD database. 
 
 - `midfieldstudents` Data frame with `r obs_students` observations and `r var_students` demographic variables. Each observation is a unique student keyed by student ID. Occupies `r size_students` of memory. Data dictionary   [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldstudents.html). 
 
@@ -185,13 +159,6 @@ The midfielddata package contains four datasets that constitute a stratified sam
 
 ## Usage
 
-**R ecosystem** midfieldr uses data.table functions and syntax and its datasets are class `data.table` and `data.frame`. However, midfieldr functions attempt to preserve data frame extensions (`tbl` for example) assigned by the user. Thus users who prefer a different ecosystem such as dplyr should find that the package is compatible with their preference. In general the midfieldr vignettes use the following packages: 
-
-- midfieldr 
-- midfielddata 
-- data.table [@Dowle+Srinivasan:2020:data.table]
-- ggplot2 [@Wickham:2016:ggplot2]
-
 **midfieldr functions** are designed to work with MIDFIELD-structured data to access and manipulate student records. A typical workflow might include:  
 
 - `get_cip()` search the CIP data set for program codes  
@@ -201,164 +168,16 @@ The midfielddata package contains four datasets that constitute a stratified sam
 - `get_race_sex()` obtain student sex and race/ethnicity 
 - `order_multiway()` condition multiway data for graphing 
 
-**example** Suppose we want to graph the number of students ever enrolled in Engineering, grouped by sex and race/ethnicity, for whom 6-year graduation is feasible within the range of data available.
+**R ecosystem**. midfieldr uses data.table functions and syntax. midfielddata data sets are class `data.table` and `data.frame`. However, midfieldr functions attempt to preserve data frame extensions assigned by the user (`tbl` for example). Thus users who prefer a different ecosystem such as dplyr should find that the package is compatible with their preference. 
 
-```{r}
-# packages used
-library(midfieldr)
-library(midfielddata)
-library(data.table)
-library(ggplot2)
+In general the midfieldr vignettes use the following packages: 
 
-# data.table printing options
-options(datatable.print.nrows = 20, datatable.print.topn = 5)
-```
+- midfieldr 
+- midfielddata 
+- data.table [@Dowle+Srinivasan:2020:data.table]
+- ggplot2 [@Wickham:2016:ggplot2]
 
-We start with the CIP code---engineering CIP codes all start with 14. `get_cip()` accesses the `cip` dataset. The output shows that `r nrow(get_cip(keep_any = "^14"))` engineering programs are defined. 
-
-```{r}
-# gather the program CIPs
-engr_cip <- get_cip(cip, keep_any = "^14")
-engr <- label_programs(engr_cip, label = "Engineering")
-
-# examine the result
-engr
-```
-
-The 6-digit CIP name is no longer needed. 
-
-```{r}
-# the 6-digit name can be omitted
-engr[, cip6name := NULL]
-
-# examine the result
-engr
-```
-
-`get_enrollees()` accesses the `midfieldterms` dataset using the `engr` 6-digit CIP column to obtain the IDs of all students ever enrolled in these programs. The output shows that we have `r nrow(get_enrollees(codes = engr$cip6))` unique combinations of student and program.  
-
-```{r}
-# extract students ever enrolled
-enrollees <- get_enrollees(midfieldterms, codes = engr$cip6)
-
-# examine the result
-enrollees
-```
-
-In this example, all students are in the same program (Engineering), so we can delete the CIP code and delete duplicated IDs due to students changing majors.  
-
-```{r}
-# one program, omit duplicate IDs
-enrollees[, cip6 := NULL]
-enrollees <- unique(enrollees)
-
-# examine the result
-enrollees
-```
-
-```{r echo = FALSE}
-# numbers in the next paragraph
-temp_ids <- completion_feasible(enrollees$id)
-temp <- enrollees[enrollees$id %in% temp_ids]
-```
-
-We now have `r nrow(enrollees)` unique students. `completion_feasible()` accesses the students, terms, and degrees datasets to 
-filter for feasible program completion within the limits of the data. The output shows we have `r nrow(temp)` students for whom program completion is feasible. 
-
-```{r}
-# apply the feasible completion filter
-feasible_ids <- completion_feasible(enrollees$id)
-rows_we_want <- enrollees$id %in% feasible_ids
-enrollees <- enrollees[rows_we_want]
-
-# examine the result
-enrollees
-```
-
-`get_race_sex()` accesses the `midfieldstudents` dataset using the enrollees IDs. 
-
-```{r}
-# get student demographics
-demographics <- get_race_sex(midfieldstudents, keep_id = feasible_ids)
-
-# examine the result
-demographics
-```
-
-Routinely we would join the demographics data to the enrollees data. However, this example illustrates students in one program only, so the information in  `demographics` is all we need. 
- 
-Group and summarize by race/ethnicity. For viewing the data, we order the rows by sex and race.  
-
-```{r}
-# aggregate
-grouped_enrollees <- demographics[, .(ever = .N), by = c("sex", "race")]
-
-# examine the result
-grouped_enrollees[order(sex, race)]
-```
-
-Prepare data for graphing. 
-
-```{r}
-# remove ambiguous levels of race/ethnicity
-race_to_drop <- c("International", "Other", "Unknown")
-rows_we_want <- !grouped_enrollees$race %in% race_to_drop
-columns_we_want <- c("sex", "race", "ever")
-
-# complete the transformation to multiway form
-pre_mw <- grouped_enrollees[rows_we_want, ..columns_we_want]
-
-# examine the result
-pre_mw[order(sex, race)]
-```
-
-`order_multiway()` converts the categorical variables to factors and orders the levels by the median of the quantitative variable. `str()` reveals that the previous character variables are now factors. 
-
-```{r}
-# multiway data
-data_mw <- order_multiway(pre_mw)
-
-# examine the result
-data_mw[order(sex, race)]
-
-# total number of students for graph subtitle
-n_ever <- sum(data_mw$ever)
-n_ever
-```
-
-We graph the results. We use a logarithmic scale to compare numbers that differ by orders of magnitude and a log-2 scale in particular because a grid line represents a doubling of the previous grid line. 
-
-```{r fig1}
-ggplot(data = data_mw, mapping = aes(x = ever, y = race)) +
-  facet_wrap(facets = vars(sex), ncol = 1, as.table = FALSE) +
-  geom_point(na.rm = TRUE) +
-  scale_x_continuous(trans = "log2", breaks = 2^seq(0, 15)) +
-  labs(
-    x = "Number of students, log-2 scale",
-    y = "",
-    title = "Ever enrolled in Engineering",
-    subtitle = bquote(N == .(n_ever)),
-    caption = "Source: midfielddata"
-  ) +
-  theme(panel.grid.minor.x = element_blank())
-```
-
-
-
-
-
-
-
-
-
-
-## Vignettes
-
-[vignette ("Using midfieldr")](articles/using_midfieldr.html) illustrates a complete example that starts with program selection and concludes with a persistence metric. 
-
-Additional vignettes go into even more detail [(link)](articles/index.html).  
-
-
+**example**. The *Getting started* vignette [(link)](getting_started.html) introduces some of the basic midfieldr functions and the midfielddata data sets. Additional vignettes develop the material in more detail.  
 
 
 

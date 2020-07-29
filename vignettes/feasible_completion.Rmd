@@ -8,7 +8,7 @@ vignette: >
 editor_options: 
   chunk_output_type: console
 bibliography: ../inst/REFERENCES.bib
-csl: ../inst/chicago-author-date.csl
+csl: ../inst/journal-of-glaciology.csl
 link-citations: yes
 resource_files:
   - ../man/figures/vignette-feasible-completion-fig1-1.png
@@ -19,7 +19,14 @@ source("vignette-knitr-opts.R")
 knitr::opts_chunk$set(fig.path = "../man/figures/vignette-feasible-completion-")
 ```
 
-`completion_feasible()` is used to subset a set of student IDs to retain those students for whom program completion is feasible. In this vignette we explore its arguments and continue the ongoing case study in four engineering programs. 
+
+Focus on midfieldr functions:
+
+- `completion_feasible()` 
+
+ 
+ 
+ 
 
 ## Introduction
 
@@ -161,6 +168,15 @@ matriculation limit
 : The last term a student can matriculate and feasibly complete their program. Defined as $x$ years (typically 6 years) before the data limit. Can be advanced by transfer credit hours.
 
 
+```{r}
+# packages used 
+library(midfieldr)
+library(midfielddata)
+library(data.table)
+
+# data.table, print max 20 rows, otherwise 5 rows head/tail
+options(datatable.print.nrows = 20, datatable.print.topn = 5)
+```
 
 
 
@@ -170,38 +186,32 @@ matriculation limit
 
 
 
-
 ## How to use `completion_feasible()`
 
-```{r message = FALSE}
-# packages used in the vignette
-library(midfieldr)
-library(midfielddata)
+In the *Compute the stickiness metric* vignette [(link)](compute_stickiness.html), we obtain a character vector of student IDs of students ever enrolled in the programs of the engineering case study. These data are included with midfieldr as the built-in data set `exa_ever`. View its help page by loading midfieldr and running
+
+```r
+? exa_ever
 ```
 
-A vector of student IDs is required to begin the feasible completion analysis. We choose the set of students ever enrolled in the study programs as the largest possible pool.  
-
-From earlier work in the case study, we have a built-in data set `exa_ever` of the `r length(exa_ever)` student IDs ever enrolled in our case study programs. 
+The data are loaded with midfieldr. 
 
 ```{r}
-# identify the group of students
-enrollees_id <- exa_ever
-
-# examine the result
-str(enrollees_id)
+# view the example data
+str(exa_ever)
 ```
 
-This vector of IDs is the input to `completion_feasible()`, which performs the subsetting for completion feasibility in one call. 
+This vector of IDs is the input to `completion_feasible()`, which performs the subsetting for completion feasibility.  
 
 ```{r}
 # filter IDs for feasible program completion within data limit
-enrollees_fc <- completion_feasible(id = enrollees_id)
+enrollees_fc <- completion_feasible(id = exa_ever)
 
 # examine the result
 str(enrollees_fc)
 ```
 
-In this instance, we started with `r length(enrollees_id)` enrollees. After applying the criteria for feasible completion, we retain `r length(exa_ever_fc)` students. These students either graduated (demonstrating the feasibility of completing their programs before the data limit) or they matriculated no later than their matriculation limits. 
+In this instance, we started with `r length(exa_ever)` enrollees. After applying the criteria for feasible completion, we retain `r length(exa_ever_fc)` students. These students either graduated (demonstrating the feasibility of completing their programs before the data limit) or they matriculated no later than their matriculation limits. 
 
 For convenience, `exa_ever_fc` is included in midfieldr as a built-in data set. View its help page by running
 
@@ -493,12 +503,13 @@ enrollees_fc <- completion_feasible(id = enrollees_id)
 The rest of the script shows the details of what happens inside `completion_feasible()`. 
 
 ```{r}
+# packages used 
 library(midfieldr)
 library(midfielddata)
+library(data.table)
 
 # subset students with and without degrees
-enrollees_id <- exa_ever
-degree_data <- get_status_degrees(midfielddegrees, keep_id = enrollees_id)
+degree_data <- get_status_degrees(midfielddegrees, keep_id = exa_ever)
 grad_rows <- !is.na(degree_data$degree)
 grads <- degree_data[grad_rows]
 nongrads <- degree_data[!grad_rows]

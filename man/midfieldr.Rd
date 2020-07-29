@@ -39,7 +39,7 @@ and codes of academic programs from the 2010 IPEDS Classification of
 Instructional Programs (CIP) by the US Department of Education.
 
 Student record data is provided in a companion data package midfielddata.
-Data are provided in four datasets: \code{midfieldstudents},
+Data are provided in four data sets: \code{midfieldstudents},
 \code{midfieldcourses}, \code{midfieldterms}, and \code{midfielddegrees}.
 }
 

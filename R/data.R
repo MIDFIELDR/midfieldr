@@ -2,7 +2,7 @@
 
 #' Classification of instructional programs (CIP) data
 #'
-#' A dataset based on the US National Center for Education Statistics
+#' A data set based on the US National Center for Education Statistics
 #' (NCES), Integrated Postsecondary Education Data System (IPEDS), 2020
 #' CIP, \url{https://nces.ed.gov/ipeds/cipcode}. The data are codes and
 #' names for 1584 instructional programs organized on three levels: a
@@ -172,16 +172,16 @@ NULL
 #' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}. Results
 #' are grouped by program, race/ethnicity, and sex.
 #'
-#' @format \code{data.table} with 32 rows and 6 columns keyed by
+#' @format \code{data.table} with 63 rows and 6 columns keyed by
 #' program, race/ethnicity, and sex. The variables are:
 #' \describe{
-#'  \item{program}{instructional programs selected for study}
-#'  \item{race}{student race/ethnicity}
-#'  \item{sex}{student sex}
-#'  \item{ever}{number of students ever enrolled in a program and completion
+#'  \item{program}{character, instructional programs selected for study}
+#'  \item{race}{character, student race/ethnicity}
+#'  \item{sex}{character, student sex}
+#'  \item{ever}{numerical, number of students ever enrolled in a program and completion
 #'  is feasible}
-#'  \item{grad}{number of students graduating from the program}
-#'  \item{stick}{program stickiness, a persistence metric}
+#'  \item{grad}{numerical, number of students graduating from the program}
+#'  \item{stick}{numerical, program stickiness, a persistence metric}
 #' }
 #'
 #' @examples
@@ -193,6 +193,31 @@ NULL
 #' @family example_data
 #'
 "exa_stickiness"
+
+
+
+# -------------------------------------------------------------------
+
+#' Example stickiness data in multiway form
+#'
+#' Stickiness metric results with two categorical variables as factors
+#' with levels ordered by the median stickiness.
+#'
+#' @format \code{data.table} with 32 rows and 3 columns keyed by
+#' program, race/ethnicity, and sex. The variables are:
+#' \describe{
+#'  \item{program}{factor, instructional programs selected for study}
+#'  \item{race_sex}{factor, student race/ethnicity and sex}
+#'  \item{stick}{numerical, program stickiness, a persistence metric}
+#' }
+#'
+#' @examples
+#' # placeholder
+#'
+#' @family example_data
+#'
+"exa_stickiness_mw"
+
 
 # -------------------------------------------------------------------
 

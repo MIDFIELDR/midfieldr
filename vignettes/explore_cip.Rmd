@@ -8,7 +8,7 @@ vignette: >
 editor_options: 
   chunk_output_type: console
 bibliography: ../inst/REFERENCES.bib
-csl: ../inst/chicago-author-date.csl
+csl: ../inst/journal-of-glaciology.csl
 link-citations: yes
 ---
 
@@ -17,20 +17,31 @@ source("vignette-knitr-opts.R")
 knitr::opts_chunk$set(fig.path = "../man/figures/vignette-explore-cip-")
 ```
 
-`get_cip()` is used to search for the CIP codes of programs one wishes to study. In this vignette we explore its arguments and we collect the codes for a case study of four engineering programs used in subsequent vignettes. 
+Focus on midfieldr functions:
+
+- `get_cip()` 
+
 
 
 ## Introduction
 
 In studying student records, a common first step is to subset the data, retaining some instructional programs and dropping others. 
 
-Programs in the US are encoded by "CIP" codes. CIP is the acronym for *Classification of Instructional Programs*, a taxonomy of academic programs curated by the US Department of Education [@NCES:2010].  
+Instructional programs in the US are encoded by "CIP" codes. CIP is the acronym for *Classification of Instructional Programs*, a taxonomy of academic programs curated by the US Department of Education [@NCES:2010].  
 
 A CIP code is a 6-digit integer assigned to an instructional program. The 2010 CIP codes are included with midfieldr in the data set `cip`. 
 
 We explore the `cip` data set using the `get_cip()` function. We illustrate several search strategies and we conclude by constructing an example data set used in subsequent vignettes. 
 
 
+```{r}
+# packages used
+library(midfieldr)
+library(data.table)
+
+# data.table, print max 20 rows, otherwise 5 rows head/tail
+options(datatable.print.nrows = 20, datatable.print.topn = 5)
+```
 
 
 
@@ -40,11 +51,6 @@ We explore the `cip` data set using the `get_cip()` function. We illustrate seve
 
 
 ## CIP data
-
-```{r}
-# load packages
-library("midfieldr")
-```
 
 The midfieldr package includes a data set called `cip` that provides the 2010 CIP codes and names for `r nrow(cip)` programs, one program per row. Every program has three codes: 
 
@@ -74,11 +80,11 @@ name1313 <- df1313$cip2name %>% unique()
 cip <- get_cip(cip) # removes data.frame class if present
 ```
 
-View the internal structure of `cip` using `str()`.
+Examine the values in the data set. 
 
 ```{r}
-# examine variable types
-str(cip)
+# examine the data
+cip
 ```
 
 If you prefer to see a spreadsheet-like array of the data, run
@@ -89,8 +95,8 @@ View(cip)
 
 In the table below, we show all programs associated with the 2-digit code "41", for "`r name41`" programs. We find 
 
-- one grouping  at the 2-digit level (code 41), that contains...  
-- `r length(unique(df$cip4))` groups at the 4-digit level (codes 4100, 4101, ...), that contain...
+- one grouping  at the 2-digit level (code 41)  
+- `r length(unique(df$cip4))` groups at the 4-digit level (codes 4100, 4101, ...)
 - `r n41` programs at the 6-digit level (codes 410000, 410101, ...) 
 
 The 6-digit codes and names represent distinct instructional programs. 
@@ -141,7 +147,9 @@ For example, filtering the CIP data for all programs containing the word "engine
 ```{r}
 # filter basics
 sub_cip <- get_cip(cip, keep_any = "engineering")
-str(sub_cip)
+
+# examine the result
+sub_cip
 ```
 
 The first two argument names can be omitted if they are in the correct order. If the optional `drop_any` argument is used, it must be named, 
@@ -149,7 +157,9 @@ The first two argument names can be omitted if they are in the correct order. If
 ```{r}
 # only the drop_any argument must be named
 sub_cip <- get_cip(cip, "civil engineering", drop_any = "technology")
-print(sub_cip)
+
+# examine the result
+sub_cip
 ```
 
 To learn more, open the help page by running 
@@ -160,8 +170,10 @@ To learn more, open the help page by running
 
 
 
+
 <br>
 <a href="#top">&#9650; top of page</a> 
+
 
 
 
@@ -176,8 +188,9 @@ Suppose we want to find the CIP codes and names for all programs in Civil Engine
 ```{r}
 # example 1 filter using keywords
 sub_cip <- get_cip(cip, keep_any = "civil")
+
 # examine the result
-print(sub_cip)
+sub_cip
 ```
 
 The same information is tabulated below to help you see the structure.  In the examples that follow, we show a table like this one instead of the R output. 
@@ -195,8 +208,10 @@ The following code chunk could be read as, "Start with the `cip` data frame, the
 ```{r results = "hide"}
 # first pass
 sub_cip <- get_cip(cip, keep_any = "civil")
+
 # refine the search
 sub_cip <- get_cip(sub_cip, keep_any = "engineering")
+
 # refine further
 sub_cip <- get_cip(sub_cip, drop_any = "technology")
 ```
@@ -236,7 +251,6 @@ sub_cip <- get_cip(cip, keep_any = "german")
 ```{r echo = FALSE}
 kable2html(sub_cip)
 ```
-
 <br>
 
 From the 6-digit program names we find only two that are of interest, German Studies (050125) and German Language and Literature (160501). We use a character vector to assign these two codes to the `keep_any` argument. 
@@ -252,7 +266,7 @@ kable2html(sub_cip)
 
 If the 6-digit codes are entered as integers, they produce an error. 
  
-```{r}
+```{r error = TRUE, purl = FALSE}
 get_cip(cip, keep_any = c(050125, 160501))
 ```
 
@@ -279,7 +293,6 @@ sub_cip <- get_cip(cip, keep_any = c("^1407", "^1408"))
 ```{r echo = FALSE}
 kable2html(sub_cip)
 ```
-
 <br>
 
 The 2-digit series represent the most general groupings of related programs. Here, the result includes all History programs. 
@@ -292,7 +305,6 @@ sub_cip <- get_cip(cip, keep_any = "^54")
 ```{r echo = FALSE}
 kable2html(sub_cip)
 ```
-
 <br>
 
 The series argument can include any combination of 2, 4, and 6-digit codes. 
@@ -317,6 +329,9 @@ kable2html(sub_cip)
 
 
 
+
+
+
 ### 4. Search terms that cannot be found
 
 If the `keep_any` argument includes terms that cannot be found in the CIP data frame, the unsuccessful terms are identified in a message and the successful terms produce the usual output. 
@@ -333,7 +348,7 @@ sub_cip
 
 However, as seen earlier, if none of the search terms are found, an error occurs. 
 
-```{r}
+```{r error = TRUE, purl = FALSE}
 get_cip(cip, keep_any = c("111111", "Bogus", "^55"))
 ```
 
@@ -359,6 +374,7 @@ sub_cip <- get_cip(sub_cip, keep_any = c("civil", "electrical", "industrial", "m
 ```{r echo = FALSE}
 kable2html(sub_cip)
 ```
+<br>
 
 The results show that the codes we want are at the 4-digit level:  1408, 1410, 1419, and 1435.
 
@@ -369,6 +385,7 @@ exa_cip <- get_cip(cip, keep_any = c("^1408", "^1410", "^1419", "^1435"))
 ```{r echo = FALSE}
 kable2html(exa_cip)
 ```
+<br>
 
 For convenience, `exa_cip` is included in midfieldr as a built-in data set. View its help page by running
 

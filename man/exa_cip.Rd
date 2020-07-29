@@ -38,6 +38,7 @@ program_group
 Other example_data: 
 \code{\link{exa_group}},
 \code{\link{exa_id}},
+\code{\link{exa_stickiness_mw}},
 \code{\link{exa_stickiness}}
 }
 \concept{example_data}
