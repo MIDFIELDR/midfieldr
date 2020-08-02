@@ -37,7 +37,6 @@ NULL
 #' value <- c(0.22, 0.14, 0.43, 0.58, 0.81, 0.46, 0.15, 0.20)
 #' mw_df <- data.frame(catg1, catg2, value)
 #' order_multiway(mw_df)
-#'
 #' @family data_carpentry
 #'
 #' @export
@@ -70,15 +69,15 @@ order_multiway <- function(data = NULL) {
 
   # factors to characters
   if ("factor" %in% mw_class) {
-    idx  <- which(mw_class == "factor")
+    idx <- which(mw_class == "factor")
     cols <- mw_names[idx]
     DT[, (cols) := lapply(.SD, as.character), .SDcols = cols]
   }
   # integer to double
   if ("integer" %in% mw_class) {
-   idx  <- which(mw_class == "integer")
-   cols <- mw_names[idx]
-   DT[, (cols) := lapply(.SD, as.double), .SDcols = cols]
+    idx <- which(mw_class == "integer")
+    cols <- mw_names[idx]
+    DT[, (cols) := lapply(.SD, as.double), .SDcols = cols]
   }
   # one numeric and 2 character
   col_class <- get_col_class(DT) # again

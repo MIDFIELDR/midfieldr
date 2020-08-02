@@ -48,15 +48,14 @@ NULL
 #'
 #' @examples
 #' # placeholder
-#'
 #' @family data_carpentry
 #'
 #' @export
 #'
 cip_after_fye <- function(id = NULL,
-                             ...,
-                             data_students = NULL,
-                             data_terms = NULL) {
+                          ...,
+                          data_students = NULL,
+                          data_terms = NULL) {
   wrapr::stop_if_dot_args(
     substitute(list(...)), "Arguments after ... must be named,"
   )
@@ -146,5 +145,4 @@ cip_after_fye <- function(id = NULL,
   # right-join, all columns in first_post_fye_terms, all rows in fye
   cip_post_fye <- merge(first_post_fye_terms, fye, by = "id", all.y = TRUE)
   cip_post_fye <- cip_post_fye[order(id)]
-
 }

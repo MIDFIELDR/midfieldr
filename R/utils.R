@@ -196,11 +196,11 @@ round_term <- function(data, iterm_col) {
 #'
 #' @param x data.frame, tibble, or data.table
 #' @noRd
-get_df_class <- function(x){
+get_df_class <- function(x) {
   class_x <- class(x)
-  if(sum(class_x %in% "data.table") > 0){
+  if (sum(class_x %in% "data.table") > 0) {
     df_class <- "data.table"
-  } else if(sum(class_x %in% c("tbl_df", "tbl")) > 0) {
+  } else if (sum(class_x %in% c("tbl_df", "tbl")) > 0) {
     df_class <- "tbl"
   } else {
     df_class <- "data.frame"
@@ -218,10 +218,10 @@ get_df_class <- function(x){
 #' @param x data.frame, tibble, or data.table
 #' @param df_class character "data.frame", "tbl", or "data.table"
 #' @noRd
-revive_class <- function (x, df_class){
-  if(df_class == "tbl"){
+revive_class <- function(x, df_class) {
+  if (df_class == "tbl") {
     data.table::setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
-  } else if (df_class == "data.table"){
+  } else if (df_class == "data.table") {
     x <- data.table::as.data.table(x)
   } else {
     x <- as.data.frame(x)
@@ -251,7 +251,7 @@ get_col_class <- function(x) {
 #' @param cols character vector of column names as keys
 #' @noRd
 unique_by_keys <- function(DT, cols = NULL) {
-  if(is.null(cols)){
+  if (is.null(cols)) {
     cols <- names(DT)
   } else {
     cols <- cols
@@ -260,4 +260,3 @@ unique_by_keys <- function(DT, cols = NULL) {
   DT <- subset(unique(DT))
   data.table::setkey(DT, NULL)
 }
-

@@ -174,7 +174,7 @@ matriculation limit
 
 
 ```{r}
-# packages used 
+# packages used
 library(midfieldr)
 library(midfielddata)
 library(data.table)
@@ -254,11 +254,12 @@ We obtain the degree data for the enrollees using `get_status_degrees()` to subs
 
 ```{r}
 # gather student degree data
-degree_data <- filter_by_id(midfielddegrees, 
-                           keep_id = exa_ever, 
-                           keep_col = c("id", "institution", "degree"), 
-                           unique_row = TRUE, 
-                           first_degree = TRUE)
+degree_data <- filter_by_id(midfielddegrees,
+  keep_id = exa_ever,
+  keep_col = c("id", "institution", "degree"),
+  unique_row = TRUE,
+  first_degree = TRUE
+)
 
 # examine the result
 degree_data
@@ -295,10 +296,11 @@ Otherwise, we continue by calling `get_status_transfers()` for the non-graduates
 
 ```{r}
 # gather transfer data for non-grads
-transfer_data <- filter_by_id(midfieldstudents, 
-                          keep_id = nongrads_id, 
-                          keep_col = c("id", "term_enter", "hours_transfer"), 
-                          unique_row = TRUE)
+transfer_data <- filter_by_id(midfieldstudents,
+  keep_id = nongrads_id,
+  keep_col = c("id", "term_enter", "hours_transfer"),
+  unique_row = TRUE
+)
 
 # examine the result
 transfer_data
@@ -343,12 +345,14 @@ We determine the median number of credit-hours per term by institution. We use o
 
 ```{r}
 # median hours/term for these grads
-hr_per_term <- filter_by_id(midfieldterms, 
-                            keep_id = grads_id, 
-                            unique_row = FALSE)
+hr_per_term <- filter_by_id(midfieldterms,
+  keep_id = grads_id,
+  unique_row = FALSE
+)
 hr_per_term <- hr_per_term[order(institution),
-                           .(med_term_hours = median(hours_term)),
-                           by = institution]
+  .(med_term_hours = median(hours_term)),
+  by = institution
+]
 
 # examine the result
 hr_per_term
@@ -519,17 +523,18 @@ enrollees_fc <- completion_feasible(id = enrollees_id)
 The rest of the script shows the details of what happens inside `completion_feasible()`. 
 
 ```{r}
-# packages used 
+# packages used
 library(midfieldr)
 library(midfielddata)
 library(data.table)
 
 # subset students with and without degrees
-degree_data <- filter_by_id(midfielddegrees, 
-                           keep_id = exa_ever, 
-                           keep_col = c("id", "institution", "degree"), 
-                           unique_row = TRUE, 
-                           first_degree = TRUE)
+degree_data <- filter_by_id(midfielddegrees,
+  keep_id = exa_ever,
+  keep_col = c("id", "institution", "degree"),
+  unique_row = TRUE,
+  first_degree = TRUE
+)
 grad_rows <- !is.na(degree_data$degree)
 grads <- degree_data[grad_rows]
 nongrads <- degree_data[!grad_rows]
@@ -537,20 +542,23 @@ grads_id <- grads$id
 nongrads_id <- nongrads$id
 
 # gather transfer data
-transfer_data <- filter_by_id(midfieldstudents, 
-                          keep_id = nongrads_id, 
-                          keep_col = c("id", "term_enter", "hours_transfer"), 
-                          unique_row = TRUE)
+transfer_data <- filter_by_id(midfieldstudents,
+  keep_id = nongrads_id,
+  keep_col = c("id", "term_enter", "hours_transfer"),
+  unique_row = TRUE
+)
 nongrads <- merge(nongrads, transfer_data, by = "id", all.x = TRUE)
 
 # gather institution variables
 inst_limits <- get_institution_limits(midfieldterms)
-hr_per_term <- filter_by_id(midfieldterms, 
-                            keep_id = grads_id, 
-                            unique_row = FALSE)
+hr_per_term <- filter_by_id(midfieldterms,
+  keep_id = grads_id,
+  unique_row = FALSE
+)
 hr_per_term <- hr_per_term[order(institution),
-                           .(med_term_hours = median(hours_term)),
-                           by = institution]
+  .(med_term_hours = median(hours_term)),
+  by = institution
+]
 institutions <- merge(inst_limits,
   hr_per_term,
   by = "institution",

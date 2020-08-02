@@ -54,6 +54,8 @@ NULL
 
 # binding
 if (getRversion() >= "2.15.1") {
-  utils::globalVariables(c(".", ":=", "..cols_we_want", ".SD",
-                           "..columns", "..columns_we_want", "..keep_col"))
+  utils::globalVariables(c(
+    ".", ":=", "..cols_we_want", ".SD",
+    "..columns", "..columns_we_want", "..keep_col"
+  ))
 }

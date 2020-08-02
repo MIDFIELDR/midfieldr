@@ -35,7 +35,6 @@ NULL
 #' filter_by_text(cip, keep_any = "civil engineering", drop_any = "technology")
 #' filter_by_text(cip, keep_any = "History") %>%
 #'   filter_by_text(keep_any = "American")
-#'
 #' @family data_query
 #'
 #' @export
@@ -61,8 +60,12 @@ filter_by_text <- function(data,
   unique_row <- unique_row %||% FALSE
 
   # check arguments
-  if (isFALSE(is.null(keep_any))) {assert_class(keep_any, "character")}
-  if (isFALSE(is.null(drop_any))) {assert_class(drop_any, "character")}
+  if (isFALSE(is.null(keep_any))) {
+    assert_class(keep_any, "character")
+  }
+  if (isFALSE(is.null(drop_any))) {
+    assert_class(drop_any, "character")
+  }
   assert_class(keep_col, "character")
   assert_class(unique_row, "logical")
 
@@ -110,6 +113,8 @@ filter_by_text <- function(data,
 
   # return
   DT <- DT[, ..keep_col]
-  if (unique_row) {DT <- unique_by_keys(DT)}
+  if (unique_row) {
+    DT <- unique_by_keys(DT)
+  }
   revive_class(DT, df_class)
 }

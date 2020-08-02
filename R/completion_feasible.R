@@ -48,7 +48,6 @@ NULL
 #'
 #' @examples
 #' # placeholder
-#'
 #' @family data_carpentry
 #'
 #' @export
@@ -68,8 +67,8 @@ completion_feasible <- function(id = NULL,
   span <- span %||% 6
   terms_transfer_max <- terms_transfer_max %||% 4
   data_students <- data_students %||% midfielddata::midfieldstudents
-  data_terms    <- data_terms %||% midfielddata::midfieldterms
-  data_degrees  <- data_degrees %||% midfielddata::midfielddegrees
+  data_terms <- data_terms %||% midfielddata::midfieldterms
+  data_degrees <- data_degrees %||% midfielddata::midfielddegrees
 
   # check arguments
   assert_class(id, "character")
@@ -93,10 +92,11 @@ completion_feasible <- function(id = NULL,
 
   # gather degree data
   degree_data <- filter_by_id(data_degrees,
-                              keep_id = id,
-                              keep_col = c("id", "institution", "degree"),
-                              first_degree = TRUE,
-                              unique_row = TRUE)
+    keep_id = id,
+    keep_col = c("id", "institution", "degree"),
+    first_degree = TRUE,
+    unique_row = TRUE
+  )
 
   # separate the grads from nongrads
   nongrad_rows <- is.na(degree_data$degree)
@@ -105,7 +105,7 @@ completion_feasible <- function(id = NULL,
   grads <- degree_data[!nongrad_rows]
   grads_id <- grads$id
 
-  if (length(nongrads_id) > 0){
+  if (length(nongrads_id) > 0) {
     transfer_data <- filter_by_id(
       data_students,
       keep_id = nongrads_id,
@@ -119,12 +119,14 @@ completion_feasible <- function(id = NULL,
     # get median hours per term of graduates by institution
     institution_nongrads <- nongrads[, .(institution)]
     institution_nongrads <- unique(institution_nongrads)
-    keep_institution     <- institution_nongrads$institution
+    keep_institution <- institution_nongrads$institution
 
     # gather institution data for feasible completion
     data_terms_specific_inst <- data_terms[institution %chin% keep_institution]
-    inst_limits <- get_institution_limits(data = data_terms_specific_inst,
-                                          span = span)
+    inst_limits <- get_institution_limits(
+      data = data_terms_specific_inst,
+      span = span
+    )
 
     # get institution hours per term
     # IDs are ALL grads in the institutions in keep_institution
@@ -136,8 +138,9 @@ completion_feasible <- function(id = NULL,
     # now go to terms with these IDs
     all_grad <- data_terms[id %in% all_grad_id, .(institution, hours_term)]
     hr_per_term <- all_grad[order(institution),
-                            .(median_hr_per_term = stats::median(hours_term)),
-                            by = institution]
+      .(median_hr_per_term = stats::median(hours_term)),
+      by = institution
+    ]
 
     # join the inst data
     institutions <- hr_per_term[inst_limits, on = "institution"]
@@ -145,9 +148,9 @@ completion_feasible <- function(id = NULL,
     # join student and institution data
     fc_data <- institutions[nongrads, on = "institution"]
     data.table::setnafill(fc_data,
-                          type = "const",
-                          fill = 0,
-                          cols = c("hours_transfer")
+      type = "const",
+      fill = 0,
+      cols = c("hours_transfer")
     )
 
     # convert transfer hours to terms
@@ -161,8 +164,8 @@ completion_feasible <- function(id = NULL,
 
     # advance matriculation limit by transfer terms
     fc_data <- term_addition(fc_data,
-                             term_col = "matric_limit",
-                             add_col = "terms_transfer"
+      term_col = "matric_limit",
+      add_col = "terms_transfer"
     )
 
     # filter
@@ -171,7 +174,6 @@ completion_feasible <- function(id = NULL,
 
     # output if we have any nongrads
     feasible_id <- sort(unique(c(grads_id, nongrad_fc_id)))
-
   } else {
 
     # output when we have grads only

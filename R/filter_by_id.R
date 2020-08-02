@@ -34,7 +34,6 @@ NULL
 #'
 #' @examples
 #' # placeholder
-#'
 #' @family data_query
 #'
 #' @export
@@ -45,52 +44,54 @@ filter_by_id <- function(data,
                          keep_col = NULL,
                          unique_row = NULL,
                          first_degree = NULL) {
-    wrapr::stop_if_dot_args(
-        substitute(list(...)), "Arguments after ... must be named,"
-    )
+  wrapr::stop_if_dot_args(
+    substitute(list(...)), "Arguments after ... must be named,"
+  )
 
-    # default optional arguments
-    unique_row <- unique_row %||% FALSE
-    first_degree <- first_degree %||% FALSE
+  # default optional arguments
+  unique_row <- unique_row %||% FALSE
+  first_degree <- first_degree %||% FALSE
 
-    # check arguments
-    assert_explicit(data)
-    assert_class(data, "data.frame")
-    keep_col <- keep_col %||% names(data) # depends on `data`
+  # check arguments
+  assert_explicit(data)
+  assert_class(data, "data.frame")
+  keep_col <- keep_col %||% names(data) # depends on `data`
 
 
-    assert_explicit(keep_id)
+  assert_explicit(keep_id)
 
-    assert_class(keep_id, "character")
-    assert_class(keep_col, "character")
-    assert_class(unique_row, "logical")
-    assert_class(first_degree, "logical")
-    assert_required_column(data, "id")
+  assert_class(keep_id, "character")
+  assert_class(keep_col, "character")
+  assert_class(unique_row, "logical")
+  assert_class(first_degree, "logical")
+  assert_required_column(data, "id")
 
-    # bind names
-    id <- NULL
-    term_degree <- NULL
+  # bind names
+  id <- NULL
+  term_degree <- NULL
 
-    # preserve data.frame, data.table, or tibble
-    df_class <- get_df_class(data)
-    DT <- data.table::as.data.table(data)
+  # preserve data.frame, data.table, or tibble
+  df_class <- get_df_class(data)
+  DT <- data.table::as.data.table(data)
 
-    # filter and unique
-    DT <- DT[id %chin% keep_id]
+  # filter and unique
+  DT <- DT[id %chin% keep_id]
 
-    # stop if all rows have been eliminated
-    if (abs(nrow(DT) - 0) < .Machine$double.eps^0.5) {
-        revive_class(DT, df_class)
-        stop("No IDs satisfy the search criteria", call. = FALSE)
-    }
-
-    # return the first degree term only
-    if (first_degree &  "term_degree" %in% names(data)){
-        DT <- DT[, term_degree := min(term_degree), by = id]
-    }
-
-    # return
-    DT <- DT[, ..keep_col]
-    if (unique_row) {DT <- unique_by_keys(DT)}
+  # stop if all rows have been eliminated
+  if (abs(nrow(DT) - 0) < .Machine$double.eps^0.5) {
     revive_class(DT, df_class)
+    stop("No IDs satisfy the search criteria", call. = FALSE)
+  }
+
+  # return the first degree term only
+  if (first_degree & "term_degree" %in% names(data)) {
+    DT <- DT[, term_degree := min(term_degree), by = id]
+  }
+
+  # return
+  DT <- DT[, ..keep_col]
+  if (unique_row) {
+    DT <- unique_by_keys(DT)
+  }
+  revive_class(DT, df_class)
 }

@@ -30,7 +30,6 @@ NULL
 #'
 #' @examples
 #' # placeholder
-#'
 #' @family data_query
 #'
 #' @export

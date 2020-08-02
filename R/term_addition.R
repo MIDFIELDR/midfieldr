@@ -16,7 +16,6 @@ NULL
 #'
 #' @examples
 #' # placeholder
-#'
 #' @family data_carpentry
 #'
 #' @export
@@ -35,7 +34,7 @@ term_addition <- function(data = NULL, term_col = NULL, add_col = NULL) {
   iterm <- NULL
   jterm <- NULL
   jyear <- NULL
-  year  <- NULL
+  year <- NULL
 
   # do the work
   DT <- data.table::as.data.table(data)
@@ -59,7 +58,7 @@ term_addition <- function(data = NULL, term_col = NULL, add_col = NULL) {
   # bind
   DT <- rbind(fc_data_1, fc_data_3)
   DT[, (term_col) := 10 * jyear + jterm]
-  DT$year  <- NULL
+  DT$year <- NULL
   DT$iterm <- NULL
   DT$jterm <- NULL
   DT$jyear <- NULL

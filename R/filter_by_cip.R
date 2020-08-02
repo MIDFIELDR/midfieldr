@@ -34,7 +34,6 @@ NULL
 #'
 #' @examples
 #' # placeholder
-#'
 #' @family data_query
 #'
 #' @export
@@ -45,7 +44,6 @@ filter_by_cip <- function(data,
                           keep_col = NULL,
                           unique_row = NULL,
                           first_degree = NULL) {
-
   wrapr::stop_if_dot_args(
     substitute(list(...)), "Arguments after ... must be named,"
   )
@@ -84,13 +82,15 @@ filter_by_cip <- function(data,
   }
 
   # return the first degree term only
-  if (first_degree &  "term_degree" %in% names(data)){
+  if (first_degree & "term_degree" %in% names(data)) {
     assert_required_column(data, "id")
     DT <- DT[, term_degree := min(term_degree), by = id]
   }
 
   # return
   DT <- DT[, ..keep_col]
-  if (unique_row) {DT <- unique_by_keys(DT)}
+  if (unique_row) {
+    DT <- unique_by_keys(DT)
+  }
   revive_class(DT, df_class)
 }

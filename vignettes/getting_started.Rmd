@@ -58,10 +58,10 @@ Instructional programs are encoded by a 6-digit CIP code. `filter_by_text()` acc
 Users do not have to know their CIP codes a priori. Search strategies using `filter_by_text()` are described in the *Explore program CIP codes* vignette [(link)](explore_cip.html).  Program labeling options are described in the *Gather programs* vignette [(link)](get_programs.html).
 
 ```{r}
-# engineering 
+# engineering
 engineering_cip <- filter_by_text(cip, keep_any = "^14", keep_col = "cip6")
 
-# add program label 
+# add program label
 engineering <- engineering_cip[, program := "Engineering"]
 
 # examine the result
@@ -71,10 +71,10 @@ print(engineering)
 Repeat for business and bind the two data frames. 
 
 ```{r}
-# business 
+# business
 business_cip <- filter_by_text(cip, keep_any = "^52", keep_col = "cip6")
 
-# add program label 
+# add program label
 business <- business_cip[, program := "Business"]
 
 # bind the two data frames
@@ -111,10 +111,11 @@ Using `filter_by_cip()`, we access `midfieldterms` to obtain the IDs of all stud
 
 ```{r}
 # extract students ever enrolled
-enrollees <- filter_by_cip(midfieldterms, 
-                           keep_cip = group_codes, 
-                           keep_col = c("id", "cip6"), 
-                           unique_row = TRUE)
+enrollees <- filter_by_cip(midfieldterms,
+  keep_cip = group_codes,
+  keep_col = c("id", "cip6"),
+  unique_row = TRUE
+)
 
 # examine the result
 enrollees
@@ -141,10 +142,11 @@ The number of students has dropped to `r nrow(enrollees)`. Our approach to deter
 Using `filter_by_id()`, we access `midfieldstudents` to obtain students' race/ethnicity and sex as self-reported at matriculation. 
 
 ```{r}
-race_sex <- filter_by_id(midfieldstudents, 
-                      keep_id = feasible_ids, 
-                      keep_col = c("id", "race", "sex"), 
-                      unique_row = TRUE)
+race_sex <- filter_by_id(midfieldstudents,
+  keep_id = feasible_ids,
+  keep_col = c("id", "race", "sex"),
+  unique_row = TRUE
+)
 
 # examine the result
 race_sex
@@ -283,14 +285,18 @@ We use ggplot2 to graph the multiway data. Rows and panels, from top to bottom, 
 ggplot(data = data_mw, mapping = aes(x = ever, y = race_sex)) +
   facet_wrap(facets = vars(program), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
-  scale_x_continuous(trans = "log2", 
-                     breaks = 2^seq(4, 14), 
-                     limits = 2^c(4, 14)) +
+  scale_x_continuous(
+    trans = "log2",
+    breaks = 2^seq(4, 14),
+    limits = 2^c(4, 14)
+  ) +
   theme(panel.grid.minor.x = element_blank()) +
-  labs(x = "Number of students (log-2 scale)", 
-       y = "", 
-       title = "Ever enrolled", 
-       caption = "Source: midfielddata")
+  labs(
+    x = "Number of students (log-2 scale)",
+    y = "",
+    title = "Ever enrolled",
+    caption = "Source: midfielddata"
+  )
 ```
 
 
@@ -345,17 +351,19 @@ program_group <- rbind(engineering, business)
 group_codes <- program_group$cip6
 
 # gather students ever enrolled with feasible program completion
-enrollees <- filter_by_cip(midfieldterms, 
-                           keep_cip = group_codes, 
-                           keep_col = c("id", "cip6"), 
-                           unique_row = TRUE)
+enrollees <- filter_by_cip(midfieldterms,
+  keep_cip = group_codes,
+  keep_col = c("id", "cip6"),
+  unique_row = TRUE
+)
 feasible_ids <- completion_feasible(id = enrollees$id)
 rows_we_want <- enrollees$id %in% feasible_ids
 enrollees <- enrollees[rows_we_want]
-race_sex <- filter_by_id(midfieldstudents, 
-                      keep_id = feasible_ids, 
-                      keep_col = c("id", "race", "sex"), 
-                      unique_row = TRUE)
+race_sex <- filter_by_id(midfieldstudents,
+  keep_id = feasible_ids,
+  keep_col = c("id", "race", "sex"),
+  unique_row = TRUE
+)
 enrollees <- merge(enrollees, race_sex, by = "id", all.x = TRUE)
 enrollees <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
 
@@ -380,14 +388,18 @@ data_mw <- order_multiway(pre_mw)
 ggplot(data = data_mw, mapping = aes(x = ever, y = race_sex)) +
   facet_wrap(facets = vars(program), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
-  scale_x_continuous(trans = "log2", 
-                     breaks = 2^seq(4, 14), 
-                     limits = 2^c(4, 14)) +
+  scale_x_continuous(
+    trans = "log2",
+    breaks = 2^seq(4, 14),
+    limits = 2^c(4, 14)
+  ) +
   theme(panel.grid.minor.x = element_blank()) +
-  labs(x = "Number of students (log-2 scale)", 
-       y = "", 
-       title = "Ever enrolled", 
-       caption = "Source: midfielddata")
+  labs(
+    x = "Number of students (log-2 scale)",
+    y = "",
+    title = "Ever enrolled",
+    caption = "Source: midfielddata"
+  )
 ```
 
 <br>

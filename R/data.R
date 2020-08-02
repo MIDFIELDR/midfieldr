@@ -45,7 +45,6 @@
 #'
 #' # filter_by_text() argument
 #' filter_by_text(cip, keep_any = "^1410")
-#'
 #' @family cip_data
 #'
 "cip"
@@ -75,7 +74,6 @@
 #'
 #' @examples
 #' # placeholder
-#'
 #' @family example_data
 #'
 "exa_cip"
@@ -110,7 +108,6 @@
 #' rows_we_want <- midfielddegrees$cip6 %in% cips_we_want
 #' graduates <- midfielddegrees[rows_we_want]
 #' str(graduates)
-#'
 #' @family example_data
 #'
 "exa_group"
@@ -145,7 +142,6 @@
 #' rows_we_want <- midfieldstudents$id %in% exa_grad
 #' graduates <- midfieldstudents[rows_we_want]
 #' head(graduates)
-#'
 #' @family example_data
 #' @name exa_id
 #'
@@ -187,7 +183,6 @@ NULL
 #' exa_stickiness$race_sex <- paste(exa_stickiness$race, exa_stickiness$sex)
 #' columns_we_want <- c("program", "race_sex", "stick")
 #' pre_mw <- exa_stickiness[, ..columns_we_want]
-#'
 #' @family example_data
 #'
 "exa_stickiness"
@@ -211,7 +206,6 @@ NULL
 #'
 #' @examples
 #' # placeholder
-#'
 #' @family example_data
 #'
 "exa_stickiness_mw"
@@ -248,7 +242,6 @@ NULL
 #' rows_we_want <- midfielddegrees$id %in% ids_we_want &
 #'   !is.na(midfielddegrees$degree)
 #' fye_grads <- midfielddegrees[rows_we_want]
-#'
 #' @family cip_data
 #'
 "midfield_fye"

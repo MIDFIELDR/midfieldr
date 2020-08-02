@@ -48,7 +48,7 @@ starting major
 Note that FYE students are neither undecided nor undeclared. Their institutions admitted them as engineering students. We just don't know their preferred major. We have to predict the starting majors of FYE students to make fair comparisons across programs and institutions. 
 
 ```{r}
-# packages used 
+# packages used
 library(midfieldr)
 library(midfielddata)
 
@@ -94,18 +94,19 @@ str(exa_ever)
 
 
 ```{r}
-matric <- filter_by_id(midfieldstudents, 
-                       keep_id = exa_ever, 
-                       keep_col = c("id", "cip6"), 
-                       unique_row = TRUE)
+matric <- filter_by_id(midfieldstudents,
+  keep_id = exa_ever,
+  keep_col = c("id", "cip6"),
+  unique_row = TRUE
+)
 rows_we_want <- matric$cip %in% c("14XXXX", "14YYYY")
 engr <- matric[!rows_we_want]
-fye  <- matric[rows_we_want]
+fye <- matric[rows_we_want]
 
 # join
 fye <- merge(fye, midfield_fye, by = "id", all.x = TRUE)
 
-# add start column 
+# add start column
 engr <- engr[, .(id, cip6, start = cip6)]
 
 starters <- rbind(fye, engr)
@@ -142,7 +143,7 @@ We impute these missing values using multiple imputation as
 implemented in the mice package [@vanBuuren+Oudshoorn:2011].
 
 ```{r}
-# additional packages used for the imputation 
+# additional packages used for the imputation
 library(midfielddata)
 library(data.table)
 library(mice)
@@ -166,7 +167,7 @@ fye
 `cip_after_fye()` accesses `midfieldstudents` and `midfieldterms` (or their equivalents) and returns the CIP codes of a student's first program after FYE. A CIP code of NA indicates that the student enrolled in no program after FYE. 
 
 ```{r}
-# post-FYE major 
+# post-FYE major
 fye_id <- fye$id
 cip_post_fye <- cip_after_fye(fye_id)
 
@@ -186,7 +187,7 @@ To learn more, open the help page by running
 Our next step is to treat all non-engineering majors as missing values, converting them to NA. Engineering CIPs start with "14," so we identify all rows that do not start with 14. 
 
 ```{r}
-# reset CIP as "start" column 
+# reset CIP as "start" column
 engr_post_fye <- cip_post_fye[, .(id, start = cip6)]
 
 # find NOT engineering rows
@@ -212,10 +213,11 @@ inst_id <- semi_join(midfieldstudents, engr_post_fye, by = "id") %>%
 
 engr_post_fye <- left_join(engr_post_fye, inst_id, by = "id")
 
-race_sex <- filter_by_id(midfieldstudents, 
-                         keep_id = engr_post_fye$id, 
-                         keep_col = c("id", "race", "sex"), 
-                         unique_row = TRUE)
+race_sex <- filter_by_id(midfieldstudents,
+  keep_id = engr_post_fye$id,
+  keep_col = c("id", "race", "sex"),
+  unique_row = TRUE
+)
 engr_post_fye <- left_join(engr_post_fye, race_sex, by = "id")
 
 setDT(engr_post_fye)

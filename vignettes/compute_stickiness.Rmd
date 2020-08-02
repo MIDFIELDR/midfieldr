@@ -58,7 +58,7 @@ In the *Gather programs* vignette [(link)](get_programs.html), we create the pro
 The data are loaded with midfieldr. 
 
 ```{r}
-# obtain programs (built-in data set) 
+# obtain programs (built-in data set)
 program_group <- exa_group
 
 # examine the result
@@ -92,10 +92,11 @@ We use `filter_by_cip()` to extract from `midfieldstudents` the IDs of students 
 
 ```{r}
 # gather students ever enrolled in programs
-enrollees <- filter_by_cip(midfieldterms, 
-                           keep_cip = group_codes, 
-                           keep_col = c("id", "cip6"), 
-                           unique_row = TRUE)
+enrollees <- filter_by_cip(midfieldterms,
+  keep_cip = group_codes,
+  keep_col = c("id", "cip6"),
+  unique_row = TRUE
+)
 
 # examine the result
 enrollees
@@ -132,10 +133,11 @@ We use `filter_by_id()` to extract from `midfieldstudents` the race/ethnicity an
 
 ```{r}
 # obtain race/ethnicity and sex at matriculation
-race_sex <- filter_by_id(midfieldstudents, 
-                      keep_id = feasible_ids, 
-                      keep_col = c("id", "race", "sex"), 
-                      unique_row = TRUE)
+race_sex <- filter_by_id(midfieldstudents,
+  keep_id = feasible_ids,
+  keep_col = c("id", "race", "sex"),
+  unique_row = TRUE
+)
 
 # examine the result
 race_sex
@@ -175,15 +177,17 @@ A similar process is used to group and summarize our graduates. We use `filter_b
 
 ```{r}
 # gather students graduating from programs
-graduates <- filter_by_cip(midfielddegrees, 
-                       keep_cip = group_codes, 
-                       keep_col = c("id", "cip6"), 
-                       unique_row = TRUE, 
-                       first_degree = TRUE)
+graduates <- filter_by_cip(midfielddegrees,
+  keep_cip = group_codes,
+  keep_col = c("id", "cip6"),
+  unique_row = TRUE,
+  first_degree = TRUE
+)
 race_sex <- filter_by_id(midfieldstudents,
-                      keep_id = graduates$id,
-                      keep_col = c("id", "race", "sex"), 
-                      unique_row = TRUE)
+  keep_id = graduates$id,
+  keep_col = c("id", "race", "sex"),
+  unique_row = TRUE
+)
 graduates <- merge(graduates, race_sex, by = "id", all.x = TRUE)
 graduates <- merge(graduates, program_group, by = "cip6", all.x = TRUE)
 
@@ -419,46 +423,51 @@ library(midfielddata)
 library(data.table)
 library(ggplot2)
 
-# obtain programs (built-in data set) 
+# obtain programs (built-in data set)
 program_group <- exa_group
 group_codes <- program_group$cip6
 
 # gather students ever enrolled in programs
-enrollees <- filter_by_cip(midfieldterms, 
-                           keep_cip = group_codes, 
-                           keep_col = c("id", "cip6"), 
-                           unique_row = TRUE)
+enrollees <- filter_by_cip(midfieldterms,
+  keep_cip = group_codes,
+  keep_col = c("id", "cip6"),
+  unique_row = TRUE
+)
 feasible_ids <- completion_feasible(id = enrollees$id)
 rows_we_want <- enrollees$id %in% feasible_ids
 enrollees <- enrollees[rows_we_want]
-race_sex <- filter_by_id(midfieldstudents, 
-                         keep_id = feasible_ids, 
-                         keep_col = c("id", "race", "sex"), 
-                         unique_row = TRUE)
+race_sex <- filter_by_id(midfieldstudents,
+  keep_id = feasible_ids,
+  keep_col = c("id", "race", "sex"),
+  unique_row = TRUE
+)
 enrollees <- merge(enrollees, race_sex, by = "id", all.x = TRUE)
 enrollees <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
 
 # gather students graduating from programs
-graduates <- filter_by_cip(midfielddegrees, 
-                           keep_cip = group_codes, 
-                           keep_col = c("id", "cip6"), 
-                           unique_row = TRUE, 
-                           first_degree = TRUE)
-race_sex <- filter_by_id(midfieldstudents, 
-                         keep_id = graduates$id, 
-                         keep_col = c("id", "race", "sex"), 
-                         unique_row = TRUE)
+graduates <- filter_by_cip(midfielddegrees,
+  keep_cip = group_codes,
+  keep_col = c("id", "cip6"),
+  unique_row = TRUE,
+  first_degree = TRUE
+)
+race_sex <- filter_by_id(midfieldstudents,
+  keep_id = graduates$id,
+  keep_col = c("id", "race", "sex"),
+  unique_row = TRUE
+)
 graduates <- merge(graduates, race_sex, by = "id", all.x = TRUE)
 graduates <- merge(graduates, program_group, by = "cip6", all.x = TRUE)
 
-# group, summarize, and join  
+# group, summarize, and join
 grouping_variables <- c("program", "race", "sex")
 grouped_enrollees <- enrollees[, .(ever = .N), by = grouping_variables]
 grouped_graduates <- graduates[, .(grad = .N), by = grouping_variables]
 grouped_data <- merge(grouped_enrollees,
-                      grouped_graduates,
-                      by = grouping_variables,
-                      all.x = TRUE)
+  grouped_graduates,
+  by = grouping_variables,
+  all.x = TRUE
+)
 
 # compute the metric
 stickiness <- grouped_data
