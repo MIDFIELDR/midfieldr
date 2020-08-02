@@ -13,12 +13,11 @@ NULL
 #' A typical midfieldr workflow might include:
 #'
 #' \itemize{
-#'   \item \code{get_cip()} search the CIP data set for program codes
+#'   \item \code{filter_by_text()} search the CIP data set for program codes
 #'   \item \code{label_programs()} isolate and label specific programs to study
-#'   \item \code{get_enrollees()} gather students ever enrolled in the programs
+#'   \item \code{filter_by_cip()} gather students ever enrolled in the programs
 #'   \item \code{completion_feasible()} subset students for 6-year
 #'   completion feasibility
-#'   \item \code{get_graduates()} gather students graduating from the programs
 #'   \item \code{get_race_sex()} obtain student sex and race/ethnicity
 #'   \item \code{order_multiway()} condition multiway data for graphing
 #' }
@@ -55,5 +54,6 @@ NULL
 
 # binding
 if (getRversion() >= "2.15.1") {
-  utils::globalVariables(c(".", ":=", "..cols_we_want", ".SD", "..columns"))
+  utils::globalVariables(c(".", ":=", "..cols_we_want", ".SD",
+                           "..columns", "..columns_we_want", "..keep_col"))
 }

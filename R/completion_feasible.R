@@ -92,7 +92,11 @@ completion_feasible <- function(id = NULL,
   # because the function returns a vector
 
   # gather degree data
-  degree_data <- get_status_degrees(data = data_degrees, keep_id = id)
+  degree_data <- filter_by_id(data_degrees,
+                              keep_id = id,
+                              keep_col = c("id", "institution", "degree"),
+                              first_degree = TRUE,
+                              unique_row = TRUE)
 
   # separate the grads from nongrads
   nongrad_rows <- is.na(degree_data$degree)
@@ -102,11 +106,11 @@ completion_feasible <- function(id = NULL,
   grads_id <- grads$id
 
   if (length(nongrads_id) > 0){
-
-    # transfers
-    transfer_data <- get_status_transfers(
-      data = data_students,
-      keep_id = nongrads_id
+    transfer_data <- filter_by_id(
+      data_students,
+      keep_id = nongrads_id,
+      keep_col = c("id", "term_enter", "hours_transfer"),
+      unique_row = TRUE
     )
 
     # join

@@ -42,12 +42,8 @@ required by name.
 }
 \seealso{
 Other data_query: 
-\code{\link{get_cip}()},
-\code{\link{get_enrollees}()},
-\code{\link{get_graduates}()},
-\code{\link{get_institution_hours_term}()},
-\code{\link{get_race_sex}()},
-\code{\link{get_status_degrees}()},
-\code{\link{get_status_transfers}()}
+\code{\link{filter_by_cip}()},
+\code{\link{filter_by_id}()},
+\code{\link{filter_by_text}()}
 }
 \concept{data_query}

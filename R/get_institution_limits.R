@@ -64,13 +64,13 @@ get_institution_limits <- function(data = NULL, span = NULL) {
   # find data_limit for each institution
   columns <- c("institution", "term")
   DT <- DT[, ..columns]
-  DT <- dt_unique_rows(DT, columns)
+  DT <- unique_by_keys(DT, columns)
   DT[, data_limit := max(term), by = institution]
 
   # select
   columns <- c("institution", "data_limit")
   DT <- DT[, ..columns]
-  DT <- dt_unique_rows(DT, columns)
+  DT <- unique_by_keys(DT, columns)
   inst_data_limit <- DT # save for later merge
 
   # split term to create year and iterm
@@ -80,7 +80,7 @@ get_institution_limits <- function(data = NULL, span = NULL) {
   # select
   columns <- c("data_limit", "year", "iterm")
   DT <- DT[, ..columns]
-  DT <- dt_unique_rows(DT, columns)
+  DT <- unique_by_keys(DT, columns)
 
   # round summer and second quarter
   DT[, iterm := ifelse(iterm >= 3, 3, 1)]
@@ -98,7 +98,7 @@ get_institution_limits <- function(data = NULL, span = NULL) {
   # select
   columns <- c("matric_limit", "data_limit")
   inst_matric_limit <- DT[, ..columns]
-  inst_matric_limit <- dt_unique_rows(inst_matric_limit, columns)
+  inst_matric_limit <- unique_by_keys(inst_matric_limit, columns)
 
   # join
   inst_limits <- merge(inst_data_limit,

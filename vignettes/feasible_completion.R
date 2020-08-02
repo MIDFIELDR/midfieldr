@@ -115,7 +115,7 @@ library(midfieldr)
 library(midfielddata)
 library(data.table)
 
-# data.table, print max 20 rows, otherwise 5 rows head/tail
+# print max 20 rows, otherwise 5 rows each head/tail
 options(datatable.print.nrows = 20, datatable.print.topn = 5)
 
 ## -----------------------------------------------------------------------------
@@ -131,11 +131,14 @@ str(enrollees_fc)
 
 ## -----------------------------------------------------------------------------
 # gather student degree data
-enrollees_id <- exa_ever
-degree_data <- get_status_degrees(midfielddegrees, keep_id = enrollees_id)
+degree_data <- filter_by_id(midfielddegrees, 
+                           keep_id = exa_ever, 
+                           keep_col = c("id", "institution", "degree"), 
+                           unique_row = TRUE, 
+                           first_degree = TRUE)
 
 # examine the result
-str(degree_data)
+degree_data
 
 ## -----------------------------------------------------------------------------
 # subset students with degrees and without
@@ -153,17 +156,20 @@ str(nongrads_id)
 
 ## -----------------------------------------------------------------------------
 # gather transfer data for non-grads
-transfer_data <- get_status_transfers(midfieldstudents, keep_id = nongrads_id)
+transfer_data <- filter_by_id(midfieldstudents, 
+                          keep_id = nongrads_id, 
+                          keep_col = c("id", "term_enter", "hours_transfer"), 
+                          unique_row = TRUE)
 
 # examine the result
-str(transfer_data)
+transfer_data
 
 ## -----------------------------------------------------------------------------
 # join transfer data to non-grads
 nongrads <- merge(nongrads, transfer_data, by = "id", all.x = TRUE)
 
 # examine the result
-str(nongrads)
+nongrads
 
 ## -----------------------------------------------------------------------------
 # gather data limits and matriculation limits
@@ -173,8 +179,13 @@ institution_limits <- get_institution_limits(midfieldterms)
 institution_limits
 
 ## -----------------------------------------------------------------------------
-# find median hours per term of students with degrees
-hr_per_term <- get_institution_hours_term(midfieldterms, keep_id = grads_id)
+# median hours/term for these grads
+hr_per_term <- filter_by_id(midfieldterms, 
+                            keep_id = grads_id, 
+                            unique_row = FALSE)
+hr_per_term <- hr_per_term[order(institution),
+                           .(med_term_hours = median(hours_term)),
+                           by = institution]
 
 # examine the result
 hr_per_term
@@ -195,7 +206,7 @@ institutions
 fc_data <- merge(nongrads, institutions, by = "institution", all.x = TRUE)
 
 # examine the result
-str(fc_data)
+fc_data
 
 ## -----------------------------------------------------------------------------
 # set NA transfer hours to zero
@@ -203,14 +214,14 @@ rows_to_zero <- is.na(fc_data$hours_transfer)
 fc_data[rows_to_zero, hours_transfer := 0]
 
 # examine the result
-str(fc_data)
+fc_data
 
 ## -----------------------------------------------------------------------------
 # estimate the term-equivalent of transfer credit hours
-fc_data[, terms_transfer := floor(hours_transfer / median_hr_per_term)]
+fc_data[, terms_transfer := floor(hours_transfer / med_term_hours)]
 
 # examine the result
-str(fc_data)
+fc_data
 
 ## -----------------------------------------------------------------------------
 # omit columns no longer necessary
@@ -218,10 +229,10 @@ fc_data$degree <- NULL
 fc_data$data_limit <- NULL
 fc_data$institution <- NULL
 fc_data$hours_transfer <- NULL
-fc_data$median_hr_per_term <- NULL
+fc_data$med_term_hours <- NULL
 
 # examine the result
-head(fc_data)
+fc_data
 
 ## -----------------------------------------------------------------------------
 # transfer terms limited to a maximum of 4
@@ -236,7 +247,7 @@ fc_data <- term_addition(fc_data,
 )
 
 # examine the result
-str(fc_data)
+fc_data
 
 ## -----------------------------------------------------------------------------
 # completion is feasible if the entry term does not exceed
@@ -245,7 +256,7 @@ rows_we_want <- fc_data$term_enter <= fc_data$matric_limit
 nongrad_fc <- fc_data[rows_we_want]
 
 # examine the result
-str(nongrad_fc)
+nongrad_fc
 
 ## -----------------------------------------------------------------------------
 # gather the IDs of all students with completion feasible
@@ -273,7 +284,11 @@ library(midfielddata)
 library(data.table)
 
 # subset students with and without degrees
-degree_data <- get_status_degrees(midfielddegrees, keep_id = exa_ever)
+degree_data <- filter_by_id(midfielddegrees, 
+                           keep_id = exa_ever, 
+                           keep_col = c("id", "institution", "degree"), 
+                           unique_row = TRUE, 
+                           first_degree = TRUE)
 grad_rows <- !is.na(degree_data$degree)
 grads <- degree_data[grad_rows]
 nongrads <- degree_data[!grad_rows]
@@ -281,12 +296,20 @@ grads_id <- grads$id
 nongrads_id <- nongrads$id
 
 # gather transfer data
-transfer_data <- get_status_transfers(midfieldstudents, keep_id = nongrads_id)
+transfer_data <- filter_by_id(midfieldstudents, 
+                          keep_id = nongrads_id, 
+                          keep_col = c("id", "term_enter", "hours_transfer"), 
+                          unique_row = TRUE)
 nongrads <- merge(nongrads, transfer_data, by = "id", all.x = TRUE)
 
 # gather institution variables
 inst_limits <- get_institution_limits(midfieldterms)
-hr_per_term <- get_institution_hours_term(midfieldterms, keep_id = grads_id)
+hr_per_term <- filter_by_id(midfieldterms, 
+                            keep_id = grads_id, 
+                            unique_row = FALSE)
+hr_per_term <- hr_per_term[order(institution),
+                           .(med_term_hours = median(hours_term)),
+                           by = institution]
 institutions <- merge(inst_limits,
   hr_per_term,
   by = "institution",
@@ -301,7 +324,7 @@ rows_to_zero <- is.na(fc_data$hours_transfer)
 fc_data[rows_to_zero, hours_transfer := 0]
 
 # advance the matriculation limit
-fc_data[, terms_transfer := floor(hours_transfer / median_hr_per_term)]
+fc_data[, terms_transfer := floor(hours_transfer / med_term_hours)]
 rows_to_limit <- fc_data$terms_transfer > 4
 fc_data[rows_to_limit, terms_transfer := 4]
 fc_data <- term_addition(fc_data,

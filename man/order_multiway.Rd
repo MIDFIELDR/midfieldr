@@ -46,8 +46,8 @@ order_multiway(mw_df)
 }
 \seealso{
 Other data_carpentry: 
+\code{\link{cip_after_fye}()},
 \code{\link{completion_feasible}()},
-\code{\link{label_programs}()},
 \code{\link{term_addition}()}
 }
 \concept{data_carpentry}

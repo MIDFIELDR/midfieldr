@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Explore multiway data</title>
+
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+<script>$(document).ready(function(){
+    if (typeof $('[data-toggle="tooltip"]').tooltip === 'function') {
+        $('[data-toggle="tooltip"]').tooltip();
+    }
+    if ($('[data-toggle="popover"]').popover === 'function') {
+        $('[data-toggle="popover"]').popover();
+    }
+});
+</script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Explore multiway data</h1>
+
+
+
+<p>Focus on midfieldr functions:</p>
+<ul>
+<li><code>order_multiway()</code></li>
+</ul>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>For initial exploration of possible stories in the data, the most common graph design used by the MIDFIELD team is the multiway graph. We examine multiway data here, in this initial tutorial, because as Wickham states <span class="citation">(Wickham and Grolemund, <a href="#ref-Wickham+Grolemund:2017" role="doc-biblioref">2017</a>)</span>,</p>
+<blockquote>
+<p>Visualization is a great place to start with R programming, because the payoff is so clear; you get to make elegant and informative plots that help you understand the data.</p>
+</blockquote>
+<p>Many persistence metrics can be organized as <em>multiway data</em> in which there is is one quantitative variable and two categorical variables. As explained by its inventor <span class="citation">(Cleveland, <a href="#ref-Cleveland:1993" role="doc-biblioref">1993</a>)</span>,</p>
+<blockquote>
+<p>… the quantitative variable is a response, and the goal is to study how it depends on the categorical variables, which are factors. What distinguishes multiway data is the cross-classification of the categorical variables; there is a value of the response for each combination of levels of the two categorical variables.</p>
+</blockquote>
+<p><code>order_multiway()</code> is used to transform multiway data such that the two categorical variables are factors with levels ordered by the third, quantitative variable. In this vignette we explore its arguments using a case study in four engineering programs.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># packages used</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(midfieldr)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">library</span>(data.table)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb1-5"><a href="#cb1-5"></a></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co"># print max 20 rows, otherwise 5 rows each head/tail</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="kw">options</span>(<span class="dt">datatable.print.nrows =</span> <span class="dv">20</span>, <span class="dt">datatable.print.topn =</span> <span class="dv">5</span>)</span></code></pre></div>
+</div>
+<div id="preparing-the-multiway-data" class="section level2">
+<h2>Preparing the multiway data</h2>
+<p>In the <em>Compute the stickiness metric</em> vignette <a href="compute_stickiness.html">(link)</a>, we construct the data frame with the numbers of students ever enrolled in the case study programs, the number graduating, and the resulting program stickiness grouped by race/ethnicity, sex, and program. These data are included with midfieldr as the built-in data set <code>exa_stickiness</code>. View its help page by loading midfieldr and running</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>? exa_stickiness </span></code></pre></div>
+<p>The data are loaded with midfieldr.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># load stickiness data from case study</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>pre_mw &lt;-<span class="st"> </span>exa_stickiness</span>
+<span id="cb3-3"><a href="#cb3-3"></a></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co"># examine the result</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>pre_mw</span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co">#&gt;                    program     race    sex ever grad stick</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#&gt;  1:      Civil Engineering    Asian Female   18   11 0.611</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt;  2:      Civil Engineering    Asian   Male   42   24 0.571</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="co">#&gt;  3:      Civil Engineering    Black Female   55   21 0.382</span></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="co">#&gt;  4:      Civil Engineering    Black   Male  102   39 0.382</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="co">#&gt;  5:      Civil Engineering Hispanic Female   11    5 0.455</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="co">#&gt; ---                                                       </span></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="co">#&gt; 59: Mechanical Engineering    Other   Male   47   28 0.596</span></span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="co">#&gt; 60: Mechanical Engineering  Unknown Female    5    3 0.600</span></span>
+<span id="cb3-15"><a href="#cb3-15"></a><span class="co">#&gt; 61: Mechanical Engineering  Unknown   Male   15    9 0.600</span></span>
+<span id="cb3-16"><a href="#cb3-16"></a><span class="co">#&gt; 62: Mechanical Engineering    White Female  313  141 0.450</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a><span class="co">#&gt; 63: Mechanical Engineering    White   Male 2035 1166 0.573</span></span></code></pre></div>
+<p>To protect confidentiality and prevent identification of individuals or institutions with small sub-populations, we typically omit rows with a small population. Using the larger MIDFIELD database, we usually set this limit to 10. Here, using the midfielddata sample, we’ll use 5.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># prepare rows</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>rows_we_want &lt;-<span class="st"> </span>pre_mw<span class="op">$</span>ever <span class="op">&gt;=</span><span class="st"> </span><span class="dv">5</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>pre_mw &lt;-<span class="st"> </span>pre_mw[rows_we_want]</span>
+<span id="cb4-4"><a href="#cb4-4"></a></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="co"># examine the result</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>pre_mw</span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="co">#&gt;                    program     race    sex ever grad stick</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt;  1:      Civil Engineering    Asian Female   18   11 0.611</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="co">#&gt;  2:      Civil Engineering    Asian   Male   42   24 0.571</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="co">#&gt;  3:      Civil Engineering    Black Female   55   21 0.382</span></span>
+<span id="cb4-11"><a href="#cb4-11"></a><span class="co">#&gt;  4:      Civil Engineering    Black   Male  102   39 0.382</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="co">#&gt;  5:      Civil Engineering Hispanic Female   11    5 0.455</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a><span class="co">#&gt; ---                                                       </span></span>
+<span id="cb4-14"><a href="#cb4-14"></a><span class="co">#&gt; 47: Mechanical Engineering    Other   Male   47   28 0.596</span></span>
+<span id="cb4-15"><a href="#cb4-15"></a><span class="co">#&gt; 48: Mechanical Engineering  Unknown Female    5    3 0.600</span></span>
+<span id="cb4-16"><a href="#cb4-16"></a><span class="co">#&gt; 49: Mechanical Engineering  Unknown   Male   15    9 0.600</span></span>
+<span id="cb4-17"><a href="#cb4-17"></a><span class="co">#&gt; 50: Mechanical Engineering    White Female  313  141 0.450</span></span>
+<span id="cb4-18"><a href="#cb4-18"></a><span class="co">#&gt; 51: Mechanical Engineering    White   Male 2035 1166 0.573</span></span></code></pre></div>
+<p>We typically delete ambiguous levels of race/ethnicity. And because of its sparse representation in the data, we often omit the Native American population as well.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># remove rows of ambiguous or underrepresented populations</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>rows_we_want &lt;-<span class="st"> </span><span class="op">!</span>pre_mw<span class="op">$</span>race <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(</span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="st">&quot;Unknown&quot;</span>,</span>
+<span id="cb5-4"><a href="#cb5-4"></a>  <span class="st">&quot;International&quot;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5"></a>  <span class="st">&quot;Other&quot;</span>,</span>
+<span id="cb5-6"><a href="#cb5-6"></a>  <span class="st">&quot;Native American&quot;</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a>)</span>
+<span id="cb5-8"><a href="#cb5-8"></a>pre_mw &lt;-<span class="st"> </span>pre_mw[rows_we_want]</span>
+<span id="cb5-9"><a href="#cb5-9"></a></span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="co"># examine the result</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="kw">unique</span>(pre_mw<span class="op">$</span>race)</span>
+<span id="cb5-12"><a href="#cb5-12"></a><span class="co">#&gt; [1] &quot;Asian&quot;    &quot;Black&quot;    &quot;Hispanic&quot; &quot;White&quot;</span></span></code></pre></div>
+<p>We combine the race/ethnicity and sex column to create one of the multiway categorical variables.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># complete the transformation to multiway form</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>data_mw &lt;-<span class="st"> </span>pre_mw</span>
+<span id="cb6-3"><a href="#cb6-3"></a></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="co"># create a new combined framing variable</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a>data_mw[, race_sex <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw">paste</span>(race, sex, <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>)]</span>
+<span id="cb6-6"><a href="#cb6-6"></a></span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="co"># examine the result</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>data_mw</span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="co">#&gt;                    program     race    sex ever grad stick        race_sex</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="co">#&gt;  1:      Civil Engineering    Asian Female   18   11 0.611    Asian Female</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="co">#&gt;  2:      Civil Engineering    Asian   Male   42   24 0.571      Asian Male</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="co">#&gt;  3:      Civil Engineering    Black Female   55   21 0.382    Black Female</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a><span class="co">#&gt;  4:      Civil Engineering    Black   Male  102   39 0.382      Black Male</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="co">#&gt;  5:      Civil Engineering Hispanic Female   11    5 0.455 Hispanic Female</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="co">#&gt; ---                                                                       </span></span>
+<span id="cb6-16"><a href="#cb6-16"></a><span class="co">#&gt; 28: Mechanical Engineering    Black   Male  211   87 0.412      Black Male</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a><span class="co">#&gt; 29: Mechanical Engineering Hispanic Female   13    5 0.385 Hispanic Female</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a><span class="co">#&gt; 30: Mechanical Engineering Hispanic   Male   80   39 0.488   Hispanic Male</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a><span class="co">#&gt; 31: Mechanical Engineering    White Female  313  141 0.450    White Female</span></span>
+<span id="cb6-20"><a href="#cb6-20"></a><span class="co">#&gt; 32: Mechanical Engineering    White   Male 2035 1166 0.573      White Male</span></span></code></pre></div>
+<p>To complete the transformation to multiway form, we select the three multiway variables.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># select the multiway variables</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>columns_we_want &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;program&quot;</span>, <span class="st">&quot;race_sex&quot;</span>, <span class="st">&quot;stick&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3"></a>data_mw &lt;-<span class="st"> </span>data_mw[, ..columns_we_want]</span>
+<span id="cb7-4"><a href="#cb7-4"></a></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="co"># examine the result</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a>data_mw</span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="co">#&gt;                    program        race_sex stick</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="co">#&gt;  1:      Civil Engineering    Asian Female 0.611</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a><span class="co">#&gt;  2:      Civil Engineering      Asian Male 0.571</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a><span class="co">#&gt;  3:      Civil Engineering    Black Female 0.382</span></span>
+<span id="cb7-11"><a href="#cb7-11"></a><span class="co">#&gt;  4:      Civil Engineering      Black Male 0.382</span></span>
+<span id="cb7-12"><a href="#cb7-12"></a><span class="co">#&gt;  5:      Civil Engineering Hispanic Female 0.455</span></span>
+<span id="cb7-13"><a href="#cb7-13"></a><span class="co">#&gt; ---                                             </span></span>
+<span id="cb7-14"><a href="#cb7-14"></a><span class="co">#&gt; 28: Mechanical Engineering      Black Male 0.412</span></span>
+<span id="cb7-15"><a href="#cb7-15"></a><span class="co">#&gt; 29: Mechanical Engineering Hispanic Female 0.385</span></span>
+<span id="cb7-16"><a href="#cb7-16"></a><span class="co">#&gt; 30: Mechanical Engineering   Hispanic Male 0.488</span></span>
+<span id="cb7-17"><a href="#cb7-17"></a><span class="co">#&gt; 31: Mechanical Engineering    White Female 0.450</span></span>
+<span id="cb7-18"><a href="#cb7-18"></a><span class="co">#&gt; 32: Mechanical Engineering      White Male 0.573</span></span></code></pre></div>
+<p>Then we use <code>order_multiway()</code> to convert the character columns to factors ordered by the median stickiness.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># transform characters to factors ordered by median stickiness</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a>data_mw &lt;-<span class="st"> </span><span class="kw">order_multiway</span>(data_mw)</span>
+<span id="cb8-3"><a href="#cb8-3"></a></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co"># examine the result</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a>data_mw</span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt;                    program        race_sex stick</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co">#&gt;  1:      Civil Engineering    Asian Female 0.611</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a><span class="co">#&gt;  2:      Civil Engineering      Asian Male 0.571</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="co">#&gt;  3:      Civil Engineering    Black Female 0.382</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a><span class="co">#&gt;  4:      Civil Engineering      Black Male 0.382</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a><span class="co">#&gt;  5:      Civil Engineering Hispanic Female 0.455</span></span>
+<span id="cb8-12"><a href="#cb8-12"></a><span class="co">#&gt; ---                                             </span></span>
+<span id="cb8-13"><a href="#cb8-13"></a><span class="co">#&gt; 28: Mechanical Engineering      Black Male 0.412</span></span>
+<span id="cb8-14"><a href="#cb8-14"></a><span class="co">#&gt; 29: Mechanical Engineering Hispanic Female 0.385</span></span>
+<span id="cb8-15"><a href="#cb8-15"></a><span class="co">#&gt; 30: Mechanical Engineering   Hispanic Male 0.488</span></span>
+<span id="cb8-16"><a href="#cb8-16"></a><span class="co">#&gt; 31: Mechanical Engineering    White Female 0.450</span></span>
+<span id="cb8-17"><a href="#cb8-17"></a><span class="co">#&gt; 32: Mechanical Engineering      White Male 0.573</span></span></code></pre></div>
+<p>For convenience, these multiway data are included in midfieldr as the built-in data set <code>exa_stickiness_mw</code>. View its help page by running</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>? exa_stickiness_mw</span></code></pre></div>
+</div>
+<div id="a-multiway-dot-plot" class="section level2">
+<h2>A multiway dot plot</h2>
+<p>We use conventional ggplot2 functions to create the multiway graphs. By previously ordering the levels of the factors, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># create one multiway graph</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> data_mw, <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> race_sex)) <span class="op">+</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="kw">vars</span>(program), <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">+</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Stickiness&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="70%" style="display: block; margin: auto;" /></p>
+<p><br></p>
+<p>This graph permits a direct visual comparison of how stickiness varies by race and sex within a particular major.</p>
+<p>Reading a multiway graph</p>
+<ul>
+<li>We can more effectively compare values within a panel than between panels.</li>
+<li>Because rows are ordered, one expects a generally increasing trend within a panel. A response greater or smaller than expected creates a visual asymmetry. The interesting stories are often in these visual anomalies.</li>
+<li>To explore the comparison between panels, we swap the row and panel categories, creating the dual multiway.</li>
+</ul>
+</div>
+<div id="the-dual-multiway-dot-plot" class="section level2">
+<h2>The dual multiway dot plot</h2>
+<p>The previous graph does not facilitate visual comparisons of members of the same race-sex group. As Cleveland says,</p>
+<blockquote>
+<p>Because of this asymmetry, it is often important to explore multiway data by as many multiway dot plots as there are categorical variables, with each variable assigned once to the levels.</p>
+</blockquote>
+<p>To create the <em>dual multiway</em> graph, we swap the roles of the rows and panels.</p>
+<ul>
+<li><code>y = race_sex</code> becomes <code>y = program</code></li>
+<li><code>facet_wrap(vars(program) ...</code> becomes <code>facet_wrap(vars(race_sex) ...</code></li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co"># create the dual multiway graph</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> data_mw, <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> program)) <span class="op">+</span></span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="kw">vars</span>(race_sex), <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">+</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Stickiness&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="70%" style="display: block; margin: auto;" /></p>
+<p><br></p>
+<p>This graph permits a direct visual comparison of how stickiness varies by major for one group of students.</p>
+<p>Both multiways should be created for discussion. Usually one or the other will convey a more compelling visual story that gets included in the published findings.</p>
+</div>
+<div id="creating-a-data-table" class="section level2">
+<h2>Creating a data table</h2>
+<p>Data tables are useful in discussions with one’s research team and are often included in publications for editors or reviewers who want to see the values underlying the data graphics. The first thing to do before tabulating is to limit the significant figures of floating-point numbers.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># tabulate data in block record (&quot;long&quot;) form</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>blockf &lt;-<span class="st"> </span>data_mw</span>
+<span id="cb12-3"><a href="#cb12-3"></a></span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="co"># limit significant digits</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a>blockf[, stick <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw">round</span>(stick, <span class="dv">2</span>)]</span>
+<span id="cb12-6"><a href="#cb12-6"></a></span>
+<span id="cb12-7"><a href="#cb12-7"></a><span class="co"># examine the result</span></span>
+<span id="cb12-8"><a href="#cb12-8"></a>blockf</span></code></pre></div>
+<p>These data are laid out in “block record” form <span class="citation">(Mount and Zumel, <a href="#ref-Mount+Zumel:2019:fluid-data" role="doc-biblioref">2019</a>)</span>, where the <code>race_sex</code> key and the <code>program</code> key are both in columns and the finding is in the last column. This layout is also called “tidy data” <span class="citation">(Wickham and Grolemund, <a href="#ref-Wickham+Grolemund:2017" role="doc-biblioref">2017</a>)</span>.</p>
+<p>The graphing package we use, ggplot2, is designed to work most effectively with block-record data, thus the block-record (“long”) form is the default layout in midfieldr.</p>
+<p><br></p>
+<table class="table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
+<caption style="font-size: initial !important;">
+Table 1: Stickiness (block records)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+program
+</th>
+<th style="text-align:left;">
+race_sex
+</th>
+<th style="text-align:right;">
+stick
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+0.61
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+0.57
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+0.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+0.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Female
+</td>
+<td style="text-align:right;">
+0.46
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Male
+</td>
+<td style="text-align:right;">
+0.49
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+White Female
+</td>
+<td style="text-align:right;">
+0.56
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+White Male
+</td>
+<td style="text-align:right;">
+0.59
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+0.52
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+0.59
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+0.46
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+0.43
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Female
+</td>
+<td style="text-align:right;">
+0.43
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Male
+</td>
+<td style="text-align:right;">
+0.46
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+White Female
+</td>
+<td style="text-align:right;">
+0.35
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+White Male
+</td>
+<td style="text-align:right;">
+0.49
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+0.56
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+0.70
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+0.59
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+0.50
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Female
+</td>
+<td style="text-align:right;">
+0.71
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Male
+</td>
+<td style="text-align:right;">
+0.73
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+White Female
+</td>
+<td style="text-align:right;">
+0.68
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+White Male
+</td>
+<td style="text-align:right;">
+0.69
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+0.62
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+0.65
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+0.39
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+0.41
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Female
+</td>
+<td style="text-align:right;">
+0.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Male
+</td>
+<td style="text-align:right;">
+0.49
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+White Female
+</td>
+<td style="text-align:right;">
+0.45
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical Engineering
+</td>
+<td style="text-align:left;">
+White Male
+</td>
+<td style="text-align:right;">
+0.57
+</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>However, the visual convention preferred by publishers and readers is a row-record (“wide”) form, as illustrated by Table 2. The <code>race_sex</code> key is in the left column and the <code>program key</code> is in the column names. The stickiness findings lie at the row-column intersections.</p>
+<p><br></p>
+<table class="table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
+<caption style="font-size: initial !important;">
+Table 2: Stickiness (row records)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Group
+</th>
+<th style="text-align:right;">
+Civil
+</th>
+<th style="text-align:right;">
+Electrical
+</th>
+<th style="text-align:right;">
+Industrial
+</th>
+<th style="text-align:right;">
+Mechanical
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+0.61
+</td>
+<td style="text-align:right;">
+0.52
+</td>
+<td style="text-align:right;">
+0.56
+</td>
+<td style="text-align:right;">
+0.62
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+0.57
+</td>
+<td style="text-align:right;">
+0.59
+</td>
+<td style="text-align:right;">
+0.70
+</td>
+<td style="text-align:right;">
+0.65
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+0.38
+</td>
+<td style="text-align:right;">
+0.46
+</td>
+<td style="text-align:right;">
+0.59
+</td>
+<td style="text-align:right;">
+0.39
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+0.38
+</td>
+<td style="text-align:right;">
+0.43
+</td>
+<td style="text-align:right;">
+0.50
+</td>
+<td style="text-align:right;">
+0.41
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hispanic Female
+</td>
+<td style="text-align:right;">
+0.46
+</td>
+<td style="text-align:right;">
+0.43
+</td>
+<td style="text-align:right;">
+0.71
+</td>
+<td style="text-align:right;">
+0.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hispanic Male
+</td>
+<td style="text-align:right;">
+0.49
+</td>
+<td style="text-align:right;">
+0.46
+</td>
+<td style="text-align:right;">
+0.73
+</td>
+<td style="text-align:right;">
+0.49
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+White Female
+</td>
+<td style="text-align:right;">
+0.56
+</td>
+<td style="text-align:right;">
+0.35
+</td>
+<td style="text-align:right;">
+0.68
+</td>
+<td style="text-align:right;">
+0.45
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+White Male
+</td>
+<td style="text-align:right;">
+0.59
+</td>
+<td style="text-align:right;">
+0.49
+</td>
+<td style="text-align:right;">
+0.69
+</td>
+<td style="text-align:right;">
+0.57
+</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>Depending on your software background, you may have encountered a block-record/row-record transformation using any of these function pairs—a list adapted from <span class="citation">(Mount and Zumel, <a href="#ref-Mount+Zumel:2019:fluid-data" role="doc-biblioref">2019</a>)</span>.</p>
+<ul>
+<li>pivot / anti-pivot or crosstab / shred (databases)</li>
+<li>pivot_to_rowrecs / unpivot_to_blocks (cdata)</li>
+<li>reshape “wide” / reshape “long” (R)</li>
+<li>pivot_wider / pivot_longer (tidyr)</li>
+<li>pivot / unpivot (Microsoft Excel)</li>
+<li>cast / melt (reshape2)</li>
+</ul>
+<p>In base R, using <code>reshape()</code>, the block-record form is transformed to row-record form to create Table 2 as follows.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># tabulate data in row-record (&quot;wide&quot;) form</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>rowf &lt;-<span class="st"> </span><span class="kw">reshape</span>(</span>
+<span id="cb13-3"><a href="#cb13-3"></a>  blockf,</span>
+<span id="cb13-4"><a href="#cb13-4"></a>  <span class="dt">idvar =</span> <span class="st">&quot;race_sex&quot;</span>,  <span class="co"># remains a column</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a>  <span class="dt">timevar =</span> <span class="st">&quot;program&quot;</span>, <span class="co"># becomes new column headings</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>  <span class="dt">v.names =</span> <span class="st">&quot;stick&quot;</span>,   <span class="co"># fills the table cells</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a>  <span class="dt">direction =</span> <span class="st">&quot;wide&quot;</span></span>
+<span id="cb13-8"><a href="#cb13-8"></a>)</span>
+<span id="cb13-9"><a href="#cb13-9"></a></span>
+<span id="cb13-10"><a href="#cb13-10"></a><span class="co"># reset the row numbers</span></span>
+<span id="cb13-11"><a href="#cb13-11"></a><span class="kw">row.names</span>(rowf) &lt;-<span class="st"> </span><span class="ot">NULL</span></span>
+<span id="cb13-12"><a href="#cb13-12"></a></span>
+<span id="cb13-13"><a href="#cb13-13"></a><span class="co"># edit columns names</span></span>
+<span id="cb13-14"><a href="#cb13-14"></a><span class="kw">names</span>(rowf) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Group&quot;</span>, <span class="st">&quot;Civil&quot;</span>, <span class="st">&quot;Electrical&quot;</span>, <span class="st">&quot;Industrial&quot;</span>, <span class="st">&quot;Mechanical&quot;</span>)</span>
+<span id="cb13-15"><a href="#cb13-15"></a></span>
+<span id="cb13-16"><a href="#cb13-16"></a><span class="co"># examine the result</span></span>
+<span id="cb13-17"><a href="#cb13-17"></a>rowf</span>
+<span id="cb13-18"><a href="#cb13-18"></a><span class="co">#&gt;              Group Civil Electrical Industrial Mechanical</span></span>
+<span id="cb13-19"><a href="#cb13-19"></a><span class="co">#&gt; 1:    Asian Female  0.61       0.52       0.56       0.62</span></span>
+<span id="cb13-20"><a href="#cb13-20"></a><span class="co">#&gt; 2:      Asian Male  0.57       0.59       0.70       0.65</span></span>
+<span id="cb13-21"><a href="#cb13-21"></a><span class="co">#&gt; 3:    Black Female  0.38       0.46       0.59       0.39</span></span>
+<span id="cb13-22"><a href="#cb13-22"></a><span class="co">#&gt; 4:      Black Male  0.38       0.43       0.50       0.41</span></span>
+<span id="cb13-23"><a href="#cb13-23"></a><span class="co">#&gt; 5: Hispanic Female  0.46       0.43       0.71       0.38</span></span>
+<span id="cb13-24"><a href="#cb13-24"></a><span class="co">#&gt; 6:   Hispanic Male  0.49       0.46       0.73       0.49</span></span>
+<span id="cb13-25"><a href="#cb13-25"></a><span class="co">#&gt; 7:    White Female  0.56       0.35       0.68       0.45</span></span>
+<span id="cb13-26"><a href="#cb13-26"></a><span class="co">#&gt; 8:      White Male  0.59       0.49       0.69       0.57</span></span></code></pre></div>
+<p>While we used the base R <code>reshape()</code> function in this example, there are good reshaping tools in other packages such as cdata <span class="citation">(Mount and Zumel, <a href="#ref-Mount+Zumel:2020:cdata" role="doc-biblioref">2020</a>)</span> or tidyr <span class="citation">(Wickham and Henry, <a href="#ref-Wickham+Henry:2020:tidyr" role="doc-biblioref">2020</a>)</span>.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<div id="refs">
+<div id="ref-Cleveland:1993">
+<p>Cleveland WS (1993) <em>Visualizing Data.</em> Hobart Press, Summit, NJ</p>
+</div>
+<div id="ref-Mount+Zumel:2019:fluid-data">
+<p>Mount J and Zumel N (2019) Coordinatized data: A fluid data specification. <a href="http://winvector.github.io/FluidData/RowsAndColumns.html">http://winvector.github.io/FluidData/RowsAndColumns.html</a></p>
+</div>
+<div id="ref-Mount+Zumel:2020:cdata">
+<p>Mount J and Zumel N (2020) <em>cdata: Fluid Data Transformations.</em> R package version 1.1.6 <a href="https://CRAN.R-project.org/package=cdata">https://CRAN.R-project.org/package=cdata</a></p>
+</div>
+<div id="ref-Wickham+Grolemund:2017">
+<p>Wickham H and Grolemund G (2017) <em>R for Data Science.</em> O’Reilly Media, Inc., Sebastopol, CA <a href="https://r4ds.had.co.nz/">https://r4ds.had.co.nz/</a></p>
+</div>
+<div id="ref-Wickham+Henry:2020:tidyr">
+<p>Wickham H and Henry L (2020) <em>tidyr: Tidy Messy Data.</em> R package version 1.1.0 <a href="https://CRAN.R-project.org/package=tidyr">https://CRAN.R-project.org/package=tidyr</a></p>
+</div>
+</div>
+</div>
+<div id="appendix" class="section level2">
+<h2>Appendix</h2>
+<div id="complete-script" class="section level3">
+<h3>Complete script</h3>
+<p>The vignette code chunks are collected below in a single, condensed script.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># packages used </span></span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="kw">library</span>(midfieldr)</span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="kw">library</span>(data.table)</span>
+<span id="cb14-4"><a href="#cb14-4"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb14-5"><a href="#cb14-5"></a></span>
+<span id="cb14-6"><a href="#cb14-6"></a><span class="co"># load stickiness data from case study</span></span>
+<span id="cb14-7"><a href="#cb14-7"></a>pre_mw &lt;-<span class="st"> </span>exa_stickiness</span>
+<span id="cb14-8"><a href="#cb14-8"></a></span>
+<span id="cb14-9"><a href="#cb14-9"></a><span class="co"># prepare rows</span></span>
+<span id="cb14-10"><a href="#cb14-10"></a>rows_we_want &lt;-<span class="st"> </span>pre_mw<span class="op">$</span>ever <span class="op">&gt;=</span><span class="st"> </span><span class="dv">5</span></span>
+<span id="cb14-11"><a href="#cb14-11"></a>pre_mw &lt;-<span class="st"> </span>pre_mw[rows_we_want]</span>
+<span id="cb14-12"><a href="#cb14-12"></a></span>
+<span id="cb14-13"><a href="#cb14-13"></a>rows_we_want &lt;-<span class="st"> </span><span class="op">!</span>pre_mw<span class="op">$</span>race <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(</span>
+<span id="cb14-14"><a href="#cb14-14"></a>  <span class="st">&quot;Unknown&quot;</span>,</span>
+<span id="cb14-15"><a href="#cb14-15"></a>  <span class="st">&quot;International&quot;</span>,</span>
+<span id="cb14-16"><a href="#cb14-16"></a>  <span class="st">&quot;Other&quot;</span>,</span>
+<span id="cb14-17"><a href="#cb14-17"></a>  <span class="st">&quot;Native American&quot;</span></span>
+<span id="cb14-18"><a href="#cb14-18"></a>)</span>
+<span id="cb14-19"><a href="#cb14-19"></a>pre_mw &lt;-<span class="st"> </span>pre_mw[rows_we_want]</span>
+<span id="cb14-20"><a href="#cb14-20"></a></span>
+<span id="cb14-21"><a href="#cb14-21"></a></span>
+<span id="cb14-22"><a href="#cb14-22"></a><span class="co"># complete the transformation to multiway form</span></span>
+<span id="cb14-23"><a href="#cb14-23"></a>data_mw &lt;-<span class="st"> </span>pre_mw</span>
+<span id="cb14-24"><a href="#cb14-24"></a>data_mw[, race_sex <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw">paste</span>(race, sex, <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>)]</span>
+<span id="cb14-25"><a href="#cb14-25"></a>columns_we_want &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;program&quot;</span>, <span class="st">&quot;race_sex&quot;</span>, <span class="st">&quot;stick&quot;</span>)</span>
+<span id="cb14-26"><a href="#cb14-26"></a>data_mw &lt;-<span class="st"> </span>data_mw[, ..columns_we_want]</span>
+<span id="cb14-27"><a href="#cb14-27"></a></span>
+<span id="cb14-28"><a href="#cb14-28"></a><span class="co"># transform characters to factors ordered by median stickiness</span></span>
+<span id="cb14-29"><a href="#cb14-29"></a>data_mw &lt;-<span class="st"> </span><span class="kw">order_multiway</span>(data_mw)</span>
+<span id="cb14-30"><a href="#cb14-30"></a></span>
+<span id="cb14-31"><a href="#cb14-31"></a><span class="co"># create one multiway graph</span></span>
+<span id="cb14-32"><a href="#cb14-32"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> data_mw, <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> race_sex)) <span class="op">+</span></span>
+<span id="cb14-33"><a href="#cb14-33"></a><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="kw">vars</span>(program), <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></span>
+<span id="cb14-34"><a href="#cb14-34"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">+</span></span>
+<span id="cb14-35"><a href="#cb14-35"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Stickiness&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb14-36"><a href="#cb14-36"></a></span>
+<span id="cb14-37"><a href="#cb14-37"></a><span class="co"># create the dual multiway graph</span></span>
+<span id="cb14-38"><a href="#cb14-38"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> data_mw, <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> program)) <span class="op">+</span></span>
+<span id="cb14-39"><a href="#cb14-39"></a><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="kw">vars</span>(race_sex), <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></span>
+<span id="cb14-40"><a href="#cb14-40"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">+</span></span>
+<span id="cb14-41"><a href="#cb14-41"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Stickiness&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb14-42"><a href="#cb14-42"></a></span>
+<span id="cb14-43"><a href="#cb14-43"></a><span class="co"># tabulate data in block record (&quot;long&quot;) form</span></span>
+<span id="cb14-44"><a href="#cb14-44"></a>blockf &lt;-<span class="st"> </span>data_mw</span>
+<span id="cb14-45"><a href="#cb14-45"></a>blockf[, stick <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw">round</span>(stick, <span class="dv">2</span>)]</span>
+<span id="cb14-46"><a href="#cb14-46"></a>blockf</span>
+<span id="cb14-47"><a href="#cb14-47"></a></span>
+<span id="cb14-48"><a href="#cb14-48"></a><span class="co"># tabulate data in row record (&quot;wide&quot;) form</span></span>
+<span id="cb14-49"><a href="#cb14-49"></a>rowf &lt;-<span class="st"> </span><span class="kw">reshape</span>(</span>
+<span id="cb14-50"><a href="#cb14-50"></a>  <span class="dt">data =</span> blockf,</span>
+<span id="cb14-51"><a href="#cb14-51"></a>  <span class="dt">idvar =</span> <span class="st">&quot;race_sex&quot;</span>, <span class="co"># column of row keys to copy</span></span>
+<span id="cb14-52"><a href="#cb14-52"></a>  <span class="dt">timevar =</span> <span class="st">&quot;program&quot;</span>, <span class="co"># column to take keys from</span></span>
+<span id="cb14-53"><a href="#cb14-53"></a>  <span class="dt">v.names =</span> <span class="st">&quot;stick&quot;</span>, <span class="co"># column to take values from</span></span>
+<span id="cb14-54"><a href="#cb14-54"></a>  <span class="dt">direction =</span> <span class="st">&quot;wide&quot;</span></span>
+<span id="cb14-55"><a href="#cb14-55"></a>)</span>
+<span id="cb14-56"><a href="#cb14-56"></a><span class="kw">row.names</span>(rowf) &lt;-<span class="st"> </span><span class="ot">NULL</span></span>
+<span id="cb14-57"><a href="#cb14-57"></a><span class="kw">names</span>(rowf) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Group&quot;</span>, <span class="st">&quot;Civil&quot;</span>, <span class="st">&quot;Electrical&quot;</span>, <span class="st">&quot;Industrial&quot;</span>, <span class="st">&quot;Mechanical&quot;</span>)</span>
+<span id="cb14-58"><a href="#cb14-58"></a>rowf</span></code></pre></div>
+<p><br> <a href="#top">▲ top of page </a><br />
+<a href="../index.html">◁ main page </a></p>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

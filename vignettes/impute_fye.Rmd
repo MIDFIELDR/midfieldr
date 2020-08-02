@@ -1,0 +1,264 @@
+---
+title: "Impute FYE starting majors"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Impute FYE starting majors}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/journal-of-glaciology.csl
+link-citations: yes
+resource_files:
+  - ../man/figures/vignette-impute-fye-fig1-1.png
+  - ../man/figures/vignette-impute-fye-fig2-1.png
+---
+
+```{r setup, include = FALSE}
+source("vignette-knitr-opts.R")
+knitr::opts_chunk$set(fig.path = "../man/figures/vignette-impute-fye-")
+```
+
+Focus on:
+
+- `midfield_fye` (data set)
+- `filter_by_id()`
+
+With an optional look at:
+
+- `fye_next_cip()`
+- `fye_join_cats()`
+- `fye_mice()`
+
+
+
+
+
+
+## Introduction 
+
+Some US institutions have first year engineering (FYE) programs---typically a common first year curriculum that is a prerequisite for declaring an engineering major. For these FYE students, some persistence metrics require us to predict their "starting major." 
+
+starting major 
+
+: The degree-granting engineering program---Civil Engineering, Electrical Engineering, Mechanical Engineering, etc.---that we predict the student would have declared had they not been required to enroll in FYE. 
+
+
+Note that FYE students are neither undecided nor undeclared. Their institutions admitted them as engineering students. We just don't know their preferred major. We have to predict the starting majors of FYE students to make fair comparisons across programs and institutions. 
+
+```{r}
+# packages used 
+library(midfieldr)
+library(midfielddata)
+
+# print max 20 rows, otherwise 5 rows each head/tail
+options(datatable.print.nrows = 20, datatable.print.topn = 5)
+```
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+## How the imputed majors are used 
+
+A data frame of starting majors imputed for all FYE students in midfielddata is included with midfieldr as the built-in data set `midfield_fye`. The starting majors are encoded, as usual, with a 6-digit CIP code, keyed by student ID. View its help page by loading midfieldr and running
+
+```r
+? midfield_fye
+```
+
+The data are loaded with midfieldr. 
+
+```{r}
+# view the example data
+midfield_fye
+```
+
+We illustrate its usage in the *Compute the graduation rate metric* vignette [(link)](compute_grad_rate.html). In summary, if one has a working data frame of student IDs and starting majors that include the FYE codes "14XXXX" or "14YYYY", 
+
+- extract the FYE IDs from the working data frame 
+- subset `midfield_fye` using these IDs
+- replace the the FYE codes "14XXXX" or "14YYYY" in the working data frame with the imputed starting majors from `midfield_fye` 
+
+The imputed starting major should be consistent with a student's race/ethnicity, sex, and institution because these are the variables used in the imputation. 
+
+**Example** using the case study IDs. 
+
+```{r}
+str(exa_ever)
+```
+
+
+
+```{r}
+matric <- filter_by_id(midfieldstudents, 
+                       keep_id = exa_ever, 
+                       keep_col = c("id", "cip6"), 
+                       unique_row = TRUE)
+rows_we_want <- matric$cip %in% c("14XXXX", "14YYYY")
+engr <- matric[!rows_we_want]
+fye  <- matric[rows_we_want]
+
+# join
+fye <- merge(fye, midfield_fye, by = "id", all.x = TRUE)
+
+# add start column 
+engr <- engr[, .(id, cip6, start = cip6)]
+
+starters <- rbind(fye, engr)
+starters[order(id)]
+starters
+```
+
+
+
+
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+
+## How the imputed majors are obtained
+
+The remainder of the vignette describes how the imputation is performed. 
+
+Predicting the starting major of FYE students takes one of two forms. 
+
+1. In the first instance, we have students who complete an FYE and declare an engineering major. This is the easy case--at the student's first opportunity, they enrolled in an engineering major of their choosing. We use that major as our predicted  starting major. 
+
+2. In the second instance, we have students who, after FYE, do not declare an engineering major. This is the more complicated case---the data provide no information regarding what engineering major the student would have declared originally had the institution not required them to enroll in FYE. For these students, we treat the starting major as missing data and impute a predicted value. 
+
+We impute these missing values using multiple imputation as 
+implemented in the mice package [@vanBuuren+Oudshoorn:2011].
+
+```{r}
+# additional packages used for the imputation 
+library(midfielddata)
+library(data.table)
+library(mice)
+library(visdat)
+```
+
+### 1. Determine a student's first major after FYE
+
+The variables used to predict the starting majors treated as missing values are institution, race, and sex. Though any subset of IDs could be used, we'll start with all FYE students in the midfielddata data sets to show how we obtained the `midfield_fye` data frame described earlier.  
+
+```{r}
+# extract IDs of all FYE students in midfieldstudents
+rows_we_want <- midfieldstudents$cip6 %in% c("14XXXX", "14YYYY")
+columns_we_want <- c("id")
+fye <- midfieldstudents[rows_we_want, ..columns_we_want]
+
+# examine the result
+fye
+```
+
+`cip_after_fye()` accesses `midfieldstudents` and `midfieldterms` (or their equivalents) and returns the CIP codes of a student's first program after FYE. A CIP code of NA indicates that the student enrolled in no program after FYE. 
+
+```{r}
+# post-FYE major 
+fye_id <- fye$id
+cip_post_fye <- cip_after_fye(fye_id)
+
+# examine the result
+cip_post_fye
+```
+
+To learn more, open the help page by running 
+
+```r
+? cip_after_fye
+```
+
+
+### 2. Set up the imputation data frame
+
+Our next step is to treat all non-engineering majors as missing values, converting them to NA. Engineering CIPs start with "14," so we identify all rows that do not start with 14. 
+
+```{r}
+# reset CIP as "start" column 
+engr_post_fye <- cip_post_fye[, .(id, start = cip6)]
+
+# find NOT engineering rows
+rows_we_want <- !grepl("^14", engr_post_fye$start)
+
+# set NOT engineering to NA
+engr_post_fye[rows_we_want, start := NA_character_]
+
+# examine the result
+engr_post_fye
+```
+
+Here we see the two forms of starting majors for FYE students. A CIP code in the `start` column indicates they transitioned to this engineering major after FYE. We treat this major as their predicted starting major. 
+
+A `start` value of NA indicates a non-engineering post-FYE major, which we treat as missing data for the imputation. 
+
+Our multivariate imputation process operates on categorical variables. We have selected institution, race/ethnicity, and sex as out categories. 
+
+```{r eval=FALSE}
+library(dplyr)
+inst_id <- semi_join(midfieldstudents, engr_post_fye, by = "id") %>%
+  select(id, institution)
+
+engr_post_fye <- left_join(engr_post_fye, inst_id, by = "id")
+
+race_sex <- filter_by_id(midfieldstudents, 
+                         keep_id = engr_post_fye$id, 
+                         keep_col = c("id", "race", "sex"), 
+                         unique_row = TRUE)
+engr_post_fye <- left_join(engr_post_fye, race_sex, by = "id")
+
+setDT(engr_post_fye)
+
+engr_post_fye
+```
+
+
+
+
+```r
+cip_after_fye
+
+fye_join_categories
+
+fye_mice
+
+```
+
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+
+
+## Appendix
+
+### Complete script
+
+The vignette code chunks are collected below in a single, condensed script.
+
+```{r eval=FALSE}
+# TBD
+```
+
+<br>
+<a href="#top"         >&#9650;     top of page </a>     
+<a href="../index.html">&#9665;       main page </a> 
+

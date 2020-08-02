@@ -8,7 +8,7 @@ library(midfieldr)
 library(data.table)
 library(ggplot2)
 
-# data.table printing options
+# print max 20 rows, otherwise 5 rows each head/tail
 options(datatable.print.nrows = 20, datatable.print.topn = 5)
 
 ## -----------------------------------------------------------------------------

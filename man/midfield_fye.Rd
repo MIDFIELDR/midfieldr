@@ -9,7 +9,7 @@
 The variables are:
 \describe{
    \item{id}{unique anonymized MIDFIELD student identifier}
-   \item{cip6}{imputed starting major of FYE students}
+   \item{start}{imputed starting major of FYE students}
 }
 }
 \usage{

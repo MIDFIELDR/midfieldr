@@ -28,8 +28,8 @@ Add a whole number of semesters to an academic term encoded \code{YYYYT}
 }
 \seealso{
 Other data_carpentry: 
+\code{\link{cip_after_fye}()},
 \code{\link{completion_feasible}()},
-\code{\link{label_programs}()},
 \code{\link{order_multiway}()}
 }
 \concept{data_carpentry}

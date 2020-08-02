@@ -43,8 +43,8 @@
 #' # overview
 #' str(cip)
 #'
-#' # get_cip() argument
-#' get_cip(data = cip, keep_any = "^1410")
+#' # filter_by_text() argument
+#' filter_by_text(cip, keep_any = "^1410")
 #'
 #' @family cip_data
 #'
@@ -74,9 +74,7 @@
 #' }
 #'
 #' @examples
-#' program_group <- label_programs(data = exa_cip, label = "cip4name")
-#' program_group$cip6name <- NULL
-#' program_group
+#' # placeholder
 #'
 #' @family example_data
 #'
@@ -237,7 +235,7 @@ NULL
 #' The variables are:
 #' \describe{
 #'    \item{id}{unique anonymized MIDFIELD student identifier}
-#'    \item{cip6}{imputed starting major of FYE students}
+#'    \item{start}{imputed starting major of FYE students}
 #' }
 #'
 #' @examples

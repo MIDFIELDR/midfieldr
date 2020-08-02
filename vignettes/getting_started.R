@@ -9,31 +9,28 @@ library(midfielddata)
 library(data.table)
 library(ggplot2)
 
-# data.table, print max 20 rows, otherwise 5 rows head/tail
+# print max 20 rows, otherwise 5 rows each head/tail
 options(datatable.print.nrows = 20, datatable.print.topn = 5)
 
 ## -----------------------------------------------------------------------------
 # engineering 
-engineering_cip <- get_cip(cip, keep_any = "^14")
-engineering <- label_programs(engineering_cip, label = "Engineering")
+engineering_cip <- filter_by_text(cip, keep_any = "^14", keep_col = "cip6")
+
+# add program label 
+engineering <- engineering_cip[, program := "Engineering"]
 
 # examine the result
-engineering
+print(engineering)
 
 ## -----------------------------------------------------------------------------
 # business 
-business_cip <- get_cip(cip, keep_any = "^52")
-business <- label_programs(business_cip, label = "Business")
+business_cip <- filter_by_text(cip, keep_any = "^52", keep_col = "cip6")
+
+# add program label 
+business <- business_cip[, program := "Business"]
 
 # bind the two data frames
 program_group <- rbind(engineering, business)
-
-# examine the result
-program_group
-
-## -----------------------------------------------------------------------------
-# verbose column can be deleted
-program_group[, cip6name := NULL]
 
 # examine the result
 program_group
@@ -47,7 +44,10 @@ str(group_codes)
 
 ## -----------------------------------------------------------------------------
 # extract students ever enrolled
-enrollees <- get_enrollees(midfieldterms, codes = group_codes)
+enrollees <- filter_by_cip(midfieldterms, 
+                           keep_cip = group_codes, 
+                           keep_col = c("id", "cip6"), 
+                           unique_row = TRUE)
 
 # examine the result
 enrollees
@@ -64,15 +64,17 @@ enrollees <- enrollees[rows_we_want]
 enrollees
 
 ## -----------------------------------------------------------------------------
-# obtain student race/ethnicity and sex
-demographics <- get_race_sex(midfieldstudents, keep_id = feasible_ids)
+race_sex <- filter_by_id(midfieldstudents, 
+                      keep_id = feasible_ids, 
+                      keep_col = c("id", "race", "sex"), 
+                      unique_row = TRUE)
 
 # examine the result
-demographics
+race_sex
 
 ## -----------------------------------------------------------------------------
 # left-join demographics to enrollees
-enrollees <- merge(enrollees, demographics, by = "id", all.x = TRUE)
+enrollees <- merge(enrollees, race_sex, by = "id", all.x = TRUE)
 
 # left-join program_group to enrollees
 enrollees <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
@@ -152,26 +154,31 @@ ggplot(data = data_mw, mapping = aes(x = ever, y = race_sex)) +
 #  library(ggplot2)
 #  
 #  # gather the programs
-#  engineering_cip <- get_cip(cip, keep_any = "^14")
-#  engineering <- label_programs(engineering_cip, label = "Engineering")
-#  business_cip <- get_cip(cip, keep_any = "^52")
-#  business <- label_programs(business_cip, label = "Business")
+#  engineering_cip <- filter_by_text(cip, keep_any = "^14", keep_col = "cip6")
+#  engineering <- engineering_cip[, program := "Engineering"]
+#  business_cip <- filter_by_text(cip, keep_any = "^52", keep_col = "cip6")
+#  business <- business_cip[, program := "Business"]
 #  program_group <- rbind(engineering, business)
-#  program_group[, cip6name := NULL]
 #  
 #  # extract a vector of 6-digit CIP codes
 #  group_codes <- program_group$cip6
 #  
 #  # gather students ever enrolled with feasible program completion
-#  enrollees <- get_enrollees(midfieldterms, codes = group_codes)
+#  enrollees <- filter_by_cip(midfieldterms,
+#                             keep_cip = group_codes,
+#                             keep_col = c("id", "cip6"),
+#                             unique_row = TRUE)
 #  feasible_ids <- completion_feasible(id = enrollees$id)
 #  rows_we_want <- enrollees$id %in% feasible_ids
 #  enrollees <- enrollees[rows_we_want]
-#  demographics <- get_race_sex(midfieldstudents, keep_id = feasible_ids)
-#  enrollees <- merge(enrollees, demographics, by = "id", all.x = TRUE)
+#  race_sex <- filter_by_id(midfieldstudents,
+#                        keep_id = feasible_ids,
+#                        keep_col = c("id", "race", "sex"),
+#                        unique_row = TRUE)
+#  enrollees <- merge(enrollees, race_sex, by = "id", all.x = TRUE)
 #  enrollees <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
 #  
-#  # group and count
+#  # group and summarize
 #  grouping_variables <- c("program", "race", "sex")
 #  grouped_enrollees <- enrollees[, .(ever = .N), by = grouping_variables]
 #  

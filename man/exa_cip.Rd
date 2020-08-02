@@ -29,9 +29,7 @@ case study of Civil, Electrical, Industrial, and Mechanical Engineering
 programs in \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 }
 \examples{
-program_group <- label_programs(data = exa_cip, label = "cip4name")
-program_group$cip6name <- NULL
-program_group
+# placeholder
 
 }
 \seealso{

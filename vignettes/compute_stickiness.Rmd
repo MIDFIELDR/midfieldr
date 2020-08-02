@@ -21,9 +21,8 @@ knitr::opts_chunk$set(fig.path = "../man/figures/vignette-compute-stickiness-")
 
 Focus on midfieldr functions:
 
-- `get_enrollees()`  
-- `get_graduates()` 
-- `get_race_sex()`
+- `filter_by_cip()` 
+- `filter_by_id()`
 
 ## Introduction 
 
@@ -40,7 +39,7 @@ library(midfielddata)
 library(data.table)
 library(ggplot2)
 
-# data.table, print max 20 rows, otherwise 5 rows head/tail
+# print max 20 rows, otherwise 5 rows each head/tail
 options(datatable.print.nrows = 20, datatable.print.topn = 5)
 ```
 
@@ -59,8 +58,10 @@ In the *Gather programs* vignette [(link)](get_programs.html), we create the pro
 The data are loaded with midfieldr. 
 
 ```{r}
-# view the example program group
+# obtain programs (built-in data set) 
 program_group <- exa_group
+
+# examine the result
 program_group
 ```
 
@@ -87,11 +88,14 @@ group_codes
 
 ## Gather the students ever enrolled
 
-We use `get_enrollees()` to extract the IDs of all students who ever enrolled in the programs listed in `group_codes`. The default data argument is `midfieldterms`.
+We use `filter_by_cip()` to extract from `midfieldstudents` the IDs of students ever enrolled in these programs.  
 
 ```{r}
-# students ever enrolled in programs
-enrollees <- get_enrollees(midfieldterms, codes = group_codes)
+# gather students ever enrolled in programs
+enrollees <- filter_by_cip(midfieldterms, 
+                           keep_cip = group_codes, 
+                           keep_col = c("id", "cip6"), 
+                           unique_row = TRUE)
 
 # examine the result
 enrollees
@@ -108,6 +112,9 @@ For some of these students, completing their program may not be feasible given t
 ```{r}
 # apply the feasible completion filter
 feasible_ids <- completion_feasible(id = enrollees$id)
+
+# examine the result
+str(feasible_ids)
 ```
 
 See the *Filter for program completion feasibility* vignette [(link)](feasible_completion.html) for a detailed explanation of how completion feasibility is determined.
@@ -121,21 +128,24 @@ enrollees <- enrollees[rows_we_want]
 enrollees
 ```
 
-We use `get_race_sex()` to obtain the race/ethnicity of each enrollee. The default data argument is `midfieldstudents`. 
+We use `filter_by_id()` to extract from `midfieldstudents` the race/ethnicity and sex of the enrollees. 
 
 ```{r}
 # obtain race/ethnicity and sex at matriculation
-demographics <- get_race_sex(midfieldstudents, keep_id = feasible_ids)
+race_sex <- filter_by_id(midfieldstudents, 
+                      keep_id = feasible_ids, 
+                      keep_col = c("id", "race", "sex"), 
+                      unique_row = TRUE)
 
 # examine the result
-demographics
+race_sex
 ```
 
 Now we can join the race/ethnicity and sex data frame to the enrollees data frame. 
 
 ```{r}
 # left-join demographics to enrollees
-enrollees <- merge(enrollees, demographics, by = "id", all.x = TRUE)
+enrollees <- merge(enrollees, race_sex, by = "id", all.x = TRUE)
 
 # examine the result
 enrollees
@@ -161,14 +171,20 @@ enrollees
 
 ## Gather the students graduating 
 
-A similar process is used to group and summarize our graduates. We start with `get_graduates()` with a default data argument of `midfielddegrees`. For graduates, the question of completion feasibility is moot---graduation itself establishes feasibility. Thus we omit the the feasible completion filter in this step. 
+A similar process is used to group and summarize our graduates. We use `filter_by_cip()` to extract from `midfielddegrees` the IDs of students  graduating from these programs. We skip the feasible completion step because for  graduates, the question of completion feasibility is moot---graduation itself establishes feasibility. 
 
 ```{r}
-# students graduating from programs
-graduates <- get_graduates(midfielddegrees, codes = group_codes)
-ids_we_want <- graduates$id
-demographics <- get_race_sex(midfieldstudents, keep_id = ids_we_want)
-graduates <- merge(graduates, demographics, by = "id", all.x = TRUE)
+# gather students graduating from programs
+graduates <- filter_by_cip(midfielddegrees, 
+                       keep_cip = group_codes, 
+                       keep_col = c("id", "cip6"), 
+                       unique_row = TRUE, 
+                       first_degree = TRUE)
+race_sex <- filter_by_id(midfieldstudents,
+                      keep_id = graduates$id,
+                      keep_col = c("id", "race", "sex"), 
+                      unique_row = TRUE)
+graduates <- merge(graduates, race_sex, by = "id", all.x = TRUE)
 graduates <- merge(graduates, program_group, by = "cip6", all.x = TRUE)
 
 # examine the result
@@ -202,7 +218,7 @@ grouping_variables <- c("program", "race", "sex")
 We count the number of students in each grouping. The count is assigned to the new `ever` column. 
 
 ```{r}
-# aggregation
+# group and summarize
 grouped_enrollees <- enrollees[, .(ever = .N), by = grouping_variables]
 
 # examine the result
@@ -214,7 +230,7 @@ Note the change in the size of the data frame, from `r nrow(enrollees)` in `enro
 Repeat for the graduates, creating the new `grad` column. 
 
 ```{r}
-# aggregation
+# group and summarize
 grouped_graduates <- graduates[, .(grad = .N), by = grouping_variables]
 
 # examine the result
@@ -226,34 +242,16 @@ We join the two data frames by our grouping variables, producing a data frame wi
 
 ```{r}
 # left-join graduates to enrollees
-stickiness <- merge(grouped_enrollees,
+grouped_data <- merge(grouped_enrollees,
   grouped_graduates,
   by = grouping_variables,
   all.x = TRUE
 )
 
 # examine the result, ordered by program
-stickiness[order(program)]
+grouped_data[order(program)]
 ```
 
-There are `r nrow(grouped_enrollees) - nrow(grouped_graduates)` NA entries in the `grad` column where we have enrollees but no graduates. To see them more directly:
-
-```{r}
-rows_with_degree_NA <- is.na(stickiness$grad)
-stickiness[rows_with_degree_NA]
-```
-
-We convert the NA values in the `grad` column to zero.
-
-```{r}
-# convert grad NA to zero
-stickiness[rows_with_degree_NA, grad := 0]
-
-# examine the result
-stickiness[rows_with_degree_NA]
-```
-
-This completes the data manipulation for obtaining the persistence metric. 
 
 
 
@@ -269,6 +267,27 @@ This completes the data manipulation for obtaining the persistence metric.
 
 ## Compute stickiness 
 
+There are `r nrow(grouped_enrollees) - nrow(grouped_graduates)` NA entries in the `grad` column where we have enrollees but no graduates. To see them more directly:
+
+```{r}
+# begin work on computing the metric
+stickiness <- grouped_data
+
+# identify NA values
+rows_with_degree_NA <- is.na(stickiness$grad)
+stickiness[rows_with_degree_NA]
+```
+
+We convert the NA values in the `grad` column to zero.
+
+```{r}
+# convert grad NA to zero
+stickiness[rows_with_degree_NA, grad := 0]
+
+# examine the result
+stickiness[rows_with_degree_NA]
+```
+
 We omit rows with zero students ever enrolled, if any, to avoid dividing by zero. 
 
 ```{r}
@@ -281,7 +300,7 @@ Divide `grad` by `ever` to compute stickiness.
 
 ```{r}
 # compute stickiness
-stickiness[, stick := round(grad / ever, 3)]
+stickiness[, stick := round(grad / ever, 2)]
 
 # examine the result
 stickiness
@@ -320,26 +339,16 @@ In the *Explore multiway data* vignette [(link)](explore_multiway.html), we desc
 The data are loaded with midfieldr. 
 
 ```{r}
-# view the example CIP
+# condition the data in multiway form (built-in data set)
 data_mw <- exa_stickiness_mw
 data_mw
 ```
 
-To see that the categorical variables are factors and not characters: 
+The attributes of the data frame confirm that the categorical variables are factors and not characters. The median values by which the factor levels are ordered are shown in the `scores` attributes. 
 
 ```{r}
 # name and class of variables (columns)
-sapply(data_mw, FUN = class)
-```
-
-To view the levels of the two categories in order of increasing median stickiness:  
-
-```{r}
-# levels of the program category
-levels(data_mw$program)
-
-# levels of the race/ethnicity/sex category
-levels(data_mw$race_sex)
+sapply(data_mw, FUN = attributes)
 ```
 
 
@@ -404,7 +413,69 @@ For more information on multiway data and interpreting multiway graphs, see the 
 The vignette code chunks are collected below in a single, condensed script.
 
 ```{r eval=FALSE}
-# TBD
+# packages used
+library(midfieldr)
+library(midfielddata)
+library(data.table)
+library(ggplot2)
+
+# obtain programs (built-in data set) 
+program_group <- exa_group
+group_codes <- program_group$cip6
+
+# gather students ever enrolled in programs
+enrollees <- filter_by_cip(midfieldterms, 
+                           keep_cip = group_codes, 
+                           keep_col = c("id", "cip6"), 
+                           unique_row = TRUE)
+feasible_ids <- completion_feasible(id = enrollees$id)
+rows_we_want <- enrollees$id %in% feasible_ids
+enrollees <- enrollees[rows_we_want]
+race_sex <- filter_by_id(midfieldstudents, 
+                         keep_id = feasible_ids, 
+                         keep_col = c("id", "race", "sex"), 
+                         unique_row = TRUE)
+enrollees <- merge(enrollees, race_sex, by = "id", all.x = TRUE)
+enrollees <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
+
+# gather students graduating from programs
+graduates <- filter_by_cip(midfielddegrees, 
+                           keep_cip = group_codes, 
+                           keep_col = c("id", "cip6"), 
+                           unique_row = TRUE, 
+                           first_degree = TRUE)
+race_sex <- filter_by_id(midfieldstudents, 
+                         keep_id = graduates$id, 
+                         keep_col = c("id", "race", "sex"), 
+                         unique_row = TRUE)
+graduates <- merge(graduates, race_sex, by = "id", all.x = TRUE)
+graduates <- merge(graduates, program_group, by = "cip6", all.x = TRUE)
+
+# group, summarize, and join  
+grouping_variables <- c("program", "race", "sex")
+grouped_enrollees <- enrollees[, .(ever = .N), by = grouping_variables]
+grouped_graduates <- graduates[, .(grad = .N), by = grouping_variables]
+grouped_data <- merge(grouped_enrollees,
+                      grouped_graduates,
+                      by = grouping_variables,
+                      all.x = TRUE)
+
+# compute the metric
+stickiness <- grouped_data
+rows_with_degree_NA <- is.na(stickiness$grad)
+stickiness[rows_with_degree_NA, grad := 0]
+rows_we_want <- stickiness$ever > 0
+stickiness <- stickiness[rows_we_want]
+stickiness[, stick := round(grad / ever, 2)]
+
+# condition the data in multiway form (built-in data set)
+data_mw <- exa_stickiness_mw
+
+# graph results
+ggplot(data = data_mw, mapping = aes(x = stick, y = race_sex)) +
+  facet_wrap(facets = vars(program), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(x = "Stickiness", y = "")
 ```
 
 <br>

@@ -7,7 +7,7 @@ knitr::opts_chunk$set(fig.path = "../man/figures/vignette-get-programs-")
 library(midfieldr)
 library(data.table)
 
-# data.table, print max 20 rows, otherwise 5 rows head/tail
+# print max 20 rows, otherwise 5 rows each head/tail
 options(datatable.print.nrows = 20, datatable.print.topn = 5)
 
 ## -----------------------------------------------------------------------------
@@ -24,48 +24,41 @@ exa_cip4
 
 ## -----------------------------------------------------------------------------
 # work with programs one at a time and bind
-# get civil engineering
-cve_cip <- get_cip(exa_cip, keep_any = "^1408")
-cve_cip
+# get civil engineering 6-digit codes 
+cve <- filter_by_text(exa_cip, keep_any = "^1408", keep_col = "cip6")
+cve
 
 ## -----------------------------------------------------------------------------
-# keep the 6-digit CIP and add a program label
-cve <- label_programs(cve_cip, label = "Civil Engineering")
+# add a program label
+cve[, program := "Civil Engineering"]
 cve
 
 ## -----------------------------------------------------------------------------
 # get electrical  engineering
-ele_cip <- get_cip(exa_cip, keep_any = "^1410")
-ele <- label_programs(ele_cip, label = "Electrical Engineering")
+ele <- filter_by_text(exa_cip, keep_any = "^1410", keep_col = "cip6")
+ele[, program := "Electrical Engineering"]
 ele
 
-## -----------------------------------------------------------------------------
 # get mechanical  engineering
-mce_cip <- get_cip(exa_cip, keep_any = "^1419")
-mce <- label_programs(mce_cip, label = "cip4name")
+mce <- filter_by_text(exa_cip, keep_any = "^1419", keep_col = "cip6")
+mce[, program := "Mechanical Engineering"]
 mce
 
 # get industrial engineering
-ise_cip <- get_cip(exa_cip, keep_any = "^1435")
-ise <- label_programs(ise_cip, label = "cip4name")
+ise <- filter_by_text(exa_cip, keep_any = "^1435", keep_col = "cip6")
+ise[, program := "Industrial Engineering"]
 ise
 
 ## -----------------------------------------------------------------------------
 # gather the programs in the study
 program_group <- rbind(cve, ele, ise, mce)
 
-# delete the verbose column
-program_group[, cip6name := NULL]
-
 # examine the result
 program_group
 
 ## -----------------------------------------------------------------------------
 # work with programs all in one data frame
-program_group <- label_programs(exa_cip, label = "cip4name")
-
-# delete the verbose column
-program_group[, cip6name := NULL]
+program_group <- exa_cip[, .(cip6, program = cip4name)]
 
 # examine the result
 program_group
@@ -81,30 +74,39 @@ program_group[rows_to_edit, program := "Electrical Engineering"]
 program_group
 
 ## -----------------------------------------------------------------------------
-# assign an arbitrary program name
-sub_cip <- get_cip(cip, keep_any = "^31")
-program_group <- label_programs(sub_cip, label = "Leisure Studies")
+# assign the 2-digit level name
+sub_cip <- filter_by_text(cip, 
+                          keep_any = "^31", 
+                          keep_col = c("cip6", "cip2name"))
+program_group <- sub_cip[, .(cip6, program = cip2name)]
 
 ## ----echo = FALSE-------------------------------------------------------------
 kable2html(program_group)
 
 ## -----------------------------------------------------------------------------
-# assign the 2-digit level name
-program_group <- label_programs(sub_cip, label = "cip2name")
+# assign the 4-digit level name
+sub_cip <- filter_by_text(cip, 
+                          keep_any = "^31", 
+                          keep_col = c("cip6", "cip4name"))
+program_group <- sub_cip[, .(cip6, program = cip4name)]
 
 ## ----echo = FALSE-------------------------------------------------------------
 kable2html(program_group)
 
 ## -----------------------------------------------------------------------------
 # assign the 6-digit level name
-program_group <- label_programs(sub_cip, label = "cip6name")
+sub_cip <- filter_by_text(cip, 
+                          keep_any = "^31", 
+                          keep_col = c("cip6", "cip6name"))
+program_group <- sub_cip[, .(cip6, program = cip6name)]
 
 ## ----echo = FALSE-------------------------------------------------------------
 kable2html(program_group)
 
 ## -----------------------------------------------------------------------------
-# label argument NULL same as 4-digit level name
-program_group <- label_programs(sub_cip)
+# assign an arbitrary program name
+sub_cip <- filter_by_text(cip, keep_any = "^31", keep_col = "cip6")
+program_group <- sub_cip[, program := "Leisure Studies"]
 
 ## ----echo = FALSE-------------------------------------------------------------
 kable2html(program_group)
@@ -119,39 +121,48 @@ sapply(cip, FUN = class)
 #  library(data.table)
 #  
 #  # work with programs one at a time and bind
-#  cve_cip <- get_cip(exa_cip, keep_any = "^1408")
-#  cve <- label_programs(cve_cip, label = "Civil Engineering")
+#  cve <- filter_by_text(exa_cip, keep_any = "^1408", keep_col = "cip6")
+#  cve[, program := "Civil Engineering"]
 #  
-#  ele_cip <- get_cip(exa_cip, keep_any = "^1410")
-#  ele <- label_programs(ele_cip, label = "Electrical Engineering")
+#  ele <- filter_by_text(exa_cip, keep_any = "^1410", keep_col = "cip6")
+#  ele[, program := "Electrical Engineering"]
 #  
-#  mce_cip <- get_cip(exa_cip, keep_any = "^1419")
-#  mce <- label_programs(mce_cip, label = "cip4name")
+#  mce <- filter_by_text(exa_cip, keep_any = "^1419", keep_col = "cip6")
+#  mce[, program := "Mechanical Engineering"]
 #  
-#  ise_cip <- get_cip(exa_cip, keep_any = "^1435")
-#  ise <- label_programs(ise_cip, label = "cip4name")
+#  ise <- filter_by_text(exa_cip, keep_any = "^1435", keep_col = "cip6")
+#  ise[, program := "Industrial Engineering"]
 #  
 #  program_group <- rbind(cve, ele, ise, mce)
-#  program_group[, cip6name := NULL]
 #  
 #  # work with programs all in one data frame
-#  program_group <- label_programs(exa_cip, label = "cip4name")
-#  program_group[, cip6name := NULL]
+#  program_group <- exa_cip[, .(cip6, program = cip4name)]
 #  rows_to_edit <- startsWith(program_group$cip6, "1410")
 #  program_group[rows_to_edit, program := "Electrical Engineering"]
 #  
-#  # assign an arbitrary program name
-#  sub_cip <- get_cip(cip, keep_any = "^31")
-#  program_group <- label_programs(sub_cip, label = "Leisure Studies")
-#  
 #  # assign the 2-digit level name
-#  program_group <- label_programs(sub_cip, label = "cip2name")
+#  sub_cip <- filter_by_text(cip,
+#                            keep_any = "^31",
+#                            keep_col = c("cip6", "cip2name"))
+#  program_group <- sub_cip[, .(cip6, program = cip2name)]
+#  
+#  # assign the 4-digit level name
+#  sub_cip <- filter_by_text(cip,
+#                            keep_any = "^31",
+#                            keep_col = c("cip6", "cip4name"))
+#  program_group <- sub_cip[, .(cip6, program = cip4name)]
 #  
 #  # assign the 6-digit level name
-#  program_group <- label_programs(sub_cip, label = "cip6name")
+#  sub_cip <- filter_by_text(cip,
+#                            keep_any = "^31",
+#                            keep_col = c("cip6", "cip6name"))
+#  program_group <- sub_cip[, .(cip6, program = cip6name)]
 #  
-#  # label argument NULL same as 4-digit level name
-#  program_group <- label_programs(sub_cip)
+#  
+#  # assign an arbitrary program name
+#  sub_cip <- filter_by_text(cip, keep_any = "^31", keep_col = "cip6")
+#  program_group <- sub_cip[, program := "Leisure Studies"]
+#  
 #  
 #  # name and class of variables (columns) in cip
 #  sapply(cip, FUN = class)

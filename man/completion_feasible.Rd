@@ -72,7 +72,7 @@ The function accesses three of the midfielddata data sets:
 }
 \seealso{
 Other data_carpentry: 
-\code{\link{label_programs}()},
+\code{\link{cip_after_fye}()},
 \code{\link{order_multiway}()},
 \code{\link{term_addition}()}
 }

@@ -250,7 +250,12 @@ get_col_class <- function(x) {
 #' @param DT data.table
 #' @param cols character vector of column names as keys
 #' @noRd
-dt_unique_rows <- function(DT, cols) {
+unique_by_keys <- function(DT, cols = NULL) {
+  if(is.null(cols)){
+    cols <- names(DT)
+  } else {
+    cols <- cols
+  }
   data.table::setkeyv(DT, cols)
   DT <- subset(unique(DT))
   data.table::setkey(DT, NULL)
