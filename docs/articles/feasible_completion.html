@@ -138,14 +138,22 @@
 
     
     
-<p>Focus on midfieldr functions:</p>
+<p>Primary focus on midfieldr functions:</p>
 <ul>
 <li><code><a href="../reference/completion_feasible.html">completion_feasible()</a></code></li>
+</ul>
+<p>With an optional look at:</p>
+<ul>
+<li><code>get_status_degrees()</code></li>
+<li><code>get_status_transfers()</code></li>
+<li><code><a href="../reference/get_institution_limits.html">get_institution_limits()</a></code></li>
+<li><code>get_institution_hours_term()</code></li>
+<li><code><a href="../reference/term_addition.html">term_addition()</a></code></li>
 </ul>
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>Persistence metrics often include a criterion that students complete their programs within <span class="math inline">\(x\)</span> years (typically 6 years, based on 150% of the “normal” time to completion). See, for example, <span class="citation">(IPEDS survey components, <a href="#ref-ipeds2018" role="doc-biblioref">2018</a>)</span>.</p>
+<p>Persistence metrics often include a criterion that students complete their programs within <span class="math inline">\(x\)</span> years (typically 6 years, based on 150% of the “normal” time to completion). See, for example, <span class="citation">(NCES, <a href="#ref-IPEDS:2020" role="doc-biblioref">2018</a>)</span>.</p>
 <p>In longitudinal research, this completion criterion requires special care. For student records near the upper limit of an institution’s data range, a student’s completion status can be ambiguous. Consider a case in which:</p>
 <ul>
 <li>a student matriculates in 2012 and graduates in 2017</li>
@@ -171,12 +179,12 @@
 <dd>The last term a student can matriculate and feasibly complete their program. Defined as <span class="math inline">\(x\)</span> years (typically 6 years) before the data limit. Can be advanced by transfer credit hours.
 </dd>
 </dl>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># packages used </span>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># packages used</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfielddata</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>)
 
-<span class="co"># data.table, print max 20 rows, otherwise 5 rows head/tail</span>
+<span class="co"># print max 20 rows, otherwise 5 rows each head/tail</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">datatable.print.nrows</span> <span class="kw">=</span> <span class="fl">20</span>, <span class="kw">datatable.print.topn</span> <span class="kw">=</span> <span class="fl">5</span>)</pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
@@ -216,18 +224,29 @@
 <div id="subset-students-with-and-without-degrees" class="section level3">
 <h3 class="hasAnchor">
 <a href="#subset-students-with-and-without-degrees" class="anchor"></a>1. Subset students with and without degrees</h3>
-<p>We obtain the degree data for the enrollees using <code><a href="../reference/get_status_degrees.html">get_status_degrees()</a></code> to subset the student degree data (<code>midfielddegrees</code> or equivalent) and return the student degree keyed by ID. The values of <code>degree</code> are character, e.g., “Bachelor of Science”, or NA for no degree.</p>
+<p>We obtain the degree data for the enrollees using <code>get_status_degrees()</code> to subset the student degree data (<code>midfielddegrees</code> or equivalent) and return the student degree keyed by ID. The values of <code>degree</code> are character, e.g., “Bachelor of Science”, or NA for no degree.</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># gather student degree data</span>
-<span class="no">enrollees_id</span> <span class="kw">&lt;-</span> <span class="no">exa_ever</span>
-<span class="no">degree_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_status_degrees.html">get_status_degrees</a></span>(<span class="no">midfielddegrees</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">enrollees_id</span>)
+<span class="no">degree_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_id.html">filter_by_id</a></span>(<span class="no">midfielddegrees</span>,
+  <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">exa_ever</span>,
+  <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"institution"</span>, <span class="st">"degree"</span>),
+  <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
+  <span class="kw">first_degree</span> <span class="kw">=</span> <span class="fl">TRUE</span>
+)
 
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">degree_data</span>)
-<span class="co">#&gt; Classes 'data.table' and 'data.frame':   10135 obs. of  3 variables:</span>
-<span class="co">#&gt;  $ id         : chr  "MID25783178" "MID25783197" "MID25783388" "MID25783441" ...</span>
-<span class="co">#&gt;  $ institution: chr  "Institution M" "Institution M" "Institution M" "Institution M" ...</span>
-<span class="co">#&gt;  $ degree     : chr  "Bachelor of Science" "Bachelor of Science" NA "Bachelor of Science" ...</span>
-<span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt;</span></pre></body></html></div>
+<span class="no">degree_data</span>
+<span class="co">#&gt;                 id   institution              degree</span>
+<span class="co">#&gt;     1: MID25783178 Institution M Bachelor of Science</span>
+<span class="co">#&gt;     2: MID25783197 Institution M Bachelor of Science</span>
+<span class="co">#&gt;     3: MID25783388 Institution M                &lt;NA&gt;</span>
+<span class="co">#&gt;     4: MID25783441 Institution M Bachelor of Science</span>
+<span class="co">#&gt;     5: MID25783491 Institution M Bachelor of Science</span>
+<span class="co">#&gt;    ---                                              </span>
+<span class="co">#&gt; 10131: MID26696967 Institution L Bachelor of Science</span>
+<span class="co">#&gt; 10132: MID26696979 Institution L                &lt;NA&gt;</span>
+<span class="co">#&gt; 10133: MID26697163 Institution L Bachelor of Science</span>
+<span class="co">#&gt; 10134: MID26697444 Institution L Bachelor of Science</span>
+<span class="co">#&gt; 10135: MID26697447 Institution L Bachelor of Science</span></pre></body></html></div>
 <p>Students with degrees have demonstrated that completing their programs before the data limits was feasible. We can extract their IDs (to be used later) and continue the completion feasibility study with the smaller non-graduate student subset.</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># subset students with degrees and without</span>
 <span class="no">grad_rows</span> <span class="kw">&lt;-</span> !<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">degree_data</span>$<span class="no">degree</span>)
@@ -248,31 +267,46 @@
 <h3 class="hasAnchor">
 <a href="#gather-transfer-data" class="anchor"></a>2. Gather transfer data</h3>
 <p>If the vector of non-grad IDs is empty, the rest of the algorithm is skipped and we return the vector of grad IDs as the complete set of IDs for feasible completion.</p>
-<p>Otherwise, we continue by calling <code><a href="../reference/get_status_transfers.html">get_status_transfers()</a></code> for the non-graduates to subset the student attributes data (<code>midfieldstudents</code> or equivalent) and return the student matriculation term and transfer credit hours keyed by ID. The values of <code>hours_transfer</code> are numerical or NA for no transfer hours.</p>
+<p>Otherwise, we continue by calling <code>get_status_transfers()</code> for the non-graduates to subset the student attributes data (<code>midfieldstudents</code> or equivalent) and return the student matriculation term and transfer credit hours keyed by ID. The values of <code>hours_transfer</code> are numerical or NA for no transfer hours.</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># gather transfer data for non-grads</span>
-<span class="no">transfer_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_status_transfers.html">get_status_transfers</a></span>(<span class="no">midfieldstudents</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">nongrads_id</span>)
+<span class="no">transfer_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_id.html">filter_by_id</a></span>(<span class="no">midfieldstudents</span>,
+  <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">nongrads_id</span>,
+  <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"term_enter"</span>, <span class="st">"hours_transfer"</span>),
+  <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">TRUE</span>
+)
 
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">transfer_data</span>)
-<span class="co">#&gt; Classes 'data.table' and 'data.frame':   4023 obs. of  3 variables:</span>
-<span class="co">#&gt;  $ id            : chr  "MID25783388" "MID25783553" "MID25783606" "MID25783648" ...</span>
-<span class="co">#&gt;  $ term_enter    : num  19871 20021 20011 20071 20011 ...</span>
-<span class="co">#&gt;  $ hours_transfer: num  NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt;</span></pre></body></html></div>
+<span class="no">transfer_data</span>
+<span class="co">#&gt;                id term_enter hours_transfer</span>
+<span class="co">#&gt;    1: MID25783388      19871             NA</span>
+<span class="co">#&gt;    2: MID25783553      20021             NA</span>
+<span class="co">#&gt;    3: MID25783606      20011             NA</span>
+<span class="co">#&gt;    4: MID25783648      20071             NA</span>
+<span class="co">#&gt;    5: MID25784022      20011             NA</span>
+<span class="co">#&gt;   ---                                      </span>
+<span class="co">#&gt; 4019: MID26694987      20121             NA</span>
+<span class="co">#&gt; 4020: MID26696186      20091             NA</span>
+<span class="co">#&gt; 4021: MID26696439      20101             NA</span>
+<span class="co">#&gt; 4022: MID26696958      20111             NA</span>
+<span class="co">#&gt; 4023: MID26696979      20154             60</span></pre></body></html></div>
 <p>Joining <code>transfer_data</code> to <code>nongrads</code> (by <code>id</code>) yields the complete student information we need.</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># join transfer data to non-grads</span>
 <span class="no">nongrads</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">nongrads</span>, <span class="no">transfer_data</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">nongrads</span>)
-<span class="co">#&gt; Classes 'data.table' and 'data.frame':   4023 obs. of  5 variables:</span>
-<span class="co">#&gt;  $ id            : chr  "MID25783388" "MID25783553" "MID25783606" "MID25783648" ...</span>
-<span class="co">#&gt;  $ institution   : chr  "Institution M" "Institution M" "Institution M" "Institution M" ...</span>
-<span class="co">#&gt;  $ degree        : chr  NA NA NA NA ...</span>
-<span class="co">#&gt;  $ term_enter    : num  19871 20021 20011 20071 20011 ...</span>
-<span class="co">#&gt;  $ hours_transfer: num  NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
-<span class="co">#&gt;  - attr(*, "sorted")= chr "id"</span></pre></body></html></div>
+<span class="no">nongrads</span>
+<span class="co">#&gt;                id   institution degree term_enter hours_transfer</span>
+<span class="co">#&gt;    1: MID25783388 Institution M   &lt;NA&gt;      19871             NA</span>
+<span class="co">#&gt;    2: MID25783553 Institution M   &lt;NA&gt;      20021             NA</span>
+<span class="co">#&gt;    3: MID25783606 Institution M   &lt;NA&gt;      20011             NA</span>
+<span class="co">#&gt;    4: MID25783648 Institution M   &lt;NA&gt;      20071             NA</span>
+<span class="co">#&gt;    5: MID25784022 Institution M   &lt;NA&gt;      20011             NA</span>
+<span class="co">#&gt;   ---                                                           </span>
+<span class="co">#&gt; 4019: MID26694987 Institution L   &lt;NA&gt;      20121             NA</span>
+<span class="co">#&gt; 4020: MID26696186 Institution L   &lt;NA&gt;      20091             NA</span>
+<span class="co">#&gt; 4021: MID26696439 Institution L   &lt;NA&gt;      20101             NA</span>
+<span class="co">#&gt; 4022: MID26696958 Institution L   &lt;NA&gt;      20111             NA</span>
+<span class="co">#&gt; 4023: MID26696979 Institution L   &lt;NA&gt;      20154             60</span></pre></body></html></div>
 </div>
 <div id="gather-institution-variables" class="section level3">
 <h3 class="hasAnchor">
@@ -302,24 +336,31 @@
 <span class="co">#&gt; 11: Institution L        20111      20164</span>
 <span class="co">#&gt; 12: Institution M        20041      20096</span></pre></body></html></div>
 <p>We determine the median number of credit-hours per term by institution. We use only students with degrees.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># find median hours per term of students with degrees</span>
-<span class="no">hr_per_term</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_institution_hours_term.html">get_institution_hours_term</a></span>(<span class="no">midfieldterms</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">grads_id</span>)
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># median hours/term for these grads</span>
+<span class="no">hr_per_term</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_id.html">filter_by_id</a></span>(<span class="no">midfieldterms</span>,
+  <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">grads_id</span>,
+  <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">FALSE</span>
+)
+<span class="no">hr_per_term</span> <span class="kw">&lt;-</span> <span class="no">hr_per_term</span>[<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html">order</a></span>(<span class="no">institution</span>),
+  <span class="fu">.</span>(<span class="kw">med_term_hours</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span>(<span class="no">hours_term</span>)),
+  <span class="kw">by</span> <span class="kw">=</span> <span class="no">institution</span>
+]
 
 <span class="co"># examine the result</span>
 <span class="no">hr_per_term</span>
-<span class="co">#&gt;       institution median_hr_per_term</span>
-<span class="co">#&gt;  1: Institution A                 14</span>
-<span class="co">#&gt;  2: Institution B                 15</span>
-<span class="co">#&gt;  3: Institution C                 14</span>
-<span class="co">#&gt;  4: Institution D                 17</span>
-<span class="co">#&gt;  5: Institution E                 12</span>
-<span class="co">#&gt;  6: Institution F                 14</span>
-<span class="co">#&gt;  7: Institution G                 12</span>
-<span class="co">#&gt;  8: Institution H                 12</span>
-<span class="co">#&gt;  9: Institution J                 12</span>
-<span class="co">#&gt; 10: Institution K                 12</span>
-<span class="co">#&gt; 11: Institution L                 12</span>
-<span class="co">#&gt; 12: Institution M                 14</span></pre></body></html></div>
+<span class="co">#&gt;       institution med_term_hours</span>
+<span class="co">#&gt;  1: Institution A             14</span>
+<span class="co">#&gt;  2: Institution B             15</span>
+<span class="co">#&gt;  3: Institution C             14</span>
+<span class="co">#&gt;  4: Institution D             17</span>
+<span class="co">#&gt;  5: Institution E             12</span>
+<span class="co">#&gt;  6: Institution F             14</span>
+<span class="co">#&gt;  7: Institution G             12</span>
+<span class="co">#&gt;  8: Institution H             12</span>
+<span class="co">#&gt;  9: Institution J             12</span>
+<span class="co">#&gt; 10: Institution K             12</span>
+<span class="co">#&gt; 11: Institution L             12</span>
+<span class="co">#&gt; 12: Institution M             14</span></pre></body></html></div>
 <p>And we join <code>hr_per_term</code> to <code>institution_limits</code> (by <code>institution</code>) to conclude our institution data gathering.</p>
 <div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># join the two sets of institution data</span>
 <span class="no">institutions</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">institution_limits</span>,
@@ -330,54 +371,80 @@
 
 <span class="co"># examine the result</span>
 <span class="no">institutions</span>
-<span class="co">#&gt;       institution matric_limit data_limit median_hr_per_term</span>
-<span class="co">#&gt;  1: Institution A        19981      20034                 14</span>
-<span class="co">#&gt;  2: Institution B        20051      20104                 15</span>
-<span class="co">#&gt;  3: Institution C        20101      20154                 14</span>
-<span class="co">#&gt;  4: Institution D        20101      20154                 17</span>
-<span class="co">#&gt;  5: Institution E        19981      20034                 12</span>
-<span class="co">#&gt;  6: Institution F        19991      20044                 14</span>
-<span class="co">#&gt;  7: Institution G        19993      20051                 12</span>
-<span class="co">#&gt;  8: Institution H        19981      20036                 12</span>
-<span class="co">#&gt;  9: Institution J        20041      20096                 12</span>
-<span class="co">#&gt; 10: Institution K        19981      20034                 12</span>
-<span class="co">#&gt; 11: Institution L        20111      20164                 12</span>
-<span class="co">#&gt; 12: Institution M        20041      20096                 14</span></pre></body></html></div>
+<span class="co">#&gt;       institution matric_limit data_limit med_term_hours</span>
+<span class="co">#&gt;  1: Institution A        19981      20034             14</span>
+<span class="co">#&gt;  2: Institution B        20051      20104             15</span>
+<span class="co">#&gt;  3: Institution C        20101      20154             14</span>
+<span class="co">#&gt;  4: Institution D        20101      20154             17</span>
+<span class="co">#&gt;  5: Institution E        19981      20034             12</span>
+<span class="co">#&gt;  6: Institution F        19991      20044             14</span>
+<span class="co">#&gt;  7: Institution G        19993      20051             12</span>
+<span class="co">#&gt;  8: Institution H        19981      20036             12</span>
+<span class="co">#&gt;  9: Institution J        20041      20096             12</span>
+<span class="co">#&gt; 10: Institution K        19981      20034             12</span>
+<span class="co">#&gt; 11: Institution L        20111      20164             12</span>
+<span class="co">#&gt; 12: Institution M        20041      20096             14</span></pre></body></html></div>
 <p>Next we join <code>nongrads</code> and <code>institution_limits</code> (by <code>institution</code>).</p>
 <div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># join student and institution data</span>
 <span class="no">fc_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">nongrads</span>, <span class="no">institutions</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"institution"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">fc_data</span>)
-<span class="co">#&gt; Classes 'data.table' and 'data.frame':   4023 obs. of  8 variables:</span>
-<span class="co">#&gt;  $ institution       : chr  "Institution A" "Institution A" "Institution A" "Institution A" ...</span>
-<span class="co">#&gt;  $ id                : chr  "MID26131502" "MID26131523" "MID26131544" "MID26133649" ...</span>
-<span class="co">#&gt;  $ degree            : chr  NA NA NA NA ...</span>
-<span class="co">#&gt;  $ term_enter        : num  20011 20011 19981 19901 20024 ...</span>
-<span class="co">#&gt;  $ hours_transfer    : num  NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">#&gt;  $ matric_limit      : num  19981 19981 19981 19981 19981 ...</span>
-<span class="co">#&gt;  $ data_limit        : num  20034 20034 20034 20034 20034 ...</span>
-<span class="co">#&gt;  $ median_hr_per_term: num  14 14 14 14 14 14 14 14 14 14 ...</span>
-<span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
-<span class="co">#&gt;  - attr(*, "sorted")= chr "institution"</span></pre></body></html></div>
+<span class="no">fc_data</span>
+<span class="co">#&gt;         institution          id degree term_enter hours_transfer matric_limit</span>
+<span class="co">#&gt;    1: Institution A MID26131502   &lt;NA&gt;      20011             NA        19981</span>
+<span class="co">#&gt;    2: Institution A MID26131523   &lt;NA&gt;      20011             NA        19981</span>
+<span class="co">#&gt;    3: Institution A MID26131544   &lt;NA&gt;      19981             NA        19981</span>
+<span class="co">#&gt;    4: Institution A MID26133649   &lt;NA&gt;      19901             NA        19981</span>
+<span class="co">#&gt;    5: Institution A MID26135340   &lt;NA&gt;      20024             NA        19981</span>
+<span class="co">#&gt;   ---                                                                        </span>
+<span class="co">#&gt; 4019: Institution M MID25852214   &lt;NA&gt;      20081             NA        20041</span>
+<span class="co">#&gt; 4020: Institution M MID25852497   &lt;NA&gt;      19981             NA        20041</span>
+<span class="co">#&gt; 4021: Institution M MID25852510   &lt;NA&gt;      19941             NA        20041</span>
+<span class="co">#&gt; 4022: Institution M MID25852630   &lt;NA&gt;      20061             NA        20041</span>
+<span class="co">#&gt; 4023: Institution M MID25852745   &lt;NA&gt;      20011             NA        20041</span>
+<span class="co">#&gt;       data_limit med_term_hours</span>
+<span class="co">#&gt;    1:      20034             14</span>
+<span class="co">#&gt;    2:      20034             14</span>
+<span class="co">#&gt;    3:      20034             14</span>
+<span class="co">#&gt;    4:      20034             14</span>
+<span class="co">#&gt;    5:      20034             14</span>
+<span class="co">#&gt;   ---                          </span>
+<span class="co">#&gt; 4019:      20096             14</span>
+<span class="co">#&gt; 4020:      20096             14</span>
+<span class="co">#&gt; 4021:      20096             14</span>
+<span class="co">#&gt; 4022:      20096             14</span>
+<span class="co">#&gt; 4023:      20096             14</span></pre></body></html></div>
 <p>We set NA values of <code>hours_transfer</code> to zero so that later, term addition avoids sums with NA.</p>
 <div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co"># set NA transfer hours to zero</span>
 <span class="no">rows_to_zero</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">fc_data</span>$<span class="no">hours_transfer</span>)
 <span class="no">fc_data</span>[<span class="no">rows_to_zero</span>, <span class="no">hours_transfer</span> <span class="kw">:=</span> <span class="fl">0</span>]
 
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">fc_data</span>)
-<span class="co">#&gt; Classes 'data.table' and 'data.frame':   4023 obs. of  8 variables:</span>
-<span class="co">#&gt;  $ institution       : chr  "Institution A" "Institution A" "Institution A" "Institution A" ...</span>
-<span class="co">#&gt;  $ id                : chr  "MID26131502" "MID26131523" "MID26131544" "MID26133649" ...</span>
-<span class="co">#&gt;  $ degree            : chr  NA NA NA NA ...</span>
-<span class="co">#&gt;  $ term_enter        : num  20011 20011 19981 19901 20024 ...</span>
-<span class="co">#&gt;  $ hours_transfer    : num  0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="co">#&gt;  $ matric_limit      : num  19981 19981 19981 19981 19981 ...</span>
-<span class="co">#&gt;  $ data_limit        : num  20034 20034 20034 20034 20034 ...</span>
-<span class="co">#&gt;  $ median_hr_per_term: num  14 14 14 14 14 14 14 14 14 14 ...</span>
-<span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
-<span class="co">#&gt;  - attr(*, "sorted")= chr "institution"</span></pre></body></html></div>
+<span class="no">fc_data</span>
+<span class="co">#&gt;         institution          id degree term_enter hours_transfer matric_limit</span>
+<span class="co">#&gt;    1: Institution A MID26131502   &lt;NA&gt;      20011              0        19981</span>
+<span class="co">#&gt;    2: Institution A MID26131523   &lt;NA&gt;      20011              0        19981</span>
+<span class="co">#&gt;    3: Institution A MID26131544   &lt;NA&gt;      19981              0        19981</span>
+<span class="co">#&gt;    4: Institution A MID26133649   &lt;NA&gt;      19901              0        19981</span>
+<span class="co">#&gt;    5: Institution A MID26135340   &lt;NA&gt;      20024              0        19981</span>
+<span class="co">#&gt;   ---                                                                        </span>
+<span class="co">#&gt; 4019: Institution M MID25852214   &lt;NA&gt;      20081              0        20041</span>
+<span class="co">#&gt; 4020: Institution M MID25852497   &lt;NA&gt;      19981              0        20041</span>
+<span class="co">#&gt; 4021: Institution M MID25852510   &lt;NA&gt;      19941              0        20041</span>
+<span class="co">#&gt; 4022: Institution M MID25852630   &lt;NA&gt;      20061              0        20041</span>
+<span class="co">#&gt; 4023: Institution M MID25852745   &lt;NA&gt;      20011              0        20041</span>
+<span class="co">#&gt;       data_limit med_term_hours</span>
+<span class="co">#&gt;    1:      20034             14</span>
+<span class="co">#&gt;    2:      20034             14</span>
+<span class="co">#&gt;    3:      20034             14</span>
+<span class="co">#&gt;    4:      20034             14</span>
+<span class="co">#&gt;    5:      20034             14</span>
+<span class="co">#&gt;   ---                          </span>
+<span class="co">#&gt; 4019:      20096             14</span>
+<span class="co">#&gt; 4020:      20096             14</span>
+<span class="co">#&gt; 4021:      20096             14</span>
+<span class="co">#&gt; 4022:      20096             14</span>
+<span class="co">#&gt; 4023:      20096             14</span></pre></body></html></div>
 <p>Now we’re ready to advance the matriculation limit for transfer students where needed.</p>
 </div>
 <div id="advance-the-matriculation-limit" class="section level3">
@@ -385,39 +452,56 @@
 <a href="#advance-the-matriculation-limit" class="anchor"></a>4. Advance the matriculation limit</h3>
 <p>We convert transfer-credit hours to their equivalent transfer-credit terms.</p>
 <div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="co"># estimate the term-equivalent of transfer credit hours</span>
-<span class="no">fc_data</span>[, <span class="no">terms_transfer</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="no">hours_transfer</span> / <span class="no">median_hr_per_term</span>)]
+<span class="no">fc_data</span>[, <span class="no">terms_transfer</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="no">hours_transfer</span> / <span class="no">med_term_hours</span>)]
 
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">fc_data</span>)
-<span class="co">#&gt; Classes 'data.table' and 'data.frame':   4023 obs. of  9 variables:</span>
-<span class="co">#&gt;  $ institution       : chr  "Institution A" "Institution A" "Institution A" "Institution A" ...</span>
-<span class="co">#&gt;  $ id                : chr  "MID26131502" "MID26131523" "MID26131544" "MID26133649" ...</span>
-<span class="co">#&gt;  $ degree            : chr  NA NA NA NA ...</span>
-<span class="co">#&gt;  $ term_enter        : num  20011 20011 19981 19901 20024 ...</span>
-<span class="co">#&gt;  $ hours_transfer    : num  0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="co">#&gt;  $ matric_limit      : num  19981 19981 19981 19981 19981 ...</span>
-<span class="co">#&gt;  $ data_limit        : num  20034 20034 20034 20034 20034 ...</span>
-<span class="co">#&gt;  $ median_hr_per_term: num  14 14 14 14 14 14 14 14 14 14 ...</span>
-<span class="co">#&gt;  $ terms_transfer    : num  0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
-<span class="co">#&gt;  - attr(*, "sorted")= chr "institution"</span></pre></body></html></div>
+<span class="no">fc_data</span>
+<span class="co">#&gt;         institution          id degree term_enter hours_transfer matric_limit</span>
+<span class="co">#&gt;    1: Institution A MID26131502   &lt;NA&gt;      20011              0        19981</span>
+<span class="co">#&gt;    2: Institution A MID26131523   &lt;NA&gt;      20011              0        19981</span>
+<span class="co">#&gt;    3: Institution A MID26131544   &lt;NA&gt;      19981              0        19981</span>
+<span class="co">#&gt;    4: Institution A MID26133649   &lt;NA&gt;      19901              0        19981</span>
+<span class="co">#&gt;    5: Institution A MID26135340   &lt;NA&gt;      20024              0        19981</span>
+<span class="co">#&gt;   ---                                                                        </span>
+<span class="co">#&gt; 4019: Institution M MID25852214   &lt;NA&gt;      20081              0        20041</span>
+<span class="co">#&gt; 4020: Institution M MID25852497   &lt;NA&gt;      19981              0        20041</span>
+<span class="co">#&gt; 4021: Institution M MID25852510   &lt;NA&gt;      19941              0        20041</span>
+<span class="co">#&gt; 4022: Institution M MID25852630   &lt;NA&gt;      20061              0        20041</span>
+<span class="co">#&gt; 4023: Institution M MID25852745   &lt;NA&gt;      20011              0        20041</span>
+<span class="co">#&gt;       data_limit med_term_hours terms_transfer</span>
+<span class="co">#&gt;    1:      20034             14              0</span>
+<span class="co">#&gt;    2:      20034             14              0</span>
+<span class="co">#&gt;    3:      20034             14              0</span>
+<span class="co">#&gt;    4:      20034             14              0</span>
+<span class="co">#&gt;    5:      20034             14              0</span>
+<span class="co">#&gt;   ---                                         </span>
+<span class="co">#&gt; 4019:      20096             14              0</span>
+<span class="co">#&gt; 4020:      20096             14              0</span>
+<span class="co">#&gt; 4021:      20096             14              0</span>
+<span class="co">#&gt; 4022:      20096             14              0</span>
+<span class="co">#&gt; 4023:      20096             14              0</span></pre></body></html></div>
 <p>There are several columns we can drop to make the other variables easier to review as he analysis proceeds.</p>
 <div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="co"># omit columns no longer necessary</span>
 <span class="no">fc_data</span>$<span class="no">degree</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
 <span class="no">fc_data</span>$<span class="no">data_limit</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
 <span class="no">fc_data</span>$<span class="no">institution</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
 <span class="no">fc_data</span>$<span class="no">hours_transfer</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
-<span class="no">fc_data</span>$<span class="no">median_hr_per_term</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
+<span class="no">fc_data</span>$<span class="no">med_term_hours</span> <span class="kw">&lt;-</span> <span class="kw">NULL</span>
 
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">fc_data</span>)
-<span class="co">#&gt;             id term_enter matric_limit terms_transfer</span>
-<span class="co">#&gt; 1: MID26131502      20011        19981              0</span>
-<span class="co">#&gt; 2: MID26131523      20011        19981              0</span>
-<span class="co">#&gt; 3: MID26131544      19981        19981              0</span>
-<span class="co">#&gt; 4: MID26133649      19901        19981              0</span>
-<span class="co">#&gt; 5: MID26135340      20024        19981              0</span>
-<span class="co">#&gt; 6: MID26137725      19901        19981              0</span></pre></body></html></div>
+<span class="no">fc_data</span>
+<span class="co">#&gt;                id term_enter matric_limit terms_transfer</span>
+<span class="co">#&gt;    1: MID26131502      20011        19981              0</span>
+<span class="co">#&gt;    2: MID26131523      20011        19981              0</span>
+<span class="co">#&gt;    3: MID26131544      19981        19981              0</span>
+<span class="co">#&gt;    4: MID26133649      19901        19981              0</span>
+<span class="co">#&gt;    5: MID26135340      20024        19981              0</span>
+<span class="co">#&gt;   ---                                                   </span>
+<span class="co">#&gt; 4019: MID25852214      20081        20041              0</span>
+<span class="co">#&gt; 4020: MID25852497      19981        20041              0</span>
+<span class="co">#&gt; 4021: MID25852510      19941        20041              0</span>
+<span class="co">#&gt; 4022: MID25852630      20061        20041              0</span>
+<span class="co">#&gt; 4023: MID25852745      20011        20041              0</span></pre></body></html></div>
 <p>Students are typically required to complete at least the final 30-60 credits (about 2 years) in residence at their new institution to earn a degree. Thus for the feasible completion analysis, we limit the transfer terms to 4 or less.</p>
 <div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="co"># transfer terms limited to a maximum of 4</span>
 <span class="no">rows_to_limit</span> <span class="kw">&lt;-</span> <span class="no">fc_data</span>$<span class="no">terms_transfer</span> <span class="kw">&gt;</span> <span class="fl">4</span>
@@ -430,13 +514,19 @@
 )
 
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">fc_data</span>)
-<span class="co">#&gt; Classes 'data.table' and 'data.frame':   4023 obs. of  4 variables:</span>
-<span class="co">#&gt;  $ matric_limit  : num  19981 19981 19981 19981 19981 ...</span>
-<span class="co">#&gt;  $ id            : chr  "MID26131502" "MID26131523" "MID26131544" "MID26133649" ...</span>
-<span class="co">#&gt;  $ term_enter    : num  20011 20011 19981 19901 20024 ...</span>
-<span class="co">#&gt;  $ terms_transfer: num  0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt;</span></pre></body></html></div>
+<span class="no">fc_data</span>
+<span class="co">#&gt;       matric_limit          id term_enter terms_transfer</span>
+<span class="co">#&gt;    1:        19981 MID26131502      20011              0</span>
+<span class="co">#&gt;    2:        19981 MID26131523      20011              0</span>
+<span class="co">#&gt;    3:        19981 MID26131544      19981              0</span>
+<span class="co">#&gt;    4:        19981 MID26133649      19901              0</span>
+<span class="co">#&gt;    5:        19981 MID26135340      20024              0</span>
+<span class="co">#&gt;   ---                                                   </span>
+<span class="co">#&gt; 4019:        19993 MID26437752      19901              0</span>
+<span class="co">#&gt; 4020:        19993 MID26437915      19991              0</span>
+<span class="co">#&gt; 4021:        19993 MID26437985      19973              0</span>
+<span class="co">#&gt; 4022:        19993 MID26438332      20031              0</span>
+<span class="co">#&gt; 4023:        19993 MID26438380      19891              0</span></pre></body></html></div>
 </div>
 <div id="return-the-completion-feasible-subset-of-student-ids" class="section level3">
 <h3 class="hasAnchor">
@@ -448,13 +538,19 @@
 <span class="no">nongrad_fc</span> <span class="kw">&lt;-</span> <span class="no">fc_data</span>[<span class="no">rows_we_want</span>]
 
 <span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">nongrad_fc</span>)
-<span class="co">#&gt; Classes 'data.table' and 'data.frame':   1931 obs. of  4 variables:</span>
-<span class="co">#&gt;  $ matric_limit  : num  19981 19981 19981 19981 19981 ...</span>
-<span class="co">#&gt;  $ id            : chr  "MID26131544" "MID26133649" "MID26137725" "MID26140157" ...</span>
-<span class="co">#&gt;  $ term_enter    : num  19981 19901 19901 19941 19944 ...</span>
-<span class="co">#&gt;  $ terms_transfer: num  0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt;</span></pre></body></html></div>
+<span class="no">nongrad_fc</span>
+<span class="co">#&gt;       matric_limit          id term_enter terms_transfer</span>
+<span class="co">#&gt;    1:        19981 MID26131544      19981              0</span>
+<span class="co">#&gt;    2:        19981 MID26133649      19901              0</span>
+<span class="co">#&gt;    3:        19981 MID26137725      19901              0</span>
+<span class="co">#&gt;    4:        19981 MID26140157      19941              0</span>
+<span class="co">#&gt;    5:        19981 MID26142617      19944              0</span>
+<span class="co">#&gt;   ---                                                   </span>
+<span class="co">#&gt; 1927:        19993 MID26437586      19931              0</span>
+<span class="co">#&gt; 1928:        19993 MID26437752      19901              0</span>
+<span class="co">#&gt; 1929:        19993 MID26437915      19991              0</span>
+<span class="co">#&gt; 1930:        19993 MID26437985      19973              0</span>
+<span class="co">#&gt; 1931:        19993 MID26438380      19891              0</span></pre></body></html></div>
 <p>If the non-grad ID vector is not empty, we combine it with the grads ID vector we set aside earlier. The result is the vector of IDs of students from the original pool for whom program completion is feasible.</p>
 <div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="co"># gather the IDs of all students with completion feasible</span>
 <span class="no">nongrad_fc_id</span> <span class="kw">&lt;-</span> <span class="no">nongrad_fc</span>$<span class="no">id</span>
@@ -473,8 +569,8 @@
 <h2 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h2>
 <div id="refs">
-<div id="ref-ipeds2018">
-<p>IPEDS survey components (2018)</p>
+<div id="ref-IPEDS:2020">
+<p>NCES (2018) <em>IPEDS Survey Methodology.</em> National Center for Education Statistics; [Online; accessed 2020-07-29] <a href="https://nces.ed.gov/ipeds/ReportYourData/IpedsSurveyMethodology">https://nces.ed.gov/ipeds/ReportYourData/IpedsSurveyMethodology</a></p>
 </div>
 </div>
 </div>
@@ -497,13 +593,18 @@
 <h3 class="hasAnchor">
 <a href="#script-how-completion_feasible-works" class="anchor"></a>Script: how <code>completion_feasible()</code> works</h3>
 <p>The rest of the script shows the details of what happens inside <code><a href="../reference/completion_feasible.html">completion_feasible()</a></code>.</p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="co"># packages used </span>
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="co"># packages used</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfielddata</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>)
 
 <span class="co"># subset students with and without degrees</span>
-<span class="no">degree_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_status_degrees.html">get_status_degrees</a></span>(<span class="no">midfielddegrees</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">exa_ever</span>)
+<span class="no">degree_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_id.html">filter_by_id</a></span>(<span class="no">midfielddegrees</span>,
+  <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">exa_ever</span>,
+  <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"institution"</span>, <span class="st">"degree"</span>),
+  <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
+  <span class="kw">first_degree</span> <span class="kw">=</span> <span class="fl">TRUE</span>
+)
 <span class="no">grad_rows</span> <span class="kw">&lt;-</span> !<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">degree_data</span>$<span class="no">degree</span>)
 <span class="no">grads</span> <span class="kw">&lt;-</span> <span class="no">degree_data</span>[<span class="no">grad_rows</span>]
 <span class="no">nongrads</span> <span class="kw">&lt;-</span> <span class="no">degree_data</span>[!<span class="no">grad_rows</span>]
@@ -511,12 +612,23 @@
 <span class="no">nongrads_id</span> <span class="kw">&lt;-</span> <span class="no">nongrads</span>$<span class="no">id</span>
 
 <span class="co"># gather transfer data</span>
-<span class="no">transfer_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_status_transfers.html">get_status_transfers</a></span>(<span class="no">midfieldstudents</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">nongrads_id</span>)
+<span class="no">transfer_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_id.html">filter_by_id</a></span>(<span class="no">midfieldstudents</span>,
+  <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">nongrads_id</span>,
+  <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"term_enter"</span>, <span class="st">"hours_transfer"</span>),
+  <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">TRUE</span>
+)
 <span class="no">nongrads</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">nongrads</span>, <span class="no">transfer_data</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># gather institution variables</span>
 <span class="no">inst_limits</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_institution_limits.html">get_institution_limits</a></span>(<span class="no">midfieldterms</span>)
-<span class="no">hr_per_term</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_institution_hours_term.html">get_institution_hours_term</a></span>(<span class="no">midfieldterms</span>, <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">grads_id</span>)
+<span class="no">hr_per_term</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_id.html">filter_by_id</a></span>(<span class="no">midfieldterms</span>,
+  <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">grads_id</span>,
+  <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">FALSE</span>
+)
+<span class="no">hr_per_term</span> <span class="kw">&lt;-</span> <span class="no">hr_per_term</span>[<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html">order</a></span>(<span class="no">institution</span>),
+  <span class="fu">.</span>(<span class="kw">med_term_hours</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span>(<span class="no">hours_term</span>)),
+  <span class="kw">by</span> <span class="kw">=</span> <span class="no">institution</span>
+]
 <span class="no">institutions</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">inst_limits</span>,
   <span class="no">hr_per_term</span>,
   <span class="kw">by</span> <span class="kw">=</span> <span class="st">"institution"</span>,
@@ -531,7 +643,7 @@
 <span class="no">fc_data</span>[<span class="no">rows_to_zero</span>, <span class="no">hours_transfer</span> <span class="kw">:=</span> <span class="fl">0</span>]
 
 <span class="co"># advance the matriculation limit</span>
-<span class="no">fc_data</span>[, <span class="no">terms_transfer</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="no">hours_transfer</span> / <span class="no">median_hr_per_term</span>)]
+<span class="no">fc_data</span>[, <span class="no">terms_transfer</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="no">hours_transfer</span> / <span class="no">med_term_hours</span>)]
 <span class="no">rows_to_limit</span> <span class="kw">&lt;-</span> <span class="no">fc_data</span>$<span class="no">terms_transfer</span> <span class="kw">&gt;</span> <span class="fl">4</span>
 <span class="no">fc_data</span>[<span class="no">rows_to_limit</span>, <span class="no">terms_transfer</span> <span class="kw">:=</span> <span class="fl">4</span>]
 <span class="no">fc_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/term_addition.html">term_addition</a></span>(<span class="no">fc_data</span>,

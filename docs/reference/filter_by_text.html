@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add semesters to an encoded academic term — term_addition • midfieldr</title>
+<title>Subset rows of a data frame by text — filter_by_text • midfieldr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,11 @@
 
 
 
-<meta property="og:title" content="Add semesters to an encoded academic term — term_addition" />
-<meta property="og:description" content="Add a whole number of semesters to an academic term encoded YYYYT" />
+<meta property="og:title" content="Subset rows of a data frame by text — filter_by_text" />
+<meta property="og:description" content="Retain rows that contain matching or partially matching character strings.
+Not case-sensitive. Default behavior is to retain all columns.
+Use keep_col to subset columns. Use unique_row to remove
+duplicate rows after subsetting." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -170,50 +173,111 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add semesters to an encoded academic term</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/term_addition.R'><code>R/term_addition.R</code></a></small>
-    <div class="hidden name"><code>term_addition.Rd</code></div>
+    <h1>Subset rows of a data frame by text</h1>
+    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/filter_by_text.R'><code>R/filter_by_text.R</code></a></small>
+    <div class="hidden name"><code>filter_by_text.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Add a whole number of semesters to an academic term encoded <code>YYYYT</code></p>
+    <p>Retain rows that contain matching or partially matching character strings.
+Not case-sensitive. Default behavior is to retain all columns.
+Use <code>keep_col</code> to subset columns. Use <code>unique_row</code> to remove
+duplicate rows after subsetting.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>term_addition</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>term_col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>add_col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>filter_by_text</span>(
+  <span class='no'>data</span>,
+  <span class='kw'>keep_any</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>drop_any</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>keep_col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>unique_row</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>data frame</p></td>
+      <td><p>data frame of character columns</p></td>
     </tr>
     <tr>
-      <th>term_col</th>
-      <td><p>character name of a numeric column of terms
-encoded YYYYT</p></td>
+      <th>keep_any</th>
+      <td><p>character vector of search patterns for retaining rows</p></td>
     </tr>
     <tr>
-      <th>add_col</th>
-      <td><p>character name of a numeric column of the whole number
-of semesters to add to YYYYT</p></td>
+      <th>...</th>
+      <td><p>not used, force later arguments to be used by name</p></td>
+    </tr>
+    <tr>
+      <th>drop_any</th>
+      <td><p>character vector of search patterns for dropping rows</p></td>
+    </tr>
+    <tr>
+      <th>keep_col</th>
+      <td><p>character vector of column names, default all columns</p></td>
+    </tr>
+    <tr>
+      <th>unique_row</th>
+      <td><p>logical, remove duplicate rows, default FALSE</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>data.frame</code> with <code>tbl</code> or <code>data.table</code>
-extensions preserved</p>
+    <p>data frame with the following properties:</p><ul>
+<li><p>Rows are a subset of the input in the same order</p></li>
+<li><p>All columns if <code>keep_col</code> NULL, otherwise columns named
+    in <code>keep_col</code></p></li>
+<li><p>Grouping structures are not preserved</p></li>
+<li><p>Data frame extensions such as <code>tbl</code> or <code>data.table</code>
+    are preserved</p></li>
+</ul>
+
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The <code>data</code> argument is typically the midfieldr <code>cip</code> data set,
+though any data frame with all character-string columns can be searched
+and subset.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other data_carpentry: 
-<code><a href='cip_after_fye.html'>cip_after_fye</a>()</code>,
-<code><a href='completion_feasible.html'>completion_feasible</a>()</code>,
-<code><a href='order_multiway.html'>order_multiway</a>()</code></p></div>
+    <div class='dont-index'><p>Other data_query: 
+<code><a href='filter_by_cip.html'>filter_by_cip</a>()</code>,
+<code><a href='filter_by_id.html'>filter_by_id</a>()</code>,
+<code><a href='get_institution_limits.html'>get_institution_limits</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'># placeholder
-
+    <pre class="examples"><div class='input'><span class='fu'>filter_by_text</span>(<span class='no'>cip</span>, <span class='kw'>keep_any</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"^1407"</span>, <span class='st'>"^1410"</span>))</div><div class='output co'>#&gt;    cip2    cip2name cip4                                               cip4name
+#&gt; 1:   14 Engineering 1407                                   Chemical Engineering
+#&gt; 2:   14 Engineering 1407                                   Chemical Engineering
+#&gt; 3:   14 Engineering 1407                                   Chemical Engineering
+#&gt; 4:   14 Engineering 1410 Electrical, Electronics and Communications Engineering
+#&gt; 5:   14 Engineering 1410 Electrical, Electronics and Communications Engineering
+#&gt; 6:   14 Engineering 1410 Electrical, Electronics and Communications Engineering
+#&gt; 7:   14 Engineering 1410 Electrical, Electronics and Communications Engineering
+#&gt;      cip6                                                      cip6name
+#&gt; 1: 140701                                          Chemical Engineering
+#&gt; 2: 140702                         Chemical and Biomolecular Engineering
+#&gt; 3: 140799                                   Chemical Engineering, Other
+#&gt; 4: 141001        Electrical, Electronics and Communications Engineering
+#&gt; 5: 141003                                 Laser and Optical Engineering
+#&gt; 6: 141004                                Telecommunications Engineering
+#&gt; 7: 141099 Electrical, Electronics and Communications Engineering, Other</div><div class='input'><span class='fu'>filter_by_text</span>(<span class='no'>cip</span>, <span class='kw'>keep_any</span> <span class='kw'>=</span> <span class='st'>"civil engineering"</span>, <span class='kw'>drop_any</span> <span class='kw'>=</span> <span class='st'>"technology"</span>)</div><div class='output co'>#&gt;    cip2    cip2name cip4          cip4name   cip6
+#&gt; 1:   14 Engineering 1408 Civil Engineering 140801
+#&gt; 2:   14 Engineering 1408 Civil Engineering 140802
+#&gt; 3:   14 Engineering 1408 Civil Engineering 140803
+#&gt; 4:   14 Engineering 1408 Civil Engineering 140804
+#&gt; 5:   14 Engineering 1408 Civil Engineering 140805
+#&gt; 6:   14 Engineering 1408 Civil Engineering 140899
+#&gt;                                  cip6name
+#&gt; 1:             Civil Engineering, General
+#&gt; 2:               Geotechnical Engineering
+#&gt; 3:                 Structural Engineering
+#&gt; 4: Transportation and Highway Engineering
+#&gt; 5:            Water Resources Engineering
+#&gt; 6:               Civil Engineering, Other</div><div class='input'><span class='fu'>filter_by_text</span>(<span class='no'>cip</span>, <span class='kw'>keep_any</span> <span class='kw'>=</span> <span class='st'>"History"</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'>filter_by_text</span>(<span class='kw'>keep_any</span> <span class='kw'>=</span> <span class='st'>"American"</span>)</div><div class='output co'>#&gt;    cip2 cip2name cip4 cip4name   cip6                         cip6name
+#&gt; 1:   54  History 5401  History 540102 American History (United States)</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
