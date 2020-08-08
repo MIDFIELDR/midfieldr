@@ -44,14 +44,14 @@
 #' str(cip)
 #'
 #' # filter_by_text() argument
-#' filter_by_text(cip, keep_any = "^1410")
+#' filter_by_text(cip, keep_text = "^1410")
 #' @family cip_data
 #'
 "cip"
 
 # -------------------------------------------------------------------
 
-#' Example CIP codes and names
+#' Representative example CIP codes and names
 #'
 #' A subset of the \code{cip} data set containing CIP codes and names for a
 #' case study of Civil, Electrical, Industrial, and Mechanical Engineering
@@ -76,11 +76,11 @@
 #' # placeholder
 #' @family example_data
 #'
-"exa_cip"
+"rep_cip"
 
 # -------------------------------------------------------------------
 
-#' Example program group
+#' Representative example program group
 #'
 #' Six-digit CIP codes and custom program names for a case study of Civil,
 #' Electrical, Industrial, and Mechanical Engineering programs in
@@ -98,23 +98,23 @@
 #' library(midfielddata)
 #'
 #' # attributes of students matriculating in programs
-#' cips_we_want <- exa_group$cip6
+#' cips_we_want <- rep_group$cip6
 #' rows_we_want <- midfieldstudents$cip6 %in% cips_we_want
 #' matriculants <- midfieldstudents[rows_we_want]
 #' str(matriculants)
 #'
 #' # attributes of students graduating in programs
-#' cips_we_want <- exa_group$cip6
+#' cips_we_want <- rep_group$cip6
 #' rows_we_want <- midfielddegrees$cip6 %in% cips_we_want
 #' graduates <- midfielddegrees[rows_we_want]
 #' str(graduates)
 #' @family example_data
 #'
-"exa_group"
+"rep_group"
 
 # -------------------------------------------------------------------
 
-#' Collections of student IDs
+#' Representative example student IDs
 #'
 #' Character vectors of student IDs at different points in a case study of
 #' Civil, Electrical, Industrial, and Mechanical Engineering programs in
@@ -122,11 +122,11 @@
 #'
 #' @format character vector. The names of the available data vectors are:
 #' \describe{
-#' \item{exa_ever}{IDs of unique students ever enrolled in
+#' \item{rep_ever}{IDs of unique students ever enrolled in
 #'   the example programs}
-#' \item{exa_ever_fc}{subset of \code{exa_ever} for whom
+#' \item{rep_ever_fc}{subset of \code{rep_ever} for whom
 #'   program completion is feasible in 6 years}
-#' \item{exa_grad}{IDs of unique students graduating from
+#' \item{rep_grad}{IDs of unique students graduating from
 #'   the example programs}
 #' }
 #'
@@ -134,32 +134,32 @@
 #' library(midfielddata)
 #'
 #' # ever enrolled
-#' rows_we_want <- midfieldstudents$id %in% exa_ever
+#' rows_we_want <- midfieldstudents$id %in% rep_ever
 #' enrollees <- midfieldstudents[rows_we_want]
 #' head(enrollees)
 #'
 #' # graduates
-#' rows_we_want <- midfieldstudents$id %in% exa_grad
+#' rows_we_want <- midfieldstudents$id %in% rep_grad
 #' graduates <- midfieldstudents[rows_we_want]
 #' head(graduates)
 #' @family example_data
-#' @name exa_id
+#' @name rep_id
 #'
 NULL
 
-#' @rdname exa_id
+#' @rdname rep_id
 #' @format NULL
-"exa_ever"
-#' @rdname exa_id
+"rep_ever"
+#' @rdname rep_id
 #' @format NULL
-"exa_grad"
-#' @rdname exa_id
+"rep_grad"
+#' @rdname rep_id
 #' @format NULL
-"exa_ever_fc"
+"rep_ever_fc"
 
 # -------------------------------------------------------------------
 
-#' Example stickiness data
+#' Representative example stickiness data
 #'
 #' Stickiness metric results for a case study of Civil, Electrical,
 #' Industrial, and Mechanical Engineering programs in
@@ -180,18 +180,18 @@ NULL
 #'
 #' @examples
 #' # prepare data for multiway graph
-#' exa_stickiness$race_sex <- paste(exa_stickiness$race, exa_stickiness$sex)
+#' rep_stickiness$race_sex <- paste(rep_stickiness$race, rep_stickiness$sex)
 #' columns_we_want <- c("program", "race_sex", "stick")
-#' pre_mw <- exa_stickiness[, ..columns_we_want]
+#' pre_mw <- rep_stickiness[, ..columns_we_want]
+#'
 #' @family example_data
 #'
-"exa_stickiness"
-
+"rep_stickiness"
 
 
 # -------------------------------------------------------------------
 
-#' Example stickiness data in multiway form
+#' Representative example stickiness data in multiway form
 #'
 #' Stickiness metric results with two categorical variables as factors
 #' with levels ordered by the median stickiness.
@@ -208,7 +208,7 @@ NULL
 #' # placeholder
 #' @family example_data
 #'
-"exa_stickiness_mw"
+"rep_stickiness_mw"
 
 
 # -------------------------------------------------------------------
@@ -220,7 +220,7 @@ NULL
 #'
 #' Some US institutions have first year engineering (FYE) programs---typically
 #' a common first year curriculum that is a prerequisite for declaring
-#' an engineering major. For some persistence metrics, we have to determine
+#' an engineering major. Some persistence metrics require us to determine
 #' what we call a "starting major" for FYE students---the predicted
 #' engineering program such as Civil, Electrical, or Mechanical, for example,
 #' the student would have declared had they not been required to enroll in FYE.
@@ -246,4 +246,4 @@ NULL
 #'
 "midfield_fye"
 
-# -------------------------------------------------------------------
+

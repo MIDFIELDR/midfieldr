@@ -61,8 +61,8 @@ cip_after_fye <- function(id = NULL,
   )
 
   # default data sets and constants
-  data_students <- data_students %||% midfielddata::midfieldstudents
-  data_terms <- data_terms %||% midfielddata::midfieldterms
+  data_students <- data_students %||% copy(midfielddata::midfieldstudents)
+  data_terms <- data_terms %||% copy(midfielddata::midfieldterms)
 
   # check arguments
   assert_class(id, "character")

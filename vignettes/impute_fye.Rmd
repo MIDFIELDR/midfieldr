@@ -20,16 +20,13 @@ source("vignette-knitr-opts.R")
 knitr::opts_chunk$set(fig.path = "../man/figures/vignette-impute-fye-")
 ```
 
-Focus on:
+Using these midfieldr components
 
-- `midfield_fye` (data set)
-- `filter_by_id()`
-
-With an optional look at:
-
-- `fye_next_cip()`
-- `fye_join_cats()`
-- `fye_mice()`
+- `midfield_fye` data 
+- `filter_by_id()` 
+- `fye_next_cip()` 
+- `fye_join_cats()` 
+- `fye_mice()` 
 
 
 
@@ -88,30 +85,29 @@ The imputed starting major should be consistent with a student's race/ethnicity,
 **Example** using the case study IDs. 
 
 ```{r}
-str(exa_ever)
+str(rep_ever)
 ```
 
 
 
 ```{r}
 matric <- filter_by_id(midfieldstudents,
-  keep_id = exa_ever,
+  keep_id = rep_ever,
   keep_col = c("id", "cip6"),
   unique_row = TRUE
 )
 rows_we_want <- matric$cip %in% c("14XXXX", "14YYYY")
 engr <- matric[!rows_we_want]
-fye <- matric[rows_we_want]
+fye <- matric[rows_we_want, .(id)]
 
 # join
 fye <- merge(fye, midfield_fye, by = "id", all.x = TRUE)
 
 # add start column
-engr <- engr[, .(id, cip6, start = cip6)]
+engr <- engr[, .(id, cip6)]
 
 starters <- rbind(fye, engr)
-starters[order(id)]
-starters
+starters[order(id), .(id, start = cip6)]
 ```
 
 
@@ -226,6 +222,8 @@ engr_post_fye
 ```
 
 
+
+More to come
 
 
 ```r

@@ -137,14 +137,13 @@ stratified sample of the MIDFIELD database.
 
 ## Usage
 
-**midfieldr functions** are designed to work with MIDFIELD-structured
-data to access and manipulate student records. A typical workflow might
-include:
+**midfieldr functions** work with MIDFIELD-structured data to access and
+manipulate student records. A typical workflow might include:
 
-  - `get_cip()` search the CIP data set for program codes  
+  - `filter_by_text()` search the CIP data set for program codes  
   - `label_programs()` isolate and label specific programs to study  
-  - `get_enrollees()` gather students ever enrolled in the programs
-  - `completion_feasible()` subset students for 6-year completion
+  - `filter_by_cip()` gather students ever enrolled in the programs
+  - `feasible_subset()` subset students for 6-year completion
     feasibility
   - `get_race_sex()` obtain student sex and race/ethnicity
   - `order_multiway()` condition multiway data for graphing
@@ -164,10 +163,9 @@ In general the midfieldr vignettes use the following packages:
     [2020](#ref-Dowle+Srinivasan:2020:data.table))
   - ggplot2 (Wickham, [2016](#ref-Wickham:2016:ggplot2))
 
-**example**. The *Getting started* vignette
-[(link)](getting_started.html) introduces some of the basic midfieldr
-functions and the midfielddata data sets. Additional vignettes develop
-the material in more detail.
+**example**. The *Get started* vignette [(link)](get_started.html)
+introduces some of the basic midfieldr functions and the midfielddata
+data sets. Additional vignettes develop the material in more detail.
 
 ## Meta
 

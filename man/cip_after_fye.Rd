@@ -57,12 +57,10 @@ with no program after FYE, the CIP is NA.
 }
 \examples{
 # placeholder
-
 }
 \seealso{
 Other data_carpentry: 
-\code{\link{completion_feasible}()},
-\code{\link{order_multiway}()},
-\code{\link{term_addition}()}
+\code{\link{feasible_subset}()},
+\code{\link{order_multiway}()}
 }
 \concept{data_carpentry}

@@ -6,9 +6,9 @@
 \usage{
 filter_by_text(
   data,
-  keep_any = NULL,
+  keep_text = NULL,
   ...,
-  drop_any = NULL,
+  drop_text = NULL,
   keep_col = NULL,
   unique_row = NULL
 )
@@ -16,11 +16,11 @@ filter_by_text(
 \arguments{
 \item{data}{data frame of character columns}
 
-\item{keep_any}{character vector of search patterns for retaining rows}
+\item{keep_text}{character vector of search patterns for retaining rows}
 
 \item{...}{not used, force later arguments to be used by name}
 
-\item{drop_any}{character vector of search patterns for dropping rows}
+\item{drop_text}{character vector of search patterns for dropping rows}
 
 \item{keep_col}{character vector of column names, default all columns}
 
@@ -49,16 +49,14 @@ though any data frame with all character-string columns can be searched
 and subset.
 }
 \examples{
-filter_by_text(cip, keep_any = c("^1407", "^1410"))
-filter_by_text(cip, keep_any = "civil engineering", drop_any = "technology")
-filter_by_text(cip, keep_any = "History") \%>\%
-  filter_by_text(keep_any = "American")
-
+filter_by_text(cip, keep_text = c("^1407", "^1410"))
+filter_by_text(cip, keep_text = "civil engineering", drop_text = "technology")
+filter_by_text(cip, keep_text = "History") \%>\%
+  filter_by_text(keep_text = "American")
 }
 \seealso{
 Other data_query: 
 \code{\link{filter_by_cip}()},
-\code{\link{filter_by_id}()},
-\code{\link{get_institution_limits}()}
+\code{\link{filter_by_id}()}
 }
 \concept{data_query}

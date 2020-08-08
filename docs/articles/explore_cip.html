@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9002</span>
       </span>
     </div>
 
@@ -51,7 +51,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/getting_started.html">Getting started</a>
+  <a href="../articles/get_started.html">Get started</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -138,17 +138,25 @@
 
     
     
-<p>Focus on midfieldr functions:</p>
-<ul>
-<li><code><a href="../reference/filter_by_text.html">filter_by_text()</a></code></li>
-</ul>
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>In studying student records, a common first step is to subset the data, retaining some instructional programs and dropping others.</p>
-<p>Instructional programs in the US are encoded by “CIP” codes. CIP is the acronym for <em>Classification of Instructional Programs</em>, a taxonomy of academic programs curated by the US Department of Education <span class="citation">(NCES, <a href="#ref-NCES:2010" role="doc-biblioref">2010</a>)</span>.</p>
-<p>A CIP code is a 6-digit integer assigned to an instructional program. The 2010 CIP codes are included with midfieldr in the data set <code>cip</code>.</p>
-<p>We explore the <code>cip</code> data set using the <code><a href="../reference/filter_by_text.html">filter_by_text()</a></code> function. We illustrate several search strategies and we conclude by constructing an example data set used in subsequent vignettes.</p>
+<p>In studying student records, a common first step is to subset the data, retaining some instructional programs and dropping others. In the US, instructional programs are encoded by “CIP” codes.</p>
+<p>CIP is the acronym for <em>Classification of Instructional Programs</em>, a taxonomy of academic programs curated by the US Department of Education <span class="citation">(NCES, <a href="#ref-NCES:2010" role="doc-biblioref">2010</a>)</span>. A CIP code is a 6-digit integer assigned to an instructional program. The 2010 CIP codes are included with midfieldr in the data set <code>cip</code>.</p>
+<p>We explore the <code>cip</code> data set using several search strategies and we conclude by constructing an example data set used in subsequent vignettes.</p>
+<div id="this-vignette-uses" class="section level3">
+<h3 class="hasAnchor">
+<a href="#this-vignette-uses" class="anchor"></a>This vignette uses</h3>
+<p>midfieldr functions</p>
+<ul>
+<li><code><a href="../reference/filter_by_text.html">filter_by_text()</a></code></li>
+</ul>
+<p>data.table syntax</p>
+<ul>
+<li>
+<code>DT[, .(column_name_1, column_name_2)]</code> select columns by name</li>
+</ul>
+<p>packages</p>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># packages used</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>)
@@ -156,6 +164,7 @@
 <span class="co"># print max 20 rows, otherwise 5 rows each head/tail</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">datatable.print.nrows</span> <span class="kw">=</span> <span class="fl">20</span>, <span class="kw">datatable.print.topn</span> <span class="kw">=</span> <span class="fl">5</span>)</pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
+</div>
 </div>
 <div id="cip-data" class="section level2">
 <h2 class="hasAnchor">
@@ -166,55 +175,308 @@
 <li>4-digit code, a group of 6-digit programs of comparable content</li>
 <li>2-digit code, a grouping of 4-digit groups of related content</li>
 </ul>
-<p>Examine the values in the data set.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># examine the data</span>
-<span class="no">cip</span>
-<span class="co">#&gt;       cip2                                                  cip2name cip4</span>
-<span class="co">#&gt;    1:   01 Agriculture, Agricultural Operations and Related Sciences 0100</span>
-<span class="co">#&gt;    2:   01 Agriculture, Agricultural Operations and Related Sciences 0101</span>
-<span class="co">#&gt;    3:   01 Agriculture, Agricultural Operations and Related Sciences 0101</span>
-<span class="co">#&gt;    4:   01 Agriculture, Agricultural Operations and Related Sciences 0101</span>
-<span class="co">#&gt;    5:   01 Agriculture, Agricultural Operations and Related Sciences 0101</span>
-<span class="co">#&gt;   ---                                                                    </span>
-<span class="co">#&gt; 1580:   54                                                   History 5401</span>
-<span class="co">#&gt; 1581:   54                                                   History 5401</span>
-<span class="co">#&gt; 1582:   54                                                   History 5401</span>
-<span class="co">#&gt; 1583:   54                                                   History 5401</span>
-<span class="co">#&gt; 1584:   99                         NonIPEDS - Undecided, Unspecified 9999</span>
-<span class="co">#&gt;                                   cip4name   cip6</span>
-<span class="co">#&gt;    1:                 Agriculture, General 010000</span>
-<span class="co">#&gt;    2: Agricultural Business and Management 010101</span>
-<span class="co">#&gt;    3: Agricultural Business and Management 010102</span>
-<span class="co">#&gt;    4: Agricultural Business and Management 010103</span>
-<span class="co">#&gt;    5: Agricultural Business and Management 010104</span>
-<span class="co">#&gt;   ---                                            </span>
-<span class="co">#&gt; 1580:                              History 540106</span>
-<span class="co">#&gt; 1581:                              History 540107</span>
-<span class="co">#&gt; 1582:                              History 540108</span>
-<span class="co">#&gt; 1583:                              History 540199</span>
-<span class="co">#&gt; 1584:    NonIPEDS - Undecided, Unspecified 999999</span>
-<span class="co">#&gt;                                             cip6name</span>
-<span class="co">#&gt;    1:                           Agriculture, General</span>
-<span class="co">#&gt;    2:  Agricultural Business and Management, General</span>
-<span class="co">#&gt;    3: Agribusiness, Agricultural Business Operations</span>
-<span class="co">#&gt;    4:                         Agricultural Economics</span>
-<span class="co">#&gt;    5:                Farm, Farm and Ranch Management</span>
-<span class="co">#&gt;   ---                                               </span>
-<span class="co">#&gt; 1580:                                  Asian History</span>
-<span class="co">#&gt; 1581:                               Canadian History</span>
-<span class="co">#&gt; 1582:                               Military History</span>
-<span class="co">#&gt; 1583:                                 History, Other</span>
-<span class="co">#&gt; 1584:              NonIPEDS - Undecided, Unspecified</span></pre></body></html></div>
-<p>If you prefer to see a spreadsheet-like array of the data, run</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span>(<span class="no">cip</span>)</pre></body></html></div>
-<p>In the table below, we show all programs associated with the 2-digit code “41”, for “Science Technologies, Technicians” programs. We find</p>
-<ul>
-<li>one grouping at the 2-digit level (code 41)<br>
-</li>
-<li>5 groups at the 4-digit level (codes 4100, 4101, …)</li>
-<li>9 programs at the 6-digit level (codes 410000, 410101, …)</li>
-</ul>
-<p>The 6-digit codes and names represent distinct instructional programs.</p>
+<p>Examine the column names and class.</p>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># column names and class of each </span>
+<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="no">cip</span>, <span class="kw">FUN</span> <span class="kw">=</span> <span class="no">class</span>)
+<span class="co">#&gt;        cip2    cip2name        cip4    cip4name        cip6    cip6name </span>
+<span class="co">#&gt; "character" "character" "character" "character" "character" "character"</span></pre></body></html></div>
+<p>View the 2-, 4-, and 6-digit columns separately.</p>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># 2-digit codes and names alone</span>
+<span class="no">cip</span>[, <span class="fu">.</span>(<span class="no">cip2</span>, <span class="no">cip2name</span>)]
+<span class="co">#&gt;       cip2                                                  cip2name</span>
+<span class="co">#&gt;    1:   01 Agriculture, Agricultural Operations and Related Sciences</span>
+<span class="co">#&gt;    2:   01 Agriculture, Agricultural Operations and Related Sciences</span>
+<span class="co">#&gt;    3:   01 Agriculture, Agricultural Operations and Related Sciences</span>
+<span class="co">#&gt;    4:   01 Agriculture, Agricultural Operations and Related Sciences</span>
+<span class="co">#&gt;    5:   01 Agriculture, Agricultural Operations and Related Sciences</span>
+<span class="co">#&gt;   ---                                                               </span>
+<span class="co">#&gt; 1580:   54                                                   History</span>
+<span class="co">#&gt; 1581:   54                                                   History</span>
+<span class="co">#&gt; 1582:   54                                                   History</span>
+<span class="co">#&gt; 1583:   54                                                   History</span>
+<span class="co">#&gt; 1584:   99                         NonIPEDS - Undecided, Unspecified</span>
+
+<span class="co"># 4-digit codes and names alone </span>
+<span class="no">cip</span>[, <span class="fu">.</span>(<span class="no">cip4</span>, <span class="no">cip4name</span>)]
+<span class="co">#&gt;       cip4                             cip4name</span>
+<span class="co">#&gt;    1: 0100                 Agriculture, General</span>
+<span class="co">#&gt;    2: 0101 Agricultural Business and Management</span>
+<span class="co">#&gt;    3: 0101 Agricultural Business and Management</span>
+<span class="co">#&gt;    4: 0101 Agricultural Business and Management</span>
+<span class="co">#&gt;    5: 0101 Agricultural Business and Management</span>
+<span class="co">#&gt;   ---                                          </span>
+<span class="co">#&gt; 1580: 5401                              History</span>
+<span class="co">#&gt; 1581: 5401                              History</span>
+<span class="co">#&gt; 1582: 5401                              History</span>
+<span class="co">#&gt; 1583: 5401                              History</span>
+<span class="co">#&gt; 1584: 9999    NonIPEDS - Undecided, Unspecified</span>
+
+<span class="co"># 6-digit codes and names alone </span>
+<span class="no">cip</span>[, <span class="fu">.</span>(<span class="no">cip6</span>, <span class="no">cip6name</span>)]
+<span class="co">#&gt;         cip6                                       cip6name</span>
+<span class="co">#&gt;    1: 010000                           Agriculture, General</span>
+<span class="co">#&gt;    2: 010101  Agricultural Business and Management, General</span>
+<span class="co">#&gt;    3: 010102 Agribusiness, Agricultural Business Operations</span>
+<span class="co">#&gt;    4: 010103                         Agricultural Economics</span>
+<span class="co">#&gt;    5: 010104                Farm, Farm and Ranch Management</span>
+<span class="co">#&gt;   ---                                                      </span>
+<span class="co">#&gt; 1580: 540106                                  Asian History</span>
+<span class="co">#&gt; 1581: 540107                               Canadian History</span>
+<span class="co">#&gt; 1582: 540108                               Military History</span>
+<span class="co">#&gt; 1583: 540199                                 History, Other</span>
+<span class="co">#&gt; 1584: 999999              NonIPEDS - Undecided, Unspecified</span></pre></body></html></div>
+<p>If you prefer to see a spreadsheet-like array of any data frame, run</p>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span>(<span class="no">cip</span>)</pre></body></html></div>
+<p>To facilitate viewing in the vignettes, we will often typeset a data frame as an HTML table. For example, the following table includes the same information from our views of <code>cip</code> above in an easy-to-read format. The values are tabulated with the variable names in the header.</p>
+<table class="table table">
+<thead><tr>
+<th style="text-align:left;">
+cip2
+</th>
+<th style="text-align:left;">
+cip2name
+</th>
+<th style="text-align:left;">
+cip4
+</th>
+<th style="text-align:left;">
+cip4name
+</th>
+<th style="text-align:left;">
+cip6
+</th>
+<th style="text-align:left;">
+cip6name
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+01
+</td>
+<td style="text-align:left;">
+Agriculture, Agricultural Operations and Related Sciences
+</td>
+<td style="text-align:left;">
+0100
+</td>
+<td style="text-align:left;">
+Agriculture, General
+</td>
+<td style="text-align:left;">
+010000
+</td>
+<td style="text-align:left;">
+Agriculture, General
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+01
+</td>
+<td style="text-align:left;">
+Agriculture, Agricultural Operations and Related Sciences
+</td>
+<td style="text-align:left;">
+0101
+</td>
+<td style="text-align:left;">
+Agricultural Business and Management
+</td>
+<td style="text-align:left;">
+010101
+</td>
+<td style="text-align:left;">
+Agricultural Business and Management, General
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+01
+</td>
+<td style="text-align:left;">
+Agriculture, Agricultural Operations and Related Sciences
+</td>
+<td style="text-align:left;">
+0101
+</td>
+<td style="text-align:left;">
+Agricultural Business and Management
+</td>
+<td style="text-align:left;">
+010102
+</td>
+<td style="text-align:left;">
+Agribusiness, Agricultural Business Operations
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+01
+</td>
+<td style="text-align:left;">
+Agriculture, Agricultural Operations and Related Sciences
+</td>
+<td style="text-align:left;">
+0101
+</td>
+<td style="text-align:left;">
+Agricultural Business and Management
+</td>
+<td style="text-align:left;">
+010103
+</td>
+<td style="text-align:left;">
+Agricultural Economics
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+01
+</td>
+<td style="text-align:left;">
+Agriculture, Agricultural Operations and Related Sciences
+</td>
+<td style="text-align:left;">
+0101
+</td>
+<td style="text-align:left;">
+Agricultural Business and Management
+</td>
+<td style="text-align:left;">
+010104
+</td>
+<td style="text-align:left;">
+Farm, Farm and Ranch Management
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+—
+</td>
+<td style="text-align:left;">
+—
+</td>
+<td style="text-align:left;">
+—
+</td>
+<td style="text-align:left;">
+—
+</td>
+<td style="text-align:left;">
+—
+</td>
+<td style="text-align:left;">
+—
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540106
+</td>
+<td style="text-align:left;">
+Asian History
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540107
+</td>
+<td style="text-align:left;">
+Canadian History
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540108
+</td>
+<td style="text-align:left;">
+Military History
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+5401
+</td>
+<td style="text-align:left;">
+History
+</td>
+<td style="text-align:left;">
+540199
+</td>
+<td style="text-align:left;">
+History, Other
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+99
+</td>
+<td style="text-align:left;">
+NonIPEDS - Undecided, Unspecified
+</td>
+<td style="text-align:left;">
+9999
+</td>
+<td style="text-align:left;">
+NonIPEDS - Undecided, Unspecified
+</td>
+<td style="text-align:left;">
+999999
+</td>
+<td style="text-align:left;">
+NonIPEDS - Undecided, Unspecified
+</td>
+</tr>
+</tbody>
+</table>
+<div id="relationships-between-2--4--and-6-digit-cip" class="section level3">
+<h3 class="hasAnchor">
+<a href="#relationships-between-2--4--and-6-digit-cip" class="anchor"></a>Relationships between 2-, 4-, and 6-digit CIP</h3>
+<p>In the table below, we show all programs associated with the 2-digit code “41” for programs in the broad area of “Science Technologies, Technicians”. This 2-digit grouping is subdivided into 5 groups at the 4-digit level (codes 4100–4199) which are further subdivided into 9 programs at the 6-digit level (codes 410000–419999).</p>
+<p>As you can see, the 6-digit codes and names represent distinct instructional programs and the 4- and 2-digit codes are groupings of programs.</p>
 <table class="table table">
 <thead><tr>
 <th style="text-align:left;">
@@ -423,14 +685,15 @@ Science Technologies, Technicians, Other
 <p>Higher-level groups comprise different numbers of lower-level groups. As shown above, codes 4102 and 4103 include 3 programs each but codes 4100, 4101, and 4199 include only one program each. At the 2-digit level, code 41 comprises N = 9 programs total.</p>
 <p>In <code>cip</code> overall, a 2-digit grouping can include anywhere from 4 programs (code 24 Liberal Arts and Sciences, General Studies and Humanities) to 238 programs (code 51 Health Professions and Related Clinical Sciences). Similarly, a 4-digit grouping can include anywhere from 1 program (codes 4100, 4101, and 4199 shown above) to 37 programs (code 1313 Education).</p>
 <p>To learn more, open the help page by running</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r">? <span class="no">cip</span></pre></body></html></div>
+<div class="sourceCode" id="cb5"><html><body><pre class="r">? <span class="no">cip</span></pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
+</div>
 </div>
 <div id="filtering-basics" class="section level2">
 <h2 class="hasAnchor">
 <a href="#filtering-basics" class="anchor"></a>Filtering basics</h2>
 <p>The variables in <code>cip</code> are all characters, facilitating filtering using character search terms.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># examine variable types</span>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># examine variable types</span>
 <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="no">cip</span>, <span class="kw">FUN</span> <span class="kw">=</span> <span class="no">class</span>)
 <span class="co">#&gt;        cip2    cip2name        cip4    cip4name        cip6    cip6name </span>
 <span class="co">#&gt; "character" "character" "character" "character" "character" "character"</span></pre></body></html></div>
@@ -439,13 +702,13 @@ Science Technologies, Technicians, Other
 <li>
 <code>data</code> data frame to be subsetted</li>
 <li>
-<code>keep_any</code> character vector of search patterns for retaining rows, not case-sensitive</li>
+<code>keep_text</code> character vector of search patterns for retaining rows, not case-sensitive</li>
 <li>
-<code>drop_any</code> (optional) character vector of search patterns for dropping rows</li>
+<code>drop_text</code> (optional) character vector of search patterns for dropping rows</li>
 </ul>
 <p>For example, filtering the CIP data for all programs containing the word “engineering” yields 121 observations.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># filter basics</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"engineering"</span>)
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># filter basics</span>
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"engineering"</span>)
 
 <span class="co"># examine the result</span>
 <span class="no">sub_cip</span>
@@ -485,9 +748,9 @@ Science Technologies, Technicians, Other
 <span class="co">#&gt; 119:                                       Combat Systems Engineering</span>
 <span class="co">#&gt; 120:                                            Engineering Acoustics</span>
 <span class="co">#&gt; 121: Assistive, Augmentative Technology and Rehabiliation Engineering</span></pre></body></html></div>
-<p>The first two argument names can be omitted if they are in the correct order. If the optional <code>drop_any</code> argument is used, it must be named,</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># only the drop_any argument must be named</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="st">"civil engineering"</span>, <span class="kw">drop_any</span> <span class="kw">=</span> <span class="st">"technology"</span>)
+<p>The first two argument names can be omitted if they are in the correct order. If the optional <code>drop_text</code> argument is used, it must be named,</p>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># only the drop_text argument must be named</span>
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="st">"civil engineering"</span>, <span class="kw">drop_text</span> <span class="kw">=</span> <span class="st">"technology"</span>)
 
 <span class="co"># examine the result</span>
 <span class="no">sub_cip</span>
@@ -506,7 +769,7 @@ Science Technologies, Technicians, Other
 <span class="co">#&gt; 5:            Water Resources Engineering</span>
 <span class="co">#&gt; 6:               Civil Engineering, Other</span></pre></body></html></div>
 <p>To learn more, open the help page by running</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r">? <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb9"><html><body><pre class="r">? <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>()</pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 <div id="filtering-examples" class="section level2">
@@ -516,8 +779,8 @@ Science Technologies, Technicians, Other
 <h3 class="hasAnchor">
 <a href="#using-keywords-and-phrases" class="anchor"></a>1. Using keywords and phrases</h3>
 <p>Suppose we want to find the CIP codes and names for all programs in Civil Engineering. The search is case-insensitive, so we start with the following code chunk.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># example 1 filter using keywords</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"civil"</span>)
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># example 1 filter using keywords</span>
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"civil"</span>)
 
 <span class="co"># examine the result</span>
 <span class="no">sub_cip</span>
@@ -828,14 +1091,14 @@ Multi, Interdisciplinary Studies - Ancient Studies, Civilization
 <p><br></p>
 <p>The search returns some programs with Civilization in their names as well as Engineering Technology. If we wanted Civil Engineering only, we can use a sequence of function calls, where the outcome of the one operation is assigned to the first argument of the next operation via the pipe <code><a href="../reference/pipe.html">%&gt;%</a></code> operator.</p>
 <p>The following code chunk could be read as, “Start with the <code>cip</code> data frame, then keep any rows in which ‘civil’ is detected, then keep any rows in which ‘engineering’ is detected, then drop any rows in which ‘technology’ is detected.”</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># first pass</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"civil"</span>)
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># first pass</span>
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"civil"</span>)
 
 <span class="co"># refine the search</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">sub_cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"engineering"</span>)
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">sub_cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"engineering"</span>)
 
 <span class="co"># refine further</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">sub_cip</span>, <span class="kw">drop_any</span> <span class="kw">=</span> <span class="st">"technology"</span>)</pre></body></html></div>
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">sub_cip</span>, <span class="kw">drop_text</span> <span class="kw">=</span> <span class="st">"technology"</span>)</pre></body></html></div>
 <table class="table table">
 <thead><tr>
 <th style="text-align:left;">
@@ -982,7 +1245,7 @@ Civil Engineering, Other
 </table>
 <p><br></p>
 <p>Seeing that all Civil Engineering programs have the same <code>cip4name</code>, we could combine our search terms in one argument set,</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"civil engineering"</span>, <span class="kw">drop_any</span> <span class="kw">=</span> <span class="st">"technology"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"civil engineering"</span>, <span class="kw">drop_text</span> <span class="kw">=</span> <span class="st">"technology"</span>)</pre></body></html></div>
 <table class="table table">
 <thead><tr>
 <th style="text-align:left;">
@@ -1132,9 +1395,9 @@ Civil Engineering, Other
 <div id="using-numerical-codes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#using-numerical-codes" class="anchor"></a>2. Using numerical codes</h3>
-<p>Suppose we want to study programs relating to German culture, language, and literature. Using “german” for the <code>keep_any</code> value yields</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># example 2 filter using numerical codes</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"german"</span>)</pre></body></html></div>
+<p>Suppose we want to study programs relating to German culture, language, and literature. Using “german” for the <code>keep_text</code> value yields</p>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># example 2 filter using numerical codes</span>
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"german"</span>)</pre></body></html></div>
 <table class="table table">
 <thead><tr>
 <th style="text-align:left;">
@@ -1360,8 +1623,8 @@ Germanic Languages, Literatures and Linguistics, Other
 </tbody>
 </table>
 <p><br></p>
-<p>From the 6-digit program names we find only two that are of interest, German Studies (050125) and German Language and Literature (160501). We use a character vector to assign these two codes to the <code>keep_any</code> argument.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"050125"</span>, <span class="st">"160501"</span>))</pre></body></html></div>
+<p>From the 6-digit program names we find only two that are of interest, German Studies (050125) and German Language and Literature (160501). We use a character vector to assign these two codes to the <code>keep_text</code> argument.</p>
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"050125"</span>, <span class="st">"160501"</span>))</pre></body></html></div>
 <table class="table table">
 <thead><tr>
 <th style="text-align:left;">
@@ -1428,16 +1691,16 @@ German Language and Literature
 </table>
 <p><br></p>
 <p>If the 6-digit codes are entered as integers, they produce an error.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">050125</span>, <span class="fl">160501</span>))
-<span class="co">#&gt; Error: `keep_any` must be of class character</span></pre></body></html></div>
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">050125</span>, <span class="fl">160501</span>))
+<span class="co">#&gt; Error: `keep_text` must be of class character</span></pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 <div id="using-regular-expressions" class="section level3">
 <h3 class="hasAnchor">
 <a href="#using-regular-expressions" class="anchor"></a>3. Using regular expressions</h3>
 <p>Specifying 4-digit codes yields a data frame all 6-digit programs containing the 4-digit string. We use the regular expression notation <code><a href="https://rdrr.io/r/base/Arithmetic.html">^</a></code> to match the start of the strings.</p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="co"># example 3 filter using regular expressions</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^1407"</span>, <span class="st">"^1408"</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="co"># example 3 filter using regular expressions</span>
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^1407"</span>, <span class="st">"^1408"</span>))</pre></body></html></div>
 <table class="table table">
 <thead><tr>
 <th style="text-align:left;">
@@ -1644,8 +1907,8 @@ Civil Engineering, Other
 </table>
 <p><br></p>
 <p>The 2-digit series represent the most general groupings of related programs. Here, the result includes all History programs.</p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="co"># 2-digit example</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^54"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="co"># 2-digit example</span>
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"^54"</span>)</pre></body></html></div>
 <table class="table table">
 <thead><tr>
 <th style="text-align:left;">
@@ -1852,8 +2115,8 @@ History, Other
 </table>
 <p><br></p>
 <p>The series argument can include any combination of 2, 4, and 6-digit codes.</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="co"># a series with 2, 4, and 6-digits specified</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^24"</span>, <span class="st">"^4102"</span>, <span class="st">"^450202"</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="co"># a series with 2, 4, and 6-digits specified</span>
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^24"</span>, <span class="st">"^4102"</span>, <span class="st">"^450202"</span>))</pre></body></html></div>
 <table class="table table">
 <thead><tr>
 <th style="text-align:left;">
@@ -2043,10 +2306,10 @@ Physical Anthropology
 <div id="search-terms-that-cannot-be-found" class="section level3">
 <h3 class="hasAnchor">
 <a href="#search-terms-that-cannot-be-found" class="anchor"></a>4. Search terms that cannot be found</h3>
-<p>If the <code>keep_any</code> argument includes terms that cannot be found in the CIP data frame, the unsuccessful terms are identified in a message and the successful terms produce the usual output.</p>
-<p>For example, the following <code>keep_any</code> argument includes three search terms that are not present in the CIP data (“111111”, “^55”, and “Bogus”) and two that are (“050125” and “160501”).</p>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="co"># unsuccessful terms produce a message</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"050125"</span>, <span class="st">"111111"</span>, <span class="st">"160501"</span>, <span class="st">"Bogus"</span>, <span class="st">"^55"</span>))
+<p>If the <code>keep_text</code> argument includes terms that cannot be found in the CIP data frame, the unsuccessful terms are identified in a message and the successful terms produce the usual output.</p>
+<p>For example, the following <code>keep_text</code> argument includes three search terms that are not present in the CIP data (“111111”, “^55”, and “Bogus”) and two that are (“050125” and “160501”).</p>
+<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="co"># unsuccessful terms produce a message</span>
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"050125"</span>, <span class="st">"111111"</span>, <span class="st">"160501"</span>, <span class="st">"Bogus"</span>, <span class="st">"^55"</span>))
 <span class="co">#&gt; Can't find these terms: 111111, Bogus, ^55</span>
 
 <span class="co"># but the successful terms are returned</span>
@@ -2061,9 +2324,41 @@ Physical Anthropology
 <span class="co">#&gt; 1:                 German Studies</span>
 <span class="co">#&gt; 2: German Language and Literature</span></pre></body></html></div>
 <p>However, as seen earlier, if none of the search terms are found, an error occurs.</p>
-<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"111111"</span>, <span class="st">"Bogus"</span>, <span class="st">"^55"</span>))
+<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"111111"</span>, <span class="st">"Bogus"</span>, <span class="st">"^55"</span>))
 <span class="co">#&gt; Error: No CIPs satisfy the search criteria</span></pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
+</div>
+<div id="other-optional-arguments" class="section level3">
+<h3 class="hasAnchor">
+<a href="#other-optional-arguments" class="anchor"></a>5. Other optional arguments</h3>
+<p><code><a href="../reference/filter_by_text.html">filter_by_text()</a></code> has two additional optional arguments.</p>
+<ul>
+<li><code>keep_col</code></li>
+<li><code>unique_row</code></li>
+</ul>
+<p>As seen in the previous examples, the default setting for <code>keep_col</code> returns all columns. We can select columns by name,</p>
+<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="co"># selecting columns </span>
+<span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>,
+               <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"^54"</span>,
+               <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"cip4"</span>, <span class="st">"cip4name"</span>))
+<span class="co">#&gt;    cip4 cip4name</span>
+<span class="co">#&gt; 1: 5401  History</span>
+<span class="co">#&gt; 2: 5401  History</span>
+<span class="co">#&gt; 3: 5401  History</span>
+<span class="co">#&gt; 4: 5401  History</span>
+<span class="co">#&gt; 5: 5401  History</span>
+<span class="co">#&gt; 6: 5401  History</span>
+<span class="co">#&gt; 7: 5401  History</span>
+<span class="co">#&gt; 8: 5401  History</span>
+<span class="co">#&gt; 9: 5401  History</span></pre></body></html></div>
+<p>The default setting for <code>unique_row</code> returns all rows. Setting the argument to TRUE removes duplicate rows after subsetting is complete.</p>
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="co"># remove duplicate rows </span>
+<span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>,
+               <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"^54"</span>,
+               <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"cip4"</span>, <span class="st">"cip4name"</span>),
+               <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="co">#&gt;    cip4 cip4name</span>
+<span class="co">#&gt; 1: 5401  History</span></pre></body></html></div>
 </div>
 </div>
 <div id="case-study" class="section level2">
@@ -2071,8 +2366,9 @@ Physical Anthropology
 <a href="#case-study" class="anchor"></a>Case study</h2>
 <p>In the midfieldr vignettes, we use a case study of four programs (Civil, Electrical, Industrial, and Mechanical Engineering) to illustrate our process of computing persistence metrics.</p>
 <p>The case study begins here, by extracting CIP data for the four engineering programs.</p>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"engineering"</span>, <span class="kw">drop_any</span> <span class="kw">=</span> <span class="st">"technology"</span>)
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">sub_cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"civil"</span>, <span class="st">"electrical"</span>, <span class="st">"industrial"</span>, <span class="st">"mechanical"</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="co"># explore the CIP</span>
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"engineering"</span>, <span class="kw">drop_text</span> <span class="kw">=</span> <span class="st">"technology"</span>)
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">sub_cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"civil"</span>, <span class="st">"electrical"</span>, <span class="st">"industrial"</span>, <span class="st">"mechanical"</span>))</pre></body></html></div>
 <table class="table table">
 <thead><tr>
 <th style="text-align:left;">
@@ -2359,7 +2655,8 @@ Electromechanical Engineering
 </table>
 <p><br></p>
 <p>The results show that the codes we want are at the 4-digit level: 1408, 1410, 1419, and 1435.</p>
-<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="no">exa_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1435"</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="co"># select the case study CIPs</span>
+<span class="no">case_study_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1435"</span>))</pre></body></html></div>
 <table class="table table">
 <thead><tr>
 <th style="text-align:left;">
@@ -2625,8 +2922,9 @@ Industrial Engineering
 </tbody>
 </table>
 <p><br></p>
-<p>For convenience, <code>exa_cip</code> is included in midfieldr as a built-in data set. View its help page by running</p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r">? <span class="no">exa_cip</span></pre></body></html></div>
+<p>The data frame <code>case_study_cip</code> concludes this stage of the case study and, in turn, is the input to the next stage. Similar intermediate results conclude every stage of the case study. In each instance, such results are named with the prefix <code>rep_</code> (indicating they are associated with the “representative” case study) and are included as data sets in midfieldr.</p>
+<p>The CIP data frame derived above is the data set <code>rep_cip</code> in midfieldr. View its help page by running</p>
+<div class="sourceCode" id="cb25"><html><body><pre class="r">? <span class="no">rep_cip</span></pre></body></html></div>
 </div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
@@ -2644,37 +2942,38 @@ Industrial Engineering
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor"></a>Complete script</h3>
 <p>The vignette code chunks are collected below in a single, condensed script.</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="co"># load packages</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"midfieldr"</span>)
+<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="co"># packages used</span>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>)
 
 <span class="co"># examine variable types</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">cip</span>)
 
 <span class="co"># filter basics</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"engineering"</span>)
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="st">"civil engineering"</span>, <span class="kw">drop_any</span> <span class="kw">=</span> <span class="st">"technology"</span>)
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"engineering"</span>)
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="st">"civil engineering"</span>, <span class="kw">drop_text</span> <span class="kw">=</span> <span class="st">"technology"</span>)
 
 <span class="co"># example 1 filter using keywords</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"civil"</span>)
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">sub_cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"engineering"</span>)
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">sub_cip</span>, <span class="kw">drop_any</span> <span class="kw">=</span> <span class="st">"technology"</span>)
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"civil engineering"</span>, <span class="kw">drop_any</span> <span class="kw">=</span> <span class="st">"technology"</span>)
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"civil"</span>)
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">sub_cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"engineering"</span>)
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">sub_cip</span>, <span class="kw">drop_text</span> <span class="kw">=</span> <span class="st">"technology"</span>)
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"civil engineering"</span>, <span class="kw">drop_text</span> <span class="kw">=</span> <span class="st">"technology"</span>)
 
 <span class="co"># example 2 filter using numerical codes</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"german"</span>)
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"050125"</span>, <span class="st">"160501"</span>))
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"german"</span>)
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"050125"</span>, <span class="st">"160501"</span>))
 
 <span class="co"># example 3 filter using regular expressions</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^1407"</span>, <span class="st">"^1408"</span>))
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="st">"^54"</span>)
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^24"</span>, <span class="st">"^4102"</span>, <span class="st">"^450202"</span>))
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^1407"</span>, <span class="st">"^1408"</span>))
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"^54"</span>)
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^24"</span>, <span class="st">"^4102"</span>, <span class="st">"^450202"</span>))
 
 <span class="co"># example 4 search terms that cannot be found</span>
-<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"050125"</span>, <span class="st">"111111"</span>, <span class="st">"160501"</span>, <span class="st">"Bogus"</span>, <span class="st">"^55"</span>))
+<span class="no">sub_cip</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"050125"</span>, <span class="st">"111111"</span>, <span class="st">"160501"</span>, <span class="st">"Bogus"</span>, <span class="st">"^55"</span>))
 
 <span class="co"># case study data set</span>
-<span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_any</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1435"</span>))
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">exa_cip</span>)</pre></body></html></div>
+<span class="fu"><a href="../reference/filter_by_text.html">filter_by_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1435"</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">rep_cip</span>)</pre></body></html></div>
 <p><br><a href="#top">▲ top of page </a><br><a href="../index.html">◁ main page </a></p>
 </div>
 </div>

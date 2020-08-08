@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9002</span>
       </span>
     </div>
 
@@ -51,7 +51,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/getting_started.html">Getting started</a>
+  <a href="../articles/get_started.html">Get started</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -138,10 +138,6 @@
 
     
     
-<p>Focus on midfieldr functions:</p>
-<ul>
-<li><code><a href="../reference/order_multiway.html">order_multiway()</a></code></li>
-</ul>
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
@@ -154,6 +150,25 @@
 <p>… the quantitative variable is a response, and the goal is to study how it depends on the categorical variables, which are factors. What distinguishes multiway data is the cross-classification of the categorical variables; there is a value of the response for each combination of levels of the two categorical variables.</p>
 </blockquote>
 <p><code><a href="../reference/order_multiway.html">order_multiway()</a></code> is used to transform multiway data such that the two categorical variables are factors with levels ordered by the third, quantitative variable. In this vignette we explore its arguments using a case study in four engineering programs.</p>
+<div id="this-vignette-uses" class="section level3">
+<h3 class="hasAnchor">
+<a href="#this-vignette-uses" class="anchor"></a>This vignette uses</h3>
+<p>midfieldr functions</p>
+<ul>
+<li><code><a href="../reference/order_multiway.html">order_multiway()</a></code></li>
+</ul>
+<p>data.table syntax</p>
+<ul>
+<li>
+<code>DT[rows_we_want]</code> subset rows</li>
+<li>
+<code>DT[, ..columns_we_want]</code> select columns</li>
+<li>
+<code>DT[, new_col := FUN]</code> create new column as a function of old columns</li>
+<li>
+<code><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html">dcast(DT, row_coord ~ col_coord, values)</a></code> reshape block-record form to row-record form</li>
+</ul>
+<p>packages</p>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># packages used</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>)
@@ -162,14 +177,15 @@
 <span class="co"># print max 20 rows, otherwise 5 rows each head/tail</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">datatable.print.nrows</span> <span class="kw">=</span> <span class="fl">20</span>, <span class="kw">datatable.print.topn</span> <span class="kw">=</span> <span class="fl">5</span>)</pre></body></html></div>
 </div>
+</div>
 <div id="preparing-the-multiway-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#preparing-the-multiway-data" class="anchor"></a>Preparing the multiway data</h2>
-<p>In the <em>Compute the stickiness metric</em> vignette <a href="compute_stickiness.html">(link)</a>, we construct the data frame with the numbers of students ever enrolled in the case study programs, the number graduating, and the resulting program stickiness grouped by race/ethnicity, sex, and program. These data are included with midfieldr as the built-in data set <code>exa_stickiness</code>. View its help page by loading midfieldr and running</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r">? <span class="no">exa_stickiness</span></pre></body></html></div>
-<p>The data are loaded with midfieldr.</p>
+<p>In the <em>Compute the stickiness metric</em> vignette <a href="compute_stickiness.html">(link)</a>, we construct the data frame with the numbers of students ever enrolled in the case study programs, the number graduating, and the resulting program stickiness grouped by race/ethnicity, sex, and program. These data are included with midfieldr as the built-in data set <code>rep_stickiness</code>. View its help page by loading midfieldr and running</p>
+<div class="sourceCode" id="cb2"><html><body><pre class="r">? <span class="no">rep_stickiness</span></pre></body></html></div>
+<p>The data are loaded with midfieldr. We assign it to the “pre-multiway” object <code>pre-mw</code>.</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># load stickiness data from case study</span>
-<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">exa_stickiness</span>
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">rep_stickiness</span>
 
 <span class="co"># examine the result</span>
 <span class="no">pre_mw</span>
@@ -218,7 +234,7 @@
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html">unique</a></span>(<span class="no">pre_mw</span>$<span class="no">race</span>)
 <span class="co">#&gt; [1] "Asian"    "Black"    "Hispanic" "White"</span></pre></body></html></div>
 <p>We combine the race/ethnicity and sex column to create one of the multiway categorical variables.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># complete the transformation to multiway form</span>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># begin transformation to multiway form</span>
 <span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>
 
 <span class="co"># create a new combined framing variable</span>
@@ -275,8 +291,8 @@
 <span class="co">#&gt; 30: Mechanical Engineering   Hispanic Male 0.488</span>
 <span class="co">#&gt; 31: Mechanical Engineering    White Female 0.450</span>
 <span class="co">#&gt; 32: Mechanical Engineering      White Male 0.573</span></pre></body></html></div>
-<p>For convenience, these multiway data are included in midfieldr as the built-in data set <code>exa_stickiness_mw</code>. View its help page by running</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r">? <span class="no">exa_stickiness_mw</span></pre></body></html></div>
+<p>The multiway data derived above is the data set <code>rep_stickiness_mw</code> in midfieldr. View its help page by running</p>
+<div class="sourceCode" id="cb9"><html><body><pre class="r">? <span class="no">rep_stickiness_mw</span></pre></body></html></div>
 </div>
 <div id="a-multiway-dot-plot" class="section level2">
 <h2 class="hasAnchor">
@@ -287,8 +303,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">program</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Stickiness"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>)</pre></body></html></div>
-<p><img src="../man/figures/vignette-explore-multiway-fig1-1.png" width="70%" style="display: block; margin: auto;"></p>
-<p><br></p>
+<p><img src="../man/figures/vignette-explore-multiway-fig1-1.png" width="70%" style="display: block; margin: auto;"><br></p>
 <p>This graph permits a direct visual comparison of how stickiness varies by race and sex within a particular major.</p>
 <p>Reading a multiway graph</p>
 <ul>
@@ -318,8 +333,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">race_sex</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Stickiness"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>)</pre></body></html></div>
-<p><img src="../man/figures/vignette-explore-multiway-fig2-1.png" width="70%" style="display: block; margin: auto;"></p>
-<p><br></p>
+<p><img src="../man/figures/vignette-explore-multiway-fig2-1.png" width="70%" style="display: block; margin: auto;"><br></p>
 <p>This graph permits a direct visual comparison of how stickiness varies by major for one group of students.</p>
 <p>Both multiways should be created for discussion. Usually one or the other will convey a more compelling visual story that gets included in the published findings.</p>
 </div>
@@ -337,7 +351,6 @@
 <span class="no">blockf</span></pre></body></html></div>
 <p>These data are laid out in “block record” form <span class="citation">(Mount and Zumel, <a href="#ref-Mount+Zumel:2019:fluid-data" role="doc-biblioref">2019</a>)</span>, where the <code>race_sex</code> key and the <code>program</code> key are both in columns and the finding is in the last column. This layout is also called “tidy data” <span class="citation">(Wickham and Grolemund, <a href="#ref-Wickham+Grolemund:2017" role="doc-biblioref">2017</a>)</span>.</p>
 <p>The graphing package we use, ggplot2, is designed to work most effectively with block-record data, thus the block-record (“long”) form is the default layout in midfieldr.</p>
-<p><br></p>
 <table class="table table">
 <caption style="font-size: initial !important;">
 Table 1: Stickiness (block records)
@@ -709,15 +722,14 @@ White Male
 </tbody>
 </table>
 <p><br></p>
-<p>However, the visual convention preferred by publishers and readers is a row-record (“wide”) form, as illustrated by Table 2. The <code>race_sex</code> key is in the left column and the <code>program key</code> is in the column names. The stickiness findings lie at the row-column intersections.</p>
-<p><br></p>
+<p>However, the visual convention preferred by publishers and readers is a row-record (“wide”) form, as illustrated by Table 2. The <code>race_sex</code> key is in the left column and the <code>program</code> key is in the column names. The stickiness findings lie at the row-column intersections.</p>
 <table class="table table">
 <caption style="font-size: initial !important;">
 Table 2: Stickiness (row records)
 </caption>
 <thead><tr>
 <th style="text-align:left;">
-Group
+Race/ethnicity/sex
 </th>
 <th style="text-align:right;">
 Civil
@@ -879,36 +891,42 @@ White Male
 <li>reshape “wide” / reshape “long” (R)</li>
 <li>pivot_wider / pivot_longer (tidyr)</li>
 <li>pivot / unpivot (Microsoft Excel)</li>
+<li>dcast / melt (data.table)</li>
 <li>cast / melt (reshape2)</li>
 </ul>
-<p>In base R, using <code><a href="https://rdrr.io/r/stats/reshape.html">reshape()</a></code>, the block-record form is transformed to row-record form to create Table 2 as follows.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># tabulate data in row-record ("wide") form</span>
-<span class="no">rowf</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/reshape.html">reshape</a></span>(
-  <span class="no">blockf</span>,
-  <span class="kw">idvar</span> <span class="kw">=</span> <span class="st">"race_sex"</span>, <span class="co"># remains a column</span>
-  <span class="kw">timevar</span> <span class="kw">=</span> <span class="st">"program"</span>, <span class="co"># becomes new column headings</span>
-  <span class="kw">v.names</span> <span class="kw">=</span> <span class="st">"stick"</span>, <span class="co"># fills the table cells</span>
-  <span class="kw">direction</span> <span class="kw">=</span> <span class="st">"wide"</span>
-)
+<p>Before reshaping, we convert factors to characters so that the rows and columns are in alphabetical order after reshaping.</p>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># convert factors to characters</span>
+<span class="no">temp</span> <span class="kw">&lt;-</span> <span class="no">blockf</span>
+<span class="no">temp</span> <span class="kw">&lt;-</span> <span class="no">temp</span>[, <span class="no">race_sex</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">race_sex</span>)]
+<span class="no">temp</span> <span class="kw">&lt;-</span> <span class="no">temp</span>[, <span class="no">program</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">program</span>)]</pre></body></html></div>
+<p><code><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html">dcast()</a></code> is used here to reshape the data frame from block-record form to row-record form.</p>
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co"># reshape </span>
+<span class="no">rowf</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html">dcast</a></span>(<span class="no">temp</span>, <span class="no">race_sex</span> ~ <span class="no">program</span>, <span class="kw">value.var</span> <span class="kw">=</span> <span class="st">"stick"</span>)</pre></body></html></div>
+<p>Lastly, we shorten the new column names. The result is the source for Table 2 above.</p>
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="co"># shorten column names</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">rowf</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">"engineering"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">rowf</span>), <span class="kw">ignore.case</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
-<span class="co"># reset the row numbers</span>
-<span class="fu"><a href="https://rdrr.io/r/base/row.names.html">row.names</a></span>(<span class="no">rowf</span>) <span class="kw">&lt;-</span> <span class="kw">NULL</span>
+<span class="co"># remove white space</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">rowf</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">" "</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">rowf</span>))
 
-<span class="co"># edit columns names</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">rowf</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Group"</span>, <span class="st">"Civil"</span>, <span class="st">"Electrical"</span>, <span class="st">"Industrial"</span>, <span class="st">"Mechanical"</span>)
+<span class="co"># edit the first column name</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">rowf</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">"race_sex"</span>,
+                    <span class="st">"Race/ethnicity/sex"</span>,
+                    <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">rowf</span>),
+                    <span class="kw">ignore.case</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># examine the result</span>
 <span class="no">rowf</span>
-<span class="co">#&gt;              Group Civil Electrical Industrial Mechanical</span>
-<span class="co">#&gt; 1:    Asian Female  0.61       0.52       0.56       0.62</span>
-<span class="co">#&gt; 2:      Asian Male  0.57       0.59       0.70       0.65</span>
-<span class="co">#&gt; 3:    Black Female  0.38       0.46       0.59       0.39</span>
-<span class="co">#&gt; 4:      Black Male  0.38       0.43       0.50       0.41</span>
-<span class="co">#&gt; 5: Hispanic Female  0.46       0.43       0.71       0.38</span>
-<span class="co">#&gt; 6:   Hispanic Male  0.49       0.46       0.73       0.49</span>
-<span class="co">#&gt; 7:    White Female  0.56       0.35       0.68       0.45</span>
-<span class="co">#&gt; 8:      White Male  0.59       0.49       0.69       0.57</span></pre></body></html></div>
-<p>While we used the base R <code><a href="https://rdrr.io/r/stats/reshape.html">reshape()</a></code> function in this example, there are good reshaping tools in other packages such as cdata <span class="citation">(Mount and Zumel, <a href="#ref-Mount+Zumel:2020:cdata" role="doc-biblioref">2020</a>)</span> or tidyr <span class="citation">(Wickham and Henry, <a href="#ref-Wickham+Henry:2020:tidyr" role="doc-biblioref">2020</a>)</span>.</p>
+<span class="co">#&gt;    Race/ethnicity/sex Civil Electrical Industrial Mechanical</span>
+<span class="co">#&gt; 1:       Asian Female  0.61       0.52       0.56       0.62</span>
+<span class="co">#&gt; 2:         Asian Male  0.57       0.59       0.70       0.65</span>
+<span class="co">#&gt; 3:       Black Female  0.38       0.46       0.59       0.39</span>
+<span class="co">#&gt; 4:         Black Male  0.38       0.43       0.50       0.41</span>
+<span class="co">#&gt; 5:    Hispanic Female  0.46       0.43       0.71       0.38</span>
+<span class="co">#&gt; 6:      Hispanic Male  0.49       0.46       0.73       0.49</span>
+<span class="co">#&gt; 7:       White Female  0.56       0.35       0.68       0.45</span>
+<span class="co">#&gt; 8:         White Male  0.59       0.49       0.69       0.57</span></pre></body></html></div>
+<p>Other good tools for reshaping are provided in packages such as cdata <span class="citation">(Mount and Zumel, <a href="#ref-Mount+Zumel:2020:cdata" role="doc-biblioref">2020</a>)</span> and tidyr <span class="citation">(Wickham and Henry, <a href="#ref-Wickham+Henry:2020:tidyr" role="doc-biblioref">2020</a>)</span>. Base R provides the <code><a href="https://rdrr.io/r/stats/reshape.html">reshape()</a></code> function but the arguments in <code><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html">dcast()</a></code> seem easier to understand in this instance.</p>
 </div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
@@ -938,13 +956,13 @@ White Male
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor"></a>Complete script</h3>
 <p>The vignette code chunks are collected below in a single, condensed script.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co"># packages used</span>
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="co"># packages used</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
 
 <span class="co"># load stickiness data from case study</span>
-<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">exa_stickiness</span>
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">rep_stickiness</span>
 
 <span class="co"># prepare rows</span>
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>$<span class="no">ever</span> <span class="kw">&gt;=</span> <span class="fl">5</span>
@@ -986,16 +1004,16 @@ White Male
 <span class="no">blockf</span>
 
 <span class="co"># tabulate data in row record ("wide") form</span>
-<span class="no">rowf</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/reshape.html">reshape</a></span>(
-  <span class="kw">data</span> <span class="kw">=</span> <span class="no">blockf</span>,
-  <span class="kw">idvar</span> <span class="kw">=</span> <span class="st">"race_sex"</span>, <span class="co"># column of row keys to copy</span>
-  <span class="kw">timevar</span> <span class="kw">=</span> <span class="st">"program"</span>, <span class="co"># column to take keys from</span>
-  <span class="kw">v.names</span> <span class="kw">=</span> <span class="st">"stick"</span>, <span class="co"># column to take values from</span>
-  <span class="kw">direction</span> <span class="kw">=</span> <span class="st">"wide"</span>
-)
-<span class="fu"><a href="https://rdrr.io/r/base/row.names.html">row.names</a></span>(<span class="no">rowf</span>) <span class="kw">&lt;-</span> <span class="kw">NULL</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">rowf</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Group"</span>, <span class="st">"Civil"</span>, <span class="st">"Electrical"</span>, <span class="st">"Industrial"</span>, <span class="st">"Mechanical"</span>)
-<span class="no">rowf</span></pre></body></html></div>
+<span class="no">temp</span> <span class="kw">&lt;-</span> <span class="no">blockf</span>
+<span class="no">temp</span> <span class="kw">&lt;-</span> <span class="no">temp</span>[, <span class="no">race_sex</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">race_sex</span>)]
+<span class="no">temp</span> <span class="kw">&lt;-</span> <span class="no">temp</span>[, <span class="no">program</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">program</span>)]
+<span class="no">rowf</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html">dcast</a></span>(<span class="no">temp</span>, <span class="no">race_sex</span> ~ <span class="no">program</span>, <span class="kw">value.var</span> <span class="kw">=</span> <span class="st">"stick"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">rowf</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">"engineering"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">rowf</span>), <span class="kw">ignore.case</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">rowf</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">" "</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">rowf</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">rowf</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">"race_sex"</span>,
+                    <span class="st">"Race/ethnicity/sex"</span>,
+                    <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">rowf</span>),
+                    <span class="kw">ignore.case</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
 <p><br><a href="#top">▲ top of page </a><br><a href="../index.html">◁ main page </a></p>
 </div>
 </div>

@@ -17,17 +17,27 @@ source("vignette-knitr-opts.R")
 knitr::opts_chunk$set(fig.path = "../man/figures/vignette-get-programs-")
 ```
 
-Focus on midfieldr functions:
-
-- `filter_by_text()` 
-
-
 
 ## Introduction 
 
 While CIP data include 2-, 4-, and 6-digit program codes and names, all program data in MIDFIELD is encoded using only the 6-digit codes. Thus, once we have identified the 6-digit CIP codes for the programs we wish to study, we collect them and label them with program names suitable for grouping, summarizing, and joining operations. 
 
 When finished with this step, the working data frame is expected to have two columns `cip6` and `program` or equivalent. 
+
+### This vignette uses
+
+midfieldr functions 
+ 
+- `filter_by_text()` 
+
+data.table syntax
+
+- `DT[, new_col := value]` add new column 
+- `DT[, ..columns_we_want]` select columns
+- `DT[, .(col1, new_col = col2)]` select columns, rename one  
+- `DT[rows_to_edit, col := value]` for identified rows, assign value in column 
+
+packages
 
 ```{r}
 # packages used
@@ -43,19 +53,18 @@ options(datatable.print.nrows = 20, datatable.print.topn = 5)
 
 ## Determine the CIP subset
 
-In the *Explore program CIP codes* vignette [(link)](explore_cip.html), we obtain the subset of CIP codes and names for the engineering case study. These data are included with midfieldr as the built-in data set `exa_cip`. View its help page by loading midfieldr and running
+In the *Explore program CIP codes* vignette [(link)](explore_cip.html), we obtain the subset of CIP codes and names for the engineering case study. These data are included with midfieldr as the built-in data set `rep_cip`. View its help page by loading midfieldr and running
 
 ```r
-? exa_cip 
+? rep_cip 
 ```
 
-The data are loaded with midfieldr. 
+The contents of `rep_cip`:
 
-```{r}
-# view the example CIP
-exa_cip
+```{r echo=FALSE}
+kable2html(rep_cip)
 ```
-
+<br>
 
 
 
@@ -71,29 +80,18 @@ exa_cip
 
 Starting with a CIP subset, we extract the 6-digit codes and label groups of programs to suit our purposes. The result is later used to filter the student-record data sets (students, courses, terms, or degrees) for the analysis at hand.
 
-In the example data, the program names at the 4-digit level are those associated with accredited engineering departments. To see the names in full, 
-
-```{r}
-# case study CIP subset
-columns_we_want <- c("cip4", "cip4name")
-exa_cip4 <- exa_cip[, ..columns_we_want]
-
-# examine the result
-exa_cip4
-```
-
-Three of these names (Civil, Industrial, and Mechanical) are concise enough for small-multiple or faceted graphs. The Electrical program name is inconveniently long.  
+As you can see in the table above, the program names at the 4-digit level are those associated with accredited engineering departments. Three of these names (Civil, Industrial, and Mechanical) are concise enough for small-multiple or faceted graphs. The Electrical program name is inconveniently long.  
 
 Two approaches to editing the program labels are shown below. 
 
 ### 1. Work with one program one at a time
 
-We separate `exa_cip` into four data frames, one for each program. 
+We separate `rep_cip` into four data frames, one for each program. 
 
 ```{r}
 # work with programs one at a time and bind
 # get civil engineering 6-digit codes
-cve <- filter_by_text(exa_cip, keep_any = "^1408", keep_col = "cip6")
+cve <- filter_by_text(rep_cip, keep_text = "^1408", keep_col = "cip6")
 cve
 ```
 
@@ -109,17 +107,17 @@ Repeat for the other majors
 
 ```{r}
 # get electrical  engineering
-ele <- filter_by_text(exa_cip, keep_any = "^1410", keep_col = "cip6")
+ele <- filter_by_text(rep_cip, keep_text = "^1410", keep_col = "cip6")
 ele[, program := "Electrical Engineering"]
 ele
 
 # get mechanical  engineering
-mce <- filter_by_text(exa_cip, keep_any = "^1419", keep_col = "cip6")
+mce <- filter_by_text(rep_cip, keep_text = "^1419", keep_col = "cip6")
 mce[, program := "Mechanical Engineering"]
 mce
 
 # get industrial engineering
-ise <- filter_by_text(exa_cip, keep_any = "^1435", keep_col = "cip6")
+ise <- filter_by_text(rep_cip, keep_text = "^1435", keep_col = "cip6")
 ise[, program := "Industrial Engineering"]
 ise
 ```
@@ -140,7 +138,7 @@ Alternatively, we can operate on one data frame throughout. Starting with the 6-
 
 ```{r}
 # work with programs all in one data frame
-program_group <- exa_cip[, .(cip6, program = cip4name)]
+program_group <- rep_cip[, .(cip6, program = cip4name)]
 
 # examine the result
 program_group
@@ -159,11 +157,10 @@ program_group[rows_to_edit, program := "Electrical Engineering"]
 program_group
 ```
 
-For convenience, this program group is included in midfieldr as the built-in data set `exa_group`. View its help page by running
-
+The program group derived above is the data set `rep_group` in midfieldr.  View its help page by running
 
 ```r
-? exa_group
+? rep_group
 ```
 
 
@@ -174,7 +171,7 @@ For convenience, this program group is included in midfieldr as the built-in dat
 
 ## Options for the program column
 
-Recall, our goal is to create a data frame with two columns, `cip6` and `program` or equivalent. In this section, we explore sesveral options for assigning program labels.   
+Our goal is to create a data frame with two columns, `cip6` and `program` or equivalent. In this section, we explore several options for assigning program labels.   
 
 
 
@@ -183,11 +180,13 @@ Recall, our goal is to create a data frame with two columns, `cip6` and `program
 We can use one of the built-in 2-, 4-, or 6-digit names as follows. 
 
 ```{r}
-# assign the 2-digit level name
+# retain the 2-digit level name
 sub_cip <- filter_by_text(cip,
-  keep_any = "^31",
+  keep_text = "^31",
   keep_col = c("cip6", "cip2name")
 )
+
+# rename column to "program"
 program_group <- sub_cip[, .(cip6, program = cip2name)]
 ```
 
@@ -197,11 +196,13 @@ kable2html(program_group)
 <br>
 
 ```{r}
-# assign the 4-digit level name
+# retain the 4-digit level name
 sub_cip <- filter_by_text(cip,
-  keep_any = "^31",
+  keep_text = "^31",
   keep_col = c("cip6", "cip4name")
 )
+
+# rename column to "program"
 program_group <- sub_cip[, .(cip6, program = cip4name)]
 ```
 
@@ -211,11 +212,13 @@ kable2html(program_group)
 <br>
 
 ```{r}
-# assign the 6-digit level name
+# retain the 6-digit level name
 sub_cip <- filter_by_text(cip,
-  keep_any = "^31",
+  keep_text = "^31",
   keep_col = c("cip6", "cip6name")
 )
+
+# rename column to "program"
 program_group <- sub_cip[, .(cip6, program = cip6name)]
 ```
 
@@ -230,8 +233,10 @@ kable2html(program_group)
 CIP program names are occasionally verbose. In such cases, we often use a shortened version of the program name to use as a graph or table heading. In this example, we substitute our own name for the "Parks, Recreation, Leisure and Fitness Studies" programs used in the previous example. 
 
 ```{r}
+# ignore all default CIP names
+sub_cip <- filter_by_text(cip, keep_text = "^31", keep_col = "cip6")
+
 # assign an arbitrary program name
-sub_cip <- filter_by_text(cip, keep_any = "^31", keep_col = "cip6")
 program_group <- sub_cip[, program := "Leisure Studies"]
 ```
 
@@ -253,7 +258,7 @@ kable2html(program_group)
 
 ## CIP data from another source
 
-If you use a CIP data set from another source, it must have the same structure as `cip`. Reshaping data frames is a conventional bit of R data carpentry. If you need help, consult any convenient R resource.
+If you use a CIP data set from another source, it must have the same structure as `cip`: six character columns named as follows,  
 
 ```{r}
 # name and class of variables (columns) in cip
@@ -286,51 +291,49 @@ library(midfieldr)
 library(data.table)
 
 # work with programs one at a time and bind
-cve <- filter_by_text(exa_cip, keep_any = "^1408", keep_col = "cip6")
+cve <- filter_by_text(rep_cip, keep_text = "^1408", keep_col = "cip6")
 cve[, program := "Civil Engineering"]
 
-ele <- filter_by_text(exa_cip, keep_any = "^1410", keep_col = "cip6")
+ele <- filter_by_text(rep_cip, keep_text = "^1410", keep_col = "cip6")
 ele[, program := "Electrical Engineering"]
 
-mce <- filter_by_text(exa_cip, keep_any = "^1419", keep_col = "cip6")
+mce <- filter_by_text(rep_cip, keep_text = "^1419", keep_col = "cip6")
 mce[, program := "Mechanical Engineering"]
 
-ise <- filter_by_text(exa_cip, keep_any = "^1435", keep_col = "cip6")
+ise <- filter_by_text(rep_cip, keep_text = "^1435", keep_col = "cip6")
 ise[, program := "Industrial Engineering"]
 
 program_group <- rbind(cve, ele, ise, mce)
 
 # work with programs all in one data frame
-program_group <- exa_cip[, .(cip6, program = cip4name)]
+program_group <- rep_cip[, .(cip6, program = cip4name)]
 rows_to_edit <- startsWith(program_group$cip6, "1410")
 program_group[rows_to_edit, program := "Electrical Engineering"]
 
 # assign the 2-digit level name
 sub_cip <- filter_by_text(cip,
-  keep_any = "^31",
+  keep_text = "^31",
   keep_col = c("cip6", "cip2name")
 )
 program_group <- sub_cip[, .(cip6, program = cip2name)]
 
 # assign the 4-digit level name
 sub_cip <- filter_by_text(cip,
-  keep_any = "^31",
+  keep_text = "^31",
   keep_col = c("cip6", "cip4name")
 )
 program_group <- sub_cip[, .(cip6, program = cip4name)]
 
 # assign the 6-digit level name
 sub_cip <- filter_by_text(cip,
-  keep_any = "^31",
+  keep_text = "^31",
   keep_col = c("cip6", "cip6name")
 )
 program_group <- sub_cip[, .(cip6, program = cip6name)]
 
-
 # assign an arbitrary program name
-sub_cip <- filter_by_text(cip, keep_any = "^31", keep_col = "cip6")
+sub_cip <- filter_by_text(cip, keep_text = "^31", keep_col = "cip6")
 program_group <- sub_cip[, program := "Leisure Studies"]
-
 
 # name and class of variables (columns) in cip
 sapply(cip, FUN = class)

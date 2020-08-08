@@ -19,11 +19,6 @@ source("vignette-knitr-opts.R")
 knitr::opts_chunk$set(fig.path = "../man/figures/vignette-compute-stickiness-")
 ```
 
-Focus on midfieldr functions:
-
-- `filter_by_cip()` 
-- `filter_by_id()`
-
 ## Introduction 
 
 Longitudinal "stickiness" is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program [@Ohland+Orr+others:2012]. 
@@ -32,8 +27,25 @@ The stickiness metric accounts for all students in a program. Unlike the graduat
 
 Every student counted in a program's stickiness metric was enrolled in that program for at least one term. The program succeeded in attracting these students---stickiness tells us how well the program succeeded in retaining them.
 
+### This vignette uses
+
+midfieldr functions 
+ 
+- `filter_by_id()` 
+- `filter_by_cip()` 
+- `feasible_subset()` 
+
+data.table syntax
+
+- `DT[rows_we_want]` subset rows 
+- `DT[, .(new_col = .N), by = grouping_variables]` count N by group
+- `DT[, new_col := FUN]` create new column as a function of old columns 
+- `DT[rows_to_edit, col := value]` for identified rows, assign value in column 
+
+packages
+
 ```{r}
-# packages used
+ # packages used
 library(midfieldr)
 library(midfielddata)
 library(data.table)
@@ -49,17 +61,17 @@ options(datatable.print.nrows = 20, datatable.print.topn = 5)
 
 ## Choose the programs to study
 
-In the *Gather programs* vignette [(link)](get_programs.html), we create the program group of 6-digit codes and user-defined program names  for the engineering case study. These data are included with midfieldr as the built-in data set `exa_group`. View its help page by running
+In the *Gather programs* vignette [(link)](get_programs.html), we create the program group of 6-digit codes and user-defined program names  for the engineering case study. These data are included with midfieldr as the built-in data set `rep_group`. View its help page by running
 
 ```r
-? exa_group 
+? rep_group 
 ```
 
 The data are loaded with midfieldr. 
 
 ```{r}
 # obtain programs (built-in data set)
-program_group <- exa_group
+program_group <- rep_group
 
 # examine the result
 program_group
@@ -69,10 +81,10 @@ We extract the `cip6` column as a character vector to gather student data.
 
 ```{r}
 # extract a vector of 6-digit CIP codes
-group_codes <- program_group$cip6
+group_cips <- program_group$cip6
 
 # examine the result
-group_codes
+group_cips
 ```
 
 
@@ -93,7 +105,7 @@ We use `filter_by_cip()` to extract from `midfieldstudents` the IDs of students 
 ```{r}
 # gather students ever enrolled in programs
 enrollees <- filter_by_cip(midfieldterms,
-  keep_cip = group_codes,
+  keep_cip = group_cips, # <---------------- group_cips from above
   keep_col = c("id", "cip6"),
   unique_row = TRUE
 )
@@ -102,17 +114,17 @@ enrollees <- filter_by_cip(midfieldterms,
 enrollees
 ```
 
-For convenience, the IDs of these enrollees are included in midfieldr as the built-in character vector `exa_ever`. View its help page by running
+For convenience, the IDs of these enrollees are included in midfieldr as the built-in character vector `rep_ever`. View its help page by running
 
 ```r
-? exa_ever
+? rep_ever
 ```
 
-For some of these students, completing their program may not be feasible given the range of data available. `completion_feasible()` subsets the student IDs, retaining those who matriculate at least six years before the last term in the data. 
+For some of these students, completing their program may not be feasible given the range of data available. `feasible_subset()` subsets the student IDs, retaining those who matriculate at least six years before the last term in the data. 
 
 ```{r}
 # apply the feasible completion filter
-feasible_ids <- completion_feasible(id = enrollees$id)
+feasible_ids <- feasible_subset(id = enrollees$id)
 
 # examine the result
 str(feasible_ids)
@@ -134,7 +146,7 @@ We use `filter_by_id()` to extract from `midfieldstudents` the race/ethnicity an
 ```{r}
 # obtain race/ethnicity and sex at matriculation
 race_sex <- filter_by_id(midfieldstudents,
-  keep_id = feasible_ids,
+  keep_id = feasible_ids, # <---------------- feasible_ids from above
   keep_col = c("id", "race", "sex"),
   unique_row = TRUE
 )
@@ -178,13 +190,13 @@ A similar process is used to group and summarize our graduates. We use `filter_b
 ```{r}
 # gather students graduating from programs
 graduates <- filter_by_cip(midfielddegrees,
-  keep_cip = group_codes,
+  keep_cip = group_cips, # <---------------- group_cips again from above
   keep_col = c("id", "cip6"),
   unique_row = TRUE,
   first_degree = TRUE
 )
 race_sex <- filter_by_id(midfieldstudents,
-  keep_id = graduates$id,
+  keep_id = graduates$id, # <---------------- from graduates just above
   keep_col = c("id", "race", "sex"),
   unique_row = TRUE
 )
@@ -195,10 +207,10 @@ graduates <- merge(graduates, program_group, by = "cip6", all.x = TRUE)
 graduates
 ```
 
-For convenience, the IDs of these graduates are included in midfieldr as the built-in character vector `exa_grad`. View its help page by running
+For convenience, the IDs of these graduates are included in midfieldr as the built-in character vector `rep_grad`. View its help page by running
 
 ```r
-? exa_grad
+? rep_grad
 ```
  
 
@@ -248,7 +260,7 @@ We join the two data frames by our grouping variables, producing a data frame wi
 # left-join graduates to enrollees
 grouped_data <- merge(grouped_enrollees,
   grouped_graduates,
-  by = grouping_variables,
+  by = grouping_variables, # <---------------- the grouping variables again 
   all.x = TRUE
 )
 
@@ -317,12 +329,14 @@ To see the class of each column:
 sapply(stickiness, FUN = class)
 ```
 
-For convenience, this data frame is included in midfieldr as the built-in data set `exa_stickiness`. View its help page by running
+
+The stickiness data derived above is the data set `rep_stickiness` in midfieldr.  View its help page by running
 
 ```r
-? exa_stickiness
+? rep_stickiness
 ```
- 
+
+
 
 <br>
 <a href="#top">&#9650; top of page</a>   
@@ -334,17 +348,17 @@ For convenience, this data frame is included in midfieldr as the built-in data s
 
 Before graphing, we isolate the three multiway variables (program, combined race and sex, and stickiness) and transform the categorical variables into factors with levels that are ordered by median stickiness. 
 
-In the *Explore multiway data* vignette [(link)](explore_multiway.html), we describe this transformation in detail. The transformed multiway data are included with midfieldr as the built-in data set `exa_stickiness_mw`. View its help page by running
+In the *Explore multiway data* vignette [(link)](explore_multiway.html), we describe this transformation in detail. The transformed multiway data are included with midfieldr as the built-in data set `rep_stickiness_mw`. View its help page by running
 
 ```r
-? exa_stickiness_mw 
+? rep_stickiness_mw 
 ```
 
 The data are loaded with midfieldr. 
 
 ```{r}
 # condition the data in multiway form (built-in data set)
-data_mw <- exa_stickiness_mw
+data_mw <- rep_stickiness_mw
 data_mw
 ```
 
@@ -377,7 +391,7 @@ asp_ratio1 <- (r + 2 * nlevel1) / q
 asp_ratio2 <- (r + 2 * nlevel2) / q
 ```
 
-We use conventional ggplot2 functions to graph the multiway. 
+We use conventional ggplot2 functions to graph the `data_mw` data set in a multiway graph. 
 
 ```{r fig1, fig.asp = asp_ratio1}
 # graph results
@@ -424,16 +438,16 @@ library(data.table)
 library(ggplot2)
 
 # obtain programs (built-in data set)
-program_group <- exa_group
-group_codes <- program_group$cip6
+program_group <- rep_group
+group_cips <- program_group$cip6
 
 # gather students ever enrolled in programs
 enrollees <- filter_by_cip(midfieldterms,
-  keep_cip = group_codes,
+  keep_cip = group_cips,
   keep_col = c("id", "cip6"),
   unique_row = TRUE
 )
-feasible_ids <- completion_feasible(id = enrollees$id)
+feasible_ids <- feasible_subset(id = enrollees$id)
 rows_we_want <- enrollees$id %in% feasible_ids
 enrollees <- enrollees[rows_we_want]
 race_sex <- filter_by_id(midfieldstudents,
@@ -446,7 +460,7 @@ enrollees <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
 
 # gather students graduating from programs
 graduates <- filter_by_cip(midfielddegrees,
-  keep_cip = group_codes,
+  keep_cip = group_cips,
   keep_col = c("id", "cip6"),
   unique_row = TRUE,
   first_degree = TRUE
@@ -478,7 +492,7 @@ stickiness <- stickiness[rows_we_want]
 stickiness[, stick := round(grad / ever, 2)]
 
 # condition the data in multiway form (built-in data set)
-data_mw <- exa_stickiness_mw
+data_mw <- rep_stickiness_mw
 
 # graph results
 ggplot(data = data_mw, mapping = aes(x = stick, y = race_sex)) +

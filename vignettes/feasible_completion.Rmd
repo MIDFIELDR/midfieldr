@@ -1,8 +1,8 @@
 ---
-title: "Filter for program completion feasibility"
+title: "Subset for completion feasibility"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Filter for program completion feasibility}
+  %\VignetteIndexEntry{Subset for completion feasibility}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -19,20 +19,6 @@ source("vignette-knitr-opts.R")
 knitr::opts_chunk$set(fig.path = "../man/figures/vignette-feasible-completion-")
 ```
 
-
-Primary focus on midfieldr functions:
-
-- `completion_feasible()` 
-
-With an optional look at: 
-
-- `get_status_degrees()` 
-- `get_status_transfers()` 
-- `get_institution_limits()` 
-- `get_institution_hours_term()` 
-- `term_addition()`
- 
-
 ## Introduction
 
 Persistence metrics often include a criterion that students complete their programs within $x$ years (typically 6 years, based on 150% of the "normal" time to completion). See, for example, [@IPEDS:2020]. 
@@ -44,7 +30,7 @@ In longitudinal research, this completion criterion requires special care. For s
 
 The student satisfies the completion criterion, but their recorded degree status is NA because their degree term exceeds the data range. 
 
-Without special care, such students would add to the count of non-graduates, adversely and unfairly affecting the value of a persistence metric. Therefore, if completing their program is not feasible given the range of data available, students with a degree status of NA are excluded from the analysis.
+Without special care, such students would add to the count of non-graduates, adversely and unfairly affecting the value of a persistence metric. Therefore, students with a degree status of NA are excluded from the analysis if completing their program is not feasible given the range of data available. 
 
 Feasible completion terminology is illustrated in the figure. Definitions are given below. 
 
@@ -160,11 +146,8 @@ ggplot(df, aes(x = yyyyt, y = y)) +
 
 <br>
 
-term encoding
-: midfielddata terms are encoded numerically  `YYYYT`, where `YYYY` is the year that starts the academic year and `T` is the term index: 1 (Fall), 2 (Winter, quarter systems), 3 (Spring), or 4-6 (summer sessions).
-
 data range
-: The span of terms for which student-record data are available, from the "first record" term to the "data limit" term. Varies by institution.
+: The range of terms for which student-record data are available, from the "first record" term to the "data limit" term. Varies by institution.
 
 completion feasibility
 : A student may complete their program within the data limit. 
@@ -173,14 +156,20 @@ matriculation limit
 : The last term a student can matriculate and feasibly complete their program. Defined as $x$ years (typically 6 years) before the data limit. Can be advanced by transfer credit hours.
 
 
+### This vignette uses
+
+midfieldr functions 
+
+- `feasible_subset()`
+
+packages
+
 ```{r}
 # packages used
 library(midfieldr)
-library(midfielddata)
-library(data.table)
 
-# print max 20 rows, otherwise 5 rows each head/tail
-options(datatable.print.nrows = 20, datatable.print.topn = 5)
+# print max 20 rows, otherwise 10 rows each head/tail
+options(datatable.print.nrows = 20, datatable.print.topn = 10)
 ```
 
 
@@ -191,38 +180,162 @@ options(datatable.print.nrows = 20, datatable.print.topn = 5)
 
 
 
-## How to use `completion_feasible()`
+## How to use `feasible_subset()`
 
-In the *Compute the stickiness metric* vignette [(link)](compute_stickiness.html), we obtain a character vector of student IDs of students ever enrolled in the programs of the engineering case study. These data are included with midfieldr as the built-in data set `exa_ever`. View its help page by loading midfieldr and running
+The first argument, `id`, is required. The remaining arguments all have default settings. The last three arguments accommodate using data sets other than those from midfielddata. Arguments after the ellipsis (...) must be named if used. 
 
 ```r
-? exa_ever
+feasible_subset(id,
+                ...,
+                span,
+                term_advance_max,
+                data_students,
+                data_terms,
+                data_degrees)
+```
+
+
+- `id` character vector of student IDs
+- `span`  number of years to define feasibility, default is 6 years
+- `term_advance_max` maximum terms of transfer credit for advancing the matriculation limit, default is 4 terms (2 years)
+- `data_students`  student attributes data set, `midfieldstudents` or equivalent
+- `data_terms`  term attributes data set, `midfieldterms` or equivalent
+- `data_degrees` degree attributes data set, `midfielddegrees` or equivalent
+
+The primary input to `feasible_subset()` is a character vector of student IDs. To illustrate its use, we use the built-in data set `rep_ever` from the engineering case study as developed in the  *Compute the stickiness metric* vignette [(link)](compute_stickiness.html). 
+
+View its help page by running
+
+```r
+? rep_ever
 ```
 
 The data are loaded with midfieldr. 
 
 ```{r}
-# view the example data
-str(exa_ever)
+# view the example IDs
+str(rep_ever)
 ```
 
-This vector of IDs is the input to `completion_feasible()`, which performs the subsetting for completion feasibility.  
+This vector of IDs is the input to `feasible_subset()`, which performs the subsetting for completion feasibility.  
 
 ```{r}
 # filter IDs for feasible program completion within data limit
-enrollees_fc <- completion_feasible(id = exa_ever)
+feasible_id <- feasible_subset(rep_ever)
 
 # examine the result
-str(enrollees_fc)
+str(feasible_id)
 ```
 
-In this instance, we started with `r length(exa_ever)` enrollees. After applying the criteria for feasible completion, we retain `r length(exa_ever_fc)` students. These students either graduated (demonstrating the feasibility of completing their programs before the data limit) or they matriculated no later than their matriculation limits. 
+In this instance, we started with `r length(rep_ever)` enrollees. After applying the criteria for feasible completion, we retain `r length(rep_ever_fc)` students. These students either graduated (demonstrating the feasibility of completing their programs before the data limit) or they matriculated no later than their matriculation limits. 
 
-For convenience, `exa_ever_fc` is included in midfieldr as a built-in data set. View its help page by running
+The feasible IDs derived above are the data set `rep_ever_fc` in midfieldr.  View its help page by running
 
 ```r
-? exa_ever_fc
+? rep_ever_fc
 ```
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+
+
+
+## How `feasible_subset()` works
+
+The remainder of the vignette describes the inner workings of  `feasible_subset()`, showing intermediate results at key stages. Its operation can be divided into 5 basic steps: 
+
+1. Identify graduates and non-graduates by ID 
+2. Obtain entering terms and transfer credit hours by ID 
+3. Derive matriculation limit and median hours per term by institution 
+4. Advance the matriculation limit by transfer credit hours 
+5. Filter IDs for feasible completion 
+
+The default data sets queried are from midfielddata, but if desired the arguments of `feasible_subset()` accommodate data sets other than those from  midfielddata. 
+
+```{r include = FALSE}
+# load all the fc intermediate results: fc01--fc08 
+load(system.file("extdata", "fc-vignette-data.rda", package = "midfieldr"))
+```
+
+### 1. Identify graduates and non-graduates by ID 
+
+The first data accessed by `feasible_subset()` is `midfielddegrees`. The head and tail of that data are show here.
+
+```{r echo = FALSE}
+# degrees data set 
+fc01
+```
+
+The `degree` column is re-coded so that the values are either `grad` or `nongrad`. 
+
+```{r echo = FALSE}
+# re-coded degree column 
+fc02
+```
+
+In this step, we use all students in the data set so that later we can use all graduates (not just those in the study) for determining median credit hours per term by institution. 
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+### 2. Obtain entering terms and transfer credit hours by ID 
+
+The `midfieldstudents` data are accessed next to obtain the entering term and transfer credit hours by student ID for the students in the study only. 
+
+```{r echo = FALSE}
+# student matriculation information 
+fc03
+```
+
+
+
+
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+### 3. Derive matriculation limit and median hours per term by institution 
+
+The `midfieldterms` data are accessed to obtain the data limits by institution. The `max_term` column is the result of a group and summarize operation.  
+
+```{r echo = FALSE}
+# institution data limit 
+fc04
+```
+
+The `span` number of years is subtracted from the maximum term to create the initial matriculation limit. 
+
+```{r echo = FALSE}
+# initial matriculation limit 
+fc05
+```
+
+To check the term addition represented here, consider Institution M. The span is 6 years (12 terms) and the last term in the data set is `20096` or summer of 2009-10 academic year. The algorithm rounds down to the spring term `20093` and subtracts the span. The six academic years ending in the Spring 2009-10 are: 2004-05, 2005-06, 2006-07, 2007-08, 2008-09, and 2009-10. Thus the matriculation limit is Fall of 2004, encoded `20041`. 
+
+In the final data query, the function filters `midfieldterms` by the IDs of all graduates in the data set, an ID vector we obtained in the first step. The function then determines the median number of credit hours per term by institution for successful (i.e., graduating) students.  
+
+Joining these results with the previous findings yields the data frame needed to subset for feasible completion.  
+
+```{r echo = FALSE}
+# data collection complete
+fc06
+```
+  
 
 
 
@@ -234,257 +347,60 @@ For convenience, `exa_ever_fc` is included in midfieldr as a built-in data set. 
 
 
 
-## How `completion_feasible()` works
-
-The remainder of the vignette describes the inner workings of  `completion_feasible()`. Its operation can be divided into 5 basic steps: 
-
-1. Subset students with and without degrees 
-2. Gather transfer data 
-3. Gather institution variables 
-4. Advance the matriculation limit 
-5. Return the completion-feasible subset of student IDs
 
 
+### 4. Advance the matriculation limit by transfer credit hours 
+
+Transfer credit hours are converted to an equivalent number of "transfer terms" by dividing by the median hours per term. The result is capped (default is 4 terms or 2 years) to account for the common institutional policy that the final two years of an undergraduate degree be earned at the degree-granting institution. 
+
+Transfer students' matriculation limits are advanced by the number of transfer terms. The printout shows two students (lines 8 and 10,132) whose matriculation term exceeds the matriculation limit, exemplifying students who are removed from the analysis in the next step. 
+
+
+```{r echo = FALSE}
+# matriculation limit advanced by transfer credit
+fc07
+```
+  
 
 
 
-### 1. Subset students with and without degrees
 
-We obtain the degree data for the enrollees using `get_status_degrees()` to subset the student degree data (`midfielddegrees` or equivalent) and return the student degree keyed by ID. The values of `degree` are character, e.g., "Bachelor of Science",  or NA for no degree. 
 
-```{r}
-# gather student degree data
-degree_data <- filter_by_id(midfielddegrees,
-  keep_id = exa_ever,
-  keep_col = c("id", "institution", "degree"),
-  unique_row = TRUE,
-  first_degree = TRUE
-)
 
-# examine the result
-degree_data
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+### 5. Filter IDs for feasible completion 
+
+This final data frame is ready for subsetting for feasible completion. All graduates are retained. Non-graduates are retained if their term of entry is no later than their matriculation limit. 
+
+
+```{r echo = FALSE}
+# subset complete for feasible completion
+fc08
 ```
 
-Students with degrees have demonstrated that completing their programs before the data limits was feasible. We can extract their IDs (to be used later) and continue the completion feasibility study with the smaller non-graduate student subset. 
+The final output of the function is the ID column from this data frame.  
 
-```{r}
-# subset students with degrees and without
-grad_rows <- !is.na(degree_data$degree)
-grads <- degree_data[grad_rows]
-nongrads <- degree_data[!grad_rows]
-
-# extract the IDs
-grads_id <- grads$id
-nongrads_id <- nongrads$id
-
-# examine the result
-str(grads_id)
-str(nongrads_id)
+```{r echo = FALSE}
+# resulting ID vector
+str(fc08$id)
 ```
 
+This vector is identical to `feasible_id` and `rep_ever_fc` described in the first part of the vignette.
 
 
- 
 
-
-### 2. Gather transfer data
-
-If the vector of non-grad IDs is empty, the rest of the algorithm is skipped and we return the vector of grad IDs as the complete set of IDs for feasible completion. 
-
-Otherwise, we continue by calling `get_status_transfers()` for the non-graduates to subset the student attributes data (`midfieldstudents` or equivalent) and return the student matriculation term and transfer credit hours keyed by ID. The values of 
-`hours_transfer` are numerical or NA for no transfer hours. 
-
-```{r}
-# gather transfer data for non-grads
-transfer_data <- filter_by_id(midfieldstudents,
-  keep_id = nongrads_id,
-  keep_col = c("id", "term_enter", "hours_transfer"),
-  unique_row = TRUE
-)
-
-# examine the result
-transfer_data
-```
-
-Joining `transfer_data` to `nongrads` (by `id`) yields the complete student information we need. 
-
-```{r}
-# join transfer data to non-grads
-nongrads <- merge(nongrads, transfer_data, by = "id", all.x = TRUE)
-
-# examine the result
-nongrads
-```
-
-
-
-
-
-
-
-
-
-### 3. Gather institution variables
-
-`get_institution_limits()` provides the following information we need for feasible completion analysis:
-
-- determines upper data limits from the term-attributes data (default is `midfieldterms`)
-- calculates `matriculation limit = data limit - span` (default `span`  is 6 years) 
-
-Some data limits are "rounded down" before computing matriculation limits. Summer term data limits are rounded to the preceding Spring; Winter term data limits (institutions on quarter systems) are rounded to the preceding Fall. 
-
-```{r}
-# gather data limits and matriculation limits
-institution_limits <- get_institution_limits(midfieldterms)
-
-# examine the result
-institution_limits
-```
-
-We determine the median number of credit-hours per term by institution. We use only students with degrees.  
-
-```{r}
-# median hours/term for these grads
-hr_per_term <- filter_by_id(midfieldterms,
-  keep_id = grads_id,
-  unique_row = FALSE
-)
-hr_per_term <- hr_per_term[order(institution),
-  .(med_term_hours = median(hours_term)),
-  by = institution
-]
-
-# examine the result
-hr_per_term
-```
-
-And we join `hr_per_term` to `institution_limits` (by `institution`) to conclude our institution data gathering. 
-
-```{r}
-# join the two sets of institution data
-institutions <- merge(institution_limits,
-  hr_per_term,
-  by = "institution",
-  all.x = TRUE
-)
-
-# examine the result
-institutions
-```
-
-Next we join `nongrads` and `institution_limits` (by `institution`).  
-
-```{r}
-# join student and institution data
-fc_data <- merge(nongrads, institutions, by = "institution", all.x = TRUE)
-
-# examine the result
-fc_data
-```
-
-We set NA values of `hours_transfer` to zero so that later, term addition avoids sums with NA. 
-
-```{r}
-# set NA transfer hours to zero
-rows_to_zero <- is.na(fc_data$hours_transfer)
-fc_data[rows_to_zero, hours_transfer := 0]
-
-# examine the result
-fc_data
-```
-
-Now we're ready to advance the matriculation limit for transfer students where needed. 
-
-
- 
-
-
-
-### 4. Advance the matriculation limit
-
-We convert transfer-credit hours to their equivalent transfer-credit terms.  
-
-```{r}
-# estimate the term-equivalent of transfer credit hours
-fc_data[, terms_transfer := floor(hours_transfer / med_term_hours)]
-
-# examine the result
-fc_data
-```
-
-There are several columns we can drop to make the other variables easier to review as he analysis proceeds. 
-
-```{r}
-# omit columns no longer necessary
-fc_data$degree <- NULL
-fc_data$data_limit <- NULL
-fc_data$institution <- NULL
-fc_data$hours_transfer <- NULL
-fc_data$med_term_hours <- NULL
-
-# examine the result
-fc_data
-```
-
-Students are typically required to complete at least the final 30-60 credits (about 2 years) in residence at their new institution to earn a degree. Thus for the feasible completion analysis, we limit the transfer terms to 4 or less. 
-
-```{r}
-# transfer terms limited to a maximum of 4
-rows_to_limit <- fc_data$terms_transfer > 4
-fc_data[rows_to_limit, terms_transfer := 4]
-```
-
-Next we perform some "term arithmetic" to advance the matriculation limit by the number of terms of credit hours transferred. `term_addition()` adds the number of terms T in the `add_col` argument to the terms YYYYT in the `term_col` argument. 
-
-```{r}
-# advance the matriculation limit
-fc_data <- term_addition(fc_data,
-  term_col = "matric_limit",
-  add_col = "terms_transfer"
-)
-
-# examine the result
-fc_data
-```
-
-
-
-
-### 5. Return the completion-feasible subset of student IDs
-
-Finally, we subset the non-graduates, retaining those whose matriculation term is no later than the matriculation limit.  
-
-```{r}
-# completion is feasible if the entry term does not exceed
-# the matriculation limit
-rows_we_want <- fc_data$term_enter <= fc_data$matric_limit
-nongrad_fc <- fc_data[rows_we_want]
-
-# examine the result
-nongrad_fc
-```
-
-If the non-grad ID vector is not empty, we combine it with the grads ID vector we set aside earlier. The result is the vector of IDs of students from the original pool for whom program completion is feasible. 
-
-```{r}
-# gather the IDs of all students with completion feasible
-nongrad_fc_id <- nongrad_fc$id
-
-# concatenate
-feasible_id <- c(grads_id, nongrad_fc_id)
-feasible_id <- sort(unique(feasible_id))
-
-# examine the result
-str(feasible_id)
-```
-
-This result is identical to the result obtained earlier using `completion_feasible()`. 
-
-
-
-
-
-
+<br>
+<a href="#top">&#9650; top of page</a> 
 
 
 
@@ -497,96 +413,26 @@ This result is identical to the result obtained earlier using `completion_feasib
 
 
 
-
 ## Appendix
 
-The vignette code chunks are collected below in a condensed script---in this case, in two parts. 
+### Complete script
 
-### Script: how to use `completion_feasible()` 
+The vignette code chunks are collected below in a single, condensed script. 
 
 ```{r eval = FALSE}
-# packages used in the vignette
-library("midfieldr")
-
-# filter IDs for feasible program completion within data limit
-enrollees_id <- exa_ever
-enrollees_fc <- completion_feasible(id = enrollees_id)
-```
-
-
-
-
-
-
-### Script: how `completion_feasible()` works
-
-The rest of the script shows the details of what happens inside `completion_feasible()`. 
-
-```{r}
 # packages used
 library(midfieldr)
-library(midfielddata)
-library(data.table)
 
-# subset students with and without degrees
-degree_data <- filter_by_id(midfielddegrees,
-  keep_id = exa_ever,
-  keep_col = c("id", "institution", "degree"),
-  unique_row = TRUE,
-  first_degree = TRUE
-)
-grad_rows <- !is.na(degree_data$degree)
-grads <- degree_data[grad_rows]
-nongrads <- degree_data[!grad_rows]
-grads_id <- grads$id
-nongrads_id <- nongrads$id
+# part 1:  How to use feasible_subset()
+feasible_id <- feasible_subset(rep_ever)
 
-# gather transfer data
-transfer_data <- filter_by_id(midfieldstudents,
-  keep_id = nongrads_id,
-  keep_col = c("id", "term_enter", "hours_transfer"),
-  unique_row = TRUE
-)
-nongrads <- merge(nongrads, transfer_data, by = "id", all.x = TRUE)
-
-# gather institution variables
-inst_limits <- get_institution_limits(midfieldterms)
-hr_per_term <- filter_by_id(midfieldterms,
-  keep_id = grads_id,
-  unique_row = FALSE
-)
-hr_per_term <- hr_per_term[order(institution),
-  .(med_term_hours = median(hours_term)),
-  by = institution
-]
-institutions <- merge(inst_limits,
-  hr_per_term,
-  by = "institution",
-  all.x = TRUE
-)
-fc_data <- merge(nongrads,
-  institutions,
-  by = "institution",
-  all.x = TRUE
-)
-rows_to_zero <- is.na(fc_data$hours_transfer)
-fc_data[rows_to_zero, hours_transfer := 0]
-
-# advance the matriculation limit
-fc_data[, terms_transfer := floor(hours_transfer / med_term_hours)]
-rows_to_limit <- fc_data$terms_transfer > 4
-fc_data[rows_to_limit, terms_transfer := 4]
-fc_data <- term_addition(fc_data,
-  term_col = "matric_limit",
-  add_col = "terms_transfer"
-)
-
-# return the completion-feasible subset of student IDs
-rows_we_want <- fc_data$term_enter <= fc_data$matric_limit
-nongrad_fc <- fc_data[rows_we_want]
-nongrad_fc_id <- nongrad_fc$id
-feasible_id <- sort(unique(c(grads_id, nongrad_fc_id)))
+# part 2:  How feasible_subset() works
+# no reproducible code
 ```
+
+
+
+
 
 
 

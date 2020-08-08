@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9002</span>
       </span>
     </div>
 
@@ -51,7 +51,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/getting_started.html">Getting started</a>
+  <a href="../articles/get_started.html">Get started</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -138,14 +138,11 @@
 
     
     
-<p>Focus on:</p>
+<p>Using these midfieldr components</p>
 <ul>
 <li>
-<code>midfield_fye</code> (data set)</li>
+<code>midfield_fye</code> data</li>
 <li><code><a href="../reference/filter_by_id.html">filter_by_id()</a></code></li>
-</ul>
-<p>With an optional look at:</p>
-<ul>
 <li><code>fye_next_cip()</code></li>
 <li><code>fye_join_cats()</code></li>
 <li><code>fye_mice()</code></li>
@@ -177,7 +174,7 @@
 <p>The data are loaded with midfieldr.</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># view the example data</span>
 <span class="no">midfield_fye</span>
-<span class="co">#&gt;                id  start</span>
+<span class="co">#&gt;                id   cip6</span>
 <span class="co">#&gt;    1: MID25783162 141901</span>
 <span class="co">#&gt;    2: MID25783166 141901</span>
 <span class="co">#&gt;    3: MID25783167 140901</span>
@@ -198,50 +195,37 @@
 </ul>
 <p>The imputed starting major should be consistent with a student’s race/ethnicity, sex, and institution because these are the variables used in the imputation.</p>
 <p><strong>Example</strong> using the case study IDs.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">exa_ever</span>)
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">rep_ever</span>)
 <span class="co">#&gt;  chr [1:10135] "MID25783178" "MID25783197" "MID25783388" "MID25783441" ...</span></pre></body></html></div>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">matric</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_id.html">filter_by_id</a></span>(<span class="no">midfieldstudents</span>,
-  <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">exa_ever</span>,
+  <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">rep_ever</span>,
   <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>),
   <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">TRUE</span>
 )
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">matric</span>$<span class="no">cip</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"14XXXX"</span>, <span class="st">"14YYYY"</span>)
 <span class="no">engr</span> <span class="kw">&lt;-</span> <span class="no">matric</span>[!<span class="no">rows_we_want</span>]
-<span class="no">fye</span> <span class="kw">&lt;-</span> <span class="no">matric</span>[<span class="no">rows_we_want</span>]
+<span class="no">fye</span> <span class="kw">&lt;-</span> <span class="no">matric</span>[<span class="no">rows_we_want</span>, <span class="fu">.</span>(<span class="no">id</span>)]
 
 <span class="co"># join</span>
 <span class="no">fye</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(<span class="no">fye</span>, <span class="no">midfield_fye</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># add start column</span>
-<span class="no">engr</span> <span class="kw">&lt;-</span> <span class="no">engr</span>[, <span class="fu">.</span>(<span class="no">id</span>, <span class="no">cip6</span>, <span class="kw">start</span> <span class="kw">=</span> <span class="no">cip6</span>)]
+<span class="no">engr</span> <span class="kw">&lt;-</span> <span class="no">engr</span>[, <span class="fu">.</span>(<span class="no">id</span>, <span class="no">cip6</span>)]
 
 <span class="no">starters</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="no">fye</span>, <span class="no">engr</span>)
-<span class="no">starters</span>[<span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span>(<span class="no">id</span>)]
-<span class="co">#&gt;                 id   cip6  start</span>
-<span class="co">#&gt;     1: MID25783178 14XXXX 140701</span>
-<span class="co">#&gt;     2: MID25783197 14XXXX 140701</span>
-<span class="co">#&gt;     3: MID25783388 14XXXX 141901</span>
-<span class="co">#&gt;     4: MID25783441 14XXXX 140801</span>
-<span class="co">#&gt;     5: MID25783491 14XXXX 141001</span>
-<span class="co">#&gt;    ---                          </span>
-<span class="co">#&gt; 10131: MID26696967 141901 141901</span>
-<span class="co">#&gt; 10132: MID26696979 141901 141901</span>
-<span class="co">#&gt; 10133: MID26697163 140101 140101</span>
-<span class="co">#&gt; 10134: MID26697444 141901 141901</span>
-<span class="co">#&gt; 10135: MID26697447 140701 140701</span>
-<span class="no">starters</span>
-<span class="co">#&gt;                 id   cip6  start</span>
-<span class="co">#&gt;     1: MID25783178 14XXXX 140701</span>
-<span class="co">#&gt;     2: MID25783197 14XXXX 140701</span>
-<span class="co">#&gt;     3: MID25783388 14XXXX 141901</span>
-<span class="co">#&gt;     4: MID25783441 14XXXX 140801</span>
-<span class="co">#&gt;     5: MID25783491 14XXXX 141001</span>
-<span class="co">#&gt;    ---                          </span>
-<span class="co">#&gt; 10131: MID26696967 141901 141901</span>
-<span class="co">#&gt; 10132: MID26696979 141901 141901</span>
-<span class="co">#&gt; 10133: MID26697163 140101 140101</span>
-<span class="co">#&gt; 10134: MID26697444 141901 141901</span>
-<span class="co">#&gt; 10135: MID26697447 140701 140701</span></pre></body></html></div>
+<span class="no">starters</span>[<span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span>(<span class="no">id</span>), <span class="fu">.</span>(<span class="no">id</span>, <span class="kw">start</span> <span class="kw">=</span> <span class="no">cip6</span>)]
+<span class="co">#&gt;                 id  start</span>
+<span class="co">#&gt;     1: MID25783178 140701</span>
+<span class="co">#&gt;     2: MID25783197 140701</span>
+<span class="co">#&gt;     3: MID25783388 141901</span>
+<span class="co">#&gt;     4: MID25783441 140801</span>
+<span class="co">#&gt;     5: MID25783491 141001</span>
+<span class="co">#&gt;    ---                   </span>
+<span class="co">#&gt; 10131: MID26696967 141901</span>
+<span class="co">#&gt; 10132: MID26696979 141901</span>
+<span class="co">#&gt; 10133: MID26697163 140101</span>
+<span class="co">#&gt; 10134: MID26697444 141901</span>
+<span class="co">#&gt; 10135: MID26697447 140701</span></pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 <div id="how-the-imputed-majors-are-obtained" class="section level2">
@@ -350,6 +334,7 @@
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setDT.html">setDT</a></span>(<span class="no">engr_post_fye</span>)
 
 <span class="no">engr_post_fye</span></pre></body></html></div>
+<p>More to come</p>
 <div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">cip_after_fye</span>
 
 <span class="no">fye_join_categories</span>

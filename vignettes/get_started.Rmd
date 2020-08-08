@@ -1,0 +1,428 @@
+---
+title: "Get started"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Get started}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/journal-of-glaciology.csl
+link-citations: yes
+resource_files:
+  - ../man/figures/vignette-get-started-fig1-1.png
+---
+
+```{r setup, include = FALSE}
+source("vignette-knitr-opts.R")
+knitr::opts_chunk$set(fig.path = "../man/figures/vignette-get-started-")
+```
+
+## Introduction
+
+We compare the number of students ever enrolled in Business and Engineering, grouped by sex and race/ethnicity. 
+
+We use midfieldr functions to access midfielddata student records. We condition, group and summarize the data, and graph a result. For data carpentry, we use base R and selected syntax from the data.table package. 
+
+### This vignette uses
+
+midfieldr functions 
+
+- `filter_by_id()` 
+- `filter_by_cip()`  
+- `filter_by_text()` 
+- `order_multiway()`  
+- `feasible_subset()` 
+
+data.table syntax 
+
+- `DT[rows_we_want]` subset rows
+- `DT[, ..columns_we_want]` select columns
+- `DT[, .(new_col = .N), by = grouping_variables]` count N by group
+- `DT[, new_col := FUN]` create new column as a function of old columns 
+
+packages
+
+```{r}
+# packages used
+library(midfieldr)
+library(midfielddata)
+library(data.table)
+library(ggplot2)
+
+# print max 20 rows, otherwise 5 rows each head/tail
+options(datatable.print.nrows = 20, datatable.print.topn = 5)
+```
+
+
+
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+## Gather programs
+
+Instructional programs are encoded by a 6-digit CIP code. `filter_by_text()` accesses the `cip` data set and retrieves all the 6-digit codes that satisfy stated conditions. In this case, we want all codes that start with 14 (engineering) and 52 (business). 
+
+Users do not have to know their CIP codes a priori. Search strategies using `filter_by_text()` are described in the *Explore program CIP codes* vignette [(link)](explore_cip.html).  Program labeling options are described in the *Gather programs* vignette [(link)](get_programs.html).
+
+```{r}
+# engineering
+engineering <- filter_by_text(cip, keep_text = "^14", keep_col = "cip6")
+
+# add program label
+engineering[, program := "Engineering"]
+
+# examine the result
+engineering
+```
+
+Repeat for business and bind the two data frames. 
+
+```{r}
+# business
+business <- filter_by_text(cip, keep_text = "^52", keep_col = "cip6")
+
+# add program label
+business[, program := "Business"]
+
+# bind the two data frames
+program_group <- rbind(engineering, business)
+
+# examine the result
+program_group
+```
+
+We extract the `cip6` column as a character vector to gather student data. 
+
+```{r}
+# extract a vector of 6-digit CIP codes
+group_cip <- program_group$cip6
+
+# examine the result
+str(group_cip)
+```
+
+The number of unique programs in this group is `r length(group_cip)`. 
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+## Gather students 
+
+Using `filter_by_cip()`, we access `midfieldterms` to obtain the IDs of all students ever enrolled in these programs.  
+
+```{r}
+# extract students ever enrolled
+enrollees <- filter_by_cip(midfieldterms,
+  keep_cip = group_cip,
+  keep_col = c("id", "cip6"),
+  unique_row = TRUE
+)
+
+# examine the result
+enrollees
+```
+
+The output shows that we have `r nrow(enrollees)` unique combinations of student and program. 
+
+For some of these students, completing their program may not be feasible given the range of data available. `feasible_subset()` subsets the enrollees IDs, retaining those who matriculate at least six years before the last term in the data. 
+
+```{r}
+# apply the feasible completion filter
+feasible_ids <- feasible_subset(enrollees$id)
+
+# subset the enrollees
+rows_we_want <- enrollees$id %in% feasible_ids
+enrollees <- enrollees[rows_we_want]
+
+# examine the result
+enrollees
+```
+
+The number of students has dropped to `r nrow(enrollees)`. Our approach to determining completion feasibility using `feasible_subset()` is described in the *Filter for program completion feasibility* vignette [(link)](feasible_completion.html). 
+
+Using `filter_by_id()`, we access `midfieldstudents` to obtain students' race/ethnicity and sex as self-reported at matriculation. 
+
+```{r}
+race_sex <- filter_by_id(midfieldstudents,
+  keep_id = feasible_ids,
+  keep_col = c("id", "race", "sex"),
+  unique_row = TRUE
+)
+
+# examine the result
+race_sex
+```
+
+Join the race/ethnicity and sex data frame to the enrollees data frame by `id`. Then join the program names from `program_group` to our working data frame by `cip6`. 
+
+```{r}
+# left-join demographics to enrollees
+enrollees <- merge(enrollees, race_sex, by = "id", all.x = TRUE)
+
+# left-join program_group to enrollees
+enrollees <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
+
+# examine the result
+enrollees
+```
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+## Group and summarize
+
+To frame our results in terms of program, race/ethnicity, and sex, we group by these variables and count the number of students in each grouping using syntax from the data.table package. The count is assigned to the new `ever` column. 
+
+```{r}
+# assign
+grouping_variables <- c("program", "race", "sex")
+
+# aggregate using data.table syntax
+grouped_enrollees <- enrollees[, .(ever = .N), by = grouping_variables]
+
+# examine the result
+grouped_enrollees
+```
+
+Note the change in the size of the data frame, from `r nrow(enrollees)` in `enrollees` where every row is a student to `r nrow(grouped_enrollees)` in the `grouped_enrollees` below where every row is a group.
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+## Condition the data for display 
+
+To prepare the results for graphing, we construct a "pre-multiway" version of the data frame. We begin by removing ambiguous levels of race/ethnicity. 
+
+```{r}
+# initialize the pre-multiway data frame
+pre_mw <- grouped_enrollees
+
+# remove ambiguous levels of race/ethnicity
+rows_we_want <- !pre_mw$race %in% c("Unknown", "International", "Other")
+pre_mw <- pre_mw[rows_we_want]
+
+# examine the result
+unique(pre_mw$race)
+```
+
+To protect confidentiality, we omit observations with 10 or fewer students ever enrolled.
+
+```{r}
+# protect confidentiality of small populations
+rows_we_want <- pre_mw$ever > 10
+pre_mw <- pre_mw[rows_we_want]
+
+# order rows for viewing
+pre_mw <- pre_mw[order(program, race, sex)]
+
+# examine the result
+pre_mw
+```
+
+In intersectional studies, we have found combined race/ethnicity and sex to be a useful category. We unite two columns to create the `race_sex` column. 
+
+```{r}
+# create a new category
+pre_mw[, race_sex := paste(race, sex, sep = " ")]
+
+# examine the result
+pre_mw
+```
+
+*Multiway data* are characterized by two categorical variables and one quantitative variable [@Cleveland:1993]. In this example, the two categories are program and race/ethnicity/sex and the quantitative variable is the number of students ever enrolled. 
+
+To structure the data in multiway form, we select the three multiway variables. 
+
+```{r}
+# select the three multiway variables
+columns_we_want <- c("program", "race_sex", "ever")
+pre_mw <- pre_mw[, ..columns_we_want]
+
+# examine the result
+pre_mw
+```
+
+The second attribute of multiway data is that the levels of the categories are ordered by the median value of the quantitative variable. `order_multiway()`  converts the categorical variables to factors and orders the category levels.  
+
+```{r}
+# order the category levels
+data_mw <- order_multiway(pre_mw)
+```
+
+The median values are attributes of the data frame. We can view them as follows. Note that `program` and `race_sex` are now factors ordered by the median enrolled numbers (recorded under the `scores` attribute). 
+
+```{r}
+sapply(data_mw, FUN = attributes)
+```
+
+Multiway data and graphs and `order_multiway()` are described in more detail in the *Explore multiway data* vignette [(link)](explore_multiway.html).
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+
+## Graph the results
+
+We use ggplot2 to graph the multiway data. Rows and panels, from top to bottom, are ordered by decreasing medians. We use a logarithmic scale because the numbers differ by orders of magnitude. In a log base-2 scale, every grid line represents a doubling of the previous grid line.   
+
+```{r fig1, fig.asp = 0.8}
+ggplot(data = data_mw, mapping = aes(x = ever, y = race_sex)) +
+  facet_wrap(facets = vars(program), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  scale_x_continuous(
+    trans = "log2",
+    breaks = 2^seq(4, 14),
+    limits = 2^c(4, 14)
+  ) +
+  theme(panel.grid.minor.x = element_blank()) +
+  labs(
+    x = "Number of students (log-2 scale)",
+    y = "",
+    title = "Ever enrolled",
+    caption = "Source: midfielddata"
+  )
+```
+
+
+
+ 
+ 
+ 
+ 
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+ 
+ 
+ 
+## References
+
+<div id="refs"></div>
+
+
+
+
+
+
+
+## Appendix
+
+### Complete script
+
+The vignette code chunks are collected below in a single, condensed script.
+
+```{r eval=FALSE}
+# packages used
+library(midfieldr)
+library(midfielddata)
+library(data.table)
+library(ggplot2)
+
+# gather the programs
+engineering_cip <- filter_by_text(cip, keep_text = "^14", keep_col = "cip6")
+engineering <- engineering_cip[, program := "Engineering"]
+business_cip <- filter_by_text(cip, keep_text = "^52", keep_col = "cip6")
+business <- business_cip[, program := "Business"]
+program_group <- rbind(engineering, business)
+
+# extract a vector of 6-digit CIP codes
+group_cip <- program_group$cip6
+
+# gather students ever enrolled with feasible program completion
+enrollees <- filter_by_cip(midfieldterms,
+  keep_cip = group_cip,
+  keep_col = c("id", "cip6"),
+  uniqueRow = TRUE
+)
+feasible_ids <- feasible_subset(enrollees$id)
+rows_we_want <- enrollees$id %in% feasible_ids
+enrollees <- enrollees[rows_we_want]
+race_sex <- filter_by_id(midfieldstudents,
+  keep_id = feasible_ids,
+  keep_col = c("id", "race", "sex"),
+  uniqueRow = TRUE
+)
+enrollees <- merge(enrollees, race_sex, by = "id", all.x = TRUE)
+enrollees <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
+
+# group and summarize
+grouping_variables <- c("program", "race", "sex")
+grouped_enrollees <- enrollees[, .(ever = .N), by = grouping_variables]
+
+# condition the data for display
+pre_mw <- grouped_enrollees
+rows_we_want <- !pre_mw$race %in% c("Unknown", "International", "Other")
+pre_mw <- pre_mw[rows_we_want]
+rows_we_want <- pre_mw$ever > 10
+pre_mw <- pre_mw[rows_we_want]
+pre_mw[, race_sex := paste(race, sex, sep = " ")]
+columns_we_want <- c("program", "race_sex", "ever")
+pre_mw <- pre_mw[, ..columns_we_want]
+
+# complete the transformation to multiway form
+data_mw <- order_multiway(pre_mw)
+
+# graph results
+ggplot(data = data_mw, mapping = aes(x = ever, y = race_sex)) +
+  facet_wrap(facets = vars(program), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  scale_x_continuous(
+    trans = "log2",
+    breaks = 2^seq(4, 14),
+    limits = 2^c(4, 14)
+  ) +
+  theme(panel.grid.minor.x = element_blank()) +
+  labs(
+    x = "Number of students (log-2 scale)",
+    y = "",
+    title = "Ever enrolled",
+    caption = "Source: midfielddata"
+  )
+```
+
+<br>
+<a href="#top"         >&#9650;     top of page </a>     
+<a href="../index.html">&#9665;       main page </a> 
+
+

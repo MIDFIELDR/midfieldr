@@ -1,4 +1,4 @@
-#' @importFrom data.table setDT '%chin%' as.data.table
+#' @importFrom data.table '%chin%' as.data.table copy
 NULL
 
 #' Subset rows of a data frame by student ID
@@ -72,7 +72,7 @@ filter_by_id <- function(data,
 
   # preserve data.frame, data.table, or tibble
   df_class <- get_df_class(data)
-  DT <- data.table::as.data.table(data)
+  DT <- copy(data.table::as.data.table(data))
 
   # filter and unique
   DT <- DT[id %chin% keep_id]

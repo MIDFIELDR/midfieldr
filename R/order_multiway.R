@@ -1,4 +1,4 @@
-#' @importFrom data.table setDT setDF as.data.table
+#' @importFrom data.table as.data.table copy
 #' @importFrom stats median reorder
 #' @importFrom wrapr let
 NULL
@@ -52,7 +52,7 @@ order_multiway <- function(data = NULL) {
   }
 
   # to preserve data.frame, data.table, or tibble
-  dat_class <- get_df_class(data)
+  df_class <- get_df_class(data)
 
   # to manage multiway column classes
   col_class <- get_col_class(data)
@@ -65,7 +65,7 @@ order_multiway <- function(data = NULL) {
   # 3   numeric       val
 
   # do the work in data.table
-  DT <- data.table::as.data.table(data)
+  DT <- data.table::copy(data.table::as.data.table(data))
 
   # factors to characters
   if ("factor" %in% mw_class) {
@@ -131,12 +131,8 @@ order_multiway <- function(data = NULL) {
       DT[, CAT2 := reorder(CAT2, MED2)]
 
       DT <- DT[, .(CAT1, CAT2, VALUE)]
-
-      # for consistency with data.frame structure
-      # attr(DT[[cat1]], "scores") <- NULL
-      # attr(DT[[cat2]], "scores") <- NULL
     }
   )
   # works by reference
-  revive_class(DT, dat_class)
+  revive_class(DT, df_class)
 }

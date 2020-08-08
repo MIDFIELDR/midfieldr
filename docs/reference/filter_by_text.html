@@ -83,7 +83,7 @@ duplicate rows after subsetting." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9002</span>
       </span>
     </div>
 
@@ -96,7 +96,7 @@ duplicate rows after subsetting." />
   </a>
 </li>
 <li>
-  <a href="../articles/getting_started.html">Getting started</a>
+  <a href="../articles/get_started.html">Get started</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -187,9 +187,9 @@ duplicate rows after subsetting.</p>
 
     <pre class="usage"><span class='fu'>filter_by_text</span>(
   <span class='no'>data</span>,
-  <span class='kw'>keep_any</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>keep_text</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='no'>...</span>,
-  <span class='kw'>drop_any</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>drop_text</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>keep_col</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>unique_row</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
 )</pre>
@@ -202,7 +202,7 @@ duplicate rows after subsetting.</p>
       <td><p>data frame of character columns</p></td>
     </tr>
     <tr>
-      <th>keep_any</th>
+      <th>keep_text</th>
       <td><p>character vector of search patterns for retaining rows</p></td>
     </tr>
     <tr>
@@ -210,7 +210,7 @@ duplicate rows after subsetting.</p>
       <td><p>not used, force later arguments to be used by name</p></td>
     </tr>
     <tr>
-      <th>drop_any</th>
+      <th>drop_text</th>
       <td><p>character vector of search patterns for dropping rows</p></td>
     </tr>
     <tr>
@@ -243,11 +243,10 @@ and subset.</p>
 
     <div class='dont-index'><p>Other data_query: 
 <code><a href='filter_by_cip.html'>filter_by_cip</a>()</code>,
-<code><a href='filter_by_id.html'>filter_by_id</a>()</code>,
-<code><a href='get_institution_limits.html'>get_institution_limits</a>()</code></p></div>
+<code><a href='filter_by_id.html'>filter_by_id</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>filter_by_text</span>(<span class='no'>cip</span>, <span class='kw'>keep_any</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"^1407"</span>, <span class='st'>"^1410"</span>))</div><div class='output co'>#&gt;    cip2    cip2name cip4                                               cip4name
+    <pre class="examples"><div class='input'><span class='fu'>filter_by_text</span>(<span class='no'>cip</span>, <span class='kw'>keep_text</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"^1407"</span>, <span class='st'>"^1410"</span>))</div><div class='output co'>#&gt;    cip2    cip2name cip4                                               cip4name
 #&gt; 1:   14 Engineering 1407                                   Chemical Engineering
 #&gt; 2:   14 Engineering 1407                                   Chemical Engineering
 #&gt; 3:   14 Engineering 1407                                   Chemical Engineering
@@ -262,7 +261,7 @@ and subset.</p>
 #&gt; 4: 141001        Electrical, Electronics and Communications Engineering
 #&gt; 5: 141003                                 Laser and Optical Engineering
 #&gt; 6: 141004                                Telecommunications Engineering
-#&gt; 7: 141099 Electrical, Electronics and Communications Engineering, Other</div><div class='input'><span class='fu'>filter_by_text</span>(<span class='no'>cip</span>, <span class='kw'>keep_any</span> <span class='kw'>=</span> <span class='st'>"civil engineering"</span>, <span class='kw'>drop_any</span> <span class='kw'>=</span> <span class='st'>"technology"</span>)</div><div class='output co'>#&gt;    cip2    cip2name cip4          cip4name   cip6
+#&gt; 7: 141099 Electrical, Electronics and Communications Engineering, Other</div><div class='input'><span class='fu'>filter_by_text</span>(<span class='no'>cip</span>, <span class='kw'>keep_text</span> <span class='kw'>=</span> <span class='st'>"civil engineering"</span>, <span class='kw'>drop_text</span> <span class='kw'>=</span> <span class='st'>"technology"</span>)</div><div class='output co'>#&gt;    cip2    cip2name cip4          cip4name   cip6
 #&gt; 1:   14 Engineering 1408 Civil Engineering 140801
 #&gt; 2:   14 Engineering 1408 Civil Engineering 140802
 #&gt; 3:   14 Engineering 1408 Civil Engineering 140803
@@ -275,10 +274,9 @@ and subset.</p>
 #&gt; 3:                 Structural Engineering
 #&gt; 4: Transportation and Highway Engineering
 #&gt; 5:            Water Resources Engineering
-#&gt; 6:               Civil Engineering, Other</div><div class='input'><span class='fu'>filter_by_text</span>(<span class='no'>cip</span>, <span class='kw'>keep_any</span> <span class='kw'>=</span> <span class='st'>"History"</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'>filter_by_text</span>(<span class='kw'>keep_any</span> <span class='kw'>=</span> <span class='st'>"American"</span>)</div><div class='output co'>#&gt;    cip2 cip2name cip4 cip4name   cip6                         cip6name
-#&gt; 1:   54  History 5401  History 540102 American History (United States)</div><div class='input'>
-</div></pre>
+#&gt; 6:               Civil Engineering, Other</div><div class='input'><span class='fu'>filter_by_text</span>(<span class='no'>cip</span>, <span class='kw'>keep_text</span> <span class='kw'>=</span> <span class='st'>"History"</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'>filter_by_text</span>(<span class='kw'>keep_text</span> <span class='kw'>=</span> <span class='st'>"American"</span>)</div><div class='output co'>#&gt;    cip2 cip2name cip4 cip4name   cip6                         cip6name
+#&gt; 1:   54  History 5401  History 540102 American History (United States)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

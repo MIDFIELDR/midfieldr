@@ -52,8 +52,7 @@ The midfielddata taxonomy includes three non-IPEDS codes:
 str(cip)
 
 # filter_by_text() argument
-filter_by_text(cip, keep_any = "^1410")
-
+filter_by_text(cip, keep_text = "^1410")
 }
 \seealso{
 Other cip_data: 

@@ -1,4 +1,4 @@
-#' @importFrom data.table setDT '%chin%' as.data.table
+#' @importFrom data.table '%chin%' as.data.table copy
 NULL
 
 #' Subset rows of a data frame by program CIP
@@ -70,7 +70,7 @@ filter_by_cip <- function(data,
 
   # preserve data.frame, data.table, or tibble
   df_class <- get_df_class(data)
-  DT <- data.table::as.data.table(data)
+  DT <- data.table::copy(data.table::as.data.table(data))
 
   # do the work
   DT <- DT[cip6 %chin% keep_cip]

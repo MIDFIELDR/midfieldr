@@ -1,4 +1,4 @@
-#' @importFrom data.table as.data.table
+#' @importFrom data.table as.data.table copy
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
@@ -14,9 +14,9 @@ NULL
 #' and subset.
 #'
 #' @param data data frame of character columns
-#' @param keep_any character vector of search patterns for retaining rows
+#' @param keep_text character vector of search patterns for retaining rows
 #' @param ... not used, force later arguments to be used by name
-#' @param drop_any character vector of search patterns for dropping rows
+#' @param drop_text character vector of search patterns for dropping rows
 #' @param keep_col character vector of column names, default all columns
 #' @param unique_row logical, remove duplicate rows, default FALSE
 #'
@@ -31,24 +31,24 @@ NULL
 #' }
 #'
 #' @examples
-#' filter_by_text(cip, keep_any = c("^1407", "^1410"))
-#' filter_by_text(cip, keep_any = "civil engineering", drop_any = "technology")
-#' filter_by_text(cip, keep_any = "History") %>%
-#'   filter_by_text(keep_any = "American")
+#' filter_by_text(cip, keep_text = c("^1407", "^1410"))
+#' filter_by_text(cip, keep_text = "civil engineering", drop_text = "technology")
+#' filter_by_text(cip, keep_text = "History") %>%
+#'   filter_by_text(keep_text = "American")
 #' @family data_query
 #'
 #' @export
 #'
 filter_by_text <- function(data,
-                           keep_any = NULL,
+                           keep_text = NULL,
                            ...,
-                           drop_any = NULL,
+                           drop_text = NULL,
                            keep_col = NULL,
                            unique_row = NULL) {
   wrapr::stop_if_dot_args(
     substitute(list(...)), "Arguments after ... must be named,"
   )
-  if (isTRUE(is.null(keep_any) & is.null(drop_any))) {
+  if (isTRUE(is.null(keep_text) & is.null(drop_text))) {
     return(data)
   }
 
@@ -60,11 +60,11 @@ filter_by_text <- function(data,
   unique_row <- unique_row %||% FALSE
 
   # check arguments
-  if (isFALSE(is.null(keep_any))) {
-    assert_class(keep_any, "character")
+  if (isFALSE(is.null(keep_text))) {
+    assert_class(keep_text, "character")
   }
-  if (isFALSE(is.null(drop_any))) {
-    assert_class(drop_any, "character")
+  if (isFALSE(is.null(drop_text))) {
+    assert_class(drop_text, "character")
   }
   assert_class(keep_col, "character")
   assert_class(unique_row, "logical")
@@ -74,13 +74,13 @@ filter_by_text <- function(data,
 
   # to preserve data.frame, data.table, or tibble
   df_class <- get_df_class(data)
-  DT <- data.table::as.data.table(data)
+  DT <- data.table::copy(data.table::as.data.table(data))
 
   # do the work
   DT <- filter_char_frame(
     data = DT,
-    keep_any = keep_any,
-    drop_any = drop_any
+    keep_text = keep_text,
+    drop_text = drop_text
   )
 
   # stop if all rows have been eliminated
@@ -90,14 +90,14 @@ filter_by_text <- function(data,
   }
 
   # message if a search term was not found
-  # data frame with as many columns as there are keep_any terms
+  # data frame with as many columns as there are keep_text terms
   # as many rows as there are being searched in data
-  df <- data.frame(matrix("", nrow = nrow(DT), ncol = length(keep_any)))
-  names(df) <- keep_any
+  df <- data.frame(matrix("", nrow = nrow(DT), ncol = length(keep_text)))
+  names(df) <- keep_text
 
-  for (j in seq_along(keep_any)) {
+  for (j in seq_along(keep_text)) {
     df[, j] <- apply(DT, 1, function(i) {
-      any(grepl(keep_any[j], i, ignore.case = TRUE))
+      any(grepl(keep_text[j], i, ignore.case = TRUE))
     })
   }
 

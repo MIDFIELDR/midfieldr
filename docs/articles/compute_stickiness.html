@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9002</span>
       </span>
     </div>
 
@@ -51,7 +51,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/getting_started.html">Getting started</a>
+  <a href="../articles/get_started.html">Get started</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -138,18 +138,34 @@
 
     
     
-<p>Focus on midfieldr functions:</p>
-<ul>
-<li><code><a href="../reference/filter_by_cip.html">filter_by_cip()</a></code></li>
-<li><code><a href="../reference/filter_by_id.html">filter_by_id()</a></code></li>
-</ul>
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
 <p>Longitudinal “stickiness” is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program <span class="citation">(Ohland and others, <a href="#ref-Ohland+Orr+others:2012" role="doc-biblioref">2012</a>)</span>.</p>
 <p>The stickiness metric accounts for all students in a program. Unlike the graduation rate metric, stickiness includes students who begin college part-time, who enroll mid-year, and who switch majors or transfer between institutions.</p>
 <p>Every student counted in a program’s stickiness metric was enrolled in that program for at least one term. The program succeeded in attracting these students—stickiness tells us how well the program succeeded in retaining them.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># packages used</span>
+<div id="this-vignette-uses" class="section level3">
+<h3 class="hasAnchor">
+<a href="#this-vignette-uses" class="anchor"></a>This vignette uses</h3>
+<p>midfieldr functions</p>
+<ul>
+<li><code><a href="../reference/filter_by_id.html">filter_by_id()</a></code></li>
+<li><code><a href="../reference/filter_by_cip.html">filter_by_cip()</a></code></li>
+<li><code><a href="../reference/feasible_subset.html">feasible_subset()</a></code></li>
+</ul>
+<p>data.table syntax</p>
+<ul>
+<li>
+<code>DT[rows_we_want]</code> subset rows</li>
+<li>
+<code>DT[, .(new_col = .N), by = grouping_variables]</code> count N by group</li>
+<li>
+<code>DT[, new_col := FUN]</code> create new column as a function of old columns</li>
+<li>
+<code>DT[rows_to_edit, col := value]</code> for identified rows, assign value in column</li>
+</ul>
+<p>packages</p>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"> <span class="co"># packages used</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfielddata</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>)
@@ -159,14 +175,15 @@
 <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">datatable.print.nrows</span> <span class="kw">=</span> <span class="fl">20</span>, <span class="kw">datatable.print.topn</span> <span class="kw">=</span> <span class="fl">5</span>)</pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
+</div>
 <div id="choose-the-programs-to-study" class="section level2">
 <h2 class="hasAnchor">
 <a href="#choose-the-programs-to-study" class="anchor"></a>Choose the programs to study</h2>
-<p>In the <em>Gather programs</em> vignette <a href="get_programs.html">(link)</a>, we create the program group of 6-digit codes and user-defined program names for the engineering case study. These data are included with midfieldr as the built-in data set <code>exa_group</code>. View its help page by running</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r">? <span class="no">exa_group</span></pre></body></html></div>
+<p>In the <em>Gather programs</em> vignette <a href="get_programs.html">(link)</a>, we create the program group of 6-digit codes and user-defined program names for the engineering case study. These data are included with midfieldr as the built-in data set <code>rep_group</code>. View its help page by running</p>
+<div class="sourceCode" id="cb2"><html><body><pre class="r">? <span class="no">rep_group</span></pre></body></html></div>
 <p>The data are loaded with midfieldr.</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># obtain programs (built-in data set)</span>
-<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="no">exa_group</span>
+<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="no">rep_group</span>
 
 <span class="co"># examine the result</span>
 <span class="no">program_group</span>
@@ -185,10 +202,10 @@
 <span class="co">#&gt; 12: 143501 Industrial Engineering</span></pre></body></html></div>
 <p>We extract the <code>cip6</code> column as a character vector to gather student data.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># extract a vector of 6-digit CIP codes</span>
-<span class="no">group_codes</span> <span class="kw">&lt;-</span> <span class="no">program_group</span>$<span class="no">cip6</span>
+<span class="no">group_cips</span> <span class="kw">&lt;-</span> <span class="no">program_group</span>$<span class="no">cip6</span>
 
 <span class="co"># examine the result</span>
-<span class="no">group_codes</span>
+<span class="no">group_cips</span>
 <span class="co">#&gt;  [1] "140801" "140802" "140803" "140804" "140805" "140899" "141001" "141003"</span>
 <span class="co">#&gt;  [9] "141004" "141099" "141901" "143501"</span></pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
@@ -199,7 +216,7 @@
 <p>We use <code><a href="../reference/filter_by_cip.html">filter_by_cip()</a></code> to extract from <code>midfieldstudents</code> the IDs of students ever enrolled in these programs.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># gather students ever enrolled in programs</span>
 <span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_cip.html">filter_by_cip</a></span>(<span class="no">midfieldterms</span>,
-  <span class="kw">keep_cip</span> <span class="kw">=</span> <span class="no">group_codes</span>,
+  <span class="kw">keep_cip</span> <span class="kw">=</span> <span class="no">group_cips</span>, <span class="co"># &lt;---------------- group_cips from above</span>
   <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>),
   <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">TRUE</span>
 )
@@ -218,11 +235,11 @@
 <span class="co">#&gt; 10762: MID26697163 141901</span>
 <span class="co">#&gt; 10763: MID26697444 141901</span>
 <span class="co">#&gt; 10764: MID26697447 141001</span></pre></body></html></div>
-<p>For convenience, the IDs of these enrollees are included in midfieldr as the built-in character vector <code>exa_ever</code>. View its help page by running</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r">? <span class="no">exa_ever</span></pre></body></html></div>
-<p>For some of these students, completing their program may not be feasible given the range of data available. <code><a href="../reference/completion_feasible.html">completion_feasible()</a></code> subsets the student IDs, retaining those who matriculate at least six years before the last term in the data.</p>
+<p>For convenience, the IDs of these enrollees are included in midfieldr as the built-in character vector <code>rep_ever</code>. View its help page by running</p>
+<div class="sourceCode" id="cb6"><html><body><pre class="r">? <span class="no">rep_ever</span></pre></body></html></div>
+<p>For some of these students, completing their program may not be feasible given the range of data available. <code><a href="../reference/feasible_subset.html">feasible_subset()</a></code> subsets the student IDs, retaining those who matriculate at least six years before the last term in the data.</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># apply the feasible completion filter</span>
-<span class="no">feasible_ids</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/completion_feasible.html">completion_feasible</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">enrollees</span>$<span class="no">id</span>)
+<span class="no">feasible_ids</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/feasible_subset.html">feasible_subset</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">enrollees</span>$<span class="no">id</span>)
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">feasible_ids</span>)
@@ -249,7 +266,7 @@
 <p>We use <code><a href="../reference/filter_by_id.html">filter_by_id()</a></code> to extract from <code>midfieldstudents</code> the race/ethnicity and sex of the enrollees.</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># obtain race/ethnicity and sex at matriculation</span>
 <span class="no">race_sex</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_id.html">filter_by_id</a></span>(<span class="no">midfieldstudents</span>,
-  <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">feasible_ids</span>,
+  <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">feasible_ids</span>, <span class="co"># &lt;---------------- feasible_ids from above</span>
   <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>),
   <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">TRUE</span>
 )
@@ -312,13 +329,13 @@
 <p>A similar process is used to group and summarize our graduates. We use <code><a href="../reference/filter_by_cip.html">filter_by_cip()</a></code> to extract from <code>midfielddegrees</code> the IDs of students graduating from these programs. We skip the feasible completion step because for graduates, the question of completion feasibility is moot—graduation itself establishes feasibility.</p>
 <div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># gather students graduating from programs</span>
 <span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_cip.html">filter_by_cip</a></span>(<span class="no">midfielddegrees</span>,
-  <span class="kw">keep_cip</span> <span class="kw">=</span> <span class="no">group_codes</span>,
+  <span class="kw">keep_cip</span> <span class="kw">=</span> <span class="no">group_cips</span>, <span class="co"># &lt;---------------- group_cips again from above</span>
   <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>),
   <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
   <span class="kw">first_degree</span> <span class="kw">=</span> <span class="fl">TRUE</span>
 )
 <span class="no">race_sex</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_id.html">filter_by_id</a></span>(<span class="no">midfieldstudents</span>,
-  <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">graduates</span>$<span class="no">id</span>,
+  <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">graduates</span>$<span class="no">id</span>, <span class="co"># &lt;---------------- from graduates just above</span>
   <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>),
   <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">TRUE</span>
 )
@@ -339,8 +356,8 @@
 <span class="co">#&gt; 4674: 143501 MID26695626 White   Male Industrial Engineering</span>
 <span class="co">#&gt; 4675: 143501 MID26696116 White Female Industrial Engineering</span>
 <span class="co">#&gt; 4676: 143501 MID26696429 White Female Industrial Engineering</span></pre></body></html></div>
-<p>For convenience, the IDs of these graduates are included in midfieldr as the built-in character vector <code>exa_grad</code>. View its help page by running</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r">? <span class="no">exa_grad</span></pre></body></html></div>
+<p>For convenience, the IDs of these graduates are included in midfieldr as the built-in character vector <code>rep_grad</code>. View its help page by running</p>
+<div class="sourceCode" id="cb13"><html><body><pre class="r">? <span class="no">rep_grad</span></pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 <div id="group-summarize-and-join" class="section level2">
@@ -390,7 +407,7 @@
 <div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="co"># left-join graduates to enrollees</span>
 <span class="no">grouped_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">grouped_enrollees</span>,
   <span class="no">grouped_graduates</span>,
-  <span class="kw">by</span> <span class="kw">=</span> <span class="no">grouping_variables</span>,
+  <span class="kw">by</span> <span class="kw">=</span> <span class="no">grouping_variables</span>, <span class="co"># &lt;---------------- the grouping variables again </span>
   <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>
 )
 
@@ -461,19 +478,19 @@
 <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="no">stickiness</span>, <span class="kw">FUN</span> <span class="kw">=</span> <span class="no">class</span>)
 <span class="co">#&gt;     program        race         sex        ever        grad       stick </span>
 <span class="co">#&gt; "character" "character" "character"   "integer"   "integer"   "numeric"</span></pre></body></html></div>
-<p>For convenience, this data frame is included in midfieldr as the built-in data set <code>exa_stickiness</code>. View its help page by running</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r">? <span class="no">exa_stickiness</span></pre></body></html></div>
+<p>The stickiness data derived above is the data set <code>rep_stickiness</code> in midfieldr. View its help page by running</p>
+<div class="sourceCode" id="cb23"><html><body><pre class="r">? <span class="no">rep_stickiness</span></pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 <div id="condition-the-data-for-display" class="section level2">
 <h2 class="hasAnchor">
 <a href="#condition-the-data-for-display" class="anchor"></a>Condition the data for display</h2>
 <p>Before graphing, we isolate the three multiway variables (program, combined race and sex, and stickiness) and transform the categorical variables into factors with levels that are ordered by median stickiness.</p>
-<p>In the <em>Explore multiway data</em> vignette <a href="explore_multiway.html">(link)</a>, we describe this transformation in detail. The transformed multiway data are included with midfieldr as the built-in data set <code>exa_stickiness_mw</code>. View its help page by running</p>
-<div class="sourceCode" id="cb24"><html><body><pre class="r">? <span class="no">exa_stickiness_mw</span></pre></body></html></div>
+<p>In the <em>Explore multiway data</em> vignette <a href="explore_multiway.html">(link)</a>, we describe this transformation in detail. The transformed multiway data are included with midfieldr as the built-in data set <code>rep_stickiness_mw</code>. View its help page by running</p>
+<div class="sourceCode" id="cb24"><html><body><pre class="r">? <span class="no">rep_stickiness_mw</span></pre></body></html></div>
 <p>The data are loaded with midfieldr.</p>
 <div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="co"># condition the data in multiway form (built-in data set)</span>
-<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">exa_stickiness_mw</span>
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">rep_stickiness_mw</span>
 <span class="no">data_mw</span>
 <span class="co">#&gt;                    program        race_sex stick</span>
 <span class="co">#&gt;  1:      Civil Engineering    Asian Female 0.611</span>
@@ -527,7 +544,7 @@
 <div id="graph-the-metric" class="section level2">
 <h2 class="hasAnchor">
 <a href="#graph-the-metric" class="anchor"></a>Graph the metric</h2>
-<p>We use conventional ggplot2 functions to graph the multiway.</p>
+<p>We use conventional ggplot2 functions to graph the <code>data_mw</code> data set in a multiway graph.</p>
 <div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="co"># graph results</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data_mw</span>, <span class="kw">mapping</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">stick</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">race_sex</span>)) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="kw">facets</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">program</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
@@ -560,16 +577,16 @@
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
 
 <span class="co"># obtain programs (built-in data set)</span>
-<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="no">exa_group</span>
-<span class="no">group_codes</span> <span class="kw">&lt;-</span> <span class="no">program_group</span>$<span class="no">cip6</span>
+<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="no">rep_group</span>
+<span class="no">group_cips</span> <span class="kw">&lt;-</span> <span class="no">program_group</span>$<span class="no">cip6</span>
 
 <span class="co"># gather students ever enrolled in programs</span>
 <span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_cip.html">filter_by_cip</a></span>(<span class="no">midfieldterms</span>,
-  <span class="kw">keep_cip</span> <span class="kw">=</span> <span class="no">group_codes</span>,
+  <span class="kw">keep_cip</span> <span class="kw">=</span> <span class="no">group_cips</span>,
   <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>),
   <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">TRUE</span>
 )
-<span class="no">feasible_ids</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/completion_feasible.html">completion_feasible</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">enrollees</span>$<span class="no">id</span>)
+<span class="no">feasible_ids</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/feasible_subset.html">feasible_subset</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">enrollees</span>$<span class="no">id</span>)
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>$<span class="no">id</span> <span class="kw">%in%</span> <span class="no">feasible_ids</span>
 <span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>[<span class="no">rows_we_want</span>]
 <span class="no">race_sex</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_id.html">filter_by_id</a></span>(<span class="no">midfieldstudents</span>,
@@ -582,7 +599,7 @@
 
 <span class="co"># gather students graduating from programs</span>
 <span class="no">graduates</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_cip.html">filter_by_cip</a></span>(<span class="no">midfielddegrees</span>,
-  <span class="kw">keep_cip</span> <span class="kw">=</span> <span class="no">group_codes</span>,
+  <span class="kw">keep_cip</span> <span class="kw">=</span> <span class="no">group_cips</span>,
   <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>),
   <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
   <span class="kw">first_degree</span> <span class="kw">=</span> <span class="fl">TRUE</span>
@@ -614,7 +631,7 @@
 <span class="no">stickiness</span>[, <span class="no">stick</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="no">grad</span> / <span class="no">ever</span>, <span class="fl">2</span>)]
 
 <span class="co"># condition the data in multiway form (built-in data set)</span>
-<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">exa_stickiness_mw</span>
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">rep_stickiness_mw</span>
 
 <span class="co"># graph results</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data_mw</span>, <span class="kw">mapping</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">stick</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">race_sex</span>)) +

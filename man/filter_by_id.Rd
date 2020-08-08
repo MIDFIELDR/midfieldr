@@ -53,12 +53,10 @@ first degree term are always retained.
 }
 \examples{
 # placeholder
-
 }
 \seealso{
 Other data_query: 
 \code{\link{filter_by_cip}()},
-\code{\link{filter_by_text}()},
-\code{\link{get_institution_limits}()}
+\code{\link{filter_by_text}()}
 }
 \concept{data_query}

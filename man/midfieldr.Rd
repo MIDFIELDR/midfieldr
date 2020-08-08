@@ -17,11 +17,10 @@ A typical midfieldr workflow might include:
 
 \itemize{
   \item \code{filter_by_text()} search the CIP data set for program codes
-  \item \code{label_programs()} isolate and label specific programs to study
   \item \code{filter_by_cip()} gather students ever enrolled in the programs
-  \item \code{completion_feasible()} subset students for 6-year
+  \item \code{filter_by_id()} obtain student sex and race/ethnicity
+  \item \code{feasible_subset()} subset students for 6-year
   completion feasibility
-  \item \code{get_race_sex()} obtain student sex and race/ethnicity
   \item \code{order_multiway()} condition multiway data for graphing
 }
 

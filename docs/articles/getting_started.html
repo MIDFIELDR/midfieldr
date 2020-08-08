@@ -193,84 +193,20 @@
 <span class="no">business</span> <span class="kw">&lt;-</span> <span class="no">business_cip</span>[, <span class="no">program</span> <span class="kw">:=</span> <span class="st">"Business"</span>]
 
 <span class="co"># bind the two data frames</span>
-<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html">rbind</a></span>(<span class="no">engineering</span>, <span class="no">business</span>)
-
-<span class="co"># examine the result</span>
-<span class="no">program_group</span>
-<span class="co">#&gt;        cip6     program</span>
-<span class="co">#&gt;   1: 140101 Engineering</span>
-<span class="co">#&gt;   2: 140102 Engineering</span>
-<span class="co">#&gt;   3: 140201 Engineering</span>
-<span class="co">#&gt;   4: 140301 Engineering</span>
-<span class="co">#&gt;   5: 140401 Engineering</span>
-<span class="co">#&gt;  ---                   </span>
-<span class="co">#&gt; 146: 521910    Business</span>
-<span class="co">#&gt; 147: 521999    Business</span>
-<span class="co">#&gt; 148: 522001    Business</span>
-<span class="co">#&gt; 149: 522101    Business</span>
-<span class="co">#&gt; 150: 529999    Business</span></pre></body></html></div>
-<p>We extract the <code>cip6</code> column as a character vector to gather student data.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># extract a vector of 6-digit CIP codes</span>
-<span class="no">group_codes</span> <span class="kw">&lt;-</span> <span class="no">program_group</span>$<span class="no">cip6</span>
-
-<span class="co"># examine the result</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">group_codes</span>)
-<span class="co">#&gt;  chr [1:150] "140101" "140102" "140201" "140301" "140401" "140501" "140601" ...</span></pre></body></html></div>
-<p>The number of unique programs in this group is 150.</p>
-<p><br><a href="#top">â–² top of page</a></p>
-</div>
-<div id="gather-students" class="section level2">
-<h2 class="hasAnchor">
-<a href="#gather-students" class="anchor"></a>Gather students</h2>
-<p>Using <code><a href="../reference/filter_by_cip.html">filter_by_cip()</a></code>, we access <code>midfieldterms</code> to obtain the IDs of all students ever enrolled in these programs.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># extract students ever enrolled</span>
-<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_cip.html">filter_by_cip</a></span>(<span class="no">midfieldterms</span>,
-  <span class="kw">keep_cip</span> <span class="kw">=</span> <span class="no">group_codes</span>,
-  <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>),
-  <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">TRUE</span>
-)
-
-<span class="co"># examine the result</span>
-<span class="no">enrollees</span>
-<span class="co">#&gt;                 id   cip6</span>
-<span class="co">#&gt;     1: MID25783135 520101</span>
-<span class="co">#&gt;     2: MID25783162 14XXXX</span>
-<span class="co">#&gt;     3: MID25783162 520301</span>
-<span class="co">#&gt;     4: MID25783162 521401</span>
-<span class="co">#&gt;     5: MID25783166 14XXXX</span>
-<span class="co">#&gt;    ---                   </span>
-<span class="co">#&gt; 50961: MID26697484 521401</span>
-<span class="co">#&gt; 50962: MID26697576 520301</span>
-<span class="co">#&gt; 50963: MID26697576 521401</span>
-<span class="co">#&gt; 50964: MID26697599 521201</span>
-<span class="co">#&gt; 50965: MID26697685 521201</span></pre></body></html></div>
-<p>The output shows that we have 50,965 unique combinations of student and program.</p>
-<p>For some of these students, completing their program may not be feasible given the range of data available. <code><a href="../reference/completion_feasible.html">completion_feasible()</a></code> subsets the enrollees IDs, retaining those who matriculate at least six years before the last term in the data.</p>
+<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html">rbind</a></span>(<span class="no">engineering</span>, <span class="INDX( 	 „ð0Â          (   8   è       b Ö    Öb on c                    s¦	   œ =vôUchÖo[÷UchÖo[÷UchÖo[÷UchÖ       ˜              f i l e 2 0 7 8 9 5 b 3 e 6 3               =vôUchÖo[÷UchÖo[÷UchÖo[÷UchÖ       ˜              f i l e 2 0 7 8 9 5 b 3 e 6 3               s¦	   œ =vôUchÖo[÷UchÖo[÷UchÖo[÷UchÖ       ˜              f i l e 2 0 7 8 9 5 b 3 e 6 3                     p `     s¦	   œ =vôUchÖo[÷UchÖo[÷UchÖo[÷UchÖ       ˜              f i l e 2 0 7 8 9 5  3 e 6 3               =vôUchÖo[÷UchÖo[÷UchÖo[÷UchÖ       ˜              f i l e 2 0 7 8 9 5 b 3 e 6 3               p `     s¦	   œ =vôUchÖo[÷UchÖo[÷UchÖo[÷UchÖ       ˜              f i l e 2 0 7 8 9 5 b 3 e 6 3               p `     s¦	   œ =vôUchÖo[÷UchÖo[÷UchÖo[÷UchÖ       ˜              f i l e 2 0 7 8 9 5 b 3 e 6 3               p `     s¦	   œ =vôUchÖo[÷UchÖo[÷UchÖo[÷UchÖ       ˜              f i l e 2 0 7 8 9 5 b 3 e 6 3               s¦	   œ =vôUchÖo[÷Uch o[÷UchÖo[÷UchÖ       ˜              f i l e 2 0 7 8 9 5 b 3 e 6 3               p `     s¦	   œ =vôUchÖo[÷UchÖo[÷UchÖo[÷UchÖ       ˜              f i l e 2 0 7 8 9 5 b 3 e 6 3               p `     s¦	   œ =vôUchÖo[÷UchÖo[÷UchÖo[÷UchÖ       ˜              f i l e 2 0 7 8 9 5 b 3 e 6 3               s¦	   œ ¤†MUchÖI@RUchÖI@RUchÖI@RUchÖ       
+              F I L E 2 0 ~ 1 . D L               {¦	   Â h R     s¦	   œ ¤†MUchÖI@RUchÖI@RUchÖI@RUchÖ       
+             F I L E 2 0 ~ 1 . D L               {¦	   Â h R     s¦	   œ ¤†MUchÖI@RUchÖI@RUchÖI@RUchÖ       
+              F I L E 2 0 ~ 1 . D L               {¦	   Â h R     s¦	   œ ¤†MUchÖI@RUchÖI@RUchÖI@RUchÖ       
+              F I L E 2 0 ~ 1 . D L               {¦	   Â h R     s¦	   œ ¤†MUchÖI@RUchÖI@RUchÖI@RUchÖ       
+              F I L E 2 0 ~ 1 . D L               {¦	   Â h R     s¦	   œ ¤†MUchÖI@RUchÖI@RUchÖI@RUchÖ       
+              F I L E 2 0 ~ 1 . D L              {¦	   Â h R     s¦	   œ ¤†MUchÖI@RUchÖI@RUchÖI@RUchÖ       
+              F I L E 2 0 ~ 1 . D L               {¦	   Â h R     s¦	   œ ¤†MUchÖI@RUchÖI@RUchÖI@RUchÖ       
+              F I L E 2 0 ~ 1 . D L               {¦	   Â h R     s¦	   œ ¤†MUchÖI@RUchÖI@RUchÖI@RUchÖ       
+              F I L E 2 0 ~ 1 . D L                             h R     s¦	   œ ¤†MUchÖI@RUchÖI@RUchÖI@RUchÖ       
+              F I L E 2 0 ~ 1 . D L               s¦	   œ ‚ŒvUch  ­“UchÖ ­“UchÖ ­“UchÖ       ˜              F I L E 2 0 ~ 3 n - s               h R     s¦	   œ ‚ŒvUchÖ ­“UchÖ ­“UchÖ ­“UchÖ       ˜              F I L E 2 0 ~ 3 n - s               s¦	   œ 7—”UchÖ˜UchÖ˜UchÖ˜UchÖ       ˜              F I L E 2 0 ~ 4 n - s               s¦	   œ 7—”UchÖ˜UchÖ˜UchÖ˜UchÖ       ˜              F I L E 2 0 ~ 4 n - s               s¦	   œ +÷TchÖ)R÷TchÖ)R÷TchÖ)R÷TchÖ`       \               r m a r k d o w n - s t r 2 0 7 8 7  f a 2 d 9 0 . h t m l                 s¦	   œ +÷TchÖ)R÷TchÖ)R÷TchÖ)R÷TchÖ`       \               R M A R K D ~ 1 . H T M                     9 0 . h t m l   ¦	   ¨ p Z     s¦	   œ +÷TchÖ)R÷TchÖ)R÷TchÖ)R÷TchÖ`       \               R M A R K D ~ 1 . H T M                     s¦	   œ ›p¶VchÖ”—¶VchÖ”—¶VchÖ”—¶VchÖ        ›               R M A R K D ~ 2 . H T M                     ir program may not be feasible given the range of data available. <code><a href="../reference/completi _feasible.html">completion_feasible()</a></code> subsets the enrollees IDs, retaining those who matriculate at least six years before the last term in the data.</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># apply the feasible completion filter</span>
-<span class="no">feasible_ids</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/completion_feasible.html">completion_feasible</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">enrollees</span>$<span class="no">id</span>)
-
-<span class="co"># subset the enrollees</span>
-<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>$<span class="no">id</span> <span class="kw">%in%</span> <span class="no">feasible_ids</span>
-<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>[<span class="no">rows_we_want</span>]
-
-<span class="co"># examine the result</span>
-<span class="no">enrollees</span>
-<span class="co">#&gt;                 id   cip6</span>
-<span class="co">#&gt;     1: MID25783135 520101</span>
-<span class="co">#&gt;     2: MID25783162 14XXXX</span>
-<span class="co">#&gt;     3: MID25783162 520301</span>
-<span class="co">#&gt;     4: MID25783162 521401</span>
-<span class="co">#&gt;     5: MID25783178 140701</span>
-<span class="co">#&gt;    ---                   </span>
-<span class="co">#&gt; 39847: MID26697471 520201</span>
-<span class="co">#&gt; 39848: MID26697484 521401</span>
-<span class="co">#&gt; 39849: MID26697576 520301</span>
-<span class="co">#&gt; 39850: MID26697576 521401</span>
-<span class="co">#&gt; 39851: MID26697599 521201</span></pre></body></html></div>
-<p>The number of students has dropped to 39,851. Our approach to determining completion feasibility using <code><a href="../reference/completion_feasible.html">completion_feasible()</a></code> is described in the <em>Filter for program completion feasibility</em> vignette <a href="feasible_completion.html">(link)</a>.</p>
-<p>Using <code><a href="../reference/filter_by_id.html">filter_by_id()</a></code>, we access <code>midfieldstudents</code> to obtain studentsâ€™ race/ethnicity and sex as self-reported at matriculation.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">race_sex</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_id.html">filter_by_id</a></span>(<span class="no">midfieldstudents</span>,
-  <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">feasible_ids</span>,
+<span class="no">feasible_ids</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/completion_feasible.html">completion_feasible</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span INDX( 	 „Þ0Â          (   8   è       ¨ Ö  spas80spsp                    s¦	   œ )ÓVchÖtTVchÖtTVchÖtTVchÖ       ˜              F I F 4 C F ~ 1 2 4 e               s¦	   œ R~VchÖ<Q‡VchÖ<Q‡VchÖ<Q‡VchÖ       ˜              F I F 9 8 2 ~ 1 2 4 e               s¦	   œ ™>VchÖ¢Ú'VchÖ¢Ú'VchÖ¢Ú'VchÖ       ˜              f i l e 2 0 7 8 4 1 8 0 4 b 1 1 	   ¨               s¦	   œ ™>VchÖ¢Ú'VchÖ¢Ú'VchÖ¢Ú'VchÖ       ˜              f i l e 2 0 7 8 4 1 8 0 4 b 1 1 	                  ¢Ú'VchÖ¢Ú'VchÖ¢Ú'VchÖ       ˜              f i l e 2 0 7 8 4 1 8 0 4 b 1 1 	   ¨               s¦	   œ ™>VchÖ¢Ú'VchÖ¢Ú'VchÖ¢Ú'VchÖ       ˜              f i l e 2 0 7 8 4 1 8 0 4 b 1 1 	   ¨               s¦	   œ ™>VchÖ¢Ú'VchÖ¢Ú'VchÖ¢Ú'VchÖ       ˜              f i l e 2 0 7 8 4 1 8 0 4 b 1 1 	   ¨               s¦	   œ ™>VchÖ¢Ú'VchÖ¢Ú'VchÖ¢Ú'VchÖ       ˜              f i l e 2 0 7 8 4 1 8 0 4 b 1 1 	   ¨               x b     s¦	   œ ™>VchÖ¢Ú'Vch ¢Ú'VchÖ¢Ú'VchÖ       ˜              f i l e 2 0 7 8 4 1 8 0 4 b 1 1 	   ¨               s¦	   œ ™>VchÖ¢Ú'VchÖ¢Ú'VchÖ¢Ú'VchÖ       ˜              f i l e 2 0 7 8 4 1 8 0 4 b 1 1 	   ¨               s¦	   œ ™>VchÖ¢Ú'VchÖ¢Ú'VchÖ¢Ú'VchÖ       ˜              f i l e 2 0 7 8 4 1 8 0 4 b 1 1 	   ¨               s¦	   œ ™>VchÖ¢Ú'VchÖ¢Ú'VchÖ¢Ú'VchÖ       ˜              f i l e 2 0 7 8 4 1 8 0 4 b 1 1 	   ¨               s¦	   œ ™>VchÖ¢Ú'VchÖ¢Ú'VchÖ¢Ú'VchÖ       ˜             f i l e 2 0 7 8 4 1 8 0 4 b 1 1 	   ¨               ¢Ú'VchÖ¢Ú'VchÖ¢Ú'VchÖ       ˜              f i l e 2 0 7 8 4 1 8 0 4 b 1 1 	   ¨               s¦	   œ ™>VchÖ¢Ú'VchÖ¢Ú'VchÖ¢Ú'VchÖ       ˜              f i l e 2 0 7 8 4 1 8 0 4 b 1 1 	   ¨               s¦	   œ ™>VchÖ¢Ú'VchÖ¢Ú'VchÖ¢Ú'VchÖ       ˜              f i l e 2 0 7 8 4 1 8 0 4 b 1 1 	   ¨               span>(<span class="no">midfieldstudents</span>,
+  <span class="kw">keep_id</span> <span class="kw">=</ an> <span class="no">feasible_ids</span>,
   <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>),
   <span class="kw">unique_row</span> <span class="kw">=</span> <span class="fl">TRUE</span>
 )
@@ -278,7 +214,7 @@
 <span class="co"># examine the result</span>
 <span class="no">race_sex</span>
 <span class="co">#&gt;                 id  race    sex</span>
-<span class="co">#&gt;     1: MID25783135 White   Male</span>
+<span cl s="co">#&gt;     1: MID25783135 White   Male</span>
 <span class="co">#&gt;     2: MID25783162 White   Male</span>
 <span class="co">#&gt;     3: MID25783178 Black   Male</span>
 <span class="co">#&gt;     4: MID25783195 White   Male</span>
@@ -286,15 +222,15 @@
 <span class="co">#&gt;    ---                         </span>
 <span class="co">#&gt; 28088: MID26697449 White Female</span>
 <span class="co">#&gt; 28089: MID26697471 Black Female</span>
-<span class="co">#&gt; 28090: MID26697484 White Female</span>
+<span class="co">#&gt; 2 90: MID26697484 White Female</span>
 <span class="co">#&gt; 28091: MID26697576 Asian   Male</span>
 <span class="co">#&gt; 28092: MID26697599 White   Male</span></pre></body></html></div>
 <p>Join the race/ethnicity and sex data frame to the enrollees data frame by <code>id</code>. Then join the program names from <code>program_group</code> to our working data frame by <code>cip6</code>.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># left-join demographics to enrollees</span>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># left-join demographics to enrollees</ an>
 <span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">race_sex</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># left-join program_group to enrollees</span>
-<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">enrollees</span> < an class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># examine the result</span>
 <span class="no">enrollees</span>

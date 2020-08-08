@@ -7,7 +7,7 @@ library("ggplot2")
 library("seplyr")
 
 # CIP information saved from an earlier vignette
-program_group <- exa_programs
+program_group <- rep_programs
 
 # variable names for grouping, summarizing, and joining
 grouping_variables <- c("program", "race", "sex")
