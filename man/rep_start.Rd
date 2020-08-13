@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_start}
 \alias{rep_start}
-\title{Starting programs data set (representative case study)}
+\title{Starting programs data set}
 \format{
 \code{data.table} with 10135 rows and 2 columns keyed by student
 ID. The variables are:
@@ -16,9 +16,10 @@ ID. The variables are:
 rep_start
 }
 \description{
-Starting programs for students in the engineering case study. Includes
-degree-granting programs that substitute for first-year-engineering (FYE)
-programs when needed for a persistence metric, e.g., graduation rate.
+Representative case study. Starting programs for students in the
+engineering case study. Includes degree-granting programs that substitute
+for first-year-engineering (FYE) programs when needed for a persistence
+metric, e.g., graduation rate.
 }
 \details{
 The starting program for a non-FYE student is their matriculation program.

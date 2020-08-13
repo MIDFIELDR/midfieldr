@@ -6,7 +6,7 @@
 \alias{rep_ever}
 \alias{rep_grad}
 \alias{rep_ever_fc}
-\title{Student ID data sets (representative case study)}
+\title{Student ID data sets}
 \format{
 character vector. The names of the available data vectors are:
 \describe{
@@ -26,8 +26,9 @@ rep_grad
 rep_ever_fc
 }
 \description{
-Character vectors of student IDs at different points in a case study of
-Civil, Electrical, Industrial, and Mechanical Engineering programs in
+Representative case study. Character vectors of student IDs at different
+points in a case study of Civil, Electrical, Industrial, and Mechanical
+Engineering programs in
 \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 }
 \examples{

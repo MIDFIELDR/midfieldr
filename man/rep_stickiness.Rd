@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_stickiness}
 \alias{rep_stickiness}
-\title{Stickiness results data set (representative case study)}
+\title{Stickiness results data set}
 \format{
 \code{data.table} with 63 rows and 6 columns keyed by
 program, race/ethnicity, and sex. The variables are:
@@ -22,7 +22,7 @@ program, race/ethnicity, and sex. The variables are:
 rep_stickiness
 }
 \description{
-Stickiness metric results for a case study of Civil, Electrical,
+Representative case study. Stickiness metric results for Civil, Electrical,
 Industrial, and Mechanical Engineering programs in
 \href{https://midfieldr.github.io/midfielddata/}{midfielddata}. Results
 are grouped by program, race/ethnicity, and sex.

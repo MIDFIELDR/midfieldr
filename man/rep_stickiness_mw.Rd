@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_stickiness_mw}
 \alias{rep_stickiness_mw}
-\title{Stickiness data in multiway form (representative case study)}
+\title{Stickiness data in multiway form}
 \format{
 \code{data.table} with 32 rows and 3 columns keyed by
 program, race/ethnicity, and sex. The variables are:
@@ -17,8 +17,8 @@ program, race/ethnicity, and sex. The variables are:
 rep_stickiness_mw
 }
 \description{
-Stickiness metric results with two categorical variables as factors
-with levels ordered by the median stickiness.
+Representative case study. Stickiness metric results with two categorical
+variables as factors with levels ordered by the median stickiness.
 }
 \seealso{
 Other example_data: 

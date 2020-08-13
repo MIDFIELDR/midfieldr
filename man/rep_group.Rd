@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_group}
 \alias{rep_group}
-\title{Program group data set (representative case study)}
+\title{Program group data set}
 \format{
 \code{data.table} with 12 rows and 2 columns keyed by the
 6-digit CIP code. The variables are:
@@ -17,8 +17,8 @@
 rep_group
 }
 \description{
-Six-digit CIP codes and custom program names for a case study of Civil,
-Electrical, Industrial, and Mechanical Engineering programs in
+Representative case study. Six-digit CIP codes and custom program names
+for Civil, Electrical, Industrial, and Mechanical Engineering programs in
 \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 }
 \examples{

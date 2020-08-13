@@ -49,11 +49,12 @@
 
 # -------------------------------------------------------------------
 
-#' CIP code data set (representative case study)
+#' CIP code data set
 #'
-#' A subset of the \code{cip} data set containing CIP codes and names for a
-#' case study of Civil, Electrical, Industrial, and Mechanical Engineering
-#' programs in \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
+#' Representative case study. A subset of the \code{cip} data set containing
+#' CIP codes and names for Civil, Electrical, Industrial,
+#' and Mechanical Engineering programs in
+#' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 #'
 #' @format \code{data.table} with 12 rows and 6 columns keyed by the
 #' 6-digit CIP code. The variables are:
@@ -75,10 +76,10 @@
 
 # -------------------------------------------------------------------
 
-#' Program group data set (representative case study)
+#' Program group data set
 #'
-#' Six-digit CIP codes and custom program names for a case study of Civil,
-#' Electrical, Industrial, and Mechanical Engineering programs in
+#' Representative case study. Six-digit CIP codes and custom program names
+#' for Civil, Electrical, Industrial, and Mechanical Engineering programs in
 #' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 #'
 #' @format \code{data.table} with 12 rows and 2 columns keyed by the
@@ -108,10 +109,11 @@
 
 # -------------------------------------------------------------------
 
-#' Student ID data sets (representative case study)
+#' Student ID data sets
 #'
-#' Character vectors of student IDs at different points in a case study of
-#' Civil, Electrical, Industrial, and Mechanical Engineering programs in
+#' Representative case study. Character vectors of student IDs at different
+#' points in a case study of Civil, Electrical, Industrial, and Mechanical
+#' Engineering programs in
 #' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 #'
 #' @format character vector. The names of the available data vectors are:
@@ -153,9 +155,9 @@ NULL
 
 # -------------------------------------------------------------------
 
-#' Stickiness results data set (representative case study)
+#' Stickiness results data set
 #'
-#' Stickiness metric results for a case study of Civil, Electrical,
+#' Representative case study. Stickiness metric results for Civil, Electrical,
 #' Industrial, and Mechanical Engineering programs in
 #' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}. Results
 #' are grouped by program, race/ethnicity, and sex.
@@ -179,10 +181,10 @@ NULL
 
 # -------------------------------------------------------------------
 
-#' Stickiness data in multiway form (representative case study)
+#' Stickiness data in multiway form
 #'
-#' Stickiness metric results with two categorical variables as factors
-#' with levels ordered by the median stickiness.
+#' Representative case study. Stickiness metric results with two categorical
+#' variables as factors with levels ordered by the median stickiness.
 #'
 #' @format \code{data.table} with 32 rows and 3 columns keyed by
 #' program, race/ethnicity, and sex. The variables are:
@@ -197,11 +199,12 @@ NULL
 
 # -------------------------------------------------------------------
 
-#' Starting programs data set (representative case study)
+#' Starting programs data set
 #'
-#' Starting programs for students in the engineering case study. Includes
-#' degree-granting programs that substitute for first-year-engineering (FYE)
-#' programs when needed for a persistence metric, e.g., graduation rate.
+#' Representative case study. Starting programs for students in the
+#' engineering case study. Includes degree-granting programs that substitute
+#' for first-year-engineering (FYE) programs when needed for a persistence
+#' metric, e.g., graduation rate.
 #'
 #' The starting program for a non-FYE student is their matriculation program.
 #' The starting programs for FYE students are a subset of the data set
