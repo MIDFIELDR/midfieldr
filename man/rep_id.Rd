@@ -6,7 +6,7 @@
 \alias{rep_ever}
 \alias{rep_grad}
 \alias{rep_ever_fc}
-\title{Student IDs for the representative case study}
+\title{Student ID data sets (representative case study)}
 \format{
 character vector. The names of the available data vectors are:
 \describe{

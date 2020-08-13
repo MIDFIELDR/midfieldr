@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_stickiness}
 \alias{rep_stickiness}
-\title{Stickiness results for the representative case study}
+\title{Stickiness results data set (representative case study)}
 \format{
 \code{data.table} with 63 rows and 6 columns keyed by
 program, race/ethnicity, and sex. The variables are:

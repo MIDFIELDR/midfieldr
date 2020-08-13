@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_start}
 \alias{rep_start}
-\title{Starting programs for the representative case study}
+\title{Starting programs data set (representative case study)}
 \format{
 \code{data.table} with 10135 rows and 2 columns keyed by student
 ID. The variables are:

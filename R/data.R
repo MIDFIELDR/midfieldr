@@ -49,7 +49,7 @@
 
 # -------------------------------------------------------------------
 
-#' CIP data for the representative case study
+#' CIP code data set (representative case study)
 #'
 #' A subset of the \code{cip} data set containing CIP codes and names for a
 #' case study of Civil, Electrical, Industrial, and Mechanical Engineering
@@ -75,7 +75,7 @@
 
 # -------------------------------------------------------------------
 
-#' Program group for the representative case study
+#' Program group data set (representative case study)
 #'
 #' Six-digit CIP codes and custom program names for a case study of Civil,
 #' Electrical, Industrial, and Mechanical Engineering programs in
@@ -108,7 +108,7 @@
 
 # -------------------------------------------------------------------
 
-#' Student IDs for the representative case study
+#' Student ID data sets (representative case study)
 #'
 #' Character vectors of student IDs at different points in a case study of
 #' Civil, Electrical, Industrial, and Mechanical Engineering programs in
@@ -153,7 +153,7 @@ NULL
 
 # -------------------------------------------------------------------
 
-#' Stickiness results for the representative case study
+#' Stickiness results data set (representative case study)
 #'
 #' Stickiness metric results for a case study of Civil, Electrical,
 #' Industrial, and Mechanical Engineering programs in
@@ -179,7 +179,7 @@ NULL
 
 # -------------------------------------------------------------------
 
-#' Stickiness data in multiway form for the representative case study
+#' Stickiness data in multiway form (representative case study)
 #'
 #' Stickiness metric results with two categorical variables as factors
 #' with levels ordered by the median stickiness.
@@ -197,7 +197,7 @@ NULL
 
 # -------------------------------------------------------------------
 
-#' Starting programs for the representative case study
+#' Starting programs data set (representative case study)
 #'
 #' Starting programs for students in the engineering case study. Includes
 #' degree-granting programs that substitute for first-year-engineering (FYE)

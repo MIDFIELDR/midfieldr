@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_stickiness_mw}
 \alias{rep_stickiness_mw}
-\title{Stickiness data in multiway form for the representative case study}
+\title{Stickiness data in multiway form (representative case study)}
 \format{
 \code{data.table} with 32 rows and 3 columns keyed by
 program, race/ethnicity, and sex. The variables are:

@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_cip}
 \alias{rep_cip}
-\title{CIP data for the representative case study}
+\title{CIP code data set (representative case study)}
 \format{
 \code{data.table} with 12 rows and 6 columns keyed by the
 6-digit CIP code. The variables are:
