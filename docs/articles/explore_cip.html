@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9003</span>
       </span>
     </div>
 
@@ -161,8 +161,8 @@
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfieldr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>)
 
-<span class="co"># print max 20 rows, otherwise 5 rows each head/tail</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">datatable.print.nrows</span> <span class="kw">=</span> <span class="fl">20</span>, <span class="kw">datatable.print.topn</span> <span class="kw">=</span> <span class="fl">5</span>)</pre></body></html></div>
+<span class="co"># print max 20 rows, otherwise 10 rows each head/tail</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">datatable.print.nrows</span> <span class="kw">=</span> <span class="fl">20</span>, <span class="kw">datatable.print.topn</span> <span class="kw">=</span> <span class="fl">10</span>)</pre></body></html></div>
 <p><br><a href="#top">▲ top of page</a></p>
 </div>
 </div>
@@ -177,7 +177,7 @@
 </ul>
 <p>Examine the column names and class.</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># column names and class of each </span>
-<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="no">cip</span>, <span class="kw">FUN</span> <span class="kw">=</span> <span class="no">class</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="no">cip</span>, <span class="kw">FUN</span> <span class="kw">=</span> <span class="no">class</span>))
 <span class="co">#&gt;        cip2    cip2name        cip4    cip4name        cip6    cip6name </span>
 <span class="co">#&gt; "character" "character" "character" "character" "character" "character"</span></pre></body></html></div>
 <p>View the 2-, 4-, and 6-digit columns separately.</p>
@@ -189,7 +189,17 @@
 <span class="co">#&gt;    3:   01 Agriculture, Agricultural Operations and Related Sciences</span>
 <span class="co">#&gt;    4:   01 Agriculture, Agricultural Operations and Related Sciences</span>
 <span class="co">#&gt;    5:   01 Agriculture, Agricultural Operations and Related Sciences</span>
+<span class="co">#&gt;    6:   01 Agriculture, Agricultural Operations and Related Sciences</span>
+<span class="co">#&gt;    7:   01 Agriculture, Agricultural Operations and Related Sciences</span>
+<span class="co">#&gt;    8:   01 Agriculture, Agricultural Operations and Related Sciences</span>
+<span class="co">#&gt;    9:   01 Agriculture, Agricultural Operations and Related Sciences</span>
+<span class="co">#&gt;   10:   01 Agriculture, Agricultural Operations and Related Sciences</span>
 <span class="co">#&gt;   ---                                                               </span>
+<span class="co">#&gt; 1575:   54                                                   History</span>
+<span class="co">#&gt; 1576:   54                                                   History</span>
+<span class="co">#&gt; 1577:   54                                                   History</span>
+<span class="co">#&gt; 1578:   54                                                   History</span>
+<span class="co">#&gt; 1579:   54                                                   History</span>
 <span class="co">#&gt; 1580:   54                                                   History</span>
 <span class="co">#&gt; 1581:   54                                                   History</span>
 <span class="co">#&gt; 1582:   54                                                   History</span>
@@ -204,7 +214,17 @@
 <span class="co">#&gt;    3: 0101 Agricultural Business and Management</span>
 <span class="co">#&gt;    4: 0101 Agricultural Business and Management</span>
 <span class="co">#&gt;    5: 0101 Agricultural Business and Management</span>
+<span class="co">#&gt;    6: 0101 Agricultural Business and Management</span>
+<span class="co">#&gt;    7: 0101 Agricultural Business and Management</span>
+<span class="co">#&gt;    8: 0101 Agricultural Business and Management</span>
+<span class="co">#&gt;    9: 0102           Agricultural Mechanization</span>
+<span class="co">#&gt;   10: 0102           Agricultural Mechanization</span>
 <span class="co">#&gt;   ---                                          </span>
+<span class="co">#&gt; 1575: 5401                              History</span>
+<span class="co">#&gt; 1576: 5401                              History</span>
+<span class="co">#&gt; 1577: 5401                              History</span>
+<span class="co">#&gt; 1578: 5401                              History</span>
+<span class="co">#&gt; 1579: 5401                              History</span>
 <span class="co">#&gt; 1580: 5401                              History</span>
 <span class="co">#&gt; 1581: 5401                              History</span>
 <span class="co">#&gt; 1582: 5401                              History</span>
@@ -213,18 +233,28 @@
 
 <span class="co"># 6-digit codes and names alone </span>
 <span class="no">cip</span>[, <span class="fu">.</span>(<span class="no">cip6</span>, <span class="no">cip6name</span>)]
-<span class="co">#&gt;         cip6                                       cip6name</span>
-<span class="co">#&gt;    1: 010000                           Agriculture, General</span>
-<span class="co">#&gt;    2: 010101  Agricultural Business and Management, General</span>
-<span class="co">#&gt;    3: 010102 Agribusiness, Agricultural Business Operations</span>
-<span class="co">#&gt;    4: 010103                         Agricultural Economics</span>
-<span class="co">#&gt;    5: 010104                Farm, Farm and Ranch Management</span>
-<span class="co">#&gt;   ---                                                      </span>
-<span class="co">#&gt; 1580: 540106                                  Asian History</span>
-<span class="co">#&gt; 1581: 540107                               Canadian History</span>
-<span class="co">#&gt; 1582: 540108                               Military History</span>
-<span class="co">#&gt; 1583: 540199                                 History, Other</span>
-<span class="co">#&gt; 1584: 999999              NonIPEDS - Undecided, Unspecified</span></pre></body></html></div>
+<span class="co">#&gt;         cip6                                              cip6name</span>
+<span class="co">#&gt;    1: 010000                                  Agriculture, General</span>
+<span class="co">#&gt;    2: 010101         Agricultural Business and Management, General</span>
+<span class="co">#&gt;    3: 010102        Agribusiness, Agricultural Business Operations</span>
+<span class="co">#&gt;    4: 010103                                Agricultural Economics</span>
+<span class="co">#&gt;    5: 010104                       Farm, Farm and Ranch Management</span>
+<span class="co">#&gt;    6: 010105 Agricultural, Farm Supplies Retailing and Wholesaling</span>
+<span class="co">#&gt;    7: 010106                      Agricultural Business Technology</span>
+<span class="co">#&gt;    8: 010199           Agricultural Business and Management, Other</span>
+<span class="co">#&gt;    9: 010201                   Agricultural Mechanization, General</span>
+<span class="co">#&gt;   10: 010204                Agricultural Power Machinery Operation</span>
+<span class="co">#&gt;   ---                                                             </span>
+<span class="co">#&gt; 1575: 540101                                      History, General</span>
+<span class="co">#&gt; 1576: 540102                      American History (United States)</span>
+<span class="co">#&gt; 1577: 540103                                      European History</span>
+<span class="co">#&gt; 1578: 540104      History and Philosophy of Science and Technology</span>
+<span class="co">#&gt; 1579: 540105   Public, Applied History and Archival Administration</span>
+<span class="co">#&gt; 1580: 540106                                         Asian History</span>
+<span class="co">#&gt; 1581: 540107                                      Canadian History</span>
+<span class="co">#&gt; 1582: 540108                                      Military History</span>
+<span class="co">#&gt; 1583: 540199                                        History, Other</span>
+<span class="co">#&gt; 1584: 999999                     NonIPEDS - Undecided, Unspecified</span></pre></body></html></div>
 <p>If you prefer to see a spreadsheet-like array of any data frame, run</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span>(<span class="no">cip</span>)</pre></body></html></div>
 <p>To facilitate viewing in the vignettes, we will often typeset a data frame as an HTML table. For example, the following table includes the same information from our views of <code>cip</code> above in an easy-to-read format. The values are tabulated with the variable names in the header.</p>
@@ -694,7 +724,7 @@ Science Technologies, Technicians, Other
 <a href="#filtering-basics" class="anchor"></a>Filtering basics</h2>
 <p>The variables in <code>cip</code> are all characters, facilitating filtering using character search terms.</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># examine variable types</span>
-<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="no">cip</span>, <span class="kw">FUN</span> <span class="kw">=</span> <span class="no">class</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="no">cip</span>, <span class="kw">FUN</span> <span class="kw">=</span> <span class="no">class</span>))
 <span class="co">#&gt;        cip2    cip2name        cip4    cip4name        cip6    cip6name </span>
 <span class="co">#&gt; "character" "character" "character" "character" "character" "character"</span></pre></body></html></div>
 <p><code><a href="../reference/filter_by_text.html">filter_by_text()</a></code> filters a data frame using character search terms. The arguments are:</p>
@@ -718,7 +748,17 @@ Science Technologies, Technicians, Other
 <span class="co">#&gt;   3:   14                                      Engineering 1402</span>
 <span class="co">#&gt;   4:   14                                      Engineering 1403</span>
 <span class="co">#&gt;   5:   14                                      Engineering 1404</span>
+<span class="co">#&gt;   6:   14                                      Engineering 1405</span>
+<span class="co">#&gt;   7:   14                                      Engineering 1406</span>
+<span class="co">#&gt;   8:   14                                      Engineering 1407</span>
+<span class="co">#&gt;   9:   14                                      Engineering 1407</span>
+<span class="co">#&gt;  10:   14                                      Engineering 1407</span>
 <span class="co">#&gt;  ---                                                           </span>
+<span class="co">#&gt; 112:   15                           Engineering Technology 1514</span>
+<span class="co">#&gt; 113:   15                           Engineering Technology 1515</span>
+<span class="co">#&gt; 114:   15                           Engineering Technology 1515</span>
+<span class="co">#&gt; 115:   15                           Engineering Technology 1515</span>
+<span class="co">#&gt; 116:   15                           Engineering Technology 1515</span>
 <span class="co">#&gt; 117:   15                           Engineering Technology 1516</span>
 <span class="co">#&gt; 118:   15                           Engineering Technology 1599</span>
 <span class="co">#&gt; 119:   29                            Military Technologies 2903</span>
@@ -730,7 +770,17 @@ Science Technologies, Technicians, Other
 <span class="co">#&gt;   3:   Aerospace, Aeronautical and Astronautical Engineering 140201</span>
 <span class="co">#&gt;   4: Agricultural, Biological Engineering and Bioengineering 140301</span>
 <span class="co">#&gt;   5:                               Architectural Engineering 140401</span>
+<span class="co">#&gt;   6:                         Biomedical, Medical Engineering 140501</span>
+<span class="co">#&gt;   7:                        Ceramic Sciences and Engineering 140601</span>
+<span class="co">#&gt;   8:                                    Chemical Engineering 140701</span>
+<span class="co">#&gt;   9:                                    Chemical Engineering 140702</span>
+<span class="co">#&gt;  10:                                    Chemical Engineering 140799</span>
 <span class="co">#&gt;  ---                                                               </span>
+<span class="co">#&gt; 112:           Nuclear Engineering Technologies, Technicians 151401</span>
+<span class="co">#&gt; 113:                              Engineering-Related Fields 151501</span>
+<span class="co">#&gt; 114:                              Engineering-Related Fields 151502</span>
+<span class="co">#&gt; 115:                              Engineering-Related Fields 151503</span>
+<span class="co">#&gt; 116:                              Engineering-Related Fields 151599</span>
 <span class="co">#&gt; 117:                                          Nanotechnology 151601</span>
 <span class="co">#&gt; 118:    Engineering-Related Technologies, Technicians, Other 159999</span>
 <span class="co">#&gt; 119:                               Military Applied Sciences 290301</span>
@@ -742,7 +792,17 @@ Science Technologies, Technicians, Other
 <span class="co">#&gt;   3:     Aerospace, Aeronautical and Astronautical, Space Engineering</span>
 <span class="co">#&gt;   4:          Agricultural, Biological Engineering and Bioengineering</span>
 <span class="co">#&gt;   5:                                        Architectural Engineering</span>
+<span class="co">#&gt;   6:                                  Biomedical, Medical Engineering</span>
+<span class="co">#&gt;   7:                                 Ceramic Sciences and Engineering</span>
+<span class="co">#&gt;   8:                                             Chemical Engineering</span>
+<span class="co">#&gt;   9:                            Chemical and Biomolecular Engineering</span>
+<span class="co">#&gt;  10:                                      Chemical Engineering, Other</span>
 <span class="co">#&gt;  ---                                                                 </span>
+<span class="co">#&gt; 112:                       Nuclear Engineering Technology, Technician</span>
+<span class="co">#&gt; 113:                                            Industrial Management</span>
+<span class="co">#&gt; 114:                                               Engineering Design</span>
+<span class="co">#&gt; 115:                                                Packaging Science</span>
+<span class="co">#&gt; 116:                                Engineering-Related Fields, Other</span>
 <span class="co">#&gt; 117:                                                   Nanotechnology</span>
 <span class="co">#&gt; 118:             Engineering Related Technologies, Technicians, Other</span>
 <span class="co">#&gt; 119:                                       Combat Systems Engineering</span>

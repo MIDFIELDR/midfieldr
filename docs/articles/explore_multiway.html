@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9003</span>
       </span>
     </div>
 
@@ -174,8 +174,8 @@
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
 
-<span class="co"># print max 20 rows, otherwise 5 rows each head/tail</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">datatable.print.nrows</span> <span class="kw">=</span> <span class="fl">20</span>, <span class="kw">datatable.print.topn</span> <span class="kw">=</span> <span class="fl">5</span>)</pre></body></html></div>
+<span class="co"># print max 20 rows, otherwise 10 rows each head/tail</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">datatable.print.nrows</span> <span class="kw">=</span> <span class="fl">20</span>, <span class="kw">datatable.print.topn</span> <span class="kw">=</span> <span class="fl">10</span>)</pre></body></html></div>
 </div>
 </div>
 <div id="preparing-the-multiway-data" class="section level2">
@@ -189,18 +189,28 @@
 
 <span class="co"># examine the result</span>
 <span class="no">pre_mw</span>
-<span class="co">#&gt;                    program     race    sex ever grad stick</span>
-<span class="co">#&gt;  1:      Civil Engineering    Asian Female   18   11 0.611</span>
-<span class="co">#&gt;  2:      Civil Engineering    Asian   Male   42   24 0.571</span>
-<span class="co">#&gt;  3:      Civil Engineering    Black Female   55   21 0.382</span>
-<span class="co">#&gt;  4:      Civil Engineering    Black   Male  102   39 0.382</span>
-<span class="co">#&gt;  5:      Civil Engineering Hispanic Female   11    5 0.455</span>
-<span class="co">#&gt; ---                                                       </span>
-<span class="co">#&gt; 59: Mechanical Engineering    Other   Male   47   28 0.596</span>
-<span class="co">#&gt; 60: Mechanical Engineering  Unknown Female    5    3 0.600</span>
-<span class="co">#&gt; 61: Mechanical Engineering  Unknown   Male   15    9 0.600</span>
-<span class="co">#&gt; 62: Mechanical Engineering    White Female  313  141 0.450</span>
-<span class="co">#&gt; 63: Mechanical Engineering    White   Male 2035 1166 0.573</span></pre></body></html></div>
+<span class="co">#&gt;                    program            race    sex ever grad stick</span>
+<span class="co">#&gt;  1:      Civil Engineering           Asian Female   18   11 0.611</span>
+<span class="co">#&gt;  2:      Civil Engineering           Asian   Male   42   24 0.571</span>
+<span class="co">#&gt;  3:      Civil Engineering           Black Female   55   21 0.382</span>
+<span class="co">#&gt;  4:      Civil Engineering           Black   Male  102   39 0.382</span>
+<span class="co">#&gt;  5:      Civil Engineering        Hispanic Female   11    5 0.455</span>
+<span class="co">#&gt;  6:      Civil Engineering        Hispanic   Male   61   30 0.492</span>
+<span class="co">#&gt;  7:      Civil Engineering   International Female    1    1 1.000</span>
+<span class="co">#&gt;  8:      Civil Engineering   International   Male   14    5 0.357</span>
+<span class="co">#&gt;  9:      Civil Engineering Native American   Male    7    3 0.429</span>
+<span class="co">#&gt; 10:      Civil Engineering           Other Female    5    1 0.200</span>
+<span class="co">#&gt; ---                                                              </span>
+<span class="co">#&gt; 54: Mechanical Engineering   International Female    3    2 0.667</span>
+<span class="co">#&gt; 55: Mechanical Engineering   International   Male   39   26 0.667</span>
+<span class="co">#&gt; 56: Mechanical Engineering Native American Female    5    2 0.400</span>
+<span class="co">#&gt; 57: Mechanical Engineering Native American   Male   14    5 0.357</span>
+<span class="co">#&gt; 58: Mechanical Engineering           Other Female    4    2 0.500</span>
+<span class="co">#&gt; 59: Mechanical Engineering           Other   Male   47   28 0.596</span>
+<span class="co">#&gt; 60: Mechanical Engineering         Unknown Female    5    3 0.600</span>
+<span class="co">#&gt; 61: Mechanical Engineering         Unknown   Male   15    9 0.600</span>
+<span class="co">#&gt; 62: Mechanical Engineering           White Female  313  141 0.450</span>
+<span class="co">#&gt; 63: Mechanical Engineering           White   Male 2035 1166 0.573</span></pre></body></html></div>
 <p>To protect confidentiality and prevent identification of individuals or institutions with small sub-populations, we typically omit rows with a small population. Using the larger MIDFIELD database, we usually set this limit to 10. Here, using the midfielddata sample, we’ll use 5.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># prepare rows</span>
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>$<span class="no">ever</span> <span class="kw">&gt;=</span> <span class="fl">5</span>
@@ -208,18 +218,28 @@
 
 <span class="co"># examine the result</span>
 <span class="no">pre_mw</span>
-<span class="co">#&gt;                    program     race    sex ever grad stick</span>
-<span class="co">#&gt;  1:      Civil Engineering    Asian Female   18   11 0.611</span>
-<span class="co">#&gt;  2:      Civil Engineering    Asian   Male   42   24 0.571</span>
-<span class="co">#&gt;  3:      Civil Engineering    Black Female   55   21 0.382</span>
-<span class="co">#&gt;  4:      Civil Engineering    Black   Male  102   39 0.382</span>
-<span class="co">#&gt;  5:      Civil Engineering Hispanic Female   11    5 0.455</span>
-<span class="co">#&gt; ---                                                       </span>
-<span class="co">#&gt; 47: Mechanical Engineering    Other   Male   47   28 0.596</span>
-<span class="co">#&gt; 48: Mechanical Engineering  Unknown Female    5    3 0.600</span>
-<span class="co">#&gt; 49: Mechanical Engineering  Unknown   Male   15    9 0.600</span>
-<span class="co">#&gt; 50: Mechanical Engineering    White Female  313  141 0.450</span>
-<span class="co">#&gt; 51: Mechanical Engineering    White   Male 2035 1166 0.573</span></pre></body></html></div>
+<span class="co">#&gt;                    program            race    sex ever grad stick</span>
+<span class="co">#&gt;  1:      Civil Engineering           Asian Female   18   11 0.611</span>
+<span class="co">#&gt;  2:      Civil Engineering           Asian   Male   42   24 0.571</span>
+<span class="co">#&gt;  3:      Civil Engineering           Black Female   55   21 0.382</span>
+<span class="co">#&gt;  4:      Civil Engineering           Black   Male  102   39 0.382</span>
+<span class="co">#&gt;  5:      Civil Engineering        Hispanic Female   11    5 0.455</span>
+<span class="co">#&gt;  6:      Civil Engineering        Hispanic   Male   61   30 0.492</span>
+<span class="co">#&gt;  7:      Civil Engineering   International   Male   14    5 0.357</span>
+<span class="co">#&gt;  8:      Civil Engineering Native American   Male    7    3 0.429</span>
+<span class="co">#&gt;  9:      Civil Engineering           Other Female    5    1 0.200</span>
+<span class="co">#&gt; 10:      Civil Engineering           Other   Male   14    8 0.571</span>
+<span class="co">#&gt; ---                                                              </span>
+<span class="co">#&gt; 42: Mechanical Engineering        Hispanic Female   13    5 0.385</span>
+<span class="co">#&gt; 43: Mechanical Engineering        Hispanic   Male   80   39 0.488</span>
+<span class="co">#&gt; 44: Mechanical Engineering   International   Male   39   26 0.667</span>
+<span class="co">#&gt; 45: Mechanical Engineering Native American Female    5    2 0.400</span>
+<span class="co">#&gt; 46: Mechanical Engineering Native American   Male   14    5 0.357</span>
+<span class="co">#&gt; 47: Mechanical Engineering           Other   Male   47   28 0.596</span>
+<span class="co">#&gt; 48: Mechanical Engineering         Unknown Female    5    3 0.600</span>
+<span class="co">#&gt; 49: Mechanical Engineering         Unknown   Male   15    9 0.600</span>
+<span class="co">#&gt; 50: Mechanical Engineering           White Female  313  141 0.450</span>
+<span class="co">#&gt; 51: Mechanical Engineering           White   Male 2035 1166 0.573</span></pre></body></html></div>
 <p>We typically delete ambiguous levels of race/ethnicity. And because of its sparse representation in the data, we often omit the Native American population as well.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># remove rows of ambiguous or underrepresented populations</span>
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> !<span class="no">pre_mw</span>$<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
@@ -248,7 +268,17 @@
 <span class="co">#&gt;  3:      Civil Engineering    Black Female   55   21 0.382    Black Female</span>
 <span class="co">#&gt;  4:      Civil Engineering    Black   Male  102   39 0.382      Black Male</span>
 <span class="co">#&gt;  5:      Civil Engineering Hispanic Female   11    5 0.455 Hispanic Female</span>
+<span class="co">#&gt;  6:      Civil Engineering Hispanic   Male   61   30 0.492   Hispanic Male</span>
+<span class="co">#&gt;  7:      Civil Engineering    White Female  346  192 0.555    White Female</span>
+<span class="co">#&gt;  8:      Civil Engineering    White   Male 1191  708 0.594      White Male</span>
+<span class="co">#&gt;  9: Electrical Engineering    Asian Female   42   22 0.524    Asian Female</span>
+<span class="co">#&gt; 10: Electrical Engineering    Asian   Male  204  120 0.588      Asian Male</span>
 <span class="co">#&gt; ---                                                                       </span>
+<span class="co">#&gt; 23: Industrial Engineering    White Female  252  172 0.683    White Female</span>
+<span class="co">#&gt; 24: Industrial Engineering    White   Male  514  354 0.689      White Male</span>
+<span class="co">#&gt; 25: Mechanical Engineering    Asian Female   24   15 0.625    Asian Female</span>
+<span class="co">#&gt; 26: Mechanical Engineering    Asian   Male  126   82 0.651      Asian Male</span>
+<span class="co">#&gt; 27: Mechanical Engineering    Black Female   88   34 0.386    Black Female</span>
 <span class="co">#&gt; 28: Mechanical Engineering    Black   Male  211   87 0.412      Black Male</span>
 <span class="co">#&gt; 29: Mechanical Engineering Hispanic Female   13    5 0.385 Hispanic Female</span>
 <span class="co">#&gt; 30: Mechanical Engineering Hispanic   Male   80   39 0.488   Hispanic Male</span>
@@ -267,7 +297,17 @@
 <span class="co">#&gt;  3:      Civil Engineering    Black Female 0.382</span>
 <span class="co">#&gt;  4:      Civil Engineering      Black Male 0.382</span>
 <span class="co">#&gt;  5:      Civil Engineering Hispanic Female 0.455</span>
+<span class="co">#&gt;  6:      Civil Engineering   Hispanic Male 0.492</span>
+<span class="co">#&gt;  7:      Civil Engineering    White Female 0.555</span>
+<span class="co">#&gt;  8:      Civil Engineering      White Male 0.594</span>
+<span class="co">#&gt;  9: Electrical Engineering    Asian Female 0.524</span>
+<span class="co">#&gt; 10: Electrical Engineering      Asian Male 0.588</span>
 <span class="co">#&gt; ---                                             </span>
+<span class="co">#&gt; 23: Industrial Engineering    White Female 0.683</span>
+<span class="co">#&gt; 24: Industrial Engineering      White Male 0.689</span>
+<span class="co">#&gt; 25: Mechanical Engineering    Asian Female 0.625</span>
+<span class="co">#&gt; 26: Mechanical Engineering      Asian Male 0.651</span>
+<span class="co">#&gt; 27: Mechanical Engineering    Black Female 0.386</span>
 <span class="co">#&gt; 28: Mechanical Engineering      Black Male 0.412</span>
 <span class="co">#&gt; 29: Mechanical Engineering Hispanic Female 0.385</span>
 <span class="co">#&gt; 30: Mechanical Engineering   Hispanic Male 0.488</span>
@@ -285,7 +325,17 @@
 <span class="co">#&gt;  3:      Civil Engineering    Black Female 0.382</span>
 <span class="co">#&gt;  4:      Civil Engineering      Black Male 0.382</span>
 <span class="co">#&gt;  5:      Civil Engineering Hispanic Female 0.455</span>
+<span class="co">#&gt;  6:      Civil Engineering   Hispanic Male 0.492</span>
+<span class="co">#&gt;  7:      Civil Engineering    White Female 0.555</span>
+<span class="co">#&gt;  8:      Civil Engineering      White Male 0.594</span>
+<span class="co">#&gt;  9: Electrical Engineering    Asian Female 0.524</span>
+<span class="co">#&gt; 10: Electrical Engineering      Asian Male 0.588</span>
 <span class="co">#&gt; ---                                             </span>
+<span class="co">#&gt; 23: Industrial Engineering    White Female 0.683</span>
+<span class="co">#&gt; 24: Industrial Engineering      White Male 0.689</span>
+<span class="co">#&gt; 25: Mechanical Engineering    Asian Female 0.625</span>
+<span class="co">#&gt; 26: Mechanical Engineering      Asian Male 0.651</span>
+<span class="co">#&gt; 27: Mechanical Engineering    Black Female 0.386</span>
 <span class="co">#&gt; 28: Mechanical Engineering      Black Male 0.412</span>
 <span class="co">#&gt; 29: Mechanical Engineering Hispanic Female 0.385</span>
 <span class="co">#&gt; 30: Mechanical Engineering   Hispanic Male 0.488</span>

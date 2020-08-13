@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Program group for the representative case study — rep_group • midfieldr</title>
+<title>Prepare an FYE data frame for multiple imputation — fye_mi_prep • midfieldr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,10 +46,10 @@
 
 
 
-<meta property="og:title" content="Program group for the representative case study — rep_group" />
-<meta property="og:description" content="Six-digit CIP codes and custom program names for a case study of Civil,
-Electrical, Industrial, and Mechanical Engineering programs in
-midfielddata." />
+<meta property="og:title" content="Prepare an FYE data frame for multiple imputation — fye_mi_prep" />
+<meta property="og:description" content="Extract first-year-engineering (FYE) students from data and prepare
+a data frame for input to the mice package for multiple imputation to
+predict starting programs of FYE students." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -172,74 +172,82 @@ midfielddata." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Program group for the representative case study</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/data.R'><code>R/data.R</code></a></small>
-    <div class="hidden name"><code>rep_group.Rd</code></div>
+    <h1>Prepare an FYE data frame for multiple imputation</h1>
+    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/fye_mi_prep.R'><code>R/fye_mi_prep.R</code></a></small>
+    <div class="hidden name"><code>fye_mi_prep.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Six-digit CIP codes and custom program names for a case study of Civil,
-Electrical, Industrial, and Mechanical Engineering programs in
-<a href='https://midfieldr.github.io/midfielddata/'>midfielddata</a>.</p>
+    <p>Extract first-year-engineering (FYE) students from data and prepare
+a data frame for input to the mice package for multiple imputation to
+predict starting programs of FYE students.</p>
     </div>
 
-    <pre class="usage"><span class='no'>rep_group</span></pre>
+    <pre class="usage"><span class='fu'>fye_mi_prep</span>(<span class='kw'>data_students</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>data_terms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>data_students</th>
+      <td><p>data frame of student attributes</p></td>
+    </tr>
+    <tr>
+      <th>data_terms</th>
+      <td><p>data frame of term attributes</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>data.table</code> with 12 rows and 2 columns keyed by the
-6-digit CIP code. The variables are:</p><dl'>
-  <dt>cip6</dt><dd><p>6-digit program code</p></dd>
-  <dt>program</dt><dd><p>program name assigned for grouping, summarizing,
-  and joining</p></dd>
+    <p>data frame with the following properties:</p><ul>
+<li><p>One row for every FYE student in the data, keyed by ID</p></li>
+<li><p>Columns for ID, institution, race, sex, and CIP code</p></li>
+<li><p>Data frame extensions such as <code>tbl</code> or <code>data.table</code>
+    are preserved</p></li>
+</ul>
 
-</dl>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
+    <p>Some US institutions have first year engineering (FYE) programs, typically
+a common first year curriculum that is a prerequisite for declaring
+an engineering major. FYE is problematic when computing a persistence
+metric such as graduation rate that counts a graduation successful only
+for students who matriculate and graduate in the same program.</p>
+<p>We have to predict, therefore, the degree-granting engineering program the
+FYE student would have declared had they not been required to enroll in
+FYE. Predicting this "starting program" takes one of two forms.</p>
+<ol>
+<li><p>Students who complete an FYE and declare an engineering major.
+    This is the easy case--at the student's first opportunity, they
+    enrolled in an engineering program of their choosing. We use that
+    program as our predicted  starting program.</p></li>
+<li><p>Students who, after FYE, do not declare an engineering major.
+    This is the more complicated case---the data provide no information
+    regarding what engineering program the student would have declared
+    originally had the institution not required them to enroll in FYE.
+    For these students, we treat the starting program as missing data and
+    impute a predicted value using multiple imputation as implemented
+    in the mice package.</p></li>
+</ol>
+
+<p>The function extracts all FYE students from <code>midfieldstudents</code> (or
+equivalent) and from <code>midfieldterms</code> (or equivalent) determines
+students' post-FYE programs. If the program is in engineering, the CIP
+is retained. If not, the CIP is replaced with NA to represent missing
+data for the imputation.</p>
+<p>Finally, the predictor variables (institution, race, sex) are converted
+to factors. The output is ready for use as an input to the mice package.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other example_data: 
-<code><a href='rep_cip.html'>rep_cip</a></code>,
-<code><a href='rep_id.html'>rep_id</a></code>,
-<code><a href='rep_start.html'>rep_start</a></code>,
-<code><a href='rep_stickiness_mw.html'>rep_stickiness_mw</a></code>,
-<code><a href='rep_stickiness.html'>rep_stickiness</a></code></p></div>
+    <div class='dont-index'><p>Other data_carpentry: 
+<code><a href='feasible_subset.html'>feasible_subset</a>()</code>,
+<code><a href='order_multiway.html'>order_multiway</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>midfielddata</span>)
+    <pre class="examples"><div class='input'># placeholder
 
-<span class='co'># attributes of students matriculating in programs</span>
-<span class='no'>cips_we_want</span> <span class='kw'>&lt;-</span> <span class='no'>rep_group</span>$<span class='no'>cip6</span>
-<span class='no'>rows_we_want</span> <span class='kw'>&lt;-</span> <span class='no'>midfieldstudents</span>$<span class='no'>cip6</span> <span class='kw'>%in%</span> <span class='no'>cips_we_want</span>
-<span class='no'>matriculants</span> <span class='kw'>&lt;-</span> <span class='no'>midfieldstudents</span>[<span class='no'>rows_we_want</span>]
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>matriculants</span>)</div><div class='output co'>#&gt; Classes 'data.table' and 'data.frame':	5026 obs. of  15 variables:
-#&gt;  $ id            : chr  "MID25792087" "MID25796088" "MID25799551" "MID25799578" ...
-#&gt;  $ institution   : chr  "Institution M" "Institution M" "Institution M" "Institution M" ...
-#&gt;  $ cip6          : chr  "141901" "140801" "141001" "141001" ...
-#&gt;  $ term_enter    : num  19961 19943 20031 20031 19971 ...
-#&gt;  $ transfer      : chr  "Y" "Y" "Y" "Y" ...
-#&gt;  $ hours_transfer: num  NA NA NA NA NA NA NA NA NA NA ...
-#&gt;  $ sex           : chr  "Female" "Male" "Male" "Male" ...
-#&gt;  $ race          : chr  "Asian" "White" "White" "White" ...
-#&gt;  $ age           : num  20 18 22 20 19 19 18 19 20 21 ...
-#&gt;  $ us_citizen    : chr  "Y" "Y" "Y" "Y" ...
-#&gt;  $ home_zip      : chr  "29503" "29607" "29631" "29625" ...
-#&gt;  $ high_school   : chr  NA "410907" "411565" "410055" ...
-#&gt;  $ sat_math      : num  460 620 640 650 540 720 600 520 520 460 ...
-#&gt;  $ sat_verbal    : num  494 616 516 576 485 587 506 475 535 364 ...
-#&gt;  $ act_comp      : num  18 27 25 25 20 29 22 19 22 15 ...
-#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </div><div class='input'>
-<span class='co'># attributes of students graduating in programs</span>
-<span class='no'>cips_we_want</span> <span class='kw'>&lt;-</span> <span class='no'>rep_group</span>$<span class='no'>cip6</span>
-<span class='no'>rows_we_want</span> <span class='kw'>&lt;-</span> <span class='no'>midfielddegrees</span>$<span class='no'>cip6</span> <span class='kw'>%in%</span> <span class='no'>cips_we_want</span>
-<span class='no'>graduates</span> <span class='kw'>&lt;-</span> <span class='no'>midfielddegrees</span>[<span class='no'>rows_we_want</span>]
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>graduates</span>)</div><div class='output co'>#&gt; Classes 'data.table' and 'data.frame':	4676 obs. of  5 variables:
-#&gt;  $ id         : chr  "MID25783178" "MID25783197" "MID25783441" "MID25783491" ...
-#&gt;  $ institution: chr  "Institution M" "Institution M" "Institution M" "Institution M" ...
-#&gt;  $ cip6       : chr  "143501" "140801" "140801" "141001" ...
-#&gt;  $ term_degree: num  20001 19911 19963 20001 20001 ...
-#&gt;  $ degree     : chr  "Bachelor of Science" "Bachelor of Science" "Bachelor of Science" "Bachelor of Science" ...
-#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </div></pre>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
