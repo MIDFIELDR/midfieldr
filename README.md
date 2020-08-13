@@ -140,12 +140,11 @@ stratified sample of the MIDFIELD database.
 **midfieldr functions** work with MIDFIELD-structured data to access and
 manipulate student records. A typical workflow might include:
 
-  - `filter_by_text()` search the CIP data set for program codes  
-  - `label_programs()` isolate and label specific programs to study  
-  - `filter_by_cip()` gather students ever enrolled in the programs
+  - `filter_by_text()` gather specific programs to study  
+  - `filter_by_cip()` gather students ever enrolled in the programs  
+  - `filter_by_id()` gather student demographic information
   - `feasible_subset()` subset students for 6-year completion
     feasibility
-  - `get_race_sex()` obtain student sex and race/ethnicity
   - `order_multiway()` condition multiway data for graphing
 
 **R ecosystem**. midfieldr uses data.table functions and syntax.

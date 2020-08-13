@@ -14,8 +14,33 @@ resource_files:
 
 
 ```{r setup, include = FALSE}
-source("vignettes/vignette-knitr-opts.R")
 knitr::opts_chunk$set(fig.path = "man/figures/vignette-explore-multiway-")
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+kable2html <- function(x, font_size = NULL, caption = NULL) {
+  font_size <- ifelse(is.null(font_size), 11, font_size)
+  kable_in <- knitr::kable(x, format = "html", caption = caption)
+  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
+}
 ```
 
 # midfieldr <span class="border-wrap"><img src="man/figures/logo.png" align="right" height="122" width="106" alt="logo.png"></span>
@@ -161,11 +186,10 @@ The midfielddata package contains four data sets that constitute a stratified sa
 
 **midfieldr functions** work with MIDFIELD-structured data to access and manipulate student records. A typical workflow might include:  
 
-- `filter_by_text()` search the CIP data set for program codes  
-- `label_programs()` isolate and label specific programs to study  
-- `filter_by_cip()` gather students ever enrolled in the programs 
+- `filter_by_text()` gather specific programs to study  
+- `filter_by_cip()` gather students ever enrolled in the programs  
+- `filter_by_id()` gather student demographic information 
 - `feasible_subset()` subset students for 6-year completion feasibility
-- `get_race_sex()` obtain student sex and race/ethnicity 
 - `order_multiway()` condition multiway data for graphing 
 
 **R ecosystem**. midfieldr uses data.table functions and syntax. midfielddata data sets are class `data.table` and `data.frame`. However, midfieldr functions attempt to preserve data frame extensions assigned by the user (`tbl` for example). Thus users who prefer a different ecosystem such as dplyr should find that the package is compatible with their preference. 
