@@ -45,7 +45,7 @@ order_multiway(mw_df)
 }
 \seealso{
 Other data_carpentry: 
-\code{\link{cip_after_fye}()},
-\code{\link{feasible_subset}()}
+\code{\link{feasible_subset}()},
+\code{\link{fye_mi_prep}()}
 }
 \concept{data_carpentry}

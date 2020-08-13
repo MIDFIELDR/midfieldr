@@ -1,8 +1,8 @@
 ---
-title: "Impute FYE starting majors"
+title: "Impute FYE starting programs"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Impute FYE starting majors}
+  %\VignetteIndexEntry{Impute FYE starting programs}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -16,42 +16,92 @@ resource_files:
 ---
 
 ```{r setup, include = FALSE}
-source("vignette-knitr-opts.R")
 knitr::opts_chunk$set(fig.path = "../man/figures/vignette-impute-fye-")
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+kable2html <- function(x, font_size = NULL, caption = NULL) {
+  font_size <- ifelse(is.null(font_size), 11, font_size)
+  kable_in <- knitr::kable(x, format = "html", caption = caption)
+  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
+}
 ```
-
-Using these midfieldr components
-
-- `midfield_fye` data 
-- `filter_by_id()` 
-- `fye_next_cip()` 
-- `fye_join_cats()` 
-- `fye_mice()` 
-
-
-
-
-
 
 ## Introduction 
 
-Some US institutions have first year engineering (FYE) programs---typically a common first year curriculum that is a prerequisite for declaring an engineering major. For these FYE students, some persistence metrics require us to predict their "starting major." 
+Some US institutions have first year engineering (FYE) programs---typically a common first year curriculum that is a prerequisite for declaring an degree-granting engineering major. 
 
-starting major 
+FYE programs are problematic for some persistence metrics. The "graduation rate" metric, for example, defines successful graduation as students graduating (within 6 years) from the same program in which they matriculate. An FYE student cannot satisfy this requirement. 
 
-: The degree-granting engineering program---Civil Engineering, Electrical Engineering, Mechanical Engineering, etc.---that we predict the student would have declared had they not been required to enroll in FYE. 
+However, FYE students are neither undecided nor is their program  "unknown"---their institutions have admitted them as engineering students. We  know their 2-digit CIP code ("14") but not their preferred 6-digit CIP code. Hence, midfielddata FYE codes are "14XXXX" and "14YYYY". 
 
+To include an FYE student in metrics such as graduation rate, we have to predict their "starting program": a 6-digit CIP code representing the engineering program they would have declared had they not been required to enroll in FYE. The vignette describes the prediction process and how the results are used. 
 
-Note that FYE students are neither undecided nor undeclared. Their institutions admitted them as engineering students. We just don't know their preferred major. We have to predict the starting majors of FYE students to make fair comparisons across programs and institutions. 
+### Options for predicting starting programs
+
+1. Ready-to-use predictions in `fye_start`, a data set in midfieldr. Starting programs are predicted for every FYE student in midfielddata.  
+
+2. Perform your own prediction. Use `fye_mi_prep()` to operate on MIDFIELD data to prepare a data frame for imputation. Use the mice package (Multivariate Imputation by Chained Equations) to impute 6-digit CIP codes. The vignette describes the process that produces the `fye_start` data set.  
+
+### This vignette uses
+
+midfieldr functions 
+
+- `filter_by_id()`
+- `fye_mi_prep()` 
+
+data.table syntax 
+
+- `setDT()` create data table
+- `setnames()` rename columns 
+- `DT[]` print the data frame
+- `DT[order(col)]` arrange rows
+- `DT[rows_we_want]` subset rows
+- `DT[, .(col1, col2)]` select columns
+- `DT[, .(new_col = .N), by = grouping_variables]` count N by group
+- `DT[, new_col := FUN]` create new column as a function of old columns 
+
+mice functions (optional, for performing the imputation yourself)
+
+- `mice()` multiple imputation
+- `complete()` extract completed data from `mice()` output
+
+packages
 
 ```{r}
 # packages used
 library(midfieldr)
 library(midfielddata)
+library(data.table)
 
-# print max 20 rows, otherwise 5 rows each head/tail
-options(datatable.print.nrows = 20, datatable.print.topn = 5)
+# optional
+library(mice)
+
+# print max 20 rows, otherwise 10 rows each head/tail
+options(datatable.print.nrows = 20, datatable.print.topn = 10)
 ```
+
+
+
+
 
 <br>
 <a href="#top">&#9650; top of page</a> 
@@ -59,59 +109,119 @@ options(datatable.print.nrows = 20, datatable.print.topn = 5)
 
 
 
-## How the imputed majors are used 
+## Option 1: Ready-to-use starting programs 
 
-A data frame of starting majors imputed for all FYE students in midfielddata is included with midfieldr as the built-in data set `midfield_fye`. The starting majors are encoded, as usual, with a 6-digit CIP code, keyed by student ID. View its help page by loading midfieldr and running
+The work described in this option is for using the ready-to-use predicted programs in `fye_start` instead of performing the computationally-expensive imputation yourself.  
+
+### Examine data set `fye_start` 
+
+The data set `fye_start` contains predicted starting programs for all  midfielddata FYE students. View its help page by running
 
 ```r
-? midfield_fye
+? fye_start
 ```
 
-The data are loaded with midfieldr. 
+The data are loaded with midfieldr. The start column is the 6-digit CIP code predicted for FYE students. The prediction is the actual post-FYE engineering program for all students who continue in engineering. The prediction is an imputed value for all other FYE students. 
 
 ```{r}
-# view the example data
-midfield_fye
+# FYE predicted starting programs 
+fye_start
 ```
 
-We illustrate its usage in the *Compute the graduation rate metric* vignette [(link)](compute_grad_rate.html). In summary, if one has a working data frame of student IDs and starting majors that include the FYE codes "14XXXX" or "14YYYY", 
+To get a sense of the distribution of programs in these data, we can count the number of students in each program. 
+ 
+```{r}
+# tally N students by program CIP
+fye_start_summary <- fye_start[, .(N = .N), by = "start"]
+```
 
-- extract the FYE IDs from the working data frame 
-- subset `midfield_fye` using these IDs
-- replace the the FYE codes "14XXXX" or "14YYYY" in the working data frame with the imputed starting majors from `midfield_fye` 
+Before viewing the result, we can join the program names from `cip`. To join by the `cip6` variable, we first must rename `start` to `cip6` in our summary data frame. 
 
-The imputed starting major should be consistent with a student's race/ethnicity, sex, and institution because these are the variables used in the imputation. 
+```{r results = "hide"}
+# rename start to cip6 for join
+setnames(fye_start_summary, old = "start", new = "cip6")
 
-**Example** using the case study IDs. 
+# left-join program names from CIP data
+fye_start_summary <- merge(fye_start_summary, cip, by = "cip6", all.x = TRUE)
+
+# order rows and select columns
+fye_start_summary <- fye_start_summary[order(-N), .(cip6, cip6name, N)]
+setnames(fye_start_summary, old = "cip6", new = "start")
+fye_start_summary
+```
+
+```{r echo = FALSE}
+kable2html(fye_start_summary, caption = "Summary of starting program predictions")
+```
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+### How to use `fye_start` 
+
+We use the engineering case study to illustrate using the predicted starting majors. 
 
 ```{r}
+# IDs of students ever enrolled in the case study programs 
 str(rep_ever)
 ```
 
-
-
+From `midfieldstudents` we obtain the matriculation programs for these students. 
 ```{r}
-matric <- filter_by_id(midfieldstudents,
-  keep_id = rep_ever,
-  keep_col = c("id", "cip6"),
-  unique_row = TRUE
-)
-rows_we_want <- matric$cip %in% c("14XXXX", "14YYYY")
-engr <- matric[!rows_we_want]
-fye <- matric[rows_we_want, .(id)]
-
-# join
-fye <- merge(fye, midfield_fye, by = "id", all.x = TRUE)
-
-# add start column
-engr <- engr[, .(id, cip6)]
-
-starters <- rbind(fye, engr)
-starters[order(id), .(id, start = cip6)]
+# matriculation CIP for representative example 
+matric_programs <- filter_by_id(midfieldstudents, 
+                                    keep_id = rep_ever, 
+                                    keep_col = c("id", "cip6"))
+# examine the result
+matric_programs
 ```
 
+Join the FYE starting programs by ID.
 
+```{r}
+# left-join the predicted CIPs for FYE students
+start_programs <- merge(matric_programs, 
+                         fye_start, 
+                         by = "id", 
+                         all.x = TRUE)
 
+# examine the result
+start_programs
+```
+
+For non-FYE students, the `start` value is the `cip6` value. 
+
+```{r}
+# non-FYE, replace NA with matriculation CIP 
+rows_non_fye <- is.na(start_programs$start)
+start_programs <- start_programs[rows_non_fye, start := cip6]
+```
+
+The `cip6` column can be removed. 
+
+```{r}
+# remove the matriculation CIP codes
+start_programs[, cip6 := NULL]
+
+# examine the result
+start_programs[]
+```
+
+The starting program data derived above is the data set `rep_start` in midfieldr.  View its help page by running
+
+```r
+? rep_start
+```
+
+To verify that these two data frames are identical,  
+
+```{r}
+# verify result matches expectation
+all.equal(rep_start, start_programs)
+```
 
 
 
@@ -125,115 +235,319 @@ starters[order(id), .(id, start = cip6)]
 
 
 
-## How the imputed majors are obtained
+## Option 2: Perform the multiple imputation 
 
-The remainder of the vignette describes how the imputation is performed. 
-
-Predicting the starting major of FYE students takes one of two forms. 
-
-1. In the first instance, we have students who complete an FYE and declare an engineering major. This is the easy case--at the student's first opportunity, they enrolled in an engineering major of their choosing. We use that major as our predicted  starting major. 
-
-2. In the second instance, we have students who, after FYE, do not declare an engineering major. This is the more complicated case---the data provide no information regarding what engineering major the student would have declared originally had the institution not required them to enroll in FYE. For these students, we treat the starting major as missing data and impute a predicted value. 
-
-We impute these missing values using multiple imputation as 
-implemented in the mice package [@vanBuuren+Oudshoorn:2011].
-
-```{r}
-# additional packages used for the imputation
-library(midfielddata)
-library(data.table)
-library(mice)
-library(visdat)
+```{r echo = FALSE}
+load("../inst/extdata/fye-vignette-data.rda")
 ```
 
-### 1. Determine a student's first major after FYE
+The work described in this option is for those who want to do their own imputation. The example illustrates how the ready-to-use starting program data `fye_start` is created.
 
-The variables used to predict the starting majors treated as missing values are institution, race, and sex. Though any subset of IDs could be used, we'll start with all FYE students in the midfielddata data sets to show how we obtained the `midfield_fye` data frame described earlier.  
+### How to use `fye_mi_prep()`
+
+The midfieldr function `fye_mi_prep()` accesses MIDFIELD data (or equivalent) and prepares a data frame of all FYE students ready for imputation using the mice package. 
+
+The arguments of `fye_mi_prep()` are the student and term data sets.  
 
 ```{r}
-# extract IDs of all FYE students in midfieldstudents
-rows_we_want <- midfieldstudents$cip6 %in% c("14XXXX", "14YYYY")
-columns_we_want <- c("id")
-fye <- midfieldstudents[rows_we_want, ..columns_we_want]
+# prepare data for mice()
+mi_data <- fye_mi_prep(midfieldstudents, midfieldterms)
 
 # examine the result
-fye
+mi_data[]
 ```
 
-`cip_after_fye()` accesses `midfieldstudents` and `midfieldterms` (or their equivalents) and returns the CIP codes of a student's first program after FYE. A CIP code of NA indicates that the student enrolled in no program after FYE. 
+The result is a data frame with the predictor variables (institution, race, and sex) as factors. The NA values denote the CIP codes to be imputed. 
+
+
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a>
+
+
+
+
+
+
+
+### How `fye_mi_prep()` works 
+
+The function's first operation extracts all FYE students from `midfieldstudents`, yielding:
+
+```{r echo = FALSE, eval = FALSE}
+fye01[order(id)]
+```
 
 ```{r}
-# post-FYE major
-fye_id <- fye$id
-cip_post_fye <- cip_after_fye(fye_id)
-
-# examine the result
-cip_post_fye
+#>                id   institution          race    sex
+#>    1: MID25783162 Institution M         White   Male
+#>    2: MID25783166 Institution M         White   Male
+#>    3: MID25783167 Institution M         White   Male
+#>    4: MID25783178 Institution M         Black   Male
+#>    5: MID25783197 Institution M         White   Male
+#>    6: MID25783199 Institution M         White Female
+#>    7: MID25783227 Institution M         White   Male
+#>    8: MID25783257 Institution M         White   Male
+#>    9: MID25783275 Institution M         White   Male
+#>   10: MID25783388 Institution M         White   Male
+#>   ---                                               
+#> 5983: MID26648334 Institution J International   Male
+#> 5984: MID26648354 Institution J         Asian   Male
+#> 5985: MID26648392 Institution J         White Female
+#> 5986: MID26648417 Institution J         White   Male
+#> 5987: MID26648422 Institution J         White   Male
+#> 5988: MID26648435 Institution J      Hispanic   Male
+#> 5989: MID26648484 Institution J      Hispanic   Male
+#> 5990: MID26648508 Institution J International Female
+#> 5991: MID26648517 Institution J      Hispanic   Male
+#> 5992: MID26648544 Institution J         White   Male
 ```
 
-To learn more, open the help page by running 
+The function's second operation extracts all term data for these students from  `midfieldterms`. The function filters for students whose first post-FYE program is in engineering, yielding: 
+
+```{r echo = FALSE, eval = FALSE}
+fye02[order(id)]
+```
+
+```{r}
+#>                id   cip6
+#>    1: MID25783167 140901
+#>    2: MID25783178 140701
+#>    3: MID25783197 140701
+#>    4: MID25783199 140301
+#>    5: MID25783257 140701
+#>    6: MID25783275 140501
+#>    7: MID25783388 141901
+#>    8: MID25783441 140801
+#>    9: MID25783491 141001
+#>   10: MID25783553 140801
+#>   ---                   
+#> 3359: MID26640528 141901
+#> 3360: MID26640591 141901
+#> 3361: MID26640613 142101
+#> 3362: MID26640916 141901
+#> 3363: MID26640932 141101
+#> 3364: MID26641121 140201
+#> 3365: MID26642386 140801
+#> 3366: MID26642809 140801
+#> 3367: MID26642812 141001
+#> 3368: MID26643920 141901
+```
+
+The results from the two operations are joined, creating an NA in the `cip6` column, representing FYE students whose post-FYE programs are missing or non-engineering.  
+
+```{r echo = FALSE, eval = FALSE}
+fye03[order(id)]
+```
+
+```{r}
+#>                id   institution          race    sex   cip6
+#>    1: MID25783162 Institution M         White   Male   <NA>
+#>    2: MID25783166 Institution M         White   Male   <NA>
+#>    3: MID25783167 Institution M         White   Male 140901
+#>    4: MID25783178 Institution M         Black   Male 140701
+#>    5: MID25783197 Institution M         White   Male 140701
+#>    6: MID25783199 Institution M         White Female 140301
+#>    7: MID25783227 Institution M         White   Male   <NA>
+#>    8: MID25783257 Institution M         White   Male 140701
+#>    9: MID25783275 Institution M         White   Male 140501
+#>   10: MID25783388 Institution M         White   Male 141901
+#>   ---                                                      
+#> 5983: MID26648334 Institution J International   Male   <NA>
+#> 5984: MID26648354 Institution J         Asian   Male   <NA>
+#> 5985: MID26648392 Institution J         White Female   <NA>
+#> 5986: MID26648417 Institution J         White   Male   <NA>
+#> 5987: MID26648422 Institution J         White   Male   <NA>
+#> 5988: MID26648435 Institution J      Hispanic   Male   <NA>
+#> 5989: MID26648484 Institution J      Hispanic   Male   <NA>
+#> 5990: MID26648508 Institution J International Female   <NA>
+#> 5991: MID26648517 Institution J      Hispanic   Male   <NA>
+#> 5992: MID26648544 Institution J         White   Male   <NA>
+```
+
+The final operation is to convert the three predictor variables---institution, race, and sex---to factors, yielding the form required for input data to `mice()`. 
+
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+
+### How to use `mice()`
+
+```{r echo = FALSE}
+# set false to avoid imputation
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+The mice package creates multiple imputations (replacement values) for missing data [@vanBuuren+Oudshoorn:2011]. The replacement values are CIP codes to replace the NA values in the prepared data frame.
+
+Our predictors (institution, race, and sex) are unordered categorical variables, so the imputation method we select is a "polytomous logistic regression" (argument `polyreg`). To read more, view the help page by running 
 
 ```r
-? cip_after_fye
+? mice() 
 ```
 
-
-### 2. Set up the imputation data frame
-
-Our next step is to treat all non-engineering majors as missing values, converting them to NA. Engineering CIPs start with "14," so we identify all rows that do not start with 14. 
+To examine the default arguments that `mice()` applies to our data, we call the function with zero iterations. (A warning may appear in your console. It can be ignored.)
 
 ```{r}
-# reset CIP as "start" column
-engr_post_fye <- cip_post_fye[, .(id, start = cip6)]
+# examine default arguments 
+mice(mi_data, maxit = 0)
+#> Class: mids
+#> Number of multiple imputations:  5 
+#> Imputation methods:
+#>          id institution        race         sex        cip6 
+#>          ""          ""          ""          ""   "polyreg" 
+#> PredictorMatrix:
+#>             id institution race sex cip6
+#> id           0           1    1   1    1
+#> institution  0           0    1   1    1
+#> race         0           1    0   1    1
+#> sex          0           1    1   0    1
+#> cip6         0           1    1   1    0
+#> Number of logged events:  1 
+#>   it im dep     meth out
+#> 1  0  0     constant  id
+```
 
-# find NOT engineering rows
-rows_we_want <- !grepl("^14", engr_post_fye$start)
+This framework is suited to our data, so no further editing of these data is needed. (If editing were required, a procedure is outlined in Appendix A.) 
 
-# set NOT engineering to NA
-engr_post_fye[rows_we_want, start := NA_character_]
+- Number of multiple imputations is 5
+- Imputation method is `polyreg`, applied to `cip6` only. This is the appropriate method for multiple, unordered, categorical predictor variables. 
+- `cip6` row of the predictor matrix correctly has a `1` in each of the three predictor columns (the other rows can be ignored)
+
+Applying `mice()` to our data returns an object of class `mids` (multiply imputed data set). The default `seed` argument is NULL, but by setting the seed as shown the vignette results are reproducible. Setting `printFlag = TRUE` displays progress in the console. 
+
+```{r}
+# impute missing CIP codes 
+mi_mids <- mice::mice(mi_data, seed = 20180624, printFlag = TRUE)
+#>  iter imp variable
+#>   1   1  cip6
+#>   1   2  cip6
+#>   1   3  cip6
+#>   1   4  cip6
+#>   1   5  cip6
+#> ---
+#>   5   1  cip6
+#>   5   2  cip6
+#>   5   3  cip6
+#>   5   4  cip6
+#>   5   5  cip6
+
+```
+
+To export the `mids` object to a data frame, we use the `complete()` function. 
+
+```{r}
+# export result to data frame 
+mi_start <- mice::complete(mi_mids)
+
+# convert to data.table structure
+data.table::setDT(mi_start)
 
 # examine the result
-engr_post_fye
+mi_start[]
+#>                id   institution          race    sex   cip6
+#>    1: MID25783162 Institution M         White   Male 140901
+#>    2: MID25783166 Institution M         White   Male 141901
+#>    3: MID25783167 Institution M         White   Male 140901
+#>    4: MID25783178 Institution M         Black   Male 140701
+#>    5: MID25783197 Institution M         White   Male 140701
+#>    6: MID25783199 Institution M         White Female 140301
+#>    7: MID25783227 Institution M         White   Male 141001
+#>    8: MID25783257 Institution M         White   Male 140701
+#>    9: MID25783275 Institution M         White   Male 140501
+#>   10: MID25783388 Institution M         White   Male 141901
+#>   ---                                                      
+#> 5983: MID26648334 Institution J International   Male 140801
+#> 5984: MID26648354 Institution J         Asian   Male 140901
+#> 5985: MID26648392 Institution J         White Female 141901
+#> 5986: MID26648417 Institution J         White   Male 140201
+#> 5987: MID26648422 Institution J         White   Male 141901
+#> 5988: MID26648435 Institution J      Hispanic   Male 141901
+#> 5989: MID26648484 Institution J      Hispanic   Male 140801
+#> 5990: MID26648508 Institution J International Female 140701
+#> 5991: MID26648517 Institution J      Hispanic   Male 140801
+#> 5992: MID26648544 Institution J         White   Male 141901
 ```
 
-Here we see the two forms of starting majors for FYE students. A CIP code in the `start` column indicates they transitioned to this engineering major after FYE. We treat this major as their predicted starting major. 
+Some final data carpentry yields the data frame we want. 
 
-A `start` value of NA indicates a non-engineering post-FYE major, which we treat as missing data for the imputation. 
+```{r}
+# select columns 
+columns_we_want <- c("id", "cip6")
+mi_start <- mi_start[, ..columns_we_want]
 
-Our multivariate imputation process operates on categorical variables. We have selected institution, race/ethnicity, and sex as out categories. 
+# ensure our columns are characters
+mi_start[, id := as.character(id)]
+mi_start[, cip6 := as.character(cip6)]
 
-```{r eval=FALSE}
-library(dplyr)
-inst_id <- semi_join(midfieldstudents, engr_post_fye, by = "id") %>%
-  select(id, institution)
+# order the rows
+mi_start <- mi_start[order(id)]
 
-engr_post_fye <- left_join(engr_post_fye, inst_id, by = "id")
+# rename CIP to start
+setnames(mi_start, old = "cip6", new = "start")
 
-race_sex <- filter_by_id(midfieldstudents,
-  keep_id = engr_post_fye$id,
-  keep_col = c("id", "race", "sex"),
-  unique_row = TRUE
-)
-engr_post_fye <- left_join(engr_post_fye, race_sex, by = "id")
+# examine the result
+mi_start[]
+#>                id  start
+#>    1: MID25783162 140901
+#>    2: MID25783166 141901
+#>    3: MID25783167 140901
+#>    4: MID25783178 140701
+#>    5: MID25783197 140701
+#>    6: MID25783199 140301
+#>    7: MID25783227 141001
+#>    8: MID25783257 140701
+#>    9: MID25783275 140501
+#>   10: MID25783388 141901
+#>   ---                   
+#> 5983: MID26648334 140801
+#> 5984: MID26648354 140901
+#> 5985: MID26648392 141901
+#> 5986: MID26648417 140201
+#> 5987: MID26648422 141901
+#> 5988: MID26648435 141901
+#> 5989: MID26648484 140801
+#> 5990: MID26648508 140701
+#> 5991: MID26648517 140801
+#> 5992: MID26648544 141901
+```
 
-setDT(engr_post_fye)
+This data frame is identical to the `fye_start` data described earlier. To verify that these two data frames are identical,  
 
-engr_post_fye
+```{r}
+# verify result matches expectation
+all.equal(mi_start, fye_start)
+#> [1] TRUE
+```
+
+```{r echo = FALSE, eval = TRUE}
+# set false to avoid imputation
+knitr::opts_chunk$set(eval = TRUE)
+```
+
+Lastly, because the mice package masks the base R `rbind()` and `cbind()` functions, we use the following to unload the package once we're done with it. 
+
+```{r}
+# unload because mice masks rbind
+detach("package:mice", unload = TRUE)
 ```
 
 
 
-More to come
+<br>
+<a href="#top">&#9650; top of page</a> 
 
-
-```r
-cip_after_fye
-
-fye_join_categories
-
-fye_mice
-
-```
 
 
 
@@ -250,15 +564,146 @@ fye_mice
 
 ## Appendix
 
-### Complete script
+```{r echo = FALSE}
+# set false to avoid imputation
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+### A. Editing the arguments for `mice()` 
+
+Had the default framework not been to our liking, we reset the arguments as follows, adapted from [@Katitas:2019]. 
+
+Obtain the `mi_data` as before, using `fye_mi_prep()`. 
+
+```{r}
+mi_data <- fye_mi_prep()
+```
+
+Use this data as the input to `mice()` with zero iterations. 
+
+```{r}
+mi_framework <- mice::mice(mi_data, maxit = 0)
+```
+
+Extract the method and predictor matrix from the framework. 
+
+```{r}
+mi_method <- mi_framework$method
+mi_predictors <- mi_framework$predictorMatrix
+```
+
+Assign the `polyreg` method to `cip6` and the "empty" method (`""`) to all others. 
+
+```{r}
+# apply an imputation method to CIP only 
+mi_method[c("cip6")] <- "polyreg"
+mi_method[c("id", "institution", "race", "sex")] <- ""
+```
+
+Ensure the ID column is not a predictor by setting its column values in the predictor matrix to zero. 
+
+```{r}
+mi_predictors[, c("id")] <- 0
+```
+
+An imputation method is assigned to `cip6` only, so only the `cip6` row of the predictor matrix is active. The values of `1` in the row indicate that  institution, sex, and race are used to impute the CIP code.  
+
+```r
+# predictor matrix excerpt 
+#>             id cip6 institution race sex
+#> cip6         0    0           1    1   1
+```
+
+Our three main arguments `mi_data`, `mi_method`, and `mi_predictors` are ready to use. 
+
+```{r}
+mi_mids <- mice::mice(data = mi_data,
+                      method = mi_method,
+                      predictorMatrix = mi_predictors, 
+                      seed = 20180624, 
+                      printFlag = TRUE)
+```
+
+The `seed` and `printFlag` arguments are optional. 
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+### B. Complete script
 
 The vignette code chunks are collected below in a single, condensed script.
 
 ```{r eval=FALSE}
-# TBD
+# packages used
+library(midfieldr)
+library(midfielddata)
+library(data.table)
+library(mice)
+
+# Option 1: Ready-to-use starting programs
+# Summarize fye_start by program CIP
+fye_start_summary <- fye_start[, .(N = .N), by = "start"]
+setnames(fye_start_summary, old = "start", new = "cip6")
+fye_start_summary <- merge(fye_start_summary, cip, by = "cip6", all.x = TRUE)
+fye_start_summary <- fye_start_summary[order(-N), .(cip6, cip6name, N)]
+setnames(fye_start_summary, old = "cip6", new = "start")
+
+# How to use fye_start
+matric_programs <- filter_by_id(midfieldstudents, 
+                                keep_id = rep_ever, 
+                                keep_col = c("id", "cip6"))
+start_programs <- merge(matric_programs, 
+                        fye_start, 
+                        by = "id", 
+                        all.x = TRUE)
+rows_non_fye <- is.na(start_programs$start)
+start_programs <- start_programs[rows_non_fye, start := cip6]
+start_programs[, cip6 := NULL]
+
+# Option 2: Perform the multiple imputation
+# How to use fye_mi_prep()
+mi_data <- fye_mi_prep(midfieldstudents, midfieldterms)
+
+# How to use mice()
+mice(mi_data, maxit = 0)
+mi_mids <- mice::mice(mi_data, seed = 20180624, printFlag = TRUE)
+mi_start <- mice::complete(mi_mids)
+data.table::setDT(mi_start)
+columns_we_want <- c("id", "cip6")
+mi_start <- mi_start[, ..columns_we_want]
+mi_start[, id := as.character(id)]
+mi_start[, cip6 := as.character(cip6)]
+mi_start <- mi_start[order(id)]
+setnames(mi_start, old = "cip6", new = "start")
+detach("package:mice", unload = TRUE)
+
+# Appendix: editing the arguments for mice()
+mi_data <- fye_mi_prep()
+mi_framework <- mice::mice(mi_data, maxit = 0)
+mi_method <- mi_framework$method
+mi_predictors <- mi_framework$predictorMatrix
+mi_method[c("cip6")] <- "polyreg"
+mi_method[c("id", "institution", "race", "sex")] <- ""
+mi_predictors[, c("id")] <- 0
+mi_mids <- mice::mice(data = mi_data,
+                      method = mi_method,
+                      predictorMatrix = mi_predictors, 
+                      seed = 20180624, 
+                      printFlag = TRUE)
 ```
+
+ 
+```{r echo = FALSE}
+# set false to avoid imputation
+knitr::opts_chunk$set(eval = TRUE)
+```
+
+
 
 <br>
 <a href="#top"         >&#9650;     top of page </a>     
-<a href="../index.html">&#9665;       main page </a> 
-
+<a href="../index.html">&#9665;       main page </a>

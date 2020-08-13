@@ -6,7 +6,7 @@
 \alias{rep_ever}
 \alias{rep_grad}
 \alias{rep_ever_fc}
-\title{Representative example student IDs}
+\title{Student IDs for the representative case study}
 \format{
 character vector. The names of the available data vectors are:
 \describe{
@@ -47,6 +47,7 @@ head(graduates)
 Other example_data: 
 \code{\link{rep_cip}},
 \code{\link{rep_group}},
+\code{\link{rep_start}},
 \code{\link{rep_stickiness_mw}},
 \code{\link{rep_stickiness}}
 }

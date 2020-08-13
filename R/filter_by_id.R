@@ -67,8 +67,7 @@ filter_by_id <- function(data,
   assert_required_column(data, "id")
 
   # bind names
-  id <- NULL
-  term_degree <- NULL
+  # NA
 
   # preserve data.frame, data.table, or tibble
   df_class <- get_df_class(data)

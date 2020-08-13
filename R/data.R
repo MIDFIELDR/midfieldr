@@ -23,7 +23,6 @@
 #'   institutions reported no program information or that students were
 #'   not enrolled in a program.}
 #' }
-#'
 #' @format \code{data.table} with 1584 rows and 6 columns keyed by the
 #' 6-digit CIP code. The variables are:
 #' \describe{
@@ -38,7 +37,6 @@
 #'   representing "the most general groupings of related programs"}
 #'   \item{cip2name}{character program name at the 2-digit level}
 #' }
-#'
 #' @examples
 #' # overview
 #' str(cip)
@@ -51,7 +49,7 @@
 
 # -------------------------------------------------------------------
 
-#' Representative example CIP codes and names
+#' CIP data for the representative case study
 #'
 #' A subset of the \code{cip} data set containing CIP codes and names for a
 #' case study of Civil, Electrical, Industrial, and Mechanical Engineering
@@ -71,16 +69,13 @@
 #'   representing "the most general groupings of related programs"}
 #'   \item{cip2name}{character program name at the 2-digit level}
 #' }
-#'
-#' @examples
-#' # placeholder
 #' @family example_data
 #'
 "rep_cip"
 
 # -------------------------------------------------------------------
 
-#' Representative example program group
+#' Program group for the representative case study
 #'
 #' Six-digit CIP codes and custom program names for a case study of Civil,
 #' Electrical, Industrial, and Mechanical Engineering programs in
@@ -93,7 +88,6 @@
 #'   \item{program}{program name assigned for grouping, summarizing,
 #'   and joining}
 #' }
-#'
 #' @examples
 #' library(midfielddata)
 #'
@@ -114,7 +108,7 @@
 
 # -------------------------------------------------------------------
 
-#' Representative example student IDs
+#' Student IDs for the representative case study
 #'
 #' Character vectors of student IDs at different points in a case study of
 #' Civil, Electrical, Industrial, and Mechanical Engineering programs in
@@ -159,7 +153,7 @@ NULL
 
 # -------------------------------------------------------------------
 
-#' Representative example stickiness data
+#' Stickiness results for the representative case study
 #'
 #' Stickiness metric results for a case study of Civil, Electrical,
 #' Industrial, and Mechanical Engineering programs in
@@ -172,18 +166,12 @@ NULL
 #'  \item{program}{character, instructional programs selected for study}
 #'  \item{race}{character, student race/ethnicity}
 #'  \item{sex}{character, student sex}
-#'  \item{ever}{numerical, number of students ever enrolled in a program and completion
+#'  \item{ever}{numerical, number of students ever enrolled in a program
+#'  and completion
 #'  is feasible}
 #'  \item{grad}{numerical, number of students graduating from the program}
 #'  \item{stick}{numerical, program stickiness, a persistence metric}
 #' }
-#'
-#' @examples
-#' # prepare data for multiway graph
-#' rep_stickiness$race_sex <- paste(rep_stickiness$race, rep_stickiness$sex)
-#' columns_we_want <- c("program", "race_sex", "stick")
-#' pre_mw <- rep_stickiness[, ..columns_we_want]
-#'
 #' @family example_data
 #'
 "rep_stickiness"
@@ -191,7 +179,7 @@ NULL
 
 # -------------------------------------------------------------------
 
-#' Representative example stickiness data in multiway form
+#' Stickiness data in multiway form for the representative case study
 #'
 #' Stickiness metric results with two categorical variables as factors
 #' with levels ordered by the median stickiness.
@@ -203,47 +191,56 @@ NULL
 #'  \item{race_sex}{factor, student race/ethnicity and sex}
 #'  \item{stick}{numerical, program stickiness, a persistence metric}
 #' }
-#'
-#' @examples
-#' # placeholder
 #' @family example_data
 #'
 "rep_stickiness_mw"
 
+# -------------------------------------------------------------------
+
+#' Starting programs for the representative case study
+#'
+#' Starting programs for students in the engineering case study. Includes
+#' degree-granting programs that substitute for first-year-engineering (FYE)
+#' programs when needed for a persistence metric, e.g., graduation rate.
+#'
+#' The starting program for a non-FYE student is their matriculation program.
+#' The starting programs for FYE students are a subset of the data set
+#' \code{fye_start} that includes a predicted starting program for every
+#' FYE student in midfielddata.
+#'
+#' @format \code{data.table} with 10135 rows and 2 columns keyed by student
+#' ID. The variables are:
+#' \describe{
+#'    \item{id}{student ID}
+#'    \item{start}{starting program}
+#' }
+#' @family example_data
+#'
+"rep_start"
 
 # -------------------------------------------------------------------
 
-#' FYE students and imputed starting majors
+#' Starting programs for all FYE students
 #'
-#' Imputed starting majors for all first-year engineering (FYE) students in
-#' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
+#' Starting programs for all FYE students in midfielddata. Includes
+#' degree-granting programs that substitute for first-year-engineering (FYE)
+#' programs when needed for a persistence metric, e.g., graduation rate.
 #'
-#' Some US institutions have first year engineering (FYE) programs---typically
-#' a common first year curriculum that is a prerequisite for declaring
-#' an engineering major. Some persistence metrics require us to determine
-#' what we call a "starting major" for FYE students---the predicted
-#' engineering program such as Civil, Electrical, or Mechanical, for example,
-#' the student would have declared had they not been required to enroll in FYE.
+#' Starting programs for FYE students are the engineering programs we
+#' predict they would have declared had they not been required to enroll in
+#' FYE. The prediction is based on their first post-FYE program and an
+#' imputation suitable for multiple categorical variables using the mice
+#' package. The predictor variables are institution, race, and sex. The
+#' predicted variable is the 6-digit CIP code.
 #'
-#' @format \code{data.frame} with 5992 rows and 2 columns keyed by student ID.
-#' The variables are:
+#' @format \code{data.table} with 5992 rows and 2 columns keyed by student
+#' ID. The variables are:
 #' \describe{
-#'    \item{id}{unique anonymized MIDFIELD student identifier}
-#'    \item{start}{imputed starting major of FYE students}
-#' }
-#'
-#' @examples
-#' # examine the data
-#' str(midfield_fye)
-#'
-#' # degree status of FYE students
-#' library(midfielddata)
-#' ids_we_want <- midfield_fye$id
-#' rows_we_want <- midfielddegrees$id %in% ids_we_want &
-#'   !is.na(midfielddegrees$degree)
-#' fye_grads <- midfielddegrees[rows_we_want]
+#'    \item{id}{student ID}
+#'    \item{start}{starting program}
+#'    }
 #' @family cip_data
 #'
-"midfield_fye"
+"fye_start"
 
 

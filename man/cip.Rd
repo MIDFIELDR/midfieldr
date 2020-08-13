@@ -56,7 +56,7 @@ filter_by_text(cip, keep_text = "^1410")
 }
 \seealso{
 Other cip_data: 
-\code{\link{midfield_fye}}
+\code{\link{fye_start}}
 }
 \concept{cip_data}
 \keyword{datasets}

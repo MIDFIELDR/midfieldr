@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_cip}
 \alias{rep_cip}
-\title{Representative example CIP codes and names}
+\title{CIP data for the representative case study}
 \format{
 \code{data.table} with 12 rows and 6 columns keyed by the
 6-digit CIP code. The variables are:
@@ -28,13 +28,11 @@ A subset of the \code{cip} data set containing CIP codes and names for a
 case study of Civil, Electrical, Industrial, and Mechanical Engineering
 programs in \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 }
-\examples{
-# placeholder
-}
 \seealso{
 Other example_data: 
 \code{\link{rep_group}},
 \code{\link{rep_id}},
+\code{\link{rep_start}},
 \code{\link{rep_stickiness_mw}},
 \code{\link{rep_stickiness}}
 }

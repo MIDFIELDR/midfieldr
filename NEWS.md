@@ -1,9 +1,20 @@
 
+## midfieldr 1.0.0.9003 / 2020-08
+
+Predicted starting programs for FYE students and vignette
+
+- `fye_mi_prep()`  
+- `fye_start` data  
+- `rep_start` data
+
+Use `midfieldr.R` to bind names of column names in the four data sets in midfielddata 
+
 ## midfieldr 1.0.0.9002 / 2020-08
 
-Continuing development with data.table format and syntax
+Feasible completion and vignette
 
-- `feasible_subset()` and vignette added 
+- `feasible_subset()` 
+- `rep_ever_fc` data  
 
 ## midfieldr 1.0.0.9001 / 2020-07
 

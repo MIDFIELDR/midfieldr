@@ -58,7 +58,8 @@ The relevant terminology is:
 
 The subsetting condition is that a student has graduated, or if not, that
 their matriculation term is no later than the matriculation limit,
-adjusted for transfer credits if any, up to a maximum of 4 terms equivalent.
+adjusted for transfer credits if any, up to a maximum of 4 terms
+equivalent.
 
 The function accesses three of the midfielddata data sets:
 \code{\link[midfielddata]{midfieldstudents}},
@@ -70,7 +71,7 @@ The function accesses three of the midfielddata data sets:
 }
 \seealso{
 Other data_carpentry: 
-\code{\link{cip_after_fye}()},
+\code{\link{fye_mi_prep}()},
 \code{\link{order_multiway}()}
 }
 \concept{data_carpentry}

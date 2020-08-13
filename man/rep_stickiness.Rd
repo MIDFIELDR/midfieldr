@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_stickiness}
 \alias{rep_stickiness}
-\title{Representative example stickiness data}
+\title{Stickiness results for the representative case study}
 \format{
 \code{data.table} with 63 rows and 6 columns keyed by
 program, race/ethnicity, and sex. The variables are:
@@ -11,7 +11,8 @@ program, race/ethnicity, and sex. The variables are:
  \item{program}{character, instructional programs selected for study}
  \item{race}{character, student race/ethnicity}
  \item{sex}{character, student sex}
- \item{ever}{numerical, number of students ever enrolled in a program and completion
+ \item{ever}{numerical, number of students ever enrolled in a program
+ and completion
  is feasible}
  \item{grad}{numerical, number of students graduating from the program}
  \item{stick}{numerical, program stickiness, a persistence metric}
@@ -26,18 +27,12 @@ Industrial, and Mechanical Engineering programs in
 \href{https://midfieldr.github.io/midfielddata/}{midfielddata}. Results
 are grouped by program, race/ethnicity, and sex.
 }
-\examples{
-# prepare data for multiway graph
-rep_stickiness$race_sex <- paste(rep_stickiness$race, rep_stickiness$sex)
-columns_we_want <- c("program", "race_sex", "stick")
-pre_mw <- rep_stickiness[, ..columns_we_want]
-
-}
 \seealso{
 Other example_data: 
 \code{\link{rep_cip}},
 \code{\link{rep_group}},
 \code{\link{rep_id}},
+\code{\link{rep_start}},
 \code{\link{rep_stickiness_mw}}
 }
 \concept{example_data}

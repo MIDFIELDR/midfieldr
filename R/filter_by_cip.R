@@ -64,9 +64,7 @@ filter_by_cip <- function(data,
   assert_required_column(data, "cip6")
 
   # bind names
-  term_degree <- NULL
-  cip6 <- NULL
-  id <- NULL
+  # NA
 
   # preserve data.frame, data.table, or tibble
   df_class <- get_df_class(data)

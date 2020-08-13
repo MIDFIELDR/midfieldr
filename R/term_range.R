@@ -48,7 +48,6 @@ term_range <- function(data) {
     # bind names
     min_term <- NULL
     max_term <- NULL
-    institution <- NULL
 
     # preserve data.frame, data.table, or tibble
     df_class <- get_df_class(data)
