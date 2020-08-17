@@ -55,8 +55,12 @@ filter_by_text(cip, keep_text = "History") \%>\%
   filter_by_text(keep_text = "American")
 }
 \seealso{
-Other data_query: 
+Other functions: 
+\code{\link{feasible_subset}()},
 \code{\link{filter_by_cip}()},
-\code{\link{filter_by_id}()}
+\code{\link{filter_by_id}()},
+\code{\link{fye_mi_prep}()},
+\code{\link{ipeds_subset}()},
+\code{\link{order_multiway}()}
 }
-\concept{data_query}
+\concept{functions}

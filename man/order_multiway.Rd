@@ -44,9 +44,12 @@ mw_df <- data.frame(catg1, catg2, value)
 order_multiway(mw_df)
 }
 \seealso{
-Other data_carpentry: 
+Other functions: 
 \code{\link{feasible_subset}()},
+\code{\link{filter_by_cip}()},
+\code{\link{filter_by_id}()},
+\code{\link{filter_by_text}()},
 \code{\link{fye_mi_prep}()},
 \code{\link{ipeds_subset}()}
 }
-\concept{data_carpentry}
+\concept{functions}

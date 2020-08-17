@@ -64,9 +64,12 @@ to factors. The output is ready for use as an input to the mice package.
 
 }
 \seealso{
-Other data_carpentry: 
+Other functions: 
 \code{\link{feasible_subset}()},
+\code{\link{filter_by_cip}()},
+\code{\link{filter_by_id}()},
+\code{\link{filter_by_text}()},
 \code{\link{ipeds_subset}()},
 \code{\link{order_multiway}()}
 }
-\concept{data_carpentry}
+\concept{functions}

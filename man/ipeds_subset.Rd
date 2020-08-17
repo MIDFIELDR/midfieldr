@@ -55,9 +55,12 @@ The function accesses these midfielddata data sets:
 # placeholder
 }
 \seealso{
-Other data_carpentry: 
+Other functions: 
 \code{\link{feasible_subset}()},
+\code{\link{filter_by_cip}()},
+\code{\link{filter_by_id}()},
+\code{\link{filter_by_text}()},
 \code{\link{fye_mi_prep}()},
 \code{\link{order_multiway}()}
 }
-\concept{data_carpentry}
+\concept{functions}
