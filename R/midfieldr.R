@@ -56,7 +56,7 @@ if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
     ".", ":=", "..cols_we_want", ".SD", "..columns", "..columns_we_want",
     "..keep_col",
-    #following are column names in the four midfielddata data sets
+    # following are column names in the four midfielddata data sets
     "id", "institution", "cip6", "race", "sex", "term", "term_degree",
     "term_enter", "degree", "hours_transfer", "hours_term", "transfer",
     "age", "us_citizen", "home_zip", "high_school", "sat_math", "sat_verbal",

@@ -86,7 +86,7 @@ data.table syntax
 packages
 
 ```{r}
- # packages used
+# packages used
 library(midfieldr)
 library(midfielddata)
 library(data.table)
@@ -124,15 +124,6 @@ group_cips <- program_group$cip6
 group_cips
 ```
 
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
-
 ## Gather the starters  
 
 By "starters" we mean students matriculating in a case study program and FYE students whose starting programs are in the case study.  
@@ -145,9 +136,10 @@ We use `filter_by_cip()` to extract from `midfieldstudents` the IDs of students 
 ```{r}
 # gather students matriculating in programs
 matriculants <- filter_by_cip(midfieldstudents,
-                              keep_cip = group_cips, 
-                              keep_col = c("id", "cip6"),
-                              unique_row = TRUE)
+  keep_cip = group_cips,
+  keep_col = c("id", "cip6"),
+  unique_row = TRUE
+)
 
 # examine the result
 matriculants
@@ -156,14 +148,15 @@ matriculants
 In the *Impute FYE starting programs* vignette [(link)](impute_fye.html), we derive the starting programs for all FYE students in midfielddata. Again, we filter by the program group CIP codes. 
 
 ```{r}
-# column name cip6 is required 
+# column name cip6 is required
 fye <- copy(fye_start)
 setnames(fye, old = "start", new = "cip6")
 
 # gather FYE students predicted to start in these programs
 fye_starters <- filter_by_cip(fye,
-                              keep_cip = group_cips,
-                              unique_row = TRUE)
+  keep_cip = group_cips,
+  unique_row = TRUE
+)
 
 # examine the result
 fye_starters
@@ -195,7 +188,7 @@ See the *Filter for program completion feasibility* vignette [(link)](feasible_c
 rows_we_want <- starters$id %in% feasible_ids
 starters <- starters[rows_we_want]
 
-# rename CIP 
+# rename CIP
 setnames(starters, old = "cip6", new = "start")
 
 # examine the result
@@ -205,21 +198,6 @@ starters
 These are the students eligible to be considered starters in our case study programs before we apply the IPEDS constraints. 
 
 The `starters` data frame is the input to `ipeds_subset()`.
-
-
-
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
-
-
-
 
 ## Apply IPEDS criteria
 
@@ -245,33 +223,23 @@ xpct <- round(100 * x, 0)
 
 By applying the IPEDS restrictions, we've dropped from `r nrow(starters)` to `r nrow(ipeds_students)` students in this example, a `r xpct`% reduction in the number of students being considered. 
 
-
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
-
-
 ## Group, summarize, and join 
 
 Join program labels, race/ethnicity and sex. 
 
 ```{r}
 setnames(ipeds_students, old = "start", new = "cip6")
-ipeds_students <- merge(ipeds_students, 
-                        program_group, 
-                        by = "cip6", 
-                        all.x = TRUE)
+ipeds_students <- merge(ipeds_students,
+  program_group,
+  by = "cip6",
+  all.x = TRUE
+)
 
 # race sex
-race_sex <- filter_by_id(midfieldstudents, 
-                  keep_id = ipeds_students$id, 
-                  keep_col = c("id", "race", "sex"))
+race_sex <- filter_by_id(midfieldstudents,
+  keep_id = ipeds_students$id,
+  keep_col = c("id", "race", "sex")
+)
 ipeds_students <- merge(ipeds_students, race_sex, by = "id", all.x = TRUE)
 
 
@@ -300,9 +268,10 @@ Aggregate number of graduates by program, race, and sex
 ```{r}
 # group and summarize
 rows_we_want <- ipeds_students$ipeds_grad == "Y"
-grouped_graduates <- ipeds_students[rows_we_want, 
-                             .(grad = .N), 
-                             by = grouping_variables]
+grouped_graduates <- ipeds_students[rows_we_want,
+  .(grad = .N),
+  by = grouping_variables
+]
 
 # examine the result
 grouped_graduates
@@ -311,24 +280,14 @@ grouped_graduates
 Join
 
 ```{r}
-grouped_data  <- merge(grouped_starters, 
-                   grouped_graduates, 
-                   by = grouping_variables, 
-                   all.x = TRUE)
+grouped_data <- merge(grouped_starters,
+  grouped_graduates,
+  by = grouping_variables,
+  all.x = TRUE
+)
 
-grouped_data 
+grouped_data
 ```
-
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
-
 
 ## Compute graduation rate
 
@@ -365,26 +324,6 @@ To see the class of each column:
 unlist(lapply(grad_rate, FUN = class))
 ```
 
-```{r echo = FALSE, eval = FALSE}
-# run manually to create external data set 
-# external (user) data files
-rep_grad_rate <- grad_rate
-usethis::use_data(
-  rep_grad_rate, 
-  internal  = FALSE,
-  overwrite = TRUE
-)
-```
-
-The graduation rate data derived above is the data set `rep_grad_rate` in midfieldr.  View its help page by running
-
-```r
-? rep_grad_rate
-```
-
-
-
-
 ## Condition the data for display 
 
 Before graphing, we isolate the three multiway variables (program, combined race and sex, and rate) and transform the categorical variables into factors with levels that are ordered by median graduation rate.  
@@ -392,9 +331,6 @@ Before graphing, we isolate the three multiway variables (program, combined race
 ```{r}
 # pre-multiway data frame
 pre_mw <- copy(grad_rate)
-
-# alternatively, use the built-in data set
-# pre_mw <- copy(rep_grad_rate)
 
 # prepare rows
 rows_we_want <- pre_mw$start >= 5
@@ -418,28 +354,6 @@ data_mw <- data_mw[, ..columns_we_want]
 data_mw <- order_multiway(data_mw)
 ```
 
-```{r echo = FALSE, eval = FALSE}
-# run manually to create external data set 
-# external (user) data files
-rep_grad_rate_mw <- data_mw
-usethis::use_data(
-  rep_grad_rate_mw, 
-  internal  = FALSE,
-  overwrite = TRUE
-)
-```
-
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a>   
-
-
-
-
-
 ## Graph the metric
 
 ```{r echo = FALSE}
@@ -462,43 +376,15 @@ ggplot(data = data_mw, mapping = aes(x = rate, y = race_sex)) +
 ```
 <br>
 
-
-
-
-
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a>
-
-
-
-
-
 ## For more information
 
 - *Impute FYE starting programs* vignette [(link)](impute_fye.html) 
 - *Subset for completion feasibility* vignette [(link)](feasible_completion.html)  
 - *Explore multiway data* vignette [(link)](explore_multiway.html) 
 
-
-
-
-
-
-
-
-
-
 ## References
 
 <div id="refs"></div>
-
-
-
-
 
 ## Appendix
 
@@ -547,10 +433,6 @@ Finally, the degree CIP is used to create a yes/no column `ipeds_grad` to be ret
 ipeds06[order(id)]
 ```
 
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
 ### B. Complete script
 
 The vignette code chunks are collected below in a single, condensed script.
@@ -566,17 +448,17 @@ library(ggplot2)
 program_group <- copy(rep_group)
 group_cips <- program_group$cip6
 
-# gather starters: matriculants and imputed FYE 
+# gather starters: matriculants and imputed FYE
 matriculants <- filter_by_cip(midfieldstudents,
-                              keep_cip = group_cips, 
-                              keep_col = c("id", "cip6"),
-                              unique_row = TRUE
+  keep_cip = group_cips,
+  keep_col = c("id", "cip6"),
+  unique_row = TRUE
 )
 fye <- copy(fye_start)
 setnames(fye, old = "start", new = "cip6")
 fye_starters <- filter_by_cip(fye,
-                              keep_cip = group_cips,
-                              unique_row = TRUE
+  keep_cip = group_cips,
+  unique_row = TRUE
 )
 starters <- rbind(matriculants, fye_starters)
 
@@ -589,28 +471,32 @@ setnames(starters, old = "cip6", new = "start")
 # apply IPEDS constraints
 ipeds_students <- ipeds_subset(starters)
 
-# join program labels and demographics 
+# join program labels and demographics
 setnames(ipeds_students, old = "start", new = "cip6")
-ipeds_students <- merge(ipeds_students, 
-                        program_group, 
-                        by = "cip6", 
-                        all.x = TRUE)
-race_sex <- filter_by_id(midfieldstudents, 
-                         keep_id = ipeds_students$id, 
-                         keep_col = c("id", "race", "sex"))
+ipeds_students <- merge(ipeds_students,
+  program_group,
+  by = "cip6",
+  all.x = TRUE
+)
+race_sex <- filter_by_id(midfieldstudents,
+  keep_id = ipeds_students$id,
+  keep_col = c("id", "race", "sex")
+)
 ipeds_students <- merge(ipeds_students, race_sex, by = "id", all.x = TRUE)
 
-# group, summarize, join 
+# group, summarize, join
 grouping_variables <- c("program", "race", "sex")
 grouped_starters <- ipeds_students[, .(start = .N), by = grouping_variables]
 rows_we_want <- ipeds_students$ipeds_grad == "Y"
-grouped_graduates <- ipeds_students[rows_we_want, 
-                                    .(grad = .N), 
-                                    by = grouping_variables]
-grouped_data  <- merge(grouped_starters, 
-                       grouped_graduates, 
-                       by = grouping_variables, 
-                       all.x = TRUE)
+grouped_graduates <- ipeds_students[rows_we_want,
+  .(grad = .N),
+  by = grouping_variables
+]
+grouped_data <- merge(grouped_starters,
+  grouped_graduates,
+  by = grouping_variables,
+  all.x = TRUE
+)
 
 # compute graduation rate
 grad_rate <- grouped_data
@@ -620,7 +506,7 @@ rows_we_want <- grad_rate$start > 0
 grad_rate <- grad_rate[rows_we_want]
 grad_rate[, rate := round(grad / start, 2)]
 
-# condition data for display 
+# condition data for display
 pre_mw <- grad_rate
 rows_we_want <- pre_mw$start >= 5
 pre_mw <- pre_mw[rows_we_want]
@@ -637,14 +523,9 @@ columns_we_want <- c("program", "race_sex", "rate")
 data_mw <- data_mw[, ..columns_we_want]
 data_mw <- order_multiway(data_mw)
 
-# graph 
+# graph
 ggplot(data = data_mw, mapping = aes(x = rate, y = race_sex)) +
   facet_wrap(facets = vars(program), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Graduation rate", y = "")
 ```
-
-
-<br>
-<a href="#top"         >&#9650;     top of page </a>     
-<a href="../index.html">&#9665;       main page </a> 

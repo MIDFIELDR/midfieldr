@@ -41,7 +41,8 @@ The midfielddata taxonomy includes three non-IPEDS codes:
   \item{14YYYY}{Engineering-Focused Curricula (pseudo-FYE). For instances
   in which a student is eligible for admission to the institution but has
   not been admitted to an engineering program. Some institutions without
-  FYE programs use such a designation in lieu of undecided or unspecified.}
+  FYE programs use such a designation in lieu of undecided or
+  unspecified.}
   \item{999999}{Undecided or Unspecified. For instances in which
   institutions reported no program information or that students were
   not enrolled in a program.}

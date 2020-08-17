@@ -7,7 +7,7 @@ NULL
 #' Subset a data frame of student IDs and starting programs, retaining
 #' students satisfying the constraints of the IPEDS definition for
 #' successful graduation. The results adds a yes/no column \code{ipeds_grad} to
-#' indicate whether the student's graduation satisfied the IPREDS constraints.
+#' indicate whether the student's graduation satisfied the IPEDS constraints.
 #'
 #' The \code{starters} input must have columns \code{id} and \code{start}.
 #'
@@ -39,13 +39,12 @@ NULL
 #'
 #' @export
 #'
-ipeds_subset <- function (starters,
-                          ...,
-                          span = NULL,
-                          data_students = NULL,
-                          data_terms = NULL,
-                          data_degrees = NULL) {
-
+ipeds_subset <- function(starters,
+                         ...,
+                         span = NULL,
+                         data_students = NULL,
+                         data_terms = NULL,
+                         data_degrees = NULL) {
   wrapr::stop_if_dot_args(
     substitute(list(...)), "Arguments after ... must be named,"
   )
@@ -53,8 +52,8 @@ ipeds_subset <- function (starters,
   # defaults
   span <- span %||% 6
   data_students <- data_students %||% midfielddata::midfieldstudents
-  data_terms    <- data_terms    %||% midfielddata::midfieldterms
-  data_degrees  <- data_degrees  %||% midfielddata::midfielddegrees
+  data_terms <- data_terms %||% midfielddata::midfieldterms
+  data_degrees <- data_degrees %||% midfielddata::midfielddegrees
 
   # check arguments
   assert_explicit(starters)
@@ -87,9 +86,10 @@ ipeds_subset <- function (starters,
 
   # gather matriculation data
   matric_attr <- filter_by_id(data_students,
-                              keep_id = starters$id,
-                              keep_col = c("id", "term_enter", "transfer"),
-                              unique_row = TRUE)
+    keep_id = starters$id,
+    keep_col = c("id", "term_enter", "transfer"),
+    unique_row = TRUE
+  )
 
   # remove transfer students
   DT <- merge(starters, matric_attr, by = "id", all.x = TRUE)
@@ -98,16 +98,18 @@ ipeds_subset <- function (starters,
 
   # merge degree data
   degree_attr <- filter_by_id(data_degrees,
-                              keep_id = DT$id,
-                              keep_col = c("id", "cip6", "term_degree"))
+    keep_id = DT$id,
+    keep_col = c("id", "cip6", "term_degree")
+  )
   setnames(degree_attr, old = c("cip6"), new = c("cip_degree"))
   DT <- merge(DT, degree_attr, by = "id", all.x = TRUE)
 
   # merge term data
   term_attr <- filter_by_id(data_terms,
-                            keep_id = DT$id,
-                            keep_col = c("id", "cip6", "term"))
-  DT <- merge(DT, term_attr , by = "id", all.x = TRUE)
+    keep_id = DT$id,
+    keep_col = c("id", "cip6", "term")
+  )
+  DT <- merge(DT, term_attr, by = "id", all.x = TRUE)
   setnames(DT, old = c("cip6"), new = c("cip_term"))
 
   # remove students with both NA term and NA term_degree

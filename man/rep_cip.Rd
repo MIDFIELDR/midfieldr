@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_cip}
 \alias{rep_cip}
-\title{CIP codes}
+\title{Case CIP codes}
 \format{
 \code{data.table} with 12 rows and 6 columns keyed by the
 6-digit CIP code. The variables are:
@@ -31,11 +31,8 @@ and Mechanical Engineering programs in
 }
 \seealso{
 Other example_data: 
-\code{\link{rep_grad_rate_mw}},
-\code{\link{rep_grad_rate}},
+\code{\link{rep_ever}},
 \code{\link{rep_group}},
-\code{\link{rep_id}},
-\code{\link{rep_start}},
 \code{\link{rep_stickiness_mw}},
 \code{\link{rep_stickiness}}
 }

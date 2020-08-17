@@ -99,16 +99,6 @@ library(mice)
 options(datatable.print.nrows = 20, datatable.print.topn = 10)
 ```
 
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
-
 ## Option 1: Ready-to-use starting programs 
 
 The work described in this option is for using the ready-to-use predicted programs in `fye_start` instead of performing the computationally-expensive imputation yourself.  
@@ -124,7 +114,7 @@ The data set `fye_start` contains predicted starting programs for all  midfieldd
 The data are loaded with midfieldr. The start column is the 6-digit CIP code predicted for FYE students. The prediction is the actual post-FYE engineering program for all students who continue in engineering. The prediction is an imputed value for all other FYE students. 
 
 ```{r}
-# FYE predicted starting programs 
+# FYE predicted starting programs
 fye_start
 ```
 
@@ -156,27 +146,22 @@ fye_start_summary
 kable2html(fye_start_summary, caption = "Summary of starting program predictions")
 ```
 
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
 ### How to use `fye_start` 
 
 We use the engineering case study to illustrate using the predicted starting majors. 
 
 ```{r}
-# IDs of students ever enrolled in the case study programs 
+# IDs of students ever enrolled in the case study programs
 str(rep_ever)
 ```
 
 From `midfieldstudents` we obtain the matriculation programs for these students. 
 ```{r}
-# matriculation CIP for representative example 
-matric_programs <- filter_by_id(midfieldstudents, 
-                                    keep_id = rep_ever, 
-                                    keep_col = c("id", "cip6"))
+# matriculation CIP for representative example
+matric_programs <- filter_by_id(midfieldstudents,
+  keep_id = rep_ever,
+  keep_col = c("id", "cip6")
+)
 # examine the result
 matric_programs
 ```
@@ -185,10 +170,11 @@ Join the FYE starting programs by ID.
 
 ```{r}
 # left-join the predicted CIPs for FYE students
-start_programs <- merge(matric_programs, 
-                         fye_start, 
-                         by = "id", 
-                         all.x = TRUE)
+start_programs <- merge(matric_programs,
+  fye_start,
+  by = "id",
+  all.x = TRUE
+)
 
 # examine the result
 start_programs
@@ -199,7 +185,7 @@ start_programs
 For non-FYE students, the `start` value is the `cip6` value. 
 
 ```{r}
-# non-FYE, replace NA with matriculation CIP 
+# non-FYE, replace NA with matriculation CIP
 rows_non_fye <- is.na(start_programs$start)
 start_programs <- start_programs[rows_non_fye, start := cip6]
 ```
@@ -213,30 +199,6 @@ start_programs[, cip6 := NULL]
 # examine the result
 start_programs[]
 ```
-
-The starting program data derived above is the data set `rep_start` in midfieldr.  View its help page by running
-
-```r
-? rep_start
-```
-
-To verify that these two data frames are identical,  
-
-```{r}
-# verify result matches expectation
-all.equal(rep_start, start_programs)
-```
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
-
-
 
 ## Option 2: Perform the multiple imputation 
 
@@ -264,17 +226,6 @@ The result is a data frame with the predictor variables (institution, race, and 
 
 How `fye_mi_prep()` works is outlined in an appendix below. 
 
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a>
-
-
-
-
-
-
 ### How to use `mice()`
 
 ```{r echo = FALSE}
@@ -293,23 +244,23 @@ Our predictors (institution, race, and sex) are unordered categorical variables,
 To examine the default arguments that `mice()` applies to our data, we call the function with zero iterations. (A warning may appear in your console. It can be ignored.)
 
 ```{r}
-# examine default arguments 
+# examine default arguments
 mice(mi_data, maxit = 0)
-#> Class: mids
-#> Number of multiple imputations:  5 
-#> Imputation methods:
-#>          id institution        race         sex        cip6 
-#>          ""          ""          ""          ""   "polyreg" 
-#> PredictorMatrix:
-#>             id institution race sex cip6
-#> id           0           1    1   1    1
-#> institution  0           0    1   1    1
-#> race         0           1    0   1    1
-#> sex          0           1    1   0    1
-#> cip6         0           1    1   1    0
-#> Number of logged events:  1 
-#>   it im dep     meth out
-#> 1  0  0     constant  id
+# > Class: mids
+# > Number of multiple imputations:  5
+# > Imputation methods:
+# >          id institution        race         sex        cip6
+# >          ""          ""          ""          ""   "polyreg"
+# > PredictorMatrix:
+# >             id institution race sex cip6
+# > id           0           1    1   1    1
+# > institution  0           0    1   1    1
+# > race         0           1    0   1    1
+# > sex          0           1    1   0    1
+# > cip6         0           1    1   1    0
+# > Number of logged events:  1
+# >   it im dep     meth out
+# > 1  0  0     constant  id
 ```
 
 This framework is suited to our data, so no further editing of these data is needed. How to edit the arguments, if needed, is outlined in an appendix below.
@@ -321,27 +272,26 @@ This framework is suited to our data, so no further editing of these data is nee
 Applying `mice()` to our data returns an object of class `mids` (multiply imputed data set). The default `seed` argument is NULL, but by setting the seed as shown the vignette results are reproducible. Setting `printFlag = TRUE` displays progress in the console. 
 
 ```{r}
-# impute missing CIP codes 
+# impute missing CIP codes
 mi_mids <- mice::mice(mi_data, seed = 20180624, printFlag = TRUE)
-#>  iter imp variable
-#>   1   1  cip6
-#>   1   2  cip6
-#>   1   3  cip6
-#>   1   4  cip6
-#>   1   5  cip6
-#> ---
-#>   5   1  cip6
-#>   5   2  cip6
-#>   5   3  cip6
-#>   5   4  cip6
-#>   5   5  cip6
-
+# >  iter imp variable
+# >   1   1  cip6
+# >   1   2  cip6
+# >   1   3  cip6
+# >   1   4  cip6
+# >   1   5  cip6
+# > ---
+# >   5   1  cip6
+# >   5   2  cip6
+# >   5   3  cip6
+# >   5   4  cip6
+# >   5   5  cip6
 ```
 
 To export the `mids` object to a data frame, we use the `complete()` function. 
 
 ```{r}
-# export result to data frame 
+# export result to data frame
 mi_start <- mice::complete(mi_mids)
 
 # convert to data.table structure
@@ -349,34 +299,34 @@ data.table::setDT(mi_start)
 
 # examine the result
 mi_start[]
-#>                id   institution          race    sex   cip6
-#>    1: MID25783162 Institution M         White   Male 140901
-#>    2: MID25783166 Institution M         White   Male 141901
-#>    3: MID25783167 Institution M         White   Male 140901
-#>    4: MID25783178 Institution M         Black   Male 140701
-#>    5: MID25783197 Institution M         White   Male 140701
-#>    6: MID25783199 Institution M         White Female 140301
-#>    7: MID25783227 Institution M         White   Male 141001
-#>    8: MID25783257 Institution M         White   Male 140701
-#>    9: MID25783275 Institution M         White   Male 140501
-#>   10: MID25783388 Institution M         White   Male 141901
-#>   ---                                                      
-#> 5983: MID26648334 Institution J International   Male 140801
-#> 5984: MID26648354 Institution J         Asian   Male 140901
-#> 5985: MID26648392 Institution J         White Female 141901
-#> 5986: MID26648417 Institution J         White   Male 140201
-#> 5987: MID26648422 Institution J         White   Male 141901
-#> 5988: MID26648435 Institution J      Hispanic   Male 141901
-#> 5989: MID26648484 Institution J      Hispanic   Male 140801
-#> 5990: MID26648508 Institution J International Female 140701
-#> 5991: MID26648517 Institution J      Hispanic   Male 140801
-#> 5992: MID26648544 Institution J         White   Male 141901
+# >                id   institution          race    sex   cip6
+# >    1: MID25783162 Institution M         White   Male 140901
+# >    2: MID25783166 Institution M         White   Male 141901
+# >    3: MID25783167 Institution M         White   Male 140901
+# >    4: MID25783178 Institution M         Black   Male 140701
+# >    5: MID25783197 Institution M         White   Male 140701
+# >    6: MID25783199 Institution M         White Female 140301
+# >    7: MID25783227 Institution M         White   Male 141001
+# >    8: MID25783257 Institution M         White   Male 140701
+# >    9: MID25783275 Institution M         White   Male 140501
+# >   10: MID25783388 Institution M         White   Male 141901
+# >   ---
+# > 5983: MID26648334 Institution J International   Male 140801
+# > 5984: MID26648354 Institution J         Asian   Male 140901
+# > 5985: MID26648392 Institution J         White Female 141901
+# > 5986: MID26648417 Institution J         White   Male 140201
+# > 5987: MID26648422 Institution J         White   Male 141901
+# > 5988: MID26648435 Institution J      Hispanic   Male 141901
+# > 5989: MID26648484 Institution J      Hispanic   Male 140801
+# > 5990: MID26648508 Institution J International Female 140701
+# > 5991: MID26648517 Institution J      Hispanic   Male 140801
+# > 5992: MID26648544 Institution J         White   Male 141901
 ```
 
 Some final data carpentry yields the data frame we want. 
 
 ```{r}
-# select columns 
+# select columns
 columns_we_want <- c("id", "cip6")
 mi_start <- mi_start[, ..columns_we_want]
 
@@ -392,28 +342,28 @@ setnames(mi_start, old = "cip6", new = "start")
 
 # examine the result
 mi_start[]
-#>                id  start
-#>    1: MID25783162 140901
-#>    2: MID25783166 141901
-#>    3: MID25783167 140901
-#>    4: MID25783178 140701
-#>    5: MID25783197 140701
-#>    6: MID25783199 140301
-#>    7: MID25783227 141001
-#>    8: MID25783257 140701
-#>    9: MID25783275 140501
-#>   10: MID25783388 141901
-#>   ---                   
-#> 5983: MID26648334 140801
-#> 5984: MID26648354 140901
-#> 5985: MID26648392 141901
-#> 5986: MID26648417 140201
-#> 5987: MID26648422 141901
-#> 5988: MID26648435 141901
-#> 5989: MID26648484 140801
-#> 5990: MID26648508 140701
-#> 5991: MID26648517 140801
-#> 5992: MID26648544 141901
+# >                id  start
+# >    1: MID25783162 140901
+# >    2: MID25783166 141901
+# >    3: MID25783167 140901
+# >    4: MID25783178 140701
+# >    5: MID25783197 140701
+# >    6: MID25783199 140301
+# >    7: MID25783227 141001
+# >    8: MID25783257 140701
+# >    9: MID25783275 140501
+# >   10: MID25783388 141901
+# >   ---
+# > 5983: MID26648334 140801
+# > 5984: MID26648354 140901
+# > 5985: MID26648392 141901
+# > 5986: MID26648417 140201
+# > 5987: MID26648422 141901
+# > 5988: MID26648435 141901
+# > 5989: MID26648484 140801
+# > 5990: MID26648508 140701
+# > 5991: MID26648517 140801
+# > 5992: MID26648544 141901
 ```
 
 This data frame is identical to the `fye_start` data described earlier. To verify that these two data frames are identical,  
@@ -421,7 +371,7 @@ This data frame is identical to the `fye_start` data described earlier. To verif
 ```{r}
 # verify result matches expectation
 all.equal(mi_start, fye_start)
-#> [1] TRUE
+# > [1] TRUE
 ```
 
 ```{r echo = FALSE, eval = TRUE}
@@ -436,24 +386,9 @@ Lastly, because the mice package masks the base R `rbind()` and `cbind()` functi
 detach("package:mice", unload = TRUE)
 ```
 
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
-
-
-
-
 ## References
 
 <div id="refs"></div>
-
-
-
-
 
 ## Appendix
 
@@ -471,28 +406,28 @@ fye01[order(id)]
 ```
 
 ```{r}
-#>                id   institution          race    sex
-#>    1: MID25783162 Institution M         White   Male
-#>    2: MID25783166 Institution M         White   Male
-#>    3: MID25783167 Institution M         White   Male
-#>    4: MID25783178 Institution M         Black   Male
-#>    5: MID25783197 Institution M         White   Male
-#>    6: MID25783199 Institution M         White Female
-#>    7: MID25783227 Institution M         White   Male
-#>    8: MID25783257 Institution M         White   Male
-#>    9: MID25783275 Institution M         White   Male
-#>   10: MID25783388 Institution M         White   Male
-#>   ---                                               
-#> 5983: MID26648334 Institution J International   Male
-#> 5984: MID26648354 Institution J         Asian   Male
-#> 5985: MID26648392 Institution J         White Female
-#> 5986: MID26648417 Institution J         White   Male
-#> 5987: MID26648422 Institution J         White   Male
-#> 5988: MID26648435 Institution J      Hispanic   Male
-#> 5989: MID26648484 Institution J      Hispanic   Male
-#> 5990: MID26648508 Institution J International Female
-#> 5991: MID26648517 Institution J      Hispanic   Male
-#> 5992: MID26648544 Institution J         White   Male
+# >                id   institution          race    sex
+# >    1: MID25783162 Institution M         White   Male
+# >    2: MID25783166 Institution M         White   Male
+# >    3: MID25783167 Institution M         White   Male
+# >    4: MID25783178 Institution M         Black   Male
+# >    5: MID25783197 Institution M         White   Male
+# >    6: MID25783199 Institution M         White Female
+# >    7: MID25783227 Institution M         White   Male
+# >    8: MID25783257 Institution M         White   Male
+# >    9: MID25783275 Institution M         White   Male
+# >   10: MID25783388 Institution M         White   Male
+# >   ---
+# > 5983: MID26648334 Institution J International   Male
+# > 5984: MID26648354 Institution J         Asian   Male
+# > 5985: MID26648392 Institution J         White Female
+# > 5986: MID26648417 Institution J         White   Male
+# > 5987: MID26648422 Institution J         White   Male
+# > 5988: MID26648435 Institution J      Hispanic   Male
+# > 5989: MID26648484 Institution J      Hispanic   Male
+# > 5990: MID26648508 Institution J International Female
+# > 5991: MID26648517 Institution J      Hispanic   Male
+# > 5992: MID26648544 Institution J         White   Male
 ```
 
 The function's second operation extracts all term data for these students from  `midfieldterms`. The function filters for students whose first post-FYE program is in engineering, yielding: 
@@ -502,28 +437,28 @@ fye02[order(id)]
 ```
 
 ```{r}
-#>                id   cip6
-#>    1: MID25783167 140901
-#>    2: MID25783178 140701
-#>    3: MID25783197 140701
-#>    4: MID25783199 140301
-#>    5: MID25783257 140701
-#>    6: MID25783275 140501
-#>    7: MID25783388 141901
-#>    8: MID25783441 140801
-#>    9: MID25783491 141001
-#>   10: MID25783553 140801
-#>   ---                   
-#> 3359: MID26640528 141901
-#> 3360: MID26640591 141901
-#> 3361: MID26640613 142101
-#> 3362: MID26640916 141901
-#> 3363: MID26640932 141101
-#> 3364: MID26641121 140201
-#> 3365: MID26642386 140801
-#> 3366: MID26642809 140801
-#> 3367: MID26642812 141001
-#> 3368: MID26643920 141901
+# >                id   cip6
+# >    1: MID25783167 140901
+# >    2: MID25783178 140701
+# >    3: MID25783197 140701
+# >    4: MID25783199 140301
+# >    5: MID25783257 140701
+# >    6: MID25783275 140501
+# >    7: MID25783388 141901
+# >    8: MID25783441 140801
+# >    9: MID25783491 141001
+# >   10: MID25783553 140801
+# >   ---
+# > 3359: MID26640528 141901
+# > 3360: MID26640591 141901
+# > 3361: MID26640613 142101
+# > 3362: MID26640916 141901
+# > 3363: MID26640932 141101
+# > 3364: MID26641121 140201
+# > 3365: MID26642386 140801
+# > 3366: MID26642809 140801
+# > 3367: MID26642812 141001
+# > 3368: MID26643920 141901
 ```
 
 The results from the two operations are joined, creating an NA in the `cip6` column, representing FYE students whose post-FYE programs are missing or non-engineering.  
@@ -533,46 +468,31 @@ fye03[order(id)]
 ```
 
 ```{r}
-#>                id   institution          race    sex   cip6
-#>    1: MID25783162 Institution M         White   Male   <NA>
-#>    2: MID25783166 Institution M         White   Male   <NA>
-#>    3: MID25783167 Institution M         White   Male 140901
-#>    4: MID25783178 Institution M         Black   Male 140701
-#>    5: MID25783197 Institution M         White   Male 140701
-#>    6: MID25783199 Institution M         White Female 140301
-#>    7: MID25783227 Institution M         White   Male   <NA>
-#>    8: MID25783257 Institution M         White   Male 140701
-#>    9: MID25783275 Institution M         White   Male 140501
-#>   10: MID25783388 Institution M         White   Male 141901
-#>   ---                                                      
-#> 5983: MID26648334 Institution J International   Male   <NA>
-#> 5984: MID26648354 Institution J         Asian   Male   <NA>
-#> 5985: MID26648392 Institution J         White Female   <NA>
-#> 5986: MID26648417 Institution J         White   Male   <NA>
-#> 5987: MID26648422 Institution J         White   Male   <NA>
-#> 5988: MID26648435 Institution J      Hispanic   Male   <NA>
-#> 5989: MID26648484 Institution J      Hispanic   Male   <NA>
-#> 5990: MID26648508 Institution J International Female   <NA>
-#> 5991: MID26648517 Institution J      Hispanic   Male   <NA>
-#> 5992: MID26648544 Institution J         White   Male   <NA>
+# >                id   institution          race    sex   cip6
+# >    1: MID25783162 Institution M         White   Male   <NA>
+# >    2: MID25783166 Institution M         White   Male   <NA>
+# >    3: MID25783167 Institution M         White   Male 140901
+# >    4: MID25783178 Institution M         Black   Male 140701
+# >    5: MID25783197 Institution M         White   Male 140701
+# >    6: MID25783199 Institution M         White Female 140301
+# >    7: MID25783227 Institution M         White   Male   <NA>
+# >    8: MID25783257 Institution M         White   Male 140701
+# >    9: MID25783275 Institution M         White   Male 140501
+# >   10: MID25783388 Institution M         White   Male 141901
+# >   ---
+# > 5983: MID26648334 Institution J International   Male   <NA>
+# > 5984: MID26648354 Institution J         Asian   Male   <NA>
+# > 5985: MID26648392 Institution J         White Female   <NA>
+# > 5986: MID26648417 Institution J         White   Male   <NA>
+# > 5987: MID26648422 Institution J         White   Male   <NA>
+# > 5988: MID26648435 Institution J      Hispanic   Male   <NA>
+# > 5989: MID26648484 Institution J      Hispanic   Male   <NA>
+# > 5990: MID26648508 Institution J International Female   <NA>
+# > 5991: MID26648517 Institution J      Hispanic   Male   <NA>
+# > 5992: MID26648544 Institution J         White   Male   <NA>
 ```
 
 The final operation is to convert the three predictor variables---institution, race, and sex---to factors, yielding the form required for input data to `mice()`. 
-
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
-
-
-
-
-
 
 ### B. Editing the arguments for `mice()` 
 
@@ -600,7 +520,7 @@ mi_predictors <- mi_framework$predictorMatrix
 Assign the `polyreg` method to `cip6` and the "empty" method (`""`) to all others. 
 
 ```{r}
-# apply an imputation method to CIP only 
+# apply an imputation method to CIP only
 mi_method[c("cip6")] <- "polyreg"
 mi_method[c("id", "institution", "race", "sex")] <- ""
 ```
@@ -622,21 +542,16 @@ An imputation method is assigned to `cip6` only, so only the `cip6` row of the p
 Our three main arguments `mi_data`, `mi_method`, and `mi_predictors` are ready to use. 
 
 ```{r}
-mi_mids <- mice::mice(data = mi_data,
-                      method = mi_method,
-                      predictorMatrix = mi_predictors, 
-                      seed = 20180624, 
-                      printFlag = TRUE)
+mi_mids <- mice::mice(
+  data = mi_data,
+  method = mi_method,
+  predictorMatrix = mi_predictors,
+  seed = 20180624,
+  printFlag = TRUE
+)
 ```
 
 The `seed` and `printFlag` arguments are optional. 
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
 
 ### C. Complete script
 
@@ -660,13 +575,15 @@ fye_start_summary <- fye_start_summary[order(-N), ..columns_we_want]
 
 
 # How to use fye_start
-matric_programs <- filter_by_id(midfieldstudents, 
-                                keep_id = rep_ever, 
-                                keep_col = c("id", "cip6"))
-start_programs <- merge(matric_programs, 
-                        fye_start, 
-                        by = "id", 
-                        all.x = TRUE)
+matric_programs <- filter_by_id(midfieldstudents,
+  keep_id = rep_ever,
+  keep_col = c("id", "cip6")
+)
+start_programs <- merge(matric_programs,
+  fye_start,
+  by = "id",
+  all.x = TRUE
+)
 rows_non_fye <- is.na(start_programs$start)
 start_programs <- start_programs[rows_non_fye, start := cip6]
 start_programs[, cip6 := NULL]
@@ -696,21 +613,16 @@ mi_predictors <- mi_framework$predictorMatrix
 mi_method[c("cip6")] <- "polyreg"
 mi_method[c("id", "institution", "race", "sex")] <- ""
 mi_predictors[, c("id")] <- 0
-mi_mids <- mice::mice(data = mi_data,
-                      method = mi_method,
-                      predictorMatrix = mi_predictors, 
-                      seed = 20180624, 
-                      printFlag = TRUE)
+mi_mids <- mice::mice(
+  data = mi_data,
+  method = mi_method,
+  predictorMatrix = mi_predictors,
+  seed = 20180624,
+  printFlag = TRUE
+)
 ```
-
  
 ```{r echo = FALSE}
 # set false to avoid imputation
 knitr::opts_chunk$set(eval = TRUE)
 ```
-
-
-
-<br>
-<a href="#top"         >&#9650;     top of page </a>     
-<a href="../index.html">&#9665;       main page </a>

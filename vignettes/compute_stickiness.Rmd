@@ -71,7 +71,7 @@ data.table syntax
 packages
 
 ```{r}
- # packages used
+# packages used
 library(midfieldr)
 library(midfielddata)
 library(data.table)
@@ -80,10 +80,6 @@ library(ggplot2)
 # print max 20 rows, otherwise 10 rows each head/tail
 options(datatable.print.nrows = 20, datatable.print.topn = 10)
 ```
-
-
-<br>
-<a href="#top">&#9650; top of page</a>  
 
 ## Choose the programs to study
 
@@ -113,17 +109,6 @@ group_cips <- program_group$cip6
 group_cips
 ```
 
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
-
-
-
 ## Gather the students ever enrolled
 
 We use `filter_by_cip()` to extract from `midfieldterms` the IDs of students ever enrolled in these programs.  
@@ -145,7 +130,6 @@ The enrollee data derived above is the data set `rep_ever` in midfieldr.  View i
 ```r
 ? rep_ever
 ```
-
 
 For some of these students, completing their program may not be feasible given the range of data available. `feasible_subset()` subsets the student IDs, retaining those who matriculate at least six years before the last term in the data. 
 
@@ -202,14 +186,6 @@ enrollees <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
 enrollees
 ```
 
-
-
-<br>
-<a href="#top">&#9650; top of page</a>   
-
-
-
-
 ## Gather the students graduating 
 
 A similar process is used to group and summarize our graduates. We use `filter_by_cip()` to extract from `midfielddegrees` the IDs of students  graduating from these programs. We skip the feasible completion step because for  graduates, the question of completion feasibility is moot---graduation itself establishes feasibility. 
@@ -233,21 +209,6 @@ graduates <- merge(graduates, program_group, by = "cip6", all.x = TRUE)
 # examine the result
 graduates
 ```
-
-
-The graduates data derived above is the data set `rep_grad` in midfieldr.  View its help page by running
-
-```r
-? rep_grad
-```
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a>   
-
-
-
 
 ## Group, summarize, and join 
 
@@ -287,26 +248,13 @@ We join the two data frames by our grouping variables, producing a data frame wi
 # left-join graduates to enrollees
 grouped_data <- merge(grouped_enrollees,
   grouped_graduates,
-  by = grouping_variables, # <---------------- the grouping variables again 
+  by = grouping_variables, # <---------------- the grouping variables again
   all.x = TRUE
 )
 
 # examine the result, ordered by program
 grouped_data[order(program)]
 ```
-
-
-
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a>  
-
-
-
-
 
 ## Compute stickiness 
 
@@ -363,14 +311,6 @@ The stickiness data derived above is the data set `rep_stickiness` in midfieldr.
 ? rep_stickiness
 ```
 
-
-
-<br>
-<a href="#top">&#9650; top of page</a>   
-
-
-
-
 ## Condition the data for display 
 
 Before graphing, we isolate the three multiway variables (program, combined race and sex, and stickiness) and transform the categorical variables into factors with levels that are ordered by median stickiness. 
@@ -396,17 +336,6 @@ The attributes of the data frame confirm that the categorical variables are fact
 lapply(data_mw, FUN = attributes)
 ```
 
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a>   
-
-
-
-
-
 ## Graph the metric
 
 ```{r echo = FALSE}
@@ -431,25 +360,9 @@ ggplot(data = data_mw, mapping = aes(x = stick, y = race_sex)) +
 
 For more information on multiway data and interpreting multiway graphs, see the *Explore multiway data* vignette [(link)](explore_multiway.html). 
 
-
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a>
-
-
-
-
-
 ## References
 
 <div id="refs"></div>
-
-
-
-
 
 ## Appendix
 
@@ -527,10 +440,3 @@ ggplot(data = data_mw, mapping = aes(x = stick, y = race_sex)) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", y = "")
 ```
-
-<br>
-<a href="#top"         >&#9650;     top of page </a>     
-<a href="../index.html">&#9665;       main page </a> 
-
-
-

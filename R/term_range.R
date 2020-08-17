@@ -31,42 +31,44 @@ NULL
 #'
 term_range <- function(data) {
 
-    # check arguments
-    assert_explicit(data)
-    assert_class(data, "data.frame")
-    assert_required_column(data, "institution")
+  # check arguments
+  assert_explicit(data)
+  assert_class(data, "data.frame")
+  assert_required_column(data, "institution")
 
-    # identify single column that starts with term
-    term_col <- names(data)[grepl("^term", names(data))]
-    if (seq_along(term_col) > 1) {
-        stop("Only one column name may start with `term`")
-    }
-    if (seq_along(term_col) < 1) {
-        stop("One column name must start with `term`")
-    }
+  # identify single column that starts with term
+  term_col <- names(data)[grepl("^term", names(data))]
+  if (seq_along(term_col) > 1) {
+    stop("Only one column name may start with `term`")
+  }
+  if (seq_along(term_col) < 1) {
+    stop("One column name must start with `term`")
+  }
 
-    # bind names
-    min_term <- NULL
-    max_term <- NULL
+  # bind names
+  min_term <- NULL
+  max_term <- NULL
 
-    # preserve data.frame, data.table, or tibble
-    df_class <- get_df_class(data)
-    DT <- data.table::copy(data.table::as.data.table(data))
+  # preserve data.frame, data.table, or tibble
+  df_class <- get_df_class(data)
+  DT <- data.table::copy(data.table::as.data.table(data))
 
-    columns_we_want <- c("institution", term_col)
-    DT <- DT[, ..columns_we_want]
-    DT[,
-          min_term := min(.SD, na.rm = TRUE),
-          by = "institution",
-          .SDcols = term_col]
-    DT[,
-          max_term := max(.SD, na.rm = TRUE),
-          by = "institution",
-          .SDcols = term_col]
+  columns_we_want <- c("institution", term_col)
+  DT <- DT[, ..columns_we_want]
+  DT[,
+    min_term := min(.SD, na.rm = TRUE),
+    by = "institution",
+    .SDcols = term_col
+  ]
+  DT[,
+    max_term := max(.SD, na.rm = TRUE),
+    by = "institution",
+    .SDcols = term_col
+  ]
 
-    # return
-    keep_col <- c("institution", "min_term", "max_term")
-    DT <- DT[order(institution), ..keep_col]
-    DT <- unique_by_keys(DT)
-    revive_class(DT, df_class)
+  # return
+  keep_col <- c("institution", "min_term", "max_term")
+  DT <- DT[order(institution), ..keep_col]
+  DT <- unique_by_keys(DT)
+  revive_class(DT, df_class)
 }

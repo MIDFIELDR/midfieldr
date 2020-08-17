@@ -41,7 +41,7 @@ data frame with the following properties:
 Subset a data frame of student IDs and starting programs, retaining
 students satisfying the constraints of the IPEDS definition for
 successful graduation. The results adds a yes/no column \code{ipeds_grad} to
-indicate whether the student's graduation satisfied the IPREDS constraints.
+indicate whether the student's graduation satisfied the IPEDS constraints.
 }
 \details{
 The \code{starters} input must have columns \code{id} and \code{start}.

@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_stickiness_mw}
 \alias{rep_stickiness_mw}
-\title{Stickiness results in multiway form}
+\title{Case stickiness multiway results}
 \format{
 \code{data.table} with 32 rows and 3 columns keyed by
 program, race/ethnicity, and sex. The variables are:
@@ -23,11 +23,8 @@ variables as factors with levels ordered by the median stickiness.
 \seealso{
 Other example_data: 
 \code{\link{rep_cip}},
-\code{\link{rep_grad_rate_mw}},
-\code{\link{rep_grad_rate}},
+\code{\link{rep_ever}},
 \code{\link{rep_group}},
-\code{\link{rep_id}},
-\code{\link{rep_start}},
 \code{\link{rep_stickiness}}
 }
 \concept{example_data}

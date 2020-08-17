@@ -3,7 +3,7 @@
 \docType{data}
 \name{fye_start}
 \alias{fye_start}
-\title{Starting programs for all midfielddata FYE students}
+\title{All-FYE starting programs}
 \format{
 \code{data.table} with 5992 rows and 2 columns keyed by student
 ID. The variables are:
@@ -16,8 +16,10 @@ ID. The variables are:
 fye_start
 }
 \description{
-Includes degree-granting programs that substitute for first-year-engineering
-(FYE) programs when needed for a persistence metric, e.g., graduation rate.
+Predicted starting programs for all FYE students in midfielddata.
+Includes degree-granting programs that substitute for
+first-year-engineering (FYE) programs when needed for a persistence
+metric, e.g., graduation rate.
 }
 \details{
 Starting programs for FYE students are the engineering programs we

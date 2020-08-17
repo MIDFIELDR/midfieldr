@@ -61,7 +61,6 @@ to factors. The output is ready for use as an input to the mice package.
 }
 \examples{
 # placeholder
-
 }
 \seealso{
 Other functions: 

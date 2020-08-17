@@ -59,7 +59,6 @@ feasible_subset <- function(id,
                             data_students = NULL,
                             data_terms = NULL,
                             data_degrees = NULL) {
-
   wrapr::stop_if_dot_args(
     substitute(list(...)), "Arguments after ... must be named,"
   )
@@ -70,8 +69,8 @@ feasible_subset <- function(id,
 
   # bind names
   matric_limit <- NULL
-  hours_term  <- NULL
-  term_sum  <- NULL
+  hours_term <- NULL
+  term_sum <- NULL
 
   # degree -> grad or nongrad, all students in database
   all_fc <- fc_degrees(data_degrees)
@@ -81,10 +80,11 @@ feasible_subset <- function(id,
 
   # reduce to IDs in study only
   study_fc <- filter_by_id(all_fc,
-                           keep_id = id,
-                           keep_col = c("id", "institution", "degree"),
-                           first_degree = TRUE,
-                           unique_row = TRUE)
+    keep_id = id,
+    keep_col = c("id", "institution", "degree"),
+    first_degree = TRUE,
+    unique_row = TRUE
+  )
 
   # gather transfer information
   transfer_fc <- fc_students(data_students, id)
@@ -101,7 +101,7 @@ feasible_subset <- function(id,
 
   # filter
   study_fc <- study_fc[degree == "grad" |
-                       degree == "nongrad" & matric_limit >= term_enter]
+    degree == "nongrad" & matric_limit >= term_enter]
   fc_id <- study_fc$id
 }
 
@@ -203,8 +203,9 @@ fc_terms <- function(data, span, all_id) {
   # median hours/term of graduates by institution
   grads <- data[id %chin% all_id, .(institution, hours_term)]
   hr_per_term <- grads[,
-                       .(med_hr_per_term = stats::median(hours_term)),
-                       by = institution]
+    .(med_hr_per_term = stats::median(hours_term)),
+    by = institution
+  ]
   # join to inst data
   fc_inst <- hr_per_term[fc_inst, on = "institution"]
 }
@@ -236,9 +237,9 @@ fc_advance_matric <- function(fc_data, terms_transfer_max) {
 
   # NAs to zero
   data.table::setnafill(fc_data,
-                        type = "const",
-                        fill = 0,
-                        cols = c("hours_transfer")
+    type = "const",
+    fill = 0,
+    cols = c("hours_transfer")
   )
 
   # convert transfer hours to terms
@@ -252,8 +253,8 @@ fc_advance_matric <- function(fc_data, terms_transfer_max) {
 
   # advance matriculation limit by transfer terms
   fc_data <- term_add(fc_data,
-                      term_col = "matric_limit",
-                      n_col = "terms_transfer"
+    term_col = "matric_limit",
+    n_col = "terms_transfer"
   )
   fc_data[, matric_limit := term_sum]
 }

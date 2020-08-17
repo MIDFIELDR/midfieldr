@@ -60,7 +60,6 @@ Without special care, such students would add to the count of non-graduates, adv
 Feasible completion terminology is illustrated in the figure. Definitions are given below. 
 
 <br>
-
 ```{r fig1, echo = FALSE, fig.asp = 5/10}
 yyyyt <- c(1988, 2005, 2010)
 df <- data.frame(yyyyt = yyyyt, y = 1)
@@ -168,7 +167,6 @@ ggplot(df, aes(x = yyyyt, y = y)) +
     panel.grid.minor = element_blank()
   )
 ```
-
 <br>
 
 data range
@@ -196,14 +194,6 @@ library(midfieldr)
 # print max 20 rows, otherwise 10 rows each head/tail
 options(datatable.print.nrows = 20, datatable.print.topn = 10)
 ```
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
 
 ## How to use `feasible_subset()`
 
@@ -252,25 +242,7 @@ feasible_id <- feasible_subset(rep_ever)
 str(feasible_id)
 ```
 
-In this instance, we started with `r length(rep_ever)` enrollees. After applying the criteria for feasible completion, we retain `r length(rep_ever_fc)` students. These students either graduated (demonstrating the feasibility of completing their programs before the data limit) or they matriculated no later than their matriculation limits. 
-
-The feasible IDs derived above are the data set `rep_ever_fc` in midfieldr.  View its help page by running
-
-```r
-? rep_ever_fc
-```
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
-
-
-
-
+In this instance, we started with `r length(rep_ever)` enrollees. After applying the criteria for feasible completion, we retain `r length(feasible_id)` students. These students either graduated (demonstrating the feasibility of completing their programs before the data limit) or they matriculated no later than their matriculation limits. 
 
 ## How `feasible_subset()` works
 
@@ -285,7 +257,7 @@ The remainder of the vignette describes the inner workings of  `feasible_subset(
 The default data sets queried are from midfielddata, but if desired the arguments of `feasible_subset()` accommodate data sets other than those from  midfielddata. 
 
 ```{r include = FALSE}
-# load all the fc intermediate results: fc01--fc08 
+# load all the fc intermediate results: fc01--fc08
 load(system.file("extdata", "fc-vignette-data.rda", package = "midfieldr"))
 ```
 
@@ -294,59 +266,41 @@ load(system.file("extdata", "fc-vignette-data.rda", package = "midfieldr"))
 The first data accessed by `feasible_subset()` is `midfielddegrees`. The head and tail of that data are show here.
 
 ```{r echo = FALSE}
-# degrees data set 
+# degrees data set
 fc01
 ```
 
 The `degree` column is re-coded so that the values are either `grad` or `nongrad`. 
 
 ```{r echo = FALSE}
-# re-coded degree column 
+# re-coded degree column
 fc02
 ```
 
 In this step, we use all students in the data set so that later we can use all graduates (not just those in the study) for determining median credit hours per term by institution. 
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
 
 ### 2. Obtain entering terms and transfer credit hours by ID 
 
 The `midfieldstudents` data are accessed next to obtain the entering term and transfer credit hours by student ID for the students in the study only. 
 
 ```{r echo = FALSE}
-# student matriculation information 
+# student matriculation information
 fc03
 ```
-
-
-
-
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
 
 ### 3. Derive matriculation limit and median hours per term by institution 
 
 The `midfieldterms` data are accessed to obtain the data limits by institution. The `max_term` column is the result of a group and summarize operation.  
 
 ```{r echo = FALSE}
-# institution data limit 
+# institution data limit
 fc04
 ```
 
 The `span` number of years is subtracted from the maximum term to create the initial matriculation limit. 
 
 ```{r echo = FALSE}
-# initial matriculation limit 
+# initial matriculation limit
 fc05
 ```
 
@@ -360,19 +314,6 @@ Joining these results with the previous findings yields the data frame needed to
 # data collection complete
 fc06
 ```
-  
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
-
-
-
 
 ### 4. Advance the matriculation limit by transfer credit hours 
 
@@ -380,29 +321,11 @@ Transfer credit hours are converted to an equivalent number of "transfer terms" 
 
 Transfer students' matriculation limits are advanced by the number of transfer terms. The printout shows two students (lines 8 and 10,132) whose matriculation term exceeds the matriculation limit, exemplifying students who are removed from the analysis in the next step. 
 
-
 ```{r echo = FALSE}
 # matriculation limit advanced by transfer credit
 fc07
 ```
   
-
-
-
-
-
-
-
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
-
-
-
 ### 5. Filter IDs for feasible completion 
 
 This final data frame is ready for subsetting for feasible completion. All graduates are retained. Non-graduates are retained if their term of entry is no later than their matriculation limit. 
@@ -420,23 +343,11 @@ The final output of the function is the ID column from this data frame.
 str(fc08$id)
 ```
 
-This vector is identical to `feasible_id` and `rep_ever_fc` described in the first part of the vignette.
-
-
-
-<br>
-<a href="#top">&#9650; top of page</a> 
-
-
+This vector is identical to `feasible_id` described in the first part of the vignette.
 
 ## References
 
 <div id="refs"></div>
-
-
-
-
-
 
 ## Appendix
 
@@ -454,16 +365,4 @@ feasible_id <- feasible_subset(rep_ever)
 # part 2:  How feasible_subset() works
 # no reproducible code
 ```
-
-
-
-
-
-
-
-<br>
-<a href="#top"         >&#9650;     top of page </a>     
-<a href="../index.html">&#9665;       main page </a> 
-
-
 

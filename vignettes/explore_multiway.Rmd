@@ -58,7 +58,6 @@ Many persistence metrics can be organized as *multiway data* in which there is i
 
 `order_multiway()` is used to transform multiway data such that the two categorical variables are factors with levels ordered by the third, quantitative variable. In this vignette we explore its arguments using a case study in four engineering programs.
 
-
 ### This vignette uses
 
 midfieldr functions 
@@ -72,8 +71,6 @@ data.table syntax
 - `DT[, new_col := FUN]` create new column as a function of old columns 
 - `dcast(DT, row_coord ~ col_coord, values)` reshape block-record form to row-record form 
 
-
-
 packages
 
 ```{r}
@@ -85,7 +82,6 @@ library(ggplot2)
 # print max 20 rows, otherwise 10 rows each head/tail
 options(datatable.print.nrows = 20, datatable.print.topn = 10)
 ```
-
 
 ## Preparing the multiway data 
 
@@ -172,8 +168,6 @@ The multiway data derived above is the data set `rep_stickiness_mw` in midfieldr
 ? rep_stickiness_mw
 ```
 
-
-
 ## A multiway dot plot  
 
 ```{r echo = FALSE}
@@ -204,9 +198,6 @@ Reading a multiway graph
 - Because rows are ordered, one expects a generally increasing trend within a panel. A response greater or smaller than expected creates a visual asymmetry. The interesting stories are often in these visual anomalies.
 - To explore the comparison between panels, we swap the row and panel categories, creating the dual multiway.
 
-
-
-
 ## The dual multiway dot plot 
 
 The previous graph does not facilitate visual comparisons of members of the same race-sex group. As Cleveland says,
@@ -230,9 +221,6 @@ ggplot(data = data_mw, aes(x = stick, y = program)) +
 This graph permits a direct visual comparison of how stickiness varies by major for one group of students. 
 
 Both multiways should be created for discussion. Usually one or the other will convey a more compelling visual story that gets included in the published findings. 
-
-
-
 
 ## Creating a data table
 
@@ -282,10 +270,11 @@ temp <- temp[, race_sex := as.character(race_sex)]
 temp <- temp[, program := as.character(program)]
 temp <- dcast(temp, race_sex ~ program, value.var = "stick")
 names(temp) <- gsub("engineering", "", names(temp), ignore.case = TRUE)
-names(temp) <- gsub("race_sex", 
-                    "Race/ethnicity/sex", 
-                    names(temp), 
-                    ignore.case = TRUE)
+names(temp) <- gsub("race_sex",
+  "Race/ethnicity/sex",
+  names(temp),
+  ignore.case = TRUE
+)
 names(temp) <- gsub(" ", "", names(temp))
 kable2html(temp, caption = "Table 2: Stickiness (row records)")
 ```
@@ -313,7 +302,7 @@ temp <- temp[, program := as.character(program)]
 `dcast()` is used here to reshape the data frame from block-record form to row-record form. 
 
 ```{r}
-# reshape 
+# reshape
 rowf <- dcast(temp, race_sex ~ program, value.var = "stick")
 ```
 
@@ -327,10 +316,11 @@ names(rowf) <- gsub("engineering", "", names(rowf), ignore.case = TRUE)
 names(rowf) <- gsub(" ", "", names(rowf))
 
 # edit the first column name
-names(rowf) <- gsub("race_sex", 
-                    "Race/ethnicity/sex", 
-                    names(rowf), 
-                    ignore.case = TRUE)
+names(rowf) <- gsub("race_sex",
+  "Race/ethnicity/sex",
+  names(rowf),
+  ignore.case = TRUE
+)
 
 # examine the result
 rowf
@@ -338,15 +328,9 @@ rowf
 
 Other good tools for reshaping are provided in packages such as cdata  [@Mount+Zumel:2020:cdata] and tidyr [@Wickham+Henry:2020:tidyr]. Base R provides  the `reshape()` function but the arguments in `dcast()` seem easier to understand in this instance. 
 
-
 ## References
 
 <div id="refs"></div>
-
-
-
-
-
 
 ## Appendix
 
@@ -409,15 +393,9 @@ temp <- temp[, program := as.character(program)]
 rowf <- dcast(temp, race_sex ~ program, value.var = "stick")
 names(rowf) <- gsub("engineering", "", names(rowf), ignore.case = TRUE)
 names(rowf) <- gsub(" ", "", names(rowf))
-names(rowf) <- gsub("race_sex", 
-                    "Race/ethnicity/sex", 
-                    names(rowf), 
-                    ignore.case = TRUE)
+names(rowf) <- gsub("race_sex",
+  "Race/ethnicity/sex",
+  names(rowf),
+  ignore.case = TRUE
+)
 ```
-
-<br>
-<a href="#top"         >&#9650;     top of page </a>     
-<a href="../index.html">&#9665;       main page </a> 
-
-
-

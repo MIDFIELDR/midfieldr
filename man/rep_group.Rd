@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_group}
 \alias{rep_group}
-\title{Program group}
+\title{Case program group}
 \format{
 \code{data.table} with 12 rows and 2 columns keyed by the
 6-digit CIP code. The variables are:
@@ -39,10 +39,7 @@ str(graduates)
 \seealso{
 Other example_data: 
 \code{\link{rep_cip}},
-\code{\link{rep_grad_rate_mw}},
-\code{\link{rep_grad_rate}},
-\code{\link{rep_id}},
-\code{\link{rep_start}},
+\code{\link{rep_ever}},
 \code{\link{rep_stickiness_mw}},
 \code{\link{rep_stickiness}}
 }

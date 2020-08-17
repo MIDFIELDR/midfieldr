@@ -53,13 +53,12 @@ NULL
 #'
 #' @examples
 #' # placeholder
-#'
 #' @family functions
 #'
 #' @export
 #'
 fye_mi_prep <- function(data_students = NULL,
-                          data_terms = NULL) {
+                        data_terms = NULL) {
 
   # default arguments
   data_students <- data_students %||% midfielddata::midfieldstudents
@@ -98,10 +97,10 @@ fye_mi_prep <- function(data_students = NULL,
   mi_kernel <- mi_kernel[order(institution, race, sex, cip6)]
 
   # mi_kernel to mi_data
-  mi_data <- mi_kernel[, ':='(institution = as.factor(institution),
-                              race = as.factor(race),
-                              sex = as.factor(sex),
-                              cip6 = as.factor(cip6))]
+  mi_data <- mi_kernel[, ":="(institution = as.factor(institution),
+    race = as.factor(race),
+    sex = as.factor(sex),
+    cip6 = as.factor(cip6))]
   mi_data <- mi_data[order(id), .(id, institution, race, sex, cip6)]
 }
 
@@ -118,7 +117,7 @@ fye_mi_prep <- function(data_students = NULL,
 #'
 #' @param data term data
 #' @noRd
-fye_terms <- function (data, keep_id){
+fye_terms <- function(data, keep_id) {
 
   # argument check
 
@@ -129,8 +128,9 @@ fye_terms <- function (data, keep_id){
   id <- NULL
 
   all_fye_terms <- filter_by_id(data,
-                                keep_id = keep_id,
-                                keep_col = c("id", "cip6", "term"))
+    keep_id = keep_id,
+    keep_col = c("id", "cip6", "term")
+  )
   all_fye_terms <- all_fye_terms[order(id, term)]
 
   last_fye_terms <- all_fye_terms[cip6 %chin% c("14XXXX", "14YYYY")]

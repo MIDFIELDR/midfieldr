@@ -50,7 +50,9 @@ and subset.
 }
 \examples{
 filter_by_text(cip, keep_text = c("^1407", "^1410"))
-filter_by_text(cip, keep_text = "civil engineering", drop_text = "technology")
+filter_by_text(cip,
+               keep_text = "civil engineering",
+               drop_text = "technology")
 filter_by_text(cip, keep_text = "History") \%>\%
   filter_by_text(keep_text = "American")
 }
