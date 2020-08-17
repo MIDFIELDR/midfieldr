@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9003</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9004</span>
       </span>
     </div>
 
@@ -141,7 +141,7 @@
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>Longitudinal “stickiness” is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program <span class="citation">(Ohland and others, <a href="#ref-Ohland+Orr+others:2012" role="doc-biblioref">2012</a>)</span>.</p>
+<p>Longitudinal “stickiness” is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program <span class="citation">(Ohland et al., <a href="#ref-Ohland+Orr+others:2012" role="doc-biblioref">2012</a>)</span>.</p>
 <p>The stickiness metric accounts for all students in a program. Unlike the graduation rate metric, stickiness includes students who begin college part-time, who enroll mid-year, and who switch majors or transfer between institutions.</p>
 <p>Every student counted in a program’s stickiness metric was enrolled in that program for at least one term. The program succeeded in attracting these students—stickiness tells us how well the program succeeded in retaining them.</p>
 <div id="this-vignette-uses" class="section level3">
@@ -155,6 +155,8 @@
 </ul>
 <p>data.table syntax</p>
 <ul>
+<li>
+<code><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html">copy()</a></code> prevent changing a source by reference</li>
 <li>
 <code>DT[rows_we_want]</code> subset rows</li>
 <li>
@@ -183,7 +185,7 @@
 <div class="sourceCode" id="cb2"><html><body><pre class="r">? <span class="no">rep_group</span></pre></body></html></div>
 <p>The data are loaded with midfieldr.</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># obtain programs (built-in data set)</span>
-<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="no">rep_group</span>
+<span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html">copy</a></span>(<span class="no">rep_group</span>)
 
 <span class="co"># examine the result</span>
 <span class="no">program_group</span>
@@ -213,7 +215,7 @@
 <div id="gather-the-students-ever-enrolled" class="section level2">
 <h2 class="hasAnchor">
 <a href="#gather-the-students-ever-enrolled" class="anchor"></a>Gather the students ever enrolled</h2>
-<p>We use <code><a href="../reference/filter_by_cip.html">filter_by_cip()</a></code> to extract from <code>midfieldstudents</code> the IDs of students ever enrolled in these programs.</p>
+<p>We use <code><a href="../reference/filter_by_cip.html">filter_by_cip()</a></code> to extract from <code>midfieldterms</code> the IDs of students ever enrolled in these programs.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># gather students ever enrolled in programs</span>
 <span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_cip.html">filter_by_cip</a></span>(<span class="no">midfieldterms</span>,
   <span class="kw">keep_cip</span> <span class="kw">=</span> <span class="no">group_cips</span>, <span class="co"># &lt;---------------- group_cips from above</span>
@@ -545,7 +547,7 @@
 <div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="co"># prevent division by zero</span>
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">stickiness</span>$<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">0</span>
 <span class="no">stickiness</span> <span class="kw">&lt;-</span> <span class="no">stickiness</span>[<span class="no">rows_we_want</span>]</pre></body></html></div>
-<p>Divide <code>grad</code> by <code>ever</code> to compute stickiness.</p>
+<p>Stickiness is the ratio of <code>grad</code> to <code>ever</code>.</p>
 <div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="co"># compute stickiness</span>
 <span class="no">stickiness</span>[, <span class="no">stick</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="no">grad</span> / <span class="no">ever</span>, <span class="fl">2</span>)]
 
@@ -669,7 +671,7 @@
 <a href="#references" class="anchor"></a>References</h2>
 <div id="refs">
 <div id="ref-Ohland+Orr+others:2012">
-<p>Ohland M, Orr M, Layton R, Lord S and Long R (2012) Introducing stickiness as a versatile metric of engineering persistence. <em>Proceedings of the Frontiers in Education Conference</em>. 1–5</p>
+<p>Ohland, Matthew, Orr, Marisa, Layton, Richard, et al. (2012) Introducing stickiness as a versatile metric of engineering persistence. In: <em>Proceedings of the Frontiers in Education Conference</em>, 2012, pp. 1–5.</p>
 </div>
 </div>
 </div>
