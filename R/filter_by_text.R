@@ -35,7 +35,7 @@ NULL
 #' filter_by_text(cip, keep_text = "civil engineering", drop_text = "technology")
 #' filter_by_text(cip, keep_text = "History") %>%
 #'   filter_by_text(keep_text = "American")
-#' @family data_query
+#' @family functions
 #'
 #' @export
 #'

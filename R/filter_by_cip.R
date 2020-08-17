@@ -34,7 +34,7 @@ NULL
 #'
 #' @examples
 #' # placeholder
-#' @family data_query
+#' @family functions
 #'
 #' @export
 #'

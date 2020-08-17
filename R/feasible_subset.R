@@ -48,7 +48,7 @@ NULL
 #'
 #' @examples
 #' # placeholder
-#' @family data_carpentry
+#' @family functions
 #'
 #' @export
 #'
