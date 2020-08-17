@@ -83,25 +83,13 @@
     </li>
   </ul>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Papers/Talks
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/pages/talks.html">Talks</a>
-    </li>
-  </ul>
-</li>
-<li>
-  <a href="../articles/pages/get_session.html">Session info</a>
+  <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../articles/pages/get_session.html">Session info</a>
 </li>
 <li>
   <a href="../news/index.html">News</a>
@@ -155,8 +143,8 @@
 <p>midfieldr functions</p>
 <ul>
 <li><code><a href="../reference/filter_by_cip.html">filter_by_cip()</a></code></li>
-<li><code><a href="../reference/feasible_subset.html">feasible_subset()</a></code></li>
-<li><code><a href="../reference/ipeds_subset.html">ipeds_subset()</a></code></li>
+<li><code><a href="../reference/subset_feasible.html">subset_feasible()</a></code></li>
+<li><code><a href="../reference/subset_ipeds.html">subset_ipeds()</a></code></li>
 <li><code><a href="../reference/filter_by_id.html">filter_by_id()</a></code></li>
 <li><code>order_multieay()</code></li>
 </ul>
@@ -324,9 +312,9 @@
 <span class="co">#&gt; 8852: MID26648484 140801</span>
 <span class="co">#&gt; 8853: MID26648517 140801</span>
 <span class="co">#&gt; 8854: MID26648544 141901</span></pre></body></html></div>
-<p>For some of these students, completing their program may not be feasible given the range of data available. <code><a href="../reference/feasible_subset.html">feasible_subset()</a></code> subsets the student IDs, retaining those who matriculate at least six years before the last term in the data.</p>
+<p>For some of these students, completing their program may not be feasible given the range of data available. <code><a href="../reference/subset_feasible.html">subset_feasible()</a></code> subsets the student IDs, retaining those who matriculate at least six years before the last term in the data.</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># apply the feasible completion filter</span>
-<span class="no">feasible_ids</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/feasible_subset.html">feasible_subset</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">starters</span>$<span class="no">id</span>)
+<span class="no">feasible_ids</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/subset_feasible.html">subset_feasible</a></span>(<span class="kw">id</span> <span class="kw">=</span> <span class="no">starters</span>$<span class="no">id</span>)
 
 <span class="co"># examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">feasible_ids</span>)
@@ -364,7 +352,7 @@
 <span class="co">#&gt; 6946: MID26630725 141901</span>
 <span class="co">#&gt; 6947: MID26636885 140801</span></pre></body></html></div>
 <p>These are the students eligible to be considered starters in our case study programs before we apply the IPEDS constraints.</p>
-<p>The <code>starters</code> data frame is the input to <code><a href="../reference/ipeds_subset.html">ipeds_subset()</a></code>.</p>
+<p>The <code>starters</code> data frame is the input to <code><a href="../reference/subset_ipeds.html">subset_ipeds()</a></code>.</p>
 </div>
 <div id="apply-ipeds-criteria" class="section level2">
 <h2 class="hasAnchor">
@@ -376,8 +364,8 @@
 <li>graduate no later than 6 years after matriculation (effectively removing part-time students)</li>
 </ul>
 <p>The IPEDS definition excludes part-time students. We do not test for part-time status specifically. We assume that students attending for no more than 6 years are effectively full-time.</p>
-<p>The input to <code><a href="../reference/ipeds_subset.html">ipeds_subset()</a></code> is the <code>starters</code> data frame with columns <code>id</code> and <code>start</code>. The function subsets the rows of the data frame per the IPEDS constraints and adds a new yes/no column <code>ipeds_grad</code>, where “Y” indicates that the student’s graduation accords with the IPEDS definition of graduation rate.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">ipeds_students</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ipeds_subset.html">ipeds_subset</a></span>(<span class="no">starters</span>)
+<p>The input to <code><a href="../reference/subset_ipeds.html">subset_ipeds()</a></code> is the <code>starters</code> data frame with columns <code>id</code> and <code>start</code>. The function subsets the rows of the data frame per the IPEDS constraints and adds a new yes/no column <code>ipeds_grad</code>, where “Y” indicates that the student’s graduation accords with the IPEDS definition of graduation rate.</p>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">ipeds_students</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/subset_ipeds.html">subset_ipeds</a></span>(<span class="no">starters</span>)
 <span class="no">ipeds_students</span>[]
 <span class="co">#&gt;                id  start ipeds_grad</span>
 <span class="co">#&gt;    1: MID25783227 141001          N</span>
@@ -636,7 +624,7 @@
 <span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">data_mw</span>[, <span class="no">..columns_we_want</span>]
 
 <span class="co"># transform characters to factors ordered by median rate</span>
-<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span>(<span class="no">data_mw</span>)</pre></body></html></div>
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/prepare_multiway.html">prepare_multiway</a></span>(<span class="no">data_mw</span>)</pre></body></html></div>
 </div>
 <div id="graph-the-metric" class="section level2">
 <h2 class="hasAnchor">
@@ -647,22 +635,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="kw">facets</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(<span class="no">program</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">as.table</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Graduation rate"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>)</pre></body></html></div>
-<p><img src="../man/figures/vignette-compute-grad-rate-fig1-1.png" width="70%" style="display: block; margin: auto;"><br></p>
-</div>
-<div id="for-more-information" class="section level2">
-<h2 class="hasAnchor">
-<a href="#for-more-information" class="anchor"></a>For more information</h2>
-<ul>
-<li>
-<em>Impute FYE starting programs</em> vignette <a href="impute_fye.html">(link)</a>
-</li>
-<li>
-<em>Subset for completion feasibility</em> vignette <a href="feasible_completion.html">(link)</a><br>
-</li>
-<li>
-<em>Explore multiway data</em> vignette <a href="explore_multiway.html">(link)</a>
-</li>
-</ul>
+<p><img src="../man/figures/vignette-compute-grad-rate-fig1-1.png" width="70%" style="display: block; margin: auto;"></p>
 </div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
@@ -679,10 +652,10 @@
 <div id="appendix" class="section level2">
 <h2 class="hasAnchor">
 <a href="#appendix" class="anchor"></a>Appendix</h2>
-<div id="a--how-ipeds_subset-works" class="section level3">
+<div id="a--how-subset_ipeds-works" class="section level3">
 <h3 class="hasAnchor">
-<a href="#a--how-ipeds_subset-works" class="anchor"></a>A. How <code>ipeds_subset()</code> works</h3>
-<p>The first operation in <code><a href="../reference/ipeds_subset.html">ipeds_subset()</a></code> is accessing <code>midfieldstudents</code> for entering term and transfer information for the students is <code>starters</code>. Then transfer students are removed, yielding:</p>
+<a href="#a--how-subset_ipeds-works" class="anchor"></a>A. How <code>subset_ipeds()</code> works</h3>
+<p>The first operation in <code><a href="../reference/subset_ipeds.html">subset_ipeds()</a></code> is accessing <code>midfieldstudents</code> for entering term and transfer information for the students is <code>starters</code>. Then transfer students are removed, yielding:</p>
 <pre><code>#&gt;                id  start term_enter transfer
 #&gt;    1: MID25783227 141001      20031        N
 #&gt;    2: MID25783388 141901      19871        N
@@ -834,13 +807,13 @@
 <span class="no">starters</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html">rbind</a></span>(<span class="no">matriculants</span>, <span class="no">fye_starters</span>)
 
 <span class="co"># apply the feasible completion filter</span>
-<span class="no">feasible_ids</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/feasible_subset.html">feasible_subset</a></span>(<span class="no">starters</span>$<span class="no">id</span>)
+<span class="no">feasible_ids</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/subset_feasible.html">subset_feasible</a></span>(<span class="no">starters</span>$<span class="no">id</span>)
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">starters</span>$<span class="no">id</span> <span class="kw">%in%</span> <span class="no">feasible_ids</span>
 <span class="no">starters</span> <span class="kw">&lt;-</span> <span class="no">starters</span>[<span class="no">rows_we_want</span>]
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html">setnames</a></span>(<span class="no">starters</span>, <span class="kw">old</span> <span class="kw">=</span> <span class="st">"cip6"</span>, <span class="kw">new</span> <span class="kw">=</span> <span class="st">"start"</span>)
 
 <span class="co"># apply IPEDS constraints</span>
-<span class="no">ipeds_students</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ipeds_subset.html">ipeds_subset</a></span>(<span class="no">starters</span>)
+<span class="no">ipeds_students</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/subset_ipeds.html">subset_ipeds</a></span>(<span class="no">starters</span>)
 
 <span class="co"># join program labels and demographics</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html">setnames</a></span>(<span class="no">ipeds_students</span>, <span class="kw">old</span> <span class="kw">=</span> <span class="st">"start"</span>, <span class="kw">new</span> <span class="kw">=</span> <span class="st">"cip6"</span>)
@@ -892,7 +865,7 @@
 <span class="no">data_mw</span>[, <span class="no">race_sex</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="no">race</span>, <span class="no">sex</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">" "</span>)]
 <span class="no">columns_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"rate"</span>)
 <span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">data_mw</span>[, <span class="no">..columns_we_want</span>]
-<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span>(<span class="no">data_mw</span>)
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/prepare_multiway.html">prepare_multiway</a></span>(<span class="no">data_mw</span>)
 
 <span class="co"># graph</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data_mw</span>, <span class="kw">mapping</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">rate</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">race_sex</span>)) +

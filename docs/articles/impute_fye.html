@@ -83,25 +83,13 @@
     </li>
   </ul>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Papers/Talks
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/pages/talks.html">Talks</a>
-    </li>
-  </ul>
-</li>
-<li>
-  <a href="../articles/pages/get_session.html">Session info</a>
+  <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../articles/pages/get_session.html">Session info</a>
 </li>
 <li>
   <a href="../news/index.html">News</a>
@@ -150,7 +138,7 @@
 <a href="#options-for-predicting-starting-programs" class="anchor"></a>Options for predicting starting programs</h3>
 <ol style="list-style-type: decimal">
 <li><p>Ready-to-use predictions in <code>fye_start</code>, a data set in midfieldr. Starting programs are predicted for every FYE student in midfielddata.</p></li>
-<li><p>Perform your own prediction. Use <code><a href="../reference/fye_mi_prep.html">fye_mi_prep()</a></code> to operate on MIDFIELD data to prepare a data frame for imputation. Use the mice package (Multivariate Imputation by Chained Equations) to impute 6-digit CIP codes. The vignette describes the process that produces the <code>fye_start</code> data set.</p></li>
+<li><p>Perform your own prediction. Use <code><a href="../reference/prepare_fye_mi.html">prepare_fye_mi()</a></code> to operate on MIDFIELD data to prepare a data frame for imputation. Use the mice package (Multivariate Imputation by Chained Equations) to impute 6-digit CIP codes. The vignette describes the process that produces the <code>fye_start</code> data set.</p></li>
 </ol>
 </div>
 <div id="this-vignette-uses" class="section level3">
@@ -159,7 +147,7 @@
 <p>midfieldr functions</p>
 <ul>
 <li><code><a href="../reference/filter_by_id.html">filter_by_id()</a></code></li>
-<li><code><a href="../reference/fye_mi_prep.html">fye_mi_prep()</a></code></li>
+<li><code><a href="../reference/prepare_fye_mi.html">prepare_fye_mi()</a></code></li>
 </ul>
 <p>data.table syntax</p>
 <ul>
@@ -482,7 +470,7 @@ Engineering, Other
 <p>We use the engineering case study to illustrate using the predicted starting majors.</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># IDs of students ever enrolled in the case study programs</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">rep_ever</span>)
-<span class="co">#&gt;  chr [1:10135] "MID25783178" "MID25783197" "MID25783388" "MID25783441" ...</span></pre></body></html></div>
+<span class="co">#&gt;  chr [1:12409] "MID25783178" "MID25783197" "MID25783388" "MID25783441" ...</span></pre></body></html></div>
 <p>From <code>midfieldstudents</code> we obtain the matriculation programs for these students.</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># matriculation CIP for representative example</span>
 <span class="no">matric_programs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_id.html">filter_by_id</a></span>(<span class="no">midfieldstudents</span>,
@@ -492,27 +480,27 @@ Engineering, Other
 <span class="co"># examine the result</span>
 <span class="no">matric_programs</span>
 <span class="co">#&gt;                 id   cip6</span>
-<span class="co">#&gt;     1: MID25783178 14XXXX</span>
-<span class="co">#&gt;     2: MID25783197 14XXXX</span>
-<span class="co">#&gt;     3: MID25783388 14XXXX</span>
-<span class="co">#&gt;     4: MID25783441 14XXXX</span>
-<span class="co">#&gt;     5: MID25783491 14XXXX</span>
-<span class="co">#&gt;     6: MID25783553 14XXXX</span>
-<span class="co">#&gt;     7: MID25783606 14XXXX</span>
-<span class="co">#&gt;     8: MID25783648 14XXXX</span>
-<span class="co">#&gt;     9: MID25783912 14XXXX</span>
-<span class="co">#&gt;    10: MID25784022 14XXXX</span>
+<span class="co">#&gt;     1: MID25783166 14XXXX</span>
+<span class="co">#&gt;     2: MID25783178 14XXXX</span>
+<span class="co">#&gt;     3: MID25783197 14XXXX</span>
+<span class="co">#&gt;     4: MID25783227 14XXXX</span>
+<span class="co">#&gt;     5: MID25783388 14XXXX</span>
+<span class="co">#&gt;     6: MID25783428 14XXXX</span>
+<span class="co">#&gt;     7: MID25783441 14XXXX</span>
+<span class="co">#&gt;     8: MID25783491 14XXXX</span>
+<span class="co">#&gt;     9: MID25783553 14XXXX</span>
+<span class="co">#&gt;    10: MID25783606 14XXXX</span>
 <span class="co">#&gt;    ---                   </span>
-<span class="co">#&gt; 10126: MID26696484 141901</span>
-<span class="co">#&gt; 10127: MID26696642 141001</span>
-<span class="co">#&gt; 10128: MID26696738 141901</span>
-<span class="co">#&gt; 10129: MID26696771 140401</span>
-<span class="co">#&gt; 10130: MID26696958 141901</span>
-<span class="co">#&gt; 10131: MID26696967 141901</span>
-<span class="co">#&gt; 10132: MID26696979 141901</span>
-<span class="co">#&gt; 10133: MID26697163 140101</span>
-<span class="co">#&gt; 10134: MID26697444 141901</span>
-<span class="co">#&gt; 10135: MID26697447 140701</span></pre></body></html></div>
+<span class="co">#&gt; 11707: MID26696484 141901</span>
+<span class="co">#&gt; 11708: MID26696642 141001</span>
+<span class="co">#&gt; 11709: MID26696738 141901</span>
+<span class="co">#&gt; 11710: MID26696771 140401</span>
+<span class="co">#&gt; 11711: MID26696958 141901</span>
+<span class="co">#&gt; 11712: MID26696967 141901</span>
+<span class="co">#&gt; 11713: MID26696979 141901</span>
+<span class="co">#&gt; 11714: MID26697163 140101</span>
+<span class="co">#&gt; 11715: MID26697444 141901</span>
+<span class="co">#&gt; 11716: MID26697447 140701</span></pre></body></html></div>
 <p>Join the FYE starting programs by ID.</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># left-join the predicted CIPs for FYE students</span>
 <span class="no">start_programs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">matric_programs</span>,
@@ -524,27 +512,27 @@ Engineering, Other
 <span class="co"># examine the result</span>
 <span class="no">start_programs</span>
 <span class="co">#&gt;                 id   cip6  start</span>
-<span class="co">#&gt;     1: MID25783178 14XXXX 140701</span>
-<span class="co">#&gt;     2: MID25783197 14XXXX 140701</span>
-<span class="co">#&gt;     3: MID25783388 14XXXX 141901</span>
-<span class="co">#&gt;     4: MID25783441 14XXXX 140801</span>
-<span class="co">#&gt;     5: MID25783491 14XXXX 141001</span>
-<span class="co">#&gt;     6: MID25783553 14XXXX 140801</span>
-<span class="co">#&gt;     7: MID25783606 14XXXX 141001</span>
-<span class="co">#&gt;     8: MID25783648 14XXXX 140801</span>
-<span class="co">#&gt;     9: MID25783912 14XXXX 143501</span>
-<span class="co">#&gt;    10: MID25784022 14XXXX 141901</span>
+<span class="co">#&gt;     1: MID25783166 14XXXX 141901</span>
+<span class="co">#&gt;     2: MID25783178 14XXXX 140701</span>
+<span class="co">#&gt;     3: MID25783197 14XXXX 140701</span>
+<span class="co">#&gt;     4: MID25783227 14XXXX 141001</span>
+<span class="co">#&gt;     5: MID25783388 14XXXX 141901</span>
+<span class="co">#&gt;     6: MID25783428 14XXXX 140801</span>
+<span class="co">#&gt;     7: MID25783441 14XXXX 140801</span>
+<span class="co">#&gt;     8: MID25783491 14XXXX 141001</span>
+<span class="co">#&gt;     9: MID25783553 14XXXX 140801</span>
+<span class="co">#&gt;    10: MID25783606 14XXXX 141001</span>
 <span class="co">#&gt;    ---                          </span>
-<span class="co">#&gt; 10126: MID26696484 141901   &lt;NA&gt;</span>
-<span class="co">#&gt; 10127: MID26696642 141001   &lt;NA&gt;</span>
-<span class="co">#&gt; 10128: MID26696738 141901   &lt;NA&gt;</span>
-<span class="co">#&gt; 10129: MID26696771 140401   &lt;NA&gt;</span>
-<span class="co">#&gt; 10130: MID26696958 141901   &lt;NA&gt;</span>
-<span class="co">#&gt; 10131: MID26696967 141901   &lt;NA&gt;</span>
-<span class="co">#&gt; 10132: MID26696979 141901   &lt;NA&gt;</span>
-<span class="co">#&gt; 10133: MID26697163 140101   &lt;NA&gt;</span>
-<span class="co">#&gt; 10134: MID26697444 141901   &lt;NA&gt;</span>
-<span class="co">#&gt; 10135: MID26697447 140701   &lt;NA&gt;</span></pre></body></html></div>
+<span class="co">#&gt; 11707: MID26696484 141901   &lt;NA&gt;</span>
+<span class="co">#&gt; 11708: MID26696642 141001   &lt;NA&gt;</span>
+<span class="co">#&gt; 11709: MID26696738 141901   &lt;NA&gt;</span>
+<span class="co">#&gt; 11710: MID26696771 140401   &lt;NA&gt;</span>
+<span class="co">#&gt; 11711: MID26696958 141901   &lt;NA&gt;</span>
+<span class="co">#&gt; 11712: MID26696967 141901   &lt;NA&gt;</span>
+<span class="co">#&gt; 11713: MID26696979 141901   &lt;NA&gt;</span>
+<span class="co">#&gt; 11714: MID26697163 140101   &lt;NA&gt;</span>
+<span class="co">#&gt; 11715: MID26697444 141901   &lt;NA&gt;</span>
+<span class="co">#&gt; 11716: MID26697447 140701   &lt;NA&gt;</span></pre></body></html></div>
 <p>For non-FYE students, the <code>start</code> value is the <code>cip6</code> value.</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># non-FYE, replace NA with matriculation CIP</span>
 <span class="no">rows_non_fye</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">start_programs</span>$<span class="no">start</span>)
@@ -556,41 +544,41 @@ Engineering, Other
 <span class="co"># examine the result</span>
 <span class="no">start_programs</span>[]
 <span class="co">#&gt;                 id  start</span>
-<span class="co">#&gt;     1: MID25783178 140701</span>
-<span class="co">#&gt;     2: MID25783197 140701</span>
-<span class="co">#&gt;     3: MID25783388 141901</span>
-<span class="co">#&gt;     4: MID25783441 140801</span>
-<span class="co">#&gt;     5: MID25783491 141001</span>
-<span class="co">#&gt;     6: MID25783553 140801</span>
-<span class="co">#&gt;     7: MID25783606 141001</span>
-<span class="co">#&gt;     8: MID25783648 140801</span>
-<span class="co">#&gt;     9: MID25783912 143501</span>
-<span class="co">#&gt;    10: MID25784022 141901</span>
+<span class="co">#&gt;     1: MID25783166 141901</span>
+<span class="co">#&gt;     2: MID25783178 140701</span>
+<span class="co">#&gt;     3: MID25783197 140701</span>
+<span class="co">#&gt;     4: MID25783227 141001</span>
+<span class="co">#&gt;     5: MID25783388 141901</span>
+<span class="co">#&gt;     6: MID25783428 140801</span>
+<span class="co">#&gt;     7: MID25783441 140801</span>
+<span class="co">#&gt;     8: MID25783491 141001</span>
+<span class="co">#&gt;     9: MID25783553 140801</span>
+<span class="co">#&gt;    10: MID25783606 141001</span>
 <span class="co">#&gt;    ---                   </span>
-<span class="co">#&gt; 10126: MID26696484 141901</span>
-<span class="co">#&gt; 10127: MID26696642 141001</span>
-<span class="co">#&gt; 10128: MID26696738 141901</span>
-<span class="co">#&gt; 10129: MID26696771 140401</span>
-<span class="co">#&gt; 10130: MID26696958 141901</span>
-<span class="co">#&gt; 10131: MID26696967 141901</span>
-<span class="co">#&gt; 10132: MID26696979 141901</span>
-<span class="co">#&gt; 10133: MID26697163 140101</span>
-<span class="co">#&gt; 10134: MID26697444 141901</span>
-<span class="co">#&gt; 10135: MID26697447 140701</span></pre></body></html></div>
+<span class="co">#&gt; 11707: MID26696484 141901</span>
+<span class="co">#&gt; 11708: MID26696642 141001</span>
+<span class="co">#&gt; 11709: MID26696738 141901</span>
+<span class="co">#&gt; 11710: MID26696771 140401</span>
+<span class="co">#&gt; 11711: MID26696958 141901</span>
+<span class="co">#&gt; 11712: MID26696967 141901</span>
+<span class="co">#&gt; 11713: MID26696979 141901</span>
+<span class="co">#&gt; 11714: MID26697163 140101</span>
+<span class="co">#&gt; 11715: MID26697444 141901</span>
+<span class="co">#&gt; 11716: MID26697447 140701</span></pre></body></html></div>
 </div>
 </div>
 <div id="option-2-perform-the-multiple-imputation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#option-2-perform-the-multiple-imputation" class="anchor"></a>Option 2: Perform the multiple imputation</h2>
 <p>The work described in this option is for those who want to do their own imputation. The example illustrates how the ready-to-use starting program data <code>fye_start</code> is created.</p>
-<div id="how-to-use-fye_mi_prep" class="section level3">
+<div id="how-to-use-prepare_fye_mi" class="section level3">
 <h3 class="hasAnchor">
-<a href="#how-to-use-fye_mi_prep" class="anchor"></a>How to use <code>fye_mi_prep()</code>
+<a href="#how-to-use-prepare_fye_mi" class="anchor"></a>How to use <code>prepare_fye_mi()</code>
 </h3>
-<p>The midfieldr function <code><a href="../reference/fye_mi_prep.html">fye_mi_prep()</a></code> accesses MIDFIELD data (or equivalent) and prepares a data frame of all FYE students ready for imputation using the mice package.</p>
-<p>The arguments of <code><a href="../reference/fye_mi_prep.html">fye_mi_prep()</a></code> are the student and term data sets.</p>
+<p>The midfieldr function <code><a href="../reference/prepare_fye_mi.html">prepare_fye_mi()</a></code> accesses MIDFIELD data (or equivalent) and prepares a data frame of all FYE students ready for imputation using the mice package.</p>
+<p>The arguments of <code><a href="../reference/prepare_fye_mi.html">prepare_fye_mi()</a></code> are the student and term data sets.</p>
 <div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># prepare data for mice()</span>
-<span class="no">mi_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/fye_mi_prep.html">fye_mi_prep</a></span>(<span class="no">midfieldstudents</span>, <span class="no">midfieldterms</span>)
+<span class="no">mi_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/prepare_fye_mi.html">prepare_fye_mi</a></span>(<span class="no">midfieldstudents</span>, <span class="no">midfieldterms</span>)
 
 <span class="co"># examine the result</span>
 <span class="no">mi_data</span>[]
@@ -617,7 +605,7 @@ Engineering, Other
 <span class="co">#&gt; 5991: MID26648517 Institution J      Hispanic   Male   &lt;NA&gt;</span>
 <span class="co">#&gt; 5992: MID26648544 Institution J         White   Male   &lt;NA&gt;</span></pre></body></html></div>
 <p>The result is a data frame with the predictor variables (institution, race, and sex) as factors. The NA values denote the CIP codes to be imputed.</p>
-<p>How <code><a href="../reference/fye_mi_prep.html">fye_mi_prep()</a></code> works is outlined in an appendix below.</p>
+<p>How <code><a href="../reference/prepare_fye_mi.html">prepare_fye_mi()</a></code> works is outlined in an appendix below.</p>
 </div>
 <div id="how-to-use-mice" class="section level3">
 <h3 class="hasAnchor">
@@ -760,10 +748,10 @@ Engineering, Other
 <div id="appendix" class="section level2">
 <h2 class="hasAnchor">
 <a href="#appendix" class="anchor"></a>Appendix</h2>
-<div id="a--how-fye_mi_prep-works" class="section level3">
+<div id="a--how-prepare_fye_mi-works" class="section level3">
 <h3 class="hasAnchor">
-<a href="#a--how-fye_mi_prep-works" class="anchor"></a>A. How <code>fye_mi_prep()</code> works</h3>
-<p>The first operation in <code><a href="../reference/fye_mi_prep.html">fye_mi_prep()</a></code> is accessing <code>midfieldstudents</code> to extract all FYE students, yielding:</p>
+<a href="#a--how-prepare_fye_mi-works" class="anchor"></a>A. How <code>prepare_fye_mi()</code> works</h3>
+<p>The first operation in <code><a href="../reference/prepare_fye_mi.html">prepare_fye_mi()</a></code> is accessing <code>midfieldstudents</code> to extract all FYE students, yielding:</p>
 <div class="sourceCode" id="cb19"><html><body><pre class="r"># &gt;                id   institution          race    sex
 # &gt;    1: MID25783162 Institution M         White   Male
 # &gt;    2: MID25783166 Institution M         White   Male
@@ -839,8 +827,8 @@ Engineering, Other
 <a href="#b--editing-the-arguments-for-mice" class="anchor"></a>B. Editing the arguments for <code>mice()</code>
 </h3>
 <p>Had the default framework not been to our liking, we reset the arguments as follows, adapted from <span class="citation">(Katitas, <a href="#ref-Katitas:2019" role="doc-biblioref">2019</a>)</span>.</p>
-<p>Obtain the <code>mi_data</code> as before, using <code><a href="../reference/fye_mi_prep.html">fye_mi_prep()</a></code>.</p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="no">mi_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/fye_mi_prep.html">fye_mi_prep</a></span>()</pre></body></html></div>
+<p>Obtain the <code>mi_data</code> as before, using <code><a href="../reference/prepare_fye_mi.html">prepare_fye_mi()</a></code>.</p>
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="no">mi_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/prepare_fye_mi.html">prepare_fye_mi</a></span>()</pre></body></html></div>
 <p>Use this data as the input to <code><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice()</a></code> with zero iterations.</p>
 <div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">mi_framework</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(<span class="no">mi_data</span>, <span class="kw">maxit</span> <span class="kw">=</span> <span class="fl">0</span>)</pre></body></html></div>
 <p>Extract the method and predictor matrix from the framework.</p>
@@ -901,8 +889,8 @@ Engineering, Other
 <span class="no">start_programs</span>[, <span class="no">cip6</span> <span class="kw">:=</span> <span class="kw">NULL</span>]
 
 <span class="co"># Option 2: Perform the multiple imputation</span>
-<span class="co"># How to use fye_mi_prep()</span>
-<span class="no">mi_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/fye_mi_prep.html">fye_mi_prep</a></span>(<span class="no">midfieldstudents</span>, <span class="no">midfieldterms</span>)
+<span class="co"># How to use prepare_fye_mi()</span>
+<span class="no">mi_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/prepare_fye_mi.html">prepare_fye_mi</a></span>(<span class="no">midfieldstudents</span>, <span class="no">midfieldterms</span>)
 
 <span class="co"># How to use mice()</span>
 <span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(<span class="no">mi_data</span>, <span class="kw">maxit</span> <span class="kw">=</span> <span class="fl">0</span>)
@@ -918,7 +906,7 @@ Engineering, Other
 <span class="fu"><a href="https://rdrr.io/r/base/detach.html">detach</a></span>(<span class="st">"package:mice"</span>, <span class="kw">unload</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 
 <span class="co"># Appendix: editing the arguments for mice()</span>
-<span class="no">mi_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/fye_mi_prep.html">fye_mi_prep</a></span>()
+<span class="no">mi_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/prepare_fye_mi.html">prepare_fye_mi</a></span>()
 <span class="no">mi_framework</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(<span class="no">mi_data</span>, <span class="kw">maxit</span> <span class="kw">=</span> <span class="fl">0</span>)
 <span class="no">mi_method</span> <span class="kw">&lt;-</span> <span class="no">mi_framework</span>$<span class="no">method</span>
 <span class="no">mi_predictors</span> <span class="kw">&lt;-</span> <span class="no">mi_framework</span>$<span class="no">predictorMatrix</span>
