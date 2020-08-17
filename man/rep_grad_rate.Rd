@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_grad_rate}
 \alias{rep_grad_rate}
-\title{Graduation rate results data set}
+\title{Graduation rate results}
 \format{
 \code{data.table} with 62 rows and 6 columns keyed by
 program, race/ethnicity, and sex. The variables are:

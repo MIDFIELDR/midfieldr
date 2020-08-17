@@ -2,7 +2,7 @@
 % Please edit documentation in R/filter_by_id.R
 \name{filter_by_id}
 \alias{filter_by_id}
-\title{Subset rows of a data frame by student ID}
+\title{Subset rows by student ID}
 \usage{
 filter_by_id(
   data,

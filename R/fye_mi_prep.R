@@ -1,7 +1,7 @@
 #' @importFrom data.table %chin% setnames setDT
 NULL
 
-#' Prepare an FYE data frame for multiple imputation
+#' Prepare FYE data for multiple imputation
 #'
 #' Extract first-year-engineering (FYE) students from data and prepare
 #' a data frame for input to the mice package for multiple imputation to

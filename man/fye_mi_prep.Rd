@@ -2,7 +2,7 @@
 % Please edit documentation in R/fye_mi_prep.R
 \name{fye_mi_prep}
 \alias{fye_mi_prep}
-\title{Prepare an FYE data frame for multiple imputation}
+\title{Prepare FYE data for multiple imputation}
 \usage{
 fye_mi_prep(data_students = NULL, data_terms = NULL)
 }

@@ -2,7 +2,7 @@
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
-#' Subset rows of a data frame by text
+#' Subset rows by text
 #'
 #' Retain rows that contain matching or partially matching character strings.
 #' Not case-sensitive. Default behavior is to retain all columns.

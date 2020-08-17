@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_grad_rate_mw}
 \alias{rep_grad_rate_mw}
-\title{Graduation rate data in multiway form}
+\title{Graduation rate results in multiway form}
 \format{
 \code{data.table} with 32 rows and 3 columns keyed by
 program, race/ethnicity, and sex. The variables are:

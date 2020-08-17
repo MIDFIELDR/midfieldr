@@ -2,7 +2,7 @@
 % Please edit documentation in R/filter_by_cip.R
 \name{filter_by_cip}
 \alias{filter_by_cip}
-\title{Subset rows of a data frame by program CIP}
+\title{Subset rows by program CIP}
 \usage{
 filter_by_cip(
   data,

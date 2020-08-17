@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_stickiness}
 \alias{rep_stickiness}
-\title{Stickiness results data set}
+\title{Stickiness results}
 \format{
 \code{data.table} with 63 rows and 6 columns keyed by
 program, race/ethnicity, and sex. The variables are:

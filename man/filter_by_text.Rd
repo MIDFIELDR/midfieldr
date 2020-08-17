@@ -2,7 +2,7 @@
 % Please edit documentation in R/filter_by_text.R
 \name{filter_by_text}
 \alias{filter_by_text}
-\title{Subset rows of a data frame by text}
+\title{Subset rows by text}
 \usage{
 filter_by_text(
   data,

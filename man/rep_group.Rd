@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_group}
 \alias{rep_group}
-\title{Program group data set}
+\title{Program group}
 \format{
 \code{data.table} with 12 rows and 2 columns keyed by the
 6-digit CIP code. The variables are:

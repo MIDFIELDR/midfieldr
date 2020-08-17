@@ -49,7 +49,7 @@
 
 # -------------------------------------------------------------------
 
-#' CIP code data set
+#' CIP codes
 #'
 #' Representative case study. A subset of the \code{cip} data set containing
 #' CIP codes and names for Civil, Electrical, Industrial,
@@ -76,7 +76,7 @@
 
 # -------------------------------------------------------------------
 
-#' Program group data set
+#' Program group
 #'
 #' Representative case study. Six-digit CIP codes and custom program names
 #' for Civil, Electrical, Industrial, and Mechanical Engineering programs in
@@ -109,7 +109,7 @@
 
 # -------------------------------------------------------------------
 
-#' Student ID data sets
+#' Student IDs
 #'
 #' Representative case study. Character vectors of student IDs at different
 #' points in a case study of Civil, Electrical, Industrial, and Mechanical
@@ -155,7 +155,7 @@ NULL
 
 # -------------------------------------------------------------------
 
-#' Stickiness results data set
+#' Stickiness results
 #'
 #' Representative case study. Stickiness metric results for Civil, Electrical,
 #' Industrial, and Mechanical Engineering programs in
@@ -181,7 +181,7 @@ NULL
 
 # -------------------------------------------------------------------
 
-#' Stickiness data in multiway form
+#' Stickiness results in multiway form
 #'
 #' Representative case study. Stickiness metric results with two categorical
 #' variables as factors with levels ordered by the median stickiness.
@@ -199,7 +199,7 @@ NULL
 
 # -------------------------------------------------------------------
 
-#' Starting programs data set
+#' Starting programs including FYE
 #'
 #' Representative case study. Starting programs for students in the
 #' engineering case study. Includes degree-granting programs that substitute
@@ -223,11 +223,10 @@ NULL
 
 # -------------------------------------------------------------------
 
-#' Starting programs for all FYE students
+#' Starting programs for all midfielddata FYE students
 #'
-#' Starting programs for all FYE students in midfielddata. Includes
-#' degree-granting programs that substitute for first-year-engineering (FYE)
-#' programs when needed for a persistence metric, e.g., graduation rate.
+#' Includes degree-granting programs that substitute for first-year-engineering
+#' (FYE) programs when needed for a persistence metric, e.g., graduation rate.
 #'
 #' Starting programs for FYE students are the engineering programs we
 #' predict they would have declared had they not been required to enroll in
@@ -249,7 +248,7 @@ NULL
 
 # -------------------------------------------------------------------
 
-#' Graduation rate results data set
+#' Graduation rate results
 #'
 #' Representative case study. Graduation rate metric results for Civil,
 #' Electrical, Industrial, and Mechanical Engineering programs in
@@ -274,7 +273,7 @@ NULL
 
 # -------------------------------------------------------------------
 
-#' Graduation rate data in multiway form
+#' Graduation rate results in multiway form
 #'
 #' Representative case study. Graduation rate metric results with two
 #' categorical variables as factors with levels ordered by the median

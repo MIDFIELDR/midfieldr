@@ -6,7 +6,7 @@
 \alias{rep_ever}
 \alias{rep_grad}
 \alias{rep_ever_fc}
-\title{Student ID data sets}
+\title{Student IDs}
 \format{
 character vector. The names of the available data vectors are:
 \describe{

@@ -1,7 +1,7 @@
 #' @importFrom data.table '%chin%' as.data.table copy
 NULL
 
-#' Subset rows of a data frame by student ID
+#' Subset rows by student ID
 #'
 #' Retain rows that match student IDs. Default behavior is to retain all
 #' columns. Use \code{keep_col} to subset columns. Use \code{unique_row} to

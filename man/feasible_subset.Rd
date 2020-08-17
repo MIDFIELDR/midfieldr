@@ -2,7 +2,7 @@
 % Please edit documentation in R/feasible_subset.R
 \name{feasible_subset}
 \alias{feasible_subset}
-\title{Subset IDs for feasible completion}
+\title{Subset ID vector for feasible completion}
 \usage{
 feasible_subset(
   id,

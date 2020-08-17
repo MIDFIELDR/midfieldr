@@ -2,7 +2,7 @@
 % Please edit documentation in R/ipeds_subset.R
 \name{ipeds_subset}
 \alias{ipeds_subset}
-\title{Subset data frame for IPEDS constraints}
+\title{Subset rows for IPEDS constraints}
 \usage{
 ipeds_subset(
   starters,

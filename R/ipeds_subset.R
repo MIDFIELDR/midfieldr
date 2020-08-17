@@ -2,7 +2,7 @@
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
-#' Subset data frame for IPEDS constraints
+#' Subset rows for IPEDS constraints
 #'
 #' Subset a data frame of student IDs and starting programs, retaining
 #' students satisfying the constraints of the IPEDS definition for

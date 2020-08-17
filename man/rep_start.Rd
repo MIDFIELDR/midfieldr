@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_start}
 \alias{rep_start}
-\title{Starting programs data set}
+\title{Starting programs including FYE}
 \format{
 \code{data.table} with 10135 rows and 2 columns keyed by student
 ID. The variables are:

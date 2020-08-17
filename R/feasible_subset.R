@@ -2,7 +2,7 @@
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
-#' Subset IDs for feasible completion
+#' Subset ID vector for feasible completion
 #'
 #' Subset a vector of student IDs, retaining students for whom program
 #' completion is feasible within a designated time limit.

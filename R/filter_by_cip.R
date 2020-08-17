@@ -1,7 +1,7 @@
 #' @importFrom data.table '%chin%' as.data.table copy
 NULL
 
-#' Subset rows of a data frame by program CIP
+#' Subset rows by program CIP
 #'
 #' Retain rows that match program CIPs. Default behavior is to retain all
 #' columns. Use \code{keep_col} to subset columns. Use \code{unique_row} to
