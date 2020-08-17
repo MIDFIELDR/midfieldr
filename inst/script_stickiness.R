@@ -40,7 +40,7 @@ stickiness_mw <- stickiness %>%
 	filter(!sex %in% "Unknown") %>%
 	mutate(race_sex = str_c(race, sex, sep = " ")) %>%
 	select(program, race_sex, stick) %>%
-	order_multiway()
+	prepare_multiway()
 
 # graph
 ggplot(stickiness_mw, aes(x = stick, y = race_sex)) +

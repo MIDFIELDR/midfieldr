@@ -1,4 +1,4 @@
-context("order_multiway")
+context("prepare_multiway")
 
 # get_my_path() for data in the testing directory
 # ctrl-shift-L to load internal functions
@@ -25,39 +25,39 @@ test_that("Incoming factors are converted", {
   data.table::setDT(df3)
   df4 <- df3
   df4[, cat1 := as.factor(cat1)]
-  expect_equal(order_multiway(df3), order_multiway(df4))
+  expect_equal(prepare_multiway(df3), prepare_multiway(df4))
 })
 test_that("Class of data frame is preserved", {
   # data.frame
   df2 <- df1
   data.table::setDF(df2)
-  expect_equivalent(sort(class(df2)), sort(class(order_multiway(df2))))
+  expect_equivalent(sort(class(df2)), sort(class(prepare_multiway(df2))))
   # data.table
   df2 <- df1
   data.table::setDT(df2)
-  expect_equivalent(sort(class(df2)), sort(class(order_multiway(df2))))
+  expect_equivalent(sort(class(df2)), sort(class(prepare_multiway(df2))))
   # tibble
   df2 <- df1
   data.table::setattr(df2, "class", c("tbl", "tbl_df", "data.frame"))
-  expect_equivalent(sort(class(df2)), sort(class(order_multiway(df2))))
+  expect_equivalent(sort(class(df2)), sort(class(prepare_multiway(df2))))
 })
 test_that("Integer values are accepted", {
   df2 <- df1
   df2$val <- as.integer(seq(1, 8))
   df3 <- df2
   df3$val <- as.double(df3$val)
-  df2 <- order_multiway(df2)
-  df3 <- order_multiway(df3)
+  df2 <- prepare_multiway(df2)
+  df3 <- prepare_multiway(df3)
   expect_equivalent(df2, df3)
 })
 test_that("Pipe correctly passes the data argument", {
   expect_equivalent(
-    df1 %>% order_multiway(),
-    order_multiway(df1)
+    df1 %>% prepare_multiway(),
+    prepare_multiway(df1)
   )
 })
 test_that("Results are correct type", {
-  df2 <- order_multiway(df1)
+  df2 <- prepare_multiway(df1)
   expect_type(df1$cat1, "character")
   expect_type(df2$cat1, "integer")
   expect_type(df1$val, "double")
@@ -67,21 +67,21 @@ test_that("Results are correct type", {
 })
 test_that("data argument has correct form", {
   expect_error(
-    order_multiway(),
+    prepare_multiway(),
     "Explicit `data` argument required"
   )
   expect_error(
-    order_multiway(df1[["cat1"]]),
+    prepare_multiway(df1[["cat1"]]),
     "`data` must be of class data.frame"
   )
   expect_error(
-    order_multiway(df1[, c("cat1", "val")]),
+    prepare_multiway(df1[, c("cat1", "val")]),
     "`data` must have exactly three columns"
   )
   df3 <- df1
   df3$val <- as.character(df3$val)
   expect_error(
-    order_multiway(df3),
+    prepare_multiway(df3),
     paste(
       "`data` must have one numeric column",
       "and two character columns"
@@ -90,7 +90,7 @@ test_that("data argument has correct form", {
   df4 <- df1[, c("cat1", "val")]
   df4$val2 <- 2.5
   expect_error(
-    order_multiway(df4),
+    prepare_multiway(df4),
     paste(
       "`data` must have one numeric column",
       "and two character columns"

@@ -59,14 +59,14 @@ To include an FYE student in metrics such as graduation rate, we have to predict
 
 1. Ready-to-use predictions in `fye_start`, a data set in midfieldr. Starting programs are predicted for every FYE student in midfielddata.  
 
-2. Perform your own prediction. Use `fye_mi_prep()` to operate on MIDFIELD data to prepare a data frame for imputation. Use the mice package (Multivariate Imputation by Chained Equations) to impute 6-digit CIP codes. The vignette describes the process that produces the `fye_start` data set.  
+2. Perform your own prediction. Use `prepare_fye_mi()` to operate on MIDFIELD data to prepare a data frame for imputation. Use the mice package (Multivariate Imputation by Chained Equations) to impute 6-digit CIP codes. The vignette describes the process that produces the `fye_start` data set.  
 
 ### This vignette uses
 
 midfieldr functions 
 
 - `filter_by_id()`
-- `fye_mi_prep()` 
+- `prepare_fye_mi()` 
 
 data.table syntax 
 
@@ -208,15 +208,15 @@ load("../inst/extdata/fye-vignette-data.rda")
 
 The work described in this option is for those who want to do their own imputation. The example illustrates how the ready-to-use starting program data `fye_start` is created.
 
-### How to use `fye_mi_prep()`
+### How to use `prepare_fye_mi()`
 
-The midfieldr function `fye_mi_prep()` accesses MIDFIELD data (or equivalent) and prepares a data frame of all FYE students ready for imputation using the mice package. 
+The midfieldr function `prepare_fye_mi()` accesses MIDFIELD data (or equivalent) and prepares a data frame of all FYE students ready for imputation using the mice package. 
 
-The arguments of `fye_mi_prep()` are the student and term data sets.  
+The arguments of `prepare_fye_mi()` are the student and term data sets.  
 
 ```{r}
 # prepare data for mice()
-mi_data <- fye_mi_prep(midfieldstudents, midfieldterms)
+mi_data <- prepare_fye_mi(midfieldstudents, midfieldterms)
 
 # examine the result
 mi_data[]
@@ -224,7 +224,7 @@ mi_data[]
 
 The result is a data frame with the predictor variables (institution, race, and sex) as factors. The NA values denote the CIP codes to be imputed. 
 
-How `fye_mi_prep()` works is outlined in an appendix below. 
+How `prepare_fye_mi()` works is outlined in an appendix below. 
 
 ### How to use `mice()`
 
@@ -397,9 +397,9 @@ detach("package:mice", unload = TRUE)
 knitr::opts_chunk$set(eval = FALSE)
 ```
 
-### A. How `fye_mi_prep()` works 
+### A. How `prepare_fye_mi()` works 
 
-The first operation in `fye_mi_prep()` is accessing `midfieldstudents` to extract all FYE students, yielding:
+The first operation in `prepare_fye_mi()` is accessing `midfieldstudents` to extract all FYE students, yielding:
 
 ```{r echo = FALSE, eval = FALSE}
 fye01[order(id)]
@@ -498,10 +498,10 @@ The final operation is to convert the three predictor variables---institution, r
 
 Had the default framework not been to our liking, we reset the arguments as follows, adapted from [@Katitas:2019]. 
 
-Obtain the `mi_data` as before, using `fye_mi_prep()`. 
+Obtain the `mi_data` as before, using `prepare_fye_mi()`. 
 
 ```{r}
-mi_data <- fye_mi_prep()
+mi_data <- prepare_fye_mi()
 ```
 
 Use this data as the input to `mice()` with zero iterations. 
@@ -589,8 +589,8 @@ start_programs <- start_programs[rows_non_fye, start := cip6]
 start_programs[, cip6 := NULL]
 
 # Option 2: Perform the multiple imputation
-# How to use fye_mi_prep()
-mi_data <- fye_mi_prep(midfieldstudents, midfieldterms)
+# How to use prepare_fye_mi()
+mi_data <- prepare_fye_mi(midfieldstudents, midfieldterms)
 
 # How to use mice()
 mice(mi_data, maxit = 0)
@@ -606,7 +606,7 @@ setnames(mi_start, old = "cip6", new = "start")
 detach("package:mice", unload = TRUE)
 
 # Appendix: editing the arguments for mice()
-mi_data <- fye_mi_prep()
+mi_data <- prepare_fye_mi()
 mi_framework <- mice::mice(mi_data, maxit = 0)
 mi_method <- mi_framework$method
 mi_predictors <- mi_framework$predictorMatrix

@@ -16,7 +16,9 @@ resource_files:
 
 ```{r include = FALSE}
 knitr::opts_knit$set(root.dir = "../")
-knitr::opts_chunk$set(fig.path = "../man/figures/vignette-compute-grad-rate-")
+knitr::opts_chunk$set(
+  fig.path = "../man/figures/vignette-compute-grad-rate-"
+  )
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
@@ -68,8 +70,8 @@ So with these caveats in mind, we provide the tools for determining  program gra
 midfieldr functions 
 
 - `filter_by_cip()` 
-- `feasible_subset()` 
-- `ipeds_subset()`
+- `subset_feasible()` 
+- `subset_ipeds()`
 - `filter_by_id()`
 - `order_multieay()`
 
@@ -171,11 +173,11 @@ starters <- rbind(matriculants, fye_starters)
 starters
 ```
 
-For some of these students, completing their program may not be feasible given the range of data available. `feasible_subset()` subsets the student IDs, retaining those who matriculate at least six years before the last term in the data. 
+For some of these students, completing their program may not be feasible given the range of data available. `subset_feasible()` subsets the student IDs, retaining those who matriculate at least six years before the last term in the data. 
 
 ```{r}
 # apply the feasible completion filter
-feasible_ids <- feasible_subset(id = starters$id)
+feasible_ids <- subset_feasible(id = starters$id)
 
 # examine the result
 str(feasible_ids)
@@ -197,7 +199,7 @@ starters
 
 These are the students eligible to be considered starters in our case study programs before we apply the IPEDS constraints. 
 
-The `starters` data frame is the input to `ipeds_subset()`.
+The `starters` data frame is the input to `subset_ipeds()`.
 
 ## Apply IPEDS criteria
 
@@ -209,10 +211,10 @@ In the next step, we subset the starters, retaining those who satisfy the IPEDS 
 
 The IPEDS definition excludes part-time students. We do not test for part-time status specifically. We assume that students attending for no more than 6 years are effectively full-time.
 
-The input to `ipeds_subset()` is the `starters` data frame with columns `id` and `start`. The function subsets the rows of the data frame per the IPEDS constraints and adds a new yes/no column `ipeds_grad`, where  "Y" indicates that the student's graduation accords with the IPEDS definition of graduation rate. 
+The input to `subset_ipeds()` is the `starters` data frame with columns `id` and `start`. The function subsets the rows of the data frame per the IPEDS constraints and adds a new yes/no column `ipeds_grad`, where  "Y" indicates that the student's graduation accords with the IPEDS definition of graduation rate. 
 
 ```{r}
-ipeds_students <- ipeds_subset(starters)
+ipeds_students <- subset_ipeds(starters)
 ipeds_students[]
 ```
 
@@ -351,7 +353,7 @@ columns_we_want <- c("program", "race_sex", "rate")
 data_mw <- data_mw[, ..columns_we_want]
 
 # transform characters to factors ordered by median rate
-data_mw <- order_multiway(data_mw)
+data_mw <- prepare_multiway(data_mw)
 ```
 
 ## Graph the metric
@@ -374,13 +376,6 @@ ggplot(data = data_mw, mapping = aes(x = rate, y = race_sex)) +
   geom_point(na.rm = TRUE) +
   labs(x = "Graduation rate", y = "")
 ```
-<br>
-
-## For more information
-
-- *Impute FYE starting programs* vignette [(link)](impute_fye.html) 
-- *Subset for completion feasibility* vignette [(link)](feasible_completion.html)  
-- *Explore multiway data* vignette [(link)](explore_multiway.html) 
 
 ## References
 
@@ -388,9 +383,9 @@ ggplot(data = data_mw, mapping = aes(x = rate, y = race_sex)) +
 
 ## Appendix
 
-### A. How `ipeds_subset()` works
+### A. How `subset_ipeds()` works
 
-The first operation in `ipeds_subset()` is accessing `midfieldstudents` for entering term and transfer information for the students is `starters`. Then transfer students are removed, yielding: 
+The first operation in `subset_ipeds()` is accessing `midfieldstudents` for entering term and transfer information for the students is `starters`. Then transfer students are removed, yielding: 
 
 ```{r echo = FALSE}
 ipeds01[order(id)]
@@ -463,13 +458,13 @@ fye_starters <- filter_by_cip(fye,
 starters <- rbind(matriculants, fye_starters)
 
 # apply the feasible completion filter
-feasible_ids <- feasible_subset(starters$id)
+feasible_ids <- subset_feasible(starters$id)
 rows_we_want <- starters$id %in% feasible_ids
 starters <- starters[rows_we_want]
 setnames(starters, old = "cip6", new = "start")
 
 # apply IPEDS constraints
-ipeds_students <- ipeds_subset(starters)
+ipeds_students <- subset_ipeds(starters)
 
 # join program labels and demographics
 setnames(ipeds_students, old = "start", new = "cip6")
@@ -521,7 +516,7 @@ data_mw <- pre_mw
 data_mw[, race_sex := paste(race, sex, sep = " ")]
 columns_we_want <- c("program", "race_sex", "rate")
 data_mw <- data_mw[, ..columns_we_want]
-data_mw <- order_multiway(data_mw)
+data_mw <- prepare_multiway(data_mw)
 
 # graph
 ggplot(data = data_mw, mapping = aes(x = rate, y = race_sex)) +

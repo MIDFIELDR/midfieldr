@@ -15,7 +15,9 @@ resource_files:
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(fig.path = "../man/figures/vignette-feasible-completion-")
+knitr::opts_chunk$set(
+  fig.path = "../man/figures/vignette-feasible-completion-"
+  )
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
@@ -183,7 +185,7 @@ matriculation limit
 
 midfieldr functions 
 
-- `feasible_subset()`
+- `subset_feasible()`
 
 packages
 
@@ -195,12 +197,12 @@ library(midfieldr)
 options(datatable.print.nrows = 20, datatable.print.topn = 10)
 ```
 
-## How to use `feasible_subset()`
+## How to use `subset_feasible()`
 
 The first argument, `id`, is required. The remaining arguments all have default settings. The last three arguments accommodate using data sets other than those from midfielddata. Arguments after the ellipsis (...) must be named if used. 
 
 ```r
-feasible_subset(id,
+subset_feasible(id,
                 ...,
                 span,
                 term_advance_max,
@@ -217,7 +219,7 @@ feasible_subset(id,
 - `data_terms`  term attributes data set, `midfieldterms` or equivalent
 - `data_degrees` degree attributes data set, `midfielddegrees` or equivalent
 
-The primary input to `feasible_subset()` is a character vector of student IDs. To illustrate its use, we use the built-in data set `rep_ever` from the engineering case study as developed in the  *Compute the stickiness metric* vignette [(link)](compute_stickiness.html). 
+The primary input to `subset_feasible()` is a character vector of student IDs. To illustrate its use, we use the built-in data set `rep_ever` from the engineering case study as developed in the  *Compute the stickiness metric* vignette [(link)](compute_stickiness.html). 
 
 View its help page by running
 
@@ -232,11 +234,11 @@ The data are loaded with midfieldr.
 str(rep_ever)
 ```
 
-This vector of IDs is the input to `feasible_subset()`, which performs the subsetting for completion feasibility.  
+This vector of IDs is the input to `subset_feasible()`, which performs the subsetting for completion feasibility.  
 
 ```{r}
 # filter IDs for feasible program completion within data limit
-feasible_id <- feasible_subset(rep_ever)
+feasible_id <- subset_feasible(rep_ever)
 
 # examine the result
 str(feasible_id)
@@ -244,9 +246,9 @@ str(feasible_id)
 
 In this instance, we started with `r length(rep_ever)` enrollees. After applying the criteria for feasible completion, we retain `r length(feasible_id)` students. These students either graduated (demonstrating the feasibility of completing their programs before the data limit) or they matriculated no later than their matriculation limits. 
 
-## How `feasible_subset()` works
+## How `subset_feasible()` works
 
-The remainder of the vignette describes the inner workings of  `feasible_subset()`, showing intermediate results at key stages. Its operation can be divided into 5 basic steps: 
+The remainder of the vignette describes the inner workings of  `subset_feasible()`, showing intermediate results at key stages. Its operation can be divided into 5 basic steps: 
 
 1. Identify graduates and non-graduates by ID 
 2. Obtain entering terms and transfer credit hours by ID 
@@ -254,7 +256,7 @@ The remainder of the vignette describes the inner workings of  `feasible_subset(
 4. Advance the matriculation limit by transfer credit hours 
 5. Filter IDs for feasible completion 
 
-The default data sets queried are from midfielddata, but if desired the arguments of `feasible_subset()` accommodate data sets other than those from  midfielddata. 
+The default data sets queried are from midfielddata, but if desired the arguments of `subset_feasible()` accommodate data sets other than those from  midfielddata. 
 
 ```{r include = FALSE}
 # load all the fc intermediate results: fc01--fc08
@@ -263,7 +265,7 @@ load(system.file("extdata", "fc-vignette-data.rda", package = "midfieldr"))
 
 ### 1. Identify graduates and non-graduates by ID 
 
-The first data accessed by `feasible_subset()` is `midfielddegrees`. The head and tail of that data are show here.
+The first data accessed by `subset_feasible()` is `midfielddegrees`. The head and tail of that data are show here.
 
 ```{r echo = FALSE}
 # degrees data set
@@ -359,10 +361,10 @@ The vignette code chunks are collected below in a single, condensed script.
 # packages used
 library(midfieldr)
 
-# part 1:  How to use feasible_subset()
-feasible_id <- feasible_subset(rep_ever)
+# part 1:  How to use subset_feasible()
+feasible_id <- subset_feasible(rep_ever)
 
-# part 2:  How feasible_subset() works
+# part 2:  How subset_feasible() works
 # no reproducible code
 ```
 

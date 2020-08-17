@@ -58,7 +58,7 @@ midfieldr functions
  
 - `filter_by_id()` 
 - `filter_by_cip()` 
-- `feasible_subset()` 
+- `subset_feasible()` 
 
 data.table syntax
 
@@ -125,17 +125,54 @@ enrollees <- filter_by_cip(midfieldterms,
 enrollees
 ```
 
+There may be FYE students who are imputed to have started in one of these programs as well. In the *Impute FYE starting programs* vignette [(link)](impute_fye.html), we derive the starting programs for all FYE students in midfielddata. Again, we filter by the program group CIP codes. 
+
+```{r}
+# column name cip6 is required
+fye <- copy(fye_start)
+setnames(fye, old = "start", new = "cip6")
+
+# gather FYE students predicted to start in these programs
+fye_starters <- filter_by_cip(fye,
+  keep_cip = group_cips,
+  unique_row = TRUE
+)
+
+# examine the result
+fye_starters
+```
+
+Bind the two data frames
+
+```{r}
+enrollees <- rbind(enrollees, fye_starters)
+enrollees <- unique(enrollees)
+
+# examine the result
+enrollees
+```
+
+```{r include = FALSE, eval = FALSE}
+# run this manually to save external data
+rep_ever <- enrollees$id
+usethis::use_data(
+  rep_ever,
+  internal  = FALSE,
+  overwrite = TRUE
+)
+```
+
 The enrollee data derived above is the data set `rep_ever` in midfieldr.  View its help page by running
 
 ```r
 ? rep_ever
 ```
 
-For some of these students, completing their program may not be feasible given the range of data available. `feasible_subset()` subsets the student IDs, retaining those who matriculate at least six years before the last term in the data. 
+For some of these students, completing their program may not be feasible given the range of data available. `subset_feasible()` subsets the student IDs, retaining those who matriculate at least six years before the last term in the data. 
 
 ```{r}
 # apply the feasible completion filter
-feasible_ids <- feasible_subset(id = enrollees$id)
+feasible_ids <- subset_feasible(id = enrollees$id)
 
 # examine the result
 str(feasible_ids)
@@ -387,7 +424,15 @@ enrollees <- filter_by_cip(midfieldterms,
   keep_col = c("id", "cip6"),
   unique_row = TRUE
 )
-feasible_ids <- feasible_subset(id = enrollees$id)
+fye <- copy(fye_start)
+setnames(fye, old = "start", new = "cip6")
+fye_starters <- filter_by_cip(fye,
+  keep_cip = group_cips,
+  unique_row = TRUE
+)
+enrollees <- rbind(enrollees, fye_starters)
+enrollees <- unique(enrollees)
+feasible_ids <- subset_feasible(id = enrollees$id)
 rows_we_want <- enrollees$id %in% feasible_ids
 enrollees <- enrollees[rows_we_want]
 race_sex <- filter_by_id(midfieldstudents,

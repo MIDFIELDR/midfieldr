@@ -57,8 +57,8 @@ midfieldr functions
 - `filter_by_id()` 
 - `filter_by_cip()`  
 - `filter_by_text()` 
-- `order_multiway()`  
-- `feasible_subset()` 
+- `prepare_multiway()`  
+- `subset_feasible()` 
 
 data.table syntax 
 
@@ -143,11 +143,11 @@ enrollees
 
 The output shows that we have `r nrow(enrollees)` unique combinations of student and program. 
 
-For some of these students, completing their program may not be feasible given the range of data available. `feasible_subset()` subsets the enrollees IDs, retaining those who matriculate at least six years before the last term in the data. 
+For some of these students, completing their program may not be feasible given the range of data available. `subset_feasible()` subsets the enrollees IDs, retaining those who matriculate at least six years before the last term in the data. 
 
 ```{r}
 # apply the feasible completion filter
-feasible_ids <- feasible_subset(enrollees$id)
+feasible_ids <- subset_feasible(enrollees$id)
 
 # subset the enrollees
 rows_we_want <- enrollees$id %in% feasible_ids
@@ -157,7 +157,7 @@ enrollees <- enrollees[rows_we_want]
 enrollees
 ```
 
-The number of students has dropped to `r nrow(enrollees)`. Our approach to determining completion feasibility using `feasible_subset()` is described in the *Filter for program completion feasibility* vignette [(link)](feasible_completion.html). 
+The number of students has dropped to `r nrow(enrollees)`. Our approach to determining completion feasibility using `subset_feasible()` is described in the *Filter for program completion feasibility* vignette [(link)](feasible_completion.html). 
 
 Using `filter_by_id()`, we access `midfieldstudents` to obtain students' race/ethnicity and sex as self-reported at matriculation. 
 
@@ -255,11 +255,11 @@ pre_mw <- pre_mw[, ..columns_we_want]
 pre_mw
 ```
 
-The second attribute of multiway data is that the levels of the categories are ordered by the median value of the quantitative variable. `order_multiway()`  converts the categorical variables to factors and orders the category levels.  
+The second attribute of multiway data is that the levels of the categories are ordered by the median value of the quantitative variable. `prepare_multiway()`  converts the categorical variables to factors and orders the category levels.  
 
 ```{r}
 # order the category levels
-data_mw <- order_multiway(pre_mw)
+data_mw <- prepare_multiway(pre_mw)
 ```
 
 The median values are attributes of the data frame. We can view them as follows. Note that `program` and `race_sex` are now factors ordered by the median enrolled numbers (recorded under the `scores` attribute). 
@@ -268,7 +268,7 @@ The median values are attributes of the data frame. We can view them as follows.
 lapply(data_mw, FUN = attributes)
 ```
 
-Multiway data and graphs and `order_multiway()` are described in more detail in the *Explore multiway data* vignette [(link)](explore_multiway.html).
+Multiway data and graphs and `prepare_multiway()` are described in more detail in the *Explore multiway data* vignette [(link)](explore_multiway.html).
 
 ## Graph the results
 
@@ -325,7 +325,7 @@ enrollees <- filter_by_cip(midfieldterms,
   keep_col = c("id", "cip6"),
   uniqueRow = TRUE
 )
-feasible_ids <- feasible_subset(enrollees$id)
+feasible_ids <- subset_feasible(enrollees$id)
 rows_we_want <- enrollees$id %in% feasible_ids
 enrollees <- enrollees[rows_we_want]
 race_sex <- filter_by_id(midfieldstudents,
@@ -351,7 +351,7 @@ columns_we_want <- c("program", "race_sex", "ever")
 pre_mw <- pre_mw[, ..columns_we_want]
 
 # complete the transformation to multiway form
-data_mw <- order_multiway(pre_mw)
+data_mw <- prepare_multiway(pre_mw)
 
 # graph results
 ggplot(data = data_mw, mapping = aes(x = ever, y = race_sex)) +

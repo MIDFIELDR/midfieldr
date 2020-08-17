@@ -57,7 +57,7 @@ NULL
 #'
 #' @export
 #'
-fye_mi_prep <- function(data_students = NULL,
+prepare_fye_mi <- function(data_students = NULL,
                         data_terms = NULL) {
 
   # default arguments

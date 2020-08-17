@@ -56,11 +56,11 @@ first degree term are always retained.
 }
 \seealso{
 Other functions: 
-\code{\link{feasible_subset}()},
 \code{\link{filter_by_cip}()},
 \code{\link{filter_by_text}()},
-\code{\link{fye_mi_prep}()},
-\code{\link{ipeds_subset}()},
-\code{\link{order_multiway}()}
+\code{\link{prepare_fye_mi}()},
+\code{\link{prepare_multiway}()},
+\code{\link{subset_feasible}()},
+\code{\link{subset_ipeds}()}
 }
 \concept{functions}

@@ -52,7 +52,7 @@ NULL
 #'
 #' @export
 #'
-feasible_subset <- function(id,
+subset_feasible <- function(id,
                             ...,
                             span = NULL,
                             term_advance_max = NULL,

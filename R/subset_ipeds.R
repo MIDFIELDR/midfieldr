@@ -39,7 +39,7 @@ NULL
 #'
 #' @export
 #'
-ipeds_subset <- function(starters,
+subset_ipeds <- function(starters,
                          ...,
                          span = NULL,
                          data_students = NULL,

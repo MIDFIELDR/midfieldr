@@ -82,7 +82,7 @@ filter_by_cip <- function(data,
   # return the first degree term only
   if (first_degree & "term_degree" %in% names(data)) {
     assert_required_column(data, "id")
-    DT <- DT[, term_degree := min(term_degree), by = id]
+    DT <- DT[, .SD[term_degree == min(term_degree)], by = id]
   }
 
   # return

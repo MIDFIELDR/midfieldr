@@ -16,9 +16,9 @@ NULL
 #'   \item \code{filter_by_text()} search the CIP data set for program codes
 #'   \item \code{filter_by_cip()} gather students ever enrolled in the programs
 #'   \item \code{filter_by_id()} obtain student sex and race/ethnicity
-#'   \item \code{feasible_subset()} subset students for 6-year
+#'   \item \code{subset_feasible()} subset students for 6-year
 #'   completion feasibility
-#'   \item \code{order_multiway()} condition multiway data for graphing
+#'   \item \code{prepare_multiway()} condition multiway data for graphing
 #' }
 #'
 #' Operations such subsetting, joining, and grouping and summarizing

@@ -1,4 +1,4 @@
-context("feasible_subset")
+context("subset_feasible")
 
 # get_my_path() for data in the testing directory
 # ctrl-shift-L to load internal functions
@@ -8,34 +8,34 @@ id <- subset_students$id
 
 test_that("Inputs are correct class", {
   expect_error(
-    feasible_subset(id = as.factor(id)),
+    subset_feasible(id = as.factor(id)),
     "`id` must be of class character"
   )
   # expect_error(
-  #   feasible_subset(id = id, span = TRUE),
+  #   subset_feasible(id = id, span = TRUE),
   #   "`span` must be of class numeric"
   # )
   # expect_error(
-  #   feasible_subset(id = id, data_students = id),
+  #   subset_feasible(id = id, data_students = id),
   #   "`data` must be of class data.frame"
   # )
   # expect_error(
-  #   feasible_subset(id = id, data_terms = id),
+  #   subset_feasible(id = id, data_terms = id),
   #   "`data` must be of class data.frame"
   # )
   # expect_error(
-  #   feasible_subset(id = id, data_degrees = id),
+  #   subset_feasible(id = id, data_degrees = id),
   #   "`data` must be of class data.frame"
   # )
 })
 test_that("Pipe correctly passes the first argument", {
   expect_equivalent(
-    feasible_subset(id = id),
-    id %>% feasible_subset()
+    subset_feasible(id = id),
+    id %>% subset_feasible()
   )
 })
 test_that("Results are correct when everyone graduates", {
-  r1 <- feasible_subset(id = id)
+  r1 <- subset_feasible(id = id)
   r1 <- r1[1:10]
   r2 <- c("MID25855262",
                "MID25860597",
@@ -53,7 +53,7 @@ test_that("Results are correct when no one graduates", {
   testcase <- midfielddata::midfielddegrees[is.na(degree), .(id, institution)]
   testcase <- testcase[order(id)][1:20]
   id <- testcase$id
-  r1 <- feasible_subset(id = id)
+  r1 <- subset_feasible(id = id)
   r2 <- c("MID25783135",
           "MID25783147",
           "MID25783156",
