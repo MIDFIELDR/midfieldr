@@ -247,3 +247,46 @@ NULL
 "fye_start"
 
 
+# -------------------------------------------------------------------
+
+#' Graduation rate results data set
+#'
+#' Representative case study. Graduation rate metric results for Civil,
+#' Electrical, Industrial, and Mechanical Engineering programs in
+#' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}. Results
+#' are grouped by program, race/ethnicity, and sex.
+#'
+#' @format \code{data.table} with 62 rows and 6 columns keyed by
+#' program, race/ethnicity, and sex. The variables are:
+#' \describe{
+#'  \item{program}{character, instructional programs selected for study}
+#'  \item{race}{character, student race/ethnicity}
+#'  \item{sex}{character, student sex}
+#'  \item{start}{numerical, number of students starting in a program
+#'      and completion is feasible}
+#'  \item{grad}{numerical, number of students graduating from the program}
+#'  \item{rate}{numerical, program graduation rate, a persistence metric}
+#' }
+#' @family example_data
+#'
+"rep_grad_rate"
+
+
+# -------------------------------------------------------------------
+
+#' Graduation rate data in multiway form
+#'
+#' Representative case study. Graduation rate metric results with two
+#' categorical variables as factors with levels ordered by the median
+#' graduation rate.
+#'
+#' @format \code{data.table} with 32 rows and 3 columns keyed by
+#' program, race/ethnicity, and sex. The variables are:
+#' \describe{
+#'  \item{program}{factor, instructional programs selected for study}
+#'  \item{race_sex}{factor, student race/ethnicity and sex}
+#'  \item{rate}{numerical, program graduation rate, a persistence metric}
+#' }
+#' @family example_data
+#'
+"rep_grad_rate_mw"

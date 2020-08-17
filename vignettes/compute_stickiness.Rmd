@@ -8,7 +8,7 @@ vignette: >
 editor_options: 
   chunk_output_type: console
 bibliography: ../inst/REFERENCES.bib
-csl: ../inst/journal-of-glaciology.csl
+csl: ../inst/body-and-society.csl
 link-citations: yes
 resource_files:
   - ../man/figures/vignette-compute-stickiness-fig1-1.png
@@ -62,6 +62,7 @@ midfieldr functions
 
 data.table syntax
 
+- `copy()` prevent changing a source by reference
 - `DT[rows_we_want]` subset rows 
 - `DT[, .(new_col = .N), by = grouping_variables]` count N by group
 - `DT[, new_col := FUN]` create new column as a function of old columns 
@@ -96,7 +97,7 @@ The data are loaded with midfieldr.
 
 ```{r}
 # obtain programs (built-in data set)
-program_group <- rep_group
+program_group <- copy(rep_group)
 
 # examine the result
 program_group
@@ -125,7 +126,7 @@ group_cips
 
 ## Gather the students ever enrolled
 
-We use `filter_by_cip()` to extract from `midfieldstudents` the IDs of students ever enrolled in these programs.  
+We use `filter_by_cip()` to extract from `midfieldterms` the IDs of students ever enrolled in these programs.  
 
 ```{r}
 # gather students ever enrolled in programs
@@ -338,7 +339,7 @@ rows_we_want <- stickiness$ever > 0
 stickiness <- stickiness[rows_we_want]
 ```
 
-Divide `grad` by `ever` to compute stickiness.  
+Stickiness is the ratio of `grad` to `ever`.  
 
 ```{r}
 # compute stickiness

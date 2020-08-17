@@ -1,4 +1,14 @@
 
+
+## midfieldr 1.0.0.9004 / 2020-08
+
+Graduation rate and vignette
+
+- `ipeds_subset()`  
+- `rep_grad_rate` data
+- `rep_grad_rate_mw` data
+
+
 ## midfieldr 1.0.0.9003 / 2020-08
 
 Predicted starting programs for FYE students and vignette

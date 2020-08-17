@@ -46,6 +46,7 @@ order_multiway(mw_df)
 \seealso{
 Other data_carpentry: 
 \code{\link{feasible_subset}()},
-\code{\link{fye_mi_prep}()}
+\code{\link{fye_mi_prep}()},
+\code{\link{ipeds_subset}()}
 }
 \concept{data_carpentry}

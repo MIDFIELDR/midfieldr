@@ -31,6 +31,8 @@ and Mechanical Engineering programs in
 }
 \seealso{
 Other example_data: 
+\code{\link{rep_grad_rate_mw}},
+\code{\link{rep_grad_rate}},
 \code{\link{rep_group}},
 \code{\link{rep_id}},
 \code{\link{rep_start}},

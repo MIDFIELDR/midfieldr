@@ -1,0 +1,650 @@
+---
+title: "Compute graduation rate"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Compute graduation rate}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/body-and-society.csl
+link-citations: yes
+resource_files:
+  - ../man/figures/vignette-compute-grad-rate-fig1-1.png
+---
+
+```{r include = FALSE}
+knitr::opts_knit$set(root.dir = "../")
+knitr::opts_chunk$set(fig.path = "../man/figures/vignette-compute-grad-rate-")
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+kable2html <- function(x, font_size = NULL, caption = NULL) {
+  font_size <- ifelse(is.null(font_size), 11, font_size)
+  kable_in <- knitr::kable(x, format = "html", caption = caption)
+  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
+}
+```
+
+```{r echo = FALSE}
+load("inst/extdata/ipeds-vignette-data.rda")
+```
+
+## Introduction 
+
+Despite its flaws, graduation rate is commonly used persistence metric. 
+
+In the US, the Integrated Postsecondary Education Data System (IPEDS) defines "graduation rate" as the fraction of *full-time, first-time,* degree/certificate-seeking undergraduate students in a particular year who *complete the program in which they matriculate* within 150 percent of normal time, i.e., *within 6 years* for a 4-year program [@IPEDS:2020]. 
+
+The IPEDS definition excludes students who attend college part-time, who transfer from one institution to another, and who change majors. The American Council on Education (ACE) estimates that this definition of graduation rate may exclude up to 60% of students at 4-year institutions [@Cook+Hartle:2011]. 
+
+So why use the metric? Do graduation rates really matter? Cook and Hartle say, yes they do ... 
+
+> ... because in the eyes of the public, policy makers, and the media, they provide a clear, simple, and logical---if often misleading---number.
+
+So with these caveats in mind, we provide the tools for determining  program graduation rates per the IPEDS definition.
+
+### This vignette uses
+
+midfieldr functions 
+
+- `filter_by_cip()` 
+- `feasible_subset()` 
+- `ipeds_subset()`
+- `filter_by_id()`
+- `order_multieay()`
+
+data.table syntax
+
+- `copy()` prevent changing a source by reference
+- `setnames()` rename columns 
+- `DT[]` print a data frame
+- `DT[rows_we_want]` subset rows
+- `DT[, col := NULL]` remove a column 
+- `DT[, col := FUN]` assign values in a column 
+- `DT[, .(new_col = .N), by = grouping_variables]` count N by group
+
+packages
+
+```{r}
+ # packages used
+library(midfieldr)
+library(midfielddata)
+library(data.table)
+library(ggplot2)
+
+# print max 20 rows, otherwise 10 rows each head/tail
+options(datatable.print.nrows = 20, datatable.print.topn = 10)
+```
+
+## Choose the programs to study
+
+In the *Gather programs* vignette [(link)](get_programs.html), we create the program group of 6-digit codes and user-defined program names  for the engineering case study. These data are included with midfieldr as the built-in data set `rep_group`. View its help page by running
+
+```r
+? rep_group 
+```
+
+The data are loaded with midfieldr. 
+
+```{r}
+# obtain programs (built-in data set)
+program_group <- copy(rep_group)
+
+# examine the result
+program_group
+```
+
+We extract the `cip6` column as a character vector to gather student data. 
+
+```{r}
+# extract a vector of 6-digit CIP codes
+group_cips <- program_group$cip6
+
+# examine the result
+group_cips
+```
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+## Gather the starters  
+
+By "starters" we mean students matriculating in a case study program and FYE students whose starting programs are in the case study.  
+
+- matriculants from `midfieldstudents` by CIP
+- FYE starters from `fye_start`
+
+We use `filter_by_cip()` to extract from `midfieldstudents` the IDs of students matriculating in these programs.  
+
+```{r}
+# gather students matriculating in programs
+matriculants <- filter_by_cip(midfieldstudents,
+                              keep_cip = group_cips, 
+                              keep_col = c("id", "cip6"),
+                              unique_row = TRUE)
+
+# examine the result
+matriculants
+```
+
+In the *Impute FYE starting programs* vignette [(link)](impute_fye.html), we derive the starting programs for all FYE students in midfielddata. Again, we filter by the program group CIP codes. 
+
+```{r}
+# column name cip6 is required 
+fye <- copy(fye_start)
+setnames(fye, old = "start", new = "cip6")
+
+# gather FYE students predicted to start in these programs
+fye_starters <- filter_by_cip(fye,
+                              keep_cip = group_cips,
+                              unique_row = TRUE)
+
+# examine the result
+fye_starters
+```
+
+Bind the two data frames
+
+```{r}
+starters <- rbind(matriculants, fye_starters)
+
+# examine the result
+starters
+```
+
+For some of these students, completing their program may not be feasible given the range of data available. `feasible_subset()` subsets the student IDs, retaining those who matriculate at least six years before the last term in the data. 
+
+```{r}
+# apply the feasible completion filter
+feasible_ids <- feasible_subset(id = starters$id)
+
+# examine the result
+str(feasible_ids)
+```
+
+See the *Filter for program completion feasibility* vignette [(link)](feasible_completion.html) for a detailed explanation of how completion feasibility is determined.
+
+```{r}
+# subset the starters
+rows_we_want <- starters$id %in% feasible_ids
+starters <- starters[rows_we_want]
+
+# rename CIP 
+setnames(starters, old = "cip6", new = "start")
+
+# examine the result
+starters
+```
+
+These are the students eligible to be considered starters in our case study programs before we apply the IPEDS constraints. 
+
+The `starters` data frame is the input to `ipeds_subset()`.
+
+
+
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+
+
+## Apply IPEDS criteria
+
+In the next step, we subset the starters, retaining those who satisfy the IPEDS criteria:
+
+- first time in college (thus removing transfers) 
+- matriculate and graduate in the same program (thus removing migrators) 
+- graduate no later than 6 years after matriculation (effectively removing  part-time students)
+
+The IPEDS definition excludes part-time students. We do not test for part-time status specifically. We assume that students attending for no more than 6 years are effectively full-time.
+
+The input to `ipeds_subset()` is the `starters` data frame with columns `id` and `start`. The function subsets the rows of the data frame per the IPEDS constraints and adds a new yes/no column `ipeds_grad`, where  "Y" indicates that the student's graduation accords with the IPEDS definition of graduation rate. 
+
+```{r}
+ipeds_students <- ipeds_subset(starters)
+ipeds_students[]
+```
+
+```{r echo = FALSE}
+x <- (nrow(starters) - nrow(ipeds_students)) / nrow(starters)
+xpct <- round(100 * x, 0)
+```
+
+By applying the IPEDS restrictions, we've dropped from `r nrow(starters)` to `r nrow(ipeds_students)` students in this example, a `r xpct`% reduction in the number of students being considered. 
+
+
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+## Group, summarize, and join 
+
+Join program labels, race/ethnicity and sex. 
+
+```{r}
+setnames(ipeds_students, old = "start", new = "cip6")
+ipeds_students <- merge(ipeds_students, 
+                        program_group, 
+                        by = "cip6", 
+                        all.x = TRUE)
+
+# race sex
+race_sex <- filter_by_id(midfieldstudents, 
+                  keep_id = ipeds_students$id, 
+                  keep_col = c("id", "race", "sex"))
+ipeds_students <- merge(ipeds_students, race_sex, by = "id", all.x = TRUE)
+
+
+# done with ID and CIP
+ipeds_students[, id := NULL]
+ipeds_students[, cip6 := NULL]
+
+ipeds_students
+```
+
+Aggregate number of starters by program, race, and sex
+
+```{r}
+# assign variables to aggregate by
+grouping_variables <- c("program", "race", "sex")
+
+# group and summarize
+grouped_starters <- ipeds_students[, .(start = .N), by = grouping_variables]
+
+# examine the result
+grouped_starters
+```
+
+Aggregate number of graduates by program, race, and sex
+
+```{r}
+# group and summarize
+rows_we_want <- ipeds_students$ipeds_grad == "Y"
+grouped_graduates <- ipeds_students[rows_we_want, 
+                             .(grad = .N), 
+                             by = grouping_variables]
+
+# examine the result
+grouped_graduates
+```
+
+Join
+
+```{r}
+grouped_data  <- merge(grouped_starters, 
+                   grouped_graduates, 
+                   by = grouping_variables, 
+                   all.x = TRUE)
+
+grouped_data 
+```
+
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+
+
+
+
+## Compute graduation rate
+
+Convert the NA values in the `grad` column to zero.
+
+```{r}
+grad_rate <- grouped_data
+rows_with_grad_NA <- is.na(grad_rate$grad)
+grad_rate[rows_with_grad_NA, grad := 0]
+
+grad_rate
+```
+
+We omit rows with zero starters, if any, to avoid dividing by zero. 
+
+```{r}
+# prevent division by zero
+rows_we_want <- grad_rate$start > 0
+grad_rate <- grad_rate[rows_we_want]
+```
+
+Graduation rate is the ratio of `grad` to `start`.
+
+```{r}
+grad_rate[, rate := round(grad / start, 2)]
+
+grad_rate
+```
+
+To see the class of each column:
+
+```{r}
+# name and class of variables (columns)
+unlist(lapply(grad_rate, FUN = class))
+```
+
+```{r echo = FALSE, eval = FALSE}
+# run manually to create external data set 
+# external (user) data files
+rep_grad_rate <- grad_rate
+usethis::use_data(
+  rep_grad_rate, 
+  internal  = FALSE,
+  overwrite = TRUE
+)
+```
+
+The graduation rate data derived above is the data set `rep_grad_rate` in midfieldr.  View its help page by running
+
+```r
+? rep_grad_rate
+```
+
+
+
+
+## Condition the data for display 
+
+Before graphing, we isolate the three multiway variables (program, combined race and sex, and rate) and transform the categorical variables into factors with levels that are ordered by median graduation rate.  
+
+```{r}
+# pre-multiway data frame
+pre_mw <- copy(grad_rate)
+
+# alternatively, use the built-in data set
+# pre_mw <- copy(rep_grad_rate)
+
+# prepare rows
+rows_we_want <- pre_mw$start >= 5
+pre_mw <- pre_mw[rows_we_want]
+
+rows_we_want <- !pre_mw$race %in% c(
+  "Unknown",
+  "International",
+  "Other",
+  "Native American"
+)
+pre_mw <- pre_mw[rows_we_want]
+
+# complete the transformation to multiway form
+data_mw <- copy(pre_mw)
+data_mw[, race_sex := paste(race, sex, sep = " ")]
+columns_we_want <- c("program", "race_sex", "rate")
+data_mw <- data_mw[, ..columns_we_want]
+
+# transform characters to factors ordered by median rate
+data_mw <- order_multiway(data_mw)
+```
+
+```{r echo = FALSE, eval = FALSE}
+# run manually to create external data set 
+# external (user) data files
+rep_grad_rate_mw <- data_mw
+usethis::use_data(
+  rep_grad_rate_mw, 
+  internal  = FALSE,
+  overwrite = TRUE
+)
+```
+
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a>   
+
+
+
+
+
+## Graph the metric
+
+```{r echo = FALSE}
+nlevel1 <- nlevels(data_mw$program)
+nlevel2 <- nlevels(data_mw$race_sex)
+r <- nlevel1 * nlevel2
+q <- 32
+asp_ratio1 <- (r + 2 * nlevel1) / q
+asp_ratio2 <- (r + 2 * nlevel2) / q
+```
+
+We use conventional ggplot2 functions to graph the `data_mw` data set in a multiway graph. 
+
+```{r fig1, fig.asp = asp_ratio1}
+# graph results
+ggplot(data = data_mw, mapping = aes(x = rate, y = race_sex)) +
+  facet_wrap(facets = vars(program), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(x = "Graduation rate", y = "")
+```
+<br>
+
+
+
+
+
+
+
+
+
+<br>
+<a href="#top">&#9650; top of page</a>
+
+
+
+
+
+## For more information
+
+- *Impute FYE starting programs* vignette [(link)](impute_fye.html) 
+- *Subset for completion feasibility* vignette [(link)](feasible_completion.html)  
+- *Explore multiway data* vignette [(link)](explore_multiway.html) 
+
+
+
+
+
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+
+
+## Appendix
+
+### A. How `ipeds_subset()` works
+
+The first operation in `ipeds_subset()` is accessing `midfieldstudents` for entering term and transfer information for the students is `starters`. Then transfer students are removed, yielding: 
+
+```{r echo = FALSE}
+ipeds01[order(id)]
+n_starters <- nrow(starters)
+n_ipeds01 <- nrow(ipeds01)
+```
+
+By removing transfer students, we've reduced the population in this example from `r n_starters` to `r n_ipeds01`. 
+
+The next operation accesses `midfielddegrees` for the degree term and CIP code. An NA indicates no degree. 
+
+```{r echo = FALSE}
+ipeds02[order(id)]
+n_ipeds02 <- nrow(ipeds02)
+```
+
+In the degree data, the term recorded is NA for students with no degree. Therefore, the next operation accesses `midfieldterms` for the term and CIP code for every term for these students, retaining the last term only, yielding:
+
+```{r echo = FALSE}
+ipeds03[order(id)]
+n_ipeds03 <- nrow(ipeds03)
+```
+
+There is a small reduction in the number of students, from `r n_ipeds02` to `r n_ipeds03`, because of incomplete data in `midfieldterms`. (Some students have an NA in both their degree term and in their `term` data in `midfieldterms`. Essentially, we have matriculation information for these students but no term information.)
+
+Selecting the columns that are needed to apply the IPEDS constraints, we have, 
+
+```{r echo = FALSE}
+ipeds04[order(id)]
+```
+
+The next step is to recode degree CIP under either condition: 
+
+- recode a degree to NA if more than 6 years from entering term to degree term 
+- recode a degree to NA if degree CIP different from matriculation CIP  
+
+Finally, the degree CIP is used to create a yes/no column `ipeds_grad` to be returned with the original ID and `start` columns. For graduates in this result, the degree CIP and starting CIP are identical. 
+
+```{r echo = FALSE}
+ipeds06[order(id)]
+```
+
+
+<br>
+<a href="#top">&#9650; top of page</a> 
+
+### B. Complete script
+
+The vignette code chunks are collected below in a single, condensed script.
+
+```{r eval = FALSE}
+# packages used
+library(midfieldr)
+library(midfielddata)
+library(data.table)
+library(ggplot2)
+
+# select programs (built-in data set)
+program_group <- copy(rep_group)
+group_cips <- program_group$cip6
+
+# gather starters: matriculants and imputed FYE 
+matriculants <- filter_by_cip(midfieldstudents,
+                              keep_cip = group_cips, 
+                              keep_col = c("id", "cip6"),
+                              unique_row = TRUE
+)
+fye <- copy(fye_start)
+setnames(fye, old = "start", new = "cip6")
+fye_starters <- filter_by_cip(fye,
+                              keep_cip = group_cips,
+                              unique_row = TRUE
+)
+starters <- rbind(matriculants, fye_starters)
+
+# apply the feasible completion filter
+feasible_ids <- feasible_subset(starters$id)
+rows_we_want <- starters$id %in% feasible_ids
+starters <- starters[rows_we_want]
+setnames(starters, old = "cip6", new = "start")
+
+# apply IPEDS constraints
+ipeds_students <- ipeds_subset(starters)
+
+# join program labels and demographics 
+setnames(ipeds_students, old = "start", new = "cip6")
+ipeds_students <- merge(ipeds_students, 
+                        program_group, 
+                        by = "cip6", 
+                        all.x = TRUE)
+race_sex <- filter_by_id(midfieldstudents, 
+                         keep_id = ipeds_students$id, 
+                         keep_col = c("id", "race", "sex"))
+ipeds_students <- merge(ipeds_students, race_sex, by = "id", all.x = TRUE)
+
+# group, summarize, join 
+grouping_variables <- c("program", "race", "sex")
+grouped_starters <- ipeds_students[, .(start = .N), by = grouping_variables]
+rows_we_want <- ipeds_students$ipeds_grad == "Y"
+grouped_graduates <- ipeds_students[rows_we_want, 
+                                    .(grad = .N), 
+                                    by = grouping_variables]
+grouped_data  <- merge(grouped_starters, 
+                       grouped_graduates, 
+                       by = grouping_variables, 
+                       all.x = TRUE)
+
+# compute graduation rate
+grad_rate <- grouped_data
+rows_with_grad_NA <- is.na(grad_rate$grad)
+grad_rate[rows_with_grad_NA, grad := 0]
+rows_we_want <- grad_rate$start > 0
+grad_rate <- grad_rate[rows_we_want]
+grad_rate[, rate := round(grad / start, 2)]
+
+# condition data for display 
+pre_mw <- grad_rate
+rows_we_want <- pre_mw$start >= 5
+pre_mw <- pre_mw[rows_we_want]
+rows_we_want <- !pre_mw$race %in% c(
+  "Unknown",
+  "International",
+  "Other",
+  "Native American"
+)
+pre_mw <- pre_mw[rows_we_want]
+data_mw <- pre_mw
+data_mw[, race_sex := paste(race, sex, sep = " ")]
+columns_we_want <- c("program", "race_sex", "rate")
+data_mw <- data_mw[, ..columns_we_want]
+data_mw <- order_multiway(data_mw)
+
+# graph 
+ggplot(data = data_mw, mapping = aes(x = rate, y = race_sex)) +
+  facet_wrap(facets = vars(program), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(x = "Graduation rate", y = "")
+```
+
+
+<br>
+<a href="#top"         >&#9650;     top of page </a>     
+<a href="../index.html">&#9665;       main page </a> 

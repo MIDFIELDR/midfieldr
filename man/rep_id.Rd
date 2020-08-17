@@ -47,6 +47,8 @@ head(graduates)
 \seealso{
 Other example_data: 
 \code{\link{rep_cip}},
+\code{\link{rep_grad_rate_mw}},
+\code{\link{rep_grad_rate}},
 \code{\link{rep_group}},
 \code{\link{rep_start}},
 \code{\link{rep_stickiness_mw}},

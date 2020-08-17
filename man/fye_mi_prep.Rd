@@ -66,6 +66,7 @@ to factors. The output is ready for use as an input to the mice package.
 \seealso{
 Other data_carpentry: 
 \code{\link{feasible_subset}()},
+\code{\link{ipeds_subset}()},
 \code{\link{order_multiway}()}
 }
 \concept{data_carpentry}
