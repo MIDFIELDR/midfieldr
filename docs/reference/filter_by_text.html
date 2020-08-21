@@ -47,10 +47,11 @@
 
 
 <meta property="og:title" content="Subset rows by text — filter_by_text" />
-<meta property="og:description" content="Retain rows that contain matching or partially matching character strings.
-Not case-sensitive. Default behavior is to retain all columns.
-Use keep_col to subset columns. Use unique_row to remove
-duplicate rows after subsetting." />
+<meta property="og:description" content="Subset a data frame, retaining rows that match or partially match
+character strings. All columns retained unless specified by
+keep_col. The function uses grepl(), therefore
+non-character columns that can be coerced to character are also searched
+for matches." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -83,7 +84,7 @@ duplicate rows after subsetting." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9005</span>
       </span>
     </div>
 
@@ -167,10 +168,11 @@ duplicate rows after subsetting." />
     </div>
 
     <div class="ref-description">
-    <p>Retain rows that contain matching or partially matching character strings.
-Not case-sensitive. Default behavior is to retain all columns.
-Use <code>keep_col</code> to subset columns. Use <code>unique_row</code> to remove
-duplicate rows after subsetting.</p>
+    <p>Subset a data frame, retaining rows that match or partially match
+character strings. All columns retained unless specified by
+<code>keep_col</code>. The function uses <code><a href='https://rdrr.io/r/base/grep.html'>grepl()</a></code>, therefore
+non-character columns that can be coerced to character are also searched
+for matches.</p>
     </div>
 
     <pre class="usage"><span class='fu'>filter_by_text</span>(
@@ -187,7 +189,7 @@ duplicate rows after subsetting.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>data frame of character columns</p></td>
+      <td><p>data frame to be subset</p></td>
     </tr>
     <tr>
       <th>keep_text</th>
@@ -207,31 +209,23 @@ duplicate rows after subsetting.</p>
     </tr>
     <tr>
       <th>unique_row</th>
-      <td><p>logical, remove duplicate rows, default FALSE</p></td>
+      <td><p>logical, remove duplicate rows, default TRUE</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>data frame with the following properties:</p><ul>
-<li><p>Rows are a subset of the input in the same order</p></li>
-<li><p>All columns if <code>keep_col</code> NULL, otherwise columns named
-    in <code>keep_col</code></p></li>
-<li><p>Grouping structures are not preserved</p></li>
+    <p>Data frame with the following properties:</p><ul>
+<li><p>Rows matching elements of <code>keep_text</code></p></li>
+<li><p>Columns specified by <code>keep_col</code></p></li>
 <li><p>Data frame extensions such as <code>tbl</code> or <code>data.table</code>
     are preserved</p></li>
+<li><p>Grouping structures are not preserved</p></li>
 </ul>
 
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>The <code>data</code> argument is typically the midfieldr <code>cip</code> data set,
-though any data frame with all character-string columns can be searched
-and subset.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other functions: 
-<code><a href='filter_by_cip.html'>filter_by_cip</a>()</code>,
-<code><a href='filter_by_id.html'>filter_by_id</a>()</code>,
 <code><a href='prepare_fye_mi.html'>prepare_fye_mi</a>()</code>,
 <code><a href='prepare_multiway.html'>prepare_multiway</a>()</code>,
 <code><a href='subset_feasible.html'>subset_feasible</a>()</code>,

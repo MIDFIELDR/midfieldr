@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9005</span>
       </span>
     </div>
 
@@ -146,7 +146,6 @@
 <a href="#this-vignette-uses" class="anchor"></a>This vignette uses</h3>
 <p>midfieldr functions</p>
 <ul>
-<li><code><a href="../reference/filter_by_id.html">filter_by_id()</a></code></li>
 <li><code><a href="../reference/prepare_fye_mi.html">prepare_fye_mi()</a></code></li>
 </ul>
 <p>data.table syntax</p>
@@ -171,9 +170,9 @@
 <p>mice functions (optional, for performing the imputation yourself)</p>
 <ul>
 <li>
-<code><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice()</a></code> multiple imputation</li>
+<code><a href="https://rdrr.io/pkg/mice/man/mice.html">mice()</a></code> multiple imputation</li>
 <li>
-<code><a href="http://stefvanbuuren.github.io/mice/reference/complete.mids.html">complete()</a></code> extract completed data from <code><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice()</a></code> output</li>
+<code><a href="https://rdrr.io/pkg/mice/man/complete.mids.html">complete()</a></code> extract completed data from <code><a href="https://rdrr.io/pkg/mice/man/mice.html">mice()</a></code> output</li>
 </ul>
 <p>packages</p>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># packages used</span>
@@ -254,8 +253,8 @@
 
 <span class="co"># order rows and select columns</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html">setnames</a></span>(<span class="no">fye_start_summary</span>, <span class="kw">old</span> <span class="kw">=</span> <span class="st">"cip6"</span>, <span class="kw">new</span> <span class="kw">=</span> <span class="st">"start"</span>)
-<span class="no">columns_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"start"</span>, <span class="st">"cip6name"</span>, <span class="st">"N"</span>)
-<span class="no">fye_start_summary</span> <span class="kw">&lt;-</span> <span class="no">fye_start_summary</span>[<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html">order</a></span>(-<span class="no">N</span>), <span class="no">..columns_we_want</span>]
+<span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"start"</span>, <span class="st">"cip6name"</span>, <span class="st">"N"</span>)
+<span class="no">fye_start_summary</span> <span class="kw">&lt;-</span> <span class="no">fye_start_summary</span>[<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html">order</a></span>(-<span class="no">N</span>), <span class="no">..cols_we_want</span>]
 <span class="no">fye_start_summary</span></pre></body></html></div>
 <table class="table table">
 <caption style="font-size: initial !important;">
@@ -473,10 +472,10 @@ Engineering, Other
 <span class="co">#&gt;  chr [1:12409] "MID25783178" "MID25783197" "MID25783388" "MID25783441" ...</span></pre></body></html></div>
 <p>From <code>midfieldstudents</code> we obtain the matriculation programs for these students.</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># matriculation CIP for representative example</span>
-<span class="no">matric_programs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_id.html">filter_by_id</a></span>(<span class="no">midfieldstudents</span>,
-  <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">rep_ever</span>,
-  <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>)
-)
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">midfieldstudents</span>$<span class="no">id</span> <span class="kw">%in%</span> <span class="no">rep_ever</span>
+<span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>)
+<span class="no">matric_programs</span> <span class="kw">&lt;-</span> <span class="no">midfieldstudents</span>[<span class="no">rows_we_want</span>, <span class="no">..cols_we_want</span>]
+
 <span class="co"># examine the result</span>
 <span class="no">matric_programs</span>
 <span class="co">#&gt;                 id   cip6</span>
@@ -613,10 +612,10 @@ Engineering, Other
 </h3>
 <p>The mice package creates multiple imputations (replacement values) for missing data <span class="citation">(van Buuren and Groothuis-Oudshoorn, <a href="#ref-vanBuuren+Oudshoorn:2011" role="doc-biblioref">2011</a>)</span>. The replacement values are CIP codes to replace the NA values in the prepared data frame.</p>
 <p>Our predictors (institution, race, and sex) are unordered categorical variables, so the imputation method we select is a “polytomous logistic regression” (argument <code>polyreg</code>). To read more, view the help page by running</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r">? <span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>()</pre></body></html></div>
-<p>To examine the default arguments that <code><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice()</a></code> applies to our data, we call the function with zero iterations. (A warning may appear in your console. It can be ignored.)</p>
+<div class="sourceCode" id="cb12"><html><body><pre class="r">? <span class="fu"><a href="https://rdrr.io/pkg/mice/man/mice.html">mice</a></span>()</pre></body></html></div>
+<p>To examine the default arguments that <code><a href="https://rdrr.io/pkg/mice/man/mice.html">mice()</a></code> applies to our data, we call the function with zero iterations. (A warning may appear in your console. It can be ignored.)</p>
 <div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># examine default arguments</span>
-<span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(<span class="no">mi_data</span>, <span class="kw">maxit</span> <span class="kw">=</span> <span class="fl">0</span>)
+<span class="fu"><a href="https://rdrr.io/pkg/mice/man/mice.html">mice</a></span>(<span class="no">mi_data</span>, <span class="kw">maxit</span> <span class="kw">=</span> <span class="fl">0</span>)
 <span class="co"># &gt; Class: mids</span>
 <span class="co"># &gt; Number of multiple imputations:  5</span>
 <span class="co"># &gt; Imputation methods:</span>
@@ -639,9 +638,9 @@ Engineering, Other
 <li>
 <code>cip6</code> row of the predictor matrix correctly has a <code>1</code> in each of the three predictor columns (the other rows can be ignored)</li>
 </ul>
-<p>Applying <code><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice()</a></code> to our data returns an object of class <code>mids</code> (multiply imputed data set). The default <code>seed</code> argument is NULL, but by setting the seed as shown the vignette results are reproducible. Setting <code>printFlag = TRUE</code> displays progress in the console.</p>
+<p>Applying <code><a href="https://rdrr.io/pkg/mice/man/mice.html">mice()</a></code> to our data returns an object of class <code>mids</code> (multiply imputed data set). The default <code>seed</code> argument is NULL, but by setting the seed as shown the vignette results are reproducible. Setting <code>printFlag = TRUE</code> displays progress in the console.</p>
 <div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co"># impute missing CIP codes</span>
-<span class="no">mi_mids</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(<span class="no">mi_data</span>, <span class="kw">seed</span> <span class="kw">=</span> <span class="fl">20180624</span>, <span class="kw">printFlag</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">mi_mids</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/mice/man/mice.html">mice</a></span>(<span class="no">mi_data</span>, <span class="kw">seed</span> <span class="kw">=</span> <span class="fl">20180624</span>, <span class="kw">printFlag</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 <span class="co"># &gt;  iter imp variable</span>
 <span class="co"># &gt;   1   1  cip6</span>
 <span class="co"># &gt;   1   2  cip6</span>
@@ -654,9 +653,9 @@ Engineering, Other
 <span class="co"># &gt;   5   3  cip6</span>
 <span class="co"># &gt;   5   4  cip6</span>
 <span class="co"># &gt;   5   5  cip6</span></pre></body></html></div>
-<p>To export the <code>mids</code> object to a data frame, we use the <code><a href="http://stefvanbuuren.github.io/mice/reference/complete.mids.html">complete()</a></code> function.</p>
+<p>To export the <code>mids</code> object to a data frame, we use the <code><a href="https://rdrr.io/pkg/mice/man/complete.mids.html">complete()</a></code> function.</p>
 <div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="co"># export result to data frame</span>
-<span class="no">mi_start</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/complete.mids.html">complete</a></span>(<span class="no">mi_mids</span>)
+<span class="no">mi_start</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/mice/man/complete.mids.html">complete</a></span>(<span class="no">mi_mids</span>)
 
 <span class="co"># convert to data.table structure</span>
 <span class="kw pkg">data.table</span><span class="kw ns">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setDT.html">setDT</a></span>(<span class="no">mi_start</span>)
@@ -687,8 +686,8 @@ Engineering, Other
 <span class="co"># &gt; 5992: MID26648544 Institution J         White   Male 141901</span></pre></body></html></div>
 <p>Some final data carpentry yields the data frame we want.</p>
 <div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="co"># select columns</span>
-<span class="no">columns_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>)
-<span class="no">mi_start</span> <span class="kw">&lt;-</span> <span class="no">mi_start</span>[, <span class="no">..columns_we_want</span>]
+<span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>)
+<span class="no">mi_start</span> <span class="kw">&lt;-</span> <span class="no">mi_start</span>[, <span class="no">..cols_we_want</span>]
 
 <span class="co"># ensure our columns are characters</span>
 <span class="no">mi_start</span>[, <span class="no">id</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">id</span>)]
@@ -728,7 +727,7 @@ Engineering, Other
 <div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="co"># verify result matches expectation</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html">all.equal</a></span>(<span class="no">mi_start</span>, <span class="no">fye_start</span>)
 <span class="co"># &gt; [1] TRUE</span></pre></body></html></div>
-<p>Lastly, because the mice package masks the base R <code><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html">rbind()</a></code> and <code><a href="http://stefvanbuuren.github.io/mice/reference/cbind.html">cbind()</a></code> functions, we use the following to unload the package once we’re done with it.</p>
+<p>Lastly, because the mice package masks the base R <code><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html">rbind()</a></code> and <code><a href="https://rdrr.io/pkg/mice/man/cbind.html">cbind()</a></code> functions, we use the following to unload the package once we’re done with it.</p>
 <div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="co"># unload because mice masks rbind</span>
 <span class="fu"><a href="https://rdrr.io/r/base/detach.html">detach</a></span>(<span class="st">"package:mice"</span>, <span class="kw">unload</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
 </div>
@@ -820,7 +819,7 @@ Engineering, Other
 # &gt; 5990: MID26648508 Institution J International Female   &lt;NA&gt;
 # &gt; 5991: MID26648517 Institution J      Hispanic   Male   &lt;NA&gt;
 # &gt; 5992: MID26648544 Institution J         White   Male   &lt;NA&gt;</pre></body></html></div>
-<p>The final operation is to convert the three predictor variables—institution, race, and sex—to factors, yielding the form required for input data to <code><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice()</a></code>.</p>
+<p>The final operation is to convert the three predictor variables—institution, race, and sex—to factors, yielding the form required for input data to <code><a href="https://rdrr.io/pkg/mice/man/mice.html">mice()</a></code>.</p>
 </div>
 <div id="b--editing-the-arguments-for-mice" class="section level3">
 <h3 class="hasAnchor">
@@ -829,8 +828,8 @@ Engineering, Other
 <p>Had the default framework not been to our liking, we reset the arguments as follows, adapted from <span class="citation">(Katitas, <a href="#ref-Katitas:2019" role="doc-biblioref">2019</a>)</span>.</p>
 <p>Obtain the <code>mi_data</code> as before, using <code><a href="../reference/prepare_fye_mi.html">prepare_fye_mi()</a></code>.</p>
 <div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="no">mi_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/prepare_fye_mi.html">prepare_fye_mi</a></span>()</pre></body></html></div>
-<p>Use this data as the input to <code><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice()</a></code> with zero iterations.</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">mi_framework</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(<span class="no">mi_data</span>, <span class="kw">maxit</span> <span class="kw">=</span> <span class="fl">0</span>)</pre></body></html></div>
+<p>Use this data as the input to <code><a href="https://rdrr.io/pkg/mice/man/mice.html">mice()</a></code> with zero iterations.</p>
+<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">mi_framework</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/mice/man/mice.html">mice</a></span>(<span class="no">mi_data</span>, <span class="kw">maxit</span> <span class="kw">=</span> <span class="fl">0</span>)</pre></body></html></div>
 <p>Extract the method and predictor matrix from the framework.</p>
 <div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="no">mi_method</span> <span class="kw">&lt;-</span> <span class="no">mi_framework</span>$<span class="no">method</span>
 <span class="no">mi_predictors</span> <span class="kw">&lt;-</span> <span class="no">mi_framework</span>$<span class="no">predictorMatrix</span></pre></body></html></div>
@@ -845,7 +844,7 @@ Engineering, Other
 #&gt;             id cip6 institution race sex
 #&gt; cip6         0    0           1    1   1</pre></body></html></div>
 <p>Our three main arguments <code>mi_data</code>, <code>mi_method</code>, and <code>mi_predictors</code> are ready to use.</p>
-<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="no">mi_mids</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(
+<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="no">mi_mids</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/mice/man/mice.html">mice</a></span>(
   <span class="kw">data</span> <span class="kw">=</span> <span class="no">mi_data</span>,
   <span class="kw">method</span> <span class="kw">=</span> <span class="no">mi_method</span>,
   <span class="kw">predictorMatrix</span> <span class="kw">=</span> <span class="no">mi_predictors</span>,
@@ -870,15 +869,13 @@ Engineering, Other
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html">setnames</a></span>(<span class="no">fye_start_summary</span>, <span class="kw">old</span> <span class="kw">=</span> <span class="st">"start"</span>, <span class="kw">new</span> <span class="kw">=</span> <span class="st">"cip6"</span>)
 <span class="no">fye_start_summary</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">fye_start_summary</span>, <span class="no">cip</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html">setnames</a></span>(<span class="no">fye_start_summary</span>, <span class="kw">old</span> <span class="kw">=</span> <span class="st">"cip6"</span>, <span class="kw">new</span> <span class="kw">=</span> <span class="st">"start"</span>)
-<span class="no">columns_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"start"</span>, <span class="st">"cip6name"</span>, <span class="st">"N"</span>)
-<span class="no">fye_start_summary</span> <span class="kw">&lt;-</span> <span class="no">fye_start_summary</span>[<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html">order</a></span>(-<span class="no">N</span>), <span class="no">..columns_we_want</span>]
-
+<span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"start"</span>, <span class="st">"cip6name"</span>, <span class="st">"N"</span>)
+<span class="no">fye_start_summary</span> <span class="kw">&lt;-</span> <span class="no">fye_start_summary</span>[<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html">order</a></span>(-<span class="no">N</span>), <span class="no">..cols_we_want</span>]
 
 <span class="co"># How to use fye_start</span>
-<span class="no">matric_programs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_by_id.html">filter_by_id</a></span>(<span class="no">midfieldstudents</span>,
-  <span class="kw">keep_id</span> <span class="kw">=</span> <span class="no">rep_ever</span>,
-  <span class="kw">keep_col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>)
-)
+<span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">midfieldstudents</span>$<span class="no">id</span> <span class="kw">%in%</span> <span class="no">rep_ever</span>
+<span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>)
+<span class="no">matric_programs</span> <span class="kw">&lt;-</span> <span class="no">midfieldstudents</span>[<span class="no">rows_we_want</span>, <span class="no">..cols_we_want</span>]
 <span class="no">start_programs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">matric_programs</span>,
   <span class="no">fye_start</span>,
   <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>,
@@ -893,12 +890,12 @@ Engineering, Other
 <span class="no">mi_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/prepare_fye_mi.html">prepare_fye_mi</a></span>(<span class="no">midfieldstudents</span>, <span class="no">midfieldterms</span>)
 
 <span class="co"># How to use mice()</span>
-<span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(<span class="no">mi_data</span>, <span class="kw">maxit</span> <span class="kw">=</span> <span class="fl">0</span>)
-<span class="no">mi_mids</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(<span class="no">mi_data</span>, <span class="kw">seed</span> <span class="kw">=</span> <span class="fl">20180624</span>, <span class="kw">printFlag</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">mi_start</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/complete.mids.html">complete</a></span>(<span class="no">mi_mids</span>)
+<span class="fu"><a href="https://rdrr.io/pkg/mice/man/mice.html">mice</a></span>(<span class="no">mi_data</span>, <span class="kw">maxit</span> <span class="kw">=</span> <span class="fl">0</span>)
+<span class="no">mi_mids</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/mice/man/mice.html">mice</a></span>(<span class="no">mi_data</span>, <span class="kw">seed</span> <span class="kw">=</span> <span class="fl">20180624</span>, <span class="kw">printFlag</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">mi_start</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/mice/man/complete.mids.html">complete</a></span>(<span class="no">mi_mids</span>)
 <span class="kw pkg">data.table</span><span class="kw ns">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setDT.html">setDT</a></span>(<span class="no">mi_start</span>)
-<span class="no">columns_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>)
-<span class="no">mi_start</span> <span class="kw">&lt;-</span> <span class="no">mi_start</span>[, <span class="no">..columns_we_want</span>]
+<span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>)
+<span class="no">mi_start</span> <span class="kw">&lt;-</span> <span class="no">mi_start</span>[, <span class="no">..cols_we_want</span>]
 <span class="no">mi_start</span>[, <span class="no">id</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">id</span>)]
 <span class="no">mi_start</span>[, <span class="no">cip6</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">cip6</span>)]
 <span class="no">mi_start</span> <span class="kw">&lt;-</span> <span class="no">mi_start</span>[<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html">order</a></span>(<span class="no">id</span>)]
@@ -907,13 +904,13 @@ Engineering, Other
 
 <span class="co"># Appendix: editing the arguments for mice()</span>
 <span class="no">mi_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/prepare_fye_mi.html">prepare_fye_mi</a></span>()
-<span class="no">mi_framework</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(<span class="no">mi_data</span>, <span class="kw">maxit</span> <span class="kw">=</span> <span class="fl">0</span>)
+<span class="no">mi_framework</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/mice/man/mice.html">mice</a></span>(<span class="no">mi_data</span>, <span class="kw">maxit</span> <span class="kw">=</span> <span class="fl">0</span>)
 <span class="no">mi_method</span> <span class="kw">&lt;-</span> <span class="no">mi_framework</span>$<span class="no">method</span>
 <span class="no">mi_predictors</span> <span class="kw">&lt;-</span> <span class="no">mi_framework</span>$<span class="no">predictorMatrix</span>
 <span class="no">mi_method</span>[<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"cip6"</span>)] <span class="kw">&lt;-</span> <span class="st">"polyreg"</span>
 <span class="no">mi_method</span>[<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"institution"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>)] <span class="kw">&lt;-</span> <span class="st">""</span>
 <span class="no">mi_predictors</span>[, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>)] <span class="kw">&lt;-</span> <span class="fl">0</span>
-<span class="no">mi_mids</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="http://stefvanbuuren.github.io/mice/reference/mice.html">mice</a></span>(
+<span class="no">mi_mids</span> <span class="kw">&lt;-</span> <span class="kw pkg">mice</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/mice/man/mice.html">mice</a></span>(
   <span class="kw">data</span> <span class="kw">=</span> <span class="no">mi_data</span>,
   <span class="kw">method</span> <span class="kw">=</span> <span class="no">mi_method</span>,
   <span class="kw">predictorMatrix</span> <span class="kw">=</span> <span class="no">mi_predictors</span>,

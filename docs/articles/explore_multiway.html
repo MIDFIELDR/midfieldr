@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9005</span>
       </span>
     </div>
 
@@ -148,9 +148,11 @@
 <p>data.table syntax</p>
 <ul>
 <li>
+<code><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html">copy()</a></code> prevent changing a source by reference</li>
+<li>
 <code>DT[rows_we_want]</code> subset rows</li>
 <li>
-<code>DT[, ..columns_we_want]</code> select columns</li>
+<code>DT[, ..cols_we_want]</code> select columns</li>
 <li>
 <code>DT[, new_col := FUN]</code> create new column as a function of old columns</li>
 <li>
@@ -173,32 +175,32 @@
 <div class="sourceCode" id="cb2"><html><body><pre class="r">? <span class="no">rep_stickiness</span></pre></body></html></div>
 <p>The data are loaded with midfieldr. We assign it to the “pre-multiway” object <code>pre-mw</code>.</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># load stickiness data from case study</span>
-<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">rep_stickiness</span>
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html">copy</a></span>(<span class="no">rep_stickiness</span>)
 
 <span class="co"># examine the result</span>
 <span class="no">pre_mw</span>
 <span class="co">#&gt;                    program            race    sex ever grad stick</span>
-<span class="co">#&gt;  1:      Civil Engineering           Asian Female   18   11 0.611</span>
-<span class="co">#&gt;  2:      Civil Engineering           Asian   Male   42   24 0.571</span>
-<span class="co">#&gt;  3:      Civil Engineering           Black Female   55   21 0.382</span>
-<span class="co">#&gt;  4:      Civil Engineering           Black   Male  102   39 0.382</span>
-<span class="co">#&gt;  5:      Civil Engineering        Hispanic Female   11    5 0.455</span>
-<span class="co">#&gt;  6:      Civil Engineering        Hispanic   Male   61   30 0.492</span>
-<span class="co">#&gt;  7:      Civil Engineering   International Female    1    1 1.000</span>
-<span class="co">#&gt;  8:      Civil Engineering   International   Male   14    5 0.357</span>
-<span class="co">#&gt;  9:      Civil Engineering Native American   Male    7    3 0.429</span>
-<span class="co">#&gt; 10:      Civil Engineering           Other Female    5    1 0.200</span>
+<span class="co">#&gt;  1:      Civil Engineering           Asian Female   22   11  0.50</span>
+<span class="co">#&gt;  2:      Civil Engineering           Asian   Male   51   24  0.47</span>
+<span class="co">#&gt;  3:      Civil Engineering           Black Female   56   21  0.38</span>
+<span class="co">#&gt;  4:      Civil Engineering           Black   Male  106   39  0.37</span>
+<span class="co">#&gt;  5:      Civil Engineering        Hispanic Female   11    5  0.45</span>
+<span class="co">#&gt;  6:      Civil Engineering        Hispanic   Male   66   30  0.45</span>
+<span class="co">#&gt;  7:      Civil Engineering   International Female    1    1  1.00</span>
+<span class="co">#&gt;  8:      Civil Engineering   International   Male   14    5  0.36</span>
+<span class="co">#&gt;  9:      Civil Engineering Native American   Male    7    3  0.43</span>
+<span class="co">#&gt; 10:      Civil Engineering           Other Female    6    1  0.17</span>
 <span class="co">#&gt; ---                                                              </span>
-<span class="co">#&gt; 54: Mechanical Engineering   International Female    3    2 0.667</span>
-<span class="co">#&gt; 55: Mechanical Engineering   International   Male   39   26 0.667</span>
-<span class="co">#&gt; 56: Mechanical Engineering Native American Female    5    2 0.400</span>
-<span class="co">#&gt; 57: Mechanical Engineering Native American   Male   14    5 0.357</span>
-<span class="co">#&gt; 58: Mechanical Engineering           Other Female    4    2 0.500</span>
-<span class="co">#&gt; 59: Mechanical Engineering           Other   Male   47   28 0.596</span>
-<span class="co">#&gt; 60: Mechanical Engineering         Unknown Female    5    3 0.600</span>
-<span class="co">#&gt; 61: Mechanical Engineering         Unknown   Male   15    9 0.600</span>
-<span class="co">#&gt; 62: Mechanical Engineering           White Female  313  141 0.450</span>
-<span class="co">#&gt; 63: Mechanical Engineering           White   Male 2035 1166 0.573</span></pre></body></html></div>
+<span class="co">#&gt; 54: Mechanical Engineering   International Female    3    2  0.67</span>
+<span class="co">#&gt; 55: Mechanical Engineering   International   Male   43   26  0.60</span>
+<span class="co">#&gt; 56: Mechanical Engineering Native American Female    5    2  0.40</span>
+<span class="co">#&gt; 57: Mechanical Engineering Native American   Male   14    5  0.36</span>
+<span class="co">#&gt; 58: Mechanical Engineering           Other Female    4    2  0.50</span>
+<span class="co">#&gt; 59: Mechanical Engineering           Other   Male   49   28  0.57</span>
+<span class="co">#&gt; 60: Mechanical Engineering         Unknown Female    5    3  0.60</span>
+<span class="co">#&gt; 61: Mechanical Engineering         Unknown   Male   15    9  0.60</span>
+<span class="co">#&gt; 62: Mechanical Engineering           White Female  345  141  0.41</span>
+<span class="co">#&gt; 63: Mechanical Engineering           White   Male 2444 1166  0.48</span></pre></body></html></div>
 <p>To protect confidentiality and prevent identification of individuals or institutions with small sub-populations, we typically omit rows with a small population. Using the larger MIDFIELD database, we usually set this limit to 10. Here, using the midfielddata sample, we’ll use 5.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># prepare rows</span>
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>$<span class="no">ever</span> <span class="kw">&gt;=</span> <span class="fl">5</span>
@@ -207,27 +209,27 @@
 <span class="co"># examine the result</span>
 <span class="no">pre_mw</span>
 <span class="co">#&gt;                    program            race    sex ever grad stick</span>
-<span class="co">#&gt;  1:      Civil Engineering           Asian Female   18   11 0.611</span>
-<span class="co">#&gt;  2:      Civil Engineering           Asian   Male   42   24 0.571</span>
-<span class="co">#&gt;  3:      Civil Engineering           Black Female   55   21 0.382</span>
-<span class="co">#&gt;  4:      Civil Engineering           Black   Male  102   39 0.382</span>
-<span class="co">#&gt;  5:      Civil Engineering        Hispanic Female   11    5 0.455</span>
-<span class="co">#&gt;  6:      Civil Engineering        Hispanic   Male   61   30 0.492</span>
-<span class="co">#&gt;  7:      Civil Engineering   International   Male   14    5 0.357</span>
-<span class="co">#&gt;  8:      Civil Engineering Native American   Male    7    3 0.429</span>
-<span class="co">#&gt;  9:      Civil Engineering           Other Female    5    1 0.200</span>
-<span class="co">#&gt; 10:      Civil Engineering           Other   Male   14    8 0.571</span>
+<span class="co">#&gt;  1:      Civil Engineering           Asian Female   22   11  0.50</span>
+<span class="co">#&gt;  2:      Civil Engineering           Asian   Male   51   24  0.47</span>
+<span class="co">#&gt;  3:      Civil Engineering           Black Female   56   21  0.38</span>
+<span class="co">#&gt;  4:      Civil Engineering           Black   Male  106   39  0.37</span>
+<span class="co">#&gt;  5:      Civil Engineering        Hispanic Female   11    5  0.45</span>
+<span class="co">#&gt;  6:      Civil Engineering        Hispanic   Male   66   30  0.45</span>
+<span class="co">#&gt;  7:      Civil Engineering   International   Male   14    5  0.36</span>
+<span class="co">#&gt;  8:      Civil Engineering Native American   Male    7    3  0.43</span>
+<span class="co">#&gt;  9:      Civil Engineering           Other Female    6    1  0.17</span>
+<span class="co">#&gt; 10:      Civil Engineering           Other   Male   15    8  0.53</span>
 <span class="co">#&gt; ---                                                              </span>
-<span class="co">#&gt; 42: Mechanical Engineering        Hispanic Female   13    5 0.385</span>
-<span class="co">#&gt; 43: Mechanical Engineering        Hispanic   Male   80   39 0.488</span>
-<span class="co">#&gt; 44: Mechanical Engineering   International   Male   39   26 0.667</span>
-<span class="co">#&gt; 45: Mechanical Engineering Native American Female    5    2 0.400</span>
-<span class="co">#&gt; 46: Mechanical Engineering Native American   Male   14    5 0.357</span>
-<span class="co">#&gt; 47: Mechanical Engineering           Other   Male   47   28 0.596</span>
-<span class="co">#&gt; 48: Mechanical Engineering         Unknown Female    5    3 0.600</span>
-<span class="co">#&gt; 49: Mechanical Engineering         Unknown   Male   15    9 0.600</span>
-<span class="co">#&gt; 50: Mechanical Engineering           White Female  313  141 0.450</span>
-<span class="co">#&gt; 51: Mechanical Engineering           White   Male 2035 1166 0.573</span></pre></body></html></div>
+<span class="co">#&gt; 43: Mechanical Engineering        Hispanic Female   13    5  0.38</span>
+<span class="co">#&gt; 44: Mechanical Engineering        Hispanic   Male   87   39  0.45</span>
+<span class="co">#&gt; 45: Mechanical Engineering   International   Male   43   26  0.60</span>
+<span class="co">#&gt; 46: Mechanical Engineering Native American Female    5    2  0.40</span>
+<span class="co">#&gt; 47: Mechanical Engineering Native American   Male   14    5  0.36</span>
+<span class="co">#&gt; 48: Mechanical Engineering           Other   Male   49   28  0.57</span>
+<span class="co">#&gt; 49: Mechanical Engineering         Unknown Female    5    3  0.60</span>
+<span class="co">#&gt; 50: Mechanical Engineering         Unknown   Male   15    9  0.60</span>
+<span class="co">#&gt; 51: Mechanical Engineering           White Female  345  141  0.41</span>
+<span class="co">#&gt; 52: Mechanical Engineering           White   Male 2444 1166  0.48</span></pre></body></html></div>
 <p>We typically delete ambiguous levels of race/ethnicity. And because of its sparse representation in the data, we often omit the Native American population as well.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># remove rows of ambiguous or underrepresented populations</span>
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> !<span class="no">pre_mw</span>$<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
@@ -243,7 +245,7 @@
 <span class="co">#&gt; [1] "Asian"    "Black"    "Hispanic" "White"</span></pre></body></html></div>
 <p>We combine the race/ethnicity and sex column to create one of the multiway categorical variables.</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># begin transformation to multiway form</span>
-<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html">copy</a></span>(<span class="no">pre_mw</span>)
 
 <span class="co"># create a new combined framing variable</span>
 <span class="no">data_mw</span>[, <span class="no">race_sex</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="no">race</span>, <span class="no">sex</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">" "</span>)]
@@ -251,56 +253,56 @@
 <span class="co"># examine the result</span>
 <span class="no">data_mw</span>
 <span class="co">#&gt;                    program     race    sex ever grad stick        race_sex</span>
-<span class="co">#&gt;  1:      Civil Engineering    Asian Female   18   11 0.611    Asian Female</span>
-<span class="co">#&gt;  2:      Civil Engineering    Asian   Male   42   24 0.571      Asian Male</span>
-<span class="co">#&gt;  3:      Civil Engineering    Black Female   55   21 0.382    Black Female</span>
-<span class="co">#&gt;  4:      Civil Engineering    Black   Male  102   39 0.382      Black Male</span>
-<span class="co">#&gt;  5:      Civil Engineering Hispanic Female   11    5 0.455 Hispanic Female</span>
-<span class="co">#&gt;  6:      Civil Engineering Hispanic   Male   61   30 0.492   Hispanic Male</span>
-<span class="co">#&gt;  7:      Civil Engineering    White Female  346  192 0.555    White Female</span>
-<span class="co">#&gt;  8:      Civil Engineering    White   Male 1191  708 0.594      White Male</span>
-<span class="co">#&gt;  9: Electrical Engineering    Asian Female   42   22 0.524    Asian Female</span>
-<span class="co">#&gt; 10: Electrical Engineering    Asian   Male  204  120 0.588      Asian Male</span>
+<span class="co">#&gt;  1:      Civil Engineering    Asian Female   22   11  0.50    Asian Female</span>
+<span class="co">#&gt;  2:      Civil Engineering    Asian   Male   51   24  0.47      Asian Male</span>
+<span class="co">#&gt;  3:      Civil Engineering    Black Female   56   21  0.38    Black Female</span>
+<span class="co">#&gt;  4:      Civil Engineering    Black   Male  106   39  0.37      Black Male</span>
+<span class="co">#&gt;  5:      Civil Engineering Hispanic Female   11    5  0.45 Hispanic Female</span>
+<span class="co">#&gt;  6:      Civil Engineering Hispanic   Male   66   30  0.45   Hispanic Male</span>
+<span class="co">#&gt;  7:      Civil Engineering    White Female  407  192  0.47    White Female</span>
+<span class="co">#&gt;  8:      Civil Engineering    White   Male 1376  708  0.51      White Male</span>
+<span class="co">#&gt;  9: Electrical Engineering    Asian Female   45   22  0.49    Asian Female</span>
+<span class="co">#&gt; 10: Electrical Engineering    Asian   Male  222  120  0.54      Asian Male</span>
 <span class="co">#&gt; ---                                                                       </span>
-<span class="co">#&gt; 23: Industrial Engineering    White Female  252  172 0.683    White Female</span>
-<span class="co">#&gt; 24: Industrial Engineering    White   Male  514  354 0.689      White Male</span>
-<span class="co">#&gt; 25: Mechanical Engineering    Asian Female   24   15 0.625    Asian Female</span>
-<span class="co">#&gt; 26: Mechanical Engineering    Asian   Male  126   82 0.651      Asian Male</span>
-<span class="co">#&gt; 27: Mechanical Engineering    Black Female   88   34 0.386    Black Female</span>
-<span class="co">#&gt; 28: Mechanical Engineering    Black   Male  211   87 0.412      Black Male</span>
-<span class="co">#&gt; 29: Mechanical Engineering Hispanic Female   13    5 0.385 Hispanic Female</span>
-<span class="co">#&gt; 30: Mechanical Engineering Hispanic   Male   80   39 0.488   Hispanic Male</span>
-<span class="co">#&gt; 31: Mechanical Engineering    White Female  313  141 0.450    White Female</span>
-<span class="co">#&gt; 32: Mechanical Engineering    White   Male 2035 1166 0.573      White Male</span></pre></body></html></div>
+<span class="co">#&gt; 23: Industrial Engineering    White Female  286  172  0.60    White Female</span>
+<span class="co">#&gt; 24: Industrial Engineering    White   Male  611  354  0.58      White Male</span>
+<span class="co">#&gt; 25: Mechanical Engineering    Asian Female   24   15  0.62    Asian Female</span>
+<span class="co">#&gt; 26: Mechanical Engineering    Asian   Male  136   82  0.60      Asian Male</span>
+<span class="co">#&gt; 27: Mechanical Engineering    Black Female   94   34  0.36    Black Female</span>
+<span class="co">#&gt; 28: Mechanical Engineering    Black   Male  237   87  0.37      Black Male</span>
+<span class="co">#&gt; 29: Mechanical Engineering Hispanic Female   13    5  0.38 Hispanic Female</span>
+<span class="co">#&gt; 30: Mechanical Engineering Hispanic   Male   87   39  0.45   Hispanic Male</span>
+<span class="co">#&gt; 31: Mechanical Engineering    White Female  345  141  0.41    White Female</span>
+<span class="co">#&gt; 32: Mechanical Engineering    White   Male 2444 1166  0.48      White Male</span></pre></body></html></div>
 <p>To complete the transformation to multiway form, we select the three multiway variables.</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># select the multiway variables</span>
-<span class="no">columns_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"stick"</span>)
-<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">data_mw</span>[, <span class="no">..columns_we_want</span>]
+<span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"stick"</span>)
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">data_mw</span>[, <span class="no">..cols_we_want</span>]
 
 <span class="co"># examine the result</span>
 <span class="no">data_mw</span>
 <span class="co">#&gt;                    program        race_sex stick</span>
-<span class="co">#&gt;  1:      Civil Engineering    Asian Female 0.611</span>
-<span class="co">#&gt;  2:      Civil Engineering      Asian Male 0.571</span>
-<span class="co">#&gt;  3:      Civil Engineering    Black Female 0.382</span>
-<span class="co">#&gt;  4:      Civil Engineering      Black Male 0.382</span>
-<span class="co">#&gt;  5:      Civil Engineering Hispanic Female 0.455</span>
-<span class="co">#&gt;  6:      Civil Engineering   Hispanic Male 0.492</span>
-<span class="co">#&gt;  7:      Civil Engineering    White Female 0.555</span>
-<span class="co">#&gt;  8:      Civil Engineering      White Male 0.594</span>
-<span class="co">#&gt;  9: Electrical Engineering    Asian Female 0.524</span>
-<span class="co">#&gt; 10: Electrical Engineering      Asian Male 0.588</span>
+<span class="co">#&gt;  1:      Civil Engineering    Asian Female  0.50</span>
+<span class="co">#&gt;  2:      Civil Engineering      Asian Male  0.47</span>
+<span class="co">#&gt;  3:      Civil Engineering    Black Female  0.38</span>
+<span class="co">#&gt;  4:      Civil Engineering      Black Male  0.37</span>
+<span class="co">#&gt;  5:      Civil Engineering Hispanic Female  0.45</span>
+<span class="co">#&gt;  6:      Civil Engineering   Hispanic Male  0.45</span>
+<span class="co">#&gt;  7:      Civil Engineering    White Female  0.47</span>
+<span class="co">#&gt;  8:      Civil Engineering      White Male  0.51</span>
+<span class="co">#&gt;  9: Electrical Engineering    Asian Female  0.49</span>
+<span class="co">#&gt; 10: Electrical Engineering      Asian Male  0.54</span>
 <span class="co">#&gt; ---                                             </span>
-<span class="co">#&gt; 23: Industrial Engineering    White Female 0.683</span>
-<span class="co">#&gt; 24: Industrial Engineering      White Male 0.689</span>
-<span class="co">#&gt; 25: Mechanical Engineering    Asian Female 0.625</span>
-<span class="co">#&gt; 26: Mechanical Engineering      Asian Male 0.651</span>
-<span class="co">#&gt; 27: Mechanical Engineering    Black Female 0.386</span>
-<span class="co">#&gt; 28: Mechanical Engineering      Black Male 0.412</span>
-<span class="co">#&gt; 29: Mechanical Engineering Hispanic Female 0.385</span>
-<span class="co">#&gt; 30: Mechanical Engineering   Hispanic Male 0.488</span>
-<span class="co">#&gt; 31: Mechanical Engineering    White Female 0.450</span>
-<span class="co">#&gt; 32: Mechanical Engineering      White Male 0.573</span></pre></body></html></div>
+<span class="co">#&gt; 23: Industrial Engineering    White Female  0.60</span>
+<span class="co">#&gt; 24: Industrial Engineering      White Male  0.58</span>
+<span class="co">#&gt; 25: Mechanical Engineering    Asian Female  0.62</span>
+<span class="co">#&gt; 26: Mechanical Engineering      Asian Male  0.60</span>
+<span class="co">#&gt; 27: Mechanical Engineering    Black Female  0.36</span>
+<span class="co">#&gt; 28: Mechanical Engineering      Black Male  0.37</span>
+<span class="co">#&gt; 29: Mechanical Engineering Hispanic Female  0.38</span>
+<span class="co">#&gt; 30: Mechanical Engineering   Hispanic Male  0.45</span>
+<span class="co">#&gt; 31: Mechanical Engineering    White Female  0.41</span>
+<span class="co">#&gt; 32: Mechanical Engineering      White Male  0.48</span></pre></body></html></div>
 <p>Then we use <code><a href="../reference/prepare_multiway.html">prepare_multiway()</a></code> to convert the character columns to factors ordered by the median stickiness.</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># transform characters to factors ordered by median stickiness</span>
 <span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/prepare_multiway.html">prepare_multiway</a></span>(<span class="no">data_mw</span>)
@@ -308,27 +310,27 @@
 <span class="co"># examine the result</span>
 <span class="no">data_mw</span>
 <span class="co">#&gt;                    program        race_sex stick</span>
-<span class="co">#&gt;  1:      Civil Engineering    Asian Female 0.611</span>
-<span class="co">#&gt;  2:      Civil Engineering      Asian Male 0.571</span>
-<span class="co">#&gt;  3:      Civil Engineering    Black Female 0.382</span>
-<span class="co">#&gt;  4:      Civil Engineering      Black Male 0.382</span>
-<span class="co">#&gt;  5:      Civil Engineering Hispanic Female 0.455</span>
-<span class="co">#&gt;  6:      Civil Engineering   Hispanic Male 0.492</span>
-<span class="co">#&gt;  7:      Civil Engineering    White Female 0.555</span>
-<span class="co">#&gt;  8:      Civil Engineering      White Male 0.594</span>
-<span class="co">#&gt;  9: Electrical Engineering    Asian Female 0.524</span>
-<span class="co">#&gt; 10: Electrical Engineering      Asian Male 0.588</span>
+<span class="co">#&gt;  1:      Civil Engineering    Asian Female  0.50</span>
+<span class="co">#&gt;  2:      Civil Engineering      Asian Male  0.47</span>
+<span class="co">#&gt;  3:      Civil Engineering    Black Female  0.38</span>
+<span class="co">#&gt;  4:      Civil Engineering      Black Male  0.37</span>
+<span class="co">#&gt;  5:      Civil Engineering Hispanic Female  0.45</span>
+<span class="co">#&gt;  6:      Civil Engineering   Hispanic Male  0.45</span>
+<span class="co">#&gt;  7:      Civil Engineering    White Female  0.47</span>
+<span class="co">#&gt;  8:      Civil Engineering      White Male  0.51</span>
+<span class="co">#&gt;  9: Electrical Engineering    Asian Female  0.49</span>
+<span class="co">#&gt; 10: Electrical Engineering      Asian Male  0.54</span>
 <span class="co">#&gt; ---                                             </span>
-<span class="co">#&gt; 23: Industrial Engineering    White Female 0.683</span>
-<span class="co">#&gt; 24: Industrial Engineering      White Male 0.689</span>
-<span class="co">#&gt; 25: Mechanical Engineering    Asian Female 0.625</span>
-<span class="co">#&gt; 26: Mechanical Engineering      Asian Male 0.651</span>
-<span class="co">#&gt; 27: Mechanical Engineering    Black Female 0.386</span>
-<span class="co">#&gt; 28: Mechanical Engineering      Black Male 0.412</span>
-<span class="co">#&gt; 29: Mechanical Engineering Hispanic Female 0.385</span>
-<span class="co">#&gt; 30: Mechanical Engineering   Hispanic Male 0.488</span>
-<span class="co">#&gt; 31: Mechanical Engineering    White Female 0.450</span>
-<span class="co">#&gt; 32: Mechanical Engineering      White Male 0.573</span></pre></body></html></div>
+<span class="co">#&gt; 23: Industrial Engineering    White Female  0.60</span>
+<span class="co">#&gt; 24: Industrial Engineering      White Male  0.58</span>
+<span class="co">#&gt; 25: Mechanical Engineering    Asian Female  0.62</span>
+<span class="co">#&gt; 26: Mechanical Engineering      Asian Male  0.60</span>
+<span class="co">#&gt; 27: Mechanical Engineering    Black Female  0.36</span>
+<span class="co">#&gt; 28: Mechanical Engineering      Black Male  0.37</span>
+<span class="co">#&gt; 29: Mechanical Engineering Hispanic Female  0.38</span>
+<span class="co">#&gt; 30: Mechanical Engineering   Hispanic Male  0.45</span>
+<span class="co">#&gt; 31: Mechanical Engineering    White Female  0.41</span>
+<span class="co">#&gt; 32: Mechanical Engineering      White Male  0.48</span></pre></body></html></div>
 <p>The multiway data derived above is the data set <code>rep_stickiness_mw</code> in midfieldr. View its help page by running</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r">? <span class="no">rep_stickiness_mw</span></pre></body></html></div>
 </div>
@@ -380,7 +382,7 @@
 <a href="#creating-a-data-table" class="anchor"></a>Creating a data table</h2>
 <p>Data tables are useful in discussions with one’s research team and are often included in publications for editors or reviewers who want to see the values underlying the data graphics. The first thing to do before tabulating is to limit the significant figures of floating-point numbers.</p>
 <div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># tabulate data in block record ("long") form</span>
-<span class="no">blockf</span> <span class="kw">&lt;-</span> <span class="no">data_mw</span>
+<span class="no">blockf</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html">copy</a></span>(<span class="no">data_mw</span>)
 
 <span class="co"># limit significant digits</span>
 <span class="no">blockf</span>[, <span class="no">stick</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="no">stick</span>, <span class="fl">2</span>)]
@@ -413,216 +415,216 @@ Civil Engineering
 Asian Female
 </td>
 <td style="text-align:right;">
-0.61
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Civil Engineering
-</td>
-<td style="text-align:left;">
-Asian Male
-</td>
-<td style="text-align:right;">
-0.57
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Civil Engineering
-</td>
-<td style="text-align:left;">
-Black Female
-</td>
-<td style="text-align:right;">
-0.38
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Civil Engineering
-</td>
-<td style="text-align:left;">
-Black Male
-</td>
-<td style="text-align:right;">
-0.38
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Civil Engineering
-</td>
-<td style="text-align:left;">
-Hispanic Female
-</td>
-<td style="text-align:right;">
-0.46
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Civil Engineering
-</td>
-<td style="text-align:left;">
-Hispanic Male
-</td>
-<td style="text-align:right;">
-0.49
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Civil Engineering
-</td>
-<td style="text-align:left;">
-White Female
-</td>
-<td style="text-align:right;">
-0.56
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Civil Engineering
-</td>
-<td style="text-align:left;">
-White Male
-</td>
-<td style="text-align:right;">
-0.59
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical Engineering
-</td>
-<td style="text-align:left;">
-Asian Female
-</td>
-<td style="text-align:right;">
-0.52
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical Engineering
-</td>
-<td style="text-align:left;">
-Asian Male
-</td>
-<td style="text-align:right;">
-0.59
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical Engineering
-</td>
-<td style="text-align:left;">
-Black Female
-</td>
-<td style="text-align:right;">
-0.46
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical Engineering
-</td>
-<td style="text-align:left;">
-Black Male
-</td>
-<td style="text-align:right;">
-0.43
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical Engineering
-</td>
-<td style="text-align:left;">
-Hispanic Female
-</td>
-<td style="text-align:right;">
-0.43
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical Engineering
-</td>
-<td style="text-align:left;">
-Hispanic Male
-</td>
-<td style="text-align:right;">
-0.46
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical Engineering
-</td>
-<td style="text-align:left;">
-White Female
-</td>
-<td style="text-align:right;">
-0.35
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical Engineering
-</td>
-<td style="text-align:left;">
-White Male
-</td>
-<td style="text-align:right;">
-0.49
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial Engineering
-</td>
-<td style="text-align:left;">
-Asian Female
-</td>
-<td style="text-align:right;">
-0.56
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial Engineering
-</td>
-<td style="text-align:left;">
-Asian Male
-</td>
-<td style="text-align:right;">
-0.70
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial Engineering
-</td>
-<td style="text-align:left;">
-Black Female
-</td>
-<td style="text-align:right;">
-0.59
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial Engineering
-</td>
-<td style="text-align:left;">
-Black Male
-</td>
-<td style="text-align:right;">
 0.50
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+0.47
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+0.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+0.37
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Female
+</td>
+<td style="text-align:right;">
+0.45
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Male
+</td>
+<td style="text-align:right;">
+0.45
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+White Female
+</td>
+<td style="text-align:right;">
+0.47
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil Engineering
+</td>
+<td style="text-align:left;">
+White Male
+</td>
+<td style="text-align:right;">
+0.51
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+0.49
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+0.54
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+0.44
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+0.39
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Female
+</td>
+<td style="text-align:right;">
+0.40
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+Hispanic Male
+</td>
+<td style="text-align:right;">
+0.46
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+White Female
+</td>
+<td style="text-align:right;">
+0.32
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical Engineering
+</td>
+<td style="text-align:left;">
+White Male
+</td>
+<td style="text-align:right;">
+0.44
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+0.54
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+0.65
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+0.53
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial Engineering
+</td>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+0.47
 </td>
 </tr>
 <tr>
@@ -655,7 +657,7 @@ Industrial Engineering
 White Female
 </td>
 <td style="text-align:right;">
-0.68
+0.60
 </td>
 </tr>
 <tr>
@@ -666,7 +668,7 @@ Industrial Engineering
 White Male
 </td>
 <td style="text-align:right;">
-0.69
+0.58
 </td>
 </tr>
 <tr>
@@ -688,7 +690,7 @@ Mechanical Engineering
 Asian Male
 </td>
 <td style="text-align:right;">
-0.65
+0.60
 </td>
 </tr>
 <tr>
@@ -699,7 +701,7 @@ Mechanical Engineering
 Black Female
 </td>
 <td style="text-align:right;">
-0.39
+0.36
 </td>
 </tr>
 <tr>
@@ -710,7 +712,7 @@ Mechanical Engineering
 Black Male
 </td>
 <td style="text-align:right;">
-0.41
+0.37
 </td>
 </tr>
 <tr>
@@ -732,7 +734,7 @@ Mechanical Engineering
 Hispanic Male
 </td>
 <td style="text-align:right;">
-0.49
+0.45
 </td>
 </tr>
 <tr>
@@ -743,7 +745,7 @@ Mechanical Engineering
 White Female
 </td>
 <td style="text-align:right;">
-0.45
+0.41
 </td>
 </tr>
 <tr>
@@ -754,7 +756,7 @@ Mechanical Engineering
 White Male
 </td>
 <td style="text-align:right;">
-0.57
+0.48
 </td>
 </tr>
 </tbody>
@@ -788,13 +790,13 @@ Mechanical
 Asian Female
 </td>
 <td style="text-align:right;">
-0.61
+0.50
 </td>
 <td style="text-align:right;">
-0.52
+0.49
 </td>
 <td style="text-align:right;">
-0.56
+0.54
 </td>
 <td style="text-align:right;">
 0.62
@@ -805,16 +807,16 @@ Asian Female
 Asian Male
 </td>
 <td style="text-align:right;">
-0.57
+0.47
 </td>
 <td style="text-align:right;">
-0.59
-</td>
-<td style="text-align:right;">
-0.70
+0.54
 </td>
 <td style="text-align:right;">
 0.65
+</td>
+<td style="text-align:right;">
+0.60
 </td>
 </tr>
 <tr>
@@ -825,13 +827,13 @@ Black Female
 0.38
 </td>
 <td style="text-align:right;">
-0.46
+0.44
 </td>
 <td style="text-align:right;">
-0.59
+0.53
 </td>
 <td style="text-align:right;">
-0.39
+0.36
 </td>
 </tr>
 <tr>
@@ -839,16 +841,16 @@ Black Female
 Black Male
 </td>
 <td style="text-align:right;">
-0.38
+0.37
 </td>
 <td style="text-align:right;">
-0.43
+0.39
 </td>
 <td style="text-align:right;">
-0.50
+0.47
 </td>
 <td style="text-align:right;">
-0.41
+0.37
 </td>
 </tr>
 <tr>
@@ -856,10 +858,10 @@ Black Male
 Hispanic Female
 </td>
 <td style="text-align:right;">
-0.46
+0.45
 </td>
 <td style="text-align:right;">
-0.43
+0.40
 </td>
 <td style="text-align:right;">
 0.71
@@ -873,7 +875,7 @@ Hispanic Female
 Hispanic Male
 </td>
 <td style="text-align:right;">
-0.49
+0.45
 </td>
 <td style="text-align:right;">
 0.46
@@ -882,7 +884,7 @@ Hispanic Male
 0.73
 </td>
 <td style="text-align:right;">
-0.49
+0.45
 </td>
 </tr>
 <tr>
@@ -890,16 +892,16 @@ Hispanic Male
 White Female
 </td>
 <td style="text-align:right;">
-0.56
+0.47
 </td>
 <td style="text-align:right;">
-0.35
+0.32
 </td>
 <td style="text-align:right;">
-0.68
+0.60
 </td>
 <td style="text-align:right;">
-0.45
+0.41
 </td>
 </tr>
 <tr>
@@ -907,16 +909,16 @@ White Female
 White Male
 </td>
 <td style="text-align:right;">
-0.59
+0.51
 </td>
 <td style="text-align:right;">
-0.49
+0.44
 </td>
 <td style="text-align:right;">
-0.69
+0.58
 </td>
 <td style="text-align:right;">
-0.57
+0.48
 </td>
 </tr>
 </tbody>
@@ -934,7 +936,7 @@ White Male
 </ul>
 <p>Before reshaping, we convert factors to characters so that the rows and columns are in alphabetical order after reshaping.</p>
 <div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># convert factors to characters</span>
-<span class="no">temp</span> <span class="kw">&lt;-</span> <span class="no">blockf</span>
+<span class="no">temp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html">copy</a></span>(<span class="no">blockf</span>)
 <span class="no">temp</span> <span class="kw">&lt;-</span> <span class="no">temp</span>[, <span class="no">race_sex</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">race_sex</span>)]
 <span class="no">temp</span> <span class="kw">&lt;-</span> <span class="no">temp</span>[, <span class="no">program</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">program</span>)]</pre></body></html></div>
 <p><code><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html">dcast()</a></code> is used here to reshape the data frame from block-record form to row-record form.</p>
@@ -957,14 +959,14 @@ White Male
 <span class="co"># examine the result</span>
 <span class="no">rowf</span>
 <span class="co">#&gt;    Race/ethnicity/sex Civil Electrical Industrial Mechanical</span>
-<span class="co">#&gt; 1:       Asian Female  0.61       0.52       0.56       0.62</span>
-<span class="co">#&gt; 2:         Asian Male  0.57       0.59       0.70       0.65</span>
-<span class="co">#&gt; 3:       Black Female  0.38       0.46       0.59       0.39</span>
-<span class="co">#&gt; 4:         Black Male  0.38       0.43       0.50       0.41</span>
-<span class="co">#&gt; 5:    Hispanic Female  0.46       0.43       0.71       0.38</span>
-<span class="co">#&gt; 6:      Hispanic Male  0.49       0.46       0.73       0.49</span>
-<span class="co">#&gt; 7:       White Female  0.56       0.35       0.68       0.45</span>
-<span class="co">#&gt; 8:         White Male  0.59       0.49       0.69       0.57</span></pre></body></html></div>
+<span class="co">#&gt; 1:       Asian Female  0.50       0.49       0.54       0.62</span>
+<span class="co">#&gt; 2:         Asian Male  0.47       0.54       0.65       0.60</span>
+<span class="co">#&gt; 3:       Black Female  0.38       0.44       0.53       0.36</span>
+<span class="co">#&gt; 4:         Black Male  0.37       0.39       0.47       0.37</span>
+<span class="co">#&gt; 5:    Hispanic Female  0.45       0.40       0.71       0.38</span>
+<span class="co">#&gt; 6:      Hispanic Male  0.45       0.46       0.73       0.45</span>
+<span class="co">#&gt; 7:       White Female  0.47       0.32       0.60       0.41</span>
+<span class="co">#&gt; 8:         White Male  0.51       0.44       0.58       0.48</span></pre></body></html></div>
 <p>Other good tools for reshaping are provided in packages such as cdata <span class="citation">(Mount and Zumel, <a href="#ref-Mount+Zumel:2020:cdata" role="doc-biblioref">2020</a>)</span> and tidyr <span class="citation">(Wickham and Henry, <a href="#ref-Wickham+Henry:2020:tidyr" role="doc-biblioref">2020</a>)</span>. Base R provides the <code><a href="https://rdrr.io/r/stats/reshape.html">reshape()</a></code> function but the arguments in <code><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html">dcast()</a></code> seem easier to understand in this instance.</p>
 </div>
 <div id="references" class="section level2">
@@ -1001,7 +1003,7 @@ White Male
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
 
 <span class="co"># load stickiness data from case study</span>
-<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">rep_stickiness</span>
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html">copy</a></span>(<span class="no">rep_stickiness</span>)
 
 <span class="co"># prepare rows</span>
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>$<span class="no">ever</span> <span class="kw">&gt;=</span> <span class="fl">5</span>
@@ -1017,10 +1019,10 @@ White Male
 
 
 <span class="co"># complete the transformation to multiway form</span>
-<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html">copy</a></span>(<span class="no">pre_mw</span>)
 <span class="no">data_mw</span>[, <span class="no">race_sex</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="no">race</span>, <span class="no">sex</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">" "</span>)]
-<span class="no">columns_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"stick"</span>)
-<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">data_mw</span>[, <span class="no">..columns_we_want</span>]
+<span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"stick"</span>)
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="no">data_mw</span>[, <span class="no">..cols_we_want</span>]
 
 <span class="co"># transform characters to factors ordered by median stickiness</span>
 <span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/prepare_multiway.html">prepare_multiway</a></span>(<span class="no">data_mw</span>)
@@ -1038,12 +1040,12 @@ White Male
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"Stickiness"</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="st">""</span>)
 
 <span class="co"># tabulate data in block record ("long") form</span>
-<span class="no">blockf</span> <span class="kw">&lt;-</span> <span class="no">data_mw</span>
+<span class="no">blockf</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html">copy</a></span>(<span class="no">data_mw</span>)
 <span class="no">blockf</span>[, <span class="no">stick</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="no">stick</span>, <span class="fl">2</span>)]
 <span class="no">blockf</span>
 
 <span class="co"># tabulate data in row record ("wide") form</span>
-<span class="no">temp</span> <span class="kw">&lt;-</span> <span class="no">blockf</span>
+<span class="no">temp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html">copy</a></span>(<span class="no">blockf</span>)
 <span class="no">temp</span> <span class="kw">&lt;-</span> <span class="no">temp</span>[, <span class="no">race_sex</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">race_sex</span>)]
 <span class="no">temp</span> <span class="kw">&lt;-</span> <span class="no">temp</span>[, <span class="no">program</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">program</span>)]
 <span class="no">rowf</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html">dcast</a></span>(<span class="no">temp</span>, <span class="no">race_sex</span> ~ <span class="no">program</span>, <span class="kw">value.var</span> <span class="kw">=</span> <span class="st">"stick"</span>)
