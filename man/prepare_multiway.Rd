@@ -2,7 +2,7 @@
 % Please edit documentation in R/prepare_multiway.R
 \name{prepare_multiway}
 \alias{prepare_multiway}
-\title{Order levels of multiway data}
+\title{Prepare multiway data}
 \usage{
 prepare_multiway(data = NULL)
 }
@@ -17,7 +17,8 @@ prepare_multiway(data = NULL)
   \item Categorical columns are factors with levels ordered by
 median quantitative values
   \item Grouping structures, if any, are not preserved
-  \item Data frame extensions \code{tbl} or \code{data.table} are preserved
+  \item Data frame extensions \code{tbl} or \code{data.table}
+  are preserved
 }
 }
 \description{
@@ -45,8 +46,6 @@ prepare_multiway(mw_df)
 }
 \seealso{
 Other functions: 
-\code{\link{filter_by_cip}()},
-\code{\link{filter_by_id}()},
 \code{\link{filter_by_text}()},
 \code{\link{prepare_fye_mi}()},
 \code{\link{subset_feasible}()},

@@ -4,32 +4,26 @@ NULL
 
 #' Subset rows by text
 #'
-#' Retain rows that contain matching or partially matching character strings.
-#' Not case-sensitive. Default behavior is to retain all columns.
-#' Use \code{keep_col} to subset columns. Use \code{unique_row} to remove
-#' duplicate rows after subsetting.
+#' Subset a data frame, retaining rows that match or partially match
+#' character strings. All columns retained unless specified by
+#' \code{keep_col}. The function uses \code{grepl()}, therefore
+#' non-character columns that can be coerced to character are also searched
+#' for matches.
 #'
-#' The \code{data} argument is typically the midfieldr \code{cip} data set,
-#' though any data frame with all character-string columns can be searched
-#' and subset.
-#'
-#' @param data data frame of character columns
+#' @param data data frame to be subset
 #' @param keep_text character vector of search patterns for retaining rows
 #' @param ... not used, force later arguments to be used by name
 #' @param drop_text character vector of search patterns for dropping rows
 #' @param keep_col character vector of column names, default all columns
-#' @param unique_row logical, remove duplicate rows, default FALSE
-#'
-#' @return data frame with the following properties:
+#' @param unique_row logical, remove duplicate rows, default TRUE
+#' @return Data frame with the following properties:
 #' \itemize{
-#'   \item Rows are a subset of the input in the same order
-#'   \item All columns if \code{keep_col} NULL, otherwise columns named
-#'     in \code{keep_col}
-#'   \item Grouping structures are not preserved
-#'   \item Data frame extensions such as \code{tbl} or \code{data.table}
+#'     \item Rows matching elements of \code{keep_text}
+#'     \item Columns specified by \code{keep_col}
+#'     \item Data frame extensions such as \code{tbl} or \code{data.table}
 #'     are preserved
+#'     \item Grouping structures are not preserved
 #' }
-#'
 #' @examples
 #' filter_by_text(cip, keep_text = c("^1407", "^1410"))
 #' filter_by_text(cip,
@@ -38,9 +32,7 @@ NULL
 #' filter_by_text(cip, keep_text = "History") %>%
 #'   filter_by_text(keep_text = "American")
 #' @family functions
-#'
 #' @export
-#'
 filter_by_text <- function(data,
                            keep_text = NULL,
                            ...,
@@ -59,7 +51,7 @@ filter_by_text <- function(data,
 
   # default optional arguments
   keep_col <- keep_col %||% names(data)
-  unique_row <- unique_row %||% FALSE
+  unique_row <- unique_row %||% TRUE
 
   # check arguments
   if (isFALSE(is.null(keep_text))) {
@@ -77,6 +69,9 @@ filter_by_text <- function(data,
   # to preserve data.frame, data.table, or tibble
   df_class <- get_df_class(data)
   DT <- data.table::copy(data.table::as.data.table(data))
+
+  # subset columns first to reduce search time
+  DT <- DT[, ..keep_col]
 
   # do the work
   DT <- filter_char_frame(
@@ -114,7 +109,6 @@ filter_by_text <- function(data,
   }
 
   # return
-  DT <- DT[, ..keep_col]
   if (unique_row) {
     DT <- unique_by_keys(DT)
   }

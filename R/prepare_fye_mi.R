@@ -85,8 +85,8 @@ prepare_fye_mi <- function(data_students = NULL,
 
   # students (fye01)
   rows_we_want <- data_students$cip6 %chin% c("14XXXX", "14YYYY")
-  columns_we_want <- c("id", "cip6", "institution", "race", "sex")
-  students_fye <- data_students[rows_we_want, ..columns_we_want]
+  cols_we_want <- c("id", "cip6", "institution", "race", "sex")
+  students_fye <- data_students[rows_we_want, ..cols_we_want]
 
   # terms produces fye02
   terms_fye <- fye_terms(data_terms, keep_id = students_fye$id)
@@ -127,10 +127,9 @@ fye_terms <- function(data, keep_id) {
   term <- NULL
   id <- NULL
 
-  all_fye_terms <- filter_by_id(data,
-    keep_id = keep_id,
-    keep_col = c("id", "cip6", "term")
-  )
+  rows_we_want <- data$id %in% keep_id
+  cols_we_want <- c("id", "cip6", "term")
+  all_fye_terms <- data[rows_we_want, ..cols_we_want]
   all_fye_terms <- all_fye_terms[order(id, term)]
 
   last_fye_terms <- all_fye_terms[cip6 %chin% c("14XXXX", "14YYYY")]

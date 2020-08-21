@@ -14,7 +14,7 @@ filter_by_text(
 )
 }
 \arguments{
-\item{data}{data frame of character columns}
+\item{data}{data frame to be subset}
 
 \item{keep_text}{character vector of search patterns for retaining rows}
 
@@ -24,29 +24,24 @@ filter_by_text(
 
 \item{keep_col}{character vector of column names, default all columns}
 
-\item{unique_row}{logical, remove duplicate rows, default FALSE}
+\item{unique_row}{logical, remove duplicate rows, default TRUE}
 }
 \value{
-data frame with the following properties:
+Data frame with the following properties:
 \itemize{
-  \item Rows are a subset of the input in the same order
-  \item All columns if \code{keep_col} NULL, otherwise columns named
-    in \code{keep_col}
-  \item Grouping structures are not preserved
-  \item Data frame extensions such as \code{tbl} or \code{data.table}
+    \item Rows matching elements of \code{keep_text}
+    \item Columns specified by \code{keep_col}
+    \item Data frame extensions such as \code{tbl} or \code{data.table}
     are preserved
+    \item Grouping structures are not preserved
 }
 }
 \description{
-Retain rows that contain matching or partially matching character strings.
-Not case-sensitive. Default behavior is to retain all columns.
-Use \code{keep_col} to subset columns. Use \code{unique_row} to remove
-duplicate rows after subsetting.
-}
-\details{
-The \code{data} argument is typically the midfieldr \code{cip} data set,
-though any data frame with all character-string columns can be searched
-and subset.
+Subset a data frame, retaining rows that match or partially match
+character strings. All columns retained unless specified by
+\code{keep_col}. The function uses \code{grepl()}, therefore
+non-character columns that can be coerced to character are also searched
+for matches.
 }
 \examples{
 filter_by_text(cip, keep_text = c("^1407", "^1410"))
@@ -58,8 +53,6 @@ filter_by_text(cip, keep_text = "History") \%>\%
 }
 \seealso{
 Other functions: 
-\code{\link{filter_by_cip}()},
-\code{\link{filter_by_id}()},
 \code{\link{prepare_fye_mi}()},
 \code{\link{prepare_multiway}()},
 \code{\link{subset_feasible}()},

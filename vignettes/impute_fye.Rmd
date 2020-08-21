@@ -65,7 +65,6 @@ To include an FYE student in metrics such as graduation rate, we have to predict
 
 midfieldr functions 
 
-- `filter_by_id()`
 - `prepare_fye_mi()` 
 
 data.table syntax 
@@ -137,8 +136,8 @@ fye_start_summary <- merge(fye_start_summary, cip, by = "cip6", all.x = TRUE)
 
 # order rows and select columns
 setnames(fye_start_summary, old = "cip6", new = "start")
-columns_we_want <- c("start", "cip6name", "N")
-fye_start_summary <- fye_start_summary[order(-N), ..columns_we_want]
+cols_we_want <- c("start", "cip6name", "N")
+fye_start_summary <- fye_start_summary[order(-N), ..cols_we_want]
 fye_start_summary
 ```
 
@@ -158,10 +157,10 @@ str(rep_ever)
 From `midfieldstudents` we obtain the matriculation programs for these students. 
 ```{r}
 # matriculation CIP for representative example
-matric_programs <- filter_by_id(midfieldstudents,
-  keep_id = rep_ever,
-  keep_col = c("id", "cip6")
-)
+rows_we_want <- midfieldstudents$id %in% rep_ever
+cols_we_want <- c("id", "cip6")
+matric_programs <- midfieldstudents[rows_we_want, ..cols_we_want]
+
 # examine the result
 matric_programs
 ```
@@ -327,8 +326,8 @@ Some final data carpentry yields the data frame we want.
 
 ```{r}
 # select columns
-columns_we_want <- c("id", "cip6")
-mi_start <- mi_start[, ..columns_we_want]
+cols_we_want <- c("id", "cip6")
+mi_start <- mi_start[, ..cols_we_want]
 
 # ensure our columns are characters
 mi_start[, id := as.character(id)]
@@ -570,15 +569,13 @@ fye_start_summary <- fye_start[, .(N = .N), by = "start"]
 setnames(fye_start_summary, old = "start", new = "cip6")
 fye_start_summary <- merge(fye_start_summary, cip, by = "cip6", all.x = TRUE)
 setnames(fye_start_summary, old = "cip6", new = "start")
-columns_we_want <- c("start", "cip6name", "N")
-fye_start_summary <- fye_start_summary[order(-N), ..columns_we_want]
-
+cols_we_want <- c("start", "cip6name", "N")
+fye_start_summary <- fye_start_summary[order(-N), ..cols_we_want]
 
 # How to use fye_start
-matric_programs <- filter_by_id(midfieldstudents,
-  keep_id = rep_ever,
-  keep_col = c("id", "cip6")
-)
+rows_we_want <- midfieldstudents$id %in% rep_ever
+cols_we_want <- c("id", "cip6")
+matric_programs <- midfieldstudents[rows_we_want, ..cols_we_want]
 start_programs <- merge(matric_programs,
   fye_start,
   by = "id",
@@ -597,8 +594,8 @@ mice(mi_data, maxit = 0)
 mi_mids <- mice::mice(mi_data, seed = 20180624, printFlag = TRUE)
 mi_start <- mice::complete(mi_mids)
 data.table::setDT(mi_start)
-columns_we_want <- c("id", "cip6")
-mi_start <- mi_start[, ..columns_we_want]
+cols_we_want <- c("id", "cip6")
+mi_start <- mi_start[, ..cols_we_want]
 mi_start[, id := as.character(id)]
 mi_start[, cip6 := as.character(cip6)]
 mi_start <- mi_start[order(id)]

@@ -1,4 +1,4 @@
-#' @importFrom data.table setDT setDF setnames %chin% setnafill
+#' @importFrom data.table setDT setDF setnames %chin% setnafill setkey
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
@@ -6,8 +6,9 @@ NULL
 #'
 #' Subset a data frame of student IDs and starting programs, retaining
 #' students satisfying the constraints of the IPEDS definition for
-#' successful graduation. The results adds a yes/no column \code{ipeds_grad} to
-#' indicate whether the student's graduation satisfied the IPEDS constraints.
+#' successful graduation. The results adds a yes/no column
+#' \code{ipeds_grad} to indicate whether the student's graduation satisfied
+#' the IPEDS constraints.
 #'
 #' The \code{starters} input must have columns \code{id} and \code{start}.
 #'
@@ -83,13 +84,14 @@ subset_ipeds <- function(starters,
   cip_degree <- NULL
   cip_term <- NULL
   ipeds_grad <- NULL
+  n_span <- NULL
+  term_sum <- NULL
 
   # gather matriculation data
-  matric_attr <- filter_by_id(data_students,
-    keep_id = starters$id,
-    keep_col = c("id", "term_enter", "transfer"),
-    unique_row = TRUE
-  )
+  rows_we_want <- data_students$id %in% starters$id
+  cols_we_want <- c("id", "term_enter", "transfer")
+  matric_attr <- data_students[rows_we_want, ..cols_we_want]
+  matric_attr <- unique(matric_attr)
 
   # remove transfer students
   DT <- merge(starters, matric_attr, by = "id", all.x = TRUE)
@@ -97,18 +99,17 @@ subset_ipeds <- function(starters,
   DT[, transfer := NULL]
 
   # merge degree data
-  degree_attr <- filter_by_id(data_degrees,
-    keep_id = DT$id,
-    keep_col = c("id", "cip6", "term_degree")
-  )
+  rows_we_want <- data_degrees$id %in% DT$id
+  cols_we_want <- c("id", "cip6", "term_degree")
+  degree_attr <- data_degrees[rows_we_want, ..cols_we_want]
+  degree_attr <- unique(degree_attr)
   setnames(degree_attr, old = c("cip6"), new = c("cip_degree"))
   DT <- merge(DT, degree_attr, by = "id", all.x = TRUE)
 
   # merge term data
-  term_attr <- filter_by_id(data_terms,
-    keep_id = DT$id,
-    keep_col = c("id", "cip6", "term")
-  )
+  rows_we_want <- data_terms$id %in% DT$id
+  cols_we_want <- c("id", "cip6", "term")
+  term_attr <- data_terms[rows_we_want, ..cols_we_want]
   DT <- merge(DT, term_attr, by = "id", all.x = TRUE)
   setnames(DT, old = c("cip6"), new = c("cip_term"))
 
@@ -125,9 +126,13 @@ subset_ipeds <- function(starters,
   DT[, cip_term := NULL]
   DT <- unique(DT)
 
-  # discount degree if > span
-  rows_we_discount <- DT$term_degree - DT$term_enter > 60 |
-    is.na(DT$term_degree)
+  # term_degree - span years = term_sum
+  # term_enter must be no less than term_sum
+  DT <- DT[, n_span := -2 * span]
+  DT <- term_add(DT, term_col = "term_degree", n_col = "n_span")
+  rows_we_discount <- DT$term_enter < DT$term_sum
+  DT[, n_span := NULL]
+  DT[, term_sum := NULL]
   DT[rows_we_discount, cip_degree := NA_character_]
 
   # discount degree if start and degree CIP not the same
@@ -140,4 +145,5 @@ subset_ipeds <- function(starters,
   DT[is.na(cip_degree), ipeds_grad := "N"]
   DT[!is.na(cip_degree), ipeds_grad := "Y"]
   DT[, cip_degree := NULL]
+  data.table::setkey(DT, NULL)
 }

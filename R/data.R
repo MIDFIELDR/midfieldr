@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------
 
-#' Classification of instructional programs (CIP) data
+#' Classification of instructional programs (CIP)
 #'
 #' A data set based on the US National Center for Education Statistics
 #' (NCES), Integrated Postsecondary Education Data System (IPEDS), 2020
@@ -38,14 +38,7 @@
 #'   representing "the most general groupings of related programs"}
 #'   \item{cip2name}{character program name at the 2-digit level}
 #' }
-#' @examples
-#' # overview
-#' str(cip)
-#'
-#' # filter_by_text() argument
-#' filter_by_text(cip, keep_text = "^1410")
 #' @family cip_data
-#'
 "cip"
 
 # -------------------------------------------------------------------
@@ -72,7 +65,6 @@
 #'   \item{cip2name}{character program name at the 2-digit level}
 #' }
 #' @family example_data
-#'
 "rep_cip"
 
 # -------------------------------------------------------------------
@@ -90,38 +82,20 @@
 #'   \item{program}{program name assigned for grouping, summarizing,
 #'   and joining}
 #' }
-#' @examples
-#' library(midfielddata)
-#'
-#' # attributes of students matriculating in programs
-#' cips_we_want <- rep_group$cip6
-#' rows_we_want <- midfieldstudents$cip6 %in% cips_we_want
-#' matriculants <- midfieldstudents[rows_we_want]
-#' str(matriculants)
-#'
-#' # attributes of students graduating in programs
-#' cips_we_want <- rep_group$cip6
-#' rows_we_want <- midfielddegrees$cip6 %in% cips_we_want
-#' graduates <- midfielddegrees[rows_we_want]
-#' str(graduates)
 #' @family example_data
-#'
 "rep_group"
 
 # -------------------------------------------------------------------
 
-#' Case student ID
+#' Case student IDs
 #'
-#' Representative case study. Character vector of student IDs ever enrolled
-#' in Civil, Electrical, Industrial, and Mechanical Engineering programs in
+#' Representative case study. Character vector of 12,409 student IDs
+#' ever enrolled in Civil, Electrical, Industrial, and Mechanical
+#' Engineering programs (including predicted starting programs for
+#' FYE students) in
 #' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 #'
 #' @format character vector
-#' @examples
-#' library(midfielddata)
-#' rows_we_want <- midfieldstudents$id %in% rep_ever
-#' enrollees <- midfieldstudents[rows_we_want]
-#' head(enrollees)
 #' @family example_data
 "rep_ever"
 
@@ -147,9 +121,7 @@
 #'  \item{stick}{numerical, program stickiness, a persistence metric}
 #' }
 #' @family example_data
-#'
 "rep_stickiness"
-
 
 # -------------------------------------------------------------------
 
@@ -166,12 +138,11 @@
 #'  \item{stick}{numerical, program stickiness, a persistence metric}
 #' }
 #' @family example_data
-#'
 "rep_stickiness_mw"
 
 # -------------------------------------------------------------------
 
-#' All-FYE starting programs
+#' Predicted starting CIP for FYE students
 #'
 #' Predicted starting programs for all FYE students in midfielddata.
 #' Includes degree-granting programs that substitute for
@@ -189,8 +160,7 @@
 #' ID. The variables are:
 #' \describe{
 #'    \item{id}{student ID}
-#'    \item{start}{starting program}
+#'    \item{start}{starting program 6-digit CIP code}
 #'    }
 #' @family cip_data
-#'
 "fye_start"

@@ -76,15 +76,27 @@ subset_feasible <- function(id,
   all_fc <- fc_degrees(data_degrees)
 
   # vector of all grads IDs
+  id <- unique(id)
   all_grads_id <- unique(all_fc[degree == "grad", id])
 
   # reduce to IDs in study only
-  study_fc <- filter_by_id(all_fc,
-    keep_id = id,
-    keep_col = c("id", "institution", "degree"),
-    first_degree = TRUE,
-    unique_row = TRUE
-  )
+  rows_we_want <- all_fc$id %in% id
+  cols_we_want <- c("id", "institution", "degree", "term_degree")
+  study_fc <- all_fc[rows_we_want, ..cols_we_want]
+
+  # separate NA degree from those with degrees
+  rows_NA    <- is.na(study_fc$term_degree)
+  degree_no  <- study_fc[rows_NA]
+  degree_no  <- unique(degree_no)
+  degree_yes <- study_fc[!rows_NA]
+
+  # keep all rows in the first degree term (allows for multiple degrees)
+  if(nrow(degree_yes) > 0 ) {
+    degree_yes <- degree_yes[, .SD[term_degree == min(term_degree)], by = id]
+  }
+  study_fc <- rbind(degree_yes, degree_no)
+  study_fc[, term_degree := NULL]
+  study_fc <- unique(study_fc)
 
   # gather transfer information
   transfer_fc <- fc_students(data_students, id)
@@ -153,12 +165,9 @@ fc_students <- function(data, id) {
   assert_class(id, "character")
 
   # obtain transfer status
-  transfer_data <- filter_by_id(
-    data,
-    keep_id = id,
-    keep_col = c("id", "term_enter", "hours_transfer"),
-    unique_row = TRUE
-  )
+  rows_we_want <- data$id %in% id
+  cols_we_want <- c("id", "term_enter", "hours_transfer")
+  transfer_data <- data[rows_we_want, ..cols_we_want]
 }
 
 # ------------------------------------------------------------------------

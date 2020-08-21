@@ -21,21 +21,6 @@ Representative case study. Six-digit CIP codes and custom program names
 for Civil, Electrical, Industrial, and Mechanical Engineering programs in
 \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 }
-\examples{
-library(midfielddata)
-
-# attributes of students matriculating in programs
-cips_we_want <- rep_group$cip6
-rows_we_want <- midfieldstudents$cip6 \%in\% cips_we_want
-matriculants <- midfieldstudents[rows_we_want]
-str(matriculants)
-
-# attributes of students graduating in programs
-cips_we_want <- rep_group$cip6
-rows_we_want <- midfielddegrees$cip6 \%in\% cips_we_want
-graduates <- midfielddegrees[rows_we_want]
-str(graduates)
-}
 \seealso{
 Other example_data: 
 \code{\link{rep_cip}},

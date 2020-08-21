@@ -3,7 +3,7 @@
 \docType{data}
 \name{rep_ever}
 \alias{rep_ever}
-\title{Case student ID}
+\title{Case student IDs}
 \format{
 character vector
 }
@@ -11,15 +11,11 @@ character vector
 rep_ever
 }
 \description{
-Representative case study. Character vector of student IDs ever enrolled
-in Civil, Electrical, Industrial, and Mechanical Engineering programs in
+Representative case study. Character vector of 12,409 student IDs
+ever enrolled in Civil, Electrical, Industrial, and Mechanical
+Engineering programs (including predicted starting programs for
+FYE students) in
 \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
-}
-\examples{
-library(midfielddata)
-rows_we_want <- midfieldstudents$id \%in\% rep_ever
-enrollees <- midfieldstudents[rows_we_want]
-head(enrollees)
 }
 \seealso{
 Other example_data: 

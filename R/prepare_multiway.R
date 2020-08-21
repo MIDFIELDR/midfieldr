@@ -3,7 +3,7 @@
 #' @importFrom wrapr let
 NULL
 
-#' Order levels of multiway data
+#' Prepare multiway data
 #'
 #' Transform a data frame such that two categorical variables are factors
 #' with levels ordered by medians of the quantitative variable. Rows and
@@ -28,7 +28,8 @@ NULL
 #'   \item Categorical columns are factors with levels ordered by
 #' median quantitative values
 #'   \item Grouping structures, if any, are not preserved
-#'   \item Data frame extensions \code{tbl} or \code{data.table} are preserved
+#'   \item Data frame extensions \code{tbl} or \code{data.table}
+#'   are preserved
 #' }
 #'
 #' @examples

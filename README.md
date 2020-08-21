@@ -54,8 +54,6 @@ public, confidentiality required some MIDFIELD variables to be
 anonymized and others to be omitted. Thus the midfielddata data
 dictionary is a subset of the MIDFIELD data dictionary.
 
-<br> <a href="#top">▲ top of page</a>
-
 ## Installation
 
 Install midfielddata first.
@@ -97,8 +95,6 @@ should be submitted to CRAN by September 2020.
 devtools::install_github("MIDFIELDR/midfieldr")
 ```
 
-<br> <a href="#top">▲ top of page</a>
-
 ## Data
 
 The midfieldr package includes:
@@ -133,19 +129,15 @@ stratified sample of the MIDFIELD database.
     unique student. Occupies 10.2 MB of memory. Data dictionary
     [(link)](https://midfieldr.github.io/midfielddata/reference/midfielddegrees.html).
 
-<br> <a href="#top">▲ top of page</a>
-
 ## Usage
 
 **midfieldr functions** work with MIDFIELD-structured data to access and
 manipulate student records. A typical workflow might include:
 
   - `filter_by_text()` gather specific programs to study  
-  - `filter_by_cip()` gather students ever enrolled in the programs  
-  - `filter_by_id()` gather student demographic information
-  - `feasible_subset()` subset students for 6-year completion
+  - `subset_feasible()` subset students for 6-year completion
     feasibility
-  - `order_multiway()` condition multiway data for graphing
+  - `prepare_multiway()` condition multiway data for graphing
 
 **R ecosystem**. midfieldr uses data.table functions and syntax.
 midfielddata data sets are class `data.table` and `data.frame`. However,
@@ -181,19 +173,18 @@ data sets. Additional vignettes develop the material in more detail.
 
 <div id="ref-Dowle+Srinivasan:2020:data.table">
 
-Dowle M and Srinivasan A (2020) *data.table: Extension of ‘data.frame‘.*
-R package version 1.13.0 <https://CRAN.R-project.org/package=data.table>
+Dowle, Matt and Srinivasan, Arun (2020) *data.table: Extension of
+‘data.frame‘*. R package version 1.13.0. Available at:
+<https://CRAN.R-project.org/package=data.table>.
 
 </div>
 
 <div id="ref-Wickham:2016:ggplot2">
 
-Wickham H (2016) *ggplot2: Elegant Graphics for Data Analysis.* ISBN
-978-3-319-24277-4; Springer-Verlag New York
-<https://ggplot2.tidyverse.org>
+Wickham, Hadley (2016) *ggplot2: Elegant Graphics for Data Analysis*.
+ISBN 978-3-319-24277-4; Springer-Verlag New York. Available at:
+<https://ggplot2.tidyverse.org>.
 
 </div>
 
 </div>
-
-<br> <a href="#top">▲ top of page</a>

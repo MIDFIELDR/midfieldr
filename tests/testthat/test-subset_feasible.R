@@ -11,22 +11,22 @@ test_that("Inputs are correct class", {
     subset_feasible(id = as.factor(id)),
     "`id` must be of class character"
   )
-  # expect_error(
-  #   subset_feasible(id = id, span = TRUE),
-  #   "`span` must be of class numeric"
-  # )
-  # expect_error(
-  #   subset_feasible(id = id, data_students = id),
-  #   "`data` must be of class data.frame"
-  # )
-  # expect_error(
-  #   subset_feasible(id = id, data_terms = id),
-  #   "`data` must be of class data.frame"
-  # )
-  # expect_error(
-  #   subset_feasible(id = id, data_degrees = id),
-  #   "`data` must be of class data.frame"
-  # )
+  expect_error(
+    subset_feasible(id = id, span = TRUE),
+    "`span` must be of class numeric"
+  )
+  expect_error(
+    subset_feasible(id = id, data_students = id),
+    "`data` must be of class data.frame"
+  )
+  expect_error(
+    subset_feasible(id = id, data_terms = id),
+    "`data` must be of class data.frame"
+  )
+  expect_error(
+    subset_feasible(id = id, data_degrees = id),
+    "`data` must be of class data.frame"
+  )
 })
 test_that("Pipe correctly passes the first argument", {
   expect_equivalent(

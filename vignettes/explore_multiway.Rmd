@@ -43,6 +43,17 @@ kable2html <- function(x, font_size = NULL, caption = NULL) {
   kable_in <- knitr::kable(x, format = "html", caption = caption)
   kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
 }
+asp_ratio_mw <- function(data, categories) {
+  cat1 <- categories[1] # panels
+  cat2 <- categories[2] # rows
+  nlevel1 <- nlevels(data[, get(cat1)])
+  nlevel2 <- nlevels(data[, get(cat2)])
+  r <- nlevel1 * nlevel2
+  q <- 32
+  asp_ratio1 <- (r + 2 * nlevel1) / q
+  asp_ratio2 <- (r + 2 * nlevel2) / q
+  ratios <- c(asp_ratio1, asp_ratio2)
+}
 ```
 
 ## Introduction 
@@ -66,8 +77,9 @@ midfieldr functions
 
 data.table syntax
 
+- `copy()` prevent changing a source by reference
 - `DT[rows_we_want]` subset rows 
-- `DT[, ..columns_we_want]` select columns
+- `DT[, ..cols_we_want]` select columns
 - `DT[, new_col := FUN]` create new column as a function of old columns 
 - `dcast(DT, row_coord ~ col_coord, values)` reshape block-record form to row-record form 
 
@@ -95,7 +107,7 @@ The data are loaded with midfieldr. We assign it to the "pre-multiway" object `p
 
 ```{r}
 # load stickiness data from case study
-pre_mw <- rep_stickiness
+pre_mw <- copy(rep_stickiness)
 
 # examine the result
 pre_mw
@@ -132,7 +144,7 @@ We combine the race/ethnicity and sex column to create one of the multiway categ
 
 ```{r}
 # begin transformation to multiway form
-data_mw <- pre_mw
+data_mw <- copy(pre_mw)
 
 # create a new combined framing variable
 data_mw[, race_sex := paste(race, sex, sep = " ")]
@@ -145,8 +157,8 @@ To complete the transformation to multiway form, we select the three multiway va
 
 ```{r}
 # select the multiway variables
-columns_we_want <- c("program", "race_sex", "stick")
-data_mw <- data_mw[, ..columns_we_want]
+cols_we_want <- c("program", "race_sex", "stick")
+data_mw <- data_mw[, ..cols_we_want]
 
 # examine the result
 data_mw
@@ -162,6 +174,16 @@ data_mw <- prepare_multiway(data_mw)
 data_mw
 ```
 
+```{r include = FALSE, eval = FALSE}
+# run this manually to save external data
+rep_stickiness_mw <- copy(data_mw)
+usethis::use_data(
+  rep_stickiness_mw,
+  internal  = FALSE,
+  overwrite = TRUE
+)
+```
+
 The multiway data derived above is the data set `rep_stickiness_mw` in midfieldr.  View its help page by running
 
 ```r
@@ -170,18 +192,13 @@ The multiway data derived above is the data set `rep_stickiness_mw` in midfieldr
 
 ## A multiway dot plot  
 
-```{r echo = FALSE}
-nlevel1 <- nlevels(data_mw$program)
-nlevel2 <- nlevels(data_mw$race_sex)
-r <- nlevel1 * nlevel2
-q <- 32
-asp_ratio1 <- (r + 2 * nlevel1) / q
-asp_ratio2 <- (r + 2 * nlevel2) / q
+```{r include = FALSE}
+asp_ratio <- asp_ratio_mw(data_mw, categories = c("program", "race_sex"))
 ```
 
 We use conventional ggplot2 functions to create the multiway graphs. By previously ordering the levels of the factors, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians. 
 
-```{r fig1, fig.asp = asp_ratio1}
+```{r fig1, fig.asp = asp_ratio[1]}
 # create one multiway graph
 ggplot(data = data_mw, aes(x = stick, y = race_sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
@@ -209,7 +226,7 @@ To create the *dual multiway* graph, we swap the roles of the rows and panels.
 - `y = race_sex` becomes `y = program`
 - `facet_wrap(vars(program) ...`  becomes `facet_wrap(vars(race_sex) ...` 
 
-```{r fig2, fig.asp = asp_ratio2}
+```{r fig2, fig.asp = asp_ratio[2]}
 # create the dual multiway graph
 ggplot(data = data_mw, aes(x = stick, y = program)) +
   facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
@@ -228,7 +245,7 @@ Data tables are useful in discussions with one's research team and are often inc
 
 ```{r results = "hide"}
 # tabulate data in block record ("long") form
-blockf <- data_mw
+blockf <- copy(data_mw)
 
 # limit significant digits
 blockf[, stick := round(stick, 2)]
@@ -249,23 +266,7 @@ kable2html(blockf, caption = "Table 1: Stickiness (block records)")
 However, the visual convention preferred by publishers and readers is a row-record ("wide") form, as illustrated by Table 2. The `race_sex` key is in the left column and the `program` key is in the column names. The stickiness findings lie at the row-column intersections. 
 
 ```{r echo = FALSE}
-# temp <- reshape(
-#   data = blockf,
-#   idvar = "race_sex", # rowKeyColumns
-#   timevar = "program", # columnToTakeKeysFrom
-#   v.names = "stick", # columnToTakeValuesFrom
-#   direction = "wide"
-# )
-# row.names(temp) <- NULL
-# names(temp) <- c(
-#   "Race/ethnicity/sex",
-#   "Civil",
-#   "Electrical",
-#   "Industrial",
-#   "Mechanical"
-# )
-
-temp <- blockf
+temp <- copy(blockf)
 temp <- temp[, race_sex := as.character(race_sex)]
 temp <- temp[, program := as.character(program)]
 temp <- dcast(temp, race_sex ~ program, value.var = "stick")
@@ -294,7 +295,7 @@ Before reshaping, we convert factors to characters so that the rows and columns 
 
 ```{r}
 # convert factors to characters
-temp <- blockf
+temp <- copy(blockf)
 temp <- temp[, race_sex := as.character(race_sex)]
 temp <- temp[, program := as.character(program)]
 ```
@@ -345,7 +346,7 @@ library(data.table)
 library(ggplot2)
 
 # load stickiness data from case study
-pre_mw <- rep_stickiness
+pre_mw <- copy(rep_stickiness)
 
 # prepare rows
 rows_we_want <- pre_mw$ever >= 5
@@ -361,10 +362,10 @@ pre_mw <- pre_mw[rows_we_want]
 
 
 # complete the transformation to multiway form
-data_mw <- pre_mw
+data_mw <- copy(pre_mw)
 data_mw[, race_sex := paste(race, sex, sep = " ")]
-columns_we_want <- c("program", "race_sex", "stick")
-data_mw <- data_mw[, ..columns_we_want]
+cols_we_want <- c("program", "race_sex", "stick")
+data_mw <- data_mw[, ..cols_we_want]
 
 # transform characters to factors ordered by median stickiness
 data_mw <- prepare_multiway(data_mw)
@@ -382,12 +383,12 @@ ggplot(data = data_mw, aes(x = stick, y = program)) +
   labs(x = "Stickiness", y = "")
 
 # tabulate data in block record ("long") form
-blockf <- data_mw
+blockf <- copy(data_mw)
 blockf[, stick := round(stick, 2)]
 blockf
 
 # tabulate data in row record ("wide") form
-temp <- blockf
+temp <- copy(blockf)
 temp <- temp[, race_sex := as.character(race_sex)]
 temp <- temp[, program := as.character(program)]
 rowf <- dcast(temp, race_sex ~ program, value.var = "stick")

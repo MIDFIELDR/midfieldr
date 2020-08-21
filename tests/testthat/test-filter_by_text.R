@@ -3,11 +3,29 @@ context("filter_by_text")
 # get_my_path() for data in the testing directory
 # ctrl-shift-L to load internal functions
 
-music_cip <- filter_by_text(data = cip, keep_text = "^5009")
+music_cip <- filter_by_text(cip, keep_text = "^5009")
 music_codes <- music_cip$cip6
 
+
+test_that("Non-character columns ignored", {
+  u4 <- copy(music_cip)
+  u4$cip2 <- as.numeric(u4$cip2)
+  u4$row_num <- as.numeric(rownames(u4))
+  u4$logic <- TRUE
+  y4 <- filter_by_text(data = u4, keep_text = "^50091")
+  y4$cip2 <- as.character(y4$cip2)
+  y5 <- filter_by_text(data = music_cip, keep_text = "^50091")
+  y5$row_num <- y4$row_num
+  y5$logic <- TRUE
+  expect_equal(y4, y5)
+
+  u6 <- copy(u4)
+  u6$logic[1:5] <- FALSE
+  y6 <- filter_by_text(data = u6, keep_text = "TRUE")
+  y7 <- filter_by_text(data = u6, keep_text = "^12$")
+})
 test_that("Class of data frame is preserved", {
-  u0 <- cip
+  u0 <- copy(cip)
   y0 <- filter_by_text(data = u0, keep_text = "^5009")
   # data.frame
   u1 <- as.data.frame(u0)
@@ -17,15 +35,15 @@ test_that("Class of data frame is preserved", {
     class(y1)
   )
   # data.table
-  u2 <- data.table::as.data.table(u0)
-  y2 <- data.table::as.data.table(y0)
+  u2 <- copy(u0)
+  y2 <- copy(y0)
   expect_setequal(
     class(filter_by_text(data = u2, keep_text = "^5009")),
     class(y2)
   )
   # tibble
-  u3 <- as.data.frame(u0)
-  y3 <- as.data.frame(y0)
+  u3 <- as.data.frame(copy(u0))
+  y3 <- as.data.frame(copy(y0))
   data.table::setattr(u3, "class", c("tbl", "tbl_df", "data.frame"))
   data.table::setattr(y3, "class", c("tbl", "tbl_df", "data.frame"))
   expect_setequal(

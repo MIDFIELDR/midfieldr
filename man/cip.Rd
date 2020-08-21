@@ -3,7 +3,7 @@
 \docType{data}
 \name{cip}
 \alias{cip}
-\title{Classification of instructional programs (CIP) data}
+\title{Classification of instructional programs (CIP)}
 \format{
 \code{data.table} with 1584 rows and 6 columns keyed by the
 6-digit CIP code. The variables are:
@@ -47,13 +47,6 @@ The midfielddata taxonomy includes three non-IPEDS codes:
   institutions reported no program information or that students were
   not enrolled in a program.}
 }
-}
-\examples{
-# overview
-str(cip)
-
-# filter_by_text() argument
-filter_by_text(cip, keep_text = "^1410")
 }
 \seealso{
 Other cip_data: 

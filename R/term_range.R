@@ -53,8 +53,8 @@ term_range <- function(data) {
   df_class <- get_df_class(data)
   DT <- data.table::copy(data.table::as.data.table(data))
 
-  columns_we_want <- c("institution", term_col)
-  DT <- DT[, ..columns_we_want]
+  cols_we_want <- c("institution", term_col)
+  DT <- DT[, ..cols_we_want]
   DT[,
     min_term := min(.SD, na.rm = TRUE),
     by = "institution",

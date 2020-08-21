@@ -3,13 +3,13 @@
 \docType{data}
 \name{fye_start}
 \alias{fye_start}
-\title{All-FYE starting programs}
+\title{Predicted starting CIP for FYE students}
 \format{
 \code{data.table} with 5992 rows and 2 columns keyed by student
 ID. The variables are:
 \describe{
    \item{id}{student ID}
-   \item{start}{starting program}
+   \item{start}{starting program 6-digit CIP code}
    }
 }
 \usage{

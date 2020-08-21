@@ -54,7 +54,7 @@ NULL
 # binding
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
-    ".", ":=", "..cols_we_want", ".SD", "..columns", "..columns_we_want",
+    ".", ":=", "..cols_we_want", ".SD", "..columns", "..cols_we_want",
     "..keep_col",
     # following are column names in the four midfielddata data sets
     "id", "institution", "cip6", "race", "sex", "term", "term_degree",
