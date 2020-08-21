@@ -103,7 +103,7 @@ The midfieldr package includes:
     program codes and names at the 2, 4, and 6-digit levels. Each
     observation is a unique program keyed by a 6-digit CIP code.
     Occupies 380 kB of memory. Data dictionary
-    [(link)](docs/reference/cip.html).
+    [(link)](reference/cip.html).
 
 The midfielddata package contains four data sets that constitute a
 stratified sample of the MIDFIELD database.
@@ -155,7 +155,7 @@ In general the midfieldr vignettes use the following packages:
   - ggplot2 (Wickham, [2016](#ref-Wickham:2016:ggplot2))
 
 **example**. The *Get started* vignette
-[(link)](docs/articles/get_started.html) introduces some of the basic
+[(link)](articles/get_started.html) introduces some of the basic
 midfieldr functions and the midfielddata data sets. Additional vignettes
 develop the material in more detail.
 
