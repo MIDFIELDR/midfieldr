@@ -103,7 +103,7 @@ The midfieldr package includes:
     program codes and names at the 2, 4, and 6-digit levels. Each
     observation is a unique program keyed by a 6-digit CIP code.
     Occupies 380 kB of memory. Data dictionary
-    [(link)](https://midfieldr.github.io/midfieldr/reference/cip.html).
+    [(link)](docs/reference/cip.html).
 
 The midfielddata package contains four data sets that constitute a
 stratified sample of the MIDFIELD database.
@@ -154,9 +154,10 @@ In general the midfieldr vignettes use the following packages:
     [2020](#ref-Dowle+Srinivasan:2020:data.table))
   - ggplot2 (Wickham, [2016](#ref-Wickham:2016:ggplot2))
 
-**example**. The *Get started* vignette [(link)](get_started.html)
-introduces some of the basic midfieldr functions and the midfielddata
-data sets. Additional vignettes develop the material in more detail.
+**example**. The *Get started* vignette
+[(link)](docs/articles/get_started.html) introduces some of the basic
+midfieldr functions and the midfielddata data sets. Additional vignettes
+develop the material in more detail.
 
 ## Meta
 
@@ -164,8 +165,8 @@ data sets. Additional vignettes develop the material in more detail.
     [(link)](https://engineering.purdue.edu/MIDFIELD)  
   - Get citation information with `citation("midfieldr")`
   - This project is released with a Code of Conduct
-    [(link)](https://midfieldr.github.io/midfieldr/CONDUCT.html). If you
-    contribute to this project you agree to abide by its terms.
+    [(link)](CONDUCT.html). If you contribute to this project you agree
+    to abide by its terms.
 
 ## References
 
