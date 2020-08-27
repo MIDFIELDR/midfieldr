@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Stickiness metric</title>
+
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Stickiness metric</h1>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Longitudinal “stickiness” is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program <span class="citation">(Ohland et al., <a href="#ref-Ohland+Orr+others:2012" role="doc-biblioref">2012</a>)</span>.</p>
+<p>The stickiness metric accounts for all students in a program. Unlike the graduation rate metric, stickiness includes students who begin college part-time, who enroll mid-year, and who switch majors or transfer between institutions.</p>
+<p>Every student counted in a program’s stickiness metric was enrolled in that program for at least one term. The program succeeded in attracting these students—stickiness tells us how well the program succeeded in retaining them.</p>
+<div id="this-vignette-uses" class="section level3">
+<h3>This vignette uses</h3>
+<p>midfieldr functions</p>
+<ul>
+<li><code>subset_feasible()</code></li>
+</ul>
+<p>data.table syntax</p>
+<ul>
+<li><code>copy()</code> prevent changing a source by reference</li>
+<li><code>DT[rows_we_want]</code> subset rows</li>
+<li><code>DT[, .(new_col = .N), by = grouping_variables]</code> count N by group</li>
+<li><code>DT[, new_col := FUN]</code> create new column as a function of old columns</li>
+<li><code>DT[rows_to_edit, col := value]</code> for identified rows, assign value in column</li>
+<li><code>DT[, .SD[col1 == min(col1)], by = col2]</code> retain rows of minimum values by group</li>
+</ul>
+<p>packages</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># packages used</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(midfieldr)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">library</span>(midfielddata)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">library</span>(data.table)</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb1-6"><a href="#cb1-6"></a></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co"># print max 20 rows, otherwise 10 rows each head/tail</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="kw">options</span>(<span class="dt">datatable.print.nrows =</span> <span class="dv">20</span>, <span class="dt">datatable.print.topn =</span> <span class="dv">10</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="choose-the-programs-to-study" class="section level2">
+<h2>Choose the programs to study</h2>
+<p>In the <em>Identify programs</em> vignette <a href="identify_programs.html">(link)</a>, we create the program group of 6-digit codes and user-defined program names for the engineering case study. These data are included with midfieldr as the built-in data set <code>rep_group</code>. View its help page by running</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>? rep_group </span></code></pre></div>
+<p>The data are loaded with midfieldr.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># obtain programs (built-in data set)</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>program_group &lt;-<span class="st"> </span><span class="kw">copy</span>(rep_group)</span>
+<span id="cb3-3"><a href="#cb3-3"></a></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co"># examine the result</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>program_group</span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co">#&gt;       cip6                program</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#&gt;  1: 140801      Civil Engineering</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt;  2: 140802      Civil Engineering</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="co">#&gt;  3: 140803      Civil Engineering</span></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="co">#&gt;  4: 140804      Civil Engineering</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="co">#&gt;  5: 140805      Civil Engineering</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="co">#&gt;  6: 140899      Civil Engineering</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="co">#&gt;  7: 141001 Electrical Engineering</span></span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="co">#&gt;  8: 141003 Electrical Engineering</span></span>
+<span id="cb3-15"><a href="#cb3-15"></a><span class="co">#&gt;  9: 141004 Electrical Engineering</span></span>
+<span id="cb3-16"><a href="#cb3-16"></a><span class="co">#&gt; 10: 141099 Electrical Engineering</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a><span class="co">#&gt; 11: 141901 Mechanical Engineering</span></span>
+<span id="cb3-18"><a href="#cb3-18"></a><span class="co">#&gt; 12: 143501 Industrial Engineering</span></span></code></pre></div>
+<p>We extract the <code>cip6</code> column as a character vector to gather student data.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># extract a vector of 6-digit CIP codes</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>group_cip &lt;-<span class="st"> </span>program_group<span class="op">$</span>cip6</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co"># examine the result</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>group_cip</span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="co">#&gt;  [1] &quot;140801&quot; &quot;140802&quot; &quot;140803&quot; &quot;140804&quot; &quot;140805&quot; &quot;140899&quot; &quot;141001&quot; &quot;141003&quot;</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="co">#&gt;  [9] &quot;141004&quot; &quot;141099&quot; &quot;141901&quot; &quot;143501&quot;</span></span></code></pre></div>
+</div>
+<div id="gather-the-students-ever-enrolled" class="section level2">
+<h2>Gather the students ever enrolled</h2>
+<p>We access <code>midfieldterms</code> to obtain the IDs of all students ever enrolled in these programs.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># extract students ever enrolled</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>cols_we_want &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;cip6&quot;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3"></a>rows_we_want &lt;-<span class="st"> </span>midfieldterms<span class="op">$</span>cip6 <span class="op">%in%</span><span class="st"> </span>group_cip</span>
+<span id="cb5-4"><a href="#cb5-4"></a>enrollees &lt;-<span class="st"> </span>midfieldterms[rows_we_want, ..cols_we_want]</span>
+<span id="cb5-5"><a href="#cb5-5"></a>enrollees &lt;-<span class="st"> </span><span class="kw">unique</span>(enrollees)</span>
+<span id="cb5-6"><a href="#cb5-6"></a></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="co"># examine the result</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a>enrollees[<span class="kw">order</span>(id)]</span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="co">#&gt;                 id   cip6</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="co">#&gt;     1: MID25783178 143501</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="co">#&gt;     2: MID25783197 140801</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a><span class="co">#&gt;     3: MID25783388 141901</span></span>
+<span id="cb5-13"><a href="#cb5-13"></a><span class="co">#&gt;     4: MID25783441 140801</span></span>
+<span id="cb5-14"><a href="#cb5-14"></a><span class="co">#&gt;     5: MID25783491 141001</span></span>
+<span id="cb5-15"><a href="#cb5-15"></a><span class="co">#&gt;     6: MID25783553 140801</span></span>
+<span id="cb5-16"><a href="#cb5-16"></a><span class="co">#&gt;     7: MID25783606 141001</span></span>
+<span id="cb5-17"><a href="#cb5-17"></a><span class="co">#&gt;     8: MID25783648 140801</span></span>
+<span id="cb5-18"><a href="#cb5-18"></a><span class="co">#&gt;     9: MID25783912 143501</span></span>
+<span id="cb5-19"><a href="#cb5-19"></a><span class="co">#&gt;    10: MID25784022 141901</span></span>
+<span id="cb5-20"><a href="#cb5-20"></a><span class="co">#&gt;    ---                   </span></span>
+<span id="cb5-21"><a href="#cb5-21"></a><span class="co">#&gt; 10755: MID26696484 141901</span></span>
+<span id="cb5-22"><a href="#cb5-22"></a><span class="co">#&gt; 10756: MID26696642 141001</span></span>
+<span id="cb5-23"><a href="#cb5-23"></a><span class="co">#&gt; 10757: MID26696738 141901</span></span>
+<span id="cb5-24"><a href="#cb5-24"></a><span class="co">#&gt; 10758: MID26696771 141001</span></span>
+<span id="cb5-25"><a href="#cb5-25"></a><span class="co">#&gt; 10759: MID26696958 141901</span></span>
+<span id="cb5-26"><a href="#cb5-26"></a><span class="co">#&gt; 10760: MID26696967 141901</span></span>
+<span id="cb5-27"><a href="#cb5-27"></a><span class="co">#&gt; 10761: MID26696979 141901</span></span>
+<span id="cb5-28"><a href="#cb5-28"></a><span class="co">#&gt; 10762: MID26697163 141901</span></span>
+<span id="cb5-29"><a href="#cb5-29"></a><span class="co">#&gt; 10763: MID26697444 141901</span></span>
+<span id="cb5-30"><a href="#cb5-30"></a><span class="co">#&gt; 10764: MID26697447 141001</span></span></code></pre></div>
+<p>There may be FYE students who are imputed to have started in one of these programs as well. In the <em>Handle FYE programs</em> vignette <a href="handle_fye.html">(link)</a>, we derive the starting programs for all FYE students in midfielddata. This <code>fye_start</code> data is included in midfieldr. Again, we filter by the program group CIP codes.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># gather FYE students predicted to start in these programs</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>rows_we_want &lt;-<span class="st"> </span>fye_start<span class="op">$</span>start <span class="op">%in%</span><span class="st"> </span>group_cip</span>
+<span id="cb6-3"><a href="#cb6-3"></a>cols_we_want &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;start&quot;</span>)</span>
+<span id="cb6-4"><a href="#cb6-4"></a>fye_starters &lt;-<span class="st"> </span>fye_start[rows_we_want, ..cols_we_want]</span>
+<span id="cb6-5"><a href="#cb6-5"></a>fye_starters &lt;-<span class="st"> </span><span class="kw">unique</span>(fye_starters)</span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="kw">setnames</span>(fye_starters, <span class="dt">old =</span> <span class="st">&quot;start&quot;</span>, <span class="dt">new =</span> <span class="st">&quot;cip6&quot;</span>)</span>
+<span id="cb6-7"><a href="#cb6-7"></a></span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="co"># examine the result</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>fye_starters[<span class="kw">order</span>(id)]</span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="co">#&gt;                id   cip6</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="co">#&gt;    1: MID25783166 141901</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="co">#&gt;    2: MID25783227 141001</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a><span class="co">#&gt;    3: MID25783388 141901</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="co">#&gt;    4: MID25783428 140801</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="co">#&gt;    5: MID25783441 140801</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a><span class="co">#&gt;    6: MID25783491 141001</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a><span class="co">#&gt;    7: MID25783553 140801</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a><span class="co">#&gt;    8: MID25783606 141001</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a><span class="co">#&gt;    9: MID25783648 140801</span></span>
+<span id="cb6-20"><a href="#cb6-20"></a><span class="co">#&gt;   10: MID25783753 141901</span></span>
+<span id="cb6-21"><a href="#cb6-21"></a><span class="co">#&gt;   ---                   </span></span>
+<span id="cb6-22"><a href="#cb6-22"></a><span class="co">#&gt; 3819: MID26648222 141901</span></span>
+<span id="cb6-23"><a href="#cb6-23"></a><span class="co">#&gt; 3820: MID26648282 143501</span></span>
+<span id="cb6-24"><a href="#cb6-24"></a><span class="co">#&gt; 3821: MID26648283 141001</span></span>
+<span id="cb6-25"><a href="#cb6-25"></a><span class="co">#&gt; 3822: MID26648334 140801</span></span>
+<span id="cb6-26"><a href="#cb6-26"></a><span class="co">#&gt; 3823: MID26648392 141901</span></span>
+<span id="cb6-27"><a href="#cb6-27"></a><span class="co">#&gt; 3824: MID26648422 141901</span></span>
+<span id="cb6-28"><a href="#cb6-28"></a><span class="co">#&gt; 3825: MID26648435 141901</span></span>
+<span id="cb6-29"><a href="#cb6-29"></a><span class="co">#&gt; 3826: MID26648484 140801</span></span>
+<span id="cb6-30"><a href="#cb6-30"></a><span class="co">#&gt; 3827: MID26648517 140801</span></span>
+<span id="cb6-31"><a href="#cb6-31"></a><span class="co">#&gt; 3828: MID26648544 141901</span></span></code></pre></div>
+<p>Bind the two data frames</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>enrollees &lt;-<span class="st"> </span><span class="kw">rbind</span>(enrollees, fye_starters)</span>
+<span id="cb7-2"><a href="#cb7-2"></a>enrollees &lt;-<span class="st"> </span><span class="kw">unique</span>(enrollees)</span>
+<span id="cb7-3"><a href="#cb7-3"></a></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co"># examine the result</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>enrollees[<span class="kw">order</span>(id)]</span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="co">#&gt;                 id   cip6</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="co">#&gt;     1: MID25783166 141901</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="co">#&gt;     2: MID25783178 143501</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a><span class="co">#&gt;     3: MID25783197 140801</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a><span class="co">#&gt;     4: MID25783227 141001</span></span>
+<span id="cb7-11"><a href="#cb7-11"></a><span class="co">#&gt;     5: MID25783388 141901</span></span>
+<span id="cb7-12"><a href="#cb7-12"></a><span class="co">#&gt;     6: MID25783428 140801</span></span>
+<span id="cb7-13"><a href="#cb7-13"></a><span class="co">#&gt;     7: MID25783441 140801</span></span>
+<span id="cb7-14"><a href="#cb7-14"></a><span class="co">#&gt;     8: MID25783491 141001</span></span>
+<span id="cb7-15"><a href="#cb7-15"></a><span class="co">#&gt;     9: MID25783553 140801</span></span>
+<span id="cb7-16"><a href="#cb7-16"></a><span class="co">#&gt;    10: MID25783606 141001</span></span>
+<span id="cb7-17"><a href="#cb7-17"></a><span class="co">#&gt;    ---                   </span></span>
+<span id="cb7-18"><a href="#cb7-18"></a><span class="co">#&gt; 12400: MID26696484 141901</span></span>
+<span id="cb7-19"><a href="#cb7-19"></a><span class="co">#&gt; 12401: MID26696642 141001</span></span>
+<span id="cb7-20"><a href="#cb7-20"></a><span class="co">#&gt; 12402: MID26696738 141901</span></span>
+<span id="cb7-21"><a href="#cb7-21"></a><span class="co">#&gt; 12403: MID26696771 141001</span></span>
+<span id="cb7-22"><a href="#cb7-22"></a><span class="co">#&gt; 12404: MID26696958 141901</span></span>
+<span id="cb7-23"><a href="#cb7-23"></a><span class="co">#&gt; 12405: MID26696967 141901</span></span>
+<span id="cb7-24"><a href="#cb7-24"></a><span class="co">#&gt; 12406: MID26696979 141901</span></span>
+<span id="cb7-25"><a href="#cb7-25"></a><span class="co">#&gt; 12407: MID26697163 141901</span></span>
+<span id="cb7-26"><a href="#cb7-26"></a><span class="co">#&gt; 12408: MID26697444 141901</span></span>
+<span id="cb7-27"><a href="#cb7-27"></a><span class="co">#&gt; 12409: MID26697447 141001</span></span></code></pre></div>
+<p>The enrollee data derived above is the data set <code>rep_ever</code> in midfieldr. View its help page by running</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>? rep_ever</span></code></pre></div>
+<p>For some of these students, completing their program may not be feasible given the range of data available. <code>subset_feasible()</code> subsets the student IDs, retaining those who matriculate at least six years before the last term in the data.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># apply the feasible completion filter</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>feasible_ids &lt;-<span class="st"> </span><span class="kw">subset_feasible</span>(<span class="dt">id =</span> enrollees<span class="op">$</span>id)</span>
+<span id="cb9-3"><a href="#cb9-3"></a></span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="co"># examine the result</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="kw">str</span>(feasible_ids)</span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="co">#&gt;  chr [1:9166] &quot;MID25783178&quot; &quot;MID25783197&quot; &quot;MID25783441&quot; &quot;MID25783491&quot; ...</span></span></code></pre></div>
+<p>See the <em>Feasible completion</em> vignette <a href="feasible_completion.html">(link)</a> for a detailed explanation of how completion feasibility is determined.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># subset the enrollees</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>rows_we_want &lt;-<span class="st"> </span>enrollees<span class="op">$</span>id <span class="op">%in%</span><span class="st"> </span>feasible_ids</span>
+<span id="cb10-3"><a href="#cb10-3"></a>enrollees &lt;-<span class="st"> </span>enrollees[rows_we_want]</span>
+<span id="cb10-4"><a href="#cb10-4"></a></span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="co"># examine the result</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a>enrollees[<span class="kw">order</span>(id)]</span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="co">#&gt;                id   cip6</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a><span class="co">#&gt;    1: MID25783178 143501</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a><span class="co">#&gt;    2: MID25783197 140801</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a><span class="co">#&gt;    3: MID25783227 141001</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a><span class="co">#&gt;    4: MID25783388 141901</span></span>
+<span id="cb10-12"><a href="#cb10-12"></a><span class="co">#&gt;    5: MID25783441 140801</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a><span class="co">#&gt;    6: MID25783491 141001</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a><span class="co">#&gt;    7: MID25783553 140801</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a><span class="co">#&gt;    8: MID25783606 141001</span></span>
+<span id="cb10-16"><a href="#cb10-16"></a><span class="co">#&gt;    9: MID25783753 141901</span></span>
+<span id="cb10-17"><a href="#cb10-17"></a><span class="co">#&gt;   10: MID25783830 141901</span></span>
+<span id="cb10-18"><a href="#cb10-18"></a><span class="co">#&gt;   ---                   </span></span>
+<span id="cb10-19"><a href="#cb10-19"></a><span class="co">#&gt; 9764: MID26696439 141901</span></span>
+<span id="cb10-20"><a href="#cb10-20"></a><span class="co">#&gt; 9765: MID26696484 141901</span></span>
+<span id="cb10-21"><a href="#cb10-21"></a><span class="co">#&gt; 9766: MID26696642 141001</span></span>
+<span id="cb10-22"><a href="#cb10-22"></a><span class="co">#&gt; 9767: MID26696738 141901</span></span>
+<span id="cb10-23"><a href="#cb10-23"></a><span class="co">#&gt; 9768: MID26696771 141001</span></span>
+<span id="cb10-24"><a href="#cb10-24"></a><span class="co">#&gt; 9769: MID26696958 141901</span></span>
+<span id="cb10-25"><a href="#cb10-25"></a><span class="co">#&gt; 9770: MID26696967 141901</span></span>
+<span id="cb10-26"><a href="#cb10-26"></a><span class="co">#&gt; 9771: MID26697163 141901</span></span>
+<span id="cb10-27"><a href="#cb10-27"></a><span class="co">#&gt; 9772: MID26697444 141901</span></span>
+<span id="cb10-28"><a href="#cb10-28"></a><span class="co">#&gt; 9773: MID26697447 141001</span></span></code></pre></div>
+<p>We access <code>midfieldstudents</code> to obtain the race/ethnicity and sex of the enrollees.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co"># obtain race/ethnicity and sex at matriculation</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>rows_we_want &lt;-<span class="st"> </span>midfieldstudents<span class="op">$</span>id <span class="op">%in%</span><span class="st"> </span>feasible_ids</span>
+<span id="cb11-3"><a href="#cb11-3"></a>cols_we_want &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;race&quot;</span>, <span class="st">&quot;sex&quot;</span>)</span>
+<span id="cb11-4"><a href="#cb11-4"></a>race_sex &lt;-<span class="st"> </span>midfieldstudents[rows_we_want, ..cols_we_want]</span>
+<span id="cb11-5"><a href="#cb11-5"></a>race_sex &lt;-<span class="st"> </span><span class="kw">unique</span>(race_sex)</span>
+<span id="cb11-6"><a href="#cb11-6"></a></span>
+<span id="cb11-7"><a href="#cb11-7"></a><span class="co"># examine the result</span></span>
+<span id="cb11-8"><a href="#cb11-8"></a>race_sex[<span class="kw">order</span>(id)]</span>
+<span id="cb11-9"><a href="#cb11-9"></a><span class="co">#&gt;                id     race    sex</span></span>
+<span id="cb11-10"><a href="#cb11-10"></a><span class="co">#&gt;    1: MID25783178    Black   Male</span></span>
+<span id="cb11-11"><a href="#cb11-11"></a><span class="co">#&gt;    2: MID25783197    White   Male</span></span>
+<span id="cb11-12"><a href="#cb11-12"></a><span class="co">#&gt;    3: MID25783227    White   Male</span></span>
+<span id="cb11-13"><a href="#cb11-13"></a><span class="co">#&gt;    4: MID25783388    White   Male</span></span>
+<span id="cb11-14"><a href="#cb11-14"></a><span class="co">#&gt;    5: MID25783441    White   Male</span></span>
+<span id="cb11-15"><a href="#cb11-15"></a><span class="co">#&gt;    6: MID25783491    White   Male</span></span>
+<span id="cb11-16"><a href="#cb11-16"></a><span class="co">#&gt;    7: MID25783553    White   Male</span></span>
+<span id="cb11-17"><a href="#cb11-17"></a><span class="co">#&gt;    8: MID25783606    White   Male</span></span>
+<span id="cb11-18"><a href="#cb11-18"></a><span class="co">#&gt;    9: MID25783753    White   Male</span></span>
+<span id="cb11-19"><a href="#cb11-19"></a><span class="co">#&gt;   10: MID25783830    Black   Male</span></span>
+<span id="cb11-20"><a href="#cb11-20"></a><span class="co">#&gt;   ---                            </span></span>
+<span id="cb11-21"><a href="#cb11-21"></a><span class="co">#&gt; 9157: MID26696439    White   Male</span></span>
+<span id="cb11-22"><a href="#cb11-22"></a><span class="co">#&gt; 9158: MID26696484    White   Male</span></span>
+<span id="cb11-23"><a href="#cb11-23"></a><span class="co">#&gt; 9159: MID26696642    White   Male</span></span>
+<span id="cb11-24"><a href="#cb11-24"></a><span class="co">#&gt; 9160: MID26696738    White   Male</span></span>
+<span id="cb11-25"><a href="#cb11-25"></a><span class="co">#&gt; 9161: MID26696771    White Female</span></span>
+<span id="cb11-26"><a href="#cb11-26"></a><span class="co">#&gt; 9162: MID26696958    White   Male</span></span>
+<span id="cb11-27"><a href="#cb11-27"></a><span class="co">#&gt; 9163: MID26696967    White   Male</span></span>
+<span id="cb11-28"><a href="#cb11-28"></a><span class="co">#&gt; 9164: MID26697163 Hispanic   Male</span></span>
+<span id="cb11-29"><a href="#cb11-29"></a><span class="co">#&gt; 9165: MID26697444    White   Male</span></span>
+<span id="cb11-30"><a href="#cb11-30"></a><span class="co">#&gt; 9166: MID26697447    Asian   Male</span></span></code></pre></div>
+<p>Now we can join the race/ethnicity and sex data frame to the enrollees data frame.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># left-join demographics to enrollees</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>enrollees &lt;-<span class="st"> </span><span class="kw">merge</span>(enrollees, race_sex, <span class="dt">by =</span> <span class="st">&quot;id&quot;</span>, <span class="dt">all.x =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb12-3"><a href="#cb12-3"></a></span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="co"># examine the result</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a>enrollees[<span class="kw">order</span>(id)]</span>
+<span id="cb12-6"><a href="#cb12-6"></a><span class="co">#&gt;                id   cip6     race    sex</span></span>
+<span id="cb12-7"><a href="#cb12-7"></a><span class="co">#&gt;    1: MID25783178 143501    Black   Male</span></span>
+<span id="cb12-8"><a href="#cb12-8"></a><span class="co">#&gt;    2: MID25783197 140801    White   Male</span></span>
+<span id="cb12-9"><a href="#cb12-9"></a><span class="co">#&gt;    3: MID25783227 141001    White   Male</span></span>
+<span id="cb12-10"><a href="#cb12-10"></a><span class="co">#&gt;    4: MID25783388 141901    White   Male</span></span>
+<span id="cb12-11"><a href="#cb12-11"></a><span class="co">#&gt;    5: MID25783441 140801    White   Male</span></span>
+<span id="cb12-12"><a href="#cb12-12"></a><span class="co">#&gt;    6: MID25783491 141001    White   Male</span></span>
+<span id="cb12-13"><a href="#cb12-13"></a><span class="co">#&gt;    7: MID25783553 140801    White   Male</span></span>
+<span id="cb12-14"><a href="#cb12-14"></a><span class="co">#&gt;    8: MID25783606 141001    White   Male</span></span>
+<span id="cb12-15"><a href="#cb12-15"></a><span class="co">#&gt;    9: MID25783753 141901    White   Male</span></span>
+<span id="cb12-16"><a href="#cb12-16"></a><span class="co">#&gt;   10: MID25783830 141901    Black   Male</span></span>
+<span id="cb12-17"><a href="#cb12-17"></a><span class="co">#&gt;   ---                                   </span></span>
+<span id="cb12-18"><a href="#cb12-18"></a><span class="co">#&gt; 9764: MID26696439 141901    White   Male</span></span>
+<span id="cb12-19"><a href="#cb12-19"></a><span class="co">#&gt; 9765: MID26696484 141901    White   Male</span></span>
+<span id="cb12-20"><a href="#cb12-20"></a><span class="co">#&gt; 9766: MID26696642 141001    White   Male</span></span>
+<span id="cb12-21"><a href="#cb12-21"></a><span class="co">#&gt; 9767: MID26696738 141901    White   Male</span></span>
+<span id="cb12-22"><a href="#cb12-22"></a><span class="co">#&gt; 9768: MID26696771 141001    White Female</span></span>
+<span id="cb12-23"><a href="#cb12-23"></a><span class="co">#&gt; 9769: MID26696958 141901    White   Male</span></span>
+<span id="cb12-24"><a href="#cb12-24"></a><span class="co">#&gt; 9770: MID26696967 141901    White   Male</span></span>
+<span id="cb12-25"><a href="#cb12-25"></a><span class="co">#&gt; 9771: MID26697163 141901 Hispanic   Male</span></span>
+<span id="cb12-26"><a href="#cb12-26"></a><span class="co">#&gt; 9772: MID26697444 141901    White   Male</span></span>
+<span id="cb12-27"><a href="#cb12-27"></a><span class="co">#&gt; 9773: MID26697447 141001    Asian   Male</span></span></code></pre></div>
+<p>We join the program names from <code>program_group</code> to our working data frame so we can aggregate by groups in a future step.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># left-join program_group to enrollees</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>enrollees &lt;-<span class="st"> </span><span class="kw">merge</span>(enrollees, program_group, <span class="dt">by =</span> <span class="st">&quot;cip6&quot;</span>, <span class="dt">all.x =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb13-3"><a href="#cb13-3"></a></span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="co"># examine the result</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a>enrollees[<span class="kw">order</span>(id)]</span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="co">#&gt;         cip6          id     race    sex                program</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a><span class="co">#&gt;    1: 143501 MID25783178    Black   Male Industrial Engineering</span></span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="co">#&gt;    2: 140801 MID25783197    White   Male      Civil Engineering</span></span>
+<span id="cb13-9"><a href="#cb13-9"></a><span class="co">#&gt;    3: 141001 MID25783227    White   Male Electrical Engineering</span></span>
+<span id="cb13-10"><a href="#cb13-10"></a><span class="co">#&gt;    4: 141901 MID25783388    White   Male Mechanical Engineering</span></span>
+<span id="cb13-11"><a href="#cb13-11"></a><span class="co">#&gt;    5: 140801 MID25783441    White   Male      Civil Engineering</span></span>
+<span id="cb13-12"><a href="#cb13-12"></a><span class="co">#&gt;    6: 141001 MID25783491    White   Male Electrical Engineering</span></span>
+<span id="cb13-13"><a href="#cb13-13"></a><span class="co">#&gt;    7: 140801 MID25783553    White   Male      Civil Engineering</span></span>
+<span id="cb13-14"><a href="#cb13-14"></a><span class="co">#&gt;    8: 141001 MID25783606    White   Male Electrical Engineering</span></span>
+<span id="cb13-15"><a href="#cb13-15"></a><span class="co">#&gt;    9: 141901 MID25783753    White   Male Mechanical Engineering</span></span>
+<span id="cb13-16"><a href="#cb13-16"></a><span class="co">#&gt;   10: 141901 MID25783830    Black   Male Mechanical Engineering</span></span>
+<span id="cb13-17"><a href="#cb13-17"></a><span class="co">#&gt;   ---                                                          </span></span>
+<span id="cb13-18"><a href="#cb13-18"></a><span class="co">#&gt; 9764: 141901 MID26696439    White   Male Mechanical Engineering</span></span>
+<span id="cb13-19"><a href="#cb13-19"></a><span class="co">#&gt; 9765: 141901 MID26696484    White   Male Mechanical Engineering</span></span>
+<span id="cb13-20"><a href="#cb13-20"></a><span class="co">#&gt; 9766: 141001 MID26696642    White   Male Electrical Engineering</span></span>
+<span id="cb13-21"><a href="#cb13-21"></a><span class="co">#&gt; 9767: 141901 MID26696738    White   Male Mechanical Engineering</span></span>
+<span id="cb13-22"><a href="#cb13-22"></a><span class="co">#&gt; 9768: 141001 MID26696771    White Female Electrical Engineering</span></span>
+<span id="cb13-23"><a href="#cb13-23"></a><span class="co">#&gt; 9769: 141901 MID26696958    White   Male Mechanical Engineering</span></span>
+<span id="cb13-24"><a href="#cb13-24"></a><span class="co">#&gt; 9770: 141901 MID26696967    White   Male Mechanical Engineering</span></span>
+<span id="cb13-25"><a href="#cb13-25"></a><span class="co">#&gt; 9771: 141901 MID26697163 Hispanic   Male Mechanical Engineering</span></span>
+<span id="cb13-26"><a href="#cb13-26"></a><span class="co">#&gt; 9772: 141901 MID26697444    White   Male Mechanical Engineering</span></span>
+<span id="cb13-27"><a href="#cb13-27"></a><span class="co">#&gt; 9773: 141001 MID26697447    Asian   Male Electrical Engineering</span></span></code></pre></div>
+</div>
+<div id="gather-the-students-graduating" class="section level2">
+<h2>Gather the students graduating</h2>
+<p>We access <code>midfielddegrees</code> to obtain the IDs of all students graduating from these programs. We skip the feasible completion step because for graduates, the question of completion feasibility is moot—graduation itself establishes feasibility.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># extract graduates</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a>cols_we_want &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;cip6&quot;</span>, <span class="st">&quot;term_degree&quot;</span>)</span>
+<span id="cb14-3"><a href="#cb14-3"></a>rows_we_want &lt;-<span class="st"> </span>midfielddegrees<span class="op">$</span>cip6 <span class="op">%in%</span><span class="st"> </span>group_cip</span>
+<span id="cb14-4"><a href="#cb14-4"></a>graduates &lt;-<span class="st"> </span>midfielddegrees[rows_we_want, ..cols_we_want]</span>
+<span id="cb14-5"><a href="#cb14-5"></a></span>
+<span id="cb14-6"><a href="#cb14-6"></a><span class="co"># examine the result</span></span>
+<span id="cb14-7"><a href="#cb14-7"></a>graduates[<span class="kw">order</span>(id)]</span>
+<span id="cb14-8"><a href="#cb14-8"></a><span class="co">#&gt;                id   cip6 term_degree</span></span>
+<span id="cb14-9"><a href="#cb14-9"></a><span class="co">#&gt;    1: MID25783178 143501       20001</span></span>
+<span id="cb14-10"><a href="#cb14-10"></a><span class="co">#&gt;    2: MID25783197 140801       19911</span></span>
+<span id="cb14-11"><a href="#cb14-11"></a><span class="co">#&gt;    3: MID25783441 140801       19963</span></span>
+<span id="cb14-12"><a href="#cb14-12"></a><span class="co">#&gt;    4: MID25783491 141001       20001</span></span>
+<span id="cb14-13"><a href="#cb14-13"></a><span class="co">#&gt;    5: MID25783912 143501       20001</span></span>
+<span id="cb14-14"><a href="#cb14-14"></a><span class="co">#&gt;    6: MID25784334 140801       19963</span></span>
+<span id="cb14-15"><a href="#cb14-15"></a><span class="co">#&gt;    7: MID25784418 140801       19981</span></span>
+<span id="cb14-16"><a href="#cb14-16"></a><span class="co">#&gt;    8: MID25784489 140801       19931</span></span>
+<span id="cb14-17"><a href="#cb14-17"></a><span class="co">#&gt;    9: MID25784709 140801       19971</span></span>
+<span id="cb14-18"><a href="#cb14-18"></a><span class="co">#&gt;   10: MID25784742 140801       19943</span></span>
+<span id="cb14-19"><a href="#cb14-19"></a><span class="co">#&gt;   ---                               </span></span>
+<span id="cb14-20"><a href="#cb14-20"></a><span class="co">#&gt; 4667: MID26696234 141901       20143</span></span>
+<span id="cb14-21"><a href="#cb14-21"></a><span class="co">#&gt; 4668: MID26696337 140801       20133</span></span>
+<span id="cb14-22"><a href="#cb14-22"></a><span class="co">#&gt; 4669: MID26696429 143501       20133</span></span>
+<span id="cb14-23"><a href="#cb14-23"></a><span class="co">#&gt; 4670: MID26696484 141901       20154</span></span>
+<span id="cb14-24"><a href="#cb14-24"></a><span class="co">#&gt; 4671: MID26696642 141001       20153</span></span>
+<span id="cb14-25"><a href="#cb14-25"></a><span class="co">#&gt; 4672: MID26696738 141901       20133</span></span>
+<span id="cb14-26"><a href="#cb14-26"></a><span class="co">#&gt; 4673: MID26696771 141001       20143</span></span>
+<span id="cb14-27"><a href="#cb14-27"></a><span class="co">#&gt; 4674: MID26696967 141901       20141</span></span>
+<span id="cb14-28"><a href="#cb14-28"></a><span class="co">#&gt; 4675: MID26697163 141901       20133</span></span>
+<span id="cb14-29"><a href="#cb14-29"></a><span class="co">#&gt; 4676: MID26697447 141001       20154</span></span></code></pre></div>
+<p>Some students might have earned a second degree in a term after their first degree. To ensure we count only the first degree, we the minimum value of <code>term_degree</code> grouped by <code>id</code>, using the data.table <code>.SD</code> syntax.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># keep the first degree term if more than one</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a>graduates &lt;-<span class="st"> </span>graduates[, .SD[term_degree <span class="op">==</span><span class="st"> </span><span class="kw">min</span>(term_degree)], by =<span class="st"> </span>id]</span>
+<span id="cb15-3"><a href="#cb15-3"></a></span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="co"># examine the result</span></span>
+<span id="cb15-5"><a href="#cb15-5"></a>graduates[<span class="kw">order</span>(id)]</span>
+<span id="cb15-6"><a href="#cb15-6"></a><span class="co">#&gt;                id   cip6 term_degree</span></span>
+<span id="cb15-7"><a href="#cb15-7"></a><span class="co">#&gt;    1: MID25783178 143501       20001</span></span>
+<span id="cb15-8"><a href="#cb15-8"></a><span class="co">#&gt;    2: MID25783197 140801       19911</span></span>
+<span id="cb15-9"><a href="#cb15-9"></a><span class="co">#&gt;    3: MID25783441 140801       19963</span></span>
+<span id="cb15-10"><a href="#cb15-10"></a><span class="co">#&gt;    4: MID25783491 141001       20001</span></span>
+<span id="cb15-11"><a href="#cb15-11"></a><span class="co">#&gt;    5: MID25783912 143501       20001</span></span>
+<span id="cb15-12"><a href="#cb15-12"></a><span class="co">#&gt;    6: MID25784334 140801       19963</span></span>
+<span id="cb15-13"><a href="#cb15-13"></a><span class="co">#&gt;    7: MID25784418 140801       19981</span></span>
+<span id="cb15-14"><a href="#cb15-14"></a><span class="co">#&gt;    8: MID25784489 140801       19931</span></span>
+<span id="cb15-15"><a href="#cb15-15"></a><span class="co">#&gt;    9: MID25784709 140801       19971</span></span>
+<span id="cb15-16"><a href="#cb15-16"></a><span class="co">#&gt;   10: MID25784742 140801       19943</span></span>
+<span id="cb15-17"><a href="#cb15-17"></a><span class="co">#&gt;   ---                               </span></span>
+<span id="cb15-18"><a href="#cb15-18"></a><span class="co">#&gt; 4667: MID26696234 141901       20143</span></span>
+<span id="cb15-19"><a href="#cb15-19"></a><span class="co">#&gt; 4668: MID26696337 140801       20133</span></span>
+<span id="cb15-20"><a href="#cb15-20"></a><span class="co">#&gt; 4669: MID26696429 143501       20133</span></span>
+<span id="cb15-21"><a href="#cb15-21"></a><span class="co">#&gt; 4670: MID26696484 141901       20154</span></span>
+<span id="cb15-22"><a href="#cb15-22"></a><span class="co">#&gt; 4671: MID26696642 141001       20153</span></span>
+<span id="cb15-23"><a href="#cb15-23"></a><span class="co">#&gt; 4672: MID26696738 141901       20133</span></span>
+<span id="cb15-24"><a href="#cb15-24"></a><span class="co">#&gt; 4673: MID26696771 141001       20143</span></span>
+<span id="cb15-25"><a href="#cb15-25"></a><span class="co">#&gt; 4674: MID26696967 141901       20141</span></span>
+<span id="cb15-26"><a href="#cb15-26"></a><span class="co">#&gt; 4675: MID26697163 141901       20133</span></span>
+<span id="cb15-27"><a href="#cb15-27"></a><span class="co">#&gt; 4676: MID26697447 141001       20154</span></span></code></pre></div>
+<p>We can remove the <code>term_degree</code> column and then we access <code>midfieldstudents</code> for student race/ethnicity and sex.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="co"># finished with term_degree column </span></span>
+<span id="cb16-2"><a href="#cb16-2"></a>graduates[, term_degree <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="ot">NULL</span>]</span>
+<span id="cb16-3"><a href="#cb16-3"></a></span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="co"># join race sex</span></span>
+<span id="cb16-5"><a href="#cb16-5"></a>rows_we_want &lt;-<span class="st"> </span>midfieldstudents<span class="op">$</span>id <span class="op">%in%</span><span class="st"> </span>graduates<span class="op">$</span>id </span>
+<span id="cb16-6"><a href="#cb16-6"></a>cols_we_want &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;race&quot;</span>, <span class="st">&quot;sex&quot;</span>)</span>
+<span id="cb16-7"><a href="#cb16-7"></a>race_sex &lt;-<span class="st"> </span>midfieldstudents[rows_we_want, ..cols_we_want]</span>
+<span id="cb16-8"><a href="#cb16-8"></a>race_sex &lt;-<span class="st"> </span><span class="kw">unique</span>(race_sex)</span>
+<span id="cb16-9"><a href="#cb16-9"></a>graduates &lt;-<span class="st"> </span><span class="kw">merge</span>(graduates, race_sex, <span class="dt">by =</span> <span class="st">&quot;id&quot;</span>, <span class="dt">all.x =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb16-10"><a href="#cb16-10"></a></span>
+<span id="cb16-11"><a href="#cb16-11"></a><span class="co"># join program labels</span></span>
+<span id="cb16-12"><a href="#cb16-12"></a>graduates &lt;-<span class="st"> </span><span class="kw">merge</span>(graduates, program_group, <span class="dt">by =</span> <span class="st">&quot;cip6&quot;</span>, <span class="dt">all.x =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb16-13"><a href="#cb16-13"></a></span>
+<span id="cb16-14"><a href="#cb16-14"></a><span class="co"># examine the result</span></span>
+<span id="cb16-15"><a href="#cb16-15"></a>graduates[<span class="kw">order</span>(id)]</span>
+<span id="cb16-16"><a href="#cb16-16"></a><span class="co">#&gt;         cip6          id     race    sex                program</span></span>
+<span id="cb16-17"><a href="#cb16-17"></a><span class="co">#&gt;    1: 143501 MID25783178    Black   Male Industrial Engineering</span></span>
+<span id="cb16-18"><a href="#cb16-18"></a><span class="co">#&gt;    2: 140801 MID25783197    White   Male      Civil Engineering</span></span>
+<span id="cb16-19"><a href="#cb16-19"></a><span class="co">#&gt;    3: 140801 MID25783441    White   Male      Civil Engineering</span></span>
+<span id="cb16-20"><a href="#cb16-20"></a><span class="co">#&gt;    4: 141001 MID25783491    White   Male Electrical Engineering</span></span>
+<span id="cb16-21"><a href="#cb16-21"></a><span class="co">#&gt;    5: 143501 MID25783912    White   Male Industrial Engineering</span></span>
+<span id="cb16-22"><a href="#cb16-22"></a><span class="co">#&gt;    6: 140801 MID25784334    White Female      Civil Engineering</span></span>
+<span id="cb16-23"><a href="#cb16-23"></a><span class="co">#&gt;    7: 140801 MID25784418    White   Male      Civil Engineering</span></span>
+<span id="cb16-24"><a href="#cb16-24"></a><span class="co">#&gt;    8: 140801 MID25784489    Asian Female      Civil Engineering</span></span>
+<span id="cb16-25"><a href="#cb16-25"></a><span class="co">#&gt;    9: 140801 MID25784709    White   Male      Civil Engineering</span></span>
+<span id="cb16-26"><a href="#cb16-26"></a><span class="co">#&gt;   10: 140801 MID25784742    White Female      Civil Engineering</span></span>
+<span id="cb16-27"><a href="#cb16-27"></a><span class="co">#&gt;   ---                                                          </span></span>
+<span id="cb16-28"><a href="#cb16-28"></a><span class="co">#&gt; 4667: 141901 MID26696234 Hispanic   Male Mechanical Engineering</span></span>
+<span id="cb16-29"><a href="#cb16-29"></a><span class="co">#&gt; 4668: 140801 MID26696337 Hispanic   Male      Civil Engineering</span></span>
+<span id="cb16-30"><a href="#cb16-30"></a><span class="co">#&gt; 4669: 143501 MID26696429    White Female Industrial Engineering</span></span>
+<span id="cb16-31"><a href="#cb16-31"></a><span class="co">#&gt; 4670: 141901 MID26696484    White   Male Mechanical Engineering</span></span>
+<span id="cb16-32"><a href="#cb16-32"></a><span class="co">#&gt; 4671: 141001 MID26696642    White   Male Electrical Engineering</span></span>
+<span id="cb16-33"><a href="#cb16-33"></a><span class="co">#&gt; 4672: 141901 MID26696738    White   Male Mechanical Engineering</span></span>
+<span id="cb16-34"><a href="#cb16-34"></a><span class="co">#&gt; 4673: 141001 MID26696771    White Female Electrical Engineering</span></span>
+<span id="cb16-35"><a href="#cb16-35"></a><span class="co">#&gt; 4674: 141901 MID26696967    White   Male Mechanical Engineering</span></span>
+<span id="cb16-36"><a href="#cb16-36"></a><span class="co">#&gt; 4675: 141901 MID26697163 Hispanic   Male Mechanical Engineering</span></span>
+<span id="cb16-37"><a href="#cb16-37"></a><span class="co">#&gt; 4676: 141001 MID26697447    Asian   Male Electrical Engineering</span></span></code></pre></div>
+</div>
+<div id="group-summarize-and-join" class="section level2">
+<h2>Group, summarize, and join</h2>
+<p>To frame our results in terms of program, race/ethnicity, and sex, we assign these variables as our grouping variables.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># assign variables to aggregate by</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a>grouping_variables &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;program&quot;</span>, <span class="st">&quot;race&quot;</span>, <span class="st">&quot;sex&quot;</span>)</span></code></pre></div>
+<p>We count the number of students in each grouping. The count is assigned to the new <code>ever</code> column.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="co"># group and summarize</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a>grouped_enrollees &lt;-<span class="st"> </span>enrollees[, .(<span class="dt">ever =</span> .N), by =<span class="st"> </span>grouping_variables]</span>
+<span id="cb18-3"><a href="#cb18-3"></a></span>
+<span id="cb18-4"><a href="#cb18-4"></a><span class="co"># examine the result</span></span>
+<span id="cb18-5"><a href="#cb18-5"></a>grouped_enrollees</span>
+<span id="cb18-6"><a href="#cb18-6"></a><span class="co">#&gt;                    program            race    sex ever</span></span>
+<span id="cb18-7"><a href="#cb18-7"></a><span class="co">#&gt;  1:      Civil Engineering           White   Male 1376</span></span>
+<span id="cb18-8"><a href="#cb18-8"></a><span class="co">#&gt;  2:      Civil Engineering   International   Male   14</span></span>
+<span id="cb18-9"><a href="#cb18-9"></a><span class="co">#&gt;  3:      Civil Engineering           Asian Female   22</span></span>
+<span id="cb18-10"><a href="#cb18-10"></a><span class="co">#&gt;  4:      Civil Engineering           White Female  407</span></span>
+<span id="cb18-11"><a href="#cb18-11"></a><span class="co">#&gt;  5:      Civil Engineering           Black   Male  106</span></span>
+<span id="cb18-12"><a href="#cb18-12"></a><span class="co">#&gt;  6:      Civil Engineering           Black Female   56</span></span>
+<span id="cb18-13"><a href="#cb18-13"></a><span class="co">#&gt;  7:      Civil Engineering           Other   Male   15</span></span>
+<span id="cb18-14"><a href="#cb18-14"></a><span class="co">#&gt;  8:      Civil Engineering           Asian   Male   51</span></span>
+<span id="cb18-15"><a href="#cb18-15"></a><span class="co">#&gt;  9:      Civil Engineering        Hispanic   Male   66</span></span>
+<span id="cb18-16"><a href="#cb18-16"></a><span class="co">#&gt; 10:      Civil Engineering           Other Female    6</span></span>
+<span id="cb18-17"><a href="#cb18-17"></a><span class="co">#&gt; ---                                                   </span></span>
+<span id="cb18-18"><a href="#cb18-18"></a><span class="co">#&gt; 54: Industrial Engineering        Hispanic   Male   26</span></span>
+<span id="cb18-19"><a href="#cb18-19"></a><span class="co">#&gt; 55: Industrial Engineering        Hispanic Female    7</span></span>
+<span id="cb18-20"><a href="#cb18-20"></a><span class="co">#&gt; 56: Industrial Engineering           Asian Female   41</span></span>
+<span id="cb18-21"><a href="#cb18-21"></a><span class="co">#&gt; 57: Industrial Engineering           Other   Male    7</span></span>
+<span id="cb18-22"><a href="#cb18-22"></a><span class="co">#&gt; 58: Industrial Engineering   International Female    6</span></span>
+<span id="cb18-23"><a href="#cb18-23"></a><span class="co">#&gt; 59: Industrial Engineering Native American   Male    1</span></span>
+<span id="cb18-24"><a href="#cb18-24"></a><span class="co">#&gt; 60: Industrial Engineering           Other Female    4</span></span>
+<span id="cb18-25"><a href="#cb18-25"></a><span class="co">#&gt; 61: Industrial Engineering         Unknown   Male    1</span></span>
+<span id="cb18-26"><a href="#cb18-26"></a><span class="co">#&gt; 62: Industrial Engineering         Unknown Female    2</span></span>
+<span id="cb18-27"><a href="#cb18-27"></a><span class="co">#&gt; 63: Industrial Engineering Native American Female    1</span></span></code></pre></div>
+<p>Repeat for the graduates, creating the new <code>grad</code> column.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="co"># group and summarize</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a>grouped_graduates &lt;-<span class="st"> </span>graduates[, .(<span class="dt">grad =</span> .N), by =<span class="st"> </span>grouping_variables]</span>
+<span id="cb19-3"><a href="#cb19-3"></a></span>
+<span id="cb19-4"><a href="#cb19-4"></a><span class="co"># examine the result</span></span>
+<span id="cb19-5"><a href="#cb19-5"></a>grouped_graduates</span>
+<span id="cb19-6"><a href="#cb19-6"></a><span class="co">#&gt;                    program            race    sex grad</span></span>
+<span id="cb19-7"><a href="#cb19-7"></a><span class="co">#&gt;  1:      Civil Engineering           White   Male  708</span></span>
+<span id="cb19-8"><a href="#cb19-8"></a><span class="co">#&gt;  2:      Civil Engineering           White Female  192</span></span>
+<span id="cb19-9"><a href="#cb19-9"></a><span class="co">#&gt;  3:      Civil Engineering           Asian Female   11</span></span>
+<span id="cb19-10"><a href="#cb19-10"></a><span class="co">#&gt;  4:      Civil Engineering           Black   Male   39</span></span>
+<span id="cb19-11"><a href="#cb19-11"></a><span class="co">#&gt;  5:      Civil Engineering           Asian   Male   24</span></span>
+<span id="cb19-12"><a href="#cb19-12"></a><span class="co">#&gt;  6:      Civil Engineering           Black Female   21</span></span>
+<span id="cb19-13"><a href="#cb19-13"></a><span class="co">#&gt;  7:      Civil Engineering   International   Male    5</span></span>
+<span id="cb19-14"><a href="#cb19-14"></a><span class="co">#&gt;  8:      Civil Engineering           Other Female    1</span></span>
+<span id="cb19-15"><a href="#cb19-15"></a><span class="co">#&gt;  9:      Civil Engineering           Other   Male    8</span></span>
+<span id="cb19-16"><a href="#cb19-16"></a><span class="co">#&gt; 10:      Civil Engineering Native American   Male    3</span></span>
+<span id="cb19-17"><a href="#cb19-17"></a><span class="co">#&gt; ---                                                   </span></span>
+<span id="cb19-18"><a href="#cb19-18"></a><span class="co">#&gt; 51: Industrial Engineering           Asian   Male   47</span></span>
+<span id="cb19-19"><a href="#cb19-19"></a><span class="co">#&gt; 52: Industrial Engineering           Black Female   56</span></span>
+<span id="cb19-20"><a href="#cb19-20"></a><span class="co">#&gt; 53: Industrial Engineering   International   Male   18</span></span>
+<span id="cb19-21"><a href="#cb19-21"></a><span class="co">#&gt; 54: Industrial Engineering        Hispanic   Male   19</span></span>
+<span id="cb19-22"><a href="#cb19-22"></a><span class="co">#&gt; 55: Industrial Engineering        Hispanic Female    5</span></span>
+<span id="cb19-23"><a href="#cb19-23"></a><span class="co">#&gt; 56: Industrial Engineering           Asian Female   22</span></span>
+<span id="cb19-24"><a href="#cb19-24"></a><span class="co">#&gt; 57: Industrial Engineering           Other   Male    4</span></span>
+<span id="cb19-25"><a href="#cb19-25"></a><span class="co">#&gt; 58: Industrial Engineering   International Female    4</span></span>
+<span id="cb19-26"><a href="#cb19-26"></a><span class="co">#&gt; 59: Industrial Engineering           Other Female    4</span></span>
+<span id="cb19-27"><a href="#cb19-27"></a><span class="co">#&gt; 60: Industrial Engineering         Unknown   Male    1</span></span></code></pre></div>
+<p>We join the two data frames by our grouping variables, producing a data frame with <code>ever</code> and <code>grad</code> for each group. Note that we have 63 groupings of enrollees but only 60 groupings of graduates. Some enrollee groups have no graduates.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="co"># left-join graduates to enrollees</span></span>
+<span id="cb20-2"><a href="#cb20-2"></a>grouped_data &lt;-<span class="st"> </span><span class="kw">merge</span>(grouped_enrollees,</span>
+<span id="cb20-3"><a href="#cb20-3"></a>  grouped_graduates,</span>
+<span id="cb20-4"><a href="#cb20-4"></a>  <span class="dt">by =</span> grouping_variables,</span>
+<span id="cb20-5"><a href="#cb20-5"></a>  <span class="dt">all.x =</span> <span class="ot">TRUE</span></span>
+<span id="cb20-6"><a href="#cb20-6"></a>)</span>
+<span id="cb20-7"><a href="#cb20-7"></a></span>
+<span id="cb20-8"><a href="#cb20-8"></a><span class="co"># examine the result, ordered by program</span></span>
+<span id="cb20-9"><a href="#cb20-9"></a>grouped_data[<span class="kw">order</span>(program)]</span>
+<span id="cb20-10"><a href="#cb20-10"></a><span class="co">#&gt;                    program            race    sex ever grad</span></span>
+<span id="cb20-11"><a href="#cb20-11"></a><span class="co">#&gt;  1:      Civil Engineering           Asian Female   22   11</span></span>
+<span id="cb20-12"><a href="#cb20-12"></a><span class="co">#&gt;  2:      Civil Engineering           Asian   Male   51   24</span></span>
+<span id="cb20-13"><a href="#cb20-13"></a><span class="co">#&gt;  3:      Civil Engineering           Black Female   56   21</span></span>
+<span id="cb20-14"><a href="#cb20-14"></a><span class="co">#&gt;  4:      Civil Engineering           Black   Male  106   39</span></span>
+<span id="cb20-15"><a href="#cb20-15"></a><span class="co">#&gt;  5:      Civil Engineering        Hispanic Female   11    5</span></span>
+<span id="cb20-16"><a href="#cb20-16"></a><span class="co">#&gt;  6:      Civil Engineering        Hispanic   Male   66   30</span></span>
+<span id="cb20-17"><a href="#cb20-17"></a><span class="co">#&gt;  7:      Civil Engineering   International Female    1    1</span></span>
+<span id="cb20-18"><a href="#cb20-18"></a><span class="co">#&gt;  8:      Civil Engineering   International   Male   14    5</span></span>
+<span id="cb20-19"><a href="#cb20-19"></a><span class="co">#&gt;  9:      Civil Engineering Native American   Male    7    3</span></span>
+<span id="cb20-20"><a href="#cb20-20"></a><span class="co">#&gt; 10:      Civil Engineering           Other Female    6    1</span></span>
+<span id="cb20-21"><a href="#cb20-21"></a><span class="co">#&gt; ---                                                        </span></span>
+<span id="cb20-22"><a href="#cb20-22"></a><span class="co">#&gt; 54: Mechanical Engineering   International Female    3    2</span></span>
+<span id="cb20-23"><a href="#cb20-23"></a><span class="co">#&gt; 55: Mechanical Engineering   International   Male   43   26</span></span>
+<span id="cb20-24"><a href="#cb20-24"></a><span class="co">#&gt; 56: Mechanical Engineering Native American Female    5    2</span></span>
+<span id="cb20-25"><a href="#cb20-25"></a><span class="co">#&gt; 57: Mechanical Engineering Native American   Male   14    5</span></span>
+<span id="cb20-26"><a href="#cb20-26"></a><span class="co">#&gt; 58: Mechanical Engineering           Other Female    4    2</span></span>
+<span id="cb20-27"><a href="#cb20-27"></a><span class="co">#&gt; 59: Mechanical Engineering           Other   Male   49   28</span></span>
+<span id="cb20-28"><a href="#cb20-28"></a><span class="co">#&gt; 60: Mechanical Engineering         Unknown Female    5    3</span></span>
+<span id="cb20-29"><a href="#cb20-29"></a><span class="co">#&gt; 61: Mechanical Engineering         Unknown   Male   15    9</span></span>
+<span id="cb20-30"><a href="#cb20-30"></a><span class="co">#&gt; 62: Mechanical Engineering           White Female  345  141</span></span>
+<span id="cb20-31"><a href="#cb20-31"></a><span class="co">#&gt; 63: Mechanical Engineering           White   Male 2444 1166</span></span></code></pre></div>
+</div>
+<div id="compute-stickiness" class="section level2">
+<h2>Compute stickiness</h2>
+<p>There are 3 NA entries in the <code>grad</code> column where we have enrollees but no graduates. To see them more directly:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="co"># begin work on computing the metric</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a>stickiness &lt;-<span class="st"> </span><span class="kw">copy</span>(grouped_data)</span>
+<span id="cb21-3"><a href="#cb21-3"></a></span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="co"># identify NA values</span></span>
+<span id="cb21-5"><a href="#cb21-5"></a>rows_with_degree_NA &lt;-<span class="st"> </span><span class="kw">is.na</span>(stickiness<span class="op">$</span>grad)</span>
+<span id="cb21-6"><a href="#cb21-6"></a>stickiness[rows_with_degree_NA]</span>
+<span id="cb21-7"><a href="#cb21-7"></a><span class="co">#&gt;                   program            race    sex ever grad</span></span>
+<span id="cb21-8"><a href="#cb21-8"></a><span class="co">#&gt; 1: Industrial Engineering Native American Female    1   NA</span></span>
+<span id="cb21-9"><a href="#cb21-9"></a><span class="co">#&gt; 2: Industrial Engineering Native American   Male    1   NA</span></span>
+<span id="cb21-10"><a href="#cb21-10"></a><span class="co">#&gt; 3: Industrial Engineering         Unknown Female    2   NA</span></span></code></pre></div>
+<p>We convert the NA values in the <code>grad</code> column to zero.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="co"># convert grad NA to zero</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a>stickiness[rows_with_degree_NA, grad <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="dv">0</span>]</span>
+<span id="cb22-3"><a href="#cb22-3"></a></span>
+<span id="cb22-4"><a href="#cb22-4"></a><span class="co"># examine the result</span></span>
+<span id="cb22-5"><a href="#cb22-5"></a>stickiness[rows_with_degree_NA]</span>
+<span id="cb22-6"><a href="#cb22-6"></a><span class="co">#&gt;                   program            race    sex ever grad</span></span>
+<span id="cb22-7"><a href="#cb22-7"></a><span class="co">#&gt; 1: Industrial Engineering Native American Female    1    0</span></span>
+<span id="cb22-8"><a href="#cb22-8"></a><span class="co">#&gt; 2: Industrial Engineering Native American   Male    1    0</span></span>
+<span id="cb22-9"><a href="#cb22-9"></a><span class="co">#&gt; 3: Industrial Engineering         Unknown Female    2    0</span></span></code></pre></div>
+<p>We omit rows with zero students ever enrolled, if any, to avoid dividing by zero.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># prevent division by zero</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a>rows_we_want &lt;-<span class="st"> </span>stickiness<span class="op">$</span>ever <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span></span>
+<span id="cb23-3"><a href="#cb23-3"></a>stickiness &lt;-<span class="st"> </span>stickiness[rows_we_want]</span></code></pre></div>
+<p>Stickiness is the ratio of <code>grad</code> to <code>ever</code>.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="co"># compute stickiness</span></span>
+<span id="cb24-2"><a href="#cb24-2"></a>stickiness[, stick <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw">round</span>(grad <span class="op">/</span><span class="st"> </span>ever, <span class="dv">2</span>)]</span>
+<span id="cb24-3"><a href="#cb24-3"></a></span>
+<span id="cb24-4"><a href="#cb24-4"></a><span class="co"># examine the result</span></span>
+<span id="cb24-5"><a href="#cb24-5"></a>stickiness</span>
+<span id="cb24-6"><a href="#cb24-6"></a><span class="co">#&gt;                    program            race    sex ever grad stick</span></span>
+<span id="cb24-7"><a href="#cb24-7"></a><span class="co">#&gt;  1:      Civil Engineering           Asian Female   22   11  0.50</span></span>
+<span id="cb24-8"><a href="#cb24-8"></a><span class="co">#&gt;  2:      Civil Engineering           Asian   Male   51   24  0.47</span></span>
+<span id="cb24-9"><a href="#cb24-9"></a><span class="co">#&gt;  3:      Civil Engineering           Black Female   56   21  0.38</span></span>
+<span id="cb24-10"><a href="#cb24-10"></a><span class="co">#&gt;  4:      Civil Engineering           Black   Male  106   39  0.37</span></span>
+<span id="cb24-11"><a href="#cb24-11"></a><span class="co">#&gt;  5:      Civil Engineering        Hispanic Female   11    5  0.45</span></span>
+<span id="cb24-12"><a href="#cb24-12"></a><span class="co">#&gt;  6:      Civil Engineering        Hispanic   Male   66   30  0.45</span></span>
+<span id="cb24-13"><a href="#cb24-13"></a><span class="co">#&gt;  7:      Civil Engineering   International Female    1    1  1.00</span></span>
+<span id="cb24-14"><a href="#cb24-14"></a><span class="co">#&gt;  8:      Civil Engineering   International   Male   14    5  0.36</span></span>
+<span id="cb24-15"><a href="#cb24-15"></a><span class="co">#&gt;  9:      Civil Engineering Native American   Male    7    3  0.43</span></span>
+<span id="cb24-16"><a href="#cb24-16"></a><span class="co">#&gt; 10:      Civil Engineering           Other Female    6    1  0.17</span></span>
+<span id="cb24-17"><a href="#cb24-17"></a><span class="co">#&gt; ---                                                              </span></span>
+<span id="cb24-18"><a href="#cb24-18"></a><span class="co">#&gt; 54: Mechanical Engineering   International Female    3    2  0.67</span></span>
+<span id="cb24-19"><a href="#cb24-19"></a><span class="co">#&gt; 55: Mechanical Engineering   International   Male   43   26  0.60</span></span>
+<span id="cb24-20"><a href="#cb24-20"></a><span class="co">#&gt; 56: Mechanical Engineering Native American Female    5    2  0.40</span></span>
+<span id="cb24-21"><a href="#cb24-21"></a><span class="co">#&gt; 57: Mechanical Engineering Native American   Male   14    5  0.36</span></span>
+<span id="cb24-22"><a href="#cb24-22"></a><span class="co">#&gt; 58: Mechanical Engineering           Other Female    4    2  0.50</span></span>
+<span id="cb24-23"><a href="#cb24-23"></a><span class="co">#&gt; 59: Mechanical Engineering           Other   Male   49   28  0.57</span></span>
+<span id="cb24-24"><a href="#cb24-24"></a><span class="co">#&gt; 60: Mechanical Engineering         Unknown Female    5    3  0.60</span></span>
+<span id="cb24-25"><a href="#cb24-25"></a><span class="co">#&gt; 61: Mechanical Engineering         Unknown   Male   15    9  0.60</span></span>
+<span id="cb24-26"><a href="#cb24-26"></a><span class="co">#&gt; 62: Mechanical Engineering           White Female  345  141  0.41</span></span>
+<span id="cb24-27"><a href="#cb24-27"></a><span class="co">#&gt; 63: Mechanical Engineering           White   Male 2444 1166  0.48</span></span></code></pre></div>
+<p>To see the class of each column:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="co"># name and class of variables (columns)</span></span>
+<span id="cb25-2"><a href="#cb25-2"></a><span class="kw">unlist</span>(<span class="kw">lapply</span>(stickiness, <span class="dt">FUN =</span> class))</span>
+<span id="cb25-3"><a href="#cb25-3"></a><span class="co">#&gt;     program        race         sex        ever        grad       stick </span></span>
+<span id="cb25-4"><a href="#cb25-4"></a><span class="co">#&gt; &quot;character&quot; &quot;character&quot; &quot;character&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;numeric&quot;</span></span></code></pre></div>
+<p>The stickiness data derived above is the data set <code>rep_stickiness</code> in midfieldr. View its help page by running</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>? rep_stickiness</span></code></pre></div>
+</div>
+<div id="condition-the-data-for-display" class="section level2">
+<h2>Condition the data for display</h2>
+<p>Before graphing, we isolate the three multiway variables (program, combined race and sex, and stickiness) and transform the categorical variables into factors with levels that are ordered by median stickiness.</p>
+<p>The <em>Multiway graphs and tables</em> vignette <a href="multiway_graphs.html">(link)</a> describes this process for the stickiness data in detail. The result is included as a data set <code>rep_stickiness_mw</code> in midfieldr. View its help page by running</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>? rep_stickiness_mw</span></code></pre></div>
+<p>This data set is loaded with midfieldr.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a><span class="co"># condition the data in multiway form (built-in data set)</span></span>
+<span id="cb28-2"><a href="#cb28-2"></a>data_mw &lt;-<span class="st"> </span><span class="kw">copy</span>(rep_stickiness_mw)</span>
+<span id="cb28-3"><a href="#cb28-3"></a></span>
+<span id="cb28-4"><a href="#cb28-4"></a><span class="co"># examine the result</span></span>
+<span id="cb28-5"><a href="#cb28-5"></a>data_mw</span>
+<span id="cb28-6"><a href="#cb28-6"></a><span class="co">#&gt;                    program        race_sex stick</span></span>
+<span id="cb28-7"><a href="#cb28-7"></a><span class="co">#&gt;  1:      Civil Engineering    Asian Female  0.50</span></span>
+<span id="cb28-8"><a href="#cb28-8"></a><span class="co">#&gt;  2:      Civil Engineering      Asian Male  0.47</span></span>
+<span id="cb28-9"><a href="#cb28-9"></a><span class="co">#&gt;  3:      Civil Engineering    Black Female  0.38</span></span>
+<span id="cb28-10"><a href="#cb28-10"></a><span class="co">#&gt;  4:      Civil Engineering      Black Male  0.37</span></span>
+<span id="cb28-11"><a href="#cb28-11"></a><span class="co">#&gt;  5:      Civil Engineering Hispanic Female  0.45</span></span>
+<span id="cb28-12"><a href="#cb28-12"></a><span class="co">#&gt;  6:      Civil Engineering   Hispanic Male  0.45</span></span>
+<span id="cb28-13"><a href="#cb28-13"></a><span class="co">#&gt;  7:      Civil Engineering    White Female  0.47</span></span>
+<span id="cb28-14"><a href="#cb28-14"></a><span class="co">#&gt;  8:      Civil Engineering      White Male  0.51</span></span>
+<span id="cb28-15"><a href="#cb28-15"></a><span class="co">#&gt;  9: Electrical Engineering    Asian Female  0.49</span></span>
+<span id="cb28-16"><a href="#cb28-16"></a><span class="co">#&gt; 10: Electrical Engineering      Asian Male  0.54</span></span>
+<span id="cb28-17"><a href="#cb28-17"></a><span class="co">#&gt; ---                                             </span></span>
+<span id="cb28-18"><a href="#cb28-18"></a><span class="co">#&gt; 23: Industrial Engineering    White Female  0.60</span></span>
+<span id="cb28-19"><a href="#cb28-19"></a><span class="co">#&gt; 24: Industrial Engineering      White Male  0.58</span></span>
+<span id="cb28-20"><a href="#cb28-20"></a><span class="co">#&gt; 25: Mechanical Engineering    Asian Female  0.62</span></span>
+<span id="cb28-21"><a href="#cb28-21"></a><span class="co">#&gt; 26: Mechanical Engineering      Asian Male  0.60</span></span>
+<span id="cb28-22"><a href="#cb28-22"></a><span class="co">#&gt; 27: Mechanical Engineering    Black Female  0.36</span></span>
+<span id="cb28-23"><a href="#cb28-23"></a><span class="co">#&gt; 28: Mechanical Engineering      Black Male  0.37</span></span>
+<span id="cb28-24"><a href="#cb28-24"></a><span class="co">#&gt; 29: Mechanical Engineering Hispanic Female  0.38</span></span>
+<span id="cb28-25"><a href="#cb28-25"></a><span class="co">#&gt; 30: Mechanical Engineering   Hispanic Male  0.45</span></span>
+<span id="cb28-26"><a href="#cb28-26"></a><span class="co">#&gt; 31: Mechanical Engineering    White Female  0.41</span></span>
+<span id="cb28-27"><a href="#cb28-27"></a><span class="co">#&gt; 32: Mechanical Engineering      White Male  0.48</span></span></code></pre></div>
+<p>The attributes of the data frame confirm that the categorical variables are factors and not characters. The median values by which the factor levels are ordered are shown in the <code>scores</code> attributes.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a><span class="co"># name and class of variables (columns)</span></span>
+<span id="cb29-2"><a href="#cb29-2"></a><span class="kw">lapply</span>(data_mw, <span class="dt">FUN =</span> attributes)</span>
+<span id="cb29-3"><a href="#cb29-3"></a><span class="co">#&gt; $program</span></span>
+<span id="cb29-4"><a href="#cb29-4"></a><span class="co">#&gt; $program$levels</span></span>
+<span id="cb29-5"><a href="#cb29-5"></a><span class="co">#&gt; [1] &quot;Mechanical Engineering&quot; &quot;Electrical Engineering&quot; &quot;Civil Engineering&quot;     </span></span>
+<span id="cb29-6"><a href="#cb29-6"></a><span class="co">#&gt; [4] &quot;Industrial Engineering&quot;</span></span>
+<span id="cb29-7"><a href="#cb29-7"></a><span class="co">#&gt; </span></span>
+<span id="cb29-8"><a href="#cb29-8"></a><span class="co">#&gt; $program$class</span></span>
+<span id="cb29-9"><a href="#cb29-9"></a><span class="co">#&gt; [1] &quot;factor&quot;</span></span>
+<span id="cb29-10"><a href="#cb29-10"></a><span class="co">#&gt; </span></span>
+<span id="cb29-11"><a href="#cb29-11"></a><span class="co">#&gt; $program$scores</span></span>
+<span id="cb29-12"><a href="#cb29-12"></a><span class="co">#&gt;      Civil Engineering Electrical Engineering Industrial Engineering </span></span>
+<span id="cb29-13"><a href="#cb29-13"></a><span class="co">#&gt;                   0.46                   0.44                   0.59 </span></span>
+<span id="cb29-14"><a href="#cb29-14"></a><span class="co">#&gt; Mechanical Engineering </span></span>
+<span id="cb29-15"><a href="#cb29-15"></a><span class="co">#&gt;                   0.43 </span></span>
+<span id="cb29-16"><a href="#cb29-16"></a><span class="co">#&gt; </span></span>
+<span id="cb29-17"><a href="#cb29-17"></a><span class="co">#&gt; </span></span>
+<span id="cb29-18"><a href="#cb29-18"></a><span class="co">#&gt; $race_sex</span></span>
+<span id="cb29-19"><a href="#cb29-19"></a><span class="co">#&gt; $race_sex$levels</span></span>
+<span id="cb29-20"><a href="#cb29-20"></a><span class="co">#&gt; [1] &quot;Black Male&quot;      &quot;Black Female&quot;    &quot;Hispanic Female&quot; &quot;White Female&quot;   </span></span>
+<span id="cb29-21"><a href="#cb29-21"></a><span class="co">#&gt; [5] &quot;Hispanic Male&quot;   &quot;White Male&quot;      &quot;Asian Female&quot;    &quot;Asian Male&quot;     </span></span>
+<span id="cb29-22"><a href="#cb29-22"></a><span class="co">#&gt; </span></span>
+<span id="cb29-23"><a href="#cb29-23"></a><span class="co">#&gt; $race_sex$class</span></span>
+<span id="cb29-24"><a href="#cb29-24"></a><span class="co">#&gt; [1] &quot;factor&quot;</span></span>
+<span id="cb29-25"><a href="#cb29-25"></a><span class="co">#&gt; </span></span>
+<span id="cb29-26"><a href="#cb29-26"></a><span class="co">#&gt; $race_sex$scores</span></span>
+<span id="cb29-27"><a href="#cb29-27"></a><span class="co">#&gt;    Asian Female      Asian Male    Black Female      Black Male Hispanic Female </span></span>
+<span id="cb29-28"><a href="#cb29-28"></a><span class="co">#&gt;           0.520           0.570           0.410           0.380           0.425 </span></span>
+<span id="cb29-29"><a href="#cb29-29"></a><span class="co">#&gt;   Hispanic Male    White Female      White Male </span></span>
+<span id="cb29-30"><a href="#cb29-30"></a><span class="co">#&gt;           0.455           0.440           0.495 </span></span>
+<span id="cb29-31"><a href="#cb29-31"></a><span class="co">#&gt; </span></span>
+<span id="cb29-32"><a href="#cb29-32"></a><span class="co">#&gt; </span></span>
+<span id="cb29-33"><a href="#cb29-33"></a><span class="co">#&gt; $stick</span></span>
+<span id="cb29-34"><a href="#cb29-34"></a><span class="co">#&gt; NULL</span></span></code></pre></div>
+</div>
+<div id="graph-the-metric" class="section level2">
+<h2>Graph the metric</h2>
+<p>We use conventional ggplot2 functions to graph the <code>data_mw</code> data set in a multiway graph.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a><span class="co"># graph results</span></span>
+<span id="cb30-2"><a href="#cb30-2"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> data_mw, <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> race_sex)) <span class="op">+</span></span>
+<span id="cb30-3"><a href="#cb30-3"></a><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="dt">facets =</span> <span class="kw">vars</span>(program), <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></span>
+<span id="cb30-4"><a href="#cb30-4"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">+</span></span>
+<span id="cb30-5"><a href="#cb30-5"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Stickiness&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="70%" style="display: block; margin: auto;" /> <br></p>
+<p>For more information on multiway data and interpreting multiway graphs, see the <em>Multiway graphs and tables</em> vignette <a href="multiway_graphs.html">(link)</a>.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<div id="refs">
+<div id="ref-Ohland+Orr+others:2012">
+<p>Ohland, Matthew, Orr, Marisa, Layton, Richard, et al. (2012) Introducing stickiness as a versatile metric of engineering persistence. In: <em>Proceedings of the Frontiers in Education Conference</em>, 2012, pp. 1–5.</p>
+</div>
+</div>
+</div>
+<div id="appendix" class="section level2">
+<h2>Appendix</h2>
+<div id="complete-script" class="section level3">
+<h3>Complete script</h3>
+<p>The vignette code chunks are collected below in a single, condensed script.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a><span class="co"># packages used</span></span>
+<span id="cb31-2"><a href="#cb31-2"></a><span class="kw">library</span>(midfieldr)</span>
+<span id="cb31-3"><a href="#cb31-3"></a><span class="kw">library</span>(midfielddata)</span>
+<span id="cb31-4"><a href="#cb31-4"></a><span class="kw">library</span>(data.table)</span>
+<span id="cb31-5"><a href="#cb31-5"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb31-6"><a href="#cb31-6"></a></span>
+<span id="cb31-7"><a href="#cb31-7"></a><span class="co"># obtain programs (built-in data set)</span></span>
+<span id="cb31-8"><a href="#cb31-8"></a>program_group &lt;-<span class="st"> </span>rep_group</span>
+<span id="cb31-9"><a href="#cb31-9"></a>group_cip &lt;-<span class="st"> </span>program_group<span class="op">$</span>cip6</span>
+<span id="cb31-10"><a href="#cb31-10"></a></span>
+<span id="cb31-11"><a href="#cb31-11"></a><span class="co"># gather students ever enrolled in programs</span></span>
+<span id="cb31-12"><a href="#cb31-12"></a>cols_we_want &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;cip6&quot;</span>)</span>
+<span id="cb31-13"><a href="#cb31-13"></a>rows_we_want &lt;-<span class="st"> </span>midfieldterms<span class="op">$</span>cip6 <span class="op">%in%</span><span class="st"> </span>group_cip</span>
+<span id="cb31-14"><a href="#cb31-14"></a>enrollees &lt;-<span class="st"> </span>midfieldterms[rows_we_want, ..cols_we_want]</span>
+<span id="cb31-15"><a href="#cb31-15"></a>enrollees &lt;-<span class="st"> </span><span class="kw">unique</span>(enrollees)</span>
+<span id="cb31-16"><a href="#cb31-16"></a></span>
+<span id="cb31-17"><a href="#cb31-17"></a><span class="co"># gather FYE students predicted to start in these programs</span></span>
+<span id="cb31-18"><a href="#cb31-18"></a>rows_we_want &lt;-<span class="st"> </span>fye_start<span class="op">$</span>start <span class="op">%in%</span><span class="st"> </span>group_cip</span>
+<span id="cb31-19"><a href="#cb31-19"></a>cols_we_want &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;start&quot;</span>)</span>
+<span id="cb31-20"><a href="#cb31-20"></a>fye_starters &lt;-<span class="st"> </span>fye_start[rows_we_want, ..cols_we_want]</span>
+<span id="cb31-21"><a href="#cb31-21"></a>fye_starters &lt;-<span class="st"> </span><span class="kw">unique</span>(fye_starters)</span>
+<span id="cb31-22"><a href="#cb31-22"></a><span class="kw">setnames</span>(fye_starters, <span class="dt">old =</span> <span class="st">&quot;start&quot;</span>, <span class="dt">new =</span> <span class="st">&quot;cip6&quot;</span>)</span>
+<span id="cb31-23"><a href="#cb31-23"></a>enrollees &lt;-<span class="st"> </span><span class="kw">rbind</span>(enrollees, fye_starters)</span>
+<span id="cb31-24"><a href="#cb31-24"></a>enrollees &lt;-<span class="st"> </span><span class="kw">unique</span>(enrollees)</span>
+<span id="cb31-25"><a href="#cb31-25"></a></span>
+<span id="cb31-26"><a href="#cb31-26"></a><span class="co"># apply the feasible completion filter</span></span>
+<span id="cb31-27"><a href="#cb31-27"></a>feasible_ids &lt;-<span class="st"> </span><span class="kw">subset_feasible</span>(<span class="dt">id =</span> enrollees<span class="op">$</span>id)</span>
+<span id="cb31-28"><a href="#cb31-28"></a>rows_we_want &lt;-<span class="st"> </span>enrollees<span class="op">$</span>id <span class="op">%in%</span><span class="st"> </span>feasible_ids</span>
+<span id="cb31-29"><a href="#cb31-29"></a>enrollees &lt;-<span class="st"> </span>enrollees[rows_we_want]</span>
+<span id="cb31-30"><a href="#cb31-30"></a></span>
+<span id="cb31-31"><a href="#cb31-31"></a><span class="co"># obtain race/ethnicity and sex at matriculation</span></span>
+<span id="cb31-32"><a href="#cb31-32"></a>rows_we_want &lt;-<span class="st"> </span>midfieldstudents<span class="op">$</span>id <span class="op">%in%</span><span class="st"> </span>feasible_ids</span>
+<span id="cb31-33"><a href="#cb31-33"></a>cols_we_want &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;race&quot;</span>, <span class="st">&quot;sex&quot;</span>)</span>
+<span id="cb31-34"><a href="#cb31-34"></a>race_sex &lt;-<span class="st"> </span>midfieldstudents[rows_we_want, ..cols_we_want]</span>
+<span id="cb31-35"><a href="#cb31-35"></a>race_sex &lt;-<span class="st"> </span><span class="kw">unique</span>(race_sex)</span>
+<span id="cb31-36"><a href="#cb31-36"></a></span>
+<span id="cb31-37"><a href="#cb31-37"></a><span class="co"># join data frames </span></span>
+<span id="cb31-38"><a href="#cb31-38"></a>enrollees &lt;-<span class="st"> </span><span class="kw">merge</span>(enrollees, race_sex, <span class="dt">by =</span> <span class="st">&quot;id&quot;</span>, <span class="dt">all.x =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb31-39"><a href="#cb31-39"></a>enrollees &lt;-<span class="st"> </span><span class="kw">merge</span>(enrollees, program_group, <span class="dt">by =</span> <span class="st">&quot;cip6&quot;</span>, <span class="dt">all.x =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb31-40"><a href="#cb31-40"></a></span>
+<span id="cb31-41"><a href="#cb31-41"></a><span class="co"># gather students graduating from programs</span></span>
+<span id="cb31-42"><a href="#cb31-42"></a>cols_we_want &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;cip6&quot;</span>, <span class="st">&quot;term_degree&quot;</span>)</span>
+<span id="cb31-43"><a href="#cb31-43"></a>rows_we_want &lt;-<span class="st"> </span>midfielddegrees<span class="op">$</span>cip6 <span class="op">%in%</span><span class="st"> </span>group_cip</span>
+<span id="cb31-44"><a href="#cb31-44"></a>graduates &lt;-<span class="st"> </span>midfielddegrees[rows_we_want, ..cols_we_want]</span>
+<span id="cb31-45"><a href="#cb31-45"></a>graduates &lt;-<span class="st"> </span>graduates[, .SD[term_degree <span class="op">==</span><span class="st"> </span><span class="kw">min</span>(term_degree)], by =<span class="st"> </span>id]</span>
+<span id="cb31-46"><a href="#cb31-46"></a></span>
+<span id="cb31-47"><a href="#cb31-47"></a><span class="co"># join race/ethnicity, sex, and program labels</span></span>
+<span id="cb31-48"><a href="#cb31-48"></a>rows_we_want &lt;-<span class="st"> </span>midfieldstudents<span class="op">$</span>id <span class="op">%in%</span><span class="st"> </span>graduates<span class="op">$</span>id </span>
+<span id="cb31-49"><a href="#cb31-49"></a>cols_we_want &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;id&quot;</span>, <span class="st">&quot;race&quot;</span>, <span class="st">&quot;sex&quot;</span>)</span>
+<span id="cb31-50"><a href="#cb31-50"></a>race_sex &lt;-<span class="st"> </span>midfieldstudents[rows_we_want, ..cols_we_want]</span>
+<span id="cb31-51"><a href="#cb31-51"></a>race_sex &lt;-<span class="st"> </span><span class="kw">unique</span>(race_sex)</span>
+<span id="cb31-52"><a href="#cb31-52"></a>graduates &lt;-<span class="st"> </span><span class="kw">merge</span>(graduates, race_sex, <span class="dt">by =</span> <span class="st">&quot;id&quot;</span>, <span class="dt">all.x =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb31-53"><a href="#cb31-53"></a>graduates &lt;-<span class="st"> </span><span class="kw">merge</span>(graduates, program_group, <span class="dt">by =</span> <span class="st">&quot;cip6&quot;</span>, <span class="dt">all.x =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb31-54"><a href="#cb31-54"></a></span>
+<span id="cb31-55"><a href="#cb31-55"></a><span class="co"># group, summarize, and join</span></span>
+<span id="cb31-56"><a href="#cb31-56"></a>grouping_variables &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;program&quot;</span>, <span class="st">&quot;race&quot;</span>, <span class="st">&quot;sex&quot;</span>)</span>
+<span id="cb31-57"><a href="#cb31-57"></a>grouped_enrollees &lt;-<span class="st"> </span>enrollees[, .(<span class="dt">ever =</span> .N), by =<span class="st"> </span>grouping_variables]</span>
+<span id="cb31-58"><a href="#cb31-58"></a>grouped_graduates &lt;-<span class="st"> </span>graduates[, .(<span class="dt">grad =</span> .N), by =<span class="st"> </span>grouping_variables]</span>
+<span id="cb31-59"><a href="#cb31-59"></a>grouped_data &lt;-<span class="st"> </span><span class="kw">merge</span>(grouped_enrollees,</span>
+<span id="cb31-60"><a href="#cb31-60"></a>  grouped_graduates,</span>
+<span id="cb31-61"><a href="#cb31-61"></a>  <span class="dt">by =</span> grouping_variables,</span>
+<span id="cb31-62"><a href="#cb31-62"></a>  <span class="dt">all.x =</span> <span class="ot">TRUE</span></span>
+<span id="cb31-63"><a href="#cb31-63"></a>)</span>
+<span id="cb31-64"><a href="#cb31-64"></a></span>
+<span id="cb31-65"><a href="#cb31-65"></a><span class="co"># compute the metric</span></span>
+<span id="cb31-66"><a href="#cb31-66"></a>stickiness &lt;-<span class="st"> </span>grouped_data</span>
+<span id="cb31-67"><a href="#cb31-67"></a>rows_with_degree_NA &lt;-<span class="st"> </span><span class="kw">is.na</span>(stickiness<span class="op">$</span>grad)</span>
+<span id="cb31-68"><a href="#cb31-68"></a>stickiness[rows_with_degree_NA, grad <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="dv">0</span>]</span>
+<span id="cb31-69"><a href="#cb31-69"></a>rows_we_want &lt;-<span class="st"> </span>stickiness<span class="op">$</span>ever <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span></span>
+<span id="cb31-70"><a href="#cb31-70"></a>stickiness &lt;-<span class="st"> </span>stickiness[rows_we_want]</span>
+<span id="cb31-71"><a href="#cb31-71"></a>stickiness[, stick <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw">round</span>(grad <span class="op">/</span><span class="st"> </span>ever, <span class="dv">2</span>)]</span>
+<span id="cb31-72"><a href="#cb31-72"></a></span>
+<span id="cb31-73"><a href="#cb31-73"></a><span class="co"># condition the data in multiway form (built-in data set)</span></span>
+<span id="cb31-74"><a href="#cb31-74"></a>data_mw &lt;-<span class="st"> </span>rep_stickiness_mw</span>
+<span id="cb31-75"><a href="#cb31-75"></a></span>
+<span id="cb31-76"><a href="#cb31-76"></a><span class="co"># graph results</span></span>
+<span id="cb31-77"><a href="#cb31-77"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> data_mw, <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> stick, <span class="dt">y =</span> race_sex)) <span class="op">+</span></span>
+<span id="cb31-78"><a href="#cb31-78"></a><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="dt">facets =</span> <span class="kw">vars</span>(program), <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">as.table =</span> <span class="ot">FALSE</span>) <span class="op">+</span></span>
+<span id="cb31-79"><a href="#cb31-79"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">+</span></span>
+<span id="cb31-80"><a href="#cb31-80"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Stickiness&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

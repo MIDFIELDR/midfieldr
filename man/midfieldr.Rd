@@ -16,11 +16,11 @@ from 1987 to 2016.
 A typical midfieldr workflow might include:
 
 \itemize{
-  \item \code{filter_by_text()} search the CIP data set for program codes
-  \item \code{filter_by_cip()} gather students ever enrolled in the programs
-  \item \code{filter_by_id()} obtain student sex and race/ethnicity
+  \item \code{filter_text()} search the CIP data set for program codes
+  \item \code{prepare_fye_mi()} predict starting programs of
+      first-year-engineering (FYE) students
   \item \code{subset_feasible()} subset students for 6-year
-  completion feasibility
+      completion feasibility
   \item \code{prepare_multiway()} condition multiway data for graphing
 }
 

@@ -1,4 +1,4 @@
-#' @importFrom data.table %chin% setnames setDT
+#' @importFrom data.table %chin% setnames setDT setkey setorder
 NULL
 
 #' Prepare FYE data for multiple imputation
@@ -72,6 +72,10 @@ prepare_fye_mi <- function(data_students = NULL,
   assert_required_column(data_students, "race")
   assert_required_column(data_students, "sex")
   assert_class(data_students$id, "character")
+  assert_class(data_students$cip6, "character")
+  assert_class(data_students$institution, "character")
+  assert_class(data_students$race, "character")
+  assert_class(data_students$sex, "character")
 
   # argument check
   assert_class(data_terms, "data.frame")
@@ -79,6 +83,8 @@ prepare_fye_mi <- function(data_students = NULL,
   assert_required_column(data_terms, "cip6")
   assert_required_column(data_terms, "term")
   assert_class(data_terms$id, "character")
+  assert_class(data_terms$cip6, "character")
+  assert_class(data_terms$term, "numeric")
 
   # bind names
   # NA
@@ -101,7 +107,9 @@ prepare_fye_mi <- function(data_students = NULL,
     race = as.factor(race),
     sex = as.factor(sex),
     cip6 = as.factor(cip6))]
-  mi_data <- mi_data[order(id), .(id, institution, race, sex, cip6)]
+  mi_data <- mi_data[, .(id, institution, race, sex, cip6)]
+  data.table::setorder(mi_data, id)
+  data.table::setkey(mi_data, NULL)
 }
 
 # ------------------------------------------------------------------------

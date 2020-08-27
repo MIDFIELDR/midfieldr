@@ -57,7 +57,7 @@ The function accesses these midfielddata data sets:
 }
 \seealso{
 Other functions: 
-\code{\link{filter_by_text}()},
+\code{\link{filter_text}()},
 \code{\link{prepare_fye_mi}()},
 \code{\link{prepare_multiway}()},
 \code{\link{subset_feasible}()}

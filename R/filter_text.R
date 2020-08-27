@@ -25,15 +25,15 @@ NULL
 #'     \item Grouping structures are not preserved
 #' }
 #' @examples
-#' filter_by_text(cip, keep_text = c("^1407", "^1410"))
-#' filter_by_text(cip,
+#' filter_text(cip, keep_text = c("^1407", "^1410"))
+#' filter_text(cip,
 #'                keep_text = "civil engineering",
 #'                drop_text = "technology")
-#' filter_by_text(cip, keep_text = "History") %>%
-#'   filter_by_text(keep_text = "American")
+#' filter_text(cip, keep_text = "History") %>%
+#'   filter_text(keep_text = "American")
 #' @family functions
 #' @export
-filter_by_text <- function(data,
+filter_text <- function(data,
                            keep_text = NULL,
                            ...,
                            drop_text = NULL,

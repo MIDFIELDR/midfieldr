@@ -67,7 +67,7 @@ We use midfieldr functions to access midfielddata student records. We condition,
 
 midfieldr functions 
 
-- `filter_by_text()` 
+- `filter_text()` 
 - `subset_feasible()` 
 - `prepare_multiway()` 
 
@@ -94,11 +94,11 @@ options(datatable.print.nrows = 20, datatable.print.topn = 10)
 
 ## Gather programs
 
-Instructional programs are encoded by a 6-digit CIP code. `filter_by_text()` accesses the `cip` data set and retrieves all the 6-digit codes that satisfy stated conditions. In this case, we want all codes that start with 14 (engineering) and 52 (business). 
+Instructional programs are encoded by a 6-digit CIP code. `filter_text()` accesses the `cip` data set and retrieves all the 6-digit codes that satisfy stated conditions. In this case, we want all codes that start with 14 (engineering) and 52 (business). 
 
 ```{r}
 # engineering
-engineering <- filter_by_text(cip, keep_text = "^14", keep_col = "cip6")
+engineering <- filter_text(cip, keep_text = "^14", keep_col = "cip6")
 
 # add program label
 engineering[, program := "Engineering"]
@@ -111,7 +111,7 @@ Repeat for business.
 
 ```{r}
 # business
-business <- filter_by_text(cip, keep_text = "^52", keep_col = "cip6")
+business <- filter_text(cip, keep_text = "^52", keep_col = "cip6")
 
 # add program label
 business[, program := "Business"]
@@ -143,8 +143,7 @@ str(group_cip)
 
 Related vignettes 
 
-- *Explore program CIP codes* [(link)](explore_cip.html) illustrates search strategies using `filter_by_text()`
-- *Gather programs* [(link)](get_programs.html) illustrates program labeling options 
+- *Identify programs* [(link)](identify_programs.html) illustrates search strategies using `filter_text()` and program labeling options 
 
 ## Gather students 
 
@@ -196,7 +195,7 @@ enrollees[order(id)]
 
 Related vignettes 
 
-- *Subset for program completion feasibility*  [(link)](feasible_completion.html) describes how completion feasibility is determined  
+- *Feasible completion* [(link)](feasible_completion.html) describes how completion feasibility is determined  
 
 ## Join the grouping variables
 
@@ -324,7 +323,7 @@ lapply(data_mw, FUN = attributes)
 
 Related vignettes
 
-- *Explore multiway data* [(link)](explore_multiway.html) describes multiway data and graphs in detail 
+- *Multiway graphs and tables* [(link)](multiway_graphs.html) describes multiway data and graphs in detail 
 
 
 ## Graph the results
@@ -371,9 +370,9 @@ library(data.table)
 library(ggplot2)
 
 # gather programs
-engineering   <- filter_by_text(cip, keep_text = "^14", keep_col = "cip6")
+engineering   <- filter_text(cip, keep_text = "^14", keep_col = "cip6")
 engineering[, program := "Engineering"]
-business      <- filter_by_text(cip, keep_text = "^52", keep_col = "cip6")
+business      <- filter_text(cip, keep_text = "^52", keep_col = "cip6")
 business      <- business[, program := "Business"]
 program_group <- rbind(engineering, business)
 group_cip     <- program_group$cip6

@@ -64,7 +64,7 @@ to factors. The output is ready for use as an input to the mice package.
 }
 \seealso{
 Other functions: 
-\code{\link{filter_by_text}()},
+\code{\link{filter_text}()},
 \code{\link{prepare_multiway}()},
 \code{\link{subset_feasible}()},
 \code{\link{subset_ipeds}()}

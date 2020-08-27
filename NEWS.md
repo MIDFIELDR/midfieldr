@@ -7,9 +7,9 @@
 
 Extensive function editing and revision, resulting in 5 essential functions
 
-- `filter_by_text()` 
 - `prepare_fye_mi()`
 - `prepare_multiway()` 
+- `subset_cip()` 
 - `subset_feasible()`  
 - `subset_ipeds()`
 
