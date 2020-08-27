@@ -134,7 +134,7 @@ stratified sample of the MIDFIELD database.
 **midfieldr functions** work with MIDFIELD-structured data to access and
 manipulate student records. A typical workflow might include:
 
-  - `filter_by_text()` gather specific programs to study  
+  - `filter_text()` gather specific programs to study  
   - `subset_feasible()` subset students for 6-year completion
     feasibility
   - `prepare_multiway()` condition multiway data for graphing
@@ -175,7 +175,7 @@ develop the material in more detail.
 <div id="ref-Dowle+Srinivasan:2020:data.table">
 
 Dowle, Matt and Srinivasan, Arun (2020) *data.table: Extension of
-‘data.frame‘*. R package version 1.13.0. Available at:
+data.frame*. R package version 1.13.0. Available at:
 <https://CRAN.R-project.org/package=data.table>.
 
 </div>
