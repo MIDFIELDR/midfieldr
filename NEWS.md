@@ -1,6 +1,7 @@
 
 ## midfieldr 1.0.0.9005 / 2020-08
 
+- add data basics vignette
 - replace filter by ID and CIP functions with data.table syntax
 
 ## midfieldr 1.0.0.9002--9004 / 2020-08
