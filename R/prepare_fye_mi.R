@@ -58,7 +58,7 @@ NULL
 #' @export
 #'
 prepare_fye_mi <- function(data_students = NULL,
-                        data_terms = NULL) {
+                           data_terms = NULL) {
 
   # default arguments
   data_students <- data_students %||% midfielddata::midfieldstudents

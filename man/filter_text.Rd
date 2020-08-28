@@ -46,8 +46,9 @@ for matches.
 \examples{
 filter_text(cip, keep_text = c("^1407", "^1410"))
 filter_text(cip,
-               keep_text = "civil engineering",
-               drop_text = "technology")
+  keep_text = "civil engineering",
+  drop_text = "technology"
+)
 filter_text(cip, keep_text = "History") \%>\%
   filter_text(keep_text = "American")
 }

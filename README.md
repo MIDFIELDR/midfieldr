@@ -134,17 +134,20 @@ stratified sample of the MIDFIELD database.
 **midfieldr functions** work with MIDFIELD-structured data to access and
 manipulate student records. A typical workflow might include:
 
-  - `filter_text()` gather specific programs to study  
-  - `subset_feasible()` subset students for 6-year completion
-    feasibility
+  - `filter_text()` gather programs to study  
+  - `prepare_fye_mi()` condition first-year-engineering data for
+    multiple imputation
+  - `subset_ipeds()` subset for the IPEDS definition of successful
+    graduation
+  - `subset_feasible()` subset for 6-year completion feasibility
   - `prepare_multiway()` condition multiway data for graphing
 
 **R ecosystem**. midfieldr uses data.table functions and syntax.
 midfielddata data sets are class `data.table` and `data.frame`. However,
 midfieldr functions attempt to preserve data frame extensions assigned
 by the user (`tbl` for example). Thus users who prefer a different
-ecosystem such as dplyr should find that the package is compatible with
-their preference.
+“dialect” such as base R or dplyr should find that the package is
+compatible with their preference.
 
 In general the midfieldr vignettes use the following packages:
 
@@ -154,10 +157,9 @@ In general the midfieldr vignettes use the following packages:
     [2020](#ref-Dowle+Srinivasan:2020:data.table))
   - ggplot2 (Wickham, [2016](#ref-Wickham:2016:ggplot2))
 
-**example**. The *Get started* vignette
-[(link)](articles/get_started.html) introduces some of the basic
-midfieldr functions and the midfielddata data sets. Additional vignettes
-develop the material in more detail.
+**Get started** vignette [(link)](articles/get_started.html) introduces
+some of the basic midfieldr functions and the midfielddata data sets.
+Additional vignettes develop the material in more detail.
 
 ## Meta
 

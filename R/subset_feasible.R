@@ -85,13 +85,13 @@ subset_feasible <- function(id,
   study_fc <- all_fc[rows_we_want, ..cols_we_want]
 
   # separate NA degree from those with degrees
-  rows_NA    <- is.na(study_fc$term_degree)
-  degree_no  <- study_fc[rows_NA]
-  degree_no  <- unique(degree_no)
+  rows_NA <- is.na(study_fc$term_degree)
+  degree_no <- study_fc[rows_NA]
+  degree_no <- unique(degree_no)
   degree_yes <- study_fc[!rows_NA]
 
   # keep all rows in the first degree term (allows for multiple degrees)
-  if(nrow(degree_yes) > 0 ) {
+  if (nrow(degree_yes) > 0) {
     degree_yes <- degree_yes[, .SD[term_degree == min(term_degree)], by = id]
   }
   study_fc <- rbind(degree_yes, degree_no)

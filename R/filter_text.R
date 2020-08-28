@@ -27,18 +27,19 @@ NULL
 #' @examples
 #' filter_text(cip, keep_text = c("^1407", "^1410"))
 #' filter_text(cip,
-#'                keep_text = "civil engineering",
-#'                drop_text = "technology")
+#'   keep_text = "civil engineering",
+#'   drop_text = "technology"
+#' )
 #' filter_text(cip, keep_text = "History") %>%
 #'   filter_text(keep_text = "American")
 #' @family functions
 #' @export
 filter_text <- function(data,
-                           keep_text = NULL,
-                           ...,
-                           drop_text = NULL,
-                           keep_col = NULL,
-                           unique_row = NULL) {
+                        keep_text = NULL,
+                        ...,
+                        drop_text = NULL,
+                        keep_col = NULL,
+                        unique_row = NULL) {
   wrapr::stop_if_dot_args(
     substitute(list(...)), "Arguments after ... must be named,"
   )

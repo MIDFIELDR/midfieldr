@@ -82,36 +82,36 @@ year_span <- floor(c(min(midfieldterms$term), max(midfieldterms$term)) / 10)
 
 ```{r echo = FALSE}
 # midfieldstudents
-n_id_students  <- nrow(unique(midfieldstudents[, .(id)]))
-n_term_enter   <- nrow(unique(midfieldstudents[, .(term_enter)]))
-obs_students   <- nrow(midfieldstudents)
-var_students   <- ncol(midfieldstudents)
-size_students  <- "19 MB"
+n_id_students <- nrow(unique(midfieldstudents[, .(id)]))
+n_term_enter <- nrow(unique(midfieldstudents[, .(term_enter)]))
+obs_students <- nrow(midfieldstudents)
+var_students <- ncol(midfieldstudents)
+size_students <- "19 MB"
 
 # midfielddegrees
 n_id_degrees <- nrow(unique(midfielddegrees[, .(id)]))
-n_graduates  <- nrow(unique(midfielddegrees[!is.na(degree), .(id)]))
-n_term_degree   <- nrow(unique(midfielddegrees[, .(term_degree)]))
-obs_degrees  <- nrow(midfielddegrees)
-var_degrees  <- ncol(midfielddegrees)
+n_graduates <- nrow(unique(midfielddegrees[!is.na(degree), .(id)]))
+n_term_degree <- nrow(unique(midfielddegrees[, .(term_degree)]))
+obs_degrees <- nrow(midfielddegrees)
+var_degrees <- ncol(midfielddegrees)
 size_degrees <- "10.2 MB"
 
 # midfieldterms
 n_id_terms <- nrow(unique(midfieldterms[, .(id)]))
-obs_terms  <- nrow(midfieldterms)
-var_terms  <- ncol(midfieldterms)
+obs_terms <- nrow(midfieldterms)
+var_terms <- ncol(midfieldterms)
 n_institutions <- nrow(unique(midfieldterms[, .(institution)]))
 n_programs_terms <- nrow(unique(midfieldterms[, .(institution, cip6)]))
-n_terms    <- nrow(unique(midfieldterms[, .(term)]))
-year_span  <- floor(c(min(midfieldterms$term), max(midfieldterms$term)) / 10)
+n_terms <- nrow(unique(midfieldterms[, .(term)]))
+year_span <- floor(c(min(midfieldterms$term), max(midfieldterms$term)) / 10)
 size_terms <- "82 MB"
 
 # midfieldcourses
 n_id_courses <- nrow(unique(midfieldcourses[, .(id)]))
-n_courses    <- nrow(unique(midfieldcourses[, .(institution, abbrev, number)]))
+n_courses <- nrow(unique(midfieldcourses[, .(institution, abbrev, number)]))
 n_term_course <- nrow(unique(midfieldcourses[, .(term_course)]))
-obs_courses  <- nrow(midfieldcourses)
-var_courses  <- ncol(midfieldcourses)
+obs_courses <- nrow(midfieldcourses)
+var_courses <- ncol(midfieldcourses)
 size_courses <- "349 MB"
 ```
 
@@ -179,7 +179,7 @@ midfielddegrees[1:10, ]
 Of course, we can identify its class directly. The output shows that a `data.table` is also `data.frame` thus one can operate on data.table objects using data.frame (base R) syntax.
 
 ```{r}
-# confirm classification 
+# confirm classification
 class(midfielddegrees)
 ```
 
@@ -189,7 +189,7 @@ Viewing a data.frame object (base R `airquality` data), the row numbers are not 
 # data.frame object
 airquality[1:10, ]
 
-# confirm classification 
+# confirm classification
 class(airquality)
 ```
 
@@ -271,7 +271,7 @@ DT[]
 rows_we_want <- DT$cip6 == "540101"
 DT <- DT[rows_we_want]
 
-# order rows by values in ID column 
+# order rows by values in ID column
 DT <- DT[order(id)]
 
 # examine the result
@@ -281,7 +281,7 @@ DT[]
 **Arrange rows by more than one column**
 
 ```{r}
-# order rows by values in two columns 
+# order rows by values in two columns
 DT <- DT[order(institution, id)]
 
 # examine the result
@@ -291,7 +291,7 @@ DT[]
 **Arrange rows in descending order**
 
 ```{r}
-# order rows by values, one ascending, one descending 
+# order rows by values, one ascending, one descending
 DT <- DT[order(institution, -term_degree)]
 
 # examine the result
@@ -353,7 +353,7 @@ DT
 **Select columns, rename one.** 
 
 ```{r}
-# subset the data frame, rename a column 
+# subset the data frame, rename a column
 DT <- DT[, .(id, race_ethnicity = race, sex)]
 
 # examine the result
@@ -384,9 +384,11 @@ DT
 Example 
 
 ```{r}
-# order rows and rename columns 
-DT <- DT[order(-hours_transfer), 
-         .(ID = id, CIP = cip6, HOURS = hours_transfer)]
+# order rows and rename columns
+DT <- DT[
+  order(-hours_transfer),
+  .(ID = id, CIP = cip6, HOURS = hours_transfer)
+]
 
 # examine the result
 DT
@@ -415,8 +417,8 @@ DT[order(degree)]
 **Remove a column by selection.**  Earlier, we saw one approach to omitting columns is to exclude them from a selection vector. For example, by selecting the three columns shown below, we are necessarily omitting the `cip6` and `institution` columns.  This operation requires the use of the assignment operator `<-` to assign the result to an object name. 
 
 ```{r}
-# omit columns by not selecting them 
-cols_we_want <- c("id", "degree",  "term_degree")
+# omit columns by not selecting them
+cols_we_want <- c("id", "degree", "term_degree")
 DT <- DT[, ..cols_we_want]
 
 # examine the result
@@ -436,7 +438,7 @@ DT[order(degree)]
 **Add a column in place.** The form is `DT[, new_col := FUN]`  where `FUN` is a function or value. Here we add a new column that consists of a single value. 
 
 ```{r}
-# add column in place 
+# add column in place
 DT[, inst_size := "small"]
 
 # examine the result
@@ -446,8 +448,8 @@ DT[order(degree)]
 Here, we add a new columns `year` and `iterm` that are functions of the `term` column. This operation illustrates one approach to separating the encoded term into separate year and integer-term columns. 
 
 ```{r}
-# add columns in place 
-DT[, year  := floor(term_degree / 10)]
+# add columns in place
+DT[, year := floor(term_degree / 10)]
 DT[, iterm := floor(term_degree - 10 * year)]
 
 # examine the result
@@ -513,7 +515,7 @@ Our practice in the vignettes is to place the grouping variables in a character 
 # edit the printout option
 options(datatable.print.nrows = 16)
 
-# assign the grouping variables 
+# assign the grouping variables
 grouping_variables <- c("institution", "coop")
 
 # count by the groupings
@@ -591,9 +593,9 @@ It follows then that a function applied to `DT` is also applied to `DF`,
 ```{r}
 # edit DT
 DT[, year := 1973]
-DT 
+DT
 
-# and the change applied to DF 
+# and the change applied to DF
 DF
 ```
 
@@ -638,7 +640,7 @@ DT[, year := 1973]
 # examine the result
 head(DT)
 
-# no change to DF 
+# no change to DF
 head(DF)
 ```
 
@@ -717,7 +719,7 @@ library(midfieldr)
 library(midfielddata)
 library(data.table)
 
-# view each data set 
+# view each data set
 midfieldstudents
 midfielddegrees
 midfieldterms
@@ -767,19 +769,21 @@ DT <- copy(midfieldstudents)
 rows_we_want <- DT$hours_transfer > 11 & DT$hours_transfer < 49
 cols_we_want <- c("id", "cip6", "hours_transfer")
 DT <- DT[rows_we_want, ..cols_we_want]
-DT <- DT[order(-hours_transfer), 
-         .(ID = id, CIP = cip6, HOURS = hours_transfer)]
+DT <- DT[
+  order(-hours_transfer),
+  .(ID = id, CIP = cip6, HOURS = hours_transfer)
+]
 
 # remove a column in place
 DT <- copy(midfielddegrees)
 rows_we_want <- DT$institution == "Institution D"
-cols_we_want <- c("id", "degree",  "term_degree")
+cols_we_want <- c("id", "degree", "term_degree")
 DT <- DT[rows_we_want, ..cols_we_want]
 DT[, id := NULL]
 
 # add a column in place
 DT[, inst_size := "small"]
-DT[, year  := floor(term_degree / 10)]
+DT[, year := floor(term_degree / 10)]
 DT[, iterm := floor(term_degree - 10 * year)]
 
 # add/modify a column in place for specific rows

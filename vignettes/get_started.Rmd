@@ -142,7 +142,7 @@ Related vignettes
 We access `midfieldterms` to obtain the IDs of all students ever enrolled in these programs.  
 
 ```{r}
-# extract students ever enrolled from terms data 
+# extract students ever enrolled from terms data
 cols_we_want <- c("id", "cip6")
 rows_we_want <- midfieldterms$cip6 %in% group_cip
 enrollees <- midfieldterms[rows_we_want, ..cols_we_want]
@@ -155,7 +155,7 @@ enrollees[order(id)]
 There may be students matriculating in our programs who do not appear in the terms data. To account for these students, we apply a similar process to `midfieldstudents`. 
 
 ```{r}
-# extract students from matriculant data 
+# extract students from matriculant data
 rows_we_want <- midfieldstudents$cip6 %in% group_cip
 matriculants <- midfieldstudents[rows_we_want, ..cols_we_want]
 ```
@@ -166,7 +166,7 @@ Combine the data frames and remove duplicates.
 # combine findings
 enrollees <- rbind(enrollees, matriculants)
 enrollees <- unique(enrollees)
-                    
+
 # examine the result
 enrollees[order(id)]
 ```
@@ -362,50 +362,50 @@ library(data.table)
 library(ggplot2)
 
 # gather programs
-engineering   <- filter_text(cip, keep_text = "^14", keep_col = "cip6")
+engineering <- filter_text(cip, keep_text = "^14", keep_col = "cip6")
 engineering[, program := "Engineering"]
-business      <- filter_text(cip, keep_text = "^52", keep_col = "cip6")
-business      <- business[, program := "Business"]
+business <- filter_text(cip, keep_text = "^52", keep_col = "cip6")
+business <- business[, program := "Business"]
 program_group <- rbind(engineering, business)
-group_cip     <- program_group$cip6
+group_cip <- program_group$cip6
 
 # gather students
 cols_we_want <- c("id", "cip6")
 rows_we_want <- midfieldterms$cip6 %in% group_cip
-enrollees    <- midfieldterms[rows_we_want, ..cols_we_want]
+enrollees <- midfieldterms[rows_we_want, ..cols_we_want]
 rows_we_want <- midfieldstudents$cip6 %in% group_cip
 matriculants <- midfieldstudents[rows_we_want, ..cols_we_want]
-enrollees    <- rbind(enrollees, matriculants)
-enrollees    <- unique(enrollees)
+enrollees <- rbind(enrollees, matriculants)
+enrollees <- unique(enrollees)
 
-# apply feasible completion 
+# apply feasible completion
 feasible_ids <- subset_feasible(enrollees$id)
 rows_we_want <- enrollees$id %in% feasible_ids
-enrollees    <- enrollees[rows_we_want]
+enrollees <- enrollees[rows_we_want]
 
 # join grouping variables
 rows_we_want <- midfieldstudents$id %in% feasible_ids
 cols_we_want <- c("id", "race", "sex")
-race_sex     <- midfieldstudents[rows_we_want, ..cols_we_want]
-enrollees    <- merge(enrollees, race_sex, by = "id", all.x = TRUE)
-enrollees    <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
+race_sex <- midfieldstudents[rows_we_want, ..cols_we_want]
+enrollees <- merge(enrollees, race_sex, by = "id", all.x = TRUE)
+enrollees <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
 enrollees[, cip6 := NULL]
-enrollees    <- unique(enrollees)
+enrollees <- unique(enrollees)
 
 # group and summarize
 grouping_variables <- c("program", "race", "sex")
-grouped_enrollees  <- enrollees[, .(ever = .N), by = grouping_variables]
+grouped_enrollees <- enrollees[, .(ever = .N), by = grouping_variables]
 
 # condition the data for display
-pre_mw       <- grouped_enrollees
+pre_mw <- grouped_enrollees
 rows_we_want <- !pre_mw$race %in% c("Unknown", "International", "Other")
-pre_mw       <- pre_mw[rows_we_want]
+pre_mw <- pre_mw[rows_we_want]
 rows_we_want <- pre_mw$ever > 10
-pre_mw       <- pre_mw[rows_we_want]
+pre_mw <- pre_mw[rows_we_want]
 pre_mw[, race_sex := paste(race, sex, sep = " ")]
 cols_we_want <- c("program", "race_sex", "ever")
-pre_mw       <- pre_mw[, ..cols_we_want]
-data_mw      <- prepare_multiway(pre_mw)
+pre_mw <- pre_mw[, ..cols_we_want]
+data_mw <- prepare_multiway(pre_mw)
 
 # graph results
 ggplot(data = data_mw, mapping = aes(x = ever, y = race_sex)) +
