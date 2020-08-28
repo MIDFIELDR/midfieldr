@@ -18,11 +18,11 @@ FYE students) in
 \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 }
 \seealso{
-Other example data: 
+Other case-study-data: 
 \code{\link{rep_cip}},
 \code{\link{rep_group}},
 \code{\link{rep_stickiness_mw}},
 \code{\link{rep_stickiness}}
 }
-\concept{example data}
+\concept{case-study-data}
 \keyword{datasets}

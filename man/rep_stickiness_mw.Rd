@@ -21,11 +21,11 @@ Representative case study. Stickiness metric results with two categorical
 variables as factors with levels ordered by the median stickiness.
 }
 \seealso{
-Other example data: 
+Other case-study-data: 
 \code{\link{rep_cip}},
 \code{\link{rep_ever}},
 \code{\link{rep_group}},
 \code{\link{rep_stickiness}}
 }
-\concept{example data}
+\concept{case-study-data}
 \keyword{datasets}
