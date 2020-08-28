@@ -3,7 +3,7 @@
 #' @importFrom wrapr let
 NULL
 
-#' Prepare multiway data
+#' Prepare multiway data for graphing
 #'
 #' Transform a data frame such that two categorical variables are factors
 #' with levels ordered by medians of the quantitative variable. Rows and
