@@ -261,7 +261,7 @@
 <h2 class="hasAnchor">
 <a href="#gather-students" class="anchor"></a>Gather students</h2>
 <p>We access <code>midfieldterms</code> to obtain the IDs of all students ever enrolled in these programs.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># extract students ever enrolled from terms data </span>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># extract students ever enrolled from terms data</span>
 <span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>)
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">midfieldterms</span>$<span class="no">cip6</span> <span class="kw">%in%</span> <span class="no">group_cip</span>
 <span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="no">midfieldterms</span>[<span class="no">rows_we_want</span>, <span class="no">..cols_we_want</span>]
@@ -292,7 +292,7 @@
 <span class="co">#&gt; 50964: MID26697599 521201</span>
 <span class="co">#&gt; 50965: MID26697685 521201</span></pre></body></html></div>
 <p>There may be students matriculating in our programs who do not appear in the terms data. To account for these students, we apply a similar process to <code>midfieldstudents</code>.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># extract students from matriculant data </span>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># extract students from matriculant data</span>
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">midfieldstudents</span>$<span class="no">cip6</span> <span class="kw">%in%</span> <span class="no">group_cip</span>
 <span class="no">matriculants</span> <span class="kw">&lt;-</span> <span class="no">midfieldstudents</span>[<span class="no">rows_we_want</span>, <span class="no">..cols_we_want</span>]</pre></body></html></div>
 <p>Combine the data frames and remove duplicates.</p>
@@ -689,50 +689,50 @@
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
 
 <span class="co"># gather programs</span>
-<span class="no">engineering</span>   <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_text.html">filter_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"^14"</span>, <span class="kw">keep_col</span> <span class="kw">=</span> <span class="st">"cip6"</span>)
+<span class="no">engineering</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_text.html">filter_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"^14"</span>, <span class="kw">keep_col</span> <span class="kw">=</span> <span class="st">"cip6"</span>)
 <span class="no">engineering</span>[, <span class="no">program</span> <span class="kw">:=</span> <span class="st">"Engineering"</span>]
-<span class="no">business</span>      <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_text.html">filter_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"^52"</span>, <span class="kw">keep_col</span> <span class="kw">=</span> <span class="st">"cip6"</span>)
-<span class="no">business</span>      <span class="kw">&lt;-</span> <span class="no">business</span>[, <span class="no">program</span> <span class="kw">:=</span> <span class="st">"Business"</span>]
+<span class="no">business</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/filter_text.html">filter_text</a></span>(<span class="no">cip</span>, <span class="kw">keep_text</span> <span class="kw">=</span> <span class="st">"^52"</span>, <span class="kw">keep_col</span> <span class="kw">=</span> <span class="st">"cip6"</span>)
+<span class="no">business</span> <span class="kw">&lt;-</span> <span class="no">business</span>[, <span class="no">program</span> <span class="kw">:=</span> <span class="st">"Business"</span>]
 <span class="no">program_group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html">rbind</a></span>(<span class="no">engineering</span>, <span class="no">business</span>)
-<span class="no">group_cip</span>     <span class="kw">&lt;-</span> <span class="no">program_group</span>$<span class="no">cip6</span>
+<span class="no">group_cip</span> <span class="kw">&lt;-</span> <span class="no">program_group</span>$<span class="no">cip6</span>
 
 <span class="co"># gather students</span>
 <span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>)
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">midfieldterms</span>$<span class="no">cip6</span> <span class="kw">%in%</span> <span class="no">group_cip</span>
-<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="no">midfieldterms</span>[<span class="no">rows_we_want</span>, <span class="no">..cols_we_want</span>]
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="no">midfieldterms</span>[<span class="no">rows_we_want</span>, <span class="no">..cols_we_want</span>]
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">midfieldstudents</span>$<span class="no">cip6</span> <span class="kw">%in%</span> <span class="no">group_cip</span>
 <span class="no">matriculants</span> <span class="kw">&lt;-</span> <span class="no">midfieldstudents</span>[<span class="no">rows_we_want</span>, <span class="no">..cols_we_want</span>]
-<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html">rbind</a></span>(<span class="no">enrollees</span>, <span class="no">matriculants</span>)
-<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html">unique</a></span>(<span class="no">enrollees</span>)
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html">rbind</a></span>(<span class="no">enrollees</span>, <span class="no">matriculants</span>)
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html">unique</a></span>(<span class="no">enrollees</span>)
 
-<span class="co"># apply feasible completion </span>
+<span class="co"># apply feasible completion</span>
 <span class="no">feasible_ids</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/subset_feasible.html">subset_feasible</a></span>(<span class="no">enrollees</span>$<span class="no">id</span>)
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>$<span class="no">id</span> <span class="kw">%in%</span> <span class="no">feasible_ids</span>
-<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="no">enrollees</span>[<span class="no">rows_we_want</span>]
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>[<span class="no">rows_we_want</span>]
 
 <span class="co"># join grouping variables</span>
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">midfieldstudents</span>$<span class="no">id</span> <span class="kw">%in%</span> <span class="no">feasible_ids</span>
 <span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>)
-<span class="no">race_sex</span>     <span class="kw">&lt;-</span> <span class="no">midfieldstudents</span>[<span class="no">rows_we_want</span>, <span class="no">..cols_we_want</span>]
-<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">race_sex</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">race_sex</span> <span class="kw">&lt;-</span> <span class="no">midfieldstudents</span>[<span class="no">rows_we_want</span>, <span class="no">..cols_we_want</span>]
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">race_sex</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"id"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html">merge</a></span>(<span class="no">enrollees</span>, <span class="no">program_group</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="st">"cip6"</span>, <span class="kw">all.x</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 <span class="no">enrollees</span>[, <span class="no">cip6</span> <span class="kw">:=</span> <span class="kw">NULL</span>]
-<span class="no">enrollees</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html">unique</a></span>(<span class="no">enrollees</span>)
+<span class="no">enrollees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html">unique</a></span>(<span class="no">enrollees</span>)
 
 <span class="co"># group and summarize</span>
 <span class="no">grouping_variables</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>)
-<span class="no">grouped_enrollees</span>  <span class="kw">&lt;-</span> <span class="no">enrollees</span>[, <span class="fu">.</span>(<span class="kw">ever</span> <span class="kw">=</span> <span class="no">.N</span>), <span class="kw">by</span> <span class="kw">=</span> <span class="no">grouping_variables</span>]
+<span class="no">grouped_enrollees</span> <span class="kw">&lt;-</span> <span class="no">enrollees</span>[, <span class="fu">.</span>(<span class="kw">ever</span> <span class="kw">=</span> <span class="no">.N</span>), <span class="kw">by</span> <span class="kw">=</span> <span class="no">grouping_variables</span>]
 
 <span class="co"># condition the data for display</span>
-<span class="no">pre_mw</span>       <span class="kw">&lt;-</span> <span class="no">grouped_enrollees</span>
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">grouped_enrollees</span>
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> !<span class="no">pre_mw</span>$<span class="no">race</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span>)
-<span class="no">pre_mw</span>       <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>]
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>]
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>$<span class="no">ever</span> <span class="kw">&gt;</span> <span class="fl">10</span>
-<span class="no">pre_mw</span>       <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>]
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[<span class="no">rows_we_want</span>]
 <span class="no">pre_mw</span>[, <span class="no">race_sex</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="no">race</span>, <span class="no">sex</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">" "</span>)]
 <span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"program"</span>, <span class="st">"race_sex"</span>, <span class="st">"ever"</span>)
-<span class="no">pre_mw</span>       <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[, <span class="no">..cols_we_want</span>]
-<span class="no">data_mw</span>      <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/prepare_multiway.html">prepare_multiway</a></span>(<span class="no">pre_mw</span>)
+<span class="no">pre_mw</span> <span class="kw">&lt;-</span> <span class="no">pre_mw</span>[, <span class="no">..cols_we_want</span>]
+<span class="no">data_mw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/prepare_multiway.html">prepare_multiway</a></span>(<span class="no">pre_mw</span>)
 
 <span class="co"># graph results</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data_mw</span>, <span class="kw">mapping</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">ever</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">race_sex</span>)) +

@@ -349,7 +349,7 @@
 <span class="co">#&gt;  9: MID25783188 Institution M 230101       20023    Bachelor of Arts</span>
 <span class="co">#&gt; 10: MID25783195 Institution M 521401       19966 Bachelor of Science</span></pre></body></html></div>
 <p>Of course, we can identify its class directly. The output shows that a <code>data.table</code> is also <code>data.frame</code> thus one can operate on data.table objects using data.frame (base R) syntax.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># confirm classification </span>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># confirm classification</span>
 <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span>(<span class="no">midfielddegrees</span>)
 <span class="co">#&gt; [1] "data.table" "data.frame"</span></pre></body></html></div>
 <p>Viewing a data.frame object (base R <code>airquality</code> data), the row numbers are not denoted by colons.</p>
@@ -367,7 +367,7 @@
 <span class="co">#&gt; 9      8      19 20.1   61     5   9</span>
 <span class="co">#&gt; 10    NA     194  8.6   69     5  10</span>
 
-<span class="co"># confirm classification </span>
+<span class="co"># confirm classification</span>
 <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span>(<span class="no">airquality</span>)
 <span class="co">#&gt; [1] "data.frame"</span></pre></body></html></div>
 </div>
@@ -472,7 +472,7 @@
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">DT</span>$<span class="no">cip6</span> <span class="kw">==</span> <span class="st">"540101"</span>
 <span class="no">DT</span> <span class="kw">&lt;-</span> <span class="no">DT</span>[<span class="no">rows_we_want</span>]
 
-<span class="co"># order rows by values in ID column </span>
+<span class="co"># order rows by values in ID column</span>
 <span class="no">DT</span> <span class="kw">&lt;-</span> <span class="no">DT</span>[<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html">order</a></span>(<span class="no">id</span>)]
 
 <span class="co"># examine the result</span>
@@ -490,7 +490,7 @@
 <span class="co">#&gt; 638: MID26695406 Institution L 540101       20133 Bachelor of Arts</span>
 <span class="co">#&gt; 639: MID26696157 Institution L 540101       20151 Bachelor of Arts</span></pre></body></html></div>
 <p><strong>Arrange rows by more than one column</strong></p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="co"># order rows by values in two columns </span>
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="co"># order rows by values in two columns</span>
 <span class="no">DT</span> <span class="kw">&lt;-</span> <span class="no">DT</span>[<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html">order</a></span>(<span class="no">institution</span>, <span class="no">id</span>)]
 
 <span class="co"># examine the result</span>
@@ -508,7 +508,7 @@
 <span class="co">#&gt; 638: MID25844205 Institution M 540101       19923  Bachelor of Arts</span>
 <span class="co">#&gt; 639: MID25845319 Institution M 540101       19923  Bachelor of Arts</span></pre></body></html></div>
 <p><strong>Arrange rows in descending order</strong></p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="co"># order rows by values, one ascending, one descending </span>
+<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="co"># order rows by values, one ascending, one descending</span>
 <span class="no">DT</span> <span class="kw">&lt;-</span> <span class="no">DT</span>[<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html">order</a></span>(<span class="no">institution</span>, -<span class="no">term_degree</span>)]
 
 <span class="co"># examine the result</span>
@@ -590,7 +590,7 @@
 <span class="co">#&gt; 97639: MID26697689 Native American   Male</span>
 <span class="co">#&gt; 97640: MID26697702           White   Male</span></pre></body></html></div>
 <p><strong>Select columns, rename one.</strong></p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="co"># subset the data frame, rename a column </span>
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="co"># subset the data frame, rename a column</span>
 <span class="no">DT</span> <span class="kw">&lt;-</span> <span class="no">DT</span>[, <span class="fu">.</span>(<span class="no">id</span>, <span class="kw">race_ethnicity</span> <span class="kw">=</span> <span class="no">race</span>, <span class="no">sex</span>)]
 
 <span class="co"># examine the result</span>
@@ -637,9 +637,11 @@
 <span class="co">#&gt; 3180: MID26696919 400601             47</span>
 <span class="co">#&gt; 3181: MID26697689 240101             47</span></pre></body></html></div>
 <p>Example</p>
-<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="co"># order rows and rename columns </span>
-<span class="no">DT</span> <span class="kw">&lt;-</span> <span class="no">DT</span>[<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html">order</a></span>(-<span class="no">hours_transfer</span>),
-         <span class="fu">.</span>(<span class="kw">ID</span> <span class="kw">=</span> <span class="no">id</span>, <span class="kw">CIP</span> <span class="kw">=</span> <span class="no">cip6</span>, <span class="kw">HOURS</span> <span class="kw">=</span> <span class="no">hours_transfer</span>)]
+<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="co"># order rows and rename columns</span>
+<span class="no">DT</span> <span class="kw">&lt;-</span> <span class="no">DT</span>[
+  <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html">order</a></span>(-<span class="no">hours_transfer</span>),
+  <span class="fu">.</span>(<span class="kw">ID</span> <span class="kw">=</span> <span class="no">id</span>, <span class="kw">CIP</span> <span class="kw">=</span> <span class="no">cip6</span>, <span class="kw">HOURS</span> <span class="kw">=</span> <span class="no">hours_transfer</span>)
+]
 
 <span class="co"># examine the result</span>
 <span class="no">DT</span>
@@ -689,8 +691,8 @@
 <span class="co">#&gt; 681: MID26131261 Institution D   &lt;NA&gt;          NA             &lt;NA&gt;</span>
 <span class="co">#&gt; 682: MID26131268 Institution D   &lt;NA&gt;          NA             &lt;NA&gt;</span></pre></body></html></div>
 <p><strong>Remove a column by selection.</strong> Earlier, we saw one approach to omitting columns is to exclude them from a selection vector. For example, by selecting the three columns shown below, we are necessarily omitting the <code>cip6</code> and <code>institution</code> columns. This operation requires the use of the assignment operator <code>&lt;-</code> to assign the result to an object name.</p>
-<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="co"># omit columns by not selecting them </span>
-<span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"degree"</span>,  <span class="st">"term_degree"</span>)
+<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="co"># omit columns by not selecting them</span>
+<span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"degree"</span>, <span class="st">"term_degree"</span>)
 <span class="no">DT</span> <span class="kw">&lt;-</span> <span class="no">DT</span>[, <span class="no">..cols_we_want</span>]
 
 <span class="co"># examine the result</span>
@@ -726,7 +728,7 @@
 <span class="co">#&gt; 681:             &lt;NA&gt;          NA</span>
 <span class="co">#&gt; 682:             &lt;NA&gt;          NA</span></pre></body></html></div>
 <p><strong>Add a column in place.</strong> The form is <code>DT[, new_col := FUN]</code> where <code>FUN</code> is a function or value. Here we add a new column that consists of a single value.</p>
-<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="co"># add column in place </span>
+<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="co"># add column in place</span>
 <span class="no">DT</span>[, <span class="no">inst_size</span> <span class="kw">:=</span> <span class="st">"small"</span>]
 
 <span class="co"># examine the result</span>
@@ -744,8 +746,8 @@
 <span class="co">#&gt; 681:             &lt;NA&gt;          NA     small</span>
 <span class="co">#&gt; 682:             &lt;NA&gt;          NA     small</span></pre></body></html></div>
 <p>Here, we add a new columns <code>year</code> and <code>iterm</code> that are functions of the <code>term</code> column. This operation illustrates one approach to separating the encoded term into separate year and integer-term columns.</p>
-<div class="sourceCode" id="cb29"><html><body><pre class="r"><span class="co"># add columns in place </span>
-<span class="no">DT</span>[, <span class="no">year</span>  <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="no">term_degree</span> / <span class="fl">10</span>)]
+<div class="sourceCode" id="cb29"><html><body><pre class="r"><span class="co"># add columns in place</span>
+<span class="no">DT</span>[, <span class="no">year</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="no">term_degree</span> / <span class="fl">10</span>)]
 <span class="no">DT</span>[, <span class="no">iterm</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="no">term_degree</span> - <span class="fl">10</span> * <span class="no">year</span>)]
 
 <span class="co"># examine the result</span>
@@ -855,7 +857,7 @@
 <div class="sourceCode" id="cb35"><html><body><pre class="r"><span class="co"># edit the printout option</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">datatable.print.nrows</span> <span class="kw">=</span> <span class="fl">16</span>)
 
-<span class="co"># assign the grouping variables </span>
+<span class="co"># assign the grouping variables</span>
 <span class="no">grouping_variables</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"institution"</span>, <span class="st">"coop"</span>)
 
 <span class="co"># count by the groupings</span>
@@ -950,9 +952,9 @@
 <p>Using in-place operations, <code>DF</code> and <code>DT</code> point to the same location in memory.</p>
 <div class="sourceCode" id="cb41"><html><body><pre class="r"><span class="co"># both labels refer to the same memory address</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/address.html">address</a></span>(<span class="no">DT</span>)
-<span class="co">#&gt; [1] "0000000028a8e078"</span>
+<span class="co">#&gt; [1] "000000002a551a80"</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/address.html">address</a></span>(<span class="no">DF</span>)
-<span class="co">#&gt; [1] "0000000028a8e078"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "000000002a551a80"</span></pre></body></html></div>
 <p>It follows then that a function applied to <code>DT</code> is also applied to <code>DF</code>,</p>
 <div class="sourceCode" id="cb42"><html><body><pre class="r"><span class="co"># edit DT</span>
 <span class="no">DT</span>[, <span class="no">year</span> <span class="kw">:=</span> <span class="fl">1973</span>]
@@ -970,7 +972,7 @@
 <span class="co">#&gt; 152:    18     131  8.0   76     9  29 1973</span>
 <span class="co">#&gt; 153:    20     223 11.5   68     9  30 1973</span>
 
-<span class="co"># and the change applied to DF </span>
+<span class="co"># and the change applied to DF</span>
 <span class="no">DF</span>
 <span class="co">#&gt;      Ozone Solar.R Wind Temp Month Day year</span>
 <span class="co">#&gt;   1:    41     190  7.4   67     5   1 1973</span>
@@ -1002,9 +1004,9 @@
 <p><code>DT</code> and <code>DF</code> have different addresses, so <code>DF</code> remains unaffected.</p>
 <div class="sourceCode" id="cb45"><html><body><pre class="r"><span class="co"># the two objects have different addresses in memory</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/address.html">address</a></span>(<span class="no">DT</span>)
-<span class="co">#&gt; [1] "00000000232c7230"</span>
+<span class="co">#&gt; [1] "000000002ec2cf70"</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/address.html">address</a></span>(<span class="no">DF</span>)
-<span class="co">#&gt; [1] "000000002759bb10"</span>
+<span class="co">#&gt; [1] "0000000027585c90"</span>
 
 <span class="co"># DF remains a data.frame</span>
 <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span>(<span class="no">DF</span>)
@@ -1023,7 +1025,7 @@
 <span class="co">#&gt; 5:    NA      NA 14.3   56     5   5 1973</span>
 <span class="co">#&gt; 6:    28      NA 14.9   66     5   6 1973</span>
 
-<span class="co"># no change to DF </span>
+<span class="co"># no change to DF</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">DF</span>)
 <span class="co">#&gt;   Ozone Solar.R Wind Temp Month Day</span>
 <span class="co">#&gt; 1    41     190  7.4   67     5   1</span>
@@ -1133,7 +1135,7 @@
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">midfielddata</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>)
 
-<span class="co"># view each data set </span>
+<span class="co"># view each data set</span>
 <span class="no">midfieldstudents</span>
 <span class="no">midfielddegrees</span>
 <span class="no">midfieldterms</span>
@@ -1183,19 +1185,21 @@
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">DT</span>$<span class="no">hours_transfer</span> <span class="kw">&gt;</span> <span class="fl">11</span> <span class="kw">&amp;</span> <span class="no">DT</span>$<span class="no">hours_transfer</span> <span class="kw">&lt;</span> <span class="fl">49</span>
 <span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"cip6"</span>, <span class="st">"hours_transfer"</span>)
 <span class="no">DT</span> <span class="kw">&lt;-</span> <span class="no">DT</span>[<span class="no">rows_we_want</span>, <span class="no">..cols_we_want</span>]
-<span class="no">DT</span> <span class="kw">&lt;-</span> <span class="no">DT</span>[<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html">order</a></span>(-<span class="no">hours_transfer</span>),
-         <span class="fu">.</span>(<span class="kw">ID</span> <span class="kw">=</span> <span class="no">id</span>, <span class="kw">CIP</span> <span class="kw">=</span> <span class="no">cip6</span>, <span class="kw">HOURS</span> <span class="kw">=</span> <span class="no">hours_transfer</span>)]
+<span class="no">DT</span> <span class="kw">&lt;-</span> <span class="no">DT</span>[
+  <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html">order</a></span>(-<span class="no">hours_transfer</span>),
+  <span class="fu">.</span>(<span class="kw">ID</span> <span class="kw">=</span> <span class="no">id</span>, <span class="kw">CIP</span> <span class="kw">=</span> <span class="no">cip6</span>, <span class="kw">HOURS</span> <span class="kw">=</span> <span class="no">hours_transfer</span>)
+]
 
 <span class="co"># remove a column in place</span>
 <span class="no">DT</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html">copy</a></span>(<span class="no">midfielddegrees</span>)
 <span class="no">rows_we_want</span> <span class="kw">&lt;-</span> <span class="no">DT</span>$<span class="no">institution</span> <span class="kw">==</span> <span class="st">"Institution D"</span>
-<span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"degree"</span>,  <span class="st">"term_degree"</span>)
+<span class="no">cols_we_want</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"id"</span>, <span class="st">"degree"</span>, <span class="st">"term_degree"</span>)
 <span class="no">DT</span> <span class="kw">&lt;-</span> <span class="no">DT</span>[<span class="no">rows_we_want</span>, <span class="no">..cols_we_want</span>]
 <span class="no">DT</span>[, <span class="no">id</span> <span class="kw">:=</span> <span class="kw">NULL</span>]
 
 <span class="co"># add a column in place</span>
 <span class="no">DT</span>[, <span class="no">inst_size</span> <span class="kw">:=</span> <span class="st">"small"</span>]
-<span class="no">DT</span>[, <span class="no">year</span>  <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="no">term_degree</span> / <span class="fl">10</span>)]
+<span class="no">DT</span>[, <span class="no">year</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="no">term_degree</span> / <span class="fl">10</span>)]
 <span class="no">DT</span>[, <span class="no">iterm</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="no">term_degree</span> - <span class="fl">10</span> * <span class="no">year</span>)]
 
 <span class="co"># add/modify a column in place for specific rows</span>
