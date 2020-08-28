@@ -49,8 +49,8 @@ The midfielddata taxonomy includes three non-IPEDS codes:
 }
 }
 \seealso{
-Other cip_data: 
+Other cip data: 
 \code{\link{fye_start}}
 }
-\concept{cip_data}
+\concept{cip data}
 \keyword{datasets}

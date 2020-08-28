@@ -30,8 +30,8 @@ package. The predictor variables are institution, race, and sex. The
 predicted variable is the 6-digit CIP code.
 }
 \seealso{
-Other cip_data: 
+Other cip data: 
 \code{\link{cip}}
 }
-\concept{cip_data}
+\concept{cip data}
 \keyword{datasets}

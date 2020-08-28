@@ -38,7 +38,7 @@
 #'   representing "the most general groupings of related programs"}
 #'   \item{cip2name}{character program name at the 2-digit level}
 #' }
-#' @family "cip data"
+#' @family cip data
 "cip"
 
 # -------------------------------------------------------------------
@@ -64,7 +64,7 @@
 #'   representing "the most general groupings of related programs"}
 #'   \item{cip2name}{character program name at the 2-digit level}
 #' }
-#' @family "example data"
+#' @family example data
 "rep_cip"
 
 # -------------------------------------------------------------------
@@ -82,7 +82,7 @@
 #'   \item{program}{program name assigned for grouping, summarizing,
 #'   and joining}
 #' }
-#' @family "example data"
+#' @family example data
 "rep_group"
 
 # -------------------------------------------------------------------
@@ -96,7 +96,7 @@
 #' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
 #'
 #' @format character vector
-#' @family "example data"
+#' @family example data
 "rep_ever"
 
 # -------------------------------------------------------------------
@@ -120,7 +120,7 @@
 #'  \item{grad}{numerical, number of students graduating from the program}
 #'  \item{stick}{numerical, program stickiness, a persistence metric}
 #' }
-#' @family "example data"
+#' @family example data
 "rep_stickiness"
 
 # -------------------------------------------------------------------
@@ -137,7 +137,7 @@
 #'  \item{race_sex}{factor, student race/ethnicity and sex}
 #'  \item{stick}{numerical, program stickiness, a persistence metric}
 #' }
-#' @family "example data"
+#' @family example data
 "rep_stickiness_mw"
 
 # -------------------------------------------------------------------
@@ -162,5 +162,5 @@
 #'    \item{id}{student ID}
 #'    \item{start}{starting program 6-digit CIP code}
 #'    }
-#' @family "cip data"
+#' @family cip data
 "fye_start"

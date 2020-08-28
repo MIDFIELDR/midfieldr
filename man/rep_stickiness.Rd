@@ -28,11 +28,11 @@ Industrial, and Mechanical Engineering programs in
 are grouped by program, race/ethnicity, and sex.
 }
 \seealso{
-Other example_data: 
+Other example data: 
 \code{\link{rep_cip}},
 \code{\link{rep_ever}},
 \code{\link{rep_group}},
 \code{\link{rep_stickiness_mw}}
 }
-\concept{example_data}
+\concept{example data}
 \keyword{datasets}
