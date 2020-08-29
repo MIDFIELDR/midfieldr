@@ -186,11 +186,7 @@ unique_by_keys <- function(DT, cols = NULL) {
   # argument check
   assert_class(DT, "data.frame")
 
-  if (is.null(cols)) {
-    cols <- names(DT)
-  } else {
-    cols <- cols
-  }
+  if (is.null(cols)) {cols <- names(DT)}
 
   # argument check
   assert_class(cols, "character")

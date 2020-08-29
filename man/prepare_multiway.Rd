@@ -2,7 +2,7 @@
 % Please edit documentation in R/prepare_multiway.R
 \name{prepare_multiway}
 \alias{prepare_multiway}
-\title{Prepare multiway data}
+\title{Prepare multiway data for graphing}
 \usage{
 prepare_multiway(data = NULL)
 }

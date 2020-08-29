@@ -64,27 +64,38 @@ prepare_fye_mi <- function(data_students = NULL,
   data_students <- data_students %||% midfielddata::midfieldstudents
   data_terms <- data_terms %||% midfielddata::midfieldterms
 
-  # argument check
+  # argument check data frames
   assert_class(data_students, "data.frame")
+  assert_class(data_terms, "data.frame")
+
+  # argument check required columns present
   assert_required_column(data_students, "id")
   assert_required_column(data_students, "cip6")
   assert_required_column(data_students, "institution")
   assert_required_column(data_students, "race")
   assert_required_column(data_students, "sex")
-  assert_class(data_students$id, "character")
-  assert_class(data_students$cip6, "character")
-  assert_class(data_students$institution, "character")
-  assert_class(data_students$race, "character")
-  assert_class(data_students$sex, "character")
-
-  # argument check
-  assert_class(data_terms, "data.frame")
   assert_required_column(data_terms, "id")
   assert_required_column(data_terms, "cip6")
   assert_required_column(data_terms, "term")
-  assert_class(data_terms$id, "character")
-  assert_class(data_terms$cip6, "character")
-  assert_class(data_terms$term, "numeric")
+
+  # argument check required columns correct class
+  id <- data_students$id
+      assert_class(id, "character")
+  cip6 <- data_students$cip6
+      assert_class(cip6, "character")
+  institution <- data_students$institution
+      assert_class(institution, "character")
+  race <- data_students$race
+      assert_class(race, "character")
+  sex <- data_students$sex
+      assert_class(sex, "character")
+
+  id <- data_terms$id
+      assert_class(id, "character")
+  cip6 <- data_terms$cip6
+      assert_class(cip6, "character")
+  term <- data_terms$term
+      assert_class(term, "numeric")
 
   # bind names
   # NA
