@@ -24,7 +24,7 @@ Based on feedback from workshop attendees, the package is undergoing
 major revision to the vignettes and the underlying functionality.
 
 While in this ambiguous state, the package should be used experimentally
-only. We hope to have the update complete by the end of August 2020.
+only. We hope to have the update complete by the end of September 2020.
 
 ## Tools for student records research
 
