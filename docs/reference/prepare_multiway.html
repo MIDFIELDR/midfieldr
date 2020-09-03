@@ -216,16 +216,26 @@ categorical variables (type character or factor).</p>
     <pre class="examples"><div class='input'><span class='no'>catg1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"urban"</span>, <span class='st'>"rural"</span>, <span class='st'>"suburb"</span>, <span class='st'>"village"</span>), <span class='kw'>each</span> <span class='kw'>=</span> <span class='fl'>2</span>)
 <span class='no'>catg2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"men"</span>, <span class='st'>"women"</span>), <span class='kw'>times</span> <span class='kw'>=</span> <span class='fl'>4</span>)
 <span class='no'>value</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.22</span>, <span class='fl'>0.14</span>, <span class='fl'>0.43</span>, <span class='fl'>0.58</span>, <span class='fl'>0.81</span>, <span class='fl'>0.46</span>, <span class='fl'>0.15</span>, <span class='fl'>0.20</span>)
-<span class='no'>mw_df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='no'>catg1</span>, <span class='no'>catg2</span>, <span class='no'>value</span>)
-<span class='fu'>prepare_multiway</span>(<span class='no'>mw_df</span>)</div><div class='output co'>#&gt;     catg1 catg2 value
-#&gt; 1   urban   men  0.22
-#&gt; 2   urban women  0.14
-#&gt; 3   rural   men  0.43
-#&gt; 4   rural women  0.58
-#&gt; 5  suburb   men  0.81
-#&gt; 6  suburb women  0.46
-#&gt; 7 village   men  0.15
-#&gt; 8 village women  0.20</div></pre>
+
+<span class='co'># structure before</span>
+<span class='no'>pre_mw</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='no'>catg1</span>, <span class='no'>catg2</span>, <span class='no'>value</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>pre_mw</span>)</div><div class='output co'>#&gt; 'data.frame':	8 obs. of  3 variables:
+#&gt;  $ catg1: chr  "urban" "urban" "rural" "rural" ...
+#&gt;  $ catg2: chr  "men" "women" "men" "women" ...
+#&gt;  $ value: num  0.22 0.14 0.43 0.58 0.81 0.46 0.15 0.2</div><div class='input'>
+<span class='co'># structure after</span>
+<span class='no'>mw</span> <span class='kw'>&lt;-</span> <span class='fu'>prepare_multiway</span>(<span class='no'>pre_mw</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>mw</span>)</div><div class='output co'>#&gt; 'data.frame':	8 obs. of  3 variables:
+#&gt;  $ catg1: Factor w/ 4 levels "village","urban",..: 2 2 3 3 4 4 1 1
+#&gt;   ..- attr(*, "scores")= num [1:4(1d)] 0.505 0.635 0.18 0.175
+#&gt;   .. ..- attr(*, "dimnames")=List of 1
+#&gt;   .. .. ..$ : chr [1:4] "rural" "suburb" "urban" "village"
+#&gt;  $ catg2: Factor w/ 2 levels "men","women": 1 2 1 2 1 2 1 2
+#&gt;   ..- attr(*, "scores")= num [1:2(1d)] 0.325 0.33
+#&gt;   .. ..- attr(*, "dimnames")=List of 1
+#&gt;   .. .. ..$ : chr [1:2] "men" "women"
+#&gt;  $ value: num  0.22 0.14 0.43 0.58 0.81 0.46 0.15 0.2</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

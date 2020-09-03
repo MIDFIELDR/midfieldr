@@ -232,25 +232,45 @@ for matches.</p>
 <code><a href='subset_ipeds.html'>subset_ipeds</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>filter_text</span>(<span class='no'>cip</span>, <span class='kw'>keep_text</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"^1407"</span>, <span class='st'>"^1410"</span>))</div><div class='output co'>#&gt;    cip2    cip2name cip4                                               cip4name
-#&gt; 1:   14 Engineering 1407                                   Chemical Engineering
-#&gt; 2:   14 Engineering 1407                                   Chemical Engineering
-#&gt; 3:   14 Engineering 1407                                   Chemical Engineering
-#&gt; 4:   14 Engineering 1410 Electrical, Electronics and Communications Engineering
-#&gt; 5:   14 Engineering 1410 Electrical, Electronics and Communications Engineering
-#&gt; 6:   14 Engineering 1410 Electrical, Electronics and Communications Engineering
-#&gt; 7:   14 Engineering 1410 Electrical, Electronics and Communications Engineering
-#&gt;      cip6                                                      cip6name
-#&gt; 1: 140701                                          Chemical Engineering
-#&gt; 2: 140702                         Chemical and Biomolecular Engineering
-#&gt; 3: 140799                                   Chemical Engineering, Other
-#&gt; 4: 141001        Electrical, Electronics and Communications Engineering
-#&gt; 5: 141003                                 Laser and Optical Engineering
-#&gt; 6: 141004                                Telecommunications Engineering
-#&gt; 7: 141099 Electrical, Electronics and Communications Engineering, Other</div><div class='input'><span class='fu'>filter_text</span>(<span class='no'>cip</span>,
-  <span class='kw'>keep_text</span> <span class='kw'>=</span> <span class='st'>"civil engineering"</span>,
-  <span class='kw'>drop_text</span> <span class='kw'>=</span> <span class='st'>"technology"</span>
-)</div><div class='output co'>#&gt;    cip2    cip2name cip4          cip4name   cip6
+    <pre class="examples"><div class='input'><span class='co'># filter using keywords</span>
+<span class='fu'>filter_text</span>(<span class='no'>cip</span>, <span class='kw'>keep_text</span> <span class='kw'>=</span> <span class='st'>"engineering"</span>)</div><div class='output co'>#&gt;      cip2                                         cip2name cip4
+#&gt;   1:   14                                      Engineering 1401
+#&gt;   2:   14                                      Engineering 1401
+#&gt;   3:   14                                      Engineering 1402
+#&gt;   4:   14                                      Engineering 1403
+#&gt;   5:   14                                      Engineering 1404
+#&gt;  ---                                                           
+#&gt; 117:   15                           Engineering Technology 1516
+#&gt; 118:   15                           Engineering Technology 1599
+#&gt; 119:   29                            Military Technologies 2903
+#&gt; 120:   29                            Military Technologies 2903
+#&gt; 121:   51 Health Professions and Related Clinical Sciences 5123
+#&gt;                                                     cip4name   cip6
+#&gt;   1:                                    Engineering, General 140101
+#&gt;   2:                                    Engineering, General 140102
+#&gt;   3:   Aerospace, Aeronautical and Astronautical Engineering 140201
+#&gt;   4: Agricultural, Biological Engineering and Bioengineering 140301
+#&gt;   5:                               Architectural Engineering 140401
+#&gt;  ---                                                               
+#&gt; 117:                                          Nanotechnology 151601
+#&gt; 118:    Engineering-Related Technologies, Technicians, Other 159999
+#&gt; 119:                               Military Applied Sciences 290301
+#&gt; 120:                               Military Applied Sciences 290303
+#&gt; 121:              Rehabilitation and Therapeutic Professions 512312
+#&gt;                                                              cip6name
+#&gt;   1:                                             Engineering, General
+#&gt;   2:                                                  Pre-Engineering
+#&gt;   3:     Aerospace, Aeronautical and Astronautical, Space Engineering
+#&gt;   4:          Agricultural, Biological Engineering and Bioengineering
+#&gt;   5:                                        Architectural Engineering
+#&gt;  ---                                                                 
+#&gt; 117:                                                   Nanotechnology
+#&gt; 118:             Engineering Related Technologies, Technicians, Other
+#&gt; 119:                                       Combat Systems Engineering
+#&gt; 120:                                            Engineering Acoustics
+#&gt; 121: Assistive, Augmentative Technology and Rehabiliation Engineering</div><div class='input'>
+<span class='co'># drop_text argument must be named</span>
+<span class='fu'>filter_text</span>(<span class='no'>cip</span>, <span class='st'>"civil engineering"</span>, <span class='kw'>drop_text</span> <span class='kw'>=</span> <span class='st'>"technology"</span>)</div><div class='output co'>#&gt;    cip2    cip2name cip4          cip4name   cip6
 #&gt; 1:   14 Engineering 1408 Civil Engineering 140801
 #&gt; 2:   14 Engineering 1408 Civil Engineering 140802
 #&gt; 3:   14 Engineering 1408 Civil Engineering 140803
@@ -263,9 +283,66 @@ for matches.</p>
 #&gt; 3:                 Structural Engineering
 #&gt; 4: Transportation and Highway Engineering
 #&gt; 5:            Water Resources Engineering
-#&gt; 6:               Civil Engineering, Other</div><div class='input'><span class='fu'>filter_text</span>(<span class='no'>cip</span>, <span class='kw'>keep_text</span> <span class='kw'>=</span> <span class='st'>"History"</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'>filter_text</span>(<span class='kw'>keep_text</span> <span class='kw'>=</span> <span class='st'>"American"</span>)</div><div class='output co'>#&gt;    cip2 cip2name cip4 cip4name   cip6                         cip6name
-#&gt; 1:   54  History 5401  History 540102 American History (United States)</div></pre>
+#&gt; 6:               Civil Engineering, Other</div><div class='input'>
+<span class='co'># filter using numerical codes</span>
+<span class='fu'>filter_text</span>(<span class='no'>cip</span>, <span class='kw'>keep_text</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"050125"</span>, <span class='st'>"160501"</span>))</div><div class='output co'>#&gt;    cip2                                            cip2name cip4
+#&gt; 1:   05 Area, Ethnic, Cultural and Gender and Group Studies 0501
+#&gt; 2:   16      Foreign Languages, Literatures and Linguistics 1605
+#&gt;                                       cip4name   cip6
+#&gt; 1:                                Area Studies 050125
+#&gt; 2: Germanic Languages, Literatures Linguistics 160501
+#&gt;                          cip6name
+#&gt; 1:                 German Studies
+#&gt; 2: German Language and Literature</div><div class='input'>
+<span class='co'># filter using regular expressions</span>
+<span class='fu'>filter_text</span>(<span class='no'>cip</span>, <span class='kw'>keep_text</span> <span class='kw'>=</span> <span class='st'>"^54"</span>)</div><div class='output co'>#&gt;    cip2 cip2name cip4 cip4name   cip6
+#&gt; 1:   54  History 5401  History 540101
+#&gt; 2:   54  History 5401  History 540102
+#&gt; 3:   54  History 5401  History 540103
+#&gt; 4:   54  History 5401  History 540104
+#&gt; 5:   54  History 5401  History 540105
+#&gt; 6:   54  History 5401  History 540106
+#&gt; 7:   54  History 5401  History 540107
+#&gt; 8:   54  History 5401  History 540108
+#&gt; 9:   54  History 5401  History 540199
+#&gt;                                               cip6name
+#&gt; 1:                                    History, General
+#&gt; 2:                    American History (United States)
+#&gt; 3:                                    European History
+#&gt; 4:    History and Philosophy of Science and Technology
+#&gt; 5: Public, Applied History and Archival Administration
+#&gt; 6:                                       Asian History
+#&gt; 7:                                    Canadian History
+#&gt; 8:                                    Military History
+#&gt; 9:                                      History, Other</div><div class='input'><span class='fu'>filter_text</span>(<span class='no'>cip</span>, <span class='kw'>keep_text</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"^1407"</span>, <span class='st'>"^1408"</span>))</div><div class='output co'>#&gt;    cip2    cip2name cip4             cip4name   cip6
+#&gt; 1:   14 Engineering 1407 Chemical Engineering 140701
+#&gt; 2:   14 Engineering 1407 Chemical Engineering 140702
+#&gt; 3:   14 Engineering 1407 Chemical Engineering 140799
+#&gt; 4:   14 Engineering 1408    Civil Engineering 140801
+#&gt; 5:   14 Engineering 1408    Civil Engineering 140802
+#&gt; 6:   14 Engineering 1408    Civil Engineering 140803
+#&gt; 7:   14 Engineering 1408    Civil Engineering 140804
+#&gt; 8:   14 Engineering 1408    Civil Engineering 140805
+#&gt; 9:   14 Engineering 1408    Civil Engineering 140899
+#&gt;                                  cip6name
+#&gt; 1:                   Chemical Engineering
+#&gt; 2:  Chemical and Biomolecular Engineering
+#&gt; 3:            Chemical Engineering, Other
+#&gt; 4:             Civil Engineering, General
+#&gt; 5:               Geotechnical Engineering
+#&gt; 6:                 Structural Engineering
+#&gt; 7: Transportation and Highway Engineering
+#&gt; 8:            Water Resources Engineering
+#&gt; 9:               Civil Engineering, Other</div><div class='input'>
+<span class='co'># select columns</span>
+<span class='fu'>filter_text</span>(<span class='no'>cip</span>,
+            <span class='kw'>keep_text</span> <span class='kw'>=</span> <span class='st'>"^54"</span>,
+            <span class='kw'>keep_col</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cip4"</span>, <span class='st'>"cip4name"</span>))</div><div class='output co'>#&gt;    cip4 cip4name
+#&gt; 1: 5401  History</div><div class='input'>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'># unsuccessful terms produce a message</span>
+<span class='fu'>filter_text</span>(<span class='no'>cip</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"050125"</span>, <span class='st'>"111111"</span>, <span class='st'>"160501"</span>, <span class='st'>"Bogus"</span>, <span class='st'>"^55"</span>))
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
