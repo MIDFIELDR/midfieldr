@@ -52,7 +52,16 @@ NULL
 #' }
 #'
 #' @examples
-#' # placeholder
+#' # prepare data for mice()
+#' data_students <- midfielddata::midfieldstudents
+#' data_terms <- midfielddata::midfieldterms
+#' mi_data <- prepare_fye_mi(data_students, data_terms)
+#'
+#' \dontrun{
+#' # impute missing CIP codes
+#' mice::mice(mi_data)
+#' }
+#'
 #' @family functions
 #'
 #' @export

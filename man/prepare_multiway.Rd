@@ -41,8 +41,15 @@ categorical variables (type character or factor).
 catg1 <- rep(c("urban", "rural", "suburb", "village"), each = 2)
 catg2 <- rep(c("men", "women"), times = 4)
 value <- c(0.22, 0.14, 0.43, 0.58, 0.81, 0.46, 0.15, 0.20)
-mw_df <- data.frame(catg1, catg2, value)
-prepare_multiway(mw_df)
+
+# structure before
+pre_mw <- data.frame(catg1, catg2, value)
+str(pre_mw)
+
+# structure after
+mw <- prepare_multiway(pre_mw)
+str(mw)
+
 }
 \seealso{
 Other functions: 

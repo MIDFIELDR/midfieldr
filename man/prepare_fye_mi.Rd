@@ -60,7 +60,16 @@ Finally, the predictor variables (institution, race, sex) are converted
 to factors. The output is ready for use as an input to the mice package.
 }
 \examples{
-# placeholder
+# prepare data for mice()
+data_students <- midfielddata::midfieldstudents
+data_terms <- midfielddata::midfieldterms
+mi_data <- prepare_fye_mi(data_students, data_terms)
+
+\dontrun{
+# impute missing CIP codes
+mice::mice(mi_data)
+}
+
 }
 \seealso{
 Other functions: 

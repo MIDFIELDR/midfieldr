@@ -44,13 +44,28 @@ non-character columns that can be coerced to character are also searched
 for matches.
 }
 \examples{
-filter_text(cip, keep_text = c("^1407", "^1410"))
+# filter using keywords
+filter_text(cip, keep_text = "engineering")
+
+# drop_text argument must be named
+filter_text(cip, "civil engineering", drop_text = "technology")
+
+# filter using numerical codes
+filter_text(cip, keep_text = c("050125", "160501"))
+
+# filter using regular expressions
+filter_text(cip, keep_text = "^54")
+filter_text(cip, keep_text = c("^1407", "^1408"))
+
+# select columns
 filter_text(cip,
-  keep_text = "civil engineering",
-  drop_text = "technology"
-)
-filter_text(cip, keep_text = "History") \%>\%
-  filter_text(keep_text = "American")
+            keep_text = "^54",
+            keep_col = c("cip4", "cip4name"))
+
+\dontrun{
+# unsuccessful terms produce a message
+filter_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
+}
 }
 \seealso{
 Other functions: 

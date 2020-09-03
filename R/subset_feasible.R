@@ -47,7 +47,22 @@ NULL
 #' @return character vector of student IDs, a subset of the input
 #'
 #' @examples
-#' # placeholder
+#' # sample character vector of student IDs
+#' id_sample <- sample(midfielddata::midfieldstudents$id, 100)
+#' str(id_sample)
+#'
+#' # subset the vector for feasible completion
+#' id_feasible <- subset_feasible(id_sample)
+#' str(id_feasible)
+#'
+#' # using a span > 6 years
+#' id_feasible <- subset_feasible(id_sample, span = 8)
+#' str(id_feasible)
+#'
+#' # allow more than 4 terms of transfer credit
+#' id_feasible <- subset_feasible(id_sample, term_advance_max = 6)
+#' str(id_feasible)
+#'
 #' @family functions
 #'
 #' @export
