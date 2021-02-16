@@ -1,4 +1,10 @@
 
+
+## midfieldr 1.0.0.9006 / 2020-09
+
+- revise graduation rate tools for IPEDS and non-IPEDS definitions
+
+
 ## midfieldr 1.0.0.9005 / 2020-08
 
 - add data basics vignette

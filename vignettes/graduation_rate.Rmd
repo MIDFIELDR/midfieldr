@@ -64,17 +64,58 @@ load("inst/extdata/ipeds-vignette-data.rda")
 
 ## Introduction 
 
-Despite its flaws, graduation rate is commonly used persistence metric. 
-
 In the US, the Integrated Postsecondary Education Data System (IPEDS) defines "graduation rate" as the fraction of *full-time, first-time,* degree/certificate-seeking undergraduate students in a particular year who *complete the program in which they matriculate* within 150 percent of normal time, i.e., *within 6 years* for a 4-year program [@IPEDS:2020]. 
 
-The IPEDS definition excludes students who attend college part-time, who transfer from one institution to another, and who change majors. The American Council on Education (ACE) estimates that this definition of graduation rate may exclude up to 60% of students at 4-year institutions [@Cook+Hartle:2011]. 
+The IPEDS definition excludes students who attend college part-time, who transfer from one institution to another, who change majors, and who start college in any term other than the Fall term. The American Council on Education (ACE) estimates that this definition of graduation rate may exclude up to 60% of students at 4-year institutions [@Cook+Hartle:2011]. 
 
 So why use the metric? Do graduation rates really matter? Cook and Hartle say, yes they do ... 
 
 > ... because in the eyes of the public, policy makers, and the media, they provide a clear, simple, and logical---if often misleading---number.
 
-So with these caveats in mind, we provide the tools for determining  program graduation rates per the IPEDS definition.
+
+
+### An alternate definition
+
+In spite of its flaws, graduation rate is a widely used persistence metric. We provide functionality to compute graduation rate with an option to use the IPEDS definition or the less-restrictive MIDFIELD definition that includes more students. 
+
+The table lists the differences between the two approaches. 
+
+```{r echo = FALSE}
+library(midfieldr)
+library(midfielddata)
+library(data.table)
+constraint <- c(
+  "complete the program in which they matriculate", 
+  "transfer students", 
+  "span", 
+  "matriculation term", 
+  "full-time/part-time"
+)
+IPEDS <- c(
+  "matching 6-digit CIPs", 
+  "excluded (FTIC only)", 
+  "6 academic years",
+  "Fall only", 
+  "full-time only"
+)
+MIDFIELD <- c(
+  "matching 2-digit CIPs", 
+  "included with adjusted span", 
+  "6 academic years", 
+  "any term", 
+  "NA"
+)
+
+DT <- data.table(constraint, IPEDS, MIDFIELD)
+kable2html(DT, caption = "Graduation rate constraints")
+```
+
+
+
+
+
+
+
 
 ### This vignette uses
 

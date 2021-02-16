@@ -92,17 +92,66 @@ year_limits <- c(1987, 2016)
 
 Based on feedback from workshop attendees, the package is undergoing major revision to the vignettes and the underlying functionality. 
 
-While in this ambiguous state, the package should be used experimentally only. We hope to have the update complete by the end of September 2020. 
+While in this ambiguous state, the package should be used experimentally only. We hope to have the update complete by July 2021.  
 
 ## Tools for student records research
 
-The *Multiple-Institution Database for Investigating Engineering Longitudinal Development* [(MIDFIELD)](https://engineering.purdue.edu/MIDFIELD) is a partnership of US higher education institutions with engineering programs. MIDFIELD contains registrar's data for 1.7M undergraduates in all majors at 19 institutions from 1987--2019. The data are organized in four related tables: students, courses, terms, and degrees. A MIDFIELD sample is provided in the midfielddata package.   
+The *Multiple-Institution Database for Investigating Engineering Longitudinal Development* [(MIDFIELD)](https://engineering.purdue.edu/MIDFIELD) is a partnership of US higher education institutions with engineering programs. MIDFIELD contains registrar's data for 1.7M undergraduates in all majors at 19 institutions from 1987--2019. The data are organized in four related tables: students, courses, terms, and degrees. 
+
+**midfieldr** provides functions specialized for manipulating MIDFIELD data to  examine the intersectionality of race/ethnicity, sex, and discipline in persistence metrics such as stickiness (retention by a discipline) and  graduation rate.  
+
+## Data
+
+Data are available in two forms: a publicly-available practice data set in the midfielddata package; and a complete research data set from MIDFIELD upon approval. 
+
+**Research data**
+
+Complete MIDFIELD data sets (students, degrees, terms, and courses) suitable for student-records research are available to researchers under the following conditions:
+
+- Your institutional IRB has granted approval for your project to study students using MIDFIELD. At most institutions, the use of MIDFIELD data for research is  in the IRB "Exempt" category, but institutional practices vary. 
+- Each researcher using the data signs a letter of confidentiality describing  the guidelines for how the data may be reported.
+
+For information about obtaining access to MIDFIELD research data, contact Russell Long (ralong@purdue.edu). midfieldr functions are designed to work with the MIDFIELD research data. 
+
+
+**Practice data**
+
+The practice data provided in midfieldr and midfielddata give users the opportunity to learn about analysis of student records using R---definitions, assumptions, and methods---with detailed examples for practice. However, these data are not suitable for drawing inferences about student performance, i.e., not for research.  
+
+The midfieldr package includes: 
+
+- `cip`  Data frame with `r obs_cip` observations and `r var_cip` CIP variables of the 2010 program codes and names at the 2, 4, and 6-digit levels. Each observation is a unique program keyed by a 6-digit CIP code. Occupies `r size_cip` of memory.  Data dictionary [(link)](reference/cip.html). 
+
+The midfielddata package contains four data sets that are proportionate stratified random samples of 12 institutions in the larger MIDFIELD data sets. Strata are institution, cip4 (the first four digits of the 6-digit CIP code), transfer status, race/ethnicity, and sex. 
+
+- `midfieldstudents` Data frame with `r obs_students` observations and `r var_students` demographic variables. Each observation is a unique student keyed by student ID. Occupies `r size_students` of memory. Data dictionary   [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldstudents.html). 
+
+- `midfieldcourses` Data frame with `r round(obs_courses/1e6, 1)` M observations and `r var_courses` academic course variables keyed by student ID, term, and course. Each observation is one course in one term for one student. Occupies `r size_courses` of memory. Data dictionary  [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldcourses.html).
+
+- `midfieldterms` Data frame with `r obs_terms` observations and `r var_terms` academic term variables keyed by student ID and term. Each observation is one term for one student. Occupies `r size_terms` of memory. Data dictionary  [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldterms.html).
+
+- `midfielddegrees` A data frame with `r obs_degrees` observations and `r var_degrees` graduation variables keyed by student ID. Each observation is a unique student. Occupies `r size_degrees` of memory. Data dictionary  [(link)](https://midfieldr.github.io/midfielddata/reference/midfielddegrees.html).
+
+In making the midfielddata package public, confidentiality required some  variables to be anonymized and others to be omitted. Thus the public midfielddata data dictionary is a subset of the research data dictionary of the complete MIDFIELD database. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+A MIDFIELD sample is provided in the midfielddata package.   
 
 **midfielddata** [(link)](https://midfieldr.github.io/midfielddata/) A  stratified sample of MIDFIELD data. Contains data for `r obs_students` undergraduates at `r n_inst` institutions from `r year_limits[1]`--`r year_limits[2]` in four data sets: `midfieldstudents`, `midfieldcourses`, `midfieldterms`, and `midfielddegrees`.  
 
 **midfieldr**  Tools for studying student records from midfielddata or the larger MIDFIELD database. Enables research in the intersectionality of race/ethnicity, sex, and discipline with metrics such as stickiness (retention by a discipline), migrator graduation rate, and migration yield (attraction of a discipline).
-
-For MIDFIELD partner researchers: In making the midfielddata package public, confidentiality required some MIDFIELD variables to be anonymized and others to be omitted. Thus the midfielddata data dictionary is a subset of the MIDFIELD data dictionary.
 
 ## Installation
 
@@ -128,32 +177,15 @@ If the installation is successful, the code chunk above should produce a view of
 
 <img src="man/figures/README-midfielddata-help-page-2.png" alt="midfielddata help page" class="center" width="80%">
 
-Once you have conformed that midfielddata is successfully installed, install midfieldr. The package is currently available from GitHub, but should be submitted to CRAN by September 2020.  
+Once you have conformed that midfielddata is successfully installed, install midfieldr. The package is currently available from GitHub.  
 
 ```r
-# install from CRAN (not yet available)
-# install.packages("midfieldr")
-
-# or install the development version from GitHub (available now)
-# install.packages("devtools")
+# install the development version from GitHub
+install.packages("devtools")
 devtools::install_github("MIDFIELDR/midfieldr")
 ```
 
-## Data
 
-The midfieldr package includes: 
-
-- `cip`  Data frame with `r obs_cip` observations and `r var_cip` CIP variables of program codes and names at the 2, 4, and 6-digit levels. Each observation is a unique program keyed by a 6-digit CIP code. Occupies `r size_cip` of memory.  Data dictionary [(link)](reference/cip.html). 
-
-The midfielddata package contains four data sets that constitute a stratified sample of the MIDFIELD database. 
-
-- `midfieldstudents` Data frame with `r obs_students` observations and `r var_students` demographic variables. Each observation is a unique student keyed by student ID. Occupies `r size_students` of memory. Data dictionary   [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldstudents.html). 
-
-- `midfieldcourses` Data frame with `r round(obs_courses/1e6, 1)` M observations and `r var_courses` academic course variables keyed by student ID, term, and course. Each observation is one course in one term for one student. Occupies `r size_courses` of memory. Data dictionary  [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldcourses.html).
-
-- `midfieldterms` Data frame with `r obs_terms` observations and `r var_terms` academic term variables keyed by student ID and term. Each observation is one term for one student. Occupies `r size_terms` of memory. Data dictionary  [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldterms.html).
-
-- `midfielddegrees` A data frame with `r obs_degrees` observations and `r var_degrees` graduation variables keyed by student ID. Each observation is a unique student. Occupies `r size_degrees` of memory. Data dictionary  [(link)](https://midfieldr.github.io/midfielddata/reference/midfielddegrees.html).
 
 ## Usage
 
