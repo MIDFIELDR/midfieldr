@@ -125,7 +125,7 @@ of race/ethnicity, sex, and discipline with metrics such as stickiness
 (retention by a discipline), migrator graduation rate, and migration
 yield (attraction of a discipline).
 
-## Installation
+## Install the data sets
 
 Install midfielddata first.
 
@@ -153,13 +153,19 @@ view of the help page as shown here.
 
 <img src="man/figures/README-midfielddata-help-page-2.png" alt="midfielddata help page" class="center" width="80%">
 
-Once you have conformed that midfielddata is successfully installed,
-install midfieldr. The package is currently available from GitHub.
+If this step is successful, you can go on to the next step.
+
+## Install midfieldr
+
+We use the `install_github()` function from the remotes package to
+install midfieldr from GitHub. (Note to experienced users: you can use
+devtools if you have it installed. We suggest the remotes package to
+reduce the number of package dependencies.)
 
 ``` r
 # install the development version from GitHub
-install.packages("devtools")
-devtools::install_github("MIDFIELDR/midfieldr")
+install.packages("remotes")
+remotes::install_github("MIDFIELDR/midfieldr")
 ```
 
 ## Usage
