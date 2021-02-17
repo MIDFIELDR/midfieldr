@@ -36,33 +36,24 @@ contains registrar’s data for 1.7M undergraduates in all majors at 19
 institutions from 1987–2019. The data are organized in four related
 tables: students, courses, terms, and degrees.
 
-**midfieldr** provides functions specialized for manipulating MIDFIELD
-data to examine the intersectionality of race/ethnicity, sex, and
-discipline in persistence metrics such as stickiness (retention by a
-discipline) and graduation rate.
+Two R packages are available:
+
+-   **midfielddata** [(link)](https://midfieldr.github.io/midfielddata/)
+    An R data package providing a stratified sample of MIDFIELD data.
+    Contains data for 97,640 undergraduates at 12 institutions from
+    1987–2016 in four data sets: `midfieldstudents`, `midfieldcourses`,
+    `midfieldterms`, and `midfielddegrees`.
+
+-   **midfieldr** An R package providing functions specialized for
+    manipulating MIDFIELD data to examine the intersectionality of
+    race/ethnicity, sex, and discipline in persistence metrics such as
+    stickiness (retention by a discipline) and graduation rate.
 
 ## Data
 
 Data are available in two forms: a publicly-available practice data set
 in the midfielddata package; and a complete research data set from
 MIDFIELD upon approval.
-
-**Research data**
-
-Complete MIDFIELD data sets (students, degrees, terms, and courses)
-suitable for student-records research are available to researchers under
-the following conditions:
-
--   Your institutional IRB has granted approval for your project to
-    study students using MIDFIELD. At most institutions, the use of
-    MIDFIELD data for research is in the IRB “Exempt” category, but
-    institutional practices vary.
--   Each researcher using the data signs a letter of confidentiality
-    describing the guidelines for how the data may be reported.
-
-For information about obtaining access to MIDFIELD research data,
-contact Russell Long (<ralong@purdue.edu>). midfieldr functions are
-designed to work with the MIDFIELD research data.
 
 **Practice data**
 
@@ -71,14 +62,6 @@ opportunity to learn about analysis of student records using
 R—definitions, assumptions, and methods—with detailed examples for
 practice. However, these data are not suitable for drawing inferences
 about student performance, i.e., not for research.
-
-The midfieldr package includes:
-
--   `cip` Data frame with 1584 observations and 6 CIP variables of the
-    2010 program codes and names at the 2, 4, and 6-digit levels. Each
-    observation is a unique program keyed by a 6-digit CIP code.
-    Occupies 380 kB of memory. Data dictionary
-    [(link)](reference/cip.html).
 
 The midfielddata package contains four data sets that are proportionate
 stratified random samples of 12 institutions in the larger MIDFIELD data
@@ -111,25 +94,55 @@ variables to be anonymized and others to be omitted. Thus the public
 midfielddata data dictionary is a subset of the research data dictionary
 of the complete MIDFIELD database.
 
-A MIDFIELD sample is provided in the midfielddata package.
+In addition to these data sets, the midfieldr package includes:
 
-**midfielddata** [(link)](https://midfieldr.github.io/midfielddata/) A
-stratified sample of MIDFIELD data. Contains data for 97,640
-undergraduates at 12 institutions from 1987–2016 in four data sets:
-`midfieldstudents`, `midfieldcourses`, `midfieldterms`, and
-`midfielddegrees`.
+-   `cip` Data frame with 1584 observations and 6 CIP variables of the
+    2010 program codes and names at the 2, 4, and 6-digit levels. Each
+    observation is a unique program keyed by a 6-digit CIP code.
+    Occupies 380 kB of memory. Data dictionary
+    [(link)](reference/cip.html).
 
-**midfieldr** Tools for studying student records from midfielddata or
-the larger MIDFIELD database. Enables research in the intersectionality
-of race/ethnicity, sex, and discipline with metrics such as stickiness
-(retention by a discipline), migrator graduation rate, and migration
-yield (attraction of a discipline).
+**Research data**
+
+Complete MIDFIELD data sets suitable for student-records research are
+available to researchers under the following conditions:
+
+-   Your institutional IRB has granted approval for your project to
+    study students using MIDFIELD. At most institutions, the use of
+    MIDFIELD data for research is in the IRB “Exempt” category, but
+    institutional practices vary.
+-   Each researcher using the data signs a letter of confidentiality
+    describing the guidelines for how the data may be reported.
+
+The research data and practice data have the same structure (students,
+degrees, terms, and courses) with consistent variable names. Thus R
+scripts written for the practice data sets using midfieldr functionality
+are expected to be used with the research data set with minor (if any)
+modifications.
+
+For information about obtaining access to MIDFIELD research data,
+contact Russell Long (<ralong@purdue.edu>).
+
+## For the absolute R beginner
+
+Experienced R users may skip this section.
+
+If you are an R novice and need an introduction to the R environment,
+there are good introductory tutorials available. Our recommendations
+include:
+
+-   Basic Basics series by R Ladies Sydney
+    [(link)](https://www.youtube.com/hashtag/ryouwithme). Step-by-step
+    video tutorials.  
+-   A Beginner’s Guide to R ([Zuur et al.,
+    2009](#ref-Zuur+Ieno+Meesters:2009)). A good resource for the
+    absolute R beginner.
 
 ## Install the data sets
 
 Install midfielddata first.
 
-Because of its size, the data package is stored in a drat repository.
+Because of its size, the data package is stored in a `drat` repository.
 Installation takes time; please be patient and wait for the Console
 prompt “&gt;” to reappear.
 
@@ -149,11 +162,10 @@ library(midfielddata)
 ```
 
 If the installation is successful, the code chunk above should produce a
-view of the help page as shown here.
+view of the help page as shown here. If this step is successful, you can
+go on to the next step.
 
 <img src="man/figures/README-midfielddata-help-page-2.png" alt="midfielddata help page" class="center" width="80%">
-
-If this step is successful, you can go on to the next step.
 
 ## Install midfieldr
 
@@ -163,10 +175,25 @@ devtools if you have it installed. We suggest the remotes package to
 reduce the number of package dependencies.)
 
 ``` r
-# install the development version from GitHub
+# install the remotes package
 install.packages("remotes")
+
+# install midfieldr from GitHub
 remotes::install_github("MIDFIELDR/midfieldr")
 ```
+
+To confirm a successful installation, run the following to view the
+package help page.
+
+``` r
+library(midfieldr)
+? midfieldr
+```
+
+If the installation is successful, the code chunk above should produce a
+view of the help page as shown here.
+
+<img src="man/figures/README-midfieldr-help-page-2.png" alt="midfieldr help page" class="center" width="80%">
 
 ## Usage
 
@@ -227,6 +254,14 @@ version 1.13.0. Available at:
 Wickham, Hadley (2016) *<span class="nocase">ggplot2: Elegant Graphics
 for Data Analysis</span>*. ISBN 978-3-319-24277-4; Springer-Verlag New
 York. Available at: <https://ggplot2.tidyverse.org>.
+
+</div>
+
+<div id="ref-Zuur+Ieno+Meesters:2009" class="csl-entry">
+
+Zuur, Alain F., Ieno, Elena N. and Meesters, Erik H. W. G. (2009) *<span
+class="nocase">A Beginner’s Guide to R</span>*. Springer. Available at:
+<https://link.springer.com/book/10.1007/978-0-387-93837-0>.
 
 </div>
 
