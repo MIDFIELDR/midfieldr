@@ -1,5 +1,11 @@
 
 
+## midfieldr 1.0.0.9007 / 2021-02
+
+- revise README and add short section for R beginners 
+- change recommendation for installing from GitHub from devtools to remotes to reduce dependencies 
+
+
 ## midfieldr 1.0.0.9006 / 2020-09
 
 - revise graduation rate tools for IPEDS and non-IPEDS definitions

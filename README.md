@@ -21,52 +21,56 @@ public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostat
 ## Undergoing major revision
 
 Based on feedback from workshop attendees, the package is undergoing
-major revision to the vignettes and the underlying functionality.
+major revision to the vignettes and the underlying functionality. While
+in this ambiguous state, the package should be used experimentally only.
 
-While in this ambiguous state, the package should be used experimentally
-only. We hope to have the update completed by July 2021.
+We hope to have the update completed by July 2021.
 
 ## Tools for student records research
 
 The *Multiple-Institution Database for Investigating Engineering
-Longitudinal Development*
-[(MIDFIELD)](https://engineering.purdue.edu/MIDFIELD) is a partnership
-of US higher education institutions with engineering programs. MIDFIELD
-contains registrar’s data for 1.7M undergraduates in all majors at 19
-institutions from 1987–2019. The data are organized in four related
-tables: students, courses, terms, and degrees.
+Longitudinal Development* (MIDFIELD) is a partnership of US higher
+education institutions with engineering programs. MIDFIELD contains
+registrar’s data for 1.7M undergraduates in all majors at 19
+institutions from 1987–2019.
 
-Two R packages are available:
-
--   **midfielddata** [(link)](https://midfieldr.github.io/midfielddata/)
-    An R data package providing a stratified sample of MIDFIELD data.
-    Contains data for 97,640 undergraduates at 12 institutions from
-    1987–2016 in four data sets: `midfieldstudents`, `midfieldcourses`,
-    `midfieldterms`, and `midfielddegrees`.
+Our software environment comprises two R packages:
 
 -   **midfieldr** An R package providing functions specialized for
     manipulating MIDFIELD data to examine the intersectionality of
     race/ethnicity, sex, and discipline in persistence metrics such as
     stickiness (retention by a discipline) and graduation rate.
 
+-   **midfielddata** [(link)](https://midfieldr.github.io/midfielddata/)
+    An R package with practice data for users to learn about student
+    record analysis using R—definitions, assumptions, and methods.
+    However, these data are not suitable for drawing inferences about
+    student performance, i.e., not for research.
+
 ## Data
 
-Data are available in two forms: a publicly-available practice data set
-in the midfielddata package; and a complete research data set from
-MIDFIELD upon approval.
+**CIP data**
 
-**Practice data**
+midfieldr includes a Classification of Instructional Programs (CIP) data
+set—a taxonomy of academic programs curated by the US National Center
+for Education Statistics (NCES), Integrated Postsecondary Education Data
+System (IPEDS).
 
-The practice data provided in midfieldr and midfielddata give users the
-opportunity to learn about analysis of student records using
-R—definitions, assumptions, and methods—with detailed examples for
-practice. However, these data are not suitable for drawing inferences
-about student performance, i.e., not for research.
+-   `cip` Data frame with 1584 observations and 6 CIP variables of the
+    2010 program codes and names at the 2, 4, and 6-digit levels. Each
+    observation is a unique program keyed by a 6-digit CIP code.
+    Occupies 380 kB of memory. Data dictionary
+    [(link)](reference/cip.html).
+
+**Student records data for practice**
 
 The midfielddata package contains four data sets that are proportionate
 stratified random samples of 12 institutions in the larger MIDFIELD data
-sets. Strata are institution, cip4 (the first four digits of the 6-digit
-CIP code), transfer status, race/ethnicity, and sex.
+sets. The sampling strata are institution, cip4 (the first four digits
+of the 6-digit CIP code), transfer status, race/ethnicity, and sex.
+Contains data for 97,640 undergraduates at 12 institutions from
+1987–2016 in four data sets: `midfieldstudents`, `midfieldcourses`,
+`midfieldterms`, and `midfielddegrees`.
 
 -   `midfieldstudents` Data frame with 97,640 observations and 15
     demographic variables. Each observation is a unique student keyed by
@@ -90,19 +94,11 @@ CIP code), transfer status, race/ethnicity, and sex.
     [(link)](https://midfieldr.github.io/midfielddata/reference/midfielddegrees.html).
 
 In making the midfielddata package public, confidentiality required some
-variables to be anonymized and others to be omitted. Thus the public
-midfielddata data dictionary is a subset of the research data dictionary
-of the complete MIDFIELD database.
+variables to be anonymized and others to be omitted. Thus the data
+dictionary of the practice data is a subset of the data dictionary of
+the (complete MIDFUIELD) research data.
 
-In addition to these data sets, the midfieldr package includes:
-
--   `cip` Data frame with 1584 observations and 6 CIP variables of the
-    2010 program codes and names at the 2, 4, and 6-digit levels. Each
-    observation is a unique program keyed by a 6-digit CIP code.
-    Occupies 380 kB of memory. Data dictionary
-    [(link)](reference/cip.html).
-
-**Research data**
+**Student records data for research**
 
 Complete MIDFIELD data sets suitable for student-records research are
 available to researchers under the following conditions:
@@ -111,34 +107,33 @@ available to researchers under the following conditions:
     study students using MIDFIELD. At most institutions, the use of
     MIDFIELD data for research is in the IRB “Exempt” category, but
     institutional practices vary.
+
 -   Each researcher using the data signs a letter of confidentiality
     describing the guidelines for how the data may be reported.
 
 The research data and practice data have the same structure (students,
 degrees, terms, and courses) with consistent variable names. Thus R
-scripts written for the practice data sets using midfieldr functionality
-are expected to be used with the research data set with minor (if any)
-modifications.
+scripts written for the practice data should work as well with the
+research data with only minor (if any) modification.
 
-For information about obtaining access to MIDFIELD research data,
-contact Russell Long (<ralong@purdue.edu>).
+For more information about obtaining access to MIDFIELD research data,
+contact Russell Long (<ralong@purdue.edu>)
 
 ## For the absolute R beginner
 
 Experienced R users may skip this section.
 
 If you are an R novice and need an introduction to the R environment,
-there are good introductory tutorials available. Our recommendations
-include:
+good introductory tutorials are available. You might start with:
 
--   Basic Basics series by R Ladies Sydney
+-   *Basic Basics* series by R Ladies Sydney
     [(link)](https://www.youtube.com/hashtag/ryouwithme). Step-by-step
     video tutorials.  
--   A Beginner’s Guide to R ([Zuur et al.,
+-   *A Beginner’s Guide to R* ([Zuur et al.,
     2009](#ref-Zuur+Ieno+Meesters:2009)). A good resource for the
     absolute R beginner.
 
-## Install the data sets
+## Install the data
 
 Install midfielddata first.
 
@@ -157,7 +152,7 @@ To confirm a successful installation, run the following to view the
 package help page.
 
 ``` r
-library(midfielddata)
+library("midfielddata")
 ? midfielddata
 ```
 
@@ -186,7 +181,7 @@ To confirm a successful installation, run the following to view the
 package help page.
 
 ``` r
-library(midfieldr)
+library("midfieldr")
 ? midfieldr
 ```
 
@@ -225,11 +220,12 @@ In general the midfieldr vignettes use the following packages:
 
 **Get started** vignette [(link)](articles/get_started.html) introduces
 some of the basic midfieldr functions and the midfielddata data sets.
-Additional vignettes develop the material in more detail.
+Additional vignettes (accessible from the *Vignettes* pull-down menu)
+develop the material in more detail.
 
 ## Meta
 
--   Data provided by MIDFIELD
+-   For more information about MIDFIELD
     [(link)](https://engineering.purdue.edu/MIDFIELD)  
 -   Get citation information with `citation("midfieldr")`
 -   This project is released with a Code of Conduct
