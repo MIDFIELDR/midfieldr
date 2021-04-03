@@ -1,4 +1,4 @@
-context("subset_ipeds")
+context("add_grad_column")
 
 # get_my_path() for data in the testing directory
 # ctrl-shift-L to load internal functions
@@ -62,7 +62,7 @@ alt_start[, cip6 := NULL]
 alt_start <- alt_start[order(id)]
 
 test_that("Results are correct", {
-    r1 <- subset_ipeds(starters = alt_start,
+    r1 <- add_grad_column(starters = alt_start,
                        data_students = subset_students,
                        data_terms = subset_terms,
                        data_degrees = subset_degrees)
@@ -98,7 +98,7 @@ test_that("Results are correct", {
 test_that("Required variables are present", {
     # span is a number
     expect_error(
-        subset_ipeds(starters = alt_start,
+        add_grad_column(starters = alt_start,
                      span = "6"),
         "`span` must be of class numeric"
     )
@@ -106,34 +106,34 @@ test_that("Required variables are present", {
     alt <- copy(alt_start)
     alt$id <- NULL
     expect_error(
-        subset_ipeds(starters = alt),
+        add_grad_column(starters = alt),
         "Column name `id` required"
     )
     alt <- copy(alt_start)
     alt$start <- NULL
     expect_error(
-        subset_ipeds(starters = alt),
+        add_grad_column(starters = alt),
         "Column name `start` required"
     )
    # data_students requires columns id, term_enter, transfer
     alt <- copy(subset_students)
     alt$id <- NULL
     expect_error(
-        subset_ipeds(starters = alt_start,
+        add_grad_column(starters = alt_start,
                      data_students = alt),
         "Column name `id` required"
     )
     alt <- copy(subset_students)
     alt$term_enter <- NULL
     expect_error(
-        subset_ipeds(starters = alt_start,
+        add_grad_column(starters = alt_start,
                      data_students = alt),
         "Column name `term_enter` required"
     )
     alt <- copy(subset_students)
     alt$transfer <- NULL
     expect_error(
-        subset_ipeds(starters = alt_start,
+        add_grad_column(starters = alt_start,
                      data_students = alt),
         "Column name `transfer` required"
     )
@@ -141,21 +141,21 @@ test_that("Required variables are present", {
     alt <- copy(subset_terms)
     alt$id <- NULL
     expect_error(
-        subset_ipeds(starters = alt_start,
+        add_grad_column(starters = alt_start,
                      data_terms = alt),
         "Column name `id` required"
     )
     alt <- copy(subset_terms)
     alt$cip6 <- NULL
     expect_error(
-        subset_ipeds(starters = alt_start,
+        add_grad_column(starters = alt_start,
                      data_terms = alt),
         "Column name `cip6` required"
     )
     alt <- copy(subset_terms)
     alt$term <- NULL
     expect_error(
-        subset_ipeds(starters = alt_start,
+        add_grad_column(starters = alt_start,
                      data_terms = alt),
         "Column name `term` required"
     )
@@ -163,21 +163,21 @@ test_that("Required variables are present", {
     alt <- copy(subset_degrees)
     alt$id <- NULL
     expect_error(
-        subset_ipeds(starters = alt_start,
+        add_grad_column(starters = alt_start,
                      data_degrees = alt),
         "Column name `id` required"
     )
     alt <- copy(subset_degrees)
     alt$cip6 <- NULL
     expect_error(
-        subset_ipeds(starters = alt_start,
+        add_grad_column(starters = alt_start,
                      data_degrees = alt),
         "Column name `cip6` required"
     )
     alt <- copy(subset_degrees)
     alt$term_degree <- NULL
     expect_error(
-        subset_ipeds(starters = alt_start,
+        add_grad_column(starters = alt_start,
                      data_degrees = alt),
         "Column name `term_degree` required"
     )
@@ -187,21 +187,21 @@ test_that("Input data frames are correct class", {
     not_df  <- test_df$id
     setnames(test_df, old = "cip6", new = "start")
     expect_error(
-        subset_ipeds(starters = not_df),
+        add_grad_column(starters = not_df),
         "`starters` must be of class data.frame"
     )
     expect_error(
-        subset_ipeds(starters = test_df,
+        add_grad_column(starters = test_df,
                      data_students = not_df),
         "`data_students` must be of class data.frame"
     )
     expect_error(
-        subset_ipeds(starters = test_df,
+        add_grad_column(starters = test_df,
                      data_terms = not_df),
         "`data_terms` must be of class data.frame"
     )
     expect_error(
-        subset_ipeds(starters = test_df,
+        add_grad_column(starters = test_df,
                      data_degrees = not_df),
         "`data_degrees` must be of class data.frame"
     )

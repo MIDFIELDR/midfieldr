@@ -69,9 +69,9 @@ filter_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 }
 \seealso{
 Other functions: 
+\code{\link{add_grad_column}()},
 \code{\link{prepare_fye_mi}()},
 \code{\link{prepare_multiway}()},
-\code{\link{subset_feasible}()},
-\code{\link{subset_ipeds}()}
+\code{\link{subset_feasible}()}
 }
 \concept{functions}

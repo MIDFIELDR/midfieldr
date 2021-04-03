@@ -86,9 +86,9 @@ str(id_feasible)
 }
 \seealso{
 Other functions: 
+\code{\link{add_grad_column}()},
 \code{\link{filter_text}()},
 \code{\link{prepare_fye_mi}()},
-\code{\link{prepare_multiway}()},
-\code{\link{subset_ipeds}()}
+\code{\link{prepare_multiway}()}
 }
 \concept{functions}
