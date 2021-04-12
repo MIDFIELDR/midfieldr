@@ -69,8 +69,7 @@ stratified random samples of 12 institutions in the larger MIDFIELD data
 sets. The sampling strata are institution, cip4 (the first four digits
 of the 6-digit CIP code), transfer status, race/ethnicity, and sex.
 Contains data for 97,640 undergraduates at 12 institutions from
-1987–2016 in four data sets: `midfieldstudents`, `midfieldcourses`,
-`midfieldterms`, and `midfielddegrees`.
+1987–2016 in four data sets:
 
 -   `midfieldstudents` Data frame with 97,640 observations and 15
     demographic variables. Each observation is a unique student keyed by
@@ -121,10 +120,9 @@ contact Russell Long (<ralong@purdue.edu>)
 
 ## For the absolute R beginner
 
-Experienced R users may skip this section.
-
-If you are an R novice and need an introduction to the R environment,
-good introductory tutorials are available. You might start with:
+Experienced R users may skip this section. If you are an R novice and
+need an introduction to the R environment, good introductory tutorials
+are available. You might start with:
 
 -   *Basic Basics* series by R Ladies Sydney
     [(link)](https://www.youtube.com/hashtag/ryouwithme). Step-by-step
@@ -167,7 +165,7 @@ go on to the next step.
 We use the `install_github()` function from the remotes package to
 install midfieldr from GitHub. (Note to experienced users: you can use
 devtools if you have it installed. We suggest the remotes package to
-reduce the number of package dependencies.)
+reduce the number of imported packages.)
 
 ``` r
 # install the remotes package
@@ -198,8 +196,7 @@ manipulate student records. A typical workflow might include:
 -   `filter_text()` gather programs to study  
 -   `prepare_fye_mi()` condition first-year-engineering data for
     multiple imputation
--   `subset_ipeds()` subset for the IPEDS definition of successful
-    graduation
+-   `add_grad_column()` add column to classify graduation rate status
 -   `subset_feasible()` subset for 6-year completion feasibility
 -   `prepare_multiway()` condition multiway data for graphing
 
