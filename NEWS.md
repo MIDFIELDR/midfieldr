@@ -1,5 +1,13 @@
 
 
+## midfieldr 1.0.0.9008 / 2021-04
+
+- add timely completion 
+- revise vignettes for clarity 
+- graduation rate in progress
+
+
+
 ## midfieldr 1.0.0.9007 / 2021-02
 
 - revise README and add short section for R beginners 

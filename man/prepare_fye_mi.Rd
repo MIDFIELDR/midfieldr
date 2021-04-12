@@ -73,7 +73,6 @@ mice::mice(mi_data)
 }
 \seealso{
 Other functions: 
-\code{\link{add_grad_column}()},
 \code{\link{filter_text}()},
 \code{\link{prepare_multiway}()},
 \code{\link{subset_feasible}()}
