@@ -25,6 +25,7 @@ Other case-study-data:
 \code{\link{rep_cip}},
 \code{\link{rep_ever}},
 \code{\link{rep_group}},
+\code{\link{rep_start}},
 \code{\link{rep_stickiness}}
 }
 \concept{case-study-data}

@@ -59,15 +59,19 @@ asp_ratio_mw <- function(data, categories) {
 
 Longitudinal "stickiness" is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program [@Ohland+Orr+others:2012]. 
 
-The stickiness metric accounts for all students in a program. Unlike the graduation rate metric, stickiness includes students who begin college part-time, who enroll mid-year, and who switch majors or transfer between institutions. 
-
-Every student counted in a program's stickiness metric was enrolled in that program for at least one term. The program succeeded in attracting these students---stickiness tells us how well the program succeeded in retaining them.
+Unlike the graduation rate metric, stickiness does not require that students matriculate and graduate in the same program. Every student counted in a program's stickiness metric was enrolled in that program for at least one term. The program succeeded in attracting these students---stickiness tells us how well the program succeeded in retaining them.
 
 ### This vignette uses
 
 midfieldr functions 
  
-- `subset_feasible()` 
+- `subset_feasible()` described in [Feasible completion](feasible_completion.html) 
+- `prepare_multiway()` described in [Multiway graphs and tables](multiway_graphs.html) 
+
+midfieldr built-in data sets 
+
+- `rep_group` described in [Identify programs](identify_programs.html) 
+- `fye_start` described in [Handle FYE programs](handle_fye.html)
 
 packages
 
@@ -82,76 +86,109 @@ library(ggplot2)
 options(datatable.print.nrows = 20, datatable.print.topn = 10)
 ``` 
 
-## Choose the programs to study
 
-In the *Identify programs* vignette [(link)](identify_programs.html), we create the program group of 6-digit codes and user-defined program names  for the engineering case study. These data are included with midfieldr as the built-in data set `rep_group`. View its help page by running
 
-```r
-? rep_group 
-```
 
-The data are loaded with midfieldr. 
+## Choose programs
+
+The programs in this case study are available as the built-in data set `rep_group`. 
 
 ```{r}
-# obtain programs (built-in data set)
-program_group <- copy(rep_group)
-
-# examine the result
-program_group
+# examine the built-in data 
+rep_group
 ```
 
-We extract the `cip6` column as a character vector to gather student data. 
+You may view its help page by running
 
-```{r}
-# extract a vector of 6-digit CIP codes
-group_cip <- program_group$cip6
-
-# examine the result
-group_cip
+```
+? rep_group
 ```
 
-## Gather the students ever enrolled
-
-We access `midfieldterms` to obtain the IDs of all students ever enrolled in these programs.  
+For readability we assign the program group to a new name. 
 
 ```{r}
-# extract students ever enrolled
-cols_we_want <- c("id", "cip6")
-rows_we_want <- midfieldterms$cip6 %in% group_cip
-enrollees <- midfieldterms[rows_we_want, ..cols_we_want]
-enrollees <- unique(enrollees)
-
-# examine the result
-enrollees[order(id)]
+# create a new memory location 
+program_labels <- copy(rep_group)
 ```
 
-There may be FYE students who are imputed to have started in one of these programs as well. In the *Handle FYE programs* vignette [(link)](handle_fye.html), we derive the starting programs for all FYE students in midfielddata. This `fye_start` data is included in midfieldr. Again, we filter by the program group CIP codes. 
+We extract the CIP codes as a vector for subsetting data. 
 
 ```{r}
-# gather FYE students predicted to start in these programs
-rows_we_want <- fye_start$start %in% group_cip
+# vector of CIP codes for subsetting
+cip6_we_want <- program_labels$cip6
+```
+
+
+
+
+## Gather enrollees
+
+We use the vector of CIP codes to filter `midfieldstudents`, `midfieldterms`, and `midfielddegrees` to obtain the IDs students ever enrolled in the group of programs. We access all three datasets to ensure we obtain all students ever enrolled. Duplicates are expected but only unique observations will be retained. 
+
+```{r}
+# two columns we want from each data set 
+cols_we_want <- c("id", "cip6") 
+
+# subset students
+rows_we_want <- midfieldstudents$cip6 %chin% cip6_we_want
+students <- midfieldstudents[rows_we_want, ..cols_we_want]
+
+# subset terms 
+rows_we_want <- midfieldterms$cip6 %chin% cip6_we_want
+terms <- midfieldterms[rows_we_want, ..cols_we_want]
+
+# subset degrees 
+rows_we_want <- midfielddegrees$cip6 %chin% cip6_we_want
+degrees <- midfielddegrees[rows_we_want, ..cols_we_want]
+```
+
+When studying engineering students we have to account for students enrolled in first-year engineering (FYE) programs. The predicted starting programs of FYE students in midfielddata are available as the built-in data set `fye_start`. 
+
+```{r}
+# examine fye data
+fye_start
+```
+
+You may view its help page by running
+
+```
+? fye_start
+```
+
+Subset these data for our program group. 
+
+```{r}
+# subset FYE
+rows_we_want <- fye_start$start %chin% cip6_we_want
 cols_we_want <- c("id", "start")
-fye_starters <- fye_start[rows_we_want, ..cols_we_want]
-fye_starters <- unique(fye_starters)
-setnames(fye_starters, old = "start", new = "cip6")
-
-# examine the result
-fye_starters[order(id)]
+fye <- fye_start[rows_we_want, ..cols_we_want]
 ```
 
-Bind the two data frames
+Rename the `start` variable to `cip6` to match the students, terms, and degrees data. 
 
 ```{r}
-enrollees <- rbind(enrollees, fye_starters)
-enrollees <- unique(enrollees)
+# edit variable name before combining data
+setnames(fye, old = "start", new = "cip6")
 
 # examine the result
-enrollees[order(id)]
+fye
+```
+
+Next we bind the four sets of IDs in a data frame named `ever` (for "ever enrolled") and reduce the data frame to its unique values. 
+
+```{r}
+# combine four data frames
+data_to_bind <- list(students, terms, degrees, fye)
+ever <- rbindlist(data_to_bind)
+ever <- unique(ever)
+
+# examine the result
+ever
 ```
 
 ```{r include = FALSE, eval = FALSE}
 # run this manually to save external data
-rep_ever <- enrollees$id
+rep_ever <- ever$id
 usethis::use_data(
   rep_ever,
   internal  = FALSE,
@@ -159,187 +196,213 @@ usethis::use_data(
 )
 ```
 
-The enrollee data derived above is the data set `rep_ever` in midfieldr.  View its help page by running
-
-```r
-? rep_ever
-```
-
-For some of these students, completing their program may not be feasible given the range of data available. `subset_feasible()` subsets the student IDs, retaining those who matriculate at least six years before the last term in the data. 
+We subset our data for program completion feasibility. 
 
 ```{r}
-# apply the feasible completion filter
-feasible_ids <- subset_feasible(id = enrollees$id)
+# students for whom completion is feasible   
+feasible_ids <- subset_feasible(id = ever$id)
+
+# subset for feasible completion
+rows_we_want <- ever$id %chin% feasible_ids
+ever <- ever[rows_we_want]
 
 # examine the result
-str(feasible_ids)
+ever
 ```
 
-See the *Feasible completion* vignette [(link)](feasible_completion.html) for a detailed explanation of how completion feasibility is determined.
+We extract the unique IDs as a vector for subsetting data.  
 
 ```{r}
-# subset the enrollees
-rows_we_want <- enrollees$id %in% feasible_ids
-enrollees <- enrollees[rows_we_want]
-
-# examine the result
-enrollees[order(id)]
+# vector of IDs for subsetting
+ever_id <- unique(ever$id)
 ```
 
-We access `midfieldstudents` to obtain the race/ethnicity and sex of the enrollees. 
+
+
+## Gather graduates 
+
+Graduates are filtered from the degree data by ID and CIP.  
 
 ```{r}
-# obtain race/ethnicity and sex at matriculation
-rows_we_want <- midfieldstudents$id %in% feasible_ids
-cols_we_want <- c("id", "race", "sex")
-race_sex <- midfieldstudents[rows_we_want, ..cols_we_want]
-race_sex <- unique(race_sex)
-
-# examine the result
-race_sex[order(id)]
-```
-
-Now we can join the race/ethnicity and sex data frame to the enrollees data frame. 
-
-```{r}
-# left-join demographics to enrollees
-enrollees <- merge(enrollees, race_sex, by = "id", all.x = TRUE)
-
-# examine the result
-enrollees[order(id)]
-```
-
-We join the program names from `program_group` to our working data frame so we can aggregate by groups in a future step.  
-
-```{r}
-# left-join program_group to enrollees
-enrollees <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
-
-# examine the result
-enrollees[order(id)]
-```
-
-## Gather the students graduating 
-
-We access `midfielddegrees` to obtain the IDs of all students graduating from these programs.  We skip the feasible completion step because for  graduates, the question of completion feasibility is moot---graduation itself establishes feasibility. 
-
-```{r}
-# extract graduates
+# subset graduates
+rows_we_want <- midfielddegrees$id   %chin% ever_id & 
+                midfielddegrees$cip6 %chin% cip6_we_want 
 cols_we_want <- c("id", "cip6", "term_degree")
-rows_we_want <- midfielddegrees$cip6 %in% group_cip
-graduates <- midfielddegrees[rows_we_want, ..cols_we_want]
+grad <- midfielddegrees[rows_we_want, ..cols_we_want]
 
 # examine the result
-graduates[order(id)]
+grad
 ```
 
-Some students might have earned a second degree in a term after their first degree. To ensure we count only the first degree, we the minimum value of `term_degree` grouped by `id`, using the data.table `.SD` syntax. 
+We retained the `term_degree` variable because some students might have earned a second degree in a term after their first degree(s). We want to retain only those degrees earned in a student's first degree term. 
 
 ```{r}
-# keep the first degree term if more than one
-graduates <- graduates[, .SD[term_degree == min(term_degree)], by = id]
+# keep the first degree term only
+grad <- grad[, .SD[term_degree == min(term_degree)], by = id]
+
+# select columns
+grad <- grad[, .(id, cip6)]
 
 # examine the result
-graduates[order(id)]
+grad
 ```
 
-We can remove the `term_degree` column and then we access `midfieldstudents` for student race/ethnicity and sex. 
+In this case, the number of graduates did not change after checking for subsequent degrees, but it is always a possibility and should be examined. 
+
+
+
+## Subset with demographics 
+
+Obtain race/ethnicity and sex variables keyed by ID. We will retain only those students for whom this information is known. 
 
 ```{r}
-# finished with term_degree column
-graduates[, term_degree := NULL]
-
-# join race sex
-rows_we_want <- midfieldstudents$id %in% graduates$id
+# obtain race/ethnicity and sex
+rows_we_want <- midfieldstudents$id %chin% ever_id
 cols_we_want <- c("id", "race", "sex")
-race_sex <- midfieldstudents[rows_we_want, ..cols_we_want]
-race_sex <- unique(race_sex)
-graduates <- merge(graduates, race_sex, by = "id", all.x = TRUE)
+demographics <- midfieldstudents[rows_we_want, ..cols_we_want]
+demographics <- unique(demographics)
 
+# examine the result
+demographics
+```
+
+Examine the values for race and sex to determine which, if any, to omit from analysis. 
+
+```{r}
+unique(demographics$race)
+unique(demographics$sex)
+```
+
+For our case study, we make the arbitrary decision to drop students identified as  International, Other, and Unknown. 
+
+```{r}
+# filter for specific race/ethnicity categories
+rows_we_want <- demographics$race %chin% 
+  c("Asian", "Black", "Hispanic", "Native American", "White")
+demographics <- demographics[rows_we_want]
+
+# examine the result
+demographics
+```
+
+Subset enrollees and graduates, retaining only those IDs for whom we have demographic information. 
+
+```{r}
+# subset for known race/ethnicity and sex
+rows_we_want <- ever$id %chin% demographics$id
+ever <- ever[rows_we_want]
+
+rows_we_want <- grad$id %chin% demographics$id
+grad <- grad[rows_we_want]
+```
+
+
+
+## Join, group, and summarize
+
+Join the demographics to the ever-enrolled and graduates data. 
+
+```{r}
+# join demographics
+ever <- merge(ever, demographics, by = "id", all.x = TRUE)
+grad <- merge(grad, demographics, by = "id", all.x = TRUE)
+
+# examine the result
+ever
+grad
+```
+
+Join the program labels. 
+
+```{r}
 # join program labels
-graduates <- merge(graduates, program_group, by = "cip6", all.x = TRUE)
+ever <- merge(ever, program_labels, by = "cip6", all.x = TRUE)
+grad <- merge(grad, program_labels, by = "cip6", all.x = TRUE)
 
 # examine the result
-graduates[order(id)]
+ever
+grad
 ```
 
-## Group, summarize, and join 
-
-To frame our results in terms of program, race/ethnicity, and sex, we assign these variables as our grouping variables. 
+In preparation for counting, we drop the ID variable. 
 
 ```{r}
-# assign variables to aggregate by
+# assign aggregation variables
 grouping_variables <- c("program", "race", "sex")
-```
 
-We count the number of students in each grouping. The count is assigned to the new `ever` column. 
-
-```{r}
-# group and summarize
-grouped_enrollees <- enrollees[, .(ever = .N), by = grouping_variables]
+# select columns
+ever <- ever[, ..grouping_variables]
+grad <- grad[, ..grouping_variables]
 
 # examine the result
-grouped_enrollees
+ever
+grad
 ```
 
-
-Repeat for the graduates, creating the new `grad` column. 
+Count the number of students enrolled by the grouping variables with the count  reported in the `ever` column. Repeat for graduates with the count reported in the `grad` column. 
 
 ```{r}
-# group and summarize
-grouped_graduates <- graduates[, .(grad = .N), by = grouping_variables]
+# summarize by grouping variables 
+ever_group <- ever[, .(ever = .N), by = grouping_variables]
+grad_group <- grad[, .(grad = .N), by = grouping_variables]
 
 # examine the result
-grouped_graduates
+ever_group
+grad_group
 ```
 
-We join the two data frames by our grouping variables, producing a data frame with `ever` and `grad` for each group. Note that we have `r nrow(grouped_enrollees)` groupings of enrollees but only `r nrow(grouped_graduates)` groupings of graduates. Some enrollee groups have no graduates. 
-
+We join the two data frames by our grouping variables, producing the data frame in which stickiness can be computed. 
 
 ```{r}
-# left-join graduates to enrollees
-grouped_data <- merge(grouped_enrollees,
-  grouped_graduates,
-  by = grouping_variables,
-  all.x = TRUE
-)
+# join graduates to enrollees
+stickiness <- merge(ever_group, grad_group, by = grouping_variables, all.x = TRUE)
 
-# examine the result, ordered by program
-grouped_data[order(program)]
+# examine the result
+stickiness
 ```
+
+
+
 
 ## Compute stickiness 
 
-There are `r nrow(grouped_enrollees) - nrow(grouped_graduates)` NA entries in the `grad` column where we have enrollees but no graduates. To see them more directly:
+Some groupings may have enrollees but no graduates. Such cases will have an NA in the `grad` column. We want to find them and convert NA to zero. 
 
 ```{r}
-# begin work on computing the metric
-stickiness <- copy(grouped_data)
+# find rows with grad NA
+rows_with_NA_grad <- is.na(stickiness$grad)
+stickiness[rows_with_NA_grad]
 
-# identify NA values
-rows_with_degree_NA <- is.na(stickiness$grad)
-stickiness[rows_with_degree_NA]
-```
-
-We convert the NA values in the `grad` column to zero.
-
-```{r}
-# convert grad NA to zero
-stickiness[rows_with_degree_NA, grad := 0]
+# convert NA to zero
+stickiness[rows_with_NA_grad, grad := 0]
 
 # examine the result
-stickiness[rows_with_degree_NA]
+stickiness[rows_with_NA_grad]
 ```
 
-We omit rows with zero students ever enrolled, if any, to avoid dividing by zero. 
+Stickiness is the ratio of `grad` to `ever`.  We omit rows with zero students ever enrolled, if any, to avoid dividing by zero. 
 
 ```{r}
 # prevent division by zero
 rows_we_want <- stickiness$ever > 0
 stickiness <- stickiness[rows_we_want]
+
+# examine the result
+stickiness
 ```
 
-Stickiness is the ratio of `grad` to `ever`.  
+To protect confidentiality, we further restrict the number of students ever enrolled by omitting observations with 10 or fewer students. 
+
+```{r}
+# protect confidentiality
+rows_we_want <- stickiness$ever > 10
+stickiness   <- stickiness[rows_we_want]
+
+# examine the result
+stickiness
+```
+
+Compute stickiness. 
 
 ```{r}
 # compute stickiness
@@ -347,13 +410,6 @@ stickiness[, stick := round(grad / ever, 2)]
 
 # examine the result
 stickiness
-```
-
-To see the class of each column: 
-
-```{r}
-# name and class of variables (columns)
-unlist(lapply(stickiness, FUN = class))
 ```
 
 ```{r include = FALSE, eval = FALSE}
@@ -366,57 +422,63 @@ usethis::use_data(
 )
 ```
 
-The stickiness data derived above is the data set `rep_stickiness` in midfieldr.  View its help page by running
 
-```r
-? rep_stickiness
-```
 
-## Condition the data for display 
+## Condition data for display 
 
-Before graphing, we isolate the three multiway variables (program, combined race and sex, and stickiness) and transform the categorical variables into factors with levels that are ordered by median stickiness. 
-
-The *Multiway graphs and tables* vignette [(link)](multiway_graphs.html) describes this process for the stickiness data in detail. The result is included as a data set `rep_stickiness_mw` in midfieldr. View its help page by running 
-
-```r
-? rep_stickiness_mw
-```
-
-This data set is loaded with midfieldr. 
+Data that are ready to be conditioned as multiway data can be considered "pre-multiway". Thus we assign `pre_mw` as the new name of the data frame. 
 
 ```{r}
-# condition the data in multiway form (built-in data set)
-data_mw <- copy(rep_stickiness_mw)
+# create a new memory location 
+pre_mw <- copy(stickiness)
+```
+
+Before graphing, we isolate the three multiway variables (program, combined race and sex, and stickiness).
+
+```{r}
+# create a combined race/ethnicity/sex variable
+pre_mw[, race_sex := paste(race, sex)]
+
+# select columns
+columns_we_want <- c("program", "race_sex", "stick")
+pre_mw <- pre_mw[, ..columns_we_want]
+```
+
+Transform the categorical variables into factors with levels that are ordered by median stickiness. The multiway-ready data frame is assigned the name `ready_mw`.  
+
+```{r}
+# convert the categorical variables to factors ordered by the stickiness value
+ready_mw <- prepare_multiway(pre_mw)
 
 # examine the result
-data_mw
+ready_mw
 ```
 
-The attributes of the data frame confirm that the categorical variables are factors and not characters. The median values by which the factor levels are ordered are shown in the `scores` attributes. 
 
-```{r}
-# name and class of variables (columns)
-lapply(data_mw, FUN = attributes)
-```
 
 ## Graph the metric
 
 ```{r include = FALSE}
-asp_ratio <- asp_ratio_mw(data_mw, categories = c("program", "race_sex"))
+asp_ratio <- asp_ratio_mw(ready_mw, categories = c("program", "race_sex"))
 ```
 
-We use conventional ggplot2 functions to graph the `data_mw` data set in a multiway graph. 
+We use conventional ggplot2 functions to graph the `ready_mw` data set in a multiway graph. Rows with no data marker are those we omitted for confidentiality. 
+
+*Reminder:* These are practice data, not suitable for drawing inferences about student performance, i.e., not for research.
 
 ```{r fig1, fig.asp = asp_ratio[1]}
-# graph results
-ggplot(data = data_mw, mapping = aes(x = stick, y = race_sex)) +
+# multiway graph of practice data
+ggplot(data = ready_mw, mapping = aes(x = stick, y = race_sex)) +
   facet_wrap(facets = vars(program), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
-  labs(x = "Stickiness", y = "")
+  labs(x = "Stickiness", 
+       y = "", 
+       title = "Practice data (not for research)", 
+       caption = "Source: midfielddata")
 ```
-<br>
 
-For more information on multiway data and interpreting multiway graphs, see the *Multiway graphs and tables* vignette [(link)](multiway_graphs.html). 
+
+
 
 ## References
 
@@ -435,78 +497,87 @@ library(midfielddata)
 library(data.table)
 library(ggplot2)
 
-# obtain programs (built-in data set)
-program_group <- rep_group
-group_cip <- program_group$cip6
+# choose programs
+program_labels <- rep_group
+cip6_we_want <- program_labels$cip6
 
-# gather students ever enrolled in programs
-cols_we_want <- c("id", "cip6")
-rows_we_want <- midfieldterms$cip6 %in% group_cip
-enrollees <- midfieldterms[rows_we_want, ..cols_we_want]
-enrollees <- unique(enrollees)
-
-# gather FYE students predicted to start in these programs
-rows_we_want <- fye_start$start %in% group_cip
+# gather enrollees
+cols_we_want <- c("id", "cip6") 
+rows_we_want <- midfieldstudents$cip6 %chin% cip6_we_want
+students <- midfieldstudents[rows_we_want, ..cols_we_want]
+rows_we_want <- midfieldterms$cip6 %chin% cip6_we_want
+terms <- midfieldterms[rows_we_want, ..cols_we_want]
+rows_we_want <- midfielddegrees$cip6 %chin% cip6_we_want
+degrees <- midfielddegrees[rows_we_want, ..cols_we_want]
+rows_we_want <- fye_start$start %chin% cip6_we_want
 cols_we_want <- c("id", "start")
-fye_starters <- fye_start[rows_we_want, ..cols_we_want]
-fye_starters <- unique(fye_starters)
-setnames(fye_starters, old = "start", new = "cip6")
-enrollees <- rbind(enrollees, fye_starters)
-enrollees <- unique(enrollees)
+fye <- fye_start[rows_we_want, ..cols_we_want]
+setnames(fye, old = "start", new = "cip6")
+data_to_bind <- list(students, terms, degrees, fye)
+ever <- rbindlist(data_to_bind)
+ever <- unique(ever)
+feasible_ids <- subset_feasible(id = ever$id)
+rows_we_want <- ever$id %chin% feasible_ids
+ever <- ever[rows_we_want]
+ever_id <- unique(ever$id)
 
-# apply the feasible completion filter
-feasible_ids <- subset_feasible(id = enrollees$id)
-rows_we_want <- enrollees$id %in% feasible_ids
-enrollees <- enrollees[rows_we_want]
-
-# obtain race/ethnicity and sex at matriculation
-rows_we_want <- midfieldstudents$id %in% feasible_ids
-cols_we_want <- c("id", "race", "sex")
-race_sex <- midfieldstudents[rows_we_want, ..cols_we_want]
-race_sex <- unique(race_sex)
-
-# join data frames
-enrollees <- merge(enrollees, race_sex, by = "id", all.x = TRUE)
-enrollees <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
-
-# gather students graduating from programs
+# gather graduates
+rows_we_want <- midfielddegrees$id   %chin% ever_id & 
+                midfielddegrees$cip6 %chin% cip6_we_want 
 cols_we_want <- c("id", "cip6", "term_degree")
-rows_we_want <- midfielddegrees$cip6 %in% group_cip
-graduates <- midfielddegrees[rows_we_want, ..cols_we_want]
-graduates <- graduates[, .SD[term_degree == min(term_degree)], by = id]
+grad <- midfielddegrees[rows_we_want, ..cols_we_want]
+grad <- grad[, .SD[term_degree == min(term_degree)], by = id]
+grad <- grad[, .(id, cip6)]
 
-# join race/ethnicity, sex, and program labels
-rows_we_want <- midfieldstudents$id %in% graduates$id
+# subset with demographics
+rows_we_want <- midfieldstudents$id %chin% ever_id
 cols_we_want <- c("id", "race", "sex")
-race_sex <- midfieldstudents[rows_we_want, ..cols_we_want]
-race_sex <- unique(race_sex)
-graduates <- merge(graduates, race_sex, by = "id", all.x = TRUE)
-graduates <- merge(graduates, program_group, by = "cip6", all.x = TRUE)
+demographics <- midfieldstudents[rows_we_want, ..cols_we_want]
+demographics <- unique(demographics)
+rows_we_want <- demographics$race %chin% 
+  c("Asian", "Black", "Hispanic", "Native American", "White")
+demographics <- demographics[rows_we_want]
+rows_we_want <- ever$id %chin% demographics$id
+ever <- ever[rows_we_want]
+rows_we_want <- grad$id %chin% demographics$id
+grad <- grad[rows_we_want]
 
-# group, summarize, and join
+# join, group, and summarize
+ever <- merge(ever, demographics, by = "id", all.x = TRUE)
+grad <- merge(grad, demographics, by = "id", all.x = TRUE)
+ever <- merge(ever, program_labels, by = "cip6", all.x = TRUE)
+grad <- merge(grad, program_labels, by = "cip6", all.x = TRUE)
 grouping_variables <- c("program", "race", "sex")
-grouped_enrollees <- enrollees[, .(ever = .N), by = grouping_variables]
-grouped_graduates <- graduates[, .(grad = .N), by = grouping_variables]
-grouped_data <- merge(grouped_enrollees,
-  grouped_graduates,
-  by = grouping_variables,
-  all.x = TRUE
-)
+ever <- ever[, ..grouping_variables]
+grad <- grad[, ..grouping_variables]
+ever_group <- ever[, .(ever = .N), by = grouping_variables]
+grad_group <- grad[, .(grad = .N), by = grouping_variables]
+stickiness <- merge(ever_group, grad_group, by = grouping_variables, all.x = TRUE)
 
-# compute the metric
-stickiness <- grouped_data
-rows_with_degree_NA <- is.na(stickiness$grad)
-stickiness[rows_with_degree_NA, grad := 0]
-rows_we_want <- stickiness$ever > 0
-stickiness <- stickiness[rows_we_want]
+# compute stickiness
+rows_with_NA_grad <- is.na(stickiness$grad)
+stickiness[rows_with_NA_grad, grad := 0]
+rows_we_want <- stickiness$ever > 10
+stickiness   <- stickiness[rows_we_want]
 stickiness[, stick := round(grad / ever, 2)]
 
-# condition the data in multiway form (built-in data set)
-data_mw <- rep_stickiness_mw
+# condition data for display
+stickiness[, race_sex := paste(race, sex)]
+columns_we_want <- c("program", "race_sex", "stick")
+stickiness <- stickiness[, ..columns_we_want]
+stickiness <- prepare_multiway(stickiness)
 
-# graph results
-ggplot(data = data_mw, mapping = aes(x = stick, y = race_sex)) +
+# graph the metric
+ggplot(data = stickiness, mapping = aes(x = stick, y = race_sex)) +
   facet_wrap(facets = vars(program), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
-  labs(x = "Stickiness", y = "")
+  labs(x = "Stickiness", 
+       y = "", 
+       title = "Practice data (not for research)", 
+       caption = "Source: midfielddata")
 ```
+
+
+
+
+

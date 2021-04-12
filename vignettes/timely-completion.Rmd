@@ -2,7 +2,7 @@
 title: "Timely completion"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Graduation rate}
+  %\VignetteIndexEntry{Timely completion}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -11,13 +11,13 @@ bibliography: ../inst/REFERENCES.bib
 csl: ../inst/body-and-society.csl
 link-citations: yes
 resource_files:
-  - ../man/figures/vignette-graduation-rate-fig1-1.png
+  - ../man/figures/vignette-timely-completion-fig1-1.png
 ---
 
 ```{r include = FALSE}
 knitr::opts_knit$set(root.dir = "../")
 knitr::opts_chunk$set(
-  fig.path = "../man/figures/vignette-graduation-rate-"
+  fig.path = "../man/figures/vignette-timely-completion-"
 )
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -69,7 +69,7 @@ Timely completion terminology is illustrated in the figure. Definitions are give
 
 
 <br>
-```{r echo = FALSE, fig.asp = 5/10}
+```{r fig1, echo = FALSE, fig.asp = 5/10}
 yyyy <- c(1990, 1992, 1994, 1995)
 df <- data.frame(yyyyt = yyyy, y = 1)
 
@@ -233,6 +233,76 @@ options(datatable.print.nrows = 20, datatable.print.topn = 10)
 
 
 
+
+
+<!-- ################################################ -->
+
+
+
+
+## How to use `timely_completion()`
+
+The first argument, `id`, is required. The remaining arguments all have default settings. The last three arguments accommodate using data sets other than those from midfielddata. Arguments after the ellipsis (...) must be named if used. 
+
+```r
+    timely_completion(
+      id,                    
+      ...,
+      span = NULL,
+      term_transfer_max = NULL,
+      data_students = NULL,
+      data_terms = NULL,
+      data_degrees = NULL
+    )
+```
+
+
+- `id` character vector of student IDs
+- `span`  number of years to define timely completion, default is 6 years
+- `term_transfer_max` maximum terms of transfer credit for determining years to graduation, default is 4 terms (2 years)
+- `data_students`  student attributes data set, `midfieldstudents` or equivalent
+- `data_terms`  term attributes data set, `midfieldterms` or equivalent
+- `data_degrees` degree attributes data set, `midfielddegrees` or equivalent
+
+The primary input to `subset_feasible()` is a character vector of student IDs. To illustrate its use, we use the built-in data set `rep_ever` from the engineering case study as developed in the  *Stickiness metric* vignette [(link)](stickiness_metric.html). 
+
+View its help page by running
+
+```r
+? rep_ever
+```
+
+The data are loaded with midfieldr. 
+
+```{r}
+# view the example IDs
+str(rep_ever)
+```
+
+This vector of IDs is the input to `subset_feasible()`, which performs the subsetting for completion feasibility.  
+
+```{r}
+# filter IDs for feasible program completion within data limit
+feasible_id <- subset_feasible(rep_ever)
+
+# examine the result
+str(feasible_id)
+```
+
+In this instance, we started with `r length(rep_ever)` enrollees. After applying the criteria for feasible completion, we retain `r length(feasible_id)` students. These students either graduated (demonstrating the feasibility of completing their programs before the data limit) or they matriculated no later than their matriculation limits. 
+
+Related vignettes
+
+- *Graduation rate* vignette [(link)](graduation_rate_metric.html) in which the representative group of case study starters is developed. 
+
+
+
+
+<!-- ################################################ -->
+
+
+
+
 ## How to use `timely_completion()`
 
 
@@ -252,9 +322,7 @@ str(rep_ever)
 ```
 
 
-Related vignettes 
 
-- *Identify  programs* [(link)](identify_programs.html) illustrates program labeling options 
 
 
 
@@ -274,15 +342,16 @@ Example output of `timely_completion(id)`
     #>  MID005             6.5       FALSE
     #>   ---   
 
-Next, merge these data frames with the starters.
 
-    #>           id   cip6  is_timely  
-    #>    1: MID001 141901      TRUE
-    #>    2: MID002 140801      TRUE
-    #>    3: MID003 141001     FALSE
-    #>    4: MID004 141001     FALSE
-    #>    5: MID005 140801     FALSE       
-    #>   ---   
+
+
+Related vignettes
+
+- obtaining `rep_ever` IDs
+
+
+
+## How `timely_completion()` works
 
 
 function arguments 
@@ -301,14 +370,6 @@ function arguments
       data_terms = NULL,        # data frame of term attributes
       data_degrees = NULL       # data frame of degree attributes
     )
-
-
-
-
-## How `timely_completion()` works
-
-
-
 
 
 ## References

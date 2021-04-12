@@ -87,9 +87,9 @@
 
 # -------------------------------------------------------------------
 
-#' Case student IDs
+#' Case student IDs ever enrolled
 #'
-#' Representative case study. Character vector of 12,409 student IDs
+#' Representative case study. Character vector of 12,600 student IDs
 #' ever enrolled in Civil, Electrical, Industrial, and Mechanical
 #' Engineering programs (including predicted starting programs for
 #' FYE students) in
@@ -98,6 +98,23 @@
 #' @format character vector
 #' @family case-study-data
 "rep_ever"
+
+
+# -------------------------------------------------------------------
+
+#' Case student IDs starters
+#'
+#' Representative case study. Character vector of 8854 student IDs
+#' starting in Civil, Electrical, Industrial, and Mechanical
+#' Engineering programs (including predicted starting programs for
+#' FYE students) in
+#' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
+#'
+#' @format character vector
+#' @family case-study-data
+"rep_start"
+
+
 
 # -------------------------------------------------------------------
 

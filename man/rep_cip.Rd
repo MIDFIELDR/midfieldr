@@ -33,6 +33,7 @@ and Mechanical Engineering programs in
 Other case-study-data: 
 \code{\link{rep_ever}},
 \code{\link{rep_group}},
+\code{\link{rep_start}},
 \code{\link{rep_stickiness_mw}},
 \code{\link{rep_stickiness}}
 }

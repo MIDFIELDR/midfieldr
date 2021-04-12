@@ -25,6 +25,7 @@ for Civil, Electrical, Industrial, and Mechanical Engineering programs in
 Other case-study-data: 
 \code{\link{rep_cip}},
 \code{\link{rep_ever}},
+\code{\link{rep_start}},
 \code{\link{rep_stickiness_mw}},
 \code{\link{rep_stickiness}}
 }
