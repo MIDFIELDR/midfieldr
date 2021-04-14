@@ -1,3 +1,4 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # midfieldr <span class="border-wrap"><img src="man/figures/logo.png" align="right" height="122" width="106" alt="logo.png"></span>
@@ -164,7 +165,7 @@ go on to the next step.
 We use the `install_github()` function from the remotes package to
 install midfieldr from GitHub. (Note to experienced users: you can use
 devtools if you have it installed. We suggest the remotes package to
-reduce the number of imported packages.)
+reduce the number of imported packages and dependencies.)
 
 ``` r
 # install the remotes package
@@ -195,8 +196,9 @@ manipulate student records. A typical workflow might include:
 -   `filter_text()` gather programs to study  
 -   `prepare_fye_mi()` condition first-year-engineering data for
     multiple imputation
--   `add_grad_column()` add column to classify graduation rate status
 -   `subset_feasible()` subset for 6-year completion feasibility
+-   `timely_completion()` subset for completing a program in 6 years or
+    less
 -   `prepare_multiway()` condition multiway data for graphing
 
 **R ecosystem**. midfieldr uses data.table functions and syntax.
