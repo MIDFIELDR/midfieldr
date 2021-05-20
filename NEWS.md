@@ -1,4 +1,8 @@
 
+## midfieldr 1.0.0.9009 / 2021-04
+
+- added to .Renviron file to address R CMD chk note
+
 
 ## midfieldr 1.0.0.9008 / 2021-04
 
