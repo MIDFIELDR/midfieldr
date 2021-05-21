@@ -55,7 +55,7 @@ prepare_multiway <- function(data = NULL) {
   assert_explicit(data)
   assert_class(data, c("data.frame", "data.table"))
 
-  if (isFALSE(ncol(data) == 3)) {
+  if (ncol(data) != 3) {
     stop("`data` must have exactly three columns")
   }
 
@@ -90,10 +90,7 @@ prepare_multiway <- function(data = NULL) {
   # one numeric and 2 character
   col_class <- get_col_class(DT) # again
   mw_class <- col_class$col_class
-  if (isFALSE(identical(
-    sort(mw_class),
-    c("character", "character", "numeric")
-  ))) {
+  if (!identical(sort(mw_class), c("character", "character", "numeric"))) {
     stop(paste(
       "`data` must have one numeric column",
       "and two character columns"

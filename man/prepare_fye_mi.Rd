@@ -73,6 +73,7 @@ mice::mice(mi_data)
 }
 \seealso{
 Other functions: 
+\code{\link{fair_record_length}()},
 \code{\link{filter_text}()},
 \code{\link{prepare_multiway}()},
 \code{\link{subset_feasible}()}

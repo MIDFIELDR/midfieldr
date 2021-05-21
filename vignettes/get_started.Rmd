@@ -68,8 +68,12 @@ We use midfieldr functions to access midfielddata student records. We condition,
 midfieldr functions 
 
 - `filter_text()` 
-- `subset_feasible()` 
+- `timely_completion_term()`
 - `prepare_multiway()` 
+
+midfieldr built-in data sets 
+
+- `cip`  
 
 packages
 
@@ -86,7 +90,13 @@ options(datatable.print.nrows = 20, datatable.print.topn = 10)
 
 ## Gather programs
 
-Instructional programs are encoded by a 6-digit CIP code. `filter_text()` accesses the `cip` data set and retrieves all the 6-digit codes that satisfy stated conditions. In this case, we want all codes that start with 14 (engineering) and 52 (business). 
+Instructional programs are encoded by 6-digit CIP codes, included in midfieldr in the `cip` data set.  You may view its help page by running
+
+```
+? cip
+```
+
+`filter_text()` accesses the `cip` data set and retrieves all the 6-digit codes that satisfy stated conditions. In this case, we want all codes that start with 14 (engineering) and 52 (business). 
 
 ```{r}
 # engineering
@@ -116,7 +126,7 @@ Bind the two data frames.
 
 ```{r}
 # bind the two data frames
-program_group <- rbind(engineering, business)
+program_group <- rbindlist(list(engineering, business))
 
 # examine the result
 program_group[order(cip6)]
@@ -132,11 +142,6 @@ group_cip <- program_group$cip6
 str(group_cip)
 ```
 
-
-Related vignettes 
-
-- *Identify programs* [(link)](identify_programs.html) illustrates search strategies using `filter_text()` and program labeling options 
-
 ## Gather students 
 
 We access `midfieldterms` to obtain the IDs of all students ever enrolled in these programs.  
@@ -146,25 +151,6 @@ We access `midfieldterms` to obtain the IDs of all students ever enrolled in the
 cols_we_want <- c("id", "cip6")
 rows_we_want <- midfieldterms$cip6 %in% group_cip
 enrollees <- midfieldterms[rows_we_want, ..cols_we_want]
-enrollees <- unique(enrollees)
-
-# examine the result
-enrollees[order(id)]
-```
-
-There may be students matriculating in our programs who do not appear in the terms data. To account for these students, we apply a similar process to `midfieldstudents`. 
-
-```{r}
-# extract students from matriculant data
-rows_we_want <- midfieldstudents$cip6 %in% group_cip
-matriculants <- midfieldstudents[rows_we_want, ..cols_we_want]
-```
-
-Combine the data frames and remove duplicates.
- 
-```{r}
-# combine findings
-enrollees <- rbind(enrollees, matriculants)
 enrollees <- unique(enrollees)
 
 # examine the result

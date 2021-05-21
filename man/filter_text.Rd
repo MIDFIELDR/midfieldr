@@ -69,6 +69,7 @@ filter_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 }
 \seealso{
 Other functions: 
+\code{\link{fair_record_length}()},
 \code{\link{prepare_fye_mi}()},
 \code{\link{prepare_multiway}()},
 \code{\link{subset_feasible}()}

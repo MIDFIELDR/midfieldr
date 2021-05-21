@@ -63,6 +63,6 @@ if (getRversion() >= "2.15.1") {
     "act_comp", "level", "standing", "coop", "hours_term_attempt", "gpa_term",
     "hours_cumul_attempt", "hours_cumul", "gpa_cumul", "term_course",
     "abbrev", "number", "section", "hours_course", "type", "pass_fail",
-    "grade", "faculty_rank"
+    "grade", "faculty_rank", "..cols"
   ))
 }

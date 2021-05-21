@@ -53,6 +53,7 @@ str(mw)
 }
 \seealso{
 Other functions: 
+\code{\link{fair_record_length}()},
 \code{\link{filter_text}()},
 \code{\link{prepare_fye_mi}()},
 \code{\link{subset_feasible}()}

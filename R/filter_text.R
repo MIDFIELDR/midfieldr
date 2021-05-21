@@ -58,7 +58,7 @@ filter_text <- function(data,
   wrapr::stop_if_dot_args(
     substitute(list(...)), "Arguments after ... must be named,"
   )
-  if (isTRUE(is.null(keep_text) & is.null(drop_text))) {
+  if (is.null(keep_text) & is.null(drop_text)) {
     return(data)
   }
 
@@ -70,10 +70,10 @@ filter_text <- function(data,
   unique_row <- unique_row %||% TRUE
 
   # check arguments
-  if (isFALSE(is.null(keep_text))) {
+  if (!is.null(keep_text)) {
     assert_class(keep_text, "character")
   }
-  if (isFALSE(is.null(drop_text))) {
+  if (!is.null(drop_text)) {
     assert_class(drop_text, "character")
   }
   assert_class(keep_col, "character")
