@@ -196,9 +196,10 @@ manipulate student records. A typical workflow might include:
 -   `filter_text()` gather programs to study  
 -   `prepare_fye_mi()` condition first-year-engineering data for
     multiple imputation
--   `subset_feasible()` subset for 6-year completion feasibility
--   `timely_completion()` subset for completing a program in 6 years or
-    less
+-   `fair_record_length()` subset for sufficient number of terms near
+    the end of the data record
+-   `timely_completion()` subset for completing a program in a timely
+    fashion
 -   `prepare_multiway()` condition multiway data for graphing
 
 **R ecosystem**. midfieldr uses data.table functions and syntax.

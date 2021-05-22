@@ -1,10 +1,17 @@
 
-## midfieldr 1.0.0.9010 / 2021-04
+
+
+## midfieldr 1.0.0.9011 / 2021-05
+
+- updated README, Get started vignette
+
+
+## midfieldr 1.0.0.9010 / 2021-05
 
 - added fair_record_length() function to replace subset_feasible() 
 - replace isFALSE() and isTRUE() with logical condition
 
-## midfieldr 1.0.0.9009 / 2021-04
+## midfieldr 1.0.0.9009 / 2021-05
 
 - added to .Renviron file to address R CMD chk note
 

@@ -68,7 +68,6 @@ We use midfieldr functions to access midfielddata student records. We condition,
 midfieldr functions 
 
 - `filter_text()` 
-- `timely_completion_term()`
 - `prepare_multiway()` 
 
 midfieldr built-in data sets 
@@ -83,7 +82,9 @@ library(midfieldr)
 library(midfielddata)
 library(data.table)
 library(ggplot2)
+```
 
+```{r echo = FALSE}
 # print max 20 rows, otherwise 10 rows each head/tail
 options(datatable.print.nrows = 20, datatable.print.topn = 10)
 ```
@@ -96,7 +97,13 @@ Instructional programs are encoded by 6-digit CIP codes, included in midfieldr i
 ? cip
 ```
 
-`filter_text()` accesses the `cip` data set and retrieves all the 6-digit codes that satisfy stated conditions. In this case, we want all codes that start with 14 (engineering) and 52 (business). 
+We search `cip` for our program codes using `filter_text()`. You may view its help page by running
+
+```
+? filter_text
+```
+
+In this example, we assume we have already searched `cip` and found that the codes we want start with 14 (engineering) and 52 (business). Our next step is to pull all 6-digit codes associated with these two programs. 
 
 ```{r}
 # engineering
@@ -144,93 +151,112 @@ str(group_cip)
 
 ## Gather students 
 
-We access `midfieldterms` to obtain the IDs of all students ever enrolled in these programs.  
+We access the term data to obtain the IDs of all students ever enrolled in these programs.  The result, `DT`, is a data table to which we will add information as we proceed. 
 
 ```{r}
-# extract students ever enrolled from terms data
-cols_we_want <- c("id", "cip6")
-rows_we_want <- midfieldterms$cip6 %in% group_cip
-enrollees <- midfieldterms[rows_we_want, ..cols_we_want]
-enrollees <- unique(enrollees)
+# extract unique students ever enrolled from term data
+cols_we_want <- c("id", "cip6", "institution")
+rows_we_want <- midfieldterms$cip6 %chin% group_cip
+DT <- midfieldterms[rows_we_want, ..cols_we_want]
+DT <- unique(DT)
 
 # examine the result
-enrollees[order(id)]
+DT[order(id)]
 ```
 
-For some of these students, completing their program may not be feasible given the range of data available. `subset_feasible()` subsets the enrollees IDs, retaining those who matriculate at least six years before the last term in the data. 
+We update the IDs a number of times, so we extract them from the data table as a character vector. 
 
 ```{r}
-# apply the feasible completion filter
-feasible_ids <- subset_feasible(enrollees$id)
-
-# subset the enrollees
-rows_we_want <- enrollees$id %in% feasible_ids
-enrollees <- enrollees[rows_we_want]
+# initialize an ID vector
+latest_id <- unique(DT$id)
 
 # examine the result
-enrollees[order(id)]
+length(latest_id)
 ```
 
-Related vignettes 
+At this point we have `r length(latest_id)` unique students in our study. 
 
-- *Feasible completion* [(link)](feasible_completion.html) describes how completion feasibility is determined  
+We access the student data set to limit our research to students for whom we have matriculation information. 
+
+```{r}
+# limit study to students with matriculation data
+cols_we_want <- c("id")
+rows_we_want <- midfieldstudents$id %chin% latest_id
+matriculate <- midfieldstudents[rows_we_want, ..cols_we_want]
+
+# examine the result
+matriculate
+```
+
+Update the ID vector.
+
+```{r}
+# update the ID vector
+latest_id <- unique(matriculate$id)
+                    
+# examine the result
+length(latest_id)
+```
+
+In this case, all our enrollees are recorded in the student data set, so the number of students remains the same.  
 
 ## Join the grouping variables
 
-In this example, the results are eventually grouped by program, race/ethnicity, and sex. Here, we join these variables to the working data frame. 
-
-We access `midfieldstudents` to obtain students' race/ethnicity and sex as self-reported at matriculation. 
+Our results are goint to be grouped by program, race/ethnicity, and sex. Here, we join these variables to the working data frame. We access the student data to obtain race/ethnicity and sex as self-reported at matriculation. 
 
 ```{r}
-rows_we_want <- midfieldstudents$id %in% feasible_ids
+# pull demographics
 cols_we_want <- c("id", "race", "sex")
+rows_we_want <- midfieldstudents$id %chin% latest_id
 race_sex <- midfieldstudents[rows_we_want, ..cols_we_want]
-race_sex <- unique(race_sex)
 
 # examine the result
 race_sex[order(id)]
 ```
 
-Join the race/ethnicity and sex data frame to the enrollees data frame by `id`. Then join the program names from `program_group` to our working data frame by `cip6`. 
+We merge the race/ethnicity and sex information with our data table. The `all.x` argument is set to FALSE so that only rows in common between `DT` and `race_sex` are retained. 
 
 ```{r}
-# left-join demographics to enrollees
-enrollees <- merge(enrollees, race_sex, by = "id", all.x = TRUE)
-
-# left-join program_group to enrollees
-enrollees <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
+# merge demographics 
+DT <- merge(DT, race_sex, by = "id", all.x = FALSE)
 
 # examine the result
-enrollees[order(id)]
+DT
 ```
 
-Here we edit one last time by deleting the CIP column and removing duplicates. In this way, students who migrate within engineering, for example, are not counted twice, but a student who transfers from engineering to business (or vice versa) is counted in both programs. 
+In case we had lost any students, we again update the ID vector. As it turns out, no students were omitted in this step. 
 
 ```{r}
-# remove the CIP codes
-enrollees[, cip6 := NULL]
-
-# remove duplicates
-enrollees <- unique(enrollees)
+# update the ID vector
+latest_id <- unique(DT[, (id)])
 
 # examine the result
-enrollees[order(id)]
+length(latest_id)
 ```
 
+Next we join the program names from `program_group` to our working data frame by `cip6`. This time, the `all.x` argument is TRUE because we want to retain all the rows of `DT` when joining the program groups to it. 
+
+```{r}
+# add program name 
+DT <- merge(DT, program_group, by = "cip6", all.x = TRUE)
+
+# examine the result
+DT
+```
 
 ## Group and summarize
 
-To frame our results in terms of program, race/ethnicity, and sex, we group by these variables and count the number of students in each grouping using syntax from the data.table package. The count is assigned to the new `ever` column. 
+To frame our results in terms of program, race/ethnicity, and sex, we group by these variables and count the number of students in each grouping. The count is assigned to the new `ever` column. 
 
 ```{r}
 # assign
 grouping_variables <- c("program", "race", "sex")
 
-# aggregate using data.table syntax
-grouped_enrollees <- enrollees[, .(ever = .N), by = grouping_variables]
+# aggregate
+grouped_DT <- DT[, .(ever = .N), by = grouping_variables]
 
 # examine the result
-grouped_enrollees
+grouped_DT
 ```
 
 ## Condition the data for display 
@@ -239,10 +265,10 @@ To prepare the results for graphing, we construct a "pre-multiway" version of th
 
 ```{r}
 # initialize the pre-multiway data frame
-pre_mw <- copy(grouped_enrollees)
+pre_mw <- copy(grouped_DT)
 
 # remove ambiguous levels of race/ethnicity
-rows_we_want <- !pre_mw$race %in% c("Unknown", "International", "Other")
+rows_we_want <- !pre_mw$race %chin% c("Unknown", "International", "Other")
 pre_mw <- pre_mw[rows_we_want]
 
 # examine the result
@@ -299,11 +325,6 @@ The median values are attributes of the data frame. We can view them as follows.
 lapply(data_mw, FUN = attributes)
 ```
 
-Related vignettes
-
-- *Multiway graphs and tables* [(link)](multiway_graphs.html) describes multiway data and graphs in detail 
-
-
 ## Graph the results
 
 ```{r include = FALSE}
@@ -352,39 +373,35 @@ engineering <- filter_text(cip, keep_text = "^14", keep_col = "cip6")
 engineering[, program := "Engineering"]
 business <- filter_text(cip, keep_text = "^52", keep_col = "cip6")
 business <- business[, program := "Business"]
-program_group <- rbind(engineering, business)
+program_group <- rbindlist(list(engineering, business))
 group_cip <- program_group$cip6
 
 # gather students
-cols_we_want <- c("id", "cip6")
-rows_we_want <- midfieldterms$cip6 %in% group_cip
-enrollees <- midfieldterms[rows_we_want, ..cols_we_want]
-rows_we_want <- midfieldstudents$cip6 %in% group_cip
-matriculants <- midfieldstudents[rows_we_want, ..cols_we_want]
-enrollees <- rbind(enrollees, matriculants)
-enrollees <- unique(enrollees)
-
-# apply feasible completion
-feasible_ids <- subset_feasible(enrollees$id)
-rows_we_want <- enrollees$id %in% feasible_ids
-enrollees <- enrollees[rows_we_want]
+cols_we_want <- c("id", "cip6", "institution")
+rows_we_want <- midfieldterms$cip6 %chin% group_cip
+DT <- midfieldterms[rows_we_want, ..cols_we_want]
+DT <- unique(DT)
+latest_id <- unique(DT$id)
+cols_we_want <- c("id")
+rows_we_want <- midfieldstudents$id %chin% latest_id
+matriculate <- midfieldstudents[rows_we_want, ..cols_we_want]
+latest_id <- unique(matriculate$id)
 
 # join grouping variables
-rows_we_want <- midfieldstudents$id %in% feasible_ids
 cols_we_want <- c("id", "race", "sex")
+rows_we_want <- midfieldstudents$id %chin% latest_id
 race_sex <- midfieldstudents[rows_we_want, ..cols_we_want]
-enrollees <- merge(enrollees, race_sex, by = "id", all.x = TRUE)
-enrollees <- merge(enrollees, program_group, by = "cip6", all.x = TRUE)
-enrollees[, cip6 := NULL]
-enrollees <- unique(enrollees)
+DT <- merge(DT, race_sex, by = "id", all.x = FALSE)
+latest_id <- unique(DT[, (id)])
+DT <- merge(DT, program_group, by = "cip6", all.x = TRUE)
 
 # group and summarize
 grouping_variables <- c("program", "race", "sex")
-grouped_enrollees <- enrollees[, .(ever = .N), by = grouping_variables]
+grouped_DT <- DT[, .(ever = .N), by = grouping_variables]
 
 # condition the data for display
-pre_mw <- grouped_enrollees
-rows_we_want <- !pre_mw$race %in% c("Unknown", "International", "Other")
+pre_mw <- copy(grouped_DT)
+rows_we_want <- !pre_mw$race %chin% c("Unknown", "International", "Other")
 pre_mw <- pre_mw[rows_we_want]
 rows_we_want <- pre_mw$ever > 10
 pre_mw <- pre_mw[rows_we_want]
