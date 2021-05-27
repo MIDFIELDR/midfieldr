@@ -1,7 +1,68 @@
-#' @importFrom data.table as.data.table copy setkeyv setkey
+#' @import data.table
 NULL
 
 # internal utility functions
+
+# ------------------------------------------------------------------------
+
+#' Add term range by institution
+#'
+#' Determine the latest academic term by institution in \code{record}.
+#' Left-join by institution to \code{dframe} in a new column \code{inst_limit}.
+#'
+#' @param dframe data frame that received added column
+#' @param record data frame of term attributes
+#' @noRd
+add_inst_limit <- function(dframe, record) {
+
+  # bind names due to nonstandard evaluation notes in R CMD check
+  # key_names <- NULL
+
+  # prepare dframe, preserve column order for return
+  # omit existing column(s) that match column(s) we add
+  setDT(dframe)
+  added_cols <- c("inst_limit")
+  names_dframe <- colnames(dframe)
+  key_names <- names_dframe[!names_dframe %chin% added_cols]
+  dframe <- dframe[, key_names, with = FALSE]
+
+  # get max term by institution
+  cols_we_want <- c("institution", "term")
+  DT <- record[, cols_we_want, with = FALSE]
+  DT <- DT[, list(inst_limit = max(term)), by = "institution"]
+
+  # left-outer join, keep all rows of dframe
+  dframe <-  merge(dframe, DT, by = "institution", all.x = TRUE)
+
+  # original columns as keys, order columns and rows
+  set_colrow_order(dframe, key_names)
+  return(dframe)
+}
+
+# ------------------------------------------------------------------------
+
+#' Set column order and row order
+#'
+#' Use the vector of column names in \code{cols} as the ordering argument
+#' in \code{data.table::setcolorder()} and as the key argument in
+#' \code{data.table::setkeyv()} to order the rows.
+#'
+#' @param dframe data frame
+#' @param cols character vector of column names to use as keys
+#' @noRd
+set_colrow_order <- function(dframe, cols) {
+  # ensure dframe is data.table class
+  setDT(dframe)
+
+  # column order of data frame by vector of names
+  setcolorder(dframe, neworder = cols)
+
+  # order rows by using names as keys
+  setkeyv(dframe, cols = cols)
+
+  # remove keys
+  setkey(dframe, NULL)
+}
 
 # ------------------------------------------------------------------------
 
@@ -83,7 +144,7 @@ filter_char_frame <- function(data, keep_text = NULL, drop_text = NULL) {
   assert_class(drop_text, "character")
 
   # to preserve data.frame, data.table, or tibble
-  dat_class <- get_df_class(data)
+  dat_class <- get_dframe_class(data)
   DT <- data.table::as.data.table(data)
 
   # filter to keep rows
@@ -114,7 +175,7 @@ filter_char_frame <- function(data, keep_text = NULL, drop_text = NULL) {
 #'
 #' @param x data.frame, tibble, or data.table
 #' @noRd
-get_df_class <- function(x) {
+get_dframe_class <- function(x) {
 
   # argument check
   assert_class(x, "data.frame")

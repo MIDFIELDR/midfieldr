@@ -68,6 +68,8 @@ We use midfieldr functions to access midfielddata student records. We condition,
 midfieldr functions 
 
 - `filter_text()` 
+- `subset_matriculant()`
+- `add_race_sex()`
 - `prepare_multiway()` 
 
 midfieldr built-in data sets 
@@ -86,7 +88,7 @@ library(ggplot2)
 
 ```{r}
 # optional code to control data.table printing
-options(datatable.print.nrows = 20, datatable.print.topn = 10)
+options(datatable.print.nrows = 10, datatable.print.topn = 5)
 ```
 
 ## Gather programs
@@ -106,19 +108,6 @@ We search `cip` for our program codes using `filter_text()`. You may view its he
 In this example, we assume we have already searched `cip` and found that the codes we want start with 14 (engineering) and 52 (business). Our next step is to pull all 6-digit codes associated with these two programs. 
 
 ```{r}
-# engineering
-engineering <- filter_text(cip, keep_text = "^14", keep_col = "cip6")
-
-# add program label
-engineering[, program := "Engineering"]
-
-# examine the result
-engineering[order(cip6)]
-```
-
-Repeat for business.  
-
-```{r}
 # business
 business <- filter_text(cip, keep_text = "^52", keep_col = "cip6")
 
@@ -129,14 +118,27 @@ business[, program := "Business"]
 business[order(cip6)]
 ```
 
+Repeat for engineering 
+
+```{r}
+# engineering
+engineering <- filter_text(cip, keep_text = "^14", keep_col = "cip6")
+
+# add program label
+engineering[, program := "Engineering"]
+
+# examine the result
+engineering[order(cip6)]
+```
+
 Bind the two data frames. 
 
 ```{r}
 # bind the two data frames
-program_group <- rbindlist(list(engineering, business))
+program_group <- rbindlist(list(business, engineering))
 
 # examine the result
-program_group[order(cip6)]
+program_group[order(program, cip6)]
 ```
 
 We extract the `cip6` column as a character vector to use later to extract student data by their CIP codes.  
@@ -164,35 +166,35 @@ DT <- unique(DT)
 DT[order(id)]
 ```
 
-We update the IDs a number of times, so we extract them from the data table as a character vector. 
+We update the IDs a number of times, so we extract them from the data table as a character vector.  
 
 ```{r}
 # initialize an ID vector
-latest_id <- unique(DT$id)
-
-# examine the result
-length(latest_id)
+latest_id <- DT[, unique(id)]
 ```
 
-At this point we have `r length(latest_id)` unique students in our study. 
+Examining the result shows a vector with `r length(DT[, unique(id)])` unique IDs.
 
-We access the student data set to limit our research to students for whom we have matriculation information. 
+```{r}
+# examine the result
+str(latest_id)
+```
+
+We use `subset_matriculant()` to limit our research to students for whom we have matriculation information. The default matriculation record is `midfieldstudents`.
 
 ```{r}
 # limit study to students with matriculation data
-cols_we_want <- c("id")
-rows_we_want <- midfieldstudents$id %chin% latest_id
-matriculate <- midfieldstudents[rows_we_want, ..cols_we_want]
+DT <- subset_matriculant(DT)
 
 # examine the result
-matriculate
+DT
 ```
 
 Update the ID vector.
 
 ```{r}
 # update the ID vector
-latest_id <- unique(matriculate$id)
+latest_id <- DT[, unique(id)]
                     
 # examine the result
 length(latest_id)
@@ -202,39 +204,17 @@ In this case, all our enrollees are recorded in the student data set, so the num
 
 ## Join the grouping variables
 
-Our results are goint to be grouped by program, race/ethnicity, and sex. Here, we join these variables to the working data frame. We access the student data to obtain race/ethnicity and sex as self-reported at matriculation. 
+Our results are going to be grouped by program, race/ethnicity, and sex. Here, we join these variables to the working data frame. We use `add_race_sex()` to access the student data to obtain race/ethnicity and sex as self-reported at matriculation. 
 
 ```{r}
-# pull demographics
-cols_we_want <- c("id", "race", "sex")
-rows_we_want <- midfieldstudents$id %chin% latest_id
-race_sex <- midfieldstudents[rows_we_want, ..cols_we_want]
-
-# examine the result
-race_sex[order(id)]
-```
-
-We merge the race/ethnicity and sex information with our data table. The `all.x` argument is set to FALSE so that only rows in common between `DT` and `race_sex` are retained. 
-
-```{r}
-# merge demographics 
-DT <- merge(DT, race_sex, by = "id", all.x = FALSE)
+# join demographics
+DT <- add_race_sex(DT)
 
 # examine the result
 DT
 ```
 
-In case we had lost any students, we again update the ID vector. As it turns out, no students were omitted in this step. 
-
-```{r}
-# update the ID vector
-latest_id <- unique(DT[, (id)])
-
-# examine the result
-length(latest_id)
-```
-
-Next we join the program names from `program_group` to our working data frame by `cip6`. This time, the `all.x` argument is TRUE because we want to retain all the rows of `DT` when joining the program groups to it. 
+Next we join the program names from `program_group` to our working data frame by `cip6`. Set `all.x = TRUE` for a left-outer join, that is, keeping all the rows of `DT`. 
 
 ```{r}
 # add program name 
@@ -246,17 +226,17 @@ DT
 
 ## Group and summarize
 
-To frame our results in terms of program, race/ethnicity, and sex, we group by these variables and count the number of students in each grouping. The count is assigned to the new `ever` column. 
+To frame our results in terms of program, race/ethnicity, and sex, we group by these variables and count the number of students in each grouping. The count is assigned to the new `ever` column.
 
 ```{r}
 # assign
-grouping_variables <- c("program", "race", "sex")
+grouping_variables <- c("program", "sex", "race")
 
 # aggregate
-grouped_DT <- DT[, .(ever = .N), by = grouping_variables]
+DT <- DT[, .(ever = .N), keyby = grouping_variables]
 
 # examine the result
-grouped_DT
+print(DT, nrows = 32)
 ```
 
 ## Condition the data for display 
@@ -264,39 +244,32 @@ grouped_DT
 To prepare the results for graphing, we construct a "pre-multiway" version of the data frame. We begin by removing ambiguous levels of race/ethnicity. 
 
 ```{r}
-# initialize the pre-multiway data frame
-pre_mw <- copy(grouped_DT)
-
 # remove ambiguous levels of race/ethnicity
-rows_we_want <- !pre_mw$race %chin% c("Unknown", "International", "Other")
-pre_mw <- pre_mw[rows_we_want]
+rows_we_want <- !DT$race %chin% c("Unknown", "International", "Other")
+DT <- DT[rows_we_want]
 
 # examine the result
-unique(pre_mw$race)
+unique(DT$race)
 ```
 
 To protect confidentiality, we omit observations with 10 or fewer students ever enrolled.
 
 ```{r}
 # protect confidentiality of small populations
-rows_we_want <- pre_mw$ever > 10
-pre_mw <- pre_mw[rows_we_want]
-
-# order rows for viewing
-pre_mw <- pre_mw[order(program, race, sex)]
+DT <- DT[ever > 10]
 
 # examine the result
-pre_mw
+print(DT, nrows = 20)
 ```
 
 In intersectional studies, we have found combined race/ethnicity and sex to be a useful category. We unite two columns to create the `race_sex` column. 
 
 ```{r}
 # create a new category
-pre_mw[, race_sex := paste(race, sex, sep = " ")]
+DT[, race_sex := paste(race, sex, sep = " ")]
 
 # examine the result
-pre_mw
+DT
 ```
 
 *Multiway data* are characterized by two categorical variables and one quantitative variable [@Cleveland:1993]. In this example, the two categories are program and race/ethnicity/sex and the quantitative variable is the number of students ever enrolled. 
@@ -306,35 +279,35 @@ To structure the data in multiway form, we select the three multiway variables.
 ```{r}
 # select the three multiway variables
 cols_we_want <- c("program", "race_sex", "ever")
-pre_mw <- pre_mw[, ..cols_we_want]
+DT <- DT[, ..cols_we_want]
 
 # examine the result
-pre_mw
+DT
 ```
 
 The second attribute of multiway data is that the levels of the categories are ordered by the median value of the quantitative variable. `prepare_multiway()`  converts the categorical variables to factors and orders the category levels.  
 
 ```{r}
 # order the category levels
-data_mw <- prepare_multiway(pre_mw)
+DT <- prepare_multiway(DT)
 ```
 
 The median values are attributes of the data frame. We can view them as follows. Note that `program` and `race_sex` are now factors ordered by the median enrolled numbers (recorded under the `scores` attribute). 
 
 ```{r}
-lapply(data_mw, FUN = attributes)
+lapply(DT, FUN = attributes)
 ```
 
 ## Graph the results
 
 ```{r include = FALSE}
-asp_ratio <- asp_ratio_mw(data_mw, categories = c("program", "race_sex"))
+asp_ratio <- asp_ratio_mw(DT, categories = c("program", "race_sex"))
 ```
 
 We use ggplot2 to graph the multiway data. Rows and panels, from top to bottom, are ordered by decreasing medians. We use a logarithmic scale because the numbers differ by orders of magnitude. In a log base-2 scale, every grid line represents a doubling of the previous grid line.   
 
 ```{r fig1, fig.asp = 0.8}
-ggplot(data = data_mw, mapping = aes(x = ever, y = race_sex)) +
+ggplot(data = DT, mapping = aes(x = ever, y = race_sex)) +
   facet_wrap(facets = vars(program), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   scale_x_continuous(
@@ -369,10 +342,10 @@ library(data.table)
 library(ggplot2)
 
 # gather programs
-engineering <- filter_text(cip, keep_text = "^14", keep_col = "cip6")
-engineering[, program := "Engineering"]
 business <- filter_text(cip, keep_text = "^52", keep_col = "cip6")
 business <- business[, program := "Business"]
+engineering <- filter_text(cip, keep_text = "^14", keep_col = "cip6")
+engineering[, program := "Engineering"]
 program_group <- rbindlist(list(engineering, business))
 group_cip <- program_group$cip6
 
@@ -381,37 +354,29 @@ cols_we_want <- c("id", "cip6", "institution")
 rows_we_want <- midfieldterms$cip6 %chin% group_cip
 DT <- midfieldterms[rows_we_want, ..cols_we_want]
 DT <- unique(DT)
-latest_id <- unique(DT$id)
-cols_we_want <- c("id")
-rows_we_want <- midfieldstudents$id %chin% latest_id
-matriculate <- midfieldstudents[rows_we_want, ..cols_we_want]
-latest_id <- unique(matriculate$id)
+latest_id <- DT[, unique(id)]
+DT <- subset_matriculant(DT)
+latest_id <- DT[, unique(id)]
 
 # join grouping variables
-cols_we_want <- c("id", "race", "sex")
-rows_we_want <- midfieldstudents$id %chin% latest_id
-race_sex <- midfieldstudents[rows_we_want, ..cols_we_want]
-DT <- merge(DT, race_sex, by = "id", all.x = FALSE)
-latest_id <- unique(DT[, (id)])
+DT <- add_race_sex(DT)
 DT <- merge(DT, program_group, by = "cip6", all.x = TRUE)
 
 # group and summarize
 grouping_variables <- c("program", "race", "sex")
-grouped_DT <- DT[, .(ever = .N), by = grouping_variables]
+DT <- DT[, .(ever = .N), by = grouping_variables]
 
 # condition the data for display
-pre_mw <- copy(grouped_DT)
-rows_we_want <- !pre_mw$race %chin% c("Unknown", "International", "Other")
-pre_mw <- pre_mw[rows_we_want]
-rows_we_want <- pre_mw$ever > 10
-pre_mw <- pre_mw[rows_we_want]
-pre_mw[, race_sex := paste(race, sex, sep = " ")]
+rows_we_want <- !DT$race %chin% c("Unknown", "International", "Other")
+DT <- DT[rows_we_want]
+DT <- DT[ever > 10]
+DT[, race_sex := paste(race, sex, sep = " ")]
 cols_we_want <- c("program", "race_sex", "ever")
-pre_mw <- pre_mw[, ..cols_we_want]
-data_mw <- prepare_multiway(pre_mw)
+DT <- DT[, ..cols_we_want]
+DT <- prepare_multiway(DT)
 
 # graph results
-ggplot(data = data_mw, mapping = aes(x = ever, y = race_sex)) +
+ggplot(data = DT, mapping = aes(x = ever, y = race_sex)) +
   facet_wrap(facets = vars(program), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   scale_x_continuous(

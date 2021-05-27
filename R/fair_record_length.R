@@ -1,4 +1,4 @@
-#' @importFrom data.table setkeyv setorderv setnames %like% fcase .N
+#' @import data.table
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
@@ -39,7 +39,7 @@ NULL
 #' @param ... not used, force later arguments to be used by name.
 #' @param span numeric scalar, number of years to define fair assessment of
 #' program completion, default is 6 years
-#' @param record data frame of term attributes
+#' @param record data frame of term attributes, default midfieldterms
 #' @param heuristic not used. Argument to be used in the future for more
 #' sophisticated algorithms to determine a student's timely completion term.
 #'
@@ -71,7 +71,7 @@ fair_record_length <- function(id,
   record <- record %||% midfielddata::midfieldterms
   heuristic <- heuristic %||% NULL
 
-  # bind names
+  # bind names due to nonstandard evaluation notes in R CMD check
   inst_max_term <- NULL
 
   # timely completion term: id, institution, w_term (i.e., the omega term)
@@ -133,7 +133,7 @@ estimate_omega_term <- function(id, span, record) {
 
   # student's first term and institution
   cols <- c("id", "term", "level", "institution")
-  DT <- DT[, ..cols]
+  DT <- DT[, cols, with = FALSE]
   setorderv(DT, cols = c("id", "term"))
   DT <- DT[, .SD[1], by = id]
   setnames(DT,
@@ -180,7 +180,7 @@ pull_inst_max_term <- function(record) {
   # placeholder <- NULL
 
   cols <- c("institution", "term")
-  data_limit <- record[, ..cols]
+  data_limit <- record[, cols, with = FALSE]
   setorderv(data_limit, cols = cols)
   data_limit <- data_limit[, .SD[.N], by = "institution"]
   setnames(data_limit, old = "term", new = "inst_max_term")

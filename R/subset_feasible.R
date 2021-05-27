@@ -1,4 +1,4 @@
-#' @importFrom data.table setDT setDF setnames %chin% setnafill
+#' @import data.table
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
@@ -66,7 +66,6 @@ NULL
 #' @family functions
 #'
 #' @export
-#'
 subset_feasible <- function(id,
                             ...,
                             span = NULL,
@@ -82,7 +81,7 @@ subset_feasible <- function(id,
   assert_explicit(id)
   assert_class(id, "character")
 
-  # bind names
+  # bind names due to nonstandard evaluation notes in R CMD check
   matric_limit <- NULL
   hours_term <- NULL
   term_sum <- NULL
@@ -97,7 +96,7 @@ subset_feasible <- function(id,
   # reduce to IDs in study only
   rows_we_want <- all_fc$id %in% id
   cols_we_want <- c("id", "institution", "degree", "term_degree")
-  study_fc <- all_fc[rows_we_want, ..cols_we_want]
+  study_fc <- all_fc[rows_we_want, cols_we_want, with = FALSE]
 
   # separate NA degree from those with degrees
   rows_NA <- is.na(study_fc$term_degree)
@@ -182,7 +181,7 @@ fc_students <- function(data, id) {
   # obtain transfer status
   rows_we_want <- data$id %in% id
   cols_we_want <- c("id", "term_enter", "hours_transfer")
-  transfer_data <- data[rows_we_want, ..cols_we_want]
+  transfer_data <- data[rows_we_want, cols_we_want, with = FALSE]
 }
 
 # ------------------------------------------------------------------------

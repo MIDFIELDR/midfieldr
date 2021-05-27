@@ -1,4 +1,4 @@
-#' @importFrom data.table %chin% setnames setDT setkey setorder
+#' @import data.table
 NULL
 
 #' Prepare FYE data for multiple imputation
@@ -40,8 +40,9 @@ NULL
 #' Finally, the predictor variables (institution, race, sex) are converted
 #' to factors. The output is ready for use as an input to the mice package.
 #'
-#' @param data_students data frame of student attributes
-#' @param data_terms data frame of term attributes
+#' @param data_students data frame of student attributes, default
+#'        midfieldstudents
+#' @param data_terms data frame of term attributes, default midfieldterms
 #'
 #' @return data frame with the following properties:
 #' \itemize{
@@ -106,13 +107,13 @@ prepare_fye_mi <- function(data_students = NULL,
   term <- data_terms$term
       assert_class(term, "numeric")
 
-  # bind names
-  # NA
+  # bind names due to nonstandard evaluation notes in R CMD check
+  # var <- NULL
 
   # students (fye01)
   rows_we_want <- data_students$cip6 %chin% c("14XXXX", "14YYYY")
   cols_we_want <- c("id", "cip6", "institution", "race", "sex")
-  students_fye <- data_students[rows_we_want, ..cols_we_want]
+  students_fye <- data_students[rows_we_want, cols_we_want, with = FALSE]
 
   # terms produces fye02
   terms_fye <- fye_terms(data_terms, keep_id = students_fye$id)
@@ -149,7 +150,7 @@ fye_terms <- function(data, keep_id) {
 
   # argument check
 
-  # bind names
+  # bind names due to nonstandard evaluation notes in R CMD check
   end_fye <- NULL
   cip6 <- NULL
   term <- NULL
@@ -157,7 +158,7 @@ fye_terms <- function(data, keep_id) {
 
   rows_we_want <- data$id %in% keep_id
   cols_we_want <- c("id", "cip6", "term")
-  all_fye_terms <- data[rows_we_want, ..cols_we_want]
+  all_fye_terms <- data[rows_we_want, cols_we_want, with = FALSE]
   all_fye_terms <- all_fye_terms[order(id, term)]
 
   last_fye_terms <- all_fye_terms[cip6 %chin% c("14XXXX", "14YYYY")]

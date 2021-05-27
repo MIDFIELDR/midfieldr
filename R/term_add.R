@@ -1,4 +1,4 @@
-#' @importFrom data.table setDT setDF as.data.table copy
+#' @import data.table
 NULL
 
 #' Add or subtract semesters to an encoded academic term
@@ -34,9 +34,9 @@ term_add <- function(data, term_col, n_col) {
   assert_class(n_col, "character")
 
   # to preserve data.frame, data.table, or tibble
-  df_class <- get_df_class(data)
+  df_class <- get_dframe_class(data)
 
-  # bind names
+  # bind names due to nonstandard evaluation notes in R CMD check
   get_n_col <- NULL
   term_sum <- NULL
   iterm <- NULL

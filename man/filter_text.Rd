@@ -69,9 +69,13 @@ filter_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 }
 \seealso{
 Other functions: 
+\code{\link{add_race_sex}()},
+\code{\link{add_timely_limit}()},
+\code{\link{eval_fair_record}()},
 \code{\link{fair_record_length}()},
 \code{\link{prepare_fye_mi}()},
 \code{\link{prepare_multiway}()},
-\code{\link{subset_feasible}()}
+\code{\link{subset_feasible}()},
+\code{\link{subset_matriculant}()}
 }
 \concept{functions}

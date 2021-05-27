@@ -51,18 +51,17 @@ NULL
 #' @family package
 NULL
 
-# binding
+# visible binding for global variables to satisfy R CMD chk
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
-    ".", ":=", "..cols_we_want", ".SD", "..columns", "..cols_we_want",
-    "..keep_col",
-    # following are column names in the four midfielddata data sets
+    ".",  ":=", ".SD",
+    # column names in the four midfielddata data sets
     "id", "institution", "cip6", "race", "sex", "term", "term_degree",
     "term_enter", "degree", "hours_transfer", "hours_term", "transfer",
     "age", "us_citizen", "home_zip", "high_school", "sat_math", "sat_verbal",
     "act_comp", "level", "standing", "coop", "hours_term_attempt", "gpa_term",
     "hours_cumul_attempt", "hours_cumul", "gpa_cumul", "term_course",
     "abbrev", "number", "section", "hours_course", "type", "pass_fail",
-    "grade", "faculty_rank", "..cols"
+    "grade", "faculty_rank"
   ))
 }

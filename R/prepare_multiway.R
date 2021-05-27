@@ -1,4 +1,4 @@
-#' @importFrom data.table as.data.table copy
+#' @import data.table
 #' @importFrom stats median reorder
 #' @importFrom wrapr let
 NULL
@@ -60,7 +60,7 @@ prepare_multiway <- function(data = NULL) {
   }
 
   # to preserve data.frame, data.table, or tibble
-  df_class <- get_df_class(data)
+  df_class <- get_dframe_class(data)
 
   # to manage multiway column classes
   col_class <- get_col_class(data)
@@ -97,7 +97,7 @@ prepare_multiway <- function(data = NULL) {
     ))
   }
 
-  # bind names
+  # bind names due to nonstandard evaluation notes in R CMD check
   VALUE <- NULL
   CAT1 <- NULL
   CAT2 <- NULL

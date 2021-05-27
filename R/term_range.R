@@ -1,4 +1,4 @@
-#' @importFrom data.table as.data.table copy
+#' @import data.table
 NULL
 
 #' Range of terms by institution
@@ -45,16 +45,16 @@ term_range <- function(data) {
     stop("One column name must start with `term`")
   }
 
-  # bind names
+  # bind names due to nonstandard evaluation notes in R CMD check
   min_term <- NULL
   max_term <- NULL
 
   # preserve data.frame, data.table, or tibble
-  df_class <- get_df_class(data)
+  df_class <- get_dframe_class(data)
   DT <- data.table::copy(data.table::as.data.table(data))
 
   cols_we_want <- c("institution", term_col)
-  DT <- DT[, ..cols_we_want]
+  DT <- DT[, cols_we_want, with = FALSE]
   DT[,
     min_term := min(.SD, na.rm = TRUE),
     by = "institution",
@@ -68,7 +68,7 @@ term_range <- function(data) {
 
   # return
   keep_col <- c("institution", "min_term", "max_term")
-  DT <- DT[order(institution), ..keep_col]
+  DT <- DT[order(institution), keep_col, with = FALSE]
   DT <- unique_by_keys(DT)
   revive_class(DT, df_class)
 }

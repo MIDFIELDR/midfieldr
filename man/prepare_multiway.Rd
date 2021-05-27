@@ -53,9 +53,13 @@ str(mw)
 }
 \seealso{
 Other functions: 
+\code{\link{add_race_sex}()},
+\code{\link{add_timely_limit}()},
+\code{\link{eval_fair_record}()},
 \code{\link{fair_record_length}()},
 \code{\link{filter_text}()},
 \code{\link{prepare_fye_mi}()},
-\code{\link{subset_feasible}()}
+\code{\link{subset_feasible}()},
+\code{\link{subset_matriculant}()}
 }
 \concept{functions}

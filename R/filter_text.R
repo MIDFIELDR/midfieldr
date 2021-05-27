@@ -1,4 +1,4 @@
-#' @importFrom data.table as.data.table copy
+#' @import data.table
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
@@ -79,15 +79,15 @@ filter_text <- function(data,
   assert_class(keep_col, "character")
   assert_class(unique_row, "logical")
 
-  # bind names
-  # NA
+  # bind names due to nonstandard evaluation notes in R CMD check
+  # var <- NULL
 
   # to preserve data.frame, data.table, or tibble
-  df_class <- get_df_class(data)
-  DT <- data.table::copy(data.table::as.data.table(data))
+  df_class <- get_dframe_class(data)
+  DT <- copy(as.data.table(data))
 
   # subset columns first to reduce search time
-  DT <- DT[, ..keep_col]
+  DT <- DT[, keep_col, with = FALSE]
 
   # do the work
   DT <- filter_char_frame(
