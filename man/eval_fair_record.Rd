@@ -2,7 +2,7 @@
 % Please edit documentation in R/eval_fair_record.R
 \name{eval_fair_record}
 \alias{eval_fair_record}
-\title{Add a column to evaluate record length}
+\title{Add a column to evaluate record length for fair assessment}
 \usage{
 eval_fair_record(dframe, ..., record = NULL, details = NULL)
 }
@@ -14,7 +14,7 @@ eval_fair_record(dframe, ..., record = NULL, details = NULL)
 \item{record}{data frame of term attributes, default midfieldterms}
 
 \item{details}{logical scalar to add columns reporting information on
-which the fair record evaluation is based, default FALSE}
+which the evaluation is based, default FALSE}
 }
 \value{
 Data frame with the following properties:
@@ -28,17 +28,29 @@ Data frame with the following properties:
 }
 }
 \description{
-Given a student's estimated timely completion limit and the range of data
-available from their institution, evaluate if the record is of
-sufficient length to fairly assess timely completion.
+A logical variable is added to a data frame indicating whether the data
+available from an institution have sufficient span to fairly assess a
+student's record.
 }
 \details{
+Program completion is typically assessed over a given span of years after
+matriculation. A student matriculating too near the last term in the
+available data should be excluded from analysis because the data
+have insufficient span to fairly assess the student's record.
+
 The data frame argument must include the \code{timely_limit} column
-obtained from the \code{add_timely_limit()} function.
+obtained using the \code{add_timely_limit()} function. Assessment is
+considered fair if the student's timely completion term is no later than
+the last term in their institution's data.
+
+If the result in the \code{fair_record} column is TRUE, then then student
+should be included in the research. If FALSE, the student should be excluded
+before calculating any persistence metric involving program completion
+(graduation). The function performs no subsetting.
 
 If \code{details} is TRUE, additional column(s) that support the finding
-are returned as well. Here the extra column is the latest term in the
-record by institution, \code{inst_limit}.
+are returned as well. Here the extra column \code{inst_limit}, the latest
+term reported by the institution in the available data.
 }
 \examples{
 # TBD
@@ -48,6 +60,7 @@ record by institution, \code{inst_limit}.
 Other functions: 
 \code{\link{add_race_sex}()},
 \code{\link{add_timely_limit}()},
+\code{\link{eval_timely_completion}()},
 \code{\link{fair_record_length}()},
 \code{\link{filter_text}()},
 \code{\link{prepare_fye_mi}()},

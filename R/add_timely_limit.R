@@ -57,6 +57,10 @@ add_timely_limit <- function(dframe,
                              details = NULL,
                              heuristic = NULL) {
 
+    wrapr::stop_if_dot_args(
+        substitute(list(...)), "Arguments after ... must be named,"
+    )
+
     # default arguments if NULL
     span <- span %||% 6
     record <- record %||% midfielddata::midfieldterms

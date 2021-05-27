@@ -27,46 +27,50 @@ NULL
 #' @export
 subset_matriculant <- function(dframe, ..., record = NULL) {
 
-# default arguments if NULL
-record <- record %||% midfielddata::midfieldstudents
+    wrapr::stop_if_dot_args(
+        substitute(list(...)), "Arguments after ... must be named,"
+    )
 
-# bind names due to nonstandard evaluation notes in R CMD check
-# var <- NULL
+    # default arguments if NULL
+    record <- record %||% midfielddata::midfieldstudents
 
-# check arguments
-assert_explicit(dframe)
-assert_class(dframe, "data.frame")
-assert_class(record, "data.frame")
+    # bind names due to nonstandard evaluation notes in R CMD check
+    # var <- NULL
 
-# existence of required columns
-assert_required_column(dframe, "id")
-assert_required_column(record, "id")
+    # check arguments
+    assert_explicit(dframe)
+    assert_class(dframe, "data.frame")
+    assert_class(record, "data.frame")
 
-# class of required columns
-assert_class(dframe$id, "character")
-assert_class(record$id, "character")
+    # existence of required columns
+    assert_required_column(dframe, "id")
+    assert_required_column(record, "id")
 
-# preserve original data.frame, data.table, or tibble class
-df_class <- get_dframe_class(dframe)
+    # class of required columns
+    assert_class(dframe$id, "character")
+    assert_class(record$id, "character")
 
-# prepare dframe
-# preserve column order for return
-setDT(dframe)
-key_names <- names(dframe)
+    # preserve original data.frame, data.table, or tibble class
+    df_class <- get_dframe_class(dframe)
 
-# work with record
-# IDs in the record of matriculants
-DT <- record[, .(id)]
+    # prepare dframe
+    # preserve column order for return
+    setDT(dframe)
+    key_names <- names(dframe)
 
-# inner join, omit students not in matriculation data
-setkeyv(DT, "id")
-setkeyv(dframe, "id")
-dframe <- DT[dframe, nomatch = 0] # data.table syntax for inner join
+    # work with record
+    # IDs in the record of matriculants
+    DT <- record[, .(id)]
 
-# prepare return
-# original columns as keys, order columns and rows
-set_colrow_order(dframe, key_names)
+    # inner join, omit students not in matriculation data
+    setkeyv(DT, "id")
+    setkeyv(dframe, "id")
+    dframe <- DT[dframe, nomatch = 0] # data.table syntax for inner join
 
-# restore original data frame class
-revive_class(dframe, df_class)
+    # prepare return
+    # original columns as keys, order columns and rows
+    set_colrow_order(dframe, key_names)
+
+    # restore original data frame class
+    revive_class(dframe, df_class)
 }
