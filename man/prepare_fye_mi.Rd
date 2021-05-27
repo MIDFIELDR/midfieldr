@@ -7,9 +7,10 @@
 prepare_fye_mi(data_students = NULL, data_terms = NULL)
 }
 \arguments{
-\item{data_students}{data frame of student attributes}
+\item{data_students}{data frame of student attributes, default
+midfieldstudents}
 
-\item{data_terms}{data frame of term attributes}
+\item{data_terms}{data frame of term attributes, default midfieldterms}
 }
 \value{
 data frame with the following properties:

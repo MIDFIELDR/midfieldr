@@ -11,7 +11,7 @@ subset_matriculant(dframe, ..., record = NULL)
 
 \item{...}{not used, forces later arguments to be used by name}
 
-\item{record}{data frame of student attributes}
+\item{record}{data frame of student attributes, default midfieldstudents}
 }
 \value{
 Data frame with the following properties:

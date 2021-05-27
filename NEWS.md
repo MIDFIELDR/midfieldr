@@ -1,14 +1,13 @@
 
-
-
 ## midfieldr 1.0.0.9011 / 2021-05
 
 - update README
-- revise vignette Get started
-- add function `subset_matriculant()`
+- revise Get started vignette
+- add function `add_race_sex()` 
 - add function `add_timely_limit()`
 - add function `eval_fair_record()` to replace `subset_feasible()` 
 - add function `eval_timely_completion()` 
+- add function `subset_matriculant()`
 
 ## midfieldr 1.0.0.9010 / 2021-05
 

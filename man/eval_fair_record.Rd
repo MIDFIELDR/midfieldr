@@ -11,7 +11,7 @@ eval_fair_record(dframe, ..., record = NULL, details = NULL)
 
 \item{...}{not used, forces later arguments to be used by name}
 
-\item{record}{data frame of term attributes}
+\item{record}{data frame of term attributes, default midfieldterms}
 
 \item{details}{logical scalar to add columns reporting information on
 which the fair record evaluation is based, default FALSE}

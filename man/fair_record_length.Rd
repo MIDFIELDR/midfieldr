@@ -14,7 +14,7 @@ fair_record_length(id, ..., span = NULL, record = NULL, heuristic = NULL)
 \item{span}{numeric scalar, number of years to define fair assessment of
 program completion, default is 6 years}
 
-\item{record}{data frame of term attributes}
+\item{record}{data frame of term attributes, default midfieldterms}
 
 \item{heuristic}{not used. Argument to be used in the future for more
 sophisticated algorithms to determine a student's timely completion term.}

@@ -21,7 +21,7 @@ add_timely_limit(
 \item{span}{numeric scalar, number of years to define timely completion,
 default 6 years}
 
-\item{record}{data frame of term attributes}
+\item{record}{data frame of term attributes, default midfieldterms}
 
 \item{details}{logical scalar to add columns reporting information on
 which the timely completion limit is based, default FALSE}
