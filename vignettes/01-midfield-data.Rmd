@@ -1,0 +1,354 @@
+---
+title: "MIDFIELD practice data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MIDFIELD practice data}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/body-and-society.csl
+link-citations: yes
+nocite: | 
+  @Dowle+Srinivasan:2020:data.table
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(fig.path = "../man/figures/midfield-data-")
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+kable2html <- function(x, font_size = NULL, caption = NULL) {
+  font_size <- ifelse(is.null(font_size), 11, font_size)
+  kable_in <- knitr::kable(x, format = "html", caption = caption)
+  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
+}
+```
+
+## Introduction 
+
+The midfielddata package is the repository of the MIDFIELD practice data, with records organized in four data frames---`student`, `course`, `term`, and `degree`---keyed by student ID. To maintain confidentiality of human subject data, the identifiers for students and institutions have been anonymized. 
+
+The midfieldr package includes `cip`, a data frame of academic program names and codes based on the 2010 assignments curated by the US Department of Education. 
+
+In this vignette, we load the data and briefly examine it.
+
+
+### This vignette uses
+ 
+packages
+
+```{r}
+# packages used
+library(midfieldr)
+library(midfielddata)
+library(data.table)
+
+# optional code to control data.table printing
+options(datatable.print.nrows = 10, datatable.print.topn = 5)
+```
+
+```{r echo = FALSE}
+# cip
+n_cip <- nrow(unique(cip))
+  
+# midfieldstudents
+midfieldstudents[, c("cip6", "term_enter") := NULL]
+obs_students <- nrow(midfieldstudents)
+var_students <- ncol(midfieldstudents)
+size_students <- "19 MB"
+
+
+
+# midfielddegrees
+n_id_degrees <- nrow(unique(midfielddegrees[, .(id)]))
+n_graduates <- nrow(unique(midfielddegrees[!is.na(degree), .(id)]))
+n_term_degree <- nrow(unique(midfielddegrees[, .(term_degree)]))
+obs_degrees <- nrow(midfielddegrees)
+var_degrees <- ncol(midfielddegrees)
+size_degrees <- "10.2 MB"
+
+# midfieldterms
+n_id_terms <- nrow(unique(midfieldterms[, .(id)]))
+obs_terms <- nrow(midfieldterms)
+var_terms <- ncol(midfieldterms)
+n_institutions <- nrow(unique(midfieldterms[, .(institution)]))
+n_programs_terms <- nrow(unique(midfieldterms[, .(institution, cip6)]))
+n_terms <- nrow(unique(midfieldterms[, .(term)]))
+year_span <- floor(c(min(midfieldterms$term), max(midfieldterms$term)) / 10)
+size_terms <- "82 MB"
+
+# midfieldcourses
+n_id_courses <- nrow(unique(midfieldcourses[, .(id)]))
+n_courses <- nrow(unique(midfieldcourses[, .(institution, abbrev, number)]))
+n_term_course <- nrow(unique(midfieldcourses[, .(term_course)]))
+obs_courses <- nrow(midfieldcourses)
+var_courses <- ncol(midfieldcourses)
+size_courses <- "349 MB"
+```
+
+## cip
+
+Loads with midfieldr. For definitions of variables, view the help page by running 
+
+```r
+? cip
+```
+
+To see the data structure, run
+
+```{r}
+str(cip)
+```
+
+To see a few of the observations, run 
+
+```{r}
+cip
+```
+
+The number of unique programs, 
+
+```{r}
+# at the 2-digit level
+sort(unique(cip[, cip2]))
+
+# at the 4-digit level
+length(unique(cip[, cip4]))
+
+# at the 6-digit level
+length(unique(cip[, cip6]))
+```
+
+A sample of program names, 
+
+```{r}
+set.seed(20210529)
+some_programs <- cip[, .(cip4name)]
+print(some_programs[sample(1:300, 20)], nrows = 20)
+```
+
+
+
+
+## student
+
+Loads with midfielddata. Each observation describes student attributes when they enter an institution, keyed by student ID. Student IDs are anonymized but are consistent across the four data sets. The record comprises `r obs_students` observations of `r var_students` variables and occupies approximately `r size_students` memory. 
+
+For definitions of variables, view the help page by running 
+
+```r
+? midfieldstudents
+```
+To see the data structure, run
+
+```{r}
+str(midfieldstudents)
+```
+
+Summarize some of the quantitative variables. 
+
+```{r}
+summary(midfieldstudents[, sat_math])
+
+summary(midfieldstudents[, age])
+```
+
+Examine a few of the categorical variables and their values. 
+
+```{r}
+sort(unique(midfieldstudents[, sex]))
+
+sort(unique(midfieldstudents[, race]))
+```
+
+
+
+## course
+
+Loads with midfielddata. An observation describes course attributes keyed by student ID, term, and course. The record comprises `r obs_courses` observations of `r var_courses` variables and occupies approximately `r size_courses` memory. 
+
+For definitions of variables, view the help page by running 
+
+```r
+? midfieldcourses
+```
+To see the data structure, run
+
+```{r}
+str(midfieldcourses)
+```
+
+Summarize a quantitative variable. 
+
+```{r}
+summary(midfieldcourses[, hours_course])
+```
+
+Examine some categorical variables and their values. 
+
+```{r}
+# type of courses
+sort(unique(midfieldcourses[, type]))
+
+# how many unique course names
+some_courses <- midfieldcourses[, .(course)]
+some_courses <- some_courses[course != ""]
+some_courses <- unique(some_courses)
+n <- nrow(some_courses)
+n
+```
+
+A sample of course names.
+
+```{r}
+# a random sample of courses
+print(some_courses[sample(1:n, 20)], nrows = 20)
+```
+
+
+
+## term
+
+Loads with midfielddata. An observation describes term attributes keyed by student ID and term. The record comprises `r obs_terms` observations of `r var_terms` variables and occupies approximately `r size_terms` memory. 
+
+For definitions of variables, view the help page by running 
+
+```r
+? midfieldterms
+```
+To see the data structure, run
+
+```{r}
+str(midfieldterms)
+```
+
+Summarize some of the quantitative variables. 
+
+```{r}
+summary(midfieldterms[, hours_term])
+
+summary(midfieldterms[, gpa_term])
+```
+
+Examine some categorical variables and their values.  
+
+```{r}
+sort(unique(midfieldterms[, level]))
+
+sort(unique(midfieldterms[, standing]))
+```
+
+
+## degree
+
+Loads with midfielddata. Each observation describes student attributes when they complete a program, keyed by student ID. The record comprises `r obs_degrees` observations of `r var_degrees` variables and occupies approximately `r size_degrees` memory. 
+
+For definitions of variables, view the help page by running 
+
+```r
+? midfielddegrees
+```
+To see the data structure, run
+
+```{r}
+str(midfielddegrees)
+```
+
+Examine some categorical variables and their values. 
+
+```{r}
+sort(unique(midfielddegrees[, institution]))
+
+sort(unique(midfielddegrees[, degree]))
+```
+
+Only students completing their programs.
+
+```{r}
+midfielddegrees[!is.na(degree)]
+```
+
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+
+
+## Appendix
+
+### Complete script
+
+The vignette code chunks are collected below in a single, condensed script.
+
+```{r eval = FALSE}
+# packages used
+library(midfieldr)
+library(midfielddata)
+library(data.table)
+
+# cip
+str(cip)
+sort(unique(cip[, cip2]))
+length(unique(cip[, cip4]))
+length(unique(cip[, cip6]))
+set.seed(20210529)
+some_programs <- cip[, .(cip4name)]
+print(some_programs[sample(1:300, 20)], nrows = 20)
+
+# student
+str(midfieldstudents)
+summary(midfieldstudents[, sat_math])
+summary(midfieldstudents[, age])
+sort(unique(midfieldstudents[, sex]))
+sort(unique(midfieldstudents[, race]))
+
+# course
+str(midfieldcourses)
+summary(midfieldcourses[, hours_course])
+sort(unique(midfieldcourses[, type]))
+some_courses <- midfieldcourses[, .(course)]
+some_courses <- some_courses[course != ""]
+some_courses <- unique(some_courses)
+n <- nrow(some_courses)
+print(some_courses[sample(1:n, 20)], nrows = 20)
+
+# term
+str(midfieldterms)
+summary(midfieldterms[, hours_term])
+summary(midfieldterms[, gpa_term])
+sort(unique(midfieldterms[, level]))
+sort(unique(midfieldterms[, standing]))
+
+# degree
+str(midfielddegrees)
+sort(unique(midfielddegrees[, institution]))
+sort(unique(midfielddegrees[, degree]))
+midfielddegrees[!is.na(degree)]
+```
