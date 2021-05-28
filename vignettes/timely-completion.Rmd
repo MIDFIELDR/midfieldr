@@ -63,313 +63,173 @@ asp_ratio_mw <- function(data, categories) {
 
 ## Introduction
 
-Some persistence metrics, e.g. graduation rate, require that students earn their degrees in a timely fashion, typically in no more than 6 years. When counting the number of graduates, only degrees earned within the timely completion span are included. All other degrees are re-coded for aggregation with the non-graduates.  
+Students generally expect to complete a program within some span of years after entry. Institutions typically use a 6 year span, based on the IPEDS convention of using 150% of the "normal time" at a 4-year institution to define gradation rate. 
 
-Timely completion terminology is illustrated in the figure. Definitions are given below.
+However, the span over which program completion might be considered "timely" is highly dependent on the choices a student makes such as transferring  institutions or changing majors. 
+
+For example, the figure illustrates the history of two students who enter in Fall 2010 and graduate in Spring 2015. We assume a basis of 6 years for timely completion. 
+
+- Student A is a first-time-in-college student with a timely completion (*TC*) term of Spring 2016. Their completion is timely because their degree term comes before their *TC* term.
+
+- Student B is a transfer student, entering as a junior. Having already satisfied 2 years of program requirements, their *TC* term is Spring 2014. Their completion is not timely because their degree term comes after their *TC* term.
 
 
 <br>
 ```{r fig1, echo = FALSE, fig.asp = 5/10}
-yyyy <- c(1990, 1992, 1994, 1995)
-df <- data.frame(yyyyt = yyyy, y = 1)
-
 library("ggplot2")
-callout_color <- "gray60"
+library("data.table")
+callout_color     <- "gray60"
 callout_line_size <- 0.3
-anno_size <- 3.5 # 3.5 approx 10 point
-vert_baseline <- 1.07
+anno_size         <- 3.5 # 3.5 approx 10 point
+vert_baseline     <- 1.07
 
-ggplot(df, aes(x = yyyyt, y = y)) +
-  
-  # adjusted start
-  geom_segment(aes(x = yyyy[1], xend = yyyy[1], 
-                   y = vert_baseline, yend = 1.75),
-               color = callout_color, size = callout_line_size
-  ) +
-  annotate("text",
-           x = yyyy[1], y = 0.89, size = anno_size,
-           label = "offset start", hjust = 1, vjust = 0
-  ) +
-  # matriculation term
-  geom_segment(aes(x = yyyy[2], xend = yyyy[2], 
-                   y = vert_baseline, yend = 1.35),
-               color = callout_color, size = callout_line_size
-  ) +
-  annotate("text",
-           x = yyyy[2], y = 0.89, size = anno_size,
-           label = "matriculation", hjust = 0.5, vjust = 0
-  ) +
-  # degree term
-  geom_segment(aes(x = yyyy[3], xend = yyyy[3], 
-                   y = vert_baseline, yend = 1.55),
-               color = callout_color, size = callout_line_size
-  ) +
-  annotate("text",
-           x = yyyy[3], y = 0.89, size = anno_size,
-           label = "degree", hjust = 0.5, vjust = 0
-  ) +
-  # timely completion limit
-  geom_segment(aes(x = yyyy[4], xend = yyyy[4], 
-                   y = vert_baseline, yend = 1.75),
-               color = callout_color, size = callout_line_size
-  ) +
-  annotate("text",
-           x = yyyy[4], y = 0.89, size = anno_size,
-           label = "limit", hjust = 0, vjust = 0
-  ) +
-  # timely completion arrow
-  geom_segment(aes(x = yyyy[1], xend = yyyy[4], y = 1.7, yend = 1.7),
-               color = callout_color,
-               size = callout_line_size,
-               arrow = arrow(
-                 type = "closed",
-                 ends = "both",
-                 length = unit(2, "mm")
-               ),
-               arrow.fill = callout_color
-  ) +
-  annotate("text",
-           x = 1/2 * (yyyy[1] + yyyy[4]) ,
-           y = 1.75,
-           size = anno_size,
-           label = "timely completion span"
-  ) +
+y1    <- 1.5
+y2    <- 1.7
+y_lim <- c(1.3, 1.8)
 
-  # offset span arrow
-  geom_segment(aes(x = yyyy[1], xend = yyyy[3], y = 1.5, yend = 1.5),
-               color = callout_color,
-               size = callout_line_size,
-               arrow = arrow(
-                 type = "closed",
-                 ends = "both",
-                 length = unit(2, "mm")
-               ),
-               arrow.fill = callout_color
-  ) +
-  annotate("text",
-           x = 1/2 * (yyyy[1] + yyyy[3]) ,
-           y = 1.55,
-           size = anno_size,
-           label = "time to graduation"
-  ) +
-  # transfer arrow
-  geom_segment(aes(x = yyyy[1], xend = yyyy[2], y = 1.3, yend = 1.3),
-               color = callout_color,
-               size = callout_line_size,
-               arrow = arrow(
-                 type = "closed",
-                 ends = "both",
-                 length = unit(2, "mm")
-               ),
-               arrow.fill = callout_color
-  ) +
-  annotate("text",
-           x = 1/2 * (yyyy[1] + yyyy[2]) ,
-           y = 1.3,
-           size = anno_size,
-           label = "transfer\noffset", 
-           hjust = 0.5,
-           vjust = 0.5
-  ) +
-  
-  geom_point(size = 2) +
-  scale_x_continuous(limits = c(1988, 1998), breaks = seq(1980, 2020, 2)) +
-  scale_y_continuous(limits = c(0.8, 1.8)) +
+x1    <- 1990
+x2    <- 1993
+x3    <- 1994
+x4    <- 1995
+x_lim <- c(x1 - 1.5, x4 + 1.5)
+
+# arrows
+df_arrow <- wrapr::build_frame(
+  "x", "x_end", "y" |
+    x1, x4, y2 |
+    x1, x2, y1
+)
+setDT(df_arrow)
+df_arrow[, x_mid := (x + x_end) / 2]
+
+# dimension lines
+del <- 0.03
+dim_lines <- wrapr::build_frame(
+  "x", "y", "y_end" |
+    x1, y1, y2 |
+    x2, y1, y1 |
+    x4, y2, y2 |
+    x3, y1, y2
+)
+setDT(dim_lines)
+dim_lines[, `:=` (y = y - 2*del, y_end = y_end + del)]
+
+# grad markers
+grad <- wrapr::build_frame(
+  "x", "y" |
+    x3, y1 |
+    x3, y2
+)
+
+ggplot(data = df_arrow) +
+  scale_x_continuous(limits = x_lim, 
+                     breaks = c(1990, 1993, 1994, 1995), 
+                     labels = c("Fall 2010", "Spr 14", "Spr 15", "Spr 16")) +
+  scale_y_continuous(limits = y_lim) +
   labs(
     y = "",
-    x = "Start of academic year",
+    x = "Term",
     title = "Illustrating timely completion"
   ) +
-  
   theme_light() +
   theme(
     axis.text.y = element_blank(),
     axis.ticks.y = element_blank(),
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank()
-  )
+  ) +
+  # label start of student row
+  annotate("text",
+           x = df_arrow$x - 0.6,
+           y = df_arrow$y,
+           size = anno_size,
+           label = c("student A", "student B"), 
+ 
+           vjust = 0.5, 
+           hjust = 1
+  ) +
+  # label end of student row
+  # annotate("text",
+  #          x = 1995.2,
+  #          y = df_arrow$y,
+  #          size = anno_size,
+  #          label = c("timely", 
+  #                    "not timely"),
+  #          vjust = 0.5, 
+  #          hjust = 0
+  # ) +
+  # arrows
+  geom_segment(aes(x = x, xend = x_end, y = y, yend = y),
+               color = callout_color,
+               size = callout_line_size,
+               arrow = arrow(
+                 type = "closed",
+                 ends = "both",
+                 length = unit(2, "mm")
+               ),
+               arrow.fill = callout_color
+  ) +
+  # label arrows
+  annotate("text",
+           x = df_arrow$x_mid,
+           y = df_arrow$y,
+           size = anno_size,
+           label = "TC span",
+           vjust = -0.5
+  ) +
+  # dimension lines
+  geom_segment(data = dim_lines, 
+               aes(x = x, xend = x, y = y, yend = y_end),
+               color = callout_color,
+               size = callout_line_size, 
+               linetype = c(1, 1, 1, 2)
+  ) +
+  # label lines
+  annotate("text",
+           x = dim_lines$x,
+           y = dim_lines$y,
+           size = anno_size, 
+           label = c("entry term",
+                     "TC term",
+                     "TC term",
+                     "degree term"), 
+           vjust = 1,
+           hjust = c(-0.1, 1.1, 1.1, -0.1)
+  ) +
+  # grad points
+  geom_point(data = grad, aes(x = x, y = y), 
+             size = 2)
 ```
-<br>
 
-matriculation term
-: The term a student enters the institution from which they graduate. Applies to transfer students as well as first-time-in-college (FTIC) students. 
+entry term
+: Term in which a student enters the institution from which they earn their first degree. If no degree, the term in which a student enters the last institution in their record. 
 
-offset start term
-: For transfer students, the effective start term as if their transfer credit hours been earned at the institution from which they graduate.  Typically, no more than 2 years of transfer credits are counted. For FTIC students, the offset is zero. 
-  
+timely completion span (TC span)
+: Span of years after entry over which program completion would be considered timely. Depends on the heuristic used to evaluate a student's history in the data record. 
+
+timely completion term (TC term)
+: Last term for which program completion would be considered timely. The end of the TC span. 
+
 degree term 
-: The term in which a student earns their first degree. 
+: Term in which a student earns their first degree by completing a program. 
 
-time to graduation
-: The number of terms (or equivalent years) between the offset start term and the end of the degree term. 
 
-timely completion span
-: The maximum time to graduation (typically 6 years) for a degree to be included in the count of program graduates. 
 
-When applying the timely completion constraint, students are counted as program graduates only if their time to graduation is no greater than the timely completion span; otherwise their they are aggregated with the program non-graduates. 
+## Estimating the timely completion term
 
+- Simple heuristic: 6 years minus level at entry
+- Better: wold account for students like me, transfer, level, switchers
 
 
-### This vignette uses
 
-midfieldr functions 
 
-- `subset_feasible()` 
-- `timely_completion()`
+## Applying the timely completion term
 
-packages
+- Untimely graduation? Grad reclassified as nongrad
+- TC exceeds data limit? Omit students from study 
 
-```{r}
-# packages used
-library(midfieldr)
-library(midfielddata)
-library(data.table)
-library(ggplot2)
 
-# print max 20 rows, otherwise 10 rows each head/tail
-options(datatable.print.nrows = 20, datatable.print.topn = 10)
-```
 
-
-
-
-
-
-<!-- ################################################ -->
-
-
-
-
-## How to use `timely_completion()`
-
-The first argument, `id`, is required. The remaining arguments all have default settings. The last three arguments accommodate using data sets other than those from midfielddata. Arguments after the ellipsis (...) must be named if used. 
-
-```r
-    timely_completion(
-      id,                    
-      ...,
-      span = NULL,
-      term_transfer_max = NULL,
-      data_students = NULL,
-      data_terms = NULL,
-      data_degrees = NULL
-    )
-```
-
-
-- `id` character vector of student IDs
-- `span`  number of years to define timely completion, default is 6 years
-- `term_transfer_max` maximum terms of transfer credit for determining years to graduation, default is 4 terms (2 years)
-- `data_students`  student attributes data set, `midfieldstudents` or equivalent
-- `data_terms`  term attributes data set, `midfieldterms` or equivalent
-- `data_degrees` degree attributes data set, `midfielddegrees` or equivalent
-
-The primary input to `subset_feasible()` is a character vector of student IDs. To illustrate its use, we use the built-in data set `rep_ever` from the engineering case study as developed in the  *Stickiness metric* vignette [(link)](stickiness_metric.html). 
-
-View its help page by running
-
-```r
-? rep_ever
-```
-
-The data are loaded with midfieldr. 
-
-```{r}
-# view the example IDs
-str(rep_ever)
-```
-
-This vector of IDs is the input to `subset_feasible()`, which performs the subsetting for completion feasibility.  
-
-```{r}
-# filter IDs for feasible program completion within data limit
-feasible_id <- subset_feasible(rep_ever)
-
-# examine the result
-str(feasible_id)
-```
-
-In this instance, we started with `r length(rep_ever)` enrollees. After applying the criteria for feasible completion, we retain `r length(feasible_id)` students. These students either graduated (demonstrating the feasibility of completing their programs before the data limit) or they matriculated no later than their matriculation limits. 
-
-Related vignettes
-
-- *Graduation rate* vignette [(link)](graduation_rate_metric.html) in which the representative group of case study starters is developed. 
-
-
-
-
-<!-- ################################################ -->
-
-
-
-
-## How to use `timely_completion()`
-
-
-change: use the `rep_ever` IDs to illustrate using the function
-
-The program group for the engineering case study is included with midfieldr as the built-in data set `rep_group`. View its help page by running
-
-```r
-? rep_ever 
-```
-
-The data are loaded with midfieldr. 
-
-```{r}
-# examine the result
-str(rep_ever)
-```
-
-
-
-
-
-
-
-
-
-The argument of `timely_completion()` is a vector of student IDs. The function returns a data frame with two columns keyed by ID: a numerical variable  `years_to_grad`, giving the time to graduation; and a logical variable `is_timely`, stating if the graduate satisfies the timely completion criterion. 
-
-Example output of `timely_completion(id)` 
-
-
-    #>      id   years_to_grad   is_timely 
-    #>  MID001               5        TRUE
-    #>  MID002               7       FALSE        
-    #>  MID003            <NA>       FALSE  
-    #>  MID004               5        TRUE
-    #>  MID005             6.5       FALSE
-    #>   ---   
-
-
-
-
-Related vignettes
-
-- obtaining `rep_ever` IDs
-
-
-
-## How `timely_completion()` works
-
-
-function arguments 
-
-    timely_completion(
-      id,                       # character vector of student IDs
-      ...,
-      span = NULL,              # numeric scalar, number of years to define 
-                                  timely completion, default 6 years
-                                  
-      term_transfer_max = NULL, # numeric scalar, maximum number of terms of
-                                  transfer credit to offset matriculation,  
-                                  default 4 terms
-
-      data_students = NULL,     # data frame of student attributes
-      data_terms = NULL,        # data frame of term attributes
-      data_degrees = NULL       # data frame of degree attributes
-    )
 
 
 ## References

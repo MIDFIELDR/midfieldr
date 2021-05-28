@@ -48,6 +48,9 @@ kable2html <- function(x, font_size = NULL, caption = NULL) {
 
 Introduces the four data sets in the midfielddata package and basic data manipulation operations in the data.table package. 
 
+Researchers interested in exploring MIDFIELD data are often R novices, learning to use midfieldr at the same time they are learning to use R. There are many good online resources for learning R, so we do not attempt to reproduce that work here. However, we would like to offer some suggestions to help address some of the obstacles our new users have encountered in the past.
+
+
 ### Why data.table? 
 
 `data.table` provides "a high-performance version of base R’s `data.frame` with syntax and feature enhancements for ease of use, convenience and programming speed" [@Dowle+Srinivasan:2020:data.table:website]. MIDFIELD data can require a lot of memory (`midfieldcourses` has 3.5 M rows and requires 348 MB of memory), making data.table's efficient use of memory potentially an important consideration. 
@@ -122,7 +125,7 @@ midfielddata [(link)](https://midfieldr.github.io/midfielddata/) is an R data pa
 - matriculation attributes keyed by student ID 
 - `r n_id_students` students over `r n_term_enter` terms
 - `r obs_students` rows, `r var_students` columns, `r size_students` memory
-- data dictionary [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldstudents.html)
+- [data dictionary](https://midfieldr.github.io/midfielddata/reference/midfieldstudents.html) 
 
 ```{r}
 midfieldstudents
@@ -133,7 +136,7 @@ midfieldstudents
 - degree attributes keyed by student ID 
 - `r n_id_degrees` students of whom `r n_graduates` earn bachelor's degrees 
 - `r obs_degrees` rows, `r var_degrees` columns, `r size_degrees` memory 
-- data dictionary [(link)](https://midfieldr.github.io/midfielddata/reference/midfielddegrees.html) 
+- [data dictionary](https://midfieldr.github.io/midfielddata/reference/midfielddegrees.html) 
 
 ```{r}
 midfielddegrees
@@ -144,7 +147,7 @@ midfielddegrees
 - term attributes keyed by student ID and academic term 
 - `r n_id_terms` students  in `r n_programs_terms` programs over `r n_terms` terms  
 - `r obs_terms` rows, `r var_terms` columns, `r size_terms` memory  
-- data dictionary [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldterms.html) 
+- [data dictionary](https://midfieldr.github.io/midfielddata/reference/midfieldterms.html)
 
 ```{r}
 midfieldterms
@@ -155,7 +158,7 @@ midfieldterms
 - course attributes keyed by student ID, academic term, and course/section identifiers 
 - `r n_id_courses` students  in `r n_courses` courses over `r n_term_course` terms
 - `r obs_courses` rows, `r var_courses` columns, `r size_courses` memory  
-- data dictionary [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldcourses.html) 
+- [data dictionary](https://midfieldr.github.io/midfielddata/reference/midfieldcourses.html) 
 
 ```{r}
 midfieldcourses
@@ -169,11 +172,11 @@ In this section, we introduce the data.table syntax most often used in the midfi
 
 ### Identifying a data.table object
 
-If you view a data frame in the console, one clue that it is a data.table is the colon that separates the row number from the first column. For example,  if I extract the first 10 rows from the degrees data, you can see the colons. 
+If you view a data frame in the console, one clue that it is a data.table is the colon that separates the row number from the first column. For example,  if I extract the first few rows from the degrees data, you can see the colons. 
 
 ```{r}
-# data.table object
-midfielddegrees[1:10, ]
+# data.table object (using data.frame syntax)
+midfielddegrees[1:10]
 ```
 
 Of course, we can identify its class directly. The output shows that a `data.table` is also `data.frame` thus one can operate on data.table objects using data.frame (base R) syntax.
@@ -183,17 +186,15 @@ Of course, we can identify its class directly. The output shows that a `data.tab
 class(midfielddegrees)
 ```
 
-Viewing a data.frame object (base R `airquality` data), the row numbers are not denoted by colons.
+Viewing a data.frame object (base R `airquality` data), the row numbers are not denoted by colons. And here, the comma is required. 
 
 ```{r}
-# data.frame object
+# data.frame object (comma is required)
 airquality[1:10, ]
 
 # confirm classification
 class(airquality)
 ```
-
- 
 
 ### Subset and arrange rows
 
@@ -267,6 +268,9 @@ DT[]
 **Arrange rows in ascending order** 
 
 ```{r}
+# start with a fresh copy
+DT <- copy(midfielddegrees)
+
 # subset the data frame
 rows_we_want <- DT$cip6 == "540101"
 DT <- DT[rows_we_want]
@@ -405,8 +409,10 @@ Columns are modified by reference (in place) using the column assignment symbol 
 - `DT[rows_to_edit, col := value]` add or modify a column in place for specific rows
 
 ```{r}
-# create a subset to work with
+# start with a fresh copy
 DT <- copy(midfielddegrees)
+
+# create a subset to work with
 rows_we_want <- DT$institution == "Institution D"
 DT <- DT[rows_we_want]
 
@@ -445,18 +451,16 @@ DT[, inst_size := "small"]
 DT[order(degree)]
 ```
 
-Here, we add a new columns `year` and `iterm` that are functions of the `term` column. This operation illustrates one approach to separating the encoded term into separate year and integer-term columns. 
+**Modify a column in place using a function**  Here, we add a new columns `year` and `term_idx` that are functions of the `term_degree` column. This operation illustrates one approach to separating the encoded term into separate year and term-index columns. In this example we use the `:=` operator in its *functional* form. 
 
 ```{r}
 # add columns in place
-DT[, year := floor(term_degree / 10)]
-DT[, iterm := floor(term_degree - 10 * year)]
+DT[, `:=` (year = substr(term_degree, 1, 4), 
+           term_idx = substr(term_degree, 5, 5))]
 
 # examine the result
 DT[order(degree, term_degree)]
 ```
-
-The `floor()` function in the first instance purposefully truncates the decimal value to yield an integer year. In the second instance, `floor()` is insurance that the term is a whole number as expected (avoiding any potential floating-point errors). 
 
 **Add a column in place for specific rows.** Here we create a new `status` column with the value of "grad" in rows where `degree` is not NA. In all other rows, the value of the `status` is automatically NA. 
 
@@ -470,6 +474,20 @@ DT[order(status)]
 ```{r}
 DT[is.na(degree), status := "nongrad"]
 DT[order(status)]
+```
+
+Of course, both operations can be combined using the data.table if-else structure, another example of modifying a column in place using a function. 
+
+```{r}
+# start with a fresh copy
+DT <- copy(midfielddegrees)
+
+# subset columns again
+DT <- DT[, ..cols_we_want]
+
+# using fifelse
+DT[, status := fifelse(is.na(degree), "nongrad", "grad")]
+DT[]
 ```
 
 
@@ -496,7 +514,10 @@ First, we count the total number of students by institution. The data.table `.N`
 
 ```{r}
 # count by institution
-DT[order(institution), .N, by = institution]
+DT[, .N, by = institution]
+
+# use keyby for grouping and ordering the rows by the same variable
+DT[, .N, keyby = institution]
 
 # count by coop
 DT[, .N, by = coop]
@@ -519,13 +540,13 @@ options(datatable.print.nrows = 16)
 grouping_variables <- c("institution", "coop")
 
 # count by the groupings
-DT[order(institution, coop), .(frequency = .N), by = grouping_variables]
+DT[, .(frequency = .N), keyby = grouping_variables]
 
 # reset the printout option
 options(datatable.print.nrows = 10, datatable.print.topn = 5)
 ```
 
-**Operate on a column by group.** The data.table `.SD` operator can be thought of as a symbol that represents "each group". We can use it to operate on one column grouped by the values in another column. 
+**Operate on a column by group.** The data.table `.SD` operator can be thought of as a symbol that represents a data.table of a specific group. We can use it to operate on one column grouped by the values in another column. 
 
 ```{r}
 # create a subset to work with
@@ -726,7 +747,7 @@ midfieldterms
 midfieldcourses
 
 # identify objects
-midfielddegrees[1:10, ]
+midfielddegrees[1:10]
 class(midfielddegrees)
 airquality[1:10, ]
 class(airquality)
@@ -746,6 +767,7 @@ DT <- copy(midfielddegrees)
 DT <- na.omit(DT)
 
 # arrange rows
+DT <- copy(midfielddegrees)
 rows_we_want <- DT$cip6 == "540101"
 DT <- DT[rows_we_want]
 DT <- DT[order(id)]
@@ -783,21 +805,24 @@ DT[, id := NULL]
 
 # add a column in place
 DT[, inst_size := "small"]
-DT[, year := floor(term_degree / 10)]
-DT[, iterm := floor(term_degree - 10 * year)]
+DT[, `:=` (year = substr(term_degree, 1, 4), 
+           term_idx = substr(term_degree, 5, 5))]
 
 # add/modify a column in place for specific rows
 DT[!is.na(degree), status := "grad"]
 DT[is.na(degree), status := "nongrad"]
+DT <- copy(midfielddegrees)
+DT <- DT[, ..cols_we_want]
+DT[, status := fifelse(is.na(degree), "nongrad", "grad")]
 
 # frequency by group
 rows_we_want <- midfieldterms$cip6 == "141901"
 cols_we_want <- c("institution", "cip6", "term", "coop")
 DT <- midfieldterms[rows_we_want, ..cols_we_want]
-DT[order(institution), .N, by = institution]
+DT[, .N, keyby = institution]
 DT[, .(N_coop = .N), by = coop]
 grouping_variables <- c("institution", "coop")
-DT[order(institution, coop), .(frequency = .N), by = grouping_variables]
+DT[, .(frequency = .N), keyby = grouping_variables]
 
 # operate on a column by group
 rows_we_want <- midfieldterms$cip6 == "141901"
