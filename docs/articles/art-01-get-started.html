@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9011</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9012</span>
       </span>
     </div>
 
@@ -127,10 +127,10 @@
 <a href="#this-vignette-uses" class="anchor"></a>This vignette uses</h3>
 <p>midfieldr functions</p>
 <ul>
-<li><code><a href="../reference/filter_text.html">filter_text()</a></code></li>
-<li><code><a href="../reference/subset_matriculant.html">subset_matriculant()</a></code></li>
 <li><code><a href="../reference/add_race_sex.html">add_race_sex()</a></code></li>
+<li><code><a href="../reference/filter_text.html">filter_text()</a></code></li>
 <li><code><a href="../reference/prepare_multiway.html">prepare_multiway()</a></code></li>
+<li><code><a href="../reference/subset_matriculant.html">subset_matriculant()</a></code></li>
 </ul>
 <p>midfieldr built-in data sets</p>
 <ul>
@@ -376,10 +376,10 @@
 <span class="co">#&gt; 32: Engineering   Male           White 15575</span>
 <span class="co">#&gt;         program    sex            race  ever</span></code></pre></div>
 </div>
-<div id="condition-the-data-for-display" class="section level2">
+<div id="graph-the-results" class="section level2">
 <h2 class="hasAnchor">
-<a href="#condition-the-data-for-display" class="anchor"></a>Condition the data for display</h2>
-<p>To prepare the results for graphing, we construct a “pre-multiway” version of the data frame. We begin by removing ambiguous levels of race/ethnicity.</p>
+<a href="#graph-the-results" class="anchor"></a>Graph the results</h2>
+<p>To begin conditioning the data for graphing, we remove ambiguous levels of race/ethnicity.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># remove ambiguous levels of race/ethnicity</span>
 <span class="va">rows_we_want</span> <span class="op">&lt;-</span> <span class="op">!</span><span class="va">DT</span><span class="op">$</span><span class="va">race</span> <span class="op">%chin%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Unknown"</span>, <span class="st">"International"</span>, <span class="st">"Other"</span><span class="op">)</span>
@@ -417,7 +417,7 @@
 <span class="co">#&gt; 18: Engineering   Male        Hispanic   756</span>
 <span class="co">#&gt; 19: Engineering   Male Native American   100</span>
 <span class="co">#&gt; 20: Engineering   Male           White 15575</span></code></pre></div>
-<p>In intersectional studies, we have found combined race/ethnicity and sex to be a useful category. We unite two columns to create the <code>race_sex</code> column.</p>
+<p>We combine race/ethnicity and sex to form the <code>race_sex</code> categorical variable.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># create a new category</span>
 <span class="va">DT</span><span class="op">[</span>, <span class="va">race_sex</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span>, sep <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">]</span>
@@ -499,10 +499,6 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $ever</span>
 <span class="co">#&gt; NULL</span></code></pre></div>
-</div>
-<div id="graph-the-results" class="section level2">
-<h2 class="hasAnchor">
-<a href="#graph-the-results" class="anchor"></a>Graph the results</h2>
 <p>We use ggplot2 to graph the multiway data. Rows and panels, from top to bottom, are ordered by decreasing medians. We use a logarithmic scale because the numbers differ by orders of magnitude. In a log base-2 scale, every grid line represents a doubling of the previous grid line.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">DT</span>, mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ever</span>, y <span class="op">=</span> <span class="va">race_sex</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
