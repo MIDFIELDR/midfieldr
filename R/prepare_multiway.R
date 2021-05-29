@@ -31,7 +31,7 @@ NULL
 #'   \item Data frame extensions \code{tbl} or \code{data.table}
 #'   are preserved
 #' }
-#'
+#' @export
 #' @examples
 #' catg1 <- rep(c("urban", "rural", "suburb", "village"), each = 2)
 #' catg2 <- rep(c("men", "women"), times = 4)
@@ -44,11 +44,6 @@ NULL
 #' # structure after
 #' mw <- prepare_multiway(pre_mw)
 #' str(mw)
-#'
-#' @family functions
-#'
-#' @export
-#'
 prepare_multiway <- function(data = NULL) {
 
   # argument checks

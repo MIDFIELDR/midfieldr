@@ -47,9 +47,6 @@ NULL
 #'
 #' @examples
 #' #TBD
-#'
-#' @family functions
-#'
 #' @export
 fair_record_length <- function(id,
                                ...,

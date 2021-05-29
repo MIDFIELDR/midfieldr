@@ -21,12 +21,11 @@ NULL
 #'           are preserved
 #'     \item Grouping structures are not preserved
 #' }
-#' @examples
-#' # TBD
-#' @family functions
 #' @seealso \code{add_race_sex()}, \code{add_timely_limit()},
 #'          \code{eval_fair_record()}, \code{eval_timely_completion()}
 #' @export
+#' @examples
+#' # TBD
 subset_matriculant <- function(dframe, ..., record = NULL) {
 
     wrapr::stop_if_dot_args(

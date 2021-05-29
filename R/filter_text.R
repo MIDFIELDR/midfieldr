@@ -24,6 +24,7 @@ NULL
 #'     are preserved
 #'     \item Grouping structures are not preserved
 #' }
+#' @export
 #' @examples
 #' # filter using keywords
 #' filter_text(cip, keep_text = "engineering")
@@ -47,8 +48,6 @@ NULL
 #' # unsuccessful terms produce a message
 #' filter_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 #' }
-#' @family functions
-#' @export
 filter_text <- function(data,
                         keep_text = NULL,
                         ...,

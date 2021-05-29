@@ -39,11 +39,9 @@ NULL
 #'           are preserved
 #'     \item Grouping structures are not preserved
 #' }
+#' @export
 #' @examples
 #' # TBD
-#'
-#' @family functions
-#' @export
 eval_timely_completion <- function(dframe,
                                    ...,
                                    record = NULL,

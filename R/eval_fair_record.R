@@ -41,11 +41,9 @@ NULL
 #'           are preserved
 #'     \item Grouping structures are not preserved
 #' }
+#' @export
 #' @examples
 #' # TBD
-#'
-#' @family functions
-#' @export
 eval_fair_record <- function(dframe,
                              ...,
                              record = NULL,

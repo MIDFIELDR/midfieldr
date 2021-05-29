@@ -37,16 +37,4 @@ retains all rows of \code{dframe} with matching IDs.
 \seealso{
 \code{add_race_sex()}, \code{add_timely_limit()},
          \code{eval_fair_record()}, \code{eval_timely_completion()}
-
-Other functions: 
-\code{\link{add_race_sex}()},
-\code{\link{add_timely_limit}()},
-\code{\link{eval_fair_record}()},
-\code{\link{eval_timely_completion}()},
-\code{\link{fair_record_length}()},
-\code{\link{filter_text}()},
-\code{\link{prepare_fye_mi}()},
-\code{\link{prepare_multiway}()},
-\code{\link{subset_feasible}()}
 }
-\concept{functions}

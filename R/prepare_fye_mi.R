@@ -51,7 +51,7 @@ NULL
 #'     \item Data frame extensions such as \code{tbl} or \code{data.table}
 #'     are preserved
 #' }
-#'
+#' @export
 #' @examples
 #' # prepare data for mice()
 #' data_students <- midfielddata::midfieldstudents
@@ -62,11 +62,6 @@ NULL
 #' # impute missing CIP codes
 #' mice::mice(mi_data)
 #' }
-#'
-#' @family functions
-#'
-#' @export
-#'
 prepare_fye_mi <- function(data_students = NULL,
                            data_terms = NULL) {
 

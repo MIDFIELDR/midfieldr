@@ -57,18 +57,4 @@ The function accesses one of the midfielddata data sets:
 }
 \examples{
 #TBD
-
 }
-\seealso{
-Other functions: 
-\code{\link{add_race_sex}()},
-\code{\link{add_timely_limit}()},
-\code{\link{eval_fair_record}()},
-\code{\link{eval_timely_completion}()},
-\code{\link{filter_text}()},
-\code{\link{prepare_fye_mi}()},
-\code{\link{prepare_multiway}()},
-\code{\link{subset_feasible}()},
-\code{\link{subset_matriculant}()}
-}
-\concept{functions}

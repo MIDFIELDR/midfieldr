@@ -70,18 +70,4 @@ mi_data <- prepare_fye_mi(data_students, data_terms)
 # impute missing CIP codes
 mice::mice(mi_data)
 }
-
 }
-\seealso{
-Other functions: 
-\code{\link{add_race_sex}()},
-\code{\link{add_timely_limit}()},
-\code{\link{eval_fair_record}()},
-\code{\link{eval_timely_completion}()},
-\code{\link{fair_record_length}()},
-\code{\link{filter_text}()},
-\code{\link{prepare_multiway}()},
-\code{\link{subset_feasible}()},
-\code{\link{subset_matriculant}()}
-}
-\concept{functions}

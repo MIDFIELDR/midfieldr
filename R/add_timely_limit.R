@@ -45,11 +45,9 @@ NULL
 #'           are preserved
 #'     \item Grouping structures are not preserved
 #' }
+#' @export
 #' @examples
 #' # TBD
-#'
-#' @family functions
-#' @export
 add_timely_limit <- function(dframe,
                              ...,
                              span = NULL,

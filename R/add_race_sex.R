@@ -20,11 +20,9 @@ NULL
 #'           are preserved
 #'     \item Grouping structures are not preserved
 #' }
+#' @export
 #' @examples
 #' # TBD
-#'
-#' @family functions
-#' @export
 add_race_sex <- function(dframe,
                          ...,
                          record = NULL) {
