@@ -2,7 +2,7 @@
 ## midfieldr 1.0.0.9011 / 2021-05
 
 - update README
-- revise Get started vignette
+- reorganize vignettes  
 - add function `add_race_sex()` 
 - add function `add_timely_limit()`
 - add function `eval_fair_record()` to replace `subset_feasible()` 
