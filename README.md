@@ -20,11 +20,10 @@ public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostat
 
 ## Undergoing major revision
 
-Based on feedback from workshop attendees, the package is undergoing
-major revision to the vignettes and the underlying functionality. While
-in this ambiguous state, the package should be used experimentally only.
-
-We hope to have the update completed by July 2021.
+Based on feedback from workshop attendees and use-testing, the package
+is undergoing major revision to the vignettes and the underlying
+functionality. While in this ambiguous state, the package should be used
+experimentally only. We hope to have the update completed by July 2021.
 
 ## Tools for student records research
 
@@ -32,7 +31,8 @@ The *Multiple-Institution Database for Investigating Engineering
 Longitudinal Development* (MIDFIELD) is a partnership of US higher
 education institutions with engineering programs. MIDFIELD contains
 registrar’s data for 1.7M undergraduates in all majors at 19
-institutions from 1987–2019.
+institutions from 1987–2019 ([Ohland and Long,
+2016](#ref-Ohland+Long:2016)).
 
 Our software environment comprises two R packages:
 
@@ -43,63 +43,65 @@ Our software environment comprises two R packages:
 
 -   **midfielddata** [(link)](https://midfieldr.github.io/midfielddata/)
     An R package with practice data for users to learn about student
-    record analysis using R—definitions, assumptions, and methods.
-    However, these data are not suitable for drawing inferences about
-    student performance, i.e., not for research.
+    record analysis using R. However, these data are not suitable for
+    drawing inferences about student performance, i.e., not for
+    research.
 
 ## Data
 
-**CIP data**
+**Taxonomy of programs**
 
-midfieldr includes a Classification of Instructional Programs (CIP) data
-set—a taxonomy of academic programs curated by the US National Center
-for Education Statistics (NCES), Integrated Postsecondary Education Data
-System (IPEDS).
+midfieldr includes `cip`, a data frame of the 2010 *Classification of
+Instructional Programs* (CIP)—a taxonomy of academic programs curated by
+the US Department of Education, National Center for Education Statistics
+(NCES), Integrated Postsecondary Education Data System (IPEDS).
 
--   `cip` Data frame with 1584 observations and 6 CIP variables of the
-    2010 program codes and names at the 2, 4, and 6-digit levels. Each
+-   `cip` Data frame with 1584 observations and 6 variables providing
+    program codes and names at the 2, 4, and 6-digit levels. Each
     observation is a unique program keyed by a 6-digit CIP code.
-    Occupies 380 kB of memory. Data dictionary
-    [(link)](reference/cip.html).
+    Occupies 380 kB of memory. [(Link)](reference/cip.html) to data
+    dictionary.
 
-**Student records data for practice**
+**Student records for practice**
 
-The midfielddata package contains four data sets that are proportionate
-stratified random samples of 12 institutions in the larger MIDFIELD data
-sets. The sampling strata are institution, cip4 (the first four digits
-of the 6-digit CIP code), transfer status, race/ethnicity, and sex.
-Contains data for 97,640 undergraduates at 12 institutions from
-1987–2016 in four data sets:
+midfielddata provides a proportionate stratified random sample of the
+MIDFIELD research data. The sampling strata are institution, cip4 (the
+first four digits of the 6-digit CIP code), transfer status,
+race/ethnicity, and sex. Contains data for 97,640 undergraduates at 12
+institutions from 1987–2016 in four data sets:
 
--   `midfieldstudents` Data frame with 97,640 observations and 15
+-   `midfieldstudents` Data frame with 97,640 observations and 13
     demographic variables. Each observation is a unique student keyed by
-    student ID. Occupies 19 MB of memory. Data dictionary
-    [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldstudents.html).
+    student ID. Occupies 19 MB of memory.
+    [(Link)](https://midfieldr.github.io/midfielddata/reference/midfieldstudents.html)
+    to data dictionary.
 
 -   `midfieldcourses` Data frame with 3.5 M observations and 12 academic
     course variables keyed by student ID, term, and course. Each
     observation is one course in one term for one student. Occupies 349
-    MB of memory. Data dictionary
-    [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldcourses.html).
+    MB of memory.
+    [(Link)](https://midfieldr.github.io/midfielddata/reference/midfieldcourses.html)
+    to data dictionary.
 
 -   `midfieldterms` Data frame with 727,369 observations and 13 academic
     term variables keyed by student ID and term. Each observation is one
-    term for one student. Occupies 82 MB of memory. Data dictionary
-    [(link)](https://midfieldr.github.io/midfielddata/reference/midfieldterms.html).
+    term for one student. Occupies 82 MB of memory.
+    [(Link)](https://midfieldr.github.io/midfielddata/reference/midfieldterms.html)
+    to data dictionary.
 
 -   `midfielddegrees` A data frame with 97,640 observations and 5
     graduation variables keyed by student ID. Each observation is a
-    unique student. Occupies 10.2 MB of memory. Data dictionary
-    [(link)](https://midfieldr.github.io/midfielddata/reference/midfielddegrees.html).
+    unique student. Occupies 10.2 MB of memory.
+    [(Link)](https://midfieldr.github.io/midfielddata/reference/midfielddegrees.html)
+    to data dictionary.
 
-In making the midfielddata package public, confidentiality required some
-variables to be anonymized and others to be omitted. Thus the data
-dictionary of the practice data is a subset of the data dictionary of
-the (complete MIDFUIELD) research data.
+In making the midfielddata package public, maintaining confidentiality
+required that some variables be omitted and that student and institution
+identifiers be anonymized.
 
-**Student records data for research**
+**Student records for research**
 
-Complete MIDFIELD data sets suitable for student-records research are
+Complete MIDFIELD data suitable for student-records research are
 available to researchers under the following conditions:
 
 -   Your institutional IRB has granted approval for your project to
@@ -110,26 +112,14 @@ available to researchers under the following conditions:
 -   Each researcher using the data signs a letter of confidentiality
     describing the guidelines for how the data may be reported.
 
-The research data and practice data have the same structure (students,
-degrees, terms, and courses) with consistent variable names. Thus R
-scripts written for the practice data should work as well with the
-research data with only minor (if any) modification.
+The research data and practice data have the same structure (`student`,
+`course`, `term`, and `degree`) with the same variable names, though
+some research variables are omitted from the practice data, as noted
+above. Thus R scripts written for the practice data should generally
+work with the research data.
 
 For more information about obtaining access to MIDFIELD research data,
 contact Russell Long (<ralong@purdue.edu>)
-
-## For the absolute R beginner
-
-Experienced R users may skip this section. If you are an R novice and
-need an introduction to the R environment, good introductory tutorials
-are available. You might start with:
-
--   *Basic Basics* series by R Ladies Sydney
-    [(link)](https://www.youtube.com/hashtag/ryouwithme). Step-by-step
-    video tutorials.  
--   *A Beginner’s Guide to R* ([Zuur et al.,
-    2009](#ref-Zuur+Ieno+Meesters:2009)). A good resource for the
-    absolute R beginner.
 
 ## Install the data
 
@@ -137,17 +127,19 @@ Install midfielddata first.
 
 Because of its size, the data package is stored in a `drat` repository.
 Installation takes time; please be patient and wait for the Console
-prompt “&gt;” to reappear.
+prompt “&gt;” to reappear. Type (or copy and paste) the following lines
+in the Console.
 
 ``` r
 # install midfielddata first 
 install.packages("midfielddata", 
                  repos = "https://MIDFIELDR.github.io/drat/", 
                  type = "source")
+# be patient
 ```
 
-To confirm a successful installation, run the following to view the
-package help page.
+Once the Console prompt “&gt;” reappears, you can confirm a successful
+installation by viewing the package help page. In the Console, run:
 
 ``` r
 library("midfielddata")
@@ -163,9 +155,7 @@ go on to the next step.
 ## Install midfieldr
 
 We use the `install_github()` function from the remotes package to
-install midfieldr from GitHub. (Note to experienced users: you can use
-devtools if you have it installed. We suggest the remotes package to
-reduce the number of imported packages and dependencies.)
+install midfieldr from GitHub. In the Console, run:
 
 ``` r
 # install the remotes package
@@ -175,8 +165,8 @@ install.packages("remotes")
 remotes::install_github("MIDFIELDR/midfieldr")
 ```
 
-To confirm a successful installation, run the following to view the
-package help page.
+You can confirm a successful installation by viewing the package help
+page. In the Console, run:
 
 ``` r
 library("midfieldr")
@@ -191,23 +181,27 @@ view of the help page as shown here.
 ## Usage
 
 **midfieldr functions** work with MIDFIELD-structured data to access and
-manipulate student records. A typical workflow might include:
+manipulate student records. Usage examples are given in the vignettes,
+but an outline of a typical workflow might include these midfieldr
+functions:
 
--   `filter_text()` gather programs to study  
--   `prepare_fye_mi()` condition first-year-engineering data for
-    multiple imputation
--   `fair_record_length()` subset for sufficient number of terms near
-    the end of the data record
--   `timely_completion()` subset for completing a program in a timely
-    fashion
+-   `filter_text()` identify program names and codes
+-   `subset_matriculant()` limit the study to students with a
+    matriculation record
+-   `add_timely_limit()` estimate the latest term for which program
+    completion could be considered timely
+-   `eval_fair_record()` determine if data have sufficient span to
+    fairly assess a student’s record
+-   `eval_timely_completion()` determine if a student completes their
+    program in a timely manner
+-   `add_race_sex()` obtain student demographics
 -   `prepare_multiway()` condition multiway data for graphing
 
-**R ecosystem**. midfieldr uses data.table functions and syntax.
-midfielddata data sets are class `data.table` and `data.frame`. However,
-midfieldr functions attempt to preserve data frame extensions assigned
-by the user (`tbl` for example). Thus users who prefer a different
-“dialect” such as base R or dplyr should find that the package is
-compatible with their preference.
+**R ecosystem**. Internally, midfieldr and midfielddata use a data.table
+syntax and structure. However, midfieldr functions attempt to preserve
+other data frame classes such as the plain data frame in base R or the
+tibble structure in dplyr. Thus users should find midfieldr compatible
+with their preferred “dialect.”
 
 In general the midfieldr vignettes use the following packages:
 
@@ -226,7 +220,8 @@ develop the material in more detail.
 
 -   For more information about MIDFIELD
     [(link)](https://engineering.purdue.edu/MIDFIELD)  
--   Get citation information with `citation("midfieldr")`
+-   Get citation information with `citation("midfieldr")` and
+    `citation("midfielddata")`
 -   This project is released with a Code of Conduct
     [(link)](CONDUCT.html). If you contribute to this project you agree
     to abide by its terms.
@@ -244,19 +239,22 @@ version 1.13.0. Available at:
 
 </div>
 
+<div id="ref-Ohland+Long:2016" class="csl-entry">
+
+Ohland, Matthew W. and Long, Russell A. (2016) <span class="nocase">The
+Multiple-Institution Database for Investigating Engineering Longitudinal
+Development: An experiential case study of data sharing and
+reuse</span>. *Advances in Engineering Education* 5(2): 398–404.
+Available at:
+<http://advances.asee.org/wp-content/uploads/vol05/issue02/Papers/AEE-18-Ohland.pdf>.
+
+</div>
+
 <div id="ref-Wickham:2016:ggplot2" class="csl-entry">
 
 Wickham, Hadley (2016) *<span class="nocase">ggplot2: Elegant Graphics
 for Data Analysis</span>*. ISBN 978-3-319-24277-4; Springer-Verlag New
 York. Available at: <https://ggplot2.tidyverse.org>.
-
-</div>
-
-<div id="ref-Zuur+Ieno+Meesters:2009" class="csl-entry">
-
-Zuur, Alain F., Ieno, Elena N. and Meesters, Erik H. W. G. (2009) *<span
-class="nocase">A Beginner’s Guide to R</span>*. Springer. Available at:
-<https://link.springer.com/book/10.1007/978-0-387-93837-0>.
 
 </div>
 
