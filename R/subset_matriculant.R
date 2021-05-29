@@ -24,6 +24,8 @@ NULL
 #' @examples
 #' # TBD
 #' @family functions
+#' @seealso \code{add_race_sex()}, \code{add_timely_limit()},
+#'          \code{eval_fair_record()}, \code{eval_timely_completion()}
 #' @export
 subset_matriculant <- function(dframe, ..., record = NULL) {
 
