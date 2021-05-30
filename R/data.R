@@ -68,7 +68,7 @@
 
 # -------------------------------------------------------------------
 
-#' Case-study program codes and names
+#' Case-study CIP codes and custom program names
 #'
 #' Data frame of 6-digit CIP codes and custom program names for Civil,
 #' Electrical, Industrial, and Mechanical Engineering programs
@@ -89,7 +89,7 @@
 
 # -------------------------------------------------------------------
 
-#' Case-study student IDs and programs
+#' Case-study student IDs and CIP codes
 #'
 #' Data frame of student IDs and program codes of students ever enrolled
 #' in the Civil, Electrical, Industrial, and Mechanical Engineering programs

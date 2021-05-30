@@ -3,7 +3,7 @@
 \docType{data}
 \name{study_enrollees}
 \alias{study_enrollees}
-\title{Case-study student IDs and programs}
+\title{Case-study student IDs and CIP codes}
 \format{
 \code{data.table} with 12,409 rows and 2 columns keyed by
 student ID. The variables are:

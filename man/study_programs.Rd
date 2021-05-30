@@ -3,7 +3,7 @@
 \docType{data}
 \name{study_programs}
 \alias{study_programs}
-\title{Case-study program codes and names}
+\title{Case-study CIP codes and custom program names}
 \format{
 \code{data.table} with 12 rows and 2 columns keyed by the
 6-digit CIP code. The variables are:
