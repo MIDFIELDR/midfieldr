@@ -51,12 +51,12 @@ test_that("Class of data frame is preserved", {
     class(y3)
   )
 })
-test_that("Pipe correctly passes the data argument", {
-  expect_equivalent(
-    cip %>% subset_text(keep_text = c("^1407", "^1410")),
-    subset_text(cip, keep_text = c("^1407", "^1410"))
-  )
-})
+# test_that("Pipe correctly passes the data argument", {
+#   expect_equivalent(
+#     cip %>% subset_text(keep_text = c("^1407", "^1410")),
+#     subset_text(cip, keep_text = c("^1407", "^1410"))
+#   )
+# })
 test_that("Argument order works correctly", {
   expect_equal(
     subset_text(cip, keep_text = c("^1407", "^1410")),

@@ -71,7 +71,7 @@ add_fair_record <- function(dframe,
 
     # class of required columns
     assert_class(dframe[, institution], "character")
-    assert_class(dframe[, timely_term], "character")
+    assert_class(dframe[, term_timely], "character")
     # to do: revise term in midfielddata to be character, for now:
     record[, term := as.character(term)]
     assert_class(record[, term], "character")

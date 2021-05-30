@@ -26,29 +26,29 @@ NULL
 #' }
 #' @export
 #' @examples
-#' # filter using keywords
-#' filter_text(cip, keep_text = "engineering")
+#' # subset using keywords
+#' subset_text(cip, keep_text = "engineering")
 #'
-#' # drop_text argument must be named
-#' filter_text(cip, "civil engineering", drop_text = "technology")
+#' # drop_text argument, when used, must be named
+#' subset_text(cip, "civil engineering", drop_text = "technology")
 #'
-#' # filter using numerical codes
-#' filter_text(cip, keep_text = c("050125", "160501"))
+#' # subset using numerical codes
+#' subset_text(cip, keep_text = c("050125", "160501"))
 #'
-#' # filter using regular expressions
-#' filter_text(cip, keep_text = "^54")
-#' filter_text(cip, keep_text = c("^1407", "^1408"))
+#' # subset using regular expressions
+#' subset_text(cip, keep_text = "^54")
+#' subset_text(cip, keep_text = c("^1407", "^1408"))
 #'
 #' # select columns
-#' filter_text(cip,
+#' subset_text(cip,
 #'             keep_text = "^54",
 #'             keep_col = c("cip4", "cip4name"))
 #'
 #' \dontrun{
 #' # unsuccessful terms produce a message
-#' filter_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
+#' subset_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 #' }
-filter_text <- function(data,
+subset_text <- function(data,
                         keep_text = NULL,
                         ...,
                         drop_text = NULL,

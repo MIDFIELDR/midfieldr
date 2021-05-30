@@ -50,12 +50,12 @@ test_that("Integer values are accepted", {
   df3 <- prepare_multiway(df3)
   expect_equivalent(df2, df3)
 })
-test_that("Pipe correctly passes the data argument", {
-  expect_equivalent(
-    df1 %>% prepare_multiway(),
-    prepare_multiway(df1)
-  )
-})
+# test_that("Pipe correctly passes the data argument", {
+#   expect_equivalent(
+#     df1 %>% prepare_multiway(),
+#     prepare_multiway(df1)
+#   )
+# })
 test_that("Results are correct type", {
   df2 <- prepare_multiway(df1)
   expect_type(df1$cat1, "character")

@@ -71,7 +71,7 @@ add_completion_timely <- function(dframe,
 
     # class of required columns
     assert_class(dframe[, id], "character")
-    assert_class(dframe[, timely_term], "character")
+    assert_class(dframe[, term_timely], "character")
     assert_class(record[, id], "character")
     assert_class(record[, term_degree], "character")
 
