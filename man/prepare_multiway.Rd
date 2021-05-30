@@ -4,10 +4,15 @@
 \alias{prepare_multiway}
 \title{Prepare multiway data for graphing}
 \usage{
-prepare_multiway(data = NULL)
+prepare_multiway(dframe, ..., details = NULL)
 }
 \arguments{
-\item{data}{data frame of multiway data}
+\item{dframe}{data frame of multiway data}
+
+\item{...}{not used, forces later arguments to be used by name}
+
+\item{details}{logical scalar to add columns reporting the medians on which
+the order of the levels is based.}
 }
 \value{
 \code{data.frame} with the following properties:
@@ -33,7 +38,7 @@ for every combination of levels of two categorical variables.
 to factors and orders the factor levels by increasing medians of the
 quantitative response variable.
 
-The \code{data} argument, therefore, must have three columns only. One
+The \code{dframe} argument, therefore, must have three columns only. One
 column is a quantitative variable (type numeric) and two columns are
 categorical variables (type character or factor).
 }
@@ -43,10 +48,10 @@ catg2 <- rep(c("men", "women"), times = 4)
 value <- c(0.22, 0.14, 0.43, 0.58, 0.81, 0.46, 0.15, 0.20)
 
 # structure before
-pre_mw <- data.frame(catg1, catg2, value)
-str(pre_mw)
+dframe <- data.frame(catg1, catg2, value)
+str(dframe)
 
 # structure after
-mw <- prepare_multiway(pre_mw)
+mw <- prepare_multiway(dframe)
 str(mw)
 }

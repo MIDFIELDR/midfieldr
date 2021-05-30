@@ -6,7 +6,7 @@
 \usage{
 subset_text(
   dframe,
-  pattern = NULL,
+  keep_text = NULL,
   ...,
   drop_text = NULL,
   select = NULL,
@@ -16,11 +16,11 @@ subset_text(
 \arguments{
 \item{dframe}{data frame to be subset}
 
-\item{pattern}{character vector of search patterns for retaining rows}
+\item{keep_text}{character vector of search keep_texts for retaining rows}
 
 \item{...}{not used, force later arguments to be used by name}
 
-\item{drop_text}{character vector of search patterns for dropping rows}
+\item{drop_text}{character vector of search keep_texts for dropping rows}
 
 \item{select}{character vector of column names, default all columns}
 
@@ -29,7 +29,7 @@ subset_text(
 \value{
 Data frame with the following properties:
 \itemize{
-    \item Rows matching elements of \code{pattern}
+    \item Rows matching elements of \code{keep_text}
     \item All columns or those specified by \code{select}
     \item Data frame extensions such as \code{tbl} or \code{data.table}
     are preserved
@@ -45,21 +45,21 @@ for matches.
 }
 \examples{
 # subset using keywords
-subset_text(cip, pattern = "engineering")
+subset_text(cip, keep_text = "engineering")
 
 # drop_text argument, when used, must be named
 subset_text(cip, "civil engineering", drop_text = "technology")
 
 # subset using numerical codes
-subset_text(cip, pattern = c("050125", "160501"))
+subset_text(cip, keep_text = c("050125", "160501"))
 
 # subset using regular expressions
-subset_text(cip, pattern = "^54")
-subset_text(cip, pattern = c("^1407", "^1408"))
+subset_text(cip, keep_text = "^54")
+subset_text(cip, keep_text = c("^1407", "^1408"))
 
 # select columns
 subset_text(cip,
-            pattern = "^54",
+            keep_text = "^54",
             select = c("cip4", "cip4name"))
 
 \dontrun{

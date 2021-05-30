@@ -49,11 +49,11 @@ NULL
 #' @examples
 #' # TBD
 add_term_timely<- function(dframe,
-                             ...,
-                             span = NULL,
-                             record = NULL,
-                             details = NULL,
-                             heuristic = NULL) {
+                           ...,
+                           span = NULL,
+                           record = NULL,
+                           details = NULL,
+                           heuristic = NULL) {
 
     wrapr::stop_if_dot_args(
         substitute(list(...)), "Arguments after ... must be named,"

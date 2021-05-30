@@ -11,14 +11,14 @@ NULL
 #' for matches.
 #'
 #' @param dframe data frame to be subset
-#' @param pattern character vector of search patterns for retaining rows
+#' @param keep_text character vector of search keep_texts for retaining rows
 #' @param ... not used, force later arguments to be used by name
-#' @param drop_text character vector of search patterns for dropping rows
+#' @param drop_text character vector of search keep_texts for dropping rows
 #' @param select character vector of column names, default all columns
 #' @param unique_row logical, remove duplicate rows, default TRUE
 #' @return Data frame with the following properties:
 #' \itemize{
-#'     \item Rows matching elements of \code{pattern}
+#'     \item Rows matching elements of \code{keep_text}
 #'     \item All columns or those specified by \code{select}
 #'     \item Data frame extensions such as \code{tbl} or \code{data.table}
 #'     are preserved
@@ -27,21 +27,21 @@ NULL
 #' @export
 #' @examples
 #' # subset using keywords
-#' subset_text(cip, pattern = "engineering")
+#' subset_text(cip, keep_text = "engineering")
 #'
 #' # drop_text argument, when used, must be named
 #' subset_text(cip, "civil engineering", drop_text = "technology")
 #'
 #' # subset using numerical codes
-#' subset_text(cip, pattern = c("050125", "160501"))
+#' subset_text(cip, keep_text = c("050125", "160501"))
 #'
 #' # subset using regular expressions
-#' subset_text(cip, pattern = "^54")
-#' subset_text(cip, pattern = c("^1407", "^1408"))
+#' subset_text(cip, keep_text = "^54")
+#' subset_text(cip, keep_text = c("^1407", "^1408"))
 #'
 #' # select columns
 #' subset_text(cip,
-#'             pattern = "^54",
+#'             keep_text = "^54",
 #'             select = c("cip4", "cip4name"))
 #'
 #' \dontrun{
@@ -49,7 +49,7 @@ NULL
 #' subset_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 #' }
 subset_text <- function(dframe,
-                        pattern = NULL,
+                        keep_text = NULL,
                         ...,
                         drop_text = NULL,
                         select = NULL,
@@ -57,7 +57,7 @@ subset_text <- function(dframe,
   wrapr::stop_if_dot_args(
     substitute(list(...)), "Arguments after ... must be named,"
   )
-  if (is.null(pattern) & is.null(drop_text)) {
+  if (is.null(keep_text) & is.null(drop_text)) {
     return(dframe)
   }
 
@@ -69,8 +69,8 @@ subset_text <- function(dframe,
   unique_row <- unique_row %||% TRUE
 
   # check arguments
-  if (!is.null(pattern)) {
-    assert_class(pattern, "character")
+  if (!is.null(keep_text)) {
+    assert_class(keep_text, "character")
   }
   if (!is.null(drop_text)) {
     assert_class(drop_text, "character")
@@ -91,7 +91,7 @@ subset_text <- function(dframe,
   # do the work
   DT <- filter_char_frame(
     data = DT,
-    pattern = pattern,
+    keep_text = keep_text,
     drop_text = drop_text
   )
 
@@ -102,14 +102,14 @@ subset_text <- function(dframe,
   }
 
   # message if a search term was not found
-  # data frame with as many columns as there are pattern terms
+  # data frame with as many columns as there are keep_text terms
   # as many rows as there are being searched in data
-  df <- data.frame(matrix("", nrow = nrow(DT), ncol = length(pattern)))
-  names(df) <- pattern
+  df <- data.frame(matrix("", nrow = nrow(DT), ncol = length(keep_text)))
+  names(df) <- keep_text
 
-  for (j in seq_along(pattern)) {
+  for (j in seq_along(keep_text)) {
     df[, j] <- apply(DT, 1, function(i) {
-      any(grepl(pattern[j], i, ignore.case = TRUE))
+      any(grepl(keep_text[j], i, ignore.case = TRUE))
     })
   }
 

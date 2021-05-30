@@ -15,12 +15,14 @@ NULL
 #' to factors and orders the factor levels by increasing medians of the
 #' quantitative response variable.
 #'
-#' The \code{data} argument, therefore, must have three columns only. One
+#' The \code{dframe} argument, therefore, must have three columns only. One
 #' column is a quantitative variable (type numeric) and two columns are
 #' categorical variables (type character or factor).
 #'
-#' @param data data frame of multiway data
-#'
+#' @param dframe data frame of multiway data
+#' @param ... not used, forces later arguments to be used by name
+#' @param details logical scalar to add columns reporting the medians on which
+#'        the order of the levels is based.
 #' @return \code{data.frame} with the following properties:
 #' \itemize{
 #'   \item Rows are not modified
@@ -38,27 +40,35 @@ NULL
 #' value <- c(0.22, 0.14, 0.43, 0.58, 0.81, 0.46, 0.15, 0.20)
 #'
 #' # structure before
-#' pre_mw <- data.frame(catg1, catg2, value)
-#' str(pre_mw)
+#' dframe <- data.frame(catg1, catg2, value)
+#' str(dframe)
 #'
 #' # structure after
-#' mw <- prepare_multiway(pre_mw)
+#' mw <- prepare_multiway(dframe)
 #' str(mw)
-prepare_multiway <- function(data = NULL) {
+prepare_multiway <- function(dframe, ..., details = NULL) {
+
+  wrapr::stop_if_dot_args(
+    substitute(list(...)), "Arguments after ... must be named,"
+  )
+
+  # default arguments if NULL
+  details <- details %||% FALSE
 
   # argument checks
-  assert_explicit(data)
-  assert_class(data, c("data.frame", "data.table"))
+  assert_explicit(dframe)
+  assert_class(dframe, c("data.frame", "data.table"))
+  assert_class(details, "logical")
 
-  if (ncol(data) != 3) {
-    stop("`data` must have exactly three columns")
+  if (ncol(dframe) != 3) {
+    stop("`dframe` must have exactly three columns")
   }
 
   # to preserve data.frame, data.table, or tibble
-  df_class <- get_dframe_class(data)
+  df_class <- get_dframe_class(dframe)
 
   # to manage multiway column classes
-  col_class <- get_col_class(data)
+  col_class <- get_col_class(dframe)
   mw_names <- col_class$col_name
   mw_class <- col_class$col_class
   # typical result
@@ -68,7 +78,7 @@ prepare_multiway <- function(data = NULL) {
   # 3   numeric       val
 
   # do the work in data.table
-  DT <- data.table::copy(data.table::as.data.table(data))
+  DT <- data.table::copy(data.table::as.data.table(dframe))
 
   # factors to characters
   if ("factor" %in% mw_class) {
@@ -87,7 +97,7 @@ prepare_multiway <- function(data = NULL) {
   mw_class <- col_class$col_class
   if (!identical(sort(mw_class), c("character", "character", "numeric"))) {
     stop(paste(
-      "`data` must have one numeric column",
+      "`dframe` must have one numeric column",
       "and two character columns"
     ))
   }
@@ -130,7 +140,12 @@ prepare_multiway <- function(data = NULL) {
       DT[, CAT1 := reorder(CAT1, MED1)]
       DT[, CAT2 := reorder(CAT2, MED2)]
 
-      DT <- DT[, .(CAT1, CAT2, VALUE)]
+      if(details) {
+        DT <- DT[, .(CAT1, CAT2, MED1, MED2, VALUE)]
+      } else{
+        DT <- DT[, .(CAT1, CAT2, VALUE)]
+      }
+
     }
   )
   # works by reference

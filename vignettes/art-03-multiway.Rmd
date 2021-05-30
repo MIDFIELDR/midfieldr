@@ -160,20 +160,38 @@ levels(DT[, race_sex])
 
 We would expect 4 $\times$ 9 = 36 observations. However, some rows are omitted to preserve confidentiality, leaving us with `r dim(DT)[1]` observations.
 
+The median values that determine the order of the levels can be obtained by using the `details` argument. 
+
+```{r}
+# return median stickiness by category
+DT_med <- prepare_multiway(DT, details = TRUE)
+
+# programs have a median stickiness across race-sex groups  
+DT_med[order(program, race_sex)]
+
+# race_sex groupings have a median stickiness across programs 
+DT_med[order(race_sex, program)]
+```
+
 ## Creating a multiway graph
 
 ```{r include = FALSE}
 asp_ratio <- asp_ratio_mw(DT, categories = c("program", "race_sex"))
 ```
 
-We use conventional ggplot2 functions to create the multiway graphs. By previously ordering the levels of the factors, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians. 
+We use conventional ggplot2 functions to create the multiway graphs. 
+
+By previously ordering the levels of the factors, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians. The panel medians are drawn as vertical dashed lines. 
 
 *Reminder:* These are practice data, not suitable for drawing inferences about student performance, i.e., not for research.
 
 ```{r fig1, fig.asp = asp_ratio[1]}
 # create one multiway graph
-ggplot(data = DT, aes(x = stick, y = race_sex)) +
+ggplot(data = DT_med, aes(x = stick, y = race_sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_vline(aes(xintercept = med_program), 
+             linetype = 2, 
+             color = "gray70") +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", 
        y = "", 
@@ -205,8 +223,11 @@ To create the *dual multiway* graph, we swap the roles of the rows and panels.
 
 ```{r fig2, fig.asp = asp_ratio[2]}
 # create the dual multiway graph
-ggplot(data = DT, aes(x = stick, y = program)) +
+ggplot(data = DT_med, aes(x = stick, y = program)) +
   facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
+  geom_vline(aes(xintercept = med_race_sex), 
+             linetype = 2, 
+             color = "gray70") +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", 
        y = "", 
@@ -340,16 +361,24 @@ library(midfieldr)
 library(data.table)
 library(ggplot2)
 
-# conditioning multiway data 
-pre_mw <- study_stickiness
-m_levels_program  <- length(unique(pre_mw$program))
-n_levels_race_sex <- length(unique(pre_mw$race_sex))
-
-ready_mw <- prepare_multiway(pre_mw)
+# data preparation
+DT <- copy(study_stickiness)
+class(DT[, program])
+class(DT[, race_sex])
+DT <- prepare_multiway(DT)
+class(DT[, program])
+levels(DT[, program])
+class(DT[, race_sex])
+levels(DT[, race_sex])
+DT_med <- prepare_multiway(DT, details = TRUE)
+DT_med[order(program, race_sex)]
+DT_med[order(race_sex, program)]
 
 # creating a multiway graph 
-ggplot(data = ready_mw, aes(x = stick, y = race_sex)) +
+ggplot(data = DT_med, aes(x = stick, y = race_sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_vline(aes(xintercept = med_program), 
+             linetype = 2) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", 
        y = "", 
@@ -357,8 +386,10 @@ ggplot(data = ready_mw, aes(x = stick, y = race_sex)) +
        caption = "Source: midfielddata")
 
 # creating the dual multiway graph
-ggplot(data = ready_mw, aes(x = stick, y = program)) +
+ggplot(data = DT_med, aes(x = stick, y = program)) +
   facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
+  geom_vline(aes(xintercept = med_race_sex), 
+             linetype = 2) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", 
        y = "", 
@@ -366,7 +397,7 @@ ggplot(data = ready_mw, aes(x = stick, y = program)) +
        caption = "Source: midfielddata")
 
 # creating a table for publication
-block_form <- copy(ready_mw)
+block_form <- copy(DT)
 block_form[, stick := round(stick, 2)]
 row_form <- copy(block_form)
 row_form[, race_sex := as.character(race_sex)]
@@ -383,6 +414,7 @@ setnames(row_form,
                  "Electrical", 
                  "Industrial", 
                  "Mechanical"))
+
 ```
 
 

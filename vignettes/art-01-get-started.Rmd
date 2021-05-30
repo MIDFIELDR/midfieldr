@@ -109,10 +109,10 @@ In this example, we assume we have already searched `cip` and found that the cod
 
 ```{r}
 # business
-business <- subset_text(cip, pattern = "^52", select = "cip6")
+business <- subset_text(cip, keep_text = "^52", select = "cip6")
 ```
 
-The `pattern` argument gives the character string to be matched; the optional  `select` argument indicates columns to select from `cip`. 
+The `keep_text` argument gives the character string to be matched; the optional  `select` argument indicates columns to select from `cip`. 
 
 ```{r}
 # add program label
@@ -126,7 +126,7 @@ Repeat for engineering
 
 ```{r}
 # engineering
-engineering <- subset_text(cip, pattern = "^14", select = "cip6")
+engineering <- subset_text(cip, keep_text = "^14", select = "cip6")
 
 # add program label
 engineering[, program := "Engineering"]
@@ -360,9 +360,9 @@ library(data.table)
 library(ggplot2)
 
 # gather programs
-business <- subset_text(cip, pattern = "^52", select = "cip6")
+business <- subset_text(cip, keep_text = "^52", select = "cip6")
 business <- business[, program := "Business"]
-engineering <- subset_text(cip, pattern = "^14", select = "cip6")
+engineering <- subset_text(cip, keep_text = "^14", select = "cip6")
 engineering[, program := "Engineering"]
 program_group <- rbindlist(list(engineering, business))
 group_cip <- program_group$cip6

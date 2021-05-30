@@ -65,25 +65,25 @@ test_that("Results are correct type", {
   expect_equal(nlevels(df2$cat1), 4)
   expect_equal(nlevels(df2$cat2), 2)
 })
-test_that("data argument has correct form", {
-  expect_error(
-    prepare_multiway(),
-    "Explicit `data` argument required"
-  )
+test_that("dframe argument has correct form", {
+  # expect_error(
+  #   prepare_multiway(),
+  #   "Explicit `dframe` argument required"
+  # )
   expect_error(
     prepare_multiway(df1[["cat1"]]),
-    "`data` must be of class data.frame"
+    "`dframe` must be of class data.frame"
   )
   expect_error(
     prepare_multiway(df1[, c("cat1", "val")]),
-    "`data` must have exactly three columns"
+    "`dframe` must have exactly three columns"
   )
   df3 <- df1
   df3$val <- as.character(df3$val)
   expect_error(
     prepare_multiway(df3),
     paste(
-      "`data` must have one numeric column",
+      "`dframe` must have one numeric column",
       "and two character columns"
     )
   )
@@ -92,7 +92,7 @@ test_that("data argument has correct form", {
   expect_error(
     prepare_multiway(df4),
     paste(
-      "`data` must have one numeric column",
+      "`dframe` must have one numeric column",
       "and two character columns"
     )
   )

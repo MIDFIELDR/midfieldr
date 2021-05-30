@@ -129,18 +129,18 @@ assert_required_column <- function(data, col) {
 
 # ------------------------------------------------------------------------
 
-#' Subset rows of character data frame by matching patterns
+#' Subset rows of character data frame by matching keep_texts
 #'
 #' @param data data frame of character variables
-#' @param pattern character vector of search patterns for retaining rows
-#' @param drop_text character vector of search patterns for dropping rows
+#' @param keep_text character vector of search keep_texts for retaining rows
+#' @param drop_text character vector of search keep_texts for dropping rows
 #' @noRd
-filter_char_frame <- function(data, pattern = NULL, drop_text = NULL) {
+filter_char_frame <- function(data, keep_text = NULL, drop_text = NULL) {
 
   # check arguments
   assert_explicit(data)
   assert_class(data, "data.frame")
-  assert_class(pattern, "character")
+  assert_class(keep_text, "character")
   assert_class(drop_text, "character")
 
   # to preserve data.frame, data.table, or tibble
@@ -148,10 +148,10 @@ filter_char_frame <- function(data, pattern = NULL, drop_text = NULL) {
   DT <- data.table::as.data.table(data)
 
   # filter to keep rows
-  if (length(pattern) > 0) {
-    pattern <- paste0(pattern, collapse = "|")
+  if (length(keep_text) > 0) {
+    keep_text <- paste0(keep_text, collapse = "|")
     DT <- DT[apply(DT, 1, function(i) {
-      any(grepl(pattern, i, ignore.case = TRUE))
+      any(grepl(keep_text, i, ignore.case = TRUE))
     }), ]
   }
 
