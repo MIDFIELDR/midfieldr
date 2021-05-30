@@ -13,7 +13,7 @@ NULL
 #' A typical midfieldr workflow might include:
 #'
 #' \itemize{
-#'   \item \code{filter_text()} search the CIP data set for program codes
+#'   \item \code{subset_text()} search the CIP data set for program codes
 #'   \item \code{prepare_fye_mi()} predict starting programs of
 #'       first-year-engineering (FYE) students
 #'   \item \code{subset_feasible()} subset students for 6-year

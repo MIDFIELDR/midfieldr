@@ -13,8 +13,8 @@ NULL
 #' available data should be excluded from analysis because the data
 #' have insufficient span to fairly assess the student's record.
 #'
-#' The data frame argument must include the \code{timely_limit} column
-#' obtained using the \code{add_timely_term()} function. Assessment is
+#' The data frame argument must include the \code{term_timely} column
+#' obtained using the \code{add_term_timely()} function. Assessment is
 #' considered fair if the student's timely completion term is no later than
 #' the last term in their institution's data.
 #'
@@ -44,7 +44,7 @@ NULL
 #' @export
 #' @examples
 #' # TBD
-eval_fair_record <- function(dframe,
+add_fair_record <- function(dframe,
                              ...,
                              record = NULL,
                              details = NULL) {
@@ -65,13 +65,13 @@ eval_fair_record <- function(dframe,
 
     # existence of required columns
     assert_required_column(dframe, "institution")
-    assert_required_column(dframe, "timely_limit")
+    assert_required_column(dframe, "term_timely")
     assert_required_column(record, "institution")
     assert_required_column(record, "term")
 
     # class of required columns
     assert_class(dframe[, institution], "character")
-    assert_class(dframe[, timely_limit], "character")
+    assert_class(dframe[, timely_term], "character")
     # to do: revise term in midfielddata to be character, for now:
     record[, term := as.character(term)]
     assert_class(record[, term], "character")
@@ -80,7 +80,7 @@ eval_fair_record <- function(dframe,
     # bind names due to nonstandard evaluation notes in R CMD check
     inst_limit <- NULL
     fair_record <- NULL
-    timely_limit <- NULL
+    term_timely<- NULL
 
     # prepare dframe, preserve class
     df_class <- get_dframe_class(dframe)
@@ -96,7 +96,7 @@ eval_fair_record <- function(dframe,
     dframe <- add_inst_limit(dframe, record = record)
 
     # assess the record length
-    dframe[, fair_record := fifelse(timely_limit <= inst_limit, TRUE, FALSE)]
+    dframe[, fair_record := fifelse(term_timely <= inst_limit, TRUE, FALSE)]
 
     # prepare return, order columns and rows
     set_colrow_order(dframe, key_names)

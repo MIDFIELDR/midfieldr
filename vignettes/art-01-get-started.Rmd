@@ -68,7 +68,7 @@ We use midfieldr functions to access midfielddata student records. We condition,
 midfieldr functions 
 
 - `add_race_sex()`
-- `filter_text()` 
+- `subset_text()` 
 - `prepare_multiway()` 
 - `subset_matriculant()`
 
@@ -99,17 +99,17 @@ Instructional programs are encoded by 6-digit CIP codes, included in midfieldr i
 ? cip
 ```
 
-We search `cip` for our program codes using `filter_text()`. You may view its help page by running
+We search `cip` for our program codes using `subset_text()`. You may view its help page by running
 
 ```
-? filter_text
+? subset_text
 ```
 
 In this example, we assume we have already searched `cip` and found that the codes we want start with 14 (engineering) and 52 (business). Our next step is to pull all 6-digit codes associated with these two programs. 
 
 ```{r}
 # business
-business <- filter_text(cip, keep_text = "^52", keep_col = "cip6")
+business <- subset_text(cip, keep_text = "^52", keep_col = "cip6")
 
 # add program label
 business[, program := "Business"]
@@ -122,7 +122,7 @@ Repeat for engineering
 
 ```{r}
 # engineering
-engineering <- filter_text(cip, keep_text = "^14", keep_col = "cip6")
+engineering <- subset_text(cip, keep_text = "^14", keep_col = "cip6")
 
 # add program label
 engineering[, program := "Engineering"]
@@ -338,9 +338,9 @@ library(data.table)
 library(ggplot2)
 
 # gather programs
-business <- filter_text(cip, keep_text = "^52", keep_col = "cip6")
+business <- subset_text(cip, keep_text = "^52", keep_col = "cip6")
 business <- business[, program := "Business"]
-engineering <- filter_text(cip, keep_text = "^14", keep_col = "cip6")
+engineering <- subset_text(cip, keep_text = "^14", keep_col = "cip6")
 engineering[, program := "Engineering"]
 program_group <- rbindlist(list(engineering, business))
 group_cip <- program_group$cip6

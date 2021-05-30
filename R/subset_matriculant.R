@@ -21,8 +21,8 @@ NULL
 #'           are preserved
 #'     \item Grouping structures are not preserved
 #' }
-#' @seealso \code{add_race_sex()}, \code{add_timely_term()},
-#'          \code{eval_fair_record()}, \code{eval_timely_completion()}
+#' @seealso \code{add_race_sex()}, \code{add_term_timely()},
+#'          \code{add_fair_record()}, \code{add_completion_timely()}
 #' @export
 #' @examples
 #' # TBD

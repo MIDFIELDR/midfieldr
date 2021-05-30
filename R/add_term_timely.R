@@ -2,7 +2,7 @@
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
-#' Add a column for the timely completion limit term
+#' Add a column for the limiting term for timely completion
 #'
 #' Given information about a student's academic path, determine the latest
 #' term for which program completion could be considered timely.
@@ -19,7 +19,7 @@ NULL
 #' completed 2 years of a program, so their span is reduced by 2 years.
 #'
 #' The adjusted span is added to their starting term; the result is the
-#' limiting term for timely completion reported in a \code{timely_limit}
+#' limiting term for timely completion reported in a \code{term_timely}
 #' column added to the data frame.
 #'
 #' If \code{details} is TRUE, additional column(s) that support the finding
@@ -39,7 +39,7 @@ NULL
 #' @return Data frame with the following properties:
 #' \itemize{
 #'     \item Rows are not modified
-#'     \item Column \code{timely_limit} is added, columns \code{term_i},
+#'     \item Column \code{term_timely} is added, columns \code{term_i},
 #'           \code{level_i}, and \code{adj_span} are added optionally
 #'     \item Data frame attributes \code{tbl} or \code{data.table}
 #'           are preserved
@@ -48,7 +48,7 @@ NULL
 #' @export
 #' @examples
 #' # TBD
-add_timely_term <- function(dframe,
+add_term_timely<- function(dframe,
                              ...,
                              span = NULL,
                              record = NULL,
@@ -70,7 +70,7 @@ add_timely_term <- function(dframe,
     delta <- NULL
     level_i <- NULL
     adj_span <- NULL
-    timely_limit <- NULL
+    term_timely <- NULL
 
     # check arguments
     assert_explicit(dframe)
@@ -100,7 +100,7 @@ add_timely_term <- function(dframe,
     # prepare dframe, preserve column order for return
     # omit existing column(s) that match column(s) we add
     setDT(dframe)
-    added_cols <- c("term_i", "level_i", "adj_span", "timely_limit")
+    added_cols <- c("term_i", "level_i", "adj_span", "term_timely")
     names_dframe <- colnames(dframe)
     key_names <- names_dframe[!names_dframe %chin% added_cols]
     dframe <- dframe[, key_names, with = FALSE]
@@ -138,8 +138,8 @@ add_timely_term <- function(dframe,
     DT[, adj_span := span - delta]
 
     # use adj_span to construct estimated term for timely-completion
-    DT[t == 1, timely_limit := paste0(yyyy + adj_span - 1, 3)]
-    DT[t  > 1, timely_limit := paste0(yyyy + adj_span    , 1)]
+    DT[t == 1, term_timely:= paste0(yyyy + adj_span - 1, 3)]
+    DT[t  > 1, term_timely:= paste0(yyyy + adj_span    , 1)]
 
     # remove intermediate variables
     DT[, c("yyyy", "t", "delta") := NULL]
@@ -153,7 +153,7 @@ add_timely_term <- function(dframe,
 
     # do we return the details variables?
     if (details == FALSE) { # omit the details
-        cols_we_want <- c(key_names, "timely_limit")
+        cols_we_want <- c(key_names, "term_timely")
         dframe <- dframe[, cols_we_want, with = FALSE]
     }
 

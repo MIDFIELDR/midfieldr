@@ -14,8 +14,8 @@ NULL
 #' Students whose completion is not timely should be grouped with the
 #' non-graduates.
 #'
-#' The data frame argument must include the \code{timely_limit} column
-#' obtained using the \code{add_timely_term()} function. Completion is
+#' The data frame argument must include the \code{term_timely} column
+#' obtained using the \code{add_term_timely()} function. Completion is
 #' considered timely if: 1) the student has completed a program; and 2) the
 #' degree term is no later than the timely completion limit.
 #'
@@ -33,7 +33,7 @@ NULL
 #' @return Data frame with the following properties:
 #' \itemize{
 #'     \item Rows are not modified
-#'     \item Column \code{timely_completion} is added, columns
+#'     \item Column \code{completion_timely} is added, columns
 #'      \code{completion} and \code{term_degree} are added optionally
 #'     \item Data frame attributes \code{tbl} or \code{data.table}
 #'           are preserved
@@ -42,7 +42,7 @@ NULL
 #' @export
 #' @examples
 #' # TBD
-eval_timely_completion <- function(dframe,
+add_completion_timely <- function(dframe,
                                    ...,
                                    record = NULL,
                                    details = NULL) {
@@ -63,7 +63,7 @@ eval_timely_completion <- function(dframe,
 
     # existence of required columns
     assert_required_column(dframe, "id")
-    assert_required_column(dframe, "timely_limit")
+    assert_required_column(dframe, "term_timely")
     assert_required_column(record, "id")
     # to do: revise term in midfielddata to be character, for now:
     record[, term_degree := as.character(term_degree)]
@@ -71,13 +71,13 @@ eval_timely_completion <- function(dframe,
 
     # class of required columns
     assert_class(dframe[, id], "character")
-    assert_class(dframe[, timely_limit], "character")
+    assert_class(dframe[, timely_term], "character")
     assert_class(record[, id], "character")
     assert_class(record[, term_degree], "character")
 
     # bind names due to nonstandard evaluation notes in R CMD check
-    timely_completion <- NULL
-    timely_limit <- NULL
+    completion_timely <- NULL
+    term_timely<- NULL
     completion <- NULL
 
     # prepare dframe, preserve class
@@ -86,7 +86,7 @@ eval_timely_completion <- function(dframe,
 
     # preserve columns not being overwritten and their order
     names_dframe <- colnames(dframe)
-    cols_we_add <- c("term_degree", "completion", "timely_completion")
+    cols_we_add <- c("term_degree", "completion", "completion_timely")
     key_names <- names_dframe[!names_dframe %chin% cols_we_add]
     dframe <- dframe[, key_names, with = FALSE]
 
@@ -107,7 +107,7 @@ eval_timely_completion <- function(dframe,
     dframe[, completion := fifelse(is.na(term_degree), FALSE, TRUE)]
 
     # evaluate, is the completion timely, TRUE / FALSE
-    dframe[, timely_completion := fifelse(term_degree <= timely_limit,
+    dframe[, completion_timely := fifelse(term_degree <= term_timely,
                                           TRUE, FALSE, na = FALSE)]
 
     # include or omit the details columns
@@ -115,7 +115,7 @@ eval_timely_completion <- function(dframe,
 
     # include or omit the details columns
     if (details == FALSE) {
-        cols_we_want <- c(key_names, "timely_completion")
+        cols_we_want <- c(key_names, "completion_timely")
         dframe <- dframe[, cols_we_want, with = FALSE]
     }
 
