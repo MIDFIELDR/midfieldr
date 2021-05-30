@@ -27,8 +27,8 @@ graphs.
 }
 \seealso{
 Other case-study-data: 
-\code{\link{study_enrollees}},
-\code{\link{study_stickiness}}
+\code{\link{study_stickiness}},
+\code{\link{study_students}}
 }
 \concept{case-study-data}
 \keyword{datasets}

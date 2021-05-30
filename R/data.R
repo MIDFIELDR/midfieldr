@@ -93,24 +93,24 @@
 #'
 #' Data frame of student IDs and program codes of students ever enrolled
 #' in the Civil, Electrical, Industrial, and Mechanical Engineering programs
-#' from midfielddata, including predicted starting programs for FYE students.
-#' Used in the case study developed in the vignettes.
+#' from midfielddata.
 #'
-#' The data have not been subset for timely completion, fair record length, or for
-#' having a matriculation record.
+#' No subsetting for other criteria such as timely completion or fair record length
+#' have been performed. Also excluded are the predicted starting majors of
+#' first-year-engineering (FYE) students.
 #'
-#' @format \code{data.table} with 12,409 rows and 2 columns keyed by
+#' @format \code{data.table} with 10,764 rows and 2 columns keyed by
 #' student ID. The variables are:
 #' \describe{
 #'   \item{id}{student ID}
 #'   \item{cip6}{6-digit program code}
 #' }
 #' @family case-study-data
-"study_enrollees"
+"study_students"
 
 # -------------------------------------------------------------------
 
-#' Case-study stickiness results
+#' Case-study program stickiness by race/ethnicity and sex
 #'
 #' Representative case study. Stickiness metric results for Civil, Electrical,
 #' Industrial, and Mechanical Engineering programs from midfielddata. Results

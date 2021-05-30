@@ -3,7 +3,7 @@
 \docType{data}
 \name{study_stickiness}
 \alias{study_stickiness}
-\title{Case-study stickiness results}
+\title{Case-study program stickiness by race/ethnicity and sex}
 \format{
 \code{data.table} with 31 rows and 3 columns keyed by
 program, race/ethnicity, and sex.
@@ -35,8 +35,8 @@ Data have also been subset to remove ambiguous levels of race/ethnicity.
 }
 \seealso{
 Other case-study-data: 
-\code{\link{study_enrollees}},
-\code{\link{study_programs}}
+\code{\link{study_programs}},
+\code{\link{study_students}}
 }
 \concept{case-study-data}
 \keyword{datasets}
