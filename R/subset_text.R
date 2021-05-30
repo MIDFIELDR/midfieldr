@@ -6,20 +6,20 @@ NULL
 #'
 #' Subset a data frame, retaining rows that match or partially match
 #' character strings. All columns retained unless specified by
-#' \code{keep_col}. The function uses \code{grepl()}, therefore
+#' \code{select}. The function uses \code{grepl()}, therefore
 #' non-character columns that can be coerced to character are also searched
 #' for matches.
 #'
-#' @param data data frame to be subset
-#' @param keep_text character vector of search patterns for retaining rows
+#' @param dframe data frame to be subset
+#' @param pattern character vector of search patterns for retaining rows
 #' @param ... not used, force later arguments to be used by name
 #' @param drop_text character vector of search patterns for dropping rows
-#' @param keep_col character vector of column names, default all columns
+#' @param select character vector of column names, default all columns
 #' @param unique_row logical, remove duplicate rows, default TRUE
 #' @return Data frame with the following properties:
 #' \itemize{
-#'     \item Rows matching elements of \code{keep_text}
-#'     \item Columns specified by \code{keep_col}
+#'     \item Rows matching elements of \code{pattern}
+#'     \item All columns or those specified by \code{select}
 #'     \item Data frame extensions such as \code{tbl} or \code{data.table}
 #'     are preserved
 #'     \item Grouping structures are not preserved
@@ -27,71 +27,71 @@ NULL
 #' @export
 #' @examples
 #' # subset using keywords
-#' subset_text(cip, keep_text = "engineering")
+#' subset_text(cip, pattern = "engineering")
 #'
 #' # drop_text argument, when used, must be named
 #' subset_text(cip, "civil engineering", drop_text = "technology")
 #'
 #' # subset using numerical codes
-#' subset_text(cip, keep_text = c("050125", "160501"))
+#' subset_text(cip, pattern = c("050125", "160501"))
 #'
 #' # subset using regular expressions
-#' subset_text(cip, keep_text = "^54")
-#' subset_text(cip, keep_text = c("^1407", "^1408"))
+#' subset_text(cip, pattern = "^54")
+#' subset_text(cip, pattern = c("^1407", "^1408"))
 #'
 #' # select columns
 #' subset_text(cip,
-#'             keep_text = "^54",
-#'             keep_col = c("cip4", "cip4name"))
+#'             pattern = "^54",
+#'             select = c("cip4", "cip4name"))
 #'
 #' \dontrun{
 #' # unsuccessful terms produce a message
 #' subset_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 #' }
-subset_text <- function(data,
-                        keep_text = NULL,
+subset_text <- function(dframe,
+                        pattern = NULL,
                         ...,
                         drop_text = NULL,
-                        keep_col = NULL,
+                        select = NULL,
                         unique_row = NULL) {
   wrapr::stop_if_dot_args(
     substitute(list(...)), "Arguments after ... must be named,"
   )
-  if (is.null(keep_text) & is.null(drop_text)) {
-    return(data)
+  if (is.null(pattern) & is.null(drop_text)) {
+    return(dframe)
   }
 
-  # check before names(data) below
-  assert_class(data, "data.frame")
+  # check before names(dframe) below
+  assert_class(dframe, "data.frame")
 
   # default optional arguments
-  keep_col <- keep_col %||% names(data)
+  select <- select %||% names(dframe)
   unique_row <- unique_row %||% TRUE
 
   # check arguments
-  if (!is.null(keep_text)) {
-    assert_class(keep_text, "character")
+  if (!is.null(pattern)) {
+    assert_class(pattern, "character")
   }
   if (!is.null(drop_text)) {
     assert_class(drop_text, "character")
   }
-  assert_class(keep_col, "character")
+  assert_class(select, "character")
   assert_class(unique_row, "logical")
 
   # bind names due to nonstandard evaluation notes in R CMD check
   # var <- NULL
 
   # to preserve data.frame, data.table, or tibble
-  df_class <- get_dframe_class(data)
-  DT <- copy(as.data.table(data))
+  df_class <- get_dframe_class(dframe)
+  DT <- copy(as.data.table(dframe))
 
   # subset columns first to reduce search time
-  DT <- DT[, keep_col, with = FALSE]
+  DT <- DT[, select, with = FALSE]
 
   # do the work
   DT <- filter_char_frame(
     data = DT,
-    keep_text = keep_text,
+    pattern = pattern,
     drop_text = drop_text
   )
 
@@ -102,14 +102,14 @@ subset_text <- function(data,
   }
 
   # message if a search term was not found
-  # data frame with as many columns as there are keep_text terms
+  # data frame with as many columns as there are pattern terms
   # as many rows as there are being searched in data
-  df <- data.frame(matrix("", nrow = nrow(DT), ncol = length(keep_text)))
-  names(df) <- keep_text
+  df <- data.frame(matrix("", nrow = nrow(DT), ncol = length(pattern)))
+  names(df) <- pattern
 
-  for (j in seq_along(keep_text)) {
+  for (j in seq_along(pattern)) {
     df[, j] <- apply(DT, 1, function(i) {
-      any(grepl(keep_text[j], i, ignore.case = TRUE))
+      any(grepl(pattern[j], i, ignore.case = TRUE))
     })
   }
 

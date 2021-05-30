@@ -109,8 +109,12 @@ In this example, we assume we have already searched `cip` and found that the cod
 
 ```{r}
 # business
-business <- subset_text(cip, keep_text = "^52", keep_col = "cip6")
+business <- subset_text(cip, pattern = "^52", select = "cip6")
+```
 
+The `pattern` argument gives the character string to be matched; the optional  `select` argument indicates columns to select from `cip`. 
+
+```{r}
 # add program label
 business[, program := "Business"]
 
@@ -122,7 +126,7 @@ Repeat for engineering
 
 ```{r}
 # engineering
-engineering <- subset_text(cip, keep_text = "^14", keep_col = "cip6")
+engineering <- subset_text(cip, pattern = "^14", select = "cip6")
 
 # add program label
 engineering[, program := "Engineering"]
@@ -160,13 +164,27 @@ We access the term data to obtain the IDs of all students ever enrolled in these
 cols_we_want <- c("id", "cip6", "institution")
 rows_we_want <- midfieldterms$cip6 %chin% group_cip
 DT <- midfieldterms[rows_we_want, ..cols_we_want]
+```
+
+Note for experienced users: The construction we use above for subsetting a data table, i.e., 
+
+```r
+    cols_we_want <- ...
+    rows_we_want <- ...
+    DT[rows_we_want, ..cols_we_want]
+```
+is not as concise as possible using data.table syntax, but it provides clarity for the less experienced R user. To continue, 
+
+```{r}
+# omit duplicate rows, if any
 DT <- unique(DT)
 
 # examine the result
 DT[order(id)]
 ```
 
-We update the IDs a number of times, so we extract them from the data table as a character vector.  
+
+We update the IDs a number of times, so we extract them from the data table as a character vector.  Syntax note: `DT[, unique(id)]` is the data.table equivalent to `unique(DT$id)` in base R. 
 
 ```{r}
 # initialize an ID vector
@@ -232,7 +250,11 @@ grouping_variables <- c("program", "sex", "race")
 
 # aggregate
 DT <- DT[, .(ever = .N), keyby = grouping_variables]
+```
 
+Like `by`, the `keyby` argument identifies the variables to group by, but `keyby` also orders the rows by the grouping variables. 
+
+```{r}
 # examine the result
 print(DT, nrows = 32)
 ```
@@ -338,9 +360,9 @@ library(data.table)
 library(ggplot2)
 
 # gather programs
-business <- subset_text(cip, keep_text = "^52", keep_col = "cip6")
+business <- subset_text(cip, pattern = "^52", select = "cip6")
 business <- business[, program := "Business"]
-engineering <- subset_text(cip, keep_text = "^14", keep_col = "cip6")
+engineering <- subset_text(cip, pattern = "^14", select = "cip6")
 engineering[, program := "Engineering"]
 program_group <- rbindlist(list(engineering, business))
 group_cip <- program_group$cip6

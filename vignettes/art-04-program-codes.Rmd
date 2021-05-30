@@ -170,15 +170,15 @@ print(some_programs[sample(1:300, 20)], nrows = 20)
 
 The variables in `cip` are all characters and `subset_text()` subsets a data frame using character search terms. The arguments are: 
 
-- `data` data frame to be subsetted
-- `keep_text` character vector of search patterns for retaining rows, not case-sensitive 
+- `dframe` data frame to be subsetted
+- `pattern` character vector of search patterns for retaining rows, not case-sensitive 
 - `drop_text` (optional) character vector of search patterns for dropping rows
 
 For example, filtering the CIP data for all programs containing the word "engineering" yields `r nrow(subset_text(cip, "engineering"))` observations. 
 
 ```{r}
 # filter basics
-subset_text(data = cip, keep_text = "engineering")
+subset_text(dframe = cip, pattern = "engineering")
 ```
 
 The first two argument names can be omitted. The optional `drop_text` argument, however, must be named if used.
@@ -234,7 +234,7 @@ subset_text(cip, "civil engineering", drop_text = "technology")
 
 ## Filter using numerical codes
 
-Suppose we want to study programs relating to German culture, language, and literature. Using  "german" for the `keep_text` value yields 
+Suppose we want to study programs relating to German culture, language, and literature. Using  "german" for the `pattern` value yields 
 
 ```{r results = "hide"}
 # example 2 filter using numerical codes
@@ -247,7 +247,7 @@ kable2html(sub_cip)
 ```
 <br>
 
-From the 6-digit program names we find only two that are of interest, German Studies (050125) and German Language and Literature (160501). We use a character vector to assign these two codes to the `keep_text` argument. 
+From the 6-digit program names we find only two that are of interest, German Studies (050125) and German Language and Literature (160501). We use a character vector to assign these two codes to the `pattern` argument. 
  
 ```r
 # character vector of search terms 
@@ -312,9 +312,9 @@ kable2html(sub_cip)
 
 ## When search terms cannot be found
 
-If the `keep_text` argument includes terms that cannot be found in the CIP data frame, the unsuccessful terms are identified in a message and the successful terms produce the usual output. 
+If the `pattern` argument includes terms that cannot be found in the CIP data frame, the unsuccessful terms are identified in a message and the successful terms produce the usual output. 
 
-For example, the following `keep_text` argument includes three search terms that are not present in the CIP data ("111111", "^55", and "Bogus") and two that are ("050125" and "160501").  
+For example, the following `pattern` argument includes three search terms that are not present in the CIP data ("111111", "^55", and "Bogus") and two that are ("050125" and "160501").  
 
 ```{r message = TRUE}
 # unsuccessful terms produce a message
@@ -334,26 +334,26 @@ subset_text(cip, c("111111", "Bogus", "^55"))
 
 `subset_text()` has two additional optional arguments. 
 
-- `keep_col` 
+- `select` 
 - `unique_row`  
 
-As seen in the previous examples, the default setting for `keep_col` returns all columns. We can select columns by name, 
+As seen in the previous examples, the default setting for `select` returns all columns. We can select columns by name, 
 
 ```{r}
 # selecting columns
 subset_text(cip,
-  keep_text = "^54",
-  keep_col = c("cip4", "cip4name")
+  pattern = "^54",
+  select = c("cip4", "cip4name")
 )
 ```
 
-The default setting for `unique_row` returns all rows. The default TRUE  argument removes duplicate rows after subsetting is complete. 
+The default setting for `unique_row` is TRUE and removes duplicate rows after subsetting is complete.
 
 ```{r}
 # remove duplicate rows
 subset_text(cip,
-  keep_text = "^54",
-  keep_col = c("cip4", "cip4name"),
+  pattern = "^54",
+  select = c("cip4", "cip4name"),
   unique_row = TRUE
 )
 ```
@@ -397,7 +397,7 @@ some_programs <- cip[, .(cip4name)]
 print(some_programs[sample(1:300, 20)], nrows = 20)
 
 # subset_text()
-subset_text(data = cip, keep_text = "engineering")
+subset_text(data = cip, pattern = "engineering")
 subset_text(cip, "civil engineering", drop_text = "technology")
 
 # filter using keywords
@@ -420,8 +420,8 @@ sub_cip <- subset_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 sub_cip
 
 # optional arguments
-subset_text(cip, "^54", keep_col = c("cip4", "cip4name"))
+subset_text(cip, "^54", select = c("cip4", "cip4name"))
 subset_text(cip, "^54", 
-            keep_col = c("cip4", "cip4name"), 
+            select = c("cip4", "cip4name"), 
             unique_row = TRUE)
 ```

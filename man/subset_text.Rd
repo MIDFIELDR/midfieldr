@@ -5,32 +5,32 @@
 \title{Subset rows by text}
 \usage{
 subset_text(
-  data,
-  keep_text = NULL,
+  dframe,
+  pattern = NULL,
   ...,
   drop_text = NULL,
-  keep_col = NULL,
+  select = NULL,
   unique_row = NULL
 )
 }
 \arguments{
-\item{data}{data frame to be subset}
+\item{dframe}{data frame to be subset}
 
-\item{keep_text}{character vector of search patterns for retaining rows}
+\item{pattern}{character vector of search patterns for retaining rows}
 
 \item{...}{not used, force later arguments to be used by name}
 
 \item{drop_text}{character vector of search patterns for dropping rows}
 
-\item{keep_col}{character vector of column names, default all columns}
+\item{select}{character vector of column names, default all columns}
 
 \item{unique_row}{logical, remove duplicate rows, default TRUE}
 }
 \value{
 Data frame with the following properties:
 \itemize{
-    \item Rows matching elements of \code{keep_text}
-    \item Columns specified by \code{keep_col}
+    \item Rows matching elements of \code{pattern}
+    \item All columns or those specified by \code{select}
     \item Data frame extensions such as \code{tbl} or \code{data.table}
     are preserved
     \item Grouping structures are not preserved
@@ -39,28 +39,28 @@ Data frame with the following properties:
 \description{
 Subset a data frame, retaining rows that match or partially match
 character strings. All columns retained unless specified by
-\code{keep_col}. The function uses \code{grepl()}, therefore
+\code{select}. The function uses \code{grepl()}, therefore
 non-character columns that can be coerced to character are also searched
 for matches.
 }
 \examples{
 # subset using keywords
-subset_text(cip, keep_text = "engineering")
+subset_text(cip, pattern = "engineering")
 
 # drop_text argument, when used, must be named
 subset_text(cip, "civil engineering", drop_text = "technology")
 
 # subset using numerical codes
-subset_text(cip, keep_text = c("050125", "160501"))
+subset_text(cip, pattern = c("050125", "160501"))
 
 # subset using regular expressions
-subset_text(cip, keep_text = "^54")
-subset_text(cip, keep_text = c("^1407", "^1408"))
+subset_text(cip, pattern = "^54")
+subset_text(cip, pattern = c("^1407", "^1408"))
 
 # select columns
 subset_text(cip,
-            keep_text = "^54",
-            keep_col = c("cip4", "cip4name"))
+            pattern = "^54",
+            select = c("cip4", "cip4name"))
 
 \dontrun{
 # unsuccessful terms produce a message
