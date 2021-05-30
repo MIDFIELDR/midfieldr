@@ -43,122 +43,6 @@
 
 # -------------------------------------------------------------------
 
-#' Case CIP codes
-#'
-#' Representative case study. A subset of the \code{cip} data set containing
-#' CIP codes and names for Civil, Electrical, Industrial,
-#' and Mechanical Engineering programs in
-#' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
-#'
-#' @format \code{data.table} with 12 rows and 6 columns keyed by the
-#' 6-digit CIP code. The variables are:
-#' \describe{
-#'   \item{cip6}{character 6-digit code representing "specific
-#'   instructional programs" (US National Center for Education Statistics)}
-#'   \item{cip6name}{character program name at the 6-digit level}
-#'   \item{cip4}{character 4-digit code (the first 4 digits of \code{cip6})
-#'   representing "intermediate groupings of programs that have
-#'   comparable content and objectives"}
-#'   \item{cip4name}{character program name at the 4-digit level}
-#'   \item{cip2}{character 2-digit code (the first 2 digits of \code{cip6})
-#'   representing "the most general groupings of related programs"}
-#'   \item{cip2name}{character program name at the 2-digit level}
-#' }
-#' @family case-study-data
-"rep_cip"
-
-# -------------------------------------------------------------------
-
-#' Case program group
-#'
-#' Representative case study. Six-digit CIP codes and custom program names
-#' for Civil, Electrical, Industrial, and Mechanical Engineering programs in
-#' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
-#'
-#' @format \code{data.table} with 12 rows and 2 columns keyed by the
-#' 6-digit CIP code. The variables are:
-#' \describe{
-#'   \item{cip6}{6-digit program code}
-#'   \item{program}{program name assigned for grouping, summarizing,
-#'   and joining}
-#' }
-#' @family case-study-data
-"rep_group"
-
-# -------------------------------------------------------------------
-
-#' Case student IDs ever enrolled
-#'
-#' Representative case study. Character vector of 12,600 student IDs
-#' ever enrolled in Civil, Electrical, Industrial, and Mechanical
-#' Engineering programs (including predicted starting programs for
-#' FYE students) in
-#' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
-#'
-#' @format character vector
-#' @family case-study-data
-"rep_ever"
-
-
-# -------------------------------------------------------------------
-
-#' Case student IDs starters
-#'
-#' Representative case study. Character vector of 8854 student IDs
-#' starting in Civil, Electrical, Industrial, and Mechanical
-#' Engineering programs (including predicted starting programs for
-#' FYE students) in
-#' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.
-#'
-#' @format character vector
-#' @family case-study-data
-"rep_start"
-
-
-
-# -------------------------------------------------------------------
-
-#' Case stickiness results
-#'
-#' Representative case study. Stickiness metric results for Civil, Electrical,
-#' Industrial, and Mechanical Engineering programs in
-#' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}. Results
-#' are grouped by program, race/ethnicity, and sex.
-#'
-#' @format \code{data.table} with 63 rows and 6 columns keyed by
-#' program, race/ethnicity, and sex. The variables are:
-#' \describe{
-#'  \item{program}{character, instructional programs selected for study}
-#'  \item{race}{character, student race/ethnicity}
-#'  \item{sex}{character, student sex}
-#'  \item{ever}{numerical, number of students ever enrolled in a program
-#'  and completion
-#'  is feasible}
-#'  \item{grad}{numerical, number of students graduating from the program}
-#'  \item{stick}{numerical, program stickiness, a persistence metric}
-#' }
-#' @family case-study-data
-"rep_stickiness"
-
-# -------------------------------------------------------------------
-
-#' Case stickiness multiway results
-#'
-#' Representative case study. Stickiness metric results with two categorical
-#' variables as factors with levels ordered by the median stickiness.
-#'
-#' @format \code{data.table} with 32 rows and 3 columns keyed by
-#' program, race/ethnicity, and sex. The variables are:
-#' \describe{
-#'  \item{program}{factor, instructional programs selected for study}
-#'  \item{race_sex}{factor, student race/ethnicity and sex}
-#'  \item{stick}{numerical, program stickiness, a persistence metric}
-#' }
-#' @family case-study-data
-"rep_stickiness_mw"
-
-# -------------------------------------------------------------------
-
 #' Predicted starting CIP for FYE students
 #'
 #' Predicted starting programs for all FYE students in midfielddata.
@@ -177,7 +61,81 @@
 #' ID. The variables are:
 #' \describe{
 #'    \item{id}{student ID}
-#'    \item{start}{starting program 6-digit CIP code}
+#'    \item{start}{6-digit CIP code of the predicted starting program}
 #'    }
 #' @family cip-data
 "fye_start"
+
+# -------------------------------------------------------------------
+
+#' Case-study program codes and names
+#'
+#' Data frame of 6-digit CIP codes and custom program names for Civil,
+#' Electrical, Industrial, and Mechanical Engineering programs
+#' from midfielddata. Used in the case study developed in the vignettes.
+#'
+#' Some program names have been shortened for convenience when creating
+#' graphs.
+#'
+#' @format \code{data.table} with 12 rows and 2 columns keyed by the
+#' 6-digit CIP code. The variables are:
+#' \describe{
+#'   \item{cip6}{6-digit program code}
+#'   \item{program}{program name assigned for grouping, summarizing,
+#'   and joining}
+#' }
+#' @family case-study-data
+"study_programs"
+
+# -------------------------------------------------------------------
+
+#' Case-study student IDs and programs
+#'
+#' Data frame of student IDs and program codes of students ever enrolled
+#' in the Civil, Electrical, Industrial, and Mechanical Engineering programs
+#' from midfielddata, including predicted starting programs for FYE students.
+#' Used in the case study developed in the vignettes.
+#'
+#' The data have not been subset for timely completion, fair record length, or for
+#' having a matriculation record.
+#'
+#' @format \code{data.table} with 12,409 rows and 2 columns keyed by
+#' student ID. The variables are:
+#' \describe{
+#'   \item{id}{student ID}
+#'   \item{cip6}{6-digit program code}
+#' }
+#' @family case-study-data
+"study_enrollees"
+
+# -------------------------------------------------------------------
+
+#' Case-study stickiness results
+#'
+#' Representative case study. Stickiness metric results for Civil, Electrical,
+#' Industrial, and Mechanical Engineering programs from midfielddata. Results
+#' are grouped by program, race/ethnicity, and sex. Used in the case study
+#' developed in the vignettes.
+#'
+#' Stickiness of a program is the ratio of the number of students graduating
+#' from a program to the number of students ever enrolled in the program.
+#'
+#' With a quantitative response value for each combination of levels of two
+#' categorical variables, these are multiway data. However, some responses
+#' are NA where observations didn't exist or were removed because of small
+#' population size.
+#'
+#' Data have also been subset to remove ambiguous levels of race/ethnicity.
+#'
+#' @format \code{data.table} with 31 rows and 3 columns keyed by
+#' program, race/ethnicity, and sex.
+#' \describe{
+#'  \item{program}{character, instructional programs selected for study}
+#'  \item{race_sex}{character, student race/ethnicity ans sex}
+#'  \item{stick}{numerical, program stickiness, a persistence metric}
+#' }
+#' @family case-study-data
+"study_stickiness"
+
+# -------------------------------------------------------------------
+

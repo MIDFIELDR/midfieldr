@@ -58,30 +58,27 @@ asp_ratio_mw <- function(data, categories) {
 
 ## Introduction 
 
-For initial exploration of possible stories in the data, the most common graph design used by the MIDFIELD team is the multiway graph. We examine multiway data here, in this initial tutorial, because as Wickham states [@Wickham+Grolemund:2017], 
+We take some time in this early tutorial to create some graphs because, as Wickham and Grolemund state [-@Wickham+Grolemund:2017], 
 
 >  Visualization is a great place to start with R programming, because the payoff is so clear; you get to make elegant and informative plots that help you understand the data. 
 
-Many persistence metrics can be organized as *multiway data* in which there is is one quantitative variable and two categorical variables. As explained by its inventor [@Cleveland:1993], 
+Many persistence metrics can be organized as *multiway data* in which there is is one quantitative variable and two categorical variables. As explained by  Cleveland [-@Cleveland:1993], 
 
 > ... the quantitative variable is a response, and the goal is to study how it depends on the categorical variables, which are factors. What distinguishes multiway data is the cross-classification of the categorical variables; there is a value of the response for each combination of levels of the two categorical variables. 
 
-The structure of multiway data is specific: one categorical variable with $m$ levels, an independent second categorical variable with $n$ levels, and a single  quantitative value associated with every combinations of levels of the two categories. Multiway data are typically organized as three columns with $m \times n$ rows. 
+The structure of multiway data is specific: a categorical variable with $m$ levels; an independent categorical variable with $n$ levels; and a single  quantitative value associated with every combinations of levels of the two categories. Multiway data are typically organized as three columns with $m \times n$ rows. 
 
-The categorical variables can also be considered keys to the values of the quantitative variable. 
-
-
-
+Note that "multiway" in our context refers to the data structure and graph design defined by Cleveland, not to the methods of analysis described by Kroonenberg [-@Kroonenberg:2008]. 
 
 ### This vignette uses
 
 midfieldr functions 
  
-- `prepare_multiway()` described in this vignette
+- `prepare_multiway()` 
 
 midfieldr built-in data sets 
 
-- `rep_stickiness` described in [Stickiness metric](stickiness_metric.html) 
+- `study_stickiness` 
 
 packages
 
@@ -95,105 +92,78 @@ library(ggplot2)
 options(datatable.print.nrows = 20, datatable.print.topn = 10)
 ```
 
+## Data preparation
 
+Longitudinal "stickiness" is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program [@Ohland+Orr+others:2012]. The stickiness metric is developed in a separate vignette---here we focus on graphing a result. 
 
+We computed stickiness for a case study in Civil, Electrical, Industrial, and Mechanical Engineering and saved the results as the data set, `study_stickiness`. You may view its help page by running
 
-## Conditioning multiway data 
+```
+? study_stickiness
+```
 
-Longitudinal "stickiness" is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program [@Ohland+Orr+others:2012]. 
+The data is loaded with midfieldr. 
 
-The stickiness data in this case study are available as the built-in data set `rep_stickiness`. 
 
 ```{r}
 # examine the built-in data 
-rep_stickiness
+study_stickiness
 ```
 
-You may view its help page by running
+Categorical variables are often provided as character variables. Without ordering the levels, the rows and panels of the multiway graph are ordered alphabetically---not the best design for gaining insights from the graph. 
 
-```
-? rep_stickiness
-```
-
-In general, data like these---ready to be conditioned as multiway data---can be considered "pre-multiway", denoted by the new name assignment, `pre_mw`. 
-
-```{r}
-# create a new memory location 
-pre_mw <- copy(rep_stickiness)
-```
-
-The quantitative variable is `stick` (stickiness); the first categorical variable is `program`; the second categorical variable is race/ethnicity/sex. We construct the `race_sex` variable by combining two columns. 
-
-```{r}
-# create a combined race/ethnicity/sex variable
-pre_mw[, race_sex := paste(race, sex)]
-```
-
-We select the three multiway variables, dropping the other columns. 
-
-```{r}
-# select columns
-columns_we_want <- c("program", "race_sex", "stick")
-pre_mw <- pre_mw[, ..columns_we_want]
-
-# examine the result
-pre_mw
-```
-
-To confirm that the data are in the form we want, 
-
-```{r}
-# number of levels of the two categories
-m_levels_program  <- length(unique(pre_mw$program))
-n_levels_race_sex <- length(unique(pre_mw$race_sex))
-
-# examine the result
-m_levels_program
-n_levels_race_sex
-```
-
-Thus we expect $m \times n$ = `r m_levels_program*n_levels_race_sex` observations. Instead, as described in the stickiness vignette, some rows are omitted to preserve confidentiality, leaving us with `r dim(pre_mw)[1]` observations.
-
-Now we apply `prepare_multiway()` to argument `pre_mw` to transform the data  such that the two categorical variables are factors with levels ordered by medians of the quantitative variable.  
-
-You may view its help page by running
+To condition the categorical variables, we use `prepare_multiway()` to convert them to factors with levels ordered by the median response values. To see its help page, run
 
 ```
 ? prepare_multiway()
 ```
 
-The result is ready for multiway graphing, so we name it `ready_mw`.
-
 ```{r}
-# convert pre-multiway data to multiway data 
-ready_mw <- prepare_multiway(pre_mw)
-
-# examine the result
-ready_mw
+# create a new memory location 
+DT <- copy(study_stickiness)
 ```
 
-Confirming that the categorical variables are factors. 
+The quantitative variable is `stick` (stickiness); the first categorical variable is `program`; the second categorical variable is race/ethnicity/sex. Before conditioning, the categorical variables are characters, 
 
 ```{r}
-# categorical variables are factors
-class(ready_mw$program)
-class(ready_mw$race_sex)
+# first category is a character
+class(DT[, program])
+
+# second category is a character
+class(DT[, race_sex])
 ```
 
-Confirming that the factor levels are ordered by stickiness (not alphabetically).
+We process the data frame
 
 ```{r}
-# the levels are from low stickiness to high stickiness
-levels(ready_mw$program)
-levels(ready_mw$race_sex)
+# condition as multiway data
+DT <- prepare_multiway(DT)
 ```
 
+No change to the row and column structure, 
 
+```{r}
+DT
+```
+
+But the categorical variables are now factors, with levels ordered non-alphabetically. `program` is now a factor with `r nlevels(DT[, program])` levels; `race_sex` is a factor with `r nlevels(DT[, race_sex])` levels. 
+
+```{r}
+# first category is now a factor
+class(DT[, program])
+levels(DT[, program])
+
+# second category is now a factor
+class(DT[, race_sex])
+levels(DT[, race_sex])
+```
+
+We would expect 4 $\times$ 9 = 36 observations. However, some rows are omitted to preserve confidentiality, leaving us with `r dim(DT)[1]` observations.
 
 ## Creating a multiway graph
 
 ```{r include = FALSE}
-asp_ratio <- asp_ratio_mw(ready_mw, categories = c("program", "race_sex"))
+asp_ratio <- asp_ratio_mw(DT, categories = c("program", "race_sex"))
 ```
 
 We use conventional ggplot2 functions to create the multiway graphs. By previously ordering the levels of the factors, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians. 
@@ -202,7 +172,7 @@ We use conventional ggplot2 functions to create the multiway graphs. By previous
 
 ```{r fig1, fig.asp = asp_ratio[1]}
 # create one multiway graph
-ggplot(data = ready_mw, aes(x = stick, y = race_sex)) +
+ggplot(data = DT, aes(x = stick, y = race_sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", 
@@ -235,7 +205,7 @@ To create the *dual multiway* graph, we swap the roles of the rows and panels.
 
 ```{r fig2, fig.asp = asp_ratio[2]}
 # create the dual multiway graph
-ggplot(data = ready_mw, aes(x = stick, y = program)) +
+ggplot(data = DT, aes(x = stick, y = program)) +
   facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(x = "Stickiness", 
@@ -249,19 +219,16 @@ This graph permits a direct visual comparison of how stickiness varies by major 
 
 Both multiways should be created for discussion. Usually one or the other will convey a more compelling visual story that gets included in the published findings. 
 
+## Tabulating multiway data
 
+Data tables are useful in discussions with one's research team and are often included in publications for readers who want to see the values underlying the data graphics. 
 
-
-## Data tables: two formats
-
-Data tables are useful in discussions with one's research team and are often included in publications for editors or reviewers who want to see the values underlying the data graphics. 
-
-Our data are currently laid out in "block record" form [@Mount+Zumel:2019:fluid-data], where the `race_sex` key and the `program` key are both in columns and the finding is in the last column. This layout is also called "tidy data"  [@Wickham+Grolemund:2017]. 
+Our example data are currently laid out in "block record" form [@Mount+Zumel:2019:fluid-data], where the `race_sex` key and the `program` key are both in columns and the response, stickiness, is in the last column. This layout is also called "tidy data"  [@Wickham+Grolemund:2017]. 
 
 The graphing package we use, ggplot2, is designed to work most effectively with block-record data, thus the block-record ("long") form is the default layout in midfieldr. 
 
 ```{r echo = FALSE}
-temp <- copy(ready_mw)
+temp <- copy(DT)
 temp[, stick := round(stick, 2)]
 kable2html(temp, caption = "Table 1: Stickiness (block records)")
 ```
@@ -287,7 +254,7 @@ setnames(temp,
 kable2html(temp, caption = "Table 2: Stickiness (row records)")
 ```
 
-Depending on your software background, you may have encountered a block-record/row-record transformation using any of these function pairs---a list adapted from [@Mount+Zumel:2019:fluid-data]. 
+Depending on your software background, you may have encountered a block-record/row-record transformation using any of these function pairs---a list adapted from [@Mount+Zumel:2019:fluid-data].  
 
 - pivot / anti-pivot or crosstab / shred (databases)
 - pivot_to_rowrecs / unpivot_to_blocks (cdata)
@@ -297,21 +264,17 @@ Depending on your software background, you may have encountered a block-record/r
 - dcast / melt (data.table)
 - cast / melt (reshape2)
 
-
-
-## Creating a table for publication
-
-The first thing to do before tabulating is to limit the significant figures of floating-point numbers. 
+In our example, we use `dcast()` from the data.table package to reshape the data for publication. We start by limiting the significant figures of floating-point numbers. 
 
 ```{r}
 # create a new memory location  
-block_form <- copy(ready_mw)
+block_form <- copy(DT)
 
 # limit significant digits
 block_form[, stick := round(stick, 2)]
 ```
 
-Before reshaping, we convert factors to characters so that the rows and columns are in alphabetical order after reshaping. 
+If in the final result we want rows and columns ordered alphabetically, we convert factors to characters. 
 
 ```{r}
 # create a new memory location 
@@ -327,9 +290,12 @@ row_form[, program := as.character(program)]
 ```{r}
 # reshape
 row_form <- dcast(row_form, race_sex ~ program, value.var = "stick")
+
+# examine the result
+row_form
 ```
 
-Lastly, we edit the new column names. 
+For publication, we edit the new column names. 
 
 ```{r}
 # edit column names
@@ -349,10 +315,14 @@ setnames(row_form,
 row_form
 ```
 
+This result is the source for Table 2, repeated below. 
 
-This result is the source for Table 2 above.
+```{r echo = FALSE}
+kable2html(temp, caption = "Table 2: Stickiness (row records)")
+```
 
-Other good tools for reshaping are provided in packages such as cdata  [@Mount+Zumel:2020:cdata], tidyr [@Wickham+Henry:2020:tidyr], and `reshape()` in base R. 
+
+Other good tools for reshaping are provided in packages such as `reshape()` in base R, cdata  [@Mount+Zumel:2020:cdata], and tidyr [@Wickham+Henry:2020:tidyr]. 
 
 ## References
 
@@ -371,10 +341,10 @@ library(data.table)
 library(ggplot2)
 
 # conditioning multiway data 
-pre_mw <- rep_stickiness
-pre_mw[, race_sex := paste(race, sex)]
-columns_we_want <- c("program", "race_sex", "stick")
-pre_mw <- pre_mw[, ..columns_we_want]
+pre_mw <- study_stickiness
+m_levels_program  <- length(unique(pre_mw$program))
+n_levels_race_sex <- length(unique(pre_mw$race_sex))
+
 ready_mw <- prepare_multiway(pre_mw)
 
 # creating a multiway graph 

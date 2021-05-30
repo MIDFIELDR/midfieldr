@@ -9,7 +9,7 @@
 ID. The variables are:
 \describe{
    \item{id}{student ID}
-   \item{start}{starting program 6-digit CIP code}
+   \item{start}{6-digit CIP code of the predicted starting program}
    }
 }
 \usage{

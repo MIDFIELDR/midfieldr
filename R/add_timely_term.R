@@ -48,7 +48,7 @@ NULL
 #' @export
 #' @examples
 #' # TBD
-add_timely_limit <- function(dframe,
+add_timely_term <- function(dframe,
                              ...,
                              span = NULL,
                              record = NULL,

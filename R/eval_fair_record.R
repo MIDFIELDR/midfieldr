@@ -14,7 +14,7 @@ NULL
 #' have insufficient span to fairly assess the student's record.
 #'
 #' The data frame argument must include the \code{timely_limit} column
-#' obtained using the \code{add_timely_limit()} function. Assessment is
+#' obtained using the \code{add_timely_term()} function. Assessment is
 #' considered fair if the student's timely completion term is no later than
 #' the last term in their institution's data.
 #'

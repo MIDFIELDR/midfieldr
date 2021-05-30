@@ -39,7 +39,7 @@ Students whose completion is not timely should be grouped with the
 non-graduates.
 
 The data frame argument must include the \code{timely_limit} column
-obtained using the \code{add_timely_limit()} function. Completion is
+obtained using the \code{add_timely_term()} function. Completion is
 considered timely if: 1) the student has completed a program; and 2) the
 degree term is no later than the timely completion limit.
 
