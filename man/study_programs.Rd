@@ -21,6 +21,10 @@ Data frame of 6-digit CIP codes and custom program names for Civil,
 Electrical, Industrial, and Mechanical Engineering programs
 from midfielddata. Used in the case study developed in the vignettes.
 }
+\details{
+Some program names have been shortened for convenience when creating
+graphs.
+}
 \seealso{
 Other case-study-data: 
 \code{\link{study_enrollees}},

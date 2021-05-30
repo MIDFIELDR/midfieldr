@@ -23,7 +23,7 @@ are grouped by program, race/ethnicity, and sex. Used in the case study
 developed in the vignettes.
 }
 \details{
-Stickiness of a program is the ratio of the number of student graduating
+Stickiness of a program is the ratio of the number of students graduating
 from a program to the number of students ever enrolled in the program.
 
 With a quantitative response value for each combination of levels of two
