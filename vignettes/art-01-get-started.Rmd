@@ -68,9 +68,9 @@ We use midfieldr functions to access midfielddata student records. We condition,
 midfieldr functions 
 
 - `add_race_sex()`
-- `subset_text()` 
+- `filter_text()` 
 - `prepare_multiway()` 
-- `subset_matriculant()`
+- `filter_degree_seeking()`
 
 midfieldr built-in data sets 
 
@@ -99,17 +99,17 @@ Instructional programs are encoded by 6-digit CIP codes, included in midfieldr i
 ? cip
 ```
 
-We search `cip` for our program codes using `subset_text()`. You may view its help page by running
+We search `cip` for our program codes using `filter_text()`. You may view its help page by running
 
 ```
-? subset_text
+? filter_text
 ```
 
 In this example, we assume we have already searched `cip` and found that the codes we want start with 14 (engineering) and 52 (business). Our next step is to pull all 6-digit codes associated with these two programs. 
 
 ```{r}
 # business
-business <- subset_text(cip, keep_text = "^52", select = "cip6")
+business <- filter_text(cip, keep_text = "^52", select = "cip6")
 ```
 
 The `keep_text` argument gives the character string to be matched; the optional  `select` argument indicates columns to select from `cip`. 
@@ -126,7 +126,7 @@ Repeat for engineering
 
 ```{r}
 # engineering
-engineering <- subset_text(cip, keep_text = "^14", select = "cip6")
+engineering <- filter_text(cip, keep_text = "^14", select = "cip6")
 
 # add program label
 engineering[, program := "Engineering"]
@@ -198,11 +198,11 @@ Examining the result shows a vector with `r length(DT[, unique(id)])` unique IDs
 str(latest_id)
 ```
 
-We use `subset_matriculant()` to limit our research to students for whom we have matriculation information. The default matriculation record is `midfieldstudents`.
+We use `filter_degree_seeking()` to limit our research to students in the `student` data base as these are the degree-seeking students. The default database is `midfieldstudents`.
 
 ```{r}
 # limit study to students with matriculation data
-DT <- subset_matriculant(DT)
+DT <- filter_degree_seeking(DT)
 
 # examine the result
 DT
@@ -360,9 +360,9 @@ library(data.table)
 library(ggplot2)
 
 # gather programs
-business <- subset_text(cip, keep_text = "^52", select = "cip6")
+business <- filter_text(cip, keep_text = "^52", select = "cip6")
 business <- business[, program := "Business"]
-engineering <- subset_text(cip, keep_text = "^14", select = "cip6")
+engineering <- filter_text(cip, keep_text = "^14", select = "cip6")
 engineering[, program := "Engineering"]
 program_group <- rbindlist(list(engineering, business))
 group_cip <- program_group$cip6
@@ -373,7 +373,7 @@ rows_we_want <- midfieldterms$cip6 %chin% group_cip
 DT <- midfieldterms[rows_we_want, ..cols_we_want]
 DT <- unique(DT)
 latest_id <- DT[, unique(id)]
-DT <- subset_matriculant(DT)
+DT <- filter_degree_seeking(DT)
 latest_id <- DT[, unique(id)]
 
 # join grouping variables

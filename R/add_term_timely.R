@@ -31,7 +31,7 @@ NULL
 #' @param ... not used, forces later arguments to be used by name
 #' @param span numeric scalar, number of years to define timely completion,
 #'        default 6 years
-#' @param record data frame of term attributes, default midfieldterms
+#' @param dbase data frame of term attributes, default midfieldterms
 #' @param details logical scalar to add columns reporting information on
 #'        which the timely completion limit is based, default FALSE
 #' @param heuristic not used, placeholder for future alternative methods of
@@ -51,7 +51,7 @@ NULL
 add_term_timely<- function(dframe,
                            ...,
                            span = NULL,
-                           record = NULL,
+                           dbase = NULL,
                            details = NULL,
                            heuristic = NULL) {
 
@@ -61,7 +61,7 @@ add_term_timely<- function(dframe,
 
     # default arguments if NULL
     span <- span %||% 6
-    record <- record %||% midfielddata::midfieldterms
+    dbase <- dbase %||% midfielddata::midfieldterms
     details <- details %||% FALSE
     heuristic <- NULL
 
@@ -76,23 +76,23 @@ add_term_timely<- function(dframe,
     assert_explicit(dframe)
     assert_class(dframe, "data.frame")
     assert_class(span, "numeric")
-    assert_class(record, "data.frame")
+    assert_class(dbase, "data.frame")
     assert_class(details, "logical")
     # heuristic ignored for now
 
     # existence of required columns
     assert_required_column(dframe, "id")
-    assert_required_column(record, "id")
-    assert_required_column(record, "term")
-    assert_required_column(record, "level")
+    assert_required_column(dbase, "id")
+    assert_required_column(dbase, "term")
+    assert_required_column(dbase, "level")
 
     # class of required columns
     assert_class(dframe[, id], "character")
-    assert_class(record[, id], "character")
+    assert_class(dbase[, id], "character")
     # to do: revise term in midfielddata to be character, for now:
-    record[, term := as.character(term)]
-    assert_class(record[, term], "character")
-    assert_class(record[, level], "character")
+    dbase[, term := as.character(term)]
+    assert_class(dbase[, term], "character")
+    assert_class(dbase[, level], "character")
 
     # preserve original data.frame, data.table, or tibble class
     df_class <- get_dframe_class(dframe)
@@ -105,11 +105,11 @@ add_term_timely<- function(dframe,
     key_names <- names_dframe[!names_dframe %chin% added_cols]
     dframe <- dframe[, key_names, with = FALSE]
 
-    # work on the record data
+    # work on the dbase data
     # get student's first term and level
     cols_we_want <- c("id", "term", "level")
-    rows_we_want <- record$id %chin% dframe$id
-    DT <- record[rows_we_want, cols_we_want, with = FALSE]
+    rows_we_want <- dbase$id %chin% dframe$id
+    DT <- dbase[rows_we_want, cols_we_want, with = FALSE]
 
     # separate term encoding
     DT[, `:=` (yyyy = as.numeric(substr(term, 1, 4)),

@@ -1,6 +1,12 @@
 
 ## midfieldr 1.0.0.9012 / 2021-06
 
+- rename functions and arguments   
+- add `filter_degree_seeking()` for retaining only those students in the `student` database  
+- add `filter_text()` for subsetting CIP data  
+- add `add_data_sufficient()` for length of data record sufficient to asses graduation in span years  
+- update `fye_start` data set with new imputed values based on improved analysis of students in  FYE programs  
+- revie vignettes to address the above changes  
 
 
 ## midfieldr 1.0.0.9011 / 2021-05
@@ -9,9 +15,7 @@
 - reorganize vignettes  
 - add function `add_race_sex()` 
 - add function `add_timely_limit()`
-- add function `eval_fair_record()` to replace `subset_feasible()` 
 - add function `eval_timely_completion()` 
-- add function `subset_matriculant()`
 
 ## midfieldr 1.0.0.9010 / 2021-05
 

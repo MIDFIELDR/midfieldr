@@ -2,7 +2,7 @@
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
-#' Add a column to evaluate record length for fair assessment
+#' Add a column to evaluate data sufficiency for fair assessment
 #'
 #' A logical variable is added to a data frame indicating whether the data
 #' available from an institution have sufficient span to fairly assess a
@@ -18,7 +18,7 @@ NULL
 #' considered fair if the student's timely completion term is no later than
 #' the last term in their institution's data.
 #'
-#' If the result in the \code{fair_record} column is TRUE, then then student
+#' If the result in the \code{data_sufficient} column is TRUE, then then student
 #' should be included in the research. If FALSE, the student should be excluded
 #' before calculating any persistence metric involving program completion
 #' (graduation). The function performs no subsetting.
@@ -29,13 +29,13 @@ NULL
 #'
 #' @param dframe data frame
 #' @param ... not used, forces later arguments to be used by name
-#' @param record data frame of term attributes, default midfieldterms
+#' @param dbase data frame of term attributes, default midfieldterms
 #' @param details logical scalar to add columns reporting information on
 #'        which the evaluation is based, default FALSE
 #' @return Data frame with the following properties:
 #' \itemize{
 #'     \item Rows are not modified
-#'     \item Column \code{fair_record} is added, column \code{inst_limit}
+#'     \item Column \code{data_sufficient} is added, column \code{inst_limit}
 #'           is added optionally
 #'     \item Data frame attributes \code{tbl} or \code{data.table}
 #'           are preserved
@@ -44,9 +44,9 @@ NULL
 #' @export
 #' @examples
 #' # TBD
-add_fair_record <- function(dframe,
+add_data_sufficient <- function(dframe,
                              ...,
-                             record = NULL,
+                             dbase = NULL,
                              details = NULL) {
 
     wrapr::stop_if_dot_args(
@@ -55,31 +55,31 @@ add_fair_record <- function(dframe,
 
     # explicit or NULL arguments
     assert_explicit(dframe)
-    record  <- record  %||% midfielddata::midfieldterms
+    dbase  <- dbase  %||% midfielddata::midfieldterms
     details <- details %||% FALSE
 
     # check argument class
     assert_class(dframe, "data.frame")
-    assert_class(record, "data.frame")
+    assert_class(dbase, "data.frame")
     assert_class(details, "logical")
 
     # existence of required columns
     assert_required_column(dframe, "institution")
     assert_required_column(dframe, "term_timely")
-    assert_required_column(record, "institution")
-    assert_required_column(record, "term")
+    assert_required_column(dbase, "institution")
+    assert_required_column(dbase, "term")
 
     # class of required columns
     assert_class(dframe[, institution], "character")
     assert_class(dframe[, term_timely], "character")
     # to do: revise term in midfielddata to be character, for now:
-    record[, term := as.character(term)]
-    assert_class(record[, term], "character")
-    assert_class(record[, institution], "character")
+    dbase[, term := as.character(term)]
+    assert_class(dbase[, term], "character")
+    assert_class(dbase[, institution], "character")
 
     # bind names due to nonstandard evaluation notes in R CMD check
     inst_limit <- NULL
-    fair_record <- NULL
+    data_sufficient <- NULL
     term_timely<- NULL
 
     # prepare dframe, preserve class
@@ -88,22 +88,22 @@ add_fair_record <- function(dframe,
 
     # preserve columns not being overwritten and their order
     names_dframe <- colnames(dframe)
-    cols_we_add <- c("inst_limit", "fair_record")
+    cols_we_add <- c("inst_limit", "data_sufficient")
     key_names <- names_dframe[!names_dframe %chin% cols_we_add]
     dframe <- dframe[, key_names, with = FALSE]
 
-    # from record, get institution last term
-    dframe <- add_inst_limit(dframe, record = record)
+    # from dbase, get institution last term
+    dframe <- add_inst_limit(dframe, dbase = dbase)
 
-    # assess the record length
-    dframe[, fair_record := fifelse(term_timely <= inst_limit, TRUE, FALSE)]
+    # assess the data sufficiency
+    dframe[, data_sufficient := fifelse(term_timely <= inst_limit, TRUE, FALSE)]
 
     # prepare return, order columns and rows
     set_colrow_order(dframe, key_names)
 
     # include or omit the details columns
     if (details == FALSE) {
-        cols_we_want <- c(key_names, "fair_record")
+        cols_we_want <- c(key_names, "data_sufficient")
         dframe <- dframe[, cols_we_want, with = FALSE]
     }
 

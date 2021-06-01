@@ -5,10 +5,10 @@
 \alias{fye_start}
 \title{Predicted starting CIP for FYE students}
 \format{
-\code{data.table} with 5992 rows and 2 columns keyed by student
+\code{data.table} with 752 rows and 2 columns keyed by student
 ID. The variables are:
 \describe{
-   \item{id}{student ID}
+   \item{id}{midfielddata student id}
    \item{start}{6-digit CIP code of the predicted starting program}
    }
 }
@@ -16,18 +16,26 @@ ID. The variables are:
 fye_start
 }
 \description{
-Predicted starting programs for all FYE students in midfielddata.
-Includes degree-granting programs that substitute for
-first-year-engineering (FYE) programs when needed for a persistence
-metric, e.g., graduation rate.
+Degree-granting, engineering CIP codes that can be substituted for
+First-Year-Engineering (FYE) codes when required by a persistence metric.
 }
 \details{
-Starting programs for FYE students are the engineering programs we
-predict they would have declared had they not been required to enroll in
-FYE. The prediction is based on their first post-FYE program and an
-imputation suitable for multiple categorical variables using the mice
+FYE is different from other non-degree-granting CIP designations such
+as "undecided" or "undeclared". FYE students are neither undecided nor
+undeclared---they have been accepted by their institutions as
+Engineering majors.
+
+Starting programs in \code{fye_start} are the engineering programs we
+predict that students would have declared had they not been required to
+enroll in FYE. The prediction is based on their first post-FYE program and
+an imputation suitable for multiple categorical variables using the mice
 package. The predictor variables are institution, race, and sex. The
-predicted variable is the 6-digit CIP code.
+predicted variable is the 6-digit CIP code of a degree-granting engineering
+program at their institution.
+
+\code{fye_start} holds only for the practice data in
+midfielddata---these values cannot be commingled with the research
+database available to MIDFIELD partners.
 }
 \seealso{
 Other cip-data: 

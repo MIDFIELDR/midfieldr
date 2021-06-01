@@ -8,7 +8,7 @@ add_term_timely(
   dframe,
   ...,
   span = NULL,
-  record = NULL,
+  dbase = NULL,
   details = NULL,
   heuristic = NULL
 )
@@ -21,7 +21,7 @@ add_term_timely(
 \item{span}{numeric scalar, number of years to define timely completion,
 default 6 years}
 
-\item{record}{data frame of term attributes, default midfieldterms}
+\item{dbase}{data frame of term attributes, default midfieldterms}
 
 \item{details}{logical scalar to add columns reporting information on
 which the timely completion limit is based, default FALSE}

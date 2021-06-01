@@ -22,12 +22,12 @@ NULL
 #' If \code{details} is TRUE, additional column(s) that support the finding
 #' are returned as well. Here the extra columns are \code{completion}
 #' indicating by TRUE/FALSE if the student completed their program and
-#' \code{term_degree} from the degree attributes record giving the term in
+#' \code{term_degree} from the degree attributes database giving the term in
 #' which the first degree(s), if any, was earned.
 #'
 #' @param dframe data frame
 #' @param ... not used, forces later arguments to be used by name
-#' @param record data frame of degree attributes, default midfielddegrees
+#' @param dbase data frame of degree attributes, default midfielddegrees
 #' @param details logical scalar to add columns reporting information on
 #'        which the evaluation is based, default FALSE
 #' @return Data frame with the following properties:
@@ -44,7 +44,7 @@ NULL
 #' # TBD
 add_completion_timely <- function(dframe,
                                    ...,
-                                   record = NULL,
+                                   dbase = NULL,
                                    details = NULL) {
 
     wrapr::stop_if_dot_args(
@@ -53,27 +53,27 @@ add_completion_timely <- function(dframe,
 
     # explicit or NULL arguments
     assert_explicit(dframe)
-    record  <- record  %||% midfielddata::midfielddegrees
+    dbase  <- dbase  %||% midfielddata::midfielddegrees
     details <- details %||% FALSE
 
     # check argument class
     assert_class(dframe, "data.frame")
-    assert_class(record, "data.frame")
+    assert_class(dbase, "data.frame")
     assert_class(details, "logical")
 
     # existence of required columns
     assert_required_column(dframe, "id")
     assert_required_column(dframe, "term_timely")
-    assert_required_column(record, "id")
+    assert_required_column(dbase, "id")
     # to do: revise term in midfielddata to be character, for now:
-    record[, term_degree := as.character(term_degree)]
-    assert_required_column(record, "term_degree")
+    dbase[, term_degree := as.character(term_degree)]
+    assert_required_column(dbase, "term_degree")
 
     # class of required columns
     assert_class(dframe[, id], "character")
     assert_class(dframe[, term_timely], "character")
-    assert_class(record[, id], "character")
-    assert_class(record[, term_degree], "character")
+    assert_class(dbase[, id], "character")
+    assert_class(dbase[, term_degree], "character")
 
     # bind names due to nonstandard evaluation notes in R CMD check
     completion_timely <- NULL
@@ -92,8 +92,8 @@ add_completion_timely <- function(dframe,
 
     # degree term
     cols_we_want <- c("id", "term_degree")
-    rows_we_want <- record$id %chin% dframe$id
-    DT <- record[rows_we_want, cols_we_want, with = FALSE]
+    rows_we_want <- dbase$id %chin% dframe$id
+    DT <- dbase[rows_we_want, cols_we_want, with = FALSE]
 
     # keep the first degree term
     setorderv(DT, c("id", "term_degree"))

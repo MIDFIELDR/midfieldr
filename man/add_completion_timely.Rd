@@ -4,14 +4,14 @@
 \alias{add_completion_timely}
 \title{Add a column to evaluate timely completion}
 \usage{
-add_completion_timely(dframe, ..., record = NULL, details = NULL)
+add_completion_timely(dframe, ..., dbase = NULL, details = NULL)
 }
 \arguments{
 \item{dframe}{data frame}
 
 \item{...}{not used, forces later arguments to be used by name}
 
-\item{record}{data frame of degree attributes, default midfielddegrees}
+\item{dbase}{data frame of degree attributes, default midfielddegrees}
 
 \item{details}{logical scalar to add columns reporting information on
 which the evaluation is based, default FALSE}
@@ -46,7 +46,7 @@ degree term is no later than the timely completion limit.
 If \code{details} is TRUE, additional column(s) that support the finding
 are returned as well. Here the extra columns are \code{completion}
 indicating by TRUE/FALSE if the student completed their program and
-\code{term_degree} from the degree attributes record giving the term in
+\code{term_degree} from the degree attributes database giving the term in
 which the first degree(s), if any, was earned.
 }
 \examples{

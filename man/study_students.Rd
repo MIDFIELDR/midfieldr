@@ -21,9 +21,9 @@ in the Civil, Electrical, Industrial, and Mechanical Engineering programs
 from midfielddata.
 }
 \details{
-No subsetting for other criteria such as timely completion or fair record length
-have been performed. Also excluded are the predicted starting majors of
-first-year-engineering (FYE) students.
+No subsetting for other criteria such as timely completion or data
+sufficiency have been performed. Also excluded are the predicted starting
+majors of first-year-engineering (FYE) students.
 }
 \seealso{
 Other case-study-data: 

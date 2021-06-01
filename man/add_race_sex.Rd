@@ -4,14 +4,14 @@
 \alias{add_race_sex}
 \title{Add columns for race/ethnicity and sex}
 \usage{
-add_race_sex(dframe, ..., record = NULL)
+add_race_sex(dframe, ..., dbase = NULL)
 }
 \arguments{
 \item{dframe}{data frame}
 
 \item{...}{not used, forces later arguments to be used by name}
 
-\item{record}{data frame of student attributes, default midfieldstudents}
+\item{dbase}{data frame of student attributes, default midfieldstudents}
 }
 \value{
 Data frame with the following properties:
@@ -24,7 +24,7 @@ Data frame with the following properties:
 }
 }
 \description{
-Add variables \code{race} and \code{sex} from \code{record} to a data
+Add variables \code{race} and \code{sex} from \code{dbase} to a data
 frame, using \code{id} is the join-by variable.
 }
 \details{
