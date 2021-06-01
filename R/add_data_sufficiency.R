@@ -18,7 +18,7 @@ NULL
 #' considered fair if the student's timely completion term is no later than
 #' the last term in their institution's data.
 #'
-#' If the result in the \code{data_sufficient} column is TRUE, then then student
+#' If the result in the \code{data_sufficiency} column is TRUE, then then student
 #' should be included in the research. If FALSE, the student should be excluded
 #' before calculating any persistence metric involving program completion
 #' (graduation). The function performs no subsetting.
@@ -35,7 +35,7 @@ NULL
 #' @return Data frame with the following properties:
 #' \itemize{
 #'     \item Rows are not modified
-#'     \item Column \code{data_sufficient} is added, column \code{inst_limit}
+#'     \item Column \code{data_sufficiency} is added, column \code{inst_limit}
 #'           is added optionally
 #'     \item Data frame attributes \code{tbl} or \code{data.table}
 #'           are preserved
@@ -44,7 +44,7 @@ NULL
 #' @export
 #' @examples
 #' # TBD
-add_data_sufficient <- function(dframe,
+add_data_sufficiency <- function(dframe,
                              ...,
                              dbase = NULL,
                              details = NULL) {
@@ -79,7 +79,7 @@ add_data_sufficient <- function(dframe,
 
     # bind names due to nonstandard evaluation notes in R CMD check
     inst_limit <- NULL
-    data_sufficient <- NULL
+    data_sufficiency <- NULL
     term_timely<- NULL
 
     # prepare dframe, preserve class
@@ -88,7 +88,7 @@ add_data_sufficient <- function(dframe,
 
     # preserve columns not being overwritten and their order
     names_dframe <- colnames(dframe)
-    cols_we_add <- c("inst_limit", "data_sufficient")
+    cols_we_add <- c("inst_limit", "data_sufficiency")
     key_names <- names_dframe[!names_dframe %chin% cols_we_add]
     dframe <- dframe[, key_names, with = FALSE]
 
@@ -96,14 +96,14 @@ add_data_sufficient <- function(dframe,
     dframe <- add_inst_limit(dframe, dbase = dbase)
 
     # assess the data sufficiency
-    dframe[, data_sufficient := fifelse(term_timely <= inst_limit, TRUE, FALSE)]
+    dframe[, data_sufficiency := fifelse(term_timely <= inst_limit, TRUE, FALSE)]
 
     # prepare return, order columns and rows
     set_colrow_order(dframe, key_names)
 
     # include or omit the details columns
     if (details == FALSE) {
-        cols_we_want <- c(key_names, "data_sufficient")
+        cols_we_want <- c(key_names, "data_sufficiency")
         dframe <- dframe[, cols_we_want, with = FALSE]
     }
 

@@ -21,7 +21,7 @@ NULL
 #'     \item Grouping structures are not preserved
 #' }
 #' @seealso \code{add_race_sex()}, \code{add_term_timely()},
-#'          \code{add_data_sufficient()}, \code{add_completion_timely()}
+#'          \code{add_data_sufficiency()}, \code{add_completion_timely()}
 #' @export
 #' @examples
 #' # TBD

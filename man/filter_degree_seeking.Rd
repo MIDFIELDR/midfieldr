@@ -35,5 +35,5 @@ retains all rows of \code{dframe} with matching IDs.
 }
 \seealso{
 \code{add_race_sex()}, \code{add_term_timely()},
-         \code{add_data_sufficient()}, \code{add_completion_timely()}
+         \code{add_data_sufficiency()}, \code{add_completion_timely()}
 }

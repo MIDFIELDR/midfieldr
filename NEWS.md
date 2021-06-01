@@ -4,8 +4,7 @@
 - rename functions and arguments   
 - add `filter_degree_seeking()` for retaining only those students in the `student` database  
 - add `filter_text()` for subsetting CIP data  
-- add `add_data_sufficient()` for length of data record sufficient to asses graduation in span years  
-- update `fye_start` data set with new imputed values based on improved analysis of students in  FYE programs  
+- add `add_data_sufficiency()` for length of data record sufficient to asses graduation in span years  cy- update `fye_start` data set with new imputed values based on improved analysis of students in  FYE programs  
 - revie vignettes to address the above changes  
 
 
