@@ -47,11 +47,10 @@
 
 
 <meta property="og:title" content="Subset rows by text — filter_text" />
-<meta property="og:description" content="Subset a data frame, retaining rows that match or partially match
+<meta property="og:description" content="Subset a data frame, retain unique rows that match or partially match
 character strings. All columns retained unless specified by
-keep_col. The function uses grepl(), therefore
-non-character columns that can be coerced to character are also searched
-for matches." />
+select. Uses grepl(), therefore non-character columns
+that can be coerced to character are also searched for matches." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -113,10 +112,16 @@ for matches." />
       <a href="../articles/art-03-multiway.html">Multiway graphs and tables</a>
     </li>
     <li>
-      <a href="../articles/art-04-case-selection.html">Case selection</a>
+      <a href="../articles/art-04-program-codes.html">Program codes</a>
     </li>
     <li>
-      <a href="../articles/art-05-timely-completion.html">Timely completion</a>
+      <a href="../articles/art-05-fye-programs.html">FYE programs</a>
+    </li>
+    <li>
+      <a href="../articles/art-06-case-selection.html">Case selection</a>
+    </li>
+    <li>
+      <a href="../articles/art-07-timely-completion.html">Timely completion</a>
     </li>
   </ul>
 </li>
@@ -159,32 +164,24 @@ for matches." />
     </div>
 
     <div class="ref-description">
-    <p>Subset a data frame, retaining rows that match or partially match
+    <p>Subset a data frame, retain unique rows that match or partially match
 character strings. All columns retained unless specified by
-<code>keep_col</code>. The function uses <code><a href='https://rdrr.io/r/base/grep.html'>grepl()</a></code>, therefore
-non-character columns that can be coerced to character are also searched
-for matches.</p>
+<code>select</code>. Uses <code><a href='https://rdrr.io/r/base/grep.html'>grepl()</a></code>, therefore non-character columns
+that can be coerced to character are also searched for matches.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>filter_text</span><span class='op'>(</span>
-  <span class='va'>data</span>,
-  keep_text <span class='op'>=</span> <span class='cn'>NULL</span>,
-  <span class='va'>...</span>,
-  drop_text <span class='op'>=</span> <span class='cn'>NULL</span>,
-  keep_col <span class='op'>=</span> <span class='cn'>NULL</span>,
-  unique_row <span class='op'>=</span> <span class='cn'>NULL</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>dframe</span>, keep_text <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span>, drop_text <span class='op'>=</span> <span class='cn'>NULL</span>, select <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>data frame to be subset</p></td>
+      <th>dframe</th>
+      <td><p>data frame to be searched</p></td>
     </tr>
     <tr>
       <th>keep_text</th>
-      <td><p>character vector of search patterns for retaining rows</p></td>
+      <td><p>character vector of search text for retaining rows</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -192,31 +189,30 @@ for matches.</p>
     </tr>
     <tr>
       <th>drop_text</th>
-      <td><p>character vector of search patterns for dropping rows</p></td>
+      <td><p>character vector of search text for dropping rows</p></td>
     </tr>
     <tr>
-      <th>keep_col</th>
-      <td><p>character vector of column names, default all columns</p></td>
-    </tr>
-    <tr>
-      <th>unique_row</th>
-      <td><p>logical, remove duplicate rows, default TRUE</p></td>
+      <th>select</th>
+      <td><p>character vector of column names to search and return,
+default all columns</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Data frame with the following properties:</p><ul>
-<li><p>Rows matching elements of <code>keep_text</code></p></li>
-<li><p>Columns specified by <code>keep_col</code></p></li>
-<li><p>Data frame extensions such as <code>tbl</code> or <code>data.table</code>
-    are preserved</p></li>
+    <p>A <code>data.table</code> with the following properties:</p><ul>
+<li><p>Unique rows matching elements of <code>keep_text</code></p></li>
+<li><p>All columns or those specified by <code>select</code></p></li>
 <li><p>Grouping structures are not preserved</p></li>
 </ul>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>To improve the speed of the search, columns are subset by the values in
+the<code>select</code> argument before the text search starts.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># filter using keywords</span>
+    <pre class="examples"><div class='input'><span class='co'># subset using keywords</span>
 <span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, keep_text <span class='op'>=</span> <span class='st'>"engineering"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;      cip2                                         cip2name cip4
 #&gt;   1:   14                                      Engineering 1401
@@ -225,11 +221,11 @@ for matches.</p>
 #&gt;   4:   14                                      Engineering 1403
 #&gt;   5:   14                                      Engineering 1404
 #&gt;  ---                                                           
-#&gt; 117:   15                           Engineering Technology 1516
-#&gt; 118:   15                           Engineering Technology 1599
-#&gt; 119:   29                            Military Technologies 2903
-#&gt; 120:   29                            Military Technologies 2903
-#&gt; 121:   51 Health Professions and Related Clinical Sciences 5123
+#&gt; 115:   15                           Engineering Technology 1516
+#&gt; 116:   15                           Engineering Technology 1599
+#&gt; 117:   29                            Military Technologies 2903
+#&gt; 118:   29                            Military Technologies 2903
+#&gt; 119:   51 Health Professions and Related Clinical Sciences 5123
 #&gt;                                                     cip4name   cip6
 #&gt;   1:                                    Engineering, General 140101
 #&gt;   2:                                    Engineering, General 140102
@@ -237,11 +233,11 @@ for matches.</p>
 #&gt;   4: Agricultural, Biological Engineering and Bioengineering 140301
 #&gt;   5:                               Architectural Engineering 140401
 #&gt;  ---                                                               
-#&gt; 117:                                          Nanotechnology 151601
-#&gt; 118:    Engineering-Related Technologies, Technicians, Other 159999
-#&gt; 119:                               Military Applied Sciences 290301
-#&gt; 120:                               Military Applied Sciences 290303
-#&gt; 121:              Rehabilitation and Therapeutic Professions 512312
+#&gt; 115:                                          Nanotechnology 151601
+#&gt; 116:    Engineering-Related Technologies, Technicians, Other 159999
+#&gt; 117:                               Military Applied Sciences 290301
+#&gt; 118:                               Military Applied Sciences 290303
+#&gt; 119:              Rehabilitation and Therapeutic Professions 512312
 #&gt;                                                              cip6name
 #&gt;   1:                                             Engineering, General
 #&gt;   2:                                                  Pre-Engineering
@@ -249,12 +245,12 @@ for matches.</p>
 #&gt;   4:          Agricultural, Biological Engineering and Bioengineering
 #&gt;   5:                                        Architectural Engineering
 #&gt;  ---                                                                 
-#&gt; 117:                                                   Nanotechnology
-#&gt; 118:             Engineering Related Technologies, Technicians, Other
-#&gt; 119:                                       Combat Systems Engineering
-#&gt; 120:                                            Engineering Acoustics
-#&gt; 121: Assistive, Augmentative Technology and Rehabiliation Engineering</div><div class='input'>
-<span class='co'># drop_text argument must be named</span>
+#&gt; 115:                                                   Nanotechnology
+#&gt; 116:             Engineering Related Technologies, Technicians, Other
+#&gt; 117:                                       Combat Systems Engineering
+#&gt; 118:                                            Engineering Acoustics
+#&gt; 119: Assistive, Augmentative Technology and Rehabiliation Engineering</div><div class='input'>
+<span class='co'># drop_text argument, when used, must be named</span>
 <span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, <span class='st'>"civil engineering"</span>, drop_text <span class='op'>=</span> <span class='st'>"technology"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    cip2    cip2name cip4          cip4name   cip6
 #&gt; 1:   14 Engineering 1408 Civil Engineering 140801
@@ -270,7 +266,7 @@ for matches.</p>
 #&gt; 4: Transportation and Highway Engineering
 #&gt; 5:            Water Resources Engineering
 #&gt; 6:               Civil Engineering, Other</div><div class='input'>
-<span class='co'># filter using numerical codes</span>
+<span class='co'># subset using numerical codes</span>
 <span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, keep_text <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"050125"</span>, <span class='st'>"160501"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    cip2                                            cip2name cip4
 #&gt; 1:   05 Area, Ethnic, Cultural and Gender and Group Studies 0501
@@ -281,7 +277,7 @@ for matches.</p>
 #&gt;                          cip6name
 #&gt; 1:                 German Studies
 #&gt; 2: German Language and Literature</div><div class='input'>
-<span class='co'># filter using regular expressions</span>
+<span class='co'># subset using regular expressions</span>
 <span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, keep_text <span class='op'>=</span> <span class='st'>"^54"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    cip2 cip2name cip4 cip4name   cip6
 #&gt; 1:   54  History 5401  History 540101
@@ -326,9 +322,17 @@ for matches.</p>
 <span class='co'># select columns</span>
 <span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>,
             keep_text <span class='op'>=</span> <span class='st'>"^54"</span>,
-            keep_col <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"cip4"</span>, <span class='st'>"cip4name"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    cip4 cip4name
-#&gt; 1: 5401  History</div><div class='input'>
+            select <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"cip6"</span>, <span class='st'>"cip4name"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;      cip6 cip4name
+#&gt; 1: 540101  History
+#&gt; 2: 540102  History
+#&gt; 3: 540103  History
+#&gt; 4: 540104  History
+#&gt; 5: 540105  History
+#&gt; 6: 540106  History
+#&gt; 7: 540107  History
+#&gt; 8: 540108  History
+#&gt; 9: 540199  History</div><div class='input'>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># unsuccessful terms produce a message</span>
 <span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"050125"</span>, <span class='st'>"111111"</span>, <span class='st'>"160501"</span>, <span class='st'>"Bogus"</span>, <span class='st'>"^55"</span><span class='op'>)</span><span class='op'>)</span>

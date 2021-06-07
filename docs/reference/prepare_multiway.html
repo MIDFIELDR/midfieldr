@@ -111,10 +111,16 @@ columns of the data frame are otherwise unaffected." />
       <a href="../articles/art-03-multiway.html">Multiway graphs and tables</a>
     </li>
     <li>
-      <a href="../articles/art-04-case-selection.html">Case selection</a>
+      <a href="../articles/art-04-program-codes.html">Program codes</a>
     </li>
     <li>
-      <a href="../articles/art-05-timely-completion.html">Timely completion</a>
+      <a href="../articles/art-05-fye-programs.html">FYE programs</a>
+    </li>
+    <li>
+      <a href="../articles/art-06-case-selection.html">Case selection</a>
+    </li>
+    <li>
+      <a href="../articles/art-07-timely-completion.html">Timely completion</a>
     </li>
   </ul>
 </li>
@@ -162,39 +168,59 @@ with levels ordered by medians of the quantitative variable. Rows and
 columns of the data frame are otherwise unaffected.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>prepare_multiway</span><span class='op'>(</span>data <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>prepare_multiway</span><span class='op'>(</span><span class='va'>dframe</span>, <span class='va'>...</span>, details <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
+      <th>dframe</th>
       <td><p>data frame of multiway data</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>not used, forces later arguments to be used by name</p></td>
+    </tr>
+    <tr>
+      <th>details</th>
+      <td><p>logical scalar to add columns reporting the medians on which
+the order of the levels is based, default FALSE</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>data.frame</code> with the following properties:</p><ul>
+    <p>A <code>data.table</code> with the following properties:</p><ul>
 <li><p>Rows are not modified</p></li>
 <li><p>Quantitative column is not modified</p></li>
 <li><p>Categorical columns are factors with levels ordered by
-median quantitative values</p></li>
+        median quantitative values</p></li>
 <li><p>Grouping structures, if any, are not preserved</p></li>
-<li><p>Data frame extensions <code>tbl</code> or <code>data.table</code>
-  are preserved</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>In multiway data, there is a single quantitative value (or response)
 for every combination of levels of two categorical variables.
-<code>order_multiway()</code> converts the columns of categorical variables
+<code>prepare_multiway()</code> converts the columns of categorical variables
 to factors and orders the factor levels by increasing medians of the
 quantitative response variable.</p>
-<p>The <code>data</code> argument, therefore, must have three columns only. One
+<p>The <code>dframe</code> argument, therefore, must have three columns only. One
 column is a quantitative variable (type numeric) and two columns are
 categorical variables (type character or factor).</p>
+<p>Note that "multiway" in our context refers to the data structure and graph
+design defined by Cleveland (1993)
+, not to
+the methods of analysis described by
+Kroonenberg (2008)
+.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Cleveland WS (1993).
+<em>Visualizing Data</em>.
+Hobart Press, Summit, NJ.<br /><br /> Kroonenberg PM (2008).
+<em>Applied Multiway Data Analysis</em>.
+Wiley, Hoboken, NJ.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='va'>catg1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"urban"</span>, <span class='st'>"rural"</span>, <span class='st'>"suburb"</span>, <span class='st'>"village"</span><span class='op'>)</span>, each <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
@@ -202,16 +228,16 @@ categorical variables (type character or factor).</p>
 <span class='va'>value</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.22</span>, <span class='fl'>0.14</span>, <span class='fl'>0.43</span>, <span class='fl'>0.58</span>, <span class='fl'>0.81</span>, <span class='fl'>0.46</span>, <span class='fl'>0.15</span>, <span class='fl'>0.20</span><span class='op'>)</span>
 
 <span class='co'># structure before</span>
-<span class='va'>pre_mw</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='va'>catg1</span>, <span class='va'>catg2</span>, <span class='va'>value</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>pre_mw</span><span class='op'>)</span>
+<span class='va'>dframe</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='va'>catg1</span>, <span class='va'>catg2</span>, <span class='va'>value</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>dframe</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 'data.frame':	8 obs. of  3 variables:
 #&gt;  $ catg1: chr  "urban" "urban" "rural" "rural" ...
 #&gt;  $ catg2: chr  "men" "women" "men" "women" ...
 #&gt;  $ value: num  0.22 0.14 0.43 0.58 0.81 0.46 0.15 0.2</div><div class='input'>
 <span class='co'># structure after</span>
-<span class='va'>mw</span> <span class='op'>&lt;-</span> <span class='fu'>prepare_multiway</span><span class='op'>(</span><span class='va'>pre_mw</span><span class='op'>)</span>
+<span class='va'>mw</span> <span class='op'>&lt;-</span> <span class='fu'>prepare_multiway</span><span class='op'>(</span><span class='va'>dframe</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>mw</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 'data.frame':	8 obs. of  3 variables:
+</div><div class='output co'>#&gt; Classes 'data.table' and 'data.frame':	8 obs. of  3 variables:
 #&gt;  $ catg1: Factor w/ 4 levels "village","urban",..: 2 2 3 3 4 4 1 1
 #&gt;   ..- attr(*, "scores")= num [1:4(1d)] 0.505 0.635 0.18 0.175
 #&gt;   .. ..- attr(*, "dimnames")=List of 1
@@ -220,7 +246,8 @@ categorical variables (type character or factor).</p>
 #&gt;   ..- attr(*, "scores")= num [1:2(1d)] 0.325 0.33
 #&gt;   .. ..- attr(*, "dimnames")=List of 1
 #&gt;   .. .. ..$ : chr [1:2] "men" "women"
-#&gt;  $ value: num  0.22 0.14 0.43 0.58 0.81 0.46 0.15 0.2</div></pre>
+#&gt;  $ value: num  0.22 0.14 0.43 0.58 0.81 0.46 0.15 0.2
+#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
