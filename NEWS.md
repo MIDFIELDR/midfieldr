@@ -5,9 +5,9 @@
 - rename functions and arguments   
 - add `filter_by_key()`   
 - add `filter_text()` for subsetting CIP data  
-- add `add_data_sufficiency()` for length of data record sufficient to asses graduation in span years  cy- update `fye_start` data set with new imputed values based on improved analysis of students in  FYE programs  
-- revise vignettes to address the above changes  
-
+- add `add_data_sufficiency()` for length of data record sufficient to asses graduation in span years
+- update `fye_start` data set with new imputed values based on improved analysis of students in  FYE programs  
+- revise vignettes 1--6 to address the above changes  
 
 ## midfieldr 1.0.0.9011 / 2021-05
 
