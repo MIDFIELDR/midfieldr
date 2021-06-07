@@ -1,11 +1,12 @@
 
 ## midfieldr 1.0.0.9012 / 2021-06
 
+- edit to use revised names of data table in midfielddata: student, course, term, and degree
 - rename functions and arguments   
-- add `filter_degree_seeking()` for retaining only those students in the `student` database  
+- add `filter_by_key()`   
 - add `filter_text()` for subsetting CIP data  
 - add `add_data_sufficiency()` for length of data record sufficient to asses graduation in span years  cy- update `fye_start` data set with new imputed values based on improved analysis of students in  FYE programs  
-- revie vignettes to address the above changes  
+- revise vignettes to address the above changes  
 
 
 ## midfieldr 1.0.0.9011 / 2021-05

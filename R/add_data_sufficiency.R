@@ -2,14 +2,15 @@
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
-#' Add a column to evaluate data sufficiency for fair assessment
+#' Add a column to evaluate data sufficiency
 #'
-#' A logical variable is added to a data frame indicating whether the data
-#' available from an institution have sufficient span to fairly assess a
-#' student's record.
+#' A column is added to a data frame indicating whether the data include a
+#' sufficient number of years to justify including a student in an analysis
+#' of student records. The new column is a logical variable (TRUE/FALSE
+#' values).
 #'
 #' Program completion is typically assessed over a given span of years after
-#' matriculation. A student matriculating too near the last term in the
+#' admission. A student admitted too near the last term in the
 #' available data should be excluded from analysis because the data
 #' have insufficient span to fairly assess the student's record.
 #'
@@ -27,18 +28,18 @@ NULL
 #' are returned as well. Here the extra column \code{inst_limit}, the latest
 #' term reported by the institution in the available data.
 #'
-#' @param dframe data frame
+#' @param dframe data frame with required variables
+#'        \code{institution} and \code{term_timely}
 #' @param ... not used, forces later arguments to be used by name
-#' @param dbase data frame of term attributes, default midfieldterms
+#' @param mdata MIDFIELD term data, default \code{midfielddata::term},
+#'        with required variables \code{institution} and \code{term}
 #' @param details logical scalar to add columns reporting information on
 #'        which the evaluation is based, default FALSE
-#' @return Data frame with the following properties:
+#' @return A \code{data.table}  with the following properties:
 #' \itemize{
 #'     \item Rows are not modified
 #'     \item Column \code{data_sufficiency} is added, column \code{inst_limit}
 #'           is added optionally
-#'     \item Data frame attributes \code{tbl} or \code{data.table}
-#'           are preserved
 #'     \item Grouping structures are not preserved
 #' }
 #' @export
@@ -46,7 +47,7 @@ NULL
 #' # TBD
 add_data_sufficiency <- function(dframe,
                              ...,
-                             dbase = NULL,
+                             mdata = NULL,
                              details = NULL) {
 
     wrapr::stop_if_dot_args(
@@ -55,50 +56,51 @@ add_data_sufficiency <- function(dframe,
 
     # explicit or NULL arguments
     assert_explicit(dframe)
-    dbase  <- dbase  %||% midfielddata::midfieldterms
+    mdata  <- mdata  %||% midfielddata::term
     details <- details %||% FALSE
 
     # check argument class
     assert_class(dframe, "data.frame")
-    assert_class(dbase, "data.frame")
+    assert_class(mdata, "data.frame")
     assert_class(details, "logical")
+
+    # The dframe argument is modified "by reference." Thus changing its value
+    # inside the function immediately changes its value in the calling frame
+    # --- a data.table feature designed for fast data manipulation,
+    # especially for data that occupies a lot of memory.
+    setDT(dframe)
+    setDT(mdata)
 
     # existence of required columns
     assert_required_column(dframe, "institution")
     assert_required_column(dframe, "term_timely")
-    assert_required_column(dbase, "institution")
-    assert_required_column(dbase, "term")
+    assert_required_column(mdata, "institution")
+    assert_required_column(mdata, "term")
 
     # class of required columns
     assert_class(dframe[, institution], "character")
     assert_class(dframe[, term_timely], "character")
-    # to do: revise term in midfielddata to be character, for now:
-    dbase[, term := as.character(term)]
-    assert_class(dbase[, term], "character")
-    assert_class(dbase[, institution], "character")
+    assert_class(mdata[, term], "character")
+    assert_class(mdata[, institution], "character")
 
-    # bind names due to nonstandard evaluation notes in R CMD check
-    inst_limit <- NULL
+    # bind names due to NSE notes in R CMD check
     data_sufficiency <- NULL
-    term_timely<- NULL
+    term_timely <- NULL
+    inst_limit <- NULL
 
-    # prepare dframe, preserve class
-    df_class <- get_dframe_class(dframe)
-    setDT(dframe)
-
-    # preserve columns not being overwritten and their order
+    # preserve column order except columns that match new columns
     names_dframe <- colnames(dframe)
     cols_we_add <- c("inst_limit", "data_sufficiency")
     key_names <- names_dframe[!names_dframe %chin% cols_we_add]
     dframe <- dframe[, key_names, with = FALSE]
 
-    # from dbase, get institution last term
-    dframe <- add_inst_limit(dframe, dbase = dbase)
+    # from mdata, get institution last term
+    dframe <- add_inst_limit(dframe, mdata = mdata)
 
     # assess the data sufficiency
     dframe[, data_sufficiency := fifelse(term_timely <= inst_limit, TRUE, FALSE)]
 
-    # prepare return, order columns and rows
+    # restore column and row order
     set_colrow_order(dframe, key_names)
 
     # include or omit the details columns
@@ -107,7 +109,10 @@ add_data_sufficiency <- function(dframe,
         dframe <- dframe[, cols_we_want, with = FALSE]
     }
 
-    # restore original data frame class
-    revive_class(dframe, df_class)
+    # remove grouping structure, if any
+    setkey(dframe, NULL)
+
+    # enable printing (see data.table FAQ 2.23)
+    dframe[]
 }
 

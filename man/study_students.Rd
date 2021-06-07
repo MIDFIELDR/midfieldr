@@ -3,13 +3,14 @@
 \docType{data}
 \name{study_students}
 \alias{study_students}
-\title{Case-study student IDs and CIP codes}
+\title{Case-study students}
 \format{
 \code{data.table} with 10,764 rows and 2 columns keyed by
 student ID. The variables are:
 \describe{
-  \item{id}{student ID}
-  \item{cip6}{6-digit program code}
+  \item{mcid}{character, anonymized student identifier}
+  \item{cip6}{character 6-digit code representing "specific instructional
+       programs" (US National Center for Education Statistics)}
 }
 }
 \usage{

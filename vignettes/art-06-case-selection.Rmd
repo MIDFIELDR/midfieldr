@@ -13,7 +13,8 @@ link-citations: yes
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(fig.path = "../man/figures/art-06-case-selection-")
+knitr::opts_chunk$set(fig.path = here::here("man/figures", 
+                                            "art-06-case-selection-"))
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
@@ -44,31 +45,307 @@ kable2html <- function(x, font_size = NULL, caption = NULL) {
 
 ## Introduction
 
-Illustrate options with a case study
+In studying student records, a common first step is to select a specific set of programs to explore. In this vignette, we illustrate this first step by constructing a data frame of program CIP codes and program names for four engineering programs (Civil, Electrical, Industrial, and Mechanical).
 
+We use this case selection in subsequent vignettes to illustrate typical workflows using midfieldr functions and MIDFIELD data tables. 
 
+### This vignette uses
 
+midfieldr functions 
+ 
+- `filter_by_key()`
+- `filter_text()` 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+packages
 
 ```{r}
-#packages used
+# packages used
 library("midfieldr")
 library("midfielddata")
 library("data.table")
+
+# optional code to control data.table printing
+options(datatable.print.nrows = 6, datatable.print.topn = 3)
 ```
+
+
+## Identify program codes
+
+We know the conventional names of the desired programs (Civil, Electrical, Industrial, and Mechanical Engineering) but these are not necessarily the exact program names used in the CIP. Thus we have to search CIP thoroughly to make sure we find all 6-digit CIP codes associated with these disciplines.
+
+We start with a text search of `cip` for `engineering`. 
+
+```{r}
+# subset rows of the CIP data matching conditions
+pass01 <- filter_text(cip, "engineering")
+pass01
+```
+
+We have a number of 2-digit codes reported. let's examine those more closely
+
+```{r}
+cols_we_want <- c("cip2", "cip2name")
+unique(pass01[, ..cols_we_want])
+```
+
+Only one of these (14) will have the programs we are looking for. So we can restrict our search to codes starting with 14. 
+
+```{r}
+pass02 <- filter_text(pass01, "^14")
+pass02
+```
+
+Let's try restricting our search to the four conventional terms: civil, electrical, industrial, and mechanical. The search is not case-sensitive. 
+
+```{r}
+# optional code to control data.table printing
+options(datatable.print.nrows = 13, datatable.print.topn = 13)
+
+pass03 <- filter_text(pass02, c("civil", "electrical", "industrial", "mechanical"))
+pass03
+```
+
+In this result,  only Electromechanical Engineering is superfluous. 
+
+```{r}
+pass04 <- filter_text(pass03, drop_text = "electromechanical")
+pass04
+```
+
+We see that 
+
+- the 4-digit level describes these programs with the customary names  
+- Civil Engineering encompasses six programs at the 6-digit level
+- Electrical Engineering encompasses four programs at the 6-digit level
+- Mechanical and Industrial have one program each at the 6-digit level
+
+All MIDFIELD data tables that have a column of CIP codes use 6-digit codes. Therefore, for a case study, we only need the `cip6` column from the work above. The names we want (in this case), however, are at the 4-digit level. We can take one final pass and keep only those columns we need,
+
+```{r}
+case_study <- filter_text(pass04, select = c("cip6", "cip4name"))
+case_study
+```
+
+
+
+## Assign program names
+
+As the study proceeds, we will want to compare and contrast the programs by name. In this case, the names in `cip4name` are suitable for this purpose except for "Electrical, Electronics and Communications Engineering" which we would prefer to replace it with the more generally used (if less specific) "Electrical Engineering". 
+
+A general approach is to create a new variable `program` that has the names we want to use. We leave the `cip4name` column in place for now to be able to check the work. 
+
+```{r}
+case_study[, program := cip4name]
+case_study
+```
+
+There are a number of ways to recode the values in the `program` column. We'll show three approaches. 
+
+### 1. Use `program := fcase()` to edit all values 
+
+In this approach, we use the data.table `fcase()` function to change all of the program names to abbreviations. The `%like%` function is essentially a wrapper function around the base R `grepl()` function. The `%ilike%` variant sets `ignore.case = TRUE`. See its help page by running (the back-ticks facilitate a help search for terms starting with a symbol):
+
+```r
+? `%like%`
+```
+
+```{r}
+dframe <- copy(case_study)
+dframe[, program := fcase(
+  program %ilike% "civil"     , "CVE", 
+  program %ilike% "electrical", "ECE", 
+  program %ilike% "mechanical", "MCE", 
+  program %ilike% "industrial", "ISE"
+)]
+dframe
+```
+
+### 2. Use `program %like%` to edit one value
+
+In this approach, we search for one distinctive term only.
+
+```{r}
+# return matches in the cip4name column 
+dframe <- copy(case_study) 
+rows_to_edit <- dframe$program %ilike% "electrical"
+dframe[rows_to_edit, program := "Electrical Engineering"]
+dframe
+```
+
+
+### 3. Use `cip6 %like%` to edit one value
+
+In our final approach, we use the `%like%` function again, but apply it to the CIP codes. Here we use the regular expression `^1410` meaning "starts with 1410." 
+
+```{r}
+# return matches that start with 1410
+rows_to_edit <- case_study$cip6 %like% "^1410"
+case_study[rows_to_edit, program := "Electrical Engineering"]
+case_study
+```
+
+Which ever of these approaches you prefer, the result is the same. Reviewing the results, we see that the program names are adequate substitutes for the original `cip4name` values, which we can now drop.
+
+```{r}
+case_study[, cip4name := NULL]
+
+case_study
+```
+
+
+
+## Save results
+
+Having identified a set of codes and names for the programs we want to study, we should save it to use later without rerunning the code that created it. 
+
+Before proceeding, you might want to check or edit your directory structure. The code snippets in this section assume that you are working in an RStudio Project and that your project directory has a `data` subdirectory. In addition, a minimal project setup would include at least some of the following directories: 
+
+```
+project-name/
+  |- data/ 
+  |- data-raw/
+  |- documents/
+  |- figures/
+  |- scripts/
+  |- project-name.Rproj
+```
+
+
+We save the `case_study` data frame as a CSV file to the `data` directory for easy access as we work through the study. 
+
+```{r eval = FALSE}
+# save an intermediate result
+fwrite(case_study, file = "data/case_study.csv")
+```
+
+Let's read it in using `fread()`. We use the `colClasses` argument to ensure that the `cip6` variable type is read as a character, not an integer. 
+
+```{r eval = FALSE}
+# read from the data directory
+case_study <- fread(
+  "data/case_study.csv",
+  colClasses = list(character = c("cip6"))
+)
+```
+
+```{r echo = FALSE}
+x <- c("data/case_study.csv")
+if(file_test("-f", x)) unlink(x)
+```
+
+We suggest saving intermediate results like these at each significant milestone of a study, especially after steps requiring a lot of computing time. 
+
+For instance, the case study program codes and names we developed above are saved in the midfieldr package as the data set `study_programs`. View its help page by running
+
+```r
+? study_programs
+```
+View the data frame, 
+
+```{r}
+study_programs
+```
+
+Going forward, we'll use `study_programs`. 
+
+
+
+
+
+
+
+
+
+## Apply results
+
+Once a set of programs is identified by their 6-digit CIP codes, the usual  application is to use the codes to subset one or more of the MIDFIELD data tables (`student`, `course`, `term`, or `degree`) and merge the program names. 
+
+```{r}
+# optional code to control data.table printing
+options(datatable.print.nrows = 10, datatable.print.topn = 5)
+```
+
+
+### Example 1. Subset by program code
+
+For example, to extract all the students in the case study who graduated, we subset rows of `degree` to keep values of `cip6` that match values of `cip6` in `study_programs`.
+
+```{r}
+# subset degree rows
+rows_we_want <- degree[, cip6] %chin% study_programs[, cip6]
+case_degree <- degree[rows_we_want]
+
+# examine the result
+case_degree
+```
+
+We often want to select specific rows at the same time, e.g., 
+
+```{r}
+# subset degree rows and columns 
+cols_we_want <- c("mcid", "institution", "cip6")
+rows_we_want <- degree[, cip6] %chin% study_programs[, cip6]
+case_degree <- degree[rows_we_want, ..cols_we_want]
+
+# examine the result
+case_degree
+```
+
+This code chunk above represents a routine we encounter fairly often: subset rows of one data frame to keep values of a key variable that match values of the same key variable in a second data frame. We can use `filter_by_key()` to accomplish the entire task. 
+
+```{r}
+# subset degree table
+dframe <- filter_by_key(degree, 
+                        match_to = study_programs, 
+                        key_col = "cip6", 
+                        select = c("mcid", "institution", "cip6"))
+
+# compare to the DT we obtained above after ordering rows the same way
+all.equal(case_degree[order(mcid)], dframe[order(mcid)])
+```
+
+### Example 2. Subset by ID
+
+Another common data access task is to retrieve information from `student` by ID. Suppose we wanted to examine the transfer status at the time of admission of the  students with degrees we subset above. We use `filter_by_key()` again to subset rows of `student` to keep values of `mcid` that match values of `mcid` in `case_degree`.
+
+```{r}
+# subset student table
+case_student <- filter_by_key(student, 
+                        match_to = case_degree, 
+                        key_col = "mcid", 
+                        select = c("mcid", "transfer", "hours_transfer"))
+# examine the result
+case_student
+```
+
+If the next step was to compare the numbers of students by their transfer status, we use `.N` from data.table. For example, 
+
+```{r}
+case_student[, .N, by = "transfer"]
+```
+
+
+
+### Example 3. Merge program names
+
+Another common use of the `study_programs` data is to merge its program names with another data frame by matching `cip6` values. The program names can then be used for grouping and summarizing. 
+
+For example, let's join the program names to the case degree data frame we created above. The `all.x = TRUE` argument performs the merge as a "left outer join", retaining all rows of `case_degree` (the "left" data frame).  
+
+```{r}
+# join program names 
+case_degree <- merge(case_degree, study_programs, by = "cip6", all.x = TRUE)
+
+# examine the result
+case_degree
+```
+
+If the next step was to group and summarize by program, we use `.N` again, for example,
+
+```{r}
+case_degree[, .N, by = "program"]
+```
+
 
 
 
@@ -86,5 +363,44 @@ The vignette code chunks are collected below in a single, condensed script.
 
 ```{r eval = FALSE}
 # packages used
+library("midfieldr")
+library("midfielddata")
+library("data.table")
 
+# identify program codes
+pass01 <- filter_text(cip, "engineering")
+pass02 <- filter_text(pass01, "^14")
+pass03 <- filter_text(pass02, 
+                      c("civil", "electrical", "industrial", "mechanical"))
+pass04 <- filter_text(pass03, drop_text = "electromechanical")
+case_study <- filter_text(pass04, select = c("cip6", "cip4name"))
+
+# assign program names
+case_study[, program := cip4name]
+dframe <- copy(case_study)
+dframe[, program := fcase(
+  program %ilike% "civil"     , "CVE", 
+  program %ilike% "electrical", "ECE", 
+  program %ilike% "mechanical", "MCE", 
+  program %ilike% "industrial", "ISE"
+)]
+dframe <- copy(case_study) 
+rows_to_edit <- dframe$program %ilike% "electrical"
+dframe[rows_to_edit, program := "Electrical Engineering"]
+rows_to_edit <- case_study$cip6 %like% "^1410"
+case_study[rows_to_edit, program := "Electrical Engineering"]
+case_study[, cip4name := NULL]
+
+# apply results
+case_degree <- filter_by_key(degree, 
+                        match_to = study_programs, 
+                        key_col = "cip6", 
+                        select = c("mcid", "institution", "cip6"))
+case_student <- filter_by_key(student, 
+                        match_to = case_degree, 
+                        key_col = "mcid", 
+                        select = c("mcid", "transfer", "hours_transfer"))
+case_student[, .N, by = "transfer"]
+case_degree <- merge(case_degree, study_programs, by = "cip6", all.x = TRUE)
+case_degree[, .N, by = "program"]
 ```

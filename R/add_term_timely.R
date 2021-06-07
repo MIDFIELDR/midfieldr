@@ -7,42 +7,41 @@ NULL
 #' Given information about a student's academic path, determine the latest
 #' term for which program completion could be considered timely.
 #'
-#' The current model for timely completion is simple, though future
-#' heuristics may be added for more sophisticated estimates. The current
-#' estimate starts with \code{span} number of years for each student
-#' (default 6 years) and adjusts the span by subtracting a whole number of
-#' years based on the level at which the student matriculates.
+#' The basic heuristic starts with \code{span} number of years for each
+#' student (default 6 years) and adjusts the span by subtracting a whole
+#' number of years based on the level at which the student is admitted.
 #'
-#' For example, a 4th-year or senior level matriculant is assumed to have
-#' completed 3 years of a program, so their span is reduced by 3 years.
-#' Similarly, a 3rd-year or junior-level matriculant is assumed to have
-#' completed 2 years of a program, so their span is reduced by 2 years.
+#' For example, a student admitted at a 4th-year or senior level is assumed
+#' to have completed 3 years of a program, so their span is reduced by 3 years.
+#' Similarly, the span of 3rd-year admissions are reduced by two years, and
+#' the span of 2nd-year admissions is reduced by one year. The adjusted span
+#' is added to their starting term; the result is the limiting term for
+#' timely completion reported in a \code{term_timely} column added to the
+#' data frame.
 #'
-#' The adjusted span is added to their starting term; the result is the
-#' limiting term for timely completion reported in a \code{term_timely}
-#' column added to the data frame.
+#' This model for timely completion is simplistic, and future
+#' heuristics may be added for more sophisticated estimates.
 #'
 #' If \code{details} is TRUE, additional column(s) that support the finding
 #' are returned as well. Here the extra columns are the student's initial
-#' (matriculation) term \code{term_i}, initial level \code{level_i}, and
+#' (admission) term \code{term_i}, initial level \code{level_i}, and
 #' the adjusted span \code{adj_span}.
 #'
-#' @param dframe data frame
+#' @param dframe data frame with required variable \code{mcid}
 #' @param ... not used, forces later arguments to be used by name
 #' @param span numeric scalar, number of years to define timely completion,
 #'        default 6 years
-#' @param dbase data frame of term attributes, default midfieldterms
+#' @param mdata MIDFIELD term data, default \code{midfielddata::term},
+#'        with required variables \code{mcid}, \code{term}, and \code{level}
 #' @param details logical scalar to add columns reporting information on
 #'        which the timely completion limit is based, default FALSE
 #' @param heuristic not used, placeholder for future alternative methods of
 #'        estimating them timely completion term
-#' @return Data frame with the following properties:
+#' @return A \code{data.table}  with the following properties:
 #' \itemize{
 #'     \item Rows are not modified
 #'     \item Column \code{term_timely} is added, columns \code{term_i},
 #'           \code{level_i}, and \code{adj_span} are added optionally
-#'     \item Data frame attributes \code{tbl} or \code{data.table}
-#'           are preserved
 #'     \item Grouping structures are not preserved
 #' }
 #' @export
@@ -51,7 +50,7 @@ NULL
 add_term_timely<- function(dframe,
                            ...,
                            span = NULL,
-                           dbase = NULL,
+                           mdata = NULL,
                            details = NULL,
                            heuristic = NULL) {
 
@@ -61,55 +60,55 @@ add_term_timely<- function(dframe,
 
     # default arguments if NULL
     span <- span %||% 6
-    dbase <- dbase %||% midfielddata::midfieldterms
+    mdata <- mdata %||% midfielddata::term
     details <- details %||% FALSE
     heuristic <- NULL
 
-    # bind names due to nonstandard evaluation notes in R CMD check
-    yyyy <- NULL
-    delta <- NULL
-    level_i <- NULL
-    adj_span <- NULL
+    # bind names due to NSE notes in R CMD check
     term_timely <- NULL
+    adj_span <- NULL
+    level_i <- NULL
+    delta <- NULL
+    yyyy <- NULL
 
     # check arguments
     assert_explicit(dframe)
     assert_class(dframe, "data.frame")
     assert_class(span, "numeric")
-    assert_class(dbase, "data.frame")
+    assert_class(mdata, "data.frame")
     assert_class(details, "logical")
     # heuristic ignored for now
 
+    # The dframe argument is modified "by reference." Thus changing its value
+    # inside the function immediately changes its value in the calling frame
+    # --- a data.table feature designed for fast data manipulation,
+    # especially for data that occupies a lot of memory.
+    setDT(dframe)
+    setDT(mdata)
+
     # existence of required columns
-    assert_required_column(dframe, "id")
-    assert_required_column(dbase, "id")
-    assert_required_column(dbase, "term")
-    assert_required_column(dbase, "level")
+    assert_required_column(dframe, "mcid")
+    assert_required_column(mdata, "mcid")
+    assert_required_column(mdata, "term")
+    assert_required_column(mdata, "level")
 
     # class of required columns
-    assert_class(dframe[, id], "character")
-    assert_class(dbase[, id], "character")
-    # to do: revise term in midfielddata to be character, for now:
-    dbase[, term := as.character(term)]
-    assert_class(dbase[, term], "character")
-    assert_class(dbase[, level], "character")
+    assert_class(dframe[, mcid], "character")
+    assert_class(mdata[, mcid], "character")
+    assert_class(mdata[, term], "character")
+    assert_class(mdata[, level], "character")
 
-    # preserve original data.frame, data.table, or tibble class
-    df_class <- get_dframe_class(dframe)
-
-    # prepare dframe, preserve column order for return
-    # omit existing column(s) that match column(s) we add
-    setDT(dframe)
+    # preserve column order except columns that match new columns
     added_cols <- c("term_i", "level_i", "adj_span", "term_timely")
     names_dframe <- colnames(dframe)
     key_names <- names_dframe[!names_dframe %chin% added_cols]
     dframe <- dframe[, key_names, with = FALSE]
 
-    # work on the dbase data
+    # work on the mdata data
     # get student's first term and level
-    cols_we_want <- c("id", "term", "level")
-    rows_we_want <- dbase$id %chin% dframe$id
-    DT <- dbase[rows_we_want, cols_we_want, with = FALSE]
+    cols_we_want <- c("mcid", "term", "level")
+    rows_we_want <- mdata$mcid %chin% dframe$mcid
+    DT <- mdata[rows_we_want, cols_we_want, with = FALSE]
 
     # separate term encoding
     DT[, `:=` (yyyy = as.numeric(substr(term, 1, 4)),
@@ -119,8 +118,8 @@ add_term_timely<- function(dframe,
     DT <- DT[t %in% seq(1, 6)]
 
     # retain the first recorded term by ID
-    setorderv(DT, c("id", "term"))
-    DT <- DT[, .SD[1], by = c("id")]
+    setorderv(DT, c("mcid", "term"))
+    DT <- DT[, .SD[1], by = c("mcid")]
     setnames(DT,
              old = c("term", "level"),
              new = c("term_i", "level_i"))
@@ -145,19 +144,21 @@ add_term_timely<- function(dframe,
     DT[, c("yyyy", "t", "delta") := NULL]
 
     # left-outer join, keep all rows of dframe
-    dframe <-  merge(dframe, DT, by = "id", all.x = TRUE)
+    dframe <-  merge(dframe, DT, by = "mcid", all.x = TRUE)
 
-    # prepare return
-    # order columns and rows using original columns as keys
+    # restore column and row order
     set_colrow_order(dframe, key_names)
 
-    # do we return the details variables?
-    if (details == FALSE) { # omit the details
+    # include or omit the details columns
+    if (details == FALSE) {
         cols_we_want <- c(key_names, "term_timely")
         dframe <- dframe[, cols_we_want, with = FALSE]
     }
 
-    # restore original data frame class
-    revive_class(dframe, df_class)
+    # remove grouping structure, if any
+    setkey(dframe, NULL)
+
+    # enable printing (see data.table FAQ 2.23)
+    dframe[]
 }
 

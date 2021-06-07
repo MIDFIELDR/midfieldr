@@ -3,13 +3,14 @@
 \docType{data}
 \name{fye_start}
 \alias{fye_start}
-\title{Predicted starting CIP for FYE students}
+\title{Starting programs imputed for FYE students}
 \format{
-\code{data.table} with 752 rows and 2 columns keyed by student
+\code{data.table} with 5033 rows and 2 columns keyed by student
 ID. The variables are:
 \describe{
-   \item{id}{midfielddata student id}
-   \item{start}{6-digit CIP code of the predicted starting program}
+   \item{mcid}{character, anonymized student identifier}
+   \item{start}{character, 6-digit CIP code of the predicted
+         starting program}
    }
 }
 \usage{

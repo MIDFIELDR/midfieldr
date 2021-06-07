@@ -4,24 +4,24 @@ NULL
 
 #' Subset rows by text
 #'
-#' Subset a data frame, retaining rows that match or partially match
+#' Subset a data frame, retain unique rows that match or partially match
 #' character strings. All columns retained unless specified by
-#' \code{select}. The function uses \code{grepl()}, therefore
-#' non-character columns that can be coerced to character are also searched
-#' for matches.
+#' \code{select}. Uses \code{grepl()}, therefore non-character columns
+#' that can be coerced to character are also searched for matches.
 #'
-#' @param dframe data frame to be subset
-#' @param keep_text character vector of search keep_texts for retaining rows
+#' To improve the speed of the search, columns are subset by the values in
+#' the\code{select} argument before the text search starts.
+#'
+#' @param dframe data frame to be searched
+#' @param keep_text character vector of search text for retaining rows
 #' @param ... not used, force later arguments to be used by name
-#' @param drop_text character vector of search keep_texts for dropping rows
-#' @param select character vector of column names, default all columns
-#' @param unique_row logical, remove duplicate rows, default TRUE
-#' @return Data frame with the following properties:
+#' @param drop_text character vector of search text for dropping rows
+#' @param select character vector of column names to search and return,
+#'        default all columns
+#' @return A \code{data.table} with the following properties:
 #' \itemize{
-#'     \item Rows matching elements of \code{keep_text}
+#'     \item Unique rows matching elements of \code{keep_text}
 #'     \item All columns or those specified by \code{select}
-#'     \item Data frame extensions such as \code{tbl} or \code{data.table}
-#'     are preserved
 #'     \item Grouping structures are not preserved
 #' }
 #' @export
@@ -42,7 +42,7 @@ NULL
 #' # select columns
 #' filter_text(cip,
 #'             keep_text = "^54",
-#'             select = c("cip4", "cip4name"))
+#'             select = c("cip6", "cip4name"))
 #'
 #' \dontrun{
 #' # unsuccessful terms produce a message
@@ -52,12 +52,11 @@ filter_text <- function(dframe,
                         keep_text = NULL,
                         ...,
                         drop_text = NULL,
-                        select = NULL,
-                        unique_row = NULL) {
+                        select = NULL) {
   wrapr::stop_if_dot_args(
     substitute(list(...)), "Arguments after ... must be named,"
   )
-  if (is.null(keep_text) & is.null(drop_text)) {
+  if (is.null(keep_text) & is.null(drop_text) & is.null(select)) {
     return(dframe)
   }
 
@@ -66,7 +65,6 @@ filter_text <- function(dframe,
 
   # default optional arguments
   select <- select %||% names(dframe)
-  unique_row <- unique_row %||% TRUE
 
   # check arguments
   if (!is.null(keep_text)) {
@@ -76,16 +74,18 @@ filter_text <- function(dframe,
     assert_class(drop_text, "character")
   }
   assert_class(select, "character")
-  assert_class(unique_row, "logical")
 
   # bind names due to nonstandard evaluation notes in R CMD check
   # var <- NULL
 
-  # to preserve data.frame, data.table, or tibble
-  df_class <- get_dframe_class(dframe)
+  # The dframe argument is copied and therefore not modified "by reference."
+  # Thus changing its value inside the function does not change its value
+  # in the calling frame.
+
+  # start
   DT <- copy(as.data.table(dframe))
 
-  # subset columns first to reduce search time
+  # subset columns
   DT <- DT[, select, with = FALSE]
 
   # do the work
@@ -97,7 +97,6 @@ filter_text <- function(dframe,
 
   # stop if all rows have been eliminated
   if (abs(nrow(DT) - 0) < .Machine$double.eps^0.5) {
-    revive_class(DT, df_class)
     stop("No CIPs satisfy the search criteria", call. = FALSE)
   }
 
@@ -124,8 +123,9 @@ filter_text <- function(dframe,
   }
 
   # return
-  if (unique_row) {
-    DT <- unique_by_keys(DT)
-  }
-  revive_class(DT, df_class)
+  setkey(DT, NULL)
+  DT <- unique(DT)
+
+  # enable printing (see data.table FAQ 2.23)
+  DT[]
 }

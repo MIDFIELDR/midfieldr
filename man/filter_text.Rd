@@ -4,44 +4,37 @@
 \alias{filter_text}
 \title{Subset rows by text}
 \usage{
-filter_text(
-  dframe,
-  keep_text = NULL,
-  ...,
-  drop_text = NULL,
-  select = NULL,
-  unique_row = NULL
-)
+filter_text(dframe, keep_text = NULL, ..., drop_text = NULL, select = NULL)
 }
 \arguments{
-\item{dframe}{data frame to be subset}
+\item{dframe}{data frame to be searched}
 
-\item{keep_text}{character vector of search keep_texts for retaining rows}
+\item{keep_text}{character vector of search text for retaining rows}
 
 \item{...}{not used, force later arguments to be used by name}
 
-\item{drop_text}{character vector of search keep_texts for dropping rows}
+\item{drop_text}{character vector of search text for dropping rows}
 
-\item{select}{character vector of column names, default all columns}
-
-\item{unique_row}{logical, remove duplicate rows, default TRUE}
+\item{select}{character vector of column names to search and return,
+default all columns}
 }
 \value{
-Data frame with the following properties:
+A \code{data.table} with the following properties:
 \itemize{
-    \item Rows matching elements of \code{keep_text}
+    \item Unique rows matching elements of \code{keep_text}
     \item All columns or those specified by \code{select}
-    \item Data frame extensions such as \code{tbl} or \code{data.table}
-    are preserved
     \item Grouping structures are not preserved
 }
 }
 \description{
-Subset a data frame, retaining rows that match or partially match
+Subset a data frame, retain unique rows that match or partially match
 character strings. All columns retained unless specified by
-\code{select}. The function uses \code{grepl()}, therefore
-non-character columns that can be coerced to character are also searched
-for matches.
+\code{select}. Uses \code{grepl()}, therefore non-character columns
+that can be coerced to character are also searched for matches.
+}
+\details{
+To improve the speed of the search, columns are subset by the values in
+the\code{select} argument before the text search starts.
 }
 \examples{
 # subset using keywords
@@ -60,7 +53,7 @@ filter_text(cip, keep_text = c("^1407", "^1408"))
 # select columns
 filter_text(cip,
             keep_text = "^54",
-            select = c("cip4", "cip4name"))
+            select = c("cip6", "cip4name"))
 
 \dontrun{
 # unsuccessful terms produce a message

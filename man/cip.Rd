@@ -3,10 +3,10 @@
 \docType{data}
 \name{cip}
 \alias{cip}
-\title{Classification of instructional programs (CIP)}
+\title{Table of academic programs}
 \format{
-\code{data.table} with 1584 rows and 6 columns keyed by the
-6-digit CIP code. The variables are:
+A \code{data.table} with 1582 rows and 6 columns keyed by the
+6-digit CIP code:
 \describe{
   \item{cip6}{character 6-digit code representing "specific
   instructional programs" (US National Center for Education Statistics)}
@@ -24,25 +24,15 @@
 cip
 }
 \description{
-A data set based on the US National Center for Education Statistics
+A data table based on the US National Center for Education Statistics
 (NCES), Integrated Postsecondary Education Data System (IPEDS), 2020
 CIP, \url{https://nces.ed.gov/ipeds/cipcode}. The data are codes and
-names for 1584 instructional programs organized on three levels: a
+names for 1582 instructional programs organized on three levels: a
 2-digit series, a 4-digit series, and a 6-digit series.
 }
 \details{
-The midfielddata taxonomy includes three non-IPEDS codes:
+The midfielddata taxonomy includes one non-IPEDS code:
 \describe{
-  \item{14XXXX}{First-Year Engineering (FYE). First-Year Engineering
-  students are neither undecided nor undeclared. Their institutions
-  admitted them as engineering students. We just don't know what
-  their engineering starting major would have been had they not been
-  required to enroll in the FYE program.}
-  \item{14YYYY}{Engineering-Focused Curricula (pseudo-FYE). For instances
-  in which a student is eligible for admission to the institution but has
-  not been admitted to an engineering program. Some institutions without
-  FYE programs use such a designation in lieu of undecided or
-  unspecified.}
   \item{999999}{Undecided or Unspecified. For instances in which
   institutions reported no program information or that students were
   not enrolled in a program.}

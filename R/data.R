@@ -1,31 +1,21 @@
 # -------------------------------------------------------------------
 
-#' Classification of instructional programs (CIP)
+#' Table of academic programs
 #'
-#' A data set based on the US National Center for Education Statistics
+#' A data table based on the US National Center for Education Statistics
 #' (NCES), Integrated Postsecondary Education Data System (IPEDS), 2020
 #' CIP, \url{https://nces.ed.gov/ipeds/cipcode}. The data are codes and
-#' names for 1584 instructional programs organized on three levels: a
+#' names for 1582 instructional programs organized on three levels: a
 #' 2-digit series, a 4-digit series, and a 6-digit series.
 #'
-#' The midfielddata taxonomy includes three non-IPEDS codes:
+#' The midfielddata taxonomy includes one non-IPEDS code:
 #' \describe{
-#'   \item{14XXXX}{First-Year Engineering (FYE). First-Year Engineering
-#'   students are neither undecided nor undeclared. Their institutions
-#'   admitted them as engineering students. We just don't know what
-#'   their engineering starting major would have been had they not been
-#'   required to enroll in the FYE program.}
-#'   \item{14YYYY}{Engineering-Focused Curricula (pseudo-FYE). For instances
-#'   in which a student is eligible for admission to the institution but has
-#'   not been admitted to an engineering program. Some institutions without
-#'   FYE programs use such a designation in lieu of undecided or
-#'   unspecified.}
 #'   \item{999999}{Undecided or Unspecified. For instances in which
 #'   institutions reported no program information or that students were
 #'   not enrolled in a program.}
 #' }
-#' @format \code{data.table} with 1584 rows and 6 columns keyed by the
-#' 6-digit CIP code. The variables are:
+#' @format A \code{data.table} with 1582 rows and 6 columns keyed by the
+#' 6-digit CIP code:
 #' \describe{
 #'   \item{cip6}{character 6-digit code representing "specific
 #'   instructional programs" (US National Center for Education Statistics)}
@@ -43,7 +33,7 @@
 
 # -------------------------------------------------------------------
 
-#' Predicted starting CIP for FYE students
+#' Starting programs imputed for FYE students
 #'
 #' Degree-granting, engineering CIP codes that can be substituted for
 #' First-Year-Engineering (FYE) codes when required by a persistence metric.
@@ -65,18 +55,19 @@
 #' midfielddata---these values cannot be commingled with the research
 #' database available to MIDFIELD partners.
 #'
-#' @format \code{data.table} with 752 rows and 2 columns keyed by student
+#' @format \code{data.table} with 5033 rows and 2 columns keyed by student
 #' ID. The variables are:
 #' \describe{
-#'    \item{id}{midfielddata student id}
-#'    \item{start}{6-digit CIP code of the predicted starting program}
+#'    \item{mcid}{character, anonymized student identifier}
+#'    \item{start}{character, 6-digit CIP code of the predicted
+#'          starting program}
 #'    }
 #' @family cip-data
 "fye_start"
 
 # -------------------------------------------------------------------
 
-#' Case-study CIP codes and custom program names
+#' Case-study programs
 #'
 #' Data frame of 6-digit CIP codes and custom program names for Civil,
 #' Electrical, Industrial, and Mechanical Engineering programs
@@ -88,7 +79,8 @@
 #' @format \code{data.table} with 12 rows and 2 columns keyed by the
 #' 6-digit CIP code. The variables are:
 #' \describe{
-#'   \item{cip6}{6-digit program code}
+#'   \item{cip6}{character 6-digit code representing "specific instructional
+#'        programs" (US National Center for Education Statistics)}
 #'   \item{program}{program name assigned for grouping, summarizing,
 #'   and joining}
 #' }
@@ -97,7 +89,7 @@
 
 # -------------------------------------------------------------------
 
-#' Case-study student IDs and CIP codes
+#' Case-study students
 #'
 #' Data frame of student IDs and program codes of students ever enrolled
 #' in the Civil, Electrical, Industrial, and Mechanical Engineering programs
@@ -110,17 +102,18 @@
 #' @format \code{data.table} with 10,764 rows and 2 columns keyed by
 #' student ID. The variables are:
 #' \describe{
-#'   \item{id}{student ID}
-#'   \item{cip6}{6-digit program code}
+#'   \item{mcid}{character, anonymized student identifier}
+#'   \item{cip6}{character 6-digit code representing "specific instructional
+#'        programs" (US National Center for Education Statistics)}
 #' }
 #' @family case-study-data
 "study_students"
 
 # -------------------------------------------------------------------
 
-#' Case-study program stickiness by race/ethnicity and sex
+#' Case-study stickiness results
 #'
-#' Representative case study. Stickiness metric results for Civil, Electrical,
+#' Stickiness metric results for Civil, Electrical,
 #' Industrial, and Mechanical Engineering programs from midfielddata. Results
 #' are grouped by program, race/ethnicity, and sex. Used in the case study
 #' developed in the vignettes.

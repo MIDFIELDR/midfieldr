@@ -16,7 +16,8 @@ resource_files:
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(fig.path = "../man/figures/art-03-multiway-graphs-")
+knitr::opts_chunk$set(fig.path = here::here("man/figures", 
+                                            "art-03-multiway-graphs-"))
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
@@ -62,7 +63,7 @@ We take some time in this early tutorial to create some graphs because, as Wickh
 
 >  Visualization is a great place to start with R programming, because the payoff is so clear; you get to make elegant and informative plots that help you understand the data. 
 
-Many persistence metrics can be organized as *multiway data* in which there is is one quantitative variable and two categorical variables. As explained by  Cleveland [-@Cleveland:1993], 
+In particular, we introduce graphs of *multiway data* in which there is is one quantitative variable and two categorical variables. As explained by  Cleveland [-@Cleveland:1993], 
 
 > ... the quantitative variable is a response, and the goal is to study how it depends on the categorical variables, which are factors. What distinguishes multiway data is the cross-classification of the categorical variables; there is a value of the response for each combination of levels of the two categorical variables. 
 
@@ -76,23 +77,19 @@ midfieldr functions
  
 - `prepare_multiway()` 
 
-midfieldr built-in data sets 
-
-- `study_stickiness` 
-
 packages
 
 ```{r}
 # packages used
-library(midfieldr)
-library(data.table)
-library(ggplot2)
+library("midfieldr")
+library("data.table")
+library("ggplot2")
 
-# print max 20 rows, otherwise 10 rows each head/tail
-options(datatable.print.nrows = 20, datatable.print.topn = 10)
+# optional code to control data.table printing
+options(datatable.print.nrows = 10, datatable.print.topn = 5)
 ```
 
-## Data preparation
+## Prepare data
 
 Longitudinal "stickiness" is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program [@Ohland+Orr+others:2012]. The stickiness metric is developed in a separate vignette---here we focus on graphing a result. 
 
@@ -173,7 +170,7 @@ DT_med[order(program, race_sex)]
 DT_med[order(race_sex, program)]
 ```
 
-## Creating a multiway graph
+## Create a multiway graph
 
 ```{r include = FALSE}
 asp_ratio <- asp_ratio_mw(DT, categories = c("program", "race_sex"))
@@ -210,7 +207,7 @@ Reading a multiway graph
 
 
 
-## Creating the dual multiway graph
+## Create the dual multiway graph
 
 The previous graph does not facilitate visual comparisons of members of the same race-sex group. As Cleveland says,
 
@@ -240,7 +237,7 @@ This graph permits a direct visual comparison of how stickiness varies by major 
 
 Both multiways should be created for discussion. Usually one or the other will convey a more compelling visual story that gets included in the published findings. 
 
-## Tabulating multiway data
+## Tabulate multiway data
 
 Data tables are useful in discussions with one's research team and are often included in publications for readers who want to see the values underlying the data graphics. 
 
@@ -357,9 +354,9 @@ The vignette code chunks are collected below in a single, condensed script.
 
 ```{r eval = FALSE}
 # packages used
-library(midfieldr)
-library(data.table)
-library(ggplot2)
+library("midfieldr")
+library("data.table")
+library("ggplot2")
 
 # data preparation
 DT <- copy(study_stickiness)

@@ -3,7 +3,7 @@
 \docType{data}
 \name{study_stickiness}
 \alias{study_stickiness}
-\title{Case-study program stickiness by race/ethnicity and sex}
+\title{Case-study stickiness results}
 \format{
 \code{data.table} with 31 rows and 3 columns keyed by
 program, race/ethnicity, and sex.
@@ -17,7 +17,7 @@ program, race/ethnicity, and sex.
 study_stickiness
 }
 \description{
-Representative case study. Stickiness metric results for Civil, Electrical,
+Stickiness metric results for Civil, Electrical,
 Industrial, and Mechanical Engineering programs from midfielddata. Results
 are grouped by program, race/ethnicity, and sex. Used in the case study
 developed in the vignettes.

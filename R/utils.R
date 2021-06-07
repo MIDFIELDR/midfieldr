@@ -7,13 +7,13 @@ NULL
 
 #' Add term range by institution
 #'
-#' Determine the latest academic term by institution in \code{dbase}.
+#' Determine the latest academic term by institution in \code{mdata}.
 #' Left-join by institution to \code{dframe} in a new column \code{inst_limit}.
 #'
 #' @param dframe data frame that received added column
-#' @param dbase data frame of term attributes
+#' @param mdata data frame of term attributes
 #' @noRd
-add_inst_limit <- function(dframe, dbase) {
+add_inst_limit <- function(dframe, mdata) {
 
   # bind names due to nonstandard evaluation notes in R CMD check
   # key_names <- NULL
@@ -28,7 +28,7 @@ add_inst_limit <- function(dframe, dbase) {
 
   # get max term by institution
   cols_we_want <- c("institution", "term")
-  DT <- dbase[, cols_we_want, with = FALSE]
+  DT <- mdata[, cols_we_want, with = FALSE]
   DT <- DT[, list(inst_limit = max(term)), by = "institution"]
 
   # left-outer join, keep all rows of dframe
@@ -62,6 +62,7 @@ set_colrow_order <- function(dframe, cols) {
 
   # remove keys
   setkey(dframe, NULL)
+  return(dframe)
 }
 
 # ------------------------------------------------------------------------
@@ -165,6 +166,7 @@ filter_char_frame <- function(data, keep_text = NULL, drop_text = NULL) {
 
   # works by reference
   revive_class(DT, dat_class)
+  return(DT)
 }
 
 # ------------------------------------------------------------------------
@@ -255,4 +257,5 @@ unique_by_keys <- function(DT, cols = NULL) {
   data.table::setkeyv(DT, cols)
   DT <- subset(unique(DT))
   data.table::setkey(DT, NULL)
+  return(DT)
 }

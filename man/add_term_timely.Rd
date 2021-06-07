@@ -8,20 +8,21 @@ add_term_timely(
   dframe,
   ...,
   span = NULL,
-  dbase = NULL,
+  mdata = NULL,
   details = NULL,
   heuristic = NULL
 )
 }
 \arguments{
-\item{dframe}{data frame}
+\item{dframe}{data frame with required variable \code{mcid}}
 
 \item{...}{not used, forces later arguments to be used by name}
 
 \item{span}{numeric scalar, number of years to define timely completion,
 default 6 years}
 
-\item{dbase}{data frame of term attributes, default midfieldterms}
+\item{mdata}{MIDFIELD term data, default \code{midfielddata::term},
+with required variables \code{mcid}, \code{term}, and \code{level}}
 
 \item{details}{logical scalar to add columns reporting information on
 which the timely completion limit is based, default FALSE}
@@ -30,13 +31,11 @@ which the timely completion limit is based, default FALSE}
 estimating them timely completion term}
 }
 \value{
-Data frame with the following properties:
+A \code{data.table}  with the following properties:
 \itemize{
     \item Rows are not modified
     \item Column \code{term_timely} is added, columns \code{term_i},
           \code{level_i}, and \code{adj_span} are added optionally
-    \item Data frame attributes \code{tbl} or \code{data.table}
-          are preserved
     \item Grouping structures are not preserved
 }
 }
@@ -45,24 +44,24 @@ Given information about a student's academic path, determine the latest
 term for which program completion could be considered timely.
 }
 \details{
-The current model for timely completion is simple, though future
-heuristics may be added for more sophisticated estimates. The current
-estimate starts with \code{span} number of years for each student
-(default 6 years) and adjusts the span by subtracting a whole number of
-years based on the level at which the student matriculates.
+The basic heuristic starts with \code{span} number of years for each
+student (default 6 years) and adjusts the span by subtracting a whole
+number of years based on the level at which the student is admitted.
 
-For example, a 4th-year or senior level matriculant is assumed to have
-completed 3 years of a program, so their span is reduced by 3 years.
-Similarly, a 3rd-year or junior-level matriculant is assumed to have
-completed 2 years of a program, so their span is reduced by 2 years.
+For example, a student admitted at a 4th-year or senior level is assumed
+to have completed 3 years of a program, so their span is reduced by 3 years.
+Similarly, the span of 3rd-year admissions are reduced by two years, and
+the span of 2nd-year admissions is reduced by one year. The adjusted span
+is added to their starting term; the result is the limiting term for
+timely completion reported in a \code{term_timely} column added to the
+data frame.
 
-The adjusted span is added to their starting term; the result is the
-limiting term for timely completion reported in a \code{term_timely}
-column added to the data frame.
+This model for timely completion is simplistic, and future
+heuristics may be added for more sophisticated estimates.
 
 If \code{details} is TRUE, additional column(s) that support the finding
 are returned as well. Here the extra columns are the student's initial
-(matriculation) term \code{term_i}, initial level \code{level_i}, and
+(admission) term \code{term_i}, initial level \code{level_i}, and
 the adjusted span \code{adj_span}.
 }
 \examples{

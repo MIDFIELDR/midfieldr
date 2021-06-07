@@ -22,21 +22,21 @@ NULL
 #' If \code{details} is TRUE, additional column(s) that support the finding
 #' are returned as well. Here the extra columns are \code{completion}
 #' indicating by TRUE/FALSE if the student completed their program and
-#' \code{term_degree} from the degree attributes database giving the term in
+#' \code{term_degree} from the degree table giving the term in
 #' which the first degree(s), if any, was earned.
 #'
-#' @param dframe data frame
+#' @param dframe data frame with required variables
+#'        \code{mcid} and \code{term_timely}
 #' @param ... not used, forces later arguments to be used by name
-#' @param dbase data frame of degree attributes, default midfielddegrees
+#' @param mdata MIDFIELD degree data, default \code{midfielddata::degree},
+#'        with required variables \code{mcid} and \code{term}
 #' @param details logical scalar to add columns reporting information on
 #'        which the evaluation is based, default FALSE
-#' @return Data frame with the following properties:
+#' @return A \code{data.table} with the following properties:
 #' \itemize{
 #'     \item Rows are not modified
 #'     \item Column \code{completion_timely} is added, columns
-#'      \code{completion} and \code{term_degree} are added optionally
-#'     \item Data frame attributes \code{tbl} or \code{data.table}
-#'           are preserved
+#'           \code{completion} and \code{term_degree} are added optionally
 #'     \item Grouping structures are not preserved
 #' }
 #' @export
@@ -44,7 +44,7 @@ NULL
 #' # TBD
 add_completion_timely <- function(dframe,
                                    ...,
-                                   dbase = NULL,
+                                   mdata = NULL,
                                    details = NULL) {
 
     wrapr::stop_if_dot_args(
@@ -53,55 +53,60 @@ add_completion_timely <- function(dframe,
 
     # explicit or NULL arguments
     assert_explicit(dframe)
-    dbase  <- dbase  %||% midfielddata::midfielddegrees
+    mdata  <- mdata  %||% midfielddata::degree
     details <- details %||% FALSE
 
     # check argument class
     assert_class(dframe, "data.frame")
-    assert_class(dbase, "data.frame")
+    assert_class(mdata, "data.frame")
     assert_class(details, "logical")
 
+    # The dframe argument is modified "by reference." Thus changing its value
+    # inside the function immediately changes its value in the calling frame
+    # --- a data.table feature designed for fast data manipulation,
+    # especially for data that occupies a lot of memory.
+    setDT(dframe)
+    setDT(mdata)
+
     # existence of required columns
-    assert_required_column(dframe, "id")
+    assert_required_column(dframe, "mcid")
     assert_required_column(dframe, "term_timely")
-    assert_required_column(dbase, "id")
-    # to do: revise term in midfielddata to be character, for now:
-    dbase[, term_degree := as.character(term_degree)]
-    assert_required_column(dbase, "term_degree")
+    assert_required_column(mdata, "mcid")
+    assert_required_column(mdata, "term")
 
     # class of required columns
-    assert_class(dframe[, id], "character")
+    assert_class(dframe[, mcid], "character")
     assert_class(dframe[, term_timely], "character")
-    assert_class(dbase[, id], "character")
-    assert_class(dbase[, term_degree], "character")
+    assert_class(mdata[, mcid], "character")
+    assert_class(mdata[, term], "character")
 
     # bind names due to nonstandard evaluation notes in R CMD check
     completion_timely <- NULL
-    term_timely<- NULL
+    term_degree <- NULL
+    term_timely <- NULL
     completion <- NULL
 
-    # prepare dframe, preserve class
-    df_class <- get_dframe_class(dframe)
-    setDT(dframe)
-
-    # preserve columns not being overwritten and their order
+    # preserve column order except columns that match new columns
     names_dframe <- colnames(dframe)
-    cols_we_add <- c("term_degree", "completion", "completion_timely")
+    cols_we_add <- c("term", "completion", "completion_timely")
     key_names <- names_dframe[!names_dframe %chin% cols_we_add]
     dframe <- dframe[, key_names, with = FALSE]
 
     # degree term
-    cols_we_want <- c("id", "term_degree")
-    rows_we_want <- dbase$id %chin% dframe$id
-    DT <- dbase[rows_we_want, cols_we_want, with = FALSE]
+    cols_we_want <- c("mcid", "term")
+    rows_we_want <- mdata$mcid %chin% dframe$mcid
+    DT <- mdata[rows_we_want, cols_we_want, with = FALSE]
 
     # keep the first degree term
-    setorderv(DT, c("id", "term_degree"))
-    DT <- na.omit(DT, cols = c("term_degree"))
-    DT <- DT[, .SD[1], by = "id"]
+    setorderv(DT, c("mcid", "term"))
+    DT <- na.omit(DT, cols = c("term"))
+    DT <- DT[, .SD[1], by = "mcid"]
+
+    # term variable might exist in dframe, so rename term to term-degree
+    setnames(DT, old = "term", new = "term_degree")
 
     # left-outer join, keep all rows of dframe
-    dframe <-  merge(dframe, DT, by = "id", all.x = TRUE)
+    dframe <-  merge(dframe, DT, by = "mcid", all.x = TRUE)
 
     # add program completion status column
     dframe[, completion := fifelse(is.na(term_degree), FALSE, TRUE)]
@@ -110,7 +115,7 @@ add_completion_timely <- function(dframe,
     dframe[, completion_timely := fifelse(term_degree <= term_timely,
                                           TRUE, FALSE, na = FALSE)]
 
-    # include or omit the details columns
+    # restore column and row order
     set_colrow_order(dframe, key_names)
 
     # include or omit the details columns
@@ -119,7 +124,10 @@ add_completion_timely <- function(dframe,
         dframe <- dframe[, cols_we_want, with = FALSE]
     }
 
-    # restore original data frame class
-    revive_class(dframe, df_class)
+    # remove grouping structure, if any
+    setkey(dframe, NULL)
+
+    # enable printing (see data.table FAQ 2.23)
+    dframe[]
 }
 

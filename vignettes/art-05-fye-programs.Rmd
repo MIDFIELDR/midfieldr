@@ -1,0 +1,579 @@
+---
+title: "FYE programs"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{FYE programs}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/body-and-society.csl
+link-citations: yes
+resource_files:
+  - ../man/figures/art-05-fye-programs-fig1-1.png
+  - ../man/figures/art-05-fye-programs-fig2-1.png
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(fig.path = here::here("man/figures", 
+                                            "art-05-fye-programs-"))
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+kable2html <- function(x, font_size = NULL, caption = NULL) {
+  font_size <- ifelse(is.null(font_size), 11, font_size)
+  kable_in <- knitr::kable(x, format = "html", caption = caption)
+  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
+}
+```
+
+## Introduction 
+
+Some US institutions have first year engineering (FYE) programs---typically a common first-year curriculum that is a prerequisite for acceptance into a degree-granting engineering major.
+
+For some persistence metrics computed at the program level, FYE programs can be problematic. For example, graduation rate is conventionally defined as the ratio of the number of students who complete their program (in a specified span of years) to the number of students in the entering cohort [@IPEDS-grad-rate:2016]. FYE students who don't transition to a particular engineering program are easily overlooked as potential members of that program's entering cohort---reducing the size of the cohort and artificially increasing the graduation rate. 
+
+FYE students have been admitted to Engineering (CIP 14)---their status is neither "undecided" nor "unknown." We simply don't know to which degree-granting program  they intend to transition.  
+
+Therefore, to include FYE students in any persistence metric requiring a degree-granting "starting" program, we have to predict the engineering program the FYE student would have declared had they not been required to enroll in FYE. The vignette describes the prediction process and how the results are used. 
+
+### Options for predicting starting programs
+
+Two approaches are described in this vignette. 
+
+1. Use prepared predictions in `fye_start`, a built-in data set in midfieldr with predicted starting programs for all FYE students in the midfielddata practice data tables. 
+
+2. Perform your own imputation. Use `prepare_fye()` to construct a data frame with appropriate predictor variables formatted such that it can be used as an input argument for the `mice()` function in the R package "mice" (multivariate imputation by chained equations). 
+
+### This vignette uses
+
+midfieldr functions 
+
+- `add_race_sex()`  
+- `filter_by_key()`
+- `filter_text()` 
+- `prepare_fye()`  
+
+packages
+
+```{r}
+# packages used
+library("midfieldr")
+library("midfielddata")
+library("data.table")
+
+# only if performing your own imputation 
+library("mice")
+
+# optional code to control data.table printing
+options(datatable.print.nrows = 10, datatable.print.topn = 5)
+```
+
+##  Use prepared predictions
+
+A set of predicted starting programs for degree-seeking FYE students in midfielddata is provided in the midfieldr data set `fye_start`. View its help page by running,
+
+```r
+? fye_start
+```
+
+Examine the data. 
+
+```{r}
+# prepared starting programs of FYE students
+fye_start
+```
+
+
+
+### Example using `fye_start`  
+
+To illustrate using these data, let's suppose that we are trying to determine the number of students in the four majors of our case study (Civil, Electrical, Industrial, and Mechanical Engineering) at the start of their first year, second year, third year, etc.  FYE students who transition to these majors would appear in the `term` data in the second year and beyond, but not in the first year. In this example, therefore, we will focus on determining how to include FYE students in the first-year count. 
+
+We use two additional prepared data sets, `study_programs` with the case-study CIP codes and program names, and `study_students`, all students ever enrolled in these programs. To see their help pages, run 
+
+```r
+# case study data sets 
+? study_programs
+? study_students
+```
+
+Examine the two data sets. The student data does not include predicted starting majors for FYE students. 
+
+```{r}
+# case study programs 
+study_programs
+
+# students ever enrolled in the case study programs
+study_students
+```
+
+We subset the `term` table for rows matching these student IDs. By matching IDs, we obtain all terms of all students ever enrolled in these programs. 
+
+```{r}
+# subset term table by ID of case study students
+rows_we_want <- term[, mcid] %chin% study_students[, mcid]
+cols_we_want <- c("mcid", "term", "cip6")
+DT <- term[rows_we_want, ..cols_we_want]
+DT <- unique(DT)
+DT
+```
+
+This code chunk above represents a routine we encounter fairly often: subset rows of one data frame to keep values of a key variable that match values of the same key variable in a second data frame.  Here, for example, we want to subset rows of `term` to keep values of `mcid` that match values of `mcid` in `study_students`. We can use `filter_by_key()` to accomplish the task. 
+
+```{r}
+# temporary object
+try_this <- filter_by_key(term, 
+                          match_to = study_students, 
+                          key_col = "mcid", 
+                          select = c("mcid", "term", "cip6"))
+
+# compare to the DT we obtained above
+all.equal(DT, try_this)
+```
+
+We'll use `filter_by_key()` for the remainder of the vignette for this type of subset task. Continuing the example, we set keys to organize the rows in block by ID and ordered terms. 
+
+```{r}
+# set keys for ordering rows 
+keys <- c("mcid", "term")
+setkeyv(DT, keys)
+DT
+```
+
+Now, use the ID key to subset the first row of each student's block. We now have one row per unique student. 
+
+```{r}
+# first term of each student
+DT <- DT[, .SD[1], by = "mcid"]
+
+# keys no longer required
+setkey(DT, NULL)
+
+# examine the result
+DT
+```
+
+These data are subset again by matching program codes to those in `study_programs`, thereby omitting students who were not enrolled in one of the four programs in their first term. 
+
+```{r}
+# filter for case study programs only 
+DT <- filter_by_key(DT, 
+                    match_to = study_programs, 
+                    key_col = "cip6", 
+                    select = c("mcid", "cip6"))
+
+# examine the result
+DT
+```
+
+Before adding the FYE students, we can group and summarize for comparison later. 
+
+```{r}
+# summarize by CIP code
+DT_no_fye <- DT[, .N, by = "cip6"]
+
+# join program names 
+DT_no_fye <- merge(DT_no_fye, study_programs, by = "cip6", all.x = TRUE)
+
+# order columns and rows for display
+cols_we_want <- c("program", "N")
+DT_no_fye <- DT_no_fye[order(-N), ..cols_we_want]
+DT_no_fye
+```
+
+Now, turn to the FYE students. We subset `fye_start` for our four programs. Before using `filter_by_key()`, we change name of the key column from `start` to `cip6`. 
+
+
+```{r}
+# subset predicted FYE start programs 
+setnames(fye_start, old = "start", new = "cip6")
+study_fye <- filter_by_key(fye_start, 
+                           match_to = study_programs, 
+                           key_col = "cip6", 
+                           select = c("mcid", "cip6"))
+
+# examine the result
+study_fye
+```
+
+Bind the two data frames. 
+
+```{r}
+# combine the two data frames 
+DT <- rbindlist(list(DT, study_fye))
+
+# examine the result
+DT
+
+# check that the IDs are unique
+length(unique(DT[, mcid]))
+```
+
+Now we can group by CIP and count. 
+
+```{r}
+# group and summarize with FYE included
+DT_with_fye <- DT[, .N, by = "cip6"]
+
+# examine the result
+DT_with_fye
+```
+
+Adding program names from `study_programs` is helpful in interpreting the results. 
+
+```{r}
+# join program names
+DT_with_fye <- merge(DT_with_fye, study_programs, by = "cip6", all.x = TRUE)
+
+# order columns and rows for display
+cols_we_want <- c("program", "N") 
+DT_with_fye <- DT_with_fye[order(-N), ..cols_we_want]
+
+# examine the result
+DT_with_fye
+```
+
+Compare to the earlier results, summarized without FYE students, 
+
+```{r}
+# earlier summary for comparison
+DT_no_fye
+```
+
+Of course, because of the imputation, the counts are estimates. However, had we ignored the FYE students, the starting term counts in all programs would have been artificially low---leading to unreliable comparisons to totals for the subsequent years.
+
+
+
+
+
+## Perform your own imputation (optional) 
+
+### Using `prepare_fye()`
+
+This section shows the details of preparing the data for imputation and using the mice package to perform an imputation. This procedure results in the prepared  `fye_start` data set we used above. 
+
+The main preparation work is done by `prepare_fye()`. The first argument of `prepare_fye()` is a data frame of all available  degree-seeking engineering students, with required variables student ID, race, and sex. Regardless of what programs we happen to be studying, if we impute starting majors for FYE students, we include all engineering programs at this point. 
+
+To collect these students, we start by obtaining all CIP codes that start with "14" (Engineering).
+
+```{r}
+# get engineering CIP codes
+engr_cip <- filter_text(cip, keep_text = "^14")
+
+# examine the result
+engr_cip
+```
+
+To obtain the IDs of all students ever enrolled in these programs, we access the `term` table. 
+
+```{r}
+# get IDs of all engineering students
+engr <- filter_by_key(term, 
+                      match_to = engr_cip, 
+                      key_col = "cip6",  
+                      select = "mcid")
+
+# examine the result
+engr
+```
+
+The students must all be degree-seeking, we want to subset rows of `engr` to keep values of `mcid` that match values of `mcid` in the `student` data table. We use `filter_by_key()` again. In this case, there is no change to the data frame because all students were degree-seeking. 
+
+```{r}
+# limit the population to degree-seeking students 
+engr <- filter_by_key(engr,
+                      match_to = student,
+                      key_col = "mcid")
+
+# examine the result
+engr
+```
+
+Lastly, we add demographic information with `add_race_sex()`. 
+
+```{r}
+# add race and sex variables 
+engr <- add_race_sex(engr)
+
+# examine the result
+engr
+```
+
+We're starting with `r nrow(engr)` engineers  total. 
+
+This data frame is ready to use as the first argument of `prepare_fye()`. The remaining  arguments have default settings and so are optional. Arguments of `prepare_fye()`:
+ 
+- `dframe` data frame with variables `mcid`, `race`, and  `sex`  
+- `mdata`  term table, default `term` 
+- `fye_codes` CIP code(s) for FYE, default `"140102"` 
+
+Using the default settings, 
+
+```{r}
+# set up a data frame for imputation 
+fye <- prepare_fye(engr)
+
+# view the result
+fye
+```
+
+Of all the engineering students, `r nrow(fye)` were enrolled in an FYE program at least once. Of the FYE students, an NA in the `cip6` column indicates students for whom we have to impute a starting major. The number of NAs in the CIP code column can be found using `sum()`.  
+
+```{r}
+# number of NA values in cip6 column 
+sum(is.na(fye[, cip6]))
+```
+
+Thus we have `r sum(is.na(fye$cip6))` starting programs to impute. (This works because in applying `sum()` to a logical vector, R coerces the TRUE/FALSE values to numerical values 1 and 0.) 
+
+### Using the mice package
+
+The mice package [@vanbuuren2011] implements multivariate imputation by chained equations (MICE). MICE is also known as "fully conditional specification" or "sequential regression multiple imputation" and is suitable for categorical variables such as ours [@azur2011]. Our computational procedure follows the approach suggested  by Dhana [-@dhana2017].
+
+The procedure assumes the missing CIP data---the NA values in the prepared data frame---are "missing at random" (MAR), that is, independent of the variables used to impute the missing values. This is the rationale for using data only from FYE institutions to impute the missing values---the existence of the missing data does depend on the institution type, FYE or non-FYE. Within the FYE data itself, however, we assume that the imputed starting majors are missing at random. 
+
+Our first use of mice is to examine the framework by calling the function with zero iterations. (A warning may appear in your console. It can be ignored.)
+
+```{r}
+# imputation
+framework <- mice(fye, maxit = 0)
+
+# examine the results
+framework
+```
+
+We look more closely at two elements of this framework. The first is the imputation method and to which variables the method is applied. 
+
+```{r}
+method <- framework[["method"]]
+method
+```
+
+In our case, this is correct. The "polyreg" imputation method (polytomous logistic regression) is appropriate for  data comprised of unordered categorical variables.  Had the method not been correctly assigned, we would assign it as follows, 
+
+```{r}
+# variable(s) being imputed
+method[c("cip6")] <- "polyreg"
+
+# variable(s) not being imputed
+method[c("mcid", "institution", "race", "sex")] <- ""
+
+#examine the result
+method
+```
+
+The second element to review is the predictor matrix. 
+
+```{r}
+predictors <- framework[["predictorMatrix"]]
+predictors
+```
+
+Each row in predictor matrix identifies the predictors that would be used to predict the variable in the row name---but only for those variables with a prediction method assigned above. Since the only variable being predicted is `cip6`, we really only have to examine the last row in the matrix, 
+
+
+```{r}
+predictors["cip6", , drop = FALSE]
+```
+
+What the zeros and ones tell us is that `cip6` is going to be predicted by institution, race, and sex (and not mcid). This is correct. 
+
+Had the default setting been incorrect, we can set them manually
+
+```{r}
+# set individual columns of the predictor matrix
+predictors[, c("mcid", "cip6")] <- 0
+
+# we need a one only in the last row for these three predictors
+predictors[, c("institution", "race", "sex")]  <- c(0, 0, 0, 0, 1)
+
+# examine the result
+predictors
+```
+
+We are ready for imputation. The default `seed` argument is NULL, but by setting the seed as shown the vignette results are reproducible. Setting `printFlag = TRUE` displays progress in the console. 
+
+```{r echo = FALSE}
+# load the saved fye_mids to avoid running mice() repeatedly
+load(here::here("R", "sysdata.rda"))
+```
+
+```{r eval = FALSE}
+# imputation
+fye_mids <- mice(
+    data = fye,
+    method = method,
+    predictorMatrix = predictors,
+    seed = 20180624,
+    printFlag = TRUE
+)
+
+# output in console with printFlag = TRUE
+#>  iter imp variable
+#>   1   1  cip6
+#>   1   2  cip6
+#>   1   3  cip6
+#>   1   4  cip6
+#>   1   5  cip6
+#>   ---   
+#>   5   1  cip6
+#>   5   2  cip6
+#>   5   3  cip6
+#>   5   4  cip6
+#>   5   5  cip6
+
+```
+
+`mice()` produces what it calls a `mids` object: a "multiply-imputed data set". The `complete()` function extracts the completed data frame from the `mids` object, which we convert to a data.table. 
+
+```{r}
+fye <- complete(fye_mids)
+setDT(fye)
+
+# examine the result
+fye
+```
+
+To use the result, we only need two columns, the predicted starting program keyed by ID. 
+
+```{r}
+cols_we_want <- c("mcid", "cip6")
+fye <- fye[, ..cols_we_want]
+str(fye)
+```
+
+The program codes are still factors. We change them back to characters. 
+
+```{r}
+fye[, cip6 := as.character(cip6)]
+str(fye)
+```
+
+Because the program codes in this data frame are predicted, we change the variable name to `start` to distinguish it from other `cip6` variables in the data tables. 
+
+```{r}
+fye <- fye[order(mcid)]
+setnames(fye, old = "cip6", new = "start")
+fye
+```
+
+This process is how the built-in data set `fye_start` was constructed, using the same random number seed that we used above. To confirm they are identical, 
+
+```{r}
+all.equal(fye, fye_start)
+```
+
+Lastly, because the mice package masks the base R `rbind()` and `cbind()` functions, we use the following to unload the package once we're done with it. 
+
+```{r}
+detach("package:mice", unload = TRUE)
+```
+
+
+## References
+
+<div id="refs"></div>
+
+## Appendix
+
+The vignette code chunks are collected below in a single, condensed script. 
+
+```{r eval = FALSE}
+# packages used
+library("midfieldr")
+library("midfielddata")
+library("data.table")
+library("mice")
+
+# prepared predictions
+DT <- filter_by_key(term, 
+                    match_to = study_students, 
+                    key_col = "mcid", 
+                    select = c("mcid", "term", "cip6"))
+keys <- c("mcid", "term")
+setkeyv(DT, keys)
+DT <- DT[, .SD[1], by = "mcid"]
+setkey(DT, NULL)
+DT <- filter_by_key(DT, 
+                    match_to = study_programs, 
+                    key_col = "cip6", 
+                    select = c("mcid", "cip6"))
+
+# summarize for later
+DT_no_fye <- DT[, .N, by = "cip6"]
+DT_no_fye <- merge(DT_no_fye, study_programs, by = "cip6", all.x = TRUE)
+cols_we_want <- c("program", "N")
+DT_no_fye <- DT_no_fye[order(-N), ..cols_we_want]
+
+# subset predicted FYE start programs 
+setnames(fye_start, old = "start", new = "cip6")
+study_fye <- filter_by_key(fye_start, 
+                           match_to = study_programs, 
+                           key_col = "cip6", 
+                           select = c("mcid", "cip6"))
+DT <- rbindlist(list(DT, study_fye))
+
+# group and summarize with FYE included
+DT_with_fye <- DT[, .N, by = "cip6"]
+DT_with_fye <- merge(DT_with_fye, study_programs, by = "cip6", all.x = TRUE)
+cols_we_want <- c("program", "N") 
+DT_with_fye <- DT_with_fye[order(-N), ..cols_we_want]
+
+# perform your own prediction
+engr_cip <- filter_text(cip, keep_text = "^14")
+engr <- filter_by_key(term, 
+                      match_to = engr_cip, 
+                      key_col = "cip6",  
+                      select = "mcid")
+engr <- filter_by_key(engr,
+                      match_to = student,
+                      key_col = "mcid")
+engr <- add_race_sex(engr)
+fye <- prepare_fye(engr)
+
+# mice
+framework <- mice(fye, maxit = 0)
+method <- framework[["method"]]
+method[c("cip6")] <- "polyreg"
+method[c("mcid", "institution", "race", "sex")] <- ""
+predictors <- framework[["predictorMatrix"]]
+predictors[, c("mcid", "cip6")] <- 0
+predictors[, c("institution", "race", "sex")]  <- c(0, 0, 0, 0, 1)
+fye_mids <- mice(
+    data = fye,
+    method = method,
+    predictorMatrix = predictors,
+    seed = 20180624,
+    printFlag = TRUE
+)
+fye <- complete(fye_mids)
+
+# prepare for use
+setDT(fye)
+cols_we_want <- c("mcid", "cip6")
+fye <- fye[, ..cols_we_want]
+fye[, cip6 := as.character(cip6)]
+fye <- fye[order(mcid)]
+setnames(fye, old = "cip6", new = "start")
+```
+

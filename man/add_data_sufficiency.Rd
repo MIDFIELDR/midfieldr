@@ -2,39 +2,40 @@
 % Please edit documentation in R/add_data_sufficiency.R
 \name{add_data_sufficiency}
 \alias{add_data_sufficiency}
-\title{Add a column to evaluate data sufficiency for fair assessment}
+\title{Add a column to evaluate data sufficiency}
 \usage{
-add_data_sufficiency(dframe, ..., dbase = NULL, details = NULL)
+add_data_sufficiency(dframe, ..., mdata = NULL, details = NULL)
 }
 \arguments{
-\item{dframe}{data frame}
+\item{dframe}{data frame with required variables
+\code{institution} and \code{term_timely}}
 
 \item{...}{not used, forces later arguments to be used by name}
 
-\item{dbase}{data frame of term attributes, default midfieldterms}
+\item{mdata}{MIDFIELD term data, default \code{midfielddata::term},
+with required variables \code{institution} and \code{term}}
 
 \item{details}{logical scalar to add columns reporting information on
 which the evaluation is based, default FALSE}
 }
 \value{
-Data frame with the following properties:
+A \code{data.table}  with the following properties:
 \itemize{
     \item Rows are not modified
     \item Column \code{data_sufficiency} is added, column \code{inst_limit}
           is added optionally
-    \item Data frame attributes \code{tbl} or \code{data.table}
-          are preserved
     \item Grouping structures are not preserved
 }
 }
 \description{
-A logical variable is added to a data frame indicating whether the data
-available from an institution have sufficient span to fairly assess a
-student's record.
+A column is added to a data frame indicating whether the data include a
+sufficient number of years to justify including a student in an analysis
+of student records. The new column is a logical variable (TRUE/FALSE
+values).
 }
 \details{
 Program completion is typically assessed over a given span of years after
-matriculation. A student matriculating too near the last term in the
+admission. A student admitted too near the last term in the
 available data should be excluded from analysis because the data
 have insufficient span to fairly assess the student's record.
 

@@ -4,28 +4,27 @@
 \alias{add_race_sex}
 \title{Add columns for race/ethnicity and sex}
 \usage{
-add_race_sex(dframe, ..., dbase = NULL)
+add_race_sex(dframe, ..., mdata = NULL)
 }
 \arguments{
-\item{dframe}{data frame}
+\item{dframe}{data frame with required variable \code{mcid}}
 
 \item{...}{not used, forces later arguments to be used by name}
 
-\item{dbase}{data frame of student attributes, default midfieldstudents}
+\item{mdata}{MIDFIELD student data, default \code{midfielddata::student},
+with required variables \code{mcid}, \code{race}, and \code{sex}}
 }
 \value{
-Data frame with the following properties:
+A \code{data.table}  with the following properties:
 \itemize{
     \item Rows are not modified
     \item Columns \code{race} and \code{sex} are added
-    \item Data frame attributes \code{tbl} or \code{data.table}
-          are preserved
     \item Grouping structures are not preserved
 }
 }
 \description{
-Add variables \code{race} and \code{sex} from \code{dbase} to a data
-frame, using \code{id} is the join-by variable.
+Add variables \code{race} and \code{sex} from \code{mdata} to a data
+frame, using \code{mcid} as the join-by variable.
 }
 \details{
 Existing variables with the same names, if any, are overwritten.

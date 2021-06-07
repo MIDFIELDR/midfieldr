@@ -3,12 +3,13 @@
 \docType{data}
 \name{study_programs}
 \alias{study_programs}
-\title{Case-study CIP codes and custom program names}
+\title{Case-study programs}
 \format{
 \code{data.table} with 12 rows and 2 columns keyed by the
 6-digit CIP code. The variables are:
 \describe{
-  \item{cip6}{6-digit program code}
+  \item{cip6}{character 6-digit code representing "specific instructional
+       programs" (US National Center for Education Statistics)}
   \item{program}{program name assigned for grouping, summarizing,
   and joining}
 }

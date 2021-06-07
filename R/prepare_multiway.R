@@ -1,7 +1,10 @@
 #' @import data.table
 #' @importFrom stats median reorder
 #' @importFrom wrapr let
+#' @importFrom Rdpack reprompt
 NULL
+
+# Rdpack reprompt is used for citations in an Roxygen document
 
 #' Prepare multiway data for graphing
 #'
@@ -11,7 +14,7 @@ NULL
 #'
 #' In multiway data, there is a single quantitative value (or response)
 #' for every combination of levels of two categorical variables.
-#' \code{order_multiway()} converts the columns of categorical variables
+#' \code{prepare_multiway()} converts the columns of categorical variables
 #' to factors and orders the factor levels by increasing medians of the
 #' quantitative response variable.
 #'
@@ -19,20 +22,25 @@ NULL
 #' column is a quantitative variable (type numeric) and two columns are
 #' categorical variables (type character or factor).
 #'
+#' Note that "multiway" in our context refers to the data structure and graph
+#' design defined by \insertCite{Cleveland:1993;textual}{midfieldr}, not to
+#' the methods of analysis described by
+#' \insertCite{Kroonenberg:2008;textual}{midfieldr}.
+#'
 #' @param dframe data frame of multiway data
 #' @param ... not used, forces later arguments to be used by name
 #' @param details logical scalar to add columns reporting the medians on which
-#'        the order of the levels is based.
-#' @return \code{data.frame} with the following properties:
+#'        the order of the levels is based, default FALSE
+#' @return A \code{data.table} with the following properties:
 #' \itemize{
 #'   \item Rows are not modified
 #'   \item Quantitative column is not modified
 #'   \item Categorical columns are factors with levels ordered by
-#' median quantitative values
+#'         median quantitative values
 #'   \item Grouping structures, if any, are not preserved
-#'   \item Data frame extensions \code{tbl} or \code{data.table}
-#'   are preserved
 #' }
+#' @references
+#'   \insertAllCited{}
 #' @export
 #' @examples
 #' catg1 <- rep(c("urban", "rural", "suburb", "village"), each = 2)
@@ -57,43 +65,43 @@ prepare_multiway <- function(dframe, ..., details = NULL) {
 
   # argument checks
   assert_explicit(dframe)
-  assert_class(dframe, c("data.frame", "data.table"))
+  assert_class(dframe, "data.frame")
   assert_class(details, "logical")
-
   if (ncol(dframe) != 3) {
     stop("`dframe` must have exactly three columns")
   }
 
-  # to preserve data.frame, data.table, or tibble
-  df_class <- get_dframe_class(dframe)
-
   # to manage multiway column classes
   col_class <- get_col_class(dframe)
-  mw_names <- col_class$col_name
-  mw_class <- col_class$col_class
   # typical result
   #     col_class     col_name
   # 1   character     cat1
   # 2   character     cat2
   # 3   numeric       val
 
-  # do the work in data.table
-  DT <- data.table::copy(data.table::as.data.table(dframe))
+  mw_names <- col_class$col_name
+  mw_class <- col_class$col_class
+
+  # The dframe argument is modified "by reference." Thus changing its value
+  # inside the function immediately changes its value in the calling frame
+  # --- a data.table feature designed for fast data manipulation,
+  # especially for data that occupies a lot of memory.
+  setDT(dframe)
 
   # factors to characters
   if ("factor" %in% mw_class) {
     idx <- which(mw_class == "factor")
     cols <- mw_names[idx]
-    DT[, (cols) := lapply(.SD, as.character), .SDcols = cols]
+    dframe[, (cols) := lapply(.SD, as.character), .SDcols = cols]
   }
   # integer to double
   if ("integer" %in% mw_class) {
     idx <- which(mw_class == "integer")
     cols <- mw_names[idx]
-    DT[, (cols) := lapply(.SD, as.double), .SDcols = cols]
+    dframe[, (cols) := lapply(.SD, as.double), .SDcols = cols]
   }
   # one numeric and 2 character
-  col_class <- get_col_class(DT) # again
+  col_class <- get_col_class(dframe) # again
   mw_class <- col_class$col_class
   if (!identical(sort(mw_class), c("character", "character", "numeric"))) {
     stop(paste(
@@ -102,7 +110,7 @@ prepare_multiway <- function(dframe, ..., details = NULL) {
     ))
   }
 
-  # bind names due to nonstandard evaluation notes in R CMD check
+  # bind names due to NSE notes in R CMD check
   VALUE <- NULL
   CAT1 <- NULL
   CAT2 <- NULL
@@ -131,23 +139,24 @@ prepare_multiway <- function(dframe, ..., details = NULL) {
       MED2 = med2
     ),
     expr = {
-      DT[, MED1 := stats::median(VALUE, na.rm = TRUE), by = CAT1]
-      DT[, MED2 := stats::median(VALUE, na.rm = TRUE), by = CAT2]
+      dframe[, MED1 := stats::median(VALUE, na.rm = TRUE), by = CAT1]
+      dframe[, MED2 := stats::median(VALUE, na.rm = TRUE), by = CAT2]
 
-      DT[, CAT1 := as.factor(CAT1)]
-      DT[, CAT2 := as.factor(CAT2)]
+      dframe[, CAT1 := as.factor(CAT1)]
+      dframe[, CAT2 := as.factor(CAT2)]
 
-      DT[, CAT1 := reorder(CAT1, MED1)]
-      DT[, CAT2 := reorder(CAT2, MED2)]
+      dframe[, CAT1 := reorder(CAT1, MED1)]
+      dframe[, CAT2 := reorder(CAT2, MED2)]
 
       if(details) {
-        DT <- DT[, .(CAT1, CAT2, MED1, MED2, VALUE)]
+        dframe <- dframe[, .(CAT1, CAT2, MED1, MED2, VALUE)]
       } else{
-        DT <- DT[, .(CAT1, CAT2, VALUE)]
+        dframe <- dframe[, .(CAT1, CAT2, VALUE)]
       }
 
     }
   )
-  # works by reference
-  revive_class(DT, df_class)
+  # remove grouping structure, if any
+  setkey(dframe, NULL)
+  dframe[]
 }

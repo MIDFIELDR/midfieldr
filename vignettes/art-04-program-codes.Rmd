@@ -13,7 +13,8 @@ link-citations: yes
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(fig.path = "../man/figures/art-04-program-codes-")
+knitr::opts_chunk$set(fig.path = here::here("man/figures", 
+                                            "art-04-program-codes-"))
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
@@ -44,11 +45,11 @@ kable2html <- function(x, font_size = NULL, caption = NULL) {
 
 ## Introduction
 
-In studying student records, a common first step is to subset the data, retaining some instructional programs and dropping others. In the US, instructional programs are encoded by "CIP" codes. 
+In studying student records, a common first step is to subset the data, retaining some instructional programs and dropping others. In the US, instructional programs are encoded by "CIP" codes. CIP is the acronym for *Classification of Instructional Programs*, a taxonomy of academic programs curated by the US Department of Education [@NCES:2010]. 
 
-CIP is the acronym for *Classification of Instructional Programs*, a taxonomy of academic programs curated by the US Department of Education [@NCES:2010]. A CIP code is a 6-digit integer assigned to an instructional program. The 2010 CIP codes are included with midfieldr in the data set `cip`. 
+The IPEDS standard encoding format is a two-digit number followed by a period, followed by a four-digit number, for example, 14.0102 [@NCES:2020]. MIDFIELD uses the same numerals, but omits the period, i.e., 140102, and stores the variable as a  character string. 
 
-We explore the `cip` data set using several search strategies and we conclude by constructing an example data set used in subsequent vignettes.
+The 2010 CIP codes are included with midfieldr in the data set `cip`. In this vignette, we examine strategies of searching `cip` for programs we want to study. 
 
 ### This vignette uses
 
@@ -56,19 +57,13 @@ midfieldr functions
 
 - `filter_text()` 
 
-midfieldr built-in data sets 
-
-- `cip`  
-
 packages
 
 ```{r}
 # packages used
-library(midfieldr)
-library(data.table)
-```
+library("midfieldr")
+library("data.table")
 
-```{r}
 # optional code to control data.table printing
 options(datatable.print.nrows = 10, datatable.print.topn = 5)
 ```
@@ -89,24 +84,24 @@ df <- filter_text(cip, "^41")
 n41 <- nrow(df)
 n4102 <- nrow(filter_text(df, "^4102"))
 n4103 <- nrow(filter_text(df, "^4103"))
-name41 <- unique(df$cip2name)
+name41 <- unique(df[, cip2name])
 
 df24 <- filter_text(cip, "^24")
 n24 <- nrow(df24)
-name24 <- unique(df24$cip2name)
+name24 <- unique(df24[, cip2name])
 
 df51 <- filter_text(cip, "^51")
 n51 <- nrow(df51)
-name51 <- unique(df51$cip2name)
+name51 <- unique(df51[, cip2name])
 
 df1313 <- filter_text(cip, "^1313")
 n1313 <- nrow(df1313)
-name1313 <- unique(df1313$cip2name)
+name1313 <- unique(df1313[, cip2name])
 
 cip <- filter_text(cip) # removes data.frame class if present
 ```
 
-In the table below, we show all programs in the broad area of "`r name41`" (code 41) to illustrate the relationships among 2-, 4-, and 6-digit program codes and names in more detail. This 2-digit grouping is subdivided into `r length(unique(df$cip4))` groups at the 4-digit level (codes 4100--4199) which are further subdivided into `r n41` programs at the 6-digit level (codes 410000--419999). 
+In the table below, we show all programs in the broad area of "`r name41`" (code 41) to illustrate the relationships among 2-, 4-, and 6-digit program codes and names in more detail. This 2-digit grouping is subdivided into `r length(unique(df[, cip4]))` groups at the 4-digit level (codes 4100--4199) which are further subdivided into `r n41` programs at the 6-digit level (codes 410000--419999). 
 
 ```{r echo=FALSE}
 sub_cip <- filter_text(cip, "^41")
@@ -118,7 +113,7 @@ The number of 6-digit programs in a 4-digit group varies by program. Four-digit 
 
 Similarly, 2-digit groupings include anywhere from four 4-digit programs  (code 24 `r name24`) to `r n51` programs (code 51 `r name51`).
 
-## `cip`
+## Inspect the `cip` data  
 
 Data set that loads with midfieldr. For definitions of variables, view the help page by running 
 
@@ -126,7 +121,7 @@ Data set that loads with midfieldr. For definitions of variables, view the help 
 ? cip
 ```
 
-To see the data structure, run
+To see the data structure, run the following. Note that all variables are character strings, protect the leading zeros on some of the codes.  
 
 ```{r}
 str(cip)
@@ -138,7 +133,7 @@ To see a few of the observations, run
 cip
 ```
 
-The number of unique programs, 
+The number of unique programs.  
 
 ```{r}
 # at the 2-digit level
@@ -159,8 +154,7 @@ some_programs <- cip[, .(cip4name)]
 print(some_programs[sample(1:300, 20)], nrows = 20)
 ```
 
-
-## `filter_text()`
+## Filter using keywords
 
 `filter_text()` is the midfieldr function for searching the `cip` data set for program codes and names. View the help page by running
 
@@ -171,8 +165,9 @@ print(some_programs[sample(1:300, 20)], nrows = 20)
 The variables in `cip` are all characters and `filter_text()` subsets a data frame using character search terms. The arguments are: 
 
 - `dframe` data frame to be subset
-- `keep_text` character vector of search keep_texts for retaining rows, not case-sensitive 
-- `drop_text` (optional) character vector of search keep_texts for dropping rows
+- `keep_text` character vector of search text for retaining rows, not case-sensitive 
+- `drop_text` (optional) character vector of search text for dropping rows
+- `select` (optional) character vector of column names to search and return, default all columns  
 
 For example, filtering the CIP data for all programs containing the word "engineering" yields `r nrow(filter_text(cip, "engineering"))` observations. 
 
@@ -181,14 +176,32 @@ For example, filtering the CIP data for all programs containing the word "engine
 filter_text(dframe = cip, keep_text = "engineering")
 ```
 
-The first two argument names can be omitted. The optional `drop_text` argument, however, must be named if used.
+The first two argument names in `filter_text()` can be omitted. The optional `drop_text` and `select` arguments, however, must be named if used.
 
 ```{r}
-# only the drop_text argument must be named
-filter_text(cip, "civil engineering", drop_text = "technology")
+# applying optional argument drop_text and select
+filter_text(cip, 
+            "engineering", 
+            drop_text = c("engineering-related", 
+                          "engineering related", 
+                          "engineering technology", 
+                          "engineering technologies"), 
+            select = c("cip6", "cip6name"))
 ```
 
-## Filter using keywords
+Note that only unique rows are returned. Above we selected the 6-digit codes and names. If we do the same search, but report the 4-digit codes and names, we obtain a shorter listing, as expected. 
+
+```{r}
+# applying optionalk argument drop_text and select
+filter_text(cip, 
+            c("engineering"), 
+            drop_text = c("engineering-related", 
+                          "engineering related", 
+                          "engineering technology", 
+                          "engineering technologies"), 
+            select = c("cip4", "cip4name"))
+```
+
 
 Suppose we want to find the CIP codes and names for all programs in Civil Engineering. The search is case-insensitive, so we start with the following code chunk. 
 
@@ -330,35 +343,6 @@ However, as seen earlier, if none of the search terms are found, an error occurs
 filter_text(cip, c("111111", "Bogus", "^55"))
 ```
 
-## More optional arguments 
-
-`filter_text()` has two additional optional arguments. 
-
-- `select` 
-- `unique_row`  
-
-As seen in the previous examples, the default setting for `select` returns all columns. We can select columns by name, 
-
-```{r}
-# selecting columns
-filter_text(cip,
-  keep_text = "^54",
-  select = c("cip4", "cip4name")
-)
-```
-
-The default setting for `unique_row` is TRUE and removes duplicate rows after subsetting is complete.
-
-```{r}
-# remove duplicate rows
-filter_text(cip,
-  keep_text = "^54",
-  select = c("cip4", "cip4name"),
-  unique_row = TRUE
-)
-```
-
-
 ## CIP data from another source
 
 If you use a CIP data set from another source, it must have the same structure as `cip`: six character columns named as follows,  
@@ -384,8 +368,8 @@ The vignette code chunks are collected below in a single, condensed script.
 
 ```{r eval=FALSE}
 # packages used
-library(midfieldr)
-library(data.table)
+library("midfieldr")
+library("data.table")
 
 # cip
 str(cip)
@@ -396,11 +380,22 @@ set.seed(20210529)
 some_programs <- cip[, .(cip4name)]
 print(some_programs[sample(1:300, 20)], nrows = 20)
 
-# filter_text()
-filter_text(data = cip, keep_text = "engineering")
-filter_text(cip, "civil engineering", drop_text = "technology")
-
 # filter using keywords
+filter_text(dframe = cip, keep_text = "engineering")
+filter_text(cip, 
+            "engineering", 
+            drop_text = c("engineering-related", 
+                          "engineering related", 
+                          "engineering technology", 
+                          "engineering technologies"), 
+            select = c("cip6", "cip6name"))
+filter_text(cip, 
+            c("engineering"), 
+            drop_text = c("engineering-related", 
+                          "engineering related", 
+                          "engineering technology", 
+                          "engineering technologies"), 
+            select = c("cip4", "cip4name"))
 filter_text(cip, "civil")
 first_pass <- filter_text(cip, "civil")
 second_pass <- filter_text(first_pass, "engineering")
@@ -418,10 +413,4 @@ filter_text(cip, codes_we_want)
 # when search terms cannot be found
 sub_cip <- filter_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 sub_cip
-
-# optional arguments
-filter_text(cip, "^54", select = c("cip4", "cip4name"))
-filter_text(cip, "^54", 
-            select = c("cip4", "cip4name"), 
-            unique_row = TRUE)
 ```

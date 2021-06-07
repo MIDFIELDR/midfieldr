@@ -12,18 +12,16 @@ prepare_multiway(dframe, ..., details = NULL)
 \item{...}{not used, forces later arguments to be used by name}
 
 \item{details}{logical scalar to add columns reporting the medians on which
-the order of the levels is based.}
+the order of the levels is based, default FALSE}
 }
 \value{
-\code{data.frame} with the following properties:
+A \code{data.table} with the following properties:
 \itemize{
   \item Rows are not modified
   \item Quantitative column is not modified
   \item Categorical columns are factors with levels ordered by
-median quantitative values
+        median quantitative values
   \item Grouping structures, if any, are not preserved
-  \item Data frame extensions \code{tbl} or \code{data.table}
-  are preserved
 }
 }
 \description{
@@ -34,13 +32,18 @@ columns of the data frame are otherwise unaffected.
 \details{
 In multiway data, there is a single quantitative value (or response)
 for every combination of levels of two categorical variables.
-\code{order_multiway()} converts the columns of categorical variables
+\code{prepare_multiway()} converts the columns of categorical variables
 to factors and orders the factor levels by increasing medians of the
 quantitative response variable.
 
 The \code{dframe} argument, therefore, must have three columns only. One
 column is a quantitative variable (type numeric) and two columns are
 categorical variables (type character or factor).
+
+Note that "multiway" in our context refers to the data structure and graph
+design defined by \insertCite{Cleveland:1993;textual}{midfieldr}, not to
+the methods of analysis described by
+\insertCite{Kroonenberg:2008;textual}{midfieldr}.
 }
 \examples{
 catg1 <- rep(c("urban", "rural", "suburb", "village"), each = 2)
@@ -54,4 +57,7 @@ str(dframe)
 # structure after
 mw <- prepare_multiway(dframe)
 str(mw)
+}
+\references{
+\insertAllCited{}
 }

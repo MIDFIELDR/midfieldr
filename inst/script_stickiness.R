@@ -18,13 +18,13 @@ library("seplyr")
 #         sort()
 #
 # # count students ever enrolled in programs
-# ever_enrolled <- get_enrollees(midfieldterms, codes = program_series) %>%
+# ever_enrolled <- get_enrollees(term, codes = program_series) %>%
 # 	race_sex_join() %>%
 # 	left_join(., program_group, by = "cip6") %>%
 # 	group_summarize(., grouping_variables, "ever" = n())
 #
 # # count students graduating from programs
-# graduated <- get_graduates(midfielddegrees, codes = program_series) %>%
+# graduated <- get_graduates(degree, codes = program_series) %>%
 # 	race_sex_join() %>%
 # 	left_join(., program_group, by = "cip6") %>%
 # 	group_summarize(., grouping_variables, "grad" = n())

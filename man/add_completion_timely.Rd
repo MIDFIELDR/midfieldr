@@ -4,26 +4,26 @@
 \alias{add_completion_timely}
 \title{Add a column to evaluate timely completion}
 \usage{
-add_completion_timely(dframe, ..., dbase = NULL, details = NULL)
+add_completion_timely(dframe, ..., mdata = NULL, details = NULL)
 }
 \arguments{
-\item{dframe}{data frame}
+\item{dframe}{data frame with required variables
+\code{mcid} and \code{term_timely}}
 
 \item{...}{not used, forces later arguments to be used by name}
 
-\item{dbase}{data frame of degree attributes, default midfielddegrees}
+\item{mdata}{MIDFIELD degree data, default \code{midfielddata::degree},
+with required variables \code{mcid} and \code{term}}
 
 \item{details}{logical scalar to add columns reporting information on
 which the evaluation is based, default FALSE}
 }
 \value{
-Data frame with the following properties:
+A \code{data.table} with the following properties:
 \itemize{
     \item Rows are not modified
     \item Column \code{completion_timely} is added, columns
-     \code{completion} and \code{term_degree} are added optionally
-    \item Data frame attributes \code{tbl} or \code{data.table}
-          are preserved
+          \code{completion} and \code{term_degree} are added optionally
     \item Grouping structures are not preserved
 }
 }
@@ -46,7 +46,7 @@ degree term is no later than the timely completion limit.
 If \code{details} is TRUE, additional column(s) that support the finding
 are returned as well. Here the extra columns are \code{completion}
 indicating by TRUE/FALSE if the student completed their program and
-\code{term_degree} from the degree attributes database giving the term in
+\code{term_degree} from the degree table giving the term in
 which the first degree(s), if any, was earned.
 }
 \examples{

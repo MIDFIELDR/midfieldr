@@ -17,7 +17,8 @@ nocite: |
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(fig.path = "../man/figures/art-01-get-started-")
+knitr::opts_chunk$set(fig.path = here::here("man/figures", 
+                                            "art-01-get-started-"))
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
@@ -59,60 +60,45 @@ asp_ratio_mw <- function(data, categories) {
 
 ## Introduction
 
-In the MIDFIELD practice data, the programs with the greatest numbers of students are Business and Engineering. In this vignette, we compare the number of students ever enrolled in these programs, grouped by sex and race/ethnicity.
+In the MIDFIELD practice data, the programs with the largest populations are Business and Engineering. In this vignette, we compare the number of students ever enrolled in these programs, grouped by sex and race/ethnicity. The goal is to outline a basic work flow that starts with the tables of student records and concludes with an exploratory graph. For data carpentry, we use base R and selected syntax from the data.table package. 
 
-We use midfieldr functions to access midfielddata student records. We condition, group and summarize the data, and graph a result. For data carpentry, we use base R and selected syntax from the data.table package. 
+
 
 ### This vignette uses
 
 midfieldr functions 
 
-- `add_race_sex()`
-- `filter_text()` 
-- `prepare_multiway()` 
-- `filter_degree_seeking()`
-
-midfieldr built-in data sets 
-
-- `cip`  
+- `add_race_sex()`  
+- `filter_by_key()`  
+- `filter_text()`  
+- `prepare_multiway()`  
 
 packages
 
 ```{r}
 # packages used
-library(midfieldr)
-library(midfielddata)
-library(data.table)
-library(ggplot2)
-```
+library("midfieldr")
+library("midfielddata")
+library("data.table")
+library("ggplot2")
 
-```{r}
 # optional code to control data.table printing
 options(datatable.print.nrows = 10, datatable.print.topn = 5)
 ```
 
 ## Gather programs
 
-Instructional programs are encoded by 6-digit CIP codes, included in midfieldr in the `cip` data set.  You may view its help page by running
+Instructional programs are encoded by 6-digit codes available in the `cip` data set loaded with midfieldr. In this example, we assume we have already searched `cip` and found that the codes we want start with 14 (engineering) and 52 (business).
 
-```
-? cip
-```
-
-We search `cip` for our program codes using `filter_text()`. You may view its help page by running
-
-```
-? filter_text
-```
-
-In this example, we assume we have already searched `cip` and found that the codes we want start with 14 (engineering) and 52 (business). Our next step is to pull all 6-digit codes associated with these two programs. 
+Our next step is to pull all 6-digit codes associated with these two programs using `filter_text()`. The `keep_text` argument gives the character string to be matched, in this case the regular expression `"^52"` (starts with character string 52). The optional  `select` argument indicates columns to select from `cip`, in this case, the column of 6-digit CIP codes. 
 
 ```{r}
 # business
 business <- filter_text(cip, keep_text = "^52", select = "cip6")
 ```
 
-The `keep_text` argument gives the character string to be matched; the optional  `select` argument indicates columns to select from `cip`. 
+
+We add a custom program label to be used later for grouping, summarizing, and graphing. We view the result and, as an option, order the rows by the `cip6` values. 
 
 ```{r}
 # add program label
@@ -122,7 +108,7 @@ business[, program := "Business"]
 business[order(cip6)]
 ```
 
-Repeat for engineering 
+Repeat for engineering. 
 
 ```{r}
 # engineering
@@ -145,25 +131,26 @@ program_group <- rbindlist(list(business, engineering))
 program_group[order(program, cip6)]
 ```
 
-We extract the `cip6` column as a character vector to use later to extract student data by their CIP codes.  
+
+## Gather students 
+
+From the previous data frame, we extract the `cip6` column as a character vector to extract term data by CIP codes.  Syntax note: `x[, var]` is the data.table equivalent to `x$var` in base R. 
 
 ```{r}
 # extract a vector of 6-digit CIP codes
-group_cip <- program_group$cip6
+group_cip <- program_group[, cip6]
 
 # examine the result
 str(group_cip)
 ```
 
-## Gather students 
-
-We access the term data to obtain the IDs of all students ever enrolled in these programs.  The result, `DT`, is a data table to which we will add information as we proceed. 
+We access the `term` table to obtain the IDs of all students ever enrolled in these programs.  The result, `DT`, is a data table to which we will add information as we proceed. 
 
 ```{r}
-# extract unique students ever enrolled from term data
-cols_we_want <- c("id", "cip6", "institution")
-rows_we_want <- midfieldterms$cip6 %chin% group_cip
-DT <- midfieldterms[rows_we_want, ..cols_we_want]
+# extract unique students ever enrolled
+cols_we_want <- c("mcid", "cip6", "institution")
+rows_we_want <- term[, cip6] %chin% group_cip
+DT <- term[rows_we_want, ..cols_we_want]
 ```
 
 Note for experienced users: The construction we use above for subsetting a data table, i.e., 
@@ -173,36 +160,38 @@ Note for experienced users: The construction we use above for subsetting a data 
     rows_we_want <- ...
     DT[rows_we_want, ..cols_we_want]
 ```
-is not as concise as possible using data.table syntax, but it provides clarity for the less experienced R user. To continue, 
+is less concise than it might be, but it provides clarity for the less experienced R user. To continue, we omit any duplicates and view the result using the option to order the rows by the ID values. 
 
 ```{r}
 # omit duplicate rows, if any
 DT <- unique(DT)
 
 # examine the result
-DT[order(id)]
+DT[order(mcid)]
 ```
 
 
-We update the IDs a number of times, so we extract them from the data table as a character vector.  Syntax note: `DT[, unique(id)]` is the data.table equivalent to `unique(DT$id)` in base R. 
+We update the IDs a number of times, so we extract them from the data table as a character vector.  Syntax note: `x[, unique(var)]` is the data.table equivalent to `unique(x$var)` in base R.
 
 ```{r}
 # initialize an ID vector
-latest_id <- DT[, unique(id)]
+latest_id <- DT[, unique(mcid)]
 ```
 
-Examining the result shows a vector with `r length(DT[, unique(id)])` unique IDs.
+Examining the result shows a vector with `r length(DT[, unique(mcid)])` unique IDs.
 
 ```{r}
 # examine the result
 str(latest_id)
 ```
 
-We use `filter_degree_seeking()` to limit our research to students in the `student` data base as these are the degree-seeking students. The default database is `midfieldstudents`.
+The IDs in our current data set `DT` originated in the `term` table, which may include non-degree-seeking students. We use  `filter_by_key()` to retain only those IDs that are also present in the  `student` table, which comprises degree-seeking students only.
 
 ```{r}
-# limit study to students with matriculation data
-DT <- filter_degree_seeking(DT)
+# limit study to degree-seeking students
+DT <- filter_by_key(DT, 
+                    match_to = student, 
+                    key_col = "mcid")
 
 # examine the result
 DT
@@ -212,7 +201,7 @@ Update the ID vector.
 
 ```{r}
 # update the ID vector
-latest_id <- DT[, unique(id)]
+latest_id <- DT[, unique(mcid)]
                     
 # examine the result
 length(latest_id)
@@ -222,7 +211,7 @@ In this case, all our enrollees are recorded in the student data set, so the num
 
 ## Group and summarize
 
-Our results are going to be grouped by program, race/ethnicity, and sex. Here, we join these variables to the working data frame. We use `add_race_sex()` to access the student data to obtain race/ethnicity and sex as self-reported at matriculation. 
+Our results are going to be grouped by program, race/ethnicity, and sex. Here, we join these variables to the working data frame. We use `add_race_sex()` to access the `student` table to obtain race/ethnicity and sex as self-reported upon admission.  
 
 ```{r}
 # join demographics
@@ -242,7 +231,7 @@ DT <- merge(DT, program_group, by = "cip6", all.x = TRUE)
 DT
 ```
 
-Next we group by our grouping variables variables and count the number of students in each grouping. The count is assigned to the new `ever` column.
+Next we group by our grouping variables and count the number of students in each grouping. The count is assigned to the new `ever` column.
 
 ```{r}
 # assign
@@ -265,11 +254,11 @@ To begin conditioning the data for graphing, we remove ambiguous levels of race/
 
 ```{r}
 # remove ambiguous levels of race/ethnicity
-rows_we_want <- !DT$race %chin% c("Unknown", "International", "Other")
+rows_we_want <- !DT[, race] %chin% c("Other/Unknown", "International", "Other")
 DT <- DT[rows_we_want]
 
 # examine the result
-unique(DT$race)
+DT[, unique(race)]
 ```
 
 To protect confidentiality, we omit observations with 10 or fewer students ever enrolled.
@@ -294,7 +283,7 @@ DT
 
 *Multiway data* are characterized by two categorical variables and one quantitative variable [@Cleveland:1993]. In this example, the two categories are program and race/ethnicity/sex and the quantitative variable is the number of students ever enrolled. 
 
-To structure the data in multiway form, we select the three multiway variables. 
+Structuring the data in multiway form comprises two steps. In the first step, we select the three multiway variables, omitting all other columns. 
 
 ```{r}
 # select the three multiway variables
@@ -305,17 +294,11 @@ DT <- DT[, ..cols_we_want]
 DT
 ```
 
-The second attribute of multiway data is that the levels of the categories are ordered by the median value of the quantitative variable. `prepare_multiway()`  converts the categorical variables to factors and orders the category levels.  
+In the second step, we convert the categorical variables to factors and order their levels by the quantitative variable medians. The midfieldr function for this step is `prepare_multiway()`.   
 
 ```{r}
 # order the category levels
 DT <- prepare_multiway(DT)
-```
-
-The median values are attributes of the data frame. We can view them as follows. Note that `program` and `race_sex` are now factors ordered by the median enrolled numbers (recorded under the `scores` attribute). 
-
-```{r}
-lapply(DT, FUN = attributes)
 ```
 
 ```{r include = FALSE}
@@ -354,10 +337,10 @@ The vignette code chunks are collected below in a single, condensed script.
 
 ```{r eval=FALSE}
 # packages used
-library(midfieldr)
-library(midfielddata)
-library(data.table)
-library(ggplot2)
+library("midfieldr")
+library("midfielddata")
+library("data.table")
+library("ggplot2")
 
 # gather programs
 business <- filter_text(cip, keep_text = "^52", select = "cip6")
@@ -365,16 +348,18 @@ business <- business[, program := "Business"]
 engineering <- filter_text(cip, keep_text = "^14", select = "cip6")
 engineering[, program := "Engineering"]
 program_group <- rbindlist(list(engineering, business))
-group_cip <- program_group$cip6
+group_cip <- program_group[, cip6]
 
 # gather students
-cols_we_want <- c("id", "cip6", "institution")
-rows_we_want <- midfieldterms$cip6 %chin% group_cip
-DT <- midfieldterms[rows_we_want, ..cols_we_want]
+cols_we_want <- c("mcid", "cip6", "institution")
+rows_we_want <- term[, cip6] %chin% group_cip
+DT <- term[rows_we_want, ..cols_we_want]
 DT <- unique(DT)
-latest_id <- DT[, unique(id)]
-DT <- filter_degree_seeking(DT)
-latest_id <- DT[, unique(id)]
+latest_id <- DT[, unique(mcid)]
+DT <- filter_by_key(DT, 
+                    match_to = student, 
+                    key_col = "mcid")
+latest_id <- DT[, unique(mcid)]
 
 # join grouping variables
 DT <- add_race_sex(DT)
@@ -385,7 +370,7 @@ grouping_variables <- c("program", "race", "sex")
 DT <- DT[, .(ever = .N), by = grouping_variables]
 
 # condition the data for display
-rows_we_want <- !DT$race %chin% c("Unknown", "International", "Other")
+rows_we_want <- !DT[, race] %chin% c("Other/Unknown", "International", "Other")
 DT <- DT[rows_we_want]
 DT <- DT[ever > 10]
 DT[, race_sex := paste(race, sex, sep = " ")]
