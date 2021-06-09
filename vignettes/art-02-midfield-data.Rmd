@@ -38,18 +38,21 @@ knitr::knit_hooks$set(inline = function(x) {
     prettyNum(round(x, 2))
   }
 })
-kable2html <- function(x, font_size = NULL, caption = NULL) {
-  font_size <- ifelse(is.null(font_size), 11, font_size)
-  kable_in <- knitr::kable(x, format = "html", caption = caption)
-  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
-}
 ```
 
 ## Introduction 
 
-The midfielddata package is the repository of the MIDFIELD practice data, with records organized in four tables---`student`, `course`, `term`, and `degree`---keyed by student ID. To maintain confidentiality of human subject data, the identifiers for students and institutions have been anonymized. 
+The midfielddata package is the repository of the MIDFIELD practice data, with records organized in four tables keyed by student ID. 
 
-In this vignette, we load the data and briefly examine it.
+- `student`  
+- `course`  
+- `term`   
+- `degree`  
+
+To maintain confidentiality of human subject data, the identifiers for students and institutions have been anonymized.
+
+In this vignette, we introduce the four data tables and briefly examine their contents before moving on in subsequent vignettes to operate on the data using the functions in midfieldr. 
+
 
 
 ### This vignette uses
@@ -61,12 +64,42 @@ packages
 library("midfieldr")
 library("midfielddata")
 library("data.table")
-
-# optional code to control data.table printing
-options(datatable.print.nrows = 10, datatable.print.topn = 5)
 ```
 
+
+### R "promise" objects 
+
+The tables of practice data in midfielddata do not load into memory until you use them (so-called R "promise" objects). Thus, loading the package with  `library("midfielddata")` as we did above, then listing the R objects in the environment with 
+
+```{r}
+# the names of objects in the environment
+ls()
+```
+
+shows zero objects. Yet the data are available. If you use the data in an operation, you'll see that the "promise" has been kept. For example, to subset the student data for students whose age at admission is over 40, we would run
+
+```{r}
+# age at admission over 40
+dframe <- student[age > 40]
+
+# the names of objects in the environment
+ls()
+
+# examine the result
+dframe
+```
+
+If you look in the RStudio *Environment* pane, you should see `dframe` listed with `r nrow(dframe)` students meeting this criterion. 
+
+All four practice data tables are promises when you load midfielddata, but  loaded into memory only when you use them. 
+
 ```{r echo = FALSE}
+kable2html <- function(x, font_size = NULL, caption = NULL) {
+  font_size <- ifelse(is.null(font_size), 11, font_size)
+  kable_in <- knitr::kable(x, format = "html", caption = caption)
+  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
+}
+
 # cip
 n_cip <- nrow(unique(cip))
   
@@ -104,7 +137,7 @@ size_courses <- "349 MB"
 
 ## Inpect the `student` data
 
-Loads with midfielddata. Table of attributes of approximately 98,000 students upon being admitted as degree-seeking undergraduates. Each observation is a unique student keyed by student ID. Student IDs are anonymized but are consistent across the four data sets. The table comprises `r obs_students` observations of `r var_students` variables and occupies approximately `r size_students` memory. 
+Table of attributes of approximately 98,000 students upon being admitted as degree-seeking undergraduates. Each observation is a unique student keyed by student ID. Student IDs are anonymized but are consistent across the four data sets. The table comprises `r obs_students` observations of `r var_students` variables and occupies approximately `r size_students` memory. 
 
 For definitions of variables, view the help page by running 
 
@@ -137,7 +170,7 @@ sort(unique(student[, race]))
 
 ## Inpect the `course` data
 
-Loads with midfielddata. Table of course-related attributes of approximately 98,000 undergraduates enrolled in courses at their institutions. Each observation is one course in one term for one student keyed by student ID and a combination of course, abbreviation, number, and section. The table comprises `r obs_courses` observations of `r var_courses` variables and occupies approximately `r size_courses` memory. 
+Table of course-related attributes of approximately 98,000 undergraduates enrolled in courses at their institutions. Each observation is one course in one term for one student keyed by student ID and a combination of course, abbreviation, number, and section. The table comprises `r obs_courses` observations of `r var_courses` variables and occupies approximately `r size_courses` memory. 
 
 For definitions of variables, view the help page by running 
 
@@ -180,7 +213,7 @@ print(all_course_names[sample(1:n, 20)], nrows = 20)
 
 ## Inpect the `term` data
 
-Loads with midfielddata. Table of term-related attributes of approximately 96,000 undergraduates for all terms completed at their institutions. Each observation is one term for one student keyed by student ID and term. The table comprises `r obs_terms` observations of `r var_terms` variables and occupies approximately `r size_terms` memory. 
+Table of term-related attributes of approximately 96,000 undergraduates for all terms completed at their institutions. Each observation is one term for one student keyed by student ID and term. The table comprises `r obs_terms` observations of `r var_terms` variables and occupies approximately `r size_terms` memory. 
 
 For definitions of variables, view the help page by running 
 
@@ -212,7 +245,7 @@ sort(unique(term[, standing]))
 
 ## Inpect the `degree` data
 
-Loads with midfielddata. Table of degree-related attributes of approximately 48,000 undergraduates upon completing their programs. Each observation is a unique student keyed by student ID. The table comprises `r obs_degrees` observations of `r var_degrees` variables and occupies approximately `r size_degrees` memory. 
+Table of degree-related attributes of approximately 48,000 undergraduates upon completing their programs. Each observation is a unique student keyed by student ID. The table comprises `r obs_degrees` observations of `r var_degrees` variables and occupies approximately `r size_degrees` memory. 
 
 For definitions of variables, view the help page by running 
 
@@ -240,16 +273,18 @@ degree[!is.na(degree)]
 ```
 
 
+## Exercises
 
+To summarize a data frame in detail, try the following and compare results.
 
+1. Install the `Hmisc` package, load it with `library("Hmisc")`, and run `describe(x)`, where `x` is one of the data tables, for example, `describe(student)`, `describe(course)`, etc. 
+
+2. Install the `skimr` package, load it with `library("skimr")`, and run `skim(x)`, where `x` is one of the data tables, for example, `skim(student)`, `skim(course)`, etc.  
 
 
 ## References
 
 <div id="refs"></div>
-
-
-
 
 
 ## Appendix
