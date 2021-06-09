@@ -4,6 +4,7 @@
 - delete Travis CI
 - continue refining function names and arguments 
 - replaced "Get started" with the vignette on the practice data sets 
+- edited license files
 
 
 
