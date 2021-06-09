@@ -56,6 +56,8 @@ that can be coerced to character are also searched for matches." />
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -67,9 +69,15 @@ that can be coerced to character are also searched for matches." />
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -162,7 +170,7 @@ that can be coerced to character are also searched for matches." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Subset rows by text</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/filter_text.R'><code>R/filter_text.R</code></a></small>
+    
     <div class="hidden name"><code>filter_text.Rd</code></div>
     </div>
 
@@ -173,7 +181,7 @@ character strings. All columns retained unless specified by
 that can be coerced to character are also searched for matches.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>dframe</span>, keep_text <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span>, drop_text <span class='op'>=</span> <span class='cn'>NULL</span>, select <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>dframe</span>, keep_text <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span>, drop_text <span class='op'>=</span> <span class='cn'>NULL</span>, select <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -215,132 +223,138 @@ default all columns</p></td>
 the<code>select</code> argument before the text search starts.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># subset using keywords</span>
-<span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, keep_text <span class='op'>=</span> <span class='st'>"engineering"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;      cip2                                         cip2name cip4
-#&gt;   1:   14                                      Engineering 1401
-#&gt;   2:   14                                      Engineering 1401
-#&gt;   3:   14                                      Engineering 1402
-#&gt;   4:   14                                      Engineering 1403
-#&gt;   5:   14                                      Engineering 1404
-#&gt;  ---                                                           
-#&gt; 115:   15                           Engineering Technology 1516
-#&gt; 116:   15                           Engineering Technology 1599
-#&gt; 117:   29                            Military Technologies 2903
-#&gt; 118:   29                            Military Technologies 2903
-#&gt; 119:   51 Health Professions and Related Clinical Sciences 5123
-#&gt;                                                     cip4name   cip6
-#&gt;   1:                                    Engineering, General 140101
-#&gt;   2:                                    Engineering, General 140102
-#&gt;   3:   Aerospace, Aeronautical and Astronautical Engineering 140201
-#&gt;   4: Agricultural, Biological Engineering and Bioengineering 140301
-#&gt;   5:                               Architectural Engineering 140401
-#&gt;  ---                                                               
-#&gt; 115:                                          Nanotechnology 151601
-#&gt; 116:    Engineering-Related Technologies, Technicians, Other 159999
-#&gt; 117:                               Military Applied Sciences 290301
-#&gt; 118:                               Military Applied Sciences 290303
-#&gt; 119:              Rehabilitation and Therapeutic Professions 512312
-#&gt;                                                              cip6name
-#&gt;   1:                                             Engineering, General
-#&gt;   2:                                                  Pre-Engineering
-#&gt;   3:     Aerospace, Aeronautical and Astronautical, Space Engineering
-#&gt;   4:          Agricultural, Biological Engineering and Bioengineering
-#&gt;   5:                                        Architectural Engineering
-#&gt;  ---                                                                 
-#&gt; 115:                                                   Nanotechnology
-#&gt; 116:             Engineering Related Technologies, Technicians, Other
-#&gt; 117:                                       Combat Systems Engineering
-#&gt; 118:                                            Engineering Acoustics
-#&gt; 119: Assistive, Augmentative Technology and Rehabiliation Engineering</div><div class='input'>
-<span class='co'># drop_text argument, when used, must be named</span>
-<span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, <span class='st'>"civil engineering"</span>, drop_text <span class='op'>=</span> <span class='st'>"technology"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    cip2    cip2name cip4          cip4name   cip6
-#&gt; 1:   14 Engineering 1408 Civil Engineering 140801
-#&gt; 2:   14 Engineering 1408 Civil Engineering 140802
-#&gt; 3:   14 Engineering 1408 Civil Engineering 140803
-#&gt; 4:   14 Engineering 1408 Civil Engineering 140804
-#&gt; 5:   14 Engineering 1408 Civil Engineering 140805
-#&gt; 6:   14 Engineering 1408 Civil Engineering 140899
-#&gt;                                  cip6name
-#&gt; 1:             Civil Engineering, General
-#&gt; 2:               Geotechnical Engineering
-#&gt; 3:                 Structural Engineering
-#&gt; 4: Transportation and Highway Engineering
-#&gt; 5:            Water Resources Engineering
-#&gt; 6:               Civil Engineering, Other</div><div class='input'>
-<span class='co'># subset using numerical codes</span>
-<span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, keep_text <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"050125"</span>, <span class='st'>"160501"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    cip2                                            cip2name cip4
-#&gt; 1:   05 Area, Ethnic, Cultural and Gender and Group Studies 0501
-#&gt; 2:   16      Foreign Languages, Literatures and Linguistics 1605
-#&gt;                                       cip4name   cip6
-#&gt; 1:                                Area Studies 050125
-#&gt; 2: Germanic Languages, Literatures Linguistics 160501
-#&gt;                          cip6name
-#&gt; 1:                 German Studies
-#&gt; 2: German Language and Literature</div><div class='input'>
-<span class='co'># subset using regular expressions</span>
-<span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, keep_text <span class='op'>=</span> <span class='st'>"^54"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    cip2 cip2name cip4 cip4name   cip6
-#&gt; 1:   54  History 5401  History 540101
-#&gt; 2:   54  History 5401  History 540102
-#&gt; 3:   54  History 5401  History 540103
-#&gt; 4:   54  History 5401  History 540104
-#&gt; 5:   54  History 5401  History 540105
-#&gt; 6:   54  History 5401  History 540106
-#&gt; 7:   54  History 5401  History 540107
-#&gt; 8:   54  History 5401  History 540108
-#&gt; 9:   54  History 5401  History 540199
-#&gt;                                               cip6name
-#&gt; 1:                                    History, General
-#&gt; 2:                    American History (United States)
-#&gt; 3:                                    European History
-#&gt; 4:    History and Philosophy of Science and Technology
-#&gt; 5: Public, Applied History and Archival Administration
-#&gt; 6:                                       Asian History
-#&gt; 7:                                    Canadian History
-#&gt; 8:                                    Military History
-#&gt; 9:                                      History, Other</div><div class='input'><span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, keep_text <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"^1407"</span>, <span class='st'>"^1408"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    cip2    cip2name cip4             cip4name   cip6
-#&gt; 1:   14 Engineering 1407 Chemical Engineering 140701
-#&gt; 2:   14 Engineering 1407 Chemical Engineering 140702
-#&gt; 3:   14 Engineering 1407 Chemical Engineering 140799
-#&gt; 4:   14 Engineering 1408    Civil Engineering 140801
-#&gt; 5:   14 Engineering 1408    Civil Engineering 140802
-#&gt; 6:   14 Engineering 1408    Civil Engineering 140803
-#&gt; 7:   14 Engineering 1408    Civil Engineering 140804
-#&gt; 8:   14 Engineering 1408    Civil Engineering 140805
-#&gt; 9:   14 Engineering 1408    Civil Engineering 140899
-#&gt;                                  cip6name
-#&gt; 1:                   Chemical Engineering
-#&gt; 2:  Chemical and Biomolecular Engineering
-#&gt; 3:            Chemical Engineering, Other
-#&gt; 4:             Civil Engineering, General
-#&gt; 5:               Geotechnical Engineering
-#&gt; 6:                 Structural Engineering
-#&gt; 7: Transportation and Highway Engineering
-#&gt; 8:            Water Resources Engineering
-#&gt; 9:               Civil Engineering, Other</div><div class='input'>
-<span class='co'># select columns</span>
-<span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>,
-            keep_text <span class='op'>=</span> <span class='st'>"^54"</span>,
-            select <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"cip6"</span>, <span class='st'>"cip4name"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;      cip6 cip4name
-#&gt; 1: 540101  History
-#&gt; 2: 540102  History
-#&gt; 3: 540103  History
-#&gt; 4: 540104  History
-#&gt; 5: 540105  History
-#&gt; 6: 540106  History
-#&gt; 7: 540107  History
-#&gt; 8: 540108  History
-#&gt; 9: 540199  History</div><div class='input'>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='co'># unsuccessful terms produce a message</span>
-<span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"050125"</span>, <span class='st'>"111111"</span>, <span class='st'>"160501"</span>, <span class='st'>"Bogus"</span>, <span class='st'>"^55"</span><span class='op'>)</span><span class='op'>)</span>
-<span class='op'>}</span>
-</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='co'># subset using keywords</span></span>
+<span class='r-in'><span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, keep_text <span class='op'>=</span> <span class='st'>"engineering"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      cip2                                         cip2name cip4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   1:   14                                      Engineering 1401</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   2:   14                                      Engineering 1401</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   3:   14                                      Engineering 1402</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   4:   14                                      Engineering 1403</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   5:   14                                      Engineering 1404</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  ---                                                           </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 115:   15                           Engineering Technology 1516</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 116:   15                           Engineering Technology 1599</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 117:   29                            Military Technologies 2903</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 118:   29                            Military Technologies 2903</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 119:   51 Health Professions and Related Clinical Sciences 5123</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                                                     cip4name   cip6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   1:                                    Engineering, General 140101</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   2:                                    Engineering, General 140102</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   3:   Aerospace, Aeronautical and Astronautical Engineering 140201</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   4: Agricultural, Biological Engineering and Bioengineering 140301</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   5:                               Architectural Engineering 140401</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  ---                                                               </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 115:                                          Nanotechnology 151601</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 116:    Engineering-Related Technologies, Technicians, Other 159999</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 117:                               Military Applied Sciences 290301</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 118:                               Military Applied Sciences 290303</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 119:              Rehabilitation and Therapeutic Professions 512312</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                                                              cip6name</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   1:                                             Engineering, General</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   2:                                                  Pre-Engineering</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   3:     Aerospace, Aeronautical and Astronautical, Space Engineering</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   4:          Agricultural, Biological Engineering and Bioengineering</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   5:                                        Architectural Engineering</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  ---                                                                 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 115:                                                   Nanotechnology</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 116:             Engineering Related Technologies, Technicians, Other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 117:                                       Combat Systems Engineering</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 118:                                            Engineering Acoustics</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 119: Assistive, Augmentative Technology and Rehabiliation Engineering</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># drop_text argument, when used, must be named</span></span>
+<span class='r-in'><span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, <span class='st'>"civil engineering"</span>, drop_text <span class='op'>=</span> <span class='st'>"technology"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    cip2    cip2name cip4          cip4name   cip6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1:   14 Engineering 1408 Civil Engineering 140801</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2:   14 Engineering 1408 Civil Engineering 140802</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3:   14 Engineering 1408 Civil Engineering 140803</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4:   14 Engineering 1408 Civil Engineering 140804</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5:   14 Engineering 1408 Civil Engineering 140805</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6:   14 Engineering 1408 Civil Engineering 140899</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                                  cip6name</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1:             Civil Engineering, General</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2:               Geotechnical Engineering</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3:                 Structural Engineering</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4: Transportation and Highway Engineering</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5:            Water Resources Engineering</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6:               Civil Engineering, Other</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># subset using numerical codes</span></span>
+<span class='r-in'><span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, keep_text <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"050125"</span>, <span class='st'>"160501"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    cip2                                            cip2name cip4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1:   05 Area, Ethnic, Cultural and Gender and Group Studies 0501</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2:   16      Foreign Languages, Literatures and Linguistics 1605</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                                       cip4name   cip6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1:                                Area Studies 050125</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2: Germanic Languages, Literatures Linguistics 160501</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                          cip6name</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1:                 German Studies</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2: German Language and Literature</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># subset using regular expressions</span></span>
+<span class='r-in'><span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, keep_text <span class='op'>=</span> <span class='st'>"^54"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    cip2 cip2name cip4 cip4name   cip6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1:   54  History 5401  History 540101</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2:   54  History 5401  History 540102</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3:   54  History 5401  History 540103</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4:   54  History 5401  History 540104</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5:   54  History 5401  History 540105</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6:   54  History 5401  History 540106</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7:   54  History 5401  History 540107</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8:   54  History 5401  History 540108</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9:   54  History 5401  History 540199</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                                               cip6name</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1:                                    History, General</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2:                    American History (United States)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3:                                    European History</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4:    History and Philosophy of Science and Technology</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5: Public, Applied History and Archival Administration</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6:                                       Asian History</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7:                                    Canadian History</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8:                                    Military History</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9:                                      History, Other</span>
+<span class='r-in'><span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, keep_text <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"^1407"</span>, <span class='st'>"^1408"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    cip2    cip2name cip4             cip4name   cip6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1:   14 Engineering 1407 Chemical Engineering 140701</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2:   14 Engineering 1407 Chemical Engineering 140702</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3:   14 Engineering 1407 Chemical Engineering 140799</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4:   14 Engineering 1408    Civil Engineering 140801</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5:   14 Engineering 1408    Civil Engineering 140802</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6:   14 Engineering 1408    Civil Engineering 140803</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7:   14 Engineering 1408    Civil Engineering 140804</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8:   14 Engineering 1408    Civil Engineering 140805</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9:   14 Engineering 1408    Civil Engineering 140899</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                                  cip6name</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1:                   Chemical Engineering</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2:  Chemical and Biomolecular Engineering</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3:            Chemical Engineering, Other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4:             Civil Engineering, General</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5:               Geotechnical Engineering</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6:                 Structural Engineering</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7: Transportation and Highway Engineering</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8:            Water Resources Engineering</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9:               Civil Engineering, Other</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># select columns</span></span>
+<span class='r-in'><span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>,</span>
+<span class='r-in'>            keep_text <span class='op'>=</span> <span class='st'>"^54"</span>,</span>
+<span class='r-in'>            select <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"cip6"</span>, <span class='st'>"cip4name"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      cip6 cip4name</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 540101  History</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2: 540102  History</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3: 540103  History</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4: 540104  History</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5: 540105  History</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6: 540106  History</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7: 540107  History</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8: 540108  History</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9: 540199  History</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'><span class='co'># unsuccessful terms produce a message</span></span>
+<span class='r-in'><span class='fu'>filter_text</span><span class='op'>(</span><span class='va'>cip</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"050125"</span>, <span class='st'>"111111"</span>, <span class='st'>"160501"</span>, <span class='st'>"Bogus"</span>, <span class='st'>"^55"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -352,11 +366,11 @@ the<code>select</code> argument before the text search starts.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Richard Layton, Russell Long, Matthew Ohland, US National Science Foundation.</p>
+  <p><p>Developed by Richard Layton, Russell Long, Matthew Ohland, Marisa Orr, US National Science Foundation.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
@@ -364,6 +378,8 @@ the<code>select</code> argument before the text search starts.</p>
 
   
 
+
+  
 
   </body>
 </html>
