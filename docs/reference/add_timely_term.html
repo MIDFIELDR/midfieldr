@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add columns for race/ethnicity and sex — add_race_sex • midfieldr</title>
+<title>Add a column for the limiting term for timely completion — add_timely_term • midfieldr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,9 @@
 
 
 
-<meta property="og:title" content="Add columns for race/ethnicity and sex — add_race_sex" />
-<meta property="og:description" content="Add variables race and sex from student to a
-data frame, using mcid as the join-by variable." />
+<meta property="og:title" content="Add a column for the limiting term for timely completion — add_timely_term" />
+<meta property="og:description" content="Given information about a student's academic path, determine the latest
+term for which program completion could be considered timely." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -159,17 +159,24 @@ data frame, using mcid as the join-by variable." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add columns for race/ethnicity and sex</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/add_race_sex.R'><code>R/add_race_sex.R</code></a></small>
-    <div class="hidden name"><code>add_race_sex.Rd</code></div>
+    <h1>Add a column for the limiting term for timely completion</h1>
+    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/add_timely_term.R'><code>R/add_timely_term.R</code></a></small>
+    <div class="hidden name"><code>add_timely_term.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Add variables <code>race</code> and <code>sex</code> from <code>student</code> to a
-data frame, using <code>mcid</code> as the join-by variable.</p>
+    <p>Given information about a student's academic path, determine the latest
+term for which program completion could be considered timely.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>add_race_sex</span><span class='op'>(</span><span class='va'>dframe</span>, <span class='va'>...</span>, midfield_table <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>add_timely_term</span><span class='op'>(</span>
+  <span class='va'>dframe</span>,
+  <span class='va'>...</span>,
+  span <span class='op'>=</span> <span class='cn'>NULL</span>,
+  mdata <span class='op'>=</span> <span class='cn'>NULL</span>,
+  details <span class='op'>=</span> <span class='cn'>NULL</span>,
+  heuristic <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -183,9 +190,24 @@ data frame, using <code>mcid</code> as the join-by variable.</p>
       <td><p>not used, forces later arguments to be used by name</p></td>
     </tr>
     <tr>
-      <th>midfield_table</th>
-      <td><p>MIDFIELD <code>student</code> table, with required
-variables <code>mcid</code>, <code>race</code>, and <code>sex</code></p></td>
+      <th>span</th>
+      <td><p>numeric scalar, number of years to define timely completion,
+default 6 years</p></td>
+    </tr>
+    <tr>
+      <th>mdata</th>
+      <td><p>MIDFIELD term data, default <code><a href='https://rdrr.io/pkg/midfielddata/man/term.html'>midfielddata::term</a></code>,
+with required variables <code>mcid</code>, <code>term</code>, and <code>level</code></p></td>
+    </tr>
+    <tr>
+      <th>details</th>
+      <td><p>logical scalar to add columns reporting information on
+which the timely completion limit is based, default FALSE</p></td>
+    </tr>
+    <tr>
+      <th>heuristic</th>
+      <td><p>not used, placeholder for future alternative methods of
+estimating them timely completion term</p></td>
     </tr>
     </table>
 
@@ -193,13 +215,29 @@ variables <code>mcid</code>, <code>race</code>, and <code>sex</code></p></td>
 
     <p>A <code>data.table</code>  with the following properties:</p><ul>
 <li><p>Rows are not modified</p></li>
-<li><p>Columns <code>race</code> and <code>sex</code> are added</p></li>
+<li><p>Column <code>timely_term</code> is added, columns <code>term_i</code>,
+          <code>level_i</code>, and <code>adj_span</code> are added optionally</p></li>
 <li><p>Grouping structures are not preserved</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Existing variables with the same names, if any, are overwritten.</p>
+    <p>The basic heuristic starts with <code>span</code> number of years for each
+student (default 6 years) and adjusts the span by subtracting a whole
+number of years based on the level at which the student is admitted.</p>
+<p>For example, a student admitted at a 4th-year or senior level is assumed
+to have completed 3 years of a program, so their span is reduced by 3 years.
+Similarly, the span of 3rd-year admissions are reduced by two years, and
+the span of 2nd-year admissions is reduced by one year. The adjusted span
+is added to their starting term; the result is the limiting term for
+timely completion reported in a <code>timely_term</code> column added to the
+data frame.</p>
+<p>This model for timely completion is simplistic, and future
+heuristics may be added for more sophisticated estimates.</p>
+<p>If <code>details</code> is TRUE, additional column(s) that support the finding
+are returned as well. Here the extra columns are the student's initial
+(admission) term <code>term_i</code>, initial level <code>level_i</code>, and
+the adjusted span <code>adj_span</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># TBD</span>
