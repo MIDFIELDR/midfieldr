@@ -16,7 +16,7 @@ NULL
 #' Similarly, the span of 3rd-year admissions are reduced by two years, and
 #' the span of 2nd-year admissions is reduced by one year. The adjusted span
 #' is added to their starting term; the result is the limiting term for
-#' timely completion reported in a \code{term_timely} column added to the
+#' timely completion reported in a \code{timely_term} column added to the
 #' data frame.
 #'
 #' This model for timely completion is simplistic, and future
@@ -40,14 +40,14 @@ NULL
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
 #'     \item Rows are not modified
-#'     \item Column \code{term_timely} is added, columns \code{term_i},
+#'     \item Column \code{timely_term} is added, columns \code{term_i},
 #'           \code{level_i}, and \code{adj_span} are added optionally
 #'     \item Grouping structures are not preserved
 #' }
 #' @export
 #' @examples
 #' # TBD
-add_term_timely<- function(dframe,
+add_timely_term<- function(dframe,
                            ...,
                            span = NULL,
                            mdata = NULL,
@@ -65,7 +65,7 @@ add_term_timely<- function(dframe,
     heuristic <- NULL
 
     # bind names due to NSE notes in R CMD check
-    term_timely <- NULL
+    timely_term <- NULL
     adj_span <- NULL
     level_i <- NULL
     delta <- NULL
@@ -99,16 +99,22 @@ add_term_timely<- function(dframe,
     assert_class(mdata[, level], "character")
 
     # preserve column order except columns that match new columns
-    added_cols <- c("term_i", "level_i", "adj_span", "term_timely")
+    added_cols <- c("term_i", "level_i", "adj_span", "timely_term")
     names_dframe <- colnames(dframe)
     key_names <- names_dframe[!names_dframe %chin% added_cols]
     dframe <- dframe[, key_names, with = FALSE]
 
     # work on the mdata data
     # get student's first term and level
-    cols_we_want <- c("mcid", "term", "level")
-    rows_we_want <- mdata$mcid %chin% dframe$mcid
-    DT <- mdata[rows_we_want, cols_we_want, with = FALSE]
+    # cols_we_want <- c("mcid", "term", "level")
+    # rows_we_want <- mdata$mcid %chin% dframe$mcid
+    # DT <- mdata[rows_we_want, cols_we_want, with = FALSE]
+
+    DT <- filter_by_key(dframe = mdata,
+                        match_to = dframe,
+                        key_col = "mcid",
+                        select =  c("mcid", "term", "level"))
+
 
     # separate term encoding
     DT[, `:=` (yyyy = as.numeric(substr(term, 1, 4)),
@@ -137,8 +143,8 @@ add_term_timely<- function(dframe,
     DT[, adj_span := span - delta]
 
     # use adj_span to construct estimated term for timely-completion
-    DT[t == 1, term_timely:= paste0(yyyy + adj_span - 1, 3)]
-    DT[t  > 1, term_timely:= paste0(yyyy + adj_span    , 1)]
+    DT[t == 1, timely_term:= paste0(yyyy + adj_span - 1, 3)]
+    DT[t  > 1, timely_term:= paste0(yyyy + adj_span    , 1)]
 
     # remove intermediate variables
     DT[, c("yyyy", "t", "delta") := NULL]
@@ -151,7 +157,7 @@ add_term_timely<- function(dframe,
 
     # include or omit the details columns
     if (details == FALSE) {
-        cols_we_want <- c(key_names, "term_timely")
+        cols_we_want <- c(key_names, "timely_term")
         dframe <- dframe[, cols_we_want, with = FALSE]
     }
 

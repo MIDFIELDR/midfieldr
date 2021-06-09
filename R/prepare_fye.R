@@ -138,9 +138,14 @@ prepare_fye <- function(dframe,
     latest_id <- fye[, unique(mcid)]
 
     # for these IDs, extract all their terms
-    cols_we_want <- c("mcid", "term", "cip6")
-    rows_we_want <- mdata$mcid %chin% latest_id
-    DT <- mdata[rows_we_want, cols_we_want, with = FALSE]
+    # cols_we_want <- c("mcid", "term", "cip6")
+    # rows_we_want <- mdata$mcid %chin% latest_id
+    # DT <- mdata[rows_we_want, cols_we_want, with = FALSE]
+
+    DT <- filter_by_key(dframe = mdata,
+                        match_to = fye,
+                        key_col = "mcid",
+                        select = c("mcid", "term", "cip6"))
 
     # order rows by setting keys
     setkeyv(DT, c("mcid", "term"))

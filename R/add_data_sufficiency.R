@@ -14,8 +14,8 @@ NULL
 #' available data should be excluded from analysis because the data
 #' have insufficient span to fairly assess the student's record.
 #'
-#' The data frame argument must include the \code{term_timely} column
-#' obtained using the \code{add_term_timely()} function. Assessment is
+#' The data frame argument must include the \code{timely_term} column
+#' obtained using the \code{add_timely_term()} function. Assessment is
 #' considered fair if the student's timely completion term is no later than
 #' the last term in their institution's data.
 #'
@@ -29,7 +29,7 @@ NULL
 #' term reported by the institution in the available data.
 #'
 #' @param dframe data frame with required variables
-#'        \code{institution} and \code{term_timely}
+#'        \code{institution} and \code{timely_term}
 #' @param ... not used, forces later arguments to be used by name
 #' @param mdata MIDFIELD term data, default \code{midfielddata::term},
 #'        with required variables \code{institution} and \code{term}
@@ -73,19 +73,19 @@ add_data_sufficiency <- function(dframe,
 
     # existence of required columns
     assert_required_column(dframe, "institution")
-    assert_required_column(dframe, "term_timely")
+    assert_required_column(dframe, "timely_term")
     assert_required_column(mdata, "institution")
     assert_required_column(mdata, "term")
 
     # class of required columns
     assert_class(dframe[, institution], "character")
-    assert_class(dframe[, term_timely], "character")
+    assert_class(dframe[, timely_term], "character")
     assert_class(mdata[, term], "character")
     assert_class(mdata[, institution], "character")
 
     # bind names due to NSE notes in R CMD check
     data_sufficiency <- NULL
-    term_timely <- NULL
+    timely_term <- NULL
     inst_limit <- NULL
 
     # preserve column order except columns that match new columns
@@ -98,7 +98,7 @@ add_data_sufficiency <- function(dframe,
     dframe <- add_inst_limit(dframe, mdata = mdata)
 
     # assess the data sufficiency
-    dframe[, data_sufficiency := fifelse(term_timely <= inst_limit, TRUE, FALSE)]
+    dframe[, data_sufficiency := fifelse(timely_term <= inst_limit, TRUE, FALSE)]
 
     # restore column and row order
     set_colrow_order(dframe, key_names)

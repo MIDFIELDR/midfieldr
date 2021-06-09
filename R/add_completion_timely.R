@@ -14,8 +14,8 @@ NULL
 #' Students whose completion is not timely should be grouped with the
 #' non-graduates.
 #'
-#' The data frame argument must include the \code{term_timely} column
-#' obtained using the \code{add_term_timely()} function. Completion is
+#' The data frame argument must include the \code{timely_term} column
+#' obtained using the \code{add_timely_term()} function. Completion is
 #' considered timely if: 1) the student has completed a program; and 2) the
 #' degree term is no later than the timely completion limit.
 #'
@@ -26,7 +26,7 @@ NULL
 #' which the first degree(s), if any, was earned.
 #'
 #' @param dframe data frame with required variables
-#'        \code{mcid} and \code{term_timely}
+#'        \code{mcid} and \code{timely_term}
 #' @param ... not used, forces later arguments to be used by name
 #' @param mdata MIDFIELD degree data, default \code{midfielddata::degree},
 #'        with required variables \code{mcid} and \code{term}
@@ -70,20 +70,20 @@ add_completion_timely <- function(dframe,
 
     # existence of required columns
     assert_required_column(dframe, "mcid")
-    assert_required_column(dframe, "term_timely")
+    assert_required_column(dframe, "timely_term")
     assert_required_column(mdata, "mcid")
     assert_required_column(mdata, "term")
 
     # class of required columns
     assert_class(dframe[, mcid], "character")
-    assert_class(dframe[, term_timely], "character")
+    assert_class(dframe[, timely_term], "character")
     assert_class(mdata[, mcid], "character")
     assert_class(mdata[, term], "character")
 
     # bind names due to nonstandard evaluation notes in R CMD check
     completion_timely <- NULL
     term_degree <- NULL
-    term_timely <- NULL
+    timely_term <- NULL
     completion <- NULL
 
     # preserve column order except columns that match new columns
@@ -93,16 +93,22 @@ add_completion_timely <- function(dframe,
     dframe <- dframe[, key_names, with = FALSE]
 
     # degree term
-    cols_we_want <- c("mcid", "term")
-    rows_we_want <- mdata$mcid %chin% dframe$mcid
-    DT <- mdata[rows_we_want, cols_we_want, with = FALSE]
+    # cols_we_want <- c("mcid", "term")
+    # rows_we_want <- mdata$mcid %chin% dframe$mcid
+    # DT <- mdata[rows_we_want, cols_we_want, with = FALSE]
+
+    # degree term
+    DT <- filter_by_key(dframe = mdata,
+                  match_to = dframe,
+                  key_col = "mcid",
+                  select = c("mcid", "term"))
 
     # keep the first degree term
     setorderv(DT, c("mcid", "term"))
     DT <- na.omit(DT, cols = c("term"))
     DT <- DT[, .SD[1], by = "mcid"]
 
-    # term variable might exist in dframe, so rename term to term-degree
+    # rename term to term-degree in case "term" is var in dframe
     setnames(DT, old = "term", new = "term_degree")
 
     # left-outer join, keep all rows of dframe
@@ -112,7 +118,7 @@ add_completion_timely <- function(dframe,
     dframe[, completion := fifelse(is.na(term_degree), FALSE, TRUE)]
 
     # evaluate, is the completion timely, TRUE / FALSE
-    dframe[, completion_timely := fifelse(term_degree <= term_timely,
+    dframe[, completion_timely := fifelse(term_degree <= timely_term,
                                           TRUE, FALSE, na = FALSE)]
 
     # restore column and row order

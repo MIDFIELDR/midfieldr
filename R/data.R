@@ -132,7 +132,7 @@
 #' program, race/ethnicity, and sex.
 #' \describe{
 #'  \item{program}{character, instructional programs selected for study}
-#'  \item{race_sex}{character, student race/ethnicity ans sex}
+#'  \item{race_sex}{character, student race/ethnicity and sex}
 #'  \item{stick}{numerical, program stickiness, a persistence metric}
 #' }
 #' @family case-study-data

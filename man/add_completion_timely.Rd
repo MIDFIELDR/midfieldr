@@ -8,7 +8,7 @@ add_completion_timely(dframe, ..., mdata = NULL, details = NULL)
 }
 \arguments{
 \item{dframe}{data frame with required variables
-\code{mcid} and \code{term_timely}}
+\code{mcid} and \code{timely_term}}
 
 \item{...}{not used, forces later arguments to be used by name}
 
@@ -38,8 +38,8 @@ graduation, students with timely completion should be grouped as graduates.
 Students whose completion is not timely should be grouped with the
 non-graduates.
 
-The data frame argument must include the \code{term_timely} column
-obtained using the \code{add_term_timely()} function. Completion is
+The data frame argument must include the \code{timely_term} column
+obtained using the \code{add_timely_term()} function. Completion is
 considered timely if: 1) the student has completed a program; and 2) the
 degree term is no later than the timely completion limit.
 

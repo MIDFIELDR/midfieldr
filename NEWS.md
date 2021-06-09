@@ -1,7 +1,9 @@
 
 ## midfieldr 1.0.0.9013 / 2021-06
 
-
+- delete Travis CI
+- continue refining function names and arguments 
+- replaced "Get started" with the vignette on the practice data sets 
 
 
 

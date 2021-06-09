@@ -8,7 +8,7 @@ add_data_sufficiency(dframe, ..., mdata = NULL, details = NULL)
 }
 \arguments{
 \item{dframe}{data frame with required variables
-\code{institution} and \code{term_timely}}
+\code{institution} and \code{timely_term}}
 
 \item{...}{not used, forces later arguments to be used by name}
 
@@ -39,8 +39,8 @@ admission. A student admitted too near the last term in the
 available data should be excluded from analysis because the data
 have insufficient span to fairly assess the student's record.
 
-The data frame argument must include the \code{term_timely} column
-obtained using the \code{add_term_timely()} function. Assessment is
+The data frame argument must include the \code{timely_term} column
+obtained using the \code{add_timely_term()} function. Assessment is
 considered fair if the student's timely completion term is no later than
 the last term in their institution's data.
 

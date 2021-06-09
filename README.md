@@ -8,9 +8,7 @@ v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/midfieldr)](https://cran.r-project.org/package=midfieldr)
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/midfieldr)](http://cran.r-project.org/package=midfieldr)
-[![Build
-Status](https://travis-ci.org/MIDFIELDR/midfieldr.svg?branch=master)](https://travis-ci.org/MIDFIELDR/midfieldr)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/midfieldr)](http://cran.r-project.org/package=midfieldr)
 [![Coverage
 Status](https://img.shields.io/codecov/c/github/MIDFIELDR/midfieldr/master.svg)](https://codecov.io/github/MIDFIELDR/midfieldr?branch=main)
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
@@ -70,29 +68,28 @@ first four digits of the 6-digit CIP code), transfer status,
 race/ethnicity, and sex. Contains data for 97,640 undergraduates at 12
 institutions from 1987–2016 in four data sets:
 
--   `midfieldstudents` Data frame with 97,640 observations and 13
-    demographic variables. Each observation is a unique student keyed by
-    student ID. Occupies 19 MB of memory.
-    [(Link)](https://midfieldr.github.io/midfielddata/reference/midfieldstudents.html)
+-   `student` Data frame with 97,640 observations and 13 demographic
+    variables. Each observation is a unique student keyed by student ID.
+    Occupies 19 MB of memory.
+    [(Link)](https://midfieldr.github.io/midfielddata/reference/student.html)
     to data dictionary.
 
--   `midfieldcourses` Data frame with 3.5 M observations and 12 academic
-    course variables keyed by student ID, term, and course. Each
-    observation is one course in one term for one student. Occupies 349
-    MB of memory.
-    [(Link)](https://midfieldr.github.io/midfielddata/reference/midfieldcourses.html)
+-   `course` Data frame with 3.5 M observations and 12 academic course
+    variables keyed by student ID, term, and course. Each observation is
+    one course in one term for one student. Occupies 349 MB of memory.
+    [(Link)](https://midfieldr.github.io/midfielddata/reference/course.html)
     to data dictionary.
 
--   `midfieldterms` Data frame with 727,369 observations and 13 academic
-    term variables keyed by student ID and term. Each observation is one
-    term for one student. Occupies 82 MB of memory.
-    [(Link)](https://midfieldr.github.io/midfielddata/reference/midfieldterms.html)
+-   `term` Data frame with 727,369 observations and 13 academic term
+    variables keyed by student ID and term. Each observation is one term
+    for one student. Occupies 82 MB of memory.
+    [(Link)](https://midfieldr.github.io/midfielddata/reference/term.html)
     to data dictionary.
 
--   `midfielddegrees` A data frame with 97,640 observations and 5
-    graduation variables keyed by student ID. Each observation is a
-    unique student. Occupies 10.2 MB of memory.
-    [(Link)](https://midfieldr.github.io/midfielddata/reference/midfielddegrees.html)
+-   `degree` A data frame with 97,640 observations and 5 graduation
+    variables keyed by student ID. Each observation is a unique student.
+    Occupies 10.2 MB of memory.
+    [(Link)](https://midfieldr.github.io/midfielddata/reference/degree.html)
     to data dictionary.
 
 In making the midfielddata package public, maintaining confidentiality
@@ -127,8 +124,8 @@ Install midfielddata first.
 
 Because of its size, the data package is stored in a `drat` repository.
 Installation takes time; please be patient and wait for the Console
-prompt “&gt;” to reappear. Type (or copy and paste) the following lines
-in the Console.
+prompt “\>” to reappear. Type (or copy and paste) the following lines in
+the Console.
 
 ``` r
 # install midfielddata first 
@@ -138,7 +135,7 @@ install.packages("midfielddata",
 # be patient
 ```
 
-Once the Console prompt “&gt;” reappears, you can confirm a successful
+Once the Console prompt “\>” reappears, you can confirm a successful
 installation by viewing the package help page. In the Console, run:
 
 ``` r
@@ -186,13 +183,12 @@ but an outline of a typical workflow might include these midfieldr
 functions:
 
 -   `filter_text()` identify program names and codes
--   `subset_matriculant()` limit the study to students with a
-    matriculation record
--   `add_timely_limit()` estimate the latest term for which program
+-   `filter_by_key()` limit the study to degree-seeking students
+-   `add_term_timely()` estimate the latest term for which program
     completion could be considered timely
--   `eval_fair_record()` determine if data have sufficient span to
+-   `add_data_sufficiency()` determine if data have sufficient span to
     fairly assess a student’s record
--   `eval_timely_completion()` determine if a student completes their
+-   `add_completion_timely()` determine if a student completes their
     program in a timely manner
 -   `add_race_sex()` obtain student demographics
 -   `prepare_multiway()` condition multiway data for graphing
@@ -228,7 +224,8 @@ develop the material in more detail.
 
 ## References
 
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs"
+class="references csl-bib-body hanging-indent references csl-bib-body hanging-indent">
 
 <div id="ref-Dowle+Srinivasan:2020:data.table" class="csl-entry">
 

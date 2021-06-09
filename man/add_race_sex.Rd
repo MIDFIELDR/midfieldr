@@ -4,15 +4,15 @@
 \alias{add_race_sex}
 \title{Add columns for race/ethnicity and sex}
 \usage{
-add_race_sex(dframe, ..., mdata = NULL)
+add_race_sex(dframe, ..., midfield_table = NULL)
 }
 \arguments{
 \item{dframe}{data frame with required variable \code{mcid}}
 
 \item{...}{not used, forces later arguments to be used by name}
 
-\item{mdata}{MIDFIELD student data, default \code{midfielddata::student},
-with required variables \code{mcid}, \code{race}, and \code{sex}}
+\item{midfield_table}{MIDFIELD \code{student} table, with required
+variables \code{mcid}, \code{race}, and \code{sex}}
 }
 \value{
 A \code{data.table}  with the following properties:
@@ -23,8 +23,8 @@ A \code{data.table}  with the following properties:
 }
 }
 \description{
-Add variables \code{race} and \code{sex} from \code{mdata} to a data
-frame, using \code{mcid} as the join-by variable.
+Add variables \code{race} and \code{sex} from \code{student} to a
+data frame, using \code{mcid} as the join-by variable.
 }
 \details{
 Existing variables with the same names, if any, are overwritten.

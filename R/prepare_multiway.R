@@ -67,20 +67,20 @@ prepare_multiway <- function(dframe, ..., details = NULL) {
   assert_explicit(dframe)
   assert_class(dframe, "data.frame")
   assert_class(details, "logical")
-  if (ncol(dframe) != 3) {
-    stop("`dframe` must have exactly three columns")
-  }
+  # if (ncol(dframe) != 3) {
+  #   stop("`dframe` must have exactly three columns")
+  # }
 
-  # to manage multiway column classes
-  col_class <- get_col_class(dframe)
-  # typical result
-  #     col_class     col_name
-  # 1   character     cat1
-  # 2   character     cat2
-  # 3   numeric       val
-
-  mw_names <- col_class$col_name
-  mw_class <- col_class$col_class
+  # # to manage multiway column classes
+  # col_class <- get_col_class(dframe)
+  # # typical result
+  # #     col_class     col_name
+  # # 1   character     cat1
+  # # 2   character     cat2
+  # # 3   numeric       val
+  #
+  # mw_names <- col_class$col_name
+  # mw_class <- col_class$col_class
 
   # The dframe argument is modified "by reference." Thus changing its value
   # inside the function immediately changes its value in the calling frame
@@ -88,24 +88,45 @@ prepare_multiway <- function(dframe, ..., details = NULL) {
   # especially for data that occupies a lot of memory.
   setDT(dframe)
 
-  # factors to characters
-  if ("factor" %in% mw_class) {
-    idx <- which(mw_class == "factor")
-    cols <- mw_names[idx]
-    dframe[, (cols) := lapply(.SD, as.character), .SDcols = cols]
+  # # factors to characters
+  # if ("factor" %in% mw_class) {
+  #   idx <- which(mw_class == "factor")
+  #   cols <- mw_names[idx]
+  #   dframe[, (cols) := lapply(.SD, as.character), .SDcols = cols]
+  # }
+  # # integer to double
+  # if ("integer" %in% mw_class) {
+  #   idx <- which(mw_class == "integer")
+  #   cols <- mw_names[idx]
+  #   dframe[, (cols) := lapply(.SD, as.double), .SDcols = cols]
+  # }
+  # # one numeric and 2 character
+  # col_class <- get_col_class(dframe) # again
+  # mw_class <- col_class$col_class
+  # if (!identical(sort(mw_class), c("character", "character", "numeric"))) {
+  #   stop(paste(
+  #     "`dframe` must have one numeric column",
+  #     "and two character columns"
+  #   ))
+  # }
+
+  # any factors to characters
+  factor_cols <- names(dframe)[sapply(dframe, is.factor)]
+  if (length(factor_cols) > 0) {
+    dframe[, (factor_cols) := lapply(.SD, as.character), .SDcols = factor_cols]
   }
-  # integer to double
-  if ("integer" %in% mw_class) {
-    idx <- which(mw_class == "integer")
-    cols <- mw_names[idx]
-    dframe[, (cols) := lapply(.SD, as.double), .SDcols = cols]
+
+  # any integers to double (comes after factors converted)
+  integer_cols <- names(dframe)[sapply(dframe, is.integer)]
+  if (length(integer_cols) > 0) {
+    dframe[, (integer_cols) := lapply(.SD, as.double), .SDcols = integer_cols]
   }
-  # one numeric and 2 character
-  col_class <- get_col_class(dframe) # again
-  mw_class <- col_class$col_class
-  if (!identical(sort(mw_class), c("character", "character", "numeric"))) {
+
+  # check corrected variables correct type
+  if (!identical(sort(unname(sapply(dframe, class))),
+                 c("character","character", "numeric"))) {
     stop(paste(
-      "`dframe` must have one numeric column",
+      "`dframe` must have exactly one numeric column",
       "and two character columns"
     ))
   }
@@ -117,16 +138,31 @@ prepare_multiway <- function(dframe, ..., details = NULL) {
   MED1 <- NULL
   MED2 <- NULL
 
-  # one quantitative variable
-  idx_num <- col_class$col_class == "numeric"
-  value <- col_class$col_name[idx_num]
+  # name of the one quantitative variable name
+  value   <- names(dframe)[sapply(dframe, is.numeric)]
 
-  # two categorical variables
-  cat_var <- col_class$col_name[!idx_num]
+  # names of two categorical variables
+  cat_var <- names(dframe)[sapply(dframe, is.character)]
   cat1 <- cat_var[1]
   cat2 <- cat_var[2]
+
+  # create names for median value variables
   med1 <- paste0("med_", cat1)
   med2 <- paste0("med_", cat2)
+
+  # convert to factors
+  # DT[, (cat_var) := lapply(.SD, as.factor), .SDcols = cat_var]
+
+  # one quantitative variable
+  # idx_num <- col_class$col_class == "numeric"
+  # value <- col_class$col_name[idx_num]
+
+  # two categorical variables
+  # cat_var <- col_class$col_name[!idx_num]
+  # cat1 <- cat_var[1]
+  # cat2 <- cat_var[2]
+  # med1 <- paste0("med_", cat1)
+  # med2 <- paste0("med_", cat2)
 
   # wrapr::let for parameterized column names
   # https://winvector.github.io/wrapr/reference/let.html
