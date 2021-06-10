@@ -5,19 +5,46 @@
 \alias{midfieldr-package}
 \title{\code{midfieldr}: Tools for Student Records Research}
 \description{
-For investigating undergraduate student records. Designed to work with data
-from the MIDFIELD project, a partnership of post-secondary US institutions.
-MIDFIELD contains registrar's data for 1.7M undergraduates in all majors at
-19 institutions from 1987--2019.
+The *Multiple-Institution Database for Investigating Engineering
+Longitudinal Development* (MIDFIELD) is a partnership of US higher
+education institutions with engineering programs. MIDFIELD contains
+registrar's data for 1.7M undergraduates in all majors at 19 institutions
+from 1987--2019 \insertCite{Ohland+Long:2016}{midfieldr}.
 }
 \details{
-Functions in midfieldr are designed to work with the MIDFIELD research data
-(available to MIDFIELD partners) as well as with the
-publicly-available practice data in the midfielddata package.
+The software environment comprises two R packages:
+\itemize{
+  \item{\package{midfieldr} An R package providing functions specialized for
+  manipulating MIDFIELD data to examine the intersectionality of
+  race/ethnicity, sex, and discipline in persistence metrics such as
+  stickiness (retention by a discipline) and graduation rate.}
+  \item{\package{midfielddata} An R  package with practice data for users to
+  learn about student record analysis using R. However, these data are
+  not suitable for drawing inferences about student performance, i.e.,
+  not for research.}
+}
 
-Operations such subsetting, joining, grouping, and summarizing
-are performed using one's preferred tools in base R or more advanced systems
-such as dplyr or data.table. The vignettes use base R and data.table
-for data carpentry and ggplot2 for graphs.
+\package{midfielddata} provides a proportionate stratified random sample
+of the MIDFIELD research data. The sampling strata are institution, cip4
+(the first four digits of the 6-digit CIP code), transfer status,
+race/ethnicity, and sex. Contains four data tables: \code{student},
+\code{course}, \code{term}, and \code{degree} keyed by an anonymized
+student ID.
+
+Complete MIDFIELD data suitable for student-records research are
+available to researchers under the following conditions:
+\enumerate{
+  \item{Your institutional IRB has granted approval for your project
+  to study students using MIDFIELD. At most institutions, the
+  use of MIDFIELD data for research is  in the IRB "Exempt" category,
+  but institutional practices vary.}
+  \item{Your institutional IRB has granted approval for your project
+  to study students using MIDFIELD. At most institutions, the
+  use of MIDFIELD data for research is  in the IRB "Exempt" category,
+  but institutional practices vary.}
+}
+}
+\references{
+\insertAllCited{}
 }
 \concept{package}
