@@ -5,13 +5,20 @@
 \alias{midfieldr-package}
 \title{\code{midfieldr}: Tools for Student Records Research}
 \description{
+Provides functions for studying US undergraduate student-record
+data provided by registrars at participating institutions.
+The practice data set includes all student records for approximately
+98,000 students at 12 institutions from 1987 to 2016. For privacy
+protection, personal and institutional identities are anonymized.
+}
+\section{Details}{
+
 The *Multiple-Institution Database for Investigating Engineering
 Longitudinal Development* (MIDFIELD) is a partnership of US higher
-education institutions with engineering programs. MIDFIELD contains
-registrar's data for 1.7M undergraduates in all majors at 19 institutions
-from 1987--2019 \insertCite{Ohland+Long:2016}{midfieldr}.
-}
-\details{
+education institutions with engineering programs. The MIDFIELD research
+database contains registrar's data for 1.7M undergraduates in all majors
+at 19 institutions from 1987--2019 \insertCite{Ohland+Long:2016}{midfieldr}.
+
 The software environment comprises two R packages:
 \itemize{
   \item{midfieldr: An R package providing functions specialized for
@@ -23,6 +30,9 @@ The software environment comprises two R packages:
   not suitable for drawing inferences about student performance, i.e.,
   not for research.}
 }
+}
+
+\section{Data}{
 
 midfielddata provides a proportionate stratified random sample
 of the MIDFIELD research data. The sampling strata are institution, cip4
@@ -47,6 +57,7 @@ the same variable names, though some research variables are
 omitted from the practice data. Thus R scripts written for the practice
 data should generally work with the research data.
 }
+
 \references{
 \insertAllCited{}
 }
