@@ -189,7 +189,7 @@ functions:
 -   `add_completion_timely()` determine if a student completes their
     program in a timely manner
 -   `add_race_sex()` obtain student demographics
--   `prepare_multiway()` condition multiway data for graphing
+-   `condition_multiway()` condition multiway data for graphing
 
 **R ecosystem**. Internally, midfieldr and midfielddata use a data.table
 syntax and structure. Thus data frames returned by midfieldr functions
