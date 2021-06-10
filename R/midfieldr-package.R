@@ -18,7 +18,7 @@ NULL
 #' for data carpentry and ggplot2 for graphs.
 #'
 #' @docType package
-#' @name midfieldr
+#' @name midfieldr-package
 #' @family package
 NULL
 
