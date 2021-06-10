@@ -1,0 +1,159 @@
+---
+title: "Graduation rate"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Graduation rate}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/body-and-society.csl
+link-citations: yes
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(fig.path = here::here("man/figures", 
+                                            "art-07-graduation-rate-"))
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+kable2html <- function(x, font_size = NULL, caption = NULL) {
+  font_size <- ifelse(is.null(font_size), 11, font_size)
+  kable_in <- knitr::kable(x, format = "html", caption = caption)
+  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
+}
+```
+
+## Introduction
+
+In the US, the Integrated Postsecondary Education Data System (IPEDS) defines "graduation rate" as the fraction of a cohort of full-time, first-time, degree-seeking undergraduates who complete their program within a percentage (100%, 150%, or 200%) of the "normal" time (typically 4 years) as defined by the institution [@IPEDS:2020]. The MIDFIELD team typically uses the 150% (6-year) definition. 
+
+The IPEDS definition excludes students who attend college part-time, who transfer from one institution to another, and who start college in any term other than the Fall term. Moreover, IPEDS policy does not extend the time limit for students who change majors (switchers) even if the student and the institution are satisfied that the student graduated in the new major in a timely fashion. 
+
+The American Council on Education (ACE) estimates that this definition of graduation rate may exclude up to 60% of students at 4-year institutions [@Cook+Hartle:2011]. 
+
+So why use the metric at all? Do graduation rates really matter? Cook and Hartle say, yes they do ... 
+
+> ... because in the eyes of the public, policy makers, and the media, they provide a clear, simple, and logical---if often misleading---number.
+
+
+### Using less-restrictive criteria 
+
+By definition, graduation rate is a program-based outcome. Thus, how one defines a program affects the outcome. 
+
+For example, consider a student matriculating in mechanical engineering (CIP code 141901) but graduating in 6 years in industrial engineering (CIP code 143501). Applying the IPEDS definition of graduation rate, the student *is not counted* as a graduate in either program because the CIPs of the two programs do not match. 
+
+In contrast, MIDFIELD defines a program by its 2-digit CIP when computing graduation rate. In the example above, mechanical and industrial engineering are both programs in Engineering (CIP code 14). Applying the MIDFIELD definition of graduation rate, the student in the example *is counted* as a Engineering graduate.  
+
+MIDFIELD also includes transfer students, part-time students, and students who start college in any term. The IPEDS-MIDFIELD comparison is summarized in the table. 
+
+<br>
+```{r echo = FALSE}
+library("midfieldr")
+library("midfielddata")
+library("data.table")
+Constraints <- c(
+  "timely completion in:", 
+  "transfer students are:", 
+  "extended span for switchers is:", 
+  "part-time students are:", 
+  "cohort admitted in:"
+)
+IPEDS <- c(
+  "6 years",
+  "excluded", 
+  "excluded", 
+  "excluded", 
+  "Fall only"
+)
+MIDFIELD <- c(
+  "6 years", 
+  "included", 
+  "planned", 
+  "included", 
+  "any term"
+)
+Notes <- c(
+  "can be changed by user", 
+  "timely completion span depends on entry level", 
+  "heuristic in development for future release", 
+  "", 
+  ""
+)
+
+DT <- data.table(Constraints, IPEDS, MIDFIELD, Notes)
+setnames(DT, old = c("Notes"), new = c("MIDFIELD notes"))
+kable2html(DT, caption = "Comparing graduation rate criteria")
+```
+
+### This vignette uses
+
+midfieldr functions 
+
+- `f()` 
+- `f()`
+- `f()`
+
+packages
+
+```{r}
+# packages used
+library("midfieldr")
+library("midfielddata")
+library("data.table")
+library("ggplot2")
+
+# print max 20 rows, otherwise 10 rows each head/tail
+options(datatable.print.nrows = 20, datatable.print.topn = 10)
+```
+
+
+
+
+## Under construction
+
+
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+## Appendix
+
+### Complete script
+
+The vignette code chunks are collected below in a single, condensed script. 
+
+```{r}
+# packages used
+library("midfieldr")
+library("midfielddata")
+library("data.table")
+library("ggplot2")
+```
+
+
+
