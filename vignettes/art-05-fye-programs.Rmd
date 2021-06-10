@@ -62,7 +62,7 @@ Two approaches are described in this vignette.
 
 1. Use prepared predictions in `fye_start`, a built-in data set in midfieldr with predicted starting programs for all FYE students in the midfielddata practice data tables. 
 
-2. Perform your own imputation. Use `prepare_fye()` to construct a data frame with appropriate predictor variables formatted such that it can be used as an input argument for the `mice()` function in the R package "mice" (multivariate imputation by chained equations). 
+2. Perform your own imputation. Use `condition_fye()` to construct a data frame with appropriate predictor variables formatted such that it can be used as an input argument for the `mice()` function in the R package "mice" (multivariate imputation by chained equations). 
 
 ### This vignette uses
 
@@ -71,7 +71,7 @@ midfieldr functions
 - `add_race_sex()`  
 - `filter_by_key()`
 - `filter_text()` 
-- `prepare_fye()`  
+- `condition_fye()`  
 
 packages
 
@@ -268,11 +268,11 @@ Of course, because of the imputation, the counts are estimates. However, had we 
 
 ## Perform your own imputation (optional) 
 
-### Using `prepare_fye()`
+### Using `condition_fye()`
 
 This section shows the details of preparing the data for imputation and using the mice package to perform an imputation. This procedure results in the prepared  `fye_start` data set we used above. 
 
-The main preparation work is done by `prepare_fye()`. The first argument of `prepare_fye()` is a data frame of all available  degree-seeking engineering students, with required variables student ID, race, and sex. Regardless of what programs we happen to be studying, if we impute starting majors for FYE students, we include all engineering programs at this point. 
+The main preparation work is done by `condition_fye()`. The first argument of `condition_fye()` is a data frame of all available  degree-seeking engineering students, with required variables student ID, race, and sex. Regardless of what programs we happen to be studying, if we impute starting majors for FYE students, we include all engineering programs at this point. 
 
 To collect these students, we start by obtaining all CIP codes that start with "14" (Engineering).
 
@@ -321,17 +321,17 @@ engr
 
 We're starting with `r nrow(engr)` engineers  total. 
 
-This data frame is ready to use as the first argument of `prepare_fye()`. The remaining  arguments have default settings and so are optional. Arguments of `prepare_fye()`:
+This data frame is ready to use as the first argument of `condition_fye()`. The remaining  arguments have default settings and so are optional. Arguments of `condition_fye()`:
  
 - `dframe` data frame with variables `mcid`, `race`, and  `sex`  
-- `mdata`  term table, default `term` 
+- `midfield_table`  term table, default `term` 
 - `fye_codes` CIP code(s) for FYE, default `"140102"` 
 
 Using the default settings, 
 
 ```{r}
 # set up a data frame for imputation 
-fye <- prepare_fye(engr)
+fye <- condition_fye(engr)
 
 # view the result
 fye
@@ -549,7 +549,7 @@ engr <- filter_by_key(engr,
                       match_to = student,
                       key_col = "mcid")
 engr <- add_race_sex(engr)
-fye <- prepare_fye(engr)
+fye <- condition_fye(engr)
 
 # mice
 framework <- mice(fye, maxit = 0)

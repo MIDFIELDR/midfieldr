@@ -40,7 +40,7 @@ library("seplyr")
 # 	filter(!sex %in% "Unknown") %>%
 # 	mutate(race_sex = str_c(race, sex, sep = " ")) %>%
 # 	select(program, race_sex, stick) %>%
-# 	prepare_multiway()
+# 	condition_multiway()
 #
 # # graph
 # ggplot(stickiness_mw, aes(x = stick, y = race_sex)) +

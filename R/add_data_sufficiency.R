@@ -30,9 +30,9 @@ NULL
 #'
 #' @param dframe data frame with required variables
 #'        \code{institution} and \code{timely_term}
-#' @param ... not used, forces later arguments to be used by name
-#' @param mdata MIDFIELD term data, default \code{midfielddata::term},
+#' @param midfield_table MIDFIELD term data, default \code{midfielddata::term},
 #'        with required variables \code{institution} and \code{term}
+#' @param ... not used, forces later arguments to be used by name
 #' @param details logical scalar to add columns reporting information on
 #'        which the evaluation is based, default FALSE
 #' @return A \code{data.table}  with the following properties:
@@ -47,9 +47,9 @@ NULL
 #' @examples
 #' # TBD
 add_data_sufficiency <- function(dframe,
-                             ...,
-                             mdata = NULL,
-                             details = NULL) {
+                                 midfield_table = NULL,
+                                 ...,
+                                 details = NULL) {
 
     wrapr::stop_if_dot_args(
         substitute(list(...)), "Arguments after ... must be named,"
@@ -57,12 +57,12 @@ add_data_sufficiency <- function(dframe,
 
     # explicit or NULL arguments
     assert_explicit(dframe)
-    mdata  <- mdata  %||% midfielddata::term
+    midfield_table  <- midfield_table  %||% midfielddata::term
     details <- details %||% FALSE
 
     # check argument class
     assert_class(dframe, "data.frame")
-    assert_class(mdata, "data.frame")
+    assert_class(midfield_table, "data.frame")
     assert_class(details, "logical")
 
     # The dframe argument is modified "by reference." Thus changing its value
@@ -70,19 +70,19 @@ add_data_sufficiency <- function(dframe,
     # --- a data.table feature designed for fast data manipulation,
     # especially for data that occupies a lot of memory.
     setDT(dframe)
-    setDT(mdata)
+    setDT(midfield_table)
 
     # existence of required columns
     assert_required_column(dframe, "institution")
     assert_required_column(dframe, "timely_term")
-    assert_required_column(mdata, "institution")
-    assert_required_column(mdata, "term")
+    assert_required_column(midfield_table, "institution")
+    assert_required_column(midfield_table, "term")
 
     # class of required columns
     assert_class(dframe[, institution], "character")
     assert_class(dframe[, timely_term], "character")
-    assert_class(mdata[, term], "character")
-    assert_class(mdata[, institution], "character")
+    assert_class(midfield_table[, term], "character")
+    assert_class(midfield_table[, institution], "character")
 
     # bind names due to NSE notes in R CMD check
     data_sufficiency <- NULL
@@ -95,8 +95,8 @@ add_data_sufficiency <- function(dframe,
     key_names <- names_dframe[!names_dframe %chin% cols_we_add]
     dframe <- dframe[, key_names, with = FALSE]
 
-    # from mdata, get institution last term
-    dframe <- add_inst_limit(dframe, mdata = mdata)
+    # from midfield_table, get institution last term
+    dframe <- add_inst_limit(dframe, midfield_table = midfield_table)
 
     # assess the data sufficiency
     dframe[, data_sufficiency := fifelse(timely_term <= inst_limit, TRUE, FALSE)]

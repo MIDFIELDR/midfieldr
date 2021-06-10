@@ -10,7 +10,6 @@ NULL
 #' Existing variables with the same names, if any, are overwritten.
 #'
 #' @param dframe data frame with required variable \code{mcid}
-#' @param ... not used, forces later arguments to be used by name
 #' @param midfield_table MIDFIELD \code{student} table, with required
 #'        variables \code{mcid}, \code{race}, and \code{sex}
 #' @return A \code{data.table}  with the following properties:
@@ -24,12 +23,7 @@ NULL
 #' @examples
 #' # TBD
 add_race_sex <- function(dframe,
-                         ...,
                          midfield_table = NULL) {
-
-    wrapr::stop_if_dot_args(
-        substitute(list(...)), "Arguments after ... must be named,"
-    )
 
     # default arguments if NULL
     midfield_table <- midfield_table %||% midfielddata::student

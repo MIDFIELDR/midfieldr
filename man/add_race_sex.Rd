@@ -4,12 +4,10 @@
 \alias{add_race_sex}
 \title{Add columns for race/ethnicity and sex}
 \usage{
-add_race_sex(dframe, ..., midfield_table = NULL)
+add_race_sex(dframe, midfield_table = NULL)
 }
 \arguments{
 \item{dframe}{data frame with required variable \code{mcid}}
-
-\item{...}{not used, forces later arguments to be used by name}
 
 \item{midfield_table}{MIDFIELD \code{student} table, with required
 variables \code{mcid}, \code{race}, and \code{sex}}
@@ -37,9 +35,9 @@ Other functions:
 \code{\link{add_completion_timely}()},
 \code{\link{add_data_sufficiency}()},
 \code{\link{add_timely_term}()},
+\code{\link{condition_fye}()},
+\code{\link{condition_multiway}()},
 \code{\link{filter_by_key}()},
-\code{\link{filter_text}()},
-\code{\link{prepare_fye}()},
-\code{\link{prepare_multiway}()}
+\code{\link{filter_text}()}
 }
 \concept{functions}

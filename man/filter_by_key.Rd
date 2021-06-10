@@ -51,8 +51,8 @@ Other functions:
 \code{\link{add_data_sufficiency}()},
 \code{\link{add_race_sex}()},
 \code{\link{add_timely_term}()},
-\code{\link{filter_text}()},
-\code{\link{prepare_fye}()},
-\code{\link{prepare_multiway}()}
+\code{\link{condition_fye}()},
+\code{\link{condition_multiway}()},
+\code{\link{filter_text}()}
 }
 \concept{functions}

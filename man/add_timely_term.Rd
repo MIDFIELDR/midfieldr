@@ -6,26 +6,26 @@
 \usage{
 add_timely_term(
   dframe,
+  midfield_table = NULL,
   ...,
-  span = NULL,
-  mdata = NULL,
   details = NULL,
+  span = NULL,
   heuristic = NULL
 )
 }
 \arguments{
 \item{dframe}{data frame with required variable \code{mcid}}
 
-\item{...}{not used, forces later arguments to be used by name}
-
-\item{span}{numeric scalar, number of years to define timely completion,
-default 6 years}
-
-\item{mdata}{MIDFIELD term data, default \code{midfielddata::term},
+\item{midfield_table}{MIDFIELD term data, default \code{midfielddata::term},
 with required variables \code{mcid}, \code{term}, and \code{level}}
+
+\item{...}{not used, forces later arguments to be used by name}
 
 \item{details}{logical scalar to add columns reporting information on
 which the timely completion limit is based, default FALSE}
+
+\item{span}{numeric scalar, number of years to define timely completion,
+default 6 years}
 
 \item{heuristic}{not used, placeholder for future alternative methods of
 estimating them timely completion term}
@@ -72,9 +72,9 @@ Other functions:
 \code{\link{add_completion_timely}()},
 \code{\link{add_data_sufficiency}()},
 \code{\link{add_race_sex}()},
+\code{\link{condition_fye}()},
+\code{\link{condition_multiway}()},
 \code{\link{filter_by_key}()},
-\code{\link{filter_text}()},
-\code{\link{prepare_fye}()},
-\code{\link{prepare_multiway}()}
+\code{\link{filter_text}()}
 }
 \concept{functions}

@@ -6,7 +6,7 @@ NULL
 
 # Rdpack reprompt is used for citations in an Roxygen document
 
-#' Prepare multiway data for graphing
+#' Condition multiway data for graphing
 #'
 #' Transform a data frame such that two categorical variables are factors
 #' with levels ordered by medians of the quantitative variable. Rows and
@@ -14,7 +14,7 @@ NULL
 #'
 #' In multiway data, there is a single quantitative value (or response)
 #' for every combination of levels of two categorical variables.
-#' \code{prepare_multiway()} converts the columns of categorical variables
+#' \code{condition_multiway()} converts the columns of categorical variables
 #' to factors and orders the factor levels by increasing medians of the
 #' quantitative response variable.
 #'
@@ -53,9 +53,9 @@ NULL
 #' str(dframe)
 #'
 #' # structure after
-#' mw <- prepare_multiway(dframe)
+#' mw <- condition_multiway(dframe)
 #' str(mw)
-prepare_multiway <- function(dframe, ..., details = NULL) {
+condition_multiway <- function(dframe, ..., details = NULL) {
 
   wrapr::stop_if_dot_args(
     substitute(list(...)), "Arguments after ... must be named,"

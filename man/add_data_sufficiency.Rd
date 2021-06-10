@@ -4,16 +4,16 @@
 \alias{add_data_sufficiency}
 \title{Add a column to evaluate data sufficiency}
 \usage{
-add_data_sufficiency(dframe, ..., mdata = NULL, details = NULL)
+add_data_sufficiency(dframe, midfield_table = NULL, ..., details = NULL)
 }
 \arguments{
 \item{dframe}{data frame with required variables
 \code{institution} and \code{timely_term}}
 
-\item{...}{not used, forces later arguments to be used by name}
-
-\item{mdata}{MIDFIELD term data, default \code{midfielddata::term},
+\item{midfield_table}{MIDFIELD term data, default \code{midfielddata::term},
 with required variables \code{institution} and \code{term}}
+
+\item{...}{not used, forces later arguments to be used by name}
 
 \item{details}{logical scalar to add columns reporting information on
 which the evaluation is based, default FALSE}
@@ -61,9 +61,9 @@ Other functions:
 \code{\link{add_completion_timely}()},
 \code{\link{add_race_sex}()},
 \code{\link{add_timely_term}()},
+\code{\link{condition_fye}()},
+\code{\link{condition_multiway}()},
 \code{\link{filter_by_key}()},
-\code{\link{filter_text}()},
-\code{\link{prepare_fye}()},
-\code{\link{prepare_multiway}()}
+\code{\link{filter_text}()}
 }
 \concept{functions}

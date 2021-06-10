@@ -28,13 +28,13 @@ NULL
 #' the adjusted span \code{adj_span}.
 #'
 #' @param dframe data frame with required variable \code{mcid}
-#' @param ... not used, forces later arguments to be used by name
-#' @param span numeric scalar, number of years to define timely completion,
-#'        default 6 years
-#' @param mdata MIDFIELD term data, default \code{midfielddata::term},
+#' @param midfield_table MIDFIELD term data, default \code{midfielddata::term},
 #'        with required variables \code{mcid}, \code{term}, and \code{level}
+#' @param ... not used, forces later arguments to be used by name
 #' @param details logical scalar to add columns reporting information on
 #'        which the timely completion limit is based, default FALSE
+#' @param span numeric scalar, number of years to define timely completion,
+#'        default 6 years
 #' @param heuristic not used, placeholder for future alternative methods of
 #'        estimating them timely completion term
 #' @return A \code{data.table}  with the following properties:
@@ -49,10 +49,10 @@ NULL
 #' @examples
 #' # TBD
 add_timely_term<- function(dframe,
+                           midfield_table = NULL,
                            ...,
-                           span = NULL,
-                           mdata = NULL,
                            details = NULL,
+                           span = NULL,
                            heuristic = NULL) {
 
     wrapr::stop_if_dot_args(
@@ -61,7 +61,7 @@ add_timely_term<- function(dframe,
 
     # default arguments if NULL
     span <- span %||% 6
-    mdata <- mdata %||% midfielddata::term
+    midfield_table <- midfield_table %||% midfielddata::term
     details <- details %||% FALSE
     heuristic <- NULL
 
@@ -76,7 +76,7 @@ add_timely_term<- function(dframe,
     assert_explicit(dframe)
     assert_class(dframe, "data.frame")
     assert_class(span, "numeric")
-    assert_class(mdata, "data.frame")
+    assert_class(midfield_table, "data.frame")
     assert_class(details, "logical")
     # heuristic ignored for now
 
@@ -85,19 +85,19 @@ add_timely_term<- function(dframe,
     # --- a data.table feature designed for fast data manipulation,
     # especially for data that occupies a lot of memory.
     setDT(dframe)
-    setDT(mdata)
+    setDT(midfield_table)
 
     # existence of required columns
     assert_required_column(dframe, "mcid")
-    assert_required_column(mdata, "mcid")
-    assert_required_column(mdata, "term")
-    assert_required_column(mdata, "level")
+    assert_required_column(midfield_table, "mcid")
+    assert_required_column(midfield_table, "term")
+    assert_required_column(midfield_table, "level")
 
     # class of required columns
     assert_class(dframe[, mcid], "character")
-    assert_class(mdata[, mcid], "character")
-    assert_class(mdata[, term], "character")
-    assert_class(mdata[, level], "character")
+    assert_class(midfield_table[, mcid], "character")
+    assert_class(midfield_table[, term], "character")
+    assert_class(midfield_table[, level], "character")
 
     # preserve column order except columns that match new columns
     added_cols <- c("term_i", "level_i", "adj_span", "timely_term")
@@ -105,13 +105,13 @@ add_timely_term<- function(dframe,
     key_names <- names_dframe[!names_dframe %chin% added_cols]
     dframe <- dframe[, key_names, with = FALSE]
 
-    # work on the mdata data
+    # work on the midfield_table data
     # get student's first term and level
     # cols_we_want <- c("mcid", "term", "level")
-    # rows_we_want <- mdata$mcid %chin% dframe$mcid
-    # DT <- mdata[rows_we_want, cols_we_want, with = FALSE]
+    # rows_we_want <- midfield_table$mcid %chin% dframe$mcid
+    # DT <- midfield_table[rows_we_want, cols_we_want, with = FALSE]
 
-    DT <- filter_by_key(dframe = mdata,
+    DT <- filter_by_key(dframe = midfield_table,
                         match_to = dframe,
                         key_col = "mcid",
                         select =  c("mcid", "term", "level"))

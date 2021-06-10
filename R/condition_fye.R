@@ -1,7 +1,7 @@
 #' @import data.table
 NULL
 
-#' Prepare FYE data for multiple imputation
+#' Condition FYE data for multiple imputation
 #'
 #' Filter first-year-engineering (FYE) students and prepare variables for
 #' predicting unknown starting majors. The prepared variables are institution,
@@ -36,7 +36,7 @@ NULL
 #'     predicted using multiple imputation.}
 #' }
 #'
-#' The function extracts all terms for all FYE students from \code{mdata}.
+#' The function extracts all terms for all FYE students from \code{midfield_table}.
 #' In cases where students enter FYE, change programs, and re-enter FYE, only
 #' the first group of FYE terms is considered. Any programs before FYE are
 #' ignored. The first (if any) post-FYE program is identified. If the program
@@ -51,10 +51,10 @@ NULL
 #' @param dframe data frame of all degree-seeking engineering students in the
 #'        database, with required variables \code{mcid}, \code{race},
 #'        and \code{sex}
-#' @param ... not used, forces later arguments to be used by name
-#' @param mdata MIDFIELD term data, default \code{midfielddata::term},
+#' @param midfield_table MIDFIELD term data, default \code{midfielddata::term},
 #'        with required variables \code{mcid}, \code{institution},
 #'        \code{term}, and \code{cip6}
+#' @param ... not used, forces later arguments to be used by name
 #' @param fye_codes character vector of 6-digit CIP codes to
 #'        identify FYE programs
 #'
@@ -69,17 +69,17 @@ NULL
 #' @export
 #' @examples
 #' # TBD
-prepare_fye <- function(dframe,
-                        ...,
-                        mdata = NULL,
-                        fye_codes = NULL) {
+condition_fye <- function(dframe,
+                          midfield_table = NULL,
+                          ...,
+                          fye_codes = NULL) {
 
     wrapr::stop_if_dot_args(
         substitute(list(...)), "Arguments after ... must be named,"
     )
 
     # default arguments if NULL
-    mdata <- mdata %||% midfielddata::term
+    midfield_table <- midfield_table %||% midfielddata::term
     fye_codes <- fye_codes %||% c("140102")
 
     # bind names due to NSE notes in R CMD check
@@ -90,7 +90,7 @@ prepare_fye <- function(dframe,
     # check arguments
     assert_explicit(dframe)
     assert_class(dframe, "data.frame")
-    assert_class(mdata, "data.frame")
+    assert_class(midfield_table, "data.frame")
     assert_class(fye_codes, "character")
 
     # The dframe argument is modified "by reference." Thus changing its value
@@ -98,34 +98,34 @@ prepare_fye <- function(dframe,
     # --- a data.table feature designed for fast data manipulation,
     # especially for data that occupies a lot of memory.
     setDT(dframe)
-    setDT(mdata)
+    setDT(midfield_table)
 
     # existence of required columns
     assert_required_column(dframe, "mcid")
     assert_required_column(dframe, "race")
     assert_required_column(dframe, "sex")
 
-    assert_required_column(mdata, "mcid")
-    assert_required_column(mdata, "institution")
-    assert_required_column(mdata, "term")
-    assert_required_column(mdata, "cip6")
+    assert_required_column(midfield_table, "mcid")
+    assert_required_column(midfield_table, "institution")
+    assert_required_column(midfield_table, "term")
+    assert_required_column(midfield_table, "cip6")
 
     # class of required columns
     assert_class(dframe[, mcid], "character")
     assert_class(dframe[, race], "character")
     assert_class(dframe[, sex], "character")
 
-    assert_class(mdata[, mcid], "character")
-    assert_class(mdata[, institution], "character")
-    assert_class(mdata[, term], "character")
-    assert_class(mdata[, cip6], "character")
+    assert_class(midfield_table[, mcid], "character")
+    assert_class(midfield_table[, institution], "character")
+    assert_class(midfield_table[, term], "character")
+    assert_class(midfield_table[, cip6], "character")
 
     # all degree-seeking engineering students
     latest_id <- dframe[, unique(mcid)]
 
     # degree-seeking engr and an FYE term
-    rows_we_want <- mdata$mcid %chin% latest_id & mdata$cip6 %chin% fye_codes
-    fye <- mdata[rows_we_want, .(mcid, institution)]
+    rows_we_want <- midfield_table$mcid %chin% latest_id & midfield_table$cip6 %chin% fye_codes
+    fye <- midfield_table[rows_we_want, .(mcid, institution)]
 
     # fye has ID and institution columns
     fye <- unique(fye)
@@ -138,10 +138,10 @@ prepare_fye <- function(dframe,
 
     # for these IDs, extract all their terms
     # cols_we_want <- c("mcid", "term", "cip6")
-    # rows_we_want <- mdata$mcid %chin% latest_id
-    # DT <- mdata[rows_we_want, cols_we_want, with = FALSE]
+    # rows_we_want <- midfield_table$mcid %chin% latest_id
+    # DT <- midfield_table[rows_we_want, cols_we_want, with = FALSE]
 
-    DT <- filter_by_key(dframe = mdata,
+    DT <- filter_by_key(dframe = midfield_table,
                         match_to = fye,
                         key_col = "mcid",
                         select = c("mcid", "term", "cip6"))

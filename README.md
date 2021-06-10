@@ -116,7 +116,7 @@ work with the research data.
 For more information about obtaining access to MIDFIELD research data,
 contact Russell Long (<ralong@purdue.edu>)
 
-## Install the data
+## Install the practice data
 
 Install midfielddata first.
 
@@ -192,11 +192,8 @@ functions:
 -   `prepare_multiway()` condition multiway data for graphing
 
 **R ecosystem**. Internally, midfieldr and midfielddata use a data.table
-syntax and structure. However, midfieldr functions attempt to preserve
-other data frame classes such as the plain data frame in base R or the
-tibble structure in dplyr. Thus users should find midfieldr compatible
-with their preferred “dialect.”
-
+syntax and structure. Thus data frames returned by midfieldr functions
+and the practice data sets are of class “data.frame” and “data.table.”
 In general the midfieldr vignettes use the following packages:
 
 -   midfieldr
@@ -204,6 +201,10 @@ In general the midfieldr vignettes use the following packages:
 -   data.table ([Dowle and Srinivasan,
     2020](#ref-Dowle+Srinivasan:2020:data.table))
 -   ggplot2 ([Wickham, 2016](#ref-Wickham:2016:ggplot2))
+
+For users preferring the dplyr “dialect”, the midfieldr functions are
+generally magrittr-pipe friendly, but class “tibble” data frames are
+converted to class “data.frame” and “data.table.”
 
 ## Meta
 
