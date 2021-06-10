@@ -60,3 +60,14 @@ filter_text(cip,
 filter_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 }
 }
+\seealso{
+Other functions: 
+\code{\link{add_completion_timely}()},
+\code{\link{add_data_sufficiency}()},
+\code{\link{add_race_sex}()},
+\code{\link{add_timely_term}()},
+\code{\link{filter_by_key}()},
+\code{\link{prepare_fye}()},
+\code{\link{prepare_multiway}()}
+}
+\concept{functions}

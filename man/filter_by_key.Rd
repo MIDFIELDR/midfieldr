@@ -45,3 +45,14 @@ key column does not have to be included in the vector of column names in
 \examples{
 # TBD
 }
+\seealso{
+Other functions: 
+\code{\link{add_completion_timely}()},
+\code{\link{add_data_sufficiency}()},
+\code{\link{add_race_sex}()},
+\code{\link{add_timely_term}()},
+\code{\link{filter_text}()},
+\code{\link{prepare_fye}()},
+\code{\link{prepare_multiway}()}
+}
+\concept{functions}
