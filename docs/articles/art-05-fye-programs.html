@@ -123,7 +123,7 @@
 <p>Two approaches are described in this vignette.</p>
 <ol style="list-style-type: decimal">
 <li><p>Use prepared predictions in <code>fye_start</code>, a built-in data set in midfieldr with predicted starting programs for all FYE students in the midfielddata practice data tables.</p></li>
-<li><p>Perform your own imputation. Use <code><a href="../reference/prepare_fye.html">prepare_fye()</a></code> to construct a data frame with appropriate predictor variables formatted such that it can be used as an input argument for the <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice()</a></code> function in the R package “mice” (multivariate imputation by chained equations).</p></li>
+<li><p>Perform your own imputation. Use <code><a href="../reference/condition_fye.html">condition_fye()</a></code> to construct a data frame with appropriate predictor variables formatted such that it can be used as an input argument for the <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice()</a></code> function in the R package “mice” (multivariate imputation by chained equations).</p></li>
 </ol>
 </div>
 <div id="this-vignette-uses" class="section level3">
@@ -136,7 +136,7 @@
 </li>
 <li><code><a href="../reference/filter_by_key.html">filter_by_key()</a></code></li>
 <li><code><a href="../reference/filter_text.html">filter_text()</a></code></li>
-<li><code><a href="../reference/prepare_fye.html">prepare_fye()</a></code></li>
+<li><code><a href="../reference/condition_fye.html">condition_fye()</a></code></li>
 </ul>
 <p>packages</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -414,12 +414,12 @@
 <div id="perform-your-own-imputation-optional" class="section level2">
 <h2 class="hasAnchor">
 <a href="#perform-your-own-imputation-optional" class="anchor" aria-hidden="true"></a>Perform your own imputation (optional)</h2>
-<div id="using-prepare_fye" class="section level3">
+<div id="using-condition_fye" class="section level3">
 <h3 class="hasAnchor">
-<a href="#using-prepare_fye" class="anchor" aria-hidden="true"></a>Using <code>prepare_fye()</code>
+<a href="#using-condition_fye" class="anchor" aria-hidden="true"></a>Using <code>condition_fye()</code>
 </h3>
 <p>This section shows the details of preparing the data for imputation and using the mice package to perform an imputation. This procedure results in the prepared <code>fye_start</code> data set we used above.</p>
-<p>The main preparation work is done by <code><a href="../reference/prepare_fye.html">prepare_fye()</a></code>. The first argument of <code><a href="../reference/prepare_fye.html">prepare_fye()</a></code> is a data frame of all available degree-seeking engineering students, with required variables student ID, race, and sex. Regardless of what programs we happen to be studying, if we impute starting majors for FYE students, we include all engineering programs at this point.</p>
+<p>The main preparation work is done by <code><a href="../reference/condition_fye.html">condition_fye()</a></code>. The first argument of <code><a href="../reference/condition_fye.html">condition_fye()</a></code> is a data frame of all available degree-seeking engineering students, with required variables student ID, race, and sex. Regardless of what programs we happen to be studying, if we impute starting majors for FYE students, we include all engineering programs at this point.</p>
 <p>To collect these students, we start by obtaining all CIP codes that start with “14” (Engineering).</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># get engineering CIP codes</span>
@@ -526,13 +526,13 @@
 <span class="co">#&gt; 19035: MID26697444           White Male</span>
 <span class="co">#&gt; 19036: MID26697447           Asian Male</span></code></pre></div>
 <p>We’re starting with 19,036 engineers total.</p>
-<p>This data frame is ready to use as the first argument of <code><a href="../reference/prepare_fye.html">prepare_fye()</a></code>. The remaining arguments have default settings and so are optional. Arguments of <code><a href="../reference/prepare_fye.html">prepare_fye()</a></code>:</p>
+<p>This data frame is ready to use as the first argument of <code><a href="../reference/condition_fye.html">condition_fye()</a></code>. The remaining arguments have default settings and so are optional. Arguments of <code><a href="../reference/condition_fye.html">condition_fye()</a></code>:</p>
 <ul>
 <li>
 <code>dframe</code> data frame with variables <code>mcid</code>, <code>race</code>, and <code>sex</code><br>
 </li>
 <li>
-<code>mdata</code> term table, default <code>term</code>
+<code>midfield_table</code> term table, default <code>term</code>
 </li>
 <li>
 <code>fye_codes</code> CIP code(s) for FYE, default <code>"140102"</code>
@@ -541,7 +541,7 @@
 <p>Using the default settings,</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># set up a data frame for imputation </span>
-<span class="va">fye</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prepare_fye.html">prepare_fye</a></span><span class="op">(</span><span class="va">engr</span><span class="op">)</span>
+<span class="va">fye</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condition_fye.html">condition_fye</a></span><span class="op">(</span><span class="va">engr</span><span class="op">)</span>
 
 <span class="co"># view the result</span>
 <span class="va">fye</span>
@@ -800,7 +800,7 @@ van Buuren, Stef and Groothuis-Oudshoorn, Karin (2011) <span class="nocase">mice
                       match_to <span class="op">=</span> <span class="va">student</span>,
                       key_col <span class="op">=</span> <span class="st">"mcid"</span><span class="op">)</span>
 <span class="va">engr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_race_sex.html">add_race_sex</a></span><span class="op">(</span><span class="va">engr</span><span class="op">)</span>
-<span class="va">fye</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prepare_fye.html">prepare_fye</a></span><span class="op">(</span><span class="va">engr</span><span class="op">)</span>
+<span class="va">fye</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condition_fye.html">condition_fye</a></span><span class="op">(</span><span class="va">engr</span><span class="op">)</span>
 
 <span class="co"># mice</span>
 <span class="va">framework</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice</a></span><span class="op">(</span><span class="va">fye</span>, maxit <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>

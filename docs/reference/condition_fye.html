@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add columns for race/ethnicity and sex — add_race_sex • midfieldr</title>
+<title>Condition FYE data for multiple imputation — condition_fye • midfieldr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,12 @@
 
 
 
-<meta property="og:title" content="Add columns for race/ethnicity and sex — add_race_sex" />
-<meta property="og:description" content="Add variables race and sex from student to a
-data frame, using mcid as the join-by variable." />
+<meta property="og:title" content="Condition FYE data for multiple imputation — condition_fye" />
+<meta property="og:description" content="Filter first-year-engineering (FYE) students and prepare variables for
+predicting unknown starting majors. The prepared variables are institution,
+race, and sex (predictors) and cip6 (with missing values to be imputed). The
+function returns a data frame formatted for multiple imputation using
+the mice package." />
 <meta property="og:image" content="https://midfieldr.github.io/midfieldr/logo.png" />
 
 
@@ -149,50 +152,99 @@ data frame, using mcid as the join-by variable." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add columns for race/ethnicity and sex</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/add_race_sex.R'><code>R/add_race_sex.R</code></a></small>
-    <div class="hidden name"><code>add_race_sex.Rd</code></div>
+    <h1>Condition FYE data for multiple imputation</h1>
+    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/condition_fye.R'><code>R/condition_fye.R</code></a></small>
+    <div class="hidden name"><code>condition_fye.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Add variables <code>race</code> and <code>sex</code> from <code>student</code> to a
-data frame, using <code>mcid</code> as the join-by variable.</p>
+    <p>Filter first-year-engineering (FYE) students and prepare variables for
+predicting unknown starting majors. The prepared variables are institution,
+race, and sex (predictors) and cip6 (with missing values to be imputed). The
+function returns a data frame formatted for multiple imputation using
+the mice package.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>add_race_sex</span><span class='op'>(</span><span class='va'>dframe</span>, midfield_table <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>condition_fye</span><span class='op'>(</span><span class='va'>dframe</span>, midfield_table <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span>, fye_codes <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>dframe</th>
-      <td><p>data frame with required variable <code>mcid</code></p></td>
+      <td><p>data frame of all degree-seeking engineering students in the
+database, with required variables <code>mcid</code>, <code>race</code>,
+and <code>sex</code></p></td>
     </tr>
     <tr>
       <th>midfield_table</th>
-      <td><p>MIDFIELD <code>student</code> table, with required
-variables <code>mcid</code>, <code>race</code>, and <code>sex</code></p></td>
+      <td><p>MIDFIELD term data, default <code><a href='https://rdrr.io/pkg/midfielddata/man/term.html'>midfielddata::term</a></code>,
+with required variables <code>mcid</code>, <code>institution</code>,
+<code>term</code>, and <code>cip6</code></p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>not used, forces later arguments to be used by name</p></td>
+    </tr>
+    <tr>
+      <th>fye_codes</th>
+      <td><p>character vector of 6-digit CIP codes to
+identify FYE programs</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>data.table</code>  with the following properties:</p><ul>
-<li><p>Rows are not modified</p></li>
-<li><p>Columns <code>race</code> and <code>sex</code> are added</p></li>
-<li><p>Grouping structures are not preserved</p></li>
+    <p>A <code>data.table</code> with the following properties:</p><ul>
+<li><p>One row for every FYE student</p></li>
+<li><p>Columns for ID, institution, race, sex, and CIP code, all
+    except ID converted to factors.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Existing variables with the same names, if any, are overwritten.</p>
+    <p>Some US institutions have first year engineering (FYE) programs, typically
+a common first year curriculum that is a prerequisite for declaring
+an engineering major. FYE programs are problematic for some persistence
+metrics. For example, in the conventional graduation rate metric, the only
+students who count as graduates are those who complete the same
+program in which they were admitted. But students cannot graduate in FYE;
+instead, upon completing FYE, they transition to a degree-granting
+engineering program.</p>
+<p>Therefore, to include FYE students in any persistence metric requiring a
+degree-granting "starting" program, we have to predict the engineering
+program the FYE student would have declared had they not been required to
+enroll in FYE. <code>predict_fye()</code> sorts students into two categories:</p>
+<ol>
+<li><p>Students who complete an FYE and declare an engineering major.
+    This is the easy case--at the student's first opportunity, they
+    enrolled in an engineering program of their choosing. We use that
+    program as the predicted  starting program.</p></li>
+<li><p>Students who, after FYE, do not declare an engineering major.
+    This is the more complicated case---the data provide no information
+    regarding what engineering program the student would have declared
+    originally had the institution not required them to enroll in FYE.
+    For these students, we treat the starting program as missing data be
+    predicted using multiple imputation.</p></li>
+</ol>
+
+<p>The function extracts all terms for all FYE students from <code>midfield_table</code>.
+In cases where students enter FYE, change programs, and re-enter FYE, only
+the first group of FYE terms is considered. Any programs before FYE are
+ignored. The first (if any) post-FYE program is identified. If the program
+is in engineering, the CIP is retained as their predicted starting major.
+If not, the CIP is replaced with NA to be treated as missing data for the
+imputation.</p>
+<p>Lastly, the predictor variables (institution, race, sex) and the imputed
+variable (cip6) are converted to unordered factors. The resulting data
+frame is ready for use as input for the mice package.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other functions: 
 <code><a href='add_completion_timely.html'>add_completion_timely</a>()</code>,
 <code><a href='add_data_sufficiency.html'>add_data_sufficiency</a>()</code>,
+<code><a href='add_race_sex.html'>add_race_sex</a>()</code>,
 <code><a href='add_timely_term.html'>add_timely_term</a>()</code>,
-<code><a href='condition_fye.html'>condition_fye</a>()</code>,
 <code><a href='condition_multiway.html'>condition_multiway</a>()</code>,
 <code><a href='filter_by_key.html'>filter_by_key</a>()</code>,
 <code><a href='filter_text.html'>filter_text</a>()</code></p></div>

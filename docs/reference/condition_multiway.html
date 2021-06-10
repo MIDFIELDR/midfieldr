@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add columns for race/ethnicity and sex — add_race_sex • midfieldr</title>
+<title>Condition multiway data for graphing — condition_multiway • midfieldr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,10 @@
 
 
 
-<meta property="og:title" content="Add columns for race/ethnicity and sex — add_race_sex" />
-<meta property="og:description" content="Add variables race and sex from student to a
-data frame, using mcid as the join-by variable." />
+<meta property="og:title" content="Condition multiway data for graphing — condition_multiway" />
+<meta property="og:description" content="Transform a data frame such that two categorical variables are factors
+with levels ordered by medians of the quantitative variable. Rows and
+columns of the data frame are otherwise unaffected." />
 <meta property="og:image" content="https://midfieldr.github.io/midfieldr/logo.png" />
 
 
@@ -149,57 +150,108 @@ data frame, using mcid as the join-by variable." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add columns for race/ethnicity and sex</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/add_race_sex.R'><code>R/add_race_sex.R</code></a></small>
-    <div class="hidden name"><code>add_race_sex.Rd</code></div>
+    <h1>Condition multiway data for graphing</h1>
+    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/condition_multiway.R'><code>R/condition_multiway.R</code></a></small>
+    <div class="hidden name"><code>condition_multiway.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Add variables <code>race</code> and <code>sex</code> from <code>student</code> to a
-data frame, using <code>mcid</code> as the join-by variable.</p>
+    <p>Transform a data frame such that two categorical variables are factors
+with levels ordered by medians of the quantitative variable. Rows and
+columns of the data frame are otherwise unaffected.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>add_race_sex</span><span class='op'>(</span><span class='va'>dframe</span>, midfield_table <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>condition_multiway</span><span class='op'>(</span><span class='va'>dframe</span>, <span class='va'>...</span>, details <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>dframe</th>
-      <td><p>data frame with required variable <code>mcid</code></p></td>
+      <td><p>data frame of multiway data</p></td>
     </tr>
     <tr>
-      <th>midfield_table</th>
-      <td><p>MIDFIELD <code>student</code> table, with required
-variables <code>mcid</code>, <code>race</code>, and <code>sex</code></p></td>
+      <th>...</th>
+      <td><p>not used, forces later arguments to be used by name</p></td>
+    </tr>
+    <tr>
+      <th>details</th>
+      <td><p>logical scalar to add columns reporting the medians on which
+the order of the levels is based, default FALSE</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>data.table</code>  with the following properties:</p><ul>
+    <p>A <code>data.table</code> with the following properties:</p><ul>
 <li><p>Rows are not modified</p></li>
-<li><p>Columns <code>race</code> and <code>sex</code> are added</p></li>
-<li><p>Grouping structures are not preserved</p></li>
+<li><p>Quantitative column is not modified</p></li>
+<li><p>Categorical columns are factors with levels ordered by
+        median quantitative values</p></li>
+<li><p>Grouping structures, if any, are not preserved</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Existing variables with the same names, if any, are overwritten.</p>
+    <p>In multiway data, there is a single quantitative value (or response)
+for every combination of levels of two categorical variables.
+<code>condition_multiway()</code> converts the columns of categorical variables
+to factors and orders the factor levels by increasing medians of the
+quantitative response variable.</p>
+<p>The <code>dframe</code> argument, therefore, must have three columns only. One
+column is a quantitative variable (type numeric) and two columns are
+categorical variables (type character or factor).</p>
+<p>Note that "multiway" in our context refers to the data structure and graph
+design defined by Cleveland (1993)
+, not to
+the methods of analysis described by
+Kroonenberg (2008)
+.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Cleveland WS (1993).
+<em>Visualizing Data</em>.
+Hobart Press, Summit, NJ.<br /><br /> Kroonenberg PM (2008).
+<em>Applied Multiway Data Analysis</em>.
+Wiley, Hoboken, NJ.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other functions: 
 <code><a href='add_completion_timely.html'>add_completion_timely</a>()</code>,
 <code><a href='add_data_sufficiency.html'>add_data_sufficiency</a>()</code>,
+<code><a href='add_race_sex.html'>add_race_sex</a>()</code>,
 <code><a href='add_timely_term.html'>add_timely_term</a>()</code>,
 <code><a href='condition_fye.html'>condition_fye</a>()</code>,
-<code><a href='condition_multiway.html'>condition_multiway</a>()</code>,
 <code><a href='filter_by_key.html'>filter_by_key</a>()</code>,
 <code><a href='filter_text.html'>filter_text</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='co'># TBD</span></span>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='va'>catg1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"urban"</span>, <span class='st'>"rural"</span>, <span class='st'>"suburb"</span>, <span class='st'>"village"</span><span class='op'>)</span>, each <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>catg2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"men"</span>, <span class='st'>"women"</span><span class='op'>)</span>, times <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>value</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.22</span>, <span class='fl'>0.14</span>, <span class='fl'>0.43</span>, <span class='fl'>0.58</span>, <span class='fl'>0.81</span>, <span class='fl'>0.46</span>, <span class='fl'>0.15</span>, <span class='fl'>0.20</span><span class='op'>)</span></span>
 <span class='r-in'></span>
+<span class='r-in'><span class='co'># structure before</span></span>
+<span class='r-in'><span class='va'>dframe</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='va'>catg1</span>, <span class='va'>catg2</span>, <span class='va'>value</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>dframe</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 'data.frame':	8 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ catg1: chr  "urban" "urban" "rural" "rural" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ catg2: chr  "men" "women" "men" "women" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ value: num  0.22 0.14 0.43 0.58 0.81 0.46 0.15 0.2</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># structure after</span></span>
+<span class='r-in'><span class='va'>mw</span> <span class='op'>&lt;-</span> <span class='fu'>condition_multiway</span><span class='op'>(</span><span class='va'>dframe</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>mw</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Classes 'data.table' and 'data.frame':	8 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ catg1: Factor w/ 4 levels "village","urban",..: 2 2 3 3 4 4 1 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..- attr(*, "scores")= num [1:4(1d)] 0.505 0.635 0.18 0.175</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..- attr(*, "dimnames")=List of 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. .. ..$ : chr [1:4] "rural" "suburb" "urban" "village"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ catg2: Factor w/ 2 levels "men","women": 1 2 1 2 1 2 1 2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..- attr(*, "scores")= num [1:2(1d)] 0.325 0.33</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..- attr(*, "dimnames")=List of 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. .. ..$ : chr [1:2] "men" "women"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ value: num  0.22 0.14 0.43 0.58 0.81 0.46 0.15 0.2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
 </code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
