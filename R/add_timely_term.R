@@ -44,6 +44,7 @@ NULL
 #'           \code{level_i}, and \code{adj_span} are added optionally
 #'     \item Grouping structures are not preserved
 #' }
+#' @family functions
 #' @export
 #' @examples
 #' # TBD

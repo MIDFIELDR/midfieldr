@@ -24,6 +24,7 @@ NULL
 #'     \item All columns or those specified by \code{select}
 #'     \item Grouping structures are not preserved
 #' }
+#' @family functions
 #' @export
 #' @examples
 #' # subset using keywords

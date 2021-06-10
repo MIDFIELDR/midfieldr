@@ -19,6 +19,7 @@ NULL
 #'     \item Columns \code{race} and \code{sex} are added
 #'     \item Grouping structures are not preserved
 #' }
+#' @family functions
 #' @export
 #' @examples
 #' # TBD

@@ -65,11 +65,10 @@ NULL
 #'     except ID converted to factors.
 #' }
 #'
-#' @examples
-#' # TBD
 #' @family functions
 #' @export
-#'
+#' @examples
+#' # TBD
 prepare_fye <- function(dframe,
                         ...,
                         mdata = NULL,

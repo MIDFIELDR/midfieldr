@@ -41,6 +41,7 @@ NULL
 #' }
 #' @references
 #'   \insertAllCited{}
+#' @family functions
 #' @export
 #' @examples
 #' catg1 <- rep(c("urban", "rural", "suburb", "village"), each = 2)

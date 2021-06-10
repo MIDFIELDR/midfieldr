@@ -42,6 +42,7 @@ NULL
 #'           is added optionally
 #'     \item Grouping structures are not preserved
 #' }
+#' @family functions
 #' @export
 #' @examples
 #' # TBD

@@ -39,6 +39,7 @@ NULL
 #'           \code{completion} and \code{term_degree} are added optionally
 #'     \item Grouping structures are not preserved
 #' }
+#' @family functions
 #' @export
 #' @examples
 #' # TBD
