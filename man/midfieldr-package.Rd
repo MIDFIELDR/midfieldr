@@ -14,17 +14,17 @@ from 1987--2019 \insertCite{Ohland+Long:2016}{midfieldr}.
 \details{
 The software environment comprises two R packages:
 \itemize{
-  \item{\pkg{midfieldr} An R package providing functions specialized for
+  \item{midfieldr: An R package providing functions specialized for
   manipulating MIDFIELD data to examine the intersectionality of
   race/ethnicity, sex, and discipline in persistence metrics such as
   stickiness (retention by a discipline) and graduation rate.}
-  \item{\pkg{midfielddata} An R  package with practice data for users to
+  \item{midfielddata: An R  package with practice data for users to
   learn about student record analysis using R. However, these data are
   not suitable for drawing inferences about student performance, i.e.,
   not for research.}
 }
 
-\pkg{midfielddata} provides a proportionate stratified random sample
+midfielddata provides a proportionate stratified random sample
 of the MIDFIELD research data. The sampling strata are institution, cip4
 (the first four digits of the 6-digit CIP code), transfer status,
 race/ethnicity, and sex. Contains four data tables: \code{student},
@@ -38,11 +38,14 @@ available to researchers under the following conditions:
   to study students using MIDFIELD. At most institutions, the
   use of MIDFIELD data for research is  in the IRB "Exempt" category,
   but institutional practices vary.}
-  \item{Your institutional IRB has granted approval for your project
-  to study students using MIDFIELD. At most institutions, the
-  use of MIDFIELD data for research is  in the IRB "Exempt" category,
-  but institutional practices vary.}
+  \item{Each researcher using the data signs a letter of
+  confidentiality describing  the guidelines for how the data may be
+  reported.}
 }
+The research data and practice data have the same structure with
+the same variable names, though some research variables are
+omitted from the practice data. Thus R scripts written for the practice
+data should generally work with the research data.
 }
 \references{
 \insertAllCited{}
