@@ -14,17 +14,17 @@ from 1987--2019 \insertCite{Ohland+Long:2016}{midfieldr}.
 \details{
 The software environment comprises two R packages:
 \itemize{
-  \item{\package{midfieldr} An R package providing functions specialized for
+  \item{\pkg{midfieldr} An R package providing functions specialized for
   manipulating MIDFIELD data to examine the intersectionality of
   race/ethnicity, sex, and discipline in persistence metrics such as
   stickiness (retention by a discipline) and graduation rate.}
-  \item{\package{midfielddata} An R  package with practice data for users to
+  \item{\pkg{midfielddata} An R  package with practice data for users to
   learn about student record analysis using R. However, these data are
   not suitable for drawing inferences about student performance, i.e.,
   not for research.}
 }
 
-\package{midfielddata} provides a proportionate stratified random sample
+\pkg{midfielddata} provides a proportionate stratified random sample
 of the MIDFIELD research data. The sampling strata are institution, cip4
 (the first four digits of the 6-digit CIP code), transfer status,
 race/ethnicity, and sex. Contains four data tables: \code{student},
