@@ -9,7 +9,6 @@ NULL
 #' 98,000 students at 12 institutions from 1987 to 2016. For privacy
 #' protection, personal and institutional identities are anonymized.
 #'
-#' @section Details:
 #' The *Multiple-Institution Database for Investigating Engineering
 #' Longitudinal Development* (MIDFIELD) is a partnership of US higher
 #' education institutions with engineering programs. The MIDFIELD research
