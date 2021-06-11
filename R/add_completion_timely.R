@@ -3,7 +3,7 @@
 #' @importFrom stats na.omit
 NULL
 
-#' Add a column to evaluate timely completion
+#' Add column from degree to evaluate timely completion
 #'
 #' A logical variable is added to a data frame indicating whether a student
 #' has completed their program in a timely manner.
@@ -27,8 +27,8 @@ NULL
 #'
 #' @param dframe data frame with required variables
 #'        \code{mcid} and \code{timely_term}
-#' @param midfield_table MIDFIELD degree data, default \code{midfielddata::degree},
-#'        with required variables \code{mcid} and \code{term}
+#' @param midfield_table MIDFIELD degree data table with required
+#'        variables \code{mcid} and \code{term}
 #' @param ... not used, forces later arguments to be used by name
 #' @param details logical scalar to add columns reporting information on
 #'        which the evaluation is based, default FALSE
@@ -44,17 +44,18 @@ NULL
 #' @examples
 #' # TBD
 add_completion_timely <- function(dframe,
-                                  midfield_table = NULL,
+                                  midfield_table,
                                   ...,
                                   details = NULL) {
 
+    # force arguments after dots to be used by name
     wrapr::stop_if_dot_args(
         substitute(list(...)), "Arguments after ... must be named,"
     )
 
-    # explicit or NULL arguments
+    # explicit arguments and NULL defaults if any
     assert_explicit(dframe)
-    midfield_table  <- midfield_table  %||% midfielddata::degree
+    assert_explicit(midfield_table)
     details <- details %||% FALSE
 
     # check argument class
@@ -62,10 +63,7 @@ add_completion_timely <- function(dframe,
     assert_class(midfield_table, "data.frame")
     assert_class(details, "logical")
 
-    # The dframe argument is modified "by reference." Thus changing its value
-    # inside the function immediately changes its value in the calling frame
-    # --- a data.table feature designed for fast data manipulation,
-    # especially for data that occupies a lot of memory.
+    # dframe is modified "by reference" throughout
     setDT(dframe)
     setDT(midfield_table)
 
@@ -81,7 +79,7 @@ add_completion_timely <- function(dframe,
     assert_class(midfield_table[, mcid], "character")
     assert_class(midfield_table[, term], "character")
 
-    # bind names due to nonstandard evaluation notes in R CMD check
+    # bind names due to NSE notes in R CMD check
     completion_timely <- NULL
     term_degree <- NULL
     timely_term <- NULL
@@ -93,16 +91,11 @@ add_completion_timely <- function(dframe,
     key_names <- names_dframe[!names_dframe %chin% cols_we_add]
     dframe <- dframe[, key_names, with = FALSE]
 
-    # degree term
-    # cols_we_want <- c("mcid", "term")
-    # rows_we_want <- midfield_table$mcid %chin% dframe$mcid
-    # DT <- midfield_table[rows_we_want, cols_we_want, with = FALSE]
-
-    # degree term
+    # subset midfield data table
     DT <- filter_by_key(dframe = midfield_table,
-                  match_to = dframe,
-                  key_col = "mcid",
-                  select = c("mcid", "term"))
+                        match_to = dframe,
+                        key_col = "mcid",
+                        select = c("mcid", "term"))
 
     # keep the first degree term
     setorderv(DT, c("mcid", "term"))

@@ -2,14 +2,14 @@
 % Please edit documentation in R/add_race_sex.R
 \name{add_race_sex}
 \alias{add_race_sex}
-\title{Add columns for race/ethnicity and sex}
+\title{Add columns from student for race/ethnicity and sex}
 \usage{
-add_race_sex(dframe, midfield_table = NULL)
+add_race_sex(dframe, midfield_table)
 }
 \arguments{
 \item{dframe}{data frame with required variable \code{mcid}}
 
-\item{midfield_table}{MIDFIELD \code{student} table, with required
+\item{midfield_table}{MIDFIELD  student data table with required
 variables \code{mcid}, \code{race}, and \code{sex}}
 }
 \value{

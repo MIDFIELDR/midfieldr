@@ -1,6 +1,8 @@
 
 ## midfieldr 1.0.0.9013 / 2021-06
 
+- make MIDFIELD data table arguments explicit in functions
+- remove dependency on installing midfielddata
 - delete Travis CI
 - continue refining function names and arguments 
 - replaced "Get started" with the vignette on the practice data sets 

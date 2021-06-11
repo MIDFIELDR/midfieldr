@@ -2,7 +2,7 @@
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
-#' Add a column to evaluate data sufficiency
+#' Add column from term to evaluate data sufficiency
 #'
 #' A column is added to a data frame indicating whether the data include a
 #' sufficient number of years to justify including a student in an analysis
@@ -30,7 +30,7 @@ NULL
 #'
 #' @param dframe data frame with required variables
 #'        \code{institution} and \code{timely_term}
-#' @param midfield_table MIDFIELD term data, default \code{midfielddata::term},
+#' @param midfield_table MIDFIELD term data table
 #'        with required variables \code{institution} and \code{term}
 #' @param ... not used, forces later arguments to be used by name
 #' @param details logical scalar to add columns reporting information on
@@ -47,17 +47,18 @@ NULL
 #' @examples
 #' # TBD
 add_data_sufficiency <- function(dframe,
-                                 midfield_table = NULL,
+                                 midfield_table,
                                  ...,
                                  details = NULL) {
 
+    # force arguments after dots to be used by name
     wrapr::stop_if_dot_args(
         substitute(list(...)), "Arguments after ... must be named,"
     )
 
-    # explicit or NULL arguments
+    # explicit arguments and NULL defaults if any
     assert_explicit(dframe)
-    midfield_table  <- midfield_table  %||% midfielddata::term
+    assert_explicit(midfield_table)
     details <- details %||% FALSE
 
     # check argument class
@@ -65,10 +66,7 @@ add_data_sufficiency <- function(dframe,
     assert_class(midfield_table, "data.frame")
     assert_class(details, "logical")
 
-    # The dframe argument is modified "by reference." Thus changing its value
-    # inside the function immediately changes its value in the calling frame
-    # --- a data.table feature designed for fast data manipulation,
-    # especially for data that occupies a lot of memory.
+    # dframe is modified "by reference" throughout
     setDT(dframe)
     setDT(midfield_table)
 

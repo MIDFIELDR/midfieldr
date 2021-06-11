@@ -54,36 +54,31 @@ filter_text <- function(dframe,
                         ...,
                         drop_text = NULL,
                         select = NULL) {
+
+  # force arguments after dots to be used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)), "Arguments after ... must be named,"
   )
+
+  # return if no work is being done
   if (is.null(keep_text) & is.null(drop_text) & is.null(select)) {
     return(dframe)
   }
 
-  # check before names(dframe) below
+  # explicit arguments and NULL defaults if any
+  assert_explicit(dframe)
+
+  # check argument class
+  # set NULL default once dframe class checked
   assert_class(dframe, "data.frame")
-
-  # default optional arguments
   select <- select %||% names(dframe)
-
-  # check arguments
-  if (!is.null(keep_text)) {
-    assert_class(keep_text, "character")
-  }
-  if (!is.null(drop_text)) {
-    assert_class(drop_text, "character")
-  }
   assert_class(select, "character")
 
-  # bind names due to nonstandard evaluation notes in R CMD check
-  # var <- NULL
+  # check argument class of optional arguments
+  if (!is.null(keep_text)) assert_class(keep_text, "character")
+  if (!is.null(drop_text)) assert_class(drop_text, "character")
 
-  # The dframe argument is copied and therefore not modified "by reference."
-  # Thus changing its value inside the function does not change its value
-  # in the calling frame.
-
-  # start
+  # dframe is NOT modified by reference
   DT <- copy(as.data.table(dframe))
 
   # subset columns

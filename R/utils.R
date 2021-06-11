@@ -15,9 +15,6 @@ NULL
 #' @noRd
 add_inst_limit <- function(dframe, midfield_table) {
 
-  # bind names due to nonstandard evaluation notes in R CMD check
-  # key_names <- NULL
-
   # prepare dframe, preserve column order for return
   # omit existing column(s) that match column(s) we add
   setDT(dframe)
@@ -110,6 +107,23 @@ assert_required_column <- function(data, col) {
   if (!col %in% names(data)) {
     stop("Column name `", col, "` required",
       call. = FALSE
+    )
+  }
+}
+
+# ------------------------------------------------------------------------
+
+#' Verify common column name exists
+#'
+#' @param data data frame
+#' @param col column name to be verified
+#' @noRd
+assert_common_column <- function(data, col) {
+  assert_class(data, "data.frame")
+  assert_class(col, "character")
+  if (!col %in% names(data)) {
+    stop("Column name `", col, "` is not present in `", substitute(data), "`",
+         call. = FALSE
     )
   }
 }
@@ -220,7 +234,7 @@ revive_class <- function(x, df_class) {
 
 # ------------------------------------------------------------------------
 
-#' Get the class of a data frame column
+#' Get the class of a column in a data frame
 #'
 #' @param x data.frame, tibble, or data.table
 #' @noRd

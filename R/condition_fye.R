@@ -51,12 +51,11 @@ NULL
 #' @param dframe data frame of all degree-seeking engineering students in the
 #'        database, with required variables \code{mcid}, \code{race},
 #'        and \code{sex}
-#' @param midfield_table MIDFIELD term data, default \code{midfielddata::term},
-#'        with required variables \code{mcid}, \code{institution},
-#'        \code{term}, and \code{cip6}
+#' @param midfield_table MIDFIELD term data table with required variables
+#'        \code{mcid}, \code{institution}, \code{term}, and \code{cip6}
 #' @param ... not used, forces later arguments to be used by name
 #' @param fye_codes character vector of 6-digit CIP codes to
-#'        identify FYE programs
+#'        identify FYE programs, default 140102
 #'
 #' @return A \code{data.table} with the following properties:
 #' \itemize{
@@ -70,33 +69,26 @@ NULL
 #' @examples
 #' # TBD
 condition_fye <- function(dframe,
-                          midfield_table = NULL,
+                          midfield_table,
                           ...,
                           fye_codes = NULL) {
 
+    # force arguments after dots to be used by name
     wrapr::stop_if_dot_args(
         substitute(list(...)), "Arguments after ... must be named,"
     )
 
-    # default arguments if NULL
-    midfield_table <- midfield_table %||% midfielddata::term
+    # explicit arguments and NULL defaults if any
+    assert_explicit(dframe)
+    assert_explicit(midfield_table)
     fye_codes <- fye_codes %||% c("140102")
 
-    # bind names due to NSE notes in R CMD check
-    next_cip6 <- NULL
-    next_cip2 <- NULL
-    cip2 <- NULL
-
-    # check arguments
-    assert_explicit(dframe)
+    # check argument class
     assert_class(dframe, "data.frame")
     assert_class(midfield_table, "data.frame")
     assert_class(fye_codes, "character")
 
-    # The dframe argument is modified "by reference." Thus changing its value
-    # inside the function immediately changes its value in the calling frame
-    # --- a data.table feature designed for fast data manipulation,
-    # especially for data that occupies a lot of memory.
+    # dframe is modified "by reference" throughout
     setDT(dframe)
     setDT(midfield_table)
 
@@ -120,11 +112,17 @@ condition_fye <- function(dframe,
     assert_class(midfield_table[, term], "character")
     assert_class(midfield_table[, cip6], "character")
 
+    # bind names due to NSE notes in R CMD check
+    next_cip6 <- NULL
+    next_cip2 <- NULL
+    cip2 <- NULL
+
     # all degree-seeking engineering students
     latest_id <- dframe[, unique(mcid)]
 
     # degree-seeking engr and an FYE term
-    rows_we_want <- midfield_table$mcid %chin% latest_id & midfield_table$cip6 %chin% fye_codes
+    rows_we_want <- midfield_table$mcid %chin% latest_id &
+        midfield_table$cip6 %chin% fye_codes
     fye <- midfield_table[rows_we_want, .(mcid, institution)]
 
     # fye has ID and institution columns
@@ -133,14 +131,7 @@ condition_fye <- function(dframe,
     # join, result has FYE ID, institution, race, sex
     fye <- merge(fye, dframe, by = "mcid", all.x = TRUE)
 
-    # update IDs
-    latest_id <- fye[, unique(mcid)]
-
-    # for these IDs, extract all their terms
-    # cols_we_want <- c("mcid", "term", "cip6")
-    # rows_we_want <- midfield_table$mcid %chin% latest_id
-    # DT <- midfield_table[rows_we_want, cols_we_want, with = FALSE]
-
+    # subset midfield data table
     DT <- filter_by_key(dframe = midfield_table,
                         match_to = fye,
                         key_col = "mcid",

@@ -2,7 +2,7 @@
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
-#' Add a column for the limiting term for timely completion
+#' Add column from term for the limiting term for timely completion
 #'
 #' Given information about a student's academic path, determine the latest
 #' term for which program completion could be considered timely.
@@ -28,7 +28,7 @@ NULL
 #' the adjusted span \code{adj_span}.
 #'
 #' @param dframe data frame with required variable \code{mcid}
-#' @param midfield_table MIDFIELD term data, default \code{midfielddata::term},
+#' @param midfield_table MIDFIELD term data table
 #'        with required variables \code{mcid}, \code{term}, and \code{level}
 #' @param ... not used, forces later arguments to be used by name
 #' @param details logical scalar to add columns reporting information on
@@ -49,41 +49,32 @@ NULL
 #' @examples
 #' # TBD
 add_timely_term<- function(dframe,
-                           midfield_table = NULL,
+                           midfield_table,
                            ...,
                            details = NULL,
                            span = NULL,
                            heuristic = NULL) {
 
+    # force arguments after dots to be used by name
     wrapr::stop_if_dot_args(
         substitute(list(...)), "Arguments after ... must be named,"
     )
 
-    # default arguments if NULL
-    span <- span %||% 6
-    midfield_table <- midfield_table %||% midfielddata::term
-    details <- details %||% FALSE
-    heuristic <- NULL
-
-    # bind names due to NSE notes in R CMD check
-    timely_term <- NULL
-    adj_span <- NULL
-    level_i <- NULL
-    delta <- NULL
-    yyyy <- NULL
-
-    # check arguments
+    # explicit arguments and NULL defaults if any
     assert_explicit(dframe)
+    assert_explicit(midfield_table)
+    details <- details %||% FALSE
+    span <- span %||% 6
+    heuristic <- NULL # for future use
+
+    # check argument class
     assert_class(dframe, "data.frame")
     assert_class(span, "numeric")
     assert_class(midfield_table, "data.frame")
     assert_class(details, "logical")
     # heuristic ignored for now
 
-    # The dframe argument is modified "by reference." Thus changing its value
-    # inside the function immediately changes its value in the calling frame
-    # --- a data.table feature designed for fast data manipulation,
-    # especially for data that occupies a lot of memory.
+    # dframe is modified "by reference" throughout
     setDT(dframe)
     setDT(midfield_table)
 
@@ -99,23 +90,24 @@ add_timely_term<- function(dframe,
     assert_class(midfield_table[, term], "character")
     assert_class(midfield_table[, level], "character")
 
+    # bind names due to NSE notes in R CMD check
+    timely_term <- NULL
+    adj_span <- NULL
+    level_i <- NULL
+    delta <- NULL
+    yyyy <- NULL
+
     # preserve column order except columns that match new columns
     added_cols <- c("term_i", "level_i", "adj_span", "timely_term")
     names_dframe <- colnames(dframe)
     key_names <- names_dframe[!names_dframe %chin% added_cols]
     dframe <- dframe[, key_names, with = FALSE]
 
-    # work on the midfield_table data
-    # get student's first term and level
-    # cols_we_want <- c("mcid", "term", "level")
-    # rows_we_want <- midfield_table$mcid %chin% dframe$mcid
-    # DT <- midfield_table[rows_we_want, cols_we_want, with = FALSE]
-
+    # subset midfield data table
     DT <- filter_by_key(dframe = midfield_table,
                         match_to = dframe,
                         key_col = "mcid",
                         select =  c("mcid", "term", "level"))
-
 
     # separate term encoding
     DT[, `:=` (yyyy = as.numeric(substr(term, 1, 4)),

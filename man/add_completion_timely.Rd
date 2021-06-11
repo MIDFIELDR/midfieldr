@@ -2,16 +2,16 @@
 % Please edit documentation in R/add_completion_timely.R
 \name{add_completion_timely}
 \alias{add_completion_timely}
-\title{Add a column to evaluate timely completion}
+\title{Add column from degree to evaluate timely completion}
 \usage{
-add_completion_timely(dframe, midfield_table = NULL, ..., details = NULL)
+add_completion_timely(dframe, midfield_table, ..., details = NULL)
 }
 \arguments{
 \item{dframe}{data frame with required variables
 \code{mcid} and \code{timely_term}}
 
-\item{midfield_table}{MIDFIELD degree data, default \code{midfielddata::degree},
-with required variables \code{mcid} and \code{term}}
+\item{midfield_table}{MIDFIELD degree data table with required
+variables \code{mcid} and \code{term}}
 
 \item{...}{not used, forces later arguments to be used by name}
 

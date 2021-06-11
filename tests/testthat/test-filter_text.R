@@ -3,9 +3,8 @@ context("filter_text")
 # get_my_path() for data in the testing directory
 # ctrl-shift-L to load internal functions
 
-music_cip <- filter_text(cip, keep_text = "^5009")
+music_cip   <- filter_text(cip, keep_text = "^5009")
 music_codes <- music_cip$cip6
-
 
 test_that("Non-character columns ignored", {
   u4 <- copy(music_cip)
@@ -24,39 +23,7 @@ test_that("Non-character columns ignored", {
   y6 <- filter_text(dframe = u6, keep_text = "TRUE")
   y7 <- filter_text(dframe = u6, keep_text = "^12$")
 })
-# test_that("Class of data frame is preserved", {
-#   u0 <- copy(cip)
-#   y0 <- filter_text(dframe = u0, keep_text = "^5009")
-#   # data.frame
-#   u1 <- as.data.frame(u0)
-#   y1 <- as.data.frame(y0)
-#   expect_setequal(
-#     class(filter_text(dframe = u1, keep_text = "^5009")),
-#     class(y1)
-#   )
-#   # data.table
-#   u2 <- copy(u0)
-#   y2 <- copy(y0)
-#   expect_setequal(
-#     class(filter_text(dframe = u2, keep_text = "^5009")),
-#     class(y2)
-#   )
-#   # tibble
-#   u3 <- as.data.frame(copy(u0))
-#   y3 <- as.data.frame(copy(y0))
-#   data.table::setattr(u3, "class", c("tbl", "tbl_df", "data.frame"))
-#   data.table::setattr(y3, "class", c("tbl", "tbl_df", "data.frame"))
-#   expect_setequal(
-#     class(filter_text(dframe = u3, keep_text = "^5009")),
-#     class(y3)
-#   )
-# })
-# test_that("Pipe correctly passes the dframe argument", {
-#   expect_equivalent(
-#     cip %>% filter_text(keep_text = c("^1407", "^1410")),
-#     filter_text(cip, keep_text = c("^1407", "^1410"))
-#   )
-# })
+
 test_that("Argument order works correctly", {
   expect_equal(
     filter_text(cip, keep_text = c("^1407", "^1410")),

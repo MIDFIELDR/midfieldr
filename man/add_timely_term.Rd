@@ -2,11 +2,11 @@
 % Please edit documentation in R/add_timely_term.R
 \name{add_timely_term}
 \alias{add_timely_term}
-\title{Add a column for the limiting term for timely completion}
+\title{Add column from term for the limiting term for timely completion}
 \usage{
 add_timely_term(
   dframe,
-  midfield_table = NULL,
+  midfield_table,
   ...,
   details = NULL,
   span = NULL,
@@ -16,7 +16,7 @@ add_timely_term(
 \arguments{
 \item{dframe}{data frame with required variable \code{mcid}}
 
-\item{midfield_table}{MIDFIELD term data, default \code{midfielddata::term},
+\item{midfield_table}{MIDFIELD term data table
 with required variables \code{mcid}, \code{term}, and \code{level}}
 
 \item{...}{not used, forces later arguments to be used by name}

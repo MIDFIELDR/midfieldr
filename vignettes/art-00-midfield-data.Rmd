@@ -53,8 +53,6 @@ To maintain confidentiality of human subject data, the identifiers for students 
 
 In this vignette, we introduce the four data tables and briefly examine their contents before moving on in subsequent vignettes to operate on the data using the functions in midfieldr. 
 
-
-
 ### This vignette uses
  
 packages
@@ -66,32 +64,45 @@ library("midfielddata")
 library("data.table")
 ```
 
+### Loading data
 
-### R "promise" objects 
-
-The tables of practice data in midfielddata do not load into memory until you use them (so-called R "promise" objects). Thus, loading the package with  `library("midfielddata")` as we did above, then listing the R objects in the environment with 
+Use `data()` to load the midfielddata data tables into memory for use. For example, after loading the package with `library("midfielddata")` as we did above, you can run `ls()` to see that the environment contains zero objects, 
 
 ```{r}
 # the names of objects in the environment
 ls()
 ```
 
-shows zero objects. Yet the data are available. If you use the data in an operation, you'll see that the "promise" has been kept. For example, to subset the student data for students whose age at admission is over 40, we would run
+To load the `student` data from midfielddata into memory, we run
 
 ```{r}
-# age at admission over 40
-dframe <- student[age > 40]
-
-# the names of objects in the environment
-ls()
-
-# examine the result
-dframe
+# loading a data set 
+data(student)
 ```
 
-If you look in the RStudio *Environment* pane, you should see `dframe` listed with `r nrow(dframe)` students meeting this criterion. 
+Checking the environment again, 
 
-All four practice data tables are promises when you load midfielddata, but  loaded into memory only when you use them. 
+```{r}
+# the names of objects in the environment
+ls()
+```
+
+If you look in the RStudio *Environment* pane, you should see `student` listed. We will typically load the data sets we need at the top of a script just after loading the midfielddata package. You need to load them only once in a session.  
+
+```{r}
+# load remaining data used in this vignette
+data(course)
+data(term)
+data(degree)
+```
+
+Checking the environment again, 
+
+```{r}
+# the names of objects in the environment
+ls()
+```
+
 
 ```{r echo = FALSE}
 kable2html <- function(x, font_size = NULL, caption = NULL) {
@@ -137,17 +148,27 @@ size_courses <- "349 MB"
 
 ## Inpect the `student` data
 
-Table of attributes of approximately 98,000 students upon being admitted as degree-seeking undergraduates. Each observation is a unique student keyed by student ID. Student IDs are anonymized but are consistent across the four data sets. The table comprises `r obs_students` observations of `r var_students` variables and occupies approximately `r size_students` memory. 
-
-For definitions of variables, view the help page by running 
+`student` is a table of `r var_students` student-related variables for the students in the sample, collected at the time they were admitted to their institutions as  degree-seeking undergraduates. For the data dictionary, you can navigate to the midfielddata website  [`student`](https://midfieldr.github.io/midfielddata/reference/student.html) page or view the same information in the help page by running 
 
 ```r
 ? student
-```
-To see the data structure, run
+``` 
+
+Each observation is a unique student keyed by student ID. Student IDs and institution names are anonymized but are consistent across the four data sets. To see the data structure, run
 
 ```{r}
+# view the structure of the data set 
 str(student)
+```
+
+`student` has `r obs_students` observations and occupies approximately `r size_students` memory. We can confirm that the student IDs are unique by running, 
+
+```{r}
+# pull the vector of unique IDs
+id <- student[, unique(mcid)]
+
+# examine the result
+length(id)
 ```
 
 Summarize some of the quantitative variables. 
@@ -166,23 +187,33 @@ sort(unique(student[, sex]))
 sort(unique(student[, race]))
 ```
 
-
-
 ## Inpect the `course` data
 
-Table of course-related attributes of approximately 98,000 undergraduates enrolled in courses at their institutions. Each observation is one course in one term for one student keyed by student ID and a combination of course, abbreviation, number, and section. The table comprises `r obs_courses` observations of `r var_courses` variables and occupies approximately `r size_courses` memory. 
-
-For definitions of variables, view the help page by running 
+`course` is a table of `r var_courses` course-related variables for the students in the sample. For the data dictionary, you can navigate to the midfielddata website  [`course`](https://midfieldr.github.io/midfielddata/reference/course.html) page or view the same information in the help page by running 
 
 ```r
 ? course
 ```
-To see the data structure, run
+
+Each observation is one course in one term for one student keyed by student ID and a combination of course, abbreviation, number, and section. To see the data structure, run
 
 ```{r}
+# view the structure of the data set 
 str(course)
 ```
 
+Of the four practice data sets in midfielddata, `course` is by far the largest, with `r obs_courses` observations and occupying `r size_courses` of memory. Depending on your machine, loading `course` can cause a noticeable delay in execution time (13 seconds on my machine), so you probably want to load it only when needed. 
+
+The number of unique students.  
+
+```{r}
+# pull the vector of unique IDs
+id <- course[, unique(mcid)]
+
+# examine the result
+length(id)
+```
+ 
 Summarize a quantitative variable. 
 
 ```{r}
@@ -213,18 +244,29 @@ print(all_course_names[sample(1:n, 20)], nrows = 20)
 
 ## Inpect the `term` data
 
-Table of term-related attributes of approximately 96,000 undergraduates for all terms completed at their institutions. Each observation is one term for one student keyed by student ID and term. The table comprises `r obs_terms` observations of `r var_terms` variables and occupies approximately `r size_terms` memory. 
-
-For definitions of variables, view the help page by running 
+`term` is a table of `r var_terms` term-related variables for the students in the sample. For the data dictionary, you can navigate to the midfielddata website  [`term`](https://midfieldr.github.io/midfielddata/reference/term.html) page or view the same information in the help page by running
 
 ```r
 ? term
 ```
-To see the data structure, run
+
+Each observation is one term for one student keyed by student ID and term. To see the data structure, run
 
 ```{r}
 str(term)
 ```
+
+`term` has `r obs_terms` observations and occupies approximately `r size_terms` of memory. The number of unique students is found by, 
+
+```{r}
+# pull the vector of unique IDs
+id <- term[, unique(mcid)]
+
+# examine the result
+length(id)
+```
+
+The number of unique students in `student` and `term` are not the same. To be recorded in `student`, students must be degree-seeking. To be recorded in `term`, students must complete a term. The data can include degree-seekers who fail to complete a term as well as term-completers not seeking a degree---hence the difference in numbers
 
 Summarize some of the quantitative variables. 
 
@@ -245,18 +287,29 @@ sort(unique(term[, standing]))
 
 ## Inpect the `degree` data
 
-Table of degree-related attributes of approximately 48,000 undergraduates upon completing their programs. Each observation is a unique student keyed by student ID. The table comprises `r obs_degrees` observations of `r var_degrees` variables and occupies approximately `r size_degrees` memory. 
-
-For definitions of variables, view the help page by running 
+`degree` is a table of `r var_degrees` degree-related variables for the students in the sample. For the data dictionary, you can navigate to the midfielddata website  [`degree`](https://midfieldr.github.io/midfielddata/reference/degree.html) page or view the same information in the help page by running
 
 ```r
 ? degree
 ```
-To see the data structure, run
+
+Each observation is a unique student keyed by student ID. To see the data structure, run
 
 ```{r}
 str(degree)
 ```
+
+`degree` has `r obs_degrees` observations and occupies approximately `r size_degrees` memory. The number of unique students is found by
+
+```{r}
+# pull the vector of unique IDs
+id <- degree[, unique(mcid)]
+
+# examine the result
+length(id)
+```
+
+Thus we have `r obs_degrees` graduates (in `degree`) from the `r obs_students` students admitted (in `student`). 
 
 Examine some categorical variables and their values. 
 
@@ -266,10 +319,10 @@ sort(unique(degree[, institution]))
 sort(unique(degree[, degree]))
 ```
 
-Only students completing their programs.
+Checking if any of the degrees are recorded as NA results in an empty table, thus all the students in `degree` are graduates. 
 
 ```{r}
-degree[!is.na(degree)]
+degree[is.na(degree)]
 ```
 
 
@@ -291,7 +344,7 @@ To summarize a data frame in detail, try the following and compare results.
 
 ### Complete script
 
-Each vignette concludes with the code chunks collected below in a single, condensed script. Some users like to copy and paste the to an R script of their own.  
+Each vignette concludes with its code chunks collected in a single, condensed script. Some users like to copy and paste the to an R script of their own.  
 
 ```{r eval = FALSE}
 # packages used
@@ -299,17 +352,15 @@ library("midfieldr")
 library("midfielddata")
 library("data.table")
 
-# cip
-str(cip)
-sort(unique(cip[, cip2]))
-length(unique(cip[, cip4]))
-length(unique(cip[, cip6]))
-set.seed(20210529)
-some_programs <- cip[, .(cip4name)]
-print(some_programs[sample(1:300, 20)], nrows = 20)
+# load data from midfielddata into memory
+data(student)
+data(course)
+data(term)
+data(degree)
 
 # student
 str(student)
+length(student[, unique(mcid)])
 summary(student[, sat_math])
 summary(student[, age])
 sort(unique(student[, sex]))
@@ -317,6 +368,7 @@ sort(unique(student[, race]))
 
 # course
 str(course)
+length(course[, unique(mcid)])
 summary(course[, hours_course])
 sort(unique(course[, type]))
 some_courses <- course[, .(course)]
@@ -327,6 +379,7 @@ print(some_courses[sample(1:n, 20)], nrows = 20)
 
 # term
 str(term)
+length(term[, unique(mcid)])
 summary(term[, hours_term])
 summary(term[, gpa_term])
 sort(unique(term[, level]))
@@ -334,7 +387,8 @@ sort(unique(term[, standing]))
 
 # degree
 str(degree)
+length(degree[, unique(mcid)])
 sort(unique(degree[, institution]))
 sort(unique(degree[, degree]))
-degree[!is.na(degree)]
+degree[is.na(degree)]
 ```

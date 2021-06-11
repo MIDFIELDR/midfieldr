@@ -4,21 +4,20 @@
 \alias{condition_fye}
 \title{Condition FYE data for multiple imputation}
 \usage{
-condition_fye(dframe, midfield_table = NULL, ..., fye_codes = NULL)
+condition_fye(dframe, midfield_table, ..., fye_codes = NULL)
 }
 \arguments{
 \item{dframe}{data frame of all degree-seeking engineering students in the
 database, with required variables \code{mcid}, \code{race},
 and \code{sex}}
 
-\item{midfield_table}{MIDFIELD term data, default \code{midfielddata::term},
-with required variables \code{mcid}, \code{institution},
-\code{term}, and \code{cip6}}
+\item{midfield_table}{MIDFIELD term data table with required variables
+\code{mcid}, \code{institution}, \code{term}, and \code{cip6}}
 
 \item{...}{not used, forces later arguments to be used by name}
 
 \item{fye_codes}{character vector of 6-digit CIP codes to
-identify FYE programs}
+identify FYE programs, default 140102}
 }
 \value{
 A \code{data.table} with the following properties:

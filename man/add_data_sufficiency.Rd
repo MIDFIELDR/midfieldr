@@ -2,15 +2,15 @@
 % Please edit documentation in R/add_data_sufficiency.R
 \name{add_data_sufficiency}
 \alias{add_data_sufficiency}
-\title{Add a column to evaluate data sufficiency}
+\title{Add column from term to evaluate data sufficiency}
 \usage{
-add_data_sufficiency(dframe, midfield_table = NULL, ..., details = NULL)
+add_data_sufficiency(dframe, midfield_table, ..., details = NULL)
 }
 \arguments{
 \item{dframe}{data frame with required variables
 \code{institution} and \code{timely_term}}
 
-\item{midfield_table}{MIDFIELD term data, default \code{midfielddata::term},
+\item{midfield_table}{MIDFIELD term data table
 with required variables \code{institution} and \code{term}}
 
 \item{...}{not used, forces later arguments to be used by name}

@@ -2,7 +2,7 @@
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
-#' Add columns for race/ethnicity and sex
+#' Add columns from student for race/ethnicity and sex
 #'
 #' Add variables \code{race} and \code{sex} from \code{student} to a
 #' data frame, using \code{mcid} as the join-by variable.
@@ -10,7 +10,7 @@ NULL
 #' Existing variables with the same names, if any, are overwritten.
 #'
 #' @param dframe data frame with required variable \code{mcid}
-#' @param midfield_table MIDFIELD \code{student} table, with required
+#' @param midfield_table MIDFIELD  student data table with required
 #'        variables \code{mcid}, \code{race}, and \code{sex}
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
@@ -23,16 +23,13 @@ NULL
 #' @examples
 #' # TBD
 add_race_sex <- function(dframe,
-                         midfield_table = NULL) {
+                         midfield_table) {
 
-    # default arguments if NULL
-    midfield_table <- midfield_table %||% midfielddata::student
-
-    # bind names due to NSE notes in R CMD check
-    # var <- NULL
-
-    # check arguments
+    # explicit arguments, NULL defaults if any
     assert_explicit(dframe)
+    assert_explicit(midfield_table)
+
+    # check argument class
     assert_class(dframe, "data.frame")
     assert_class(midfield_table, "data.frame")
 
