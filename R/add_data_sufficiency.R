@@ -28,19 +28,19 @@ NULL
 #' are returned as well. Here the extra column \code{inst_limit}, the latest
 #' term reported by the institution in the available data.
 #'
-#' @param dframe data frame with required variables
-#'        \code{institution} and \code{timely_term}
+#' @param dframe Data frame with required variables
+#'        \code{institution} and \code{timely_term}.
 #' @param midfield_table MIDFIELD term data table
-#'        with required variables \code{institution} and \code{term}
-#' @param ... not used, forces later arguments to be used by name
-#' @param details logical scalar to add columns reporting information on
-#'        which the evaluation is based, default FALSE
+#'        with required variables \code{institution} and \code{term}.
+#' @param ... Not used, forces later arguments to be used by name.
+#' @param details Logical scalar to add columns reporting information on
+#'        which the evaluation is based, default FALSE.
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
-#'     \item Rows are not modified
+#'     \item Rows are not modified.
 #'     \item Column \code{data_sufficiency} is added, column \code{inst_limit}
-#'           is added optionally
-#'     \item Grouping structures are not preserved
+#'           is added optionally.
+#'     \item Grouping structures are not preserved.
 #' }
 #' @family functions
 #' @export

@@ -2,41 +2,31 @@
 % Please edit documentation in R/add_timely_term.R
 \name{add_timely_term}
 \alias{add_timely_term}
-\title{Add column from term for the limiting term for timely completion}
+\title{Add column for timely completion term}
 \usage{
-add_timely_term(
-  dframe,
-  midfield_table,
-  ...,
-  details = NULL,
-  span = NULL,
-  heuristic = NULL
-)
+add_timely_term(dframe, midfield_table, ..., details = NULL, span = NULL)
 }
 \arguments{
-\item{dframe}{data frame with required variable \code{mcid}}
+\item{dframe}{Data frame with required variable \code{mcid}.}
 
-\item{midfield_table}{MIDFIELD term data table
-with required variables \code{mcid}, \code{term}, and \code{level}}
+\item{midfield_table}{MIDFIELD term data table with required variables
+\code{mcid}, \code{term}, and \code{level}.}
 
-\item{...}{not used, forces later arguments to be used by name}
+\item{...}{Not used, forces later arguments to be used by name.}
 
-\item{details}{logical scalar to add columns reporting information on
-which the timely completion limit is based, default FALSE}
+\item{details}{Logical scalar to add columns reporting information on
+which the timely completion term is based, default FALSE.}
 
-\item{span}{numeric scalar, number of years to define timely completion,
-default 6 years}
-
-\item{heuristic}{not used, placeholder for future alternative methods of
-estimating them timely completion term}
+\item{span}{Numeric scalar, number of years to define timely completion,
+default 6 years.}
 }
 \value{
 A \code{data.table}  with the following properties:
 \itemize{
-    \item Rows are not modified
+    \item Rows are not modified.
     \item Column \code{timely_term} is added, columns \code{term_i},
-          \code{level_i}, and \code{adj_span} are added optionally
-    \item Grouping structures are not preserved
+          \code{level_i}, and \code{adj_span} are added optionally.
+    \item Grouping structures are not preserved.
 }
 }
 \description{
@@ -44,20 +34,20 @@ Given information about a student's academic path, determine the latest
 term for which program completion could be considered timely.
 }
 \details{
-The basic heuristic starts with \code{span} number of years for each
-student (default 6 years) and adjusts the span by subtracting a whole
-number of years based on the level at which the student is admitted.
+The basic heuristic starts with \code{span} number of years for each student
+(default 6 years). The span for students admitted at a higher level than
+first year are reduced by one year for each full year the student is
+assumed to have completed.
 
-For example, a student admitted at a 4th-year or senior level is assumed
-to have completed 3 years of a program, so their span is reduced by 3 years.
-Similarly, the span of 3rd-year admissions are reduced by two years, and
-the span of 2nd-year admissions is reduced by one year. The adjusted span
-is added to their starting term; the result is the limiting term for
-timely completion reported in a \code{timely_term} column added to the
+For example, a student admitted at the second-year level is assumed
+to have completed one year of a program, so their span is reduced by one
+year. Similarly, spans are reduced by two years for students admitted at
+the 3rd-year level and by three years for students admitted at the
+fourth-year level.
+
+The adjusted span of years is added to their starting term; the result is
+the timely completion reported in the \code{timely_term} column added to the
 data frame.
-
-This model for timely completion is simplistic, and future
-heuristics may be added for more sophisticated estimates.
 
 If \code{details} is TRUE, additional column(s) that support the finding
 are returned as well. Here the extra columns are the student's initial
@@ -71,10 +61,11 @@ the adjusted span \code{adj_span}.
 Other functions: 
 \code{\link{add_completion_timely}()},
 \code{\link{add_data_sufficiency}()},
+\code{\link{add_institution}()},
 \code{\link{add_race_sex}()},
 \code{\link{condition_fye}()},
 \code{\link{condition_multiway}()},
-\code{\link{filter_by_key}()},
+\code{\link{filter_match}()},
 \code{\link{filter_text}()}
 }
 \concept{functions}

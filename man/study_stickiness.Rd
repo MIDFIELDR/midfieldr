@@ -8,9 +8,9 @@
 \code{data.table} with 31 rows and 3 columns keyed by
 program, race/ethnicity, and sex.
 \describe{
- \item{program}{character, instructional programs selected for study}
- \item{race_sex}{character, student race/ethnicity and sex}
- \item{stick}{numerical, program stickiness, a persistence metric}
+ \item{program}{Character, instructional programs selected for study}
+ \item{race_sex}{Character, student race/ethnicity and sex}
+ \item{stick}{Numerical, program stickiness, a persistence metric}
 }
 }
 \usage{

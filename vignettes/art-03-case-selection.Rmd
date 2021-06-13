@@ -53,7 +53,7 @@ We use this case selection in subsequent vignettes to illustrate typical workflo
 
 midfieldr functions 
  
-- `filter_by_key()`
+- `filter_match()`
 - `filter_text()` 
 
 packages
@@ -65,7 +65,7 @@ library("midfielddata")
 library("data.table")
 
 # load data tables from midfielddata
-data(student, degree)
+data(student, term, degree)
 
 # optional code to control data.table printing
 options(datatable.print.nrows = 6, datatable.print.topn = 3)
@@ -294,13 +294,13 @@ case_degree <- degree[rows_we_want, ..cols_we_want]
 case_degree
 ```
 
-This code chunk above represents a routine we encounter fairly often: subset rows of one data frame to keep values of a key variable that match values of the same key variable in a second data frame. We can use `filter_by_key()` to accomplish the entire task. 
+This code chunk above represents a routine we encounter fairly often: subset rows of one data frame to keep values of a key variable that match values of the same key variable in a second data frame. We can use `filter_match()` to accomplish the entire task. 
 
 ```{r}
 # subset degree table
-dframe <- filter_by_key(degree, 
-                        match_to = study_programs, 
-                        key_col = "cip6", 
+dframe <- filter_match(degree, 
+                        to = study_programs, 
+                        by = "cip6", 
                         select = c("mcid", "institution", "cip6"))
 
 # compare to the DT we obtained above after ordering rows the same way
@@ -309,13 +309,13 @@ all.equal(case_degree[order(mcid)], dframe[order(mcid)])
 
 ### Example 2. Subset by ID
 
-Another common data access task is to retrieve information from `student` by ID. Suppose we wanted to examine the transfer status at the time of admission of the  students with degrees we subset above. We use `filter_by_key()` again to subset rows of `student` to keep values of `mcid` that match values of `mcid` in `case_degree`.
+Another common data access task is to retrieve information from `student` by ID. Suppose we wanted to examine the transfer status at the time of admission of the  students with degrees we subset above. We use `filter_match()` again to subset rows of `student` to keep values of `mcid` that match values of `mcid` in `case_degree`.
 
 ```{r}
 # subset student table
-case_student <- filter_by_key(student, 
-                        match_to = case_degree, 
-                        key_col = "mcid", 
+case_student <- filter_match(student, 
+                        to = case_degree, 
+                        by = "mcid", 
                         select = c("mcid", "transfer", "hours_transfer"))
 # examine the result
 case_student
@@ -348,6 +348,44 @@ If the next step was to group and summarize by program, we use `.N` again, for e
 ```{r}
 case_degree[, .N, by = "program"]
 ```
+
+
+
+### Example 4. Case study students
+
+In the final example, we access the `term` table and to obtain the IDs of all students ever enrolled in our case study programs. 
+
+```{r}
+case_students <- filter_match(term, 
+                    to = study_programs, 
+                    by = "cip6", 
+                    select = c("mcid", "cip6"))
+case_students
+```
+
+This data set is in midfieldr package as the data set `study_students`. View its help page by running
+
+```r
+? study_students
+```
+View the data frame, 
+
+```{r}
+study_students
+```
+
+Confirm the two data frames contian the same information. 
+ 
+```{r}
+all.equal(
+  case_students[order(mcid, cip6)], 
+  study_students[order(mcid, cip6)]
+)
+```
+ 
+
+
+
 
 
 
@@ -398,15 +436,19 @@ case_study[rows_to_edit, program := "Electrical Engineering"]
 case_study[, cip4name := NULL]
 
 # apply results
-case_degree <- filter_by_key(degree, 
-                        match_to = study_programs, 
-                        key_col = "cip6", 
-                        select = c("mcid", "institution", "cip6"))
-case_student <- filter_by_key(student, 
-                        match_to = case_degree, 
-                        key_col = "mcid", 
-                        select = c("mcid", "transfer", "hours_transfer"))
+case_degree <- filter_match(degree, 
+                             to = study_programs, 
+                             by = "cip6", 
+                             select = c("mcid", "institution", "cip6"))
+case_student <- filter_match(student, 
+                              to = case_degree, 
+                              by = "mcid", 
+                              select = c("mcid", "transfer", "hours_transfer"))
 case_student[, .N, by = "transfer"]
 case_degree <- merge(case_degree, study_programs, by = "cip6", all.x = TRUE)
 case_degree[, .N, by = "program"]
+case_students <- filter_match(term, 
+                               to = study_programs, 
+                               by = "cip6", 
+                               select = c("mcid", "cip6"))
 ```

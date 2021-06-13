@@ -2,21 +2,21 @@
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
-#' Add columns from student for race/ethnicity and sex
+#' Add columns for race/ethnicity and sex
 #'
-#' Add variables \code{race} and \code{sex} from \code{student} to a
-#' data frame, using \code{mcid} as the join-by variable.
+#' Add variables \code{race} and \code{sex} from the MIDFIELD \code{student}
+#' table to a data frame, using \code{mcid} as the join-by variable.
 #'
 #' Existing variables with the same names, if any, are overwritten.
 #'
-#' @param dframe data frame with required variable \code{mcid}
+#' @param dframe Data frame with required variable \code{mcid}.
 #' @param midfield_table MIDFIELD  student data table with required
-#'        variables \code{mcid}, \code{race}, and \code{sex}
+#'        variables \code{mcid}, \code{race}, and \code{sex}.
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
-#'     \item Rows are not modified
-#'     \item Columns \code{race} and \code{sex} are added
-#'     \item Grouping structures are not preserved
+#'     \item Rows are not modified.
+#'     \item Columns \code{race} and \code{sex} are added.
+#'     \item Grouping structures are not preserved.
 #' }
 #' @family functions
 #' @export
@@ -63,9 +63,9 @@ add_race_sex <- function(dframe,
     # rows_we_want <- midfield_table$mcid %chin% dframe$mcid
     # DT <- midfield_table[rows_we_want, cols_we_want, with = FALSE]
 
-    DT <- filter_by_key(dframe = midfield_table,
-                        match_to = dframe,
-                        key_col = "mcid",
+    DT <- filter_match(dframe = midfield_table,
+                        to = dframe,
+                        by = "mcid",
                         select = c("mcid", added_cols))
 
 

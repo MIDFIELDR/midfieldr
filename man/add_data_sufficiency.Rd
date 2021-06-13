@@ -7,24 +7,24 @@
 add_data_sufficiency(dframe, midfield_table, ..., details = NULL)
 }
 \arguments{
-\item{dframe}{data frame with required variables
-\code{institution} and \code{timely_term}}
+\item{dframe}{Data frame with required variables
+\code{institution} and \code{timely_term}.}
 
 \item{midfield_table}{MIDFIELD term data table
-with required variables \code{institution} and \code{term}}
+with required variables \code{institution} and \code{term}.}
 
-\item{...}{not used, forces later arguments to be used by name}
+\item{...}{Not used, forces later arguments to be used by name.}
 
-\item{details}{logical scalar to add columns reporting information on
-which the evaluation is based, default FALSE}
+\item{details}{Logical scalar to add columns reporting information on
+which the evaluation is based, default FALSE.}
 }
 \value{
 A \code{data.table}  with the following properties:
 \itemize{
-    \item Rows are not modified
+    \item Rows are not modified.
     \item Column \code{data_sufficiency} is added, column \code{inst_limit}
-          is added optionally
-    \item Grouping structures are not preserved
+          is added optionally.
+    \item Grouping structures are not preserved.
 }
 }
 \description{
@@ -59,11 +59,12 @@ term reported by the institution in the available data.
 \seealso{
 Other functions: 
 \code{\link{add_completion_timely}()},
+\code{\link{add_institution}()},
 \code{\link{add_race_sex}()},
 \code{\link{add_timely_term}()},
 \code{\link{condition_fye}()},
 \code{\link{condition_multiway}()},
-\code{\link{filter_by_key}()},
+\code{\link{filter_match}()},
 \code{\link{filter_text}()}
 }
 \concept{functions}

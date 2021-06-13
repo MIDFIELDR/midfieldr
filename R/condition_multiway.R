@@ -27,17 +27,17 @@ NULL
 #' the methods of analysis described by
 #' \insertCite{Kroonenberg:2008;textual}{midfieldr}.
 #'
-#' @param dframe data frame of multiway data
-#' @param ... not used, forces later arguments to be used by name
-#' @param details logical scalar to add columns reporting the medians on which
-#'        the order of the levels is based, default FALSE
+#' @param dframe Data frame of multiway data.
+#' @param ... Not used, forces later arguments to be used by name.
+#' @param details Logical scalar to add columns reporting the medians on which
+#'        the order of the levels is based, default FALSE.
 #' @return A \code{data.table} with the following properties:
 #' \itemize{
-#'   \item Rows are not modified
-#'   \item Quantitative column is not modified
+#'   \item Rows are not modified.
+#'   \item Quantitative column is not modified.
 #'   \item Categorical columns are factors with levels ordered by
-#'         median quantitative values
-#'   \item Grouping structures, if any, are not preserved
+#'         median quantitative values.
+#'   \item Grouping structures are not preserved.
 #' }
 #' @references
 #'   \insertAllCited{}

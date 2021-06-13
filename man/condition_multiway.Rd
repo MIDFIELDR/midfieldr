@@ -7,21 +7,21 @@
 condition_multiway(dframe, ..., details = NULL)
 }
 \arguments{
-\item{dframe}{data frame of multiway data}
+\item{dframe}{Data frame of multiway data.}
 
-\item{...}{not used, forces later arguments to be used by name}
+\item{...}{Not used, forces later arguments to be used by name.}
 
-\item{details}{logical scalar to add columns reporting the medians on which
-the order of the levels is based, default FALSE}
+\item{details}{Logical scalar to add columns reporting the medians on which
+the order of the levels is based, default FALSE.}
 }
 \value{
 A \code{data.table} with the following properties:
 \itemize{
-  \item Rows are not modified
-  \item Quantitative column is not modified
+  \item Rows are not modified.
+  \item Quantitative column is not modified.
   \item Categorical columns are factors with levels ordered by
-        median quantitative values
-  \item Grouping structures, if any, are not preserved
+        median quantitative values.
+  \item Grouping structures are not preserved.
 }
 }
 \description{
@@ -65,10 +65,11 @@ str(mw)
 Other functions: 
 \code{\link{add_completion_timely}()},
 \code{\link{add_data_sufficiency}()},
+\code{\link{add_institution}()},
 \code{\link{add_race_sex}()},
 \code{\link{add_timely_term}()},
 \code{\link{condition_fye}()},
-\code{\link{filter_by_key}()},
+\code{\link{filter_match}()},
 \code{\link{filter_text}()}
 }
 \concept{functions}

@@ -17,16 +17,16 @@
 #' @format A \code{data.table} with 1582 rows and 6 columns keyed by the
 #' 6-digit CIP code:
 #' \describe{
-#'   \item{cip6}{character 6-digit code representing "specific
+#'   \item{cip6}{Character 6-digit code representing "specific
 #'   instructional programs" (US National Center for Education Statistics)}
-#'   \item{cip6name}{character program name at the 6-digit level}
-#'   \item{cip4}{character 4-digit code (the first 4 digits of \code{cip6})
+#'   \item{cip6name}{Character program name at the 6-digit level}
+#'   \item{cip4}{Character 4-digit code (the first 4 digits of \code{cip6})
 #'   representing "intermediate groupings of programs that have
 #'   comparable content and objectives"}
-#'   \item{cip4name}{character program name at the 4-digit level}
-#'   \item{cip2}{character 2-digit code (the first 2 digits of \code{cip6})
+#'   \item{cip4name}{Character program name at the 4-digit level}
+#'   \item{cip2}{Character 2-digit code (the first 2 digits of \code{cip6})
 #'   representing "the most general groupings of related programs"}
-#'   \item{cip2name}{character program name at the 2-digit level}
+#'   \item{cip2name}{Character program name at the 2-digit level}
 #' }
 #' @family cip-data
 "cip"
@@ -58,8 +58,8 @@
 #' @format \code{data.table} with 5033 rows and 2 columns keyed by student
 #' ID. The variables are:
 #' \describe{
-#'    \item{mcid}{character, anonymized student identifier}
-#'    \item{start}{character, 6-digit CIP code of the predicted
+#'    \item{mcid}{Character, anonymized student identifier}
+#'    \item{start}{Character, 6-digit CIP code of the predicted
 #'          starting program}
 #'    }
 #' @family cip-data
@@ -79,9 +79,9 @@
 #' @format \code{data.table} with 12 rows and 2 columns keyed by the
 #' 6-digit CIP code. The variables are:
 #' \describe{
-#'   \item{cip6}{character 6-digit code representing "specific instructional
+#'   \item{cip6}{Character 6-digit code representing "specific instructional
 #'        programs" (US National Center for Education Statistics)}
-#'   \item{program}{program name assigned for grouping, summarizing,
+#'   \item{program}{Program name assigned for grouping, summarizing,
 #'   and joining}
 #' }
 #' @family case-study-data
@@ -102,8 +102,8 @@
 #' @format \code{data.table} with 10,764 rows and 2 columns keyed by
 #' student ID. The variables are:
 #' \describe{
-#'   \item{mcid}{character, anonymized student identifier}
-#'   \item{cip6}{character 6-digit code representing "specific instructional
+#'   \item{mcid}{Character, anonymized student identifier}
+#'   \item{cip6}{Character 6-digit code representing "specific instructional
 #'        programs" (US National Center for Education Statistics)}
 #' }
 #' @family case-study-data
@@ -131,9 +131,9 @@
 #' @format \code{data.table} with 31 rows and 3 columns keyed by
 #' program, race/ethnicity, and sex.
 #' \describe{
-#'  \item{program}{character, instructional programs selected for study}
-#'  \item{race_sex}{character, student race/ethnicity and sex}
-#'  \item{stick}{numerical, program stickiness, a persistence metric}
+#'  \item{program}{Character, instructional programs selected for study}
+#'  \item{race_sex}{Character, student race/ethnicity and sex}
+#'  \item{stick}{Numerical, program stickiness, a persistence metric}
 #' }
 #' @family case-study-data
 "study_stickiness"

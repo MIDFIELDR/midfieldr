@@ -2,47 +2,45 @@
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
-#' Add column from term for the limiting term for timely completion
+#' Add column for timely completion term
 #'
 #' Given information about a student's academic path, determine the latest
 #' term for which program completion could be considered timely.
 #'
-#' The basic heuristic starts with \code{span} number of years for each
-#' student (default 6 years) and adjusts the span by subtracting a whole
-#' number of years based on the level at which the student is admitted.
+#' The basic heuristic starts with \code{span} number of years for each student
+#' (default 6 years). The span for students admitted at a higher level than
+#' first year are reduced by one year for each full year the student is
+#' assumed to have completed.
 #'
-#' For example, a student admitted at a 4th-year or senior level is assumed
-#' to have completed 3 years of a program, so their span is reduced by 3 years.
-#' Similarly, the span of 3rd-year admissions are reduced by two years, and
-#' the span of 2nd-year admissions is reduced by one year. The adjusted span
-#' is added to their starting term; the result is the limiting term for
-#' timely completion reported in a \code{timely_term} column added to the
+#' For example, a student admitted at the second-year level is assumed
+#' to have completed one year of a program, so their span is reduced by one
+#' year. Similarly, spans are reduced by two years for students admitted at
+#' the 3rd-year level and by three years for students admitted at the
+#' fourth-year level.
+#'
+#' The adjusted span of years is added to their starting term; the result is
+#' the timely completion reported in the \code{timely_term} column added to the
 #' data frame.
-#'
-#' This model for timely completion is simplistic, and future
-#' heuristics may be added for more sophisticated estimates.
 #'
 #' If \code{details} is TRUE, additional column(s) that support the finding
 #' are returned as well. Here the extra columns are the student's initial
 #' (admission) term \code{term_i}, initial level \code{level_i}, and
 #' the adjusted span \code{adj_span}.
 #'
-#' @param dframe data frame with required variable \code{mcid}
-#' @param midfield_table MIDFIELD term data table
-#'        with required variables \code{mcid}, \code{term}, and \code{level}
-#' @param ... not used, forces later arguments to be used by name
-#' @param details logical scalar to add columns reporting information on
-#'        which the timely completion limit is based, default FALSE
-#' @param span numeric scalar, number of years to define timely completion,
-#'        default 6 years
-#' @param heuristic not used, placeholder for future alternative methods of
-#'        estimating them timely completion term
+#' @param dframe Data frame with required variable \code{mcid}.
+#' @param midfield_table MIDFIELD term data table with required variables
+#'        \code{mcid}, \code{term}, and \code{level}.
+#' @param ... Not used, forces later arguments to be used by name.
+#' @param details Logical scalar to add columns reporting information on
+#'        which the timely completion term is based, default FALSE.
+#' @param span Numeric scalar, number of years to define timely completion,
+#'        default 6 years.
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
-#'     \item Rows are not modified
+#'     \item Rows are not modified.
 #'     \item Column \code{timely_term} is added, columns \code{term_i},
-#'           \code{level_i}, and \code{adj_span} are added optionally
-#'     \item Grouping structures are not preserved
+#'           \code{level_i}, and \code{adj_span} are added optionally.
+#'     \item Grouping structures are not preserved.
 #' }
 #' @family functions
 #' @export
@@ -52,8 +50,7 @@ add_timely_term<- function(dframe,
                            midfield_table,
                            ...,
                            details = NULL,
-                           span = NULL,
-                           heuristic = NULL) {
+                           span = NULL) {
 
     # force arguments after dots to be used by name
     wrapr::stop_if_dot_args(
@@ -65,14 +62,12 @@ add_timely_term<- function(dframe,
     assert_explicit(midfield_table)
     details <- details %||% FALSE
     span <- span %||% 6
-    heuristic <- NULL # for future use
 
     # check argument class
     assert_class(dframe, "data.frame")
     assert_class(span, "numeric")
     assert_class(midfield_table, "data.frame")
     assert_class(details, "logical")
-    # heuristic ignored for now
 
     # dframe is modified "by reference" throughout
     setDT(dframe)
@@ -97,16 +92,19 @@ add_timely_term<- function(dframe,
     delta <- NULL
     yyyy <- NULL
 
-    # preserve column order except columns that match new columns
-    added_cols <- c("term_i", "level_i", "adj_span", "timely_term")
-    names_dframe <- colnames(dframe)
-    key_names <- names_dframe[!names_dframe %chin% added_cols]
-    dframe <- dframe[, key_names, with = FALSE]
+    # condition dframe  -----------------------------------------------
+    # new columns that overwrite existing columns if any
+    new_cols <- c("term_i", "level_i", "adj_span", "timely_term")
 
-    # subset midfield data table
-    DT <- filter_by_key(dframe = midfield_table,
-                        match_to = dframe,
-                        key_col = "mcid",
+    # existing column names to keep and restore
+    names_dframe <- colnames(dframe)
+    keep_cols <- names_dframe[!names_dframe %chin% new_cols]
+    dframe <- dframe[, keep_cols, with = FALSE]
+
+    # condition subset of midfield table ------------------------------
+    DT <- filter_match(dframe = midfield_table,
+                        to = dframe,
+                        by = "mcid",
                         select =  c("mcid", "term", "level"))
 
     # separate term encoding
@@ -142,16 +140,18 @@ add_timely_term<- function(dframe,
     # remove intermediate variables
     DT[, c("yyyy", "t", "delta") := NULL]
 
-    # left-outer join, keep all rows of dframe
-    dframe <-  merge(dframe, DT, by = "mcid", all.x = TRUE)
+    # left outer join DT to dframe -------------------------------------
+    setkeyv(DT, "mcid")
+    setkeyv(dframe, "mcid")
+    dframe <- DT[dframe]
 
     # restore column and row order
-    set_colrow_order(dframe, key_names)
+    set_colrow_order(dframe, keep_cols)
 
-    # include or omit the details columns
+    # drop the optional columns if details not requested
     if (details == FALSE) {
-        cols_we_want <- c(key_names, "timely_term")
-        dframe <- dframe[, cols_we_want, with = FALSE]
+        keep_cols <- c(keep_cols, "timely_term")
+        dframe <- dframe[, keep_cols, with = FALSE]
     }
 
     # remove grouping structure, if any

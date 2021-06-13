@@ -7,24 +7,25 @@
 condition_fye(dframe, midfield_table, ..., fye_codes = NULL)
 }
 \arguments{
-\item{dframe}{data frame of all degree-seeking engineering students in the
+\item{dframe}{Data frame of all degree-seeking engineering students in the
 database, with required variables \code{mcid}, \code{race},
-and \code{sex}}
+and \code{sex}.}
 
 \item{midfield_table}{MIDFIELD term data table with required variables
-\code{mcid}, \code{institution}, \code{term}, and \code{cip6}}
+\code{mcid}, \code{institution}, \code{term}, and \code{cip6}.}
 
-\item{...}{not used, forces later arguments to be used by name}
+\item{...}{Not used, forces later arguments to be used by name.}
 
-\item{fye_codes}{character vector of 6-digit CIP codes to
-identify FYE programs, default 140102}
+\item{fye_codes}{Character vector of 6-digit CIP codes to
+identify FYE programs, default 140102.}
 }
 \value{
 A \code{data.table} with the following properties:
 \itemize{
-    \item One row for every FYE student
+    \item One row for every FYE student.
     \item Columns for ID, institution, race, sex, and CIP code, all
     except ID converted to factors.
+    \item Grouping structures are not preserved.
 }
 }
 \description{
@@ -81,10 +82,11 @@ frame is ready for use as input for the mice package.
 Other functions: 
 \code{\link{add_completion_timely}()},
 \code{\link{add_data_sufficiency}()},
+\code{\link{add_institution}()},
 \code{\link{add_race_sex}()},
 \code{\link{add_timely_term}()},
 \code{\link{condition_multiway}()},
-\code{\link{filter_by_key}()},
+\code{\link{filter_match}()},
 \code{\link{filter_text}()}
 }
 \concept{functions}

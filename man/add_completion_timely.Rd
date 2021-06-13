@@ -7,24 +7,24 @@
 add_completion_timely(dframe, midfield_table, ..., details = NULL)
 }
 \arguments{
-\item{dframe}{data frame with required variables
-\code{mcid} and \code{timely_term}}
+\item{dframe}{Data frame with required variables
+\code{mcid} and \code{timely_term}.}
 
 \item{midfield_table}{MIDFIELD degree data table with required
-variables \code{mcid} and \code{term}}
+variables \code{mcid} and \code{term}.}
 
-\item{...}{not used, forces later arguments to be used by name}
+\item{...}{Not used, forces later arguments to be used by name.}
 
-\item{details}{logical scalar to add columns reporting information on
-which the evaluation is based, default FALSE}
+\item{details}{Logical scalar to add columns reporting information on
+which the evaluation is based, default FALSE.}
 }
 \value{
 A \code{data.table} with the following properties:
 \itemize{
-    \item Rows are not modified
+    \item Rows are not modified.
     \item Column \code{completion_timely} is added, columns
-          \code{completion} and \code{term_degree} are added optionally
-    \item Grouping structures are not preserved
+          \code{completion} and \code{term_degree} are added optionally.
+    \item Grouping structures are not preserved.
 }
 }
 \description{
@@ -55,11 +55,12 @@ which the first degree(s), if any, was earned.
 \seealso{
 Other functions: 
 \code{\link{add_data_sufficiency}()},
+\code{\link{add_institution}()},
 \code{\link{add_race_sex}()},
 \code{\link{add_timely_term}()},
 \code{\link{condition_fye}()},
 \code{\link{condition_multiway}()},
-\code{\link{filter_by_key}()},
+\code{\link{filter_match}()},
 \code{\link{filter_text}()}
 }
 \concept{functions}

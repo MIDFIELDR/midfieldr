@@ -25,19 +25,19 @@ NULL
 #' \code{term_degree} from the degree table giving the term in
 #' which the first degree(s), if any, was earned.
 #'
-#' @param dframe data frame with required variables
-#'        \code{mcid} and \code{timely_term}
+#' @param dframe Data frame with required variables
+#'        \code{mcid} and \code{timely_term}.
 #' @param midfield_table MIDFIELD degree data table with required
-#'        variables \code{mcid} and \code{term}
-#' @param ... not used, forces later arguments to be used by name
-#' @param details logical scalar to add columns reporting information on
-#'        which the evaluation is based, default FALSE
+#'        variables \code{mcid} and \code{term}.
+#' @param ... Not used, forces later arguments to be used by name.
+#' @param details Logical scalar to add columns reporting information on
+#'        which the evaluation is based, default FALSE.
 #' @return A \code{data.table} with the following properties:
 #' \itemize{
-#'     \item Rows are not modified
+#'     \item Rows are not modified.
 #'     \item Column \code{completion_timely} is added, columns
-#'           \code{completion} and \code{term_degree} are added optionally
-#'     \item Grouping structures are not preserved
+#'           \code{completion} and \code{term_degree} are added optionally.
+#'     \item Grouping structures are not preserved.
 #' }
 #' @family functions
 #' @export
@@ -85,24 +85,30 @@ add_completion_timely <- function(dframe,
     timely_term <- NULL
     completion <- NULL
 
-    # preserve column order except columns that match new columns
+    # preserve "term" column if exists in incoming df
     names_dframe <- colnames(dframe)
-    cols_we_add <- c("term", "completion", "completion_timely")
+    if ("term" %chin% names_dframe) {
+        setnames(dframe, old = "term", new = "existing_term_col")
+    }
+
+    # preserve column order except columns that match new columns
+    cols_we_add <- c("term_degree", "completion", "completion_timely")
     key_names <- names_dframe[!names_dframe %chin% cols_we_add]
     dframe <- dframe[, key_names, with = FALSE]
 
     # subset midfield data table
-    DT <- filter_by_key(dframe = midfield_table,
-                        match_to = dframe,
-                        key_col = "mcid",
+    DT <- filter_match(midfield_table,
+                        to = dframe,
+                        by = "mcid",
                         select = c("mcid", "term"))
 
     # keep the first degree term
     setorderv(DT, c("mcid", "term"))
     DT <- na.omit(DT, cols = c("term"))
     DT <- DT[, .SD[1], by = "mcid"]
+    setkey(DT, NULL)
 
-    # rename term to term-degree in case "term" is var in dframe
+    # rename term to term-degree
     setnames(DT, old = "term", new = "term_degree")
 
     # left-outer join, keep all rows of dframe
@@ -113,7 +119,7 @@ add_completion_timely <- function(dframe,
 
     # evaluate, is the completion timely, TRUE / FALSE
     dframe[, completion_timely := fifelse(term_degree <= timely_term,
-                                          TRUE, FALSE, na = FALSE)]
+                                           TRUE, FALSE, na = FALSE)]
 
     # restore column and row order
     set_colrow_order(dframe, key_names)
@@ -126,6 +132,11 @@ add_completion_timely <- function(dframe,
 
     # remove grouping structure, if any
     setkey(dframe, NULL)
+
+    # restore "term" column if exists in incoming df
+    if ("existing_term_col" %chin% names(dframe)) {
+        setnames(dframe, old = "existing_term_col", new = "term")
+    }
 
     # enable printing (see data.table FAQ 2.23)
     dframe[]

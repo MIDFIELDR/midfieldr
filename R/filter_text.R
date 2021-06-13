@@ -12,17 +12,17 @@ NULL
 #' To improve the speed of the search, columns are subset by the values in
 #' the\code{select} argument before the text search starts.
 #'
-#' @param dframe data frame to be searched
-#' @param keep_text character vector of search text for retaining rows
-#' @param ... not used, force later arguments to be used by name
-#' @param drop_text character vector of search text for dropping rows
-#' @param select character vector of column names to search and return,
-#'        default all columns
+#' @param dframe Data frame to be searched.
+#' @param keep_text Character vector of search text for retaining rows.
+#' @param ... Not used, force later arguments to be used by name.
+#' @param drop_text Character vector of search text for dropping rows.
+#' @param select Character vector of column names to search and return,
+#'        default all columns.
 #' @return A \code{data.table} with the following properties:
 #' \itemize{
-#'     \item Unique rows matching elements of \code{keep_text}
-#'     \item All columns or those specified by \code{select}
-#'     \item Grouping structures are not preserved
+#'     \item Unique rows matching elements of \code{keep_text}.
+#'     \item All columns or those specified by \code{select}.
+#'     \item Grouping structures are not preserved.
 #' }
 #' @family functions
 #' @export

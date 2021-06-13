@@ -2,27 +2,27 @@
 % Please edit documentation in R/add_race_sex.R
 \name{add_race_sex}
 \alias{add_race_sex}
-\title{Add columns from student for race/ethnicity and sex}
+\title{Add columns for race/ethnicity and sex}
 \usage{
 add_race_sex(dframe, midfield_table)
 }
 \arguments{
-\item{dframe}{data frame with required variable \code{mcid}}
+\item{dframe}{Data frame with required variable \code{mcid}.}
 
 \item{midfield_table}{MIDFIELD  student data table with required
-variables \code{mcid}, \code{race}, and \code{sex}}
+variables \code{mcid}, \code{race}, and \code{sex}.}
 }
 \value{
 A \code{data.table}  with the following properties:
 \itemize{
-    \item Rows are not modified
-    \item Columns \code{race} and \code{sex} are added
-    \item Grouping structures are not preserved
+    \item Rows are not modified.
+    \item Columns \code{race} and \code{sex} are added.
+    \item Grouping structures are not preserved.
 }
 }
 \description{
-Add variables \code{race} and \code{sex} from \code{student} to a
-data frame, using \code{mcid} as the join-by variable.
+Add variables \code{race} and \code{sex} from the MIDFIELD \code{student}
+table to a data frame, using \code{mcid} as the join-by variable.
 }
 \details{
 Existing variables with the same names, if any, are overwritten.
@@ -34,10 +34,11 @@ Existing variables with the same names, if any, are overwritten.
 Other functions: 
 \code{\link{add_completion_timely}()},
 \code{\link{add_data_sufficiency}()},
+\code{\link{add_institution}()},
 \code{\link{add_timely_term}()},
 \code{\link{condition_fye}()},
 \code{\link{condition_multiway}()},
-\code{\link{filter_by_key}()},
+\code{\link{filter_match}()},
 \code{\link{filter_text}()}
 }
 \concept{functions}

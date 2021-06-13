@@ -1,0 +1,421 @@
+---
+title: "Data sufficiency"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data sufficiency}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/body-and-society.csl
+link-citations: yes
+resource_files:
+  - ../man/figures/art-04-data-sufficiency-fig1-1.png
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(fig.path = here::here("man/figures", 
+                                            "art-04-cccc-"))
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+kable2html <- function(x, font_size = NULL, caption = NULL) {
+  font_size <- ifelse(is.null(font_size), 11, font_size)
+  kable_in <- knitr::kable(x, format = "html", caption = caption)
+  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
+}
+asp_ratio_mw <- function(data, categories) {
+  cat1 <- categories[1] # panels
+  cat2 <- categories[2] # rows
+  nlevel1 <- nlevels(data[, get(cat1)])
+  nlevel2 <- nlevels(data[, get(cat2)])
+  r <- nlevel1 * nlevel2
+  q <- 32
+  asp_ratio1 <- (r + 2 * nlevel1) / q
+  asp_ratio2 <- (r + 2 * nlevel2) / q
+  ratios <- c(asp_ratio1, asp_ratio2)
+}
+```
+
+## Introduction
+
+The data provided by institutions to MIDFIELD cover a finite span of years, with different starting and ending terms for each institution.
+
+For students admitted too near the upper limit of their institution's data range, the  available data cover an insufficient number of years to fairly assess student  performance. Only students for whom the data range is sufficient should be included in any analysis. 
+
+In this vignette, we introduce two concepts and their related midfieldr functions:
+
+timely completion (TC) term 
+: The last term in which program completion would be considered timely for a given student. For example, the TC term in many cases is defined as the admission term plus 6 years.     
+
+data sufficiency criterion
+: A study must be limited to students whose timely completion term is within the range of data provided by their institution. 
+
+In the figure we compare two first-time-in-college students admitted in different terms, both with 6-year spans during which program completion would be considered timely. 
+
+- Student A enters in Fall 1990 with a timely completion (TC) term of  Spring 1995. 
+- Student B enters in Fall 1992 with a TC term of Spring 1997. 
+- Institution data is available from 1986 to 1996.
+
+
+
+
+<br>
+```{r fig1, echo = FALSE, fig.asp = 5/10}
+library("ggplot2")
+library("data.table")
+
+# parameters
+callout_color     <- "gray60"
+callout_line_size <- 0.3
+anno_size         <- 3.5 # 3.5 approx 10 point
+vert_baseline     <- 1.07
+
+# construct coordinates
+y     <- c(1.4, 1.75, 2.0)
+y_lim <- c(min(y) - 0.3, max(y) + 0.1)
+x <- c(1986, 1990, 1992, 1995, 1996, 1997)
+x_lim <- c(min(x) - 0.5, max(x) + 1.5)
+
+# arrows
+df_arrow <- wrapr::build_frame(
+  "x", "x_end", "y"  |
+    x[1], x[5], y[3] |
+    x[2], x[4], y[2] |
+    x[3], x[6], y[1] 
+)
+setDT(df_arrow)
+df_arrow[, x_mid := (x + x_end) / 2]
+
+# dimension lines
+del <- 0.03
+dim_lines <- wrapr::build_frame(
+  "x", "y", "y_end" |
+    x[1], y[3], y[3] |
+    x[5], y[1], y[3] |
+    x[2], y[2], y[2] |
+    x[4], y[2], y[2] |
+    x[3], y[1], y[1] |
+    x[6], y[1], y[1] 
+)
+setDT(dim_lines)
+dim_lines[, `:=` (y = y - 1.5 * del, y_end = y_end + del)]
+dim_lines[x == 1996, y := y - 4*del]
+
+# graph
+ggplot(data = df_arrow) +
+  scale_x_continuous(limits = x_lim, 
+                     breaks = x) +
+  scale_y_continuous(limits = y_lim) +
+  labs(
+    y = "",
+    x = "Year",
+    title = "Illustrating data sufficiency"
+  ) +
+  theme_light() +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  ) +
+  # horizontal arrows
+  geom_segment(aes(x = x, xend = x_end, y = y, yend = y),
+               color = callout_color,
+               size = callout_line_size,
+               arrow = arrow(
+                 type = "closed",
+                 ends = c("both", "both", "both"), # both, first, last
+                 length = unit(c(2, 2, 2), "mm") # "0" length = no arrow head
+               ),
+               arrow.fill = callout_color
+  )  +
+  # dimension lines
+  geom_segment(data = dim_lines, 
+               aes(x = x, xend = x, y = y, yend = y_end),
+               color = callout_color,
+               size = callout_line_size, 
+               linetype = 1
+  ) +
+  # student labels
+  annotate("text",
+           x = df_arrow$x[2] - 0.7,
+           y = df_arrow$y[c(2, 3)],
+           size = anno_size,
+           label = c("student A:", "student B:"), 
+           vjust = 0.5, 
+           hjust = 1
+  ) +
+  # label arrows
+  annotate("text",
+           x = df_arrow$x_mid,
+           y = df_arrow$y,
+           size = anno_size,
+           label = c("institution data range", "timely span", "timely span"),
+           vjust = -0.5
+  ) +
+  # label dimension lines
+  annotate("text",
+           x = dim_lines$x,
+           y = dim_lines$y,
+           size = anno_size, 
+           label = c("",
+                     "data limit",
+                     "enter",
+                     "TC term", 
+                     "enter", 
+                     "TC term"), 
+           vjust = 1,
+           hjust = c(-0.1, 1.1, -0.1, 1.1, -0.1, -0.1)
+  )
+```
+<br>
+
+The TC term for Student B is not within the range of data provided by their institution. 
+By the data sufficiency criterion, we exclude student B from the study.
+
+The criterion applies even if Student B were known to have graduated within the data limit. Other students like Student B will graduate after the data limit, but we cannot know if their program completion was timely or not. Because such students must be excluded from the study, so must every student whose TC term is not encompassed by the available data.   
+
+### This vignette uses
+
+midfieldr functions 
+ 
+- `add_data_sufficiency()`
+- `add_institution()`
+- `add_timely_term()` 
+- `filter_match()` 
+
+
+packages
+
+```{r}
+# packages used
+library("midfieldr")
+library("midfielddata")
+library("data.table")
+library("ggplot2")
+
+# load data tables from midfielddata
+data(student, term, degree)
+
+# optional code to control data.table printing
+options(datatable.print.nrows = 10, datatable.print.topn = 5)
+```
+
+## Case study students
+
+Recall that the case study program codes and names are saved in the midfieldr package as the data set `study_programs`. View its help page by running
+
+```r
+? study_programs
+```
+
+View the data frame, 
+
+```{r}
+study_programs
+```
+
+To obtain the students enrolled in the case study programs, we use `filter_match()` to access the `term` table. 
+
+```{r}
+case_students <- filter_match(term, 
+                               by = "cip6", 
+                               to = study_programs, 
+                               select = c("mcid", "cip6"))
+case_students
+```
+
+## Estimate the timely completion term 
+
+A necessary prerequisite for applying the data sufficiency criterion is to determine a timely completion term for every prospective student in a study. To confirm that the pool of students are all degree-seeking, we use `filter_match()` to match to the IDs in the `student` table. 
+
+```{r}
+# limit population to degree-seeking students
+DT <- filter_match(case_students, 
+                    by = "mcid",
+                    to = student)
+
+# examine the result
+DT
+```
+
+We use `add_timely_term()` to estimate the timely completion term. View its help page by running
+
+```r
+? add_timely_term
+```
+
+As the function name suggests, `add_timely_term()` adds the `timely_term` column to the input data frame. The new variable contains the estimated timely completion term for each student. The first argument is your working data frame to which the column is to be added; the second argument is `term` (or your equivalent term-variables data frame). Both are required. 
+
+```{r}
+# estimate the timely completion term
+DT <- add_timely_term(DT, midfield_table = term)
+DT
+```
+
+The basic heuristic starts with span number of years for each student (default 6 years) and adjusts the span by subtracting a whole number of years based on the level at which the student is admitted.
+
+For example, a student admitted at the second-year level is assumed to have completed one year of a program, so their span is reduced by one year. Similarly, spans are reduced by two years for students admitted at the 3rd-year level and by three years for students admitted at the fourth-year level. The adjusted span of years added to their starting term produces timely completion term.
+
+Optional arguments are `details` and `span`. When used, these arguments must be named. 
+
+```r
+add_timely_term(dframe,
+                midfield_table,
+                ...,
+                details = NULL,  # default FALSE
+                span = NULL)     # default 6 years
+```
+
+- The `span` argument can be set to other values by the user. 
+- The `details` argument, when TRUE, provides additional columns in the output that were used to determine the results in `timely_term`. 
+
+Setting `details` to TRUE yields additional columns for 
+
+- `term_i` admission term 
+- `level_i` level upon being admitted 
+- `adj_span` adjusted span 
+
+The potential use of these data are to implement one's own heuristic for determining timely completion terms. 
+
+```{r}
+# show details
+DT <- add_timely_term(DT, 
+                      midfield_table = term, 
+                      details = TRUE
+                      )
+DT
+```
+ 
+If the input data frame has an existing column name matching any of the added column names, the existing columns are deleted. For example, having examined the details, you can delete them (especially useful in an interactive session) by running the same code with details set to FALSE. 
+
+```{r}
+# remove details
+DT <- add_timely_term(DT, 
+                      midfield_table = term, 
+                      details = FALSE
+                      )
+DT
+```
+
+## Determine data sufficiency 
+
+Data sufficiency depends on the range of data from an institution, so our first step is to add a column for institution keyed by the student ID. We use the `add_institution()`. View its help page by running 
+
+```r
+? add_institution
+```
+The function has two arguments, the data frame to which the new variable is added and the `term` MIDFIELD data table (or equivalent). In the event that a student were admitted to more than one institution over their history in the data, the function reports the institution at which the student was enrolled for the greatest number of terms.  
+
+```{r}
+# add institutions
+DT <- add_institution(DT, 
+                      midfield_table = term)
+
+# examine the result
+DT
+```
+
+Like  the other midfieldr `add_` functions, existing columns are deleted or overwritten if they have the same name as the variables to be added (here, `institution`). 
+
+Now that our working data frame has `timely_term` and `institution` columns, we can use `add_data_sufficiency()` to add a logical variable (TRUE/FALSE) that answers the question, "Is the data sufficiency constraint satisfied?" View its help page by running, 
+
+```r
+? add_data_sufficiency
+
+```
+
+Similar to `add_timely_term()`, this function has two required arguments and one optional `details` argument. The details, in this case, add one extra column to show the institution's upper data limit. 
+
+```{r}
+# add column with details
+DT <- add_data_sufficiency(DT,
+                           midfield_table = term,
+                           details = TRUE)
+# examine the result
+DT
+```
+
+With details FALSE, only the `data_sufficieny` column is added.
+
+```{r}
+# without details
+DT <- add_data_sufficiency(DT,
+                           midfield_table = term,
+                           details = FALSE)
+# examine the result
+DT
+```
+
+
+## Subset data for data sufficiency
+
+The final step, subsetting, is straightforward. Students with TRUE in the `data_sufficiency` column are retained for study. 
+
+```{r}
+# limit population to data sufficient
+DT <- DT[data_sufficiency == TRUE]
+
+# examine the result
+DT
+```
+
+Having performed the subset, the working columns we used to get to this point can be deleted. We retain the two columns with which we started this vignette, `mcid` and `cip6`. 
+
+```{r}
+DT <- DT[, .(mcid, cip6)]
+
+DT
+```
+
+Again, we suggest saving intermediate results like these. This data frame of IDs and CIP codes is saved in midfieldr as the data set `study_students`. View its help page by running
+
+```r
+? study__programs_students
+```
+View the data frame, 
+
+```{r}
+study_students
+```
+
+Confirm the two are the same. 
+
+```{r}
+setkeyv(DT, "mcid")
+setkeyv(study_students, "mcid")
+all.equal(DT, study_students)
+```
+
+
+
+## References
+
+<div id="refs"></div>
+
+## Appendix
+
+### Complete script
+
+The vignette code chunks are collected below in a single, condensed script. 
+

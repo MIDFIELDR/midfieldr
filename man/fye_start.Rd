@@ -8,8 +8,8 @@
 \code{data.table} with 5033 rows and 2 columns keyed by student
 ID. The variables are:
 \describe{
-   \item{mcid}{character, anonymized student identifier}
-   \item{start}{character, 6-digit CIP code of the predicted
+   \item{mcid}{Character, anonymized student identifier}
+   \item{start}{Character, 6-digit CIP code of the predicted
          starting program}
    }
 }

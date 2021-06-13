@@ -8,9 +8,9 @@
 \code{data.table} with 12 rows and 2 columns keyed by the
 6-digit CIP code. The variables are:
 \describe{
-  \item{cip6}{character 6-digit code representing "specific instructional
+  \item{cip6}{Character 6-digit code representing "specific instructional
        programs" (US National Center for Education Statistics)}
-  \item{program}{program name assigned for grouping, summarizing,
+  \item{program}{Program name assigned for grouping, summarizing,
   and joining}
 }
 }

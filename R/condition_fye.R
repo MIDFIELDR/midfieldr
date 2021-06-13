@@ -48,20 +48,21 @@ NULL
 #' variable (cip6) are converted to unordered factors. The resulting data
 #' frame is ready for use as input for the mice package.
 #'
-#' @param dframe data frame of all degree-seeking engineering students in the
+#' @param dframe Data frame of all degree-seeking engineering students in the
 #'        database, with required variables \code{mcid}, \code{race},
-#'        and \code{sex}
+#'        and \code{sex}.
 #' @param midfield_table MIDFIELD term data table with required variables
-#'        \code{mcid}, \code{institution}, \code{term}, and \code{cip6}
-#' @param ... not used, forces later arguments to be used by name
-#' @param fye_codes character vector of 6-digit CIP codes to
-#'        identify FYE programs, default 140102
+#'        \code{mcid}, \code{institution}, \code{term}, and \code{cip6}.
+#' @param ... Not used, forces later arguments to be used by name.
+#' @param fye_codes Character vector of 6-digit CIP codes to
+#'        identify FYE programs, default 140102.
 #'
 #' @return A \code{data.table} with the following properties:
 #' \itemize{
-#'     \item One row for every FYE student
+#'     \item One row for every FYE student.
 #'     \item Columns for ID, institution, race, sex, and CIP code, all
 #'     except ID converted to factors.
+#'     \item Grouping structures are not preserved.
 #' }
 #'
 #' @family functions
@@ -132,9 +133,9 @@ condition_fye <- function(dframe,
     fye <- merge(fye, dframe, by = "mcid", all.x = TRUE)
 
     # subset midfield data table
-    DT <- filter_by_key(dframe = midfield_table,
-                        match_to = fye,
-                        key_col = "mcid",
+    DT <- filter_match(dframe = midfield_table,
+                        to = fye,
+                        by = "mcid",
                         select = c("mcid", "term", "cip6"))
 
     # order rows by setting keys

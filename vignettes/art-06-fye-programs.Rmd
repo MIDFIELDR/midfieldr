@@ -69,7 +69,7 @@ Two approaches are described in this vignette.
 midfieldr functions 
 
 - `add_race_sex()`  
-- `filter_by_key()`
+- `filter_match()`
 - `filter_text()` 
 - `condition_fye()`  
 
@@ -134,27 +134,13 @@ We subset the `term` table for rows matching these student IDs. By matching IDs,
 
 ```{r}
 # subset term table by ID of case study students
-rows_we_want <- term[, mcid] %chin% study_students[, mcid]
-cols_we_want <- c("mcid", "term", "cip6")
-DT <- term[rows_we_want, ..cols_we_want]
-DT <- unique(DT)
-DT
+DT <- filter_match(term, 
+                    to = study_students, 
+                    by = "mcid", 
+                    select = c("mcid", "term", "cip6"))
 ```
 
-This code chunk above represents a routine we encounter fairly often: subset rows of one data frame to keep values of a key variable that match values of the same key variable in a second data frame.  Here, for example, we want to subset rows of `term` to keep values of `mcid` that match values of `mcid` in `study_students`. We can use `filter_by_key()` to accomplish the task. 
-
-```{r}
-# temporary object
-try_this <- filter_by_key(term, 
-                          match_to = study_students, 
-                          key_col = "mcid", 
-                          select = c("mcid", "term", "cip6"))
-
-# compare to the DT we obtained above
-all.equal(DT, try_this)
-```
-
-We'll use `filter_by_key()` for the remainder of the vignette for this type of subset task. Continuing the example, we set keys to organize the rows in block by ID and ordered terms. 
+We set keys to organize the rows in block by ID and ordered terms. 
 
 ```{r}
 # set keys for ordering rows 
@@ -180,9 +166,9 @@ These data are subset again by matching program codes to those in `study_program
 
 ```{r}
 # filter for case study programs only 
-DT <- filter_by_key(DT, 
-                    match_to = study_programs, 
-                    key_col = "cip6", 
+DT <- filter_match(DT, 
+                    to = study_programs, 
+                    by = "cip6", 
                     select = c("mcid", "cip6"))
 
 # examine the result
@@ -204,15 +190,15 @@ DT_no_fye <- DT_no_fye[order(-N), ..cols_we_want]
 DT_no_fye
 ```
 
-Now, turn to the FYE students. We subset `fye_start` for our four programs. Before using `filter_by_key()`, we change name of the key column from `start` to `cip6`. 
+Now, turn to the FYE students. We subset `fye_start` for our four programs. Before using `filter_match()`, we change name of the key column from `start` to `cip6`. 
 
 
 ```{r}
 # subset predicted FYE start programs 
 setnames(fye_start, old = "start", new = "cip6")
-study_fye <- filter_by_key(fye_start, 
-                           match_to = study_programs, 
-                           key_col = "cip6", 
+study_fye <- filter_match(fye_start, 
+                           to = study_programs, 
+                           by = "cip6", 
                            select = c("mcid", "cip6"))
 
 # examine the result
@@ -275,7 +261,13 @@ Of course, because of the imputation, the counts are estimates. However, had we 
 
 This section shows the details of preparing the data for imputation and using the mice package to perform an imputation. This procedure results in the prepared  `fye_start` data set we used above. 
 
-The main preparation work is done by `condition_fye()`. The first argument of `condition_fye()` is a data frame of all available  degree-seeking engineering students, with required variables student ID, race, and sex. Regardless of what programs we happen to be studying, if we impute starting majors for FYE students, we include all engineering programs at this point. 
+The main preparation work is done by `condition_fye()`. View its help page by running
+
+```r
+? condition_fye()
+```
+
+The first argument of `condition_fye()` is the data frame of all available  degree-seeking engineering students, with required variables student ID, race, and sex. Regardless of what programs we happen to be studying, if we impute starting majors for FYE students, we include all engineering programs at this point. 
 
 To collect these students, we start by obtaining all CIP codes that start with "14" (Engineering).
 
@@ -291,50 +283,46 @@ To obtain the IDs of all students ever enrolled in these programs, we access the
 
 ```{r}
 # get IDs of all engineering students
-engr <- filter_by_key(term, 
-                      match_to = engr_cip, 
-                      key_col = "cip6",  
+engr <- filter_match(term, 
+                      to = engr_cip, 
+                      by = "cip6",  
                       select = "mcid")
 
 # examine the result
 engr
 ```
 
-The students must all be degree-seeking, we want to subset rows of `engr` to keep values of `mcid` that match values of `mcid` in the `student` data table. We use `filter_by_key()` again. In this case, there is no change to the data frame because all students were degree-seeking. 
+The students must all be degree-seeking, we want to subset rows of `engr` to keep values of `mcid` that match values of `mcid` in the `student` data table. We use `filter_match()` again. In this case, there is no change to the data frame because all students were degree-seeking. 
 
 ```{r}
 # limit the population to degree-seeking students 
-engr <- filter_by_key(engr,
-                      match_to = student,
-                      key_col = "mcid")
+engr <- filter_match(engr,
+                      to = student,
+                      by = "mcid")
 
 # examine the result
 engr
 ```
 
-Lastly, we add demographic information with `add_race_sex()`. 
+Lastly, we add demographic information with `add_race_sex()`. View its help page by running 
+
+```r
+? add_race_sex
+```
 
 ```{r}
 # add race and sex variables 
-engr <- add_race_sex(engr, student)
+engr <- add_race_sex(engr, midfield_table = student)
 
 # examine the result
 engr
 ```
 
-We're starting with `r nrow(engr)` engineers  total. 
-
-This data frame is ready to use as the first argument of `condition_fye()`. The remaining  arguments have default settings and so are optional. Arguments of `condition_fye()`:
- 
-- `dframe` data frame with variables `mcid`, `race`, and  `sex`  
-- `midfield_table`  term table, default `term` 
-- `fye_codes` CIP code(s) for FYE, default `"140102"` 
-
-Using the default settings, 
+Next we use the `engr` data frame as the first argument of the `condition_fye()`  function. The second argument is the `term` data table from midfielddata (or equivalent). The third argument `fye_codes` is optional because it has a default assignment ("140102").
 
 ```{r}
 # set up a data frame for imputation 
-fye <- condition_fye(engr, term)
+fye <- condition_fye(engr, midfield_table = term)
 
 # view the result
 fye
@@ -490,6 +478,7 @@ Lastly, because the mice package masks the base R `rbind()` and `cbind()` functi
 
 ```{r}
 detach("package:mice", unload = TRUE)
+set.seed(NULL)
 ```
 
 
@@ -509,17 +498,17 @@ library("data.table")
 library("mice")
 
 # prepared predictions
-DT <- filter_by_key(term, 
-                    match_to = study_students, 
-                    key_col = "mcid", 
+DT <- filter_match(term, 
+                    to = study_students, 
+                    by = "mcid", 
                     select = c("mcid", "term", "cip6"))
 keys <- c("mcid", "term")
 setkeyv(DT, keys)
 DT <- DT[, .SD[1], by = "mcid"]
 setkey(DT, NULL)
-DT <- filter_by_key(DT, 
-                    match_to = study_programs, 
-                    key_col = "cip6", 
+DT <- filter_match(DT, 
+                    to = study_programs, 
+                    by = "cip6", 
                     select = c("mcid", "cip6"))
 
 # summarize for later
@@ -530,9 +519,9 @@ DT_no_fye <- DT_no_fye[order(-N), ..cols_we_want]
 
 # subset predicted FYE start programs 
 setnames(fye_start, old = "start", new = "cip6")
-study_fye <- filter_by_key(fye_start, 
-                           match_to = study_programs, 
-                           key_col = "cip6", 
+study_fye <- filter_match(fye_start, 
+                           to = study_programs, 
+                           by = "cip6", 
                            select = c("mcid", "cip6"))
 DT <- rbindlist(list(DT, study_fye))
 
@@ -544,15 +533,15 @@ DT_with_fye <- DT_with_fye[order(-N), ..cols_we_want]
 
 # perform your own prediction
 engr_cip <- filter_text(cip, keep_text = "^14")
-engr <- filter_by_key(term, 
-                      match_to = engr_cip, 
-                      key_col = "cip6",  
+engr <- filter_match(term, 
+                      to = engr_cip, 
+                      by = "cip6",  
                       select = "mcid")
-engr <- filter_by_key(engr,
-                      match_to = student,
-                      key_col = "mcid")
-engr <- add_race_sex(engr)
-fye <- condition_fye(engr)
+engr <- filter_match(engr,
+                      to = student,
+                      by = "mcid")
+engr <- add_race_sex(engr, midfield_table = student)
+fye <- condition_fye(engr, midfield_table = term)
 
 # mice
 framework <- mice(fye, maxit = 0)
@@ -578,5 +567,8 @@ fye <- fye[, ..cols_we_want]
 fye[, cip6 := as.character(cip6)]
 fye <- fye[order(mcid)]
 setnames(fye, old = "cip6", new = "start")
+
+# reinitialize random number seed 
+set.seed(NULL)
 ```
 

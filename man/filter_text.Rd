@@ -7,23 +7,23 @@
 filter_text(dframe, keep_text = NULL, ..., drop_text = NULL, select = NULL)
 }
 \arguments{
-\item{dframe}{data frame to be searched}
+\item{dframe}{Data frame to be searched.}
 
-\item{keep_text}{character vector of search text for retaining rows}
+\item{keep_text}{Character vector of search text for retaining rows.}
 
-\item{...}{not used, force later arguments to be used by name}
+\item{...}{Not used, force later arguments to be used by name.}
 
-\item{drop_text}{character vector of search text for dropping rows}
+\item{drop_text}{Character vector of search text for dropping rows.}
 
-\item{select}{character vector of column names to search and return,
-default all columns}
+\item{select}{Character vector of column names to search and return,
+default all columns.}
 }
 \value{
 A \code{data.table} with the following properties:
 \itemize{
-    \item Unique rows matching elements of \code{keep_text}
-    \item All columns or those specified by \code{select}
-    \item Grouping structures are not preserved
+    \item Unique rows matching elements of \code{keep_text}.
+    \item All columns or those specified by \code{select}.
+    \item Grouping structures are not preserved.
 }
 }
 \description{
@@ -64,10 +64,11 @@ filter_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 Other functions: 
 \code{\link{add_completion_timely}()},
 \code{\link{add_data_sufficiency}()},
+\code{\link{add_institution}()},
 \code{\link{add_race_sex}()},
 \code{\link{add_timely_term}()},
 \code{\link{condition_fye}()},
 \code{\link{condition_multiway}()},
-\code{\link{filter_by_key}()}
+\code{\link{filter_match}()}
 }
 \concept{functions}
