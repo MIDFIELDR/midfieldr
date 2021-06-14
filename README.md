@@ -114,17 +114,40 @@ work with the research data.
 For more information about obtaining access to MIDFIELD research data,
 contact Russell Long (<ralong@purdue.edu>)
 
-## Install the practice data
+## Install midfieldr
 
-Install midfielddata first.
-
-Because of its size, the data package is stored in a `drat` repository.
-Installation takes time; please be patient and wait for the Console
-prompt “\>” to reappear. Type (or copy and paste) the following lines in
-the Console.
+We use the `install_github()` function from the remotes package to
+install midfieldr from GitHub. In the Console, run:
 
 ``` r
-# install midfielddata first 
+# install remotes
+install.packages("remotes")
+
+# install midfieldr
+remotes::install_github("MIDFIELDR/midfieldr")
+```
+
+You can confirm a successful installation by viewing the package help
+page. In the Console, run:
+
+``` r
+library("midfieldr")
+? midfieldr
+```
+
+If the installation is successful, the code chunk above should produce a
+view of the help page as shown here.
+
+<img src="man/figures/README-midfieldr-help-page-2.png" alt="midfieldr help page" class="center" width="80%">
+
+## Install the practice data
+
+Because of its size, the data package is stored in a “drat” repository.
+Installation takes time; please be patient and wait for the Console
+prompt “\>” to reappear. In the Console, run:
+
+``` r
+# install midfielddata  
 install.packages("midfielddata", 
                  repos = "https://MIDFIELDR.github.io/drat/", 
                  type = "source")
@@ -145,32 +168,6 @@ go on to the next step.
 
 <img src="man/figures/README-midfielddata-help-page-2.png" alt="midfielddata help page" class="center" width="80%">
 
-## Install midfieldr
-
-We use the `install_github()` function from the remotes package to
-install midfieldr from GitHub. In the Console, run:
-
-``` r
-# install the remotes package
-install.packages("remotes")
-
-# install midfieldr from GitHub
-remotes::install_github("MIDFIELDR/midfieldr")
-```
-
-You can confirm a successful installation by viewing the package help
-page. In the Console, run:
-
-``` r
-library("midfieldr")
-? midfieldr
-```
-
-If the installation is successful, the code chunk above should produce a
-view of the help page as shown here.
-
-<img src="man/figures/README-midfieldr-help-page-2.png" alt="midfieldr help page" class="center" width="80%">
-
 ## Usage
 
 **midfieldr functions** work with MIDFIELD-structured data to access and
@@ -178,8 +175,8 @@ manipulate student records. Usage examples are given in the vignettes,
 but an outline of a typical workflow might include these midfieldr
 functions:
 
--   `filter_text()` identify program names and codes
--   `filter_by_key()` limit the study to degree-seeking students
+-   `filter_search()` identify program names and codes
+-   `filter_match()` limit the study to degree-seeking students
 -   `add_timely_term()` estimate the latest term for which program
     completion could be considered timely
 -   `add_data_sufficiency()` determine if data have sufficient span to
