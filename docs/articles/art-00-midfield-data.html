@@ -47,11 +47,11 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../articles/art-00-midfield-data.html">MIDFIELD practice data</a>
+  <a href="../articles/art-00-midfield-data.html">Introduction</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+    Vignettes
      
     <span class="caret"></span>
   </a>
@@ -66,16 +66,19 @@
       <a href="../articles/art-03-case-selection.html">Case selection</a>
     </li>
     <li>
-      <a href="../articles/art-04-timely-completion.html">Timely completion</a>
+      <a href="../articles/art-04-data-sufficiency.html">Data sufficiency</a>
     </li>
     <li>
       <a href="../articles/art-05-stickiness.html">Stickiness</a>
     </li>
     <li>
-      <a href="../articles/art-06-fye-programs.html">FYE programs</a>
+      <a href="../articles/art-06-timely-completion.html">Timely completion</a>
     </li>
     <li>
-      <a href="../articles/art-07-graduation-rate.html">Graduation rate</a>
+      <a href="../articles/art-07-fye-programs.html">FYE programs</a>
+    </li>
+    <li>
+      <a href="../articles/art-08-graduation-rate.html">Graduation rate</a>
     </li>
   </ul>
 </li>
@@ -134,6 +137,17 @@
 </ul>
 <p>To maintain confidentiality of human subject data, the identifiers for students and institutions have been anonymized.</p>
 <p>In this vignette, we introduce the four data tables and briefly examine their contents before moving on in subsequent vignettes to operate on the data using the functions in midfieldr.</p>
+<p>While we suggest installing and loading the data.table package, we use base R functions in the vignettes to reduce the cognitive load on new users. We attempt to introduce data.table syntax only when there is a clear benefit to the reader.</p>
+<div id="outline" class="section level3">
+<h3 class="hasAnchor">
+<a href="#outline" class="anchor" aria-hidden="true"></a>Outline</h3>
+<ul>
+<li>Inspect the <code>student</code> data</li>
+<li>Inspect the <code>course</code> data</li>
+<li>Inspect the <code>term</code> data</li>
+<li>Inspect the <code>degree</code> data</li>
+</ul>
+</div>
 <div id="this-vignette-uses" class="section level3">
 <h3 class="hasAnchor">
 <a href="#this-vignette-uses" class="anchor" aria-hidden="true"></a>This vignette uses</h3>
@@ -144,75 +158,46 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span></code></pre></div>
 </div>
-<div id="r-promise-objects" class="section level3">
+<div id="loading-data" class="section level3">
 <h3 class="hasAnchor">
-<a href="#r-promise-objects" class="anchor" aria-hidden="true"></a>R “promise” objects</h3>
-<p>The tables of practice data in midfielddata do not load into memory until you use them (so-called R “promise” objects). Thus, loading the package with <code><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">library("midfielddata")</a></code> as we did above, then listing the R objects in the environment with</p>
+<a href="#loading-data" class="anchor" aria-hidden="true"></a>Loading data</h3>
+<p>Use <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code> to load the midfielddata data tables into memory for use. For example, after loading the package with <code><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">library("midfielddata")</a></code> as we did above, you can run <code><a href="https://rdrr.io/r/base/ls.html" class="external-link">ls()</a></code> to see that the environment contains zero objects,</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># the names of objects in the environment</span>
 <span class="fu"><a href="https://rdrr.io/r/base/ls.html" class="external-link">ls</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; character(0)</span></code></pre></div>
-<p>shows zero objects. Yet the data are available. If you use the data in an operation, you’ll see that the “promise” has been kept. For example, to subset the student data for students whose age at admission is over 40, we would run</p>
+<p>To load the <code>student</code> data from midfielddata into memory, we run</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># age at admission over 40</span>
-<span class="va">dframe</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span><span class="va">age</span> <span class="op">&gt;</span> <span class="fl">40</span><span class="op">]</span>
-
-<span class="co"># the names of objects in the environment</span>
+<code class="sourceCode R"><span class="co"># loading a data set </span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></code></pre></div>
+<p>Checking the environment again,</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># the names of objects in the environment</span>
 <span class="fu"><a href="https://rdrr.io/r/base/ls.html" class="external-link">ls</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] "dframe"</span>
-
-<span class="co"># examine the result</span>
-<span class="va">dframe</span>
-<span class="co">#&gt;             mcid   institution              transfer hours_transfer</span>
-<span class="co">#&gt;   1: MID25827731 Institution M First-Time in College             NA</span>
-<span class="co">#&gt;   2: MID25896426 Institution B   First-Time Transfer             34</span>
-<span class="co">#&gt;   3: MID25898425 Institution B   First-Time Transfer            165</span>
-<span class="co">#&gt;   4: MID25901161 Institution B   First-Time Transfer            109</span>
-<span class="co">#&gt;   5: MID25920190 Institution B   First-Time Transfer             93</span>
-<span class="co">#&gt;  ---                                                               </span>
-<span class="co">#&gt; 148: MID26618379 Institution J   First-Time Transfer             NA</span>
-<span class="co">#&gt; 149: MID26625917 Institution J   First-Time Transfer             NA</span>
-<span class="co">#&gt; 150: MID26632109 Institution J   First-Time Transfer             NA</span>
-<span class="co">#&gt; 151: MID26697662 Institution L First-Time in College             NA</span>
-<span class="co">#&gt; 152: MID26697689 Institution L   First-Time Transfer             47</span>
-<span class="co">#&gt;                 race    sex age us_citizen home_zip high_school sat_math</span>
-<span class="co">#&gt;   1:           White   Male  41        Yes    29621                  750</span>
-<span class="co">#&gt;   2:           White   Male  53         No    80501      331925      730</span>
-<span class="co">#&gt;   3:           White   Male  75         No    80301      471530      500</span>
-<span class="co">#&gt;   4:           White   Male  47         No    80501      051260      420</span>
-<span class="co">#&gt;   5:           White Female  41         No    80027      060070       NA</span>
-<span class="co">#&gt;  ---                                                                    </span>
-<span class="co">#&gt; 148:   Other/Unknown Female  43        Yes    23464                   NA</span>
-<span class="co">#&gt; 149:   Other/Unknown Female  51        Yes    98043                   NA</span>
-<span class="co">#&gt; 150:   Other/Unknown Female  48        Yes    20816                   NA</span>
-<span class="co">#&gt; 151:           White   Male  43       &lt;NA&gt;    73135                   NA</span>
-<span class="co">#&gt; 152: Native American   Male  42       &lt;NA&gt;    74857      372378       NA</span>
-<span class="co">#&gt;      sat_verbal act_comp</span>
-<span class="co">#&gt;   1:        667       32</span>
-<span class="co">#&gt;   2:        670       30</span>
-<span class="co">#&gt;   3:        500       24</span>
-<span class="co">#&gt;   4:        520       20</span>
-<span class="co">#&gt;   5:         NA       19</span>
-<span class="co">#&gt;  ---                    </span>
-<span class="co">#&gt; 148:         NA       21</span>
-<span class="co">#&gt; 149:         NA       21</span>
-<span class="co">#&gt; 150:         NA       21</span>
-<span class="co">#&gt; 151:         NA       20</span>
-<span class="co">#&gt; 152:         NA       20</span></code></pre></div>
-<p>If you look in the RStudio <em>Environment</em> pane, you should see <code>dframe</code> listed with 152 students meeting this criterion.</p>
-<p>All four practice data tables are promises when you load midfielddata, but loaded into memory only when you use them.</p>
+<span class="co">#&gt; [1] "student"</span></code></pre></div>
+<p>If you look in the RStudio <em>Environment</em> pane, you should see <code>student</code> listed. We will typically load the data sets we need at the top of a script just after loading the midfielddata package. You need to load them only once in a session.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># load remaining data used in this vignette</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">course</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></code></pre></div>
+<p>Checking the environment again,</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># the names of objects in the environment</span>
+<span class="fu"><a href="https://rdrr.io/r/base/ls.html" class="external-link">ls</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co">#&gt; [1] "course"  "degree"  "student" "term"</span></code></pre></div>
 </div>
 </div>
 <div id="inpect-the-student-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#inpect-the-student-data" class="anchor" aria-hidden="true"></a>Inpect the <code>student</code> data</h2>
-<p>Table of attributes of approximately 98,000 students upon being admitted as degree-seeking undergraduates. Each observation is a unique student keyed by student ID. Student IDs are anonymized but are consistent across the four data sets. The table comprises 97,640 observations of 13 variables and occupies approximately 19 MB memory.</p>
-<p>For definitions of variables, view the help page by running</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p><code>student</code> is a table of 13 student-related variables for the students in the sample, collected at the time they were admitted to their institutions as degree-seeking undergraduates. For the data dictionary, you can navigate to the midfielddata website <a href="https://midfieldr.github.io/midfielddata/reference/student.html" class="external-link"><code>student</code></a> page or view the same information in the help page by running</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">?</span> <span class="va">student</span></code></pre></div>
-<p>To see the data structure, run</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span>
+<p>Each observation is a unique student keyed by student ID. Student IDs and institution names are anonymized but are consistent across the four data sets. To see the data structure, run</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># view the structure of the data set </span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span>
 <span class="co">#&gt; Classes 'data.table' and 'data.frame':   97640 obs. of  13 variables:</span>
 <span class="co">#&gt;  $ mcid          : chr  "MID25783135" "MID25783147" "MID25783156" "MID25783162" ...</span>
 <span class="co">#&gt;  $ institution   : chr  "Institution M" "Institution M" "Institution M" "Institution M" ...</span>
@@ -229,34 +214,39 @@
 <span class="co">#&gt;  $ act_comp      : num  21 19 29 18 26 22 24 25 21 21 ...</span>
 <span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
 <span class="co">#&gt;  - attr(*, "index")= int(0)</span></code></pre></div>
+<p><code>student</code> has 97,640 observations and occupies approximately 19 MB memory. We can confirm that the student IDs are unique by running,</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># number of unique IDs</span>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">student</span><span class="op">$</span><span class="va">mcid</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; [1] 97640</span></code></pre></div>
 <p>Summarize some of the quantitative variables.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">student</span><span class="op">[</span>, <span class="va">sat_math</span><span class="op">]</span><span class="op">)</span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">student</span><span class="op">$</span><span class="va">sat_math</span><span class="op">)</span>
 <span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's </span>
 <span class="co">#&gt;   200.0   520.0   580.0   578.1   640.0   800.0   31705</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">student</span><span class="op">[</span>, <span class="va">age</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">student</span><span class="op">$</span><span class="va">age</span><span class="op">)</span>
 <span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's </span>
 <span class="co">#&gt;   16.00   18.00   18.00   18.47   18.00   75.00   22916</span></code></pre></div>
 <p>Examine a few of the categorical variables and their values.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">student</span><span class="op">[</span>, <span class="va">sex</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">student</span><span class="op">$</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] "Female"  "Male"    "Unknown"</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">student</span><span class="op">[</span>, <span class="va">race</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">student</span><span class="op">$</span><span class="va">race</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] "Asian"           "Black"           "Hispanic/Latinx" "International"  </span>
 <span class="co">#&gt; [5] "Native American" "Other/Unknown"   "White"</span></code></pre></div>
 </div>
 <div id="inpect-the-course-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#inpect-the-course-data" class="anchor" aria-hidden="true"></a>Inpect the <code>course</code> data</h2>
-<p>Table of course-related attributes of approximately 98,000 undergraduates enrolled in courses at their institutions. Each observation is one course in one term for one student keyed by student ID and a combination of course, abbreviation, number, and section. The table comprises 3,540,533 observations of 12 variables and occupies approximately 349 MB memory.</p>
-<p>For definitions of variables, view the help page by running</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p><code>course</code> is a table of 12 course-related variables for the students in the sample. For the data dictionary, you can navigate to the midfielddata website <a href="https://midfieldr.github.io/midfielddata/reference/course.html" class="external-link"><code>course</code></a> page or view the same information in the help page by running</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">?</span> <span class="va">course</span></code></pre></div>
-<p>To see the data structure, run</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">course</span><span class="op">)</span>
+<p>Each observation is one course in one term for one student keyed by student ID and a combination of course, abbreviation, number, and section. To see the data structure, run</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># view the structure of the data set </span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">course</span><span class="op">)</span>
 <span class="co">#&gt; Classes 'data.table' and 'data.frame':   3540533 obs. of  12 variables:</span>
 <span class="co">#&gt;  $ mcid        : chr  "MID25783135" "MID25783135" "MID25783135" "MID25783135" ...</span>
 <span class="co">#&gt;  $ institution : chr  "Institution M" "Institution M" "Institution M" "Institution M" ...</span>
@@ -271,15 +261,21 @@
 <span class="co">#&gt;  $ pass_fail   : chr  "No" "No" "No" "No" ...</span>
 <span class="co">#&gt;  $ grade       : chr  "A" "C" "A" "B" ...</span>
 <span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt;</span></code></pre></div>
+<p>Of the four practice data sets in midfielddata, <code>course</code> is by far the largest, with 3,540,533 observations and occupying 349 MB of memory. Depending on your machine, loading <code>course</code> can cause a noticeable delay in execution time (13 seconds on my machine), so you probably want to load it only when needed.</p>
+<p>The number of unique students.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># number of unique IDs</span>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">course</span><span class="op">$</span><span class="va">mcid</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; [1] 97640</span></code></pre></div>
 <p>Summarize a quantitative variable.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">course</span><span class="op">[</span>, <span class="va">hours_course</span><span class="op">]</span><span class="op">)</span>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">course</span><span class="op">$</span><span class="va">hours_course</span><span class="op">)</span>
 <span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's </span>
 <span class="co">#&gt;    0.00    3.00    3.00    2.69    3.00   99.50   60775</span></code></pre></div>
-<p>Examine some categorical variables and their values.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<p>Examine a categorical variable and its values.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># type of courses</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">course</span><span class="op">[</span>, <span class="va">type</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">course</span><span class="op">$</span><span class="va">type</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;  [1] ""                         "Academic Redemption"     </span>
 <span class="co">#&gt;  [3] "Blended"                  "Directed Study"          </span>
 <span class="co">#&gt;  [5] "Duplicate Credit"         "Exemption Credit"        </span>
@@ -293,50 +289,16 @@
 <span class="co">#&gt; [21] "Seminar"                  "Special Exam"            </span>
 <span class="co">#&gt; [23] "Special Topics"           "Supervised Laboratory"   </span>
 <span class="co">#&gt; [25] "Synchronized"             "Test"                    </span>
-<span class="co">#&gt; [27] "Thesis/Dissertation"      "Unsupervised Laboratory"</span>
-
-<span class="co"># how many unique course names</span>
-<span class="va">all_course_names</span> <span class="op">&lt;-</span> <span class="va">course</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">course</span><span class="op">)</span><span class="op">]</span>
-<span class="va">all_course_names</span> <span class="op">&lt;-</span> <span class="va">all_course_names</span><span class="op">[</span><span class="va">course</span> <span class="op">!=</span> <span class="st">""</span><span class="op">]</span>
-<span class="va">all_course_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">all_course_names</span><span class="op">)</span>
-<span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">all_course_names</span><span class="op">)</span>
-<span class="va">n</span>
-<span class="co">#&gt; [1] 15458</span></code></pre></div>
-<p>A sample of course names.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># a random sample of courses</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">all_course_names</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n</span>, <span class="fl">20</span><span class="op">)</span><span class="op">]</span>, nrows <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>
-<span class="co">#&gt;                                                               course</span>
-<span class="co">#&gt;  1:                                      Introduction to Archaeology</span>
-<span class="co">#&gt;  2:                                   Cultures/Capitalisms  (HONORS)</span>
-<span class="co">#&gt;  3:                                        Democracy and its Critics</span>
-<span class="co">#&gt;  4:                                       Atomic Structure (PHY 221)</span>
-<span class="co">#&gt;  5:                                         HD Research and Analysis</span>
-<span class="co">#&gt;  6:                                               NCAA Compliance II</span>
-<span class="co">#&gt;  7:                                             Project Management I</span>
-<span class="co">#&gt;  8:                                              Life Cycle Analysis</span>
-<span class="co">#&gt;  9: Volunteer Income Tax                          Assistance Program</span>
-<span class="co">#&gt; 10:                                  Philosophy: Film and Literature</span>
-<span class="co">#&gt; 11:                                            Plains Indian Culture</span>
-<span class="co">#&gt; 12:                                       Practice of Public History</span>
-<span class="co">#&gt; 13:                                     FrenchWrittenComprehen-Lvl 5</span>
-<span class="co">#&gt; 14:                                   Exptl Genetics &amp; Cell Biol Lab</span>
-<span class="co">#&gt; 15:                                             Advanced Stimulation</span>
-<span class="co">#&gt; 16:                                   Group Study-Special Topics Psy</span>
-<span class="co">#&gt; 17:                                     Animal Biology-Invertebrates</span>
-<span class="co">#&gt; 18:                                   Hist of Food Animl Agriculture</span>
-<span class="co">#&gt; 19:                                              Material Properties</span>
-<span class="co">#&gt; 20:                                   Porous Media Transport Phenom.</span></code></pre></div>
+<span class="co">#&gt; [27] "Thesis/Dissertation"      "Unsupervised Laboratory"</span></code></pre></div>
 </div>
 <div id="inpect-the-term-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#inpect-the-term-data" class="anchor" aria-hidden="true"></a>Inpect the <code>term</code> data</h2>
-<p>Table of term-related attributes of approximately 96,000 undergraduates for all terms completed at their institutions. Each observation is one term for one student keyed by student ID and term. The table comprises 727,369 observations of 13 variables and occupies approximately 82 MB memory.</p>
-<p>For definitions of variables, view the help page by running</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<p><code>term</code> is a table of 13 term-related variables for the students in the sample. For the data dictionary, you can navigate to the midfielddata website <a href="https://midfieldr.github.io/midfielddata/reference/term.html" class="external-link"><code>term</code></a> page or view the same information in the help page by running</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">?</span> <span class="va">term</span></code></pre></div>
-<p>To see the data structure, run</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<p>Each observation is one term for one student keyed by student ID and term. To see the data structure, run</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span>
 <span class="co">#&gt; Classes 'data.table' and 'data.frame':   727369 obs. of  13 variables:</span>
 <span class="co">#&gt;  $ mcid               : chr  "MID25783135" "MID25783135" "MID25783147" "MID25783147" ...</span>
@@ -354,21 +316,27 @@
 <span class="co">#&gt;  $ gpa_cumul          : num  2.47 2.79 3.76 3.13 3.15 3.36 3.39 3.5 3.59 3.61 ...</span>
 <span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
 <span class="co">#&gt;  - attr(*, "index")= int(0)</span></code></pre></div>
+<p><code>term</code> has 727,369 observations and occupies approximately 82 MB of memory. The number of unique students is found by,</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># number of unique IDs</span>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">term</span><span class="op">$</span><span class="va">mcid</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; [1] 95995</span></code></pre></div>
+<p>The number of unique students in <code>student</code> and <code>term</code> are not the same. To be recorded in <code>student</code>, students must be degree-seeking. To be recorded in <code>term</code>, students must complete a term. The data can include degree-seekers who fail to complete a term as well as term-completers not seeking a degree—hence the difference in numbers</p>
 <p>Summarize some of the quantitative variables.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">term</span><span class="op">[</span>, <span class="va">hours_term</span><span class="op">]</span><span class="op">)</span>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">term</span><span class="op">$</span><span class="va">hours_term</span><span class="op">)</span>
 <span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span>
 <span class="co">#&gt;    0.00    9.00   12.00   11.48   15.00   46.00</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">term</span><span class="op">[</span>, <span class="va">gpa_term</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">term</span><span class="op">$</span><span class="va">gpa_term</span><span class="op">)</span>
 <span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's </span>
 <span class="co">#&gt;   0.000   2.400   3.000   2.862   3.540   9.300     267</span></code></pre></div>
 <p>Examine some categorical variables and their values.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">term</span><span class="op">[</span>, <span class="va">level</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">term</span><span class="op">$</span><span class="va">level</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] "01 Freshman"  "02 Sophomore" "03 Junior"    "04 Senior"</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">term</span><span class="op">[</span>, <span class="va">standing</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">term</span><span class="op">$</span><span class="va">standing</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] "Academic Probation"               "Academic Suspension"             </span>
 <span class="co">#&gt; [3] "Academic Suspension - Reinstated" "Academic Warning"                </span>
 <span class="co">#&gt; [5] "Good Standing"</span></code></pre></div>
@@ -376,12 +344,11 @@
 <div id="inpect-the-degree-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#inpect-the-degree-data" class="anchor" aria-hidden="true"></a>Inpect the <code>degree</code> data</h2>
-<p>Table of degree-related attributes of approximately 48,000 undergraduates upon completing their programs. Each observation is a unique student keyed by student ID. The table comprises 47,499 observations of 5 variables and occupies approximately 10 MB memory.</p>
-<p>For definitions of variables, view the help page by running</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<p><code>degree</code> is a table of 5 degree-related variables for the students in the sample. For the data dictionary, you can navigate to the midfielddata website <a href="https://midfieldr.github.io/midfielddata/reference/degree.html" class="external-link"><code>degree</code></a> page or view the same information in the help page by running</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">?</span> <span class="va">degree</span></code></pre></div>
-<p>To see the data structure, run</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<p>Each observation is a unique student keyed by student ID. To see the data structure, run</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span>
 <span class="co">#&gt; Classes 'data.table' and 'data.frame':   47499 obs. of  5 variables:</span>
 <span class="co">#&gt;  $ mcid       : chr  "MID25783162" "MID25783178" "MID25783188" "MID25783195" ...</span>
@@ -390,46 +357,29 @@
 <span class="co">#&gt;  $ cip6       : chr  "521401" "143501" "230101" "521401" ...</span>
 <span class="co">#&gt;  $ degree     : chr  "Bachelor of Science" "Bachelor of Science" "Bachelor of Arts" "Bachelor of Science" ...</span>
 <span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;externalptr&gt;</span></code></pre></div>
+<p><code>degree</code> has 47,499 observations and occupies approximately 10 MB memory. The number of unique students is found by</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># number of unique IDs</span>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">degree</span><span class="op">$</span><span class="va">mcid</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; [1] 47499</span></code></pre></div>
+<p>Thus we have 47,499 graduates (in <code>degree</code>) from the 97,640 students admitted (in <code>student</code>).</p>
 <p>Examine some categorical variables and their values.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">degree</span><span class="op">[</span>, <span class="va">institution</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">degree</span><span class="op">$</span><span class="va">institution</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;  [1] "Institution A" "Institution B" "Institution C" "Institution D"</span>
 <span class="co">#&gt;  [5] "Institution E" "Institution F" "Institution G" "Institution H"</span>
 <span class="co">#&gt;  [9] "Institution J" "Institution K" "Institution L" "Institution M"</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">degree</span><span class="op">[</span>, <span class="va">degree</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">degree</span><span class="op">$</span><span class="va">degree</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;  [1] "Bachelor's Degree"                   "Bachelor of Architecture"           </span>
 <span class="co">#&gt;  [3] "Bachelor of Arts"                    "Bachelor of Arts and Sciences"      </span>
 <span class="co">#&gt;  [5] "Bachelor of Arts in Letters"         "Bachelor of Business Administration"</span>
 <span class="co">#&gt;  [7] "Bachelor of Fine Arts"               "Bachelor of Interior Design"        </span>
 <span class="co">#&gt;  [9] "Bachelor of Music"                   "Bachelor of Science"</span></code></pre></div>
-<p>Only students completing their programs.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">degree</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span><span class="op">]</span>
-<span class="co">#&gt;               mcid   institution  term   cip6</span>
-<span class="co">#&gt;     1: MID25783162 Institution M 19963 521401</span>
-<span class="co">#&gt;     2: MID25783178 Institution M 20001 143501</span>
-<span class="co">#&gt;     3: MID25783188 Institution M 20023 230101</span>
-<span class="co">#&gt;     4: MID25783195 Institution M 19966 521401</span>
-<span class="co">#&gt;     5: MID25783197 Institution M 19911 140801</span>
-<span class="co">#&gt;    ---                                       </span>
-<span class="co">#&gt; 47495: MID26697553 Institution L 20133 451001</span>
-<span class="co">#&gt; 47496: MID26697574 Institution L 20113 300000</span>
-<span class="co">#&gt; 47497: MID26697576 Institution L 20134 521401</span>
-<span class="co">#&gt; 47498: MID26697599 Institution L 20143 110401</span>
-<span class="co">#&gt; 47499: MID26697623 Institution L 20153 520301</span>
-<span class="co">#&gt;                                     degree</span>
-<span class="co">#&gt;     1:                 Bachelor of Science</span>
-<span class="co">#&gt;     2:                 Bachelor of Science</span>
-<span class="co">#&gt;     3:                    Bachelor of Arts</span>
-<span class="co">#&gt;     4:                 Bachelor of Science</span>
-<span class="co">#&gt;     5:                 Bachelor of Science</span>
-<span class="co">#&gt;    ---                                    </span>
-<span class="co">#&gt; 47495:                    Bachelor of Arts</span>
-<span class="co">#&gt; 47496:                    Bachelor of Arts</span>
-<span class="co">#&gt; 47497: Bachelor of Business Administration</span>
-<span class="co">#&gt; 47498:                    Bachelor of Arts</span>
-<span class="co">#&gt; 47499: Bachelor of Business Administration</span></code></pre></div>
+<p>Checking if any of the degrees are recorded as NA results in an empty table, thus all the students in <code>degree</code> are graduates.</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">degree</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span><span class="op">]</span>
+<span class="co">#&gt; Empty data.table (0 rows and 5 cols): mcid,institution,term,cip6,degree</span></code></pre></div>
 </div>
 <div id="exercises" class="section level2">
 <h2 class="hasAnchor">
@@ -461,51 +411,47 @@ Waring, Elin, Quinn, Michael, McNamara, Amelia, et al. (2021) <em><span class="n
 <div id="complete-script" class="section level3">
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor" aria-hidden="true"></a>Complete script</h3>
-<p>Each vignette concludes with the code chunks collected below in a single, condensed script. Some users like to copy and paste the to an R script of their own.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<p>We conclude each vignette by collecting its code chunks in a single, condensed script for the convenience of those who wish to copy it into their own R file.</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span>
 
-<span class="co"># cip</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">cip</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">[</span>, <span class="va">cip2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">[</span>, <span class="va">cip4</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">[</span>, <span class="va">cip6</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">20210529</span><span class="op">)</span>
-<span class="va">some_programs</span> <span class="op">&lt;-</span> <span class="va">cip</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip4name</span><span class="op">)</span><span class="op">]</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">some_programs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">300</span>, <span class="fl">20</span><span class="op">)</span><span class="op">]</span>, nrows <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>
+<span class="co"># loading data</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">course</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span>
 
 <span class="co"># student</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">student</span><span class="op">[</span>, <span class="va">sat_math</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">student</span><span class="op">[</span>, <span class="va">age</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">student</span><span class="op">[</span>, <span class="va">sex</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">student</span><span class="op">[</span>, <span class="va">race</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">student</span><span class="op">$</span><span class="va">mcid</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">student</span><span class="op">$</span><span class="va">sat_math</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">student</span><span class="op">$</span><span class="va">age</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">student</span><span class="op">$</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">student</span><span class="op">$</span><span class="va">race</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># course</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">course</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">course</span><span class="op">[</span>, <span class="va">hours_course</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">course</span><span class="op">[</span>, <span class="va">type</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="va">some_courses</span> <span class="op">&lt;-</span> <span class="va">course</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">course</span><span class="op">)</span><span class="op">]</span>
-<span class="va">some_courses</span> <span class="op">&lt;-</span> <span class="va">some_courses</span><span class="op">[</span><span class="va">course</span> <span class="op">!=</span> <span class="st">""</span><span class="op">]</span>
-<span class="va">some_courses</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">some_courses</span><span class="op">)</span>
-<span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">some_courses</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">some_courses</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n</span>, <span class="fl">20</span><span class="op">)</span><span class="op">]</span>, nrows <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">course</span><span class="op">$</span><span class="va">mcid</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">course</span><span class="op">$</span><span class="va">hours_course</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">course</span><span class="op">$</span><span class="va">type</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># term</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">term</span><span class="op">[</span>, <span class="va">hours_term</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">term</span><span class="op">[</span>, <span class="va">gpa_term</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">term</span><span class="op">[</span>, <span class="va">level</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">term</span><span class="op">[</span>, <span class="va">standing</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">term</span><span class="op">$</span><span class="va">mcid</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">term</span><span class="op">$</span><span class="va">hours_term</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">term</span><span class="op">$</span><span class="va">gpa_term</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">term</span><span class="op">$</span><span class="va">level</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">term</span><span class="op">$</span><span class="va">standing</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># degree</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">degree</span><span class="op">[</span>, <span class="va">institution</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">degree</span><span class="op">[</span>, <span class="va">degree</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="va">degree</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span><span class="op">]</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">degree</span><span class="op">$</span><span class="va">mcid</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">degree</span><span class="op">$</span><span class="va">institution</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">degree</span><span class="op">$</span><span class="va">degree</span><span class="op">)</span><span class="op">)</span>
+<span class="va">degree</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 </div>
 </div>
   </div>

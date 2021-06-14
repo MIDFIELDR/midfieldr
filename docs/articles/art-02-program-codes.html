@@ -47,11 +47,11 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../articles/art-00-midfield-data.html">MIDFIELD practice data</a>
+  <a href="../articles/art-00-midfield-data.html">Introduction</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+    Vignettes
      
     <span class="caret"></span>
   </a>
@@ -66,16 +66,19 @@
       <a href="../articles/art-03-case-selection.html">Case selection</a>
     </li>
     <li>
-      <a href="../articles/art-04-timely-completion.html">Timely completion</a>
+      <a href="../articles/art-04-data-sufficiency.html">Data sufficiency</a>
     </li>
     <li>
       <a href="../articles/art-05-stickiness.html">Stickiness</a>
     </li>
     <li>
-      <a href="../articles/art-06-fye-programs.html">FYE programs</a>
+      <a href="../articles/art-06-timely-completion.html">Timely completion</a>
     </li>
     <li>
-      <a href="../articles/art-07-graduation-rate.html">Graduation rate</a>
+      <a href="../articles/art-07-fye-programs.html">FYE programs</a>
+    </li>
+    <li>
+      <a href="../articles/art-08-graduation-rate.html">Graduation rate</a>
     </li>
   </ul>
 </li>
@@ -123,12 +126,21 @@
 <p>In studying student records, a common first step is to subset the data, retaining some instructional programs and dropping others. In the US, instructional programs are encoded by “CIP” codes. CIP is the acronym for <em>Classification of Instructional Programs</em>, a taxonomy of academic programs curated by the US Department of Education <span class="citation">(<a href="#ref-NCES:2010" role="doc-biblioref">NCES, 2010</a>)</span>.</p>
 <p>The IPEDS standard encoding format is a two-digit number followed by a period, followed by a four-digit number, for example, 14.0102 <span class="citation">(<a href="#ref-NCES:2020" role="doc-biblioref">NCES, 2020</a>)</span>. MIDFIELD uses the same numerals, but omits the period, i.e., 140102, and stores the variable as a character string.</p>
 <p>The 2010 CIP codes are included with midfieldr in the data set <code>cip</code>. In this vignette, we examine strategies of searching <code>cip</code> for programs we want to study.</p>
+<div id="outline" class="section level3">
+<h3 class="hasAnchor">
+<a href="#outline" class="anchor" aria-hidden="true"></a>Outline</h3>
+<ul>
+<li>Explore the taxonomy of academic programs</li>
+<li>Inspect the CIP data</li>
+<li>Practice searching the CIP data using different approaches</li>
+</ul>
+</div>
 <div id="this-vignette-uses" class="section level3">
 <h3 class="hasAnchor">
 <a href="#this-vignette-uses" class="anchor" aria-hidden="true"></a>This vignette uses</h3>
 <p>midfieldr functions</p>
 <ul>
-<li><code><a href="../reference/filter_text.html">filter_text()</a></code></li>
+<li><code><a href="../reference/filter_search.html">filter_search()</a></code></li>
 </ul>
 <p>packages</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -137,7 +149,9 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span>
 
 <span class="co"># optional code to control data.table printing</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.nrows <span class="op">=</span> <span class="fl">10</span>, datatable.print.topn <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.nrows <span class="op">=</span> <span class="fl">10</span>, 
+        datatable.print.topn  <span class="op">=</span> <span class="fl">5</span>, 
+        datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 <div id="taxonomy-of-programs" class="section level2">
@@ -381,19 +395,21 @@ Science Technologies, Technicians, Other
 <p>To see a few of the observations, run</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cip</span>
-<span class="co">#&gt;       cip2                                                  cip2name cip4</span>
-<span class="co">#&gt;    1:   01 Agriculture, Agricultural Operations and Related Sciences 0100</span>
-<span class="co">#&gt;    2:   01 Agriculture, Agricultural Operations and Related Sciences 0101</span>
-<span class="co">#&gt;    3:   01 Agriculture, Agricultural Operations and Related Sciences 0101</span>
-<span class="co">#&gt;    4:   01 Agriculture, Agricultural Operations and Related Sciences 0101</span>
-<span class="co">#&gt;    5:   01 Agriculture, Agricultural Operations and Related Sciences 0101</span>
-<span class="co">#&gt;   ---                                                                    </span>
-<span class="co">#&gt; 1578:   54                                                   History 5401</span>
-<span class="co">#&gt; 1579:   54                                                   History 5401</span>
-<span class="co">#&gt; 1580:   54                                                   History 5401</span>
-<span class="co">#&gt; 1581:   54                                                   History 5401</span>
-<span class="co">#&gt; 1582:   99                         NonIPEDS - Undecided, Unspecified 9999</span>
+<span class="co">#&gt;         cip2                                                  cip2name   cip4</span>
+<span class="co">#&gt;       &lt;char&gt;                                                    &lt;char&gt; &lt;char&gt;</span>
+<span class="co">#&gt;    1:     01 Agriculture, Agricultural Operations and Related Sciences   0100</span>
+<span class="co">#&gt;    2:     01 Agriculture, Agricultural Operations and Related Sciences   0101</span>
+<span class="co">#&gt;    3:     01 Agriculture, Agricultural Operations and Related Sciences   0101</span>
+<span class="co">#&gt;    4:     01 Agriculture, Agricultural Operations and Related Sciences   0101</span>
+<span class="co">#&gt;    5:     01 Agriculture, Agricultural Operations and Related Sciences   0101</span>
+<span class="co">#&gt;   ---                                                                        </span>
+<span class="co">#&gt; 1578:     54                                                   History   5401</span>
+<span class="co">#&gt; 1579:     54                                                   History   5401</span>
+<span class="co">#&gt; 1580:     54                                                   History   5401</span>
+<span class="co">#&gt; 1581:     54                                                   History   5401</span>
+<span class="co">#&gt; 1582:     99                         NonIPEDS - Undecided, Unspecified   9999</span>
 <span class="co">#&gt;                                   cip4name   cip6</span>
+<span class="co">#&gt;                                     &lt;char&gt; &lt;char&gt;</span>
 <span class="co">#&gt;    1:                 Agriculture, General 010000</span>
 <span class="co">#&gt;    2: Agricultural Business and Management 010101</span>
 <span class="co">#&gt;    3: Agricultural Business and Management 010102</span>
@@ -406,6 +422,7 @@ Science Technologies, Technicians, Other
 <span class="co">#&gt; 1581:                              History 540199</span>
 <span class="co">#&gt; 1582:    NonIPEDS - Undecided, Unspecified 999999</span>
 <span class="co">#&gt;                                             cip6name</span>
+<span class="co">#&gt;                                               &lt;char&gt;</span>
 <span class="co">#&gt;    1:                           Agriculture, General</span>
 <span class="co">#&gt;    2:  Agricultural Business and Management, General</span>
 <span class="co">#&gt;    3: Agribusiness, Agricultural Business Operations</span>
@@ -420,53 +437,90 @@ Science Technologies, Technicians, Other
 <p>The number of unique programs.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># at the 2-digit level</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">[</span>, <span class="va">cip2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">$</span><span class="va">cip2</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;  [1] "01" "03" "04" "05" "09" "10" "11" "12" "13" "14" "15" "16" "19" "22" "23"</span>
 <span class="co">#&gt; [16] "24" "25" "26" "27" "28" "29" "30" "31" "32" "33" "34" "35" "36" "37" "38"</span>
 <span class="co">#&gt; [31] "39" "40" "41" "42" "43" "44" "45" "46" "47" "48" "49" "50" "51" "52" "54"</span>
 <span class="co">#&gt; [46] "99"</span>
 
 <span class="co"># at the 4-digit level</span>
-<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">[</span>, <span class="va">cip4</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] 394</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">$</span><span class="va">cip4</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt;   [1] "0100" "0101" "0102" "0103" "0104" "0105" "0106" "0107" "0108" "0109"</span>
+<span class="co">#&gt;  [11] "0110" "0111" "0112" "0199" "0301" "0302" "0303" "0305" "0306" "0399"</span>
+<span class="co">#&gt;  [21] "0402" "0403" "0404" "0405" "0406" "0408" "0409" "0410" "0499" "0501"</span>
+<span class="co">#&gt;  [31] "0502" "0599" "0901" "0904" "0907" "0909" "0910" "0999" "1001" "1002"</span>
+<span class="co">#&gt;  [41] "1003" "1099" "1100" "1101" "1102" "1103" "1104" "1105" "1106" "1107"</span>
+<span class="co">#&gt;  [51] "1108" "1109" "1110" "1199" "1203" "1204" "1205" "1299" "1301" "1302"</span>
+<span class="co">#&gt;  [61] "1303" "1304" "1305" "1306" "1307" "1309" "1310" "1311" "1312" "1313"</span>
+<span class="co">#&gt;  [71] "1314" "1315" "1399" "1401" "1402" "1403" "1404" "1405" "1406" "1407"</span>
+<span class="co">#&gt;  [81] "1408" "1409" "1410" "1411" "1412" "1413" "1414" "1418" "1419" "1420"</span>
+<span class="co">#&gt;  [91] "1421" "1422" "1423" "1424" "1425" "1427" "1428" "1431" "1432" "1433"</span>
+<span class="co">#&gt; [101] "1434" "1435" "1436" "1437" "1438" "1439" "1440" "1441" "1442" "1443"</span>
+<span class="co">#&gt; [111] "1444" "1445" "1499" "1500" "1501" "1502" "1503" "1504" "1505" "1506"</span>
+<span class="co">#&gt; [121] "1507" "1508" "1509" "1510" "1511" "1512" "1513" "1514" "1515" "1516"</span>
+<span class="co">#&gt; [131] "1599" "1600" "1601" "1602" "1603" "1604" "1605" "1606" "1607" "1608"</span>
+<span class="co">#&gt; [141] "1609" "1610" "1611" "1612" "1613" "1614" "1615" "1616" "1699" "1900"</span>
+<span class="co">#&gt; [151] "1901" "1902" "1904" "1905" "1906" "1907" "1909" "1999" "2200" "2201"</span>
+<span class="co">#&gt; [161] "2202" "2203" "2299" "2301" "2304" "2305" "2307" "2308" "2310" "2311"</span>
+<span class="co">#&gt; [171] "2313" "2314" "2399" "2401" "2501" "2503" "2599" "2601" "2602" "2603"</span>
+<span class="co">#&gt; [181] "2604" "2605" "2606" "2607" "2608" "2609" "2610" "2611" "2612" "2613"</span>
+<span class="co">#&gt; [191] "2614" "2615" "2699" "2701" "2703" "2705" "2799" "2801" "2803" "2804"</span>
+<span class="co">#&gt; [201] "2805" "2806" "2807" "2899" "2902" "2903" "2904" "2999" "3000" "3001"</span>
+<span class="co">#&gt; [211] "3005" "3006" "3008" "3010" "3011" "3012" "3013" "3014" "3015" "3016"</span>
+<span class="co">#&gt; [221] "3017" "3018" "3019" "3020" "3021" "3022" "3023" "3024" "3025" "3026"</span>
+<span class="co">#&gt; [231] "3027" "3028" "3029" "3030" "3031" "3032" "3033" "3099" "3101" "3103"</span>
+<span class="co">#&gt; [241] "3105" "3106" "3199" "3201" "3301" "3401" "3501" "3601" "3701" "3800"</span>
+<span class="co">#&gt; [251] "3801" "3802" "3899" "3902" "3903" "3904" "3905" "3906" "3907" "3999"</span>
+<span class="co">#&gt; [261] "4001" "4002" "4004" "4005" "4006" "4008" "4010" "4099" "4100" "4101"</span>
+<span class="co">#&gt; [271] "4102" "4103" "4199" "4201" "4227" "4228" "4299" "4301" "4302" "4303"</span>
+<span class="co">#&gt; [281] "4399" "4400" "4402" "4404" "4405" "4407" "4499" "4501" "4502" "4503"</span>
+<span class="co">#&gt; [291] "4504" "4505" "4506" "4507" "4509" "4510" "4511" "4512" "4513" "4514"</span>
+<span class="co">#&gt; [301] "4599" "4600" "4601" "4602" "4603" "4604" "4605" "4699" "4700" "4701"</span>
+<span class="co">#&gt; [311] "4702" "4703" "4704" "4706" "4799" "4800" "4803" "4805" "4807" "4808"</span>
+<span class="co">#&gt; [321] "4899" "4901" "4902" "4903" "4999" "5001" "5002" "5003" "5004" "5005"</span>
+<span class="co">#&gt; [331] "5006" "5007" "5009" "5010" "5099" "5100" "5101" "5102" "5104" "5105"</span>
+<span class="co">#&gt; [341] "5106" "5107" "5108" "5109" "5110" "5111" "5112" "5114" "5115" "5117"</span>
+<span class="co">#&gt; [351] "5118" "5119" "5120" "5121" "5122" "5123" "5124" "5125" "5126" "5127"</span>
+<span class="co">#&gt; [361] "5131" "5132" "5133" "5134" "5135" "5136" "5137" "5138" "5139" "5199"</span>
+<span class="co">#&gt; [371] "5201" "5202" "5203" "5204" "5205" "5206" "5207" "5208" "5209" "5210"</span>
+<span class="co">#&gt; [381] "5211" "5212" "5213" "5214" "5215" "5216" "5217" "5218" "5219" "5220"</span>
+<span class="co">#&gt; [391] "5221" "5299" "5401" "9999"</span>
 
 <span class="co"># at the 6-digit level</span>
-<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">[</span>, <span class="va">cip6</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">$</span><span class="va">cip6</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] 1582</span></code></pre></div>
-<p>A sample of program names,</p>
+<p>A sample of program names (<code><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample()</a></code> uses a random number generator, so your result will differ from that shown)</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">20210529</span><span class="op">)</span>
-<span class="va">some_programs</span> <span class="op">&lt;-</span> <span class="va">cip</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip4name</span><span class="op">)</span><span class="op">]</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">some_programs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">300</span>, <span class="fl">20</span><span class="op">)</span><span class="op">]</span>, nrows <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>
-<span class="co">#&gt;                                                                 cip4name</span>
-<span class="co">#&gt;  1:                   Cosmetology and Related Personal Grooming Services</span>
-<span class="co">#&gt;  2:              Public Relations, Advertising and Applied Communication</span>
-<span class="co">#&gt;  3:                              Natural Resources Management and Policy</span>
-<span class="co">#&gt;  4:                                Communications Technology, Technician</span>
-<span class="co">#&gt;  5:                                                        Soil Sciences</span>
-<span class="co">#&gt;  6:                           Educational Administration and Supervision</span>
-<span class="co">#&gt;  7:                                   Agricultural Production Operations</span>
-<span class="co">#&gt;  8:                                                         Area Studies</span>
-<span class="co">#&gt;  9:                                                      Animal Sciences</span>
-<span class="co">#&gt; 10:                                                             Forestry</span>
-<span class="co">#&gt; 11:                                       Special Education and Teaching</span>
-<span class="co">#&gt; 12: Communications Technologies, Technicians and Support Services, Other</span>
-<span class="co">#&gt; 13:                                       Special Education and Teaching</span>
-<span class="co">#&gt; 14:                                                         Area Studies</span>
-<span class="co">#&gt; 15:                                                             Forestry</span>
-<span class="co">#&gt; 16:                                 Agricultural Business and Management</span>
-<span class="co">#&gt; 17:                                                           Journalism</span>
-<span class="co">#&gt; 18:                   Cosmetology and Related Personal Grooming Services</span>
-<span class="co">#&gt; 19:                                                             Forestry</span>
-<span class="co">#&gt; 20:              Public Relations, Advertising and Applied Communication</span></code></pre></div>
+<code class="sourceCode R"><span class="va">some_programs</span> <span class="op">&lt;-</span> <span class="va">cip</span><span class="op">[</span>, <span class="va">cip4name</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">some_programs</span>, <span class="fl">20</span><span class="op">)</span>
+<span class="co">#&gt;  [1] "Educational Administration and Supervision"                            </span>
+<span class="co">#&gt;  [2] "Linguistic, Comparative Related Language Studies and Services"         </span>
+<span class="co">#&gt;  [3] "Business Operations Support and Assistant Services"                    </span>
+<span class="co">#&gt;  [4] "Biomedical, Medical Engineering"                                       </span>
+<span class="co">#&gt;  [5] "Human Development, Family Studies Related Services"                    </span>
+<span class="co">#&gt;  [6] "Industrial Production Technologies, Technicians"                       </span>
+<span class="co">#&gt;  [7] "Somatic Bodywork and Related Therapeutic Services"                     </span>
+<span class="co">#&gt;  [8] "Business Operations Support and Assistant Services"                    </span>
+<span class="co">#&gt;  [9] "Rehabilitation and Therapeutic Professions"                            </span>
+<span class="co">#&gt; [10] "Astronomy and Astrophysics"                                            </span>
+<span class="co">#&gt; [11] "Allied Health Diagnostic, Intervention Treatment Professions"          </span>
+<span class="co">#&gt; [12] "Applied Horticulture, Horticultural Business Services"                 </span>
+<span class="co">#&gt; [13] "Ophthalmic and Optometric Support Services and Allied Professions"     </span>
+<span class="co">#&gt; [14] "Specialized Sales, Merchandising and Marketing Operations"             </span>
+<span class="co">#&gt; [15] "Engineering-Related Fields"                                            </span>
+<span class="co">#&gt; [16] "Teacher Education and Professional Development, Specific Subject Areas"</span>
+<span class="co">#&gt; [17] "Allied Health Diagnostic, Intervention Treatment Professions"          </span>
+<span class="co">#&gt; [18] "Leatherworking and Upholstery"                                         </span>
+<span class="co">#&gt; [19] "Health, Medical Preparatory Programs"                                  </span>
+<span class="co">#&gt; [20] "Research and Experimental Psychology"</span></code></pre></div>
 </div>
-<div id="filter-using-keywords" class="section level2">
+<div id="filter-using-a-keyword-search" class="section level2">
 <h2 class="hasAnchor">
-<a href="#filter-using-keywords" class="anchor" aria-hidden="true"></a>Filter using keywords</h2>
-<p><code><a href="../reference/filter_text.html">filter_text()</a></code> is the midfieldr function for searching the <code>cip</code> data set for program codes and names. View the help page by running</p>
+<a href="#filter-using-a-keyword-search" class="anchor" aria-hidden="true"></a>Filter using a keyword search</h2>
+<p><code><a href="../reference/filter_search.html">filter_search()</a></code> is the midfieldr function for searching the <code>cip</code> data set for program codes and names. View the help page by running</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">?</span> <span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p>The variables in <code>cip</code> are all characters and <code><a href="../reference/filter_text.html">filter_text()</a></code> subsets a data frame using character search terms. The arguments are:</p>
+<code class="sourceCode R"><span class="op">?</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p>The variables in <code>cip</code> are all characters and <code><a href="../reference/filter_search.html">filter_search()</a></code> subsets a data frame using character search terms. The arguments are:</p>
 <ul>
 <li>
 <code>dframe</code> data frame to be subset</li>
@@ -480,20 +534,22 @@ Science Technologies, Technicians, Other
 <p>For example, filtering the CIP data for all programs containing the word “engineering” yields 119 observations.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># filter basics</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">cip</span>, keep_text <span class="op">=</span> <span class="st">"engineering"</span><span class="op">)</span>
-<span class="co">#&gt;      cip2                                         cip2name cip4</span>
-<span class="co">#&gt;   1:   14                                      Engineering 1401</span>
-<span class="co">#&gt;   2:   14                                      Engineering 1401</span>
-<span class="co">#&gt;   3:   14                                      Engineering 1402</span>
-<span class="co">#&gt;   4:   14                                      Engineering 1403</span>
-<span class="co">#&gt;   5:   14                                      Engineering 1404</span>
-<span class="co">#&gt;  ---                                                           </span>
-<span class="co">#&gt; 115:   15                           Engineering Technology 1516</span>
-<span class="co">#&gt; 116:   15                           Engineering Technology 1599</span>
-<span class="co">#&gt; 117:   29                            Military Technologies 2903</span>
-<span class="co">#&gt; 118:   29                            Military Technologies 2903</span>
-<span class="co">#&gt; 119:   51 Health Professions and Related Clinical Sciences 5123</span>
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">cip</span>, keep_text <span class="op">=</span> <span class="st">"engineering"</span><span class="op">)</span>
+<span class="co">#&gt;        cip2                                         cip2name   cip4</span>
+<span class="co">#&gt;      &lt;char&gt;                                           &lt;char&gt; &lt;char&gt;</span>
+<span class="co">#&gt;   1:     14                                      Engineering   1401</span>
+<span class="co">#&gt;   2:     14                                      Engineering   1401</span>
+<span class="co">#&gt;   3:     14                                      Engineering   1402</span>
+<span class="co">#&gt;   4:     14                                      Engineering   1403</span>
+<span class="co">#&gt;   5:     14                                      Engineering   1404</span>
+<span class="co">#&gt;  ---                                                               </span>
+<span class="co">#&gt; 115:     15                           Engineering Technology   1516</span>
+<span class="co">#&gt; 116:     15                           Engineering Technology   1599</span>
+<span class="co">#&gt; 117:     29                            Military Technologies   2903</span>
+<span class="co">#&gt; 118:     29                            Military Technologies   2903</span>
+<span class="co">#&gt; 119:     51 Health Professions and Related Clinical Sciences   5123</span>
 <span class="co">#&gt;                                                     cip4name   cip6</span>
+<span class="co">#&gt;                                                       &lt;char&gt; &lt;char&gt;</span>
 <span class="co">#&gt;   1:                                    Engineering, General 140101</span>
 <span class="co">#&gt;   2:                                    Engineering, General 140102</span>
 <span class="co">#&gt;   3:   Aerospace, Aeronautical and Astronautical Engineering 140201</span>
@@ -506,6 +562,7 @@ Science Technologies, Technicians, Other
 <span class="co">#&gt; 118:                               Military Applied Sciences 290303</span>
 <span class="co">#&gt; 119:              Rehabilitation and Therapeutic Professions 512312</span>
 <span class="co">#&gt;                                                              cip6name</span>
+<span class="co">#&gt;                                                                &lt;char&gt;</span>
 <span class="co">#&gt;   1:                                             Engineering, General</span>
 <span class="co">#&gt;   2:                                                  Pre-Engineering</span>
 <span class="co">#&gt;   3:     Aerospace, Aeronautical and Astronautical, Space Engineering</span>
@@ -517,10 +574,10 @@ Science Technologies, Technicians, Other
 <span class="co">#&gt; 117:                                       Combat Systems Engineering</span>
 <span class="co">#&gt; 118:                                            Engineering Acoustics</span>
 <span class="co">#&gt; 119: Assistive, Augmentative Technology and Rehabiliation Engineering</span></code></pre></div>
-<p>The first two argument names in <code><a href="../reference/filter_text.html">filter_text()</a></code> can be omitted. The optional <code>drop_text</code> and <code>select</code> arguments, however, must be named if used.</p>
+<p>The first two argument names in <code><a href="../reference/filter_search.html">filter_search()</a></code> can be omitted. The optional <code>drop_text</code> and <code>select</code> arguments, however, must be named if used.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># applying optional argument drop_text and select</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, 
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, 
             <span class="st">"engineering"</span>, 
             drop_text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"engineering-related"</span>, 
                           <span class="st">"engineering related"</span>, 
@@ -528,6 +585,7 @@ Science Technologies, Technicians, Other
                           <span class="st">"engineering technologies"</span><span class="op">)</span>, 
             select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span>, <span class="st">"cip6name"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;       cip6                                                         cip6name</span>
+<span class="co">#&gt;     &lt;char&gt;                                                           &lt;char&gt;</span>
 <span class="co">#&gt;  1: 140101                                             Engineering, General</span>
 <span class="co">#&gt;  2: 140102                                                  Pre-Engineering</span>
 <span class="co">#&gt;  3: 140201     Aerospace, Aeronautical and Astronautical, Space Engineering</span>
@@ -542,42 +600,45 @@ Science Technologies, Technicians, Other
 <p>Note that only unique rows are returned. Above we selected the 6-digit codes and names. If we do the same search, but report the 4-digit codes and names, we obtain a shorter listing, as expected.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># applying optionalk argument drop_text and select</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, 
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, 
             <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"engineering"</span><span class="op">)</span>, 
             drop_text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"engineering-related"</span>, 
                           <span class="st">"engineering related"</span>, 
                           <span class="st">"engineering technology"</span>, 
                           <span class="st">"engineering technologies"</span><span class="op">)</span>, 
             select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip4"</span>, <span class="st">"cip4name"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;     cip4                                                cip4name</span>
-<span class="co">#&gt;  1: 1401                                    Engineering, General</span>
-<span class="co">#&gt;  2: 1402   Aerospace, Aeronautical and Astronautical Engineering</span>
-<span class="co">#&gt;  3: 1403 Agricultural, Biological Engineering and Bioengineering</span>
-<span class="co">#&gt;  4: 1404                               Architectural Engineering</span>
-<span class="co">#&gt;  5: 1405                         Biomedical, Medical Engineering</span>
-<span class="co">#&gt; ---                                                             </span>
-<span class="co">#&gt; 34: 1442       Mechatronics, Robotics and Automation Engineering</span>
-<span class="co">#&gt; 35: 1443                                 Biochemical Engineering</span>
-<span class="co">#&gt; 36: 1444                                   Engineering Chemistry</span>
-<span class="co">#&gt; 37: 1445                      Biological, Biosystems Engineering</span>
-<span class="co">#&gt; 38: 1499                                      Engineering, Other</span></code></pre></div>
-<p>Suppose we want to find the CIP codes and names for all programs in Civil Engineering. The search is case-insensitive, so we start with the following code chunk.</p>
+<span class="co">#&gt;       cip4                                                cip4name</span>
+<span class="co">#&gt;     &lt;char&gt;                                                  &lt;char&gt;</span>
+<span class="co">#&gt;  1:   1401                                    Engineering, General</span>
+<span class="co">#&gt;  2:   1402   Aerospace, Aeronautical and Astronautical Engineering</span>
+<span class="co">#&gt;  3:   1403 Agricultural, Biological Engineering and Bioengineering</span>
+<span class="co">#&gt;  4:   1404                               Architectural Engineering</span>
+<span class="co">#&gt;  5:   1405                         Biomedical, Medical Engineering</span>
+<span class="co">#&gt; ---                                                               </span>
+<span class="co">#&gt; 34:   1442       Mechatronics, Robotics and Automation Engineering</span>
+<span class="co">#&gt; 35:   1443                                 Biochemical Engineering</span>
+<span class="co">#&gt; 36:   1444                                   Engineering Chemistry</span>
+<span class="co">#&gt; 37:   1445                      Biological, Biosystems Engineering</span>
+<span class="co">#&gt; 38:   1499                                      Engineering, Other</span></code></pre></div>
+<p>Suppose we want to find the CIP codes and names for all programs in Civil Engineering. The search is insensitive to case, so we start with the following code chunk.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># example 1 filter using keywords</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"civil"</span><span class="op">)</span>
-<span class="co">#&gt;     cip2                                            cip2name cip4</span>
-<span class="co">#&gt;  1:   05 Area, Ethnic, Cultural and Gender and Group Studies 0501</span>
-<span class="co">#&gt;  2:   05 Area, Ethnic, Cultural and Gender and Group Studies 0501</span>
-<span class="co">#&gt;  3:   05 Area, Ethnic, Cultural and Gender and Group Studies 0501</span>
-<span class="co">#&gt;  4:   14                                         Engineering 1408</span>
-<span class="co">#&gt;  5:   14                                         Engineering 1408</span>
-<span class="co">#&gt; ---                                                              </span>
-<span class="co">#&gt;  8:   14                                         Engineering 1408</span>
-<span class="co">#&gt;  9:   14                                         Engineering 1408</span>
-<span class="co">#&gt; 10:   15                              Engineering Technology 1502</span>
-<span class="co">#&gt; 11:   15                              Engineering Technology 1513</span>
-<span class="co">#&gt; 12:   30                     Muti, Interdisciplinary Studies 3022</span>
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"civil"</span><span class="op">)</span>
+<span class="co">#&gt;       cip2                                            cip2name   cip4</span>
+<span class="co">#&gt;     &lt;char&gt;                                              &lt;char&gt; &lt;char&gt;</span>
+<span class="co">#&gt;  1:     05 Area, Ethnic, Cultural and Gender and Group Studies   0501</span>
+<span class="co">#&gt;  2:     05 Area, Ethnic, Cultural and Gender and Group Studies   0501</span>
+<span class="co">#&gt;  3:     05 Area, Ethnic, Cultural and Gender and Group Studies   0501</span>
+<span class="co">#&gt;  4:     14                                         Engineering   1408</span>
+<span class="co">#&gt;  5:     14                                         Engineering   1408</span>
+<span class="co">#&gt; ---                                                                  </span>
+<span class="co">#&gt;  8:     14                                         Engineering   1408</span>
+<span class="co">#&gt;  9:     14                                         Engineering   1408</span>
+<span class="co">#&gt; 10:     15                              Engineering Technology   1502</span>
+<span class="co">#&gt; 11:     15                              Engineering Technology   1513</span>
+<span class="co">#&gt; 12:     30                     Muti, Interdisciplinary Studies   3022</span>
 <span class="co">#&gt;                                                                       cip4name</span>
+<span class="co">#&gt;                                                                         &lt;char&gt;</span>
 <span class="co">#&gt;  1:                                                               Area Studies</span>
 <span class="co">#&gt;  2:                                                               Area Studies</span>
 <span class="co">#&gt;  3:                                                               Area Studies</span>
@@ -590,6 +651,7 @@ Science Technologies, Technicians, Other
 <span class="co">#&gt; 11:                     Drafting, Design Engineering Technologies, Technicians</span>
 <span class="co">#&gt; 12: Classical and Ancient, Oriental Studies - Multi, Interdisciplinary Studies</span>
 <span class="co">#&gt;       cip6                                                         cip6name</span>
+<span class="co">#&gt;     &lt;char&gt;                                                           &lt;char&gt;</span>
 <span class="co">#&gt;  1: 050102                    American, United States Studies, Civilization</span>
 <span class="co">#&gt;  2: 050103                                      Asian Studies, Civilization</span>
 <span class="co">#&gt;  3: 050106                                   European Studies, Civilization</span>
@@ -871,13 +933,13 @@ Multi, Interdisciplinary Studies - Ancient Studies, Civilization
 <p>The following code chunk could be read as, “Start with the <code>cip</code> data frame, then keep any rows in which ‘civil’ is detected, then keep any rows in which ‘engineering’ is detected, then drop any rows in which ‘technology’ is detected.”</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># first search</span>
-<span class="va">first_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"civil"</span><span class="op">)</span>
+<span class="va">first_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"civil"</span><span class="op">)</span>
 
 <span class="co"># refine the search</span>
-<span class="va">second_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">first_pass</span>, <span class="st">"engineering"</span><span class="op">)</span>
+<span class="va">second_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">first_pass</span>, <span class="st">"engineering"</span><span class="op">)</span>
 
 <span class="co"># refine further</span>
-<span class="va">third_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">second_pass</span>, drop_text <span class="op">=</span> <span class="st">"technology"</span><span class="op">)</span></code></pre></div>
+<span class="va">third_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">second_pass</span>, drop_text <span class="op">=</span> <span class="st">"technology"</span><span class="op">)</span></code></pre></div>
 <table class="table table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -1025,15 +1087,15 @@ Civil Engineering, Other
 <p><br></p>
 <p>Seeing that all Civil Engineering programs have the same <code>cip4name</code>, we could have combined our arguments and obtained the same result.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"civil engineering"</span>, drop_text <span class="op">=</span> <span class="st">"technology"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"civil engineering"</span>, drop_text <span class="op">=</span> <span class="st">"technology"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="filter-using-numerical-codes" class="section level2">
+<div id="filter-using-a-numerical-code-search" class="section level2">
 <h2 class="hasAnchor">
-<a href="#filter-using-numerical-codes" class="anchor" aria-hidden="true"></a>Filter using numerical codes</h2>
+<a href="#filter-using-a-numerical-code-search" class="anchor" aria-hidden="true"></a>Filter using a numerical code search</h2>
 <p>Suppose we want to study programs relating to German culture, language, and literature. Using “german” for the <code>keep_text</code> value yields</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># example 2 filter using numerical codes</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"german"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"german"</span><span class="op">)</span></code></pre></div>
 <table class="table table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -1262,7 +1324,7 @@ Germanic Languages, Literatures and Linguistics, Other
 <p>From the 6-digit program names we find only two that are of interest, German Studies (050125) and German Language and Literature (160501). We use a character vector to assign these two codes to the <code>keep_text</code> argument.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># character vector of search terms </span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"050125"</span>, <span class="st">"160501"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"050125"</span>, <span class="st">"160501"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <table class="table table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -1330,16 +1392,16 @@ German Language and Literature
 <p><br></p>
 <p>If the 6-digit codes are entered as integers, they produce an error.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">050125</span>, <span class="fl">160501</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">050125</span>, <span class="fl">160501</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Error: `keep_text` must be of class character</span></code></pre></div>
 </div>
-<div id="filter-using-regular-expressions" class="section level2">
+<div id="filter-using-a-regular-expression-search" class="section level2">
 <h2 class="hasAnchor">
-<a href="#filter-using-regular-expressions" class="anchor" aria-hidden="true"></a>Filter using regular expressions</h2>
+<a href="#filter-using-a-regular-expression-search" class="anchor" aria-hidden="true"></a>Filter using a regular expression search</h2>
 <p>Specifying 4-digit codes yields a data frame all 6-digit programs containing the 4-digit string. We use the regular expression notation <code>^</code> to match the start of the strings.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># example 3 filter using regular expressions</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1407"</span>, <span class="st">"^1408"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1407"</span>, <span class="st">"^1408"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <table class="table table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -1548,7 +1610,7 @@ Civil Engineering, Other
 <p>The 2-digit series represent the most general groupings of related programs. Here, the result includes all History programs.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># 2-digit example</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"^54"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"^54"</span><span class="op">)</span></code></pre></div>
 <table class="table table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -1760,7 +1822,7 @@ History, Other
 <span class="va">codes_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^24"</span>, <span class="st">"^4102"</span>, <span class="st">"^450202"</span><span class="op">)</span>
 
 <span class="co"># a series with 2, 4, and 6-digits specified</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="va">codes_we_want</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="va">codes_we_want</span><span class="op">)</span></code></pre></div>
 <table class="table table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -1954,23 +2016,26 @@ Physical Anthropology
 <p>For example, the following <code>keep_text</code> argument includes three search terms that are not present in the CIP data (“111111”, “^55”, and “Bogus”) and two that are (“050125” and “160501”).</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># unsuccessful terms produce a message</span>
-<span class="va">sub_cip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"050125"</span>, <span class="st">"111111"</span>, <span class="st">"160501"</span>, <span class="st">"Bogus"</span>, <span class="st">"^55"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">sub_cip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"050125"</span>, <span class="st">"111111"</span>, <span class="st">"160501"</span>, <span class="st">"Bogus"</span>, <span class="st">"^55"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Can't find these terms: 111111, Bogus, ^55</span>
 
 <span class="co"># but the successful terms are returned</span>
 <span class="va">sub_cip</span>
-<span class="co">#&gt;    cip2                                            cip2name cip4</span>
-<span class="co">#&gt; 1:   05 Area, Ethnic, Cultural and Gender and Group Studies 0501</span>
-<span class="co">#&gt; 2:   16      Foreign Languages, Literatures and Linguistics 1605</span>
+<span class="co">#&gt;      cip2                                            cip2name   cip4</span>
+<span class="co">#&gt;    &lt;char&gt;                                              &lt;char&gt; &lt;char&gt;</span>
+<span class="co">#&gt; 1:     05 Area, Ethnic, Cultural and Gender and Group Studies   0501</span>
+<span class="co">#&gt; 2:     16      Foreign Languages, Literatures and Linguistics   1605</span>
 <span class="co">#&gt;                                       cip4name   cip6</span>
+<span class="co">#&gt;                                         &lt;char&gt; &lt;char&gt;</span>
 <span class="co">#&gt; 1:                                Area Studies 050125</span>
 <span class="co">#&gt; 2: Germanic Languages, Literatures Linguistics 160501</span>
 <span class="co">#&gt;                          cip6name</span>
+<span class="co">#&gt;                            &lt;char&gt;</span>
 <span class="co">#&gt; 1:                 German Studies</span>
 <span class="co">#&gt; 2: German Language and Literature</span></code></pre></div>
 <p>However, as seen earlier, if none of the search terms are found, an error occurs.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"111111"</span>, <span class="st">"Bogus"</span>, <span class="st">"^55"</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"111111"</span>, <span class="st">"Bogus"</span>, <span class="st">"^55"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Error: No CIPs satisfy the search criteria</span></code></pre></div>
 </div>
 <div id="cip-data-from-another-source" class="section level2">
@@ -2007,47 +2072,50 @@ NCES (2020) <em><span class="nocase">Introduction to the classification of instr
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span>
 
+<span class="co"># optional code to control data.table printing</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.nrows <span class="op">=</span> <span class="fl">10</span>, 
+        datatable.print.topn  <span class="op">=</span> <span class="fl">5</span>, 
+        datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co"># cip</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">cip</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">[</span>, <span class="va">cip2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">[</span>, <span class="va">cip4</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">[</span>, <span class="va">cip6</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">20210529</span><span class="op">)</span>
-<span class="va">some_programs</span> <span class="op">&lt;-</span> <span class="va">cip</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip4name</span><span class="op">)</span><span class="op">]</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">some_programs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">300</span>, <span class="fl">20</span><span class="op">)</span><span class="op">]</span>, nrows <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">$</span><span class="va">cip2</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">$</span><span class="va">cip4</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">$</span><span class="va">cip6</span><span class="op">)</span><span class="op">)</span>
+<span class="va">some_programs</span> <span class="op">&lt;-</span> <span class="va">cip</span><span class="op">[</span>, <span class="va">cip4name</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">some_programs</span>, <span class="fl">20</span><span class="op">)</span>
 
 <span class="co"># filter using keywords</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">cip</span>, keep_text <span class="op">=</span> <span class="st">"engineering"</span><span class="op">)</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, 
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">cip</span>, keep_text <span class="op">=</span> <span class="st">"engineering"</span><span class="op">)</span>
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, 
             <span class="st">"engineering"</span>, 
             drop_text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"engineering-related"</span>, 
                           <span class="st">"engineering related"</span>, 
                           <span class="st">"engineering technology"</span>, 
                           <span class="st">"engineering technologies"</span><span class="op">)</span>, 
             select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span>, <span class="st">"cip6name"</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, 
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, 
             <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"engineering"</span><span class="op">)</span>, 
             drop_text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"engineering-related"</span>, 
                           <span class="st">"engineering related"</span>, 
                           <span class="st">"engineering technology"</span>, 
                           <span class="st">"engineering technologies"</span><span class="op">)</span>, 
             select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip4"</span>, <span class="st">"cip4name"</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"civil"</span><span class="op">)</span>
-<span class="va">first_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"civil"</span><span class="op">)</span>
-<span class="va">second_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">first_pass</span>, <span class="st">"engineering"</span><span class="op">)</span>
-<span class="va">third_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">second_pass</span>, drop_text <span class="op">=</span> <span class="st">"technology"</span><span class="op">)</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"civil engineering"</span>, drop_text <span class="op">=</span> <span class="st">"technology"</span><span class="op">)</span>
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"civil"</span><span class="op">)</span>
+<span class="va">first_pass</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"civil"</span><span class="op">)</span>
+<span class="va">second_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">first_pass</span>, <span class="st">"engineering"</span><span class="op">)</span>
+<span class="va">third_pass</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">second_pass</span>, drop_text <span class="op">=</span> <span class="st">"technology"</span><span class="op">)</span>
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"civil engineering"</span>, drop_text <span class="op">=</span> <span class="st">"technology"</span><span class="op">)</span>
 
 <span class="co"># filter using numerical codes</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"german"</span><span class="op">)</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"050125"</span>, <span class="st">"160501"</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1407"</span>, <span class="st">"^1408"</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"^54"</span><span class="op">)</span>
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"german"</span><span class="op">)</span>
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"050125"</span>, <span class="st">"160501"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1407"</span>, <span class="st">"^1408"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"^54"</span><span class="op">)</span>
 <span class="va">codes_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^24"</span>, <span class="st">"^4102"</span>, <span class="st">"^450202"</span><span class="op">)</span>
-<span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="va">codes_we_want</span><span class="op">)</span>
+<span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="va">codes_we_want</span><span class="op">)</span>
 
 <span class="co"># when search terms cannot be found</span>
-<span class="va">sub_cip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_text.html">filter_text</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"050125"</span>, <span class="st">"111111"</span>, <span class="st">"160501"</span>, <span class="st">"Bogus"</span>, <span class="st">"^55"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">sub_cip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"050125"</span>, <span class="st">"111111"</span>, <span class="st">"160501"</span>, <span class="st">"Bogus"</span>, <span class="st">"^55"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">sub_cip</span></code></pre></div>
 </div>
 </div>

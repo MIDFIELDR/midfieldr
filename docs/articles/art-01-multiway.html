@@ -47,11 +47,11 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../articles/art-00-midfield-data.html">MIDFIELD practice data</a>
+  <a href="../articles/art-00-midfield-data.html">Introduction</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+    Vignettes
      
     <span class="caret"></span>
   </a>
@@ -66,16 +66,19 @@
       <a href="../articles/art-03-case-selection.html">Case selection</a>
     </li>
     <li>
-      <a href="../articles/art-04-timely-completion.html">Timely completion</a>
+      <a href="../articles/art-04-data-sufficiency.html">Data sufficiency</a>
     </li>
     <li>
       <a href="../articles/art-05-stickiness.html">Stickiness</a>
     </li>
     <li>
-      <a href="../articles/art-06-fye-programs.html">FYE programs</a>
+      <a href="../articles/art-06-timely-completion.html">Timely completion</a>
     </li>
     <li>
-      <a href="../articles/art-07-graduation-rate.html">Graduation rate</a>
+      <a href="../articles/art-07-fye-programs.html">FYE programs</a>
+    </li>
+    <li>
+      <a href="../articles/art-08-graduation-rate.html">Graduation rate</a>
     </li>
   </ul>
 </li>
@@ -130,6 +133,16 @@
 </blockquote>
 <p>The structure of multiway data is specific: a categorical variable with <span class="math inline">\(m\)</span> levels; an independent categorical variable with <span class="math inline">\(n\)</span> levels; and a single quantitative value associated with every combinations of levels of the two categories. Multiway data are typically organized as three columns with <span class="math inline">\(m \times n\)</span> rows.</p>
 <p>Note that “multiway” in our context refers to the data structure and graph design defined by Cleveland, not to the methods of analysis described by Kroonenberg <span class="citation">(<a href="#ref-Kroonenberg:2008" role="doc-biblioref">2008</a>)</span>.</p>
+<div id="outline" class="section level3">
+<h3 class="hasAnchor">
+<a href="#outline" class="anchor" aria-hidden="true"></a>Outline</h3>
+<ul>
+<li>Start with the case study stickiness results (<code>study_stickiness</code>)</li>
+<li>Practice conditioning multiway data for display</li>
+<li>Practice creating multiway graphs and their duals</li>
+<li>Practice tabulating multiway data</li>
+</ul>
+</div>
 <div id="this-vignette-uses" class="section level3">
 <h3 class="hasAnchor">
 <a href="#this-vignette-uses" class="anchor" aria-hidden="true"></a>This vignette uses</h3>
@@ -142,10 +155,13 @@
 <code class="sourceCode R"><span class="co"># packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span>
-
-<span class="co"># optional code to control data.table printing</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.nrows <span class="op">=</span> <span class="fl">10</span>, datatable.print.topn <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></code></pre></div>
+<p>We can control how a data.table is printed to the screen with the following options.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># optional code to control data.table printing</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.nrows <span class="op">=</span> <span class="fl">10</span>, 
+        datatable.print.topn  <span class="op">=</span> <span class="fl">5</span>, 
+        datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 <div id="prepare-data" class="section level2">
@@ -154,11 +170,12 @@
 <p>Longitudinal “stickiness” is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program <span class="citation">(<a href="#ref-Ohland+Orr+others:2012" role="doc-biblioref">Ohland et al., 2012</a>)</span>. The stickiness metric is developed in a separate vignette—here we focus on graphing a result.</p>
 <p>We computed stickiness for a case study in Civil, Electrical, Industrial, and Mechanical Engineering and saved the results as the data set, <code>study_stickiness</code>. You may view its help page by running</p>
 <pre><code><a href="../reference/study_stickiness.html">? study_stickiness</a></code></pre>
-<p>The data is loaded with midfieldr.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<p>The data is loaded with midfieldr (we don’t have to use <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code> to access it.)</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># examine the built-in data </span>
 <span class="va">study_stickiness</span>
 <span class="co">#&gt;                    program             race_sex stick</span>
+<span class="co">#&gt;                     &lt;char&gt;               &lt;char&gt; &lt;num&gt;</span>
 <span class="co">#&gt;  1:      Civil Engineering         Asian Female  0.45</span>
 <span class="co">#&gt;  2:      Civil Engineering         Black Female  0.35</span>
 <span class="co">#&gt;  3:      Civil Engineering         White Female  0.46</span>
@@ -173,26 +190,27 @@
 <p>Categorical variables are often provided as character variables. Without ordering the levels, the rows and panels of the multiway graph are ordered alphabetically—not the best design for gaining insights from the graph.</p>
 <p>To condition the categorical variables, we use <code><a href="../reference/condition_multiway.html">condition_multiway()</a></code> to convert them to factors with levels ordered by the median response values. To see its help page, run</p>
 <pre><code>? condition_multiway()</code></pre>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># create a new memory location </span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_stickiness</span><span class="op">)</span></code></pre></div>
 <p>The quantitative variable is <code>stick</code> (stickiness); the first categorical variable is <code>program</code>; the second categorical variable is race/ethnicity/sex. Before conditioning, the categorical variables are characters,</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># first category is a character</span>
-<span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">DT</span><span class="op">[</span>, <span class="va">program</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">program</span><span class="op">)</span>
 <span class="co">#&gt; [1] "character"</span>
 
 <span class="co"># second category is a character</span>
-<span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">DT</span><span class="op">[</span>, <span class="va">race_sex</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">race_sex</span><span class="op">)</span>
 <span class="co">#&gt; [1] "character"</span></code></pre></div>
 <p>We process the data frame</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># condition as multiway data</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condition_multiway.html">condition_multiway</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></code></pre></div>
-<p>No change to the row and column structure,</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p>No change to the row and column structure, but as you can see, the previous character variables have been converted to factors,</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">DT</span>
 <span class="co">#&gt;                    program             race_sex stick</span>
+<span class="co">#&gt;                     &lt;fctr&gt;               &lt;fctr&gt; &lt;num&gt;</span>
 <span class="co">#&gt;  1:      Civil Engineering         Asian Female  0.45</span>
 <span class="co">#&gt;  2:      Civil Engineering         Black Female  0.35</span>
 <span class="co">#&gt;  3:      Civil Engineering         White Female  0.46</span>
@@ -204,69 +222,126 @@
 <span class="co">#&gt; 29: Mechanical Engineering Hispanic/Latinx Male  0.43</span>
 <span class="co">#&gt; 30: Mechanical Engineering Native American Male  0.29</span>
 <span class="co">#&gt; 31: Mechanical Engineering           White Male  0.46</span></code></pre></div>
-<p>But the categorical variables are now factors, with levels ordered non-alphabetically. <code>program</code> is now a factor with 4 levels; <code>race_sex</code> is a factor with 9 levels.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<p>The levels of the factors are ordered non-alphabetically. <code>program</code> is now a factor with 4 levels; <code>race_sex</code> is a factor with 9 levels.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># first category is now a factor</span>
-<span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">DT</span><span class="op">[</span>, <span class="va">program</span><span class="op">]</span><span class="op">)</span>
-<span class="co">#&gt; [1] "factor"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">DT</span><span class="op">[</span>, <span class="va">program</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">program</span><span class="op">)</span>
 <span class="co">#&gt; [1] "Electrical Engineering" "Mechanical Engineering" "Civil Engineering"     </span>
 <span class="co">#&gt; [4] "Industrial Engineering"</span>
 
 <span class="co"># second category is now a factor</span>
-<span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">DT</span><span class="op">[</span>, <span class="va">race_sex</span><span class="op">]</span><span class="op">)</span>
-<span class="co">#&gt; [1] "factor"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">DT</span><span class="op">[</span>, <span class="va">race_sex</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">race_sex</span><span class="op">)</span>
 <span class="co">#&gt; [1] "Native American Male"   "Black Male"             "Black Female"          </span>
 <span class="co">#&gt; [4] "Hispanic/Latinx Female" "White Female"           "Hispanic/Latinx Male"  </span>
 <span class="co">#&gt; [7] "Asian Female"           "White Male"             "Asian Male"</span></code></pre></div>
 <p>We would expect 4 <span class="math inline">\(\times\)</span> 9 = 36 observations. However, some rows are omitted to preserve confidentiality, leaving us with 31 observations.</p>
 <p>The median values that determine the order of the levels can be obtained by using the <code>details</code> argument.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># return median stickiness by category</span>
-<span class="va">DT_med</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condition_multiway.html">condition_multiway</a></span><span class="op">(</span><span class="va">DT</span>, details <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">DT_med</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condition_multiway.html">condition_multiway</a></span><span class="op">(</span><span class="va">DT</span>, details <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<p>By ordering the data by <code>program</code>, you can see that a given program has a single value of <code>med_program</code> copied as many times as needed.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># optional code to control data.table printing</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.topn  <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
 
 <span class="co"># programs have a median stickiness across race-sex groups  </span>
-<span class="va">DT_med</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">program</span>, <span class="va">race_sex</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT_med</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span>
 <span class="co">#&gt;                    program               race_sex med_program med_race_sex</span>
-<span class="co">#&gt;  1: Electrical Engineering             Black Male       0.425        0.365</span>
+<span class="co">#&gt;                     &lt;fctr&gt;                 &lt;fctr&gt;       &lt;num&gt;        &lt;num&gt;</span>
+<span class="co">#&gt;  1: Electrical Engineering           Asian Female       0.425        0.470</span>
 <span class="co">#&gt;  2: Electrical Engineering           Black Female       0.425        0.385</span>
 <span class="co">#&gt;  3: Electrical Engineering Hispanic/Latinx Female       0.425        0.425</span>
 <span class="co">#&gt;  4: Electrical Engineering           White Female       0.425        0.430</span>
-<span class="co">#&gt;  5: Electrical Engineering   Hispanic/Latinx Male       0.425        0.440</span>
+<span class="co">#&gt;  5: Electrical Engineering             Asian Male       0.425        0.540</span>
+<span class="co">#&gt;  6: Electrical Engineering             Black Male       0.425        0.365</span>
+<span class="co">#&gt;  7: Electrical Engineering   Hispanic/Latinx Male       0.425        0.440</span>
+<span class="co">#&gt;  8: Electrical Engineering             White Male       0.425        0.480</span>
+<span class="co">#&gt;  9: Mechanical Engineering           Asian Female       0.430        0.470</span>
+<span class="co">#&gt; 10: Mechanical Engineering           Black Female       0.430        0.385</span>
 <span class="co">#&gt; ---                                                                       </span>
+<span class="co">#&gt; 22:      Civil Engineering             Black Male       0.450        0.365</span>
+<span class="co">#&gt; 23:      Civil Engineering   Hispanic/Latinx Male       0.450        0.440</span>
+<span class="co">#&gt; 24:      Civil Engineering             White Male       0.450        0.480</span>
+<span class="co">#&gt; 25: Industrial Engineering           Asian Female       0.560        0.470</span>
+<span class="co">#&gt; 26: Industrial Engineering           Black Female       0.560        0.385</span>
 <span class="co">#&gt; 27: Industrial Engineering           White Female       0.560        0.430</span>
-<span class="co">#&gt; 28: Industrial Engineering   Hispanic/Latinx Male       0.560        0.440</span>
-<span class="co">#&gt; 29: Industrial Engineering           Asian Female       0.560        0.470</span>
-<span class="co">#&gt; 30: Industrial Engineering             White Male       0.560        0.480</span>
-<span class="co">#&gt; 31: Industrial Engineering             Asian Male       0.560        0.540</span>
+<span class="co">#&gt; 28: Industrial Engineering             Asian Male       0.560        0.540</span>
+<span class="co">#&gt; 29: Industrial Engineering             Black Male       0.560        0.365</span>
+<span class="co">#&gt; 30: Industrial Engineering   Hispanic/Latinx Male       0.560        0.440</span>
+<span class="co">#&gt; 31: Industrial Engineering             White Male       0.560        0.480</span>
 <span class="co">#&gt;     stick</span>
-<span class="co">#&gt;  1:  0.37</span>
+<span class="co">#&gt;     &lt;num&gt;</span>
+<span class="co">#&gt;  1:  0.46</span>
 <span class="co">#&gt;  2:  0.42</span>
 <span class="co">#&gt;  3:  0.40</span>
 <span class="co">#&gt;  4:  0.34</span>
-<span class="co">#&gt;  5:  0.43</span>
+<span class="co">#&gt;  5:  0.51</span>
+<span class="co">#&gt;  6:  0.37</span>
+<span class="co">#&gt;  7:  0.43</span>
+<span class="co">#&gt;  8:  0.43</span>
+<span class="co">#&gt;  9:  0.61</span>
+<span class="co">#&gt; 10:  0.33</span>
 <span class="co">#&gt; ---      </span>
+<span class="co">#&gt; 22:  0.36</span>
+<span class="co">#&gt; 23:  0.45</span>
+<span class="co">#&gt; 24:  0.50</span>
+<span class="co">#&gt; 25:  0.48</span>
+<span class="co">#&gt; 26:  0.51</span>
 <span class="co">#&gt; 27:  0.58</span>
-<span class="co">#&gt; 28:  0.68</span>
-<span class="co">#&gt; 29:  0.48</span>
-<span class="co">#&gt; 30:  0.56</span>
-<span class="co">#&gt; 31:  0.65</span>
-
-<span class="co"># race_sex groupings have a median stickiness across programs </span>
-<span class="va">DT_med</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">race_sex</span>, <span class="va">program</span><span class="op">)</span><span class="op">]</span>
-<span class="co">#&gt;                    program             race_sex med_program med_race_sex stick</span>
-<span class="co">#&gt;  1: Mechanical Engineering Native American Male       0.430        0.290  0.29</span>
-<span class="co">#&gt;  2: Electrical Engineering           Black Male       0.425        0.365  0.37</span>
-<span class="co">#&gt;  3: Mechanical Engineering           Black Male       0.430        0.365  0.35</span>
-<span class="co">#&gt;  4:      Civil Engineering           Black Male       0.450        0.365  0.36</span>
-<span class="co">#&gt;  5: Industrial Engineering           Black Male       0.560        0.365  0.45</span>
-<span class="co">#&gt; ---                                                                           </span>
-<span class="co">#&gt; 27: Industrial Engineering           White Male       0.560        0.480  0.56</span>
-<span class="co">#&gt; 28: Electrical Engineering           Asian Male       0.425        0.540  0.51</span>
-<span class="co">#&gt; 29: Mechanical Engineering           Asian Male       0.430        0.540  0.57</span>
-<span class="co">#&gt; 30:      Civil Engineering           Asian Male       0.450        0.540  0.48</span>
-<span class="co">#&gt; 31: Industrial Engineering           Asian Male       0.560        0.540  0.65</span></code></pre></div>
+<span class="co">#&gt; 28:  0.65</span>
+<span class="co">#&gt; 29:  0.45</span>
+<span class="co">#&gt; 30:  0.68</span>
+<span class="co">#&gt; 31:  0.56</span></code></pre></div>
+<p>Similarly, by ordering the data by <code>race_sex</code>, you can see that a given demographic group has a single value of <code>med_race_sex</code> copied as many times as needed.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># race_sex groupings have a median stickiness across programs </span>
+<span class="va">DT_med</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">race_sex</span><span class="op">)</span><span class="op">]</span>
+<span class="co">#&gt;                    program               race_sex med_program med_race_sex</span>
+<span class="co">#&gt;                     &lt;fctr&gt;                 &lt;fctr&gt;       &lt;num&gt;        &lt;num&gt;</span>
+<span class="co">#&gt;  1: Mechanical Engineering   Native American Male       0.430        0.290</span>
+<span class="co">#&gt;  2:      Civil Engineering             Black Male       0.450        0.365</span>
+<span class="co">#&gt;  3: Electrical Engineering             Black Male       0.425        0.365</span>
+<span class="co">#&gt;  4: Industrial Engineering             Black Male       0.560        0.365</span>
+<span class="co">#&gt;  5: Mechanical Engineering             Black Male       0.430        0.365</span>
+<span class="co">#&gt;  6:      Civil Engineering           Black Female       0.450        0.385</span>
+<span class="co">#&gt;  7: Electrical Engineering           Black Female       0.425        0.385</span>
+<span class="co">#&gt;  8: Industrial Engineering           Black Female       0.560        0.385</span>
+<span class="co">#&gt;  9: Mechanical Engineering           Black Female       0.430        0.385</span>
+<span class="co">#&gt; 10: Electrical Engineering Hispanic/Latinx Female       0.425        0.425</span>
+<span class="co">#&gt; ---                                                                       </span>
+<span class="co">#&gt; 22: Industrial Engineering           Asian Female       0.560        0.470</span>
+<span class="co">#&gt; 23: Mechanical Engineering           Asian Female       0.430        0.470</span>
+<span class="co">#&gt; 24:      Civil Engineering             White Male       0.450        0.480</span>
+<span class="co">#&gt; 25: Electrical Engineering             White Male       0.425        0.480</span>
+<span class="co">#&gt; 26: Industrial Engineering             White Male       0.560        0.480</span>
+<span class="co">#&gt; 27: Mechanical Engineering             White Male       0.430        0.480</span>
+<span class="co">#&gt; 28:      Civil Engineering             Asian Male       0.450        0.540</span>
+<span class="co">#&gt; 29: Electrical Engineering             Asian Male       0.425        0.540</span>
+<span class="co">#&gt; 30: Industrial Engineering             Asian Male       0.560        0.540</span>
+<span class="co">#&gt; 31: Mechanical Engineering             Asian Male       0.430        0.540</span>
+<span class="co">#&gt;     stick</span>
+<span class="co">#&gt;     &lt;num&gt;</span>
+<span class="co">#&gt;  1:  0.29</span>
+<span class="co">#&gt;  2:  0.36</span>
+<span class="co">#&gt;  3:  0.37</span>
+<span class="co">#&gt;  4:  0.45</span>
+<span class="co">#&gt;  5:  0.35</span>
+<span class="co">#&gt;  6:  0.35</span>
+<span class="co">#&gt;  7:  0.42</span>
+<span class="co">#&gt;  8:  0.51</span>
+<span class="co">#&gt;  9:  0.33</span>
+<span class="co">#&gt; 10:  0.40</span>
+<span class="co">#&gt; ---      </span>
+<span class="co">#&gt; 22:  0.48</span>
+<span class="co">#&gt; 23:  0.61</span>
+<span class="co">#&gt; 24:  0.50</span>
+<span class="co">#&gt; 25:  0.43</span>
+<span class="co">#&gt; 26:  0.56</span>
+<span class="co">#&gt; 27:  0.46</span>
+<span class="co">#&gt; 28:  0.48</span>
+<span class="co">#&gt; 29:  0.51</span>
+<span class="co">#&gt; 30:  0.65</span>
+<span class="co">#&gt; 31:  0.57</span></code></pre></div>
 </div>
 <div id="create-a-multiway-graph" class="section level2">
 <h2 class="hasAnchor">
@@ -274,7 +349,7 @@
 <p>We use conventional ggplot2 functions to create the multiway graphs.</p>
 <p>By previously ordering the levels of the factors, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians. The panel medians are drawn as vertical dashed lines.</p>
 <p><em>Reminder:</em> These are practice data, not suitable for drawing inferences about student performance, i.e., not for research.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># create one multiway graph</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">DT_med</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">stick</span>, y <span class="op">=</span> <span class="va">race_sex</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span>, as.table <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
@@ -311,7 +386,7 @@
 <code>facet_wrap(vars(program) ...</code> becomes <code>facet_wrap(vars(race_sex) ...</code>
 </li>
 </ul>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># create the dual multiway graph</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">DT_med</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">stick</span>, y <span class="op">=</span> <span class="va">program</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">race_sex</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span>, as.table <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
@@ -326,6 +401,16 @@
 <p><img src="../man/figures/art-01-multiway-graphs-fig2-1.png" width="70%" style="display: block; margin: auto;"><br></p>
 <p>This graph permits a direct visual comparison of how stickiness varies by major for one group of students.</p>
 <p>Both multiways should be created for discussion. Usually one or the other will convey a more compelling visual story that gets included in the published findings.</p>
+<div id="exercise" class="section level3">
+<h3 class="hasAnchor">
+<a href="#exercise" class="anchor" aria-hidden="true"></a>Exercise</h3>
+<p>Using the built-in data <code>study_grad_rate</code>,</p>
+<ul>
+<li>Examine the data set variables and structure</li>
+<li>Condition the data for a multiway display</li>
+<li>Graph the graduation rate in both forms shown above</li>
+</ul>
+</div>
 </div>
 <div id="tabulate-multiway-data" class="section level2">
 <h2 class="hasAnchor">
@@ -1074,14 +1159,14 @@ White Male
 <li>cast / melt (reshape2)</li>
 </ul>
 <p>In our example, we use <code><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast()</a></code> from the data.table package to reshape the data for publication. We start by limiting the significant figures of floating-point numbers.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># create a new memory location  </span>
 <span class="va">block_form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
 
 <span class="co"># limit significant digits</span>
 <span class="va">block_form</span><span class="op">[</span>, <span class="va">stick</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">stick</span>, <span class="fl">2</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 <p>If in the final result we want rows and columns ordered alphabetically, we convert factors to characters.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># create a new memory location </span>
 <span class="va">row_form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">block_form</span><span class="op">)</span>
 
@@ -1089,13 +1174,14 @@ White Male
 <span class="va">row_form</span><span class="op">[</span>, <span class="va">race_sex</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">race_sex</span><span class="op">)</span><span class="op">]</span>
 <span class="va">row_form</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 <p><code><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast()</a></code> is used to reshape the data frame from block-record form to row-record form.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># reshape</span>
 <span class="va">row_form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">row_form</span>, <span class="va">race_sex</span> <span class="op">~</span> <span class="va">program</span>, value.var <span class="op">=</span> <span class="st">"stick"</span><span class="op">)</span>
 
 <span class="co"># examine the result</span>
 <span class="va">row_form</span>
 <span class="co">#&gt;                  race_sex Civil Engineering Electrical Engineering</span>
+<span class="co">#&gt;                    &lt;char&gt;             &lt;num&gt;                  &lt;num&gt;</span>
 <span class="co">#&gt; 1:           Asian Female              0.45                   0.46</span>
 <span class="co">#&gt; 2:             Asian Male              0.48                   0.51</span>
 <span class="co">#&gt; 3:           Black Female              0.35                   0.42</span>
@@ -1106,6 +1192,7 @@ White Male
 <span class="co">#&gt; 8:           White Female              0.46                   0.34</span>
 <span class="co">#&gt; 9:             White Male              0.50                   0.43</span>
 <span class="co">#&gt;    Industrial Engineering Mechanical Engineering</span>
+<span class="co">#&gt;                     &lt;num&gt;                  &lt;num&gt;</span>
 <span class="co">#&gt; 1:                   0.48                   0.61</span>
 <span class="co">#&gt; 2:                   0.65                   0.57</span>
 <span class="co">#&gt; 3:                   0.51                   0.33</span>
@@ -1116,7 +1203,7 @@ White Male
 <span class="co">#&gt; 8:                   0.58                   0.40</span>
 <span class="co">#&gt; 9:                   0.56                   0.46</span></code></pre></div>
 <p>For publication, we edit the new column names.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># edit column names</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">row_form</span>, 
          old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"race_sex"</span>, 
@@ -1133,6 +1220,7 @@ White Male
 <span class="co"># examine the result</span>
 <span class="va">row_form</span>
 <span class="co">#&gt;        Race/ethnicity/sex Civil Electrical Industrial Mechanical</span>
+<span class="co">#&gt;                    &lt;char&gt; &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span>
 <span class="co">#&gt; 1:           Asian Female  0.45       0.46       0.48       0.61</span>
 <span class="co">#&gt; 2:             Asian Male  0.48       0.51       0.65       0.57</span>
 <span class="co">#&gt; 3:           Black Female  0.35       0.42       0.51       0.33</span>
@@ -1321,6 +1409,15 @@ White Male
 </tbody>
 </table>
 <p>Other good tools for reshaping are provided in packages such as <code><a href="https://rdrr.io/r/stats/reshape.html" class="external-link">reshape()</a></code> in base R, cdata <span class="citation">(<a href="#ref-Mount+Zumel:2020:cdata" role="doc-biblioref">Mount and Zumel, 2020</a>)</span>, and tidyr <span class="citation">(<a href="#ref-Wickham+Henry:2020:tidyr" role="doc-biblioref">Wickham and Henry, 2020</a>)</span>.</p>
+<div id="exercise-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#exercise-1" class="anchor" aria-hidden="true"></a>Exercise</h3>
+<p>Using the built-in data <code>study_grad_rate</code>,</p>
+<ul>
+<li>Examine the data set variables and structure</li>
+<li>Reshape the data to construct a table like the one above</li>
+</ul>
+</div>
 </div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
@@ -1356,24 +1453,27 @@ Wickham, Hadley and Henry, Lionel (2020) <em><span class="nocase">tidyr: Tidy Me
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor" aria-hidden="true"></a>Complete script</h3>
 <p>The vignette code chunks are collected below in a single, condensed script.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span>
 
+<span class="co"># optional code to control data.table printing</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.nrows <span class="op">=</span> <span class="fl">10</span>, 
+        datatable.print.topn  <span class="op">=</span> <span class="fl">5</span>, 
+        datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+
 <span class="co"># data preparation</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_stickiness</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">DT</span><span class="op">[</span>, <span class="va">program</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">DT</span><span class="op">[</span>, <span class="va">race_sex</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">program</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">race_sex</span><span class="op">)</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condition_multiway.html">condition_multiway</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">DT</span><span class="op">[</span>, <span class="va">program</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">DT</span><span class="op">[</span>, <span class="va">program</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">DT</span><span class="op">[</span>, <span class="va">race_sex</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">DT</span><span class="op">[</span>, <span class="va">race_sex</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">program</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">race_sex</span><span class="op">)</span>
 <span class="va">DT_med</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condition_multiway.html">condition_multiway</a></span><span class="op">(</span><span class="va">DT</span>, details <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">DT_med</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">program</span>, <span class="va">race_sex</span><span class="op">)</span><span class="op">]</span>
-<span class="va">DT_med</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">race_sex</span>, <span class="va">program</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT_med</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT_med</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">race_sex</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># creating a multiway graph </span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">DT_med</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">stick</span>, y <span class="op">=</span> <span class="va">race_sex</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>

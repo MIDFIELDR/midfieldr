@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add column from degree to evaluate timely completion — add_completion_timely • midfieldr</title>
+<title>Subset rows by matching values in a common key column — filter_match • midfieldr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,9 @@
 
 
 
-<meta property="og:title" content="Add column from degree to evaluate timely completion — add_completion_timely" />
-<meta property="og:description" content="A logical variable is added to a data frame indicating whether a student
-has completed their program in a timely manner." />
+<meta property="og:title" content="Subset rows by matching values in a common key column — filter_match" />
+<meta property="og:description" content="Subset rows of one data frame by values of a key variable that match values
+of the same key variable in a second data frame." />
 <meta property="og:image" content="https://midfieldr.github.io/midfieldr/logo.png" />
 
 
@@ -158,77 +158,73 @@ has completed their program in a timely manner." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add column from degree to evaluate timely completion</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/add_completion_timely.R'><code>R/add_completion_timely.R</code></a></small>
-    <div class="hidden name"><code>add_completion_timely.Rd</code></div>
+    <h1>Subset rows by matching values in a common key column</h1>
+    <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/filter_match.R'><code>R/filter_match.R</code></a></small>
+    <div class="hidden name"><code>filter_match.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A logical variable is added to a data frame indicating whether a student
-has completed their program in a timely manner.</p>
+    <p>Subset rows of one data frame by values of a key variable that match values
+of the same key variable in a second data frame.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>add_completion_timely</span><span class='op'>(</span><span class='va'>dframe</span>, <span class='va'>midfield_table</span>, <span class='va'>...</span>, details <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>filter_match</span><span class='op'>(</span><span class='va'>dframe</span>, <span class='va'>match_to</span>, <span class='va'>by_col</span>, <span class='va'>...</span>, select <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>dframe</th>
-      <td><p>Data frame with required variables
-<code>mcid</code> and <code>timely_term</code>.</p></td>
+      <td><p>Data frame to be subset and returned, column identified in
+<code>by_col</code> required.</p></td>
     </tr>
     <tr>
-      <th>midfield_table</th>
-      <td><p>MIDFIELD degree data table with required
-variables <code>mcid</code> and <code>term</code>.</p></td>
+      <th>match_to</th>
+      <td><p>Data frame to match to, column identified in <code>by_col</code> required</p></td>
+    </tr>
+    <tr>
+      <th>by_col</th>
+      <td><p>Character scalar, name of the key column.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Not used, forces later arguments to be used by name.</p></td>
+      <td><p>Not used, force later arguments to be used by name.</p></td>
     </tr>
     <tr>
-      <th>details</th>
-      <td><p>Logical scalar to add columns reporting information on
-which the evaluation is based, default FALSE.</p></td>
+      <th>select</th>
+      <td><p>Character vector of <code>dframe</code> column names to retain,
+default all columns.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A <code>data.table</code> with the following properties:</p><ul>
-<li><p>Rows are not modified.</p></li>
-<li><p>Column <code>completion_timely</code> is added, columns
-          <code>completion</code> and <code>term_degree</code> are added optionally.</p></li>
+<li><p>Unique rows with matching values.</p></li>
+<li><p>All columns or those specified by <code>select</code>.</p></li>
 <li><p>Grouping structures are not preserved.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Program completion is typically considered timely if it occurs within a
-given span of years after matriculation. In a persistence metric involving
-graduation, students with timely completion should be grouped as graduates.
-Students whose completion is not timely should be grouped with the
-non-graduates.</p>
-<p>The data frame argument must include the <code>timely_term</code> column
-obtained using the <code><a href='add_timely_term.html'>add_timely_term()</a></code> function. Completion is
-considered timely if: 1) the student has completed a program; and 2) the
-degree term is no later than the timely completion limit.</p>
-<p>If <code>details</code> is TRUE, additional column(s) that support the finding
-are returned as well. Here the extra columns are <code>completion</code>
-indicating by TRUE/FALSE if the student completed their program and
-<code>term_degree</code> from the degree table giving the term in
-which the first degree(s), if any, was earned.</p>
+    <p>Two data frames are input. The <code>match_to</code> data frame is subset to
+retain its key column only.  The result is merged with <code>dframe</code> in an
+inner-join, returning the rows of <code>dframe</code> with values matching the key
+values in <code>match_to</code>.</p>
+<p>All columns in <code>dframe</code> are returned unless a subset is given in the
+<code>select</code> argument. Column subsetting occurs after the inner join, so the
+key column does not have to be included in the vector of column names in
+<code>select</code>. The final operation is to subset for unique rows.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other functions: 
+<code><a href='add_completion_timely.html'>add_completion_timely</a>()</code>,
 <code><a href='add_data_sufficiency.html'>add_data_sufficiency</a>()</code>,
 <code><a href='add_institution.html'>add_institution</a>()</code>,
 <code><a href='add_race_sex.html'>add_race_sex</a>()</code>,
 <code><a href='add_timely_term.html'>add_timely_term</a>()</code>,
 <code><a href='condition_fye.html'>condition_fye</a>()</code>,
 <code><a href='condition_multiway.html'>condition_multiway</a>()</code>,
-<code><a href='filter_match.html'>filter_match</a>()</code>,
 <code><a href='filter_search.html'>filter_search</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
