@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add column from term to evaluate data sufficiency — add_data_sufficiency • midfieldr</title>
+<title>Add a column to evaluate data sufficiency — add_data_sufficiency • midfieldr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,11 +46,11 @@
 
 
 
-<meta property="og:title" content="Add column from term to evaluate data sufficiency — add_data_sufficiency" />
-<meta property="og:description" content="A column is added to a data frame indicating whether the data include a
-sufficient number of years to justify including a student in an analysis
-of student records. The new column is a logical variable (TRUE/FALSE
-values)." />
+<meta property="og:title" content="Add a column to evaluate data sufficiency — add_data_sufficiency" />
+<meta property="og:description" content="Add a column of logical values (TRUE/FALSE) to a data frame indicating
+whether the available data include a sufficient range of years to justify
+including a student in an analysis. Based on information in the MIDFIELD
+term data table." />
 <meta property="og:image" content="https://midfieldr.github.io/midfieldr/logo.png" />
 
 
@@ -91,7 +91,7 @@ values)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9013</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9014</span>
       </span>
     </div>
 
@@ -160,16 +160,16 @@ values)." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add column from term to evaluate data sufficiency</h1>
+    <h1>Add a column to evaluate data sufficiency</h1>
     <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/add_data_sufficiency.R'><code>R/add_data_sufficiency.R</code></a></small>
     <div class="hidden name"><code>add_data_sufficiency.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A column is added to a data frame indicating whether the data include a
-sufficient number of years to justify including a student in an analysis
-of student records. The new column is a logical variable (TRUE/FALSE
-values).</p>
+    <p>Add a column of logical values (TRUE/FALSE) to a data frame indicating
+whether the available data include a sufficient range of years to justify
+including a student in an analysis. Based on information in the MIDFIELD
+<code>term</code> data table.</p>
     </div>
 
     <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>add_data_sufficiency</span><span class='op'>(</span><span class='va'>dframe</span>, <span class='va'>midfield_table</span>, <span class='va'>...</span>, details <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
@@ -184,7 +184,7 @@ values).</p>
     </tr>
     <tr>
       <th>midfield_table</th>
-      <td><p>MIDFIELD term data table
+      <td><p>MIDFIELD <code>term</code> data table or equivalent
 with required variables <code>institution</code> and <code>term</code>.</p></td>
     </tr>
     <tr>
@@ -193,8 +193,8 @@ with required variables <code>institution</code> and <code>term</code>.</p></td>
     </tr>
     <tr>
       <th>details</th>
-      <td><p>Logical scalar to add columns reporting information on
-which the evaluation is based, default FALSE.</p></td>
+      <td><p>Logical scalar to add optional columns reporting information
+on which the evaluation is based, default FALSE.</p></td>
     </tr>
     </table>
 
@@ -202,39 +202,36 @@ which the evaluation is based, default FALSE.</p></td>
 
     <p>A <code>data.table</code>  with the following properties:</p><ul>
 <li><p>Rows are not modified.</p></li>
-<li><p>Column <code>data_sufficiency</code> is added, column <code>inst_limit</code>
-          is added optionally.</p></li>
+<li><p>Column <code>data_sufficiency</code> is added with an option to add
+          column <code>inst_limit</code>.</p></li>
 <li><p>Grouping structures are not preserved.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Program completion is typically assessed over a given span of years after
-admission. A student admitted too near the last term in the
-available data should be excluded from analysis because the data
-have insufficient span to fairly assess the student's record.</p>
-<p>The data frame argument must include the <code>timely_term</code> column
-obtained using the <code><a href='add_timely_term.html'>add_timely_term()</a></code> function. Assessment is
-considered fair if the student's timely completion term is no later than
-the last term in their institution's data.</p>
+    <p>Program completion is typically considered timely if it occurs within a
+specific span of years after admission. Students admitted too near the
+last term in the available data are generally excluded from a study because
+the data have insufficient range to fairly assess their records.</p>
+<p>The input data frame <code>dframe</code> must include the <code>timely_term</code>
+column obtained using the <code><a href='add_timely_term.html'>add_timely_term()</a></code> function. Students can be
+retained in a study if their estimated timely completion term is no later
+than the last term in their institution's data.</p>
 <p>If the result in the <code>data_sufficiency</code> column is TRUE, then then student
 should be included in the research. If FALSE, the student should be excluded
 before calculating any persistence metric involving program completion
-(graduation). The function performs no subsetting.</p>
+(graduation). The function itself performs no subsetting.</p>
 <p>If <code>details</code> is TRUE, additional column(s) that support the finding
-are returned as well. Here the extra column <code>inst_limit</code>, the latest
+are returned as well. Here the extra column is <code>inst_limit</code>, the latest
 term reported by the institution in the available data.</p>
+<p>Existing columns with the same names as the added columns are overwritten.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other functions: 
+    <div class='dont-index'><p>Other add_*: 
 <code><a href='add_completion_timely.html'>add_completion_timely</a>()</code>,
 <code><a href='add_institution.html'>add_institution</a>()</code>,
 <code><a href='add_race_sex.html'>add_race_sex</a>()</code>,
-<code><a href='add_timely_term.html'>add_timely_term</a>()</code>,
-<code><a href='condition_fye.html'>condition_fye</a>()</code>,
-<code><a href='condition_multiway.html'>condition_multiway</a>()</code>,
-<code><a href='filter_match.html'>filter_match</a>()</code>,
-<code><a href='filter_search.html'>filter_search</a>()</code></p></div>
+<code><a href='add_timely_term.html'>add_timely_term</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='co'># TBD</span></span>
@@ -251,7 +248,7 @@ term reported by the institution in the available data.</p>
 
       <footer>
       <div class="copyright">
-  <p><p>Developed by <a href="https://github.com/graphdr" class="external-link">Richard Layton</a>, Russell Long, Matthew Ohland, Marisa Orr, US National Science Foundation.</p></p>
+  <p><p>Developed by <a href="https://github.com/graphdr" class="external-link">Richard Layton</a>, Russell Long, Susan Lord, Matthew Ohland, Marisa Orr, US National Science Foundation.</p></p>
 </div>
 
 <div class="pkgdown">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add column from degree to evaluate timely completion — add_completion_timely • midfieldr</title>
+<title>Add a column to evaluate program completion — add_completion_timely • midfieldr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,10 @@
 
 
 
-<meta property="og:title" content="Add column from degree to evaluate timely completion — add_completion_timely" />
-<meta property="og:description" content="A logical variable is added to a data frame indicating whether a student
-has completed their program in a timely manner." />
+<meta property="og:title" content="Add a column to evaluate program completion — add_completion_timely" />
+<meta property="og:description" content="Add a column of logical values (TRUE/FALSE) to a data frame indicating
+whether a student completes their program in a timely manner. Based on
+information in the MIDFIELD degree data table." />
 <meta property="og:image" content="https://midfieldr.github.io/midfieldr/logo.png" />
 
 
@@ -89,7 +90,7 @@ has completed their program in a timely manner." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9013</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9014</span>
       </span>
     </div>
 
@@ -158,14 +159,15 @@ has completed their program in a timely manner." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add column from degree to evaluate timely completion</h1>
+    <h1>Add a column to evaluate program completion</h1>
     <small class="dont-index">Source: <a href='https://github.com/MIDFIELDR/midfieldr/blob/master/R/add_completion_timely.R'><code>R/add_completion_timely.R</code></a></small>
     <div class="hidden name"><code>add_completion_timely.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A logical variable is added to a data frame indicating whether a student
-has completed their program in a timely manner.</p>
+    <p>Add a column of logical values (TRUE/FALSE) to a data frame indicating
+whether a student completes their program in a timely manner. Based on
+information in the MIDFIELD <code>degree</code> data table.</p>
     </div>
 
     <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>add_completion_timely</span><span class='op'>(</span><span class='va'>dframe</span>, <span class='va'>midfield_table</span>, <span class='va'>...</span>, details <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
@@ -180,8 +182,8 @@ has completed their program in a timely manner.</p>
     </tr>
     <tr>
       <th>midfield_table</th>
-      <td><p>MIDFIELD degree data table with required
-variables <code>mcid</code> and <code>term</code>.</p></td>
+      <td><p>MIDFIELD <code>degree</code> data table or equivalent with
+required variables <code>mcid</code> and <code>term</code>.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -189,8 +191,8 @@ variables <code>mcid</code> and <code>term</code>.</p></td>
     </tr>
     <tr>
       <th>details</th>
-      <td><p>Logical scalar to add columns reporting information on
-which the evaluation is based, default FALSE.</p></td>
+      <td><p>Logical scalar to add optional columns reporting information
+on which the evaluation is based, default FALSE.</p></td>
     </tr>
     </table>
 
@@ -198,38 +200,37 @@ which the evaluation is based, default FALSE.</p></td>
 
     <p>A <code>data.table</code> with the following properties:</p><ul>
 <li><p>Rows are not modified.</p></li>
-<li><p>Column <code>completion_timely</code> is added, columns
-          <code>completion</code> and <code>term_degree</code> are added optionally.</p></li>
+<li><p>Column <code>completion_timely</code> is added with an option to add
+          columns <code>completion</code> and <code>term_degree</code>.</p></li>
 <li><p>Grouping structures are not preserved.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Program completion is typically considered timely if it occurs within a
-given span of years after matriculation. In a persistence metric involving
-graduation, students with timely completion should be grouped as graduates.
-Students whose completion is not timely should be grouped with the
-non-graduates.</p>
-<p>The data frame argument must include the <code>timely_term</code> column
-obtained using the <code><a href='add_timely_term.html'>add_timely_term()</a></code> function. Completion is
+specific span of years after admission. In a persistence metric that depends
+on program completion (graduation), only students whose program completion
+is timely are counted as graduates; students whose program completion
+is un-timely (taking longer than the specific span to complete) are counted
+as non-graduates.</p>
+<p>The input data frame <code>dframe</code> must include the <code>timely_term</code>
+column obtained using the <code><a href='add_timely_term.html'>add_timely_term()</a></code> function. Completion is
 considered timely if: 1) the student has completed a program; and 2) the
-degree term is no later than the timely completion limit.</p>
+degree term is no later than the estimated timely completion term. The
+function itself performs no subsetting.</p>
 <p>If <code>details</code> is TRUE, additional column(s) that support the finding
 are returned as well. Here the extra columns are <code>completion</code>
 indicating by TRUE/FALSE if the student completed their program and
-<code>term_degree</code> from the degree table giving the term in
-which the first degree(s), if any, was earned.</p>
+<code>term_degree</code> from the <code>degree</code> table giving the first term in
+which degree(s), if any, are earned.</p>
+<p>Existing columns with the same names as the added columns are overwritten.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other functions: 
+    <div class='dont-index'><p>Other add_*: 
 <code><a href='add_data_sufficiency.html'>add_data_sufficiency</a>()</code>,
 <code><a href='add_institution.html'>add_institution</a>()</code>,
 <code><a href='add_race_sex.html'>add_race_sex</a>()</code>,
-<code><a href='add_timely_term.html'>add_timely_term</a>()</code>,
-<code><a href='condition_fye.html'>condition_fye</a>()</code>,
-<code><a href='condition_multiway.html'>condition_multiway</a>()</code>,
-<code><a href='filter_match.html'>filter_match</a>()</code>,
-<code><a href='filter_search.html'>filter_search</a>()</code></p></div>
+<code><a href='add_timely_term.html'>add_timely_term</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='co'># TBD</span></span>
@@ -246,7 +247,7 @@ which the first degree(s), if any, was earned.</p>
 
       <footer>
       <div class="copyright">
-  <p><p>Developed by <a href="https://github.com/graphdr" class="external-link">Richard Layton</a>, Russell Long, Matthew Ohland, Marisa Orr, US National Science Foundation.</p></p>
+  <p><p>Developed by <a href="https://github.com/graphdr" class="external-link">Richard Layton</a>, Russell Long, Susan Lord, Matthew Ohland, Marisa Orr, US National Science Foundation.</p></p>
 </div>
 
 <div class="pkgdown">
