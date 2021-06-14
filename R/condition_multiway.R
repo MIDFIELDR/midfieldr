@@ -35,13 +35,13 @@ NULL
 #' \itemize{
 #'   \item Rows are not modified.
 #'   \item Quantitative column is not modified.
-#'   \item Categorical columns are factors with levels ordered by
-#'         median quantitative values.
+#'   \item Categorical columns are factors with levels ordered by median
+#'         quantitative values with an option to add columns of group medians.
 #'   \item Grouping structures are not preserved.
 #' }
 #' @references
 #'   \insertAllCited{}
-#' @family functions
+#' @family condition_*
 #' @export
 #' @examples
 #' catg1 <- rep(c("urban", "rural", "suburb", "village"), each = 2)

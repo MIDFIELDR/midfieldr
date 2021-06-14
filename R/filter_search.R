@@ -2,15 +2,17 @@
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
-#' Subset rows by text
+#' Subset rows that include matches to search strings
 #'
-#' Subset a data frame, retain unique rows that match or partially match
-#' character strings. All columns retained unless specified by
-#' \code{select}. Uses \code{grepl()}, therefore non-character columns
-#' that can be coerced to character are also searched for matches.
+#' Subset a data frame, retaining unique rows that match or partially match
+#' a vector of character strings. Columns are not subset unless selected in
+#' an optional argument. Most commonly used for searching the CIP data set.
 #'
-#' To improve the speed of the search, columns are subset by the values in
-#' the\code{select} argument before the text search starts.
+#' Search terms can include regular expressions. To improve the speed of
+#' the search, columns are subset by the values in the \code{select} argument
+#' before the text search starts. Uses \code{grepl()}, therefore non-character
+#' columns (if any) that can be coerced to character are also searched for
+#' matches.
 #'
 #' @param dframe Data frame to be searched.
 #' @param keep_text Character vector of search text for retaining rows.
@@ -24,7 +26,7 @@ NULL
 #'     \item All columns or those specified by \code{select}.
 #'     \item Grouping structures are not preserved.
 #' }
-#' @family functions
+#' @family filter_*
 #' @export
 #' @examples
 #' # subset using keywords

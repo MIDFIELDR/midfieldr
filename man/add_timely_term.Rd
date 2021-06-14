@@ -2,20 +2,20 @@
 % Please edit documentation in R/add_timely_term.R
 \name{add_timely_term}
 \alias{add_timely_term}
-\title{Add column for timely completion term}
+\title{Add a column of terms delimiting timely completion}
 \usage{
 add_timely_term(dframe, midfield_table, ..., details = NULL, span = NULL)
 }
 \arguments{
 \item{dframe}{Data frame with required variable \code{mcid}.}
 
-\item{midfield_table}{MIDFIELD term data table with required variables
-\code{mcid}, \code{term}, and \code{level}.}
+\item{midfield_table}{MIDFIELD \code{term} data table or equivalent with
+required variables \code{mcid}, \code{term}, and \code{level}.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
-\item{details}{Logical scalar to add columns reporting information on
-which the timely completion term is based, default FALSE.}
+\item{details}{Logical scalar to add optional columns reporting information
+on which the evaluation is based, default FALSE.}
 
 \item{span}{Numeric scalar, number of years to define timely completion,
 default 6 years.}
@@ -24,14 +24,17 @@ default 6 years.}
 A \code{data.table}  with the following properties:
 \itemize{
     \item Rows are not modified.
-    \item Column \code{timely_term} is added, columns \code{term_i},
-          \code{level_i}, and \code{adj_span} are added optionally.
+    \item Column \code{timely_term} is added with an option to add
+          columns \code{term_i}, \code{level_i}, and \code{adj_span}.
     \item Grouping structures are not preserved.
 }
 }
 \description{
-Given information about a student's academic path, determine the latest
-term for which program completion could be considered timely.
+Add a column of academic term values to a data frame indicating the latest
+term by which a student can graduate and have it considered a timely
+completion. Student ID is the join-by variable; terms are encoded as
+character strings YYYYT. Based on information in the MIDFIELD \code{term}
+data table.
 }
 \details{
 The basic heuristic starts with \code{span} number of years for each student
@@ -46,26 +49,27 @@ the 3rd-year level and by three years for students admitted at the
 fourth-year level.
 
 The adjusted span of years is added to their starting term; the result is
-the timely completion reported in the \code{timely_term} column added to the
-data frame.
+the timely completion term reported in the \code{timely_term} column.
+
+The timely completion term is used in two evaluations: filtering for data
+sufficiency (see \code{add_data_sufficiency()}) and assessing
+completion for timeliness (\code{add_completion_timely()}).
 
 If \code{details} is TRUE, additional column(s) that support the finding
 are returned as well. Here the extra columns are the student's initial
 (admission) term \code{term_i}, initial level \code{level_i}, and
 the adjusted span \code{adj_span}.
+
+Existing columns with the same names as the added columns are overwritten.
 }
 \examples{
 # TBD
 }
 \seealso{
-Other functions: 
+Other add_*: 
 \code{\link{add_completion_timely}()},
 \code{\link{add_data_sufficiency}()},
 \code{\link{add_institution}()},
-\code{\link{add_race_sex}()},
-\code{\link{condition_fye}()},
-\code{\link{condition_multiway}()},
-\code{\link{filter_match}()},
-\code{\link{filter_search}()}
+\code{\link{add_race_sex}()}
 }
-\concept{functions}
+\concept{add_*}

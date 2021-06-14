@@ -54,7 +54,7 @@ We use this case selection in subsequent vignettes to illustrate typical workflo
 - Identify CIP codes for case study   
 - Assign custom program names
 - Practice different subsetting scenarios  
-- Practice read/write to `data` directory 
+- Practice read/write to `results` directory 
 - Result is the set of programs for the case study (`study_programs`) 
 
 ### This vignette uses
@@ -226,6 +226,9 @@ Once a set of programs is identified by their 6-digit CIP codes, the usual  appl
 For example, to extract all the students in the case study who graduated, we subset rows of `degree` to keep values of `cip6` that match values of `cip6` in `study_programs`.
 
 ```{r}
+# optional code to control data.table printing
+options(datatable.print.topn = 5)
+
 # subset degree rows
 rows_we_want <- degree$cip6 %chin% case_study$cip6
 case_degree <- degree[rows_we_want]
@@ -246,7 +249,7 @@ case_degree <- degree[rows_we_want, ..cols_we_want]
 case_degree
 ```
 
-This code chunk above represents a routine we encounter fairly often: subset rows of one data frame to keep values of a key variable that match values of the same key variable in a second data frame. We can use `filter_match()` to accomplish the entire task. 
+This code chunk above represents a routine we encounter fairly often: subset rows of one data frame to keep values of a key variable that match values of the same key variable in a second data frame.  We use `filter_match()` to do the entire task:  subset rows of `degree` to keep values of `cip6` that match values of `cip6` in `case_study` and return three columns of the `degree` subset. 
 
 ```{r}
 # subset degree table
@@ -261,7 +264,7 @@ all.equal(case_degree[order(mcid)], dframe[order(mcid)])
 
 ### Example 2. Subset by ID
 
-Another common data access task is to retrieve information from `student` by ID. Suppose we wanted to examine the transfer status at the time of admission of the  students with degrees we subset above. We use `filter_match()` again to subset rows of `student` to keep values of `mcid` that match values of `mcid` in `case_degree`.
+Another common data access task is to retrieve information from `student` by ID. Suppose we wanted to examine the transfer status at the time of admission of the  students with degrees we subset above. We use `filter_match()` again to subset rows of `student` to keep values of `mcid` that match values of `mcid` in `case_degree` and return three columns of the `student` subset. 
 
 ```{r}
 # subset student table
@@ -305,43 +308,24 @@ case_degree[, .N, by = "program"]
 
 Having identified a set of codes and names for the programs we want to study, we should save it to use later without rerunning the code that created it. 
 
-Before proceeding, you might want to check or edit your directory structure. The code snippets in this section assume that you are working in an RStudio Project and that your project directory has a `data` subdirectory. In addition, a minimal project setup would include at least some of the following directories: 
+We save the `case_study` data frame as a CSV file to the project `results` directory for easy access as we work through the study. Here we use fast read and write `fread()` and `fwrite()`  from data.table. You may prefer other read/write functions such as those in base R or packages readr or rio. 
 
-```
-project-name/
-  |- data/ 
-  |- data-raw/
-  |- documents/
-  |- figures/
-  |- scripts/
-  |- project-name.Rproj
-```
-
-We save the `case_study` data frame as a CSV file to the `data` directory for easy access as we work through the study. Here we use fast read and write `fread()` and `fwrite()`  from data.table. You may prefer other read/write functions such as those in base R or packages readr or rio. 
-
-```{r eval = FALSE}
+```r
 # save an intermediate result
-fwrite(case_study, file = "data/case_study.csv")
+fwrite(case_study, file = "results/case_study.csv")
 ```
 
 Let's read it in using `fread()`. We use the `colClasses` argument to ensure that the `cip6` variable type is read as a character, not an integer. 
 
-```{r eval = FALSE}
-# read from the data directory
+```r
+# read from the results directory
 case_study <- fread(
-  "data/case_study.csv",
+  "results/case_study.csv",
   colClasses = list(character = c("cip6"))
 )
 ```
 
-```{r echo = FALSE}
-x <- c("data/case_study.csv")
-if(file_test("-f", x)) unlink(x)
-```
-
-We suggest saving intermediate results like these at each significant milestone of a study, especially after steps requiring a lot of computing time. 
-
-For instance, the case study program codes and names we developed above are saved in the midfieldr package as the data set `study_programs`. View its help page by running
+We suggest saving intermediate results like these at each significant milestone of a study, especially after steps requiring a lot of computing time. For instance, the case study program codes and names we developed above are saved in the midfieldr package as the data set `study_programs`. View its help page by running
 
 ```r
 ? study_programs
@@ -429,9 +413,9 @@ case_degree <- merge(case_degree, case_study, by = "cip6", all.x = TRUE)
 case_degree[, .N, by = "program"]
 
 # save results
-fwrite(case_study, file = "data/case_study.csv")
+fwrite(case_study, file = "results/case_study.csv")
 case_study <- fread(
-  "data/case_study.csv",
+  "results/case_study.csv",
   colClasses = list(character = c("cip6"))
 )
 ```

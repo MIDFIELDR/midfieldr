@@ -3,43 +3,48 @@
 #' @importFrom stats na.omit
 NULL
 
-#' Add column from degree to evaluate timely completion
+#' Add a column to evaluate program completion
 #'
-#' A logical variable is added to a data frame indicating whether a student
-#' has completed their program in a timely manner.
+#' Add a column of logical values (TRUE/FALSE) to a data frame indicating
+#' whether a student completes their program in a timely manner. Based on
+#' information in the MIDFIELD \code{degree} data table.
 #'
 #' Program completion is typically considered timely if it occurs within a
-#' given span of years after matriculation. In a persistence metric involving
-#' graduation, students with timely completion should be grouped as graduates.
-#' Students whose completion is not timely should be grouped with the
-#' non-graduates.
+#' specific span of years after admission. In a persistence metric that depends
+#' on program completion (graduation), only students whose program completion
+#' is timely are counted as graduates; students whose program completion
+#' is un-timely (taking longer than the specific span to complete) are counted
+#' as non-graduates.
 #'
-#' The data frame argument must include the \code{timely_term} column
-#' obtained using the \code{add_timely_term()} function. Completion is
+#' The input data frame \code{dframe} must include the \code{timely_term}
+#' column obtained using the \code{add_timely_term()} function. Completion is
 #' considered timely if: 1) the student has completed a program; and 2) the
-#' degree term is no later than the timely completion limit.
+#' degree term is no later than the estimated timely completion term. The
+#' function itself performs no subsetting.
 #'
 #' If \code{details} is TRUE, additional column(s) that support the finding
 #' are returned as well. Here the extra columns are \code{completion}
 #' indicating by TRUE/FALSE if the student completed their program and
-#' \code{term_degree} from the degree table giving the term in
-#' which the first degree(s), if any, was earned.
+#' \code{term_degree} from the \code{degree} table giving the first term in
+#' which degree(s), if any, are earned.
+#'
+#' Existing columns with the same names as the added columns are overwritten.
 #'
 #' @param dframe Data frame with required variables
 #'        \code{mcid} and \code{timely_term}.
-#' @param midfield_table MIDFIELD degree data table with required
-#'        variables \code{mcid} and \code{term}.
+#' @param midfield_table MIDFIELD \code{degree} data table or equivalent with
+#'        required variables \code{mcid} and \code{term}.
 #' @param ... Not used, forces later arguments to be used by name.
-#' @param details Logical scalar to add columns reporting information on
-#'        which the evaluation is based, default FALSE.
+#' @param details Logical scalar to add optional columns reporting information
+#'        on which the evaluation is based, default FALSE.
 #' @return A \code{data.table} with the following properties:
 #' \itemize{
 #'     \item Rows are not modified.
-#'     \item Column \code{completion_timely} is added, columns
-#'           \code{completion} and \code{term_degree} are added optionally.
+#'     \item Column \code{completion_timely} is added with an option to add
+#'           columns \code{completion} and \code{term_degree}.
 #'     \item Grouping structures are not preserved.
 #' }
-#' @family functions
+#' @family add_*
 #' @export
 #' @examples
 #' # TBD

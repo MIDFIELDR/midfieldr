@@ -2,24 +2,25 @@
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
-#' Subset rows by matching values in a common key column
+#' Subset rows by matching values in shared key columns
 #'
-#' Subset rows of one data frame by values of a key variable that match values
-#' of the same key variable in a second data frame.
+#' Subset rows of one data frame by values of a key column that match values
+#' of a similar key column in a second data frame. Columns are not subset
+#' unless selected in an optional argument.
 #'
 #' Two data frames are input. The \code{match_to} data frame is subset to
 #' retain its key column only.  The result is merged with \code{dframe} in an
 #' inner-join, returning the rows of \code{dframe} with values matching the key
 #' values in \code{match_to}.
 #'
-#' All columns in \code{dframe} are returned unless a subset is given in the
-#' \code{select} argument. Column subsetting occurs after the inner join, so the
+#' Column subsetting occurs after the inner join, so the
 #' key column does not have to be included in the vector of column names in
 #' \code{select}. The final operation is to subset for unique rows.
 #'
-#' @param dframe Data frame to be subset and returned, column identified in
-#'        \code{by_col} required.
-#' @param match_to Data frame to match to, column identified in \code{by_col} required
+#' @param dframe Data frame to be subset and returned. Must contain the key
+#'        column named in \code{by_col}.
+#' @param match_to Data frame with key column values to be matched to. The
+#'        only column used is the required key column named in \code{by_col}.
 #' @param by_col Character scalar, name of the key column.
 #' @param ... Not used, force later arguments to be used by name.
 #' @param select Character vector of \code{dframe} column names to retain,
@@ -30,7 +31,7 @@ NULL
 #'     \item All columns or those specified by \code{select}.
 #'     \item Grouping structures are not preserved.
 #' }
-#' @family functions
+#' @family filter_*
 #' @export
 #' @examples
 #' # TBD

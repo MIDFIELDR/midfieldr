@@ -2,15 +2,16 @@
 % Please edit documentation in R/filter_match.R
 \name{filter_match}
 \alias{filter_match}
-\title{Subset rows by matching values in a common key column}
+\title{Subset rows by matching values in shared key columns}
 \usage{
 filter_match(dframe, match_to, by_col, ..., select = NULL)
 }
 \arguments{
-\item{dframe}{Data frame to be subset and returned, column identified in
-\code{by_col} required.}
+\item{dframe}{Data frame to be subset and returned. Must contain the key
+column named in \code{by_col}.}
 
-\item{match_to}{Data frame to match to, column identified in \code{by_col} required}
+\item{match_to}{Data frame with key column values to be matched to. The
+only column used is the required key column named in \code{by_col}.}
 
 \item{by_col}{Character scalar, name of the key column.}
 
@@ -28,8 +29,9 @@ A \code{data.table} with the following properties:
 }
 }
 \description{
-Subset rows of one data frame by values of a key variable that match values
-of the same key variable in a second data frame.
+Subset rows of one data frame by values of a key column that match values
+of a similar key column in a second data frame. Columns are not subset
+unless selected in an optional argument.
 }
 \details{
 Two data frames are input. The \code{match_to} data frame is subset to
@@ -37,8 +39,7 @@ retain its key column only.  The result is merged with \code{dframe} in an
 inner-join, returning the rows of \code{dframe} with values matching the key
 values in \code{match_to}.
 
-All columns in \code{dframe} are returned unless a subset is given in the
-\code{select} argument. Column subsetting occurs after the inner join, so the
+Column subsetting occurs after the inner join, so the
 key column does not have to be included in the vector of column names in
 \code{select}. The final operation is to subset for unique rows.
 }
@@ -46,14 +47,7 @@ key column does not have to be included in the vector of column names in
 # TBD
 }
 \seealso{
-Other functions: 
-\code{\link{add_completion_timely}()},
-\code{\link{add_data_sufficiency}()},
-\code{\link{add_institution}()},
-\code{\link{add_race_sex}()},
-\code{\link{add_timely_term}()},
-\code{\link{condition_fye}()},
-\code{\link{condition_multiway}()},
+Other filter_*: 
 \code{\link{filter_search}()}
 }
-\concept{functions}
+\concept{filter_*}

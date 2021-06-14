@@ -2,23 +2,24 @@
 #' @importFrom wrapr stop_if_dot_args
 NULL
 
-#' Add columns for race/ethnicity and sex
+#' Add two columns for student race/ethnicity and sex
 #'
-#' Add variables \code{race} and \code{sex} from the MIDFIELD \code{student}
-#' table to a data frame, using \code{mcid} as the join-by variable.
+#' Add two columns of character values of students' self-reported
+#' race/ethnicity and sex using student ID as the join-by variable.
+#' Based on information in the MIDFIELD \code{student} data table.
 #'
-#' Existing variables with the same names, if any, are overwritten.
+#' Existing columns with the same names as the added columns are overwritten.
 #'
 #' @param dframe Data frame with required variable \code{mcid}.
-#' @param midfield_table MIDFIELD  student data table with required
-#'        variables \code{mcid}, \code{race}, and \code{sex}.
+#' @param midfield_table MIDFIELD \code{student} data table or equivalent
+#'        with required variables \code{mcid}, \code{race}, and \code{sex}.
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
 #'     \item Rows are not modified.
 #'     \item Columns \code{race} and \code{sex} are added.
 #'     \item Grouping structures are not preserved.
 #' }
-#' @family functions
+#' @family add_*
 #' @export
 #' @examples
 #' # TBD

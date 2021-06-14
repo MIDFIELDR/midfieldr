@@ -2,7 +2,7 @@
 % Please edit documentation in R/filter_search.R
 \name{filter_search}
 \alias{filter_search}
-\title{Subset rows by text}
+\title{Subset rows that include matches to search strings}
 \usage{
 filter_search(dframe, keep_text = NULL, ..., drop_text = NULL, select = NULL)
 }
@@ -27,14 +27,16 @@ A \code{data.table} with the following properties:
 }
 }
 \description{
-Subset a data frame, retain unique rows that match or partially match
-character strings. All columns retained unless specified by
-\code{select}. Uses \code{grepl()}, therefore non-character columns
-that can be coerced to character are also searched for matches.
+Subset a data frame, retaining unique rows that match or partially match
+a vector of character strings. Columns are not subset unless selected in
+an optional argument. Most commonly used for searching the CIP data set.
 }
 \details{
-To improve the speed of the search, columns are subset by the values in
-the\code{select} argument before the text search starts.
+Search terms can include regular expressions. To improve the speed of
+the search, columns are subset by the values in the \code{select} argument
+before the text search starts. Uses \code{grepl()}, therefore non-character
+columns (if any) that can be coerced to character are also searched for
+matches.
 }
 \examples{
 # subset using keywords
@@ -61,14 +63,7 @@ filter_search(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 }
 }
 \seealso{
-Other functions: 
-\code{\link{add_completion_timely}()},
-\code{\link{add_data_sufficiency}()},
-\code{\link{add_institution}()},
-\code{\link{add_race_sex}()},
-\code{\link{add_timely_term}()},
-\code{\link{condition_fye}()},
-\code{\link{condition_multiway}()},
+Other filter_*: 
 \code{\link{filter_match}()}
 }
-\concept{functions}
+\concept{filter_*}

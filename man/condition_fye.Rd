@@ -79,14 +79,7 @@ frame is ready for use as input for the mice package.
 # TBD
 }
 \seealso{
-Other functions: 
-\code{\link{add_completion_timely}()},
-\code{\link{add_data_sufficiency}()},
-\code{\link{add_institution}()},
-\code{\link{add_race_sex}()},
-\code{\link{add_timely_term}()},
-\code{\link{condition_multiway}()},
-\code{\link{filter_match}()},
-\code{\link{filter_search}()}
+Other condition_*: 
+\code{\link{condition_multiway}()}
 }
-\concept{functions}
+\concept{condition_*}

@@ -17,9 +17,10 @@ public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostat
 ## Undergoing major revision
 
 Based on feedback from workshop attendees and use-testing, the package
-is undergoing major revision to the vignettes and the underlying
-functionality. While in this ambiguous state, the package should be used
-experimentally only. We hope to have the update completed by July 2021.
+is undergoing significant, non-backwards-compatible revision to th API.
+
+While in this ambiguous state, the package should be used experimentally
+only. We hope to have a stable release by the end of July 2021.
 
 ## Tools for student records research
 
@@ -188,8 +189,8 @@ functions:
 
 **R ecosystem**. Internally, midfieldr and midfielddata use a data.table
 syntax and structure. Thus data frames returned by midfieldr functions
-and the practice data sets are of class “data.frame” and “data.table.”
-In general the midfieldr vignettes use the following packages:
+and the practice data sets are of class “data.table.” In general the
+midfieldr vignettes use the following packages:
 
 -   midfieldr
 -   midfielddata
@@ -207,8 +208,7 @@ converted to class “data.frame” and “data.table.”
     [MIDFIELD](https://engineering.purdue.edu/MIDFIELD)  
 -   Getting started with R using [MIDFIELD workshop
     materials](https://midfieldr.github.io/2021-asee-workshop/)  
--   Get citation information with `citation("midfieldr")` and
-    `citation("midfielddata")`
+-   Get citation information with `citation("midfieldr")`
 -   This project is released with a [Code of Conduct](CONDUCT.html). If
     you contribute to this project you agree to abide by its terms.
 

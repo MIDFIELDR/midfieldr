@@ -1,25 +1,27 @@
 #' @import data.table
 NULL
 
-#' Add column for institution
+#' Add a column of institution names
 #'
-#' Add variable \code{institution} from the MIDFIELD \code{term} table
-#' to a data frame, using \code{mcid} as the join-by variable.
+#' Add a column of character values with institution names (or labels) using
+#' student ID as the join-by variable. In the MIDFIELD practice data, the
+#' labels are anonymized. Based on information in the MIDFIELD \code{term}
+#' data table.
 #'
-#' An existing variable with the same name, if any, is overwritten. If a
-#' student is associated with more than one institution, the institution at
-#' which they completed the most terms is returned.
+#' If a student is associated with more than one institution, the institution
+#' at which they completed the most terms is returned. An existing column with
+#' the same name as the added column is overwritten.
 #'
 #' @param dframe Data frame with required variable \code{mcid}.
-#' @param midfield_table MIDFIELD term data table with required variables
-#'        \code{mcid}, \code{institutiion}, \code{term}.
+#' @param midfield_table MIDFIELD \code{term} data table or equivalent with
+#'        required variables \code{mcid}, \code{institutiion}, \code{term}.
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
 #'     \item Rows are not modified.
 #'     \item Column \code{institution} is added.
 #'     \item Grouping structures are not preserved.
 #' }
-#' @family functions
+#' @family add_*
 #' @export
 #' @examples
 #' # TBD

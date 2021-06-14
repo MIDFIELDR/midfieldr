@@ -19,8 +19,8 @@ A \code{data.table} with the following properties:
 \itemize{
   \item Rows are not modified.
   \item Quantitative column is not modified.
-  \item Categorical columns are factors with levels ordered by
-        median quantitative values.
+  \item Categorical columns are factors with levels ordered by median
+        quantitative values with an option to add columns of group medians.
   \item Grouping structures are not preserved.
 }
 }
@@ -62,14 +62,7 @@ str(mw)
 \insertAllCited{}
 }
 \seealso{
-Other functions: 
-\code{\link{add_completion_timely}()},
-\code{\link{add_data_sufficiency}()},
-\code{\link{add_institution}()},
-\code{\link{add_race_sex}()},
-\code{\link{add_timely_term}()},
-\code{\link{condition_fye}()},
-\code{\link{filter_match}()},
-\code{\link{filter_search}()}
+Other condition_*: 
+\code{\link{condition_fye}()}
 }
-\concept{functions}
+\concept{condition_*}

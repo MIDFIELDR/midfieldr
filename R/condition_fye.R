@@ -65,7 +65,7 @@ NULL
 #'     \item Grouping structures are not preserved.
 #' }
 #'
-#' @family functions
+#' @family condition_*
 #' @export
 #' @examples
 #' # TBD

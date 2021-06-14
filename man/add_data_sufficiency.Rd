@@ -2,7 +2,7 @@
 % Please edit documentation in R/add_data_sufficiency.R
 \name{add_data_sufficiency}
 \alias{add_data_sufficiency}
-\title{Add column from term to evaluate data sufficiency}
+\title{Add a column to evaluate data sufficiency}
 \usage{
 add_data_sufficiency(dframe, midfield_table, ..., details = NULL)
 }
@@ -10,61 +10,59 @@ add_data_sufficiency(dframe, midfield_table, ..., details = NULL)
 \item{dframe}{Data frame with required variables
 \code{institution} and \code{timely_term}.}
 
-\item{midfield_table}{MIDFIELD term data table
+\item{midfield_table}{MIDFIELD \code{term} data table or equivalent
 with required variables \code{institution} and \code{term}.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
-\item{details}{Logical scalar to add columns reporting information on
-which the evaluation is based, default FALSE.}
+\item{details}{Logical scalar to add optional columns reporting information
+on which the evaluation is based, default FALSE.}
 }
 \value{
 A \code{data.table}  with the following properties:
 \itemize{
     \item Rows are not modified.
-    \item Column \code{data_sufficiency} is added, column \code{inst_limit}
-          is added optionally.
+    \item Column \code{data_sufficiency} is added with an option to add
+          column \code{inst_limit}.
     \item Grouping structures are not preserved.
 }
 }
 \description{
-A column is added to a data frame indicating whether the data include a
-sufficient number of years to justify including a student in an analysis
-of student records. The new column is a logical variable (TRUE/FALSE
-values).
+Add a column of logical values (TRUE/FALSE) to a data frame indicating
+whether the available data include a sufficient range of years to justify
+including a student in an analysis. Based on information in the MIDFIELD
+\code{term} data table.
 }
 \details{
-Program completion is typically assessed over a given span of years after
-admission. A student admitted too near the last term in the
-available data should be excluded from analysis because the data
-have insufficient span to fairly assess the student's record.
+Program completion is typically considered timely if it occurs within a
+specific span of years after admission. Students admitted too near the
+last term in the available data are generally excluded from a study because
+the data have insufficient range to fairly assess their records.
 
-The data frame argument must include the \code{timely_term} column
-obtained using the \code{add_timely_term()} function. Assessment is
-considered fair if the student's timely completion term is no later than
-the last term in their institution's data.
+The input data frame \code{dframe} must include the \code{timely_term}
+column obtained using the \code{add_timely_term()} function. Students can be
+retained in a study if their estimated timely completion term is no later
+than the last term in their institution's data.
 
 If the result in the \code{data_sufficiency} column is TRUE, then then student
 should be included in the research. If FALSE, the student should be excluded
 before calculating any persistence metric involving program completion
-(graduation). The function performs no subsetting.
+(graduation). The function itself performs no subsetting.
 
 If \code{details} is TRUE, additional column(s) that support the finding
-are returned as well. Here the extra column \code{inst_limit}, the latest
+are returned as well. Here the extra column is \code{inst_limit}, the latest
 term reported by the institution in the available data.
+
+Existing columns with the same names as the added columns are overwritten.
 }
 \examples{
 # TBD
 }
 \seealso{
-Other functions: 
+Other add_*: 
 \code{\link{add_completion_timely}()},
 \code{\link{add_institution}()},
 \code{\link{add_race_sex}()},
-\code{\link{add_timely_term}()},
-\code{\link{condition_fye}()},
-\code{\link{condition_multiway}()},
-\code{\link{filter_match}()},
-\code{\link{filter_search}()}
+\code{\link{add_timely_term}()}
 }
-\concept{functions}
+\concept{add_*}

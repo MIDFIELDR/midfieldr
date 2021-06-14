@@ -2,15 +2,15 @@
 % Please edit documentation in R/add_race_sex.R
 \name{add_race_sex}
 \alias{add_race_sex}
-\title{Add columns for race/ethnicity and sex}
+\title{Add two columns for student race/ethnicity and sex}
 \usage{
 add_race_sex(dframe, midfield_table)
 }
 \arguments{
 \item{dframe}{Data frame with required variable \code{mcid}.}
 
-\item{midfield_table}{MIDFIELD  student data table with required
-variables \code{mcid}, \code{race}, and \code{sex}.}
+\item{midfield_table}{MIDFIELD \code{student} data table or equivalent
+with required variables \code{mcid}, \code{race}, and \code{sex}.}
 }
 \value{
 A \code{data.table}  with the following properties:
@@ -21,24 +21,21 @@ A \code{data.table}  with the following properties:
 }
 }
 \description{
-Add variables \code{race} and \code{sex} from the MIDFIELD \code{student}
-table to a data frame, using \code{mcid} as the join-by variable.
+Add two columns of character values of students' self-reported
+race/ethnicity and sex using student ID as the join-by variable.
+Based on information in the MIDFIELD \code{student} data table.
 }
 \details{
-Existing variables with the same names, if any, are overwritten.
+Existing columns with the same names as the added columns are overwritten.
 }
 \examples{
 # TBD
 }
 \seealso{
-Other functions: 
+Other add_*: 
 \code{\link{add_completion_timely}()},
 \code{\link{add_data_sufficiency}()},
 \code{\link{add_institution}()},
-\code{\link{add_timely_term}()},
-\code{\link{condition_fye}()},
-\code{\link{condition_multiway}()},
-\code{\link{filter_match}()},
-\code{\link{filter_search}()}
+\code{\link{add_timely_term}()}
 }
-\concept{functions}
+\concept{add_*}

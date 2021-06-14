@@ -2,15 +2,15 @@
 % Please edit documentation in R/add_institution.R
 \name{add_institution}
 \alias{add_institution}
-\title{Add column for institution}
+\title{Add a column of institution names}
 \usage{
 add_institution(dframe, midfield_table)
 }
 \arguments{
 \item{dframe}{Data frame with required variable \code{mcid}.}
 
-\item{midfield_table}{MIDFIELD term data table with required variables
-\code{mcid}, \code{institutiion}, \code{term}.}
+\item{midfield_table}{MIDFIELD \code{term} data table or equivalent with
+required variables \code{mcid}, \code{institutiion}, \code{term}.}
 }
 \value{
 A \code{data.table}  with the following properties:
@@ -21,26 +21,24 @@ A \code{data.table}  with the following properties:
 }
 }
 \description{
-Add variable \code{institution} from the MIDFIELD \code{term} table
-to a data frame, using \code{mcid} as the join-by variable.
+Add a column of character values with institution names (or labels) using
+student ID as the join-by variable. In the MIDFIELD practice data, the
+labels are anonymized. Based on information in the MIDFIELD \code{term}
+data table.
 }
 \details{
-An existing variable with the same name, if any, is overwritten. If a
-student is associated with more than one institution, the institution at
-which they completed the most terms is returned.
+If a student is associated with more than one institution, the institution
+at which they completed the most terms is returned. An existing column with
+the same name as the added column is overwritten.
 }
 \examples{
 # TBD
 }
 \seealso{
-Other functions: 
+Other add_*: 
 \code{\link{add_completion_timely}()},
 \code{\link{add_data_sufficiency}()},
 \code{\link{add_race_sex}()},
-\code{\link{add_timely_term}()},
-\code{\link{condition_fye}()},
-\code{\link{condition_multiway}()},
-\code{\link{filter_match}()},
-\code{\link{filter_search}()}
+\code{\link{add_timely_term}()}
 }
-\concept{functions}
+\concept{add_*}
