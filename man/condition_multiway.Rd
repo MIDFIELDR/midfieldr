@@ -70,6 +70,6 @@ Other functions:
 \code{\link{add_timely_term}()},
 \code{\link{condition_fye}()},
 \code{\link{filter_match}()},
-\code{\link{filter_text}()}
+\code{\link{filter_search}()}
 }
 \concept{functions}

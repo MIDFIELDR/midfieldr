@@ -64,8 +64,8 @@ add_race_sex <- function(dframe,
     # DT <- midfield_table[rows_we_want, cols_we_want, with = FALSE]
 
     DT <- filter_match(dframe = midfield_table,
-                        to = dframe,
-                        by = "mcid",
+                        match_to = dframe,
+                        by_col = "mcid",
                         select = c("mcid", added_cols))
 
 

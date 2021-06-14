@@ -134,8 +134,8 @@ condition_fye <- function(dframe,
 
     # subset midfield data table
     DT <- filter_match(dframe = midfield_table,
-                        to = fye,
-                        by = "mcid",
+                        match_to = fye,
+                        by_col = "mcid",
                         select = c("mcid", "term", "cip6"))
 
     # order rows by setting keys

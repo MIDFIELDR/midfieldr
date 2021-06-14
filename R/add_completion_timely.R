@@ -98,8 +98,8 @@ add_completion_timely <- function(dframe,
 
     # subset midfield data table
     DT <- filter_match(midfield_table,
-                        to = dframe,
-                        by = "mcid",
+                        match_to = dframe,
+                        by_col = "mcid",
                         select = c("mcid", "term"))
 
     # keep the first degree term

@@ -28,28 +28,28 @@ NULL
 #' @export
 #' @examples
 #' # subset using keywords
-#' filter_text(cip, keep_text = "engineering")
+#' filter_search(cip, keep_text = "engineering")
 #'
 #' # drop_text argument, when used, must be named
-#' filter_text(cip, "civil engineering", drop_text = "technology")
+#' filter_search(cip, "civil engineering", drop_text = "technology")
 #'
 #' # subset using numerical codes
-#' filter_text(cip, keep_text = c("050125", "160501"))
+#' filter_search(cip, keep_text = c("050125", "160501"))
 #'
 #' # subset using regular expressions
-#' filter_text(cip, keep_text = "^54")
-#' filter_text(cip, keep_text = c("^1407", "^1408"))
+#' filter_search(cip, keep_text = "^54")
+#' filter_search(cip, keep_text = c("^1407", "^1408"))
 #'
 #' # select columns
-#' filter_text(cip,
+#' filter_search(cip,
 #'             keep_text = "^54",
 #'             select = c("cip6", "cip4name"))
 #'
 #' \dontrun{
 #' # unsuccessful terms produce a message
-#' filter_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
+#' filter_search(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 #' }
-filter_text <- function(dframe,
+filter_search <- function(dframe,
                         keep_text = NULL,
                         ...,
                         drop_text = NULL,

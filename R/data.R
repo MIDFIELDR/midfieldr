@@ -95,11 +95,10 @@
 #' in the Civil, Electrical, Industrial, and Mechanical Engineering programs
 #' from midfielddata.
 #'
-#' No subsetting for other criteria such as timely completion or data
-#' sufficiency have been performed. Also excluded are the predicted starting
-#' majors of first-year-engineering (FYE) students.
+#' Data have been subset for data sufficiency. Does not include predicted
+#' starting programs for FYE students.
 #'
-#' @format \code{data.table} with 10,764 rows and 2 columns keyed by
+#' @format \code{data.table} with 8219 rows and 2 columns keyed by
 #' student ID. The variables are:
 #' \describe{
 #'   \item{mcid}{Character, anonymized student identifier}

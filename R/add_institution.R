@@ -54,8 +54,8 @@ add_institution <- function(dframe,
     N <- NULL
 
     DT <- filter_match(midfield_table,
-                       to = dframe,
-                       by = "mcid",
+                       match_to = dframe,
+                       by_col = "mcid",
                        select = c("mcid", "institution", "term"))
 
     # count terms at institutions

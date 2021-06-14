@@ -12,6 +12,7 @@ csl: ../inst/body-and-society.csl
 link-citations: yes
 resource_files:
   - ../man/figures/art-04-data-sufficiency-fig1-1.png
+  - ../man/figures/art-04-data-sufficiency-fig2-1.png
 ---
 
 ```{r include = FALSE}
@@ -81,8 +82,8 @@ In the figure we compare two first-time-in-college students admitted in differen
 
 <br>
 ```{r fig1, echo = FALSE, fig.asp = 5/10}
-library("ggplot2")
 library("data.table")
+library("ggplot2")
 
 # parameters
 callout_color     <- "gray60"
@@ -185,7 +186,7 @@ ggplot(data = df_arrow) +
                      "enter", 
                      "TC term"), 
            vjust = 1,
-           hjust = c(-0.1, 1.1, -0.1, 1.1, -0.1, -0.1)
+           hjust = c(-0.1, 0.5, -0.1, 1.1, -0.1, -0.1)
   )
 ```
 <br>
@@ -193,7 +194,16 @@ ggplot(data = df_arrow) +
 The TC term for Student B is not within the range of data provided by their institution. 
 By the data sufficiency criterion, we exclude student B from the study.
 
-The criterion applies even if Student B were known to have graduated within the data limit. Other students like Student B will graduate after the data limit, but we cannot know if their program completion was timely or not. Because such students must be excluded from the study, so must every student whose TC term is not encompassed by the available data.   
+The criterion applies even if Student B were known to have graduated within the data limit. Other students like Student B will graduate after the data limit, but we cannot know if their program completion was timely or not. Because such students must be excluded from the study, so must every student whose TC term is not encompassed by the available data.  
+
+### Outline
+
+- Start with the case study programs (`study_programs`) 
+- Obtain all students ever enrolled in these programs 
+- Determine their timely completion terms 
+- Determine data sufficiency by institution and student 
+- Filter observations for data sufficiency 
+- Result is set of students for further analysis (`study_students`)
 
 ### This vignette uses
 
@@ -214,12 +224,19 @@ library("midfielddata")
 library("data.table")
 library("ggplot2")
 
+# optional code to format data.table printing
+options(datatable.print.nrows = 10, 
+        datatable.print.topn  = 5, 
+        datatable.print.class = TRUE)
+```
+
+data
+
+```{r}
 # load data tables from midfielddata
 data(student, term, degree)
-
-# optional code to control data.table printing
-options(datatable.print.nrows = 10, datatable.print.topn = 5)
 ```
+   
 
 ## Case study students
 
@@ -239,9 +256,9 @@ To obtain the students enrolled in the case study programs, we use `filter_match
 
 ```{r}
 case_students <- filter_match(term, 
-                               by = "cip6", 
-                               to = study_programs, 
-                               select = c("mcid", "cip6"))
+                              match_to = study_programs, 
+                              by_col = "cip6", 
+                              select = c("mcid", "cip6"))
 case_students
 ```
 
@@ -252,8 +269,8 @@ A necessary prerequisite for applying the data sufficiency criterion is to deter
 ```{r}
 # limit population to degree-seeking students
 DT <- filter_match(case_students, 
-                    by = "mcid",
-                    to = student)
+                   match_to = student, 
+                   by_col = "mcid")
 
 # examine the result
 DT
@@ -302,8 +319,7 @@ The potential use of these data are to implement one's own heuristic for determi
 # show details
 DT <- add_timely_term(DT, 
                       midfield_table = term, 
-                      details = TRUE
-                      )
+                      details = TRUE)
 DT
 ```
  
@@ -313,8 +329,7 @@ If the input data frame has an existing column name matching any of the added co
 # remove details
 DT <- add_timely_term(DT, 
                       midfield_table = term, 
-                      details = FALSE
-                      )
+                      details = FALSE)
 DT
 ```
 
@@ -391,7 +406,7 @@ DT
 Again, we suggest saving intermediate results like these. This data frame of IDs and CIP codes is saved in midfieldr as the data set `study_students`. View its help page by running
 
 ```r
-? study__programs_students
+? study_students
 ```
 View the data frame, 
 
@@ -399,23 +414,105 @@ View the data frame,
 study_students
 ```
 
-Confirm the two are the same. 
+Confirm the two are the same.
 
 ```{r}
-setkeyv(DT, "mcid")
-setkeyv(study_students, "mcid")
+DT <- DT[order(mcid)]
+study_students <- study_students[order(mcid)]
 all.equal(DT, study_students)
 ```
 
+## Compare programs
 
+We can create a simple dot chart to compare the numbers of students in these programs. 
 
-## References
+```{r}
+# group and summarize
+DT <- study_students[, .N, by = "cip6"]
 
-<div id="refs"></div>
+# join the program names 
+DT <- merge(DT, study_programs, by = "cip6", all.x = TRUE)
+
+#examine the result
+DT
+```
+
+Before graphing, we convert the program variable to a factor and order the factor by `N` to automatically order the rows by `N` instead of alphabetically. 
+
+```{r}
+# character to factor
+DT[, program := as.factor(program)]
+
+# order the levels by the values in N
+DT[, program := reorder(program, N)]
+
+# examine the result
+levels(DT$program)
+```
+
+The graph follows. 
+
+```{r fig2, fig.asp = 0.375}
+ggplot(DT, aes(x = N, y = program)) +
+  scale_x_continuous(limits = c(1000, 3000)) +
+  geom_point() +
+  labs(x = "Number of students", 
+       y = "", 
+       title = "Case study students", 
+       caption = "Source: midfielddata")
+```
+
 
 ## Appendix
 
 ### Complete script
 
 The vignette code chunks are collected below in a single, condensed script. 
+
+```{r}
+# packages used
+library("midfieldr")
+library("midfielddata")
+library("data.table")
+library("ggplot2")
+
+# load data tables from midfielddata
+data(student, term, degree)
+
+# Case study students
+case_students <- filter_match(term, 
+                              match_to = study_programs, 
+                              by_col = "cip6", 
+                              select = c("mcid", "cip6"))
+
+# Estimate the timely completion term
+DT <- filter_match(case_students, 
+                   match_to = student, 
+                   by_col = "mcid")
+DT <- add_timely_term(DT, midfield_table = term)
+
+# Determine data sufficiency
+DT <- add_institution(DT, midfield_table = term)
+DT <- add_data_sufficiency(DT,
+                           midfield_table = term,
+                           details = TRUE)
+
+# Subset data for data sufficiency
+DT <- DT[data_sufficiency == TRUE]
+DT <- DT[, .(mcid, cip6)]
+
+# Compare programs
+DT <- study_students[, .N, by = "cip6"]
+DT <- merge(DT, study_programs, by = "cip6", all.x = TRUE)
+DT[, program := as.factor(program)]
+DT[, program := reorder(program, N)]
+ggplot(DT, aes(x = N, y = program)) +
+  scale_x_continuous(limits = c(1000, 3000)) +
+  geom_point() +
+  labs(x = "Number of students", 
+       y = "", 
+       title = "Case study students", 
+       caption = "Source: midfielddata")
+```
+
 

@@ -71,6 +71,13 @@ The structure of multiway data is specific: a categorical variable with $m$ leve
 
 Note that "multiway" in our context refers to the data structure and graph design defined by Cleveland, not to the methods of analysis described by Kroonenberg [-@Kroonenberg:2008]. 
 
+### Outline
+
+- Start with the case study stickiness results (`study_stickiness`) 
+- Practice conditioning multiway data for display 
+- Practice creating multiway graphs and their duals 
+- Practice tabulating multiway data  
+
 ### This vignette uses
 
 midfieldr functions 
@@ -84,10 +91,17 @@ packages
 library("midfieldr")
 library("data.table")
 library("ggplot2")
-
-# optional code to control data.table printing
-options(datatable.print.nrows = 10, datatable.print.topn = 5)
 ```
+
+We can control how a data.table is printed to the screen with the following options.  
+
+```{r}
+# optional code to control data.table printing
+options(datatable.print.nrows = 10, 
+        datatable.print.topn  = 5, 
+        datatable.print.class = TRUE)
+```
+
 
 ## Prepare data
 
@@ -123,10 +137,10 @@ The quantitative variable is `stick` (stickiness); the first categorical variabl
 
 ```{r}
 # first category is a character
-class(DT[, program])
+class(DT$program)
 
 # second category is a character
-class(DT[, race_sex])
+class(DT$race_sex)
 ```
 
 We process the data frame
@@ -136,22 +150,20 @@ We process the data frame
 DT <- condition_multiway(DT)
 ```
 
-No change to the row and column structure, 
+No change to the row and column structure, but as you can see, the previous character variables have been converted to factors, 
 
 ```{r}
 DT
 ```
 
-But the categorical variables are now factors, with levels ordered non-alphabetically. `program` is now a factor with `r nlevels(DT[, program])` levels; `race_sex` is a factor with `r nlevels(DT[, race_sex])` levels. 
+The levels of the factors are ordered non-alphabetically. `program` is now a factor with `r nlevels(DT[, program])` levels; `race_sex` is a factor with `r nlevels(DT[, race_sex])` levels. 
 
 ```{r}
 # first category is now a factor
-class(DT[, program])
-levels(DT[, program])
+levels(DT$program)
 
 # second category is now a factor
-class(DT[, race_sex])
-levels(DT[, race_sex])
+levels(DT$race_sex)
 ```
 
 We would expect 4 $\times$ 9 = 36 observations. However, some rows are omitted to preserve confidentiality, leaving us with `r dim(DT)[1]` observations.
@@ -161,12 +173,23 @@ The median values that determine the order of the levels can be obtained by usin
 ```{r}
 # return median stickiness by category
 DT_med <- condition_multiway(DT, details = TRUE)
+```
+
+By ordering the data by `program`, you can see that a given program has a single value of `med_program` copied as many times as needed. 
+
+```{r}
+# optional code to control data.table printing
+options(datatable.print.topn  = 10)
 
 # programs have a median stickiness across race-sex groups  
-DT_med[order(program, race_sex)]
+DT_med[order(program)]
+```
 
+Similarly, by ordering the data by `race_sex`, you can see that a given demographic group has a single value of `med_race_sex` copied as many times as needed. 
+
+```{r}
 # race_sex groupings have a median stickiness across programs 
-DT_med[order(race_sex, program)]
+DT_med[order(race_sex)]
 ```
 
 ## Create a multiway graph
@@ -377,18 +400,21 @@ library("midfieldr")
 library("data.table")
 library("ggplot2")
 
+# optional code to control data.table printing
+options(datatable.print.nrows = 10, 
+        datatable.print.topn  = 5, 
+        datatable.print.class = TRUE)
+
 # data preparation
 DT <- copy(study_stickiness)
-class(DT[, program])
-class(DT[, race_sex])
+class(DT$program)
+class(DT$race_sex)
 DT <- condition_multiway(DT)
-class(DT[, program])
-levels(DT[, program])
-class(DT[, race_sex])
-levels(DT[, race_sex])
+levels(DT$program)
+levels(DT$race_sex)
 DT_med <- condition_multiway(DT, details = TRUE)
-DT_med[order(program, race_sex)]
-DT_med[order(race_sex, program)]
+DT_med[order(program)]
+DT_med[order(race_sex)]
 
 # creating a multiway graph 
 ggplot(data = DT_med, aes(x = stick, y = race_sex)) +

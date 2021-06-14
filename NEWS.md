@@ -1,77 +1,19 @@
 
-## midfieldr 1.0.0.9013 / 2021-06
+## midfieldr 1.0.0.9014 / 2021-06
 
-- make MIDFIELD data table arguments explicit in functions
-- remove dependency on installing midfielddata
-- delete Travis CI
-- continue refining function names and arguments 
-- replaced "Get started" with the vignette on the practice data sets 
-- edited license files
+Significant changes from earlier versions, no backwards compatibility, prompting version number change to 1.0.0
 
+- Change names of practice data to match research data: student, course, term, and degree 
+- Update built-in data sets consistent with methodology described in vignettes 
+- Edit practice data variable values for consistency with research data values 
+- Delete Travis CI due to change in Travis ownership and policies 
+- Make MIDFIELD data arguments explicit in functions 
+- Make function names and arguments internally consistent 
+- Edit functions to depend on data.table functionality 
+- Remove dependency on dplyr and related packages 
+- Remove dependency on installing midfielddata 
+- Overhaul midfieldr functions completely 
 
-
-## midfieldr 1.0.0.9012 / 2021-06
-
-- edit to use revised names of data table in midfielddata: student, course, term, and degree
-- rename functions and arguments   
-- add `filter_by_key()`   
-- add `filter_text()` for subsetting CIP data  
-- add `add_data_sufficiency()` for length of data record sufficient to asses graduation in span years
-- update `fye_start` data set with new imputed values based on improved analysis of students in  FYE programs  
-- revise vignettes 1--6 to address the above changes  
-
-## midfieldr 1.0.0.9011 / 2021-05
-
-- update README
-- reorganize vignettes  
-- add function `add_race_sex()` 
-- add function `add_timely_limit()`
-- add function `eval_timely_completion()` 
-
-## midfieldr 1.0.0.9010 / 2021-05
-
-- replace isFALSE() and isTRUE() with logical condition
-
-## midfieldr 1.0.0.9009 / 2021-05
-
-- added to .Renviron file to address R CMD chk note
-
-## midfieldr 1.0.0.9008 / 2021-04
-
-- add timely completion 
-- revise vignettes for clarity 
-- graduation rate in progress
-
-## midfieldr 1.0.0.9007 / 2021-02
-
-- revise README and add short section for R beginners 
-- change recommendation for installing from GitHub from devtools to remotes to reduce dependencies 
-
-## midfieldr 1.0.0.9006 / 2020-09
-
-- revise graduation rate tools for IPEDS and non-IPEDS definitions
-
-## midfieldr 1.0.0.9005 / 2020-08
-
-- add data basics vignette
-- replace filter by ID and CIP functions with data.table syntax
-
-## midfieldr 1.0.0.9002--9004 / 2020-08
-
-Extensive function editing and revision, resulting in new functions
-
-- `prepare_fye_mi()`
-- `prepare_multiway()` 
-- `subset_cip()` 
-- `subset_feasible()`  
-
-## midfieldr 1.0.0.9001 / 2020-07
-
-Changes incompatible with earlier versions. The scope of the revisions prompted the version number change to 1.0.0. 
-
-- Changed function names
-- Changed data manipulation dependency from dplyr to data.table 
-- Functions attempt to preserve data frame extensions such as tibble and maintain compatibility with the magrittr pipe 
 
 ## midfieldr 0.1.0 / 2018-06
 

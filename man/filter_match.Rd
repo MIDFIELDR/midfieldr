@@ -4,15 +4,15 @@
 \alias{filter_match}
 \title{Subset rows by matching values in a common key column}
 \usage{
-filter_match(dframe, to, by, ..., select = NULL)
+filter_match(dframe, match_to, by_col, ..., select = NULL)
 }
 \arguments{
 \item{dframe}{Data frame to be subset and returned, column identified in
-\code{by} required.}
+\code{by_col} required.}
 
-\item{to}{Data frame, column identified in \code{by} required}
+\item{match_to}{Data frame to match to, column identified in \code{by_col} required}
 
-\item{by}{Character scalar, name of the key column.}
+\item{by_col}{Character scalar, name of the key column.}
 
 \item{...}{Not used, force later arguments to be used by name.}
 
@@ -32,10 +32,10 @@ Subset rows of one data frame by values of a key variable that match values
 of the same key variable in a second data frame.
 }
 \details{
-Two data frames are input. The \code{to} data frame is subset to
+Two data frames are input. The \code{match_to} data frame is subset to
 retain its key column only.  The result is merged with \code{dframe} in an
 inner-join, returning the rows of \code{dframe} with values matching the key
-values in \code{to}.
+values in \code{match_to}.
 
 All columns in \code{dframe} are returned unless a subset is given in the
 \code{select} argument. Column subsetting occurs after the inner join, so the
@@ -54,6 +54,6 @@ Other functions:
 \code{\link{add_timely_term}()},
 \code{\link{condition_fye}()},
 \code{\link{condition_multiway}()},
-\code{\link{filter_text}()}
+\code{\link{filter_search}()}
 }
 \concept{functions}

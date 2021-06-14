@@ -7,10 +7,10 @@ NULL
 #' Subset rows of one data frame by values of a key variable that match values
 #' of the same key variable in a second data frame.
 #'
-#' Two data frames are input. The \code{to} data frame is subset to
+#' Two data frames are input. The \code{match_to} data frame is subset to
 #' retain its key column only.  The result is merged with \code{dframe} in an
 #' inner-join, returning the rows of \code{dframe} with values matching the key
-#' values in \code{to}.
+#' values in \code{match_to}.
 #'
 #' All columns in \code{dframe} are returned unless a subset is given in the
 #' \code{select} argument. Column subsetting occurs after the inner join, so the
@@ -18,9 +18,9 @@ NULL
 #' \code{select}. The final operation is to subset for unique rows.
 #'
 #' @param dframe Data frame to be subset and returned, column identified in
-#'        \code{by} required.
-#' @param to Data frame to match to, column identified in \code{by} required
-#' @param by Character scalar, name of the key column.
+#'        \code{by_col} required.
+#' @param match_to Data frame to match to, column identified in \code{by_col} required
+#' @param by_col Character scalar, name of the key column.
 #' @param ... Not used, force later arguments to be used by name.
 #' @param select Character vector of \code{dframe} column names to retain,
 #'        default all columns.
@@ -35,8 +35,8 @@ NULL
 #' @examples
 #' # TBD
 filter_match<- function(dframe,
-                        to,
-                        by,
+                        match_to,
+                        by_col,
                         ...,
                         select = NULL) {
 
@@ -47,39 +47,39 @@ filter_match<- function(dframe,
 
   # explicit arguments
   assert_explicit(dframe)
-  assert_explicit(to)
-  assert_explicit(by)
+  assert_explicit(match_to)
+  assert_explicit(by_col)
 
   # check argument class
   # set NULL default once dframe class checked
   assert_class(dframe, "data.frame")
-  assert_class(to, "data.frame")
-  assert_class(by, "character")
+  assert_class(match_to, "data.frame")
+  assert_class(by_col, "character")
   select <- select %||% names(dframe)
   assert_class(select, "character")
 
   # existence of required columns
-  assert_common_column(dframe, by)
-  assert_common_column(to, by)
+  assert_common_column(dframe, by_col)
+  assert_common_column(match_to, by_col)
 
   # dframe is not modified by reference
   dframe <- copy(as.data.table(dframe))
-  setDT(to)
+  setDT(match_to)
 
   # key must be in both data frames
-  stopifnot("`by` must be a column in `dframe`" = by %in% names(dframe))
-  stopifnot("`by` must be a column in `to`" = by %in% names(to))
+  stopifnot("`by_col` must be a column in `dframe`" = by_col %in% names(dframe))
+  stopifnot("`by_col` must be a column in `match_to`" = by_col %in% names(match_to))
 
   # keep one column
-  to <- to[, by, with = FALSE]
-  to <- unique(to)
+  match_to <- match_to[, by_col, with = FALSE]
+  match_to <- unique(match_to)
 
   # set common key
-  setkeyv(dframe, by)
-  setkeyv(to, by)
+  setkeyv(dframe, by_col)
+  setkeyv(match_to, by_col)
 
   # inner join
-  dframe <- to[dframe, nomatch = 0]
+  dframe <- match_to[dframe, nomatch = 0]
 
   # keep selected columns
   dframe <- dframe[, select, with = FALSE]

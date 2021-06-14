@@ -103,8 +103,8 @@ add_timely_term<- function(dframe,
 
     # condition subset of midfield table ------------------------------
     DT <- filter_match(dframe = midfield_table,
-                        to = dframe,
-                        by = "mcid",
+                        match_to = dframe,
+                        by_col = "mcid",
                         select =  c("mcid", "term", "level"))
 
     # separate term encoding

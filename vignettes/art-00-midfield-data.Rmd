@@ -53,6 +53,17 @@ To maintain confidentiality of human subject data, the identifiers for students 
 
 In this vignette, we introduce the four data tables and briefly examine their contents before moving on in subsequent vignettes to operate on the data using the functions in midfieldr. 
 
+While we suggest installing and loading the data.table package, we use base R functions in the vignettes to reduce the cognitive load on new users. We attempt to introduce data.table syntax only when there is a clear benefit to the reader. 
+
+
+### Outline
+
+- Inspect the `student` data 
+- Inspect the `course` data 
+- Inspect the `term` data 
+- Inspect the `degree` data 
+
+
 ### This vignette uses
  
 packages
@@ -75,7 +86,12 @@ ls()
 
 To load the `student` data from midfielddata into memory, we run
 
-```{r}
+```{r echo = FALSE, cache = TRUE}
+# cache = TRUE speeds up repeats
+if(!exists("student")) data(student)
+```
+
+```r
 # loading a data set 
 data(student)
 ```
@@ -89,7 +105,14 @@ ls()
 
 If you look in the RStudio *Environment* pane, you should see `student` listed. We will typically load the data sets we need at the top of a script just after loading the midfielddata package. You need to load them only once in a session.  
 
-```{r}
+```{r echo = FALSE, cache = TRUE}
+# cache = TRUE speeds up repeats 
+if(!exists("course"))  data(course)
+if(!exists("term"))    data(term)
+if(!exists("degree"))  data(degree)
+```
+
+```r
 # load remaining data used in this vignette
 data(course)
 data(term)
@@ -164,27 +187,24 @@ str(student)
 `student` has `r obs_students` observations and occupies approximately `r size_students` memory. We can confirm that the student IDs are unique by running, 
 
 ```{r}
-# pull the vector of unique IDs
-id <- student[, unique(mcid)]
-
-# examine the result
-length(id)
+# number of unique IDs
+length(unique(student$mcid))
 ```
 
 Summarize some of the quantitative variables. 
 
 ```{r}
-summary(student[, sat_math])
+summary(student$sat_math)
 
-summary(student[, age])
+summary(student$age)
 ```
 
 Examine a few of the categorical variables and their values. 
 
 ```{r}
-sort(unique(student[, sex]))
+sort(unique(student$sex))
 
-sort(unique(student[, race]))
+sort(unique(student$race))
 ```
 
 ## Inpect the `course` data
@@ -207,39 +227,23 @@ Of the four practice data sets in midfielddata, `course` is by far the largest, 
 The number of unique students.  
 
 ```{r}
-# pull the vector of unique IDs
-id <- course[, unique(mcid)]
-
-# examine the result
-length(id)
+# number of unique IDs
+length(unique(course$mcid))
 ```
  
 Summarize a quantitative variable. 
 
 ```{r}
-summary(course[, hours_course])
+summary(course$hours_course)
 ```
 
-Examine some categorical variables and their values. 
+Examine a categorical variable and its values. 
 
 ```{r}
 # type of courses
-sort(unique(course[, type]))
-
-# how many unique course names
-all_course_names <- course[, .(course)]
-all_course_names <- all_course_names[course != ""]
-all_course_names <- unique(all_course_names)
-n <- nrow(all_course_names)
-n
+sort(unique(course$type))
 ```
 
-A sample of course names.
-
-```{r}
-# a random sample of courses
-print(all_course_names[sample(1:n, 20)], nrows = 20)
-```
 
 
 ## Inpect the `term` data
@@ -259,11 +263,8 @@ str(term)
 `term` has `r obs_terms` observations and occupies approximately `r size_terms` of memory. The number of unique students is found by, 
 
 ```{r}
-# pull the vector of unique IDs
-id <- term[, unique(mcid)]
-
-# examine the result
-length(id)
+# number of unique IDs
+length(unique(term$mcid))
 ```
 
 The number of unique students in `student` and `term` are not the same. To be recorded in `student`, students must be degree-seeking. To be recorded in `term`, students must complete a term. The data can include degree-seekers who fail to complete a term as well as term-completers not seeking a degree---hence the difference in numbers
@@ -271,17 +272,17 @@ The number of unique students in `student` and `term` are not the same. To be re
 Summarize some of the quantitative variables. 
 
 ```{r}
-summary(term[, hours_term])
+summary(term$hours_term)
 
-summary(term[, gpa_term])
+summary(term$gpa_term)
 ```
 
 Examine some categorical variables and their values.  
 
 ```{r}
-sort(unique(term[, level]))
+sort(unique(term$level))
 
-sort(unique(term[, standing]))
+sort(unique(term$standing))
 ```
 
 
@@ -302,11 +303,8 @@ str(degree)
 `degree` has `r obs_degrees` observations and occupies approximately `r size_degrees` memory. The number of unique students is found by
 
 ```{r}
-# pull the vector of unique IDs
-id <- degree[, unique(mcid)]
-
-# examine the result
-length(id)
+# number of unique IDs
+length(unique(degree$mcid))
 ```
 
 Thus we have `r obs_degrees` graduates (in `degree`) from the `r obs_students` students admitted (in `student`). 
@@ -314,9 +312,9 @@ Thus we have `r obs_degrees` graduates (in `degree`) from the `r obs_students` s
 Examine some categorical variables and their values. 
 
 ```{r}
-sort(unique(degree[, institution]))
+sort(unique(degree$institution))
 
-sort(unique(degree[, degree]))
+sort(unique(degree$degree))
 ```
 
 Checking if any of the degrees are recorded as NA results in an empty table, thus all the students in `degree` are graduates. 
@@ -344,7 +342,7 @@ To summarize a data frame in detail, try the following and compare results.
 
 ### Complete script
 
-Each vignette concludes with its code chunks collected in a single, condensed script. Some users like to copy and paste the to an R script of their own.  
+We conclude each vignette by collecting its code chunks in a single, condensed script for the convenience of those who wish to copy it into their own R file. 
 
 ```{r eval = FALSE}
 # packages used
@@ -352,7 +350,7 @@ library("midfieldr")
 library("midfielddata")
 library("data.table")
 
-# load data from midfielddata into memory
+# loading data
 data(student)
 data(course)
 data(term)
@@ -360,35 +358,32 @@ data(degree)
 
 # student
 str(student)
-length(student[, unique(mcid)])
-summary(student[, sat_math])
-summary(student[, age])
-sort(unique(student[, sex]))
-sort(unique(student[, race]))
+length(unique(student$mcid))
+summary(student$sat_math)
+summary(student$age)
+sort(unique(student$sex))
+sort(unique(student$race))
 
 # course
 str(course)
-length(course[, unique(mcid)])
-summary(course[, hours_course])
-sort(unique(course[, type]))
-some_courses <- course[, .(course)]
-some_courses <- some_courses[course != ""]
-some_courses <- unique(some_courses)
-n <- nrow(some_courses)
-print(some_courses[sample(1:n, 20)], nrows = 20)
+length(unique(course$mcid))
+summary(course$hours_course)
+sort(unique(course$type))
 
 # term
 str(term)
-length(term[, unique(mcid)])
-summary(term[, hours_term])
-summary(term[, gpa_term])
-sort(unique(term[, level]))
-sort(unique(term[, standing]))
+length(unique(term$mcid))
+summary(term$hours_term)
+summary(term$gpa_term)
+sort(unique(term$level))
+sort(unique(term$standing))
 
 # degree
 str(degree)
-length(degree[, unique(mcid)])
-sort(unique(degree[, institution]))
-sort(unique(degree[, degree]))
+length(unique(degree$mcid))
+sort(unique(degree$institution))
+sort(unique(degree$degree))
 degree[is.na(degree)]
 ```
+
+

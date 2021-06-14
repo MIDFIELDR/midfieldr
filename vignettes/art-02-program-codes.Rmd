@@ -51,11 +51,17 @@ The IPEDS standard encoding format is a two-digit number followed by a period, f
 
 The 2010 CIP codes are included with midfieldr in the data set `cip`. In this vignette, we examine strategies of searching `cip` for programs we want to study. 
 
+### Outline
+
+- Explore the taxonomy of academic programs 
+- Inspect the CIP data 
+- Practice searching  the CIP data using different approaches 
+
 ### This vignette uses
 
 midfieldr functions 
 
-- `filter_text()` 
+- `filter_search()` 
 
 packages
 
@@ -65,8 +71,11 @@ library("midfieldr")
 library("data.table")
 
 # optional code to control data.table printing
-options(datatable.print.nrows = 10, datatable.print.topn = 5)
+options(datatable.print.nrows = 10, 
+        datatable.print.topn  = 5, 
+        datatable.print.class = TRUE)
 ```
+
 
 
 ## Taxonomy of programs
@@ -80,31 +89,31 @@ Academic programs have three levels of codes and names:
 Loosely, the 6-digit level can be thought of as a specialty within a discipline, the 4-digit level is often equivalent to an academic department, and the 2-digit level is roughly equivalent to an academic college. For example, Geotechnical Engineering (140802) is a specialty in  Civil Engineering (1408) which is a department in the college of Engineering (14). 
 
 ```{r echo = FALSE}
-df <- filter_text(cip, "^41")
+df <- filter_search(cip, "^41")
 n41 <- nrow(df)
-n4102 <- nrow(filter_text(df, "^4102"))
-n4103 <- nrow(filter_text(df, "^4103"))
+n4102 <- nrow(filter_search(df, "^4102"))
+n4103 <- nrow(filter_search(df, "^4103"))
 name41 <- unique(df[, cip2name])
 
-df24 <- filter_text(cip, "^24")
+df24 <- filter_search(cip, "^24")
 n24 <- nrow(df24)
 name24 <- unique(df24[, cip2name])
 
-df51 <- filter_text(cip, "^51")
+df51 <- filter_search(cip, "^51")
 n51 <- nrow(df51)
 name51 <- unique(df51[, cip2name])
 
-df1313 <- filter_text(cip, "^1313")
+df1313 <- filter_search(cip, "^1313")
 n1313 <- nrow(df1313)
 name1313 <- unique(df1313[, cip2name])
 
-cip <- filter_text(cip) # removes data.frame class if present
+cip <- filter_search(cip) # removes data.frame class if present
 ```
 
 In the table below, we show all programs in the broad area of "`r name41`" (code 41) to illustrate the relationships among 2-, 4-, and 6-digit program codes and names in more detail. This 2-digit grouping is subdivided into `r length(unique(df[, cip4]))` groups at the 4-digit level (codes 4100--4199) which are further subdivided into `r n41` programs at the 6-digit level (codes 410000--419999). 
 
 ```{r echo=FALSE}
-sub_cip <- filter_text(cip, "^41")
+sub_cip <- filter_search(cip, "^41")
 kable2html(sub_cip)
 ```
 <br>
@@ -137,53 +146,57 @@ The number of unique programs.
 
 ```{r}
 # at the 2-digit level
-sort(unique(cip[, cip2]))
+sort(unique(cip$cip2))
 
 # at the 4-digit level
-length(unique(cip[, cip4]))
+sort(unique(cip$cip4))
 
 # at the 6-digit level
-length(unique(cip[, cip6]))
+length(unique(cip$cip6))
 ```
 
-A sample of program names, 
+A sample of program names (`sample()` uses a random number generator, so your result will differ from that shown)
+
+```{r echo = FALSE}
+set.seed(20210613)
+```
 
 ```{r}
-set.seed(20210529)
-some_programs <- cip[, .(cip4name)]
-print(some_programs[sample(1:300, 20)], nrows = 20)
+some_programs <- cip[, cip4name, drop = FALSE]
+sample(some_programs, 20)
+```
 
-# reset random seed
+```{r echo = FALSE}
 set.seed(NULL)
 ```
 
-## Filter using keywords
+## Filter using a keyword search
 
-`filter_text()` is the midfieldr function for searching the `cip` data set for program codes and names. View the help page by running
+`filter_search()` is the midfieldr function for searching the `cip` data set for program codes and names. View the help page by running
 
 ```r
-? filter_text()
+? filter_search()
 ```
 
-The variables in `cip` are all characters and `filter_text()` subsets a data frame using character search terms. The arguments are: 
+The variables in `cip` are all characters and `filter_search()` subsets a data frame using character search terms. The arguments are: 
 
 - `dframe` data frame to be subset
 - `keep_text` character vector of search text for retaining rows, not case-sensitive 
 - `drop_text` (optional) character vector of search text for dropping rows
 - `select` (optional) character vector of column names to search and return, default all columns  
 
-For example, filtering the CIP data for all programs containing the word "engineering" yields `r nrow(filter_text(cip, "engineering"))` observations. 
+For example, filtering the CIP data for all programs containing the word "engineering" yields `r nrow(filter_search(cip, "engineering"))` observations. 
 
 ```{r}
 # filter basics
-filter_text(dframe = cip, keep_text = "engineering")
+filter_search(dframe = cip, keep_text = "engineering")
 ```
 
-The first two argument names in `filter_text()` can be omitted. The optional `drop_text` and `select` arguments, however, must be named if used.
+The first two argument names in `filter_search()` can be omitted. The optional `drop_text` and `select` arguments, however, must be named if used.
 
 ```{r}
 # applying optional argument drop_text and select
-filter_text(cip, 
+filter_search(cip, 
             "engineering", 
             drop_text = c("engineering-related", 
                           "engineering related", 
@@ -196,7 +209,7 @@ Note that only unique rows are returned. Above we selected the 6-digit codes and
 
 ```{r}
 # applying optionalk argument drop_text and select
-filter_text(cip, 
+filter_search(cip, 
             c("engineering"), 
             drop_text = c("engineering-related", 
                           "engineering related", 
@@ -206,17 +219,17 @@ filter_text(cip,
 ```
 
 
-Suppose we want to find the CIP codes and names for all programs in Civil Engineering. The search is case-insensitive, so we start with the following code chunk. 
+Suppose we want to find the CIP codes and names for all programs in Civil Engineering. The search is insensitive to case, so we start with the following code chunk. 
 
 ```{r}
 # example 1 filter using keywords
-filter_text(cip, "civil")
+filter_search(cip, "civil")
 ```
 
 The same information is tabulated below to help you see the structure.  In the examples that follow, we show a table like this one instead of the R output. 
 
 ```{r echo = FALSE}
-sub_cip <- filter_text(cip, "civil")
+sub_cip <- filter_search(cip, "civil")
 # using kable_styling() for output but conceal from novice user
 kable2html(sub_cip)
 ```
@@ -228,13 +241,13 @@ The following code chunk could be read as, "Start with the `cip` data frame, the
 
 ```{r results = "hide"}
 # first search
-first_pass <- filter_text(cip, "civil")
+first_pass <- filter_search(cip, "civil")
 
 # refine the search
-second_pass <- filter_text(first_pass, "engineering")
+second_pass <- filter_search(first_pass, "engineering")
 
 # refine further
-third_pass <- filter_text(second_pass, drop_text = "technology")
+third_pass <- filter_search(second_pass, drop_text = "technology")
 ```
 
 ```{r echo = FALSE}
@@ -245,20 +258,20 @@ kable2html(third_pass)
 Seeing that all Civil Engineering programs have the same `cip4name`, we could have combined our arguments and obtained the same result. 
 
 ```r 
-filter_text(cip, "civil engineering", drop_text = "technology")
+filter_search(cip, "civil engineering", drop_text = "technology")
 ```
 
-## Filter using numerical codes
+## Filter using a numerical code search
 
 Suppose we want to study programs relating to German culture, language, and literature. Using  "german" for the `keep_text` value yields 
 
 ```{r results = "hide"}
 # example 2 filter using numerical codes
-filter_text(cip, "german")
+filter_search(cip, "german")
 ```
 
 ```{r echo = FALSE}
-sub_cip <- filter_text(cip, "german")
+sub_cip <- filter_search(cip, "german")
 kable2html(sub_cip)
 ```
 <br>
@@ -267,11 +280,11 @@ From the 6-digit program names we find only two that are of interest, German Stu
  
 ```r
 # character vector of search terms 
-filter_text(cip, c("050125", "160501"))
+filter_search(cip, c("050125", "160501"))
 ```
 
 ```{r echo = FALSE}
-sub_cip <- filter_text(cip, c("050125", "160501"))
+sub_cip <- filter_search(cip, c("050125", "160501"))
 kable2html(sub_cip)
 ```
 <br>
@@ -279,20 +292,20 @@ kable2html(sub_cip)
 If the 6-digit codes are entered as integers, they produce an error. 
  
 ```{r error = TRUE, purl = FALSE}
-filter_text(cip, c(050125, 160501))
+filter_search(cip, c(050125, 160501))
 ```
 
-## Filter using regular expressions
+## Filter using a regular expression search
 
 Specifying 4-digit codes yields a data frame all 6-digit programs containing the 4-digit string. We use the regular expression notation `^` to match the start of the strings.
 
 ```r
 # example 3 filter using regular expressions
-filter_text(cip, c("^1407", "^1408"))
+filter_search(cip, c("^1407", "^1408"))
 ```
 
 ```{r echo = FALSE}
-sub_cip <- filter_text(cip, c("^1407", "^1408"))
+sub_cip <- filter_search(cip, c("^1407", "^1408"))
 kable2html(sub_cip)
 ```
 <br>
@@ -301,11 +314,11 @@ The 2-digit series represent the most general groupings of related programs. Her
 
 ```r
 # 2-digit example
-filter_text(cip, "^54")
+filter_search(cip, "^54")
 ```
 
 ```{r echo = FALSE}
-sub_cip <- filter_text(cip, "^54")
+sub_cip <- filter_search(cip, "^54")
 kable2html(sub_cip)
 ```
 <br>
@@ -317,11 +330,11 @@ The series argument can include any combination of 2, 4, and 6-digit codes. It c
 codes_we_want <- c("^24", "^4102", "^450202")
 
 # a series with 2, 4, and 6-digits specified
-filter_text(cip, codes_we_want)
+filter_search(cip, codes_we_want)
 ```
 
 ```{r echo = FALSE}
-sub_cip <- filter_text(cip, codes_we_want)
+sub_cip <- filter_search(cip, codes_we_want)
 kable2html(sub_cip)
 ```
 <br>
@@ -334,7 +347,7 @@ For example, the following `keep_text` argument includes three search terms that
 
 ```{r message = TRUE}
 # unsuccessful terms produce a message
-sub_cip <- filter_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
+sub_cip <- filter_search(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 
 # but the successful terms are returned
 sub_cip
@@ -343,7 +356,7 @@ sub_cip
 However, as seen earlier, if none of the search terms are found, an error occurs. 
 
 ```{r error = TRUE, purl = FALSE}
-filter_text(cip, c("111111", "Bogus", "^55"))
+filter_search(cip, c("111111", "Bogus", "^55"))
 ```
 
 ## CIP data from another source
@@ -374,47 +387,49 @@ The vignette code chunks are collected below in a single, condensed script.
 library("midfieldr")
 library("data.table")
 
+# optional code to control data.table printing
+options(datatable.print.nrows = 10, 
+        datatable.print.topn  = 5, 
+        datatable.print.class = TRUE)
 # cip
 str(cip)
-sort(unique(cip[, cip2]))
-length(unique(cip[, cip4]))
-length(unique(cip[, cip6]))
-set.seed(20210529)
-some_programs <- cip[, .(cip4name)]
-print(some_programs[sample(1:300, 20)], nrows = 20)
-set.seed(NULL)
+sort(unique(cip$cip2))
+sort(unique(cip$cip4))
+length(unique(cip$cip6))
+some_programs <- cip[, cip4name, drop = FALSE]
+sample(some_programs, 20)
 
 # filter using keywords
-filter_text(dframe = cip, keep_text = "engineering")
-filter_text(cip, 
+filter_search(dframe = cip, keep_text = "engineering")
+filter_search(cip, 
             "engineering", 
             drop_text = c("engineering-related", 
                           "engineering related", 
                           "engineering technology", 
                           "engineering technologies"), 
             select = c("cip6", "cip6name"))
-filter_text(cip, 
+filter_search(cip, 
             c("engineering"), 
             drop_text = c("engineering-related", 
                           "engineering related", 
                           "engineering technology", 
                           "engineering technologies"), 
             select = c("cip4", "cip4name"))
-filter_text(cip, "civil")
-first_pass <- filter_text(cip, "civil")
-second_pass <- filter_text(first_pass, "engineering")
-third_pass <- filter_text(second_pass, drop_text = "technology")
-filter_text(cip, "civil engineering", drop_text = "technology")
+filter_search(cip, "civil")
+first_pass  <- filter_search(cip, "civil")
+second_pass <- filter_search(first_pass, "engineering")
+third_pass  <- filter_search(second_pass, drop_text = "technology")
+filter_search(cip, "civil engineering", drop_text = "technology")
 
 # filter using numerical codes
-filter_text(cip, "german")
-filter_text(cip, c("050125", "160501"))
-filter_text(cip, c("^1407", "^1408"))
-filter_text(cip, "^54")
+filter_search(cip, "german")
+filter_search(cip, c("050125", "160501"))
+filter_search(cip, c("^1407", "^1408"))
+filter_search(cip, "^54")
 codes_we_want <- c("^24", "^4102", "^450202")
-filter_text(cip, codes_we_want)
+filter_search(cip, codes_we_want)
 
 # when search terms cannot be found
-sub_cip <- filter_text(cip, c("050125", "111111", "160501", "Bogus", "^55"))
+sub_cip <- filter_search(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 sub_cip
 ```

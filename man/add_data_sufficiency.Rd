@@ -65,6 +65,6 @@ Other functions:
 \code{\link{condition_fye}()},
 \code{\link{condition_multiway}()},
 \code{\link{filter_match}()},
-\code{\link{filter_text}()}
+\code{\link{filter_search}()}
 }
 \concept{functions}

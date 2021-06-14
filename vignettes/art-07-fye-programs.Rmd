@@ -56,13 +56,12 @@ FYE students have been admitted to Engineering (CIP 14)---their status is neithe
 
 Therefore, to include FYE students in any persistence metric requiring a degree-granting "starting" program, we have to predict the engineering program the FYE student would have declared had they not been required to enroll in FYE. The vignette describes the prediction process and how the results are used. 
 
-### Options for predicting starting programs
+### Outline
 
 Two approaches are described in this vignette. 
 
-1. Use prepared predictions in `fye_start`, a built-in data set in midfieldr with predicted starting programs for all FYE students in the midfielddata practice data tables. 
-
-2. Perform your own imputation. Use `condition_fye()` to construct a data frame with appropriate predictor variables formatted such that it can be used as an input argument for the `mice()` function in the R package "mice" (multivariate imputation by chained equations). 
+- Use prepared predictions in `fye_start`, a built-in data set in midfieldr with predicted starting programs for all FYE students in the midfielddata practice data tables. 
+- Perform your own imputation. Use `condition_fye()` to construct a data frame with appropriate predictor variables formatted such that it can be used as an input argument for the `mice()` function in the R package "mice" (multivariate imputation by chained equations). 
 
 ### This vignette uses
 
@@ -70,7 +69,7 @@ midfieldr functions
 
 - `add_race_sex()`  
 - `filter_match()`
-- `filter_text()` 
+- `filter_search()` 
 - `condition_fye()`  
 
 packages
@@ -81,15 +80,25 @@ library("midfieldr")
 library("midfielddata")
 library("data.table")
 
-# load data tables from midfielddata
-data(student, term)
-
 # only if performing your own imputation 
 library("mice")
 
 # optional code to control data.table printing
-options(datatable.print.nrows = 10, datatable.print.topn = 5)
+options(datatable.print.nrows = 10, 
+        datatable.print.topn  = 5, 
+        datatable.print.class = TRUE)
 ```
+
+data
+
+```{r}
+# load data tables from midfielddata
+data(student, term)
+```
+
+
+
+
 
 ##  Use prepared predictions
 
@@ -135,9 +144,9 @@ We subset the `term` table for rows matching these student IDs. By matching IDs,
 ```{r}
 # subset term table by ID of case study students
 DT <- filter_match(term, 
-                    to = study_students, 
-                    by = "mcid", 
-                    select = c("mcid", "term", "cip6"))
+                   match_to = study_students, 
+                   by_col = "mcid", 
+                   select = c("mcid", "term", "cip6"))
 ```
 
 We set keys to organize the rows in block by ID and ordered terms. 
@@ -167,9 +176,9 @@ These data are subset again by matching program codes to those in `study_program
 ```{r}
 # filter for case study programs only 
 DT <- filter_match(DT, 
-                    to = study_programs, 
-                    by = "cip6", 
-                    select = c("mcid", "cip6"))
+                   match_to = study_programs, 
+                   by_col = "cip6", 
+                   select = c("mcid", "cip6"))
 
 # examine the result
 DT
@@ -197,9 +206,9 @@ Now, turn to the FYE students. We subset `fye_start` for our four programs. Befo
 # subset predicted FYE start programs 
 setnames(fye_start, old = "start", new = "cip6")
 study_fye <- filter_match(fye_start, 
-                           to = study_programs, 
-                           by = "cip6", 
-                           select = c("mcid", "cip6"))
+                          match_to = study_programs, 
+                          by_col = "cip6", 
+                          select = c("mcid", "cip6"))
 
 # examine the result
 study_fye
@@ -273,7 +282,7 @@ To collect these students, we start by obtaining all CIP codes that start with "
 
 ```{r}
 # get engineering CIP codes
-engr_cip <- filter_text(cip, keep_text = "^14")
+engr_cip <- filter_search(cip, keep_text = "^14")
 
 # examine the result
 engr_cip
@@ -284,9 +293,9 @@ To obtain the IDs of all students ever enrolled in these programs, we access the
 ```{r}
 # get IDs of all engineering students
 engr <- filter_match(term, 
-                      to = engr_cip, 
-                      by = "cip6",  
-                      select = "mcid")
+                     match_to = engr_cip, 
+                     by_col = "cip6",  
+                     select = "mcid")
 
 # examine the result
 engr
@@ -297,8 +306,8 @@ The students must all be degree-seeking, we want to subset rows of `engr` to kee
 ```{r}
 # limit the population to degree-seeking students 
 engr <- filter_match(engr,
-                      to = student,
-                      by = "mcid")
+                     match_to = student,
+                     by_col = "mcid")
 
 # examine the result
 engr
@@ -499,17 +508,17 @@ library("mice")
 
 # prepared predictions
 DT <- filter_match(term, 
-                    to = study_students, 
-                    by = "mcid", 
-                    select = c("mcid", "term", "cip6"))
+                   match_to = study_students, 
+                   by_col = "mcid", 
+                   select = c("mcid", "term", "cip6"))
 keys <- c("mcid", "term")
 setkeyv(DT, keys)
 DT <- DT[, .SD[1], by = "mcid"]
 setkey(DT, NULL)
 DT <- filter_match(DT, 
-                    to = study_programs, 
-                    by = "cip6", 
-                    select = c("mcid", "cip6"))
+                   match_to = study_programs, 
+                   by_col = "cip6", 
+                   select = c("mcid", "cip6"))
 
 # summarize for later
 DT_no_fye <- DT[, .N, by = "cip6"]
@@ -520,9 +529,9 @@ DT_no_fye <- DT_no_fye[order(-N), ..cols_we_want]
 # subset predicted FYE start programs 
 setnames(fye_start, old = "start", new = "cip6")
 study_fye <- filter_match(fye_start, 
-                           to = study_programs, 
-                           by = "cip6", 
-                           select = c("mcid", "cip6"))
+                          match_to = study_programs, 
+                          by_col = "cip6", 
+                          select = c("mcid", "cip6"))
 DT <- rbindlist(list(DT, study_fye))
 
 # group and summarize with FYE included
@@ -532,14 +541,14 @@ cols_we_want <- c("program", "N")
 DT_with_fye <- DT_with_fye[order(-N), ..cols_we_want]
 
 # perform your own prediction
-engr_cip <- filter_text(cip, keep_text = "^14")
+engr_cip <- filter_search(cip, keep_text = "^14")
 engr <- filter_match(term, 
-                      to = engr_cip, 
-                      by = "cip6",  
-                      select = "mcid")
+                     match_to = engr_cip, 
+                     by_col = "cip6",  
+                     select = "mcid")
 engr <- filter_match(engr,
-                      to = student,
-                      by = "mcid")
+                     match_to = student,
+                     by_col = "mcid")
 engr <- add_race_sex(engr, midfield_table = student)
 fye <- condition_fye(engr, midfield_table = term)
 
@@ -552,11 +561,11 @@ predictors <- framework[["predictorMatrix"]]
 predictors[, c("mcid", "cip6")] <- 0
 predictors[, c("institution", "race", "sex")]  <- c(0, 0, 0, 0, 1)
 fye_mids <- mice(
-    data = fye,
-    method = method,
-    predictorMatrix = predictors,
-    seed = 20180624,
-    printFlag = TRUE
+  data = fye,
+  method = method,
+  predictorMatrix = predictors,
+  seed = 20180624,
+  printFlag = TRUE
 )
 fye <- complete(fye_mids)
 
