@@ -28,6 +28,7 @@ graphs.
 }
 \seealso{
 Other case-study-data: 
+\code{\link{study_grad_rate}},
 \code{\link{study_stickiness}},
 \code{\link{study_students}}
 }

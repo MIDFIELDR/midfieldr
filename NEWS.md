@@ -13,6 +13,7 @@ Significant changes from earlier versions, no backwards compatibility, prompting
 - Remove dependency on dplyr and related packages 
 - Remove dependency on installing midfielddata 
 - Overhaul midfieldr functions completely 
+- switched to tinytest for unit testing 
 
 
 ## midfieldr 0.1.0 / 2018-06

@@ -139,6 +139,30 @@
 
 # -------------------------------------------------------------------
 
+#' Case-study graduation rate results
+#'
+#' Graduation rate metric results for Civil, Electrical,
+#' Industrial, and Mechanical Engineering programs from midfielddata. Results
+#' are grouped by program, race/ethnicity, and sex. Used in the case study
+#' developed in the vignettes.
+#'
+#' Graduation rate of a program is fraction of students starting in a
+#' program who graduate in that program.
+#'
+#' Data have also been subset to remove ambiguous levels of race/ethnicity.
+#'
+#' @format \code{data.table} with 31 rows and 3 columns keyed by
+#' program, race/ethnicity, and sex.
+#' \describe{
+#'  \item{program}{Character, instructional programs selected for study}
+#'  \item{race_sex}{Character, student race/ethnicity and sex}
+#'  \item{grad_rate}{Numerical, program graduation rate, a persistence metric}
+#' }
+#' @family case-study-data
+"study_grad_rate"
+
+# -------------------------------------------------------------------
+
 #' Student data for examples
 #'
 #' A small subset by row and column of the MIDFIELD student table
