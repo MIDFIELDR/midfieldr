@@ -1,8 +1,8 @@
 ---
-title: "MIDFIELD practice data"
+title: "Introduction to midfieldr"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{MIDFIELD practice data}
+  %\VignetteIndexEntry{Introduction to midfieldr}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -16,7 +16,7 @@ nocite: |
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(fig.path = here::here("man/figures", 
-                                            "art-00-midfield-data-"))
+                                            "art-00-introduction-"))
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
@@ -38,11 +38,20 @@ knitr::knit_hooks$set(inline = function(x) {
     prettyNum(round(x, 2))
   }
 })
+kable2html <- function(x, font_size = NULL, caption = NULL) {
+  font_size <- ifelse(is.null(font_size), 11, font_size)
+  kable_in <- knitr::kable(x, format = "html", caption = caption)
+  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
+}
 ```
 
 ## Introduction 
 
-The midfielddata package is the repository of the MIDFIELD practice data, with records organized in four tables keyed by student ID. 
+The *Multiple-Institution Database for Investigating Engineering Longitudinal Development* (MIDFIELD) is a partnership of US higher education institutions with engineering programs. MIDFIELD contains registrar's data for 1.7M undergraduates in all majors at 19 institutions from 1987--2019 [@Ohland+Long:2016].
+
+The midfieldr package provides functions specialized for manipulating MIDFIELD data. The midfielddata package provides practice data for users to learn about student record analysis using R. In this introduction, we inspect the practice data and briefly summarize the midfieldr functions. Subsequent vignettes illustrate the application of midfieldr functions in detail. 
+
+The midfielddata package organizes the student records in four tables keyed by student ID. 
 
 - `student`  
 - `course`  
@@ -53,30 +62,51 @@ To maintain confidentiality of human subject data, the identifiers for students 
 
 In this vignette, we introduce the four data tables and briefly examine their contents before moving on in subsequent vignettes to operate on the data using the functions in midfieldr. 
 
-While we suggest installing and loading the data.table package, we use base R functions in the vignettes to reduce the cognitive load on new users. We attempt to introduce data.table syntax only when there is a clear benefit to the reader. 
+We suggest installing and loading the data.table package. While we use base R functions in the vignettes to reduce the cognitive load on new users, there are times when the data.table syntax offers advantages in clarity and speed.
 
 
 ### Outline
 
+- Organize for practice 
+- Loading data
 - Inspect the `student` data 
 - Inspect the `course` data 
 - Inspect the `term` data 
 - Inspect the `degree` data 
-- Organize your project
+- Overview of midfieldr functions 
 
 
-### This vignette uses
- 
-packages
+## Organize for practice 
+
+We recommend that you always work within an RStudio Project and that you organize the file structure at the start of the project.  For practice working with midfieldr you might create an RStudio project `practice-midfieldr` that has the minimal structure:
+
+```
+/practice-midfieldr
+        /data       # raw data from any external source 
+        /results    # reproducible results:  graphs and tabulated data
+        /scripts    # R files, one per vignette 
+        practice-midfieldr.Rproj 
+```
+
+Some of the code snippets in the midfieldr vignettes are written with relative file paths that assume the existence of this minimal structure. Use any organization that suits your needs. 
+
+Reading:
+
+- Wilson, Bryan, et al. [-@Wilson+Bryan+others:2017] offer detailed advice for organizing computational projects. Highly recommended.  
+- [Using RStudio Projects](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects) provides instructions for creating RStudio projects.
+
+
+## Loading data
+
+These code snippets can be run in the Console, though for repeatability and exploration, some are more useful if typed into an R script. 
 
 ```{r}
-# packages used
+# packages used in this vignette
 library("midfieldr")
 library("midfielddata")
 library("data.table")
 ```
 
-### Loading data
 
 Use `data()` to load the midfielddata data tables into memory for use. For example, after loading the package with `library("midfielddata")` as we did above, you can run `ls()` to see that the environment contains zero objects, 
 
@@ -169,6 +199,10 @@ obs_courses <- nrow(course)
 var_courses <- ncol(course)
 size_courses <- "349 MB"
 ```
+
+
+
+
 
 ## Inpect the `student` data
 
@@ -333,37 +367,50 @@ To summarize a data frame in detail, try the following and compare results.
 
 2. Install the `skimr` package, load it with `library("skimr")`, and run `skim(x)`, where `x` is one of the data tables, for example, `skim(student)`, `skim(course)`, etc.  
 
-## Organize your practice 
 
-We recommend that you always work within an RStudio Project and that you organize the file structure at the start of the project.  For practice working with midfieldr you might create an RStudio project `practice-midfieldr` that has the minimal structure:
 
-```
-/practice-midfieldr
-        /data       # raw data from any external source 
-        /results    # reproducible results:  graphs and tabulated data
-        /scripts    # R files, one per vignette 
-        practice-midfieldr.Rproj 
-```
+## Overview of midfieldr functions
 
-Some of the code snippets in the midfieldr vignettes are written with relative file paths that assume the existence of this minimal structure. Use any organization that suits your needs---I have found a slightly more detailed structure to be useful for many of my data visualization projects:
+midfieldr functions are introduced in detail in subsequent vignettes, but we can introduce their general organization here. 
 
-```
-/project-name
-        /data       # processed versions of raw data
-        /data-raw   # raw data, read-only, can also include scripts for basic cleaning 
-        /manage     # project management, proposals, budgets, anything from collaborators  
-        /reports    # reproducible reports, R markdown files, bibliographies, CSL files, etc  
-        /results    # reproducible results:  graphs and tabulated data   
-        /scripts    # R files that convert data into results
-        LICENSE     # explicit licenses for text, code, and data 
-        README      # project overview
-        project-name.Rproj
+**`add_*`**    
+This family of functions takes working data frames as input and adds specific columns of interest without subsetting rows. 
+
+```{r echo = FALSE}
+df <- wrapr::build_frame(
+  "Function", "Action" |
+  "add_completion_timely()", "Add a column to evaluate program completion" |
+  "add_data_sufficiency()", "Add a column to evaluate data sufficiency" |
+  "add_institution()", "Add a column of institution names" |
+  "add_race_sex()", "Add two columns for student race/ethnicity and sex" |
+  "add_timely_term()", "Add a column of terms delimiting timely completion" 
+)
+kable2html(df, font_size = 12)
 ```
 
-Reading:
+**`filter_*`**    
+This family of functions takes working data frames as input and subsets rows that match conditions; selected columns are subset if specified.  
 
-- Wilson, Bryan, et al. [-@Wilson+Bryan+others:2017] offer detailed advice for organizing computational projects. Highly recommended.  
-- [Using RStudio Projects](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects) provides instructions for creating RStudio projects.
+```{r echo = FALSE}
+df <- wrapr::build_frame(
+  "Function", "Action" |
+  "filter_match()", "Subset rows by matching values in shared key columns" |
+  "filter_search()", "Subset rows that include matches to search strings" 
+)
+kable2html(df, font_size = 12)
+```
+
+**`condition_*`**    
+This family of functions takes highly-structured data frames as input and produces output data frames conditioned for particular tasks. 
+
+```{r echo = FALSE}
+df <- wrapr::build_frame(
+  "Function", "Action" |
+  "condition_fye()", "Condition FYE data for multiple imputation" |
+  "condition_multiway()", "Condition multiway data for graphing" 
+)
+kable2html(df, font_size = 12)
+```
 
 
 
