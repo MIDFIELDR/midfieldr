@@ -62,7 +62,10 @@ add_timely_term<- function(dframe,
 
     # force arguments after dots to be used by name
     wrapr::stop_if_dot_args(
-        substitute(list(...)), "Arguments after ... must be named,"
+        substitute(list(...)),
+        paste("Arguments after ... must be named.\n",
+              "* Did you forget to write `details = ` or `span = `?\n *")
+
     )
 
     # explicit arguments and NULL defaults if any

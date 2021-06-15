@@ -139,3 +139,92 @@
 
 # -------------------------------------------------------------------
 
+#' Student data for examples
+#'
+#' A small subset by row and column of the MIDFIELD student table
+#' for use in package examples.
+#'
+#' @format \code{data.table} with 100 rows and 6 columns keyed by
+#' student ID.
+#' \describe{
+#'  \item{mcid}{Character, anonymized student identifier}
+#'  \item{institution}{Character, anonymized institution name, e.g.,
+#'       Institution A, Institution B, etc.}
+#'  \item{transfer}{Character, stating whether the student is a First-Time in
+#'       College students or a First-Time Transfer student}
+#'  \item{hours_transfer}{Numeric, transfer hours accepted at the institution}
+#'  \item{race}{Character, race/ethnicity as self-reported by the student,
+#'       e.g., Asian, Black, Hispanic/LatinX, etc.}
+#'  \item{sex}{character, sex as self-reported by the student, values are
+#'       Female, Male, and Unknown}
+#' }
+#' @family toy-data
+"toy_student"
+
+# -------------------------------------------------------------------
+
+#' Course data for examples
+#'
+#' A small subset by row and column of the MIDFIELD course table
+#' for use in package examples.
+#'
+#' @format \code{data.table} with 4721 rows and 6 columns keyed by
+#' student ID.
+#' \describe{
+#'  \item{mcid}{Character, anonymized student identifier}
+#'  \item{institution}{Character, anonymized institution name, e.g.,
+#'       Institution A, Institution B, etc.}
+#'  \item{term}{character, academic year and term, format YYYYT}
+#'  \item{abbrev}{character, course alpha identifier, e.g. ENGR, MATH,
+#'  ENGL, composite key (see id)}
+#'  \item{number}{character, course numeric identifier, e.g. 101, 3429,
+#'  composite key (see id)}
+#'  \item{grade}{character, course grade, e.g., A+, A, A-, B+, I, NG, etc.}
+#' }
+#' @family toy-data
+"toy_course"
+
+# -------------------------------------------------------------------
+
+#' Term data for examples
+#'
+#' A small subset by row and column of the MIDFIELD term table
+#' for use in package examples.
+#'
+#' @format \code{data.table} with 100 rows and 6 columns keyed by
+#' student ID.
+#' \describe{
+#'  \item{mcid}{Character, anonymized student identifier}
+#'  \item{institution}{Character, anonymized institution name, e.g.,
+#'       Institution A, Institution B, etc.}
+#'  \item{term}{character, academic year and term, format YYYYT}
+#'  \item{cip6}{character, 6-digit CIP code of program in which a student
+#'  is enrolled in a term}
+#'  \item{level}{character, 01 Freshman, 02 Sophomore, etc.}
+#'  \item{hours_term}{numeric, credit hours earned in the term}
+#' }
+#' @family toy-data
+"toy_term"
+
+# -------------------------------------------------------------------
+
+#' Degree data for examples
+#'
+#' A small subset by row and column of the MIDFIELD degree table
+#' for use in package examples.
+#'
+#' @format \code{data.table} with 64 rows and 5 columns keyed by
+#' student ID.
+#' \describe{
+#'  \item{mcid}{Character, anonymized student identifier}
+#'  \item{institution}{Character, anonymized institution name, e.g.,
+#'       Institution A, Institution B, etc.}
+#'  \item{term}{character, academic year and term, format YYYYT, in which
+#'  a student completes their program}
+#'  \item{cip6}{character, 6-digit CIP code of program in which a student
+#'  earns a degree}
+#'  \item{degree}{character, type of degree awarded, e.g., Bachelor's
+#'  Degree, Bachelor of Arts, Bachelor of Science, etc.}
+#' }
+#' @family toy-data
+"toy_degree"

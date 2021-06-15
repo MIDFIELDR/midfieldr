@@ -57,6 +57,11 @@ filter_search(cip,
             keep_text = "^54",
             select = c("cip6", "cip4name"))
 
+# multiple passes to narrow the results
+first_pass  <- filter_search(cip, "civil")
+second_pass <- filter_search(first_pass, "engineering")
+filter_search(second_pass, drop_text = "technology")
+
 \dontrun{
 # unsuccessful terms produce a message
 filter_search(cip, c("050125", "111111", "160501", "Bogus", "^55"))

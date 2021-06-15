@@ -34,7 +34,17 @@ NULL
 #' @family filter_*
 #' @export
 #' @examples
-#' # TBD
+#' library("midfielddata")
+#' data(degree)
+#' filter_match(degree,
+#'              match_to = study_programs,
+#'              by_col   = "cip6",
+#'              select   = c("mcid", "institution", "cip6"))
+#'
+#'
+#'
+#'
+#'
 filter_match<- function(dframe,
                         match_to,
                         by_col,
@@ -43,7 +53,10 @@ filter_match<- function(dframe,
 
   # force arguments after dots to be used by name
   wrapr::stop_if_dot_args(
-    substitute(list(...)), "Arguments after ... must be named,"
+    substitute(list(...)),
+    paste("Arguments after ... must be named.\n",
+          "* Did you forget to write `select = `?\n *")
+
   )
 
   # explicit arguments

@@ -55,11 +55,33 @@ add_completion_timely <- function(dframe,
 
     # force arguments after dots to be used by name
     wrapr::stop_if_dot_args(
-        substitute(list(...)), "Arguments after ... must be named,"
+        substitute(list(...)),
+        paste("Arguments after ... must be named.\n",
+              "* Did you forget to write `details = `?\n *")
+
     )
 
-    # explicit arguments and NULL defaults if any
-    assert_explicit(dframe)
+
+
+    if (missing(dframe)) {
+        stop(paste("`dframe` is a required argument.\n",
+                   "* You did not include it."),
+             call. = FALSE
+        )
+    }
+    # # explicit arguments and NULL defaults if any
+    if (is.null(dframe)) {
+        stop(paste("`dframe` is a data frame.\n",
+                   "* You supplied a NULL argument."),
+             call. = FALSE
+        )
+    }
+
+
+
+
+
+    # assert_explicit(dframe)
     assert_explicit(midfield_table)
     details <- details %||% FALSE
 

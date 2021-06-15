@@ -44,7 +44,17 @@ key column does not have to be included in the vector of column names in
 \code{select}. The final operation is to subset for unique rows.
 }
 \examples{
-# TBD
+library("midfielddata")
+data(degree)
+filter_match(degree,
+             match_to = study_programs,
+             by_col   = "cip6",
+             select   = c("mcid", "institution", "cip6"))
+
+
+
+
+
 }
 \seealso{
 Other filter_*: 

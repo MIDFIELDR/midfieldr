@@ -59,7 +59,9 @@ condition_multiway <- function(dframe, ..., details = NULL) {
 
   # force arguments after dots to be used by name
   wrapr::stop_if_dot_args(
-    substitute(list(...)), "Arguments after ... must be named,"
+    substitute(list(...)),
+    msg = paste("Arguments after ... must be named.\n",
+          "* Did you forget to write `details = ` ?\n *")
   )
 
   # explicit arguments and NULL defaults if any
