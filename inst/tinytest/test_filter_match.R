@@ -5,13 +5,13 @@ test_filter_match <- function() {
     data(study_students)
 
     # obtain the student subset
-    load("../extdata/subset_student.rda")
+    load("../tinytest/subset_student.rda")
 
     # for interactive use only
-    load("inst/extdata/subset_student.rda")
-    load("inst/extdata/subset_course.rda")
-    load("inst/extdata/subset_term.rda")
-    load("inst/extdata/subset_degree.rda")
+    # load("inst/extdata/subset_student.rda")
+    # load("inst/extdata/subset_course.rda")
+    # load("inst/extdata/subset_term.rda")
+    # load("inst/extdata/subset_degree.rda")
 
        subset_student <- subset_student[, .(mcid, institution, race, sex)]
 
