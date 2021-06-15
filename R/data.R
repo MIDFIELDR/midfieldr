@@ -151,7 +151,7 @@
 #'
 #' Data have also been subset to remove ambiguous levels of race/ethnicity.
 #'
-#' @format \code{data.table} with 31 rows and 3 columns keyed by
+#' @format \code{data.table} with 32 rows and 3 columns keyed by
 #' program, race/ethnicity, and sex.
 #' \describe{
 #'  \item{program}{Character, instructional programs selected for study}
