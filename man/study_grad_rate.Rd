@@ -5,7 +5,7 @@
 \alias{study_grad_rate}
 \title{Case-study graduation rate results}
 \format{
-\code{data.table} with 31 rows and 3 columns keyed by
+\code{data.table} with 32 rows and 3 columns keyed by
 program, race/ethnicity, and sex.
 \describe{
  \item{program}{Character, instructional programs selected for study}
