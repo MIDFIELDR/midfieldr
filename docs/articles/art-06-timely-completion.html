@@ -177,9 +177,11 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span>
 
 <span class="co"># optional code to control data.table printing</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.nrows <span class="op">=</span> <span class="fl">10</span>, 
-        datatable.print.topn  <span class="op">=</span> <span class="fl">5</span>, 
-        datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>
+  datatable.print.nrows <span class="op">=</span> <span class="fl">10</span>,
+  datatable.print.topn <span class="op">=</span> <span class="fl">5</span>,
+  datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span></code></pre></div>
 <p>data</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># load data tables from midfielddata</span>
@@ -209,9 +211,10 @@
 <p>To confirm that the pool of students are all degree-seeking, we use <code><a href="../reference/filter_match.html">filter_match()</a></code> to match to the IDs in the <code>student</code> table.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># limit population to degree-seeking students</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">study_students</span>, 
-                   match_to <span class="op">=</span> <span class="va">student</span>, 
-                   by_col <span class="op">=</span> <span class="st">"mcid"</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">study_students</span>,
+  match_to <span class="op">=</span> <span class="va">student</span>,
+  by_col <span class="op">=</span> <span class="st">"mcid"</span>
+<span class="op">)</span>
 
 <span class="co"># examine the result</span>
 <span class="va">DT</span>
@@ -271,10 +274,10 @@
 </ul>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># estimate the timely completion term with details shown</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, 
-                      midfield_table <span class="op">=</span> <span class="va">term</span>, 
-                      details <span class="op">=</span> <span class="cn">TRUE</span>
-                      <span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>,
+  midfield_table <span class="op">=</span> <span class="va">term</span>,
+  details <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 <span class="va">DT</span>
 <span class="co">#&gt;              mcid   cip6 term_i      level_i adj_span timely_term</span>
 <span class="co">#&gt;            &lt;char&gt; &lt;char&gt; &lt;char&gt;       &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span>
@@ -292,10 +295,10 @@
 <p>If the input data frame has existing columns matching any of the new added columns, the existing columns are overwritten. Thus, you can repeat running the function and still obtain the expected results,</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># repeat</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, 
-                      midfield_table <span class="op">=</span> <span class="va">term</span>, 
-                      details <span class="op">=</span> <span class="cn">TRUE</span>
-                      <span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>,
+  midfield_table <span class="op">=</span> <span class="va">term</span>,
+  details <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 <span class="va">DT</span>
 <span class="co">#&gt;              mcid   cip6 term_i      level_i adj_span timely_term</span>
 <span class="co">#&gt;            &lt;char&gt; &lt;char&gt; &lt;char&gt;       &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span>
@@ -313,10 +316,10 @@
 <p>And you can run the function again, effectively removing the details columns with no effect on the main outcome,</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># remove details</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, 
-                      midfield_table <span class="op">=</span> <span class="va">term</span>, 
-                      details <span class="op">=</span> <span class="cn">FALSE</span>
-                      <span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>,
+  midfield_table <span class="op">=</span> <span class="va">term</span>,
+  details <span class="op">=</span> <span class="cn">FALSE</span>
+<span class="op">)</span>
 <span class="va">DT</span>
 <span class="co">#&gt;              mcid   cip6 timely_term</span>
 <span class="co">#&gt;            &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span>
@@ -341,8 +344,9 @@
 </ul>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_timely.html">add_completion_timely</a></span><span class="op">(</span><span class="va">DT</span>,
-                            midfield_table <span class="op">=</span> <span class="va">degree</span>, 
-                            details <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+  midfield_table <span class="op">=</span> <span class="va">degree</span>,
+  details <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 <span class="va">DT</span>
 <span class="co">#&gt;              mcid   cip6 timely_term term_degree completion completion_timely</span>
 <span class="co">#&gt;            &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;     &lt;lgcl&gt;            &lt;lgcl&gt;</span>
@@ -360,8 +364,9 @@
 
 <span class="co"># no details</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_timely.html">add_completion_timely</a></span><span class="op">(</span><span class="va">DT</span>,
-                            midfield_table <span class="op">=</span> <span class="va">degree</span>, 
-                            details <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+  midfield_table <span class="op">=</span> <span class="va">degree</span>,
+  details <span class="op">=</span> <span class="cn">FALSE</span>
+<span class="op">)</span>
 <span class="va">DT</span>
 <span class="co">#&gt;              mcid   cip6 timely_term completion_timely</span>
 <span class="co">#&gt;            &lt;char&gt; &lt;char&gt;      &lt;char&gt;            &lt;lgcl&gt;</span>
@@ -383,8 +388,9 @@
 <p>This step requires <code>timely_term</code> and <code>institution</code> column in input.</p>
 <p>To get institution</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_institution.html">add_institution</a></span><span class="op">(</span><span class="va">DT</span>, 
-                      midfield_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_institution.html">add_institution</a></span><span class="op">(</span><span class="va">DT</span>,
+  midfield_table <span class="op">=</span> <span class="va">term</span>
+<span class="op">)</span>
 <span class="va">DT</span>
 <span class="co">#&gt;              mcid   institution   cip6 timely_term completion_timely</span>
 <span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;      &lt;char&gt;            &lt;lgcl&gt;</span>
@@ -404,9 +410,10 @@
 </ul>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># add column with details</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, 
-                           midfield_table <span class="op">=</span> <span class="va">term</span>, 
-                           details <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>,
+  midfield_table <span class="op">=</span> <span class="va">term</span>,
+  details <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 <span class="va">DT</span>
 <span class="co">#&gt;              mcid   institution   cip6 timely_term completion_timely inst_limit</span>
 <span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;      &lt;char&gt;            &lt;lgcl&gt;     &lt;char&gt;</span>
@@ -437,9 +444,10 @@
 
 
 <span class="co"># add column without details</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, 
-                           midfield_table <span class="op">=</span> <span class="va">term</span>, 
-                           details <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>,
+  midfield_table <span class="op">=</span> <span class="va">term</span>,
+  details <span class="op">=</span> <span class="cn">FALSE</span>
+<span class="op">)</span>
 <span class="va">DT</span>
 <span class="co">#&gt;              mcid   institution   cip6 timely_term completion_timely</span>
 <span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;      &lt;char&gt;            &lt;lgcl&gt;</span>

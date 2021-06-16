@@ -173,9 +173,11 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span>
 
 <span class="co"># optional code to format data.table printing</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.nrows <span class="op">=</span> <span class="fl">10</span>, 
-        datatable.print.topn  <span class="op">=</span> <span class="fl">5</span>, 
-        datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>
+  datatable.print.nrows <span class="op">=</span> <span class="fl">10</span>,
+  datatable.print.topn <span class="op">=</span> <span class="fl">5</span>,
+  datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span></code></pre></div>
 <p>data</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># load data tables from midfielddata</span>
@@ -206,10 +208,11 @@
 <span class="co">#&gt; 12: 143501 Industrial Engineering</span></code></pre></div>
 <p>To obtain the students enrolled in the case study programs, we use <code><a href="../reference/filter_match.html">filter_match()</a></code> to access the <code>term</code> table.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">case_students</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">term</span>, 
-                              match_to <span class="op">=</span> <span class="va">study_programs</span>, 
-                              by_col <span class="op">=</span> <span class="st">"cip6"</span>, 
-                              select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"cip6"</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">case_students</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">term</span>,
+  match_to <span class="op">=</span> <span class="va">study_programs</span>,
+  by_col <span class="op">=</span> <span class="st">"cip6"</span>,
+  select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"cip6"</span><span class="op">)</span>
+<span class="op">)</span>
 <span class="va">case_students</span>
 <span class="co">#&gt;               mcid   cip6</span>
 <span class="co">#&gt;             &lt;char&gt; &lt;char&gt;</span>
@@ -231,9 +234,10 @@
 <p>A necessary prerequisite for applying the data sufficiency criterion is to determine a timely completion term for every prospective student in a study. To confirm that the pool of students are all degree-seeking, we use <code><a href="../reference/filter_match.html">filter_match()</a></code> to match to the IDs in the <code>student</code> table.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># limit population to degree-seeking students</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">case_students</span>, 
-                   match_to <span class="op">=</span> <span class="va">student</span>, 
-                   by_col <span class="op">=</span> <span class="st">"mcid"</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">case_students</span>,
+  match_to <span class="op">=</span> <span class="va">student</span>,
+  by_col <span class="op">=</span> <span class="st">"mcid"</span>
+<span class="op">)</span>
 
 <span class="co"># examine the result</span>
 <span class="va">DT</span>
@@ -296,9 +300,10 @@
 <p>The potential use of these data are to implement one’s own heuristic for determining timely completion terms.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># show details</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, 
-                      midfield_table <span class="op">=</span> <span class="va">term</span>, 
-                      details <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>,
+  midfield_table <span class="op">=</span> <span class="va">term</span>,
+  details <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 <span class="va">DT</span>
 <span class="co">#&gt;               mcid   cip6 term_i      level_i adj_span timely_term</span>
 <span class="co">#&gt;             &lt;char&gt; &lt;char&gt; &lt;char&gt;       &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span>
@@ -316,9 +321,10 @@
 <p>If the input data frame has an existing column name matching any of the added column names, the existing columns are deleted. For example, having examined the details, you can delete them (especially useful in an interactive session) by running the same code with details set to FALSE.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># remove details</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, 
-                      midfield_table <span class="op">=</span> <span class="va">term</span>, 
-                      details <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>,
+  midfield_table <span class="op">=</span> <span class="va">term</span>,
+  details <span class="op">=</span> <span class="cn">FALSE</span>
+<span class="op">)</span>
 <span class="va">DT</span>
 <span class="co">#&gt;               mcid   cip6 timely_term</span>
 <span class="co">#&gt;             &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span>
@@ -343,8 +349,9 @@
 <p>The function has two arguments, the data frame to which the new variable is added and the <code>term</code> MIDFIELD data table (or equivalent). In the event that a student were admitted to more than one institution over their history in the data, the function reports the institution at which the student was enrolled for the greatest number of terms.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># add institutions</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_institution.html">add_institution</a></span><span class="op">(</span><span class="va">DT</span>, 
-                      midfield_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_institution.html">add_institution</a></span><span class="op">(</span><span class="va">DT</span>,
+  midfield_table <span class="op">=</span> <span class="va">term</span>
+<span class="op">)</span>
 
 <span class="co"># examine the result</span>
 <span class="va">DT</span>
@@ -369,8 +376,9 @@
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># add column with details</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>,
-                           midfield_table <span class="op">=</span> <span class="va">term</span>,
-                           details <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+  midfield_table <span class="op">=</span> <span class="va">term</span>,
+  details <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 <span class="co"># examine the result</span>
 <span class="va">DT</span>
 <span class="co">#&gt;               mcid   institution   cip6 timely_term inst_limit data_sufficiency</span>
@@ -390,8 +398,9 @@
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># without details</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>,
-                           midfield_table <span class="op">=</span> <span class="va">term</span>,
-                           details <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+  midfield_table <span class="op">=</span> <span class="va">term</span>,
+  details <span class="op">=</span> <span class="cn">FALSE</span>
+<span class="op">)</span>
 <span class="co"># examine the result</span>
 <span class="va">DT</span>
 <span class="co">#&gt;               mcid   institution   cip6 timely_term data_sufficiency</span>
@@ -483,10 +492,10 @@
 <code class="sourceCode R"><span class="co"># group and summarize</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_students</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"cip6"</span><span class="op">]</span>
 
-<span class="co"># join the program names </span>
+<span class="co"># join the program names</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">study_programs</span>, by <span class="op">=</span> <span class="st">"cip6"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
-<span class="co">#examine the result</span>
+<span class="co"># examine the result</span>
 <span class="va">DT</span>
 <span class="co">#&gt;      cip6     N                program</span>
 <span class="co">#&gt;    &lt;char&gt; &lt;int&gt;                 &lt;char&gt;</span>
@@ -511,10 +520,12 @@
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">N</span>, y <span class="op">=</span> <span class="va">program</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">3000</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Number of students"</span>, 
-       y <span class="op">=</span> <span class="st">""</span>, 
-       title <span class="op">=</span> <span class="st">"Case study students"</span>, 
-       caption <span class="op">=</span> <span class="st">"Source: midfielddata"</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>
+    x <span class="op">=</span> <span class="st">"Number of students"</span>,
+    y <span class="op">=</span> <span class="st">""</span>,
+    title <span class="op">=</span> <span class="st">"Case study students"</span>,
+    caption <span class="op">=</span> <span class="st">"Source: midfielddata"</span>
+  <span class="op">)</span></code></pre></div>
 <p><img src="../man/figures/art-04-data-sufficiency-fig2-1.png" width="70%" style="display: block; margin: auto;"></p>
 </div>
 <div id="appendix" class="section level2">
@@ -535,22 +546,25 @@
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span>, <span class="va">degree</span><span class="op">)</span>
 
 <span class="co"># Case study students</span>
-<span class="va">case_students</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">term</span>, 
-                              match_to <span class="op">=</span> <span class="va">study_programs</span>, 
-                              by_col <span class="op">=</span> <span class="st">"cip6"</span>, 
-                              select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"cip6"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">case_students</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">term</span>,
+  match_to <span class="op">=</span> <span class="va">study_programs</span>,
+  by_col <span class="op">=</span> <span class="st">"cip6"</span>,
+  select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"cip6"</span><span class="op">)</span>
+<span class="op">)</span>
 
 <span class="co"># Estimate the timely completion term</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">case_students</span>, 
-                   match_to <span class="op">=</span> <span class="va">student</span>, 
-                   by_col <span class="op">=</span> <span class="st">"mcid"</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">case_students</span>,
+  match_to <span class="op">=</span> <span class="va">student</span>,
+  by_col <span class="op">=</span> <span class="st">"mcid"</span>
+<span class="op">)</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, midfield_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
 
 <span class="co"># Determine data sufficiency</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_institution.html">add_institution</a></span><span class="op">(</span><span class="va">DT</span>, midfield_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>,
-                           midfield_table <span class="op">=</span> <span class="va">term</span>,
-                           details <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+  midfield_table <span class="op">=</span> <span class="va">term</span>,
+  details <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 
 <span class="co"># Subset data for data sufficiency</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">]</span>
@@ -564,10 +578,12 @@
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">N</span>, y <span class="op">=</span> <span class="va">program</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">3000</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Number of students"</span>, 
-       y <span class="op">=</span> <span class="st">""</span>, 
-       title <span class="op">=</span> <span class="st">"Case study students"</span>, 
-       caption <span class="op">=</span> <span class="st">"Source: midfielddata"</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>
+    x <span class="op">=</span> <span class="st">"Number of students"</span>,
+    y <span class="op">=</span> <span class="st">""</span>,
+    title <span class="op">=</span> <span class="st">"Case study students"</span>,
+    caption <span class="op">=</span> <span class="st">"Source: midfielddata"</span>
+  <span class="op">)</span></code></pre></div>
 <p><img src="../man/figures/art-04-data-sufficiency-unnamed-chunk-19-1.png" width="70%" style="display: block; margin: auto;"></p>
 </div>
 </div>
