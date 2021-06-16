@@ -4,7 +4,7 @@ NULL
 
 #' Subset rows that include matches to search strings
 #'
-#' Subset a data frame, retaining unique rows that match or partially match
+#' Subset a data frame, retaining rows that match or partially match
 #' a vector of character strings. Columns are not subset unless selected in
 #' an optional argument. Most commonly used for searching the CIP data set.
 #'
@@ -22,7 +22,7 @@ NULL
 #'        default all columns.
 #' @return A \code{data.table} with the following properties:
 #' \itemize{
-#'     \item Unique rows matching elements of \code{keep_text}.
+#'     \item Rows matching elements of \code{keep_text}.
 #'     \item All columns or those specified by \code{select}.
 #'     \item Grouping structures are not preserved.
 #' }
@@ -105,13 +105,11 @@ filter_search <- function(dframe,
 
   # stop if all rows have been eliminated
   if (abs(nrow(DT) - 0) < .Machine$double.eps^0.5) {
-    stop(
-      paste(
-        "The search result is empty. Either 'keep_text' terms were not",
-        "found or 'drop_text' eliminated every row."
-      ),
-      call. = FALSE
-    )
+    stop(paste("The search result is empty. Potential causes include:\n",
+               "* 'select' columns (if used) do not contain the search terms.\n",
+               "* 'dframe' does not contain the search terms.\n",
+               "* 'drop_text' has eliminated all rows."),
+         call. = FALSE)
   }
 
   # message if a search term was not found
@@ -138,7 +136,6 @@ filter_search <- function(dframe,
 
   # return
   setkey(DT, NULL)
-  DT <- unique(DT)
 
   # enable printing (see data.table FAQ 2.23)
   DT[]

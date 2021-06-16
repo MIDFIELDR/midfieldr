@@ -15,7 +15,7 @@ NULL
 #'
 #' Column subsetting occurs after the inner join, so the
 #' key column does not have to be included in the vector of column names in
-#' \code{select}. The final operation is to subset for unique rows.
+#' \code{select}.
 #'
 #' @param dframe Data frame to be subset and returned. Must contain the key
 #'        column named in \code{by_col}.
@@ -27,20 +27,14 @@ NULL
 #'        default all columns.
 #' @return A \code{data.table} with the following properties:
 #' \itemize{
-#'     \item Unique rows with matching values.
+#'     \item Rows with matching values.
 #'     \item All columns or those specified by \code{select}.
 #'     \item Grouping structures are not preserved.
 #' }
 #' @family filter_*
 #' @export
 #' @examples
-#' library("midfielddata")
-#' data(degree)
-#' filter_match(degree,
-#'   match_to = study_programs,
-#'   by_col = "cip6",
-#'   select = c("mcid", "institution", "cip6")
-#' )
+#' TBD
 filter_match <- function(dframe,
                          match_to,
                          by_col,
@@ -94,8 +88,6 @@ filter_match <- function(dframe,
 
   # keep selected columns
   dframe <- dframe[, select, with = FALSE]
-  dframe <- unique(dframe)
-
   setkey(dframe, NULL)
 
   # enable printing (see data.table FAQ 2.23)

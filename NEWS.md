@@ -1,5 +1,5 @@
 
-## midfieldr 1.0.0.9014 / 2021-06
+## midfieldr 1.0.0.9015 / 2021-06
 
 Significant changes from earlier versions, no backwards compatibility, prompting version number change to 1.0.0
 
@@ -12,9 +12,9 @@ Significant changes from earlier versions, no backwards compatibility, prompting
 - Edit functions to depend on data.table functionality 
 - Remove dependency on dplyr and related packages 
 - Remove dependency on installing midfielddata 
+- Omit unique() and end of filter_* functions
 - Overhaul midfieldr functions completely 
-- switched to tinytest for unit testing 
-
+- switched to tinytest for unit testing
 
 ## midfieldr 0.1.0 / 2018-06
 

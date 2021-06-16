@@ -21,13 +21,13 @@ default all columns.}
 \value{
 A \code{data.table} with the following properties:
 \itemize{
-    \item Unique rows matching elements of \code{keep_text}.
+    \item Rows matching elements of \code{keep_text}.
     \item All columns or those specified by \code{select}.
     \item Grouping structures are not preserved.
 }
 }
 \description{
-Subset a data frame, retaining unique rows that match or partially match
+Subset a data frame, retaining rows that match or partially match
 a vector of character strings. Columns are not subset unless selected in
 an optional argument. Most commonly used for searching the CIP data set.
 }

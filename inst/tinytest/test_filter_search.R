@@ -39,7 +39,7 @@ test_filter_search <- function() {
 
     # Result is correct
     expect_equal(ans,
-                 filter_search(music_cip, select = select_these))
+                 unique(filter_search(music_cip, select = select_these)))
 
     # Select produces correct columns
     expect_equal(select_these,
@@ -59,24 +59,21 @@ test_filter_search <- function() {
 
     # Result is empty if drop_text is all-inclusive
     expect_error(
-        filter_search(music_cip,
-                      drop_text = music_codes),
-        paste("The search result is empty. Either 'keep_text' terms were not",
-              "found or 'drop_text' eliminated every row.")
+        filter_search(music_cip, drop_text = music_codes),
     )
 
     # Result is empty if keep_text is misspelled and therefore not found
     expect_error(
-        filter_search(music_cip, keep_text = "Brasss"),
-        paste("The search result is empty. Either 'keep_text' terms were not",
-              "found or 'drop_text' eliminated every row.")
+        filter_search(music_cip, keep_text = "Brasss")
     )
+
+    # Result is empty if the selected columns do not contain the search terms
 
     # Message if some keep_text not found
     incorrect_cip_text <- c("Bogus", "111111")
     expect_message(
-        filter_search(music_cip, keep_text = c(music_codes, incorrect_cip_text)),
-        "Can't find these terms: Bogus, 111111"
+        filter_search(music_cip,
+                      keep_text = c(music_codes, incorrect_cip_text))
     )
 
     # Non-character columns coerced to text
