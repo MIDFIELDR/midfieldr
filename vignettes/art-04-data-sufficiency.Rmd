@@ -1,16 +1,17 @@
 ---
 title: "Data sufficiency"
+author: "Richard Layton"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
 output: rmarkdown::html_vignette
+csl: ../inst/body-and-society.csl
 vignette: >
   %\VignetteIndexEntry{Data sufficiency}
-  %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
-  chunk_output_type: console
-bibliography: ../inst/REFERENCES.bib
-csl: ../inst/body-and-society.csl
-link-citations: yes
-resource_files:
+  %\VignetteEncoding{UTF-8}
+nocite: | 
+resource_files: 
   - ../man/figures/art-04-data-sufficiency-fig1-1.png
   - ../man/figures/art-04-data-sufficiency-fig2-1.png
 ---
@@ -271,6 +272,14 @@ case_students <- filter_match(term,
 case_students
 ```
 
+Delete duplicate rows, if any, 
+
+```{r}
+case_students <- unique(case_students)
+case_students
+```
+
+
 ## Estimate the timely completion term 
 
 A necessary prerequisite for applying the data sufficiency criterion is to determine a timely completion term for every prospective student in a study. To confirm that the pool of students are all degree-seeking, we use `filter_match()` to match to the IDs in the `student` table. 
@@ -283,6 +292,7 @@ DT <- filter_match(case_students,
 )
 
 # examine the result
+DT <- unique(DT)
 DT
 ```
 
@@ -414,8 +424,6 @@ Having performed the subset, the working columns we used to get to this point ca
 
 ```{r}
 DT <- DT[, .(mcid, cip6)]
-
-DT
 ```
 
 Again, we suggest saving intermediate results like these. This data frame of IDs and CIP codes is saved in midfieldr as the data set `study_students`. View its help page by running
@@ -442,6 +450,9 @@ all.equal(DT, study_students)
 We can create a simple dot chart to compare the numbers of students in these programs. 
 
 ```{r}
+# delete duplicate rows, if any, before counting
+DT <- unique(DT)
+
 # group and summarize
 DT <- study_students[, .N, by = "cip6"]
 
@@ -502,12 +513,14 @@ case_students <- filter_match(term,
   by_col = "cip6",
   select = c("mcid", "cip6")
 )
+case_students <- unique(case_students)
 
 # Estimate the timely completion term
 DT <- filter_match(case_students,
   match_to = student,
   by_col = "mcid"
 )
+DT <- unique(DT)
 DT <- add_timely_term(DT, midfield_table = term)
 
 # Determine data sufficiency
@@ -522,6 +535,7 @@ DT <- DT[data_sufficiency == TRUE]
 DT <- DT[, .(mcid, cip6)]
 
 # Compare programs
+DT <- unique(DT)
 DT <- study_students[, .N, by = "cip6"]
 DT <- merge(DT, study_programs, by = "cip6", all.x = TRUE)
 DT[, program := as.factor(program)]

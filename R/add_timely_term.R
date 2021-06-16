@@ -1,6 +1,9 @@
+
+
 #' @import data.table
 #' @importFrom wrapr stop_if_dot_args
 NULL
+
 
 #' Add a column of terms delimiting timely completion
 #'
@@ -50,10 +53,18 @@ NULL
 #'           columns \code{term_i}, \code{level_i}, and \code{adj_span}.
 #'     \item Grouping structures are not preserved.
 #' }
+#'
+#'
 #' @family add_*
-#' @export
+#'
+#'
 #' @examples
 #' # TBD
+#'
+#'
+#' @export
+#'
+#'
 add_timely_term <- function(dframe,
                             midfield_table,
                             ...,

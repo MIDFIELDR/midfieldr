@@ -44,7 +44,49 @@ key column does not have to be included in the vector of column names in
 \code{select}.
 }
 \examples{
-TBD
+
+
+# Start with a toy sample of student (built-in data set)
+str(toy_student)
+
+
+# Filter by matching IDs of graduates
+x_student <- filter_match(toy_student,
+                          match_to = toy_degree,
+                          by_col   = "mcid")
+# Note change in number of rows
+str(x_student)
+
+
+# Same filter and select 3 columns only
+x_student <- filter_match(toy_student,
+                          match_to = toy_degree,
+                          by_col   = "mcid",
+                          select   = c("mcid", "race", "sex"))
+str(x_student)
+
+
+# Filter term data for engineering program codes (start with "14")
+engr_term <- toy_term[grepl("^14", cip6), ]
+str(engr_term)
+
+
+# Filter student by matching IDs of engineering students
+x_student <- filter_match(toy_student,
+                   match_to = engr_term,
+                   by_col   = "mcid",
+                   select   = c("mcid", "institution", "transfer", "sex"))
+str(x_student)
+
+
+# The 'by_col' column does not have to be included in the `select` columns
+x_student <- filter_match(toy_student,
+                          match_to = engr_term,
+                          by_col   = "mcid",
+                          select   = c("institution", "transfer", "sex"))
+str(x_student)
+
+
 }
 \seealso{
 Other filter_*: 

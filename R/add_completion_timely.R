@@ -1,7 +1,10 @@
+
+
 #' @import data.table
 #' @importFrom wrapr stop_if_dot_args
 #' @importFrom stats na.omit
 NULL
+
 
 #' Add a column to evaluate program completion
 #'
@@ -44,10 +47,19 @@ NULL
 #'           columns \code{completion} and \code{term_degree}.
 #'     \item Grouping structures are not preserved.
 #' }
+#'
+#'
 #' @family add_*
-#' @export
+#'
+#'
 #' @examples
 #' # TBD
+#'
+#'
+#'
+#' @export
+#'
+#'
 add_completion_timely <- function(dframe,
                                   midfield_table,
                                   ...,

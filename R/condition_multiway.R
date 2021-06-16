@@ -1,10 +1,12 @@
+
+
 #' @import data.table
 #' @importFrom stats median reorder
 #' @importFrom wrapr let
 #' @importFrom Rdpack reprompt
+# Rdpack reprompt is used for citations in an Roxygen document
 NULL
 
-# Rdpack reprompt is used for citations in an Roxygen document
 
 #' Condition multiway data for graphing
 #'
@@ -39,22 +41,36 @@ NULL
 #'         quantitative values with an option to add columns of group medians.
 #'   \item Grouping structures are not preserved.
 #' }
+#'
+#'
 #' @references
 #'   \insertAllCited{}
+#'
+#'
 #' @family condition_*
-#' @export
+#'
+#'
 #' @examples
+#'
+#'
 #' catg1 <- rep(c("urban", "rural", "suburb", "village"), each = 2)
 #' catg2 <- rep(c("men", "women"), times = 4)
 #' value <- c(0.22, 0.14, 0.43, 0.58, 0.81, 0.46, 0.15, 0.20)
+#'
 #'
 #' # structure before
 #' dframe <- data.frame(catg1, catg2, value)
 #' str(dframe)
 #'
+#'
 #' # structure after
 #' mw <- condition_multiway(dframe)
 #' str(mw)
+#'
+#'
+#' @export
+#'
+#'
 condition_multiway <- function(dframe, ..., details = NULL) {
 
   # force arguments after dots to be used by name

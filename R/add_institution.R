@@ -1,5 +1,8 @@
+
+
 #' @import data.table
 NULL
+
 
 #' Add a column of institution names
 #'
@@ -21,10 +24,18 @@ NULL
 #'     \item Column \code{institution} is added.
 #'     \item Grouping structures are not preserved.
 #' }
+#'
+#'
 #' @family add_*
-#' @export
+#'
+#'
 #' @examples
 #' # TBD
+#'
+#'
+#' @export
+#'
+#'
 add_institution <- function(dframe,
                             midfield_table) {
 
@@ -64,16 +75,9 @@ add_institution <- function(dframe,
   # count terms at institutions
   DT <- DT[, .N, by = c("mcid", "institution")]
 
-  # test
-  # y <- data.table(
-  #   mcid = "MID25783178",
-  #   institution = " Institution Q",
-  #   N = 2
-  # )
-  # y
-  # x <- rbindlist(list(x, y))
 
-  # what if there is a tie? can we selec the most recent institution?
+
+  # what if there is a tie? can we select the most recent institution?
   # keep the institution with the most terms (if more than one)
   setkeyv(DT, c("mcid", "N"))
   DT <- DT[, .SD[.N], by = "mcid"]

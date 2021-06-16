@@ -29,7 +29,18 @@ Based on information in the MIDFIELD \code{student} data table.
 Existing columns with the same names as the added columns are overwritten.
 }
 \examples{
-# TBD
+
+
+# Add race and sex to a data frame of graduates
+dframe <- toy_degree[1:5, c("mcid", "cip6")]
+add_race_sex(dframe = dframe, midfield_table = toy_student)
+
+
+# Add race and sex to a data frame from the term table
+dframe <- toy_term[21:26, c("mcid", "institution", "level")]
+add_race_sex(dframe = dframe, midfield_table = toy_student)
+
+
 }
 \seealso{
 Other add_*: 

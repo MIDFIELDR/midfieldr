@@ -15,13 +15,14 @@ filter_search(dframe, keep_text = NULL, ..., drop_text = NULL, select = NULL)
 
 \item{drop_text}{Character vector of search text for dropping rows.}
 
-\item{select}{Character vector of column names to search and return,
+\item{select}{Character vector of column names to return,
 default all columns.}
 }
 \value{
 A \code{data.table} with the following properties:
 \itemize{
-    \item Rows matching elements of \code{keep_text}.
+    \item Rows matching elements of \code{keep_text} in
+          \code{in_col} columns.
     \item All columns or those specified by \code{select}.
     \item Grouping structures are not preserved.
 }
@@ -32,25 +33,30 @@ a vector of character strings. Columns are not subset unless selected in
 an optional argument. Most commonly used for searching the CIP data set.
 }
 \details{
-Search terms can include regular expressions. To improve the speed of
-the search, columns are subset by the values in the \code{select} argument
-before the text search starts. Uses \code{grepl()}, therefore non-character
-columns (if any) that can be coerced to character are also searched for
-matches.
+Search terms can include regular expressions. Uses \code{grepl()},
+therefore non-character columns (if any) that can be coerced to
+character are also searched for matches. Columns are subset by
+the values in \code{select} after the search concludes.
 }
 \examples{
+
+
 # subset using keywords
 filter_search(cip, keep_text = "engineering")
+
 
 # drop_text argument, when used, must be named
 filter_search(cip, "civil engineering", drop_text = "technology")
 
+
 # subset using numerical codes
 filter_search(cip, keep_text = c("050125", "160501"))
+
 
 # subset using regular expressions
 filter_search(cip, keep_text = "^54")
 filter_search(cip, keep_text = c("^1407", "^1408"))
+
 
 # select columns
 filter_search(cip,
@@ -58,14 +64,19 @@ filter_search(cip,
   select = c("cip6", "cip4name")
 )
 
+
 # multiple passes to narrow the results
 first_pass <- filter_search(cip, "civil")
 second_pass <- filter_search(first_pass, "engineering")
 filter_search(second_pass, drop_text = "technology")
+
+
 \dontrun{
 # unsuccessful terms produce a message
 filter_search(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 }
+
+
 }
 \seealso{
 Other filter_*: 

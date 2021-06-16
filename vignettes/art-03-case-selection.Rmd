@@ -1,15 +1,17 @@
 ---
 title: "Case selection"
+author: "Richard Layton"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
 output: rmarkdown::html_vignette
+csl: ../inst/body-and-society.csl
 vignette: >
   %\VignetteIndexEntry{Case selection}
-  %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
-  chunk_output_type: console
-bibliography: ../inst/REFERENCES.bib
-csl: ../inst/body-and-society.csl
-link-citations: yes
+  %\VignetteEncoding{UTF-8}
+nocite: | 
+resource_files: |
 ---
 
 ```{r setup, include = FALSE}
@@ -141,10 +143,16 @@ We see that
 - Electrical Engineering encompasses four programs at the 6-digit level
 - Mechanical and Industrial have one program each at the 6-digit level
 
-All MIDFIELD data tables that have a column of CIP codes use 6-digit codes. Therefore, for a case study, we only need the `cip6` column from the work above. The names we want (in this case), however, are at the 4-digit level. We can take one final pass and keep only those columns we need,
+All MIDFIELD data tables that have a column of CIP codes use 6-digit codes. Therefore, for a case study, we only need the `cip6` column from the work above. The names we want (in this case), however, are at the 4-digit level. We can select the columns we need. 
 
 ```{r}
-case_study <- filter_search(pass04, select = c("cip6", "cip4name"))
+cols_we_want <-  c("cip6", "cip4name")
+case_study <- pass04[, cols_we_want, with = FALSE]
+
+# or, equivalently, 
+# case_study <- pass04[, ..cols_we_want]
+
+# examine the result
 case_study
 ```
 
@@ -267,6 +275,19 @@ dframe <- filter_match(degree,
 all.equal(case_degree[order(mcid)], dframe[order(mcid)])
 ```
 
+
+If duplicate rows were a possibility and we want to delete them, `unique()` will do  the job. 
+
+```{r}
+# omit duplicate rows if any
+dframe <- unique(dframe)
+
+# examine the results
+dframe
+```
+
+
+
 ### Example 2. Subset by ID
 
 Another common data access task is to retrieve information from `student` by ID. Suppose we wanted to examine the transfer status at the time of admission of the  students with degrees we subset above. We use `filter_match()` again to subset rows of `student` to keep values of `mcid` that match values of `mcid` in `case_degree` and return three columns of the `student` subset. 
@@ -285,6 +306,8 @@ case_student
 If the next step was to compare the numbers of students by their transfer status, we use `.N` from data.table. For example, 
 
 ```{r}
+# omit any duplicate rows before counting
+case_student <- unique(case_student)
 case_student[, .N, by = "transfer"]
 ```
 
@@ -391,7 +414,8 @@ pass03 <- filter_search(
   c("civil", "electrical", "industrial", "mechanical")
 )
 pass04 <- filter_search(pass03, drop_text = "electromechanical")
-case_study <- filter_search(pass04, select = c("cip6", "cip4name"))
+cols_we_want <-  c("cip6", "cip4name")
+case_study <- pass04[, cols_we_want, with = FALSE]
 
 # assign program names
 case_study[, program := cip4name]

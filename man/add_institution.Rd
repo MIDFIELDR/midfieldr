@@ -33,6 +33,8 @@ the same name as the added column is overwritten.
 }
 \examples{
 # TBD
+
+
 }
 \seealso{
 Other add_*: 

@@ -77,6 +77,8 @@ frame is ready for use as input for the mice package.
 }
 \examples{
 # TBD
+
+
 }
 \seealso{
 Other condition_*: 

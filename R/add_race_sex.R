@@ -1,6 +1,9 @@
+
+
 #' @import data.table
 #' @importFrom wrapr stop_if_dot_args
 NULL
+
 
 #' Add two columns for student race/ethnicity and sex
 #'
@@ -19,10 +22,27 @@ NULL
 #'     \item Columns \code{race} and \code{sex} are added.
 #'     \item Grouping structures are not preserved.
 #' }
+#'
+#'
 #' @family add_*
-#' @export
+#'
+#'
 #' @examples
-#' # TBD
+#'
+#'
+#' # Add race and sex to a data frame of graduates
+#' dframe <- toy_degree[1:5, c("mcid", "cip6")]
+#' add_race_sex(dframe = dframe, midfield_table = toy_student)
+#'
+#'
+#' # Add race and sex to a data frame from the term table
+#' dframe <- toy_term[21:26, c("mcid", "institution", "level")]
+#' add_race_sex(dframe = dframe, midfield_table = toy_student)
+#'
+#'
+#' @export
+#'
+#'
 add_race_sex <- function(dframe,
                          midfield_table) {
 

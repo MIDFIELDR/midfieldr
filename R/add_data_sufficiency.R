@@ -1,6 +1,9 @@
+
+
 #' @import data.table
 #' @importFrom wrapr stop_if_dot_args
 NULL
+
 
 #' Add a column to evaluate data sufficiency
 #'
@@ -44,10 +47,18 @@ NULL
 #'           column \code{inst_limit}.
 #'     \item Grouping structures are not preserved.
 #' }
+#'
+#'
 #' @family add_*
-#' @export
+#'
+#'
 #' @examples
 #' # TBD
+#'
+#'
+#' @export
+#'
+#'
 add_data_sufficiency <- function(dframe,
                                  midfield_table,
                                  ...,

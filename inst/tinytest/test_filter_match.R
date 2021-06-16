@@ -3,7 +3,14 @@ test_filter_match <- function() {
     library("midfieldr")
     library("data.table")
 
+    # function arguments
+    # filter_match <- function(dframe,
+    #                          match_to,
+    #                          by_col,
+    #                          ...,
+    #                          select = NULL)
 
+    # example data frame for testing
     toy_student <- toy_student[, .(mcid, institution, race, sex)]
 
     # create answer
@@ -11,6 +18,7 @@ test_filter_match <- function() {
     #     filter_match(toy_student, study_students, "mcid")
     #     ))
 
+    # Gives correct answer
     DT1 <- wrapr::build_frame(
         "mcid"         , "institution"  , "race" , "sex"    |
             "MID25845841", "Institution M", "White", "Female" |
@@ -21,8 +29,6 @@ test_filter_match <- function() {
             "MID26577489", "Institution J", "White", "Male"   )
     setDT(DT1)
     DT2 <- DT1[, .(mcid, institution)]
-
-    # Gives correct answer
     expect_equal(DT1,
                  filter_match(toy_student,
                               study_students,
@@ -32,54 +38,19 @@ test_filter_match <- function() {
                               study_students,
                               "mcid",
                               select = c("mcid", "institution")))
+    expect_equal(nrow(toy_degree),
+                 nrow(filter_match(toy_student, toy_degree, "mcid")))
 
+    # arguments after ... must be named
+    expect_error(filter_match(toy_student,
+                              study_students,
+                              "mcid",
+                              c("mcid", "institution"))) # select not named
 
     invisible(NULL)
 }
 
 test_filter_match()
 
-# example
-
-# # subset degree table
-# library("midfieldr")
-# library("data.table")
-# options(datatable.print.nrows = 10, datatable.print.class = TRUE)
-#
-# # small sample of student data
-# toy_student
-#
-# # filter for students who earn a degree
-# x_student <- filter_match(toy_student,
-#              match_to = toy_degree,
-#              by_col   = "mcid")
-# x_student
-#
-# # repeat and select columns
-# x_student <- filter_match(toy_student,
-#              match_to = toy_degree,
-#              by_col   = "mcid",
-#              select   = c("mcid", "race", "sex"))
-# x_student
-#
-# # engineers in the toy term data
-# engr_term <- toy_term[grepl("^14", cip6)]
-# engr_term
-#
-# # What are their admissions information
-# x_student <- filter_match(toy_student,
-#                    match_to = engr_term,
-#                    by_col   = "mcid",
-#                    select   = c("mcid", "institution", "transfer"))
-#
-# x_student
-#
-# # can use ID to match but exclude it from select, only unique rows returned
-# x_student <- filter_match(toy_student,
-#                            match_to = engr_term,
-#                            by_col   = "mcid",
-#                            select   = c("institution", "transfer", "sex"))
-#
-# x_student
 
 

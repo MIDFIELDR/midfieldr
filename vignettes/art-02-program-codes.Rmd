@@ -1,15 +1,17 @@
 ---
 title: "Program codes"
+author: "Richard Layton"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
 output: rmarkdown::html_vignette
+csl: ../inst/body-and-society.csl
 vignette: >
   %\VignetteIndexEntry{Program codes}
-  %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
-  chunk_output_type: console
-bibliography: ../inst/REFERENCES.bib
-csl: ../inst/body-and-society.csl
-link-citations: yes
+  %\VignetteEncoding{UTF-8}
+nocite: | 
+resource_files: |
 ---
 
 ```{r setup, include = FALSE}
@@ -196,33 +198,31 @@ For example, filtering the CIP data for all programs containing the word "engine
 filter_search(dframe = cip, keep_text = "engineering")
 ```
 
-The first two argument names in `filter_search()` can be omitted. The optional `drop_text` and `select` arguments, however, must be named if used.
+The first two arguments in `filter_search()` do not have to be named explicitly, but the  optional `drop_text` and `select` arguments do.
 
 ```{r}
 # applying optional argument drop_text and select
 filter_search(cip,
   "engineering",
   drop_text = c(
-    "engineering-related",
-    "engineering related",
-    "engineering technology",
-    "engineering technologies"
+    "related",
+    "technology",
+    "technologies"
   ),
   select = c("cip6", "cip6name")
 )
 ```
 
-Note that only unique rows are returned. Above we selected the 6-digit codes and names. If we do the same search, but report the 4-digit codes and names, we obtain a shorter listing, as expected. 
+Columns in `select`  are subset after filtering for `keep_text` and `drop_text`. Thus a repeat search with a different column selection should return the same rows but different columns. 
 
 ```{r}
-# applying optionalk argument drop_text and select
+# repeat search with different columns selected
 filter_search(cip,
-  c("engineering"),
+  "engineering",
   drop_text = c(
-    "engineering-related",
-    "engineering related",
-    "engineering technology",
-    "engineering technologies"
+    "related",
+    "technology",
+    "technologies"
   ),
   select = c("cip4", "cip4name")
 )
@@ -265,11 +265,14 @@ kable2html(third_pass)
 ```
 <br>
 
-Seeing that all Civil Engineering programs have the same `cip4name`, we could have combined our arguments and obtained the same result. 
+Seeing that all Civil Engineering programs have the same `cip4name`, we could have used 
+`keep_text = c("civil engineering")` to narrow the search to rows that match the full phrase. For example, 
 
-```r 
+```{r results = 'hide'}
 filter_search(cip, "civil engineering", drop_text = "technology")
 ```
+
+produces the same result reported in the table above. 
 
 ## Filter using a numerical code search
 
@@ -416,20 +419,18 @@ filter_search(dframe = cip, keep_text = "engineering")
 filter_search(cip,
   "engineering",
   drop_text = c(
-    "engineering-related",
-    "engineering related",
-    "engineering technology",
-    "engineering technologies"
+    "related",
+    "technology",
+    "technologies"
   ),
   select = c("cip6", "cip6name")
 )
 filter_search(cip,
-  c("engineering"),
+  "engineering",
   drop_text = c(
-    "engineering-related",
-    "engineering related",
-    "engineering technology",
-    "engineering technologies"
+    "related",
+    "technology",
+    "technologies"
   ),
   select = c("cip4", "cip4name")
 )

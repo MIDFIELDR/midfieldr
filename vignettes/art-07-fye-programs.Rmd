@@ -1,16 +1,17 @@
 ---
 title: "FYE programs"
+author: "Richard Layton"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
 output: rmarkdown::html_vignette
+csl: ../inst/body-and-society.csl
 vignette: >
   %\VignetteIndexEntry{FYE programs}
-  %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
-  chunk_output_type: console
-bibliography: ../inst/REFERENCES.bib
-csl: ../inst/body-and-society.csl
-link-citations: yes
-resource_files:
+  %\VignetteEncoding{UTF-8}
+nocite: | 
+resource_files: 
   - ../man/figures/art-06-fye-programs-fig1-1.png
   - ../man/figures/art-06-fye-programs-fig2-1.png
 ---
@@ -186,6 +187,9 @@ DT <- filter_match(DT,
   select = c("mcid", "cip6")
 )
 
+# ensure rows are unique
+DT <- unique(DT)
+
 # examine the result
 DT
 ```
@@ -298,12 +302,18 @@ engr_cip
 To obtain the IDs of all students ever enrolled in these programs, we access the `term` table. 
 
 ```{r}
-# get IDs of all engineering students
+# get IDs of all engineering students in all terms
 engr <- filter_match(term,
   match_to = engr_cip,
   by_col = "cip6",
   select = "mcid"
 )
+
+# all terms, so there will be duplictae IDs
+engr
+
+# omit duplicate rows
+engr <- unique(engr)
 
 # examine the result
 engr
@@ -361,7 +371,7 @@ The mice package [@vanbuuren2011] implements multivariate imputation by chained 
 
 The procedure assumes the missing CIP data---the NA values in the prepared data frame---are "missing at random" (MAR), that is, independent of the variables used to impute the missing values. This is the rationale for using data only from FYE institutions to impute the missing values---the existence of the missing data does depend on the institution type, FYE or non-FYE. Within the FYE data itself, however, we assume that the imputed starting majors are missing at random. 
 
-Our first use of mice is to examine the framework by calling the function with zero iterations. (A warning may appear in your console. It can be ignored.)
+Our first use of mice is to examine the framework by calling the function with zero iterations on the `fye` data frame. (A warning may appear in your console. It can be ignored.)
 
 ```{r}
 # imputation
@@ -529,6 +539,7 @@ DT <- filter_match(DT,
   by_col = "cip6",
   select = c("mcid", "cip6")
 )
+DT <- unique(DT)
 
 # summarize for later
 DT_no_fye <- DT[, .N, by = "cip6"]
@@ -558,6 +569,7 @@ engr <- filter_match(term,
   by_col = "cip6",
   select = "mcid"
 )
+engr <- unique(engr)
 engr <- filter_match(engr,
   match_to = student,
   by_col = "mcid"

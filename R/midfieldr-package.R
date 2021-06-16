@@ -1,5 +1,8 @@
+
+
 #' @importFrom Rdpack reprompt
 NULL
+
 
 #' \code{midfieldr}: Tools for Student Records Research
 #'
@@ -51,12 +54,20 @@ NULL
 #' omitted from the practice data. Thus R scripts written for the practice
 #' data should generally work with the research data.
 #'
+#'
 #' @docType package
 #' @name midfieldr-package
+#'
+#'
 #' @references
 #'   \insertAllCited{}
+#'
+#'
 #' @family package
+#'
+#'
 NULL
+
 
 # bind names due to NSE notes in R CMD check
 if (getRversion() >= "2.15.1") {

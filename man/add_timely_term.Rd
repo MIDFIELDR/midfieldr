@@ -64,6 +64,8 @@ Existing columns with the same names as the added columns are overwritten.
 }
 \examples{
 # TBD
+
+
 }
 \seealso{
 Other add_*: 

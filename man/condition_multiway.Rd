@@ -46,17 +46,23 @@ the methods of analysis described by
 \insertCite{Kroonenberg:2008;textual}{midfieldr}.
 }
 \examples{
+
+
 catg1 <- rep(c("urban", "rural", "suburb", "village"), each = 2)
 catg2 <- rep(c("men", "women"), times = 4)
 value <- c(0.22, 0.14, 0.43, 0.58, 0.81, 0.46, 0.15, 0.20)
+
 
 # structure before
 dframe <- data.frame(catg1, catg2, value)
 str(dframe)
 
+
 # structure after
 mw <- condition_multiway(dframe)
 str(mw)
+
+
 }
 \references{
 \insertAllCited{}

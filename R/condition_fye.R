@@ -1,5 +1,8 @@
+
+
 #' @import data.table
 NULL
+
 
 #' Condition FYE data for multiple imputation
 #'
@@ -65,10 +68,17 @@ NULL
 #'     \item Grouping structures are not preserved.
 #' }
 #'
+#'
 #' @family condition_*
-#' @export
+#'
+#'
 #' @examples
 #' # TBD
+#'
+#'
+#' @export
+#'
+#'
 condition_fye <- function(dframe,
                           midfield_table,
                           ...,
