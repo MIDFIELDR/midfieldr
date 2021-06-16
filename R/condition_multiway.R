@@ -60,8 +60,10 @@ condition_multiway <- function(dframe, ..., details = NULL) {
   # force arguments after dots to be used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
-    msg = paste("Arguments after ... must be named.\n",
-          "* Did you forget to write `details = ` ?\n *")
+    msg = paste(
+      "Arguments after ... must be named.\n",
+      "* Did you forget to write `details = ` ?\n *"
+    )
   )
 
   # explicit arguments and NULL defaults if any
@@ -87,8 +89,10 @@ condition_multiway <- function(dframe, ..., details = NULL) {
     dframe[, (integer_cols) := lapply(.SD, as.double), .SDcols = integer_cols]
   }
   # now check class
-  if (!identical(sort(unname(sapply(dframe, class))),
-                 c("character","character", "numeric"))) {
+  if (!identical(
+    sort(unname(sapply(dframe, class))),
+    c("character", "character", "numeric")
+  )) {
     stop(paste(
       "`dframe` must have exactly one numeric column",
       "and two character columns"
@@ -103,7 +107,7 @@ condition_multiway <- function(dframe, ..., details = NULL) {
   MED2 <- NULL
 
   # name of the one quantitative variable name
-  value   <- names(dframe)[sapply(dframe, is.numeric)]
+  value <- names(dframe)[sapply(dframe, is.numeric)]
 
   # names of two categorical variables
   cat_var <- names(dframe)[sapply(dframe, is.character)]
@@ -134,12 +138,11 @@ condition_multiway <- function(dframe, ..., details = NULL) {
       dframe[, CAT1 := reorder(CAT1, MED1)]
       dframe[, CAT2 := reorder(CAT2, MED2)]
 
-      if(details) {
+      if (details) {
         dframe <- dframe[, .(CAT1, CAT2, MED1, MED2, VALUE)]
-      } else{
+      } else {
         dframe <- dframe[, .(CAT1, CAT2, VALUE)]
       }
-
     }
   )
   # remove grouping structure, if any

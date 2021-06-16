@@ -53,70 +53,70 @@ add_data_sufficiency <- function(dframe,
                                  ...,
                                  details = NULL) {
 
-    # force arguments after dots to be used by name
-    wrapr::stop_if_dot_args(
-        substitute(list(...)),
-        paste("Arguments after ... must be named.\n",
-              "* Did you forget to write `details = `?\n *")
-
+  # force arguments after dots to be used by name
+  wrapr::stop_if_dot_args(
+    substitute(list(...)),
+    paste(
+      "Arguments after ... must be named.\n",
+      "* Did you forget to write `details = `?\n *"
     )
+  )
 
-    # explicit arguments and NULL defaults if any
-    assert_explicit(dframe)
-    assert_explicit(midfield_table)
-    details <- details %||% FALSE
+  # explicit arguments and NULL defaults if any
+  assert_explicit(dframe)
+  assert_explicit(midfield_table)
+  details <- details %||% FALSE
 
-    # check argument class
-    assert_class(dframe, "data.frame")
-    assert_class(midfield_table, "data.frame")
-    assert_class(details, "logical")
+  # check argument class
+  assert_class(dframe, "data.frame")
+  assert_class(midfield_table, "data.frame")
+  assert_class(details, "logical")
 
-    # dframe is modified "by reference" throughout
-    setDT(dframe)
-    setDT(midfield_table)
+  # dframe is modified "by reference" throughout
+  setDT(dframe)
+  setDT(midfield_table)
 
-    # existence of required columns
-    assert_required_column(dframe, "institution")
-    assert_required_column(dframe, "timely_term")
-    assert_required_column(midfield_table, "institution")
-    assert_required_column(midfield_table, "term")
+  # existence of required columns
+  assert_required_column(dframe, "institution")
+  assert_required_column(dframe, "timely_term")
+  assert_required_column(midfield_table, "institution")
+  assert_required_column(midfield_table, "term")
 
-    # class of required columns
-    assert_class(dframe[, institution], "character")
-    assert_class(dframe[, timely_term], "character")
-    assert_class(midfield_table[, term], "character")
-    assert_class(midfield_table[, institution], "character")
+  # class of required columns
+  assert_class(dframe[, institution], "character")
+  assert_class(dframe[, timely_term], "character")
+  assert_class(midfield_table[, term], "character")
+  assert_class(midfield_table[, institution], "character")
 
-    # bind names due to NSE notes in R CMD check
-    data_sufficiency <- NULL
-    timely_term <- NULL
-    inst_limit <- NULL
+  # bind names due to NSE notes in R CMD check
+  data_sufficiency <- NULL
+  timely_term <- NULL
+  inst_limit <- NULL
 
-    # preserve column order except columns that match new columns
-    names_dframe <- colnames(dframe)
-    cols_we_add <- c("inst_limit", "data_sufficiency")
-    key_names <- names_dframe[!names_dframe %chin% cols_we_add]
-    dframe <- dframe[, key_names, with = FALSE]
+  # preserve column order except columns that match new columns
+  names_dframe <- colnames(dframe)
+  cols_we_add <- c("inst_limit", "data_sufficiency")
+  key_names <- names_dframe[!names_dframe %chin% cols_we_add]
+  dframe <- dframe[, key_names, with = FALSE]
 
-    # from midfield_table, get institution last term
-    dframe <- add_inst_limit(dframe, midfield_table = midfield_table)
+  # from midfield_table, get institution last term
+  dframe <- add_inst_limit(dframe, midfield_table = midfield_table)
 
-    # assess the data sufficiency
-    dframe[, data_sufficiency := fifelse(timely_term <= inst_limit, TRUE, FALSE)]
+  # assess the data sufficiency
+  dframe[, data_sufficiency := fifelse(timely_term <= inst_limit, TRUE, FALSE)]
 
-    # restore column and row order
-    set_colrow_order(dframe, key_names)
+  # restore column and row order
+  set_colrow_order(dframe, key_names)
 
-    # include or omit the details columns
-    if (details == FALSE) {
-        cols_we_want <- c(key_names, "data_sufficiency")
-        dframe <- dframe[, cols_we_want, with = FALSE]
-    }
+  # include or omit the details columns
+  if (details == FALSE) {
+    cols_we_want <- c(key_names, "data_sufficiency")
+    dframe <- dframe[, cols_we_want, with = FALSE]
+  }
 
-    # remove grouping structure, if any
-    setkey(dframe, NULL)
+  # remove grouping structure, if any
+  setkey(dframe, NULL)
 
-    # enable printing (see data.table FAQ 2.23)
-    dframe[]
+  # enable printing (see data.table FAQ 2.23)
+  dframe[]
 }
-

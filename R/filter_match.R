@@ -37,26 +37,23 @@ NULL
 #' library("midfielddata")
 #' data(degree)
 #' filter_match(degree,
-#'              match_to = study_programs,
-#'              by_col   = "cip6",
-#'              select   = c("mcid", "institution", "cip6"))
-#'
-#'
-#'
-#'
-#'
-filter_match<- function(dframe,
-                        match_to,
-                        by_col,
-                        ...,
-                        select = NULL) {
+#'   match_to = study_programs,
+#'   by_col = "cip6",
+#'   select = c("mcid", "institution", "cip6")
+#' )
+filter_match <- function(dframe,
+                         match_to,
+                         by_col,
+                         ...,
+                         select = NULL) {
 
   # force arguments after dots to be used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
-    paste("Arguments after ... must be named.\n",
-          "* Did you forget to write `select = `?\n *")
-
+    paste(
+      "Arguments after ... must be named.\n",
+      "* Did you forget to write `select = `?\n *"
+    )
   )
 
   # explicit arguments

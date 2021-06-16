@@ -16,8 +16,10 @@ resource_files:
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(fig.path = here::here("man/figures", 
-                                            "art-01-multiway-graphs-"))
+knitr::opts_chunk$set(fig.path = here::here(
+  "man/figures",
+  "art-01-multiway-graphs-"
+))
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
@@ -97,9 +99,11 @@ We can control how a data.table is printed to the screen with the following opti
 
 ```{r}
 # optional code to control data.table printing
-options(datatable.print.nrows = 10, 
-        datatable.print.topn  = 5, 
-        datatable.print.class = TRUE)
+options(
+  datatable.print.nrows = 10,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
 ```
 
 
@@ -116,7 +120,7 @@ We computed stickiness for a case study in Civil, Electrical, Industrial, and Me
 The data is loaded with midfieldr (we don't have to use `data()` to access it.)
 
 ```{r}
-# examine the built-in data 
+# examine the built-in data
 study_stickiness
 ```
 
@@ -129,7 +133,7 @@ To condition the categorical variables, we use `condition_multiway()` to convert
 ```
 
 ```{r}
-# create a new memory location 
+# create a new memory location
 DT <- copy(study_stickiness)
 ```
 
@@ -179,16 +183,16 @@ By ordering the data by `program`, you can see that a given program has a single
 
 ```{r}
 # optional code to control data.table printing
-options(datatable.print.topn  = 10)
+options(datatable.print.topn = 10)
 
-# programs have a median stickiness across race-sex groups  
+# programs have a median stickiness across race-sex groups
 DT_med[order(program)]
 ```
 
 Similarly, by ordering the data by `race_sex`, you can see that a given demographic group has a single value of `med_race_sex` copied as many times as needed. 
 
 ```{r}
-# race_sex groupings have a median stickiness across programs 
+# race_sex groupings have a median stickiness across programs
 DT_med[order(race_sex)]
 ```
 
@@ -208,14 +212,17 @@ By previously ordering the levels of the factors, we have structured the data so
 # create one multiway graph
 ggplot(data = DT_med, aes(x = stick, y = race_sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = med_program), 
-             linetype = 2, 
-             color = "gray70") +
+  geom_vline(aes(xintercept = med_program),
+    linetype = 2,
+    color = "gray70"
+  ) +
   geom_point(na.rm = TRUE) +
-  labs(x = "Stickiness", 
-       y = "", 
-       title = "Practice data (not for research)", 
-       caption = "Source: midfielddata")
+  labs(
+    x = "Stickiness",
+    y = "",
+    title = "Practice data (not for research)",
+    caption = "Source: midfielddata"
+  )
 ```
 <br>
 
@@ -244,14 +251,17 @@ To create the *dual multiway* graph, we swap the roles of the rows and panels.
 # create the dual multiway graph
 ggplot(data = DT_med, aes(x = stick, y = program)) +
   facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = med_race_sex), 
-             linetype = 2, 
-             color = "gray70") +
+  geom_vline(aes(xintercept = med_race_sex),
+    linetype = 2,
+    color = "gray70"
+  ) +
   geom_point(na.rm = TRUE) +
-  labs(x = "Stickiness", 
-       y = "", 
-       title = "Practice data (not for research)", 
-       caption = "Source: midfielddata")
+  labs(
+    x = "Stickiness",
+    y = "",
+    title = "Practice data (not for research)",
+    caption = "Source: midfielddata"
+  )
 ```
 <br>
 
@@ -291,17 +301,22 @@ However, the visual convention preferred by publishers and readers is a row-reco
 temp[, race_sex := as.character(race_sex)]
 temp[, program := as.character(program)]
 temp <- dcast(temp, race_sex ~ program, value.var = "stick")
-setnames(temp, 
-         old = c("race_sex", 
-                 "Civil Engineering", 
-                 "Electrical Engineering", 
-                 "Industrial Engineering", 
-                 "Mechanical Engineering"), 
-         new = c("Race/ethnicity/sex", 
-                 "Civil", 
-                 "Electrical", 
-                 "Industrial", 
-                 "Mechanical"))
+setnames(temp,
+  old = c(
+    "race_sex",
+    "Civil Engineering",
+    "Electrical Engineering",
+    "Industrial Engineering",
+    "Mechanical Engineering"
+  ),
+  new = c(
+    "Race/ethnicity/sex",
+    "Civil",
+    "Electrical",
+    "Industrial",
+    "Mechanical"
+  )
+)
 kable2html(temp, caption = "Table 2: Stickiness (row records)")
 ```
 
@@ -318,7 +333,7 @@ Depending on your software background, you may have encountered a block-record/r
 In our example, we use `dcast()` from the data.table package to reshape the data for publication. We start by limiting the significant figures of floating-point numbers. 
 
 ```{r}
-# create a new memory location  
+# create a new memory location
 block_form <- copy(DT)
 
 # limit significant digits
@@ -328,7 +343,7 @@ block_form[, stick := round(stick, 2)]
 If in the final result we want rows and columns ordered alphabetically, we convert factors to characters. 
 
 ```{r}
-# create a new memory location 
+# create a new memory location
 row_form <- copy(block_form)
 
 # convert factors to characters
@@ -350,17 +365,22 @@ For publication, we edit the new column names.
 
 ```{r}
 # edit column names
-setnames(row_form, 
-         old = c("race_sex", 
-                 "Civil Engineering", 
-                 "Electrical Engineering", 
-                 "Industrial Engineering", 
-                 "Mechanical Engineering"), 
-         new = c("Race/ethnicity/sex", 
-                 "Civil", 
-                 "Electrical", 
-                 "Industrial", 
-                 "Mechanical"))
+setnames(row_form,
+  old = c(
+    "race_sex",
+    "Civil Engineering",
+    "Electrical Engineering",
+    "Industrial Engineering",
+    "Mechanical Engineering"
+  ),
+  new = c(
+    "Race/ethnicity/sex",
+    "Civil",
+    "Electrical",
+    "Industrial",
+    "Mechanical"
+  )
+)
 
 # examine the result
 row_form
@@ -401,9 +421,11 @@ library("data.table")
 library("ggplot2")
 
 # optional code to control data.table printing
-options(datatable.print.nrows = 10, 
-        datatable.print.topn  = 5, 
-        datatable.print.class = TRUE)
+options(
+  datatable.print.nrows = 10,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
 
 # data preparation
 DT <- copy(study_stickiness)
@@ -416,27 +438,33 @@ DT_med <- condition_multiway(DT, details = TRUE)
 DT_med[order(program)]
 DT_med[order(race_sex)]
 
-# creating a multiway graph 
+# creating a multiway graph
 ggplot(data = DT_med, aes(x = stick, y = race_sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = med_program), 
-             linetype = 2) +
+  geom_vline(aes(xintercept = med_program),
+    linetype = 2
+  ) +
   geom_point(na.rm = TRUE) +
-  labs(x = "Stickiness", 
-       y = "", 
-       title = "Practice data (not for research)", 
-       caption = "Source: midfielddata")
+  labs(
+    x = "Stickiness",
+    y = "",
+    title = "Practice data (not for research)",
+    caption = "Source: midfielddata"
+  )
 
 # creating the dual multiway graph
 ggplot(data = DT_med, aes(x = stick, y = program)) +
   facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = med_race_sex), 
-             linetype = 2) +
+  geom_vline(aes(xintercept = med_race_sex),
+    linetype = 2
+  ) +
   geom_point(na.rm = TRUE) +
-  labs(x = "Stickiness", 
-       y = "", 
-       title = "Practice data (not for research)", 
-       caption = "Source: midfielddata")
+  labs(
+    x = "Stickiness",
+    y = "",
+    title = "Practice data (not for research)",
+    caption = "Source: midfielddata"
+  )
 
 # creating a table for publication
 block_form <- copy(DT)
@@ -445,18 +473,22 @@ row_form <- copy(block_form)
 row_form[, race_sex := as.character(race_sex)]
 row_form[, program := as.character(program)]
 row_form <- dcast(row_form, race_sex ~ program, value.var = "stick")
-setnames(row_form, 
-         old = c("race_sex", 
-                 "Civil Engineering", 
-                 "Electrical Engineering", 
-                 "Industrial Engineering", 
-                 "Mechanical Engineering"), 
-         new = c("Race/ethnicity/sex", 
-                 "Civil", 
-                 "Electrical", 
-                 "Industrial", 
-                 "Mechanical"))
-
+setnames(row_form,
+  old = c(
+    "race_sex",
+    "Civil Engineering",
+    "Electrical Engineering",
+    "Industrial Engineering",
+    "Mechanical Engineering"
+  ),
+  new = c(
+    "Race/ethnicity/sex",
+    "Civil",
+    "Electrical",
+    "Industrial",
+    "Mechanical"
+  )
+)
 ```
 
 ```{r echo = FALSE}

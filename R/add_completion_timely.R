@@ -53,119 +53,126 @@ add_completion_timely <- function(dframe,
                                   ...,
                                   details = NULL) {
 
-    # force arguments after dots to be used by name
-    wrapr::stop_if_dot_args(
-        substitute(list(...)),
-        paste("Arguments after ... must be named.\n",
-              "* Did you forget to write `details = `?\n *")
-
+  # force arguments after dots to be used by name
+  wrapr::stop_if_dot_args(
+    substitute(list(...)),
+    paste(
+      "Arguments after ... must be named.\n",
+      "* Did you forget to write `details = `?\n *"
     )
+  )
 
 
 
-    if (missing(dframe)) {
-        stop(paste("`dframe` is a required argument.\n",
-                   "* You did not include it."),
-             call. = FALSE
-        )
-    }
-    # # explicit arguments and NULL defaults if any
-    if (is.null(dframe)) {
-        stop(paste("`dframe` is a data frame.\n",
-                   "* You supplied a NULL argument."),
-             call. = FALSE
-        )
-    }
+  if (missing(dframe)) {
+    stop(paste(
+      "`dframe` is a required argument.\n",
+      "* You did not include it."
+    ),
+    call. = FALSE
+    )
+  }
+  # # explicit arguments and NULL defaults if any
+  if (is.null(dframe)) {
+    stop(paste(
+      "`dframe` is a data frame.\n",
+      "* You supplied a NULL argument."
+    ),
+    call. = FALSE
+    )
+  }
 
 
 
 
 
-    # assert_explicit(dframe)
-    assert_explicit(midfield_table)
-    details <- details %||% FALSE
+  # assert_explicit(dframe)
+  assert_explicit(midfield_table)
+  details <- details %||% FALSE
 
-    # check argument class
-    assert_class(dframe, "data.frame")
-    assert_class(midfield_table, "data.frame")
-    assert_class(details, "logical")
+  # check argument class
+  assert_class(dframe, "data.frame")
+  assert_class(midfield_table, "data.frame")
+  assert_class(details, "logical")
 
-    # dframe is modified "by reference" throughout
-    setDT(dframe)
-    setDT(midfield_table)
+  # dframe is modified "by reference" throughout
+  setDT(dframe)
+  setDT(midfield_table)
 
-    # existence of required columns
-    assert_required_column(dframe, "mcid")
-    assert_required_column(dframe, "timely_term")
-    assert_required_column(midfield_table, "mcid")
-    assert_required_column(midfield_table, "term")
+  # existence of required columns
+  assert_required_column(dframe, "mcid")
+  assert_required_column(dframe, "timely_term")
+  assert_required_column(midfield_table, "mcid")
+  assert_required_column(midfield_table, "term")
 
-    # class of required columns
-    assert_class(dframe[, mcid], "character")
-    assert_class(dframe[, timely_term], "character")
-    assert_class(midfield_table[, mcid], "character")
-    assert_class(midfield_table[, term], "character")
+  # class of required columns
+  assert_class(dframe[, mcid], "character")
+  assert_class(dframe[, timely_term], "character")
+  assert_class(midfield_table[, mcid], "character")
+  assert_class(midfield_table[, term], "character")
 
-    # bind names due to NSE notes in R CMD check
-    completion_timely <- NULL
-    term_degree <- NULL
-    timely_term <- NULL
-    completion <- NULL
+  # bind names due to NSE notes in R CMD check
+  completion_timely <- NULL
+  term_degree <- NULL
+  timely_term <- NULL
+  completion <- NULL
 
-    # preserve "term" column if exists in incoming df
-    names_dframe <- colnames(dframe)
-    if ("term" %chin% names_dframe) {
-        setnames(dframe, old = "term", new = "existing_term_col")
-    }
+  # preserve "term" column if exists in incoming df
+  names_dframe <- colnames(dframe)
+  if ("term" %chin% names_dframe) {
+    setnames(dframe, old = "term", new = "existing_term_col")
+  }
 
-    # preserve column order except columns that match new columns
-    cols_we_add <- c("term_degree", "completion", "completion_timely")
-    key_names <- names_dframe[!names_dframe %chin% cols_we_add]
-    dframe <- dframe[, key_names, with = FALSE]
+  # preserve column order except columns that match new columns
+  cols_we_add <- c("term_degree", "completion", "completion_timely")
+  key_names <- names_dframe[!names_dframe %chin% cols_we_add]
+  dframe <- dframe[, key_names, with = FALSE]
 
-    # subset midfield data table
-    DT <- filter_match(midfield_table,
-                        match_to = dframe,
-                        by_col = "mcid",
-                        select = c("mcid", "term"))
+  # subset midfield data table
+  DT <- filter_match(midfield_table,
+    match_to = dframe,
+    by_col = "mcid",
+    select = c("mcid", "term")
+  )
 
-    # keep the first degree term
-    setorderv(DT, c("mcid", "term"))
-    DT <- na.omit(DT, cols = c("term"))
-    DT <- DT[, .SD[1], by = "mcid"]
-    setkey(DT, NULL)
+  # keep the first degree term
+  setorderv(DT, c("mcid", "term"))
+  DT <- na.omit(DT, cols = c("term"))
+  DT <- DT[, .SD[1], by = "mcid"]
+  setkey(DT, NULL)
 
-    # rename term to term-degree
-    setnames(DT, old = "term", new = "term_degree")
+  # rename term to term-degree
+  setnames(DT, old = "term", new = "term_degree")
 
-    # left-outer join, keep all rows of dframe
-    dframe <-  merge(dframe, DT, by = "mcid", all.x = TRUE)
+  # left-outer join, keep all rows of dframe
+  dframe <- merge(dframe, DT, by = "mcid", all.x = TRUE)
 
-    # add program completion status column
-    dframe[, completion := fifelse(is.na(term_degree), FALSE, TRUE)]
+  # add program completion status column
+  dframe[, completion := fifelse(is.na(term_degree), FALSE, TRUE)]
 
-    # evaluate, is the completion timely, TRUE / FALSE
-    dframe[, completion_timely := fifelse(term_degree <= timely_term,
-                                           TRUE, FALSE, na = FALSE)]
+  # evaluate, is the completion timely, TRUE / FALSE
+  dframe[, completion_timely := fifelse(term_degree <= timely_term,
+    TRUE, FALSE,
+    na = FALSE
+  )]
 
-    # restore column and row order
-    set_colrow_order(dframe, key_names)
+  # restore column and row order
+  set_colrow_order(dframe, key_names)
 
-    # include or omit the details columns
-    if (details == FALSE) {
-        cols_we_want <- c(key_names, "completion_timely")
-        dframe <- dframe[, cols_we_want, with = FALSE]
-    }
+  # include or omit the details columns
+  if (details == FALSE) {
+    cols_we_want <- c(key_names, "completion_timely")
+    dframe <- dframe[, cols_we_want, with = FALSE]
+  }
 
-    # remove grouping structure, if any
-    setkey(dframe, NULL)
+  # remove grouping structure, if any
+  setkey(dframe, NULL)
 
-    # restore "term" column if exists in incoming df
-    if ("existing_term_col" %chin% names(dframe)) {
-        setnames(dframe, old = "existing_term_col", new = "term")
-    }
+  # restore "term" column if exists in incoming df
+  if ("existing_term_col" %chin% names(dframe)) {
+    setnames(dframe, old = "existing_term_col", new = "term")
+  }
 
-    # enable printing (see data.table FAQ 2.23)
-    dframe[]
+  # enable printing (see data.table FAQ 2.23)
+  dframe[]
 }
-

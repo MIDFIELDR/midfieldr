@@ -61,7 +61,7 @@ NULL
 # bind names due to NSE notes in R CMD check
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
-    ".",  ":=", ".SD",
+    ".", ":=", ".SD",
     # column names in the four midfielddata data sets
     "mcid", "institution", "cip6", "race", "sex", "term",
     "degree", "hours_transfer", "hours_term", "transfer",

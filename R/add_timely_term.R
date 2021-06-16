@@ -54,121 +54,126 @@ NULL
 #' @export
 #' @examples
 #' # TBD
-add_timely_term<- function(dframe,
-                           midfield_table,
-                           ...,
-                           details = NULL,
-                           span = NULL) {
+add_timely_term <- function(dframe,
+                            midfield_table,
+                            ...,
+                            details = NULL,
+                            span = NULL) {
 
-    # force arguments after dots to be used by name
-    wrapr::stop_if_dot_args(
-        substitute(list(...)),
-        paste("Arguments after ... must be named.\n",
-              "* Did you forget to write `details = ` or `span = `?\n *")
-
+  # force arguments after dots to be used by name
+  wrapr::stop_if_dot_args(
+    substitute(list(...)),
+    paste(
+      "Arguments after ... must be named.\n",
+      "* Did you forget to write `details = ` or `span = `?\n *"
     )
+  )
 
-    # explicit arguments and NULL defaults if any
-    assert_explicit(dframe)
-    assert_explicit(midfield_table)
-    details <- details %||% FALSE
-    span <- span %||% 6
+  # explicit arguments and NULL defaults if any
+  assert_explicit(dframe)
+  assert_explicit(midfield_table)
+  details <- details %||% FALSE
+  span <- span %||% 6
 
-    # check argument class
-    assert_class(dframe, "data.frame")
-    assert_class(span, "numeric")
-    assert_class(midfield_table, "data.frame")
-    assert_class(details, "logical")
+  # check argument class
+  assert_class(dframe, "data.frame")
+  assert_class(span, "numeric")
+  assert_class(midfield_table, "data.frame")
+  assert_class(details, "logical")
 
-    # dframe is modified "by reference" throughout
-    setDT(dframe)
-    setDT(midfield_table)
+  # dframe is modified "by reference" throughout
+  setDT(dframe)
+  setDT(midfield_table)
 
-    # existence of required columns
-    assert_required_column(dframe, "mcid")
-    assert_required_column(midfield_table, "mcid")
-    assert_required_column(midfield_table, "term")
-    assert_required_column(midfield_table, "level")
+  # existence of required columns
+  assert_required_column(dframe, "mcid")
+  assert_required_column(midfield_table, "mcid")
+  assert_required_column(midfield_table, "term")
+  assert_required_column(midfield_table, "level")
 
-    # class of required columns
-    assert_class(dframe[, mcid], "character")
-    assert_class(midfield_table[, mcid], "character")
-    assert_class(midfield_table[, term], "character")
-    assert_class(midfield_table[, level], "character")
+  # class of required columns
+  assert_class(dframe[, mcid], "character")
+  assert_class(midfield_table[, mcid], "character")
+  assert_class(midfield_table[, term], "character")
+  assert_class(midfield_table[, level], "character")
 
-    # bind names due to NSE notes in R CMD check
-    timely_term <- NULL
-    adj_span <- NULL
-    level_i <- NULL
-    delta <- NULL
-    yyyy <- NULL
+  # bind names due to NSE notes in R CMD check
+  timely_term <- NULL
+  adj_span <- NULL
+  level_i <- NULL
+  delta <- NULL
+  yyyy <- NULL
 
-    # condition dframe  -----------------------------------------------
-    # new columns that overwrite existing columns if any
-    new_cols <- c("term_i", "level_i", "adj_span", "timely_term")
+  # condition dframe  -----------------------------------------------
+  # new columns that overwrite existing columns if any
+  new_cols <- c("term_i", "level_i", "adj_span", "timely_term")
 
-    # existing column names to keep and restore
-    names_dframe <- colnames(dframe)
-    keep_cols <- names_dframe[!names_dframe %chin% new_cols]
+  # existing column names to keep and restore
+  names_dframe <- colnames(dframe)
+  keep_cols <- names_dframe[!names_dframe %chin% new_cols]
+  dframe <- dframe[, keep_cols, with = FALSE]
+
+  # condition subset of midfield table ------------------------------
+  DT <- filter_match(
+    dframe = midfield_table,
+    match_to = dframe,
+    by_col = "mcid",
+    select = c("mcid", "term", "level")
+  )
+
+  # separate term encoding
+  DT[, `:=`(
+    yyyy = as.numeric(substr(term, 1, 4)),
+    t = as.numeric(substr(term, 5, 5))
+  )]
+
+  # keep fall through summer terms, omit "month" terms A, B, etc.
+  DT <- DT[t %in% seq(1, 6)]
+
+  # retain the first recorded term by ID
+  setorderv(DT, c("mcid", "term"))
+  DT <- DT[, .SD[1], by = c("mcid")]
+  setnames(DT,
+    old = c("term", "level"),
+    new = c("term_i", "level_i")
+  )
+
+  # if first term is in summer, delay to the subsequent Fall
+  DT[t %in% c(4, 5, 6), `:=`(yyyy = yyyy + 1, t = 1)]
+
+  # reduce span by assumed number of completed years by level
+  DT[, delta := fcase(
+    level_i %like% "04", 3,
+    level_i %like% "03", 2,
+    level_i %like% "02", 1,
+    default = 0
+  )]
+  DT[, adj_span := span - delta]
+
+  # use adj_span to construct estimated term for timely-completion
+  DT[t == 1, timely_term := paste0(yyyy + adj_span - 1, 3)]
+  DT[t > 1, timely_term := paste0(yyyy + adj_span, 1)]
+
+  # remove intermediate variables
+  DT[, c("yyyy", "t", "delta") := NULL]
+
+  # left outer join DT to dframe -------------------------------------
+  setkeyv(DT, "mcid")
+  setkeyv(dframe, "mcid")
+  dframe <- DT[dframe]
+
+  # restore column and row order
+  set_colrow_order(dframe, keep_cols)
+
+  # drop the optional columns if details not requested
+  if (details == FALSE) {
+    keep_cols <- c(keep_cols, "timely_term")
     dframe <- dframe[, keep_cols, with = FALSE]
+  }
 
-    # condition subset of midfield table ------------------------------
-    DT <- filter_match(dframe = midfield_table,
-                        match_to = dframe,
-                        by_col = "mcid",
-                        select =  c("mcid", "term", "level"))
+  # remove grouping structure, if any
+  setkey(dframe, NULL)
 
-    # separate term encoding
-    DT[, `:=` (yyyy = as.numeric(substr(term, 1, 4)),
-               t = as.numeric(substr(term, 5, 5)))]
-
-    # keep fall through summer terms, omit "month" terms A, B, etc.
-    DT <- DT[t %in% seq(1, 6)]
-
-    # retain the first recorded term by ID
-    setorderv(DT, c("mcid", "term"))
-    DT <- DT[, .SD[1], by = c("mcid")]
-    setnames(DT,
-             old = c("term", "level"),
-             new = c("term_i", "level_i"))
-
-    # if first term is in summer, delay to the subsequent Fall
-    DT[t %in% c(4, 5, 6), `:=` (yyyy = yyyy + 1, t = 1)]
-
-    # reduce span by assumed number of completed years by level
-    DT[, delta := fcase(
-        level_i %like% "04", 3,
-        level_i %like% "03", 2,
-        level_i %like% "02", 1,
-        default = 0
-    )]
-    DT[, adj_span := span - delta]
-
-    # use adj_span to construct estimated term for timely-completion
-    DT[t == 1, timely_term:= paste0(yyyy + adj_span - 1, 3)]
-    DT[t  > 1, timely_term:= paste0(yyyy + adj_span    , 1)]
-
-    # remove intermediate variables
-    DT[, c("yyyy", "t", "delta") := NULL]
-
-    # left outer join DT to dframe -------------------------------------
-    setkeyv(DT, "mcid")
-    setkeyv(dframe, "mcid")
-    dframe <- DT[dframe]
-
-    # restore column and row order
-    set_colrow_order(dframe, keep_cols)
-
-    # drop the optional columns if details not requested
-    if (details == FALSE) {
-        keep_cols <- c(keep_cols, "timely_term")
-        dframe <- dframe[, keep_cols, with = FALSE]
-    }
-
-    # remove grouping structure, if any
-    setkey(dframe, NULL)
-
-    # enable printing (see data.table FAQ 2.23)
-    dframe[]
+  # enable printing (see data.table FAQ 2.23)
+  dframe[]
 }
-

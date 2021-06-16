@@ -44,30 +44,31 @@ NULL
 #'
 #' # select columns
 #' filter_search(cip,
-#'             keep_text = "^54",
-#'             select = c("cip6", "cip4name"))
+#'   keep_text = "^54",
+#'   select = c("cip6", "cip4name")
+#' )
 #'
 #' # multiple passes to narrow the results
-#' first_pass  <- filter_search(cip, "civil")
+#' first_pass <- filter_search(cip, "civil")
 #' second_pass <- filter_search(first_pass, "engineering")
 #' filter_search(second_pass, drop_text = "technology")
-#'
 #' \dontrun{
 #' # unsuccessful terms produce a message
 #' filter_search(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 #' }
 filter_search <- function(dframe,
-                        keep_text = NULL,
-                        ...,
-                        drop_text = NULL,
-                        select = NULL) {
+                          keep_text = NULL,
+                          ...,
+                          drop_text = NULL,
+                          select = NULL) {
 
   # force arguments after dots to be used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
-    paste("Arguments after ... must be named.\n",
-          "* Did you forget to write `drop_text = ` or `select = `?\n *")
-
+    paste(
+      "Arguments after ... must be named.\n",
+      "* Did you forget to write `drop_text = ` or `select = `?\n *"
+    )
   )
 
   # explicit arguments and NULL defaults
@@ -76,8 +77,8 @@ filter_search <- function(dframe,
 
   # return if no work is being done
   if ((missing(keep_text) | is.null(keep_text)) &
-      is.null(drop_text) &
-      is.null(select)) {
+    is.null(drop_text) &
+    is.null(select)) {
     return(dframe)
   }
 
@@ -105,9 +106,12 @@ filter_search <- function(dframe,
   # stop if all rows have been eliminated
   if (abs(nrow(DT) - 0) < .Machine$double.eps^0.5) {
     stop(
-      paste("The search result is empty. Either 'keep_text' terms were not",
-            "found or 'drop_text' eliminated every row."),
-      call. = FALSE)
+      paste(
+        "The search result is empty. Either 'keep_text' terms were not",
+        "found or 'drop_text' eliminated every row."
+      ),
+      call. = FALSE
+    )
   }
 
   # message if a search term was not found

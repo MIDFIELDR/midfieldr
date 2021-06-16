@@ -74,134 +74,137 @@ condition_fye <- function(dframe,
                           ...,
                           fye_codes = NULL) {
 
-    # force arguments after dots to be used by name
-    wrapr::stop_if_dot_args(
-        substitute(list(...)),
-        paste("Arguments after ... must be named.\n",
-              "* Did you forget to write `fye_codes = `?\n *")
-
+  # force arguments after dots to be used by name
+  wrapr::stop_if_dot_args(
+    substitute(list(...)),
+    paste(
+      "Arguments after ... must be named.\n",
+      "* Did you forget to write `fye_codes = `?\n *"
     )
+  )
 
-    # explicit arguments and NULL defaults if any
-    assert_explicit(dframe)
-    assert_explicit(midfield_table)
-    fye_codes <- fye_codes %||% c("140102")
+  # explicit arguments and NULL defaults if any
+  assert_explicit(dframe)
+  assert_explicit(midfield_table)
+  fye_codes <- fye_codes %||% c("140102")
 
-    # check argument class
-    assert_class(dframe, "data.frame")
-    assert_class(midfield_table, "data.frame")
-    assert_class(fye_codes, "character")
+  # check argument class
+  assert_class(dframe, "data.frame")
+  assert_class(midfield_table, "data.frame")
+  assert_class(fye_codes, "character")
 
-    # dframe is modified "by reference" throughout
-    setDT(dframe)
-    setDT(midfield_table)
+  # dframe is modified "by reference" throughout
+  setDT(dframe)
+  setDT(midfield_table)
 
-    # existence of required columns
-    assert_required_column(dframe, "mcid")
-    assert_required_column(dframe, "race")
-    assert_required_column(dframe, "sex")
+  # existence of required columns
+  assert_required_column(dframe, "mcid")
+  assert_required_column(dframe, "race")
+  assert_required_column(dframe, "sex")
 
-    assert_required_column(midfield_table, "mcid")
-    assert_required_column(midfield_table, "institution")
-    assert_required_column(midfield_table, "term")
-    assert_required_column(midfield_table, "cip6")
+  assert_required_column(midfield_table, "mcid")
+  assert_required_column(midfield_table, "institution")
+  assert_required_column(midfield_table, "term")
+  assert_required_column(midfield_table, "cip6")
 
-    # class of required columns
-    assert_class(dframe[, mcid], "character")
-    assert_class(dframe[, race], "character")
-    assert_class(dframe[, sex], "character")
+  # class of required columns
+  assert_class(dframe[, mcid], "character")
+  assert_class(dframe[, race], "character")
+  assert_class(dframe[, sex], "character")
 
-    assert_class(midfield_table[, mcid], "character")
-    assert_class(midfield_table[, institution], "character")
-    assert_class(midfield_table[, term], "character")
-    assert_class(midfield_table[, cip6], "character")
+  assert_class(midfield_table[, mcid], "character")
+  assert_class(midfield_table[, institution], "character")
+  assert_class(midfield_table[, term], "character")
+  assert_class(midfield_table[, cip6], "character")
 
-    # bind names due to NSE notes in R CMD check
-    next_cip6 <- NULL
-    next_cip2 <- NULL
-    cip2 <- NULL
+  # bind names due to NSE notes in R CMD check
+  next_cip6 <- NULL
+  next_cip2 <- NULL
+  cip2 <- NULL
 
-    # all degree-seeking engineering students
-    latest_id <- dframe[, unique(mcid)]
+  # all degree-seeking engineering students
+  latest_id <- dframe[, unique(mcid)]
 
-    # degree-seeking engr and an FYE term
-    rows_we_want <- midfield_table$mcid %chin% latest_id &
-        midfield_table$cip6 %chin% fye_codes
-    fye <- midfield_table[rows_we_want, .(mcid, institution)]
+  # degree-seeking engr and an FYE term
+  rows_we_want <- midfield_table$mcid %chin% latest_id &
+    midfield_table$cip6 %chin% fye_codes
+  fye <- midfield_table[rows_we_want, .(mcid, institution)]
 
-    # fye has ID and institution columns
-    fye <- unique(fye)
+  # fye has ID and institution columns
+  fye <- unique(fye)
 
-    # join, result has FYE ID, institution, race, sex
-    fye <- merge(fye, dframe, by = "mcid", all.x = TRUE)
+  # join, result has FYE ID, institution, race, sex
+  fye <- merge(fye, dframe, by = "mcid", all.x = TRUE)
 
-    # subset midfield data table
-    DT <- filter_match(dframe = midfield_table,
-                        match_to = fye,
-                        by_col = "mcid",
-                        select = c("mcid", "term", "cip6"))
+  # subset midfield data table
+  DT <- filter_match(
+    dframe = midfield_table,
+    match_to = fye,
+    by_col = "mcid",
+    select = c("mcid", "term", "cip6")
+  )
 
-    # order rows by setting keys
-    setkeyv(DT, c("mcid", "term"))
+  # order rows by setting keys
+  setkeyv(DT, c("mcid", "term"))
 
-    # determine the CIP in the immediately following term, keyed by ID
-    DT[, next_cip6 := shift(.SD, n = 1, fill = NA, type = "lead"),
-       by = "mcid",
-       .SDcols = "cip6"]
+  # determine the CIP in the immediately following term, keyed by ID
+  DT[, next_cip6 := shift(.SD, n = 1, fill = NA, type = "lead"),
+    by = "mcid",
+    .SDcols = "cip6"
+  ]
 
-    # omit rows for which the next term is FYE
-    DT <- DT[!next_cip6 %chin% fye_codes]
+  # omit rows for which the next term is FYE
+  DT <- DT[!next_cip6 %chin% fye_codes]
 
-    # omit rows in which consecutive CIPs are identical
-    DT <- DT[cip6 != next_cip6]
+  # omit rows in which consecutive CIPs are identical
+  DT <- DT[cip6 != next_cip6]
 
-    # add 2-digit codes
-    DT[, `:=` (cip2 = substr(cip6, 1, 2),
-               next_cip2 = substr(next_cip6, 1, 2)
-    )]
+  # add 2-digit codes
+  DT[, `:=`(
+    cip2 = substr(cip6, 1, 2),
+    next_cip2 = substr(next_cip6, 1, 2)
+  )]
 
-    # at least one of the cip2 must be engineering
-    DT <- DT[cip2 == "14" | next_cip2 == "14"]
+  # at least one of the cip2 must be engineering
+  DT <- DT[cip2 == "14" | next_cip2 == "14"]
 
-    # keep rows in which the cip6 (term, not next term) is FYE
-    DT <- DT[cip6 %chin% fye_codes]
+  # keep rows in which the cip6 (term, not next term) is FYE
+  DT <- DT[cip6 %chin% fye_codes]
 
-    # keep the first term instance (some students enter FYE twice)
-    DT <- DT[, .SD[1], by = "mcid"]
+  # keep the first term instance (some students enter FYE twice)
+  DT <- DT[, .SD[1], by = "mcid"]
 
-    # subset to retain those who transition to engr major after FYE
-    DT <- DT[next_cip2 == "14"]
+  # subset to retain those who transition to engr major after FYE
+  DT <- DT[next_cip2 == "14"]
 
-    # assign predicted engr major to replace FYE code
-    DT[, cip6 := next_cip6]
+  # assign predicted engr major to replace FYE code
+  DT[, cip6 := next_cip6]
 
-    # drop unneeded columns
-    DT <- DT[, .(mcid, cip6)]
+  # drop unneeded columns
+  DT <- DT[, .(mcid, cip6)]
 
-    # fye currently has ID, institution, race, sex
-    # join to original, introduces NA to cip6
-    fye <- merge(fye, DT, by = "mcid", all.x = TRUE)
+  # fye currently has ID, institution, race, sex
+  # join to original, introduces NA to cip6
+  fye <- merge(fye, DT, by = "mcid", all.x = TRUE)
 
-    # predictor variables and target variables to factors
-    fye[, `:=` (institution = as.factor(institution),
-                cip6 = as.factor(cip6),
-                race = as.factor(race),
-                sex = as.factor(sex)
-    )]
+  # predictor variables and target variables to factors
+  fye[, `:=`(
+    institution = as.factor(institution),
+    cip6 = as.factor(cip6),
+    race = as.factor(race),
+    sex = as.factor(sex)
+  )]
 
-    # reorder columns
-    setcolorder(fye, c("mcid", "institution", "race", "sex", "cip6"))
+  # reorder columns
+  setcolorder(fye, c("mcid", "institution", "race", "sex", "cip6"))
 
-    # reorder rows
-    keys <- c("institution", "cip6", "sex", "race")
-    setkeyv(fye, keys)
+  # reorder rows
+  keys <- c("institution", "cip6", "sex", "race")
+  setkeyv(fye, keys)
 
-    # undo keys
-    setkey(fye, NULL)
+  # undo keys
+  setkey(fye, NULL)
 
-    # enable printing (see data.table FAQ 2.23)
-    fye[]
+  # enable printing (see data.table FAQ 2.23)
+  fye[]
 }
-
-
-

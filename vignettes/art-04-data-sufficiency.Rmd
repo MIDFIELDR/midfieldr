@@ -16,8 +16,10 @@ resource_files:
 ---
 
 ```{r include = FALSE}
-knitr::opts_chunk$set(fig.path = here::here("man/figures", 
-                                            "art-04-data-sufficiency-"))
+knitr::opts_chunk$set(fig.path = here::here(
+  "man/figures",
+  "art-04-data-sufficiency-"
+))
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
@@ -86,23 +88,23 @@ library("data.table")
 library("ggplot2")
 
 # parameters
-callout_color     <- "gray60"
+callout_color <- "gray60"
 callout_line_size <- 0.3
-anno_size         <- 3.5 # 3.5 approx 10 point
-vert_baseline     <- 1.07
+anno_size <- 3.5 # 3.5 approx 10 point
+vert_baseline <- 1.07
 
 # construct coordinates
-y     <- c(1.4, 1.75, 2.0)
+y <- c(1.4, 1.75, 2.0)
 y_lim <- c(min(y) - 0.3, max(y) + 0.1)
 x <- c(1986, 1990, 1992, 1995, 1996, 1997)
 x_lim <- c(min(x) - 0.5, max(x) + 1.5)
 
 # arrows
 df_arrow <- wrapr::build_frame(
-  "x", "x_end", "y"  |
+  "x", "x_end", "y" |
     x[1], x[5], y[3] |
     x[2], x[4], y[2] |
-    x[3], x[6], y[1] 
+    x[3], x[6], y[1]
 )
 setDT(df_arrow)
 df_arrow[, x_mid := (x + x_end) / 2]
@@ -116,16 +118,18 @@ dim_lines <- wrapr::build_frame(
     x[2], y[2], y[2] |
     x[4], y[2], y[2] |
     x[3], y[1], y[1] |
-    x[6], y[1], y[1] 
+    x[6], y[1], y[1]
 )
 setDT(dim_lines)
-dim_lines[, `:=` (y = y - 1.5 * del, y_end = y_end + del)]
-dim_lines[x == 1996, y := y - 4*del]
+dim_lines[, `:=`(y = y - 1.5 * del, y_end = y_end + del)]
+dim_lines[x == 1996, y := y - 4 * del]
 
 # graph
 ggplot(data = df_arrow) +
-  scale_x_continuous(limits = x_lim, 
-                     breaks = x) +
+  scale_x_continuous(
+    limits = x_lim,
+    breaks = x
+  ) +
   scale_y_continuous(limits = y_lim) +
   labs(
     y = "",
@@ -141,52 +145,55 @@ ggplot(data = df_arrow) +
   ) +
   # horizontal arrows
   geom_segment(aes(x = x, xend = x_end, y = y, yend = y),
-               color = callout_color,
-               size = callout_line_size,
-               arrow = arrow(
-                 type = "closed",
-                 ends = c("both", "both", "both"), # both, first, last
-                 length = unit(c(2, 2, 2), "mm") # "0" length = no arrow head
-               ),
-               arrow.fill = callout_color
-  )  +
+    color = callout_color,
+    size = callout_line_size,
+    arrow = arrow(
+      type = "closed",
+      ends = c("both", "both", "both"), # both, first, last
+      length = unit(c(2, 2, 2), "mm") # "0" length = no arrow head
+    ),
+    arrow.fill = callout_color
+  ) +
   # dimension lines
-  geom_segment(data = dim_lines, 
-               aes(x = x, xend = x, y = y, yend = y_end),
-               color = callout_color,
-               size = callout_line_size, 
-               linetype = 1
+  geom_segment(
+    data = dim_lines,
+    aes(x = x, xend = x, y = y, yend = y_end),
+    color = callout_color,
+    size = callout_line_size,
+    linetype = 1
   ) +
   # student labels
   annotate("text",
-           x = df_arrow$x[2] - 0.7,
-           y = df_arrow$y[c(2, 3)],
-           size = anno_size,
-           label = c("student A:", "student B:"), 
-           vjust = 0.5, 
-           hjust = 1
+    x = df_arrow$x[2] - 0.7,
+    y = df_arrow$y[c(2, 3)],
+    size = anno_size,
+    label = c("student A:", "student B:"),
+    vjust = 0.5,
+    hjust = 1
   ) +
   # label arrows
   annotate("text",
-           x = df_arrow$x_mid,
-           y = df_arrow$y,
-           size = anno_size,
-           label = c("institution data range", "timely span", "timely span"),
-           vjust = -0.5
+    x = df_arrow$x_mid,
+    y = df_arrow$y,
+    size = anno_size,
+    label = c("institution data range", "timely span", "timely span"),
+    vjust = -0.5
   ) +
   # label dimension lines
   annotate("text",
-           x = dim_lines$x,
-           y = dim_lines$y,
-           size = anno_size, 
-           label = c("",
-                     "data limit",
-                     "enter",
-                     "TC term", 
-                     "enter", 
-                     "TC term"), 
-           vjust = 1,
-           hjust = c(-0.1, 0.5, -0.1, 1.1, -0.1, -0.1)
+    x = dim_lines$x,
+    y = dim_lines$y,
+    size = anno_size,
+    label = c(
+      "",
+      "data limit",
+      "enter",
+      "TC term",
+      "enter",
+      "TC term"
+    ),
+    vjust = 1,
+    hjust = c(-0.1, 0.5, -0.1, 1.1, -0.1, -0.1)
   )
 ```
 <br>
@@ -224,9 +231,11 @@ library("data.table")
 library("ggplot2")
 
 # optional code to format data.table printing
-options(datatable.print.nrows = 10, 
-        datatable.print.topn  = 5, 
-        datatable.print.class = TRUE)
+options(
+  datatable.print.nrows = 10,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
 ```
 
 data
@@ -254,10 +263,11 @@ study_programs
 To obtain the students enrolled in the case study programs, we use `filter_match()` to access the `term` table. 
 
 ```{r}
-case_students <- filter_match(term, 
-                              match_to = study_programs, 
-                              by_col = "cip6", 
-                              select = c("mcid", "cip6"))
+case_students <- filter_match(term,
+  match_to = study_programs,
+  by_col = "cip6",
+  select = c("mcid", "cip6")
+)
 case_students
 ```
 
@@ -267,9 +277,10 @@ A necessary prerequisite for applying the data sufficiency criterion is to deter
 
 ```{r}
 # limit population to degree-seeking students
-DT <- filter_match(case_students, 
-                   match_to = student, 
-                   by_col = "mcid")
+DT <- filter_match(case_students,
+  match_to = student,
+  by_col = "mcid"
+)
 
 # examine the result
 DT
@@ -316,9 +327,10 @@ The potential use of these data are to implement one's own heuristic for determi
 
 ```{r}
 # show details
-DT <- add_timely_term(DT, 
-                      midfield_table = term, 
-                      details = TRUE)
+DT <- add_timely_term(DT,
+  midfield_table = term,
+  details = TRUE
+)
 DT
 ```
  
@@ -326,9 +338,10 @@ If the input data frame has an existing column name matching any of the added co
 
 ```{r}
 # remove details
-DT <- add_timely_term(DT, 
-                      midfield_table = term, 
-                      details = FALSE)
+DT <- add_timely_term(DT,
+  midfield_table = term,
+  details = FALSE
+)
 DT
 ```
 
@@ -343,8 +356,9 @@ The function has two arguments, the data frame to which the new variable is adde
 
 ```{r}
 # add institutions
-DT <- add_institution(DT, 
-                      midfield_table = term)
+DT <- add_institution(DT,
+  midfield_table = term
+)
 
 # examine the result
 DT
@@ -364,8 +378,9 @@ Similar to `add_timely_term()`, this function has two required arguments and one
 ```{r}
 # add column with details
 DT <- add_data_sufficiency(DT,
-                           midfield_table = term,
-                           details = TRUE)
+  midfield_table = term,
+  details = TRUE
+)
 # examine the result
 DT
 ```
@@ -375,8 +390,9 @@ With details FALSE, only the `data_sufficieny` column is added.
 ```{r}
 # without details
 DT <- add_data_sufficiency(DT,
-                           midfield_table = term,
-                           details = FALSE)
+  midfield_table = term,
+  details = FALSE
+)
 # examine the result
 DT
 ```
@@ -429,10 +445,10 @@ We can create a simple dot chart to compare the numbers of students in these pro
 # group and summarize
 DT <- study_students[, .N, by = "cip6"]
 
-# join the program names 
+# join the program names
 DT <- merge(DT, study_programs, by = "cip6", all.x = TRUE)
 
-#examine the result
+# examine the result
 DT
 ```
 
@@ -455,10 +471,12 @@ The graph follows.
 ggplot(DT, aes(x = N, y = program)) +
   scale_x_continuous(limits = c(1000, 3000)) +
   geom_point() +
-  labs(x = "Number of students", 
-       y = "", 
-       title = "Case study students", 
-       caption = "Source: midfielddata")
+  labs(
+    x = "Number of students",
+    y = "",
+    title = "Case study students",
+    caption = "Source: midfielddata"
+  )
 ```
 
 
@@ -479,22 +497,25 @@ library("ggplot2")
 data(student, term, degree)
 
 # Case study students
-case_students <- filter_match(term, 
-                              match_to = study_programs, 
-                              by_col = "cip6", 
-                              select = c("mcid", "cip6"))
+case_students <- filter_match(term,
+  match_to = study_programs,
+  by_col = "cip6",
+  select = c("mcid", "cip6")
+)
 
 # Estimate the timely completion term
-DT <- filter_match(case_students, 
-                   match_to = student, 
-                   by_col = "mcid")
+DT <- filter_match(case_students,
+  match_to = student,
+  by_col = "mcid"
+)
 DT <- add_timely_term(DT, midfield_table = term)
 
 # Determine data sufficiency
 DT <- add_institution(DT, midfield_table = term)
 DT <- add_data_sufficiency(DT,
-                           midfield_table = term,
-                           details = TRUE)
+  midfield_table = term,
+  details = TRUE
+)
 
 # Subset data for data sufficiency
 DT <- DT[data_sufficiency == TRUE]
@@ -508,10 +529,12 @@ DT[, program := reorder(program, N)]
 ggplot(DT, aes(x = N, y = program)) +
   scale_x_continuous(limits = c(1000, 3000)) +
   geom_point() +
-  labs(x = "Number of students", 
-       y = "", 
-       title = "Case study students", 
-       caption = "Source: midfielddata")
+  labs(
+    x = "Number of students",
+    y = "",
+    title = "Case study students",
+    caption = "Source: midfielddata"
+  )
 ```
 
 

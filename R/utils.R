@@ -29,7 +29,7 @@ add_inst_limit <- function(dframe, midfield_table) {
   DT <- DT[, list(inst_limit = max(term)), by = "institution"]
 
   # left-outer join, keep all rows of dframe
-  dframe <-  merge(dframe, DT, by = "institution", all.x = TRUE)
+  dframe <- merge(dframe, DT, by = "institution", all.x = TRUE)
 
   # original columns as keys, order columns and rows
   set_colrow_order(dframe, key_names)
@@ -123,7 +123,7 @@ assert_common_column <- function(data, col) {
   assert_class(col, "character")
   if (!col %in% names(data)) {
     stop("Column name `", col, "` is not present in `", substitute(data), "`",
-         call. = FALSE
+      call. = FALSE
     )
   }
 }
@@ -263,7 +263,9 @@ unique_by_keys <- function(DT, cols = NULL) {
   # argument check
   assert_class(DT, "data.frame")
 
-  if (is.null(cols)) {cols <- names(DT)}
+  if (is.null(cols)) {
+    cols <- names(DT)
+  }
 
   # argument check
   assert_class(cols, "character")

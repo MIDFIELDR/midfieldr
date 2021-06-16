@@ -13,8 +13,10 @@ link-citations: yes
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(fig.path = here::here("man/figures", 
-                                            "art-03-case-selection-"))
+knitr::opts_chunk$set(fig.path = here::here(
+  "man/figures",
+  "art-03-case-selection-"
+))
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
@@ -74,9 +76,11 @@ library("midfielddata")
 library("data.table")
 
 # optional code to control data.table printing
-options(datatable.print.nrows = 10, 
-        datatable.print.topn  = 5, 
-        datatable.print.class = TRUE)
+options(
+  datatable.print.nrows = 10,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
 ```
 
 data
@@ -170,9 +174,9 @@ In this approach, we use the data.table `fcase()` function to change all of the 
 ```{r}
 dframe <- copy(case_study)
 dframe[, program := fcase(
-  program %ilike% "civil"     , "CVE", 
-  program %ilike% "electrical", "ECE", 
-  program %ilike% "mechanical", "MCE", 
+  program %ilike% "civil", "CVE",
+  program %ilike% "electrical", "ECE",
+  program %ilike% "mechanical", "MCE",
   program %ilike% "industrial", "ISE"
 )]
 dframe
@@ -183,8 +187,8 @@ dframe
 In this approach, we search for one distinctive term only.
 
 ```{r}
-# return matches in the cip4name column 
-dframe <- copy(case_study) 
+# return matches in the cip4name column
+dframe <- copy(case_study)
 rows_to_edit <- dframe$program %ilike% "electrical"
 dframe[rows_to_edit, program := "Electrical Engineering"]
 dframe
@@ -240,7 +244,7 @@ case_degree
 We often want to select specific rows at the same time, e.g., 
 
 ```{r}
-# subset degree rows and columns 
+# subset degree rows and columns
 cols_we_want <- c("mcid", "institution", "cip6")
 rows_we_want <- degree$cip6 %chin% case_study$cip6
 case_degree <- degree[rows_we_want, ..cols_we_want]
@@ -253,10 +257,11 @@ This code chunk above represents a routine we encounter fairly often: subset row
 
 ```{r}
 # subset degree table
-dframe <- filter_match(degree, 
-                        match_to = case_study, 
-                        by_col   = "cip6", 
-                        select   = c("mcid", "institution", "cip6"))
+dframe <- filter_match(degree,
+  match_to = case_study,
+  by_col = "cip6",
+  select = c("mcid", "institution", "cip6")
+)
 
 # compare to the DT we obtained above after ordering rows the same way
 all.equal(case_degree[order(mcid)], dframe[order(mcid)])
@@ -268,10 +273,11 @@ Another common data access task is to retrieve information from `student` by ID.
 
 ```{r}
 # subset student table
-case_student <- filter_match(student, 
-                        match_to = case_degree, 
-                        by_col   = "mcid", 
-                        select   = c("mcid", "transfer", "hours_transfer"))
+case_student <- filter_match(student,
+  match_to = case_degree,
+  by_col = "mcid",
+  select = c("mcid", "transfer", "hours_transfer")
+)
 # examine the result
 case_student
 ```
@@ -291,7 +297,7 @@ Another common use of the `case_study` data is to merge its program names with a
 For example, let's join the program names to the case degree data frame we created above. The `all.x = TRUE` argument performs the merge as a "left outer join", retaining all rows of `case_degree` (the "left" data frame).  
 
 ```{r}
-# join program names 
+# join program names
 case_degree <- merge(case_degree, case_study, by = "cip6", all.x = TRUE)
 
 # examine the result
@@ -371,15 +377,19 @@ library("data.table")
 data(student, degree)
 
 # optional code to control data.table printing
-options(datatable.print.nrows = 10, 
-        datatable.print.topn  = 5, 
-        datatable.print.class = TRUE)
+options(
+  datatable.print.nrows = 10,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
 
 # identify program codes
 pass01 <- filter_search(cip, "engineering")
 pass02 <- filter_search(pass01, "^14")
-pass03 <- filter_search(pass02, 
-                        c("civil", "electrical", "industrial", "mechanical"))
+pass03 <- filter_search(
+  pass02,
+  c("civil", "electrical", "industrial", "mechanical")
+)
 pass04 <- filter_search(pass03, drop_text = "electromechanical")
 case_study <- filter_search(pass04, select = c("cip6", "cip4name"))
 
@@ -387,12 +397,12 @@ case_study <- filter_search(pass04, select = c("cip6", "cip4name"))
 case_study[, program := cip4name]
 dframe <- copy(case_study)
 dframe[, program := fcase(
-  program %ilike% "civil"     , "CVE", 
-  program %ilike% "electrical", "ECE", 
-  program %ilike% "mechanical", "MCE", 
+  program %ilike% "civil", "CVE",
+  program %ilike% "electrical", "ECE",
+  program %ilike% "mechanical", "MCE",
   program %ilike% "industrial", "ISE"
 )]
-dframe <- copy(case_study) 
+dframe <- copy(case_study)
 rows_to_edit <- dframe$program %ilike% "electrical"
 dframe[rows_to_edit, program := "Electrical Engineering"]
 rows_to_edit <- case_study$cip6 %like% "^1410"
@@ -400,14 +410,16 @@ case_study[rows_to_edit, program := "Electrical Engineering"]
 case_study[, cip4name := NULL]
 
 # apply results
-case_degree <- filter_match(degree, 
-                            match_to = case_study, 
-                            by_col   = "cip6", 
-                            select   = c("mcid", "institution", "cip6"))
-case_student <- filter_match(student, 
-                             match_to = case_degree, 
-                             by_col   = "mcid", 
-                             select   = c("mcid", "transfer", "hours_transfer"))
+case_degree <- filter_match(degree,
+  match_to = case_study,
+  by_col = "cip6",
+  select = c("mcid", "institution", "cip6")
+)
+case_student <- filter_match(student,
+  match_to = case_degree,
+  by_col = "mcid",
+  select = c("mcid", "transfer", "hours_transfer")
+)
 case_student[, .N, by = "transfer"]
 case_degree <- merge(case_degree, case_study, by = "cip6", all.x = TRUE)
 case_degree[, .N, by = "program"]
