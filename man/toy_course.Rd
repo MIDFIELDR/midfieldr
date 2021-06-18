@@ -5,7 +5,7 @@
 \alias{toy_course}
 \title{Course data for examples}
 \format{
-\code{data.table} with 4721 rows and 6 columns keyed by
+\code{data.table} with 4616 rows and 6 columns keyed by
 student ID.
 \describe{
  \item{mcid}{Character, anonymized student identifier}

@@ -30,22 +30,30 @@ test_add_institution <- function() {
                  add_institution(dframe = id_inst,
                                  midfield_table = toy_term))
 
-    # midfield_table argument must term or equivalent
+    # midfield_table argument must be term or equivalent
     expect_error(add_institution(DT, midfield_table = toy_student))
 
     # ID column required in both data frames
-    # missing_column <- copy(DT)[, mcid := NULL]
-    # expect_error(add_race_sex(DT, missing_column))
-    # expect_error(add_race_sex(missing_column, DT))
+    missing_column <- copy(toy_term)[, mcid := NULL]
+    expect_error(add_institution(DT, missing_column))
+    expect_error(add_institution(missing_column, DT))
+
+    # institution and term columns required in midfield_table argument
+    missing_column <- copy(toy_term)[, institution := NULL]
+    expect_error(add_institution(DT, missing_column))
+    missing_column <- copy(toy_term)[, term := NULL]
+    expect_error(add_institution(DT, missing_column))
+
+    # arguments must be data frames
+    expect_error(add_institution(DT$mcid, midfield_table = toy_term))
+    expect_error(add_institution(DT, midfield_table = toy_term$term))
+
+    # arguments must be explicit
+    expect_error(add_institution(NULL, midfield_table = toy_term))
+    expect_error(add_institution(DT, midfield_table = NULL))
 
 
-
-
-
-
-
-
-
+    # create an answer with NA in column?
 
 
 

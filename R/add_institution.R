@@ -10,8 +10,8 @@ NULL
 #'
 #' Add a column of character values with institution names (or labels) using
 #' student ID as the join-by variable. In the MIDFIELD practice data, the
-#' labels are anonymized. Based on information in the MIDFIELD \code{term}
-#' data table or equivalent.
+#' labels are anonymized. Institution names pulled from the MIDFIELD
+#' \code{term} data table or equivalent.
 #'
 #' If a student is associated with more than one institution, the institution
 #' at which they completed the most terms is returned. An existing column with
@@ -46,17 +46,15 @@ NULL
 #' head(DT2)
 #'
 #'
-#'
-#'
-#'
-#'
-#'
-#'
 #' @export
 #'
 #'
 add_institution <- function(dframe,
                             midfield_table) {
+
+  # remove all keys
+  on.exit(setkey(dframe, NULL))
+  on.exit(setkey(midfield_table, NULL), add = TRUE)
 
   # required arguments
   qassert(dframe, "d+")
@@ -111,9 +109,6 @@ add_institution <- function(dframe,
   setkeyv(DT, "mcid")
   setkeyv(dframe, "mcid")
   dframe <- DT[dframe]
-
-  # remove grouping structure
-  setkey(dframe, NULL)
 
   # enable printing (see data.table FAQ 2.23)
   dframe[]

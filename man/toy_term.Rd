@@ -5,7 +5,7 @@
 \alias{toy_term}
 \title{Term data for examples}
 \format{
-\code{data.table} with 100 rows and 6 columns keyed by
+\code{data.table} with 169 rows and 6 columns keyed by
 student ID.
 \describe{
  \item{mcid}{Character, anonymized student identifier}

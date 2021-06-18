@@ -18,14 +18,18 @@ with required variables \code{mcid}, \code{institution},
 \item{...}{Not used, forces later arguments to be used by name.}
 
 \item{fye_codes}{Optional character vector of 6-digit CIP codes to
-identify FYE programs, default 140102.}
+identify FYE programs, default 140102. Codes must be 6-digit
+strings of numbers; regular expressions are prohibited.
+Non-engineering codes---those that do not start with
+14"---are ignored.}
 }
 \value{
 A \code{data.table} with the following properties:
 \itemize{
     \item One row for every FYE student.
     \item Columns for ID, institution, race, sex, and CIP code, all
-    except ID converted to factors.
+    except ID converted to factors. Additional columns in \code{dframe}
+    are dropped.
     \item Grouping structures are not preserved.
 }
 }
@@ -77,7 +81,41 @@ variable (cip6) are converted to unordered factors. The resulting data
 frame is ready for use as input for the mice package.
 }
 \examples{
-# TBD
+# Using toy data
+DT <- toy_student[, .(mcid, race, sex)]
+condition_fye(dframe = DT, midfield_table = toy_term)
+
+
+# Overwrites institution if present in dframe
+DT <- toy_student[, .(mcid, institution, race, sex)]
+condition_fye(dframe = DT, midfield_table = toy_term)
+
+
+# Other columns, if any, are dropped
+colnames(toy_student)
+colnames(condition_fye(toy_student, toy_term))
+
+
+# Optional argument permits multiple CIP codes for FYE
+condition_fye(DT, toy_term, fye_codes = c("140101", "140102"))
+
+
+\dontrun{
+# Constraints on the \vode{fye_codes} argument
+DT <- toy_student[, .(mcid, race, sex)]
+
+
+# Must be an engineering CIP (starts with 14)
+condition_fye(DT, toy_term, fye_codes = c("140101", "540102"))
+
+
+# Must have 6-digits
+condition_fye(DT, toy_term, fye_codes = "1401")
+
+
+# Must contain numerals only (no regular expressions)
+condition_fye(DT, toy_term, fye_codes = "^14010")
+}
 
 
 }

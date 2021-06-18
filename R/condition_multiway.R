@@ -96,6 +96,9 @@ NULL
 #'
 condition_multiway <- function(dframe, ..., details = NULL) {
 
+  # remove all keys
+  on.exit(setkey(dframe, NULL))
+
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
@@ -186,7 +189,7 @@ condition_multiway <- function(dframe, ..., details = NULL) {
       }
     }
   )
-  # remove grouping structure, if any
-  setkey(dframe, NULL)
+
+  # enable printing (see data.table FAQ 2.23)
   dframe[]
 }

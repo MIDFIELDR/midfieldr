@@ -192,7 +192,7 @@
 #' A small subset by row and column of the MIDFIELD course table
 #' for use in package examples.
 #'
-#' @format \code{data.table} with 4721 rows and 6 columns keyed by
+#' @format \code{data.table} with 4616 rows and 6 columns keyed by
 #' student ID.
 #' \describe{
 #'  \item{mcid}{Character, anonymized student identifier}
@@ -215,7 +215,7 @@
 #' A small subset by row and column of the MIDFIELD term table
 #' for use in package examples.
 #'
-#' @format \code{data.table} with 100 rows and 6 columns keyed by
+#' @format \code{data.table} with 169 rows and 6 columns keyed by
 #' student ID.
 #' \describe{
 #'  \item{mcid}{Character, anonymized student identifier}

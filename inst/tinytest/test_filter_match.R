@@ -21,8 +21,11 @@ test_filter_match <- function() {
     # Gives correct answer
     DT1 <- wrapr::build_frame(
         "mcid"         , "institution"  , "race" , "sex"    |
+            "MID25828870", "Institution M", "White", "Male"   |
             "MID25845841", "Institution M", "White", "Female" |
-            "MID25851790", "Institution M", "White", "Male"   |
+            "MID25846316", "Institution M", "White", "Male"   |
+            "MID25847220", "Institution M", "White", "Male"   |
+            "MID25848589", "Institution M", "White", "Male"   |
             "MID25982250", "Institution B", "White", "Female" |
             "MID26319252", "Institution E", "White", "Male"   |
             "MID26439623", "Institution H", "White", "Male"   |

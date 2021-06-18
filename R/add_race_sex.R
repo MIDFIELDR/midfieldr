@@ -53,6 +53,10 @@ NULL
 add_race_sex <- function(dframe,
                          midfield_table) {
 
+  # remove all keys
+  on.exit(setkey(dframe, NULL))
+  on.exit(setkey(midfield_table, NULL), add = TRUE)
+
   # required arguments
   qassert(dframe, "d+")
   qassert(midfield_table, "d+")
@@ -99,9 +103,6 @@ add_race_sex <- function(dframe,
 
   # restore column and row order
   set_colrow_order(dframe, key_names)
-
-  # remove grouping structure, if any
-  setkey(dframe, NULL)
 
   # enable printing (see data.table FAQ 2.23)
   dframe[]

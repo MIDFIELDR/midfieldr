@@ -1,7 +1,8 @@
 
 
 #' @import data.table
-#' @importFrom checkmate qassert assert_names
+#' @importFrom checkmate assert_choice assert_subset
+#' @importFrom checkmate qassert assert_names assert_false
 NULL
 
 
@@ -60,13 +61,16 @@ NULL
 #'        \code{term}, and \code{cip6}.
 #' @param ... Not used, forces later arguments to be used by name.
 #' @param fye_codes Optional character vector of 6-digit CIP codes to
-#'        identify FYE programs, default 140102.
-#'
+#'        identify FYE programs, default 140102. Codes must be 6-digit
+#'        strings of numbers; regular expressions are prohibited.
+#'        Non-engineering codes---those that do not start with
+#'        14"---are ignored.
 #' @return A \code{data.table} with the following properties:
 #' \itemize{
 #'     \item One row for every FYE student.
 #'     \item Columns for ID, institution, race, sex, and CIP code, all
-#'     except ID converted to factors.
+#'     except ID converted to factors. Additional columns in \code{dframe}
+#'     are dropped.
 #'     \item Grouping structures are not preserved.
 #' }
 #'
@@ -75,7 +79,41 @@ NULL
 #'
 #'
 #' @examples
-#' # TBD
+#' # Using toy data
+#' DT <- toy_student[, .(mcid, race, sex)]
+#' condition_fye(dframe = DT, midfield_table = toy_term)
+#'
+#'
+#' # Overwrites institution if present in dframe
+#' DT <- toy_student[, .(mcid, institution, race, sex)]
+#' condition_fye(dframe = DT, midfield_table = toy_term)
+#'
+#'
+#' # Other columns, if any, are dropped
+#' colnames(toy_student)
+#' colnames(condition_fye(toy_student, toy_term))
+#'
+#'
+#' # Optional argument permits multiple CIP codes for FYE
+#' condition_fye(DT, toy_term, fye_codes = c("140101", "140102"))
+#'
+#'
+#' \dontrun{
+#' # Constraints on the \vode{fye_codes} argument
+#' DT <- toy_student[, .(mcid, race, sex)]
+#'
+#'
+#' # Must be an engineering CIP (starts with 14)
+#' condition_fye(DT, toy_term, fye_codes = c("140101", "540102"))
+#'
+#'
+#' # Must have 6-digits
+#' condition_fye(DT, toy_term, fye_codes = "1401")
+#'
+#'
+#' # Must contain numerals only (no regular expressions)
+#' condition_fye(DT, toy_term, fye_codes = "^14010")
+#' }
 #'
 #'
 #' @export
@@ -85,6 +123,10 @@ condition_fye <- function(dframe,
                           midfield_table,
                           ...,
                           fye_codes = NULL) {
+
+  # remove all keys
+  on.exit(setkey(dframe, NULL))
+  on.exit(setkey(midfield_table, NULL), add = TRUE)
 
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
@@ -99,9 +141,21 @@ condition_fye <- function(dframe,
   qassert(dframe, "d+")
   qassert(midfield_table, "d+")
 
-  # optional arguments
-  fye_codes <- fye_codes %||% c("140102")
-  qassert(fye_codes, "s+") # string, length >= 1
+  # optional arguments: fye_codes default value(s)
+  fye_codes  <- fye_codes %||% c("140102")
+  assert_choice(unique(nchar(fye_codes)), choices = 6) # 6 digits only
+
+  # fye_codes: number strings only, no regular expressions
+  assert_subset(
+    unlist(strsplit(fye_codes, split = character(0))),
+    choices = c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+  )
+
+  # fye_codes must be engineering (start with "14")
+  assert_false(length(fye_codes) != length(fye_codes[fye_codes %like% "^14"]))
+
+  # fye_codes: string, length >= 1
+  qassert(fye_codes, "s+")
 
   # inputs modified (or not) by reference
   dframe <- copy(as.data.table(dframe)) # not the output
@@ -136,8 +190,14 @@ condition_fye <- function(dframe,
     midfield_table$cip6 %chin% fye_codes
   fye <- midfield_table[rows_we_want, .(mcid, institution)]
 
+  # remove key when finished
+  on.exit(setkey(fye, NULL), add = TRUE)
+
   # fye has ID and institution columns
   fye <- unique(fye)
+
+  # institution in fye replaces institution (if any) in dframe
+  if("institution" %chin% names(dframe)){dframe[, institution := NULL]}
 
   # join, result has FYE ID, institution, race, sex
   fye <- merge(fye, dframe, by = "mcid", all.x = TRUE)
@@ -201,15 +261,14 @@ condition_fye <- function(dframe,
     sex = as.factor(sex)
   )]
 
-  # reorder columns
-  setcolorder(fye, c("mcid", "institution", "race", "sex", "cip6"))
+  # keep required columns only
+  cols_we_want <- c("mcid", "institution", "race", "sex", "cip6")
+  fye <- fye[, cols_we_want, with = FALSE]
+  setcolorder(fye, cols_we_want)
 
   # reorder rows
   keys <- c("institution", "cip6", "sex", "race")
   setkeyv(fye, keys)
-
-  # undo keys
-  setkey(fye, NULL)
 
   # enable printing (see data.table FAQ 2.23)
   fye[]

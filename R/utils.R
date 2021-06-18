@@ -49,6 +49,9 @@ add_inst_limit <- function(dframe, midfield_table) {
 #' @param cols character vector of column names to use as keys
 #' @noRd
 set_colrow_order <- function(dframe, cols) {
+
+  on.exit(setkey(dframe, NULL))
+
   # ensure dframe is data.table class
   setDT(dframe)
 
@@ -57,10 +60,6 @@ set_colrow_order <- function(dframe, cols) {
 
   # order rows by using names as keys
   setkeyv(dframe, cols = cols)
-
-  # remove keys
-  setkey(dframe, NULL)
-  return(dframe)
 }
 
 # ------------------------------------------------------------------------

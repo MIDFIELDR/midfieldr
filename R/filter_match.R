@@ -93,6 +93,10 @@ filter_match <- function(dframe,
                          ...,
                          select = NULL) {
 
+  # remove all keys
+  on.exit(setkey(dframe, NULL))
+  on.exit(setkey(match_to, NULL), add = TRUE)
+
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),

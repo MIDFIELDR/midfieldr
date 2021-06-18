@@ -85,6 +85,9 @@ filter_search <- function(dframe,
                           drop_text,
                           select = NULL) {
 
+  # remove all keys
+  on.exit(setkey(dframe, NULL))
+
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
@@ -160,9 +163,6 @@ filter_search <- function(dframe,
       paste(names(not_found), collapse = ", ")
     ))
   }
-
-  # prepare to return
-  setkey(dframe, NULL)
 
   # subset columns
   dframe <- dframe[, select, with = FALSE]

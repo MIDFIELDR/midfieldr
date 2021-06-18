@@ -1,23 +1,10 @@
 test_filter_search <- function() {
 
-    # function arguments
     # filter_search <- function(dframe,
     #                           keep_text = NULL,
     #                           ...,
     #                           drop_text = NULL,
     #                           select = NULL)
-
-    library(data.table)
-    options(datatable.print.class = TRUE)
-
-    # create test case
-    # music_cip <- filter_search(
-    #     cip,
-    #     keep_text = "^5009",
-    #     drop_text = c("500902", "500903", "500904", "500905", "500909", "500911"),
-    #     select    = c("cip4", "cip4name", "cip6", "cip6name")
-    #     )
-    # cat(wrapr::draw_frame(music_cip))
 
     # test case
     music_cip <- wrapr::build_frame(
@@ -48,11 +35,7 @@ test_filter_search <- function() {
     expect_equal(ans,
                  unique(filter_search(music_cip, select = select_these)))
 
-    # Select produces correct columns
-    expect_equal(select_these,
-                 colnames(filter_search(music_cip, select = select_these)))
-
-    # First two arguments do not have to be named if ordered correctly
+    # Arguments before ... do not have to be named if ordered correctly
     expect_equal(
         filter_search(keep_text = c("500913"), dframe = music_cip),
         filter_search(music_cip, c("500913"))
@@ -60,9 +43,29 @@ test_filter_search <- function() {
 
     # Data returned unaltered if keep_text and drop_text are NULL
     expect_equal(
-        filter_search(music_cip, keep_text = NULL, drop_text = NULL),
-        music_cip,
+        filter_search(music_cip, keep_text = "Conducting", select = "cip6"),
+        music_cip[cip6name =="Conducting", .(cip6)]
     )
+
+    # Correct result if search terms found in columns not selected for return
+    setkey(music_cip, NULL)
+    expect_equal(
+        filter_search(music_cip, keep_text = NULL, drop_text = NULL),
+        music_cip
+    )
+
+    # Data returned unaltered if no arguments do anything
+    expect_equal(
+        filter_search(music_cip,
+                      keep_text = NULL,
+                      drop_text = NULL,
+                      select = NULL),
+        music_cip
+    )
+
+    # Select alone produces correct columns
+    expect_equal(select_these,
+                 colnames(filter_search(music_cip, select = select_these)))
 
     # Result is empty if drop_text is all-inclusive
     expect_error(
@@ -73,8 +76,6 @@ test_filter_search <- function() {
     expect_error(
         filter_search(music_cip, keep_text = "Brasss")
     )
-
-    # Result is empty if the selected columns do not contain the search terms
 
     # Message if some keep_text not found
     incorrect_cip_text <- c("Bogus", "111111")
@@ -98,3 +99,9 @@ test_filter_search <- function() {
 }
 
 test_filter_search()
+
+
+
+
+
+

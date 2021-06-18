@@ -65,6 +65,9 @@ add_completion_timely <- function(dframe,
                                   midfield_table,
                                   ...,
                                   details = NULL) {
+  # remove all keys
+  on.exit(setkey(dframe, NULL))
+  on.exit(setkey(midfield_table, NULL), add = TRUE)
 
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
@@ -153,9 +156,6 @@ add_completion_timely <- function(dframe,
     cols_we_want <- c(key_names, "completion_timely")
     dframe <- dframe[, cols_we_want, with = FALSE]
   }
-
-  # remove grouping structure, if any
-  setkey(dframe, NULL)
 
   # restore "term" column if exists in incoming df
   if ("existing_term_col" %chin% names(dframe)) {

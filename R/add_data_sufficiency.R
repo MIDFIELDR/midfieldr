@@ -64,6 +64,9 @@ add_data_sufficiency <- function(dframe,
                                  midfield_table,
                                  ...,
                                  details = NULL) {
+  # remove all keys
+  on.exit(setkey(dframe, NULL))
+  on.exit(setkey(midfield_table, NULL), add = TRUE)
 
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
@@ -124,9 +127,6 @@ add_data_sufficiency <- function(dframe,
     cols_we_want <- c(key_names, "data_sufficiency")
     dframe <- dframe[, cols_we_want, with = FALSE]
   }
-
-  # remove grouping structure, if any
-  setkey(dframe, NULL)
 
   # enable printing (see data.table FAQ 2.23)
   dframe[]
