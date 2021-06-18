@@ -47,10 +47,22 @@ test_filter_match <- function() {
                               "mcid",
                               c("mcid", "institution"))) # select not named
 
+    # arguments must be data frames
+    expect_error(filter_match(toy_student$mcid,
+                              study_students,
+                              "mcid"))
+    expect_error(filter_match(toy_student,
+                              study_students$mcid,
+                              "mcid"))
+
+
+
     invisible(NULL)
 }
 
 test_filter_match()
 
 
-
+# filter_match(toy_student,
+#              toy_student,
+#              c("mcid", "institution"))

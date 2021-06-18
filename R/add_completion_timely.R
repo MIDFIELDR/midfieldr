@@ -3,6 +3,7 @@
 #' @import data.table
 #' @importFrom wrapr stop_if_dot_args
 #' @importFrom stats na.omit
+#' @importFrom checkmate qassert assert_names
 NULL
 
 
@@ -10,7 +11,7 @@ NULL
 #'
 #' Add a column of logical values (TRUE/FALSE) to a data frame indicating
 #' whether a student completes their program in a timely manner. Based on
-#' information in the MIDFIELD \code{degree} data table.
+#' information in the MIDFIELD \code{degree} data table or equivalent.
 #'
 #' Program completion is typically considered timely if it occurs within a
 #' specific span of years after admission. In a persistence metric that depends
@@ -38,7 +39,7 @@ NULL
 #' @param midfield_table MIDFIELD \code{degree} data table or equivalent with
 #'        required variables \code{mcid} and \code{term}.
 #' @param ... Not used, forces later arguments to be used by name.
-#' @param details Logical scalar to add optional columns reporting information
+#' @param details Optional flag to add columns reporting information
 #'        on which the evaluation is based, default FALSE.
 #' @return A \code{data.table} with the following properties:
 #' \itemize{
@@ -65,7 +66,7 @@ add_completion_timely <- function(dframe,
                                   ...,
                                   details = NULL) {
 
-  # force arguments after dots to be used by name
+  # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     paste(
@@ -74,54 +75,29 @@ add_completion_timely <- function(dframe,
     )
   )
 
+  # required arguments
+  qassert(dframe, "d+")
+  qassert(midfield_table, "d+")
 
-
-  if (missing(dframe)) {
-    stop(paste(
-      "`dframe` is a required argument.\n",
-      "* You did not include it."
-    ),
-    call. = FALSE
-    )
-  }
-  # # explicit arguments and NULL defaults if any
-  if (is.null(dframe)) {
-    stop(paste(
-      "`dframe` is a data frame.\n",
-      "* You supplied a NULL argument."
-    ),
-    call. = FALSE
-    )
-  }
-
-
-
-
-
-  # assert_explicit(dframe)
-  assert_explicit(midfield_table)
+  # optional arguments
   details <- details %||% FALSE
+  qassert(details, "b1") # boolean, length = 1
 
-  # check argument class
-  assert_class(dframe, "data.frame")
-  assert_class(midfield_table, "data.frame")
-  assert_class(details, "logical")
-
-  # dframe is modified "by reference" throughout
+  # inputs modified (or not) by reference
   setDT(dframe)
-  setDT(midfield_table)
+  setDT(midfield_table) # immediately subset, so side-effect OK
 
-  # existence of required columns
-  assert_required_column(dframe, "mcid")
-  assert_required_column(dframe, "timely_term")
-  assert_required_column(midfield_table, "mcid")
-  assert_required_column(midfield_table, "term")
+  # required columns
+  assert_names(colnames(dframe),
+               must.include = c("mcid", "timely_term"))
+  assert_names(colnames(midfield_table),
+               must.include = c("mcid", "term"))
 
   # class of required columns
-  assert_class(dframe[, mcid], "character")
-  assert_class(dframe[, timely_term], "character")
-  assert_class(midfield_table[, mcid], "character")
-  assert_class(midfield_table[, term], "character")
+  qassert(dframe[, mcid], "s+")
+  qassert(dframe[, timely_term], "s+")
+  qassert(midfield_table[, mcid], "s+")
+  qassert(midfield_table[, term], "s+")
 
   # bind names due to NSE notes in R CMD check
   completion_timely <- NULL
@@ -129,6 +105,7 @@ add_completion_timely <- function(dframe,
   timely_term <- NULL
   completion <- NULL
 
+  # do the work
   # preserve "term" column if exists in incoming df
   names_dframe <- colnames(dframe)
   if ("term" %chin% names_dframe) {

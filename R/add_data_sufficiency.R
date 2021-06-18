@@ -2,6 +2,7 @@
 
 #' @import data.table
 #' @importFrom wrapr stop_if_dot_args
+#' @importFrom checkmate qassert assert_names
 NULL
 
 
@@ -10,7 +11,7 @@ NULL
 #' Add a column of logical values (TRUE/FALSE) to a data frame indicating
 #' whether the available data include a sufficient range of years to justify
 #' including a student in an analysis. Based on information in the MIDFIELD
-#' \code{term} data table.
+#' \code{term} data table or equivalent.
 #'
 #' Program completion is typically considered timely if it occurs within a
 #' specific span of years after admission. Students admitted too near the
@@ -38,7 +39,7 @@ NULL
 #' @param midfield_table MIDFIELD \code{term} data table or equivalent
 #'        with required variables \code{institution} and \code{term}.
 #' @param ... Not used, forces later arguments to be used by name.
-#' @param details Logical scalar to add optional columns reporting information
+#' @param details Optional flag to add columns reporting information
 #'        on which the evaluation is based, default FALSE.
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
@@ -64,7 +65,7 @@ add_data_sufficiency <- function(dframe,
                                  ...,
                                  details = NULL) {
 
-  # force arguments after dots to be used by name
+  # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     paste(
@@ -73,37 +74,36 @@ add_data_sufficiency <- function(dframe,
     )
   )
 
-  # explicit arguments and NULL defaults if any
-  assert_explicit(dframe)
-  assert_explicit(midfield_table)
+  # required arguments
+  qassert(dframe, "d+")
+  qassert(midfield_table, "d+")
+
+  # optional arguments
   details <- details %||% FALSE
+  qassert(details, "b1") # boolean, length = 1
 
-  # check argument class
-  assert_class(dframe, "data.frame")
-  assert_class(midfield_table, "data.frame")
-  assert_class(details, "logical")
-
-  # dframe is modified "by reference" throughout
+  # inputs modified (or not) by reference
   setDT(dframe)
-  setDT(midfield_table)
+  setDT(midfield_table) # immediately subset, so side-effect OK
 
-  # existence of required columns
-  assert_required_column(dframe, "institution")
-  assert_required_column(dframe, "timely_term")
-  assert_required_column(midfield_table, "institution")
-  assert_required_column(midfield_table, "term")
+  # required columns
+  assert_names(colnames(dframe),
+               must.include = c("institution", "timely_term"))
+  assert_names(colnames(midfield_table),
+               must.include = c("institution", "term"))
 
   # class of required columns
-  assert_class(dframe[, institution], "character")
-  assert_class(dframe[, timely_term], "character")
-  assert_class(midfield_table[, term], "character")
-  assert_class(midfield_table[, institution], "character")
+  qassert(dframe[, institution], "s+")
+  qassert(dframe[, timely_term], "s+")
+  qassert(midfield_table[, term], "s+")
+  qassert(midfield_table[, institution], "s+")
 
   # bind names due to NSE notes in R CMD check
   data_sufficiency <- NULL
   timely_term <- NULL
   inst_limit <- NULL
 
+  # do the work
   # preserve column order except columns that match new columns
   names_dframe <- colnames(dframe)
   cols_we_add <- c("inst_limit", "data_sufficiency")

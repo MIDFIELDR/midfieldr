@@ -2,6 +2,7 @@
 
 #' @import data.table
 #' @importFrom wrapr stop_if_dot_args
+#' @importFrom checkmate qassert assert_names
 NULL
 
 
@@ -11,7 +12,7 @@ NULL
 #' term by which a student can graduate and have it considered a timely
 #' completion. Student ID is the join-by variable; terms are encoded as
 #' character strings YYYYT. Based on information in the MIDFIELD \code{term}
-#' data table.
+#' data table or equivalent.
 #'
 #' The basic heuristic starts with \code{span} number of years for each student
 #' (default 6 years). The span for students admitted at a higher level than
@@ -42,10 +43,10 @@ NULL
 #' @param midfield_table MIDFIELD \code{term} data table or equivalent with
 #'        required variables \code{mcid}, \code{term}, and \code{level}.
 #' @param ... Not used, forces later arguments to be used by name.
-#' @param details Logical scalar to add optional columns reporting information
+#' @param details Optional flag to add columns reporting information
 #'        on which the evaluation is based, default FALSE.
-#' @param span Numeric scalar, number of years to define timely completion,
-#'        default 6 years.
+#' @param span Optional numeric scalar, number of years to define timely
+#'        completion, default 6 years.
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
 #'     \item Rows are not modified.
@@ -71,7 +72,7 @@ add_timely_term <- function(dframe,
                             details = NULL,
                             span = NULL) {
 
-  # force arguments after dots to be used by name
+  # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     paste(
@@ -80,33 +81,31 @@ add_timely_term <- function(dframe,
     )
   )
 
-  # explicit arguments and NULL defaults if any
-  assert_explicit(dframe)
-  assert_explicit(midfield_table)
+  # required arguments
+  qassert(dframe, "d+")
+  qassert(midfield_table, "d+")
+
+  # optional arguments
   details <- details %||% FALSE
   span <- span %||% 6
+  qassert(details, "b1") # boolean, length = 1
+  qassert(span, "r1") # real/double, length = 1
 
-  # check argument class
-  assert_class(dframe, "data.frame")
-  assert_class(span, "numeric")
-  assert_class(midfield_table, "data.frame")
-  assert_class(details, "logical")
-
-  # dframe is modified "by reference" throughout
+  # input modified or not by reference
   setDT(dframe)
-  setDT(midfield_table)
+  setDT(midfield_table) # immediately subset, so side-effect OK
 
-  # existence of required columns
-  assert_required_column(dframe, "mcid")
-  assert_required_column(midfield_table, "mcid")
-  assert_required_column(midfield_table, "term")
-  assert_required_column(midfield_table, "level")
+  # required columns
+  assert_names(colnames(dframe),
+               must.include = c("mcid"))
+  assert_names(colnames(midfield_table),
+               must.include = c("mcid", "term", "level"))
 
   # class of required columns
-  assert_class(dframe[, mcid], "character")
-  assert_class(midfield_table[, mcid], "character")
-  assert_class(midfield_table[, term], "character")
-  assert_class(midfield_table[, level], "character")
+  qassert(dframe[, mcid], "s+")
+  qassert(midfield_table[, mcid], "s+")
+  qassert(midfield_table[, term], "s+")
+  qassert(midfield_table[, level], "s+")
 
   # bind names due to NSE notes in R CMD check
   timely_term <- NULL
@@ -115,7 +114,8 @@ add_timely_term <- function(dframe,
   delta <- NULL
   yyyy <- NULL
 
-  # condition dframe  -----------------------------------------------
+  # do the work
+  # condition dframe
   # new columns that overwrite existing columns if any
   new_cols <- c("term_i", "level_i", "adj_span", "timely_term")
 

@@ -11,7 +11,7 @@ condition_multiway(dframe, ..., details = NULL)
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
-\item{details}{Logical scalar to add columns reporting the medians on which
+\item{details}{Optional flag to add columns reporting the medians on which
 the order of the levels is based, default FALSE.}
 }
 \value{
@@ -27,27 +27,36 @@ A \code{data.table} with the following properties:
 \description{
 Transform a data frame such that two categorical variables are factors
 with levels ordered by medians of the quantitative variable. Rows and
-columns of the data frame are otherwise unaffected.
+columns of the data frame are otherwise unaffected. The primary goal is to
+structure the data for display in a Cleveland "multiway dot plot," where
+the ordering of the levels and panels are crucial to the perception of
+effects.
 }
 \details{
-In multiway data, there is a single quantitative value (or response)
-for every combination of levels of two categorical variables.
-\code{condition_multiway()} converts the columns of categorical variables
-to factors and orders the factor levels by increasing medians of the
-quantitative response variable.
-
-The \code{dframe} argument, therefore, must have three columns only. One
-column is a quantitative variable (type numeric) and two columns are
-categorical variables (type character or factor).
+In multiway data---as defined by
+\insertCite{Cleveland:1993;textual}{midfieldr}---there is a single
+quantitative value (or response) for every combination of levels
+of two categorical variables. \code{condition_multiway()} converts
+the columns of categorical variables to factors and orders the factor
+levels by increasing medians of the quantitative response variable.
 
 Note that "multiway" in our context refers to the data structure and graph
-design defined by \insertCite{Cleveland:1993;textual}{midfieldr}, not to
-the methods of analysis described by
+design defined by Cleveland, not to the methods of analysis described by
 \insertCite{Kroonenberg:2008;textual}{midfieldr}.
+
+In the multiway dot plot, there are panels, the individual dot plots
+of the display, and there are levels, the rows of each panel. One category
+is encoded by the panels; the other by the rows. All panels have the same
+quantitative scale on the x-axis and the same organization of category
+levels on the y-axis. Panels and rows are ordered so that medians increase
+in "graph order", that is, from left to right and from bottom to top. Hence
+the importance of the medians reported by the \code{details} argument.
+
+In our implementation, the \code{dframe} argument must have three
+columns only: two categorical columns (type character or factor) and one
+quantitative column (type numeric).
 }
 \examples{
-
-
 catg1 <- rep(c("urban", "rural", "suburb", "village"), each = 2)
 catg2 <- rep(c("men", "women"), times = 4)
 value <- c(0.22, 0.14, 0.43, 0.58, 0.81, 0.46, 0.15, 0.20)
@@ -61,6 +70,18 @@ str(dframe)
 # structure after
 mw <- condition_multiway(dframe)
 str(mw)
+
+
+# incoming columns can be factor if not character
+mw2 <- condition_multiway(mw)
+str(mw2)
+
+
+# report median values
+mw <- condition_multiway(dframe, details = TRUE)
+str(mw)
+levels(mw$catg1) # note: not alphabetical
+levels(mw$catg2)
 
 
 }

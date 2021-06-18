@@ -2,6 +2,7 @@
 
 #' @import data.table
 #' @importFrom wrapr stop_if_dot_args
+#' @importFrom checkmate qassert assert_names
 NULL
 
 
@@ -24,9 +25,11 @@ NULL
 #'        column named in \code{by_col}.
 #' @param match_to Data frame with key column values to be matched to. The
 #'        only column used is the required key column named in \code{by_col}.
-#' @param by_col Character scalar, name of the key column.
+#' @param by_col Character scalar, name of the key column. Values in the
+#'        key column must be character strings.
 #' @param ... Not used, force later arguments to be used by name.
-#' @param select Character vector of \code{dframe} column names to retain,
+#' @param select Optional character vector of \code{dframe} column names
+#'        to retain,
 #'        default all columns.
 #' @return A \code{data.table} with the following properties:
 #' \itemize{
@@ -40,8 +43,6 @@ NULL
 #'
 #'
 #' @examples
-#'
-#'
 #' # Start with a toy sample of student (built-in data set)
 #' str(toy_student)
 #'
@@ -92,7 +93,7 @@ filter_match <- function(dframe,
                          ...,
                          select = NULL) {
 
-  # force arguments after dots to be used by name
+  # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     paste(
@@ -101,32 +102,31 @@ filter_match <- function(dframe,
     )
   )
 
-  # explicit arguments
-  assert_explicit(dframe)
-  assert_explicit(match_to)
-  assert_explicit(by_col)
+  # required arguments
+  qassert(dframe, "d+")
+  qassert(match_to, "d+")
+  qassert(by_col, "s1")
 
-  # check argument class
-  # set NULL default once dframe class checked
-  assert_class(dframe, "data.frame")
-  assert_class(match_to, "data.frame")
-  assert_class(by_col, "character")
+  # optional arguments
   select <- select %||% names(dframe)
-  assert_class(select, "character")
+  qassert(select, "s+")
 
-  # existence of required columns
-  assert_common_column(dframe, by_col)
-  assert_common_column(match_to, by_col)
+  # inputs modified (or not) by reference
+  setDT(dframe)
+  setDT(match_to) # immediately subset, so side-effect OK
 
-  # dframe is not modified by reference
-  dframe <- copy(as.data.table(dframe))
-  setDT(match_to)
+  # required columns
+  assert_names(colnames(dframe), must.include = by_col)
+  assert_names(colnames(match_to), must.include = by_col)
 
-  # key must be in both data frames
-  stopifnot("`by_col` must be a column in `dframe`" = by_col %in% names(dframe))
-  stopifnot("`by_col` must be a column in `match_to`" = by_col %in% names(match_to))
+  # class of required columns
+  # qassert(dframe[, ..by_col], "s+")
+  # qassert(match_to[, ..by_col], "s+")
 
-  # keep one column
+  # bind names due to NSE notes in R CMD check
+  # NA
+
+  # do the work
   match_to <- match_to[, by_col, with = FALSE]
   match_to <- unique(match_to)
 

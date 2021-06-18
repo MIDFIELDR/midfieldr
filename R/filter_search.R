@@ -2,6 +2,7 @@
 
 #' @import data.table
 #' @importFrom wrapr stop_if_dot_args
+#' @importFrom checkmate qassert
 NULL
 
 
@@ -16,16 +17,20 @@ NULL
 #' character are also searched for matches. Columns are subset by
 #' the values in \code{select} after the search concludes.
 #'
+#' If none of the optional arguments are specified, the function returns
+#' the original data frame.
+#'
 #' @param dframe Data frame to be searched.
-#' @param keep_text Character vector of search text for retaining rows.
+#' @param keep_text Optional character vector of search text for retaining
+#'        rows.
 #' @param ... Not used, force later arguments to be used by name.
-#' @param drop_text Character vector of search text for dropping rows.
-#' @param select Character vector of column names to return,
+#' @param drop_text Optional character vector of search text for dropping rows.
+#' @param select Optional character vector of column names to return,
 #'        default all columns.
 #' @return A \code{data.table} with the following properties:
 #' \itemize{
-#'     \item Rows matching elements of \code{keep_text} in
-#'           \code{in_col} columns.
+#'     \item Rows matching elements of \code{keep_text} but excluding rows
+#'           matching elements of \code{drop_text}.
 #'     \item All columns or those specified by \code{select}.
 #'     \item Grouping structures are not preserved.
 #' }
@@ -34,10 +39,7 @@ NULL
 #' @family filter_*
 #'
 #'
-
 #' @examples
-#'
-#'
 #' # subset using keywords
 #' filter_search(cip, keep_text = "engineering")
 #'
@@ -78,12 +80,12 @@ NULL
 #'
 #'
 filter_search <- function(dframe,
-                          keep_text = NULL,
+                          keep_text,
                           ...,
-                          drop_text = NULL,
+                          drop_text,
                           select = NULL) {
 
-  # force arguments after dots to be used by name
+  # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     paste(
@@ -92,27 +94,31 @@ filter_search <- function(dframe,
     )
   )
 
-  # explicit arguments and NULL defaults
-  assert_explicit(dframe)
-  assert_class(dframe, "data.frame")
+  # required argument
+  qassert(dframe, "d+")
+
+  # optional arguments
+  select <- select %||% names(dframe)
+  if (missing(keep_text)){keep_text = NULL}
+  if (missing(drop_text)){drop_text = NULL}
+  qassert(select, "s+")
+  if (!is.null(keep_text)) qassert(keep_text, "s+")
+  if (!is.null(drop_text)) qassert(drop_text, "s+")
 
   # return if no work is being done
-  if ((missing(keep_text) | is.null(keep_text)) &
-      is.null(drop_text) &
-      is.null(select)) {
+  if (is.null(keep_text) & is.null(drop_text) & is.null(select)) {
     return(dframe)
   }
 
-  # NULL default
-  select <- select %||% names(dframe)
-  assert_class(select, "character")
+  # input modified (or not) by reference
+  setDT(dframe)
 
-  # check argument class of optional arguments
-  if (!is.null(keep_text)) assert_class(keep_text, "character")
-  if (!is.null(drop_text)) assert_class(drop_text, "character")
-
-  # dframe is NOT modified by reference
-  dframe <- copy(as.data.table(dframe))
+  # required columns
+  # NA
+  # class of required columns
+  # NA
+  # bind names due to NSE notes in R CMD check
+  # NA
 
   # do the work
   dframe <- filter_char_frame(

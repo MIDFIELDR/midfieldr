@@ -1,6 +1,7 @@
 
 
 #' @import data.table
+#' @importFrom checkmate qassert assert_names
 NULL
 
 
@@ -39,13 +40,13 @@ NULL
 #'     predicted using multiple imputation.}
 #' }
 #'
-#' The function extracts all terms for all FYE students from \code{midfield_table}.
-#' In cases where students enter FYE, change programs, and re-enter FYE, only
-#' the first group of FYE terms is considered. Any programs before FYE are
-#' ignored. The first (if any) post-FYE program is identified. If the program
-#' is in engineering, the CIP is retained as their predicted starting major.
-#' If not, the CIP is replaced with NA to be treated as missing data for the
-#' imputation.
+#' The function extracts all terms for all FYE students from
+#' \code{midfield_table}. In cases where students enter FYE, change programs,
+#' and re-enter FYE, only the first group of FYE terms is considered. Any
+#' programs before FYE are ignored. The first (if any) post-FYE program is
+#' identified. If the program is in engineering, the CIP is retained as
+#' their predicted starting major. If not, the CIP is replaced with NA to
+#' be treated as missing data for the imputation.
 #'
 #' Lastly, the predictor variables (institution, race, sex) and the imputed
 #' variable (cip6) are converted to unordered factors. The resulting data
@@ -54,10 +55,11 @@ NULL
 #' @param dframe Data frame of all degree-seeking engineering students in the
 #'        database, with required variables \code{mcid}, \code{race},
 #'        and \code{sex}.
-#' @param midfield_table MIDFIELD term data table with required variables
-#'        \code{mcid}, \code{institution}, \code{term}, and \code{cip6}.
+#' @param midfield_table MIDFIELD \code{term} data table or equivalent
+#'        with required variables \code{mcid}, \code{institution},
+#'        \code{term}, and \code{cip6}.
 #' @param ... Not used, forces later arguments to be used by name.
-#' @param fye_codes Character vector of 6-digit CIP codes to
+#' @param fye_codes Optional character vector of 6-digit CIP codes to
 #'        identify FYE programs, default 140102.
 #'
 #' @return A \code{data.table} with the following properties:
@@ -84,7 +86,7 @@ condition_fye <- function(dframe,
                           ...,
                           fye_codes = NULL) {
 
-  # force arguments after dots to be used by name
+  # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     paste(
@@ -93,45 +95,39 @@ condition_fye <- function(dframe,
     )
   )
 
-  # explicit arguments and NULL defaults if any
-  assert_explicit(dframe)
-  assert_explicit(midfield_table)
+  # required arguments
+  qassert(dframe, "d+")
+  qassert(midfield_table, "d+")
+
+  # optional arguments
   fye_codes <- fye_codes %||% c("140102")
+  qassert(fye_codes, "s+") # string, length >= 1
 
-  # check argument class
-  assert_class(dframe, "data.frame")
-  assert_class(midfield_table, "data.frame")
-  assert_class(fye_codes, "character")
+  # inputs modified (or not) by reference
+  dframe <- copy(as.data.table(dframe)) # not the output
+  setDT(midfield_table) # immediately subset, so side-effect OK
 
-  # dframe is modified "by reference" throughout
-  setDT(dframe)
-  setDT(midfield_table)
-
-  # existence of required columns
-  assert_required_column(dframe, "mcid")
-  assert_required_column(dframe, "race")
-  assert_required_column(dframe, "sex")
-
-  assert_required_column(midfield_table, "mcid")
-  assert_required_column(midfield_table, "institution")
-  assert_required_column(midfield_table, "term")
-  assert_required_column(midfield_table, "cip6")
+  # required columns
+  assert_names(colnames(dframe),
+               must.include = c("mcid", "race", "sex"))
+  assert_names(colnames(midfield_table),
+               must.include = c("mcid", "institution", "term", "cip6"))
 
   # class of required columns
-  assert_class(dframe[, mcid], "character")
-  assert_class(dframe[, race], "character")
-  assert_class(dframe[, sex], "character")
-
-  assert_class(midfield_table[, mcid], "character")
-  assert_class(midfield_table[, institution], "character")
-  assert_class(midfield_table[, term], "character")
-  assert_class(midfield_table[, cip6], "character")
+  qassert(dframe[, mcid], "s+")
+  qassert(dframe[, race], "s+")
+  qassert(dframe[, sex], "s+")
+  qassert(midfield_table[, mcid], "s+")
+  qassert(midfield_table[, institution], "s+")
+  qassert(midfield_table[, term], "s+")
+  qassert(midfield_table[, cip6], "s+")
 
   # bind names due to NSE notes in R CMD check
   next_cip6 <- NULL
   next_cip2 <- NULL
   cip2 <- NULL
 
+  # do the work
   # all degree-seeking engineering students
   latest_id <- dframe[, unique(mcid)]
 

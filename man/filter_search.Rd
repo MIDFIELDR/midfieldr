@@ -4,25 +4,26 @@
 \alias{filter_search}
 \title{Subset rows that include matches to search strings}
 \usage{
-filter_search(dframe, keep_text = NULL, ..., drop_text = NULL, select = NULL)
+filter_search(dframe, keep_text, ..., drop_text, select = NULL)
 }
 \arguments{
 \item{dframe}{Data frame to be searched.}
 
-\item{keep_text}{Character vector of search text for retaining rows.}
+\item{keep_text}{Optional character vector of search text for retaining
+rows.}
 
 \item{...}{Not used, force later arguments to be used by name.}
 
-\item{drop_text}{Character vector of search text for dropping rows.}
+\item{drop_text}{Optional character vector of search text for dropping rows.}
 
-\item{select}{Character vector of column names to return,
+\item{select}{Optional character vector of column names to return,
 default all columns.}
 }
 \value{
 A \code{data.table} with the following properties:
 \itemize{
-    \item Rows matching elements of \code{keep_text} in
-          \code{in_col} columns.
+    \item Rows matching elements of \code{keep_text} but excluding rows
+          matching elements of \code{drop_text}.
     \item All columns or those specified by \code{select}.
     \item Grouping structures are not preserved.
 }
@@ -37,10 +38,11 @@ Search terms can include regular expressions. Uses \code{grepl()},
 therefore non-character columns (if any) that can be coerced to
 character are also searched for matches. Columns are subset by
 the values in \code{select} after the search concludes.
+
+If none of the optional arguments are specified, the function returns
+the original data frame.
 }
 \examples{
-
-
 # subset using keywords
 filter_search(cip, keep_text = "engineering")
 

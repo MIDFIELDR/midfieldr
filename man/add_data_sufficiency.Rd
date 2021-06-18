@@ -15,7 +15,7 @@ with required variables \code{institution} and \code{term}.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
-\item{details}{Logical scalar to add optional columns reporting information
+\item{details}{Optional flag to add columns reporting information
 on which the evaluation is based, default FALSE.}
 }
 \value{
@@ -31,7 +31,7 @@ A \code{data.table}  with the following properties:
 Add a column of logical values (TRUE/FALSE) to a data frame indicating
 whether the available data include a sufficient range of years to justify
 including a student in an analysis. Based on information in the MIDFIELD
-\code{term} data table.
+\code{term} data table or equivalent.
 }
 \details{
 Program completion is typically considered timely if it occurs within a

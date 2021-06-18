@@ -24,7 +24,7 @@ A \code{data.table}  with the following properties:
 Add a column of character values with institution names (or labels) using
 student ID as the join-by variable. In the MIDFIELD practice data, the
 labels are anonymized. Based on information in the MIDFIELD \code{term}
-data table.
+data table or equivalent.
 }
 \details{
 If a student is associated with more than one institution, the institution
@@ -32,7 +32,24 @@ at which they completed the most terms is returned. An existing column with
 the same name as the added column is overwritten.
 }
 \examples{
-# TBD
+# extract a column of IDs from student
+id <- toy_student[, .(mcid)]
+
+
+# add institutions from term
+DT1 <- add_institution(id, midfield_table = toy_term)
+head(DT1)
+
+
+# will overwrite institution column if present
+DT2 <- add_institution(DT1, midfield_table = toy_term)
+head(DT2)
+
+
+
+
+
+
 
 
 }

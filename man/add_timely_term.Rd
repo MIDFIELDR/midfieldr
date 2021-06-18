@@ -14,11 +14,11 @@ required variables \code{mcid}, \code{term}, and \code{level}.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
-\item{details}{Logical scalar to add optional columns reporting information
+\item{details}{Optional flag to add columns reporting information
 on which the evaluation is based, default FALSE.}
 
-\item{span}{Numeric scalar, number of years to define timely completion,
-default 6 years.}
+\item{span}{Optional numeric scalar, number of years to define timely
+completion, default 6 years.}
 }
 \value{
 A \code{data.table}  with the following properties:
@@ -34,7 +34,7 @@ Add a column of academic term values to a data frame indicating the latest
 term by which a student can graduate and have it considered a timely
 completion. Student ID is the join-by variable; terms are encoded as
 character strings YYYYT. Based on information in the MIDFIELD \code{term}
-data table.
+data table or equivalent.
 }
 \details{
 The basic heuristic starts with \code{span} number of years for each student

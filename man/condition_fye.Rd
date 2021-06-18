@@ -11,12 +11,13 @@ condition_fye(dframe, midfield_table, ..., fye_codes = NULL)
 database, with required variables \code{mcid}, \code{race},
 and \code{sex}.}
 
-\item{midfield_table}{MIDFIELD term data table with required variables
-\code{mcid}, \code{institution}, \code{term}, and \code{cip6}.}
+\item{midfield_table}{MIDFIELD \code{term} data table or equivalent
+with required variables \code{mcid}, \code{institution},
+\code{term}, and \code{cip6}.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
-\item{fye_codes}{Character vector of 6-digit CIP codes to
+\item{fye_codes}{Optional character vector of 6-digit CIP codes to
 identify FYE programs, default 140102.}
 }
 \value{
@@ -63,13 +64,13 @@ enroll in FYE. \code{predict_fye()} sorts students into two categories:
     predicted using multiple imputation.}
 }
 
-The function extracts all terms for all FYE students from \code{midfield_table}.
-In cases where students enter FYE, change programs, and re-enter FYE, only
-the first group of FYE terms is considered. Any programs before FYE are
-ignored. The first (if any) post-FYE program is identified. If the program
-is in engineering, the CIP is retained as their predicted starting major.
-If not, the CIP is replaced with NA to be treated as missing data for the
-imputation.
+The function extracts all terms for all FYE students from
+\code{midfield_table}. In cases where students enter FYE, change programs,
+and re-enter FYE, only the first group of FYE terms is considered. Any
+programs before FYE are ignored. The first (if any) post-FYE program is
+identified. If the program is in engineering, the CIP is retained as
+their predicted starting major. If not, the CIP is replaced with NA to
+be treated as missing data for the imputation.
 
 Lastly, the predictor variables (institution, race, sex) and the imputed
 variable (cip6) are converted to unordered factors. The resulting data

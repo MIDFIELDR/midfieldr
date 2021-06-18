@@ -13,11 +13,13 @@ column named in \code{by_col}.}
 \item{match_to}{Data frame with key column values to be matched to. The
 only column used is the required key column named in \code{by_col}.}
 
-\item{by_col}{Character scalar, name of the key column.}
+\item{by_col}{Character scalar, name of the key column. Values in the
+key column must be character strings.}
 
 \item{...}{Not used, force later arguments to be used by name.}
 
-\item{select}{Character vector of \code{dframe} column names to retain,
+\item{select}{Optional character vector of \code{dframe} column names
+to retain,
 default all columns.}
 }
 \value{
@@ -44,8 +46,6 @@ key column does not have to be included in the vector of column names in
 \code{select}.
 }
 \examples{
-
-
 # Start with a toy sample of student (built-in data set)
 str(toy_student)
 

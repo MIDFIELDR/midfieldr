@@ -15,7 +15,7 @@ required variables \code{mcid} and \code{term}.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
-\item{details}{Logical scalar to add optional columns reporting information
+\item{details}{Optional flag to add columns reporting information
 on which the evaluation is based, default FALSE.}
 }
 \value{
@@ -30,7 +30,7 @@ A \code{data.table} with the following properties:
 \description{
 Add a column of logical values (TRUE/FALSE) to a data frame indicating
 whether a student completes their program in a timely manner. Based on
-information in the MIDFIELD \code{degree} data table.
+information in the MIDFIELD \code{degree} data table or equivalent.
 }
 \details{
 Program completion is typically considered timely if it occurs within a

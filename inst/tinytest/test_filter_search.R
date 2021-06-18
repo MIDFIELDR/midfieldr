@@ -1,5 +1,12 @@
 test_filter_search <- function() {
 
+    # function arguments
+    # filter_search <- function(dframe,
+    #                           keep_text = NULL,
+    #                           ...,
+    #                           drop_text = NULL,
+    #                           select = NULL)
+
     library(data.table)
     options(datatable.print.class = TRUE)
 

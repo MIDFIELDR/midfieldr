@@ -18,6 +18,7 @@ add_inst_limit <- function(dframe, midfield_table) {
   # prepare dframe, preserve column order for return
   # omit existing column(s) that match column(s) we add
   setDT(dframe)
+  setDT(midfield_table)
   added_cols <- c("inst_limit")
   names_dframe <- colnames(dframe)
   key_names <- names_dframe[!names_dframe %chin% added_cols]
@@ -64,72 +65,6 @@ set_colrow_order <- function(dframe, cols) {
 
 # ------------------------------------------------------------------------
 
-#' Verify class of argument
-#'
-#' @param x object
-#' @param y character string of required class
-#' @noRd
-assert_class <- function(x, y) {
-  if (!is.null(x)) {
-    if (!inherits(x, what = y)) {
-      stop("`", deparse(substitute(x)), "` must be of class ",
-        paste0(y, collapse = ", "),
-        call. = FALSE
-      )
-    }
-  }
-}
-
-# ------------------------------------------------------------------------
-
-#' Verify that an argument is explicit, not NULL
-#'
-#' @param x object
-#' @noRd
-assert_explicit <- function(x) {
-  if (is.null(x)) {
-    stop("Explicit `", deparse(substitute(x)), "` argument required",
-      call. = FALSE
-    )
-  }
-}
-
-# ------------------------------------------------------------------------
-
-#' Verify required column name exists
-#'
-#' @param data data frame
-#' @param col column name to be verified
-#' @noRd
-assert_required_column <- function(data, col) {
-  assert_class(data, "data.frame")
-  assert_class(col, "character")
-  if (!col %in% names(data)) {
-    stop("Column name `", col, "` required",
-      call. = FALSE
-    )
-  }
-}
-
-# ------------------------------------------------------------------------
-
-#' Verify common column name exists
-#'
-#' @param data data frame
-#' @param col column name to be verified
-#' @noRd
-assert_common_column <- function(data, col) {
-  assert_class(data, "data.frame")
-  assert_class(col, "character")
-  if (!col %in% names(data)) {
-    stop("Column name `", col, "` is not present in `", substitute(data), "`",
-      call. = FALSE
-    )
-  }
-}
-
-# ------------------------------------------------------------------------
-
 #' Assign default arguments in functions
 #'
 #' Infix operator. If 'a' is NULL, assign default 'b'.
@@ -152,14 +87,6 @@ assert_common_column <- function(data, col) {
 #' @noRd
 filter_char_frame <- function(data, keep_text = NULL, drop_text = NULL) {
 
-  # check arguments
-  assert_explicit(data)
-  assert_class(data, "data.frame")
-  assert_class(keep_text, "character")
-  assert_class(drop_text, "character")
-
-  # to preserve data.frame, data.table, or tibble
-  dat_class <- get_dframe_class(data)
   DT <- data.table::as.data.table(data)
 
   # filter to keep rows
@@ -179,77 +106,26 @@ filter_char_frame <- function(data, keep_text = NULL, drop_text = NULL) {
   }
 
   # works by reference
-  revive_class(DT, dat_class)
   return(DT)
 }
 
-# ------------------------------------------------------------------------
-
-#' Get the class of a data frame
-#'
-#' Used as argument in revive_class()
-#'
-#' @param x data.frame, tibble, or data.table
-#' @noRd
-get_dframe_class <- function(x) {
-
-  # argument check
-  assert_class(x, "data.frame")
-
-  class_x <- class(x)
-  if (sum(class_x %in% "data.table") > 0) {
-    df_class <- "data.table"
-  } else if (sum(class_x %in% c("tbl_df", "tbl")) > 0) {
-    df_class <- "tbl"
-  } else {
-    df_class <- "data.frame"
-  }
-  return(df_class)
-}
-
-# ------------------------------------------------------------------------
-
-#' Revive the class of a data frame
-#'
-#' In midfieldr functions, resets the class of a data frame: tibble,
-#' data.frame, or data.table
-#'
-#' @param x data.frame, tibble, or data.table
-#' @param df_class character "data.frame", "tbl", or "data.table"
-#' @noRd
-revive_class <- function(x, df_class) {
-
-  # argument check
-  assert_class(x, "data.frame")
-
-  if (df_class == "tbl") {
-    data.table::setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
-  } else if (df_class == "data.table") {
-    x <- data.table::as.data.table(x)
-  } else {
-    x <- as.data.frame(x)
-  }
-  return(x)
-}
-
-# ------------------------------------------------------------------------
-
-#' Get the class of a column in a data frame
-#'
-#' @param x data.frame, tibble, or data.table
-#' @noRd
-get_col_class <- function(x) {
-
-  # argument check
-  assert_class(x, "data.frame")
-
-  col_class <- unlist(lapply(x, FUN = class))
-  col_class <- as.data.frame(col_class)
-  col_class$col_name <- row.names(col_class)
-  row.names(col_class) <- NULL
-  return(col_class)
-}
-
+# # ------------------------------------------------------------------------
+#
+# #' Get the class of a column in a data frame
+# #'
+# #' @param x data.frame, tibble, or data.table
+# #' @noRd
+# get_col_class <- function(x) {
+#
+#   # assert data frame with at least one column
+#   qassert(x, "d+")
+#
+#   col_class <- unlist(lapply(x, FUN = class))
+#   col_class <- as.data.frame(col_class)
+#   col_class$col_name <- row.names(col_class)
+#   row.names(col_class) <- NULL
+#   return(col_class)
+# }
 
 # ------------------------------------------------------------------------
 
@@ -260,15 +136,15 @@ get_col_class <- function(x) {
 #' @noRd
 unique_by_keys <- function(DT, cols = NULL) {
 
-  # argument check
-  assert_class(DT, "data.frame")
+  # assert data frame with at least one column
+  qassert(DT, "d+")
 
   if (is.null(cols)) {
     cols <- names(DT)
   }
 
   # argument check
-  assert_class(cols, "character")
+  qassert(cols, "s+")
 
   data.table::setkeyv(DT, cols)
   DT <- subset(unique(DT))

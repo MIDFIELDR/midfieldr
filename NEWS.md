@@ -3,7 +3,7 @@
 
 Significant changes from earlier versions, no backwards compatibility, prompting version number change to 1.0.0
 
-- Change names of practice data to match research data: student, course, term, and degree 
+- Change practice data names to match research data: student, course, term, degree 
 - Update built-in data sets consistent with methodology described in vignettes 
 - Edit practice data variable values for consistency with research data values 
 - Delete Travis CI due to change in Travis ownership and policies 
@@ -14,7 +14,8 @@ Significant changes from earlier versions, no backwards compatibility, prompting
 - Remove dependency on installing midfielddata 
 - Omit unique() and end of filter_* functions
 - Overhaul midfieldr functions completely 
-- switched to tinytest for unit testing
+- Use package checkmate for runtime assertions
+- Switch to package tinytest for unit testing
 
 ## midfieldr 0.1.0 / 2018-06
 

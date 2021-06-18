@@ -21,23 +21,16 @@ test_condition_multiway <- function() {
     expect_equal(class(mw$value), "numeric")
 
     # input argument class
-    expect_error(condition_multiway(catg1),
-                 pattern = "`dframe` must be of class data.frame*",
-                 class = "error",
-                 info = NA_character_)
+    expect_error(condition_multiway(catg1))
 
     # arguments after ... must be named
-    expect_error(condition_multiway(dframe, TRUE),
-                 pattern = ".*", # avoids error statement matching
-                 class = "error",
-                 info = NA_character_)
+    expect_error(condition_multiway(dframe, TRUE))
 
     # details produces correct columns out
     expect_equal(names(condition_multiway(dframe, details = TRUE)),
                  c("catg1", "catg2", "med_catg1", "med_catg2", "value"))
     expect_equal(names(condition_multiway(dframe, details = FALSE)),
                  c("catg1", "catg2", "value"))
-
 
     # cat(wrapr::draw_frame(mw))
     # medians correct
@@ -56,19 +49,18 @@ test_condition_multiway <- function() {
 
     # incorrect column combinations
     dframe <- data.frame(catg1, catg2, cat3 = paste0(catg1, catg2))
-    expect_error(condition_multiway(dframe),
-                 pattern = paste("`dframe` must have exactly one numeric",
-                                 "column and two character columns"),
-                 class = "error",
-                 info = NA_character_)
+    expect_error(condition_multiway(dframe))
 
-    # integer valuyes converted to numeric
+    # integer values converted to numeric
     value <- c(22L, 14L, 43L, 58L, 81L, 46L, 15L, 20L)
     dframe <- data.frame(catg1, catg2, value)
     mw <- condition_multiway(dframe)
     expect_equal(class(mw$catg1), "factor")
     expect_equal(class(mw$catg2), "factor")
     expect_equal(class(mw$value), "numeric")
+
+
+
 
     invisible(NULL)
 }
