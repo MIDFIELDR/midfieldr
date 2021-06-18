@@ -90,7 +90,7 @@ unless selected in an optional argument." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9014</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9015</span>
       </span>
     </div>
 
@@ -187,7 +187,8 @@ only column used is the required key column named in <code>by_col</code>.</p></t
     </tr>
     <tr>
       <th>by_col</th>
-      <td><p>Character scalar, name of the key column.</p></td>
+      <td><p>Character scalar, name of the key column. Values in the
+key column must be character strings.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -195,7 +196,8 @@ only column used is the required key column named in <code>by_col</code>.</p></t
     </tr>
     <tr>
       <th>select</th>
-      <td><p>Character vector of <code>dframe</code> column names to retain,
+      <td><p>Optional character vector of <code>dframe</code> column names
+to retain,
 default all columns.</p></td>
     </tr>
     </table>
@@ -203,7 +205,7 @@ default all columns.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A <code>data.table</code> with the following properties:</p><ul>
-<li><p>Unique rows with matching values.</p></li>
+<li><p>Rows with matching values.</p></li>
 <li><p>All columns or those specified by <code>select</code>.</p></li>
 <li><p>Grouping structures are not preserved.</p></li>
 </ul>
@@ -216,32 +218,94 @@ inner-join, returning the rows of <code>dframe</code> with values matching the k
 values in <code>match_to</code>.</p>
 <p>Column subsetting occurs after the inner join, so the
 key column does not have to be included in the vector of column names in
-<code>select</code>. The final operation is to subset for unique rows.</p>
+<code>select</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other filter_*: 
 <code><a href='filter_search.html'>filter_search</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://github.com/MIDFIELDR/midfielddata'>"midfielddata"</a></span><span class='op'>)</span></span>
-<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>degree</span><span class='op'>)</span></span>
-<span class='r-in'><span class='fu'>filter_match</span><span class='op'>(</span><span class='va'>degree</span>,</span>
-<span class='r-in'>  match_to <span class='op'>=</span> <span class='va'>study_programs</span>,</span>
-<span class='r-in'>  by_col <span class='op'>=</span> <span class='st'>"cip6"</span>,</span>
-<span class='r-in'>  select <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mcid"</span>, <span class='st'>"institution"</span>, <span class='st'>"cip6"</span><span class='op'>)</span></span>
-<span class='r-in'><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>              mcid   institution   cip6</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    1: MID25783197 Institution M 140801</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    2: MID25783441 Institution M 140801</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    3: MID25784334 Institution M 140801</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    4: MID25784418 Institution M 140801</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    5: MID25784489 Institution M 140801</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ---                                 </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 4672: MID26689274 Institution L 143501</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 4673: MID26692926 Institution L 143501</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 4674: MID26695626 Institution L 143501</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 4675: MID26696116 Institution L 143501</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 4676: MID26696429 Institution L 143501</span>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='co'># Start with a toy sample of student (built-in data set)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>toy_student</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Classes 'data.table' and 'data.frame':	100 obs. of  6 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ mcid          : chr  "MID25783939" "MID25784402" "MID25805538" "MID25808099" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ institution   : chr  "Institution M" "Institution M" "Institution M" "Institution M" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ transfer      : chr  "First-Time in College" "First-Time in College" "First-Time in College" "First-Time in College" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ hours_transfer: num  NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ race          : chr  "White" "White" "White" "White" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ sex           : chr  "Female" "Male" "Female" "Female" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Filter by matching IDs of graduates</span></span>
+<span class='r-in'><span class='va'>x_student</span> <span class='op'>&lt;-</span> <span class='fu'>filter_match</span><span class='op'>(</span><span class='va'>toy_student</span>,</span>
+<span class='r-in'>                          match_to <span class='op'>=</span> <span class='va'>toy_degree</span>,</span>
+<span class='r-in'>                          by_col   <span class='op'>=</span> <span class='st'>"mcid"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># Note change in number of rows</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>x_student</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Classes 'data.table' and 'data.frame':	64 obs. of  6 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ mcid          : chr  "MID25783939" "MID25808099" "MID25826223" "MID25840802" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ institution   : chr  "Institution M" "Institution M" "Institution M" "Institution M" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ transfer      : chr  "First-Time in College" "First-Time in College" "First-Time Transfer" "First-Time in College" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ hours_transfer: num  NA NA NA NA NA NA NA 30 55 NA ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ race          : chr  "White" "White" "White" "White" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ sex           : chr  "Female" "Female" "Female" "Female" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Same filter and select 3 columns only</span></span>
+<span class='r-in'><span class='va'>x_student</span> <span class='op'>&lt;-</span> <span class='fu'>filter_match</span><span class='op'>(</span><span class='va'>toy_student</span>,</span>
+<span class='r-in'>                          match_to <span class='op'>=</span> <span class='va'>toy_degree</span>,</span>
+<span class='r-in'>                          by_col   <span class='op'>=</span> <span class='st'>"mcid"</span>,</span>
+<span class='r-in'>                          select   <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mcid"</span>, <span class='st'>"race"</span>, <span class='st'>"sex"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>x_student</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Classes 'data.table' and 'data.frame':	64 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ mcid: chr  "MID25783939" "MID25808099" "MID25826223" "MID25840802" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ race: chr  "White" "White" "White" "White" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ sex : chr  "Female" "Female" "Female" "Female" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Filter term data for engineering program codes (start with "14")</span></span>
+<span class='r-in'><span class='va'>engr_term</span> <span class='op'>&lt;-</span> <span class='va'>toy_term</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/grep.html'>grepl</a></span><span class='op'>(</span><span class='st'>"^14"</span>, <span class='va'>cip6</span><span class='op'>)</span>, <span class='op'>]</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>engr_term</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Classes 'data.table' and 'data.frame':	17 obs. of  6 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ mcid       : chr  "MID25784402" "MID25816437" "MID25839453" "MID25845841" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ institution: chr  "Institution M" "Institution M" "Institution M" "Institution M" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ term       : chr  "20081" "20071" "20083" "19961" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ cip6       : chr  "141901" "140601" "140501" "140801" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ level      : chr  "04 Senior" "02 Sophomore" "04 Senior" "03 Junior" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ hours_term : num  19 15 16 17 6 14 17 5 3 14 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Filter student by matching IDs of engineering students</span></span>
+<span class='r-in'><span class='va'>x_student</span> <span class='op'>&lt;-</span> <span class='fu'>filter_match</span><span class='op'>(</span><span class='va'>toy_student</span>,</span>
+<span class='r-in'>                   match_to <span class='op'>=</span> <span class='va'>engr_term</span>,</span>
+<span class='r-in'>                   by_col   <span class='op'>=</span> <span class='st'>"mcid"</span>,</span>
+<span class='r-in'>                   select   <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mcid"</span>, <span class='st'>"institution"</span>, <span class='st'>"transfer"</span>, <span class='st'>"sex"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>x_student</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Classes 'data.table' and 'data.frame':	17 obs. of  4 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ mcid       : chr  "MID25784402" "MID25816437" "MID25839453" "MID25845841" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ institution: chr  "Institution M" "Institution M" "Institution M" "Institution M" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ transfer   : chr  "First-Time in College" "First-Time in College" "First-Time in College" "First-Time in College" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ sex        : chr  "Male" "Male" "Female" "Female" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># The 'by_col' column does not have to be included in the `select` columns</span></span>
+<span class='r-in'><span class='va'>x_student</span> <span class='op'>&lt;-</span> <span class='fu'>filter_match</span><span class='op'>(</span><span class='va'>toy_student</span>,</span>
+<span class='r-in'>                          match_to <span class='op'>=</span> <span class='va'>engr_term</span>,</span>
+<span class='r-in'>                          by_col   <span class='op'>=</span> <span class='st'>"mcid"</span>,</span>
+<span class='r-in'>                          select   <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"institution"</span>, <span class='st'>"transfer"</span>, <span class='st'>"sex"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>x_student</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Classes 'data.table' and 'data.frame':	17 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ institution: chr  "Institution M" "Institution M" "Institution M" "Institution M" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ transfer   : chr  "First-Time in College" "First-Time in College" "First-Time in College" "First-Time in College" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ sex        : chr  "Male" "Male" "Female" "Female" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
+<span class='r-in'></span>
+<span class='r-in'></span>
 </code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -49,7 +49,10 @@
 <meta property="og:title" content="Condition multiway data for graphing — condition_multiway" />
 <meta property="og:description" content="Transform a data frame such that two categorical variables are factors
 with levels ordered by medians of the quantitative variable. Rows and
-columns of the data frame are otherwise unaffected." />
+columns of the data frame are otherwise unaffected. The primary goal is to
+structure the data for display in a Cleveland &quot;multiway dot plot,&quot; where
+the ordering of the levels and panels are crucial to the perception of
+effects." />
 <meta property="og:image" content="https://midfieldr.github.io/midfieldr/logo.png" />
 
 
@@ -90,7 +93,7 @@ columns of the data frame are otherwise unaffected." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9014</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9015</span>
       </span>
     </div>
 
@@ -167,7 +170,10 @@ columns of the data frame are otherwise unaffected." />
     <div class="ref-description">
     <p>Transform a data frame such that two categorical variables are factors
 with levels ordered by medians of the quantitative variable. Rows and
-columns of the data frame are otherwise unaffected.</p>
+columns of the data frame are otherwise unaffected. The primary goal is to
+structure the data for display in a Cleveland "multiway dot plot," where
+the ordering of the levels and panels are crucial to the perception of
+effects.</p>
     </div>
 
     <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>condition_multiway</span><span class='op'>(</span><span class='va'>dframe</span>, <span class='va'>...</span>, details <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
@@ -185,7 +191,7 @@ columns of the data frame are otherwise unaffected.</p>
     </tr>
     <tr>
       <th>details</th>
-      <td><p>Logical scalar to add columns reporting the medians on which
+      <td><p>Optional flag to add columns reporting the medians on which
 the order of the levels is based, default FALSE.</p></td>
     </tr>
     </table>
@@ -202,20 +208,27 @@ the order of the levels is based, default FALSE.</p></td>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>In multiway data, there is a single quantitative value (or response)
-for every combination of levels of two categorical variables.
-<code>condition_multiway()</code> converts the columns of categorical variables
-to factors and orders the factor levels by increasing medians of the
-quantitative response variable.</p>
-<p>The <code>dframe</code> argument, therefore, must have three columns only. One
-column is a quantitative variable (type numeric) and two columns are
-categorical variables (type character or factor).</p>
+    <p>In multiway data---as defined by
+Cleveland (1993)
+---there is a single
+quantitative value (or response) for every combination of levels
+of two categorical variables. <code>condition_multiway()</code> converts
+the columns of categorical variables to factors and orders the factor
+levels by increasing medians of the quantitative response variable.</p>
 <p>Note that "multiway" in our context refers to the data structure and graph
-design defined by Cleveland (1993)
-, not to
-the methods of analysis described by
+design defined by Cleveland, not to the methods of analysis described by
 Kroonenberg (2008)
 .</p>
+<p>In the multiway dot plot, there are panels, the individual dot plots
+of the display, and there are levels, the rows of each panel. One category
+is encoded by the panels; the other by the rows. All panels have the same
+quantitative scale on the x-axis and the same organization of category
+levels on the y-axis. Panels and rows are ordered so that medians increase
+in "graph order", that is, from left to right and from bottom to top. Hence
+the importance of the medians reported by the <code>details</code> argument.</p>
+<p>In our implementation, the <code>dframe</code> argument must have three
+columns only: two categorical columns (type character or factor) and one
+quantitative column (type numeric).</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Cleveland WS (1993).
@@ -233,6 +246,7 @@ Wiley, Hoboken, NJ.</p>
 <span class='r-in'><span class='va'>catg2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"men"</span>, <span class='st'>"women"</span><span class='op'>)</span>, times <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span></span>
 <span class='r-in'><span class='va'>value</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.22</span>, <span class='fl'>0.14</span>, <span class='fl'>0.43</span>, <span class='fl'>0.58</span>, <span class='fl'>0.81</span>, <span class='fl'>0.46</span>, <span class='fl'>0.15</span>, <span class='fl'>0.20</span><span class='op'>)</span></span>
 <span class='r-in'></span>
+<span class='r-in'></span>
 <span class='r-in'><span class='co'># structure before</span></span>
 <span class='r-in'><span class='va'>dframe</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='va'>catg1</span>, <span class='va'>catg2</span>, <span class='va'>value</span><span class='op'>)</span></span>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>dframe</span><span class='op'>)</span></span>
@@ -240,6 +254,7 @@ Wiley, Hoboken, NJ.</p>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  $ catg1: chr  "urban" "urban" "rural" "rural" ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  $ catg2: chr  "men" "women" "men" "women" ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  $ value: num  0.22 0.14 0.43 0.58 0.81 0.46 0.15 0.2</span>
+<span class='r-in'></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># structure after</span></span>
 <span class='r-in'><span class='va'>mw</span> <span class='op'>&lt;-</span> <span class='fu'>condition_multiway</span><span class='op'>(</span><span class='va'>dframe</span><span class='op'>)</span></span>
@@ -255,6 +270,46 @@ Wiley, Hoboken, NJ.</p>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   .. .. ..$ : chr [1:2] "men" "women"</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  $ value: num  0.22 0.14 0.43 0.58 0.81 0.46 0.15 0.2</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># incoming columns can be factor if not character</span></span>
+<span class='r-in'><span class='va'>mw2</span> <span class='op'>&lt;-</span> <span class='fu'>condition_multiway</span><span class='op'>(</span><span class='va'>mw</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>mw2</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Classes 'data.table' and 'data.frame':	8 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ catg1: Factor w/ 4 levels "village","urban",..: 2 2 3 3 4 4 1 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..- attr(*, "scores")= num [1:4(1d)] 0.505 0.635 0.18 0.175</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..- attr(*, "dimnames")=List of 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. .. ..$ : chr [1:4] "rural" "suburb" "urban" "village"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ catg2: Factor w/ 2 levels "men","women": 1 2 1 2 1 2 1 2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..- attr(*, "scores")= num [1:2(1d)] 0.325 0.33</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..- attr(*, "dimnames")=List of 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. .. ..$ : chr [1:2] "men" "women"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ value: num  0.22 0.14 0.43 0.58 0.81 0.46 0.15 0.2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># report median values</span></span>
+<span class='r-in'><span class='va'>mw</span> <span class='op'>&lt;-</span> <span class='fu'>condition_multiway</span><span class='op'>(</span><span class='va'>dframe</span>, details <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>mw</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Classes 'data.table' and 'data.frame':	8 obs. of  5 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ catg1    : Factor w/ 4 levels "village","urban",..: 2 2 3 3 4 4 1 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..- attr(*, "scores")= num [1:4(1d)] 0.505 0.635 0.18 0.175</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..- attr(*, "dimnames")=List of 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. .. ..$ : chr [1:4] "rural" "suburb" "urban" "village"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ catg2    : Factor w/ 2 levels "men","women": 1 2 1 2 1 2 1 2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..- attr(*, "scores")= num [1:2(1d)] 0.325 0.33</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..- attr(*, "dimnames")=List of 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. .. ..$ : chr [1:2] "men" "women"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ med_catg1: num  0.18 0.18 0.505 0.505 0.635 0.635 0.175 0.175</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ med_catg2: num  0.325 0.33 0.325 0.33 0.325 0.33 0.325 0.33</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ value    : num  0.22 0.14 0.43 0.58 0.81 0.46 0.15 0.2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - attr(*, ".internal.selfref")=&lt;externalptr&gt; </span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='va'>mw</span><span class='op'>$</span><span class='va'>catg1</span><span class='op'>)</span> <span class='co'># note: not alphabetical</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "village" "urban"   "rural"   "suburb" </span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='va'>mw</span><span class='op'>$</span><span class='va'>catg2</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "men"   "women"</span>
+<span class='r-in'></span>
+<span class='r-in'></span>
 </code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

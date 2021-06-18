@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9014</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9015</span>
       </span>
     </div>
 
@@ -106,11 +106,13 @@
 
       
 
-      </header><script src="art-03-case-selection_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><script src="art-03-case-selection_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Case selection</h1>
+                        <h4 data-toc-skip class="author">Richard Layton</h4>
             
+            <h4 data-toc-skip class="date">2021-06-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/master/vignettes/art-03-case-selection.Rmd" class="external-link"><code>vignettes/art-03-case-selection.Rmd</code></a></small>
       <div class="hidden name"><code>art-03-case-selection.Rmd</code></div>
@@ -371,9 +373,15 @@
 <li>Electrical Engineering encompasses four programs at the 6-digit level</li>
 <li>Mechanical and Industrial have one program each at the 6-digit level</li>
 </ul>
-<p>All MIDFIELD data tables that have a column of CIP codes use 6-digit codes. Therefore, for a case study, we only need the <code>cip6</code> column from the work above. The names we want (in this case), however, are at the 4-digit level. We can take one final pass and keep only those columns we need,</p>
+<p>All MIDFIELD data tables that have a column of CIP codes use 6-digit codes. Therefore, for a case study, we only need the <code>cip6</code> column from the work above. The names we want (in this case), however, are at the 4-digit level. We can select the columns we need.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">case_study</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">pass04</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span>, <span class="st">"cip4name"</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">cols_we_want</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span>, <span class="st">"cip4name"</span><span class="op">)</span>
+<span class="va">case_study</span> <span class="op">&lt;-</span> <span class="va">pass04</span><span class="op">[</span>, <span class="va">cols_we_want</span>, with <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span>
+
+<span class="co"># or, equivalently, </span>
+<span class="co"># case_study &lt;- pass04[, ..cols_we_want]</span>
+
+<span class="co"># examine the result</span>
 <span class="va">case_study</span>
 <span class="co">#&gt;       cip6                                               cip4name</span>
 <span class="co">#&gt;     &lt;char&gt;                                                 &lt;char&gt;</span>
@@ -619,12 +627,32 @@
 <span class="co"># compare to the DT we obtained above after ordering rows the same way</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">case_degree</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>, <span class="va">dframe</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
+<p>If duplicate rows were a possibility and we want to delete them, <code><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique()</a></code> will do the job.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># omit duplicate rows if any</span>
+<span class="va">dframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">dframe</span><span class="op">)</span>
+
+<span class="co"># examine the results</span>
+<span class="va">dframe</span>
+<span class="co">#&gt;              mcid   institution   cip6</span>
+<span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;</span>
+<span class="co">#&gt;    1: MID25783197 Institution M 140801</span>
+<span class="co">#&gt;    2: MID25783441 Institution M 140801</span>
+<span class="co">#&gt;    3: MID25784334 Institution M 140801</span>
+<span class="co">#&gt;    4: MID25784418 Institution M 140801</span>
+<span class="co">#&gt;    5: MID25784489 Institution M 140801</span>
+<span class="co">#&gt;   ---                                 </span>
+<span class="co">#&gt; 4672: MID26689274 Institution L 143501</span>
+<span class="co">#&gt; 4673: MID26692926 Institution L 143501</span>
+<span class="co">#&gt; 4674: MID26695626 Institution L 143501</span>
+<span class="co">#&gt; 4675: MID26696116 Institution L 143501</span>
+<span class="co">#&gt; 4676: MID26696429 Institution L 143501</span></code></pre></div>
 </div>
 <div id="example-2--subset-by-id" class="section level3">
 <h3 class="hasAnchor">
 <a href="#example-2--subset-by-id" class="anchor" aria-hidden="true"></a>Example 2. Subset by ID</h3>
 <p>Another common data access task is to retrieve information from <code>student</code> by ID. Suppose we wanted to examine the transfer status at the time of admission of the students with degrees we subset above. We use <code><a href="../reference/filter_match.html">filter_match()</a></code> again to subset rows of <code>student</code> to keep values of <code>mcid</code> that match values of <code>mcid</code> in <code>case_degree</code> and return three columns of the <code>student</code> subset.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># subset student table</span>
 <span class="va">case_student</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">student</span>,
   match_to <span class="op">=</span> <span class="va">case_degree</span>,
@@ -647,8 +675,10 @@
 <span class="co">#&gt; 4675: MID26697163 First-Time in College             NA</span>
 <span class="co">#&gt; 4676: MID26697447 First-Time in College             NA</span></code></pre></div>
 <p>If the next step was to compare the numbers of students by their transfer status, we use <code>.N</code> from data.table. For example,</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">case_student</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"transfer"</span><span class="op">]</span>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># omit any duplicate rows before counting</span>
+<span class="va">case_student</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">case_student</span><span class="op">)</span>
+<span class="va">case_student</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"transfer"</span><span class="op">]</span>
 <span class="co">#&gt;                 transfer     N</span>
 <span class="co">#&gt;                   &lt;char&gt; &lt;int&gt;</span>
 <span class="co">#&gt; 1: First-Time in College  3873</span>
@@ -659,7 +689,7 @@
 <a href="#example-3--merge-program-names" class="anchor" aria-hidden="true"></a>Example 3. Merge program names</h3>
 <p>Another common use of the <code>case_study</code> data is to merge its program names with another data frame by matching <code>cip6</code> values. The program names can then be used for grouping and summarizing.</p>
 <p>For example, let’s join the program names to the case degree data frame we created above. The <code>all.x = TRUE</code> argument performs the merge as a “left outer join”, retaining all rows of <code>case_degree</code> (the “left” data frame).</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># join program names</span>
 <span class="va">case_degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">case_degree</span>, <span class="va">case_study</span>, by <span class="op">=</span> <span class="st">"cip6"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
@@ -679,7 +709,7 @@
 <span class="co">#&gt; 4675: 143501 MID26696116 Institution L Industrial Engineering</span>
 <span class="co">#&gt; 4676: 143501 MID26696429 Institution L Industrial Engineering</span></code></pre></div>
 <p>If the next step was to group and summarize by program, we use <code>.N</code> again, for example,</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">case_degree</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"program"</span><span class="op">]</span>
 <span class="co">#&gt;                   program     N</span>
 <span class="co">#&gt;                    &lt;char&gt; &lt;int&gt;</span>
@@ -694,21 +724,21 @@
 <a href="#save-results" class="anchor" aria-hidden="true"></a>Save results</h2>
 <p>Having identified a set of codes and names for the programs we want to study, we should save it to use later without rerunning the code that created it.</p>
 <p>We save the <code>case_study</code> data frame as a CSV file to the project <code>results</code> directory for easy access as we work through the study. Here we use fast read and write <code><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread()</a></code> and <code><a href="https://Rdatatable.gitlab.io/data.table/reference/fwrite.html" class="external-link">fwrite()</a></code> from data.table. You may prefer other read/write functions such as those in base R or packages readr or rio.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># save an intermediate result</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fwrite.html" class="external-link">fwrite</a></span><span class="op">(</span><span class="va">case_study</span>, file <span class="op">=</span> <span class="st">"results/case_study.csv"</span><span class="op">)</span></code></pre></div>
 <p>Let’s read it in using <code><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread()</a></code>. We use the <code>colClasses</code> argument to ensure that the <code>cip6</code> variable type is read as a character, not an integer.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># read from the results directory</span>
 <span class="va">case_study</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span>
   <span class="st">"results/case_study.csv"</span>,
   colClasses <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>character <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 <p>We suggest saving intermediate results like these at each significant milestone of a study, especially after steps requiring a lot of computing time. For instance, the case study program codes and names we developed above are saved in the midfieldr package as the data set <code>study_programs</code>. View its help page by running</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">?</span> <span class="va">study_programs</span></code></pre></div>
 <p>View the data frame,</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">study_programs</span>
 <span class="co">#&gt;       cip6                program</span>
 <span class="co">#&gt;     &lt;char&gt;                 &lt;char&gt;</span>
@@ -724,7 +754,7 @@
 <span class="co">#&gt; 11: 141901 Mechanical Engineering</span>
 <span class="co">#&gt; 12: 143501 Industrial Engineering</span></code></pre></div>
 <p>Check that the two data frames are identical,</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">case_study</span>, <span class="va">study_programs</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
 </div>
@@ -742,7 +772,7 @@
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor" aria-hidden="true"></a>Complete script</h3>
 <p>The vignette code chunks are collected below in a single, condensed script.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>
@@ -766,7 +796,8 @@
   <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"civil"</span>, <span class="st">"electrical"</span>, <span class="st">"industrial"</span>, <span class="st">"mechanical"</span><span class="op">)</span>
 <span class="op">)</span>
 <span class="va">pass04</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">pass03</span>, drop_text <span class="op">=</span> <span class="st">"electromechanical"</span><span class="op">)</span>
-<span class="va">case_study</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">pass04</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span>, <span class="st">"cip4name"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">cols_we_want</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span>, <span class="st">"cip4name"</span><span class="op">)</span>
+<span class="va">case_study</span> <span class="op">&lt;-</span> <span class="va">pass04</span><span class="op">[</span>, <span class="va">cols_we_want</span>, with <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span>
 
 <span class="co"># assign program names</span>
 <span class="va">case_study</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="va">cip4name</span><span class="op">]</span>
