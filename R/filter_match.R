@@ -1,7 +1,7 @@
 
 
 #' @import data.table
-#' @importFrom wrapr stop_if_dot_args
+#' @importFrom wrapr stop_if_dot_args `%?%`
 #' @importFrom checkmate qassert assert_names
 NULL
 
@@ -112,7 +112,7 @@ filter_match <- function(dframe,
   qassert(by_col, "s1")
 
   # optional arguments
-  select <- select %||% names(dframe)
+  select <- select %?% names(dframe)
   qassert(select, "s+")
 
   # inputs modified (or not) by reference

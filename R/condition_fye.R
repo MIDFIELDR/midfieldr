@@ -1,8 +1,9 @@
 
 
 #' @import data.table
-#' @importFrom checkmate assert_choice assert_subset
-#' @importFrom checkmate qassert assert_names assert_false
+#' @importFrom checkmate assert_subset assert_false
+#' @importFrom checkmate qassert assert_names
+#' @importFrom wrapr stop_if_dot_args `%?%`
 NULL
 
 
@@ -142,8 +143,9 @@ condition_fye <- function(dframe,
   qassert(midfield_term, "d+")
 
   # optional arguments: fye_codes default value(s)
-  fye_codes  <- fye_codes %||% c("140102")
-  assert_choice(unique(nchar(fye_codes)), choices = 6) # 6 digits only
+  fye_codes <- fye_codes %?%  c("140102")
+  # 6 digit CIPs only
+  qassert(unique(nchar(fye_codes)), "I1[6,6]")
 
   # fye_codes: number strings only, no regular expressions
   assert_subset(

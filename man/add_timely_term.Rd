@@ -2,7 +2,7 @@
 % Please edit documentation in R/add_timely_term.R
 \name{add_timely_term}
 \alias{add_timely_term}
-\title{Add a column of terms delimiting timely completion}
+\title{Add a column of timely completion terms}
 \usage{
 add_timely_term(
   dframe,

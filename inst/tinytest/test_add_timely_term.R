@@ -67,18 +67,25 @@ test_add_timely_term <- function() {
                                  details = FALSE,
                                  6)) # span not named
 
-    # details must be true or false
+    # optional arguments are spcific types
     expect_error(
         add_timely_term(x, toy_term, details = 1)
-        )
+    )
     expect_error(
+        add_timely_term(x, toy_term, span = TRUE)
+    )
+
+    # optional arguments, NA same as NULL
+    expect_equal(
+        add_timely_term(x, toy_term, span = 6),
+        add_timely_term(x, toy_term, span = NA)
+    )
+    expect_equal(
+        add_timely_term(x, toy_term, details = FALSE),
         add_timely_term(x, toy_term, details = NA)
     )
 
-    # relationships between span and sched_span
-    expect_error(
-        add_timely_term(x, toy_term, span = NA)
-    )
+    # span must be >=  sched_span
     expect_error(
         add_timely_term(x, toy_term, span = 2)
     )

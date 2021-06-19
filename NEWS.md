@@ -18,6 +18,7 @@ Significant changes from earlier versions, no backwards compatibility, prompting
 - Use package checkmate for runtime assertions
 - Switch to package tinytest for unit testing 
 - Use package checkmate for runtime assertions 
+- Switch to wrapr coalesce
 
 ## midfieldr 0.1.0 / 2018-06
 

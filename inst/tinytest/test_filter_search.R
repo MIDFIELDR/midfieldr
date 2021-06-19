@@ -1,10 +1,10 @@
 test_filter_search <- function() {
 
-    # filter_search <- function(dframe,
-    #                           keep_text = NULL,
-    #                           ...,
-    #                           drop_text = NULL,
-    #                           select = NULL)
+    # filter_search(dframe,
+    #               keep_text = NULL,
+    #               ...,
+    #               drop_text = NULL,
+    #               select = NULL)
 
     # test case
     music_cip <- wrapr::build_frame(

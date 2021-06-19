@@ -64,18 +64,26 @@ set_colrow_order <- function(dframe, cols) {
 
 # ------------------------------------------------------------------------
 
-#' Assign default arguments in functions
-#'
-#' Infix operator. If 'a' is NULL, assign default 'b'.
-#' a <- a %||% b
-#'
-#' @param a object that might be NULL
-#' @param b default argument in case of NULL
-#' @noRd
-`%||%` <- function(a, b) {
-  if (!is.null(a) && length(a) > 0) a else data.table::copy(b)
-}
-
+# Assign default arguments in functions
+#
+# Coalesce infix operator. Goal is to provide default values for function
+# arguments set to NULL in the call but that also have a specific default
+# value. Inputs are expected to be scalars or vectors.
+#
+# If lhs is NULL/NA/missing/length < 1, then assign default rhs.
+# Adapted from checkmate coalesce function, see
+# https://github.com/mllg/checkmate/blob/master/R/coalesce.R
+#
+# lhs <- lhs %||% rhs
+#
+# @param lhs Object that might be NULL, missing, NA, or length < 1
+# @param rhs Default argument in case of NULL, missing, NA, or length < 1
+# @noRd
+# `%||%` <- function(lhs, rhs) {
+#   if(missing(lhs) || is.null(lhs) || is.na(lhs)) rhs else lhs
+#   }
+#  Hadley's version
+# `%||%` <- function(a, b) if (!is.null(a)) a else b
 # ------------------------------------------------------------------------
 
 #' Subset rows of character data frame by matching keep_texts

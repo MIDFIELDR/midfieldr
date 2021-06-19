@@ -2,7 +2,7 @@
 
 #' @import data.table
 #' @importFrom stats median reorder
-#' @importFrom wrapr let
+#' @importFrom wrapr let stop_if_dot_args `%?%`
 #' @importFrom checkmate qassert assert_data_frame
 #' @importFrom Rdpack reprompt
 # Rdpack reprompt is used for citations in an Roxygen document
@@ -116,7 +116,7 @@ condition_multiway <- function(dframe, ..., details = NULL) {
   )
 
   # optional arguments
-  details <- details %||% FALSE
+  details <- details %?% FALSE
   qassert(details, "b1") # boolean, length = 1
 
   # input modified (or not) by reference

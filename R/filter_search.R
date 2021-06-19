@@ -1,7 +1,7 @@
 
 
 #' @import data.table
-#' @importFrom wrapr stop_if_dot_args
+#' @importFrom wrapr stop_if_dot_args `%?%`
 #' @importFrom checkmate qassert
 NULL
 
@@ -22,9 +22,10 @@ NULL
 #'
 #' @param dframe Data frame to be searched.
 #' @param keep_text Optional character vector of search text for retaining
-#'        rows.
+#'        rows, default NULL.
 #' @param ... Not used, force later arguments to be used by name.
-#' @param drop_text Optional character vector of search text for dropping rows.
+#' @param drop_text Optional character vector of search text for dropping
+#'        rows, default NULL.
 #' @param select Optional character vector of column names to return,
 #'        default all columns.
 #' @return A \code{data.table} with the following properties:
@@ -80,9 +81,9 @@ NULL
 #'
 #'
 filter_search <- function(dframe,
-                          keep_text,
+                          keep_text = NULL,
                           ...,
-                          drop_text,
+                          drop_text = NULL,
                           select = NULL) {
 
   # remove all keys
@@ -101,17 +102,19 @@ filter_search <- function(dframe,
   qassert(dframe, "d+")
 
   # optional arguments
-  select <- select %||% names(dframe)
-  if (missing(keep_text)){keep_text = NULL}
-  if (missing(drop_text)){drop_text = NULL}
-  qassert(select, "s+")
-  if (!is.null(keep_text)) qassert(keep_text, "s+")
-  if (!is.null(drop_text)) qassert(drop_text, "s+")
+  select <- select %?% names(dframe)
 
   # return if no work is being done
-  if (is.null(keep_text) & is.null(drop_text) & is.null(select)) {
+  if(identical(select, names(dframe)) &
+     is.null(keep_text) &
+     is.null(drop_text)) {
     return(dframe)
   }
+
+  # assertions for optional arguments
+  qassert(select, "s+") # missing is OK
+  if(!is.null(keep_text)) qassert(keep_text, "s+")
+  if(!is.null(drop_text)) qassert(drop_text, "s+")
 
   # input modified (or not) by reference
   setDT(dframe)

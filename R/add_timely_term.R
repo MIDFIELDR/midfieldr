@@ -1,12 +1,12 @@
 
 
 #' @import data.table
-#' @importFrom wrapr stop_if_dot_args
-#' @importFrom checkmate qassert assert_names assert_number
+#' @importFrom wrapr stop_if_dot_args `%?%`
+#' @importFrom checkmate qassert assert_names assert_int
 NULL
 
 
-#' Add a column of terms delimiting timely completion
+#' Add a column of timely completion terms
 #'
 #' Add a column of academic term values to a data frame indicating the latest
 #' term by which a student can graduate and have it considered a timely
@@ -109,13 +109,13 @@ add_timely_term <- function(dframe,
   qassert(midfield_term, "d+")
 
   # optional arguments
-  details <- details %||% FALSE
-  span <- span %||% 6
-  sched_span <- sched_span %||% 4
+  details <- details %?% FALSE
+  span <- span %?% 6
+  sched_span <- sched_span %?% 4
 
   qassert(details, "B1")
-  assert_number(sched_span, lower = 0)
-  assert_number(span, lower = sched_span)
+  assert_int(sched_span, lower = 0)
+  assert_int(span, lower = sched_span)
 
   # input modified or not by reference
   setDT(dframe)

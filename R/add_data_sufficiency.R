@@ -1,7 +1,7 @@
 
 
 #' @import data.table
-#' @importFrom wrapr stop_if_dot_args
+#' @importFrom wrapr stop_if_dot_args `%?%`
 #' @importFrom checkmate qassert assert_names
 NULL
 
@@ -54,7 +54,7 @@ NULL
 #'
 #'
 #' @examples
-#' # Start with IDs, add institution and timely term
+#' # Start with IDs and add institution and timely term
 #' DT <- toy_student[1:10, .(mcid)]
 #' DT <- add_institution(DT, midfield_term = toy_term)
 #' DT <- add_timely_term(DT, midfield_term = toy_term)
@@ -93,7 +93,7 @@ add_data_sufficiency <- function(dframe,
   qassert(midfield_term, "d+")
 
   # optional arguments
-  details <- details %||% FALSE
+  details <- details %?% FALSE
   qassert(details, "b1") # boolean, length = 1
 
   # inputs modified (or not) by reference

@@ -56,7 +56,7 @@ term reported by the institution in the available data.
 Existing columns with the same names as the added columns are overwritten.
 }
 \examples{
-# Start with IDs, add institution and timely term
+# Start with IDs and add institution and timely term
 DT <- toy_student[1:10, .(mcid)]
 DT <- add_institution(DT, midfield_term = toy_term)
 DT <- add_timely_term(DT, midfield_term = toy_term)

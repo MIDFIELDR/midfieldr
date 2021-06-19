@@ -4,17 +4,18 @@
 \alias{filter_search}
 \title{Subset rows that include matches to search strings}
 \usage{
-filter_search(dframe, keep_text, ..., drop_text, select = NULL)
+filter_search(dframe, keep_text = NULL, ..., drop_text = NULL, select = NULL)
 }
 \arguments{
 \item{dframe}{Data frame to be searched.}
 
 \item{keep_text}{Optional character vector of search text for retaining
-rows.}
+rows, default NULL.}
 
 \item{...}{Not used, force later arguments to be used by name.}
 
-\item{drop_text}{Optional character vector of search text for dropping rows.}
+\item{drop_text}{Optional character vector of search text for dropping
+rows, default NULL.}
 
 \item{select}{Optional character vector of column names to return,
 default all columns.}
