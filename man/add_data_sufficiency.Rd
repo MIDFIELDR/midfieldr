@@ -4,13 +4,13 @@
 \alias{add_data_sufficiency}
 \title{Add a column to evaluate data sufficiency}
 \usage{
-add_data_sufficiency(dframe, midfield_table, ..., details = NULL)
+add_data_sufficiency(dframe, midfield_term, ..., details = NULL)
 }
 \arguments{
 \item{dframe}{Data frame with required variables
 \code{institution} and \code{timely_term}.}
 
-\item{midfield_table}{MIDFIELD \code{term} data table or equivalent
+\item{midfield_term}{MIDFIELD \code{term} data table or equivalent
 with required variables \code{institution} and \code{term}.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
@@ -44,10 +44,10 @@ column obtained using the \code{add_timely_term()} function. Students can be
 retained in a study if their estimated timely completion term is no later
 than the last term in their institution's data.
 
-If the result in the \code{data_sufficiency} column is TRUE, then then student
-should be included in the research. If FALSE, the student should be excluded
-before calculating any persistence metric involving program completion
-(graduation). The function itself performs no subsetting.
+If the result in the \code{data_sufficiency} column is TRUE, then then
+student should be included in the research. If FALSE, the student should
+be excluded before calculating any persistence metric involving program
+completion (graduation). The function itself performs no subsetting.
 
 If \code{details} is TRUE, additional column(s) that support the finding
 are returned as well. Here the extra column is \code{inst_limit}, the latest
@@ -56,7 +56,18 @@ term reported by the institution in the available data.
 Existing columns with the same names as the added columns are overwritten.
 }
 \examples{
-# TBD
+# Start with IDs, add institution and timely term
+DT <- toy_student[1:10, .(mcid)]
+DT <- add_institution(DT, midfield_term = toy_term)
+DT <- add_timely_term(DT, midfield_term = toy_term)
+
+
+# Data sufficiency column
+add_data_sufficiency(DT, midfield_term = toy_term)
+
+
+# Data sufficiency column with details
+add_data_sufficiency(DT, midfield_term = toy_term, details = TRUE)
 
 
 }

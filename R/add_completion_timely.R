@@ -1,7 +1,7 @@
 
 
+#' @importFrom wrapr stop_if_dot_args `%?%`
 #' @import data.table
-#' @importFrom wrapr stop_if_dot_args
 #' @importFrom stats na.omit
 #' @importFrom checkmate qassert assert_names
 NULL
@@ -36,7 +36,7 @@ NULL
 #'
 #' @param dframe Data frame with required variables
 #'        \code{mcid} and \code{timely_term}.
-#' @param midfield_table MIDFIELD \code{degree} data table or equivalent with
+#' @param midfield_degree MIDFIELD \code{degree} data table or equivalent with
 #'        required variables \code{mcid} and \code{term}.
 #' @param ... Not used, forces later arguments to be used by name.
 #' @param details Optional flag to add columns reporting information
@@ -62,12 +62,12 @@ NULL
 #'
 #'
 add_completion_timely <- function(dframe,
-                                  midfield_table,
+                                  midfield_degree,
                                   ...,
                                   details = NULL) {
   # remove all keys
   on.exit(setkey(dframe, NULL))
-  on.exit(setkey(midfield_table, NULL), add = TRUE)
+  on.exit(setkey(midfield_degree, NULL), add = TRUE)
 
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
@@ -80,27 +80,27 @@ add_completion_timely <- function(dframe,
 
   # required arguments
   qassert(dframe, "d+")
-  qassert(midfield_table, "d+")
+  qassert(midfield_degree, "d+")
 
   # optional arguments
-  details <- details %||% FALSE
+  details <- details %?% FALSE
   qassert(details, "b1") # boolean, length = 1
 
   # inputs modified (or not) by reference
   setDT(dframe)
-  setDT(midfield_table) # immediately subset, so side-effect OK
+  setDT(midfield_degree) # immediately subset, so side-effect OK
 
   # required columns
   assert_names(colnames(dframe),
                must.include = c("mcid", "timely_term"))
-  assert_names(colnames(midfield_table),
+  assert_names(colnames(midfield_degree),
                must.include = c("mcid", "term"))
 
   # class of required columns
   qassert(dframe[, mcid], "s+")
   qassert(dframe[, timely_term], "s+")
-  qassert(midfield_table[, mcid], "s+")
-  qassert(midfield_table[, term], "s+")
+  qassert(midfield_degree[, mcid], "s+")
+  qassert(midfield_degree[, term], "s+")
 
   # bind names due to NSE notes in R CMD check
   completion_timely <- NULL
@@ -121,7 +121,7 @@ add_completion_timely <- function(dframe,
   dframe <- dframe[, key_names, with = FALSE]
 
   # subset midfield data table
-  DT <- filter_match(midfield_table,
+  DT <- filter_match(midfield_degree,
     match_to = dframe,
     by_col = "mcid",
     select = c("mcid", "term")

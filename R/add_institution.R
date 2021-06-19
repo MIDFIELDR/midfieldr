@@ -18,7 +18,7 @@ NULL
 #' the same name as the added column is overwritten.
 #'
 #' @param dframe Data frame with required variable \code{mcid}.
-#' @param midfield_table MIDFIELD \code{term} data table or equivalent with
+#' @param midfield_term MIDFIELD \code{term} data table or equivalent with
 #'        required variables \code{mcid}, \code{institutiion}, \code{term}.
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
@@ -37,12 +37,12 @@ NULL
 #'
 #'
 #' # add institutions from term
-#' DT1 <- add_institution(id, midfield_table = toy_term)
+#' DT1 <- add_institution(id, midfield_term = toy_term)
 #' head(DT1)
 #'
 #'
 #' # will overwrite institution column if present
-#' DT2 <- add_institution(DT1, midfield_table = toy_term)
+#' DT2 <- add_institution(DT1, midfield_term = toy_term)
 #' head(DT2)
 #'
 #'
@@ -50,40 +50,40 @@ NULL
 #'
 #'
 add_institution <- function(dframe,
-                            midfield_table) {
+                            midfield_term) {
 
   # remove all keys
   on.exit(setkey(dframe, NULL))
-  on.exit(setkey(midfield_table, NULL), add = TRUE)
+  on.exit(setkey(midfield_term, NULL), add = TRUE)
 
   # required arguments
   qassert(dframe, "d+")
-  qassert(midfield_table, "d+")
+  qassert(midfield_term, "d+")
 
   # optional arguments
   # NA
 
   # inputs modified (or not) by reference
   dframe <- copy(as.data.table(dframe)) #  must copy
-  setDT(midfield_table) # immediately subset, so side-effect OK
+  setDT(midfield_term) # immediately subset, so side-effect OK
 
   # required columns
   assert_names(colnames(dframe),
                must.include = c("mcid"))
-  assert_names(colnames(midfield_table),
+  assert_names(colnames(midfield_term),
                must.include = c("mcid", "institution", "term"))
 
   # class of required columns
   qassert(dframe[, mcid], "s+")
-  qassert(midfield_table[, mcid], "s+")
-  qassert(midfield_table[, institution], "s+")
-  qassert(midfield_table[, term], "s+")
+  qassert(midfield_term[, mcid], "s+")
+  qassert(midfield_term[, institution], "s+")
+  qassert(midfield_term[, term], "s+")
 
   # bind names due to NSE notes in R CMD check
   N <- NULL
 
   # do the work
-  DT <- filter_match(midfield_table,
+  DT <- filter_match(midfield_term,
     match_to = dframe,
     by_col = "mcid",
     select = c("mcid", "institution", "term")

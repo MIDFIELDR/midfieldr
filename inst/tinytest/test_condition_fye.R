@@ -5,13 +5,13 @@ test_condition_fye <- function() {
     options(datatable.print.class = TRUE)
 
     # condition_fye <- function(dframe,             # mcid, race, sex
-    #                           midfield_table,     # term
+    #                           midfield_term,     # term
     #                           ...,
     #                           fye_codes = NULL)   # default 140102
 
     # create an answer
     # DT <- toy_student[, .(mcid, race, sex)]
-    # DT <- condition_fye(dframe = DT, midfield_table = toy_term)
+    # DT <- condition_fye(dframe = DT, midfield_term = toy_term)
     # cat(wrapr::draw_frame(DT))
 
     # test case

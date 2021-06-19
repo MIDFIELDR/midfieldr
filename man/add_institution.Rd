@@ -4,12 +4,12 @@
 \alias{add_institution}
 \title{Add a column of institution names}
 \usage{
-add_institution(dframe, midfield_table)
+add_institution(dframe, midfield_term)
 }
 \arguments{
 \item{dframe}{Data frame with required variable \code{mcid}.}
 
-\item{midfield_table}{MIDFIELD \code{term} data table or equivalent with
+\item{midfield_term}{MIDFIELD \code{term} data table or equivalent with
 required variables \code{mcid}, \code{institutiion}, \code{term}.}
 }
 \value{
@@ -37,12 +37,12 @@ id <- toy_student[, .(mcid)]
 
 
 # add institutions from term
-DT1 <- add_institution(id, midfield_table = toy_term)
+DT1 <- add_institution(id, midfield_term = toy_term)
 head(DT1)
 
 
 # will overwrite institution column if present
-DT2 <- add_institution(DT1, midfield_table = toy_term)
+DT2 <- add_institution(DT1, midfield_term = toy_term)
 head(DT2)
 
 

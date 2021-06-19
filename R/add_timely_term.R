@@ -2,7 +2,7 @@
 
 #' @import data.table
 #' @importFrom wrapr stop_if_dot_args
-#' @importFrom checkmate qassert assert_names
+#' @importFrom checkmate qassert assert_names assert_number
 NULL
 
 
@@ -40,13 +40,17 @@ NULL
 #' Existing columns with the same names as the added columns are overwritten.
 #'
 #' @param dframe Data frame with required variable \code{mcid}.
-#' @param midfield_table MIDFIELD \code{term} data table or equivalent with
+#' @param midfield_term MIDFIELD \code{term} data table or equivalent with
 #'        required variables \code{mcid}, \code{term}, and \code{level}.
 #' @param ... Not used, forces later arguments to be used by name.
 #' @param details Optional flag to add columns reporting information
 #'        on which the evaluation is based, default FALSE.
 #' @param span Optional numeric scalar, number of years to define timely
-#'        completion, default 6 years.
+#'        completion. Values that are 100%, 150%, and 200% of the "scheduled
+#'        span" (\code{sched_span}) are commonly used. Default 6 years.
+#' @param sched_span Optional numeric scalar, the number of years an
+#'        institution officially schedules for completing a program. Default
+#'        4 years.
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
 #'     \item Rows are not modified.
@@ -60,21 +64,36 @@ NULL
 #'
 #'
 #' @examples
-#' # TBD
+#' # Using the toy data sets
+#' DT <- toy_student[1:10, .(mcid)]
+#' add_timely_term(DT, midfield_term = toy_term)
+#'
+#'
+#' # Add details on which the timely term is based
+#' add_timely_term(DT, midfield_term = toy_term, details = TRUE)
+#'
+#'
+#' # Define timely completion as 200% of scheduled span (8 years)
+#' add_timely_term(DT, midfield_term = toy_term, span = 8)
+#'
+#'
+#' # Optional arguments (after ...) must be named
+#' add_timely_term(DT, toy_term, details = TRUE, span = 6)
 #'
 #'
 #' @export
 #'
 #'
 add_timely_term <- function(dframe,
-                            midfield_table,
+                            midfield_term,
                             ...,
                             details = NULL,
-                            span = NULL) {
+                            span = NULL,
+                            sched_span = NULL) {
 
   # remove all keys
   on.exit(setkey(dframe, NULL))
-  on.exit(setkey(midfield_table, NULL), add = TRUE)
+  on.exit(setkey(midfield_term, NULL), add = TRUE)
 
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
@@ -87,29 +106,32 @@ add_timely_term <- function(dframe,
 
   # required arguments
   qassert(dframe, "d+")
-  qassert(midfield_table, "d+")
+  qassert(midfield_term, "d+")
 
   # optional arguments
   details <- details %||% FALSE
   span <- span %||% 6
-  qassert(details, "b1") # boolean, length = 1
-  qassert(span, "r1") # real/double, length = 1
+  sched_span <- sched_span %||% 4
+
+  qassert(details, "B1")
+  assert_number(sched_span, lower = 0)
+  assert_number(span, lower = sched_span)
 
   # input modified or not by reference
   setDT(dframe)
-  setDT(midfield_table) # immediately subset, so side-effect OK
+  setDT(midfield_term) # immediately subset, so side-effect OK
 
   # required columns
   assert_names(colnames(dframe),
                must.include = c("mcid"))
-  assert_names(colnames(midfield_table),
+  assert_names(colnames(midfield_term),
                must.include = c("mcid", "term", "level"))
 
   # class of required columns
   qassert(dframe[, mcid], "s+")
-  qassert(midfield_table[, mcid], "s+")
-  qassert(midfield_table[, term], "s+")
-  qassert(midfield_table[, level], "s+")
+  qassert(midfield_term[, mcid], "s+")
+  qassert(midfield_term[, term], "s+")
+  qassert(midfield_term[, level], "s+")
 
   # bind names due to NSE notes in R CMD check
   timely_term <- NULL
@@ -130,7 +152,7 @@ add_timely_term <- function(dframe,
 
   # condition subset of midfield table ------------------------------
   DT <- filter_match(
-    dframe = midfield_table,
+    dframe = midfield_term,
     match_to = dframe,
     by_col = "mcid",
     select = c("mcid", "term", "level")

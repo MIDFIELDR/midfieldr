@@ -4,13 +4,13 @@
 \alias{add_completion_timely}
 \title{Add a column to evaluate program completion}
 \usage{
-add_completion_timely(dframe, midfield_table, ..., details = NULL)
+add_completion_timely(dframe, midfield_degree, ..., details = NULL)
 }
 \arguments{
 \item{dframe}{Data frame with required variables
 \code{mcid} and \code{timely_term}.}
 
-\item{midfield_table}{MIDFIELD \code{degree} data table or equivalent with
+\item{midfield_degree}{MIDFIELD \code{degree} data table or equivalent with
 required variables \code{mcid} and \code{term}.}
 
 \item{...}{Not used, forces later arguments to be used by name.}

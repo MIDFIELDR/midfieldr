@@ -42,7 +42,7 @@ NULL
 #' }
 #'
 #' The function extracts all terms for all FYE students from
-#' \code{midfield_table}. In cases where students enter FYE, change programs,
+#' \code{midfield_term}. In cases where students enter FYE, change programs,
 #' and re-enter FYE, only the first group of FYE terms is considered. Any
 #' programs before FYE are ignored. The first (if any) post-FYE program is
 #' identified. If the program is in engineering, the CIP is retained as
@@ -56,7 +56,7 @@ NULL
 #' @param dframe Data frame of all degree-seeking engineering students in the
 #'        database, with required variables \code{mcid}, \code{race},
 #'        and \code{sex}.
-#' @param midfield_table MIDFIELD \code{term} data table or equivalent
+#' @param midfield_term MIDFIELD \code{term} data table or equivalent
 #'        with required variables \code{mcid}, \code{institution},
 #'        \code{term}, and \code{cip6}.
 #' @param ... Not used, forces later arguments to be used by name.
@@ -81,12 +81,12 @@ NULL
 #' @examples
 #' # Using toy data
 #' DT <- toy_student[, .(mcid, race, sex)]
-#' condition_fye(dframe = DT, midfield_table = toy_term)
+#' condition_fye(dframe = DT, midfield_term = toy_term)
 #'
 #'
 #' # Overwrites institution if present in dframe
 #' DT <- toy_student[, .(mcid, institution, race, sex)]
-#' condition_fye(dframe = DT, midfield_table = toy_term)
+#' condition_fye(dframe = DT, midfield_term = toy_term)
 #'
 #'
 #' # Other columns, if any, are dropped
@@ -120,13 +120,13 @@ NULL
 #'
 #'
 condition_fye <- function(dframe,
-                          midfield_table,
+                          midfield_term,
                           ...,
                           fye_codes = NULL) {
 
   # remove all keys
   on.exit(setkey(dframe, NULL))
-  on.exit(setkey(midfield_table, NULL), add = TRUE)
+  on.exit(setkey(midfield_term, NULL), add = TRUE)
 
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
@@ -139,7 +139,7 @@ condition_fye <- function(dframe,
 
   # required arguments
   qassert(dframe, "d+")
-  qassert(midfield_table, "d+")
+  qassert(midfield_term, "d+")
 
   # optional arguments: fye_codes default value(s)
   fye_codes  <- fye_codes %||% c("140102")
@@ -159,22 +159,22 @@ condition_fye <- function(dframe,
 
   # inputs modified (or not) by reference
   dframe <- copy(as.data.table(dframe)) # not the output
-  setDT(midfield_table) # immediately subset, so side-effect OK
+  setDT(midfield_term) # immediately subset, so side-effect OK
 
   # required columns
   assert_names(colnames(dframe),
                must.include = c("mcid", "race", "sex"))
-  assert_names(colnames(midfield_table),
+  assert_names(colnames(midfield_term),
                must.include = c("mcid", "institution", "term", "cip6"))
 
   # class of required columns
   qassert(dframe[, mcid], "s+")
   qassert(dframe[, race], "s+")
   qassert(dframe[, sex], "s+")
-  qassert(midfield_table[, mcid], "s+")
-  qassert(midfield_table[, institution], "s+")
-  qassert(midfield_table[, term], "s+")
-  qassert(midfield_table[, cip6], "s+")
+  qassert(midfield_term[, mcid], "s+")
+  qassert(midfield_term[, institution], "s+")
+  qassert(midfield_term[, term], "s+")
+  qassert(midfield_term[, cip6], "s+")
 
   # bind names due to NSE notes in R CMD check
   next_cip6 <- NULL
@@ -186,9 +186,9 @@ condition_fye <- function(dframe,
   latest_id <- dframe[, unique(mcid)]
 
   # degree-seeking engr and an FYE term
-  rows_we_want <- midfield_table$mcid %chin% latest_id &
-    midfield_table$cip6 %chin% fye_codes
-  fye <- midfield_table[rows_we_want, .(mcid, institution)]
+  rows_we_want <- midfield_term$mcid %chin% latest_id &
+    midfield_term$cip6 %chin% fye_codes
+  fye <- midfield_term[rows_we_want, .(mcid, institution)]
 
   # remove key when finished
   on.exit(setkey(fye, NULL), add = TRUE)
@@ -204,7 +204,7 @@ condition_fye <- function(dframe,
 
   # subset midfield data table
   DT <- filter_match(
-    dframe = midfield_table,
+    dframe = midfield_term,
     match_to = fye,
     by_col = "mcid",
     select = c("mcid", "term", "cip6")

@@ -4,14 +4,14 @@
 \alias{condition_fye}
 \title{Condition FYE data for multiple imputation}
 \usage{
-condition_fye(dframe, midfield_table, ..., fye_codes = NULL)
+condition_fye(dframe, midfield_term, ..., fye_codes = NULL)
 }
 \arguments{
 \item{dframe}{Data frame of all degree-seeking engineering students in the
 database, with required variables \code{mcid}, \code{race},
 and \code{sex}.}
 
-\item{midfield_table}{MIDFIELD \code{term} data table or equivalent
+\item{midfield_term}{MIDFIELD \code{term} data table or equivalent
 with required variables \code{mcid}, \code{institution},
 \code{term}, and \code{cip6}.}
 
@@ -69,7 +69,7 @@ enroll in FYE. \code{predict_fye()} sorts students into two categories:
 }
 
 The function extracts all terms for all FYE students from
-\code{midfield_table}. In cases where students enter FYE, change programs,
+\code{midfield_term}. In cases where students enter FYE, change programs,
 and re-enter FYE, only the first group of FYE terms is considered. Any
 programs before FYE are ignored. The first (if any) post-FYE program is
 identified. If the program is in engineering, the CIP is retained as
@@ -83,12 +83,12 @@ frame is ready for use as input for the mice package.
 \examples{
 # Using toy data
 DT <- toy_student[, .(mcid, race, sex)]
-condition_fye(dframe = DT, midfield_table = toy_term)
+condition_fye(dframe = DT, midfield_term = toy_term)
 
 
 # Overwrites institution if present in dframe
 DT <- toy_student[, .(mcid, institution, race, sex)]
-condition_fye(dframe = DT, midfield_table = toy_term)
+condition_fye(dframe = DT, midfield_term = toy_term)
 
 
 # Other columns, if any, are dropped

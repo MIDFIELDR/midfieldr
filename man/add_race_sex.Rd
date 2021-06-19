@@ -4,12 +4,12 @@
 \alias{add_race_sex}
 \title{Add one column each for student race/ethnicity and sex}
 \usage{
-add_race_sex(dframe, midfield_table)
+add_race_sex(dframe, midfield_student)
 }
 \arguments{
 \item{dframe}{Data frame with required variable \code{mcid}.}
 
-\item{midfield_table}{MIDFIELD \code{student} data table or equivalent
+\item{midfield_student}{MIDFIELD \code{student} data table or equivalent
 with required variables \code{mcid}, \code{race}, and \code{sex}.}
 }
 \value{
@@ -32,18 +32,18 @@ Existing columns with the same names as the added columns are overwritten.
 \examples{
 # Add race and sex to a data frame of graduates
 dframe <- toy_degree[1:5, c("mcid", "cip6")]
-add_race_sex(dframe, midfield_table = toy_student)
+add_race_sex(dframe, midfield_student = toy_student)
 
 
 # Add race and sex to a data frame from the term table
 dframe <- toy_term[21:26, c("mcid", "institution", "level")]
-add_race_sex(dframe, midfield_table = toy_student)
+add_race_sex(dframe, midfield_student = toy_student)
 
 
 # If present, existing race and sex columns are overwritten
 # Using dframe from above,
-DT1 <- add_race_sex(dframe, midfield_table = toy_student)
-DT2 <- add_race_sex(DT1, midfield_table = toy_student)
+DT1 <- add_race_sex(dframe, midfield_student = toy_student)
+DT2 <- add_race_sex(DT1, midfield_student = toy_student)
 all.equal(DT1, DT2)
 
 

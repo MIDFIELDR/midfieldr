@@ -23,10 +23,10 @@ NULL
 #' retained in a study if their estimated timely completion term is no later
 #' than the last term in their institution's data.
 #'
-#' If the result in the \code{data_sufficiency} column is TRUE, then then student
-#' should be included in the research. If FALSE, the student should be excluded
-#' before calculating any persistence metric involving program completion
-#' (graduation). The function itself performs no subsetting.
+#' If the result in the \code{data_sufficiency} column is TRUE, then then
+#' student should be included in the research. If FALSE, the student should
+#' be excluded before calculating any persistence metric involving program
+#' completion (graduation). The function itself performs no subsetting.
 #'
 #' If \code{details} is TRUE, additional column(s) that support the finding
 #' are returned as well. Here the extra column is \code{inst_limit}, the latest
@@ -36,7 +36,7 @@ NULL
 #'
 #' @param dframe Data frame with required variables
 #'        \code{institution} and \code{timely_term}.
-#' @param midfield_table MIDFIELD \code{term} data table or equivalent
+#' @param midfield_term MIDFIELD \code{term} data table or equivalent
 #'        with required variables \code{institution} and \code{term}.
 #' @param ... Not used, forces later arguments to be used by name.
 #' @param details Optional flag to add columns reporting information
@@ -54,19 +54,30 @@ NULL
 #'
 #'
 #' @examples
-#' # TBD
+#' # Start with IDs, add institution and timely term
+#' DT <- toy_student[1:10, .(mcid)]
+#' DT <- add_institution(DT, midfield_term = toy_term)
+#' DT <- add_timely_term(DT, midfield_term = toy_term)
+#'
+#'
+#' # Data sufficiency column
+#' add_data_sufficiency(DT, midfield_term = toy_term)
+#'
+#'
+#' # Data sufficiency column with details
+#' add_data_sufficiency(DT, midfield_term = toy_term, details = TRUE)
 #'
 #'
 #' @export
 #'
 #'
 add_data_sufficiency <- function(dframe,
-                                 midfield_table,
+                                 midfield_term,
                                  ...,
                                  details = NULL) {
   # remove all keys
   on.exit(setkey(dframe, NULL))
-  on.exit(setkey(midfield_table, NULL), add = TRUE)
+  on.exit(setkey(midfield_term, NULL), add = TRUE)
 
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
@@ -79,7 +90,7 @@ add_data_sufficiency <- function(dframe,
 
   # required arguments
   qassert(dframe, "d+")
-  qassert(midfield_table, "d+")
+  qassert(midfield_term, "d+")
 
   # optional arguments
   details <- details %||% FALSE
@@ -87,19 +98,19 @@ add_data_sufficiency <- function(dframe,
 
   # inputs modified (or not) by reference
   setDT(dframe)
-  setDT(midfield_table) # immediately subset, so side-effect OK
+  setDT(midfield_term) # immediately subset, so side-effect OK
 
   # required columns
   assert_names(colnames(dframe),
                must.include = c("institution", "timely_term"))
-  assert_names(colnames(midfield_table),
+  assert_names(colnames(midfield_term),
                must.include = c("institution", "term"))
 
   # class of required columns
   qassert(dframe[, institution], "s+")
   qassert(dframe[, timely_term], "s+")
-  qassert(midfield_table[, term], "s+")
-  qassert(midfield_table[, institution], "s+")
+  qassert(midfield_term[, term], "s+")
+  qassert(midfield_term[, institution], "s+")
 
   # bind names due to NSE notes in R CMD check
   data_sufficiency <- NULL
@@ -113,8 +124,8 @@ add_data_sufficiency <- function(dframe,
   key_names <- names_dframe[!names_dframe %chin% cols_we_add]
   dframe <- dframe[, key_names, with = FALSE]
 
-  # from midfield_table, get institution last term
-  dframe <- add_inst_limit(dframe, midfield_table = midfield_table)
+  # from midfield_term, get institution last term
+  dframe <- add_inst_limit(dframe, midfield_term = midfield_term)
 
   # assess the data sufficiency
   dframe[, data_sufficiency := fifelse(timely_term <= inst_limit, TRUE, FALSE)]

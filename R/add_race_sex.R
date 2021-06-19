@@ -16,7 +16,7 @@ NULL
 #' Existing columns with the same names as the added columns are overwritten.
 #'
 #' @param dframe Data frame with required variable \code{mcid}.
-#' @param midfield_table MIDFIELD \code{student} data table or equivalent
+#' @param midfield_student MIDFIELD \code{student} data table or equivalent
 #'        with required variables \code{mcid}, \code{race}, and \code{sex}.
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
@@ -32,18 +32,18 @@ NULL
 #' @examples
 #' # Add race and sex to a data frame of graduates
 #' dframe <- toy_degree[1:5, c("mcid", "cip6")]
-#' add_race_sex(dframe, midfield_table = toy_student)
+#' add_race_sex(dframe, midfield_student = toy_student)
 #'
 #'
 #' # Add race and sex to a data frame from the term table
 #' dframe <- toy_term[21:26, c("mcid", "institution", "level")]
-#' add_race_sex(dframe, midfield_table = toy_student)
+#' add_race_sex(dframe, midfield_student = toy_student)
 #'
 #'
 #' # If present, existing race and sex columns are overwritten
 #' # Using dframe from above,
-#' DT1 <- add_race_sex(dframe, midfield_table = toy_student)
-#' DT2 <- add_race_sex(DT1, midfield_table = toy_student)
+#' DT1 <- add_race_sex(dframe, midfield_student = toy_student)
+#' DT2 <- add_race_sex(DT1, midfield_student = toy_student)
 #' all.equal(DT1, DT2)
 #'
 #'
@@ -51,34 +51,34 @@ NULL
 #'
 #'
 add_race_sex <- function(dframe,
-                         midfield_table) {
+                         midfield_student) {
 
   # remove all keys
   on.exit(setkey(dframe, NULL))
-  on.exit(setkey(midfield_table, NULL), add = TRUE)
+  on.exit(setkey(midfield_student, NULL), add = TRUE)
 
   # required arguments
   qassert(dframe, "d+")
-  qassert(midfield_table, "d+")
+  qassert(midfield_student, "d+")
 
   # optional arguments
   # NA
 
   # inputs modified (or not) by reference
   setDT(dframe)
-  setDT(midfield_table) # immediately subset, so side-effect OK
+  setDT(midfield_student) # immediately subset, so side-effect OK
 
   # required columns
   assert_names(colnames(dframe),
                must.include = c("mcid"))
-  assert_names(colnames(midfield_table),
+  assert_names(colnames(midfield_student),
                must.include = c("mcid", "race", "sex"))
 
   # class of required columns
   qassert(dframe[, mcid], "s+")
-  qassert(midfield_table[, mcid], "s+")
-  qassert(midfield_table[, race], "s+")
-  qassert(midfield_table[, sex], "s+")
+  qassert(midfield_student[, mcid], "s+")
+  qassert(midfield_student[, race], "s+")
+  qassert(midfield_student[, sex], "s+")
 
 
   # bind names due to NSE notes in R CMD check
@@ -92,7 +92,7 @@ add_race_sex <- function(dframe,
   dframe <- dframe[, key_names, with = FALSE]
 
   DT <- filter_match(
-    dframe = midfield_table,
+    dframe = midfield_student,
     match_to = dframe,
     by_col = "mcid",
     select = c("mcid", added_cols)

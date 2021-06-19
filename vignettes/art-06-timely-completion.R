@@ -1,21 +1,4 @@
----
-title: "Timely completion"
-author: "Richard Layton"
-date: "`r Sys.Date()`"
-link-citations: yes
-bibliography: ../inst/REFERENCES.bib
-output: rmarkdown::html_vignette
-csl: ../inst/body-and-society.csl
-vignette: >
-  %\VignetteIndexEntry{Timely completion}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
-nocite: | 
-resource_files: 
-  - ../man/figures/art-06-timely-completion-fig1-1.png
----
-
-```{r include = FALSE}
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(fig.path = here::here(
   "man/figures",
   "art-06-timely-completion-"
@@ -57,22 +40,8 @@ asp_ratio_mw <- function(data, categories) {
   asp_ratio2 <- (r + 2 * nlevel2) / q
   ratios <- c(asp_ratio1, asp_ratio2)
 }
-```
 
-## Introduction
-
-Students generally expect to complete a program within some span of years after entry. IPEDS defines timely completion as one of three values: 100%, 150%, or 200%  of the "normal" time to completion at the institution. For a 4-year institution, the 150% model (6 years) is in common use.  
-
-However, the span over which program completion might be considered "timely" is highly dependent on the choices a student makes such as transferring  institutions or changing majors. 
-
-For example, the figure illustrates the history of two students who enter in Fall 2010 and graduate in Spring 2015. We assume a basis of 6 years for timely completion. 
-
-- Student A is a first-time-in-college student with a timely completion (*TC*) term of Spring 2016. Their completion is timely because their degree term comes before their *TC* term.
-
-- Student B is a transfer student, entering as a junior. Having already satisfied 2 years of program requirements, their *TC* term is Spring 2014. Their completion is not timely because their degree term comes after their *TC* term.
-
-<br>
-```{r fig1, echo = FALSE, fig.asp = 5/10}
+## ----fig1, echo = FALSE, fig.asp = 5/10---------------------------------------
 library("ggplot2")
 library("data.table")
 callout_color <- "gray60"
@@ -202,42 +171,8 @@ ggplot(data = df_arrow) +
     data = grad, aes(x = x, y = y),
     size = 2
   )
-```
 
-entry term
-: Term in which a student enters the institution. 
-
-timely completion span (TC span)
-: Span of years after entry over which program completion would be considered timely. Depends on the heuristic used to evaluate a student's history in the data record. 
-
-timely completion term (TC term)
-: Last term for which program completion would be considered timely. The end of the TC span. 
-
-degree term 
-: Term in which a student completes a program.
-
-### Outline
-
-- Start with 
-- do
-- do
-- do
-- Result is
-
-### This vignette uses
-
-midfieldr functions 
-
-- `add_completion_timely()`  
-- `add_data_sufficiency()`
-- `add_institution()`
-- `add_timely_term()` 
-- `filter_match()` 
-
-
-packages
-
-```{r}
+## -----------------------------------------------------------------------------
 # packages used
 library("midfieldr")
 library("midfielddata")
@@ -250,27 +185,16 @@ options(
   datatable.print.topn = 5,
   datatable.print.class = TRUE
 )
-```
 
-data
-
-```{r}
+## -----------------------------------------------------------------------------
 # load data tables from midfielddata
 data(student, term, degree)
-```
-  
-## Estimate the timely completion term 
 
-To illustrate how we estimate and apply the timely completion term, we start with the case study students. 
-
-```{r}
+## -----------------------------------------------------------------------------
 # case study IDs and CIP codes
 study_students
-```
 
-To confirm that the pool of students are all degree-seeking, we use `filter_match()` to match to the IDs in the `student` table. 
-
-```{r}
+## -----------------------------------------------------------------------------
 # limit population to degree-seeking students
 DT <- filter_match(study_students,
   match_to = student,
@@ -279,84 +203,37 @@ DT <- filter_match(study_students,
 
 # examine the result
 DT
-```
 
-We use `add_timely_term()` to estimate the timely completion term. View its help page by running
-
-```r
-? add_timely_term
-```
-
-`add_timely_term()` accesses the `term` table and adds a new column, `timely_term`, to the data frame input. For example, 
-
-```{r}
+## -----------------------------------------------------------------------------
 # estimate the timely completion term
 DT <- add_timely_term(DT, midfield_term = term)
 DT
-```
 
-The `timely_term` column contains the estimate of the timely completion term for each student. The basic heuristic starts with span number of years for each student (default 6 years) and adjusts the span by subtracting a whole number of years based on the level at which the student is admitted.
-
-For example, a student admitted at the second-year level is assumed to have completed one year of a program, so their span is reduced by one year. Similarly, spans are reduced by two years for students admitted at the 3rd-year level and by three years for students admitted at the fourth-year level. The adjusted span of years is added to their starting term; the result is the timely completion reported in the timely_term column added to the data frame.
-
-Optional arguments include `details` and `span`. 
-
-```r
-add_timely_term(dframe,
-                midfield_term,
-                ...,
-                details = NULL,
-                span = NULL)
-```
-
-- The `span` argument has a default setting of 6 years but can be reset by the user, e.g., including the argument `span = 4` 
-- The `details` argument default is FALSE. When set to TRUE, additional columns are provided providing the information on which the `timely_term` was based. 
-
-Setting `details` to TRUE yields additional columns for 
-
-- `term_i` 
-- `level_i` 
-- `adj_span` 
- 
-```{r}
+## -----------------------------------------------------------------------------
 # estimate the timely completion term with details shown
 DT <- add_timely_term(DT,
   midfield_term = term,
   details = TRUE
 )
 DT
-```
 
-If the input data frame has existing columns matching any of the new added columns, the existing columns are overwritten. Thus, you can repeat running the function and still obtain the expected results, 
-
-```{r}
+## -----------------------------------------------------------------------------
 # repeat
 DT <- add_timely_term(DT,
   midfield_term = term,
   details = TRUE
 )
 DT
-```
 
-And you can run the function again, effectively removing the details columns with no effect on the main outcome, 
-
-```{r}
+## -----------------------------------------------------------------------------
 # remove details
 DT <- add_timely_term(DT,
   midfield_term = term,
   details = FALSE
 )
 DT
-```
 
-
-## Assess timely completion 
-
-Depends on `timely_term` and `mcid` column in input, Accesses `degree` table.
-
-- Untimely graduation? Grad reclassified as nongrad
-
-```{r}
+## -----------------------------------------------------------------------------
 DT <- add_completion_timely(DT,
   midfield_degree = degree,
   details = TRUE
@@ -369,45 +246,14 @@ DT <- add_completion_timely(DT,
   details = FALSE
 )
 DT
-```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Assess data sufficiency 
-
-
-
-This step requires `timely_term` and `institution` column in input.
-
-To get institution
-
-```{r}
+## -----------------------------------------------------------------------------
 DT <- add_institution(DT,
                       midfield_term = term
 )
 DT
-```
 
-
-- TC exceeds data limit? Omit students from study 
-
-```{r}
+## -----------------------------------------------------------------------------
 # add column with details
 DT <- add_data_sufficiency(DT,
   midfield_term = term,
@@ -428,11 +274,8 @@ DT
 
 DT[, c("timely_term", "institution") := NULL]
 DT
-```
 
-## Evaluate
-
-```{r}
+## -----------------------------------------------------------------------------
 # limit population to data sufficient
 DT <- DT[data_sufficiency == TRUE]
 DT[]
@@ -448,19 +291,4 @@ DT <- merge(DT, study_programs, by = "cip6", all.x = TRUE)
 DT[, cip6 := NULL]
 setcolorder(DT, c("mcid", "program"))
 DT
-```
-
-
-
-
-
-## References
-
-<div id="refs"></div>
-
-## Appendix
-
-### Complete script
-
-The vignette code chunks are collected below in a single, condensed script. 
 

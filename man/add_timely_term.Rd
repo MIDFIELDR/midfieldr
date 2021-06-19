@@ -4,12 +4,19 @@
 \alias{add_timely_term}
 \title{Add a column of terms delimiting timely completion}
 \usage{
-add_timely_term(dframe, midfield_table, ..., details = NULL, span = NULL)
+add_timely_term(
+  dframe,
+  midfield_term,
+  ...,
+  details = NULL,
+  span = NULL,
+  sched_span = NULL
+)
 }
 \arguments{
 \item{dframe}{Data frame with required variable \code{mcid}.}
 
-\item{midfield_table}{MIDFIELD \code{term} data table or equivalent with
+\item{midfield_term}{MIDFIELD \code{term} data table or equivalent with
 required variables \code{mcid}, \code{term}, and \code{level}.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
@@ -18,7 +25,12 @@ required variables \code{mcid}, \code{term}, and \code{level}.}
 on which the evaluation is based, default FALSE.}
 
 \item{span}{Optional numeric scalar, number of years to define timely
-completion, default 6 years.}
+completion. Values that are 100%, 150%, and 200% of the "scheduled
+span" (\code{sched_span}) are commonly used. Default 6 years.}
+
+\item{sched_span}{Optional numeric scalar, the number of years an
+institution officially schedules for completing a program. Default
+4 years.}
 }
 \value{
 A \code{data.table}  with the following properties:
@@ -63,7 +75,21 @@ the adjusted span \code{adj_span}.
 Existing columns with the same names as the added columns are overwritten.
 }
 \examples{
-# TBD
+# Using the toy data sets
+DT <- toy_student[1:10, .(mcid)]
+add_timely_term(DT, midfield_term = toy_term)
+
+
+# Add details on which the timely term is based
+add_timely_term(DT, midfield_term = toy_term, details = TRUE)
+
+
+# Define timely completion as 200\% of scheduled span (8 years)
+add_timely_term(DT, midfield_term = toy_term, span = 8)
+
+
+# Optional arguments (after ...) must be named
+add_timely_term(DT, toy_term, details = TRUE, span = 6)
 
 
 }
