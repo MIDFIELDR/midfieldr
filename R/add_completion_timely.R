@@ -84,7 +84,7 @@ add_completion_timely <- function(dframe,
 
   # optional arguments
   details <- details %?% FALSE
-  qassert(details, "b1") # boolean, length = 1
+  qassert(details, "B1") # boolean, length = 1
 
   # inputs modified (or not) by reference
   setDT(dframe)

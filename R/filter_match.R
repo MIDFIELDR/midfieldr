@@ -109,7 +109,7 @@ filter_match <- function(dframe,
   # required arguments
   qassert(dframe, "d+")
   qassert(match_to, "d+")
-  qassert(by_col, "s1")
+  qassert(by_col, "S1")
 
   # optional arguments
   select <- select %?% names(dframe)
@@ -124,8 +124,8 @@ filter_match <- function(dframe,
   assert_names(colnames(match_to), must.include = by_col)
 
   # class of required columns
-  # qassert(dframe[, ..by_col], "s+")
-  # qassert(match_to[, ..by_col], "s+")
+  qassert(dframe[[by_col]], "s+")
+  qassert(match_to[[by_col]], "s+")
 
   # bind names due to NSE notes in R CMD check
   # NA

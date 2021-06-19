@@ -1,7 +1,7 @@
 
 
 #' @import data.table
-#' @importFrom checkmate assert_subset assert_false
+#' @importFrom checkmate assert_subset
 #' @importFrom checkmate qassert assert_names
 #' @importFrom wrapr stop_if_dot_args `%?%`
 NULL
@@ -144,7 +144,8 @@ condition_fye <- function(dframe,
 
   # optional arguments: fye_codes default value(s)
   fye_codes <- fye_codes %?%  c("140102")
-  # 6 digit CIPs only
+
+  # fye_codes: 6 digit CIPs only
   qassert(unique(nchar(fye_codes)), "I1[6,6]")
 
   # fye_codes: number strings only, no regular expressions
@@ -153,14 +154,19 @@ condition_fye <- function(dframe,
     choices = c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
   )
 
-  # fye_codes must be engineering (start with "14")
-  assert_false(length(fye_codes) != length(fye_codes[fye_codes %like% "^14"]))
-
   # fye_codes: string, length >= 1
   qassert(fye_codes, "s+")
 
+  # fye_codes: must be engineering (start with "14")
+  x <- as.data.table(fye_codes)
+  x[, cip2 := substr(fye_codes, 1, 2)]
+  assert_subset(
+    x[, cip2],
+    choices = c("14")
+  )
+
   # inputs modified (or not) by reference
-  dframe <- copy(as.data.table(dframe)) # not the output
+  dframe <- copy(as.data.table(dframe)) # dframe not the function output
   setDT(midfield_term) # immediately subset, so side-effect OK
 
   # required columns
@@ -182,6 +188,7 @@ condition_fye <- function(dframe,
   next_cip6 <- NULL
   next_cip2 <- NULL
   cip2 <- NULL
+  x <- NULL
 
   # do the work
   # all degree-seeking engineering students

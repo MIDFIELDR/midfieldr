@@ -1,5 +1,5 @@
 
-## midfieldr 1.0.0.9015 / 2021-06
+## midfieldr 1.0.0.9016 / 2021-06
 
 Significant changes from earlier versions, no backwards compatibility, prompting version number change to 1.0.0
 

@@ -113,6 +113,7 @@ add_timely_term <- function(dframe,
   span <- span %?% 6
   sched_span <- sched_span %?% 4
 
+  # optional arguments assertions
   qassert(details, "B1")
   assert_int(sched_span, lower = 0)
   assert_int(span, lower = sched_span)

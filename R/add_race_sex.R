@@ -80,7 +80,6 @@ add_race_sex <- function(dframe,
   qassert(midfield_student[, race], "s+")
   qassert(midfield_student[, sex], "s+")
 
-
   # bind names due to NSE notes in R CMD check
   # NA
 

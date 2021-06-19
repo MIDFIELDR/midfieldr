@@ -55,17 +55,24 @@ NULL
 #'
 #' @examples
 #' # Start with IDs and add institution and timely term
-#' DT <- toy_student[1:10, .(mcid)]
-#' DT <- add_institution(DT, midfield_term = toy_term)
-#' DT <- add_timely_term(DT, midfield_term = toy_term)
+#' dframe <- toy_student[1:10, .(mcid)]
+#' dframe <- add_institution(dframe, midfield_term = toy_term)
+#' dframe <- add_timely_term(dframe, midfield_term = toy_term)
 #'
 #'
 #' # Data sufficiency column
-#' add_data_sufficiency(DT, midfield_term = toy_term)
+#' add_data_sufficiency(dframe, midfield_term = toy_term)
 #'
 #'
 #' # Data sufficiency column with details
-#' add_data_sufficiency(DT, midfield_term = toy_term, details = TRUE)
+#' add_data_sufficiency(dframe, midfield_term = toy_term, details = TRUE)
+#'
+#'
+#' # If present, existing data_sufficiency column is overwritten
+#' # Using dframe from above,
+#' DT1 <- add_data_sufficiency(dframe, midfield_term = toy_term)
+#' DT2 <- add_data_sufficiency(DT1, midfield_term = toy_term)
+#' all.equal(DT1, DT2)
 #'
 #'
 #' @export
@@ -94,7 +101,7 @@ add_data_sufficiency <- function(dframe,
 
   # optional arguments
   details <- details %?% FALSE
-  qassert(details, "b1") # boolean, length = 1
+  qassert(details, "B1") # boolean, length = 1
 
   # inputs modified (or not) by reference
   setDT(dframe)

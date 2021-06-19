@@ -117,7 +117,7 @@ condition_multiway <- function(dframe, ..., details = NULL) {
 
   # optional arguments
   details <- details %?% FALSE
-  qassert(details, "b1") # boolean, length = 1
+  qassert(details, "B1") # boolean, length = 1
 
   # input modified (or not) by reference
   setDT(dframe)
