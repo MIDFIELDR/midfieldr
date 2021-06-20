@@ -1,9 +1,12 @@
 test_condition_multiway <- function() {
-    # ctrl L for load_all()
 
+    # usage
     # condition_multiway(dframe,
     #                    ...,
     #                    details = NULL)
+
+    # Needed for tinytest::build_install_test()
+    library("data.table")
 
     # create a multiway
     catg1 <- rep(c("urban", "rural", "suburb", "village"), each = 2)

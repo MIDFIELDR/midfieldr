@@ -89,6 +89,9 @@ filter_search <- function(dframe,
   # remove all keys
   on.exit(setkey(dframe, NULL))
 
+  # required argument
+  qassert(dframe, "d+")
+
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
@@ -97,9 +100,6 @@ filter_search <- function(dframe,
       "* Did you forget to write `drop_text = ` or `select = `?\n *"
     )
   )
-
-  # required argument
-  qassert(dframe, "d+")
 
   # optional arguments
   select <- select %?% names(dframe)

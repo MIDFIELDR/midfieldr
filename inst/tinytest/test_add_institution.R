@@ -1,12 +1,10 @@
 test_add_institution <- function() {
 
-    # function arguments
-    # add_institution <- function(dframe, midfield_term)
+    # usage
+    # add_institution(dframe, midfield_term)
 
-    # library("midfieldr")
-    # library("data.table")
-    # library("tinytest")
-    # options(datatable.print.class = TRUE)
+    # Needed for tinytest::build_install_test()
+    library("data.table")
 
     # correct answer
     id_inst <- toy_student[, .(mcid, institution)]

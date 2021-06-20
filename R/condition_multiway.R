@@ -99,6 +99,13 @@ condition_multiway <- function(dframe, ..., details = NULL) {
   # remove all keys
   on.exit(setkey(dframe, NULL))
 
+  # required arguments
+  assert_data_frame(
+    dframe,
+    types = c("numeric", "character", "factor"),
+    ncols = 3
+  )
+
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
@@ -106,13 +113,6 @@ condition_multiway <- function(dframe, ..., details = NULL) {
       "Arguments after ... must be named.\n",
       "* Did you forget to write `details = ` ?\n *"
     )
-  )
-
-  # required arguments
-  assert_data_frame(
-    dframe,
-    types = c("numeric", "character", "factor"),
-    ncols = 3
   )
 
   # optional arguments

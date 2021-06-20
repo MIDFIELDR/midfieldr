@@ -97,6 +97,11 @@ filter_match <- function(dframe,
   on.exit(setkey(dframe, NULL))
   on.exit(setkey(match_to, NULL), add = TRUE)
 
+  # required arguments
+  qassert(dframe, "d+")
+  qassert(match_to, "d+")
+  qassert(by_col, "S1")
+
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
@@ -105,11 +110,6 @@ filter_match <- function(dframe,
       "* Did you forget to write `select = `?\n *"
     )
   )
-
-  # required arguments
-  qassert(dframe, "d+")
-  qassert(match_to, "d+")
-  qassert(by_col, "S1")
 
   # optional arguments
   select <- select %?% names(dframe)

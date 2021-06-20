@@ -129,6 +129,10 @@ condition_fye <- function(dframe,
   on.exit(setkey(dframe, NULL))
   on.exit(setkey(midfield_term, NULL), add = TRUE)
 
+  # required arguments
+  qassert(dframe, "d+")
+  qassert(midfield_term, "d+")
+
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
@@ -137,10 +141,6 @@ condition_fye <- function(dframe,
       "* Did you forget to write `fye_codes = `?\n *"
     )
   )
-
-  # required arguments
-  qassert(dframe, "d+")
-  qassert(midfield_term, "d+")
 
   # optional arguments: fye_codes default value(s)
   fye_codes <- fye_codes %?%  c("140102")

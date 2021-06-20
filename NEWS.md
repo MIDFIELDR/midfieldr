@@ -13,12 +13,11 @@ Significant changes from earlier versions, no backwards compatibility, prompting
 - Edit functions to depend on data.table functionality 
 - Remove dependency on dplyr and related packages 
 - Remove dependency on installing midfielddata 
-- Omit unique() and end of filter_* functions
 - Overhaul midfieldr functions completely 
-- Use package checkmate for runtime assertions
 - Switch to package tinytest for unit testing 
+- Initial round of runtime assertions and unit tests complete
 - Use package checkmate for runtime assertions 
-- Switch to wrapr coalesce
+- Switch to wrapr coalesce `%?%` for assigning default arguments
 
 ## midfieldr 0.1.0 / 2018-06
 

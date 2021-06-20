@@ -1,14 +1,14 @@
 test_add_timely_term <- function() {
 
-    # add_timely_term <- function(dframe,
-    #                             midfield_term,
-    #                             ...,
-    #                             details = NULL,
-    #                             span = NULL)
+    # usage
+    # add_timely_term(dframe,
+    #                 midfield_term,
+    #                 ...,
+    #                 details = NULL,
+    #                 span = NULL)
 
-    library("midfieldr")
+    # Needed for tinytest::build_install_test()
     library("data.table")
-    options(datatable.print.class = TRUE)
 
     # create case
     # x <- toy_student[1:10, .(mcid)]

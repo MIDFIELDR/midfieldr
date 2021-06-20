@@ -1,14 +1,10 @@
 test_add_race_sex <- function() {
 
-    library("tinytest")
-    library("checkmate")
-    using("checkmate")
+    # usage
+    # add_race_sex(dframe, midfield_student)
 
-    # function arguments
-    # add_race_sex <- function(dframe, midfield_student)
-
-    library(data.table)
-    options(datatable.print.nrows = 10, datatable.print.class = TRUE)
+    # Needed for tinytest::build_install_test()
+    library("data.table")
 
     # create an answer
     # DT <- toy_degree[1:10, .(mcid, cip6)]

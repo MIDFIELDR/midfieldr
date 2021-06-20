@@ -1,14 +1,14 @@
 test_filter_match <- function() {
 
-    library("midfieldr")
-    library("data.table")
+    # usage
+    # filter_match(dframe,
+    #              match_to,
+    #              by_col,
+    #              ...,
+    #              select = NULL)
 
-    # function arguments
-    # filter_match <- function(dframe,
-    #                          match_to,
-    #                          by_col,
-    #                          ...,
-    #                          select = NULL)
+    # Needed for tinytest::build_install_test()
+    library("data.table")
 
     # example data frame for testing
     toy_student <- toy_student[, .(mcid, institution, race, sex)]

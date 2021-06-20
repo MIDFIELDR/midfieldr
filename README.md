@@ -15,7 +15,7 @@ v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org
 has not yet been a stable, usable release suitable for the
 public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![Coverage
-Status](https://img.shields.io/codecov/c/github/MIDFIELDR/midfieldr/master.svg)](https://codecov.io/github/MIDFIELDR/midfieldr?branch=main)
+Status](https://img.shields.io/codecov/c/github/MIDFIELDR/midfieldr/main.svg)](https://codecov.io/github/MIDFIELDR/midfieldr?branch=main)
 <!-- badges: end -->
 
 ## Undergoing major revision
@@ -204,7 +204,19 @@ midfieldr vignettes use the following packages:
 
 For users preferring the dplyr “dialect”, the midfieldr functions are
 generally magrittr-pipe friendly, but class “tibble” data frames are
-converted to class “data.frame” and “data.table.”
+converted to class “data.table” (both of which are class “data.frame”.)
+
+**Testing**. If a midfieldr user encounters a bug, they can check if the
+package unit tests run successfully on their system by installing the
+tinytest package ([van der Loo, 2020](#ref-van_der_Loo:2020:tinytest))
+and running,
+
+``` r
+tinytest::test_package("midfieldr")
+```
+
+The results of that test can be helpful to the midfieldr maintainers
+when responding to bug reports.
 
 ## Meta
 
@@ -212,9 +224,9 @@ converted to class “data.frame” and “data.table.”
     [MIDFIELD](https://engineering.purdue.edu/MIDFIELD)  
 -   Getting started with R using [MIDFIELD workshop
     materials](https://midfieldr.github.io/2021-asee-workshop/)  
--   Get citation information with `citation("midfieldr")`
 -   This project is released with a [Code of Conduct](CONDUCT.html). If
     you contribute to this project you agree to abide by its terms.
+-   Get citation information with `citation("midfieldr")`
 
 ## References
 
@@ -238,6 +250,15 @@ Development: An experiential case study of data sharing and
 reuse</span>. *Advances in Engineering Education* 5(2): 398–404.
 Available at:
 <http://advances.asee.org/wp-content/uploads/vol05/issue02/Papers/AEE-18-Ohland.pdf>.
+
+</div>
+
+<div id="ref-van_der_Loo:2020:tinytest" class="csl-entry">
+
+van der Loo, Mark PJ (2020) *<span class="nocase">tinytest: Lightweight
+but Feature Complete Unit Testing Framework</span>*. R package
+version 1.2.4. Available at:
+<https://github.com/markvanderloo/tinytest>.
 
 </div>
 

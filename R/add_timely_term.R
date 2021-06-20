@@ -95,6 +95,10 @@ add_timely_term <- function(dframe,
   on.exit(setkey(dframe, NULL))
   on.exit(setkey(midfield_term, NULL), add = TRUE)
 
+  # required arguments
+  qassert(dframe, "d+")
+  qassert(midfield_term, "d+")
+
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
@@ -103,10 +107,6 @@ add_timely_term <- function(dframe,
       "* Did you forget to write `details = ` or `span = `?\n *"
     )
   )
-
-  # required arguments
-  qassert(dframe, "d+")
-  qassert(midfield_term, "d+")
 
   # optional arguments
   details <- details %?% FALSE

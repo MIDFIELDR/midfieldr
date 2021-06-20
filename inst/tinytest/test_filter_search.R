@@ -1,10 +1,14 @@
 test_filter_search <- function() {
 
+    # usage
     # filter_search(dframe,
     #               keep_text = NULL,
     #               ...,
     #               drop_text = NULL,
     #               select = NULL)
+
+    # Needed for tinytest::build_install_test()
+    library("data.table")
 
     # test case
     music_cip <- wrapr::build_frame(

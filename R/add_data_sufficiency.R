@@ -86,6 +86,10 @@ add_data_sufficiency <- function(dframe,
   on.exit(setkey(dframe, NULL))
   on.exit(setkey(midfield_term, NULL), add = TRUE)
 
+  # required arguments
+  qassert(dframe, "d+")
+  qassert(midfield_term, "d+")
+
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
@@ -94,10 +98,6 @@ add_data_sufficiency <- function(dframe,
       "* Did you forget to write `details = `?\n *"
     )
   )
-
-  # required arguments
-  qassert(dframe, "d+")
-  qassert(midfield_term, "d+")
 
   # optional arguments
   details <- details %?% FALSE

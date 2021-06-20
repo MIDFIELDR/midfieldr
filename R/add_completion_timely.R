@@ -54,8 +54,25 @@ NULL
 #'
 #'
 #' @examples
-#' # TBD
+#' # Start with IDs and add institution and timely term
+#' dframe <- toy_student[1:10, .(mcid)]
+#' dframe <- add_institution(dframe, midfield_term = toy_term)
+#' dframe <- add_timely_term(dframe, midfield_term = toy_term)
 #'
+#'
+#' # Timely completion column with details
+#' add_completion_timely(dframe, midfield_degree = toy_degree)
+#'
+#'
+#' # Timely completion column with details
+#' add_completion_timely(dframe, midfield_degree = toy_degree, details = TRUE)
+#'
+#'
+#' # If present, existing completion_timely column is overwritten
+#' # Using dframe from above,
+#' DT1 <- add_completion_timely(dframe, midfield_degree = toy_degree)
+#' DT2 <- add_completion_timely(DT1, midfield_degree = toy_degree)
+#' all.equal(DT1, DT2)
 #'
 #'
 #' @export
@@ -65,9 +82,13 @@ add_completion_timely <- function(dframe,
                                   midfield_degree,
                                   ...,
                                   details = NULL) {
-  # remove all keys
-  on.exit(setkey(dframe, NULL))
+
   on.exit(setkey(midfield_degree, NULL), add = TRUE)
+  on.exit(setkey(dframe, NULL), add = TRUE)
+
+  # required arguments
+  qassert(dframe, "d+")
+  qassert(midfield_degree, "d+")
 
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
@@ -109,13 +130,8 @@ add_completion_timely <- function(dframe,
   completion <- NULL
 
   # do the work
-  # preserve "term" column if exists in incoming df
-  names_dframe <- colnames(dframe)
-  if ("term" %chin% names_dframe) {
-    setnames(dframe, old = "term", new = "existing_term_col")
-  }
-
   # preserve column order except columns that match new columns
+  names_dframe <- colnames(dframe)
   cols_we_add <- c("term_degree", "completion", "completion_timely")
   key_names <- names_dframe[!names_dframe %chin% cols_we_add]
   dframe <- dframe[, key_names, with = FALSE]
@@ -127,14 +143,14 @@ add_completion_timely <- function(dframe,
     select = c("mcid", "term")
   )
 
-  # keep the first degree term
-  setorderv(DT, c("mcid", "term"))
-  DT <- na.omit(DT, cols = c("term"))
-  DT <- DT[, .SD[1], by = "mcid"]
-  setkey(DT, NULL)
-
   # rename term to term-degree
   setnames(DT, old = "term", new = "term_degree")
+
+  # keep the first degree term
+  setorderv(DT, c("mcid", "term_degree"))
+  DT <- na.omit(DT, cols = c("term_degree"))
+  DT <- DT[, .SD[1], by = "mcid"]
+  setkey(DT, NULL)
 
   # left-outer join, keep all rows of dframe
   dframe <- merge(dframe, DT, by = "mcid", all.x = TRUE)
@@ -155,11 +171,6 @@ add_completion_timely <- function(dframe,
   if (details == FALSE) {
     cols_we_want <- c(key_names, "completion_timely")
     dframe <- dframe[, cols_we_want, with = FALSE]
-  }
-
-  # restore "term" column if exists in incoming df
-  if ("existing_term_col" %chin% names(dframe)) {
-    setnames(dframe, old = "existing_term_col", new = "term")
   }
 
   # enable printing (see data.table FAQ 2.23)

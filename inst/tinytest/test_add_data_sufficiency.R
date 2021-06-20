@@ -6,6 +6,9 @@ test_add_data_sufficiency <- function() {
     #                      ...,
     #                      details = NULL)
 
+    # Needed for tinytest::build_install_test()
+    library("data.table")
+
     # create answers
     DT <- toy_student[1:10, .(mcid)]
     DT <- add_institution(DT, midfield_term = toy_term)

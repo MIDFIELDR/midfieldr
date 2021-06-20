@@ -1,13 +1,13 @@
 test_condition_fye <- function() {
 
-    library(midfieldr)
-    library(data.table)
-    options(datatable.print.class = TRUE)
+    # usage
+    # condition_fye(dframe,             # mcid, race, sex
+    #               midfield_term,      # term
+    #               ...,
+    #               fye_codes = NULL)   # default 140102
 
-    # condition_fye <- function(dframe,             # mcid, race, sex
-    #                           midfield_term,     # term
-    #                           ...,
-    #                           fye_codes = NULL)   # default 140102
+    # Needed for tinytest::build_install_test()
+    library("data.table")
 
     # create an answer
     # DT <- toy_student[, .(mcid, race, sex)]
