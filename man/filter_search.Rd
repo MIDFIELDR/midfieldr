@@ -72,13 +72,10 @@ filter_search(cip,
 first_pass <- filter_search(cip, "civil")
 second_pass <- filter_search(first_pass, "engineering")
 filter_search(second_pass, drop_text = "technology")
-
-
 \dontrun{
 # unsuccessful terms produce a message
 filter_search(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 }
-
 
 }
 \seealso{

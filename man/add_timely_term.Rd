@@ -90,8 +90,6 @@ add_timely_term(DT, midfield_term = toy_term, span = 8)
 
 # Optional arguments (after ...) must be named
 add_timely_term(DT, toy_term, details = TRUE, span = 6)
-
-
 }
 \seealso{
 Other add_*: 

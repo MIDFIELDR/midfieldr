@@ -45,8 +45,6 @@ add_race_sex(dframe, midfield_student = toy_student)
 DT1 <- add_race_sex(dframe, midfield_student = toy_student)
 DT2 <- add_race_sex(DT1, midfield_student = toy_student)
 all.equal(DT1, DT2)
-
-
 }
 \seealso{
 Other add_*: 

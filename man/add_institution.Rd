@@ -44,8 +44,6 @@ head(DT1)
 # will overwrite institution column if present
 DT2 <- add_institution(DT1, midfield_term = toy_term)
 head(DT2)
-
-
 }
 \seealso{
 Other add_*: 

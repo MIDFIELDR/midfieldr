@@ -37,7 +37,7 @@ Program completion is typically considered timely if it occurs within a
 specific span of years after admission. In a persistence metric that depends
 on program completion (graduation), only students whose program completion
 is timely are counted as graduates; students whose program completion
-is un-timely (taking longer than the specific span to complete) are counted
+is untimely (taking longer than the specific span to complete) are counted
 as non-graduates.
 
 The input data frame \code{dframe} must include the \code{timely_term}
@@ -74,8 +74,6 @@ add_completion_timely(dframe, midfield_degree = toy_degree, details = TRUE)
 DT1 <- add_completion_timely(dframe, midfield_degree = toy_degree)
 DT2 <- add_completion_timely(DT1, midfield_degree = toy_degree)
 all.equal(DT1, DT2)
-
-
 }
 \seealso{
 Other add_*: 

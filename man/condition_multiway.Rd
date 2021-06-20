@@ -82,8 +82,6 @@ mw <- condition_multiway(dframe, details = TRUE)
 str(mw)
 levels(mw$catg1) # note: not alphabetical
 levels(mw$catg2)
-
-
 }
 \references{
 \insertAllCited{}

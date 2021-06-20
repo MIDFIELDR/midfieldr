@@ -98,8 +98,6 @@ colnames(condition_fye(toy_student, toy_term))
 
 # Optional argument permits multiple CIP codes for FYE
 condition_fye(DT, toy_term, fye_codes = c("140101", "140102"))
-
-
 \dontrun{
 # Constraints on the \vode{fye_codes} argument
 DT <- toy_student[, .(mcid, race, sex)]
@@ -116,7 +114,6 @@ condition_fye(DT, toy_term, fye_codes = "1401")
 # Must contain numerals only (no regular expressions)
 condition_fye(DT, toy_term, fye_codes = "^14010")
 }
-
 
 }
 \seealso{
