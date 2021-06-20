@@ -73,8 +73,6 @@ NULL
 #' DT1 <- add_data_sufficiency(dframe, midfield_term = toy_term)
 #' DT2 <- add_data_sufficiency(DT1, midfield_term = toy_term)
 #' all.equal(DT1, DT2)
-#'
-#'
 #' @export
 #'
 #'
@@ -109,9 +107,11 @@ add_data_sufficiency <- function(dframe,
 
   # required columns
   assert_names(colnames(dframe),
-               must.include = c("institution", "timely_term"))
+    must.include = c("institution", "timely_term")
+  )
   assert_names(colnames(midfield_term),
-               must.include = c("institution", "term"))
+    must.include = c("institution", "term")
+  )
 
   # class of required columns
   qassert(dframe[, institution], "s+")

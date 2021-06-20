@@ -73,8 +73,6 @@ NULL
 #' DT1 <- add_completion_timely(dframe, midfield_degree = toy_degree)
 #' DT2 <- add_completion_timely(DT1, midfield_degree = toy_degree)
 #' all.equal(DT1, DT2)
-#'
-#'
 #' @export
 #'
 #'
@@ -82,7 +80,6 @@ add_completion_timely <- function(dframe,
                                   midfield_degree,
                                   ...,
                                   details = NULL) {
-
   on.exit(setkey(midfield_degree, NULL), add = TRUE)
   on.exit(setkey(dframe, NULL), add = TRUE)
 
@@ -113,9 +110,11 @@ add_completion_timely <- function(dframe,
 
   # required columns
   assert_names(colnames(dframe),
-               must.include = c("mcid", "timely_term"))
+    must.include = c("mcid", "timely_term")
+  )
   assert_names(colnames(midfield_degree),
-               must.include = c("mcid", "term"))
+    must.include = c("mcid", "term")
+  )
 
   # class of required columns
   qassert(dframe[, mcid], "s+")

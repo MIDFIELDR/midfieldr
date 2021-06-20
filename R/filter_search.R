@@ -69,13 +69,10 @@ NULL
 #' first_pass <- filter_search(cip, "civil")
 #' second_pass <- filter_search(first_pass, "engineering")
 #' filter_search(second_pass, drop_text = "technology")
-#'
-#'
 #' \dontrun{
 #' # unsuccessful terms produce a message
 #' filter_search(cip, c("050125", "111111", "160501", "Bogus", "^55"))
 #' }
-#'
 #'
 #' @export
 #'
@@ -105,16 +102,16 @@ filter_search <- function(dframe,
   select <- select %?% names(dframe)
 
   # return if no work is being done
-  if(identical(select, names(dframe)) &
-     is.null(keep_text) &
-     is.null(drop_text)) {
+  if (identical(select, names(dframe)) &
+    is.null(keep_text) &
+    is.null(drop_text)) {
     return(dframe)
   }
 
   # assertions for optional arguments
   qassert(select, "s+") # missing is OK
-  if(!is.null(keep_text)) qassert(keep_text, "s+")
-  if(!is.null(drop_text)) qassert(drop_text, "s+")
+  if (!is.null(keep_text)) qassert(keep_text, "s+")
+  if (!is.null(drop_text)) qassert(drop_text, "s+")
 
   # input modified (or not) by reference
   setDT(dframe)

@@ -49,17 +49,19 @@ NULL
 #'
 #' # Filter by matching IDs of graduates
 #' x_student <- filter_match(toy_student,
-#'                           match_to = toy_degree,
-#'                           by_col   = "mcid")
+#'   match_to = toy_degree,
+#'   by_col = "mcid"
+#' )
 #' # Note change in number of rows
 #' str(x_student)
 #'
 #'
 #' # Same filter and select 3 columns only
 #' x_student <- filter_match(toy_student,
-#'                           match_to = toy_degree,
-#'                           by_col   = "mcid",
-#'                           select   = c("mcid", "race", "sex"))
+#'   match_to = toy_degree,
+#'   by_col = "mcid",
+#'   select = c("mcid", "race", "sex")
+#' )
 #' str(x_student)
 #'
 #'
@@ -70,20 +72,20 @@ NULL
 #'
 #' # Filter student by matching IDs of engineering students
 #' x_student <- filter_match(toy_student,
-#'                    match_to = engr_term,
-#'                    by_col   = "mcid",
-#'                    select   = c("mcid", "institution", "transfer", "sex"))
+#'   match_to = engr_term,
+#'   by_col = "mcid",
+#'   select = c("mcid", "institution", "transfer", "sex")
+#' )
 #' str(x_student)
 #'
 #'
 #' # The 'by_col' column does not have to be included in the `select` columns
 #' x_student <- filter_match(toy_student,
-#'                           match_to = engr_term,
-#'                           by_col   = "mcid",
-#'                           select   = c("institution", "transfer", "sex"))
+#'   match_to = engr_term,
+#'   by_col = "mcid",
+#'   select = c("institution", "transfer", "sex")
+#' )
 #' str(x_student)
-#'
-#'
 #' @export
 #'
 #'

@@ -44,8 +44,6 @@ NULL
 #' # will overwrite institution column if present
 #' DT2 <- add_institution(DT1, midfield_term = toy_term)
 #' head(DT2)
-#'
-#'
 #' @export
 #'
 #'
@@ -69,9 +67,11 @@ add_institution <- function(dframe,
 
   # required columns
   assert_names(colnames(dframe),
-               must.include = c("mcid"))
+    must.include = c("mcid")
+  )
   assert_names(colnames(midfield_term),
-               must.include = c("mcid", "institution", "term"))
+    must.include = c("mcid", "institution", "term")
+  )
 
   # class of required columns
   qassert(dframe[, mcid], "s+")

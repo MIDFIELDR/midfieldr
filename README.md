@@ -15,7 +15,7 @@ v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org
 has not yet been a stable, usable release suitable for the
 public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![Coverage
-Status](https://img.shields.io/codecov/c/github/MIDFIELDR/midfieldr/main.svg)](https://codecov.io/github/MIDFIELDR/midfieldr?branch=main)
+Status](https://img.shields.io/codecov/c/github/MIDFIELDR/midfieldr/master.svg)](https://codecov.io/github/MIDFIELDR/midfieldr?branch=master)
 <!-- badges: end -->
 
 ## Undergoing major revision

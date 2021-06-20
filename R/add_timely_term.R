@@ -79,8 +79,6 @@ NULL
 #'
 #' # Optional arguments (after ...) must be named
 #' add_timely_term(DT, toy_term, details = TRUE, span = 6)
-#'
-#'
 #' @export
 #'
 #'
@@ -124,9 +122,11 @@ add_timely_term <- function(dframe,
 
   # required columns
   assert_names(colnames(dframe),
-               must.include = c("mcid"))
+    must.include = c("mcid")
+  )
   assert_names(colnames(midfield_term),
-               must.include = c("mcid", "term", "level"))
+    must.include = c("mcid", "term", "level")
+  )
 
   # class of required columns
   qassert(dframe[, mcid], "s+")

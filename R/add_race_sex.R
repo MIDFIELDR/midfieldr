@@ -45,8 +45,6 @@ NULL
 #' DT1 <- add_race_sex(dframe, midfield_student = toy_student)
 #' DT2 <- add_race_sex(DT1, midfield_student = toy_student)
 #' all.equal(DT1, DT2)
-#'
-#'
 #' @export
 #'
 #'
@@ -70,9 +68,11 @@ add_race_sex <- function(dframe,
 
   # required columns
   assert_names(colnames(dframe),
-               must.include = c("mcid"))
+    must.include = c("mcid")
+  )
   assert_names(colnames(midfield_student),
-               must.include = c("mcid", "race", "sex"))
+    must.include = c("mcid", "race", "sex")
+  )
 
   # class of required columns
   qassert(dframe[, mcid], "s+")

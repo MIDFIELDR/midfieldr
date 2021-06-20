@@ -49,7 +49,6 @@ add_inst_limit <- function(dframe, midfield_term) {
 #' @param cols character vector of column names to use as keys
 #' @noRd
 set_colrow_order <- function(dframe, cols) {
-
   on.exit(setkey(dframe, NULL))
 
   # ensure dframe is data.table class
@@ -93,7 +92,6 @@ set_colrow_order <- function(dframe, cols) {
 #' @param drop_text character vector of search keep_texts for dropping rows
 #' @noRd
 filter_char_frame <- function(data, keep_text = NULL, drop_text = NULL) {
-
   DT <- data.table::as.data.table(data)
 
   # filter to keep rows

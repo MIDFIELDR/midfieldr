@@ -89,8 +89,6 @@ NULL
 #' str(mw)
 #' levels(mw$catg1) # note: not alphabetical
 #' levels(mw$catg2)
-#'
-#'
 #' @export
 #'
 #'
@@ -136,7 +134,7 @@ condition_multiway <- function(dframe, ..., details = NULL) {
 
   # class of required columns
   char_cols <- names(dframe)[sapply(dframe, is.character)]
-  num_cols  <- names(dframe)[sapply(dframe, is.numeric)]
+  num_cols <- names(dframe)[sapply(dframe, is.numeric)]
   qassert(dframe[[char_cols[1]]], "s+")
   qassert(dframe[[char_cols[2]]], "s+")
   qassert(dframe[[num_cols]], "r+")

@@ -97,8 +97,6 @@ NULL
 #'
 #' # Optional argument permits multiple CIP codes for FYE
 #' condition_fye(DT, toy_term, fye_codes = c("140101", "140102"))
-#'
-#'
 #' \dontrun{
 #' # Constraints on the \vode{fye_codes} argument
 #' DT <- toy_student[, .(mcid, race, sex)]
@@ -115,7 +113,6 @@ NULL
 #' # Must contain numerals only (no regular expressions)
 #' condition_fye(DT, toy_term, fye_codes = "^14010")
 #' }
-#'
 #'
 #' @export
 #'
@@ -143,7 +140,7 @@ condition_fye <- function(dframe,
   )
 
   # optional arguments: fye_codes default value(s)
-  fye_codes <- fye_codes %?%  c("140102")
+  fye_codes <- fye_codes %?% c("140102")
 
   # fye_codes: 6 digit CIPs only
   qassert(unique(nchar(fye_codes)), "I1[6,6]")
@@ -171,9 +168,11 @@ condition_fye <- function(dframe,
 
   # required columns
   assert_names(colnames(dframe),
-               must.include = c("mcid", "race", "sex"))
+    must.include = c("mcid", "race", "sex")
+  )
   assert_names(colnames(midfield_term),
-               must.include = c("mcid", "institution", "term", "cip6"))
+    must.include = c("mcid", "institution", "term", "cip6")
+  )
 
   # class of required columns
   qassert(dframe[, mcid], "s+")
@@ -206,7 +205,9 @@ condition_fye <- function(dframe,
   fye <- unique(fye)
 
   # institution in fye replaces institution (if any) in dframe
-  if("institution" %chin% names(dframe)){dframe[, institution := NULL]}
+  if ("institution" %chin% names(dframe)) {
+    dframe[, institution := NULL]
+  }
 
   # join, result has FYE ID, institution, race, sex
   fye <- merge(fye, dframe, by = "mcid", all.x = TRUE)
