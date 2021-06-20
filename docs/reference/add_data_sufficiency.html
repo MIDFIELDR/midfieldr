@@ -91,7 +91,7 @@ term data table or equivalent." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9015</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9016</span>
       </span>
     </div>
 
@@ -172,7 +172,7 @@ including a student in an analysis. Based on information in the MIDFIELD
 <code>term</code> data table or equivalent.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>add_data_sufficiency</span><span class='op'>(</span><span class='va'>dframe</span>, <span class='va'>midfield_table</span>, <span class='va'>...</span>, details <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>add_data_sufficiency</span><span class='op'>(</span><span class='va'>dframe</span>, <span class='va'>midfield_term</span>, <span class='va'>...</span>, details <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -183,7 +183,7 @@ including a student in an analysis. Based on information in the MIDFIELD
 <code>institution</code> and <code>timely_term</code>.</p></td>
     </tr>
     <tr>
-      <th>midfield_table</th>
+      <th>midfield_term</th>
       <td><p>MIDFIELD <code>term</code> data table or equivalent
 with required variables <code>institution</code> and <code>term</code>.</p></td>
     </tr>
@@ -217,10 +217,10 @@ the data have insufficient range to fairly assess their records.</p>
 column obtained using the <code><a href='add_timely_term.html'>add_timely_term()</a></code> function. Students can be
 retained in a study if their estimated timely completion term is no later
 than the last term in their institution's data.</p>
-<p>If the result in the <code>data_sufficiency</code> column is TRUE, then then student
-should be included in the research. If FALSE, the student should be excluded
-before calculating any persistence metric involving program completion
-(graduation). The function itself performs no subsetting.</p>
+<p>If the result in the <code>data_sufficiency</code> column is TRUE, then then
+student should be included in the research. If FALSE, the student should
+be excluded before calculating any persistence metric involving program
+completion (graduation). The function itself performs no subsetting.</p>
 <p>If <code>details</code> is TRUE, additional column(s) that support the finding
 are returned as well. Here the extra column is <code>inst_limit</code>, the latest
 term reported by the institution in the available data.</p>
@@ -234,8 +234,48 @@ term reported by the institution in the available data.</p>
 <code><a href='add_timely_term.html'>add_timely_term</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='co'># TBD</span></span>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='co'># Start with IDs and add institution and timely term</span></span>
+<span class='r-in'><span class='va'>dframe</span> <span class='op'>&lt;-</span> <span class='va'>toy_student</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, <span class='fu'>.</span><span class='op'>(</span><span class='va'>mcid</span><span class='op'>)</span><span class='op'>]</span></span>
+<span class='r-in'><span class='va'>dframe</span> <span class='op'>&lt;-</span> <span class='fu'><a href='add_institution.html'>add_institution</a></span><span class='op'>(</span><span class='va'>dframe</span>, midfield_term <span class='op'>=</span> <span class='va'>toy_term</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>dframe</span> <span class='op'>&lt;-</span> <span class='fu'><a href='add_timely_term.html'>add_timely_term</a></span><span class='op'>(</span><span class='va'>dframe</span>, midfield_term <span class='op'>=</span> <span class='va'>toy_term</span><span class='op'>)</span></span>
 <span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Data sufficiency column</span></span>
+<span class='r-in'><span class='fu'>add_data_sufficiency</span><span class='op'>(</span><span class='va'>dframe</span>, midfield_term <span class='op'>=</span> <span class='va'>toy_term</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            mcid   institution timely_term data_sufficiency</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  1: MID25783939 Institution M       20053             TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  2: MID25784402 Institution M       20103            FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  3: MID25805538 Institution M       20091             TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  4: MID25808099 Institution M       19923             TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  5: MID25816437 Institution M       20113            FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  6: MID25826223 Institution M       19913             TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  7: MID25828870 Institution M       19933             TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  8: MID25831839 Institution M       20123            FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  9: MID25839453 Institution M       20111            FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10: MID25840802 Institution M       19951             TRUE</span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Data sufficiency column with details</span></span>
+<span class='r-in'><span class='fu'>add_data_sufficiency</span><span class='op'>(</span><span class='va'>dframe</span>, midfield_term <span class='op'>=</span> <span class='va'>toy_term</span>, details <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            mcid   institution timely_term inst_limit data_sufficiency</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  1: MID25783939 Institution M       20053      20093             TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  2: MID25784402 Institution M       20103      20093            FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  3: MID25805538 Institution M       20091      20093             TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  4: MID25808099 Institution M       19923      20093             TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  5: MID25816437 Institution M       20113      20093            FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  6: MID25826223 Institution M       19913      20093             TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  7: MID25828870 Institution M       19933      20093             TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  8: MID25831839 Institution M       20123      20093            FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  9: MID25839453 Institution M       20111      20093            FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10: MID25840802 Institution M       19951      20093             TRUE</span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># If present, existing data_sufficiency column is overwritten</span></span>
+<span class='r-in'><span class='co'># Using dframe from above,</span></span>
+<span class='r-in'><span class='va'>DT1</span> <span class='op'>&lt;-</span> <span class='fu'>add_data_sufficiency</span><span class='op'>(</span><span class='va'>dframe</span>, midfield_term <span class='op'>=</span> <span class='va'>toy_term</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>DT2</span> <span class='op'>&lt;-</span> <span class='fu'>add_data_sufficiency</span><span class='op'>(</span><span class='va'>DT1</span>, midfield_term <span class='op'>=</span> <span class='va'>toy_term</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span><span class='op'>(</span><span class='va'>DT1</span>, <span class='va'>DT2</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] TRUE</span>
 <span class='r-in'></span>
 <span class='r-in'></span>
 </code></pre></div>
