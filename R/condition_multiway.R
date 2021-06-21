@@ -1,14 +1,4 @@
 
-
-#' @import data.table
-#' @importFrom stats median reorder
-#' @importFrom wrapr let stop_if_dot_args `%?%`
-#' @importFrom checkmate qassert assert_data_frame
-#' @importFrom Rdpack reprompt
-# Rdpack reprompt is used for citations in an Roxygen document
-NULL
-
-
 #' Condition multiway data for graphing
 #'
 #' Transform a data frame such that two categorical variables are factors

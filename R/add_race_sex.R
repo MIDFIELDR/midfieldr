@@ -1,11 +1,4 @@
 
-
-#' @import data.table
-#' @importFrom wrapr stop_if_dot_args
-#' @importFrom checkmate qassert assert_names
-NULL
-
-
 #' Add one column each for student race/ethnicity and sex
 #'
 #' Add two columns of character values of students' self-reported
@@ -48,8 +41,7 @@ NULL
 #' @export
 #'
 #'
-add_race_sex <- function(dframe,
-                         midfield_student) {
+add_race_sex <- function(dframe, midfield_student) {
 
   # remove all keys
   on.exit(setkey(dframe, NULL))

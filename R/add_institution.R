@@ -1,11 +1,4 @@
 
-
-#' @import data.table
-#' @importFrom checkmate qassert assert_names
-NULL
-
-
-
 #' Add a column of institution names
 #'
 #' Add a column of character values with institution names (or labels) using

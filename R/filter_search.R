@@ -1,11 +1,4 @@
 
-
-#' @import data.table
-#' @importFrom wrapr stop_if_dot_args `%?%`
-#' @importFrom checkmate qassert
-NULL
-
-
 #' Subset rows that include matches to search strings
 #'
 #' Subset a data frame, retaining rows that match or partially match
@@ -125,7 +118,7 @@ filter_search <- function(dframe,
 
   # do the work
   dframe <- filter_char_frame(
-    data = dframe,
+    dframe = dframe,
     keep_text = keep_text,
     drop_text = drop_text
   )
@@ -169,4 +162,37 @@ filter_search <- function(dframe,
 
   # enable printing (see data.table FAQ 2.23)
   dframe[]
+}
+
+# ------------------------------------------------------------------------
+
+# Subset rows of character data frame by matching keep_texts
+
+# dframe      data frame of character variables
+# keep_text   character vector of search keep_texts for retaining rows
+# drop_text   character vector of search keep_texts for dropping rows
+
+filter_char_frame <- function(dframe,
+                              keep_text = NULL,
+                              drop_text = NULL) {
+  DT <- as.data.table(dframe)
+
+  # filter to keep rows
+  if (length(keep_text) > 0) {
+    keep_text <- paste0(keep_text, collapse = "|")
+    DT <- DT[apply(DT, 1, function(i) {
+      any(grepl(keep_text, i, ignore.case = TRUE))
+    }), ]
+  }
+
+  # filter to drop rows
+  if (length(drop_text) > 0) {
+    drop_text <- paste0(drop_text, collapse = "|")
+    DT <- DT[apply(DT, 1, function(j) {
+      !any(grepl(drop_text, j, ignore.case = TRUE))
+    }), ]
+  }
+
+  # works by reference
+  return(DT)
 }

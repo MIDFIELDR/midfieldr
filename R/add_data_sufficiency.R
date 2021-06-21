@@ -1,11 +1,5 @@
 
 
-#' @import data.table
-#' @importFrom wrapr stop_if_dot_args `%?%`
-#' @importFrom checkmate qassert assert_names
-NULL
-
-
 #' Add a column to evaluate data sufficiency
 #'
 #' Add a column of logical values (TRUE/FALSE) to a data frame indicating
@@ -148,4 +142,38 @@ add_data_sufficiency <- function(dframe,
 
   # enable printing (see data.table FAQ 2.23)
   dframe[]
+}
+
+# ------------------------------------------------------------------------
+
+# Add term range by institution
+#
+# Determine the latest academic term by institution in \code{midfield_term}.
+# Left-join by institution to \code{dframe} in a new column \code{inst_limit}.
+#
+# dframe            data frame that received added column
+# midfield_term     data frame of term attributes
+#
+add_inst_limit <- function(dframe, midfield_term) {
+
+  # prepare dframe, preserve column order for return
+  # omit existing column(s) that match column(s) we add
+  setDT(dframe)
+  setDT(midfield_term)
+  added_cols <- c("inst_limit")
+  names_dframe <- colnames(dframe)
+  key_names <- names_dframe[!names_dframe %chin% added_cols]
+  dframe <- dframe[, key_names, with = FALSE]
+
+  # get max term by institution
+  cols_we_want <- c("institution", "term")
+  DT <- midfield_term[, cols_we_want, with = FALSE]
+  DT <- DT[, list(inst_limit = max(term)), by = "institution"]
+
+  # left-outer join, keep all rows of dframe
+  dframe <- merge(dframe, DT, by = "institution", all.x = TRUE)
+
+  # original columns as keys, order columns and rows
+  set_colrow_order(dframe, key_names)
+  return(dframe)
 }

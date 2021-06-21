@@ -164,7 +164,7 @@ case_cip
 4. Assign the result to the object name `exercise_cip`. 
 
 ```{r echo = FALSE}
-# exercise solution 
+# exercise solution
 library("midfieldr")
 library("midfielddata")
 library("data.table")
@@ -270,16 +270,26 @@ case_program
 # exercise solution
 exercise_program <- copy(exercise_cip)
 exercise_program[, program := cip6name]
-exercise_program[cip6name %ilike% "General", 
-             program := "General History"]
-exercise_program[cip6name %ilike% "Other", 
-             program := "General History"]
-exercise_program[cip6name %ilike% "Philosophy", 
-             program := "Science and Techn"]
-exercise_program[cip6name %ilike% "Public", 
-             program := "Resource Admin"]
-exercise_program[cip6name %ilike% "United States", 
-             program := "US History"]
+exercise_program[
+  cip6name %ilike% "General",
+  program := "General History"
+]
+exercise_program[
+  cip6name %ilike% "Other",
+  program := "General History"
+]
+exercise_program[
+  cip6name %ilike% "Philosophy",
+  program := "Science and Techn"
+]
+exercise_program[
+  cip6name %ilike% "Public",
+  program := "Resource Admin"
+]
+exercise_program[
+  cip6name %ilike% "United States",
+  program := "US History"
+]
 exercise_program[, cip6name := NULL]
 ```
 
@@ -405,17 +415,18 @@ case_degree[, .N, by = "program"]
 4. Summarize the number of students in these history programs by the `program` column. 
 
 ```{r echo = FALSE}
-# exercise solution 
+# exercise solution
 exercise_student <- filter_match(term,
   match_to = exercise_program,
   by_col = "cip6",
   select = c("mcid", "cip6")
 )
 exercise_student <- unique(exercise_student)
-exercise_student <- merge(exercise_student, 
-                          exercise_program, 
-                          by = "cip6", 
-                          all.x = TRUE)
+exercise_student <- merge(exercise_student,
+  exercise_program,
+  by = "cip6",
+  all.x = TRUE
+)
 exercise_summary <- exercise_student[, .N, by = "program"]
 ```
 
@@ -509,7 +520,7 @@ pass03 <- filter_search(
 )
 pass04 <- filter_search(pass03, drop_text = "electromechanical")
 cols_we_want <- c("cip6", "cip4name")
-case_cip<- pass04[, cols_we_want, with = FALSE]
+case_cip <- pass04[, cols_we_want, with = FALSE]
 
 # assign program names
 case_program <- copy(case_cip)
@@ -568,16 +579,26 @@ exercise_cip
 # Assign program names
 exercise_program <- copy(exercise_cip)
 exercise_program[, program := cip6name]
-exercise_program[cip6name %ilike% "General",    
-                 program := "General History"]
-exercise_program[cip6name %ilike% "Other",      
-                 program := "General History"]
-exercise_program[cip6name %ilike% "Philosophy", 
-                 program := "Science and Technology"]
-exercise_program[cip6name %ilike% "Public", 
-                 program := "Historical Resources"]
-exercise_program[cip6name %ilike% "United States", 
-                 program := "US History"]
+exercise_program[
+  cip6name %ilike% "General",
+  program := "General History"
+]
+exercise_program[
+  cip6name %ilike% "Other",
+  program := "General History"
+]
+exercise_program[
+  cip6name %ilike% "Philosophy",
+  program := "Science and Technology"
+]
+exercise_program[
+  cip6name %ilike% "Public",
+  program := "Historical Resources"
+]
+exercise_program[
+  cip6name %ilike% "United States",
+  program := "US History"
+]
 exercise_program[, cip6name := NULL]
 exercise_program
 
@@ -591,10 +612,11 @@ exercise_student <- unique(exercise_student)
 exercise_student
 
 # Merge program names
-exercise_student <- merge(exercise_student, 
-                          exercise_program, 
-                          by = "cip6", 
-                          all.x = TRUE)
+exercise_student <- merge(exercise_student,
+  exercise_program,
+  by = "cip6",
+  all.x = TRUE
+)
 exercise_student
 
 exercise_student[, .N, by = "program"]
