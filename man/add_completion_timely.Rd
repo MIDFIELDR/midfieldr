@@ -70,10 +70,10 @@ add_completion_timely(dframe, midfield_degree = toy_degree, details = TRUE)
 
 
 # If present, existing completion_timely column is overwritten
-# Using dframe from above,
 DT1 <- add_completion_timely(dframe, midfield_degree = toy_degree)
 DT2 <- add_completion_timely(DT1, midfield_degree = toy_degree)
 all.equal(DT1, DT2)
+
 }
 \seealso{
 Other add_*: 

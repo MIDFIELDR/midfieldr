@@ -98,22 +98,6 @@ colnames(condition_fye(toy_student, toy_term))
 
 # Optional argument permits multiple CIP codes for FYE
 condition_fye(DT, toy_term, fye_codes = c("140101", "140102"))
-\dontrun{
-# Constraints on the \vode{fye_codes} argument
-DT <- toy_student[, .(mcid, race, sex)]
-
-
-# Must be an engineering CIP (starts with 14)
-condition_fye(DT, toy_term, fye_codes = c("140101", "540102"))
-
-
-# Must have 6-digits
-condition_fye(DT, toy_term, fye_codes = "1401")
-
-
-# Must contain numerals only (no regular expressions)
-condition_fye(DT, toy_term, fye_codes = "^14010")
-}
 
 }
 \seealso{

@@ -44,7 +44,7 @@ If none of the optional arguments are specified, the function returns
 the original data frame.
 }
 \examples{
-# subset using keywords
+# Subset using keywords
 filter_search(cip, keep_text = "engineering")
 
 
@@ -52,7 +52,7 @@ filter_search(cip, keep_text = "engineering")
 filter_search(cip, "civil engineering", drop_text = "technology")
 
 
-# subset using numerical codes
+# Subset using numerical codes
 filter_search(cip, keep_text = c("050125", "160501"))
 
 
@@ -61,21 +61,17 @@ filter_search(cip, keep_text = "^54")
 filter_search(cip, keep_text = c("^1407", "^1408"))
 
 
-# select columns
+# Select columns
 filter_search(cip,
   keep_text = "^54",
   select = c("cip6", "cip4name")
 )
 
 
-# multiple passes to narrow the results
+# Multiple passes to narrow the results
 first_pass <- filter_search(cip, "civil")
 second_pass <- filter_search(first_pass, "engineering")
 filter_search(second_pass, drop_text = "technology")
-\dontrun{
-# unsuccessful terms produce a message
-filter_search(cip, c("050125", "111111", "160501", "Bogus", "^55"))
-}
 
 }
 \seealso{

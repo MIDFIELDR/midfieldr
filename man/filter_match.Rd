@@ -47,48 +47,55 @@ key column does not have to be included in the vector of column names in
 }
 \examples{
 # Start with a toy sample of student (built-in data set)
-str(toy_student)
+head(toy_student)
+nrow(toy_student)
 
 
 # Filter by matching IDs of graduates
-x_student <- filter_match(toy_student,
+student_example <- filter_match(toy_student,
   match_to = toy_degree,
   by_col = "mcid"
 )
+head(student_example)
 # Note change in number of rows
-str(x_student)
+nrow(student_example)
 
 
 # Same filter and select 3 columns only
-x_student <- filter_match(toy_student,
+student_example <- filter_match(toy_student,
   match_to = toy_degree,
   by_col = "mcid",
   select = c("mcid", "race", "sex")
 )
-str(x_student)
+head(student_example)
+nrow(student_example)
 
 
 # Filter term data for engineering program codes (start with "14")
-engr_term <- toy_term[grepl("^14", cip6), ]
-str(engr_term)
+term_example <- toy_term[grepl("^14", cip6), ]
+head(term_example)
+nrow(term_example)
 
 
 # Filter student by matching IDs of engineering students
-x_student <- filter_match(toy_student,
-  match_to = engr_term,
+student_example <- filter_match(toy_student,
+  match_to = term_example,
   by_col = "mcid",
   select = c("mcid", "institution", "transfer", "sex")
 )
-str(x_student)
+head(student_example)
+nrow(student_example)
 
 
 # The 'by_col' column does not have to be included in the `select` columns
-x_student <- filter_match(toy_student,
-  match_to = engr_term,
+student_example <- filter_match(toy_student,
+  match_to = term_example,
   by_col = "mcid",
   select = c("institution", "transfer", "sex")
 )
-str(x_student)
+head(student_example)
+nrow(student_example)
+
 }
 \seealso{
 Other filter_*: 

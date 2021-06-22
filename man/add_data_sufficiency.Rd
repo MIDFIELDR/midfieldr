@@ -75,6 +75,7 @@ add_data_sufficiency(dframe, midfield_term = toy_term, details = TRUE)
 DT1 <- add_data_sufficiency(dframe, midfield_term = toy_term)
 DT2 <- add_data_sufficiency(DT1, midfield_term = toy_term)
 all.equal(DT1, DT2)
+
 }
 \seealso{
 Other add_*: 

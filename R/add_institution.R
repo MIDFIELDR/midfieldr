@@ -24,19 +24,9 @@
 #' @family add_*
 #'
 #'
-#' @examples
-#' # extract a column of IDs from student
-#' id <- toy_student[, .(mcid)]
+#' @example man/examples/add_institution_exa.R
 #'
 #'
-#' # add institutions from term
-#' DT1 <- add_institution(id, midfield_term = toy_term)
-#' head(DT1)
-#'
-#'
-#' # will overwrite institution column if present
-#' DT2 <- add_institution(DT1, midfield_term = toy_term)
-#' head(DT2)
 #' @export
 #'
 #'

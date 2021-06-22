@@ -53,32 +53,9 @@
 #' @family condition_*
 #'
 #'
-#' @examples
-#' catg1 <- rep(c("urban", "rural", "suburb", "village"), each = 2)
-#' catg2 <- rep(c("men", "women"), times = 4)
-#' value <- c(0.22, 0.14, 0.43, 0.58, 0.81, 0.46, 0.15, 0.20)
+#' @example man/examples/condition_multiway_exa.R
 #'
 #'
-#' # structure before
-#' dframe <- data.frame(catg1, catg2, value)
-#' str(dframe)
-#'
-#'
-#' # structure after
-#' mw <- condition_multiway(dframe)
-#' str(mw)
-#'
-#'
-#' # incoming columns can be factor if not character
-#' mw2 <- condition_multiway(mw)
-#' str(mw2)
-#'
-#'
-#' # report median values
-#' mw <- condition_multiway(dframe, details = TRUE)
-#' str(mw)
-#' levels(mw$catg1) # note: not alphabetical
-#' levels(mw$catg2)
 #' @export
 #'
 #'

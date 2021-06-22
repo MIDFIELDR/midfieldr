@@ -32,18 +32,21 @@ at which they completed the most terms is returned. An existing column with
 the same name as the added column is overwritten.
 }
 \examples{
-# extract a column of IDs from student
+# Extract a column of IDs from student
 id <- toy_student[, .(mcid)]
 
 
-# add institutions from term
+# Add institutions from term
 DT1 <- add_institution(id, midfield_term = toy_term)
 head(DT1)
+nrow(DT1)
 
 
-# will overwrite institution column if present
+# Will overwrite institution column if present
 DT2 <- add_institution(DT1, midfield_term = toy_term)
 head(DT2)
+nrow(DT2)
+
 }
 \seealso{
 Other add_*: 
