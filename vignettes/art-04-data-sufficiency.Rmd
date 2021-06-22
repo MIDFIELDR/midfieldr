@@ -60,6 +60,11 @@ asp_ratio_mw <- function(data, categories) {
 }
 ```
 
+
+
+
+
+
 ## Introduction
 
 The data provided by institutions to MIDFIELD cover a finite span of years, with different starting and ending terms for each institution.
@@ -229,7 +234,6 @@ packages
 library("midfieldr")
 library("midfielddata")
 library("data.table")
-library("ggplot2")
 
 # optional code to format data.table printing
 options(
@@ -246,6 +250,10 @@ data
 data(student, term, degree)
 ```
    
+
+
+
+
 
 ## Case study students
 
@@ -278,6 +286,10 @@ Delete duplicate rows, if any,
 case_students <- unique(case_students)
 case_students
 ```
+
+
+
+
 
 
 ## Estimate the timely completion term 
@@ -325,12 +337,11 @@ add_timely_term(dframe,
                 sched_span = NULL)  # default 4 years
 ```
 
-- `details`, when TRUE, provides additional columns in the output that were used to determine the results in `timely_term`. 
 - `span` must be no less than `sched_span`. 
 - `sched_span` is the number of years the institution schedules for program completion, typically 4 years. 
+- `details`, when TRUE, provides additional columns (described next) 
 
-
-Setting `details` to TRUE yields additional columns for 
+Setting `details` to TRUE yields additional columns that were used to determine the timely-term results: 
 
 - `term_i` admission term 
 - `level_i` level upon being admitted 
@@ -357,6 +368,40 @@ DT <- add_timely_term(DT,
 )
 DT
 ```
+
+
+### Exercises
+
+
+If we start with a data frame with details shown 
+
+```{r}
+x <- add_timely_term(DT, term, details = TRUE)
+```
+
+then the following code chunk, 
+
+```r
+x[adj_span == 6, .SD[1], by = cip6]
+```
+subsets `x` as follows: 
+
+- `adj_span == 6` subsets rows for a 6 year span
+- `by = cip6` groups the data by the four CIP codes
+- `.SD[1]` retains the first row of each group
+
+with the resulting 4 rows (one for each CIP): 
+
+```{r echo = FALSE}
+x[adj_span == 6, .SD[1], by = cip6]
+```
+
+1. Recall (from the `term` help page) that all terms of an academic year are encoded with the same YYYY value. Choose any row. Confirm that a student starting in the initial term shown and graduating a full 6 academic years later would graduate in the term reported in the timely-term column. 
+2. Reuse the code chunk but change the adjusted span to 4 or 5 years. Select one row and repeat the assessment. 
+
+
+
+
 
 ## Determine data sufficiency 
 
@@ -411,9 +456,65 @@ DT
 ```
 
 
+
+### Exercises
+
+If we start with the `term` data table, select two columns, and order its rows by institution and term, 
+
+```{r}
+# select columns from term
+cols_we_want <- c("institution", "term")
+x <- term[order(institution, term), ..cols_we_want]
+```
+
+then the following code chunk, 
+
+```r
+# optional code to format data.table printing
+options(datatable.print.nrows = 12)
+
+# filter for last term grouped by instititution
+x[, .SD[.N], by = institution]
+```
+subsets `x` as follows: 
+
+- `by = institution` groups the data by the 12 institutions
+- `.SD[.N]` retains the last row of each group (having previously ordered the rows by term within each institution)
+
+yielding a data frame (not shown) giving the last term in the data for each institution. Obtain the data frame for yourself by running the code chunks above. Then run:
+
+```{r include = FALSE}
+options(datatable.print.nrows = 12)
+x[, .SD[.N], by = institution]
+```
+
+```{r}
+y <- add_data_sufficiency(DT,
+  midfield_term = term,
+  details = TRUE
+)
+```
+
+Filter for one institution using
+
+```{r results = 'hide'}
+y[institution == "Institution A", .SD[1:5]]
+```
+
+where 
+
+- `institution == "Institution A"` filters for Institution A only 
+- `.SD[1:5]` pulls out the first 5 rows, 
+
+1. Confirm that the last term for Institution A found earlier is a match to the `inst_limit` reported by `add_data_sufficiency()`. 
+2. Repeat the last code chunk for another institution and confirm the result. 
+
+
+
+
 ## Subset data for data sufficiency
 
-The final step, subsetting, is straightforward. Students with TRUE in the `data_sufficiency` column are retained for study. 
+Observations (rows) satisfying the data sufficiency criterion are labeled TRUE in the `data_sufficiency` column; those that do not are labeled FALSE. Limiting the population to students satisfying the criterion is straightforward---we retain the TRUE data sufficiency rows. 
 
 ```{r}
 # limit population to data sufficient
@@ -448,50 +549,12 @@ study_students <- study_students[order(mcid)]
 all.equal(DT, study_students)
 ```
 
-## Compare programs
 
-We can create a simple dot chart to compare the numbers of students in these programs. 
+## Conclusion
 
-```{r}
-# delete duplicate rows, if any, before counting
-DT <- unique(DT)
+The data sufficiency criterion must be applied whenever a study incorporates program completion (graduation) as part of a metric. Different heuristics might be used to determine the term of timely completion (discussed in a separate vignette), but once the timely term is determined, the sufficiency of the data available immediately determines whether the student remains in the study.
 
-# group and summarize
-DT <- study_students[, .N, by = "cip6"]
 
-# join the program names
-DT <- merge(DT, study_programs, by = "cip6", all.x = TRUE)
-
-# examine the result
-DT
-```
-
-Before graphing, we convert the program variable to a factor and order the factor by `N` to automatically order the rows by `N` instead of alphabetically. 
-
-```{r}
-# character to factor
-DT[, program := as.factor(program)]
-
-# order the levels by the values in N
-DT[, program := reorder(program, N)]
-
-# examine the result
-levels(DT$program)
-```
-
-The graph follows. 
-
-```{r fig2, fig.asp = 0.375}
-ggplot(DT, aes(x = N, y = program)) +
-  scale_x_continuous(limits = c(1000, 3000)) +
-  geom_point() +
-  labs(
-    x = "Number of students",
-    y = "",
-    title = "Case study students",
-    caption = "Source: midfielddata"
-  )
-```
 
 
 ## Appendix
@@ -505,7 +568,6 @@ The vignette code chunks are collected below in a single, condensed script.
 library("midfieldr")
 library("midfielddata")
 library("data.table")
-library("ggplot2")
 
 # load data tables from midfielddata
 data(student, term, degree)
@@ -536,22 +598,6 @@ DT <- add_data_sufficiency(DT,
 # Subset data for data sufficiency
 DT <- DT[data_sufficiency == TRUE]
 DT <- DT[, .(mcid, cip6)]
-
-# Compare programs
-DT <- unique(DT)
-DT <- study_students[, .N, by = "cip6"]
-DT <- merge(DT, study_programs, by = "cip6", all.x = TRUE)
-DT[, program := as.factor(program)]
-DT[, program := reorder(program, N)]
-ggplot(DT, aes(x = N, y = program)) +
-  scale_x_continuous(limits = c(1000, 3000)) +
-  geom_point() +
-  labs(
-    x = "Number of students",
-    y = "",
-    title = "Case study students",
-    caption = "Source: midfielddata"
-  )
 ```
 
 
