@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">midfieldr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9016</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9017</span>
       </span>
     </div>
 
@@ -112,7 +112,7 @@
       <h1 data-toc-skip>FYE programs</h1>
                         <h4 data-toc-skip class="author">Richard Layton</h4>
             
-            <h4 data-toc-skip class="date">2021-06-22</h4>
+            <h4 data-toc-skip class="date">2021-06-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/master/vignettes/art-07-fye-programs.Rmd" class="external-link"><code>vignettes/art-07-fye-programs.Rmd</code></a></small>
       <div class="hidden name"><code>art-07-fye-programs.Rmd</code></div>
@@ -125,7 +125,7 @@
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h2>
 <p>Some US institutions have first year engineering (FYE) programs—typically a common first-year curriculum that is a prerequisite for acceptance into a degree-granting engineering major.</p>
-<p>For some persistence metrics computed at the program level, FYE programs can be problematic. For example, graduation rate is conventionally defined as the ratio of the number of students who complete their program (in a specified span of years) to the number of students in the entering cohort <span class="citation">(<a href="#ref-IPEDS-grad-rate:2016" role="doc-biblioref">NCES-IPEDS, 2016</a>)</span>. FYE students who don’t transition to a particular engineering program are easily overlooked as potential members of that program’s entering cohort—reducing the size of the cohort and artificially increasing the graduation rate.</p>
+<p>For some persistence metrics computed at the program level, FYE programs can be problematic. For example, graduation rate is conventionally defined as the ratio of the number of students who complete their program (in a specified span of years) to the number of students in the entering cohort <span class="citation"><a href="#ref-IPEDS-grad-rate:2016" role="doc-biblioref">[1]</a></span>. FYE students who don’t transition to a particular engineering program are easily overlooked as potential members of that program’s entering cohort—reducing the size of the cohort and artificially increasing the graduation rate.</p>
 <p>FYE students have been admitted to Engineering (CIP 14)—their status is neither “undecided” nor “unknown.” We simply don’t know to which degree-granting program they intend to transition.</p>
 <p>Therefore, to include FYE students in any persistence metric requiring a degree-granting “starting” program, we have to predict the engineering program the FYE student would have declared had they not been required to enroll in FYE. The vignette describes the prediction process and how the results are used.</p>
 <div id="outline" class="section level3">
@@ -600,7 +600,7 @@
 <div id="using-the-mice-package" class="section level3">
 <h3 class="hasAnchor">
 <a href="#using-the-mice-package" class="anchor" aria-hidden="true"></a>Using the mice package</h3>
-<p>The mice package <span class="citation">(<a href="#ref-vanbuuren2011" role="doc-biblioref">van Buuren and Groothuis-Oudshoorn, 2011</a>)</span> implements multivariate imputation by chained equations (MICE). MICE is also known as “fully conditional specification” or “sequential regression multiple imputation” and is suitable for categorical variables such as ours <span class="citation">(<a href="#ref-azur2011" role="doc-biblioref">Azur et al., 2011</a>)</span>. Our computational procedure follows the approach suggested by Dhana <span class="citation">(<a href="#ref-dhana2017" role="doc-biblioref">2017</a>)</span>.</p>
+<p>The mice package <span class="citation"><a href="#ref-vanbuuren2011" role="doc-biblioref">[2]</a></span> implements multivariate imputation by chained equations (MICE). MICE is also known as “fully conditional specification” or “sequential regression multiple imputation” and is suitable for categorical variables such as ours <span class="citation"><a href="#ref-azur2011" role="doc-biblioref">[3]</a></span>. Our computational procedure follows the approach suggested by Dhana <span class="citation"><a href="#ref-dhana2017" role="doc-biblioref">[4]</a></span>.</p>
 <p>The procedure assumes the missing CIP data—the NA values in the prepared data frame—are “missing at random” (MAR), that is, independent of the variables used to impute the missing values. This is the rationale for using data only from FYE institutions to impute the missing values—the existence of the missing data does depend on the institution type, FYE or non-FYE. Within the FYE data itself, however, we assume that the imputed starting majors are missing at random.</p>
 <p>Our first use of mice is to examine the framework by calling the function with zero iterations on the <code>fye</code> data frame. (A warning may appear in your console. It can be ignored.)</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
@@ -698,7 +698,7 @@
 <span class="co"># &gt;   5   3  cip6</span>
 <span class="co"># &gt;   5   4  cip6</span>
 <span class="co"># &gt;   5   5  cip6</span></code></pre></div>
-<p><code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice()</a></code> produces what it calls a <code>mids</code> object: a “multiply-imputed data set”. The <code><a href="https://amices.org/mice/reference/complete.mids.html" class="external-link">complete()</a></code> function extracts the completed data frame from the <code>mids</code> object, which we convert to a data.table.</p>
+<p><code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice()</a></code> produces what it calls a <code>mids</code> object: a “multiply-imputed data set.” The <code><a href="https://amices.org/mice/reference/complete.mids.html" class="external-link">complete()</a></code> function extracts the completed data frame from the <code>mids</code> object, which we convert to a data.table.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fye</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://amices.org/mice/reference/complete.mids.html" class="external-link">complete</a></span><span class="op">(</span><span class="va">fye_mids</span><span class="op">)</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setDT.html" class="external-link">setDT</a></span><span class="op">(</span><span class="va">fye</span><span class="op">)</span>
@@ -766,18 +766,24 @@
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
 <a href="#references" class="anchor" aria-hidden="true"></a>References</h2>
-<div id="refs" class="references csl-bib-body hanging-indent references csl-bib-body hanging-indent">
-<div id="ref-azur2011" class="csl-entry">
-Azur, Melissa J., Stuart, Elizabeth A., Frangakis, Constantine, et al. (2011) Multiple imputation by chained equations: <span>W</span>hat is it and how does it work? <em>International Journal of Methods in Psychiatric Research</em> 20(1): 40–49.
-</div>
-<div id="ref-dhana2017" class="csl-entry">
-Dhana, Klodian (2017) Handling missing data with <span>MICE</span> package: A simple approach. Plus, Data Science (ed.). <a href="https://datascienceplus.com/handling-missing-data-with-mice-package-a-simple-approach/" class="external-link">https://datascienceplus.com/handling-missing-data-with-mice-package-a-simple-approach/</a>.
-</div>
+<div id="refs" class="references csl-bib-body references csl-bib-body">
 <div id="ref-IPEDS-grad-rate:2016" class="csl-entry">
-NCES-IPEDS (2016) <em><span class="nocase">Graduation Rates, Publication number 2017046</span></em>. <span>National Center for Education Statistics</span>; [Online; accessed 2021-06-06]. Available at: <a href="https://nces.ed.gov/pubs2017/2017046.pdf" class="external-link">https://nces.ed.gov/pubs2017/2017046.pdf</a>.
+<div class="csl-left-margin">[1] </div>
+<div class="csl-right-inline">NCES-IPEDS, <em><span class="nocase">Graduation Rates, Publication number 2017046</span></em>. <span>National Center for Education Statistics</span>; [Online; accessed 2021-06-06], 2016 [Online]. Available: <a href="https://nces.ed.gov/pubs2017/2017046.pdf" class="external-link">https://nces.ed.gov/pubs2017/2017046.pdf</a>
+</div>
 </div>
 <div id="ref-vanbuuren2011" class="csl-entry">
-van Buuren, Stef and Groothuis-Oudshoorn, Karin (2011) <span class="nocase">mice</span>: Multivariate imputation by chained equations in r. <em>Journal of Statistical Software</em> 45(3): 1–67. Available at: <a href="https://www.jstatsoft.org/v45/i03/" class="external-link">https://www.jstatsoft.org/v45/i03/</a>.
+<div class="csl-left-margin">[2] </div>
+<div class="csl-right-inline">S. van Buuren and K. Groothuis-Oudshoorn, <span>“<span class="nocase">mice</span>: Multivariate imputation by chained equations in r,”</span> <em>Journal of Statistical Software</em>, vol. 45, no. 3, pp. 1–67, 2011 [Online]. Available: <a href="https://www.jstatsoft.org/v45/i03/" class="external-link">https://www.jstatsoft.org/v45/i03/</a>
+</div>
+</div>
+<div id="ref-azur2011" class="csl-entry">
+<div class="csl-left-margin">[3] </div>
+<div class="csl-right-inline">M. J. Azur, E. A. Stuart, C. Frangakis, and P. J. Leaf, <span>“Multiple imputation by chained equations: <span>W</span>hat is it and how does it work?”</span> <em>International Journal of Methods in Psychiatric Research</em>, vol. 20, no. 1, pp. 40–49, 2011. </div>
+</div>
+<div id="ref-dhana2017" class="csl-entry">
+<div class="csl-left-margin">[4] </div>
+<div class="csl-right-inline">K. Dhana, <span>“Handling missing data with <span>MICE</span> package: A simple approach.”</span> <a href="https://datascienceplus.com/handling-missing-data-with-mice-package-a-simple-approach/" class="external-link">https://datascienceplus.com/handling-missing-data-with-mice-package-a-simple-approach/</a>, 2017. </div>
 </div>
 </div>
 </div>
