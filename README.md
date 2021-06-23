@@ -154,16 +154,28 @@ help("midfielddata-package")
 
 ## Contributing
 
-To contribute to midfieldr, clone this repo locally and commit your code
-on a separate branch. Please include runtime argument checks in
-functions using *checkmate* and write unit tests for your code using
-*tinytest*.
-
-Participation in this open source project is subject to a [Code of
-Conduct](CONDUCT.html).
+-   To contribute to midfieldr, clone this repo locally and commit your
+    code on a separate branch. Please include runtime argument checks in
+    functions using *checkmate* and write unit tests for your code using
+    *tinytest*.
+-   Please use the GitHub
+    [Issues](https://github.com/MIDFIELDR/midfieldr/issues) page to
+    report bugs or provide feedback.
+-   Participation in this open source project is subject to a [Code of
+    Conduct](CONDUCT.html).
 
 ## License
 
 *midfieldr* is licensed under GPL (>= 2)  
 © 2018 Richard Layton, Russell Long, Matthew Ohland, Susan Lord, and
 Marisa Orr
+
+## Related work
+
+-   [*midfielddata*](https://midfieldr.github.io/midfielddata/) Sample
+    of MIDFIELD student unit record data.
+-   [MIDFIELD](https://engineering.purdue.edu/MIDFIELD) A partnership of
+    US institutions.
+-   [MIDFIELD
+    workshops](https://midfieldr.github.io/2021-asee-workshop/) for
+    additional information and tutorials.

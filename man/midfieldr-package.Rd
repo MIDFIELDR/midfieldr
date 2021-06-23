@@ -36,33 +36,4 @@ The tools in midfieldr work equally well with the practice data in
 midfielddata and the research data in MIDFIELD.
 }
 
-\section{Data}{
-
-midfielddata provides a proportionate stratified random sample
-of the MIDFIELD research data. The sampling strata are institution, cip4
-(the first four digits of the 6-digit CIP code), transfer status,
-race/ethnicity, and sex. Contains four data tables: \code{student},
-\code{course}, \code{term}, and \code{degree} keyed by an anonymized
-student ID.
-
-Complete MIDFIELD data suitable for student-records research are
-available to researchers under the following conditions:
-\enumerate{
-  \item{Your institutional IRB has granted approval for your project
-  to study students using MIDFIELD. At most institutions, the
-  use of MIDFIELD data for research is  in the IRB "Exempt" category,
-  but institutional practices vary.}
-  \item{Each researcher using the data signs a letter of
-  confidentiality describing  the guidelines for how the data may be
-  reported.}
-}
-The research data and practice data have the same structure with
-the same variable names, though some research variables are
-omitted from the practice data. Thus R scripts written for the practice
-data should generally work with the research data.
-}
-
-\references{
-\insertAllCited{}
-}
 \concept{package}
