@@ -5,10 +5,9 @@
 \alias{midfieldr-package}
 \title{Tools for Studying MIDFIELD Student Unit Record Data in R}
 \description{
-The goal of midfieldr is to provide tools for working with MIDFIELD
-data, a resource for research on undergraduate students'
-trajectories through the university that includes longitudinal,
-anonymized, whole population data for multiple US institutions.
+The goal of midfieldr is to provide tools for working with MIDFIELD data,
+a resource of longitudinal, de-identified, individual student unit records
+from multiple US institutions.
 }
 \section{Background}{
 
