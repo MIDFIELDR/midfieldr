@@ -3,33 +3,40 @@
 \docType{package}
 \name{midfieldr-package}
 \alias{midfieldr-package}
-\title{\code{midfieldr}: Tools for Student Records Research}
+\title{Tools for Studying MIDFIELD Student Unit Record Data in R}
 \description{
-Provides functions for studying US undergraduate student-record
-data provided by registrars at participating institutions.
-The practice data set includes all student records for approximately
-98,000 students at 12 institutions from 1987 to 2016. For privacy
-protection, personal and institutional identities are anonymized.
+The goal of midfieldr is to provide tools for working with MIDFIELD
+data, a resource for research on undergraduate students'
+trajectories through the university that includes longitudinal,
+anonymized, whole population data for multiple US institutions.
 }
-\details{
-The *Multiple-Institution Database for Investigating Engineering
-Longitudinal Development* (MIDFIELD) is a partnership of US higher
-education institutions with engineering programs. The MIDFIELD research
-database contains registrar's data for 1.7M undergraduates in all majors
-at 19 institutions from 1987--2019 \insertCite{Ohland+Long:2016}{midfieldr}.
+\section{Background}{
 
-The software environment comprises two R packages:
+\href{https://engineering.purdue.edu/MIDFIELD}{MIDFIELD} (as of May 2021)
+contains individual student record data for 1.7 M unique students at 33
+US institutions. MIDFIELD is large enough to permit disaggregation by
+multiple characteristics simultaneously, enabling researchers to examine
+student characteristics (race/ethnicity, sex, prior achievement) and
+curricular pathways (including coursework and major) by institution and
+over time.
+
+A proportionate stratified sample of these data (for practice) is
+available in
+\href{https://midfieldr.github.io/midfielddata/}{midfielddata}, an R
+data package with longitudinal student unit-records for 98,000
+undergraduates at 12 institutions from  1987--2016 organized in four data
+tables:
 \itemize{
-  \item{midfieldr: An R package providing functions specialized for
-  manipulating MIDFIELD data to examine the intersectionality of
-  race/ethnicity, sex, and discipline in persistence metrics such as
-  stickiness (retention by a discipline) and graduation rate.}
-  \item{midfielddata: An R  package with practice data for users to
-  learn about student record analysis using R. However, these data are
-  not suitable for drawing inferences about student performance, i.e.,
-  not for research.}
+ \item {\href{https://midfieldr.github.io/midfielddata/reference/student.html}{student}}
+ \item {\href{https://midfieldr.github.io/midfielddata/reference/course.html}{course}}
+ \item {\href{https://midfieldr.github.io/midfielddata/reference/term.html}{term}}
+ \item {\href{https://midfieldr.github.io/midfielddata/reference/degree.html}{degree}}
 }
+
+The tools in midfieldr work equally well with the practice data in
+midfielddata and the research data in MIDFIELD.
 }
+
 \section{Data}{
 
 midfielddata provides a proportionate stratified random sample
