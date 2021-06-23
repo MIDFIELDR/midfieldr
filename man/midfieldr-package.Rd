@@ -9,8 +9,7 @@ The goal of midfieldr is to provide tools for working with MIDFIELD data,
 a resource of longitudinal, de-identified, individual student unit records
 from multiple US institutions.
 }
-\section{Background}{
-
+\details{
 \href{https://engineering.purdue.edu/MIDFIELD}{MIDFIELD} (as of May 2021)
 contains individual student record data for 1.7 M unique students at 33
 US institutions. MIDFIELD is large enough to permit disaggregation by
@@ -34,6 +33,8 @@ tables:
 
 The tools in midfieldr work equally well with the practice data in
 midfielddata and the research data in MIDFIELD.
-}
 
+This work is supported by a grant from the US National Science
+Foundation (EEC 1545667).
+}
 \concept{package}

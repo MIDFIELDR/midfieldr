@@ -9,7 +9,7 @@ Tools for studying MIDFIELD student unit record data in R
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/MIDFIELDR/midfieldr/workflows/R-CMD-check/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions)
+[![build](https://github.com/MIDFIELDR/midfieldr/workflows/build/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions)
 [![codecov](https://codecov.io/gh/MIDFIELDR/midfieldr/branch/main/graph/badge.svg?token=KcuCzBkLBP)](https://codecov.io/gh/MIDFIELDR/midfieldr)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/midfieldr)](http://cran.r-project.org/package=midfieldr)
 [![License: GPL
@@ -25,34 +25,28 @@ records from multiple US institutions.
 [MIDFIELD](https://engineering.purdue.edu/MIDFIELD) (as of May 2021)
 contains individual student unit record (SUR) data for 1.7M unique
 students at 33 US institutions. MIDFIELD is large enough to permit
-disaggregation by multiple characteristics simultaneously, enabling
-researchers to examine student characteristics (race/ethnicity, sex,
-prior achievement) and curricular pathways (including coursework and
-major) by institution and over time.
+grouping and summarizing by multiple characteristics simultaneously,
+enabling researchers to examine student characteristics (race/ethnicity,
+sex, prior achievement) and curricular pathways (including coursework
+and major) by institution and over time.
 
 A proportionate stratified sample of these data (for practice) is
 available in
 [*midfielddata*](https://midfieldr.github.io/midfielddata/), an R data
-package with longitudinal SURs for 98,000 undergraduates at 12
+package with longitudinal SURs for nearly 98,000 undergraduates at 12
 institutions from 1987–2016 organized in four data tables:
 
--   [`student`](https://midfieldr.github.io/midfielddata/reference/student.html)  
+-   [`student`](https://midfieldr.github.io/midfielddata/reference/student.html)
+    97,640 rows and 13 columns
 -   [`course`](https://midfieldr.github.io/midfielddata/reference/course.html)
+    3.5M rows and 12 columns  
 -   [`term`](https://midfieldr.github.io/midfielddata/reference/term.html)
+    728,000 rows and 13 columns  
 -   [`degree`](https://midfieldr.github.io/midfielddata/reference/degree.html)
+    47,500 rows and 5 columns
 
 The tools in *midfieldr* work equally well with the practice data in
 *midfielddata* and the research data in MIDFIELD.
-
-## Requirements
-
--   [R](https://www.r-project.org/) (>= 3.5.0)
--   [*midfielddata*](https://midfieldr.github.io/midfielddata/) for
-    practice working with student unit records.
--   [*data.table*](https://rdatatable.gitlab.io/data.table/) recommended
-    for data manipulation, but not required.  
--   [*ggplot2*](https://ggplot2.tidyverse.org/) recommended for data
-    graphics, but not required.
 
 ## Usage
 
@@ -108,9 +102,19 @@ result[order(grad_status, sex, race)]
 #> 28:    non-grad   Male           White  4423
 ```
 
+## Requirements
+
+-   [R](https://www.r-project.org/) (>= 3.5.0)
+-   [*midfielddata*](https://midfieldr.github.io/midfielddata/) for
+    practice working with student unit records.
+-   [*data.table*](https://rdatatable.gitlab.io/data.table/) recommended
+    for data manipulation, but not required.  
+-   [*ggplot2*](https://ggplot2.tidyverse.org/) recommended for data
+    graphics, but not required.
+
 ## Installation
 
-To install the development version of midfieldr from
+To install the development version of *midfieldr* from
 [GitHub](https://github.com/), type in the Console:
 
 ``` r
@@ -154,21 +158,15 @@ help("midfielddata-package")
 
 ## Contributing
 
--   To contribute to midfieldr, clone this repo locally and commit your
-    code on a separate branch. Please include runtime argument checks in
-    functions using *checkmate* and write unit tests for your code using
-    *tinytest*.
+-   To contribute to *midfieldr*, clone this repo locally and commit
+    your code on a separate branch. Please include runtime argument
+    checks in functions using *checkmate* and write unit tests for your
+    code using *tinytest*.
 -   Please use the GitHub
     [Issues](https://github.com/MIDFIELDR/midfieldr/issues) page to
     report bugs or provide feedback.
 -   Participation in this open source project is subject to a [Code of
     Conduct](CONDUCT.html).
-
-## License
-
-*midfieldr* is licensed under GPL (>= 2)  
-© 2018 Richard Layton, Russell Long, Matthew Ohland, Susan Lord, and
-Marisa Orr
 
 ## Related work
 
@@ -179,3 +177,14 @@ Marisa Orr
 -   [MIDFIELD
     workshops](https://midfieldr.github.io/2021-asee-workshop/) for
     additional information and tutorials.
+
+## Acknowledgments
+
+This work is supported by a grant from the US National Science
+Foundation (EEC 1545667).
+
+## License
+
+*midfieldr* is licensed under GPL (>= 2)  
+© 2018 Richard Layton, Russell Long, Matthew Ohland, Susan Lord, and
+Marisa Orr
