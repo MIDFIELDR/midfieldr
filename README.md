@@ -14,43 +14,43 @@ Tools for studying MIDFIELD student unit record data in R
 v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 <!-- badges: end -->
 
-The goal of *midfieldr* is to provide tools for working with MIDFIELD
+------------------------------------------------------------------------
+
+The goal of midfieldr is to provide tools for working with MIDFIELD
 data, a resource of longitudinal, de-identified, individual student unit
-records from multiple US institutions.
+records.
 
-## Background
+## Overview
 
-[MIDFIELD](https://engineering.purdue.edu/MIDFIELD) (as of May 2021)
-contains individual student unit record (SUR) data for 1.7M unique
-students at 33 US institutions. MIDFIELD is large enough to permit
-grouping and summarizing by multiple characteristics simultaneously,
-enabling researchers to examine student characteristics (race/ethnicity,
-sex, prior achievement) and curricular pathways (including coursework
-and major) by institution and over time.
+[**MIDFIELD**](https://engineering.purdue.edu/MIDFIELD) contains
+individual Student Unit Record (SUR) data for 1.7M students at 33 US
+institutions (as of June 2021). MIDFIELD is large enough to permit
+grouping and summarizing by multiple characteristics, enabling
+researchers to examine student characteristics (race/ethnicity, sex,
+prior achievement) and curricular pathways (including coursework and
+major) by institution and over time.
 
-A proportionate stratified sample of these data (for practice) is
-available in
-[*midfielddata*](https://midfieldr.github.io/midfielddata/), an R data
-package with longitudinal SURs for nearly 98,000 undergraduates at 12
-institutions from 1987–2016 organized in four data tables:
+**midfieldr** is an R package that provides tools for working with
+MIDFIELD SURs. The tools in midfieldr work equally well with the
+research data in MIDFIELD and the practice data in midfielddata.
 
--   [`student`](https://midfieldr.github.io/midfielddata/reference/student.html)
-    97,640 rows and 13 columns
--   [`course`](https://midfieldr.github.io/midfielddata/reference/course.html)
-    3.5M rows and 12 columns  
--   [`term`](https://midfieldr.github.io/midfielddata/reference/term.html)
-    728,000 rows and 13 columns  
--   [`degree`](https://midfieldr.github.io/midfielddata/reference/degree.html)
-    47,500 rows and 5 columns
+[**midfielddata**](https://midfieldr.github.io/midfielddata/) is an R
+package that provides practice data (a proportionate stratified sample
+of MIDFIELD) with longitudinal SURs for nearly 98,000 undergraduates at
+12 institutions from 1987–2016 organized in four data tables:
 
-The tools in *midfieldr* work equally well with the practice data in
-*midfielddata* and the research data in MIDFIELD.
+| Data set                                                                     | Each row is                           |  N rows | N columns |
+|:-----------------------------------------------------------------------------|:--------------------------------------|--------:|----------:|
+| [`student`](https://midfieldr.github.io/midfielddata/reference/student.html) | a student upon being admitted         |  97,640 |        13 |
+| [`course`](https://midfieldr.github.io/midfielddata/reference/course.html)   | a student in a course                 |    3.5M |        12 |
+| [`term`](https://midfieldr.github.io/midfielddata/reference/term.html)       | a student in a term                   | 728,000 |        13 |
+| [`degree`](https://midfieldr.github.io/midfielddata/reference/degree.html)   | a student who completes their program |  48,000 |         5 |
 
 ## Usage
 
 In this brief usage example, we compare counts of engineering students
 by race/ethnicity, sex, and graduation status. Data manipulation is
-performed using the *data.table* package.
+performed using the data.table package.
 
 ``` r
 # packages used 
@@ -103,16 +103,16 @@ result[order(grad_status, sex, race)]
 ## Requirements
 
 -   [R](https://www.r-project.org/) (>= 3.5.0)
--   [*midfielddata*](https://midfieldr.github.io/midfielddata/) for
+-   [midfielddata](https://midfieldr.github.io/midfielddata/) for
     practice working with student unit records.
--   [*data.table*](https://rdatatable.gitlab.io/data.table/) recommended
+-   [data.table](https://rdatatable.gitlab.io/data.table/) recommended
     for data manipulation, but not required.  
--   [*ggplot2*](https://ggplot2.tidyverse.org/) recommended for data
+-   [ggplot2](https://ggplot2.tidyverse.org/) recommended for data
     graphics, but not required.
 
 ## Installation
 
-To install the development version of *midfieldr* from
+To install the development version of midfieldr from
 [GitHub](https://github.com/), type in the Console:
 
 ``` r
@@ -156,10 +156,10 @@ help("midfielddata-package")
 
 ## Contributing
 
--   To contribute to *midfieldr*, clone this repo locally and commit
-    your code on a separate branch. Please include runtime argument
-    checks in functions using *checkmate* and write unit tests for your
-    code using *tinytest*.
+-   To contribute to midfieldr, clone this repo locally and commit your
+    code on a separate branch. Please include runtime argument checks in
+    functions using *checkmate* and write unit tests for your code using
+    *tinytest*.
 -   Please use the GitHub
     [Issues](https://github.com/MIDFIELDR/midfieldr/issues) page to
     report bugs or provide feedback.
@@ -168,8 +168,8 @@ help("midfielddata-package")
 
 ## Related work
 
--   [*midfielddata*](https://midfieldr.github.io/midfielddata/) Sample
-    of MIDFIELD student unit record data.
+-   [midfielddata](https://midfieldr.github.io/midfielddata/) Sample of
+    MIDFIELD student unit record data.
 -   [MIDFIELD](https://engineering.purdue.edu/MIDFIELD) A partnership of
     US institutions.
 -   [MIDFIELD
