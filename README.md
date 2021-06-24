@@ -181,6 +181,6 @@ Foundation (EEC 1545667).
 
 ## License
 
-*midfieldr* is licensed under GPL (>= 2)  
+midfieldr is licensed under GPL (>= 2)  
 © 2018 Richard Layton, Russell Long, Matthew Ohland, Susan Lord, and
 Marisa Orr
