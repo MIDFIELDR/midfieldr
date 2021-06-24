@@ -1,8 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-<img src="man/figures/logo-smaller.png" align="right"/>
-
 # midfieldr
 
 Tools for studying MIDFIELD student unit record data in R
