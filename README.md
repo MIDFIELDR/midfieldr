@@ -3,7 +3,7 @@
 
 # midfieldr
 
-Tools for studying MIDFIELD student unit record data in R
+Tools for Studying MIDFIELD Student Unit Record Data in R
 
 <!-- badges: start -->
 
