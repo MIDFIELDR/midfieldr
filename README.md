@@ -131,7 +131,7 @@ library("midfieldr")
 help("midfieldr-package")
 ```
 
-![](man/figures/README-midfieldr-help-page-1.png)
+<img src="man/figures/README-midfieldr-help-page-1.png" align="center" style="width: 75vw; min-width: 330px;"/><br>
 
 Because of its size, installing the practice data takes time; please be
 patient and wait for the prompt “\>” to reappear. In the Console, run:
@@ -152,7 +152,7 @@ library("midfielddata")
 help("midfielddata-package")
 ```
 
-![](man/figures/README-midfielddata-help-page-1.png)
+<img src="man/figures/README-midfielddata-help-page-1.png" align="center" style="width: 75vw; min-width: 330px;"/><br>
 
 ## Contributing
 
