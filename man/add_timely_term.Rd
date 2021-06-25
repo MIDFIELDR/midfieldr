@@ -45,8 +45,8 @@ A \code{data.table}  with the following properties:
 Add a column of academic term values to a data frame indicating the latest
 term by which a student can graduate and have it considered a timely
 completion. Student ID is the join-by variable; terms are encoded as
-character strings YYYYT. Based on information in the MIDFIELD \code{term}
-data table or equivalent.
+character strings YYYYT. Obtains the information from the
+MIDFIELD \code{term} data table or equivalent.
 }
 \details{
 The basic heuristic starts with \code{span} number of years for each student

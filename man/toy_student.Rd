@@ -8,8 +8,8 @@
 \code{data.table} with 100 rows and 6 columns keyed by
 student ID.
 \describe{
- \item{mcid}{Character, anonymized student identifier}
- \item{institution}{Character, anonymized institution name, e.g.,
+ \item{mcid}{Character, de-identified student ID}
+ \item{institution}{Character, de-identified institution name, e.g.,
       Institution A, Institution B, etc.}
  \item{transfer}{Character, stating whether the student is a First-Time in
       College students or a First-Time Transfer student}

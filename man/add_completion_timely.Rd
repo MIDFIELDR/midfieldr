@@ -29,8 +29,8 @@ A \code{data.table} with the following properties:
 }
 \description{
 Add a column of logical values (TRUE/FALSE) to a data frame indicating
-whether a student completes their program in a timely manner. Based on
-information in the MIDFIELD \code{degree} data table or equivalent.
+whether a student completes their program in a timely manner. Obtains the
+information from the MIDFIELD \code{degree} data table or equivalent.
 }
 \details{
 Program completion is typically considered timely if it occurs within a

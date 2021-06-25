@@ -8,7 +8,7 @@
 \code{data.table} with 64 rows and 5 columns keyed by
 student ID.
 \describe{
- \item{mcid}{Character, anonymized student identifier}
+ \item{mcid}{Character, anonymized student ID}
  \item{institution}{Character, anonymized institution name, e.g.,
       Institution A, Institution B, etc.}
  \item{term}{character, academic year and term, format YYYYT, in which

@@ -8,8 +8,8 @@
 \code{data.table} with 169 rows and 6 columns keyed by
 student ID.
 \describe{
- \item{mcid}{Character, anonymized student identifier}
- \item{institution}{Character, anonymized institution name, e.g.,
+ \item{mcid}{Character, de-identified student ID}
+ \item{institution}{Character, de-identified institution name, e.g.,
       Institution A, Institution B, etc.}
  \item{term}{character, academic year and term, format YYYYT}
  \item{cip6}{character, 6-digit CIP code of program in which a student

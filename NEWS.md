@@ -1,5 +1,5 @@
 
-## midfieldr 1.0.0.9017 / 2021-06
+## midfieldr 1.0.0.9018 / 2021-06
 
 Significant changes from earlier versions, no backwards compatibility, prompting version number change to 1.0.0
 
@@ -18,6 +18,7 @@ Significant changes from earlier versions, no backwards compatibility, prompting
 - Switch to package tinytest for unit testing 
 - Overhaul midfieldr functions completely 
 - Update README and midfielddata README
+- Revise vignettes to use new functions 
 
 
 

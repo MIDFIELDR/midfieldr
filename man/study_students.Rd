@@ -8,7 +8,7 @@
 \code{data.table} with 8219 rows and 2 columns keyed by
 student ID. The variables are:
 \describe{
-  \item{mcid}{Character, anonymized student identifier}
+  \item{mcid}{Character, de-identified student ID}
   \item{cip6}{Character 6-digit code representing "specific instructional
        programs" (US National Center for Education Statistics)}
 }
