@@ -301,12 +301,12 @@ Now that our working data frame has a `timely_term` column, we use `add_completi
 This function has two required arguments and one optional `details` argument. The input `dframe` must have a `timely_term` column.  The details, in this case, add two extra columns to show whether a program was completed, and if so, in what term. 
 
 ```{r}
-# Add the completion timely column  
+# Add the completion timely column
 DT <- add_completion_timely(
-  dframe = DT, 
-  midfield_degree = degree, 
+  dframe = DT,
+  midfield_degree = degree,
   details = TRUE
-  )
+)
 
 # Examine the result
 DT
@@ -320,12 +320,12 @@ Interpreting the result:
 With details FALSE, only the `completion_timely` column is added.
 
 ```{r}
-# With details FALSE 
+# With details FALSE
 DT <- add_completion_timely(
-  dframe = DT, 
-  midfield_degree = degree, 
+  dframe = DT,
+  midfield_degree = degree,
   details = FALSE
-  )
+)
 
 # Examine the result
 DT
@@ -342,15 +342,15 @@ Like the other midfieldr `add_*` functions, existing columns are deleted or over
 If we start with the result from above and add the details, 
 
 ```{r}
-# Assign a new memory location 
+# Assign a new memory location
 x <- copy(DT)
 
 # Add the details
 x <- add_completion_timely(
-  dframe = x, 
-  midfield_degree = degree, 
+  dframe = x,
+  midfield_degree = degree,
   details = TRUE
-  )
+)
 ```
 
 Then order the rows and examine the last 20 rows only, 
@@ -396,28 +396,32 @@ In a typical persistence metric, the untimely graduates and the non-completers a
 - Non-completer 
 
 ```{r}
-# Need the completion column for this application 
+# Need the completion column for this application
 DT <- add_completion_timely(
-  dframe = DT, 
-  midfield_degree = degree, 
+  dframe = DT,
+  midfield_degree = degree,
   details = TRUE
-  )
+)
 ```
    
 A timely graduate completed their program no later than their timely completion term. 
 
 ```{r}
 # Timely grads
-DT[completion == TRUE & completion_timely == TRUE, 
-   status := "Timely grad"]
+DT[
+  completion == TRUE & completion_timely == TRUE,
+  status := "Timely grad"
+]
 ```
 
 A untimely graduate completed their program after their timely completion term. 
 
 ```{r}
 # Untimely grads
-DT[completion == TRUE & completion_timely == FALSE, 
-   status := "Untimely grad"]
+DT[
+  completion == TRUE & completion_timely == FALSE,
+  status := "Untimely grad"
+]
 ```
 
 A non-completer did not complete their program. 
@@ -462,7 +466,7 @@ DT
 Group and summarize, 
 
 ```{r}
-# Count students by program and completion status 
+# Count students by program and completion status
 DT <- DT[, .(N_group = .N), by = .(program, status)]
 DT
 ```
@@ -470,7 +474,7 @@ DT
 In anticipation of the graph, we condition these multiway data with the categorical columns converted to factors with levels ordered by the median values of `N_group`. 
 
 ```{r}
-# Create factors with ordered levels 
+# Create factors with ordered levels
 mw <- condition_multiway(DT)
 mw
 ```
@@ -482,15 +486,16 @@ asp_ratio <- 1.2 * asp_ratio_mw(mw, categories = c("program", "status"))
 Graph the numbers of students by completion status and program. 
 
 ```{r fig2, fig.asp = asp_ratio[1]}
-# Graph the counts 
+# Graph the counts
 ggplot(mw, aes(x = N_group, y = status)) +
   geom_point() +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   scale_x_continuous(limits = c(0, 2000)) +
-  labs(x = "Number of students", 
-       y = "", 
-       title = "Practice data (not for research)",
-       caption = "Source: midfielddata"
+  labs(
+    x = "Number of students",
+    y = "",
+    title = "Practice data (not for research)",
+    caption = "Source: midfielddata"
   )
 ```
 <br>
@@ -512,10 +517,11 @@ ggplot(mw, aes(x = pct_of_program, y = status)) +
   geom_point() +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   scale_x_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)) +
-  labs(x = "Percentage of N students in the major", 
-       y = "", 
-       title = "Practice data (not for research)",
-       caption = "Source: midfielddata"
+  labs(
+    x = "Percentage of N students in the major",
+    y = "",
+    title = "Practice data (not for research)",
+    caption = "Source: midfielddata"
   )
 ```
 <br>
@@ -543,20 +549,24 @@ library("midfielddata")
 library("data.table")
 library("ggplot2")
 
-# Timely completion 
+# Timely completion
 data(student, term, degree)
 DT <- add_timely_term(study_students, midfield_term = term)
 DT <- add_completion_timely(
-  dframe = DT, 
-  midfield_degree = degree, 
+  dframe = DT,
+  midfield_degree = degree,
   details = TRUE
-  )
+)
 
 # Compare programs by completion status
-DT[completion == TRUE & completion_timely == TRUE, 
-   status := "Timely grad"]
-DT[completion == TRUE & completion_timely == FALSE, 
-   status := "Untimely grad"]
+DT[
+  completion == TRUE & completion_timely == TRUE,
+  status := "Timely grad"
+]
+DT[
+  completion == TRUE & completion_timely == FALSE,
+  status := "Untimely grad"
+]
 DT[completion == FALSE, status := "Non-completer"]
 DT <- merge(DT, study_programs, by = "cip6", all.x = TRUE)
 DT <- DT[, .(N_group = .N), by = .(program, status)]
@@ -567,10 +577,11 @@ ggplot(mw, aes(x = N_group, y = status)) +
   geom_point() +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   scale_x_continuous(limits = c(0, 2000)) +
-  labs(x = "Number of students", 
-       y = "", 
-       title = "Practice data (not for research)",
-       caption = "Source: midfielddata"
+  labs(
+    x = "Number of students",
+    y = "",
+    title = "Practice data (not for research)",
+    caption = "Source: midfielddata"
   )
 
 # Graph percentages
@@ -580,10 +591,11 @@ ggplot(mw, aes(x = pct_of_program, y = status)) +
   geom_point() +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   scale_x_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)) +
-  labs(x = "Percentage of N students in the major", 
-       y = "", 
-       title = "Practice data (not for research)",
-       caption = "Source: midfielddata"
+  labs(
+    x = "Percentage of N students in the major",
+    y = "",
+    title = "Practice data (not for research)",
+    caption = "Source: midfielddata"
   )
 ```
 
