@@ -17,21 +17,22 @@ program, race/ethnicity, and sex.
 study_stickiness
 }
 \description{
-Stickiness metric results for Civil, Electrical,
-Industrial, and Mechanical Engineering programs from midfielddata. Results
-are grouped by program, race/ethnicity, and sex. Used in the case study
-developed in the vignettes.
+Stickiness metric results for Civil, Electrical, Industrial, and
+Mechanical Engineering programs from midfielddata. Results are grouped
+by program, race/ethnicity, and sex. Used in the case study developed in
+the vignettes.
 }
 \details{
 Stickiness of a program is the ratio of the number of students graduating
 from a program to the number of students ever enrolled in the program.
-
 With a quantitative response value for each combination of levels of two
-categorical variables, these are multiway data. However, some responses
-are NA where observations didn't exist or were removed because of small
-population size.
+categorical variables, these are multiway data, though not every
 
-Data have also been subset to remove ambiguous levels of race/ethnicity.
+Data are subset to satisfy the data sufficiency criterion and some
+graduates are reclassified as non-completers to satisfy the timely
+completion criterion. Data are also subset to remove ambiguous levels
+of race/ethnicity and to remove groupings small enough to risk
+identification.
 }
 \seealso{
 Other case-study-data: 

@@ -8,10 +8,12 @@ output: rmarkdown::html_vignette
 csl: ../inst/ieee-with-url.csl
 vignette: >
   %\VignetteIndexEntry{Stickiness}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 nocite: | 
 resource_files: |
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include = FALSE}
@@ -45,6 +47,17 @@ kable2html <- function(x, font_size = NULL, caption = NULL) {
   kable_in <- knitr::kable(x, format = "html", caption = caption)
   kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
 }
+asp_ratio_mw <- function(data, categories) {
+  cat1 <- categories[1] # panels
+  cat2 <- categories[2] # rows
+  nlevel1 <- nlevels(data[, get(cat1)])
+  nlevel2 <- nlevels(data[, get(cat2)])
+  r <- nlevel1 * nlevel2
+  q <- 32
+  asp_ratio1 <- (r + 2 * nlevel1) / q
+  asp_ratio2 <- (r + 2 * nlevel2) / q
+  ratios <- c(asp_ratio1, asp_ratio2)
+}
 ```
 
 ## Introduction
@@ -57,19 +70,22 @@ Every student counted in a program's stickiness metric was enrolled in that prog
 
 ### Outline
 
-- Start with 
-- do
-- do
-- do
-- Result is
+- Gather eligible students (start with `study_programs`)
+- Group, summarize, and join 
+- Condition the results
+- Compute stickiness (conclude with `study_stickiness`)
+- Graph results
 
 ### This vignette uses
 
 midfieldr functions 
  
-- `f()` 
-- `f()` 
-- `f()` 
+- `filter_match()` 
+- `add_timely_term()` 
+- `add_data_sufficiency()` 
+- `add_race_sex()` 
+- `add_completion_timely()` 
+- `condition_multiway()` 
 
 packages
 
@@ -98,7 +114,184 @@ data(student, term, degree)
 
 
 
-## Under construction
+
+
+
+
+## Gather eligible students
+
+We will start with the case study program codes and names saved in the data set `study_programs`. You may review its help page by running
+
+``` r
+? study_programs
+```
+
+```{r}
+# Case study programs codes and names 
+study_programs
+```
+
+
+```{r}
+# Get all students in case programs 
+DT <- filter_match(term,
+  match_to = study_programs,
+  by_col = "cip6",
+  select = c("mcid", "institution", "cip6")
+)
+
+# Retain unique observations
+DT <- unique(DT)
+
+# Limit the study to degree-seeking students 
+DT <- filter_match(DT,
+  match_to = student,
+  by_col = "mcid"
+)
+DT
+
+# Apply the data sufficiency criterion 
+DT <- add_timely_term(DT, midfield_term = term)
+DT <- add_data_sufficiency(DT, midfield_term = term)
+DT <- DT[data_sufficiency == TRUE]
+DT
+```
+
+
+
+```{r}
+# Add the grouping variables: program, race, and sex
+DT <- merge(DT, study_programs, by = "cip6", all.x = TRUE)
+DT <- add_race_sex(DT, midfield_student = student)
+DT
+```
+
+
+## Group, summarize, and join
+
+Ever enrolled
+
+```{r}
+# Count ever enrolled
+ever_enrolled <- DT[, .(ever = .N), by = .(program, race, sex)]
+ever_enrolled
+```
+
+Graduates
+
+```{r}
+DT <- add_completion_timely(DT, midfield_degree = degree)
+
+graduates <- DT[completion_timely == TRUE]
+graduates
+
+
+
+graduates <- graduates[, .(grad = .N), by = .(program, race, sex)]
+graduates
+
+```
+
+Join 
+
+```{r}
+DT <- merge(ever_enrolled, 
+            graduates, 
+            by = c("program", "race", "sex"),
+            all = TRUE)
+DT
+```
+
+
+
+## Condition the results
+
+```{r}
+# Condition
+DT[is.na(ever)]
+DT[is.na(grad)]
+
+DT <- DT[is.na(grad), grad := 0]
+
+sort(unique(DT$ever))
+sort(unique(DT$grad))
+sort(unique(DT$race))
+sort(unique(DT$sex))
+
+
+
+DT <- DT[ever > 10]
+DT <- DT[race %chin% c("Asian", "Black", "Hispanic/Latinx", "Native American", "White" )]
+
+
+
+sort(unique(DT$ever))
+sort(unique(DT$grad))
+sort(unique(DT$race))
+sort(unique(DT$sex))
+```
+
+## Compute stickiness
+
+Expect 40 rows
+
+```{r}
+# stickiness
+options(datatable.print.topn = 40)
+DT[, stick := round(100 * grad / ever, 1)]
+DT <- DT[order(program, sex, race)]
+
+
+
+DT[, race_sex := paste(race, sex)]
+DT <- DT[, .(program, race_sex, ever, grad, stick)]
+DT
+```
+
+Save result for graph
+
+```{r}
+case_stickiness <- DT[, .(program, race_sex, stick)]
+case_stickiness
+```
+
+Same as built-in data `study_stickiness`. 
+
+```{r}
+all.equal(case_stickiness, study_stickiness)
+```
+
+
+
+```{r}
+# data preparation
+DT <- condition_multiway(case_stickiness)
+DT_med <- condition_multiway(DT, details = TRUE)
+```
+
+```{r echo = FALSE}
+asp_ratio <- asp_ratio_mw(DT_med, 
+                                categories = c("program", "race_sex"))
+```
+
+
+## Graph
+
+```{r fig1, fig.asp = asp_ratio[1]}
+# creating a multiway graph
+ggplot(data = DT_med, aes(x = stick, y = race_sex)) +
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_vline(aes(xintercept = med_program),
+    linetype = 2
+  ) +
+  geom_point(na.rm = TRUE) +
+  labs(
+    x = "Stickiness",
+    y = "",
+    title = "Practice data (not for research)",
+    caption = "Source: midfielddata"
+  )
+```
 
 
 ## References
