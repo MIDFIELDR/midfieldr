@@ -3,8 +3,9 @@
 #'
 #' Filter first-year-engineering (FYE) students and prepare variables for
 #' predicting unknown starting majors. The prepared variables are institution,
-#' race, and sex (predictors) and cip6 (with missing values to be imputed). The
-#' function returns a data frame formatted for multiple imputation using
+#' race, and sex (predictors) and cip6 (with missing values to be imputed).
+#' Obtains the requisite information from the MIDFIELD \code{term} data table
+#' or equivalent. Returns a data frame formatted for multiple imputation using
 #' the mice package.
 #'
 #' Some US institutions have first year engineering (FYE) programs, typically

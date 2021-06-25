@@ -1,10 +1,9 @@
 
-#' Add one column each for student race/ethnicity and sex
+#' Add columns for student race/ethnicity and sex
 #'
-#' Add two columns of character values of students' self-reported
-#' race/ethnicity and sex using student ID as the join-by variable.
-#' Based on information in the MIDFIELD \code{student} data table or
-#' equivalent.
+#' Add columns for students' self-reported race/ethnicity and sex using
+#' student ID as the join-by variable. Obtains the information from the
+#' MIDFIELD \code{student} data table or equivalent.
 #'
 #' Existing columns with the same names as the added columns are overwritten.
 #'

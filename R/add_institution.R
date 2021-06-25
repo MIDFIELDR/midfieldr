@@ -2,9 +2,9 @@
 #' Add a column of institution names
 #'
 #' Add a column of character values with institution names (or labels) using
-#' student ID as the join-by variable. In the MIDFIELD practice data, the
-#' labels are anonymized. Institution names pulled from the MIDFIELD
-#' \code{term} data table or equivalent.
+#' student ID as the join-by variable. Obtains the information from the
+#' MIDFIELD \code{term} data table or equivalent. In the MIDFIELD practice
+#' data, the labels are de-identified.
 #'
 #' If a student is associated with more than one institution, the institution
 #' at which they completed the most terms is returned. An existing column with

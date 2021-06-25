@@ -3,8 +3,8 @@
 #' Add a column to evaluate program completion
 #'
 #' Add a column of logical values (TRUE/FALSE) to a data frame indicating
-#' whether a student completes their program in a timely manner. Based on
-#' information in the MIDFIELD \code{degree} data table or equivalent.
+#' whether a student completes their program in a timely manner. Obtains the
+#' information from the MIDFIELD \code{degree} data table or equivalent.
 #'
 #' Program completion is typically considered timely if it occurs within a
 #' specific span of years after admission. In a persistence metric that depends
