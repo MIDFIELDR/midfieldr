@@ -1,5 +1,5 @@
 ---
-title: "Stickiness"
+title: "Longitudinal stickiness"
 author: "Richard Layton"
 date: "`r Sys.Date()`"
 link-citations: yes
@@ -7,7 +7,7 @@ bibliography: ../inst/REFERENCES.bib
 output: rmarkdown::html_vignette
 csl: ../inst/ieee-with-url.csl
 vignette: >
-  %\VignetteIndexEntry{Stickiness}
+  %\VignetteIndexEntry{Longitudinal stickiness}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 nocite: | 
@@ -62,19 +62,16 @@ asp_ratio_mw <- function(data, categories) {
 
 ## Introduction
 
-Longitudinal "stickiness" is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program [@Ohland+Orr+others:2012]. 
+Longitudinal "stickiness" is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program after accounting for the data sufficiency and timely completion  criteria  [@Ohland+Orr+others:2012]. 
 
-The stickiness metric accounts for all students in a program. Unlike the graduation rate metric, stickiness includes students who begin college part-time, who enroll mid-year, and who switch majors or transfer between institutions. 
-
-Every student counted in a program's stickiness metric was enrolled in that program for at least one term. The program succeeded in attracting these students---stickiness tells us how well the program succeeded in retaining them.
+The stickiness metric accounts for all students in a program, including  students who begin college part-time, enroll mid-year, switch majors, or transfer. Every student counted in a program's stickiness metric was enrolled in that program for at least one term. The program succeeded in attracting these students---stickiness tells us how well the program succeeded in retaining them.
 
 ### Outline
 
 - Gather eligible students (start with `study_programs`)
-- Group, summarize, and join 
-- Condition the results
-- Compute stickiness (conclude with `study_stickiness`)
-- Graph results
+- Group, summarize, and join enrollees and graduates  
+- Condition the findings
+- Compute and graph stickiness (conclude with `study_stickiness`)
 
 ### This vignette uses
 
@@ -93,7 +90,7 @@ packages
 # packages used
 library("midfieldr")
 library("midfielddata")
-library("data.table")
+suppressPackageStartupMessages(library("data.table"))
 library("ggplot2")
 
 # optional code to control data.table printing
@@ -120,17 +117,20 @@ data(student, term, degree)
 
 ## Gather eligible students
 
-We will start with the case study program codes and names saved in the data set `study_programs`. You may review its help page by running
+We start with the case study program codes and names saved in the data set `study_programs`, with which you are familiar from previous vignettes. You may review its help page by running
 
 ``` r
 ? study_programs
 ```
+
+Review the contents of the saved data:
 
 ```{r}
 # Case study programs codes and names 
 study_programs
 ```
 
+Use `filter_match()` to subset rows of `term` by values of `cip6` that match values of `cip6` in `study_programs`. 
 
 ```{r}
 # Get all students in case programs 
@@ -275,7 +275,7 @@ asp_ratio <- asp_ratio_mw(DT_med,
 ```
 
 
-## Graph
+## Graph the results
 
 ```{r fig1, fig.asp = asp_ratio[1]}
 # creating a multiway graph

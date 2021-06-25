@@ -103,6 +103,17 @@ result[order(grad_status, sex, race)]
 #> 28:    non-grad   Male           White  4423
 ```
 
+## Documentation
+
+-   [Articles.](https://midfieldr.github.io/midfieldr/articles/) For a
+    listing of all vignettes.
+-   [Reference
+    (midfieldr).](https://midfieldr.github.io/midfieldr/reference/) For
+    a listing of all midfieldr functions and prepared data.
+-   [Reference
+    (midfielddata).](https://midfieldr.github.io/midfielddata/reference/)
+    For a listing of the four practice MIDFIELD data tables.
+
 ## Requirements
 
 -   [R](https://www.r-project.org/) (>= 3.5.0)
@@ -113,10 +124,11 @@ result[order(grad_status, sex, race)]
 -   [ggplot2](https://ggplot2.tidyverse.org/) recommended for data
     graphics, but not required.
 
-## Installation
+## Install midfieldr
 
-To install the development version of midfieldr from
-[GitHub](https://github.com/), type in the Console:
+Not yet available from [CRAN](https://cran.r-project.org/). To install
+the development version of midfieldr from [GitHub](https://github.com/),
+type in the Console:
 
 ``` r
 # install remotes
@@ -135,6 +147,8 @@ help("midfieldr-package")
 ```
 
 <img src="man/figures/README-midfieldr-help-page-1.png" width="75%" />
+
+## Install midfielddata
 
 Because of its size, installing the practice data takes time; please be
 patient and wait for the prompt “\>” to reappear. In the Console, run:
@@ -186,6 +200,6 @@ Foundation (EEC 1545667).
 
 ## License
 
-midfieldr is licensed under GPL (>= 2)  
+midfieldr is licensed under GPL (>= 2.0)  
 © 2018 Richard Layton, Russell Long, Matthew Ohland, Susan Lord, and
 Marisa Orr
