@@ -8,15 +8,21 @@
 \code{data.table} with 4616 rows and 6 columns keyed by
 student ID.
 \describe{
- \item{mcid}{Character, anonymized student ID}
+
+ \item{mcid}{Character, anonymized student ID.}
+
  \item{institution}{Character, de-identified institution name, e.g.,
       Institution A, Institution B, etc.}
- \item{term}{character, academic year and term, format YYYYT}
- \item{abbrev}{character, course alpha identifier, e.g. ENGR, MATH,
- ENGL, composite key (see id)}
- \item{number}{character, course numeric identifier, e.g. 101, 3429,
- composite key (see id)}
- \item{grade}{character, course grade, e.g., A+, A, A-, B+, I, NG, etc.}
+
+ \item{term}{Character, academic year and term, format YYYYT.}
+
+ \item{abbrev}{Character, course alpha identifier, e.g. ENGR, MATH,
+ ENGL.}
+
+ \item{number}{Character, course numeric identifier, e.g. 101, 3429.}
+
+ \item{grade}{Character, course grade, e.g., A+, A, A-, B+, I, NG, etc.}
+
 }
 }
 \usage{

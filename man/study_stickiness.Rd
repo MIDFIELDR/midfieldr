@@ -5,40 +5,59 @@
 \alias{study_stickiness}
 \title{Case-study stickiness results}
 \format{
-\code{data.table} with 31 rows and 3 columns keyed by
+\code{data.table} with 38 rows and 6 columns keyed by
 program, race/ethnicity, and sex.
 \describe{
- \item{program}{Character, instructional programs selected for study}
- \item{race_sex}{Character, student race/ethnicity and sex}
- \item{stick}{Numerical, program stickiness, a persistence metric}
+
+  \item{program}{Character, program name assigned for grouping and
+  summarizing and for display in graphs and tables.}
+
+ \item{race}{Character, race/ethnicity as self-reported by the student,
+ e.g., Asian, Black, Hispanic/LatinX, etc.}
+
+ \item{sex}{Character, sex as self-reported by the student, values are
+ Female, Male, and Unknown.}
+
+ \item{ever}{Numerical, number of students ever enrolled in the program,
+ after subsetting for data sufficiency and small populations.}
+
+ \item{grad}{Numerical, number of students completing a program after
+ subsetting for data sufficiency and accounting for timely completion.}
+
+ \item{stick}{Numerical, program stickiness, the ratio of the number of
+ students completing a program to the number of students ever enrolled
+ in the program.}
+
 }
 }
 \usage{
 study_stickiness
 }
 \description{
-Stickiness metric results for Civil, Electrical, Industrial, and
-Mechanical Engineering programs from midfielddata. Results are grouped
-by program, race/ethnicity, and sex. Used in the case study developed in
-the vignettes.
+Longitudinal stickiness results for Civil, Electrical, Industrial, and
+Mechanical Engineering programs from midfielddata. Results are keyed by
+program, race/ethnicity, and sex. Used in the case study developed in the
+vignettes.
 }
 \details{
-Stickiness of a program is the ratio of the number of students graduating
-from a program to the number of students ever enrolled in the program.
-With a quantitative response value for each combination of levels of two
-categorical variables, these are multiway data, though not every
+Longitudinal stickiness is the ratio of the number of students graduating
+from a program to the number of students ever enrolled in the program over
+the time span of available data.
 
 Data are subset to satisfy the data sufficiency criterion and some
 graduates are reclassified as non-completers to satisfy the timely
-completion criterion. Data are also subset to remove ambiguous levels
-of race/ethnicity and to remove groupings small enough to risk
+completion criterion. Data are also subset to remove groups with 10 or
+fewer members in the \code{ever} column to reduce the risk of
 identification.
 }
 \seealso{
+\code{\link{add_data_sufficiency}},
+\code{\link{add_completion_timely}}
+
 Other case-study-data: 
 \code{\link{study_grad_rate}},
-\code{\link{study_programs}},
-\code{\link{study_students}}
+\code{\link{study_program}},
+\code{\link{study_student}}
 }
 \concept{case-study-data}
 \keyword{datasets}

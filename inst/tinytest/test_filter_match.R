@@ -15,7 +15,7 @@ test_filter_match <- function() {
 
     # create answer
     # cat(wrapr::draw_frame(
-    #     filter_match(toy_student, study_students, "mcid")
+    #     filter_match(toy_student, study_student, "mcid")
     #     ))
 
     # Gives correct answer
@@ -34,11 +34,11 @@ test_filter_match <- function() {
     DT2 <- DT1[, .(mcid, institution)]
     expect_equal(DT1,
                  filter_match(toy_student,
-                              study_students,
+                              study_student,
                               "mcid"))
     expect_equal(DT2,
                  filter_match(toy_student,
-                              study_students,
+                              study_student,
                               "mcid",
                               select = c("mcid", "institution")))
     expect_equal(nrow(toy_degree),
@@ -46,16 +46,16 @@ test_filter_match <- function() {
 
     # arguments after ... must be named
     expect_error(filter_match(toy_student,
-                              study_students,
+                              study_student,
                               "mcid",
                               c("mcid", "institution"))) # select not named
 
     # arguments must be data frames
     expect_error(filter_match(toy_student$mcid,
-                              study_students,
+                              study_student,
                               "mcid"))
     expect_error(filter_match(toy_student,
-                              study_students$mcid,
+                              study_student$mcid,
                               "mcid"))
 
 

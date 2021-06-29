@@ -1,0 +1,329 @@
+---
+title: "Tabulating data"
+author: "Richard Layton"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
+output: rmarkdown::html_vignette
+csl: ../inst/ieee-with-url.csl
+vignette: >
+  %\VignetteIndexEntry{Tabulating data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+nocite: | 
+resource_files: |
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(fig.path = here::here(
+  "man/figures",
+  "art-060-tabulating-data-"
+))
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+kable2html <- function(x, font_size = NULL, caption = NULL) {
+  font_size <- ifelse(is.null(font_size), 11, font_size)
+  kable_in <- knitr::kable(x, format = "html", caption = caption)
+  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
+}
+asp_ratio_mw <- function(data, categories) {
+  cat1 <- categories[1] # panels
+  cat2 <- categories[2] # rows
+  nlevel1 <- nlevels(data[, get(cat1)])
+  nlevel2 <- nlevels(data[, get(cat2)])
+  r <- nlevel1 * nlevel2
+  q <- 32
+  asp_ratio1 <- (r + 2 * nlevel1) / q
+  asp_ratio2 <- (r + 2 * nlevel2) / q
+  ratios <- c(asp_ratio1, asp_ratio2)
+}
+```
+
+## Introduction 
+
+ 
+### Outline
+
+- Practice tabulating multiway data  
+
+### This vignette uses
+
+midfieldr functions 
+ 
+- `condition_multiway()` 
+
+packages
+
+```{r}
+# packages used
+library("midfieldr")
+library("midfielddata")
+
+library("ggplot2")
+library("janitor")
+library("data.table")
+```
+
+We can control how a data.table is printed to the screen with the following options.  
+
+```{r}
+# optional code to control data.table printing
+options(
+  datatable.print.nrows = 10,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
+```
+
+```{r echo = FALSE}
+DT <- wrapr::build_frame(
+   "program"     , "race_sex"              , "stick", "med_program", "med_race_sex" |
+     "Civil"     , "Asian Female"          , 70.6   , 58.9         , 70.85          |
+     "Civil"     , "Black Female"          , 51.9   , 58.9         , 56.95          |
+     "Civil"     , "White Female"          , 70.5   , 58.9         , 65.1           |
+     "Civil"     , "Asian Male"            , 64.9   , 58.9         , 63.9           |
+     "Civil"     , "Black Male"            , 43.9   , 58.9         , 45.9           |
+     "Civil"     , "Hispanic/Latinx Male"  , 58.9   , 58.9         , 60.35          |
+     "Civil"     , "International Male"    , 42.9   , 58.9         , 52.95          |
+     "Civil"     , "Other/Unknown Male"    , 31.2   , 58.9         , 50             |
+     "Civil"     , "White Male"            , 68.3   , 58.9         , 65.1           |
+     "Electrical", "Asian Female"          , 71.1   , 62.45        , 70.85          |
+     "Electrical", "Black Female"          , 61.7   , 62.45        , 56.95          |
+     "Electrical", "Hispanic/Latinx Female", 71.4   , 62.45        , 72.05          |
+     "Electrical", "White Female"          , 63.2   , 62.45        , 65.1           |
+     "Electrical", "Asian Male"            , 64.5   , 62.45        , 63.9           |
+     "Electrical", "Black Male"            , 45.1   , 62.45        , 45.9           |
+     "Electrical", "Hispanic/Latinx Male"  , 55.2   , 62.45        , 60.35          |
+     "Electrical", "International Male"    , 59.2   , 62.45        , 52.95          |
+     "Electrical", "Other/Unknown Male"    , 50     , 62.45        , 50             |
+     "Electrical", "White Male"            , 63.7   , 62.45        , 65.1           |
+     "Industrial", "Asian Female"          , 50     , 59.6         , 70.85          |
+     "Industrial", "Black Female"          , 58.5   , 59.6         , 56.95          |
+     "Industrial", "White Female"          , 60.7   , 59.6         , 65.1           |
+     "Industrial", "Asian Male"            , 63.3   , 59.6         , 63.9           |
+     "Industrial", "Black Male"            , 53.8   , 59.6         , 45.9           |
+     "Industrial", "Hispanic/Latinx Male"  , 88     , 59.6         , 60.35          |
+     "Industrial", "International Male"    , 54.5   , 59.6         , 52.95          |
+     "Industrial", "White Male"            , 65     , 59.6         , 65.1           |
+     "Mechanical", "Asian Female"          , 82.6   , 61.8         , 70.85          |
+     "Mechanical", "Black Female"          , 55.4   , 61.8         , 56.95          |
+     "Mechanical", "Hispanic/Latinx Female", 72.7   , 61.8         , 72.05          |
+     "Mechanical", "White Female"          , 67     , 61.8         , 65.1           |
+     "Mechanical", "Asian Male"            , 63.1   , 61.8         , 63.9           |
+     "Mechanical", "Black Male"            , 46.7   , 61.8         , 45.9           |
+     "Mechanical", "Hispanic/Latinx Male"  , 61.8   , 61.8         , 60.35          |
+     "Mechanical", "International Male"    , 51.4   , 61.8         , 52.95          |
+     "Mechanical", "Native American Male"  , 57.1   , 61.8         , 57.1           |
+     "Mechanical", "Other/Unknown Male"    , 58.3   , 61.8         , 50             |
+     "Mechanical", "White Male"            , 65.2   , 61.8         , 65.1           )
+setDT(DT)
+```
+
+
+## Tabulating data
+
+Data tables are useful in discussions with one's research team and are often included in publications for readers who want to see the values underlying the data graphics. 
+
+Our example data are currently laid out in "block record" form [@Mount+Zumel:2019:fluid-data], where the `race_sex` key and the `program` key are both in columns and the response, stickiness, is in the last column. This layout is also called "tidy data"  [@Wickham+Grolemund:2017]. 
+
+The graphing package we use, ggplot2, is designed to work most effectively with block-record data, thus the block-record ("long") form is the default layout in midfieldr. 
+
+```{r echo = FALSE}
+temp <- copy(DT)
+kable2html(temp, caption = "Table 1: Stickiness (block records)")
+```
+<br>
+
+However, the visual convention preferred by publishers and readers is a row-record ("wide") form, as illustrated by Table 2. The `race_sex` key is in the left column and the `program` key is in the column names. The stickiness findings lie at the row-column intersections. Note that in this form, the four NA observations we mentioned earlier are explicitly shown. 
+
+```{r echo = FALSE}
+temp[, race_sex := as.character(race_sex)]
+temp[, program := as.character(program)]
+temp <- dcast(temp, race_sex ~ program, value.var = "stick")
+kable2html(temp, caption = "Table 2: Stickiness (row records)")
+```
+
+Depending on your software background, you may have encountered a block-record/row-record transformation using any of these function pairs---a list adapted from [@Mount+Zumel:2019:fluid-data].  
+
+- pivot / anti-pivot or crosstab / shred (databases)
+- pivot_to_rowrecs / unpivot_to_blocks (cdata)
+- reshape "wide" / reshape "long" (R)
+- pivot_wider / pivot_longer (tidyr)
+- pivot / unpivot (Microsoft Excel)
+- dcast / melt (data.table)
+- cast / melt (reshape2)
+
+In our example, we use `dcast()` from the data.table package to reshape the data for publication. We start by limiting the significant figures of floating-point numbers. 
+
+```{r}
+# create a new memory location
+block_form <- copy(DT)
+
+# limit significant digits
+block_form[, stick := round(stick, 2)]
+```
+
+If in the final result we want rows and columns ordered alphabetically, we convert factors to characters. 
+
+```{r}
+# create a new memory location
+row_form <- copy(block_form)
+
+# convert factors to characters
+row_form[, race_sex := as.character(race_sex)]
+row_form[, program := as.character(program)]
+```
+
+`dcast()` is used to reshape the data frame from block-record form to row-record form. 
+
+```{r}
+# reshape
+row_form <- dcast(row_form, race_sex ~ program, value.var = "stick")
+
+# examine the result
+row_form
+```
+
+This result is the source for Table 2, repeated below. 
+
+```{r echo = FALSE}
+kable2html(temp, caption = "Table 2: Stickiness (row records)")
+```
+
+
+Other good tools for reshaping are provided in packages such as `reshape()` in base R, cdata  [@Mount+Zumel:2020:cdata], and tidyr [@Wickham+Henry:2020:tidyr]. 
+
+
+### Exercise
+
+1. Create a table of `study_grad_rate` data similar to the table above. 
+
+
+
+
+
+
+
+## Tables with totals
+
+When data have not been summarized, as in the `study_student` data set for example, 
+
+```{r}
+study_student
+```
+
+and what we want is a count of students by group, the result is a frequency table. The janitor package has convenient functions for creating frequency tables and adding row and column totals.
+
+```{r}
+# To access the tabyl() and adorn_total() functions 
+library("janitor")
+
+# Create a new memory location 
+DT <- copy(study_student)
+```
+
+We join the race/ethnicity and sex variables to construct our usual categories, 
+
+```{r}
+# Merge the groups as usual 
+DT[, race_sex := paste(race, sex)]
+
+# Examine the result
+DT
+```
+
+Use `tabyl()` to create the two-way frequency table of counts,  
+
+```{r}
+# Create the two-way frequency table
+DT <- tabyl(DT, race_sex, program)
+
+# Examine the result
+DT
+```
+
+Use `adorn_totals()` to add row totals, column totals, or (as shown here) both, 
+
+```{r}
+# Add row and column totals 
+DT <- adorn_totals(DT, where = c("row", "col"))
+
+# Examine the result
+DT
+```
+
+
+
+
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+
+
+
+## Appendix
+
+### Complete script
+
+The vignette code chunks are collected below in a single, condensed script. 
+
+```{r eval = FALSE}
+# packages used
+library("midfieldr")
+library("data.table")
+library("ggplot2")
+
+# optional code to control data.table printing
+options(
+  datatable.print.nrows = 10,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
+
+
+```
+
+```{r echo = FALSE}
+# to change the CSS file for block quotes
+# per https://github.com/rstudio/rmarkdown/issues/732
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{css}
+blockquote {
+    padding: 10px 20px;
+    margin: 0 0 20px;
+    font-size: 12px;
+    border-left: 0px solid
+}
+```
+
+
+

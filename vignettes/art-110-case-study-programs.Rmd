@@ -1,0 +1,274 @@
+---
+title: "Case study programs"
+author: "Richard Layton"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
+output: rmarkdown::html_vignette
+csl: ../inst/ieee-with-url.csl
+vignette: >
+  %\VignetteIndexEntry{Case study programs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+nocite: | 
+resource_files: |
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(fig.path = here::here(
+  "man/figures",
+  "art-110-case-study-programs-"
+))
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+kable2html <- function(x, font_size = NULL, caption = NULL) {
+  font_size <- ifelse(is.null(font_size), 11, font_size)
+  kable_in <- knitr::kable(x, format = "html", caption = caption)
+  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
+}
+```
+
+## Introduction
+
+In studying student records, a common first step is to select a specific set of programs to explore. In this vignette, we construct a data frame of program CIP codes and program names for four engineering programs (Civil, Electrical, Industrial, and Mechanical).
+
+We use this case selection in subsequent vignettes to illustrate typical workflows using midfieldr functions and MIDFIELD data tables. 
+
+### Outline
+
+- Identify the CIP codes for the case study   
+- Assign custom program names
+- Save the results
+
+### This vignette uses
+
+midfieldr functions 
+ 
+- `filter_search()` 
+
+
+packages
+
+```{r}
+# packages used
+library("midfieldr")
+library("data.table")
+
+# optional code to control data.table printing
+options(
+  datatable.print.nrows = 6,
+  datatable.print.topn = 3,
+  datatable.print.class = TRUE
+)
+```
+
+## Identify program codes
+
+We know the conventional names of the desired programs (Civil, Electrical, Industrial, and Mechanical Engineering) but these are not necessarily the exact program names used in the CIP. Thus we have to search CIP thoroughly to make sure we find all 6-digit CIP codes associated with these disciplines.
+
+We start with a text search of `cip` for `engineering`. 
+
+```{r}
+# subset rows of the CIP data matching conditions
+pass01 <- filter_search(cip, "engineering")
+pass01
+```
+
+We have a number of 2-digit codes reported. Let's examine those more closely using data.table syntax for selecting columns. 
+
+```{r}
+cols_we_want <- c("cip2", "cip2name")
+unique(pass01[, ..cols_we_want])
+```
+
+Only one of these (14) will have the programs we are looking for. So in our second pass, we can restrict our search to codes starting with 14. 
+
+```{r}
+pass02 <- filter_search(pass01, "^14")
+pass02
+```
+
+In the next pass, let's try restricting our search to the four conventional terms: civil, electrical, industrial, and mechanical. The search is not case-sensitive. 
+
+```{r}
+# optional code to control data.table printing
+options(datatable.print.topn = 13)
+
+pass03 <- filter_search(pass02, c("civil", "electrical", "industrial", "mechanical"))
+pass03
+```
+
+In this result,  only Electromechanical Engineering is superfluous, so we can drop it in the next pass. 
+
+```{r}
+pass04 <- filter_search(pass03, drop_text = "electromechanical")
+pass04
+```
+
+We see that 
+
+- the 4-digit level describes these programs with the customary names  
+- Civil Engineering encompasses six programs at the 6-digit level
+- Electrical Engineering encompasses four programs at the 6-digit level
+- Mechanical and Industrial have one program each at the 6-digit level
+
+All MIDFIELD data tables that have a column of CIP codes use 6-digit codes. Therefore, for a case study, we only need the `cip6` column from the work above. The names we want (in this case), however, are at the 4-digit level. We can select the columns we need. 
+
+```{r}
+cols_we_want <- c("cip6", "cip4name")
+case_cip <- pass04[, ..cols_we_want]
+
+# examine the result
+case_cip
+```
+
+
+## Assign program names
+
+As the study proceeds, we will want to compare and contrast the programs by name. The names in `cip4name`  are close to what we want, but all can be shortened for later reporting in graphs and tables. 
+
+We use the data.table `fcase()` function and `%ilike%` to add a `program` column with values that depend on the values in the `cip4name` column. 
+
+View their help pages by running
+
+``` r
+? `%ilike%`
+
+? fcase
+```
+
+```{r}
+# Create a new memory location
+case_program <- copy(case_cip)
+
+# Add a new column for custom program labels
+case_program[, program := fcase(
+  cip4name %ilike% "civil", "Civil",
+  cip4name %ilike% "electrical", "Electrical",
+  cip4name %ilike% "mechanical", "Mechanical",
+  cip4name %ilike% "industrial", "Industrial"
+)]
+
+# Examine the result
+case_program
+```
+
+In subsequent work we need only the `cip6` and `program` values, so we can drop the `cip4name` column. 
+
+```{r}
+# Drop an unnecessary column 
+case_program[, cip4name := NULL]
+
+# Examine the result
+case_program
+```
+
+
+## Save results
+
+We save the `case_program` data frame as a CSV file to the `results` directory for easy access as we work through the study. Here we use fast write `fwrite()`  from data.table. You may prefer other read/write functions such as those in base R or packages readr or rio. Note that relative file path shown assumes you are working within an RStudio project and that you have a `results` subdirectory (as described in [Getting started](art-00-midfield-data.html)).  
+
+```r
+# Assumes you have a results folder in the project directory
+fwrite(case_program, file = "results/case_program.csv")
+```
+
+We suggest saving intermediate results like these at each significant milestone of a study, especially after steps requiring a lot of computing time.
+
+These results have been included with midfieldr as the built-in data set `study_program`. View its help page by running 
+
+```r
+? study_program
+```
+View the data frame, 
+
+```{r}
+study_program
+```
+
+Check that the two data frames are identical, 
+
+```{r}
+all.equal(case_program, study_program)
+```
+
+In subsequent vignettes, you can read in the `case_program` data from your `results` directory or you can use the `study_program` data provided with midfieldr. 
+
+
+## Related articles
+
+- [Program codes and names](art-010-program-codes.html) for practice working with CIP codes and assigning program names. 
+
+
+
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+
+
+
+## Appendix
+
+### Complete script
+
+The vignette code chunks are collected below in a single, condensed script. 
+
+```{r eval = FALSE}
+# packages used
+library("midfieldr")
+library("midfielddata")
+library("data.table")
+
+# identify program codes
+pass01 <- filter_search(cip, "engineering")
+pass02 <- filter_search(pass01, "^14")
+pass03 <- filter_search(
+  pass02,
+  c("civil", "electrical", "industrial", "mechanical")
+)
+pass04 <- filter_search(pass03, drop_text = "electromechanical")
+cols_we_want <- c("cip6", "cip4name")
+case_cip <- pass04[, ..cols_we_want]
+
+# assign program names
+case_program <- copy(case_cip)
+case_program[, program := cip4name]
+dframe <- copy(case_program)
+case_program[, program := fcase(
+  cip4name %ilike% "civil", "Civil",
+  cip4name %ilike% "electrical", "Electrical",
+  cip4name %ilike% "mechanical", "Mechanical",
+  cip4name %ilike% "industrial", "Industrial"
+)]
+case_program[, cip4name := NULL]
+
+# save results
+fwrite(case_program, file = "results/case_program.csv")
+```

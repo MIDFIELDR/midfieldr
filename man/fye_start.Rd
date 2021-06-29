@@ -8,10 +8,13 @@
 \code{data.table} with 5033 rows and 2 columns keyed by student
 ID. The variables are:
 \describe{
-   \item{mcid}{Character, de-identified student ID}
-   \item{start}{Character, 6-digit CIP code of the predicted
-         starting program}
-   }
+
+  \item{mcid}{Character, de-identified student ID.}
+
+  \item{start}{Character, 6-digit CIP code of the predicted starting
+  program.}
+
+ }
 }
 \usage{
 fye_start

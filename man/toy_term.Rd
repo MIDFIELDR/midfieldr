@@ -8,14 +8,21 @@
 \code{data.table} with 169 rows and 6 columns keyed by
 student ID.
 \describe{
- \item{mcid}{Character, de-identified student ID}
+
+ \item{mcid}{Character, de-identified student ID.}
+
  \item{institution}{Character, de-identified institution name, e.g.,
       Institution A, Institution B, etc.}
- \item{term}{character, academic year and term, format YYYYT}
- \item{cip6}{character, 6-digit CIP code of program in which a student
- is enrolled in a term}
- \item{level}{character, 01 Freshman, 02 Sophomore, etc.}
- \item{hours_term}{numeric, credit hours earned in the term}
+
+ \item{term}{Character, academic year and term, format YYYYT.}
+
+ \item{cip6}{Character, 6-digit CIP code of program in which a student
+ is enrolled in a term.}
+
+ \item{level}{Character, 01 Freshman, 02 Sophomore, etc.}
+
+ \item{hours_term}{Numeric, credit hours earned in the term.}
+
 }
 }
 \usage{

@@ -8,15 +8,21 @@
 \code{data.table} with 64 rows and 5 columns keyed by
 student ID.
 \describe{
- \item{mcid}{Character, anonymized student ID}
+
+ \item{mcid}{Character, anonymized student ID.}
+
  \item{institution}{Character, anonymized institution name, e.g.,
       Institution A, Institution B, etc.}
- \item{term}{character, academic year and term, format YYYYT, in which
- a student completes their program}
- \item{cip6}{character, 6-digit CIP code of program in which a student
- earns a degree}
- \item{degree}{character, type of degree awarded, e.g., Bachelor's
+
+ \item{term}{Character, academic year and term in which
+ a student completes their program, format YYYYT.}
+
+ \item{cip6}{Character, 6-digit CIP code of program in which a student
+ earns a degree.}
+
+ \item{degree}{Character, type of degree awarded, e.g., Bachelor's
  Degree, Bachelor of Arts, Bachelor of Science, etc.}
+
 }
 }
 \usage{

@@ -8,16 +8,24 @@
 \code{data.table} with 100 rows and 6 columns keyed by
 student ID.
 \describe{
- \item{mcid}{Character, de-identified student ID}
+
+ \item{mcid}{Character, de-identified student ID.}
+
  \item{institution}{Character, de-identified institution name, e.g.,
-      Institution A, Institution B, etc.}
+  Institution A, Institution B, etc.}
+
  \item{transfer}{Character, stating whether the student is a First-Time in
-      College students or a First-Time Transfer student}
- \item{hours_transfer}{Numeric, transfer hours accepted at the institution}
+ College students or a First-Time Transfer student.}
+
+ \item{hours_transfer}{Numeric, transfer hours accepted at the
+ institution.}
+
  \item{race}{Character, race/ethnicity as self-reported by the student,
-      e.g., Asian, Black, Hispanic/LatinX, etc.}
- \item{sex}{character, sex as self-reported by the student, values are
-      Female, Male, and Unknown}
+ e.g., Asian, Black, Hispanic/LatinX, etc.}
+
+ \item{sex}{character, sex as self-reported by the student, possible
+ values are Female, Male, and Unknown.}
+
 }
 }
 \usage{

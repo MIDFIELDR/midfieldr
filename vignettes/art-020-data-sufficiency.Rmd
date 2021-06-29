@@ -12,14 +12,14 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 nocite: | 
 resource_files: 
-  - ../man/figures/art-04-data-sufficiency-fig1-1.png
-  - ../man/figures/art-04-data-sufficiency-fig2-1.png
+  - ../man/figures/art-020-data-sufficiency-fig1-1.png
+  - ../man/figures/art-020-data-sufficiency-fig2-1.png
 ---
 
 ```{r include = FALSE}
 knitr::opts_chunk$set(fig.path = here::here(
   "man/figures",
-  "art-04-data-sufficiency-"
+  "art-020-data-sufficiency-"
 ))
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -210,12 +210,12 @@ The criterion applies even if Student B were known to have graduated within the 
 
 ### Outline
 
-- Start with the case study programs (`study_programs`) 
+- Start with the case study programs (`study_program`) 
 - Obtain all students ever enrolled in these programs 
 - Determine their timely completion terms 
 - Determine data sufficiency by institution and student 
 - Filter observations for data sufficiency 
-- Result is set of students for further analysis (`study_students`)
+- Result is set of students for further analysis (`study_student`)
 
 ### This vignette uses
 
@@ -257,23 +257,23 @@ data(student, term, degree)
 
 ## Case study students
 
-Recall that the case study program codes and names are saved in the midfieldr package as the data set `study_programs`. View its help page by running
+Recall that the case study program codes and names are saved in the midfieldr package as the data set `study_program`. View its help page by running
 
 ```r
-? study_programs
+? study_program
 ```
 
 View the data frame, 
 
 ```{r}
-study_programs
+study_program
 ```
 
 To obtain the students enrolled in the case study programs, we use `filter_match()` to access the `term` table. 
 
 ```{r}
 case_students <- filter_match(term,
-  match_to = study_programs,
+  match_to = study_program,
   by_col = "cip6",
   select = c("mcid", "cip6")
 )
@@ -530,23 +530,23 @@ Having performed the subset, the working columns we used to get to this point ca
 DT <- DT[, .(mcid, cip6)]
 ```
 
-Again, we suggest saving intermediate results like these. This data frame of IDs and CIP codes is saved in midfieldr as the data set `study_students`. View its help page by running
+Again, we suggest saving intermediate results like these. This data frame of IDs and CIP codes is saved in midfieldr as the data set `study_student`. View its help page by running
 
 ```r
-? study_students
+? study_student
 ```
 View the data frame, 
 
 ```{r}
-study_students
+study_student
 ```
 
 Confirm the two are the same.
 
 ```{r}
 DT <- DT[order(mcid)]
-study_students <- study_students[order(mcid)]
-all.equal(DT, study_students)
+study_student <- study_student[order(mcid)]
+all.equal(DT, study_student)
 ```
 
 
@@ -556,10 +556,6 @@ The data sufficiency criterion must be applied whenever a study incorporates pro
 
 
 
-
-<br><br><br>
-[&#5176; *Case selection* ](art-03-case-selection.html) &nbsp; &nbsp; &nbsp; [*Timely completion* &#5171;](art-05-timely-completion.html)  
-<br><br>
 
 
 
@@ -582,7 +578,7 @@ data(student, term, degree)
 
 # Case study students
 case_students <- filter_match(term,
-  match_to = study_programs,
+  match_to = study_program,
   by_col = "cip6",
   select = c("mcid", "cip6")
 )

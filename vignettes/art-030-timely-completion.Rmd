@@ -12,15 +12,15 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 nocite: | 
 resource_files: 
-  - ../man/figures/art-05-timely-completion-fig1-1.png
-  - ../man/figures/art-05-timely-completion-fig2-1.png
-  - ../man/figures/art-05-timely-completion-fig3-1.png
+  - ../man/figures/art-030-timely-completion-fig1-1.png
+  - ../man/figures/art-030-timely-completion-fig2-1.png
+  - ../man/figures/art-030-timely-completion-fig3-1.png
 ---
 
 ```{r include = FALSE}
 knitr::opts_chunk$set(fig.path = here::here(
   "man/figures",
-  "art-05-timely-completion-"
+  "art-030-timely-completion-"
 ))
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -70,7 +70,7 @@ asp_ratio_mw <- function(data, categories) {
 
 Program completion---a key component of most persistence measures---must be timely, that is, occur within a specific span of years. Our default set point is six years---150% of the typical "scheduled" span of four years.  
 
-Students who complete their programs later than their *timely completion term* (introduced in the [Data sufficiency vignette](art-04-data-sufficiency.html)). are reclassified as non-graduates in most persistence metrics.  
+Students who complete their programs later than their *timely completion term* (introduced in the [Data sufficiency vignette](art-020-data-sufficiency.html)). are reclassified as non-graduates in most persistence metrics.  
 
 In this vignette, we introduce the *timely completion criterion* and related midfieldr functions. 
 
@@ -217,7 +217,7 @@ However, Student B's degree term is after their *TC* term. Their completion is n
 
 ### Outline
 
-- Start with the case study students (`study_students`)
+- Start with the case study students (`study_student`)
 - Determine whether completion is timely 
 - Summarize the pre-metric criteria 
 - Explore: Compare programs by completion status
@@ -264,18 +264,18 @@ data(student, term, degree)
 
 ## Case study students
 
-Having applied the data sufficiency criterion to our case study programs, we saved the result in the midfieldr package as the data set `study_students`. These students all have timely completion terms within the range of data provided by their institutions. 
+Having applied the data sufficiency criterion to our case study programs, we saved the result in the midfieldr package as the data set `study_student`. These students all have timely completion terms within the range of data provided by their institutions. 
 
 Review its help page by running
 
 ```r
-? study_students
+? study_student
 ```
 
 Review the data frame, 
 
 ```{r}
-study_students
+study_student
 ```
 
 
@@ -285,11 +285,11 @@ study_students
 
 ## Determine whether completion is timely
 
-We use `add_timely_term()` to estimate the timely completion term. See the [Data sufficiency vignette](art-04-data-sufficiency.html) for additional details about this function.  
+We use `add_timely_term()` to estimate the timely completion term. See the [Data sufficiency vignette](art-020-data-sufficiency.html) for additional details about this function.  
 
 ```{r}
 # Estimate the timely completion term
-DT <- add_timely_term(study_students, midfield_term = term)
+DT <- add_timely_term(study_student, midfield_term = term)
 DT
 ```
 
@@ -443,17 +443,17 @@ options(datatable.print.topn = 12)
 DT
 ```
 
-Recall that we have a data frame of case-study program CIP codes and names in the `study_programs` data set. To review its hep page, run
+Recall that we have a data frame of case-study program CIP codes and names in the `study_program` data set. To review its hep page, run
 
 ``` r
-? study_programs
+? study_program
 ```
 
 Join the program names to our working data frame and drop unnecessary columns, 
 
 ```{r}
 # Join program names
-DT <- merge(DT, study_programs, by = "cip6", all.x = TRUE)
+DT <- merge(DT, study_program, by = "cip6", all.x = TRUE)
 
 # Keep columns we need for grouping and summarizing
 cols_we_want <- c("status", "program")
@@ -532,9 +532,7 @@ The graph can't tell us why this is, but it does raise the question. While this 
 
 
 
-<br><br><br>
-[&#5176; *Data sufficiency* ](art-04-data-sufficiency.html) &nbsp; &nbsp; &nbsp; [*Longitudinal stickiness* &#5171;](art-06-stickiness.html)  
-<br><br>
+
 
 
 
@@ -553,7 +551,7 @@ library("ggplot2")
 
 # Timely completion
 data(student, term, degree)
-DT <- add_timely_term(study_students, midfield_term = term)
+DT <- add_timely_term(study_student, midfield_term = term)
 DT <- add_completion_timely(
   dframe = DT,
   midfield_degree = degree,
@@ -570,7 +568,7 @@ DT[
   status := "Untimely grad"
 ]
 DT[completion == FALSE, status := "Non-completer"]
-DT <- merge(DT, study_programs, by = "cip6", all.x = TRUE)
+DT <- merge(DT, study_program, by = "cip6", all.x = TRUE)
 DT <- DT[, .(N_group = .N), by = .(program, status)]
 
 # Graph counts

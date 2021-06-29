@@ -12,14 +12,14 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 nocite: | 
 resource_files: 
-  - ../man/figures/art-06-fye-programs-fig1-1.png
-  - ../man/figures/art-06-fye-programs-fig2-1.png
+  - ../man/figures/art-040-fye-programs-fig1-1.png
+  - ../man/figures/art-040-fye-programs-fig2-1.png
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(fig.path = here::here(
   "man/figures",
-  "art-07-fye-programs-"
+  "art-040-fye-programs-"
 ))
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -126,22 +126,22 @@ fye_start
 
 To illustrate using these data, let's suppose that we are trying to determine the number of students in the four majors of our case study (Civil, Electrical, Industrial, and Mechanical Engineering) at the start of their first year, second year, third year, etc.  FYE students who transition to these majors would appear in the `term` data in the second year and beyond, but not in the first year. In this example, therefore, we will focus on determining how to include FYE students in the first-year count. 
 
-We use two additional prepared data sets, `study_programs` with the case-study CIP codes and program names, and `study_students`, all students ever enrolled in these programs. To see their help pages, run 
+We use two additional prepared data sets, `study_program` with the case-study CIP codes and program names, and `study_student`, all students ever enrolled in these programs. To see their help pages, run 
 
 ```r
 # case study data sets 
-? study_programs
-? study_students
+? study_program
+? study_student
 ```
 
 Examine the two data sets. The student data does not include predicted starting majors for FYE students. 
 
 ```{r}
 # case study programs
-study_programs
+study_program
 
 # students ever enrolled in the case study programs
-study_students
+study_student
 ```
 
 We subset the `term` table for rows matching these student IDs. By matching IDs, we obtain all terms of all students ever enrolled in these programs. 
@@ -149,7 +149,7 @@ We subset the `term` table for rows matching these student IDs. By matching IDs,
 ```{r}
 # subset term table by ID of case study students
 DT <- filter_match(term,
-  match_to = study_students,
+  match_to = study_student,
   by_col = "mcid",
   select = c("mcid", "term", "cip6")
 )
@@ -177,12 +177,12 @@ setkey(DT, NULL)
 DT
 ```
 
-These data are subset again by matching program codes to those in `study_programs`, thereby omitting students who were not enrolled in one of the four programs in their first term. 
+These data are subset again by matching program codes to those in `study_program`, thereby omitting students who were not enrolled in one of the four programs in their first term. 
 
 ```{r}
 # filter for case study programs only
 DT <- filter_match(DT,
-  match_to = study_programs,
+  match_to = study_program,
   by_col = "cip6",
   select = c("mcid", "cip6")
 )
@@ -201,7 +201,7 @@ Before adding the FYE students, we can group and summarize for comparison later.
 DT_no_fye <- DT[, .N, by = "cip6"]
 
 # join program names
-DT_no_fye <- merge(DT_no_fye, study_programs, by = "cip6", all.x = TRUE)
+DT_no_fye <- merge(DT_no_fye, study_program, by = "cip6", all.x = TRUE)
 
 # order columns and rows for display
 cols_we_want <- c("program", "N")
@@ -216,7 +216,7 @@ Now, turn to the FYE students. We subset `fye_start` for our four programs. Befo
 # subset predicted FYE start programs
 setnames(fye_start, old = "start", new = "cip6")
 study_fye <- filter_match(fye_start,
-  match_to = study_programs,
+  match_to = study_program,
   by_col = "cip6",
   select = c("mcid", "cip6")
 )
@@ -248,11 +248,11 @@ DT_with_fye <- DT[, .N, by = "cip6"]
 DT_with_fye
 ```
 
-Adding program names from `study_programs` is helpful in interpreting the results. 
+Adding program names from `study_program` is helpful in interpreting the results. 
 
 ```{r}
 # join program names
-DT_with_fye <- merge(DT_with_fye, study_programs, by = "cip6", all.x = TRUE)
+DT_with_fye <- merge(DT_with_fye, study_program, by = "cip6", all.x = TRUE)
 
 # order columns and rows for display
 cols_we_want <- c("program", "N")
@@ -514,9 +514,6 @@ set.seed(NULL)
 <div id="refs"></div>
 
 
-<br><br><br>
-[&#5176; *Longitudinal stickiness* ](art-06-stickiness.html) &nbsp; &nbsp; &nbsp; [*Graduation rate* &#5171;](art-08-graduation-rate.html)  
-<br><br>
 
 
 
@@ -534,7 +531,7 @@ library("mice")
 
 # prepared predictions
 DT <- filter_match(term,
-  match_to = study_students,
+  match_to = study_student,
   by_col = "mcid",
   select = c("mcid", "term", "cip6")
 )
@@ -543,7 +540,7 @@ setkeyv(DT, keys)
 DT <- DT[, .SD[1], by = "mcid"]
 setkey(DT, NULL)
 DT <- filter_match(DT,
-  match_to = study_programs,
+  match_to = study_program,
   by_col = "cip6",
   select = c("mcid", "cip6")
 )
@@ -551,14 +548,14 @@ DT <- unique(DT)
 
 # summarize for later
 DT_no_fye <- DT[, .N, by = "cip6"]
-DT_no_fye <- merge(DT_no_fye, study_programs, by = "cip6", all.x = TRUE)
+DT_no_fye <- merge(DT_no_fye, study_program, by = "cip6", all.x = TRUE)
 cols_we_want <- c("program", "N")
 DT_no_fye <- DT_no_fye[order(-N), ..cols_we_want]
 
 # subset predicted FYE start programs
 setnames(fye_start, old = "start", new = "cip6")
 study_fye <- filter_match(fye_start,
-  match_to = study_programs,
+  match_to = study_program,
   by_col = "cip6",
   select = c("mcid", "cip6")
 )
@@ -566,7 +563,7 @@ DT <- rbindlist(list(DT, study_fye))
 
 # group and summarize with FYE included
 DT_with_fye <- DT[, .N, by = "cip6"]
-DT_with_fye <- merge(DT_with_fye, study_programs, by = "cip6", all.x = TRUE)
+DT_with_fye <- merge(DT_with_fye, study_program, by = "cip6", all.x = TRUE)
 cols_we_want <- c("program", "N")
 DT_with_fye <- DT_with_fye[order(-N), ..cols_we_want]
 

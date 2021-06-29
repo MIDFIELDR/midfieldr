@@ -1,0 +1,313 @@
+---
+title: "Subsetting MIDFIELD data"
+author: "Richard Layton"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
+output: rmarkdown::html_vignette
+csl: ../inst/ieee-with-url.csl
+vignette: >
+  %\VignetteIndexEntry{Subsetting MIDFIELD data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+nocite: | 
+resource_files: |
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(fig.path = here::here(
+  "man/figures",
+  "art-015-subsetting-data-"
+))
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = FALSE,
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+kable2html <- function(x, font_size = NULL, caption = NULL) {
+  font_size <- ifelse(is.null(font_size), 11, font_size)
+  kable_in <- knitr::kable(x, format = "html", caption = caption)
+  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
+}
+```
+
+## Introduction
+
+In the previous vignette, we practiced gathering 6-digit CIP codes of programs we want to study and assigning a custom `program` label to each. 
+
+In this vignette, we use the programs codes to subset the MIDFIELD data tables. The examples and practice exercises  illustrate a number of data manipulation methods that we regularly use in working with student unit record data. 
+
+
+
+
+
+### Outline
+
+- Subset by program code
+- Subset by ID
+- Merge program names
+
+### This vignette uses
+
+midfieldr functions 
+
+- `filter_match()` 
+
+packages
+
+```{r}
+# packages used
+library("midfieldr")
+library("midfielddata")
+library("data.table")
+
+# optional code to control data.table printing
+options(
+  datatable.print.nrows = 10,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
+```
+
+data
+
+```{r}
+data(student, term, degree)
+```
+
+
+
+
+## Subset by program code
+
+In these examples, we use the `study_program` data frame as our starting point to subset the MIDFIELD data tables. You can view its help page by running 
+
+``` r 
+? study_program
+```
+
+Review its structure, 
+
+```{r}
+study_program
+```
+
+To extract all the students in these programs who graduated, we subset rows of `degree` to keep values of `cip6` that match values of `cip6` in `study_program`.
+
+```{r}
+# subset degree rows
+rows_we_want <- degree$cip6 %chin% study_program$cip6
+dframe <- degree[rows_we_want]
+
+# examine the result
+dframe
+```
+
+We often want to select specific rows as well, e.g., 
+
+```{r}
+# subset degree columns
+cols_we_want <- c("mcid", "institution", "cip6")
+dframe <- dframe[, ..cols_we_want]
+
+# examine the result
+dframe
+```
+
+These two operations could have been combined, as in 
+
+```{r}
+# subset rows and columns 
+rows_we_want <- degree$cip6 %chin% study_program$cip6
+cols_we_want <- c("mcid", "institution", "cip6")
+dframe <- degree[rows_we_want, ..cols_we_want]
+
+# examine the result
+dframe
+```
+
+This code chunk above represents a routine we encounter fairly often: subset rows of one data frame to keep values of a key variable that match values of the same key variable in a second data frame.  We use `filter_match()` to do the entire task:  subset rows of `degree` to keep values of `cip6` that match values of `cip6` in `study_program` and return three columns of the `degree` subset. 
+
+```{r}
+# subset degree table
+case_degree <- filter_match(degree,
+  match_to = study_program,
+  by_col = "cip6",
+  select = c("mcid", "institution", "cip6")
+)
+
+# compare to the DT we obtained above after ordering rows the same way
+all.equal(case_degree[order(mcid)], dframe[order(mcid)])
+```
+
+
+If duplicate rows were a possibility and we want to delete them, `unique()` will do  the job. 
+
+```{r}
+# omit duplicate rows if any
+case_degree <- unique(case_degree)
+
+# examine the results
+case_degree
+```
+
+
+
+
+
+
+
+
+## Subset by ID
+
+Another common data access task is to retrieve information from `student` by ID. Suppose we wanted to examine the transfer status at the time of admission of the  students with degrees we subset above. We use `filter_match()` again to subset rows of `student` to keep values of `mcid` that match values of `mcid` in `case_degree` and return three columns of the `student` subset. 
+
+```{r}
+# subset student table
+case_student <- filter_match(student,
+  match_to = case_degree,
+  by_col = "mcid",
+  select = c("mcid", "transfer", "hours_transfer")
+)
+# examine the result
+case_student
+```
+
+If the next step was to compare the numbers of students by their transfer status, we use `.N` from data.table. For example, 
+
+```{r}
+# omit any duplicate rows before counting
+case_student <- unique(case_student)
+case_student[, .N, by = "transfer"]
+```
+
+
+
+
+
+
+
+
+## Merge program names
+
+Another common use of the `study_program` data is to merge its program names with another data frame by matching `cip6` values. The program names can then be used for grouping and summarizing. 
+
+For example, let's join the program names to the case degree data frame we created above. The `all.x = TRUE` argument performs the merge as a "left outer join", retaining all rows of `case_degree` (the "left" data frame).  
+
+```{r}
+# join program names
+case_degree <- merge(case_degree, study_program, by = "cip6", all.x = TRUE)
+
+# examine the result
+case_degree
+```
+
+If the next step was to group and summarize by program, we use `.N` again, for example,
+
+```{r}
+case_degree[, .N, by = "program"]
+```
+
+
+### Exercises 
+
+Start by reading the  `exercise_program`  file you saved in the exercises in the previous vignette. Try `fread()`. You can view its help page by running, 
+
+``` r 
+? fread
+```
+
+To read the saved data from your `results` directory, 
+
+```{r eval = FALSE}
+exercise_program <- fread(
+  "results/case_program.csv",
+  colClasses = list(character = c("cip6"))
+)
+```
+
+1. Use `filter_match()` to find all terms of all students ever enrolled in these programs by matching the `term` data table to `exercise_program` by the `cip6` column. Select the ID and CIP variables. Assign the result to the object `exercise_student`.
+2. Eliminate duplicate rows using `unique()`. 
+3. Merge the program names in `exercise_program` to the students in `exercise_student` by the CIP code. 
+4. Summarize the number of students in these history programs by the `program` column. 
+
+```{r echo = FALSE}
+# copied from previous vignette
+exercise_program <- wrapr::build_frame(
+   "cip6"    , "program"           |
+     "540101", "General History"   |
+     "540102", "US History"        |
+     "540103", "European History"  |
+     "540104", "Science and Techn" |
+     "540105", "Resource Admin"    |
+     "540106", "Asian History"     |
+     "540107", "Canadian History"  |
+     "540108", "Military History"  |
+     "540199", "General History"   )
+
+# exercise solution
+exercise_student <- filter_match(term,
+  match_to = exercise_program,
+  by_col = "cip6",
+  select = c("mcid", "cip6")
+)
+exercise_student <- unique(exercise_student)
+exercise_student <- merge(exercise_student,
+  exercise_program,
+  by = "cip6",
+  all.x = TRUE
+)
+exercise_summary <- exercise_student[, .N, by = "program"]
+```
+
+```{r}
+# answer
+exercise_summary
+```
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+
+
+
+
+
+
+
+## Appendix
+
+### Complete script
+
+The vignette code chunks are collected below in a single, condensed script. 
+
+```{r eval=FALSE}
+# packages used
+library("midfieldr")
+library("data.table")
+
+
+```

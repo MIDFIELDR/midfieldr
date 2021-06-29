@@ -12,14 +12,14 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 nocite: | 
 resource_files:
-  - ../man/figures/art-01-multiway-graphs-fig1-1.png
-  - ../man/figures/art-01-multiway-graphs-fig2-1.png
+  - ../man/figures/art-050-multiway-graphs-fig1-1.png
+  - ../man/figures/art-050-multiway-graphs-fig2-1.png
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(fig.path = here::here(
   "man/figures",
-  "art-01-multiway-graphs-"
+  "art-050-multiway-graphs-"
 ))
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -92,8 +92,10 @@ packages
 ```{r}
 # packages used
 library("midfieldr")
+library("midfielddata")
 library("data.table")
 library("ggplot2")
+library("janitor")
 ```
 
 We can control how a data.table is printed to the screen with the following options.  
@@ -133,9 +135,28 @@ To condition the categorical variables, we use `condition_multiway()` to convert
 ? condition_multiway()
 ```
 
+The function requires exactly three columns, two for the categorical variables and one for the quantitative variables. To achieve that, we combine race and sex into one column, 
+
 ```{r}
 # create a new memory location
 DT <- copy(study_stickiness)
+
+# Construct one of the categorical variables 
+DT[, race_sex := paste(race, sex)]
+
+# Examine the result
+DT
+```
+
+And we select the columns we need, dropping the others, 
+
+```{r}
+# Keep the multiway variables
+cols_we_want <- c("program", "race_sex", "stick")
+DT <- DT[, ..cols_we_want]
+
+# Examine the result
+DT
 ```
 
 The quantitative variable is `stick` (stickiness); the first categorical variable is `program`; the second categorical variable is race/ethnicity/sex. Before conditioning, the categorical variables are characters, 
@@ -195,6 +216,11 @@ Similarly, by ordering the data by `race_sex`, you can see that a given demograp
 ```{r}
 # race_sex groupings have a median stickiness across programs
 DT_med[order(race_sex)]
+```
+
+
+```{r include = FALSE}
+cat(wrapr::draw_frame(DT))
 ```
 
 
@@ -290,126 +316,6 @@ Both multiways should be created for discussion. Usually one or the other will c
 
 
 
-## Tabulate multiway data
-
-Data tables are useful in discussions with one's research team and are often included in publications for readers who want to see the values underlying the data graphics. 
-
-Our example data are currently laid out in "block record" form [@Mount+Zumel:2019:fluid-data], where the `race_sex` key and the `program` key are both in columns and the response, stickiness, is in the last column. This layout is also called "tidy data"  [@Wickham+Grolemund:2017]. 
-
-The graphing package we use, ggplot2, is designed to work most effectively with block-record data, thus the block-record ("long") form is the default layout in midfieldr. 
-
-```{r echo = FALSE}
-temp <- copy(DT)
-temp[, stick := round(stick, 2)]
-kable2html(temp, caption = "Table 1: Stickiness (block records)")
-```
-<br>
-
-However, the visual convention preferred by publishers and readers is a row-record ("wide") form, as illustrated by Table 2. The `race_sex` key is in the left column and the `program` key is in the column names. The stickiness findings lie at the row-column intersections. Note that in this form, the four NA observations we mentioned earlier are explicitly shown. 
-
-```{r echo = FALSE}
-temp[, race_sex := as.character(race_sex)]
-temp[, program := as.character(program)]
-temp <- dcast(temp, race_sex ~ program, value.var = "stick")
-setnames(temp,
-  old = c(
-    "race_sex",
-    "Civil Engineering",
-    "Electrical Engineering",
-    "Industrial Engineering",
-    "Mechanical Engineering"
-  ),
-  new = c(
-    "Race/ethnicity/sex",
-    "Civil",
-    "Electrical",
-    "Industrial",
-    "Mechanical"
-  )
-)
-kable2html(temp, caption = "Table 2: Stickiness (row records)")
-```
-
-Depending on your software background, you may have encountered a block-record/row-record transformation using any of these function pairs---a list adapted from [@Mount+Zumel:2019:fluid-data].  
-
-- pivot / anti-pivot or crosstab / shred (databases)
-- pivot_to_rowrecs / unpivot_to_blocks (cdata)
-- reshape "wide" / reshape "long" (R)
-- pivot_wider / pivot_longer (tidyr)
-- pivot / unpivot (Microsoft Excel)
-- dcast / melt (data.table)
-- cast / melt (reshape2)
-
-In our example, we use `dcast()` from the data.table package to reshape the data for publication. We start by limiting the significant figures of floating-point numbers. 
-
-```{r}
-# create a new memory location
-block_form <- copy(DT)
-
-# limit significant digits
-block_form[, stick := round(stick, 2)]
-```
-
-If in the final result we want rows and columns ordered alphabetically, we convert factors to characters. 
-
-```{r}
-# create a new memory location
-row_form <- copy(block_form)
-
-# convert factors to characters
-row_form[, race_sex := as.character(race_sex)]
-row_form[, program := as.character(program)]
-```
-
-`dcast()` is used to reshape the data frame from block-record form to row-record form. 
-
-```{r}
-# reshape
-row_form <- dcast(row_form, race_sex ~ program, value.var = "stick")
-
-# examine the result
-row_form
-```
-
-For publication, we edit the new column names. 
-
-```{r}
-# edit column names
-setnames(row_form,
-  old = c(
-    "race_sex",
-    "Civil Engineering",
-    "Electrical Engineering",
-    "Industrial Engineering",
-    "Mechanical Engineering"
-  ),
-  new = c(
-    "Race/ethnicity/sex",
-    "Civil",
-    "Electrical",
-    "Industrial",
-    "Mechanical"
-  )
-)
-
-# examine the result
-row_form
-```
-
-This result is the source for Table 2, repeated below. 
-
-```{r echo = FALSE}
-kable2html(temp, caption = "Table 2: Stickiness (row records)")
-```
-
-
-Other good tools for reshaping are provided in packages such as `reshape()` in base R, cdata  [@Mount+Zumel:2020:cdata], and tidyr [@Wickham+Henry:2020:tidyr]. 
-
-
-### Exercise
-
-1. Create a table of `study_grad_rate` data similar to the table above. 
-
 
 ## References
 
@@ -417,9 +323,6 @@ Other good tools for reshaping are provided in packages such as `reshape()` in b
 
 
 
-<br><br><br>
-[&#5176; *Getting started* ](art-00-midfield-data.html) &nbsp; &nbsp; &nbsp; [*Program codes* &#5171;](art-02-program-codes.html)  
-<br><br>
 
 
 

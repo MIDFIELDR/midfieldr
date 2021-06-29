@@ -8,9 +8,13 @@
 \code{data.table} with 32 rows and 3 columns keyed by
 program, race/ethnicity, and sex.
 \describe{
+
  \item{program}{Character, instructional programs selected for study}
+
  \item{race_sex}{Character, student race/ethnicity and sex}
+
  \item{grad_rate}{Numerical, program graduation rate, a persistence metric}
+
 }
 }
 \usage{
@@ -30,9 +34,9 @@ Data have also been subset to remove ambiguous levels of race/ethnicity.
 }
 \seealso{
 Other case-study-data: 
-\code{\link{study_programs}},
+\code{\link{study_program}},
 \code{\link{study_stickiness}},
-\code{\link{study_students}}
+\code{\link{study_student}}
 }
 \concept{case-study-data}
 \keyword{datasets}
