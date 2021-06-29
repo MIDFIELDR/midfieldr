@@ -19,6 +19,7 @@ Significant changes from earlier versions, no backwards compatibility, prompting
 - Overhaul midfieldr functions completely 
 - Update README and midfielddata README
 - Revise vignettes to use new functions 
+- Separate case study from detailed vignettes
 
 
 
