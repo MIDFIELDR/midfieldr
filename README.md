@@ -126,16 +126,15 @@ result[order(grad_status, sex, race)]
 
 ## Install midfieldr
 
-Not yet available from [CRAN](https://cran.r-project.org/). To install
-the development version of midfieldr from [GitHub](https://github.com/),
-type in the Console:
+midfieldr is not yet available from [CRAN](https://cran.r-project.org/).
+To install the development version of midfieldr from its `drat`
+repository, type in the Console:
 
 ``` r
-# install remotes
-if (!require(remotes)) install.packages("remotes")
-
-# install midfieldr
-remotes::install_github("MIDFIELDR/midfieldr")
+# install midfieldr from drat repo
+install.packages("midfieldr", 
+                 repos = "https://MIDFIELDR.github.io/drat/", 
+                 type = "source")
 ```
 
 You can confirm a successful installation by running the following lines
