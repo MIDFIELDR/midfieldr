@@ -93,7 +93,7 @@
       <h1 class="display-4" data-toc-skip>Case study students</h1>
                         <h4 data-toc-skip class="author">Richard Layton</h4>
             
-            <h4 data-toc-skip class="date">2021-07-01</h4>
+            <h4 data-toc-skip class="date">2021-07-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/master/vignettes/art-004-case-study-students.Rmd" class="external-link"><code>vignettes/art-004-case-study-students.Rmd</code></a></small>
       <div class="d-none name"><code>art-004-case-study-students.Rmd</code></div>
@@ -102,6 +102,285 @@
 
     
     
+<div id="introduction" class="section level2">
+<h2 class="hasAnchor">
+<a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h2>
+<p>We continue the case study by using the CIP codes in <code>study_program</code> to gather all degree-seeking students ever enrolled in the case study programs. After joining columns for program names and student race/ethnicity and sex, we filter for data sufficiency. The resulting data frame is the common basis for computing persistence metrics.</p>
+<p>The case study is a quick tour of a typical workflow using student unit record data. This is a “big picture” development—functions are used without detailed explanations or development so that we can focus on the logic of the analysis. For exploring related midfieldr functions and methods in greater detail, see</p>
+<ul>
+<li><a href="art-015-subsetting-midfield-data.html" target="_blank">Subsetting MIDFIELD data</a></li>
+<li><a href="art-020-data-sufficiency.html" target="_blank">Data sufficiency</a></li>
+</ul>
+<div id="outline" class="section level3">
+<h3 class="hasAnchor">
+<a href="#outline" class="anchor" aria-hidden="true"></a>Outline</h3>
+<ul>
+<li>Gather students</li>
+<li>Join grouping variables</li>
+<li>Filter for data sufficiency</li>
+<li>Save results</li>
+</ul>
+</div>
+<div id="in-this-vignette" class="section level3">
+<h3 class="hasAnchor">
+<a href="#in-this-vignette" class="anchor" aria-hidden="true"></a>In this vignette</h3>
+<p>midfieldr functions</p>
+<ul>
+<li><a href="../reference/filter_match.html"><code>filter_match()</code></a></li>
+<li><a href="../reference/add_race_sex.html"><code>add_race_sex()</code></a></li>
+<li><a href="../reference/add_timely_term.html"><code>add_timely_term()</code></a></li>
+<li><a href="../reference/add_data_sufficiency.html"><code>add_data_sufficiency()</code></a></li>
+</ul>
+<p>packages</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># packages used</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span>
+
+<span class="co"># optional code to control data.table printing</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>
+  datatable.print.nrows <span class="op">=</span> <span class="fl">6</span>,
+  datatable.print.topn <span class="op">=</span> <span class="fl">3</span>,
+  datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span></code></pre></div>
+<p>data</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># load data tables from midfielddata</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span><span class="op">)</span></code></pre></div>
+</div>
+</div>
+<div id="gather-students" class="section level2">
+<h2 class="hasAnchor">
+<a href="#gather-students" class="anchor" aria-hidden="true"></a>Gather students</h2>
+<p>If you saved your results from the previous vignette in the file <code>results/case_program.csv</code>, you can read them back in to your workspace using the following where we specify that the CIP column is a string variable to prevent it being read as an integer.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Optional </span>
+<span class="va">case_program</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"results/case_program.csv"</span>, 
+                      colClasses <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>cip6 <span class="op">=</span> <span class="st">"character"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>If not, the data are included with midfieldr as the <code>study_program</code> data set. View its help page by running</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="op">?</span> <span class="va">study_program</span></code></pre></div>
+<p>In the remainder of the vignette, we assume we’re using the <code>study_program</code> data frame. A reminder of its contents:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Loaded with midfieldr</span>
+<span class="va">study_program</span>
+<span class="co">#&gt;       cip6    program</span>
+<span class="co">#&gt;     &lt;char&gt;     &lt;char&gt;</span>
+<span class="co">#&gt;  1: 140801      Civil</span>
+<span class="co">#&gt;  2: 140802      Civil</span>
+<span class="co">#&gt;  3: 140803      Civil</span>
+<span class="co">#&gt; ---                  </span>
+<span class="co">#&gt; 10: 141099 Electrical</span>
+<span class="co">#&gt; 11: 141901 Mechanical</span>
+<span class="co">#&gt; 12: 143501 Industrial</span></code></pre></div>
+<p>We start with <code><a href="../reference/filter_match.html">filter_match()</a></code> to subset rows of <code>term</code> with <code>cip6</code> values that match the <code>cip6</code> values in <code>study_program</code> and returning three columns for student ID, institution, and CIP code.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># All terms for all students in the study programs </span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">term</span>,
+                   match_to <span class="op">=</span> <span class="va">study_program</span>,
+                   by_col <span class="op">=</span> <span class="st">"cip6"</span>,
+                   select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"institution"</span>, <span class="st">"cip6"</span><span class="op">)</span><span class="op">)</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">DT</span>
+<span class="co">#&gt;               mcid   institution   cip6</span>
+<span class="co">#&gt;             &lt;char&gt;        &lt;char&gt; &lt;char&gt;</span>
+<span class="co">#&gt;     1: MID25783197 Institution M 140801</span>
+<span class="co">#&gt;     2: MID25783197 Institution M 140801</span>
+<span class="co">#&gt;     3: MID25783197 Institution M 140801</span>
+<span class="co">#&gt;    ---                                 </span>
+<span class="co">#&gt; 67091: MID26696429 Institution L 143501</span>
+<span class="co">#&gt; 67092: MID26696429 Institution L 143501</span>
+<span class="co">#&gt; 67093: MID26696429 Institution L 143501</span></code></pre></div>
+<p>This result has duplicate rows because the data include all terms for each student. We remove duplicates with <code><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique()</a></code>.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">DT</span>
+<span class="co">#&gt;               mcid   institution   cip6</span>
+<span class="co">#&gt;             &lt;char&gt;        &lt;char&gt; &lt;char&gt;</span>
+<span class="co">#&gt;     1: MID25783197 Institution M 140801</span>
+<span class="co">#&gt;     2: MID25783441 Institution M 140801</span>
+<span class="co">#&gt;     3: MID25783553 Institution M 140801</span>
+<span class="co">#&gt;    ---                                 </span>
+<span class="co">#&gt; 10762: MID26695626 Institution L 143501</span>
+<span class="co">#&gt; 10763: MID26696116 Institution L 143501</span>
+<span class="co">#&gt; 10764: MID26696429 Institution L 143501</span></code></pre></div>
+<p>In general, the <code>term</code> data can include non-degree-seeking students. To limit the study to degree-seeking students only, we subset rows of <code>DT</code> with <code>mcid</code> values that match the <code>mcid</code> values in the <code>student</code> table (all students in th <code>student</code> data table are degree-seeking). As it happens, in this example all students are degree-seeking, so the results don’t change.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Limit the study to degree-seeking students</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">DT</span>,
+                   match_to <span class="op">=</span> <span class="va">student</span>,
+                   by_col <span class="op">=</span> <span class="st">"mcid"</span><span class="op">)</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">DT</span>
+<span class="co">#&gt;               mcid   institution   cip6</span>
+<span class="co">#&gt;             &lt;char&gt;        &lt;char&gt; &lt;char&gt;</span>
+<span class="co">#&gt;     1: MID25783178 Institution M 143501</span>
+<span class="co">#&gt;     2: MID25783197 Institution M 140801</span>
+<span class="co">#&gt;     3: MID25783388 Institution M 141901</span>
+<span class="co">#&gt;    ---                                 </span>
+<span class="co">#&gt; 10762: MID26697163 Institution L 141901</span>
+<span class="co">#&gt; 10763: MID26697444 Institution L 141901</span>
+<span class="co">#&gt; 10764: MID26697447 Institution L 141001</span></code></pre></div>
+</div>
+<div id="join-grouping-variables" class="section level2">
+<h2 class="hasAnchor">
+<a href="#join-grouping-variables" class="anchor" aria-hidden="true"></a>Join grouping variables</h2>
+<p>In support of examining student characteristics (race/ethnicity and sex) and curricular pathways (program), we join these characteristics to the student data. These are the “group by” variables used in our persistence metrics.</p>
+<p>Program names are joined by merging <code>study_program</code> to our working data frame.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Program name is a commonly used grouping variable</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">study_program</span>, by <span class="op">=</span> <span class="st">"cip6"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">DT</span>
+<span class="co">#&gt;          cip6        mcid   institution    program</span>
+<span class="co">#&gt;        &lt;char&gt;      &lt;char&gt;        &lt;char&gt;     &lt;char&gt;</span>
+<span class="co">#&gt;     1: 140801 MID25783197 Institution M      Civil</span>
+<span class="co">#&gt;     2: 140801 MID25783441 Institution M      Civil</span>
+<span class="co">#&gt;     3: 140801 MID25783553 Institution M      Civil</span>
+<span class="co">#&gt;    ---                                            </span>
+<span class="co">#&gt; 10762: 143501 MID26695626 Institution L Industrial</span>
+<span class="co">#&gt; 10763: 143501 MID26696116 Institution L Industrial</span>
+<span class="co">#&gt; 10764: 143501 MID26696429 Institution L Industrial</span></code></pre></div>
+<p>Student race/ethnicity and sex are joined using the midfieldr <code><a href="../reference/add_race_sex.html">add_race_sex()</a></code> function.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Race/ethnicity and sex are commonly used grouping variables</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_race_sex.html">add_race_sex</a></span><span class="op">(</span><span class="va">DT</span>, midfield_student <span class="op">=</span> <span class="va">student</span><span class="op">)</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">DT</span>
+<span class="co">#&gt;          cip6        mcid   institution    program   race    sex</span>
+<span class="co">#&gt;        &lt;char&gt;      &lt;char&gt;        &lt;char&gt;     &lt;char&gt; &lt;char&gt; &lt;char&gt;</span>
+<span class="co">#&gt;     1: 140801 MID25783197 Institution M      Civil  White   Male</span>
+<span class="co">#&gt;     2: 140801 MID25783441 Institution M      Civil  White   Male</span>
+<span class="co">#&gt;     3: 140801 MID25783553 Institution M      Civil  White   Male</span>
+<span class="co">#&gt;    ---                                                          </span>
+<span class="co">#&gt; 10762: 143501 MID26695626 Institution L Industrial  White   Male</span>
+<span class="co">#&gt; 10763: 143501 MID26696116 Institution L Industrial  White Female</span>
+<span class="co">#&gt; 10764: 143501 MID26696429 Institution L Industrial  White Female</span></code></pre></div>
+</div>
+<div id="filter-for-data-sufficiency" class="section level2">
+<h2 class="hasAnchor">
+<a href="#filter-for-data-sufficiency" class="anchor" aria-hidden="true"></a>Filter for data sufficiency</h2>
+<p>For students admitted too near the upper limit of their institution’s data range, the available data cover an insufficient number of years to fairly assess student performance. Only students for whom the data range is sufficient should be included in any analysis.</p>
+<p>Data sufficiency is defined in terms of a timely completion term: the last term in which program completion would be considered timely for a given student. The timely completion term for many students is their admission term plus 6 years.</p>
+<p>The midfieldr function <code><a href="../reference/add_timely_term.html">add_timely_term()</a></code> estimates a timely completion term for each student.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Timely completion term is required for determining data sufficiency </span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">DT</span>
+<span class="co">#&gt;          cip6        mcid   institution    program   race    sex timely_term</span>
+<span class="co">#&gt;        &lt;char&gt;      &lt;char&gt;        &lt;char&gt;     &lt;char&gt; &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span>
+<span class="co">#&gt;     1: 140801 MID25783197 Institution M      Civil  White   Male       19923</span>
+<span class="co">#&gt;     2: 140801 MID25783441 Institution M      Civil  White   Male       19973</span>
+<span class="co">#&gt;     3: 140801 MID25783553 Institution M      Civil  White   Male       20073</span>
+<span class="co">#&gt;    ---                                                                      </span>
+<span class="co">#&gt; 10762: 143501 MID26695626 Institution L Industrial  White   Male       20143</span>
+<span class="co">#&gt; 10763: 143501 MID26696116 Institution L Industrial  White Female       20153</span>
+<span class="co">#&gt; 10764: 143501 MID26696429 Institution L Industrial  White Female       20153</span></code></pre></div>
+<p>The data sufficiency criterion is that a study must be limited to students whose timely completion term is within the range of data provided by their institution.</p>
+<p>The midfieldr function <code>add_data_sufficiency</code> accesses finds the upper limit of their institution’s data range, compares it to the timely completion term, and reports in a TRUE/FALSE column whether the data are sufficient.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Establish the criterion</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">DT</span>
+<span class="co">#&gt;          cip6        mcid   institution    program   race    sex timely_term</span>
+<span class="co">#&gt;        &lt;char&gt;      &lt;char&gt;        &lt;char&gt;     &lt;char&gt; &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span>
+<span class="co">#&gt;     1: 140801 MID25783197 Institution M      Civil  White   Male       19923</span>
+<span class="co">#&gt;     2: 140801 MID25783441 Institution M      Civil  White   Male       19973</span>
+<span class="co">#&gt;     3: 140801 MID25783553 Institution M      Civil  White   Male       20073</span>
+<span class="co">#&gt;    ---                                                                      </span>
+<span class="co">#&gt; 10762: 143501 MID26695626 Institution L Industrial  White   Male       20143</span>
+<span class="co">#&gt; 10763: 143501 MID26696116 Institution L Industrial  White Female       20153</span>
+<span class="co">#&gt; 10764: 143501 MID26696429 Institution L Industrial  White Female       20153</span>
+<span class="co">#&gt;        data_sufficiency</span>
+<span class="co">#&gt;                  &lt;lgcl&gt;</span>
+<span class="co">#&gt;     1:             TRUE</span>
+<span class="co">#&gt;     2:             TRUE</span>
+<span class="co">#&gt;     3:             TRUE</span>
+<span class="co">#&gt;    ---                 </span>
+<span class="co">#&gt; 10762:             TRUE</span>
+<span class="co">#&gt; 10763:             TRUE</span>
+<span class="co">#&gt; 10764:             TRUE</span></code></pre></div>
+<p>We limit the study to students for whom the data sufficiency criterion is met.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Apply the criterion</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">]</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">DT</span>
+<span class="co">#&gt;         cip6        mcid   institution    program   race    sex timely_term</span>
+<span class="co">#&gt;       &lt;char&gt;      &lt;char&gt;        &lt;char&gt;     &lt;char&gt; &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span>
+<span class="co">#&gt;    1: 140801 MID25783197 Institution M      Civil  White   Male       19923</span>
+<span class="co">#&gt;    2: 140801 MID25783441 Institution M      Civil  White   Male       19973</span>
+<span class="co">#&gt;    3: 140801 MID25783553 Institution M      Civil  White   Male       20073</span>
+<span class="co">#&gt;   ---                                                                      </span>
+<span class="co">#&gt; 8217: 143501 MID26695626 Institution L Industrial  White   Male       20143</span>
+<span class="co">#&gt; 8218: 143501 MID26696116 Institution L Industrial  White Female       20153</span>
+<span class="co">#&gt; 8219: 143501 MID26696429 Institution L Industrial  White Female       20153</span>
+<span class="co">#&gt;       data_sufficiency</span>
+<span class="co">#&gt;                 &lt;lgcl&gt;</span>
+<span class="co">#&gt;    1:             TRUE</span>
+<span class="co">#&gt;    2:             TRUE</span>
+<span class="co">#&gt;    3:             TRUE</span>
+<span class="co">#&gt;   ---                 </span>
+<span class="co">#&gt; 8217:             TRUE</span>
+<span class="co">#&gt; 8218:             TRUE</span>
+<span class="co">#&gt; 8219:             TRUE</span></code></pre></div>
+</div>
+<div id="save-results" class="section level2">
+<h2 class="hasAnchor">
+<a href="#save-results" class="anchor" aria-hidden="true"></a>Save results</h2>
+<p>We can order the rows of the result using the data.table function <code><a href="https://Rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder()</a></code>—not strictly necessary, but it does facilitate reproducibility.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Optional step to order the rows </span>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"institution"</span><span class="op">)</span><span class="op">)</span>
+
+<span class="co"># Rename before saving </span>
+<span class="va">case_student</span> <span class="op">&lt;-</span> <span class="va">DT</span></code></pre></div>
+<p>We save the <code>DT</code> data frame as a CSV file to the <code>results</code> directory for easy access as we work through the study.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Assumes you have a results folder in the project directory</span>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fwrite.html" class="external-link">fwrite</a></span><span class="op">(</span><span class="va">case_student</span>, file <span class="op">=</span> <span class="st">"results/case_student.csv"</span><span class="op">)</span></code></pre></div>
+<p>These results have been included with midfieldr as the built-in data set <code>study_student</code>. View its help page by running</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="op">?</span> <span class="va">study_student</span></code></pre></div>
+<p>View the data frame,</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">study_student</span>
+<span class="co">#&gt;              mcid   institution   cip6    program   race    sex timely_term</span>
+<span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;     &lt;char&gt; &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span>
+<span class="co">#&gt;    1: MID25783197 Institution M 140801      Civil  White   Male       19923</span>
+<span class="co">#&gt;    2: MID25783441 Institution M 140801      Civil  White   Male       19973</span>
+<span class="co">#&gt;    3: MID25783553 Institution M 140801      Civil  White   Male       20073</span>
+<span class="co">#&gt;   ---                                                                      </span>
+<span class="co">#&gt; 8217: MID26695626 Institution L 143501 Industrial  White   Male       20143</span>
+<span class="co">#&gt; 8218: MID26696116 Institution L 143501 Industrial  White Female       20153</span>
+<span class="co">#&gt; 8219: MID26696429 Institution L 143501 Industrial  White Female       20153</span>
+<span class="co">#&gt;       data_sufficiency</span>
+<span class="co">#&gt;                 &lt;lgcl&gt;</span>
+<span class="co">#&gt;    1:             TRUE</span>
+<span class="co">#&gt;    2:             TRUE</span>
+<span class="co">#&gt;    3:             TRUE</span>
+<span class="co">#&gt;   ---                 </span>
+<span class="co">#&gt; 8217:             TRUE</span>
+<span class="co">#&gt; 8218:             TRUE</span>
+<span class="co">#&gt; 8219:             TRUE</span></code></pre></div>
+<p>Check that the two data frames are identical,</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">case_student</span>, <span class="va">study_student</span><span class="op">)</span>
+<span class="co">#&gt; [1] TRUE</span></code></pre></div>
+<p>In subsequent vignettes, you can read in the <code>case_student</code> data from your <code>results</code> directory or you can use the <code>study_student</code> data provided with midfieldr.</p>
+</div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
 <a href="#references" class="anchor" aria-hidden="true"></a>References</h2>
@@ -116,11 +395,38 @@
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor" aria-hidden="true"></a>Complete script</h3>
 <p>The vignette code chunks are collected below in a single, condensed script.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span></code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span>
+
+<span class="co"># load data tables from midfielddata</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span><span class="op">)</span>
+
+<span class="co"># Gather students</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">term</span>,
+                   match_to <span class="op">=</span> <span class="va">study_program</span>,
+                   by_col <span class="op">=</span> <span class="st">"cip6"</span>,
+                   select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"institution"</span>, <span class="st">"cip6"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">DT</span>,
+                   match_to <span class="op">=</span> <span class="va">student</span>,
+                   by_col <span class="op">=</span> <span class="st">"mcid"</span><span class="op">)</span>
+
+<span class="co"># Join grouping variables</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">study_program</span>, by <span class="op">=</span> <span class="st">"cip6"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_race_sex.html">add_race_sex</a></span><span class="op">(</span><span class="va">DT</span>, midfield_student <span class="op">=</span> <span class="va">student</span><span class="op">)</span>
+
+<span class="co"># Filter for data sufficiency</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">]</span>
+
+<span class="co"># Save results</span>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"institution"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">case_student</span> <span class="op">&lt;-</span> <span class="va">DT</span>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fwrite.html" class="external-link">fwrite</a></span><span class="op">(</span><span class="va">case_student</span>, file <span class="op">=</span> <span class="st">"results/case_student.csv"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
   </div>

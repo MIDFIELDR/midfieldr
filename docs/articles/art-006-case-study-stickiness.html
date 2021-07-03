@@ -93,7 +93,7 @@
       <h1 class="display-4" data-toc-skip>Case study stickiness</h1>
                         <h4 data-toc-skip class="author">Richard Layton</h4>
             
-            <h4 data-toc-skip class="date">2021-07-01</h4>
+            <h4 data-toc-skip class="date">2021-07-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/master/vignettes/art-006-case-study-stickiness.Rmd" class="external-link"><code>vignettes/art-006-case-study-stickiness.Rmd</code></a></small>
       <div class="d-none name"><code>art-006-case-study-stickiness.Rmd</code></div>
@@ -107,6 +107,12 @@
 <a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h2>
 <p>Longitudinal “stickiness” is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program after accounting for the data sufficiency and timely completion criteria <span class="citation"><a href="#ref-Ohland+Orr+others:2012" role="doc-biblioref">[1]</a></span>.</p>
 <p>The stickiness metric accounts for all students in a program, including students who begin college part-time, enroll mid-year, switch majors, or transfer. Every student counted in a program’s stickiness metric was enrolled in that program for at least one term. The program succeeded in attracting these students—stickiness tells us how well the program succeeded in retaining them.</p>
+<p>The case study is a quick tour of a typical workflow using student unit record data. This is a “big picture” development—functions are used without detailed explanations or development so that we can focus on the logic of the analysis. For exploring related midfieldr functions and methods in greater detail, see</p>
+<ul>
+<li><a href="art-030-timely-completion.html" target="_blank">Timely completion</a></li>
+<li><a href="art-050-multiway-graphs.html" target="_blank">Multiway graphs</a></li>
+<li><a href="art-060-tabulating-data.html" target="_blank">Tabulating data</a></li>
+</ul>
 <div id="outline" class="section level3">
 <h3 class="hasAnchor">
 <a href="#outline" class="anchor" aria-hidden="true"></a>Outline</h3>
@@ -118,9 +124,9 @@
 <li>Compute and graph stickiness (conclude with <code>study_stickiness</code>)</li>
 </ul>
 </div>
-<div id="this-vignette-uses" class="section level3">
+<div id="in-this-vignette" class="section level3">
 <h3 class="hasAnchor">
-<a href="#this-vignette-uses" class="anchor" aria-hidden="true"></a>This vignette uses</h3>
+<a href="#in-this-vignette" class="anchor" aria-hidden="true"></a>In this vignette</h3>
 <p>midfieldr functions</p>
 <ul>
 <li><code><a href="../reference/filter_match.html">filter_match()</a></code></li>
@@ -148,16 +154,44 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># load data tables from midfielddata</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span>, <span class="va">degree</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># study stickiness</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_student</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_timely.html">add_completion_timely</a></span><span class="op">(</span><span class="va">DT</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span>
+
+<span class="va">ever_enroll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
+<span class="va">ever_enroll</span> <span class="op">&lt;-</span> <span class="va">ever_enroll</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>ever <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>
+<span class="va">ever_enroll</span>
+
+<span class="va">graduate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
+<span class="va">graduate</span> <span class="op">&lt;-</span> <span class="va">graduate</span><span class="op">[</span><span class="va">completion_timely</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">]</span>
+<span class="va">graduate</span> <span class="op">&lt;-</span> <span class="va">graduate</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>grad <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>
+<span class="va">graduate</span>
+
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">ever_enroll</span>,
+            <span class="va">graduate</span>,
+            by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span>,
+            all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">grad</span><span class="op">)</span>, <span class="va">grad</span> <span class="op">:=</span> <span class="fl">0</span><span class="op">]</span><span class="op">[</span><span class="op">]</span>
+<span class="va">DT</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">ever</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">]</span>
+<span class="va">DT</span><span class="op">[</span>, <span class="va">stick</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">grad</span> <span class="op">/</span> <span class="va">ever</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">program</span>, <span class="va">sex</span>, <span class="va">race</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.nrows <span class="op">=</span> <span class="fl">40</span><span class="op">)</span>
+<span class="va">study_stickiness</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
+<span class="va">study_stickiness</span></code></pre></div>
 </div>
 </div>
 <div id="gather-eligible-students" class="section level2">
 <h2 class="hasAnchor">
 <a href="#gather-eligible-students" class="anchor" aria-hidden="true"></a>Gather eligible students</h2>
 <p>We start with the case study program codes and names saved in the data set <code>study_program</code>, with which you are familiar from previous vignettes. You may review its help page by running</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">?</span> <span class="va">study_program</span></code></pre></div>
 <p>Review the contents of the saved data:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Case study programs codes and names </span>
 <span class="va">study_program</span>
 <span class="co">#&gt;       cip6    program</span>
@@ -174,7 +208,7 @@
 <span class="co">#&gt; 11: 141901 Mechanical</span>
 <span class="co">#&gt; 12: 143501 Industrial</span></code></pre></div>
 <p>Use <code><a href="../reference/filter_match.html">filter_match()</a></code> to subset rows of <code>term</code> by values of <code>cip6</code> that match values of <code>cip6</code> in <code>study_program</code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Get all students in case programs </span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">term</span>,
   match_to <span class="op">=</span> <span class="va">study_program</span>,
@@ -223,7 +257,7 @@
 <span class="co">#&gt; 8217: MID26697163 Institution L 141901       20143             TRUE</span>
 <span class="co">#&gt; 8218: MID26697444 Institution L 141901       20153             TRUE</span>
 <span class="co">#&gt; 8219: MID26697447 Institution L 141001       20163             TRUE</span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Add the grouping variables: program, race, and sex</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">study_program</span>, by <span class="op">=</span> <span class="st">"cip6"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_race_sex.html">add_race_sex</a></span><span class="op">(</span><span class="va">DT</span>, midfield_student <span class="op">=</span> <span class="va">student</span><span class="op">)</span>
@@ -259,7 +293,7 @@
 <h2 class="hasAnchor">
 <a href="#group-summarize-and-join" class="anchor" aria-hidden="true"></a>Group, summarize, and join</h2>
 <p>Ever enrolled</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Count ever enrolled</span>
 <span class="va">ever_enrolled</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>ever <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>
 <span class="va">ever_enrolled</span>
@@ -277,7 +311,7 @@
 <span class="co">#&gt; 54: Industrial   Other/Unknown Female     3</span>
 <span class="co">#&gt; 55: Industrial Native American Female     1</span></code></pre></div>
 <p>Graduates</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_timely.html">add_completion_timely</a></span><span class="op">(</span><span class="va">DT</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span>
 
 <span class="va">graduates</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">completion_timely</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">]</span>
@@ -327,7 +361,7 @@
 <span class="co">#&gt; 50: Industrial   Other/Unknown Female     3</span>
 <span class="co">#&gt; 51: Industrial Native American Female     1</span></code></pre></div>
 <p>Join</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">ever_enrolled</span>, 
             <span class="va">graduates</span>, 
             by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span>,
@@ -350,7 +384,7 @@
 <div id="condition-the-results" class="section level2">
 <h2 class="hasAnchor">
 <a href="#condition-the-results" class="anchor" aria-hidden="true"></a>Condition the results</h2>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Condition</span>
 <span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">ever</span><span class="op">)</span><span class="op">]</span>
 <span class="co">#&gt; Empty data.table (0 rows and 5 cols): program,race,sex,ever,grad</span>
@@ -401,7 +435,7 @@
 <h2 class="hasAnchor">
 <a href="#compute-stickiness" class="anchor" aria-hidden="true"></a>Compute stickiness</h2>
 <p>Expect 40 rows</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># stickiness</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.topn <span class="op">=</span> <span class="fl">40</span><span class="op">)</span>
 <span class="va">DT</span><span class="op">[</span>, <span class="va">stick</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">grad</span> <span class="op">/</span> <span class="va">ever</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span>
@@ -447,7 +481,7 @@
 <span class="co">#&gt; 31: Mechanical             White Male  1940  1265  65.2</span>
 <span class="co">#&gt;        program               race_sex  ever  grad stick</span></code></pre></div>
 <p>Save result for graph</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">case_stickiness</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">race_sex</span>, <span class="va">stick</span><span class="op">)</span><span class="op">]</span>
 <span class="va">case_stickiness</span>
 <span class="co">#&gt;        program               race_sex stick</span>
@@ -485,11 +519,11 @@
 <span class="co">#&gt; 31: Mechanical             White Male  65.2</span>
 <span class="co">#&gt;        program               race_sex stick</span></code></pre></div>
 <p>Same as built-in data <code>study_stickiness</code>.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">case_stickiness</span>, <span class="va">study_stickiness</span><span class="op">)</span>
 <span class="co">#&gt; [1] "Different number of rows"    "Different number of columns"</span>
 <span class="co">#&gt; [3] "Different column names"</span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># data preparation</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condition_multiway.html">condition_multiway</a></span><span class="op">(</span><span class="va">case_stickiness</span><span class="op">)</span>
 <span class="va">DT_med</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condition_multiway.html">condition_multiway</a></span><span class="op">(</span><span class="va">DT</span>, details <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
@@ -497,7 +531,7 @@
 <div id="graph-the-results" class="section level2">
 <h2 class="hasAnchor">
 <a href="#graph-the-results" class="anchor" aria-hidden="true"></a>Graph the results</h2>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># creating a multiway graph</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">DT_med</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">stick</span>, y <span class="op">=</span> <span class="va">race_sex</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span>, as.table <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
@@ -530,7 +564,7 @@
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor" aria-hidden="true"></a>Complete script</h3>
 <p>The vignette code chunks are collected below in a single, condensed script.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>
