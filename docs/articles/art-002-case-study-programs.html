@@ -93,7 +93,7 @@
       <h1 class="display-4" data-toc-skip>Case study programs</h1>
                         <h4 data-toc-skip class="author">Richard Layton</h4>
             
-            <h4 data-toc-skip class="date">2021-07-03</h4>
+            <h4 data-toc-skip class="date">2021-07-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/master/vignettes/art-002-case-study-programs.Rmd" class="external-link"><code>vignettes/art-002-case-study-programs.Rmd</code></a></small>
       <div class="d-none name"><code>art-002-case-study-programs.Rmd</code></div>
@@ -105,30 +105,41 @@
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h2>
-<p>In studying student records, a common first step is to select a specific set of programs to explore. In this vignette, we start a case study of four engineering programs by constructing a data frame of program CIP codes and program names.</p>
-<p>The case study is a quick tour of a typical workflow using student unit record data. This is a “big picture” development—functions are used without detailed explanations or development so that we can focus on the logic of the analysis. For exploring related midfieldr functions and methods in greater detail, see</p>
+<p>The case study is a tour of a typical workflow with student unit record data. For the sake of brevity, we focus on the logic of the analysis and leave the detailed discussion of functions and arguments to later vignettes.</p>
+<p>Assuming you completed the introduction to the four data tables (in <a href="art-000-getting-started.html">Getting started</a>), the case study has four parts:</p>
+<ul>
+<li>
+<em>Case study programs</em> ⮘ You are here.</li>
+<li><a href="art-004-case-study-students.html">Case study students</a></li>
+<li><a href="art-006-case-study-stickiness.html">Case study stickiness</a></li>
+<li><a href="art-006-case-study-grad-rate.html">Case study graduation rate</a></li>
+</ul>
+<p>Longer, related vignettes with detailed discussions of methods and functions include:</p>
 <ul>
 <li><a href="art-010-program-codes.html" target="_blank">Program codes and names</a></li>
 <li><a href="art-015-subsetting-midfield-data.html" target="_blank">Subsetting MIDFIELD data</a></li>
 </ul>
-<div id="outline" class="section level3">
+<div id="in-this-vignette" class="section level3">
 <h3 class="hasAnchor">
-<a href="#outline" class="anchor" aria-hidden="true"></a>Outline</h3>
+<a href="#in-this-vignette" class="anchor" aria-hidden="true"></a>In this vignette</h3>
+<p>In studying student records, a common first step is to select a specific set of programs to explore. In this vignette, we start a case study of four engineering programs in which we:</p>
 <ul>
-<li>Identify the CIP codes for the case study<br>
+<li>Identify their CIP codes<br>
 </li>
 <li>Assign custom program names</li>
 <li>Save the results</li>
 </ul>
-</div>
-<div id="in-this-vignette" class="section level3">
-<h3 class="hasAnchor">
-<a href="#in-this-vignette" class="anchor" aria-hidden="true"></a>In this vignette</h3>
-<p>midfieldr functions</p>
+<p>We use the following midfieldr functions</p>
 <ul>
 <li><a href="../reference/filter_search.html"><code>filter_search()</code></a></li>
 </ul>
-<p>packages</p>
+<p>The vignette output is the data frame <code>study_program</code>.</p>
+</div>
+</div>
+<div id="identify-program-codes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#identify-program-codes" class="anchor" aria-hidden="true"></a>Identify program codes</h2>
+<p>If you are writing your own script to follow along, we start with these packages:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
@@ -140,16 +151,17 @@
   datatable.print.topn <span class="op">=</span> <span class="fl">3</span>,
   datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
-</div>
-</div>
-<div id="identify-program-codes" class="section level2">
-<h2 class="hasAnchor">
-<a href="#identify-program-codes" class="anchor" aria-hidden="true"></a>Identify program codes</h2>
-<p>We know the conventional names of the desired programs (Civil, Electrical, Industrial, and Mechanical Engineering) but these are not necessarily the exact program names used in the CIP. Thus we have to search CIP thoroughly to make sure we find all 6-digit CIP codes associated with these disciplines.</p>
-<p>We start with a text search of <code>cip</code> for <code>engineering</code>.</p>
+<p>midfieldr includes <code>cip</code>, a data table of academic program codes and names. View its help page by running</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Type in the Console</span>
+<span class="op">?</span> <span class="va">cip</span></code></pre></div>
+<p>We know the conventional names of the desired programs (Civil, Electrical, Industrial, and Mechanical Engineering) but these are not necessarily the exact program names used in the CIP. Thus we have to search CIP thoroughly to make sure we find all 6-digit CIP codes associated with these disciplines.</p>
+<p>We start with a text search of <code>cip</code> for <code>engineering</code> using <code><a href="../reference/filter_search.html">filter_search()</a></code>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># subset rows of the CIP data matching conditions</span>
 <span class="va">pass01</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"engineering"</span><span class="op">)</span>
+
+<span class="co"># Examine the result</span>
 <span class="va">pass01</span>
 <span class="co">#&gt;        cip2                                         cip2name   cip4</span>
 <span class="co">#&gt;      &lt;char&gt;                                           &lt;char&gt; &lt;char&gt;</span>
@@ -179,7 +191,7 @@
 <span class="co">#&gt; 118:                                            Engineering Acoustics</span>
 <span class="co">#&gt; 119: Assistive, Augmentative Technology and Rehabiliation Engineering</span></code></pre></div>
 <p>We have a number of 2-digit codes reported. Let’s examine those more closely using data.table syntax for selecting columns.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cols_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip2"</span>, <span class="st">"cip2name"</span><span class="op">)</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">pass01</span><span class="op">[</span>, <span class="va">..cols_we_want</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt;      cip2                                         cip2name</span>
@@ -189,8 +201,10 @@
 <span class="co">#&gt; 3:     29                            Military Technologies</span>
 <span class="co">#&gt; 4:     51 Health Professions and Related Clinical Sciences</span></code></pre></div>
 <p>Only one of these (14) will have the programs we are looking for. So in our second pass, we can restrict our search to codes starting with 14.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pass02</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">pass01</span>, <span class="st">"^14"</span><span class="op">)</span>
+
+<span class="co"># Examine the result</span>
 <span class="va">pass02</span>
 <span class="co">#&gt;       cip2    cip2name   cip4</span>
 <span class="co">#&gt;     &lt;char&gt;      &lt;char&gt; &lt;char&gt;</span>
@@ -220,60 +234,34 @@
 <span class="co">#&gt; 53:                           Biological, Biosystems Engineering</span>
 <span class="co">#&gt; 54:                                           Engineering, Other</span></code></pre></div>
 <p>In the next pass, let’s try restricting our search to the four conventional terms: civil, electrical, industrial, and mechanical. The search is not case-sensitive.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># optional code to control data.table printing</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.topn <span class="op">=</span> <span class="fl">13</span><span class="op">)</span>
 
 <span class="va">pass03</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">pass02</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"civil"</span>, <span class="st">"electrical"</span>, <span class="st">"industrial"</span>, <span class="st">"mechanical"</span><span class="op">)</span><span class="op">)</span>
-<span class="va">pass03</span>
-<span class="co">#&gt;       cip2    cip2name   cip4</span>
-<span class="co">#&gt;     &lt;char&gt;      &lt;char&gt; &lt;char&gt;</span>
-<span class="co">#&gt;  1:     14 Engineering   1408</span>
-<span class="co">#&gt;  2:     14 Engineering   1408</span>
-<span class="co">#&gt;  3:     14 Engineering   1408</span>
-<span class="co">#&gt;  4:     14 Engineering   1408</span>
-<span class="co">#&gt;  5:     14 Engineering   1408</span>
-<span class="co">#&gt;  6:     14 Engineering   1408</span>
-<span class="co">#&gt;  7:     14 Engineering   1410</span>
-<span class="co">#&gt;  8:     14 Engineering   1410</span>
-<span class="co">#&gt;  9:     14 Engineering   1410</span>
-<span class="co">#&gt; 10:     14 Engineering   1410</span>
-<span class="co">#&gt; 11:     14 Engineering   1419</span>
-<span class="co">#&gt; 12:     14 Engineering   1435</span>
-<span class="co">#&gt; 13:     14 Engineering   1441</span>
-<span class="co">#&gt;                                                   cip4name   cip6</span>
-<span class="co">#&gt;                                                     &lt;char&gt; &lt;char&gt;</span>
-<span class="co">#&gt;  1:                                      Civil Engineering 140801</span>
-<span class="co">#&gt;  2:                                      Civil Engineering 140802</span>
-<span class="co">#&gt;  3:                                      Civil Engineering 140803</span>
-<span class="co">#&gt;  4:                                      Civil Engineering 140804</span>
-<span class="co">#&gt;  5:                                      Civil Engineering 140805</span>
-<span class="co">#&gt;  6:                                      Civil Engineering 140899</span>
-<span class="co">#&gt;  7: Electrical, Electronics and Communications Engineering 141001</span>
-<span class="co">#&gt;  8: Electrical, Electronics and Communications Engineering 141003</span>
-<span class="co">#&gt;  9: Electrical, Electronics and Communications Engineering 141004</span>
-<span class="co">#&gt; 10: Electrical, Electronics and Communications Engineering 141099</span>
-<span class="co">#&gt; 11:                                 Mechanical Engineering 141901</span>
-<span class="co">#&gt; 12:                                 Industrial Engineering 143501</span>
-<span class="co">#&gt; 13:                          Electromechanical Engineering 144101</span>
-<span class="co">#&gt;                                                          cip6name</span>
-<span class="co">#&gt;                                                            &lt;char&gt;</span>
-<span class="co">#&gt;  1:                                    Civil Engineering, General</span>
-<span class="co">#&gt;  2:                                      Geotechnical Engineering</span>
-<span class="co">#&gt;  3:                                        Structural Engineering</span>
-<span class="co">#&gt;  4:                        Transportation and Highway Engineering</span>
-<span class="co">#&gt;  5:                                   Water Resources Engineering</span>
-<span class="co">#&gt;  6:                                      Civil Engineering, Other</span>
-<span class="co">#&gt;  7:        Electrical, Electronics and Communications Engineering</span>
-<span class="co">#&gt;  8:                                 Laser and Optical Engineering</span>
-<span class="co">#&gt;  9:                                Telecommunications Engineering</span>
-<span class="co">#&gt; 10: Electrical, Electronics and Communications Engineering, Other</span>
-<span class="co">#&gt; 11:                                        Mechanical Engineering</span>
-<span class="co">#&gt; 12:                                        Industrial Engineering</span>
-<span class="co">#&gt; 13:                                 Electromechanical Engineering</span></code></pre></div>
+
+<span class="co"># Examine the result</span>
+<span class="va">pass03</span><span class="op">[</span> , <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, <span class="va">cip6name</span><span class="op">)</span><span class="op">]</span>
+<span class="co">#&gt;       cip6                                                      cip6name</span>
+<span class="co">#&gt;     &lt;char&gt;                                                        &lt;char&gt;</span>
+<span class="co">#&gt;  1: 140801                                    Civil Engineering, General</span>
+<span class="co">#&gt;  2: 140802                                      Geotechnical Engineering</span>
+<span class="co">#&gt;  3: 140803                                        Structural Engineering</span>
+<span class="co">#&gt;  4: 140804                        Transportation and Highway Engineering</span>
+<span class="co">#&gt;  5: 140805                                   Water Resources Engineering</span>
+<span class="co">#&gt;  6: 140899                                      Civil Engineering, Other</span>
+<span class="co">#&gt;  7: 141001        Electrical, Electronics and Communications Engineering</span>
+<span class="co">#&gt;  8: 141003                                 Laser and Optical Engineering</span>
+<span class="co">#&gt;  9: 141004                                Telecommunications Engineering</span>
+<span class="co">#&gt; 10: 141099 Electrical, Electronics and Communications Engineering, Other</span>
+<span class="co">#&gt; 11: 141901                                        Mechanical Engineering</span>
+<span class="co">#&gt; 12: 143501                                        Industrial Engineering</span>
+<span class="co">#&gt; 13: 144101                                 Electromechanical Engineering</span></code></pre></div>
 <p>In this result, only Electromechanical Engineering is superfluous, so we can drop it in the next pass.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pass04</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">pass03</span>, drop_text <span class="op">=</span> <span class="st">"electromechanical"</span><span class="op">)</span>
+
+<span class="co"># Examine the result</span>
 <span class="va">pass04</span>
 <span class="co">#&gt;       cip2    cip2name   cip4</span>
 <span class="co">#&gt;     &lt;char&gt;      &lt;char&gt; &lt;char&gt;</span>
@@ -326,11 +314,11 @@
 <li>Mechanical and Industrial have one program each at the 6-digit level</li>
 </ul>
 <p>All MIDFIELD data tables that have a column of CIP codes use 6-digit codes. Therefore, for a case study, we only need the <code>cip6</code> column from the work above. The names we want (in this case), however, are at the 4-digit level. We can select the columns we need.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cols_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span>, <span class="st">"cip4name"</span><span class="op">)</span>
 <span class="va">case_cip</span> <span class="op">&lt;-</span> <span class="va">pass04</span><span class="op">[</span>, <span class="va">..cols_we_want</span><span class="op">]</span>
 
-<span class="co"># examine the result</span>
+<span class="co"># Examine the result</span>
 <span class="va">case_cip</span>
 <span class="co">#&gt;       cip6                                               cip4name</span>
 <span class="co">#&gt;     &lt;char&gt;                                                 &lt;char&gt;</span>
@@ -353,12 +341,13 @@
 <p>As the study proceeds, we will want to compare and contrast the programs by name. The names in <code>cip4name</code> are close to what we want, but all can be shortened for later reporting in graphs and tables.</p>
 <p>We use the data.table <code><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase()</a></code> function and <code>%ilike%</code> to add a <code>program</code> column with values that depend on the values in the <code>cip4name</code> column.</p>
 <p>View their help pages by running</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">?</span> <span class="va">`%ilike%`</span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Type in the Console</span>
+<span class="op">?</span> <span class="va">`%ilike%`</span>
 
 <span class="op">?</span> <span class="va">fcase</span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Create a new memory location</span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Create a new memory location to avoid updating by reference</span>
 <span class="va">case_program</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">case_cip</span><span class="op">)</span>
 
 <span class="co"># Add a new column for custom program labels</span>
@@ -386,7 +375,7 @@
 <span class="co">#&gt; 11: 141901                                 Mechanical Engineering Mechanical</span>
 <span class="co">#&gt; 12: 143501                                 Industrial Engineering Industrial</span></code></pre></div>
 <p>In subsequent work we need only the <code>cip6</code> and <code>program</code> values, so we can drop the <code>cip4name</code> column.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Drop an unnecessary column </span>
 <span class="va">case_program</span><span class="op">[</span>, <span class="va">cip4name</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span>
 
@@ -411,15 +400,16 @@
 <h2 class="hasAnchor">
 <a href="#save-results" class="anchor" aria-hidden="true"></a>Save results</h2>
 <p>We save the <code>case_program</code> data frame as a CSV file to the <code>results</code> directory for easy access as we work through the study. Here we use fast write <code><a href="https://Rdatatable.gitlab.io/data.table/reference/fwrite.html" class="external-link">fwrite()</a></code> from data.table. You may prefer other read/write functions such as those in base R or packages readr or rio. Note that relative file path shown assumes you are working within an RStudio project and that you have a <code>results</code> subdirectory (as described in <a href="art-00-midfield-data.html">Getting started</a>).</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Assumes you have a results folder in the project directory</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fwrite.html" class="external-link">fwrite</a></span><span class="op">(</span><span class="va">case_program</span>, file <span class="op">=</span> <span class="st">"results/case_program.csv"</span><span class="op">)</span></code></pre></div>
 <p>We suggest saving intermediate results like these at each significant milestone of a study, especially after steps requiring a lot of computing time.</p>
 <p>These results have been included with midfieldr as the built-in data set <code>study_program</code>. View its help page by running</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">?</span> <span class="va">study_program</span></code></pre></div>
-<p>View the data frame,</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Type in the Console</span>
+<span class="op">?</span> <span class="va">study_program</span></code></pre></div>
+<p>View the data frame,</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">study_program</span>
 <span class="co">#&gt;       cip6    program</span>
 <span class="co">#&gt;     &lt;char&gt;     &lt;char&gt;</span>
@@ -436,7 +426,7 @@
 <span class="co">#&gt; 11: 141901 Mechanical</span>
 <span class="co">#&gt; 12: 143501 Industrial</span></code></pre></div>
 <p>Check that the two data frames are identical,</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">case_program</span>, <span class="va">study_program</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
 <p>In subsequent vignettes, you can read in the <code>case_program</code> data from your <code>results</code> directory or you can use the <code>study_program</code> data provided with midfieldr.</p>
@@ -463,7 +453,7 @@
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor" aria-hidden="true"></a>Complete script</h3>
 <p>The vignette code chunks are collected below in a single, condensed script.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>

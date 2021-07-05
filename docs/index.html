@@ -162,7 +162,7 @@
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor" aria-hidden="true"></a>Usage</h2>
-<p>In this brief usage example, we compare counts of engineering students by race/ethnicity, sex, and graduation status. Data manipulation is performed using the data.table package.</p>
+<p>In this brief usage example, we compare counts of engineering students by race/ethnicity, sex, and graduation status. Data manipulation is performed using data.table syntax.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># packages used </span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
@@ -173,7 +173,8 @@
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span>, <span class="va">degree</span><span class="op">)</span>
 
 <span class="co"># Filter for engineering programs </span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^14"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">institution</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^14"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">institution</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
 
 <span class="co"># Ensure students are degree-seeking </span>
@@ -194,23 +195,23 @@
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_race_sex.html">add_race_sex</a></span><span class="op">(</span><span class="va">DT</span>, midfield_student <span class="op">=</span> <span class="va">student</span><span class="op">)</span>
 
 <span class="co"># Count by grouping variables</span>
-<span class="va">result</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">grad_status</span>, <span class="va">sex</span>, <span class="va">race</span><span class="op">)</span><span class="op">]</span></code></pre></div>
-<p>The resulting counts are given by:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">result</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">grad_status</span>, <span class="va">sex</span>, <span class="va">race</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">grad_status</span>, <span class="va">sex</span>, <span class="va">race</span><span class="op">)</span><span class="op">]</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">DT</span>
 <span class="co">#&gt;     grad_status    sex            race     N</span>
 <span class="co">#&gt;          &lt;char&gt; &lt;char&gt;          &lt;char&gt; &lt;int&gt;</span>
-<span class="co">#&gt;  1:        grad Female           Asian   182</span>
-<span class="co">#&gt;  2:        grad Female           Black   433</span>
-<span class="co">#&gt;  3:        grad Female Hispanic/Latinx    85</span>
-<span class="co">#&gt;  4:        grad Female   International    30</span>
-<span class="co">#&gt;  5:        grad Female Native American    14</span>
+<span class="co">#&gt;  1:        grad   Male           White  7172</span>
+<span class="co">#&gt;  2:        grad   Male           Black   533</span>
+<span class="co">#&gt;  3:    non-grad   Male           White  4423</span>
+<span class="co">#&gt;  4:    non-grad   Male           Black   706</span>
+<span class="co">#&gt;  5:    non-grad   Male   Other/Unknown   113</span>
 <span class="co">#&gt; ---                                         </span>
-<span class="co">#&gt; 24:    non-grad   Male Hispanic/Latinx   176</span>
-<span class="co">#&gt; 25:    non-grad   Male   International   157</span>
-<span class="co">#&gt; 26:    non-grad   Male Native American    38</span>
-<span class="co">#&gt; 27:    non-grad   Male   Other/Unknown   113</span>
-<span class="co">#&gt; 28:    non-grad   Male           White  4423</span></code></pre></div>
+<span class="co">#&gt; 24:        grad Female   Other/Unknown    35</span>
+<span class="co">#&gt; 25:        grad Female Native American    14</span>
+<span class="co">#&gt; 26:    non-grad Female   International    24</span>
+<span class="co">#&gt; 27:    non-grad Female Native American     7</span>
+<span class="co">#&gt; 28:        grad   Male Native American    36</span></code></pre></div>
 </div>
 <div id="documentation" class="section level2">
 <h2 class="hasAnchor">
@@ -243,13 +244,13 @@
 <h2 class="hasAnchor">
 <a href="#install-midfieldr" class="anchor" aria-hidden="true"></a>Install midfieldr</h2>
 <p>midfieldr is not yet available from <a href="https://cran.r-project.org/" class="external-link">CRAN</a>. To install the development version of midfieldr from its <code>drat</code> repository, type in the Console:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install midfieldr from drat repo</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"midfieldr"</span>, 
                  repos <span class="op">=</span> <span class="st">"https://MIDFIELDR.github.io/drat/"</span>, 
                  type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></code></pre></div>
 <p>You can confirm a successful installation by running the following lines to bring up the package help page in the Help window.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"midfieldr-package"</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-midfieldr-help-page-1.png" width="75%"></p>
@@ -258,14 +259,14 @@
 <h2 class="hasAnchor">
 <a href="#install-midfielddata" class="anchor" aria-hidden="true"></a>Install midfielddata</h2>
 <p>Because of its size, installing the practice data takes time; please be patient and wait for the prompt “&gt;” to reappear. In the Console, run:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install midfielddata  </span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"midfielddata"</span>, 
                  repos <span class="op">=</span> <span class="st">"https://MIDFIELDR.github.io/drat/"</span>, 
                  type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span>
 <span class="co"># be patient</span></code></pre></div>
 <p>You can confirm a successful installation by running the following lines to bring up the package help page in the Help window.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"midfielddata-package"</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-midfielddata-help-page-1.png" width="75%"></p>
