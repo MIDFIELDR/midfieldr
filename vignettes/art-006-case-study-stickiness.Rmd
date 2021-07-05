@@ -63,41 +63,55 @@ asp_ratio_mw <- function(data, categories) {
 
 ## Introduction
 
-Longitudinal "stickiness" is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program after accounting for the data sufficiency and timely completion  criteria  [@Ohland+Orr+others:2012]. 
+We continue the case study, a tour of a typical workflow with student unit record data. Again, for the sake of brevity we focus on the logic of the analysis and leave the detailed discussion of functions and arguments to later vignettes. 
 
-The stickiness metric accounts for all students in a program, including  students who begin college part-time, enroll mid-year, switch majors, or transfer. Every student counted in a program's stickiness metric was enrolled in that program for at least one term. The program succeeded in attracting these students---stickiness tells us how well the program succeeded in retaining them.
+Assuming you completed the introduction to the four data tables (in [Getting started](art-000-getting-started.html)), the case study has four parts:
 
-The case study is a quick tour of a typical workflow using student unit record data. This is a “big picture” development---functions are used without detailed explanations or development so that we can focus on the logic of the analysis. For exploring related midfieldr functions and methods in greater detail, see
+- [Case study programs](art-002-case-study-programs.html)
+- [Case study students](art-004-case-study-students.html)
+- *Case study stickiness* &#11160; You are here.
+- [Case study graduation rate](art-006-case-study-grad-rate.html)
 
+Longer, related vignettes with detailed discussions of methods and functions include:  
+
+
+- [Data sufficiency](art-020-data-sufficiency.html)
 - [Timely completion](art-030-timely-completion.html){target="_blank"} 
 - [Multiway graphs](art-050-multiway-graphs.html){target="_blank"} 
-- [Tabulating data](art-060-tabulating-data.html){target="_blank"} 
-
-### Outline
-
-- Gather eligible students (start with `study_program`)
-- Group, summarize, and join enrollees and graduates  
-- Condition the findings
-- Compute and graph stickiness (conclude with `study_stickiness`)
 
 ### In this vignette
 
-midfieldr functions 
+Starting with the `study_student` data frame from the previous vignette ([Case study students](art-004-case-study-students.html){target="_blank"}), we:
 
-- [`filter_match()`](../reference/filter_match.html)
-- [`add_race_sex()`](../reference/add_race_sex.html)
-- [`add_timely_term()`](../reference/add_timely_term.html)
-- [`add_data_sufficiency()`](../reference/add_data_sufficiency.html)
+- Apply the timely completion criterion 
+- Tally students ever enrolled in a program by race/ethnicity, and sex
+- Tally students completing a program by race/ethnicity, and sex
+- Compute and graph the stickiness 
+- Save the results
+ 
+*Longitudinal stickiness* is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program after accounting for the data sufficiency and timely completion  criteria  [@Ohland+Orr+others:2012]. Stickiness measures the extent to which a program succeeds in its basic goal of graduating the students it admits, without regard to how or when a student is admitted to a program---the metric includes students who begin college part-time, enroll mid-year, switch majors, or transfer, in addition to first-time-in-college students. 
+
+
+We use the following midfieldr functions
+
 - [`add_completion_timely()`](../reference/add_completion_timely.html)
 - [`condition_multiway()`](../reference/condition_multiway.html)
 
-packages
+The vignette output is the data frame `study_stickiness`. 
+
+
+
+
+
+## Apply the timely completion criterion 
+
+If you are writing your own script to follow along, we start with these packages: 
 
 ```{r}
 # packages used
 library("midfieldr")
 library("midfielddata")
-suppressPackageStartupMessages(library("data.table"))
+library("data.table")
 library("ggplot2")
 
 # optional code to control data.table printing
@@ -106,135 +120,80 @@ options(
   datatable.print.topn = 5,
   datatable.print.class = TRUE
 )
+
+# load data tables from midfielddata
+data(degree)
 ```
 
-data
+
+
+
+We gathered the eligible students for the case study programs in the previous case study vignettes.  The data are saved in the `study_student` data set that loads with midfieldr. View its help page by running
+
+```r  
+? study_student
+```
+
+Review the data. The data sufficiency criterion has been applied. As usual, we use assign our working data frame to `DT`. 
 
 ```{r}
-# load data tables from midfielddata
-data(student, term, degree)
+# Create a new memory location to avoid updating by reference
+DT <- copy(study_student)
+
+# Examine the result
+DT
 ```
 
-```{r eval = FALSE}
-# study stickiness
-DT <- copy(study_student)
+Before we can count the number of graduates, we have to assess whether graduates complete their program in a timely manner. A student graduating later than their timely-completion term are grouped with non-graduates for purposes of computing a persistence metric.
+
+The `add_completion_timely()` function requires that the input data frame has a `timely_term` column---which ours does. The function accesses the `degree` data to determine the term  of a student's first degree and reports whether the degree term (if any) satisfies the timely completion criterion. 
+
+```{r}
 DT <- add_completion_timely(DT, midfield_degree = degree)
+DT
+```
 
+
+## Summarize by group 
+
+We count the number of students ever enrolled and the number of graduates in separate steps, then join the results. 
+
+First we assign the grouping variables to be used for grouping, summarizing, and joining. 
+
+```{r}
+grouping_variables <- c("program", "race", "sex")
+```
+
+We count the enrollees and assign the result to the new `ever` column. 
+
+```{r}
 ever_enroll <- copy(DT)
-ever_enroll <- ever_enroll[, .(ever = .N), by = .(program, race, sex)]
+ever_enroll <- ever_enroll[, .(ever = .N), by = grouping_variables]
 ever_enroll
+```
 
+Before counting graduates, we subset for those satisfying the timely-completion criterion. 
+
+```{r}
 graduate <- copy(DT)
 graduate <- graduate[completion_timely == TRUE]
-graduate <- graduate[, .(grad = .N), by = .(program, race, sex)]
 graduate
+```
 
+We count the graduates and assign the result to the new `grad` column. 
+
+```{r}
+graduate <- graduate[, .(grad = .N),  by = grouping_variables]
+graduate
+```
+
+Now we join the two data frames, setting `all.x = TRUE` to retain all rows of both `ever_enroll`. 
+
+```{r}
 DT <- merge(ever_enroll,
             graduate,
-            by = c("program", "race", "sex"),
-            all = TRUE)
-DT <- DT[is.na(grad), grad := 0][]
-DT
-DT <- DT[ever > 10]
-DT[, stick := round(100 * grad / ever, 1)]
-DT <- DT[order(program, sex, race)]
-DT
-
-options(datatable.print.nrows = 40)
-study_stickiness <- copy(DT)
-study_stickiness
-```
-
-
-
-
-
-
-
-## Gather eligible students
-
-We start with the case study program codes and names saved in the data set `study_program`, with which you are familiar from previous vignettes. You may review its help page by running
-
-``` r
-? study_program
-```
-
-Review the contents of the saved data:
-
-```{r}
-# Case study programs codes and names 
-study_program
-```
-
-Use `filter_match()` to subset rows of `term` by values of `cip6` that match values of `cip6` in `study_program`. 
-
-```{r}
-# Get all students in case programs 
-DT <- filter_match(term,
-  match_to = study_program,
-  by_col = "cip6",
-  select = c("mcid", "institution", "cip6")
-)
-
-# Retain unique observations
-DT <- unique(DT)
-
-# Limit the study to degree-seeking students 
-DT <- filter_match(DT,
-  match_to = student,
-  by_col = "mcid"
-)
-DT
-
-# Apply the data sufficiency criterion 
-DT <- add_timely_term(DT, midfield_term = term)
-DT <- add_data_sufficiency(DT, midfield_term = term)
-DT <- DT[data_sufficiency == TRUE]
-DT
-```
-
-
-
-```{r}
-# Add the grouping variables: program, race, and sex
-DT <- merge(DT, study_program, by = "cip6", all.x = TRUE)
-DT <- add_race_sex(DT, midfield_student = student)
-DT
-```
-
-
-## Group, summarize, and join
-
-Ever enrolled
-
-```{r}
-# Count ever enrolled
-ever_enrolled <- DT[, .(ever = .N), by = .(program, race, sex)]
-ever_enrolled
-```
-
-Graduates
-
-```{r}
-DT <- add_completion_timely(DT, midfield_degree = degree)
-
-graduates <- DT[completion_timely == TRUE]
-graduates
-
-
-
-graduates <- graduates[, .(grad = .N), by = .(program, race, sex)]
-graduates
-
-```
-
-Join 
-
-```{r}
-DT <- merge(ever_enrolled, 
-            graduates, 
-            by = c("program", "race", "sex"),
-            all = TRUE)
+            by = grouping_variables,
+            all.x = TRUE)
 DT
 ```
 
@@ -242,80 +201,63 @@ DT
 
 ## Condition the results
 
+If the `graduate` data had fewer rows than the `ever_enroll` data, the `merge()` we did introduces some NA values in the `grad` column. 
+
 ```{r}
-# Condition
-DT[is.na(ever)]
-DT[is.na(grad)]
-
-DT <- DT[is.na(grad), grad := 0]
-
-sort(unique(DT$ever))
-sort(unique(DT$grad))
-sort(unique(DT$race))
-sort(unique(DT$sex))
-
-
-
-DT <- DT[ever > 10]
-DT <- DT[race %chin% c("Asian", "Black", "Hispanic/Latinx", "Native American", "White" )]
-
-
-
-sort(unique(DT$ever))
-sort(unique(DT$grad))
-sort(unique(DT$race))
-sort(unique(DT$sex))
+# Any NA in grad?
+sum(is.na(DT$grad))
 ```
 
-## Compute stickiness
-
-Expect 40 rows
+Those NA values are better encoded as zeros.
 
 ```{r}
-# stickiness
-options(datatable.print.topn = 40)
-DT[, stick := round(100 * grad / ever, 1)]
-DT <- DT[order(program, sex, race)]
-
-
-
-DT[, race_sex := paste(race, sex)]
-DT <- DT[, .(program, race_sex, ever, grad, stick)]
+DT <- DT[is.na(grad), grad := 0][]
 DT
 ```
 
-Save result for graph
+Before computing stickiness, we omit populations of 10 or less to protect their identity. 
 
 ```{r}
-case_stickiness <- DT[, .(program, race_sex, stick)]
-case_stickiness
+DT <- DT[ever > 10]
+DT
 ```
 
-Same as built-in data `study_stickiness`. 
 
-```{r}
-all.equal(case_stickiness, study_stickiness)
-```
 
+## Compute stickiness
 
 
 ```{r}
-# data preparation
-DT <- condition_multiway(case_stickiness)
-DT_med <- condition_multiway(DT, details = TRUE)
+DT[, stick := round(100 * grad / ever, 1)]
+DT <- DT[order(program, sex, race)]
+DT
+
+all.equal(DT, study_stickiness)
 ```
 
-```{r echo = FALSE}
-asp_ratio <- asp_ratio_mw(DT_med, 
-                                categories = c("program", "race_sex"))
-```
 
 
 ## Graph the results
 
+```{r}
+# data preparation
+mw <- DT[!race %chin% c("International", "Other/Unknown")]
+mw
+
+mw <- mw[, .(program, race_sex = paste(race, sex), stick)]
+mw
+
+mw <- condition_multiway(mw, details = TRUE)
+mw
+```
+
+```{r echo = FALSE}
+asp_ratio <- asp_ratio_mw(mw, categories = c("program", "race_sex"))
+```
+
 ```{r fig1, fig.asp = asp_ratio[1]}
 # creating a multiway graph
-ggplot(data = DT_med, aes(x = stick, y = race_sex)) +
+ggplot(data = mw, aes(x = stick, y = race_sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   geom_vline(aes(xintercept = med_program),
     linetype = 2
@@ -328,6 +270,10 @@ ggplot(data = DT_med, aes(x = stick, y = race_sex)) +
     caption = "Source: midfielddata"
   )
 ```
+
+
+
+
 
 
 ## References

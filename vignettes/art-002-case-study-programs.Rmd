@@ -49,27 +49,43 @@ kable2html <- function(x, font_size = NULL, caption = NULL) {
 
 ## Introduction
 
-In studying student records, a common first step is to select a specific set of programs to explore. In this vignette, we start a case study of four engineering programs by constructing a data frame of program CIP codes and program names. 
+The case study is a tour of a typical workflow with student unit record data. For the sake of brevity, we focus on the logic of the analysis and leave the  detailed discussion of functions and arguments to later vignettes. 
 
-The case study is a quick tour of a typical workflow using student unit record data. This is a “big picture” development---functions are used without detailed explanations or development so that we can focus on the logic of the analysis. For exploring related midfieldr functions and methods in greater detail, see
+Assuming you completed the introduction to the four data tables (in [Getting started](art-000-getting-started.html)), the case study has four parts:
+
+- *Case study programs* &#11160; You are here.
+- [Case study students](art-004-case-study-students.html) 
+- [Case study stickiness](art-006-case-study-stickiness.html)
+- [Case study graduation rate](art-006-case-study-grad-rate.html)
+
+Longer, related vignettes with detailed discussions of methods and functions include:  
 
 - [Program codes and names](art-010-program-codes.html){target="_blank"} 
 - [Subsetting MIDFIELD data](art-015-subsetting-midfield-data.html){target="_blank"} 
 
 
-### Outline
+### In this vignette
 
-- Identify the CIP codes for the case study   
+In studying student records, a common first step is to select a specific set of programs to explore. In this vignette, we start a case study of four engineering programs in which we: 
+
+- Identify their CIP codes   
 - Assign custom program names
 - Save the results
 
-### In this vignette
-
-midfieldr functions
+We use the following midfieldr functions
  
 - [`filter_search()`](../reference/filter_search.html)
 
-packages
+The vignette output is the data frame `study_program`. 
+
+
+
+
+
+
+## Identify program codes
+
+If you are writing your own script to follow along, we start with these packages: 
 
 ```{r}
 # packages used
@@ -84,15 +100,22 @@ options(
 )
 ```
 
-## Identify program codes
+midfieldr includes `cip`,  a data table of academic program codes and names. View its help page by running
+
+```r
+# Type in the Console
+? cip
+```
 
 We know the conventional names of the desired programs (Civil, Electrical, Industrial, and Mechanical Engineering) but these are not necessarily the exact program names used in the CIP. Thus we have to search CIP thoroughly to make sure we find all 6-digit CIP codes associated with these disciplines.
 
-We start with a text search of `cip` for `engineering`. 
+We start with a text search of `cip` for `engineering` using `filter_search()`. 
 
 ```{r}
 # subset rows of the CIP data matching conditions
 pass01 <- filter_search(cip, "engineering")
+
+# Examine the result
 pass01
 ```
 
@@ -107,6 +130,8 @@ Only one of these (14) will have the programs we are looking for. So in our seco
 
 ```{r}
 pass02 <- filter_search(pass01, "^14")
+
+# Examine the result
 pass02
 ```
 
@@ -117,13 +142,17 @@ In the next pass, let's try restricting our search to the four conventional term
 options(datatable.print.topn = 13)
 
 pass03 <- filter_search(pass02, c("civil", "electrical", "industrial", "mechanical"))
-pass03
+
+# Examine the result
+pass03[ , .(cip6, cip6name)]
 ```
 
 In this result,  only Electromechanical Engineering is superfluous, so we can drop it in the next pass. 
 
 ```{r}
 pass04 <- filter_search(pass03, drop_text = "electromechanical")
+
+# Examine the result
 pass04
 ```
 
@@ -140,7 +169,7 @@ All MIDFIELD data tables that have a column of CIP codes use 6-digit codes. Ther
 cols_we_want <- c("cip6", "cip4name")
 case_cip <- pass04[, ..cols_we_want]
 
-# examine the result
+# Examine the result
 case_cip
 ```
 
@@ -154,13 +183,14 @@ We use the data.table `fcase()` function and `%ilike%` to add a `program` column
 View their help pages by running
 
 ``` r
+# Type in the Console
 ? `%ilike%`
 
 ? fcase
 ```
 
 ```{r}
-# Create a new memory location
+# Create a new memory location to avoid updating by reference
 case_program <- copy(case_cip)
 
 # Add a new column for custom program labels
@@ -200,6 +230,7 @@ We suggest saving intermediate results like these at each significant milestone 
 These results have been included with midfieldr as the built-in data set `study_program`. View its help page by running 
 
 ```r
+# Type in the Console
 ? study_program
 ```
 View the data frame, 

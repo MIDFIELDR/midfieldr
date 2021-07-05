@@ -49,7 +49,7 @@ tables:
 
 In this brief usage example, we compare counts of engineering students
 by race/ethnicity, sex, and graduation status. Data manipulation is
-performed using the data.table package.
+performed using data.table syntax.
 
 ``` r
 # packages used 
@@ -61,7 +61,8 @@ library("data.table")
 data(student, term, degree)
 
 # Filter for engineering programs 
-DT <- term[cip6 %like% "^14", .(mcid, institution, cip6)]
+DT <- copy(term)
+DT <- DT[cip6 %like% "^14", .(mcid, institution, cip6)]
 DT <- unique(DT)
 
 # Ensure students are degree-seeking 
@@ -82,26 +83,23 @@ DT <- DT[data_sufficiency == TRUE]
 DT <- add_race_sex(DT, midfield_student = student)
 
 # Count by grouping variables
-result <- DT[, .N, by = .(grad_status, sex, race)]
-```
+DT <- DT[, .N, by = .(grad_status, sex, race)]
 
-The resulting counts are given by:
-
-``` r
-result[order(grad_status, sex, race)]
+# Examine the result
+DT
 #>     grad_status    sex            race     N
 #>          <char> <char>          <char> <int>
-#>  1:        grad Female           Asian   182
-#>  2:        grad Female           Black   433
-#>  3:        grad Female Hispanic/Latinx    85
-#>  4:        grad Female   International    30
-#>  5:        grad Female Native American    14
+#>  1:        grad   Male           White  7172
+#>  2:        grad   Male           Black   533
+#>  3:    non-grad   Male           White  4423
+#>  4:    non-grad   Male           Black   706
+#>  5:    non-grad   Male   Other/Unknown   113
 #> ---                                         
-#> 24:    non-grad   Male Hispanic/Latinx   176
-#> 25:    non-grad   Male   International   157
-#> 26:    non-grad   Male Native American    38
-#> 27:    non-grad   Male   Other/Unknown   113
-#> 28:    non-grad   Male           White  4423
+#> 24:        grad Female   Other/Unknown    35
+#> 25:        grad Female Native American    14
+#> 26:    non-grad Female   International    24
+#> 27:    non-grad Female Native American     7
+#> 28:        grad   Male Native American    36
 ```
 
 ## Documentation

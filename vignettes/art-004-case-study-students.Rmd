@@ -49,31 +49,41 @@ kable2html <- function(x, font_size = NULL, caption = NULL) {
 
 ## Introduction
 
-We continue the case study by using the CIP codes in `study_program` to gather all degree-seeking  students ever enrolled  in the case study programs. After joining columns for program names and student race/ethnicity and sex, we filter for data sufficiency. The resulting data frame is the common basis for  computing persistence metrics. 
+We continue the case study, a tour of a typical workflow with student unit record data. Again, for the sake of brevity we focus on the logic of the analysis and leave the detailed discussion of functions and arguments to later vignettes. 
 
-The case study is a quick tour of a typical workflow using student unit record data. This is a “big picture” development---functions are used without detailed explanations or development so that we can focus on the logic of the analysis. For exploring related midfieldr functions and methods in greater detail, see
+Assuming you completed the introduction to the four data tables (in [Getting started](art-000-getting-started.html)), the case study has four parts:
+
+- [Case study programs](art-002-case-study-programs.html)
+- *Case study students* &#11160; You are here.
+- [Case study stickiness](art-006-case-study-stickiness.html)
+- [Case study graduation rate](art-006-case-study-grad-rate.html)
+
+Longer, related vignettes with detailed discussions of methods and functions include:  
 
 - [Subsetting MIDFIELD data](art-015-subsetting-midfield-data.html){target="_blank"} 
 - [Data sufficiency](art-020-data-sufficiency.html){target="_blank"} 
 
-
-### Outline
-
-- Gather students
-- Join grouping variables 
-- Filter for data sufficiency 
-- Save results
-
 ### In this vignette
 
-midfieldr functions
+Starting with the `study_program` data frame from the previous vignette ([Case study programs](art-002-case-study-programs.html){target="_blank"}), we: 
+
+- Gather all degree-seeking students ever enrolled  in the programs
+- Join columns for program names and student race/ethnicity and sex 
+- Subset rows for data sufficiency 
+- Save the results 
+
+We use the following midfieldr functions
  
 - [`filter_match()`](../reference/filter_match.html)
 - [`add_race_sex()`](../reference/add_race_sex.html)
 - [`add_timely_term()`](../reference/add_timely_term.html)
 - [`add_data_sufficiency()`](../reference/add_data_sufficiency.html)
 
-packages
+The vignette output is the data frame `study_student`. 
+
+## Gather students
+
+If you are writing your own script to follow along, we start with these packages: 
 
 ```{r}
 # packages used
@@ -87,16 +97,10 @@ options(
   datatable.print.topn = 3,
   datatable.print.class = TRUE
 )
-```
 
-data
-
-```{r}
 # load data tables from midfielddata
 data(student, term)
 ```
-
-## Gather students
 
 If you saved your results from the previous vignette in the file  `results/case_program.csv`, you can read them back in to your workspace using the following where we specify that the CIP column is a string variable to prevent it being read as an integer. 
 
