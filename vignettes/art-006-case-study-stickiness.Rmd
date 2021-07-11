@@ -178,7 +178,7 @@ DT
 We assign the grouping variables to a vector. 
 
 ```{r}
-# A reusable vector for grouping, summarizing, and joining. 
+# A reusable vector for grouping, summarizing, and joining.
 grouping_variables <- c("program", "race_sex")
 ```
 
@@ -201,7 +201,7 @@ Returning to our working data frame `DT`, we subset rows satisfying the timely-c
 # Create a new memory location to avoid updating by reference
 completed <- copy(DT)
 
-# Limit the graduate count to those with timely completion 
+# Limit the graduate count to those with timely completion
 completed <- completed[completion_timely == TRUE]
 
 # Examine the result
@@ -234,14 +234,14 @@ setkey(DT, NULL)
 In this case, the `completed` data has fewer rows than the `enrolled` data so the `merge()` introduced some NA values in the `grad` column. 
 
 ```{r}
-# Checking if any NAs were introduced in the grad column 
+# Checking if any NAs were introduced in the grad column
 sum(is.na(DT$grad))
 ```
 
 Those NA values are better encoded as zeros.
 
 ```{r}
-# NA in this case represents a count of zero 
+# NA in this case represents a count of zero
 DT[is.na(grad), grad := 0][]
 
 # Examine the result
@@ -325,12 +325,12 @@ Condition the data for graphing using `condition_multiway()`.  The comments give
 
 ```{r}
 DT <- condition_multiway(
-    dframe    = DT,                       # input data frame
-    categ_col = c("program", "race_sex"), # multiway categorical variables 
-    quant_col = "stick",                  # multiway quantitative variable
-    detail    = FALSE,                    # do not return columns of details 
-    order_by  = "percent",                # row and panel ordering method
-    param_col = c("grad", "ever")         # parameters used for ordering
+  dframe = DT, # input data frame
+  categ_col = c("program", "race_sex"), # multiway categorical variables
+  quant_col = "stick", # multiway quantitative variable
+  detail = FALSE, # do not return columns of details
+  order_by = "percent", # row and panel ordering method
+  param_col = c("grad", "ever") # parameters used for ordering
 )
 
 # Examine the result
@@ -346,14 +346,14 @@ Because stickiness is a percentage, we can use the "percent" method for ordering
 
 ```{r fig1, fig.asp = asp_ratio[1]}
 ggplot(data = DT, aes(x = stick, y = race_sex)) +
-    facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-    geom_point(na.rm = TRUE) +
-    labs(
-        x = "Stickiness (%)",
-        y = "",
-        title = "Ordered by computed group metric",
-        caption = "Source: midfielddata."
-    )
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(
+    x = "Stickiness (%)",
+    y = "",
+    title = "Ordered by computed group metric",
+    caption = "Source: midfielddata."
+  )
 ```
 
 **Observations:** The graph illustrates how the ordering of rows and panels are crucial to what Cleveland calls the "asymmetry in the perception of effects." For example, consider the low stickiness of Hispanic/Latinx women in Civil Engineering (given their overall high stickiness across all programs) or the high stickiness of Hispanic/Latinx men in Industrial Engineering (given their overall low stickiness across all programs).

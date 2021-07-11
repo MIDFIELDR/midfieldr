@@ -174,12 +174,12 @@ We process the data frame
 ```{r}
 # condition as multiway data
 DT <- condition_multiway(
-    dframe    = DT,                       # input data frame
-    categ_col = c("program", "race_sex"), # multiway categorical variables 
-    quant_col = "stick",                  # multiway quantitative variable
-    detail    = FALSE,                    # do not return columns of details 
-    order_by  = "percent",                # row and panel ordering method
-    param_col = c("grad", "ever")         # parameters used for ordering
+  dframe = DT, # input data frame
+  categ_col = c("program", "race_sex"), # multiway categorical variables
+  quant_col = "stick", # multiway quantitative variable
+  detail = FALSE, # do not return columns of details
+  order_by = "percent", # row and panel ordering method
+  param_col = c("grad", "ever") # parameters used for ordering
 )
 ```
 
@@ -204,12 +204,12 @@ The values that determine the order of the levels can be obtained by using the `
 ```{r}
 # return stickiness by category
 DT <- condition_multiway(
-    dframe    = DT,                       # input data frame
-    categ_col = c("program", "race_sex"), # multiway categorical variables 
-    quant_col = "stick",                  # multiway quantitative variable
-    detail    = TRUE,                     # return columns of details 
-    order_by  = "percent",                # row and panel ordering method
-    param_col = c("grad", "ever")         # parameters used for ordering
+  dframe = DT, # input data frame
+  categ_col = c("program", "race_sex"), # multiway categorical variables
+  quant_col = "stick", # multiway quantitative variable
+  detail = TRUE, # return columns of details
+  order_by = "percent", # row and panel ordering method
+  param_col = c("grad", "ever") # parameters used for ordering
 )
 ```
 
@@ -335,9 +335,11 @@ The `order_by` argument in `condition_multiway()` provides options for ordering 
 p <- ggplot(data = temp, aes(x = stick, y = race_sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
-  labs(x = "Longitudinal stickiness (%)", 
-       y = "", 
-       caption = "Source: midfielddata")
+  labs(
+    x = "Longitudinal stickiness (%)",
+    y = "",
+    caption = "Source: midfielddata"
+  )
 ```
 
 The following values of `order_by` are possible:
@@ -354,16 +356,17 @@ median
 
 ```{r fig3, fig.asp = asp_ratio[1]}
 dtf <- condition_multiway(
-  dframe    = temp,                      
-  categ_col = c("program", "race_sex"),  
-  quant_col = "stick", 
+  dframe = temp,
+  categ_col = c("program", "race_sex"),
+  quant_col = "stick",
   detail = TRUE
 )
 p %+% dtf +
   labs(title = "Levels ordered by median values") +
-  geom_vline(aes(xintercept = program_stick), 
-             linetype = 2, 
-             col = "gray50")
+  geom_vline(aes(xintercept = program_stick),
+    linetype = 2,
+    col = "gray50"
+  )
 ```
 
 mean
@@ -371,17 +374,18 @@ mean
 
 ```{r fig4, fig.asp = asp_ratio[1]}
 dtf <- condition_multiway(
-  dframe    = temp,                      
-  categ_col = c("program", "race_sex"),  
-  quant_col = "stick", 
-  order_by = "mean", 
+  dframe = temp,
+  categ_col = c("program", "race_sex"),
+  quant_col = "stick",
+  order_by = "mean",
   detail = TRUE
 )
 p %+% dtf +
   labs(title = "Levels ordered by mean values") +
-  geom_vline(aes(xintercept = program_stick), 
-             linetype = 2, 
-             col = "gray50")
+  geom_vline(aes(xintercept = program_stick),
+    linetype = 2,
+    col = "gray50"
+  )
 ```
 
 sum
@@ -389,23 +393,26 @@ sum
 
 ```{r fig5, fig.asp = asp_ratio[1]}
 dtf <- condition_multiway(
-  dframe    = temp,                      
-  categ_col = c("program", "race_sex"),  
-  quant_col = "ever", 
-  order_by = "sum", 
+  dframe = temp,
+  categ_col = c("program", "race_sex"),
+  quant_col = "ever",
+  order_by = "sum",
   detail = TRUE
 )
 ggplot(data = dtf, aes(x = ever, y = race_sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
-  scale_x_continuous(trans = "log2") + 
-  geom_vline(aes(xintercept = program_ever), 
-             linetype = 2, 
-             col = "gray50") +
-  labs(x = "Number of students ever enrolled (log-2 scale)", 
-       y = "", 
-       title = "Levels ordered by count totals", 
-       caption = "Source: midfielddata")
+  scale_x_continuous(trans = "log2") +
+  geom_vline(aes(xintercept = program_ever),
+    linetype = 2,
+    col = "gray50"
+  ) +
+  labs(
+    x = "Number of students ever enrolled (log-2 scale)",
+    y = "",
+    title = "Levels ordered by count totals",
+    caption = "Source: midfielddata"
+  )
 ```
 
 alphabet
@@ -413,9 +420,9 @@ alphabet
 
 ```{r fig6, fig.asp = asp_ratio[1]}
 dtf <- condition_multiway(
-  dframe    = temp,                      
-  categ_col = c("program", "race_sex"),  
-  quant_col = "stick", 
+  dframe = temp,
+  categ_col = c("program", "race_sex"),
+  quant_col = "stick",
   order_by = "alphabet"
 )
 p %+% dtf +
