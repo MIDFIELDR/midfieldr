@@ -4,7 +4,7 @@ add_timely_term(DT, midfield_term = toy_term)
 
 
 # Add details on which the timely term is based
-add_timely_term(DT, midfield_term = toy_term, details = TRUE)
+add_timely_term(DT, midfield_term = toy_term, detail = TRUE)
 
 
 # Define timely completion as 200% of scheduled span (8 years)
@@ -12,5 +12,5 @@ add_timely_term(DT, midfield_term = toy_term, span = 8)
 
 
 # Optional arguments (after ...) must be named
-add_timely_term(DT, toy_term, details = TRUE, span = 6)
+add_timely_term(DT, toy_term, detail = TRUE, span = 6)
 

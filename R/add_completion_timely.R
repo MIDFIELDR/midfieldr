@@ -19,7 +19,7 @@
 #' degree term is no later than the estimated timely completion term. The
 #' function itself performs no subsetting.
 #'
-#' If \code{details} is TRUE, additional column(s) that support the finding
+#' If \code{detail} is TRUE, additional column(s) that support the finding
 #' are returned as well. Here the extra columns are \code{completion}
 #' indicating by TRUE/FALSE if the student completed their program and
 #' \code{term_degree} from the \code{degree} table giving the first term in
@@ -32,7 +32,7 @@
 #' @param midfield_degree MIDFIELD \code{degree} data table or equivalent with
 #'        required variables \code{mcid} and \code{term}.
 #' @param ... Not used, forces later arguments to be used by name.
-#' @param details Optional flag to add columns reporting information
+#' @param detail Optional flag to add columns reporting information
 #'        on which the evaluation is based, default FALSE.
 #' @return A \code{data.table} with the following properties:
 #' \itemize{
@@ -55,27 +55,30 @@
 add_completion_timely <- function(dframe,
                                   midfield_degree,
                                   ...,
-                                  details = NULL) {
+                                  detail = NULL) {
   
-  on.exit(setkey(midfield_degree, NULL), add = TRUE)
-  on.exit(setkey(dframe, NULL), add = TRUE)
 
-  # required arguments
-  qassert(dframe, "d+")
-  qassert(midfield_degree, "d+")
+  on.exit(setkey(dframe, NULL), add = TRUE)
+  on.exit(setkey(midfield_degree, NULL), add = TRUE)
 
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     paste(
       "Arguments after ... must be named.\n",
-      "* Did you forget to write `details = `?\n *"
+      "* Did you forget to write `detail = `?\n *"
     )
   )
 
+  # required arguments
+  qassert(dframe, "d+")
+  qassert(midfield_degree, "d+")
+
+
+
   # optional arguments
-  details <- details %?% FALSE
-  qassert(details, "B1") # boolean, missing values prohibited, length 1
+  detail <- detail %?% FALSE
+  qassert(detail, "B1") # boolean, missing values prohibited, length 1
 
   # inputs modified (or not) by reference
   setDT(dframe)
@@ -139,8 +142,8 @@ add_completion_timely <- function(dframe,
   # restore column and row order
   set_colrow_order(dframe, key_names)
 
-  # include or omit the details columns
-  if (details == FALSE) {
+  # include or omit the detail columns
+  if (detail == FALSE) {
     cols_we_want <- c(key_names, "completion_timely")
     dframe <- dframe[, cols_we_want, with = FALSE]
   }

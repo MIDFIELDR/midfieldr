@@ -4,7 +4,7 @@
 \alias{add_completion_timely}
 \title{Add a column to evaluate program completion}
 \usage{
-add_completion_timely(dframe, midfield_degree, ..., details = NULL)
+add_completion_timely(dframe, midfield_degree, ..., detail = NULL)
 }
 \arguments{
 \item{dframe}{Data frame with required variables
@@ -15,7 +15,7 @@ required variables \code{mcid} and \code{term}.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
-\item{details}{Optional flag to add columns reporting information
+\item{detail}{Optional flag to add columns reporting information
 on which the evaluation is based, default FALSE.}
 }
 \value{
@@ -46,7 +46,7 @@ considered timely if: 1) the student has completed a program; and 2) the
 degree term is no later than the estimated timely completion term. The
 function itself performs no subsetting.
 
-If \code{details} is TRUE, additional column(s) that support the finding
+If \code{detail} is TRUE, additional column(s) that support the finding
 are returned as well. Here the extra columns are \code{completion}
 indicating by TRUE/FALSE if the student completed their program and
 \code{term_degree} from the \code{degree} table giving the first term in
@@ -61,12 +61,12 @@ dframe <- add_institution(dframe, midfield_term = toy_term)
 dframe <- add_timely_term(dframe, midfield_term = toy_term)
 
 
-# Timely completion column with details
+# Timely completion column without detail
 add_completion_timely(dframe, midfield_degree = toy_degree)
 
 
-# Timely completion column with details
-add_completion_timely(dframe, midfield_degree = toy_degree, details = TRUE)
+# Timely completion column with detail
+add_completion_timely(dframe, midfield_degree = toy_degree, detail = TRUE)
 
 
 # If present, existing completion_timely column is overwritten

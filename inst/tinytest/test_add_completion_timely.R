@@ -4,7 +4,7 @@ test_add_completion_timely <- function() {
     # add_completion_timely(dframe,
     #                       midfield_degree,
     #                       ...,
-    #                       details = NULL)
+    #                       detail = NULL)
 
     # Needed for tinytest::build_install_test()
     library("data.table")
@@ -21,7 +21,7 @@ test_add_completion_timely <- function() {
     # DT_with_details <- add_completion_timely(
     #     DT,
     #     midfield_degree = toy_degree,
-    #     details = TRUE
+    #     detail = TRUE
     # )
     # cat(wrapr::draw_frame(DT_no_details))
     # cat(wrapr::draw_frame(DT_with_details))
@@ -71,7 +71,7 @@ test_add_completion_timely <- function() {
     )
     expect_equal(
         DT_with_details,
-        add_completion_timely(DT, toy_degree, details = TRUE)
+        add_completion_timely(DT, toy_degree, detail = TRUE)
     )
 
     # overwrites existing columns
@@ -83,7 +83,7 @@ test_add_completion_timely <- function() {
         DT_with_details,
         add_completion_timely(DT_with_details,
                              toy_degree,
-                             details = TRUE)
+                             detail = TRUE)
     )
 
     # existing term column (if exists) is not over written
@@ -138,7 +138,7 @@ test_add_completion_timely <- function() {
 
     # arguments after ... must be named
     expect_error(
-        add_completion_timely(DT, toy_degree, TRUE) # details not named
+        add_completion_timely(DT, toy_degree, TRUE) # detail not named
     )
 
     invisible(NULL)

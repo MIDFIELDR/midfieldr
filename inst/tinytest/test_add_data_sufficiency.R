@@ -4,7 +4,7 @@ test_add_data_sufficiency <- function() {
     # add_data_sufficiency(dframe
     #                      midfield_term,
     #                      ...,
-    #                      details = NULL)
+    #                      detail = NULL)
 
     # Needed for tinytest::build_install_test()
     library("data.table")
@@ -18,7 +18,7 @@ test_add_data_sufficiency <- function() {
     #                                       midfield_term = toy_term)
     # DT_with_details <- add_data_sufficiency(DT,
     #                                         midfield_term = toy_term,
-    #                                         details = TRUE)
+    #                                         detail = TRUE)
     # cat(wrapr::draw_frame(DT_no_details))
     # cat(wrapr::draw_frame(DT_with_details))
 
@@ -68,7 +68,7 @@ test_add_data_sufficiency <- function() {
     )
     expect_equal(
         DT_with_details,
-        add_data_sufficiency(DT, midfield_term = toy_term, details = TRUE)
+        add_data_sufficiency(DT, midfield_term = toy_term, detail = TRUE)
     )
 
     # overwrites existing columns
@@ -80,7 +80,7 @@ test_add_data_sufficiency <- function() {
         DT_with_details,
         add_data_sufficiency(DT_with_details,
                              midfield_term = toy_term,
-                             details = TRUE)
+                             detail = TRUE)
     )
 
     # midfield_term argument must be term or equivalent
@@ -126,7 +126,7 @@ test_add_data_sufficiency <- function() {
 
     # arguments after ... must be named
     expect_error(
-        add_data_sufficiency(DT, toy_term, TRUE) # details not named
+        add_data_sufficiency(DT, toy_term, TRUE) # detail not named
         )
 
     invisible(NULL)

@@ -9,7 +9,7 @@ add_data_sufficiency(dframe, midfield_term = toy_term)
 
 
 # Data sufficiency column with details
-add_data_sufficiency(dframe, midfield_term = toy_term, details = TRUE)
+add_data_sufficiency(dframe, midfield_term = toy_term, detail = TRUE)
 
 
 # If present, existing data_sufficiency column is overwritten

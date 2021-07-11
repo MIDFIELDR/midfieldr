@@ -4,7 +4,7 @@
 \alias{add_data_sufficiency}
 \title{Add a column to evaluate data sufficiency}
 \usage{
-add_data_sufficiency(dframe, midfield_term, ..., details = NULL)
+add_data_sufficiency(dframe, midfield_term, ..., detail = NULL)
 }
 \arguments{
 \item{dframe}{Data frame with required variables
@@ -15,7 +15,7 @@ with required variables \code{institution} and \code{term}.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
-\item{details}{Optional flag to add columns reporting information
+\item{detail}{Optional flag to add columns reporting information
 on which the evaluation is based, default FALSE.}
 }
 \value{
@@ -49,7 +49,7 @@ student should be included in the research. If FALSE, the student should
 be excluded before calculating any persistence metric involving program
 completion (graduation). The function itself performs no subsetting.
 
-If \code{details} is TRUE, additional column(s) that support the finding
+If \code{detail} is TRUE, additional column(s) that support the finding
 are returned as well. Here the extra column is \code{inst_limit}, the latest
 term reported by the institution in the available data.
 
@@ -67,7 +67,7 @@ add_data_sufficiency(dframe, midfield_term = toy_term)
 
 
 # Data sufficiency column with details
-add_data_sufficiency(dframe, midfield_term = toy_term, details = TRUE)
+add_data_sufficiency(dframe, midfield_term = toy_term, detail = TRUE)
 
 
 # If present, existing data_sufficiency column is overwritten

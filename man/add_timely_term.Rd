@@ -8,7 +8,7 @@ add_timely_term(
   dframe,
   midfield_term,
   ...,
-  details = NULL,
+  detail = NULL,
   span = NULL,
   sched_span = NULL
 )
@@ -21,7 +21,7 @@ required variables \code{mcid}, \code{term}, and \code{level}.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
-\item{details}{Optional flag to add columns reporting information
+\item{detail}{Optional flag to add columns reporting information
 on which the evaluation is based, default FALSE.}
 
 \item{span}{Optional numeric scalar, number of years to define timely
@@ -67,7 +67,7 @@ The timely completion term is used in two evaluations: filtering for data
 sufficiency (see \code{add_data_sufficiency()}) and assessing
 completion for timeliness (\code{add_completion_timely()}).
 
-If \code{details} is TRUE, additional column(s) that support the finding
+If \code{detail} is TRUE, additional column(s) that support the finding
 are returned as well. Here the extra columns are the student's initial
 (admission) term \code{term_i}, initial level \code{level_i}, and
 the adjusted span \code{adj_span}.
@@ -81,7 +81,7 @@ add_timely_term(DT, midfield_term = toy_term)
 
 
 # Add details on which the timely term is based
-add_timely_term(DT, midfield_term = toy_term, details = TRUE)
+add_timely_term(DT, midfield_term = toy_term, detail = TRUE)
 
 
 # Define timely completion as 200\% of scheduled span (8 years)
@@ -89,7 +89,7 @@ add_timely_term(DT, midfield_term = toy_term, span = 8)
 
 
 # Optional arguments (after ...) must be named
-add_timely_term(DT, toy_term, details = TRUE, span = 6)
+add_timely_term(DT, toy_term, detail = TRUE, span = 6)
 
 }
 \seealso{

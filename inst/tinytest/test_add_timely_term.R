@@ -4,7 +4,7 @@ test_add_timely_term <- function() {
     # add_timely_term(dframe,
     #                 midfield_term,
     #                 ...,
-    #                 details = NULL,
+    #                 detail = NULL,
     #                 span = NULL)
 
     # Needed for tinytest::build_install_test()
@@ -12,7 +12,7 @@ test_add_timely_term <- function() {
 
     # create case
     # x <- toy_student[1:10, .(mcid)]
-    # y <- add_timely_term(x, toy_term, details = TRUE)
+    # y <- add_timely_term(x, toy_term, detail = TRUE)
     # DTout <- cat(wrapr::draw_frame(y))
     DT_details <- wrapr::build_frame(
         "mcid"         , "term_i", "level_i"     , "adj_span", "timely_term" |
@@ -31,7 +31,7 @@ test_add_timely_term <- function() {
 
     # correct answers, add optional arguments in combinations
     x <- toy_student[1:10, .(mcid)]
-    # without details
+    # without detail
     expect_equal(
         DT_no_details,
         add_timely_term(x, toy_term)
@@ -42,16 +42,16 @@ test_add_timely_term <- function() {
     )
     expect_equal(
         DT_no_details,
-        add_timely_term(x, toy_term, details = NULL, span = NULL)
+        add_timely_term(x, toy_term, detail = NULL, span = NULL)
     )
-    # with details
+    # with detail
     expect_equal(
         DT_details,
-        add_timely_term(x, toy_term, details = TRUE)
+        add_timely_term(x, toy_term, detail = TRUE)
     )
     expect_equal(
         DT_details,
-        add_timely_term(x, toy_term, details = TRUE, span = 6)
+        add_timely_term(x, toy_term, detail = TRUE, span = 6)
     )
 
     # arguments must be data frames
@@ -64,12 +64,12 @@ test_add_timely_term <- function() {
                                  TRUE)) # details not named
     expect_error(add_timely_term(x,
                                  toy_term,
-                                 details = FALSE,
+                                 detail = FALSE,
                                  6)) # span not named
 
-    # optional arguments are spcific types
+    # optional arguments are specific types
     expect_error(
-        add_timely_term(x, toy_term, details = 1)
+        add_timely_term(x, toy_term, detail = 1)
     )
     expect_error(
         add_timely_term(x, toy_term, span = TRUE)
@@ -81,8 +81,8 @@ test_add_timely_term <- function() {
         add_timely_term(x, toy_term, span = NA)
     )
     expect_equal(
-        add_timely_term(x, toy_term, details = FALSE),
-        add_timely_term(x, toy_term, details = NA)
+        add_timely_term(x, toy_term, detail = FALSE),
+        add_timely_term(x, toy_term, detail = NA)
     )
 
     # span must be >=  sched_span

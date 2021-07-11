@@ -22,7 +22,7 @@
 #' be excluded before calculating any persistence metric involving program
 #' completion (graduation). The function itself performs no subsetting.
 #'
-#' If \code{details} is TRUE, additional column(s) that support the finding
+#' If \code{detail} is TRUE, additional column(s) that support the finding
 #' are returned as well. Here the extra column is \code{inst_limit}, the latest
 #' term reported by the institution in the available data.
 #'
@@ -33,7 +33,7 @@
 #' @param midfield_term MIDFIELD \code{term} data table or equivalent
 #'        with required variables \code{institution} and \code{term}.
 #' @param ... Not used, forces later arguments to be used by name.
-#' @param details Optional flag to add columns reporting information
+#' @param detail Optional flag to add columns reporting information
 #'        on which the evaluation is based, default FALSE.
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
@@ -56,7 +56,7 @@
 add_data_sufficiency <- function(dframe,
                                  midfield_term,
                                  ...,
-                                 details = NULL) {
+                                 detail = NULL) {
   # remove all keys
   on.exit(setkey(dframe, NULL))
   on.exit(setkey(midfield_term, NULL), add = TRUE)
@@ -70,13 +70,13 @@ add_data_sufficiency <- function(dframe,
     substitute(list(...)),
     paste(
       "Arguments after ... must be named.\n",
-      "* Did you forget to write `details = `?\n *"
+      "* Did you forget to write `detail = `?\n *"
     )
   )
 
   # optional arguments
-  details <- details %?% FALSE
-  qassert(details, "B1") # boolean, length = 1
+  detail <- detail %?% FALSE
+  qassert(detail, "B1") # boolean, length = 1
 
   # inputs modified (or not) by reference
   setDT(dframe)
@@ -117,8 +117,8 @@ add_data_sufficiency <- function(dframe,
   # restore column and row order
   set_colrow_order(dframe, key_names)
 
-  # include or omit the details columns
-  if (details == FALSE) {
+  # include or omit the detail columns
+  if (detail == FALSE) {
     cols_we_want <- c(key_names, "data_sufficiency")
     dframe <- dframe[, cols_we_want, with = FALSE]
   }

@@ -325,22 +325,22 @@ The basic heuristic starts with span number of years for each student (default 6
 
 For example, a student admitted at the second-year level is assumed to have completed one year of a program, so their span is reduced by one year. Similarly, spans are reduced by two years for students admitted at the 3rd-year level and by three years for students admitted at the fourth-year level. The adjusted span of years added to their starting term produces timely completion term.
 
-Optional arguments are `details`, `span`, and `sched_span`. When used, these arguments must be named. 
+Optional arguments are `detail`, `span`, and `sched_span`. When used, these arguments must be named. 
 
 ```r
 add_timely_term(dframe,
                 midfield_term,
                 ...,
-                details = NULL,     # default FALSE
+                detail = NULL,     # default FALSE
                 span = NULL,        # default 6 years
                 sched_span = NULL)  # default 4 years
 ```
 
 - `span` must be no less than `sched_span`. 
 - `sched_span` is the number of years the institution schedules for program completion, typically 4 years. 
-- `details`, when TRUE, provides additional columns (described next) 
+- `detail`, when TRUE, provides additional columns (described next) 
 
-Setting `details` to TRUE yields additional columns that were used to determine the timely-term results: 
+Setting `detail` to TRUE yields additional columns that were used to determine the timely-term results: 
 
 - `term_i` admission term 
 - `level_i` level upon being admitted 
@@ -349,10 +349,10 @@ Setting `details` to TRUE yields additional columns that were used to determine 
 The potential use of these data are to implement one's own heuristic for determining timely completion terms. 
 
 ```{r}
-# show details
+# show detail
 DT <- add_timely_term(DT,
   midfield_term = term,
-  details = TRUE
+  detail = TRUE
 )
 DT
 ```
@@ -360,10 +360,10 @@ DT
 If the input data frame has an existing column name matching any of the added column names, the existing columns are deleted. For example, having examined the details, you can delete them (especially useful in an interactive session) by running the same code with details set to FALSE. 
 
 ```{r}
-# remove details
+# remove detail
 DT <- add_timely_term(DT,
   midfield_term = term,
-  details = FALSE
+  detail = FALSE
 )
 DT
 ```
@@ -372,10 +372,10 @@ DT
 ### Exercises
 
 
-If we start with a data frame with details shown 
+If we start with a data frame with detail shown 
 
 ```{r}
-x <- add_timely_term(DT, term, details = TRUE)
+x <- add_timely_term(DT, term, detail = TRUE)
 ```
 
 then the following code chunk, 
@@ -430,25 +430,25 @@ Now that our working data frame has `timely_term` and `institution` columns, we 
 
 ```
 
-Similar to `add_timely_term()`, this function has two required arguments and one optional `details` argument. The details, in this case, add one extra column to show the institution's upper data limit. 
+Similar to `add_timely_term()`, this function has two required arguments and one optional `detail` argument. The details, in this case, add one extra column to show the institution's upper data limit. 
 
 ```{r}
 # add column with details
 DT <- add_data_sufficiency(DT,
   midfield_term = term,
-  details = TRUE
+  detail = TRUE
 )
 # examine the result
 DT
 ```
 
-With details FALSE, only the `data_sufficieny` column is added.
+With detail FALSE, only the `data_sufficieny` column is added.
 
 ```{r}
-# without details
+# without detail
 DT <- add_data_sufficiency(DT,
   midfield_term = term,
-  details = FALSE
+  detail = FALSE
 )
 # examine the result
 DT
@@ -490,7 +490,7 @@ x[, .SD[.N], by = institution]
 ```{r}
 y <- add_data_sufficiency(DT,
   midfield_term = term,
-  details = TRUE
+  detail = TRUE
 )
 ```
 
@@ -595,7 +595,7 @@ DT <- add_timely_term(DT, midfield_term = term)
 DT <- add_institution(DT, midfield_term = term)
 DT <- add_data_sufficiency(DT,
   midfield_term = term,
-  details = TRUE
+  detail = TRUE
 )
 
 # Subset data for data sufficiency

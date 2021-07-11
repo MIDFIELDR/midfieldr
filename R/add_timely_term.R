@@ -25,7 +25,7 @@
 #' sufficiency (see \code{add_data_sufficiency()}) and assessing
 #' completion for timeliness (\code{add_completion_timely()}).
 #'
-#' If \code{details} is TRUE, additional column(s) that support the finding
+#' If \code{detail} is TRUE, additional column(s) that support the finding
 #' are returned as well. Here the extra columns are the student's initial
 #' (admission) term \code{term_i}, initial level \code{level_i}, and
 #' the adjusted span \code{adj_span}.
@@ -36,7 +36,7 @@
 #' @param midfield_term MIDFIELD \code{term} data table or equivalent with
 #'        required variables \code{mcid}, \code{term}, and \code{level}.
 #' @param ... Not used, forces later arguments to be used by name.
-#' @param details Optional flag to add columns reporting information
+#' @param detail Optional flag to add columns reporting information
 #'        on which the evaluation is based, default FALSE.
 #' @param span Optional numeric scalar, number of years to define timely
 #'        completion. Values that are 100%, 150%, and 200% of the "scheduled
@@ -65,7 +65,7 @@
 add_timely_term <- function(dframe,
                             midfield_term,
                             ...,
-                            details = NULL,
+                            detail = NULL,
                             span = NULL,
                             sched_span = NULL) {
 
@@ -82,17 +82,17 @@ add_timely_term <- function(dframe,
     substitute(list(...)),
     paste(
       "Arguments after ... must be named.\n",
-      "* Did you forget to write `details = ` or `span = `?\n *"
+      "* Did you forget to write `detail = ` or `span = `?\n *"
     )
   )
 
   # optional arguments
-  details <- details %?% FALSE
+  detail <- detail %?% FALSE
   span <- span %?% 6
   sched_span <- sched_span %?% 4
 
   # optional arguments assertions
-  qassert(details, "B1")
+  qassert(detail, "B1")
   assert_int(sched_span, lower = 0)
   assert_int(span, lower = sched_span)
 
@@ -183,8 +183,8 @@ add_timely_term <- function(dframe,
   # restore column and row order
   set_colrow_order(dframe, keep_cols)
 
-  # drop the optional columns if details not requested
-  if (details == FALSE) {
+  # drop the optional columns if detail not requested
+  if (detail == FALSE) {
     keep_cols <- c(keep_cols, "timely_term")
     dframe <- dframe[, keep_cols, with = FALSE]
   }
