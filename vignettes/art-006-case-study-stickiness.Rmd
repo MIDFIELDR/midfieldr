@@ -133,20 +133,36 @@ options(
 data(degree)
 ```
 
-We gathered the eligible students for the case study programs in the previous case study vignettes.  The data are saved in the `study_student` data set that loads with midfieldr. View its help page by running
 
-```r  
+If you saved your results from the previous vignette in the file  `results/case_student.csv`, you can read them back in to your workspace using the following where we specify that the CIP and timely term columns are character variables to prevent them being read as integers. 
+
+``` r
+# Optional 
+case_program <- fread("results/case_student.csv", 
+                      colClasses = c(
+                        cip6 = "character",
+                        timely_term = "character"
+                      ))
+```
+
+If not, the data are included with midfieldr as the `study_student` data set. View its help page by running
+
+``` r
 ? study_student
 ```
 
-Review the data. The data sufficiency criterion has been applied. As usual, we use assign our working data frame to `DT`. 
+In the remainder of the vignette, we assume we're using the `study_student` data frame. A reminder of its contents:
+
+```{r}
+# Loaded with midfieldr
+study_student
+```
+
+The data sufficiency criterion has been applied. As usual, we use assign our working data frame to `DT`. 
 
 ```{r}
 # Create a new memory location to avoid updating by reference
 DT <- copy(study_student)
-
-# Examine the result
-DT
 ```
 
 Before we can count the number of graduates, we have to assess whether graduates complete their program in a timely manner. A student graduating later than their timely-completion term are grouped with non-graduates for purposes of computing a persistence metric.
@@ -165,7 +181,7 @@ DT
 
 ## Summarize by group 
 
-The variables we group by are program, race/ethnicity, and sex. It has proven convenient to combine race/ethnicity and sex into its own column.  
+The variables we group by are program, race/ethnicity, and sex. It has proven convenient over the years to combine race/ethnicity and sex into its own column.  
 
 ```{r}
 # Construct one of the grouping variables.
@@ -182,7 +198,14 @@ We assign the grouping variables to a vector.
 grouping_variables <- c("program", "race_sex")
 ```
 
-Starting with our working data frame `DT`, we count the enrollees by groups and assign the result to the new `ever` column. 
+
+```{r echo = FALSE}
+temp <- copy(DT)
+temp <- temp[, .(ever = .N), by = grouping_variables]
+n_temp <- nrow(temp)
+```
+
+Starting with our working data frame `DT`, we count the enrollees by groups and assign the result to the new `ever` column. The result is a new data frame with only `r n_temp`  rows since we have aggregated the counts. 
 
 ```{r}
 # Create a new memory location to avoid updating by reference
@@ -329,8 +352,8 @@ DT <- condition_multiway(
   categ_col = c("program", "race_sex"), # multiway categorical variables
   quant_col = "stick", # multiway quantitative variable
   detail = FALSE, # do not return columns of details
-  order_by = "percent", # row and panel ordering method
-  param_col = c("grad", "ever") # parameters used for ordering
+  order_by = "percent", # stickiness (a percentage) used to order rows and panels
+  param_col = c("grad", "ever") # parameters for computing group stickiness
 )
 
 # Examine the result
@@ -382,12 +405,55 @@ Recall, however, that these are practice data, not research data---suitable for 
 
 The vignette code chunks are collected below in a single, condensed script.
 
-```{r eval=FALSE}
+```{r eval = FALSE}
 # packages used
 library("midfieldr")
 library("midfielddata")
 library("data.table")
 library("ggplot2")
+
+# load data tables from midfielddata
+data(degree)
+
+# Apply the timely completion criterion
+DT <- copy(study_student)
+DT <- add_completion_timely(DT, midfield_degree = degree)
+
+# Summarize by group
+DT[, race_sex := paste(race, sex)]
+grouping_variables <- c("program", "race_sex")
+enrolled <- copy(DT)
+enrolled <- enrolled[, .(ever = .N), by = grouping_variables]
+completed <- copy(DT)
+completed <- completed[completion_timely == TRUE]
+completed <- completed[, .(grad = .N), by = grouping_variables]
+DT <- merge(enrolled, completed, by = grouping_variables, all.x = TRUE)
+setkey(DT, NULL)
+DT[is.na(grad), grad := 0][]
+
+# Compute longitudinal stickiness
+DT[, stick := round(100 * grad / ever, 1)]
+
+# Graph the results
+DT <- DT[ever >= 10]
+DT <- DT[!race_sex %ilike% c("International|Other|Native")]
+DT <- condition_multiway(
+  dframe = DT, # input data frame
+  categ_col = c("program", "race_sex"), # multiway categorical variables
+  quant_col = "stick", # multiway quantitative variable
+  detail = FALSE, # do not return columns of details
+  order_by = "percent", # stickiness (a percentage) used to order rows and panels
+  param_col = c("grad", "ever") # parameters for computing group stickiness
+)
+ggplot(data = DT, aes(x = stick, y = race_sex)) +
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(
+    x = "Stickiness (%)",
+    y = "",
+    title = "Ordered by computed group metric",
+    caption = "Source: midfielddata."
+  )
 ```
 
 
