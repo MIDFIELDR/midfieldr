@@ -16,7 +16,7 @@ student ID.
 
  \item{term}{Character, academic year and term, format YYYYT.}
 
- \item{abbrev}{Character, course alpha identifier, e.g. ENGR, MATH,
+ \item{abbrev}{Character, course alphabetical identifier, e.g. ENGR, MATH,
  ENGL.}
 
  \item{number}{Character, course numeric identifier, e.g. 101, 3429.}

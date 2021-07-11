@@ -5,7 +5,7 @@
 \alias{study_stickiness}
 \title{Case-study stickiness results}
 \format{
-\code{data.table} with 38 rows and 6 columns keyed by
+\code{data.table} with 55 rows and 6 columns keyed by
 program, race/ethnicity, and sex.
 \describe{
 
@@ -46,9 +46,7 @@ the time span of available data.
 
 Data are subset to satisfy the data sufficiency criterion and some
 graduates are reclassified as non-completers to satisfy the timely
-completion criterion. Data are also subset to remove groups with 10 or
-fewer members in the \code{ever} column to reduce the risk of
-identification.
+completion criterion.
 }
 \seealso{
 \code{\link{add_data_sufficiency}},

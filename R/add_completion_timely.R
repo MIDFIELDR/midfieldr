@@ -56,6 +56,7 @@ add_completion_timely <- function(dframe,
                                   midfield_degree,
                                   ...,
                                   details = NULL) {
+  
   on.exit(setkey(midfield_degree, NULL), add = TRUE)
   on.exit(setkey(dframe, NULL), add = TRUE)
 
@@ -72,13 +73,9 @@ add_completion_timely <- function(dframe,
     )
   )
 
-  # required arguments
-  qassert(dframe, "d+")
-  qassert(midfield_degree, "d+")
-
   # optional arguments
   details <- details %?% FALSE
-  qassert(details, "B1") # boolean, length = 1
+  qassert(details, "B1") # boolean, missing values prohibited, length 1
 
   # inputs modified (or not) by reference
   setDT(dframe)

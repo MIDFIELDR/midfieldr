@@ -61,6 +61,10 @@ asp_ratio_mw <- function(data, categories) {
 }
 ```
 
+
+
+
+
 ## Introduction
 
 We continue the case study, a tour of a typical workflow with student unit record data. Again, for the sake of brevity we focus on the logic of the analysis and leave the detailed discussion of functions and arguments to later vignettes. 
@@ -69,15 +73,20 @@ Assuming you completed the introduction to the four data tables (in [Getting sta
 
 - [Case study programs](art-002-case-study-programs.html)
 - [Case study students](art-004-case-study-students.html)
-- *Case study stickiness* &#11160; You are here.
+- *Case study stickiness* &#9665; You are here.
 - [Case study graduation rate](art-006-case-study-grad-rate.html)
 
-Longer, related vignettes with detailed discussions of methods and functions include:  
-
+Longer vignettes with detailed development of methods and functions related to this part of the study include:  
 
 - [Data sufficiency](art-020-data-sufficiency.html)
 - [Timely completion](art-030-timely-completion.html){target="_blank"} 
 - [Multiway graphs](art-050-multiway-graphs.html){target="_blank"} 
+
+### Longitudinal stickiness
+ 
+*Longitudinal stickiness* is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program after accounting for the data sufficiency and timely completion  criteria  [@Ohland+Orr+others:2012]. 
+
+Stickiness measures the extent to which a program succeeds in its basic goal of graduating the students it admits, without regard to how or when a student is admitted to a program---the metric includes students who begin college part-time, enroll mid-year, switch majors, or transfer, in addition to first-time-in-college students. 
 
 ### In this vignette
 
@@ -88,9 +97,6 @@ Starting with the `study_student` data frame from the previous vignette ([Case s
 - Tally students completing a program by race/ethnicity, and sex
 - Compute and graph the stickiness 
 - Save the results
- 
-*Longitudinal stickiness* is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program after accounting for the data sufficiency and timely completion  criteria  [@Ohland+Orr+others:2012]. Stickiness measures the extent to which a program succeeds in its basic goal of graduating the students it admits, without regard to how or when a student is admitted to a program---the metric includes students who begin college part-time, enroll mid-year, switch majors, or transfer, in addition to first-time-in-college students. 
-
 
 We use the following midfieldr functions
 
@@ -98,6 +104,8 @@ We use the following midfieldr functions
 - [`condition_multiway()`](../reference/condition_multiway.html)
 
 The vignette output is the data frame `study_stickiness`. 
+
+
 
 
 
@@ -116,17 +124,14 @@ library("ggplot2")
 
 # optional code to control data.table printing
 options(
-  datatable.print.nrows = 10,
-  datatable.print.topn = 5,
+  datatable.print.nrows = 6,
+  datatable.print.topn = 3,
   datatable.print.class = TRUE
 )
 
 # load data tables from midfielddata
 data(degree)
 ```
-
-
-
 
 We gathered the eligible students for the case study programs in the previous case study vignettes.  The data are saved in the `study_student` data set that loads with midfieldr. View its help page by running
 
@@ -146,132 +151,214 @@ DT
 
 Before we can count the number of graduates, we have to assess whether graduates complete their program in a timely manner. A student graduating later than their timely-completion term are grouped with non-graduates for purposes of computing a persistence metric.
 
-The `add_completion_timely()` function requires that the input data frame has a `timely_term` column---which ours does. The function accesses the `degree` data to determine the term  of a student's first degree and reports whether the degree term (if any) satisfies the timely completion criterion. 
+The `add_completion_timely()` function accesses the `degree` data to determine the term  of a student's first degree (if any), compares it to the student's timely completion term, and reports whether the degree term satisfies the timely completion criterion. 
 
 ```{r}
+# Determine whether the timely completion criterion is satisfied
 DT <- add_completion_timely(DT, midfield_degree = degree)
+
+# Examine the result
 DT
 ```
 
 
+
 ## Summarize by group 
 
-We count the number of students ever enrolled and the number of graduates in separate steps, then join the results. 
-
-First we assign the grouping variables to be used for grouping, summarizing, and joining. 
+The variables we group by are program, race/ethnicity, and sex. It has proven convenient to combine race/ethnicity and sex into its own column.  
 
 ```{r}
-grouping_variables <- c("program", "race", "sex")
+# Construct one of the grouping variables.
+DT[, race_sex := paste(race, sex)]
+
+# Examine the result
+DT
 ```
 
-We count the enrollees and assign the result to the new `ever` column. 
+We assign the grouping variables to a vector. 
 
 ```{r}
-ever_enroll <- copy(DT)
-ever_enroll <- ever_enroll[, .(ever = .N), by = grouping_variables]
-ever_enroll
+# A reusable vector for grouping, summarizing, and joining. 
+grouping_variables <- c("program", "race_sex")
 ```
 
-Before counting graduates, we subset for those satisfying the timely-completion criterion. 
+Starting with our working data frame `DT`, we count the enrollees by groups and assign the result to the new `ever` column. 
 
 ```{r}
-graduate <- copy(DT)
-graduate <- graduate[completion_timely == TRUE]
-graduate
+# Create a new memory location to avoid updating by reference
+enrolled <- copy(DT)
+
+# Count
+enrolled <- enrolled[, .(ever = .N), by = grouping_variables]
+
+# Examine the result
+enrolled
+```
+
+Returning to our working data frame `DT`, we subset rows satisfying the timely-completion criterion. 
+
+```{r}
+# Create a new memory location to avoid updating by reference
+completed <- copy(DT)
+
+# Limit the graduate count to those with timely completion 
+completed <- completed[completion_timely == TRUE]
+
+# Examine the result
+completed
 ```
 
 We count the graduates and assign the result to the new `grad` column. 
 
 ```{r}
-graduate <- graduate[, .(grad = .N),  by = grouping_variables]
-graduate
+# Obtain count of graduates
+completed <- completed[, .(grad = .N), by = grouping_variables]
+
+# Examine the result
+completed
 ```
 
-Now we join the two data frames, setting `all.x = TRUE` to retain all rows of both `ever_enroll`. 
+Now we join the two data frames, setting `all.x = TRUE` to retain all rows of  `enrolled`. 
 
 ```{r}
-DT <- merge(ever_enroll,
-            graduate,
-            by = grouping_variables,
-            all.x = TRUE)
+# Join
+DT <- merge(enrolled, completed, by = grouping_variables, all.x = TRUE)
+
+# Examine the result
 DT
+
+# Merging created a data.table "key" that we delete
+setkey(DT, NULL)
 ```
 
-
-
-## Condition the results
-
-If the `graduate` data had fewer rows than the `ever_enroll` data, the `merge()` we did introduces some NA values in the `grad` column. 
+In this case, the `completed` data has fewer rows than the `enrolled` data so the `merge()` introduced some NA values in the `grad` column. 
 
 ```{r}
-# Any NA in grad?
+# Checking if any NAs were introduced in the grad column 
 sum(is.na(DT$grad))
 ```
 
 Those NA values are better encoded as zeros.
 
 ```{r}
-DT <- DT[is.na(grad), grad := 0][]
+# NA in this case represents a count of zero 
+DT[is.na(grad), grad := 0][]
+
+# Examine the result
 DT
 ```
 
-Before computing stickiness, we omit populations of 10 or less to protect their identity. 
 
-```{r}
-DT <- DT[ever > 10]
-DT
-```
 
 
 
 ## Compute stickiness
 
+Stickiness is the ratio of graduates to enrollees by group. 
 
 ```{r}
-DT[, stick := round(100 * grad / ever, 1)]
-DT <- DT[order(program, sex, race)]
-DT
+# data table printing option
+options(datatable.print.topn = 40)
 
+# Reached our goal of computing longitudinal stickiness
+DT[, stick := round(100 * grad / ever, 1)]
+
+# Examine the result
+DT
+```
+
+You could save the `DT` data frame as a CSV file to your `results` directory for easy access as we work through the study.  
+
+``` r
+# Assumes you have a results folder in the project directory
+fwrite(DT, file = "results/case_stickiness.csv")
+```
+
+These results have been included with midfieldr as the built-in data set `study_stickiness`. View its help page by running 
+
+```r
+? study_stickiness
+```
+View the data frame, 
+
+```{r}
+study_stickiness
+```
+
+Check that the two data frames are identical, 
+
+```{r}
 all.equal(DT, study_stickiness)
 ```
+
+In subsequent vignettes, you can read in the `case_stickiness` data from your `results` directory or you can use the `study_stickiness` data provided with midfieldr. 
+
+
+
+
 
 
 
 ## Graph the results
 
+We do some data conditioning before presenting the results. Even with students and institutions de-identified, privacy is at risk for small populations, so we omit observations with fewer than 10 students ever enrolled. 
+
 ```{r}
-# data preparation
-mw <- DT[!race %chin% c("International", "Other/Unknown")]
-mw
+# Omit before graphing
+DT <- DT[ever >= 10]
+```
 
-mw <- mw[, .(program, race_sex = paste(race, sex), stick)]
-mw
+We also omit rows with ambiguous values for race/ethnicity (International and Other/Unknown). Having graphed the results in advance, we find that the small population subset removed Native American students from all but one of the disciplines---so we add them to the list of observations to omit. 
 
-mw <- condition_multiway(mw, details = TRUE)
-mw
+```{r}
+# data table printing option
+options(datatable.print.topn = 3)
+
+# Omit before graphing
+DT <- DT[!race_sex %ilike% c("International|Other|Native")]
+
+# Examine the result
+DT
+```
+
+Condition the data for graphing using `condition_multiway()`.  The comments give a brief clue to the purpose of each argument. We'll use it here without lengthy explanation (covered in detail in a separate vignette). 
+
+```{r}
+DT <- condition_multiway(
+    dframe    = DT,                       # input data frame
+    categ_col = c("program", "race_sex"), # multiway categorical variables 
+    quant_col = "stick",                  # multiway quantitative variable
+    detail    = FALSE,                    # do not return columns of details 
+    order_by  = "percent",                # row and panel ordering method
+    param_col = c("grad", "ever")         # parameters used for ordering
+)
+
+# Examine the result
+DT
 ```
 
 ```{r echo = FALSE}
+mw <- copy(DT[, .(program, race_sex, stick)])
 asp_ratio <- asp_ratio_mw(mw, categories = c("program", "race_sex"))
 ```
 
+Because stickiness is a percentage, we can use the "percent" method for ordering: panels are ordered by program stickiness (ignoring race/ethnicity and sex) and rows are ordered by race/sex stickiness (ignoring program). 
+
 ```{r fig1, fig.asp = asp_ratio[1]}
-# creating a multiway graph
-ggplot(data = mw, aes(x = stick, y = race_sex)) +
-  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = med_program),
-    linetype = 2
-  ) +
-  geom_point(na.rm = TRUE) +
-  labs(
-    x = "Stickiness",
-    y = "",
-    title = "Practice data (not for research)",
-    caption = "Source: midfielddata"
-  )
+ggplot(data = DT, aes(x = stick, y = race_sex)) +
+    facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+    geom_point(na.rm = TRUE) +
+    labs(
+        x = "Stickiness (%)",
+        y = "",
+        title = "Ordered by computed group metric",
+        caption = "Source: midfielddata."
+    )
 ```
 
+**Observations:** The graph illustrates how the ordering of rows and panels are crucial to what Cleveland calls the "asymmetry in the perception of effects." For example, consider the low stickiness of Hispanic/Latinx women in Civil Engineering (given their overall high stickiness across all programs) or the high stickiness of Hispanic/Latinx men in Industrial Engineering (given their overall low stickiness across all programs).
 
+Recall, however, that these are practice data, not research data---suitable for learning about student-record analysis, but not for drawing inferences about student performance. 
 
 
 

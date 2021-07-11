@@ -54,11 +54,11 @@ We continue the case study, a tour of a typical workflow with student unit recor
 Assuming you completed the introduction to the four data tables (in [Getting started](art-000-getting-started.html)), the case study has four parts:
 
 - [Case study programs](art-002-case-study-programs.html)
-- *Case study students* &#11160; You are here.
+- *Case study students* &#9665; You are here.
 - [Case study stickiness](art-006-case-study-stickiness.html)
 - [Case study graduation rate](art-006-case-study-grad-rate.html)
 
-Longer, related vignettes with detailed discussions of methods and functions include:  
+Longer vignettes with detailed development of methods and functions related to this part of the study include:   
 
 - [Subsetting MIDFIELD data](art-015-subsetting-midfield-data.html){target="_blank"} 
 - [Data sufficiency](art-020-data-sufficiency.html){target="_blank"} 
@@ -126,11 +126,12 @@ study_program
 We start with `filter_match()` to subset rows of `term` with `cip6` values that match the `cip6` values in `study_program` and returning three columns for student ID, institution, and CIP code.  
 
 ```{r}
-# All terms for all students in the study programs 
+# All terms for all students in the study programs
 DT <- filter_match(term,
-                   match_to = study_program,
-                   by_col = "cip6",
-                   select = c("mcid", "institution", "cip6"))
+  match_to = study_program,
+  by_col = "cip6",
+  select = c("mcid", "institution", "cip6")
+)
 
 # Examine the result
 DT
@@ -150,8 +151,9 @@ In general, the `term` data can include non-degree-seeking students. To limit th
 ```{r}
 # Limit the study to degree-seeking students
 DT <- filter_match(DT,
-                   match_to = student,
-                   by_col = "mcid")
+  match_to = student,
+  by_col = "mcid"
+)
 
 # Examine the result
 DT
@@ -193,7 +195,7 @@ Data sufficiency is defined in terms of a timely completion term: the last term 
 The midfieldr function `add_timely_term()` estimates a timely completion term for each student. 
 
 ```{r}
-# Timely completion term is required for determining data sufficiency 
+# Timely completion term is required for determining data sufficiency
 DT <- add_timely_term(DT, midfield_term = term)
 
 # Examine the result
@@ -230,21 +232,18 @@ DT
 
 ## Save results
 
-We can order the rows of the result using the data.table function  `setcolorder()`---not strictly necessary, but it does facilitate  reproducibility.  
+We can order the columns of the result using the data.table function  `setcolorder()`---not strictly necessary, but it does facilitate  reproducibility.  
 
 ```{r}
-# Optional step to order the rows 
+# Optional step to order the rows
 setcolorder(DT, c("mcid", "institution"))
-
-# Rename before saving 
-case_student <- DT
 ```
 
 We save the `DT` data frame as a CSV file to the `results` directory for easy access as we work through the study.  
 
 ``` r
 # Assumes you have a results folder in the project directory
-fwrite(case_student, file = "results/case_student.csv")
+fwrite(DT, file = "results/case_student.csv")
 ```
 These results have been included with midfieldr as the built-in data set `study_student`. View its help page by running 
 
@@ -260,7 +259,7 @@ study_student
 Check that the two data frames are identical, 
 
 ```{r}
-all.equal(case_student, study_student)
+all.equal(DT, study_student)
 ```
 
 In subsequent vignettes, you can read in the `case_student` data from your `results` directory or you can use the `study_student` data provided with midfieldr. 
@@ -307,13 +306,15 @@ data(student, term)
 
 # Gather students
 DT <- filter_match(term,
-                   match_to = study_program,
-                   by_col = "cip6",
-                   select = c("mcid", "institution", "cip6"))
+  match_to = study_program,
+  by_col = "cip6",
+  select = c("mcid", "institution", "cip6")
+)
 DT <- unique(DT)
 DT <- filter_match(DT,
-                   match_to = student,
-                   by_col = "mcid")
+  match_to = student,
+  by_col = "mcid"
+)
 
 # Join grouping variables
 DT <- merge(DT, study_program, by = "cip6", all.x = TRUE)

@@ -49,28 +49,36 @@ kable2html <- function(x, font_size = NULL, caption = NULL) {
 
 ## Introduction
 
-The case study continues our tour of a typical workflow with student unit record data. This is a “big picture” development---functions are used without detailed explanations or development so that we can focus on the overall logic of the analysis. 
+We continue the case study, a tour of a typical workflow with student unit record data. Again, for the sake of brevity we focus on the logic of the analysis and leave the detailed discussion of functions and arguments to later vignettes. 
 
-In the US, the Integrated Postsecondary Education Data System (IPEDS) defines "graduation rate" as the fraction of a cohort of full-time, first-time, degree-seeking undergraduates who complete their program within a percentage (100%, 150%, or 200%) of the "normal" time (typically 4 years) as defined by the institution [@IPEDS:2020]. The MIDFIELD team typically uses the 150% (6-year) definition. 
+Assuming you completed the introduction to the four data tables (in [Getting started](art-000-getting-started.html)), the case study has four parts:
 
-The IPEDS definition excludes students who attend college part-time, who transfer from one institution to another, and who start college in any term other than the Fall term. Moreover, IPEDS policy does not extend the time limit for students who change majors (switchers) even if the student and the institution are satisfied that the student graduated in the new major in a timely fashion. 
+- [Case study programs](art-002-case-study-programs.html)
+- [Case study students](art-004-case-study-students.html)
+- [Case study stickiness](art-006-case-study-stickiness.html)
+- *Case study graduation rate* &#9665; You are here.
 
-The American Council on Education (ACE) estimates that this definition of graduation rate may exclude up to 60% of students at 4-year institutions [@Cook+Hartle:2011]. 
+Longer vignettes with detailed development of methods and functions related to this part of the study include:  
 
-So why use the metric at all? Do graduation rates really matter? Cook and Hartle say, yes they do ... 
+- [Timely completion](art-030-timely-completion.html){target="_blank"} 
+- [FYE programs](art-040-fye-programs.html){target="_blank"} 
+- [Multiway graphs](art-050-multiway-graphs.html){target="_blank"}  
+- [Tabulating data](art-060-tabulating-data.html){target="_blank"} 
 
-> ... because in the eyes of the public, policy makers, and the media, they provide a clear, simple, and logical---if often misleading---number.
+### Graduation rate
+
+**As defined by IPEDS:** In the US, the Integrated Postsecondary Education Data System (IPEDS) defines "graduation rate" as the fraction of a cohort of full-time, first-time, degree-seeking undergraduates who complete their program within a percentage (100%, 150%, or 200%) of the "normal" time (typically 4 years) as defined by the institution [@IPEDS:2020]. The MIDFIELD team typically uses the 150% (6-year) definition. 
+
+The IPEDS definition limits the cohort being studied by excluding students who attend college part-time, who transfer from one institution to another, and who start college in any term other than the Fall term. Moreover, IPEDS policy does not extend the time limit for students who change majors (switchers) even if the student and the institution are satisfied that the student graduated in the new major in a timely fashion. 
+
+The American Council on Education (ACE) estimates that this definition of graduation rate may exclude up to 60% of students at 4-year institutions [@Cook+Hartle:2011]. So why use the metric at all? As Cook and Hartle explain, 
+
+> ... in the eyes of the public, policy makers, and the media, graduation
+> rate is a clear, simple, and logical---if often misleading---number.
 
 
-### Using less-restrictive criteria 
+**As defined by MIDFIELD:** Compared to IPEDS, a more inclusive cohort is used in MIDFIELD calculations of graduation rate. The differences are summarized in the table.  
 
-By definition, graduation rate is a program-based outcome. Thus, how one defines a program affects the outcome. 
-
-For example, consider a student matriculating in mechanical engineering (CIP code 141901) but graduating in 6 years in industrial engineering (CIP code 143501). Applying the IPEDS definition of graduation rate, the student *is not counted* as a graduate in either program because the CIPs of the two programs do not match. 
-
-In contrast, MIDFIELD defines a program by its 2-digit CIP when computing graduation rate. In the example above, mechanical and industrial engineering are both programs in Engineering (CIP code 14). Applying the MIDFIELD definition of graduation rate, the student in the example *is counted* as a Engineering graduate.  
-
-MIDFIELD also includes transfer students, part-time students, and students who start college in any term. The IPEDS-MIDFIELD comparison is summarized in the table. 
 
 <br>
 ```{r echo = FALSE}
@@ -112,33 +120,32 @@ kable2html(DT, caption = "Comparing graduation rate criteria")
 ```
 <br>
 
-For a more detailed development and discussion of the midfieldr functions and methods used in this portion of the case study, see: 
 
-- [Timely completion](art-030-timely-completion.html){target="_blank"} 
-- [FYE programs](art-040-fye-programs.html){target="_blank"} 
-- [Multiway graphs](art-050-multiway-graphs.html){target="_blank"}  
-- [Tabulating data](art-060-tabulating-data.html){target="_blank"} 
-
-### Outline
-
-- Start with 
-- do
-- do
-- do
-- Result is
 
 ### In this vignette
 
-midfieldr functions 
+Starting with the `study_student` data frame from a previous vignette ([Case study students](art-004-case-study-students.html){target="_blank"}), we:
 
-- [`filter_match()`](../reference/filter_match.html)
-- [`add_race_sex()`](../reference/add_race_sex.html)
-- [`add_timely_term()`](../reference/add_timely_term.html)
-- [`add_data_sufficiency()`](../reference/add_data_sufficiency.html)
+- A
+- T
+- T
+- Compute and graph the graduation rate 
+- Save the results
+
+We use the following midfieldr functions
+
 - [`add_completion_timely()`](../reference/add_completion_timely.html)
 - [`condition_multiway()`](../reference/condition_multiway.html)
 
-packages
+The vignette output is the data frame `study_grad_rate`. 
+
+
+
+
+
+## Apply the timely completion criterion 
+
+If you are writing your own script to follow along, we start with these packages: 
 
 ```{r}
 # packages used
@@ -153,24 +160,37 @@ options(
   datatable.print.topn = 5,
   datatable.print.class = TRUE
 )
+
+# load data tables from midfielddata
+data(degree)
 ```
 
-data
+We gathered the eligible students for the case study programs in a previous case study vignettes.  The data are saved in the `study_student` data set that loads with midfieldr. View its help page by running
+
+```r  
+? study_student
+```
+
+Review the data. The data sufficiency criterion has been applied. As usual, we use assign our working data frame to `DT`. 
 
 ```{r}
-# load data tables from midfielddata
-data(student, term, degree)
+# Create a new memory location to avoid updating by reference
+DT <- copy(study_student)
+
+# Examine the result
+DT
 ```
 
+Before we can count the number of graduates, we have to assess whether graduates complete their program in a timely manner. A student graduating later than their timely-completion term are grouped with non-graduates for purposes of computing a persistence metric.
 
+The `add_completion_timely()` function requires that the input data frame has a `timely_term` column---which ours does. The function accesses the `degree` data to determine the term  of a student's first degree and reports whether the degree term (if any) satisfies the timely completion criterion. 
 
-## Under construction
+```{r}
+DT <- add_completion_timely(DT, midfield_degree = degree)
+DT
+```
 
-
-
-
-
-
+## Under construction 
 
 ## References
 

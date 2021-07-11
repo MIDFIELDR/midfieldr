@@ -4,92 +4,103 @@
 \alias{condition_multiway}
 \title{Condition multiway data for graphing}
 \usage{
-condition_multiway(dframe, ..., details = NULL)
+condition_multiway(
+  dframe,
+  categ_col,
+  quant_col,
+  ...,
+  detail = NULL,
+  order_by = NULL,
+  param_col = NULL
+)
 }
 \arguments{
-\item{dframe}{Data frame of multiway data.}
+\item{dframe}{Data frame with at least three columns: two categorical 
+variables (columns can be character or factor) and one quantitative 
+response variable (column must be numeric).}
+
+\item{categ_col}{Character vector with the names (in quotes) of the two 
+categorical columns.}
+
+\item{quant_col}{Character scalar with the name (in quotes) of the 
+quantitative response column.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
-\item{details}{Optional flag to add columns reporting the medians on which
-the order of the levels is based, default FALSE.}
+\item{detail}{Optional flag to retain the columns created to implement the 
+ordering scheme, default FALSE. When TRUE, the extra columns are 
+useful for graphing vertical reference lines---indicating, for 
+instance, the panel median, mean, or total count---to visualize the 
+quantity by which the panels are ordered.}
+
+\item{order_by}{Optional character scalar (in quotes) assigning the 
+method for ordering the levels of the categorical variables. 
+The following values are possible: 
+\itemize{
+
+\item{"median"} {(default) Orders by the median of values in the 
+quantitative column grouped by category.}
+
+\item{"mean"} {Orders by the mean of values in the quantitative 
+column grouped by category.}
+
+\item{"sum"} {Orders by the sum of values in the quantitative 
+column grouped by category. Useful when the quantitative variable 
+is a count or frequency.}
+
+\item{"percent"} {Orders by ratios computed by category. Used when 
+the quantitative response variable is the ratio (in percent) of two 
+columns of integer counts (frequencies). The counts are summed by 
+category to obtain grouped percentages used to order the levels of 
+the categorical variables. Requires two parameter columns be 
+identified in \code{param_col} and assumes that the parameter with 
+the larger column sum is the denominator of the ratio.}
+
+\item{"alphabet"} {Orders the levels of the categorical variables 
+alphabetically. Rarely useful for perceiving effects, but can be 
+useful for value look up.}
+
+}}
+
+\item{param_col}{Optional character vector with the names (in quotes) 
+of the columns used as parameters in the \code{order_by} method. 
+Currently supports \code{"percent"} method only---expects two column 
+names (in any order) of the integer count columns used to construct 
+the percentage response column.}
 }
 \value{
 A \code{data.table} with the following properties:
 \itemize{
   \item Rows are not modified.
-  \item Quantitative column is not modified.
-  \item Categorical columns are factors with levels ordered by median
-        quantitative values with an option to add columns of group medians.
+  \item The quantitative column is not modified.
+  \item The two categorical columns are factors with levels ordered by 
+        the method selected. Optionally, the additional columns (if any) 
+        created to implement the ordering scheme can be retained. 
   \item Grouping structures are not preserved.
 }
 }
 \description{
 Transform a data frame such that two categorical variables are factors
-with levels ordered by medians of the quantitative variable. Rows and
-columns of the data frame are otherwise unaffected. The primary goal is to
-structure the data for display in a Cleveland "multiway dot plot," where
-the ordering of the levels and panels are crucial to the perception of
-effects.
-}
-\details{
-In multiway data---as defined by
+with levels ordered for display in a Cleveland "multiway dot plot," where
+the ordering of the panels and rows are crucial to the perception of
+effects. In multiway data---as defined by
 \insertCite{Cleveland:1993;textual}{midfieldr}---there is a single
 quantitative value (or response) for every combination of levels
-of two categorical variables. \code{condition_multiway()} converts
-the columns of categorical variables to factors and orders the factor
-levels by increasing medians of the quantitative response variable.
-
-Note that "multiway" in our context refers to the data structure and graph
-design defined by Cleveland, not to the methods of analysis described by
-\insertCite{Kroonenberg:2008;textual}{midfieldr}.
-
+of two categorical variables. Typically the quantitative column is used to 
+order the levels of the two categorical columns.
+}
+\details{
 In the multiway dot plot, there are panels, the individual dot plots
 of the display, and there are levels, the rows of each panel. One category
 is encoded by the panels; the other by the rows. All panels have the same
 quantitative scale on the x-axis and the same organization of category
-levels on the y-axis. Panels and rows are ordered so that medians increase
-in "graph order", that is, from left to right and from bottom to top. Hence
-the importance of the medians reported by the \code{details} argument.
+levels on the y-axis. Panels and rows are ordered so that ordering scheme 
+increases in "graph order", that is, increases from left to right and from 
+bottom to top.
 
-In our implementation, the \code{dframe} argument must have three
-columns only: two categorical columns (type character or factor) and one
-quantitative column (type numeric).
-}
-\examples{
-# Construct example data frame
-catg1 <- rep(c("urban", "rural", "suburb", "village"), each = 2)
-catg2 <- rep(c("men", "women"), times = 4)
-value <- c(0.22, 0.14, 0.43, 0.58, 0.81, 0.46, 0.15, 0.20)
-dframe <- data.frame(catg1, catg2, value)
-dframe
-
-
-# Class before conditioning
-class(dframe$catg1)
-class(dframe$catg2)
-
-
-# Class and levels after conditioning
-mw1 <- condition_multiway(dframe)
-class(mw1$catg1)
-levels(mw1$catg1)
-class(mw1$catg2)
-levels(mw1$catg2)
-
-
-# Existing factors (if any) are re-ordered
-mw2 <- dframe
-mw2$catg1 <- factor(mw2$catg1,
-                       levels = c("rural", "suburb", "urban", "village"))
-levels(mw2$catg1) # levels before conditioning
-mw2 <- condition_multiway(mw2)
-levels(mw2$catg1) # levels after conditioning
-
-
-# Report median values
-mw <- condition_multiway(dframe, details = TRUE)
-mw
+Note that "multiway" in our context refers to the data structure and graph
+design defined by Cleveland, not to the methods of analysis described by
+\insertCite{Kroonenberg:2008;textual}{midfieldr}.
 }
 \references{
 \insertAllCited{}

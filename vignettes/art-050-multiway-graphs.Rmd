@@ -14,6 +14,10 @@ nocite: |
 resource_files:
   - ../man/figures/art-050-multiway-graphs-fig1-1.png
   - ../man/figures/art-050-multiway-graphs-fig2-1.png
+  - ../man/figures/art-050-multiway-graphs-fig3-1.png
+  - ../man/figures/art-050-multiway-graphs-fig4-1.png
+  - ../man/figures/art-050-multiway-graphs-fig5-1.png
+  - ../man/figures/art-050-multiway-graphs-fig6-1.png
 ---
 
 ```{r setup, include = FALSE}
@@ -62,15 +66,11 @@ asp_ratio_mw <- function(data, categories) {
 
 ## Introduction 
 
-We take some time in this early tutorial to create some graphs because, as Wickham and Grolemund state [-@Wickham+Grolemund:2017], 
-
->  Visualization is a great place to start with R programming, because the payoff is so clear; you get to make elegant and informative plots that help you understand the data. 
-
-In particular, we introduce graphs of *multiway data* in which there is is one quantitative variable and two categorical variables. As explained by  Cleveland [-@Cleveland:1993], 
+We introduce graphs of *multiway data* in which there is is one quantitative variable and two categorical variables. As explained by  Cleveland [-@Cleveland:1993], 
 
 > ... the quantitative variable is a response, and the goal is to study how it depends on the categorical variables, which are factors. What distinguishes multiway data is the cross-classification of the categorical variables; there is a value of the response for each combination of levels of the two categorical variables. 
 
-The structure of multiway data is specific: a categorical variable with $m$ levels; an independent categorical variable with $n$ levels; and a single  quantitative value associated with every combinations of levels of the two categories. Multiway data are typically organized as three columns with $m \times n$ rows. 
+Multiway data have a specific structure: a categorical variable with $m$ levels; an independent categorical variable with $n$ levels; and a single  quantitative value associated with every combinations of levels of the two categories. Multiway data are typically organized as three columns with $m \times n$ rows. 
 
 Note that "multiway" in our context refers to the data structure and graph design defined by Cleveland, not to the methods of analysis described by Kroonenberg [-@Kroonenberg:2008]. 
 
@@ -79,7 +79,7 @@ Note that "multiway" in our context refers to the data structure and graph desig
 - Start with the case study stickiness results (`study_stickiness`) 
 - Practice conditioning multiway data for display 
 - Practice creating multiway graphs and their duals 
-- Practice tabulating multiway data  
+- Practice different options for ordering rows and panels
 
 ### In this vignette
 
@@ -95,7 +95,6 @@ library("midfieldr")
 library("midfielddata")
 library("data.table")
 library("ggplot2")
-library("janitor")
 ```
 
 We can control how a data.table is printed to the screen with the following options.  
@@ -129,39 +128,18 @@ study_stickiness
 
 Categorical variables are often provided as character variables. Without ordering the levels, the rows and panels of the multiway graph are ordered alphabetically---not the best design for gaining insights from the graph. 
 
-To condition the categorical variables, we use `condition_multiway()` to convert them to factors with levels ordered by the median response values. To see its help page, run
+To condition the categorical variables, we use `condition_multiway()` to convert them to factors with levels ordered by the quantitative response variable in some fashion, To see its help page, run
 
 ```
 ? condition_multiway()
 ```
 
-The function requires exactly three columns, two for the categorical variables and one for the quantitative variables. To achieve that, we combine race and sex into one column, 
+The function requires two categorical variables and one quantitative variable. In this data frame, the two categorical columns are `program` and `race_sex`. the quantitative variable is `stick` (for longitudinal stickiness). Before conditioning, the categorical variables are characters, 
 
 ```{r}
 # create a new memory location
 DT <- copy(study_stickiness)
 
-# Construct one of the categorical variables 
-DT[, race_sex := paste(race, sex)]
-
-# Examine the result
-DT
-```
-
-And we select the columns we need, dropping the others, 
-
-```{r}
-# Keep the multiway variables
-cols_we_want <- c("program", "race_sex", "stick")
-DT <- DT[, ..cols_we_want]
-
-# Examine the result
-DT
-```
-
-The quantitative variable is `stick` (stickiness); the first categorical variable is `program`; the second categorical variable is race/ethnicity/sex. Before conditioning, the categorical variables are characters, 
-
-```{r}
 # first category is a character
 class(DT$program)
 
@@ -169,11 +147,40 @@ class(DT$program)
 class(DT$race_sex)
 ```
 
+We do some data conditioning before presenting the results. Even with students and institutions de-identified, privacy is at risk for small populations, so we omit observations with fewer than 10 students ever enrolled. 
+
+```{r}
+# Omit before graphing
+DT <- DT[ever >= 10]
+```
+
+We also omit rows with ambiguous values for race/ethnicity (International and Other/Unknown). Having graphed the results in advance, we find that the small population subset removed Native American students from all but one of the disciplines---so we add them to the list of observations to omit. 
+
+```{r}
+# data table printing option
+options(datatable.print.topn = 3)
+
+# Omit before graphing
+DT <- DT[!race_sex %ilike% c("International|Other|Native")]
+
+# Examine the result
+DT
+
+temp <- copy(DT)
+```
+ 
 We process the data frame
 
 ```{r}
 # condition as multiway data
-DT <- condition_multiway(DT)
+DT <- condition_multiway(
+    dframe    = DT,                       # input data frame
+    categ_col = c("program", "race_sex"), # multiway categorical variables 
+    quant_col = "stick",                  # multiway quantitative variable
+    detail    = FALSE,                    # do not return columns of details 
+    order_by  = "percent",                # row and panel ordering method
+    param_col = c("grad", "ever")         # parameters used for ordering
+)
 ```
 
 No change to the row and column structure, but as you can see, the previous character variables have been converted to factors, 
@@ -192,35 +199,35 @@ levels(DT$program)
 levels(DT$race_sex)
 ```
 
-We would expect 4 $\times$ 9 = 36 observations. However, some rows are omitted to preserve confidentiality, leaving us with `r dim(DT)[1]` observations.
-
-The median values that determine the order of the levels can be obtained by using the `details` argument. 
+The values that determine the order of the levels can be obtained by using the `detail` argument. 
 
 ```{r}
-# return median stickiness by category
-DT_med <- condition_multiway(DT, details = TRUE)
+# return stickiness by category
+DT <- condition_multiway(
+    dframe    = DT,                       # input data frame
+    categ_col = c("program", "race_sex"), # multiway categorical variables 
+    quant_col = "stick",                  # multiway quantitative variable
+    detail    = TRUE,                     # return columns of details 
+    order_by  = "percent",                # row and panel ordering method
+    param_col = c("grad", "ever")         # parameters used for ordering
+)
 ```
 
-By ordering the data by `program`, you can see that a given program has a single value of `med_program` copied as many times as needed. 
+By ordering the data by `program`, you can see that a given program has a single value of `program_stick` copied as many times as needed. 
 
 ```{r}
 # optional code to control data.table printing
 options(datatable.print.topn = 10)
 
 # programs have a median stickiness across race-sex groups
-DT_med[order(program)]
+DT[order(program)]
 ```
 
-Similarly, by ordering the data by `race_sex`, you can see that a given demographic group has a single value of `med_race_sex` copied as many times as needed. 
+Similarly, by ordering the data by `race_sex`, you can see that a given demographic group has a single value of `race_sex_stick` copied as many times as needed. 
 
 ```{r}
 # race_sex groupings have a median stickiness across programs
-DT_med[order(race_sex)]
-```
-
-
-```{r include = FALSE}
-cat(wrapr::draw_frame(DT))
+DT[order(race_sex)]
 ```
 
 
@@ -239,21 +246,21 @@ asp_ratio <- asp_ratio_mw(DT, categories = c("program", "race_sex"))
 
 We use conventional ggplot2 functions to create the multiway graphs. 
 
-By previously ordering the levels of the factors, we have structured the data so that the rows and panels of the multiway graph are ordered by the appropriate medians. The panel medians are drawn as vertical dashed lines. 
+By previously ordering the levels of the factors, we have structured the data so that the rows and panels of the multiway graph are ordered by the method we selected. here we used the "percent" method. Program stickiness is drawn as a vertical reference line in each panel.
 
 *Reminder:* These are practice data, not suitable for drawing inferences about student performance, i.e., not for research.
 
 ```{r fig1, fig.asp = asp_ratio[1]}
 # create one multiway graph
-ggplot(data = DT_med, aes(x = stick, y = race_sex)) +
+ggplot(data = DT, aes(x = stick, y = race_sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = med_program),
+  geom_vline(aes(xintercept = program_stick),
     linetype = 2,
     color = "gray70"
   ) +
   geom_point(na.rm = TRUE) +
   labs(
-    x = "Stickiness",
+    x = "Stickiness (%)",
     y = "",
     title = "Practice data (not for research)",
     caption = "Source: midfielddata"
@@ -289,15 +296,15 @@ To create the *dual multiway* graph, we swap the roles of the rows and panels.
 
 ```{r fig2, fig.asp = asp_ratio[2]}
 # create the dual multiway graph
-ggplot(data = DT_med, aes(x = stick, y = program)) +
+ggplot(data = DT, aes(x = stick, y = program)) +
   facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = med_race_sex),
+  geom_vline(aes(xintercept = race_sex_stick),
     linetype = 2,
     color = "gray70"
   ) +
   geom_point(na.rm = TRUE) +
   labs(
-    x = "Stickiness",
+    x = "Stickiness (%)",
     y = "",
     title = "Practice data (not for research)",
     caption = "Source: midfielddata"
@@ -305,7 +312,7 @@ ggplot(data = DT_med, aes(x = stick, y = program)) +
 ```
 <br>
 
-This graph permits a direct visual comparison of how stickiness varies by major for one group of students. 
+This graph permits a direct visual comparison of how stickiness varies by major for one group of students. Race/ethnicity/sex group stickiness is drawn as a vertical reference line in each panel. 
 
 Both multiways should be created for discussion. Usually one or the other will convey a more compelling visual story that gets included in the published findings. 
 
@@ -315,6 +322,105 @@ Both multiways should be created for discussion. Usually one or the other will c
 1. Create the dual multiway graph using the conditioned `study_grad_rate` data 
 
 
+
+
+
+
+## Panel and row ordering options 
+
+The `order_by` argument in `condition_multiway()` provides options for ordering the two categorical variables (panel order and row order) in a multiway graph. 
+
+```{r}
+# create a common graph framework to use in the example below
+p <- ggplot(data = temp, aes(x = stick, y = race_sex)) +
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(x = "Longitudinal stickiness (%)", 
+       y = "", 
+       caption = "Source: midfielddata")
+```
+
+The following values of `order_by` are possible:
+
+percent
+: Orders by ratios computed by category. Used when the quantitative response variable is the ratio (in percent) of two columns of integer counts (the two columns are the numerator and denominator of the ratio), such as the ratio of graduates to ever-enrolled (stickiness) or the ratio of graduates to starters (graduation rate). The counts in the two columns are summed by category and ratios for that category are computed. These grouped ratios are used to order the levels of the categories. 
+
+: The graphs shown above are representative of this type of ordering. 
+
+: Requires the optional `param_col` argument with the names of the columns of the two terms of the ratio.
+
+median
+: (default) Orders by the median of values in the quantitative column grouped by category. Here, the only quantity manipulated is the 
+
+```{r fig3, fig.asp = asp_ratio[1]}
+dtf <- condition_multiway(
+  dframe    = temp,                      
+  categ_col = c("program", "race_sex"),  
+  quant_col = "stick", 
+  detail = TRUE
+)
+p %+% dtf +
+  labs(title = "Levels ordered by median values") +
+  geom_vline(aes(xintercept = program_stick), 
+             linetype = 2, 
+             col = "gray50")
+```
+
+mean
+: Orders by the mean of values in the quantitative column grouped by category.
+
+```{r fig4, fig.asp = asp_ratio[1]}
+dtf <- condition_multiway(
+  dframe    = temp,                      
+  categ_col = c("program", "race_sex"),  
+  quant_col = "stick", 
+  order_by = "mean", 
+  detail = TRUE
+)
+p %+% dtf +
+  labs(title = "Levels ordered by mean values") +
+  geom_vline(aes(xintercept = program_stick), 
+             linetype = 2, 
+             col = "gray50")
+```
+
+sum
+: Orders by the sum of values in the quantitative column grouped by category. Useful when the response variable is a count or frequency.
+
+```{r fig5, fig.asp = asp_ratio[1]}
+dtf <- condition_multiway(
+  dframe    = temp,                      
+  categ_col = c("program", "race_sex"),  
+  quant_col = "ever", 
+  order_by = "sum", 
+  detail = TRUE
+)
+ggplot(data = dtf, aes(x = ever, y = race_sex)) +
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  scale_x_continuous(trans = "log2") + 
+  geom_vline(aes(xintercept = program_ever), 
+             linetype = 2, 
+             col = "gray50") +
+  labs(x = "Number of students ever enrolled (log-2 scale)", 
+       y = "", 
+       title = "Levels ordered by count totals", 
+       caption = "Source: midfielddata")
+```
+
+alphabet
+: Orders the levels of the categorical variables alphabetically. Rarely useful for perceiving effects, but can be useful for value look up.
+
+```{r fig6, fig.asp = asp_ratio[1]}
+dtf <- condition_multiway(
+  dframe    = temp,                      
+  categ_col = c("program", "race_sex"),  
+  quant_col = "stick", 
+  order_by = "alphabet"
+)
+p %+% dtf +
+  labs(title = "Levels ordered alphbetically")
+```
 
 
 ## References
@@ -345,68 +451,7 @@ options(
   datatable.print.class = TRUE
 )
 
-# data preparation
-DT <- copy(study_stickiness)
-class(DT$program)
-class(DT$race_sex)
-DT <- condition_multiway(DT)
-levels(DT$program)
-levels(DT$race_sex)
-DT_med <- condition_multiway(DT, details = TRUE)
-DT_med[order(program)]
-DT_med[order(race_sex)]
 
-# creating a multiway graph
-ggplot(data = DT_med, aes(x = stick, y = race_sex)) +
-  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = med_program),
-    linetype = 2
-  ) +
-  geom_point(na.rm = TRUE) +
-  labs(
-    x = "Stickiness",
-    y = "",
-    title = "Practice data (not for research)",
-    caption = "Source: midfielddata"
-  )
-
-# creating the dual multiway graph
-ggplot(data = DT_med, aes(x = stick, y = program)) +
-  facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = med_race_sex),
-    linetype = 2
-  ) +
-  geom_point(na.rm = TRUE) +
-  labs(
-    x = "Stickiness",
-    y = "",
-    title = "Practice data (not for research)",
-    caption = "Source: midfielddata"
-  )
-
-# creating a table for publication
-block_form <- copy(DT)
-block_form[, stick := round(stick, 2)]
-row_form <- copy(block_form)
-row_form[, race_sex := as.character(race_sex)]
-row_form[, program := as.character(program)]
-row_form <- dcast(row_form, race_sex ~ program, value.var = "stick")
-setnames(row_form,
-  old = c(
-    "race_sex",
-    "Civil Engineering",
-    "Electrical Engineering",
-    "Industrial Engineering",
-    "Mechanical Engineering"
-  ),
-  new = c(
-    "Race/ethnicity/sex",
-    "Civil",
-    "Electrical",
-    "Industrial",
-    "Mechanical"
-  )
-)
 ```
 
 ```{r echo = FALSE}

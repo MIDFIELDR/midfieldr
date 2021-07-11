@@ -52,7 +52,7 @@ by race/ethnicity, sex, and graduation status. Data manipulation is
 performed using data.table syntax.
 
 ``` r
-# packages used 
+# packages used
 library("midfieldr")
 library("midfielddata")
 library("data.table")
@@ -60,22 +60,22 @@ library("data.table")
 # Load the data tables
 data(student, term, degree)
 
-# Filter for engineering programs 
+# Filter for engineering programs
 DT <- copy(term)
 DT <- DT[cip6 %like% "^14", .(mcid, institution, cip6)]
 DT <- unique(DT)
 
-# Ensure students are degree-seeking 
+# Ensure students are degree-seeking
 DT <- filter_match(DT, match_to = student, by_col = "mcid")
 
-# Estimate timely completion terms 
+# Estimate timely completion terms
 DT <- add_timely_term(DT, midfield_term = term)
 
-# Determine graduation status  
+# Determine graduation status
 DT <- add_completion_timely(DT, midfield_degree = degree)
 DT[, grad_status := fifelse(completion_timely, "grad", "non-grad")]
 
-# Apply the data sufficiency criterion 
+# Apply the data sufficiency criterion
 DT <- add_data_sufficiency(DT, midfield_term = term)
 DT <- DT[data_sufficiency == TRUE]
 

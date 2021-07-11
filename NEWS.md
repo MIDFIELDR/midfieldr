@@ -1,9 +1,9 @@
 
-## midfieldr 1.0.0.9018 / 2021-06
+## midfieldr 1.0.0.9019 / 2021-06
 
 Significant changes from earlier versions, no backwards compatibility, prompting version number change to 1.0.0
 
-- Change practice data names to match research data: student, course, term, degree 
+- Change names of practice data tables to match the names of the research data
 - Edit practice data values for consistency with research data values 
 - Revise built-in data sets for use in vignettes and Rd examples
 - Switch to wrapr coalesce `%?%` for assigning default arguments
@@ -16,11 +16,10 @@ Significant changes from earlier versions, no backwards compatibility, prompting
 - Use package checkmate for runtime assertions 
 - Remove dependency on installing midfielddata 
 - Switch to package tinytest for unit testing 
-- Overhaul midfieldr functions completely 
+- Separate case study from detailed vignettes
+- Completely overhaul midfieldr functions  
 - Update README and midfielddata README
 - Revise vignettes to use new functions 
-- Separate case study from detailed vignettes
-
 
 
 ## midfieldr 0.1.0 / 2018-06

@@ -470,11 +470,15 @@ DT <- DT[, .(N_group = .N), by = .(program, status)]
 DT
 ```
 
-In anticipation of the graph, we condition these multiway data with the categorical columns converted to factors with levels ordered by the median values of `N_group`. 
+In anticipation of the graph, we condition these multiway data with the categorical columns converted to factors with levels ordered by the total values of `N_group`. 
 
 ```{r}
 # Create factors with ordered levels
-mw <- condition_multiway(DT)
+mw <- condition_multiway(DT, 
+                   categ_col = c("program", "status"), 
+                   quant_col = "N_group", 
+                   order_by = "sum", 
+                   detail = TRUE)
 mw
 ```
 
@@ -503,8 +507,7 @@ A more useful comparison might be as a percentage of the total number in each pr
 
 ```{r}
 # Compute percentage of total in a program
-mw[, N_program := sum(N_group), by = .(program)]
-mw[, pct_of_program := round(100 * N_group / N_program, 1)]
+mw[, pct_of_program := round(100 * N_group / program_N_group, 1)]
 mw
 ```
 
@@ -571,31 +574,7 @@ DT <- merge(DT, study_program, by = "cip6", all.x = TRUE)
 DT <- DT[, .(N_group = .N), by = .(program, status)]
 
 # Graph counts
-mw <- condition_multiway(DT)
-ggplot(mw, aes(x = N_group, y = status)) +
-  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  scale_x_continuous(limits = c(0, 2000)) +
-  geom_point() +
-  labs(
-    x = "Number of students",
-    y = "",
-    title = "Practice data (not for research)",
-    caption = "Source: midfielddata"
-  )
 
-# Graph percentages
-mw[, N_program := sum(N_group), by = .(program)]
-mw[, pct_of_program := round(100 * N_group / N_program, 1)]
-ggplot(mw, aes(x = pct_of_program, y = status)) +
-  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  scale_x_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)) +
-  geom_point() +
-  labs(
-    x = "Percentage of N students in the major",
-    y = "",
-    title = "Practice data (not for research)",
-    caption = "Source: midfielddata"
-  )
 ```
 
 
