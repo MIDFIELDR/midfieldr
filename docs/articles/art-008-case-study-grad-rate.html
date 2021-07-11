@@ -37,7 +37,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <button type="button" id="version-badge" class="badge badge-default d-none d-lg-block" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Released version">1.0.0.9018</button>
+    <button type="button" id="version-badge" class="badge badge-default d-none d-lg-block" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Released version">1.0.0.9019</button>
 
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto ml-3">
@@ -94,7 +94,7 @@
       <h1 class="display-4" data-toc-skip>Case study graduation rate</h1>
                         <h4 data-toc-skip class="author">Richard Layton</h4>
             
-            <h4 data-toc-skip class="date">2021-07-04</h4>
+            <h4 data-toc-skip class="date">2021-07-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/master/vignettes/art-008-case-study-grad-rate.Rmd" class="external-link"><code>vignettes/art-008-case-study-grad-rate.Rmd</code></a></small>
       <div class="d-none name"><code>art-008-case-study-grad-rate.Rmd</code></div>
@@ -106,21 +106,34 @@
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h2>
-<p>The case study continues our tour of a typical workflow with student unit record data. This is a “big picture” development—functions are used without detailed explanations or development so that we can focus on the overall logic of the analysis.</p>
-<p>In the US, the Integrated Postsecondary Education Data System (IPEDS) defines “graduation rate” as the fraction of a cohort of full-time, first-time, degree-seeking undergraduates who complete their program within a percentage (100%, 150%, or 200%) of the “normal” time (typically 4 years) as defined by the institution <span class="citation"><a href="#ref-IPEDS:2020" role="doc-biblioref">[1]</a></span>. The MIDFIELD team typically uses the 150% (6-year) definition.</p>
-<p>The IPEDS definition excludes students who attend college part-time, who transfer from one institution to another, and who start college in any term other than the Fall term. Moreover, IPEDS policy does not extend the time limit for students who change majors (switchers) even if the student and the institution are satisfied that the student graduated in the new major in a timely fashion.</p>
-<p>The American Council on Education (ACE) estimates that this definition of graduation rate may exclude up to 60% of students at 4-year institutions <span class="citation"><a href="#ref-Cook+Hartle:2011" role="doc-biblioref">[2]</a></span>.</p>
-<p>So why use the metric at all? Do graduation rates really matter? Cook and Hartle say, yes they do …</p>
-<blockquote>
-<p>… because in the eyes of the public, policy makers, and the media, they provide a clear, simple, and logical—if often misleading—number.</p>
-</blockquote>
-<div id="using-less-restrictive-criteria" class="section level3">
+<p>We continue the case study, a tour of a typical workflow with student unit record data. Again, for the sake of brevity we focus on the logic of the analysis and leave the detailed discussion of functions and arguments to later vignettes.</p>
+<p>Assuming you completed the introduction to the four data tables (in <a href="art-000-getting-started.html">Getting started</a>), the case study has four parts:</p>
+<ul>
+<li><a href="art-002-case-study-programs.html">Case study programs</a></li>
+<li><a href="art-004-case-study-students.html">Case study students</a></li>
+<li><a href="art-006-case-study-stickiness.html">Case study stickiness</a></li>
+<li>
+<em>Case study graduation rate</em> ◁ You are here.</li>
+</ul>
+<p>Longer vignettes with detailed development of methods and functions related to this part of the study include:</p>
+<ul>
+<li><a href="art-030-timely-completion.html" target="_blank">Timely completion</a></li>
+<li><a href="art-040-fye-programs.html" target="_blank">FYE programs</a></li>
+<li>
+<a href="art-050-multiway-graphs.html" target="_blank">Multiway graphs</a><br>
+</li>
+<li><a href="art-060-tabulating-data.html" target="_blank">Tabulating data</a></li>
+</ul>
+<div id="graduation-rate" class="section level3">
 <h3 class="hasAnchor">
-<a href="#using-less-restrictive-criteria" class="anchor" aria-hidden="true"></a>Using less-restrictive criteria</h3>
-<p>By definition, graduation rate is a program-based outcome. Thus, how one defines a program affects the outcome.</p>
-<p>For example, consider a student matriculating in mechanical engineering (CIP code 141901) but graduating in 6 years in industrial engineering (CIP code 143501). Applying the IPEDS definition of graduation rate, the student <em>is not counted</em> as a graduate in either program because the CIPs of the two programs do not match.</p>
-<p>In contrast, MIDFIELD defines a program by its 2-digit CIP when computing graduation rate. In the example above, mechanical and industrial engineering are both programs in Engineering (CIP code 14). Applying the MIDFIELD definition of graduation rate, the student in the example <em>is counted</em> as a Engineering graduate.</p>
-<p>MIDFIELD also includes transfer students, part-time students, and students who start college in any term. The IPEDS-MIDFIELD comparison is summarized in the table.</p>
+<a href="#graduation-rate" class="anchor" aria-hidden="true"></a>Graduation rate</h3>
+<p><strong>As defined by IPEDS:</strong> In the US, the Integrated Postsecondary Education Data System (IPEDS) defines “graduation rate” as the fraction of a cohort of full-time, first-time, degree-seeking undergraduates who complete their program within a percentage (100%, 150%, or 200%) of the “normal” time (typically 4 years) as defined by the institution <span class="citation"><a href="#ref-IPEDS:2020" role="doc-biblioref">[1]</a></span>. The MIDFIELD team typically uses the 150% (6-year) definition.</p>
+<p>The IPEDS definition limits the cohort being studied by excluding students who attend college part-time, who transfer from one institution to another, and who start college in any term other than the Fall term. Moreover, IPEDS policy does not extend the time limit for students who change majors (switchers) even if the student and the institution are satisfied that the student graduated in the new major in a timely fashion.</p>
+<p>The American Council on Education (ACE) estimates that this definition of graduation rate may exclude up to 60% of students at 4-year institutions <span class="citation"><a href="#ref-Cook+Hartle:2011" role="doc-biblioref">[2]</a></span>. So why use the metric at all? As Cook and Hartle explain,</p>
+<blockquote>
+<p>… in the eyes of the public, policy makers, and the media, graduation rate is a clear, simple, and logical—if often misleading—number.</p>
+</blockquote>
+<p><strong>As defined by MIDFIELD:</strong> Compared to IPEDS, a more inclusive cohort is used in MIDFIELD calculations of graduation rate. The differences are summarized in the table.</p>
 <br><table class="table table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
 <caption style="font-size: initial !important;">
 Comparing graduation rate criteria
@@ -211,40 +224,30 @@ any term
 </tbody>
 </table>
 <p><br></p>
-<p>For a more detailed development and discussion of the midfieldr functions and methods used in this portion of the case study, see:</p>
-<ul>
-<li><a href="art-030-timely-completion.html" target="_blank">Timely completion</a></li>
-<li><a href="art-040-fye-programs.html" target="_blank">FYE programs</a></li>
-<li>
-<a href="art-050-multiway-graphs.html" target="_blank">Multiway graphs</a><br>
-</li>
-<li><a href="art-060-tabulating-data.html" target="_blank">Tabulating data</a></li>
-</ul>
-</div>
-<div id="outline" class="section level3">
-<h3 class="hasAnchor">
-<a href="#outline" class="anchor" aria-hidden="true"></a>Outline</h3>
-<ul>
-<li>Start with</li>
-<li>do</li>
-<li>do</li>
-<li>do</li>
-<li>Result is</li>
-</ul>
 </div>
 <div id="in-this-vignette" class="section level3">
 <h3 class="hasAnchor">
 <a href="#in-this-vignette" class="anchor" aria-hidden="true"></a>In this vignette</h3>
-<p>midfieldr functions</p>
+<p>Starting with the <code>study_student</code> data frame from a previous vignette (<a href="art-004-case-study-students.html" target="_blank">Case study students</a>), we:</p>
 <ul>
-<li><a href="../reference/filter_match.html"><code>filter_match()</code></a></li>
-<li><a href="../reference/add_race_sex.html"><code>add_race_sex()</code></a></li>
-<li><a href="../reference/add_timely_term.html"><code>add_timely_term()</code></a></li>
-<li><a href="../reference/add_data_sufficiency.html"><code>add_data_sufficiency()</code></a></li>
+<li>A</li>
+<li>T</li>
+<li>T</li>
+<li>Compute and graph the graduation rate</li>
+<li>Save the results</li>
+</ul>
+<p>We use the following midfieldr functions</p>
+<ul>
 <li><a href="../reference/add_completion_timely.html"><code>add_completion_timely()</code></a></li>
 <li><a href="../reference/condition_multiway.html"><code>condition_multiway()</code></a></li>
 </ul>
-<p>packages</p>
+<p>The vignette output is the data frame <code>study_grad_rate</code>.</p>
+</div>
+</div>
+<div id="apply-the-timely-completion-criterion" class="section level2">
+<h2 class="hasAnchor">
+<a href="#apply-the-timely-completion-criterion" class="anchor" aria-hidden="true"></a>Apply the timely completion criterion</h2>
+<p>If you are writing your own script to follow along, we start with these packages:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
@@ -257,12 +260,77 @@ any term
   datatable.print.nrows <span class="op">=</span> <span class="fl">10</span>,
   datatable.print.topn <span class="op">=</span> <span class="fl">5</span>,
   datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
-<p>data</p>
+<span class="op">)</span>
+
+<span class="co"># load data tables from midfielddata</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></code></pre></div>
+<p>We gathered the eligible students for the case study programs in a previous case study vignettes. The data are saved in the <code>study_student</code> data set that loads with midfieldr. View its help page by running</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># load data tables from midfielddata</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span>, <span class="va">degree</span><span class="op">)</span></code></pre></div>
-</div>
+<code class="sourceCode R"><span class="op">?</span> <span class="va">study_student</span></code></pre></div>
+<p>Review the data. The data sufficiency criterion has been applied. As usual, we use assign our working data frame to <code>DT</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Create a new memory location to avoid updating by reference</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_student</span><span class="op">)</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">DT</span>
+<span class="co">#&gt;              mcid   institution   cip6    program          race    sex</span>
+<span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;     &lt;char&gt;        &lt;char&gt; &lt;char&gt;</span>
+<span class="co">#&gt;    1: MID25783197 Institution M 140801      Civil         White   Male</span>
+<span class="co">#&gt;    2: MID25783441 Institution M 140801      Civil         White   Male</span>
+<span class="co">#&gt;    3: MID25783553 Institution M 140801      Civil         White   Male</span>
+<span class="co">#&gt;    4: MID25784209 Institution M 140801      Civil International   Male</span>
+<span class="co">#&gt;    5: MID25784489 Institution M 140801      Civil         Asian Female</span>
+<span class="co">#&gt;   ---                                                                 </span>
+<span class="co">#&gt; 8215: MID26692926 Institution L 143501 Industrial         White   Male</span>
+<span class="co">#&gt; 8216: MID26693368 Institution L 143501 Industrial         White   Male</span>
+<span class="co">#&gt; 8217: MID26695626 Institution L 143501 Industrial         White   Male</span>
+<span class="co">#&gt; 8218: MID26696116 Institution L 143501 Industrial         White Female</span>
+<span class="co">#&gt; 8219: MID26696429 Institution L 143501 Industrial         White Female</span>
+<span class="co">#&gt;       timely_term data_sufficiency</span>
+<span class="co">#&gt;            &lt;char&gt;           &lt;lgcl&gt;</span>
+<span class="co">#&gt;    1:       19923             TRUE</span>
+<span class="co">#&gt;    2:       19973             TRUE</span>
+<span class="co">#&gt;    3:       20073             TRUE</span>
+<span class="co">#&gt;    4:       20003             TRUE</span>
+<span class="co">#&gt;    5:       19943             TRUE</span>
+<span class="co">#&gt;   ---                             </span>
+<span class="co">#&gt; 8215:       20153             TRUE</span>
+<span class="co">#&gt; 8216:       20143             TRUE</span>
+<span class="co">#&gt; 8217:       20143             TRUE</span>
+<span class="co">#&gt; 8218:       20153             TRUE</span>
+<span class="co">#&gt; 8219:       20153             TRUE</span></code></pre></div>
+<p>Before we can count the number of graduates, we have to assess whether graduates complete their program in a timely manner. A student graduating later than their timely-completion term are grouped with non-graduates for purposes of computing a persistence metric.</p>
+<p>The <code><a href="../reference/add_completion_timely.html">add_completion_timely()</a></code> function requires that the input data frame has a <code>timely_term</code> column—which ours does. The function accesses the <code>degree</code> data to determine the term of a student’s first degree and reports whether the degree term (if any) satisfies the timely completion criterion.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_timely.html">add_completion_timely</a></span><span class="op">(</span><span class="va">DT</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span>
+<span class="va">DT</span>
+<span class="co">#&gt;              mcid   institution   cip6    program            race    sex</span>
+<span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;     &lt;char&gt;          &lt;char&gt; &lt;char&gt;</span>
+<span class="co">#&gt;    1: MID25783178 Institution M 143501 Industrial           Black   Male</span>
+<span class="co">#&gt;    2: MID25783197 Institution M 140801      Civil           White   Male</span>
+<span class="co">#&gt;    3: MID25783388 Institution M 141901 Mechanical           White   Male</span>
+<span class="co">#&gt;    4: MID25783441 Institution M 140801      Civil           White   Male</span>
+<span class="co">#&gt;    5: MID25783491 Institution M 141001 Electrical           White   Male</span>
+<span class="co">#&gt;   ---                                                                   </span>
+<span class="co">#&gt; 8215: MID26696958 Institution L 141901 Mechanical           White   Male</span>
+<span class="co">#&gt; 8216: MID26696967 Institution L 141901 Mechanical           White   Male</span>
+<span class="co">#&gt; 8217: MID26697163 Institution L 141901 Mechanical Hispanic/Latinx   Male</span>
+<span class="co">#&gt; 8218: MID26697444 Institution L 141901 Mechanical           White   Male</span>
+<span class="co">#&gt; 8219: MID26697447 Institution L 141001 Electrical           Asian   Male</span>
+<span class="co">#&gt;       timely_term data_sufficiency completion_timely</span>
+<span class="co">#&gt;            &lt;char&gt;           &lt;lgcl&gt;            &lt;lgcl&gt;</span>
+<span class="co">#&gt;    1:       20003             TRUE              TRUE</span>
+<span class="co">#&gt;    2:       19923             TRUE              TRUE</span>
+<span class="co">#&gt;    3:       19923             TRUE             FALSE</span>
+<span class="co">#&gt;    4:       19973             TRUE              TRUE</span>
+<span class="co">#&gt;    5:       20013             TRUE              TRUE</span>
+<span class="co">#&gt;   ---                                               </span>
+<span class="co">#&gt; 8215:       20163             TRUE             FALSE</span>
+<span class="co">#&gt; 8216:       20153             TRUE              TRUE</span>
+<span class="co">#&gt; 8217:       20143             TRUE              TRUE</span>
+<span class="co">#&gt; 8218:       20153             TRUE              TRUE</span>
+<span class="co">#&gt; 8219:       20163             TRUE              TRUE</span></code></pre></div>
 </div>
 <div id="under-construction" class="section level2">
 <h2 class="hasAnchor">
@@ -290,7 +358,7 @@ any term
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor" aria-hidden="true"></a>Complete script</h3>
 <p>The vignette code chunks are collected below in a single, condensed script.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>

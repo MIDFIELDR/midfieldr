@@ -37,7 +37,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <button type="button" id="version-badge" class="badge badge-default d-none d-lg-block" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Released version">1.0.0.9018</button>
+    <button type="button" id="version-badge" class="badge badge-default d-none d-lg-block" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Released version">1.0.0.9019</button>
 
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto ml-3">
@@ -93,7 +93,7 @@
       <h1 class="display-4" data-toc-skip>Case study students</h1>
                         <h4 data-toc-skip class="author">Richard Layton</h4>
             
-            <h4 data-toc-skip class="date">2021-07-04</h4>
+            <h4 data-toc-skip class="date">2021-07-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/master/vignettes/art-004-case-study-students.Rmd" class="external-link"><code>vignettes/art-004-case-study-students.Rmd</code></a></small>
       <div class="d-none name"><code>art-004-case-study-students.Rmd</code></div>
@@ -110,11 +110,11 @@
 <ul>
 <li><a href="art-002-case-study-programs.html">Case study programs</a></li>
 <li>
-<em>Case study students</em> ⮘ You are here.</li>
+<em>Case study students</em> ◁ You are here.</li>
 <li><a href="art-006-case-study-stickiness.html">Case study stickiness</a></li>
 <li><a href="art-006-case-study-grad-rate.html">Case study graduation rate</a></li>
 </ul>
-<p>Longer, related vignettes with detailed discussions of methods and functions include:</p>
+<p>Longer vignettes with detailed development of methods and functions related to this part of the study include:</p>
 <ul>
 <li><a href="art-015-subsetting-midfield-data.html" target="_blank">Subsetting MIDFIELD data</a></li>
 <li><a href="art-020-data-sufficiency.html" target="_blank">Data sufficiency</a></li>
@@ -181,11 +181,12 @@
 <span class="co">#&gt; 12: 143501 Industrial</span></code></pre></div>
 <p>We start with <code><a href="../reference/filter_match.html">filter_match()</a></code> to subset rows of <code>term</code> with <code>cip6</code> values that match the <code>cip6</code> values in <code>study_program</code> and returning three columns for student ID, institution, and CIP code.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># All terms for all students in the study programs </span>
+<code class="sourceCode R"><span class="co"># All terms for all students in the study programs</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">term</span>,
-                   match_to <span class="op">=</span> <span class="va">study_program</span>,
-                   by_col <span class="op">=</span> <span class="st">"cip6"</span>,
-                   select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"institution"</span>, <span class="st">"cip6"</span><span class="op">)</span><span class="op">)</span>
+  match_to <span class="op">=</span> <span class="va">study_program</span>,
+  by_col <span class="op">=</span> <span class="st">"cip6"</span>,
+  select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"institution"</span>, <span class="st">"cip6"</span><span class="op">)</span>
+<span class="op">)</span>
 
 <span class="co"># Examine the result</span>
 <span class="va">DT</span>
@@ -217,8 +218,9 @@
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Limit the study to degree-seeking students</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">DT</span>,
-                   match_to <span class="op">=</span> <span class="va">student</span>,
-                   by_col <span class="op">=</span> <span class="st">"mcid"</span><span class="op">)</span>
+  match_to <span class="op">=</span> <span class="va">student</span>,
+  by_col <span class="op">=</span> <span class="st">"mcid"</span>
+<span class="op">)</span>
 
 <span class="co"># Examine the result</span>
 <span class="va">DT</span>
@@ -276,7 +278,7 @@
 <p>Data sufficiency is defined in terms of a timely completion term: the last term in which program completion would be considered timely for a given student. The timely completion term for many students is their admission term plus 6 years.</p>
 <p>The midfieldr function <code><a href="../reference/add_timely_term.html">add_timely_term()</a></code> estimates a timely completion term for each student.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Timely completion term is required for determining data sufficiency </span>
+<code class="sourceCode R"><span class="co"># Timely completion term is required for determining data sufficiency</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
 
 <span class="co"># Examine the result</span>
@@ -345,17 +347,14 @@
 <div id="save-results" class="section level2">
 <h2 class="hasAnchor">
 <a href="#save-results" class="anchor" aria-hidden="true"></a>Save results</h2>
-<p>We can order the rows of the result using the data.table function <code><a href="https://Rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder()</a></code>—not strictly necessary, but it does facilitate reproducibility.</p>
+<p>We can order the columns of the result using the data.table function <code><a href="https://Rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder()</a></code>—not strictly necessary, but it does facilitate reproducibility.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Optional step to order the rows </span>
-<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"institution"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Rename before saving </span>
-<span class="va">case_student</span> <span class="op">&lt;-</span> <span class="va">DT</span></code></pre></div>
+<code class="sourceCode R"><span class="co"># Optional step to order the rows</span>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"institution"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>We save the <code>DT</code> data frame as a CSV file to the <code>results</code> directory for easy access as we work through the study.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Assumes you have a results folder in the project directory</span>
-<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fwrite.html" class="external-link">fwrite</a></span><span class="op">(</span><span class="va">case_student</span>, file <span class="op">=</span> <span class="st">"results/case_student.csv"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fwrite.html" class="external-link">fwrite</a></span><span class="op">(</span><span class="va">DT</span>, file <span class="op">=</span> <span class="st">"results/case_student.csv"</span><span class="op">)</span></code></pre></div>
 <p>These results have been included with midfieldr as the built-in data set <code>study_student</code>. View its help page by running</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">?</span> <span class="va">study_student</span></code></pre></div>
@@ -382,7 +381,7 @@
 <span class="co">#&gt; 8219:             TRUE</span></code></pre></div>
 <p>Check that the two data frames are identical,</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">case_student</span>, <span class="va">study_student</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">study_student</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
 <p>In subsequent vignettes, you can read in the <code>case_student</code> data from your <code>results</code> directory or you can use the <code>study_student</code> data provided with midfieldr.</p>
 </div>
@@ -411,13 +410,15 @@
 
 <span class="co"># Gather students</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">term</span>,
-                   match_to <span class="op">=</span> <span class="va">study_program</span>,
-                   by_col <span class="op">=</span> <span class="st">"cip6"</span>,
-                   select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"institution"</span>, <span class="st">"cip6"</span><span class="op">)</span><span class="op">)</span>
+  match_to <span class="op">=</span> <span class="va">study_program</span>,
+  by_col <span class="op">=</span> <span class="st">"cip6"</span>,
+  select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"institution"</span>, <span class="st">"cip6"</span><span class="op">)</span>
+<span class="op">)</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">DT</span>,
-                   match_to <span class="op">=</span> <span class="va">student</span>,
-                   by_col <span class="op">=</span> <span class="st">"mcid"</span><span class="op">)</span>
+  match_to <span class="op">=</span> <span class="va">student</span>,
+  by_col <span class="op">=</span> <span class="st">"mcid"</span>
+<span class="op">)</span>
 
 <span class="co"># Join grouping variables</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">study_program</span>, by <span class="op">=</span> <span class="st">"cip6"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>

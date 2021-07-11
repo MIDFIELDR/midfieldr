@@ -37,7 +37,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <button type="button" id="version-badge" class="badge badge-default d-none d-lg-block" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Released version">1.0.0.9018</button>
+    <button type="button" id="version-badge" class="badge badge-default d-none d-lg-block" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Released version">1.0.0.9019</button>
 
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto ml-3">
@@ -93,7 +93,7 @@
       <h1 class="display-4" data-toc-skip>Case study stickiness</h1>
                         <h4 data-toc-skip class="author">Richard Layton</h4>
             
-            <h4 data-toc-skip class="date">2021-07-04</h4>
+            <h4 data-toc-skip class="date">2021-07-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/master/vignettes/art-006-case-study-stickiness.Rmd" class="external-link"><code>vignettes/art-006-case-study-stickiness.Rmd</code></a></small>
       <div class="d-none name"><code>art-006-case-study-stickiness.Rmd</code></div>
@@ -111,15 +111,21 @@
 <li><a href="art-002-case-study-programs.html">Case study programs</a></li>
 <li><a href="art-004-case-study-students.html">Case study students</a></li>
 <li>
-<em>Case study stickiness</em> ⮘ You are here.</li>
+<em>Case study stickiness</em> ◁ You are here.</li>
 <li><a href="art-006-case-study-grad-rate.html">Case study graduation rate</a></li>
 </ul>
-<p>Longer, related vignettes with detailed discussions of methods and functions include:</p>
+<p>Longer vignettes with detailed development of methods and functions related to this part of the study include:</p>
 <ul>
 <li><a href="art-020-data-sufficiency.html">Data sufficiency</a></li>
 <li><a href="art-030-timely-completion.html" target="_blank">Timely completion</a></li>
 <li><a href="art-050-multiway-graphs.html" target="_blank">Multiway graphs</a></li>
 </ul>
+<div id="longitudinal-stickiness" class="section level3">
+<h3 class="hasAnchor">
+<a href="#longitudinal-stickiness" class="anchor" aria-hidden="true"></a>Longitudinal stickiness</h3>
+<p><em>Longitudinal stickiness</em> is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program after accounting for the data sufficiency and timely completion criteria <span class="citation"><a href="#ref-Ohland+Orr+others:2012" role="doc-biblioref">[1]</a></span>.</p>
+<p>Stickiness measures the extent to which a program succeeds in its basic goal of graduating the students it admits, without regard to how or when a student is admitted to a program—the metric includes students who begin college part-time, enroll mid-year, switch majors, or transfer, in addition to first-time-in-college students.</p>
+</div>
 <div id="in-this-vignette" class="section level3">
 <h3 class="hasAnchor">
 <a href="#in-this-vignette" class="anchor" aria-hidden="true"></a>In this vignette</h3>
@@ -131,7 +137,6 @@
 <li>Compute and graph the stickiness</li>
 <li>Save the results</li>
 </ul>
-<p><em>Longitudinal stickiness</em> is the ratio of the number of students graduating in a program to the number of students ever enrolled in that program after accounting for the data sufficiency and timely completion criteria <span class="citation"><a href="#ref-Ohland+Orr+others:2012" role="doc-biblioref">[1]</a></span>. Stickiness measures the extent to which a program succeeds in its basic goal of graduating the students it admits, without regard to how or when a student is admitted to a program—the metric includes students who begin college part-time, enroll mid-year, switch majors, or transfer, in addition to first-time-in-college students.</p>
 <p>We use the following midfieldr functions</p>
 <ul>
 <li><a href="../reference/add_completion_timely.html"><code>add_completion_timely()</code></a></li>
@@ -153,8 +158,8 @@
 
 <span class="co"># optional code to control data.table printing</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>
-  datatable.print.nrows <span class="op">=</span> <span class="fl">10</span>,
-  datatable.print.topn <span class="op">=</span> <span class="fl">5</span>,
+  datatable.print.nrows <span class="op">=</span> <span class="fl">6</span>,
+  datatable.print.topn <span class="op">=</span> <span class="fl">3</span>,
   datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span>
 
@@ -170,47 +175,38 @@
 
 <span class="co"># Examine the result</span>
 <span class="va">DT</span>
-<span class="co">#&gt;              mcid   institution   cip6    program          race    sex</span>
-<span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;     &lt;char&gt;        &lt;char&gt; &lt;char&gt;</span>
-<span class="co">#&gt;    1: MID25783197 Institution M 140801      Civil         White   Male</span>
-<span class="co">#&gt;    2: MID25783441 Institution M 140801      Civil         White   Male</span>
-<span class="co">#&gt;    3: MID25783553 Institution M 140801      Civil         White   Male</span>
-<span class="co">#&gt;    4: MID25784209 Institution M 140801      Civil International   Male</span>
-<span class="co">#&gt;    5: MID25784489 Institution M 140801      Civil         Asian Female</span>
-<span class="co">#&gt;   ---                                                                 </span>
-<span class="co">#&gt; 8215: MID26692926 Institution L 143501 Industrial         White   Male</span>
-<span class="co">#&gt; 8216: MID26693368 Institution L 143501 Industrial         White   Male</span>
-<span class="co">#&gt; 8217: MID26695626 Institution L 143501 Industrial         White   Male</span>
-<span class="co">#&gt; 8218: MID26696116 Institution L 143501 Industrial         White Female</span>
-<span class="co">#&gt; 8219: MID26696429 Institution L 143501 Industrial         White Female</span>
-<span class="co">#&gt;       timely_term data_sufficiency</span>
-<span class="co">#&gt;            &lt;char&gt;           &lt;lgcl&gt;</span>
-<span class="co">#&gt;    1:       19923             TRUE</span>
-<span class="co">#&gt;    2:       19973             TRUE</span>
-<span class="co">#&gt;    3:       20073             TRUE</span>
-<span class="co">#&gt;    4:       20003             TRUE</span>
-<span class="co">#&gt;    5:       19943             TRUE</span>
-<span class="co">#&gt;   ---                             </span>
-<span class="co">#&gt; 8215:       20153             TRUE</span>
-<span class="co">#&gt; 8216:       20143             TRUE</span>
-<span class="co">#&gt; 8217:       20143             TRUE</span>
-<span class="co">#&gt; 8218:       20153             TRUE</span>
-<span class="co">#&gt; 8219:       20153             TRUE</span></code></pre></div>
+<span class="co">#&gt;              mcid   institution   cip6    program   race    sex timely_term</span>
+<span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;     &lt;char&gt; &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span>
+<span class="co">#&gt;    1: MID25783197 Institution M 140801      Civil  White   Male       19923</span>
+<span class="co">#&gt;    2: MID25783441 Institution M 140801      Civil  White   Male       19973</span>
+<span class="co">#&gt;    3: MID25783553 Institution M 140801      Civil  White   Male       20073</span>
+<span class="co">#&gt;   ---                                                                      </span>
+<span class="co">#&gt; 8217: MID26695626 Institution L 143501 Industrial  White   Male       20143</span>
+<span class="co">#&gt; 8218: MID26696116 Institution L 143501 Industrial  White Female       20153</span>
+<span class="co">#&gt; 8219: MID26696429 Institution L 143501 Industrial  White Female       20153</span>
+<span class="co">#&gt;       data_sufficiency</span>
+<span class="co">#&gt;                 &lt;lgcl&gt;</span>
+<span class="co">#&gt;    1:             TRUE</span>
+<span class="co">#&gt;    2:             TRUE</span>
+<span class="co">#&gt;    3:             TRUE</span>
+<span class="co">#&gt;   ---                 </span>
+<span class="co">#&gt; 8217:             TRUE</span>
+<span class="co">#&gt; 8218:             TRUE</span>
+<span class="co">#&gt; 8219:             TRUE</span></code></pre></div>
 <p>Before we can count the number of graduates, we have to assess whether graduates complete their program in a timely manner. A student graduating later than their timely-completion term are grouped with non-graduates for purposes of computing a persistence metric.</p>
-<p>The <code><a href="../reference/add_completion_timely.html">add_completion_timely()</a></code> function requires that the input data frame has a <code>timely_term</code> column—which ours does. The function accesses the <code>degree</code> data to determine the term of a student’s first degree and reports whether the degree term (if any) satisfies the timely completion criterion.</p>
+<p>The <code><a href="../reference/add_completion_timely.html">add_completion_timely()</a></code> function accesses the <code>degree</code> data to determine the term of a student’s first degree (if any), compares it to the student’s timely completion term, and reports whether the degree term satisfies the timely completion criterion.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_timely.html">add_completion_timely</a></span><span class="op">(</span><span class="va">DT</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span>
+<code class="sourceCode R"><span class="co"># Determine whether the timely completion criterion is satisfied</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_timely.html">add_completion_timely</a></span><span class="op">(</span><span class="va">DT</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span>
+
+<span class="co"># Examine the result</span>
 <span class="va">DT</span>
 <span class="co">#&gt;              mcid   institution   cip6    program            race    sex</span>
 <span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;     &lt;char&gt;          &lt;char&gt; &lt;char&gt;</span>
 <span class="co">#&gt;    1: MID25783178 Institution M 143501 Industrial           Black   Male</span>
 <span class="co">#&gt;    2: MID25783197 Institution M 140801      Civil           White   Male</span>
 <span class="co">#&gt;    3: MID25783388 Institution M 141901 Mechanical           White   Male</span>
-<span class="co">#&gt;    4: MID25783441 Institution M 140801      Civil           White   Male</span>
-<span class="co">#&gt;    5: MID25783491 Institution M 141001 Electrical           White   Male</span>
 <span class="co">#&gt;   ---                                                                   </span>
-<span class="co">#&gt; 8215: MID26696958 Institution L 141901 Mechanical           White   Male</span>
-<span class="co">#&gt; 8216: MID26696967 Institution L 141901 Mechanical           White   Male</span>
 <span class="co">#&gt; 8217: MID26697163 Institution L 141901 Mechanical Hispanic/Latinx   Male</span>
 <span class="co">#&gt; 8218: MID26697444 Institution L 141901 Mechanical           White   Male</span>
 <span class="co">#&gt; 8219: MID26697447 Institution L 141001 Electrical           Asian   Male</span>
@@ -219,11 +215,7 @@
 <span class="co">#&gt;    1:       20003             TRUE              TRUE</span>
 <span class="co">#&gt;    2:       19923             TRUE              TRUE</span>
 <span class="co">#&gt;    3:       19923             TRUE             FALSE</span>
-<span class="co">#&gt;    4:       19973             TRUE              TRUE</span>
-<span class="co">#&gt;    5:       20013             TRUE              TRUE</span>
 <span class="co">#&gt;   ---                                               </span>
-<span class="co">#&gt; 8215:       20163             TRUE             FALSE</span>
-<span class="co">#&gt; 8216:       20153             TRUE              TRUE</span>
 <span class="co">#&gt; 8217:       20143             TRUE              TRUE</span>
 <span class="co">#&gt; 8218:       20153             TRUE              TRUE</span>
 <span class="co">#&gt; 8219:       20163             TRUE              TRUE</span></code></pre></div>
@@ -231,231 +223,355 @@
 <div id="summarize-by-group" class="section level2">
 <h2 class="hasAnchor">
 <a href="#summarize-by-group" class="anchor" aria-hidden="true"></a>Summarize by group</h2>
-<p>We count the number of students ever enrolled and the number of graduates in separate steps, then join the results.</p>
-<p>First we assign the grouping variables to be used for grouping, summarizing, and joining.</p>
+<p>The variables we group by are program, race/ethnicity, and sex. It has proven convenient to combine race/ethnicity and sex into its own column.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">grouping_variables</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span></code></pre></div>
-<p>We count the enrollees and assign the result to the new <code>ever</code> column.</p>
+<code class="sourceCode R"><span class="co"># Construct one of the grouping variables.</span>
+<span class="va">DT</span><span class="op">[</span>, <span class="va">race_sex</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">DT</span>
+<span class="co">#&gt;              mcid   institution   cip6    program            race    sex</span>
+<span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;     &lt;char&gt;          &lt;char&gt; &lt;char&gt;</span>
+<span class="co">#&gt;    1: MID25783178 Institution M 143501 Industrial           Black   Male</span>
+<span class="co">#&gt;    2: MID25783197 Institution M 140801      Civil           White   Male</span>
+<span class="co">#&gt;    3: MID25783388 Institution M 141901 Mechanical           White   Male</span>
+<span class="co">#&gt;   ---                                                                   </span>
+<span class="co">#&gt; 8217: MID26697163 Institution L 141901 Mechanical Hispanic/Latinx   Male</span>
+<span class="co">#&gt; 8218: MID26697444 Institution L 141901 Mechanical           White   Male</span>
+<span class="co">#&gt; 8219: MID26697447 Institution L 141001 Electrical           Asian   Male</span>
+<span class="co">#&gt;       timely_term data_sufficiency completion_timely             race_sex</span>
+<span class="co">#&gt;            &lt;char&gt;           &lt;lgcl&gt;            &lt;lgcl&gt;               &lt;char&gt;</span>
+<span class="co">#&gt;    1:       20003             TRUE              TRUE           Black Male</span>
+<span class="co">#&gt;    2:       19923             TRUE              TRUE           White Male</span>
+<span class="co">#&gt;    3:       19923             TRUE             FALSE           White Male</span>
+<span class="co">#&gt;   ---                                                                    </span>
+<span class="co">#&gt; 8217:       20143             TRUE              TRUE Hispanic/Latinx Male</span>
+<span class="co">#&gt; 8218:       20153             TRUE              TRUE           White Male</span>
+<span class="co">#&gt; 8219:       20163             TRUE              TRUE           Asian Male</span></code></pre></div>
+<p>We assign the grouping variables to a vector.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ever_enroll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
-<span class="va">ever_enroll</span> <span class="op">&lt;-</span> <span class="va">ever_enroll</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>ever <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="va">grouping_variables</span><span class="op">]</span>
-<span class="va">ever_enroll</span>
-<span class="co">#&gt;        program            race    sex  ever</span>
-<span class="co">#&gt;         &lt;char&gt;          &lt;char&gt; &lt;char&gt; &lt;int&gt;</span>
-<span class="co">#&gt;  1: Industrial           Black   Male   106</span>
-<span class="co">#&gt;  2:      Civil           White   Male  1147</span>
-<span class="co">#&gt;  3: Mechanical           White   Male  1940</span>
-<span class="co">#&gt;  4: Electrical           White   Male  1366</span>
-<span class="co">#&gt;  5: Industrial           White   Male   494</span>
+<code class="sourceCode R"><span class="co"># A reusable vector for grouping, summarizing, and joining.</span>
+<span class="va">grouping_variables</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"race_sex"</span><span class="op">)</span></code></pre></div>
+<p>Starting with our working data frame <code>DT</code>, we count the enrollees by groups and assign the result to the new <code>ever</code> column.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Create a new memory location to avoid updating by reference</span>
+<span class="va">enrolled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
+
+<span class="co"># Count</span>
+<span class="va">enrolled</span> <span class="op">&lt;-</span> <span class="va">enrolled</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>ever <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="va">grouping_variables</span><span class="op">]</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">enrolled</span>
+<span class="co">#&gt;        program               race_sex  ever</span>
+<span class="co">#&gt;         &lt;char&gt;                 &lt;char&gt; &lt;int&gt;</span>
+<span class="co">#&gt;  1: Industrial             Black Male   106</span>
+<span class="co">#&gt;  2:      Civil             White Male  1147</span>
+<span class="co">#&gt;  3: Mechanical             White Male  1940</span>
 <span class="co">#&gt; ---                                        </span>
-<span class="co">#&gt; 51: Industrial Native American   Male     1</span>
-<span class="co">#&gt; 52: Industrial   Other/Unknown Female     3</span>
 <span class="co">#&gt; 53:      Civil   International Female     1</span>
 <span class="co">#&gt; 54: Mechanical Native American Female     5</span>
 <span class="co">#&gt; 55: Industrial Native American Female     1</span></code></pre></div>
-<p>Before counting graduates, we subset for those satisfying the timely-completion criterion.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">graduate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
-<span class="va">graduate</span> <span class="op">&lt;-</span> <span class="va">graduate</span><span class="op">[</span><span class="va">completion_timely</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">]</span>
-<span class="va">graduate</span>
+<p>Returning to our working data frame <code>DT</code>, we subset rows satisfying the timely-completion criterion.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Create a new memory location to avoid updating by reference</span>
+<span class="va">completed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
+
+<span class="co"># Limit the graduate count to those with timely completion</span>
+<span class="va">completed</span> <span class="op">&lt;-</span> <span class="va">completed</span><span class="op">[</span><span class="va">completion_timely</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">]</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">completed</span>
 <span class="co">#&gt;              mcid   institution   cip6    program            race    sex</span>
 <span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;     &lt;char&gt;          &lt;char&gt; &lt;char&gt;</span>
 <span class="co">#&gt;    1: MID25783178 Institution M 143501 Industrial           Black   Male</span>
 <span class="co">#&gt;    2: MID25783197 Institution M 140801      Civil           White   Male</span>
 <span class="co">#&gt;    3: MID25783441 Institution M 140801      Civil           White   Male</span>
-<span class="co">#&gt;    4: MID25783491 Institution M 141001 Electrical           White   Male</span>
-<span class="co">#&gt;    5: MID25783912 Institution M 143501 Industrial           White   Male</span>
 <span class="co">#&gt;   ---                                                                   </span>
-<span class="co">#&gt; 5166: MID26696771 Institution L 141001 Electrical           White Female</span>
-<span class="co">#&gt; 5167: MID26696967 Institution L 141901 Mechanical           White   Male</span>
 <span class="co">#&gt; 5168: MID26697163 Institution L 141901 Mechanical Hispanic/Latinx   Male</span>
 <span class="co">#&gt; 5169: MID26697444 Institution L 141901 Mechanical           White   Male</span>
 <span class="co">#&gt; 5170: MID26697447 Institution L 141001 Electrical           Asian   Male</span>
-<span class="co">#&gt;       timely_term data_sufficiency completion_timely</span>
-<span class="co">#&gt;            &lt;char&gt;           &lt;lgcl&gt;            &lt;lgcl&gt;</span>
-<span class="co">#&gt;    1:       20003             TRUE              TRUE</span>
-<span class="co">#&gt;    2:       19923             TRUE              TRUE</span>
-<span class="co">#&gt;    3:       19973             TRUE              TRUE</span>
-<span class="co">#&gt;    4:       20013             TRUE              TRUE</span>
-<span class="co">#&gt;    5:       20023             TRUE              TRUE</span>
-<span class="co">#&gt;   ---                                               </span>
-<span class="co">#&gt; 5166:       20143             TRUE              TRUE</span>
-<span class="co">#&gt; 5167:       20153             TRUE              TRUE</span>
-<span class="co">#&gt; 5168:       20143             TRUE              TRUE</span>
-<span class="co">#&gt; 5169:       20153             TRUE              TRUE</span>
-<span class="co">#&gt; 5170:       20163             TRUE              TRUE</span></code></pre></div>
+<span class="co">#&gt;       timely_term data_sufficiency completion_timely             race_sex</span>
+<span class="co">#&gt;            &lt;char&gt;           &lt;lgcl&gt;            &lt;lgcl&gt;               &lt;char&gt;</span>
+<span class="co">#&gt;    1:       20003             TRUE              TRUE           Black Male</span>
+<span class="co">#&gt;    2:       19923             TRUE              TRUE           White Male</span>
+<span class="co">#&gt;    3:       19973             TRUE              TRUE           White Male</span>
+<span class="co">#&gt;   ---                                                                    </span>
+<span class="co">#&gt; 5168:       20143             TRUE              TRUE Hispanic/Latinx Male</span>
+<span class="co">#&gt; 5169:       20153             TRUE              TRUE           White Male</span>
+<span class="co">#&gt; 5170:       20163             TRUE              TRUE           Asian Male</span></code></pre></div>
 <p>We count the graduates and assign the result to the new <code>grad</code> column.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">graduate</span> <span class="op">&lt;-</span> <span class="va">graduate</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>grad <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>,  by <span class="op">=</span> <span class="va">grouping_variables</span><span class="op">]</span>
-<span class="va">graduate</span>
-<span class="co">#&gt;        program            race    sex  grad</span>
-<span class="co">#&gt;         &lt;char&gt;          &lt;char&gt; &lt;char&gt; &lt;int&gt;</span>
-<span class="co">#&gt;  1: Industrial           Black   Male    57</span>
-<span class="co">#&gt;  2:      Civil           White   Male   783</span>
-<span class="co">#&gt;  3: Electrical           White   Male   870</span>
-<span class="co">#&gt;  4: Industrial           White   Male   321</span>
-<span class="co">#&gt;  5:      Civil           Asian Female    12</span>
-<span class="co">#&gt; ---                                        </span>
-<span class="co">#&gt; 47: Industrial   Other/Unknown Female     3</span>
-<span class="co">#&gt; 48: Electrical Native American   Male     4</span>
-<span class="co">#&gt; 49: Mechanical Native American Female     3</span>
-<span class="co">#&gt; 50:      Civil Native American   Male     1</span>
-<span class="co">#&gt; 51: Industrial Native American Female     1</span></code></pre></div>
-<p>Now we join the two data frames, setting <code>all.x = TRUE</code> to retain all rows of both <code>ever_enroll</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">ever_enroll</span>,
-            <span class="va">graduate</span>,
-            by <span class="op">=</span> <span class="va">grouping_variables</span>,
-            all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">DT</span>
-<span class="co">#&gt;        program            race    sex  ever  grad</span>
-<span class="co">#&gt;         &lt;char&gt;          &lt;char&gt; &lt;char&gt; &lt;int&gt; &lt;int&gt;</span>
-<span class="co">#&gt;  1:      Civil           Asian Female    17    12</span>
-<span class="co">#&gt;  2:      Civil           Asian   Male    37    24</span>
-<span class="co">#&gt;  3:      Civil           Black Female    54    28</span>
-<span class="co">#&gt;  4:      Civil           Black   Male    98    43</span>
-<span class="co">#&gt;  5:      Civil Hispanic/Latinx Female    10     5</span>
-<span class="co">#&gt; ---                                              </span>
-<span class="co">#&gt; 51: Mechanical Native American   Male    14     8</span>
-<span class="co">#&gt; 52: Mechanical   Other/Unknown Female     8     7</span>
-<span class="co">#&gt; 53: Mechanical   Other/Unknown   Male    48    28</span>
-<span class="co">#&gt; 54: Mechanical           White Female   291   195</span>
-<span class="co">#&gt; 55: Mechanical           White   Male  1940  1265</span></code></pre></div>
-</div>
-<div id="condition-the-results" class="section level2">
-<h2 class="hasAnchor">
-<a href="#condition-the-results" class="anchor" aria-hidden="true"></a>Condition the results</h2>
-<p>If the <code>graduate</code> data had fewer rows than the <code>ever_enroll</code> data, the <code><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge()</a></code> we did introduces some NA values in the <code>grad</code> column.</p>
+<code class="sourceCode R"><span class="co"># Obtain count of graduates</span>
+<span class="va">completed</span> <span class="op">&lt;-</span> <span class="va">completed</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>grad <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="va">grouping_variables</span><span class="op">]</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">completed</span>
+<span class="co">#&gt;        program               race_sex  grad</span>
+<span class="co">#&gt;         &lt;char&gt;                 &lt;char&gt; &lt;int&gt;</span>
+<span class="co">#&gt;  1: Industrial             Black Male    57</span>
+<span class="co">#&gt;  2:      Civil             White Male   783</span>
+<span class="co">#&gt;  3: Electrical             White Male   870</span>
+<span class="co">#&gt; ---                                        </span>
+<span class="co">#&gt; 49: Mechanical Native American Female     3</span>
+<span class="co">#&gt; 50:      Civil   Native American Male     1</span>
+<span class="co">#&gt; 51: Industrial Native American Female     1</span></code></pre></div>
+<p>Now we join the two data frames, setting <code>all.x = TRUE</code> to retain all rows of <code>enrolled</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Any NA in grad?</span>
+<code class="sourceCode R"><span class="co"># Join</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">enrolled</span>, <span class="va">completed</span>, by <span class="op">=</span> <span class="va">grouping_variables</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">DT</span>
+<span class="co">#&gt;        program           race_sex  ever  grad</span>
+<span class="co">#&gt;         &lt;char&gt;             &lt;char&gt; &lt;int&gt; &lt;int&gt;</span>
+<span class="co">#&gt;  1:      Civil       Asian Female    17    12</span>
+<span class="co">#&gt;  2:      Civil         Asian Male    37    24</span>
+<span class="co">#&gt;  3:      Civil       Black Female    54    28</span>
+<span class="co">#&gt; ---                                          </span>
+<span class="co">#&gt; 53: Mechanical Other/Unknown Male    48    28</span>
+<span class="co">#&gt; 54: Mechanical       White Female   291   195</span>
+<span class="co">#&gt; 55: Mechanical         White Male  1940  1265</span>
+
+<span class="co"># Merging created a data.table "key" that we delete</span>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setkey.html" class="external-link">setkey</a></span><span class="op">(</span><span class="va">DT</span>, <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+<p>In this case, the <code>completed</code> data has fewer rows than the <code>enrolled</code> data so the <code><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge()</a></code> introduced some NA values in the <code>grad</code> column.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Checking if any NAs were introduced in the grad column</span>
 <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">grad</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] 4</span></code></pre></div>
 <p>Those NA values are better encoded as zeros.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">grad</span><span class="op">)</span>, <span class="va">grad</span> <span class="op">:=</span> <span class="fl">0</span><span class="op">]</span><span class="op">[</span><span class="op">]</span>
-<span class="va">DT</span>
-<span class="co">#&gt;        program            race    sex  ever  grad</span>
-<span class="co">#&gt;         &lt;char&gt;          &lt;char&gt; &lt;char&gt; &lt;int&gt; &lt;int&gt;</span>
-<span class="co">#&gt;  1:      Civil           Asian Female    17    12</span>
-<span class="co">#&gt;  2:      Civil           Asian   Male    37    24</span>
-<span class="co">#&gt;  3:      Civil           Black Female    54    28</span>
-<span class="co">#&gt;  4:      Civil           Black   Male    98    43</span>
-<span class="co">#&gt;  5:      Civil Hispanic/Latinx Female    10     5</span>
-<span class="co">#&gt; ---                                              </span>
-<span class="co">#&gt; 51: Mechanical Native American   Male    14     8</span>
-<span class="co">#&gt; 52: Mechanical   Other/Unknown Female     8     7</span>
-<span class="co">#&gt; 53: Mechanical   Other/Unknown   Male    48    28</span>
-<span class="co">#&gt; 54: Mechanical           White Female   291   195</span>
-<span class="co">#&gt; 55: Mechanical           White   Male  1940  1265</span></code></pre></div>
-<p>Before computing stickiness, we omit populations of 10 or less to protect their identity.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">ever</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">]</span>
+<code class="sourceCode R"><span class="co"># NA in this case represents a count of zero</span>
+<span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">grad</span><span class="op">)</span>, <span class="va">grad</span> <span class="op">:=</span> <span class="fl">0</span><span class="op">]</span><span class="op">[</span><span class="op">]</span>
+<span class="co">#&gt;        program           race_sex  ever  grad</span>
+<span class="co">#&gt;         &lt;char&gt;             &lt;char&gt; &lt;int&gt; &lt;int&gt;</span>
+<span class="co">#&gt;  1:      Civil       Asian Female    17    12</span>
+<span class="co">#&gt;  2:      Civil         Asian Male    37    24</span>
+<span class="co">#&gt;  3:      Civil       Black Female    54    28</span>
+<span class="co">#&gt; ---                                          </span>
+<span class="co">#&gt; 53: Mechanical Other/Unknown Male    48    28</span>
+<span class="co">#&gt; 54: Mechanical       White Female   291   195</span>
+<span class="co">#&gt; 55: Mechanical         White Male  1940  1265</span>
+
+<span class="co"># Examine the result</span>
 <span class="va">DT</span>
-<span class="co">#&gt;        program            race    sex  ever  grad</span>
-<span class="co">#&gt;         &lt;char&gt;          &lt;char&gt; &lt;char&gt; &lt;int&gt; &lt;int&gt;</span>
-<span class="co">#&gt;  1:      Civil           Asian Female    17    12</span>
-<span class="co">#&gt;  2:      Civil           Asian   Male    37    24</span>
-<span class="co">#&gt;  3:      Civil           Black Female    54    28</span>
-<span class="co">#&gt;  4:      Civil           Black   Male    98    43</span>
-<span class="co">#&gt;  5:      Civil Hispanic/Latinx   Male    56    33</span>
-<span class="co">#&gt; ---                                              </span>
-<span class="co">#&gt; 34: Mechanical   International   Male    37    19</span>
-<span class="co">#&gt; 35: Mechanical Native American   Male    14     8</span>
-<span class="co">#&gt; 36: Mechanical   Other/Unknown   Male    48    28</span>
-<span class="co">#&gt; 37: Mechanical           White Female   291   195</span>
-<span class="co">#&gt; 38: Mechanical           White   Male  1940  1265</span></code></pre></div>
+<span class="co">#&gt;        program           race_sex  ever  grad</span>
+<span class="co">#&gt;         &lt;char&gt;             &lt;char&gt; &lt;int&gt; &lt;int&gt;</span>
+<span class="co">#&gt;  1:      Civil       Asian Female    17    12</span>
+<span class="co">#&gt;  2:      Civil         Asian Male    37    24</span>
+<span class="co">#&gt;  3:      Civil       Black Female    54    28</span>
+<span class="co">#&gt; ---                                          </span>
+<span class="co">#&gt; 53: Mechanical Other/Unknown Male    48    28</span>
+<span class="co">#&gt; 54: Mechanical       White Female   291   195</span>
+<span class="co">#&gt; 55: Mechanical         White Male  1940  1265</span></code></pre></div>
 </div>
 <div id="compute-stickiness" class="section level2">
 <h2 class="hasAnchor">
 <a href="#compute-stickiness" class="anchor" aria-hidden="true"></a>Compute stickiness</h2>
+<p>Stickiness is the ratio of graduates to enrollees by group.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">DT</span><span class="op">[</span>, <span class="va">stick</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">grad</span> <span class="op">/</span> <span class="va">ever</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">program</span>, <span class="va">sex</span>, <span class="va">race</span><span class="op">)</span><span class="op">]</span>
-<span class="va">DT</span>
-<span class="co">#&gt;        program            race    sex  ever  grad stick</span>
-<span class="co">#&gt;         &lt;char&gt;          &lt;char&gt; &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span>
-<span class="co">#&gt;  1:      Civil           Asian Female    17    12  70.6</span>
-<span class="co">#&gt;  2:      Civil           Black Female    54    28  51.9</span>
-<span class="co">#&gt;  3:      Civil           White Female   329   232  70.5</span>
-<span class="co">#&gt;  4:      Civil           Asian   Male    37    24  64.9</span>
-<span class="co">#&gt;  5:      Civil           Black   Male    98    43  43.9</span>
-<span class="co">#&gt; ---                                                    </span>
-<span class="co">#&gt; 34: Mechanical Hispanic/Latinx   Male    76    47  61.8</span>
-<span class="co">#&gt; 35: Mechanical   International   Male    37    19  51.4</span>
-<span class="co">#&gt; 36: Mechanical Native American   Male    14     8  57.1</span>
-<span class="co">#&gt; 37: Mechanical   Other/Unknown   Male    48    28  58.3</span>
-<span class="co">#&gt; 38: Mechanical           White   Male  1940  1265  65.2</span>
+<code class="sourceCode R"><span class="co"># data table printing option</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.topn <span class="op">=</span> <span class="fl">40</span><span class="op">)</span>
 
-<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">study_stickiness</span><span class="op">)</span>
+<span class="co"># Reached our goal of computing longitudinal stickiness</span>
+<span class="va">DT</span><span class="op">[</span>, <span class="va">stick</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">grad</span> <span class="op">/</span> <span class="va">ever</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">DT</span>
+<span class="co">#&gt;        program               race_sex  ever  grad stick</span>
+<span class="co">#&gt;         &lt;char&gt;                 &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span>
+<span class="co">#&gt;  1:      Civil           Asian Female    17    12  70.6</span>
+<span class="co">#&gt;  2:      Civil             Asian Male    37    24  64.9</span>
+<span class="co">#&gt;  3:      Civil           Black Female    54    28  51.9</span>
+<span class="co">#&gt;  4:      Civil             Black Male    98    43  43.9</span>
+<span class="co">#&gt;  5:      Civil Hispanic/Latinx Female    10     5  50.0</span>
+<span class="co">#&gt;  6:      Civil   Hispanic/Latinx Male    56    33  58.9</span>
+<span class="co">#&gt;  7:      Civil   International Female     1     0   0.0</span>
+<span class="co">#&gt;  8:      Civil     International Male    14     6  42.9</span>
+<span class="co">#&gt;  9:      Civil   Native American Male     7     1  14.3</span>
+<span class="co">#&gt; 10:      Civil   Other/Unknown Female     6     3  50.0</span>
+<span class="co">#&gt; 11:      Civil     Other/Unknown Male    16     5  31.2</span>
+<span class="co">#&gt; 12:      Civil           White Female   329   232  70.5</span>
+<span class="co">#&gt; 13:      Civil             White Male  1147   783  68.3</span>
+<span class="co">#&gt; 14: Electrical           Asian Female    38    27  71.1</span>
+<span class="co">#&gt; 15: Electrical             Asian Male   197   127  64.5</span>
+<span class="co">#&gt; 16: Electrical           Black Female   154    95  61.7</span>
+<span class="co">#&gt; 17: Electrical             Black Male   304   137  45.1</span>
+<span class="co">#&gt; 18: Electrical Hispanic/Latinx Female    14    10  71.4</span>
+<span class="co">#&gt; 19: Electrical   Hispanic/Latinx Male    67    37  55.2</span>
+<span class="co">#&gt; 20: Electrical   International Female     8     4  50.0</span>
+<span class="co">#&gt; 21: Electrical     International Male    71    42  59.2</span>
+<span class="co">#&gt; 22: Electrical Native American Female     3     0   0.0</span>
+<span class="co">#&gt; 23: Electrical   Native American Male     8     4  50.0</span>
+<span class="co">#&gt; 24: Electrical   Other/Unknown Female     8     5  62.5</span>
+<span class="co">#&gt; 25: Electrical     Other/Unknown Male    28    14  50.0</span>
+<span class="co">#&gt; 26: Electrical           White Female   193   122  63.2</span>
+<span class="co">#&gt; 27: Electrical             White Male  1366   870  63.7</span>
+<span class="co">#&gt; 28: Industrial           Asian Female    40    20  50.0</span>
+<span class="co">#&gt; 29: Industrial             Asian Male    60    38  63.3</span>
+<span class="co">#&gt; 30: Industrial           Black Female    94    55  58.5</span>
+<span class="co">#&gt; 31: Industrial             Black Male   106    57  53.8</span>
+<span class="co">#&gt; 32: Industrial Hispanic/Latinx Female     6     4  66.7</span>
+<span class="co">#&gt; 33: Industrial   Hispanic/Latinx Male    25    22  88.0</span>
+<span class="co">#&gt; 34: Industrial   International Female     5     3  60.0</span>
+<span class="co">#&gt; 35: Industrial     International Male    22    12  54.5</span>
+<span class="co">#&gt; 36: Industrial Native American Female     1     1 100.0</span>
+<span class="co">#&gt; 37: Industrial   Native American Male     1     0   0.0</span>
+<span class="co">#&gt; 38: Industrial   Other/Unknown Female     3     3 100.0</span>
+<span class="co">#&gt; 39: Industrial     Other/Unknown Male     2     0   0.0</span>
+<span class="co">#&gt; 40: Industrial           White Female   234   142  60.7</span>
+<span class="co">#&gt; 41: Industrial             White Male   494   321  65.0</span>
+<span class="co">#&gt; 42: Mechanical           Asian Female    23    19  82.6</span>
+<span class="co">#&gt; 43: Mechanical             Asian Male   122    77  63.1</span>
+<span class="co">#&gt; 44: Mechanical           Black Female    83    46  55.4</span>
+<span class="co">#&gt; 45: Mechanical             Black Male   214   100  46.7</span>
+<span class="co">#&gt; 46: Mechanical Hispanic/Latinx Female    11     8  72.7</span>
+<span class="co">#&gt; 47: Mechanical   Hispanic/Latinx Male    76    47  61.8</span>
+<span class="co">#&gt; 48: Mechanical   International Female     3     1  33.3</span>
+<span class="co">#&gt; 49: Mechanical     International Male    37    19  51.4</span>
+<span class="co">#&gt; 50: Mechanical Native American Female     5     3  60.0</span>
+<span class="co">#&gt; 51: Mechanical   Native American Male    14     8  57.1</span>
+<span class="co">#&gt; 52: Mechanical   Other/Unknown Female     8     7  87.5</span>
+<span class="co">#&gt; 53: Mechanical     Other/Unknown Male    48    28  58.3</span>
+<span class="co">#&gt; 54: Mechanical           White Female   291   195  67.0</span>
+<span class="co">#&gt; 55: Mechanical             White Male  1940  1265  65.2</span>
+<span class="co">#&gt;        program               race_sex  ever  grad stick</span></code></pre></div>
+<p>You could save the <code>DT</code> data frame as a CSV file to your <code>results</code> directory for easy access as we work through the study.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Assumes you have a results folder in the project directory</span>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fwrite.html" class="external-link">fwrite</a></span><span class="op">(</span><span class="va">DT</span>, file <span class="op">=</span> <span class="st">"results/case_stickiness.csv"</span><span class="op">)</span></code></pre></div>
+<p>These results have been included with midfieldr as the built-in data set <code>study_stickiness</code>. View its help page by running</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="op">?</span> <span class="va">study_stickiness</span></code></pre></div>
+<p>View the data frame,</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">study_stickiness</span>
+<span class="co">#&gt;        program               race_sex  ever  grad stick</span>
+<span class="co">#&gt;         &lt;char&gt;                 &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span>
+<span class="co">#&gt;  1:      Civil           Asian Female    17    12  70.6</span>
+<span class="co">#&gt;  2:      Civil             Asian Male    37    24  64.9</span>
+<span class="co">#&gt;  3:      Civil           Black Female    54    28  51.9</span>
+<span class="co">#&gt;  4:      Civil             Black Male    98    43  43.9</span>
+<span class="co">#&gt;  5:      Civil Hispanic/Latinx Female    10     5  50.0</span>
+<span class="co">#&gt;  6:      Civil   Hispanic/Latinx Male    56    33  58.9</span>
+<span class="co">#&gt;  7:      Civil   International Female     1     0   0.0</span>
+<span class="co">#&gt;  8:      Civil     International Male    14     6  42.9</span>
+<span class="co">#&gt;  9:      Civil   Native American Male     7     1  14.3</span>
+<span class="co">#&gt; 10:      Civil   Other/Unknown Female     6     3  50.0</span>
+<span class="co">#&gt; 11:      Civil     Other/Unknown Male    16     5  31.2</span>
+<span class="co">#&gt; 12:      Civil           White Female   329   232  70.5</span>
+<span class="co">#&gt; 13:      Civil             White Male  1147   783  68.3</span>
+<span class="co">#&gt; 14: Electrical           Asian Female    38    27  71.1</span>
+<span class="co">#&gt; 15: Electrical             Asian Male   197   127  64.5</span>
+<span class="co">#&gt; 16: Electrical           Black Female   154    95  61.7</span>
+<span class="co">#&gt; 17: Electrical             Black Male   304   137  45.1</span>
+<span class="co">#&gt; 18: Electrical Hispanic/Latinx Female    14    10  71.4</span>
+<span class="co">#&gt; 19: Electrical   Hispanic/Latinx Male    67    37  55.2</span>
+<span class="co">#&gt; 20: Electrical   International Female     8     4  50.0</span>
+<span class="co">#&gt; 21: Electrical     International Male    71    42  59.2</span>
+<span class="co">#&gt; 22: Electrical Native American Female     3     0   0.0</span>
+<span class="co">#&gt; 23: Electrical   Native American Male     8     4  50.0</span>
+<span class="co">#&gt; 24: Electrical   Other/Unknown Female     8     5  62.5</span>
+<span class="co">#&gt; 25: Electrical     Other/Unknown Male    28    14  50.0</span>
+<span class="co">#&gt; 26: Electrical           White Female   193   122  63.2</span>
+<span class="co">#&gt; 27: Electrical             White Male  1366   870  63.7</span>
+<span class="co">#&gt; 28: Industrial           Asian Female    40    20  50.0</span>
+<span class="co">#&gt; 29: Industrial             Asian Male    60    38  63.3</span>
+<span class="co">#&gt; 30: Industrial           Black Female    94    55  58.5</span>
+<span class="co">#&gt; 31: Industrial             Black Male   106    57  53.8</span>
+<span class="co">#&gt; 32: Industrial Hispanic/Latinx Female     6     4  66.7</span>
+<span class="co">#&gt; 33: Industrial   Hispanic/Latinx Male    25    22  88.0</span>
+<span class="co">#&gt; 34: Industrial   International Female     5     3  60.0</span>
+<span class="co">#&gt; 35: Industrial     International Male    22    12  54.5</span>
+<span class="co">#&gt; 36: Industrial Native American Female     1     1 100.0</span>
+<span class="co">#&gt; 37: Industrial   Native American Male     1     0   0.0</span>
+<span class="co">#&gt; 38: Industrial   Other/Unknown Female     3     3 100.0</span>
+<span class="co">#&gt; 39: Industrial     Other/Unknown Male     2     0   0.0</span>
+<span class="co">#&gt; 40: Industrial           White Female   234   142  60.7</span>
+<span class="co">#&gt; 41: Industrial             White Male   494   321  65.0</span>
+<span class="co">#&gt; 42: Mechanical           Asian Female    23    19  82.6</span>
+<span class="co">#&gt; 43: Mechanical             Asian Male   122    77  63.1</span>
+<span class="co">#&gt; 44: Mechanical           Black Female    83    46  55.4</span>
+<span class="co">#&gt; 45: Mechanical             Black Male   214   100  46.7</span>
+<span class="co">#&gt; 46: Mechanical Hispanic/Latinx Female    11     8  72.7</span>
+<span class="co">#&gt; 47: Mechanical   Hispanic/Latinx Male    76    47  61.8</span>
+<span class="co">#&gt; 48: Mechanical   International Female     3     1  33.3</span>
+<span class="co">#&gt; 49: Mechanical     International Male    37    19  51.4</span>
+<span class="co">#&gt; 50: Mechanical Native American Female     5     3  60.0</span>
+<span class="co">#&gt; 51: Mechanical   Native American Male    14     8  57.1</span>
+<span class="co">#&gt; 52: Mechanical   Other/Unknown Female     8     7  87.5</span>
+<span class="co">#&gt; 53: Mechanical     Other/Unknown Male    48    28  58.3</span>
+<span class="co">#&gt; 54: Mechanical           White Female   291   195  67.0</span>
+<span class="co">#&gt; 55: Mechanical             White Male  1940  1265  65.2</span>
+<span class="co">#&gt;        program               race_sex  ever  grad stick</span></code></pre></div>
+<p>Check that the two data frames are identical,</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">study_stickiness</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
+<p>In subsequent vignettes, you can read in the <code>case_stickiness</code> data from your <code>results</code> directory or you can use the <code>study_stickiness</code> data provided with midfieldr.</p>
 </div>
 <div id="graph-the-results" class="section level2">
 <h2 class="hasAnchor">
 <a href="#graph-the-results" class="anchor" aria-hidden="true"></a>Graph the results</h2>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># data preparation</span>
-<span class="va">mw</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="va">race</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"International"</span>, <span class="st">"Other/Unknown"</span><span class="op">)</span><span class="op">]</span>
-<span class="va">mw</span>
-<span class="co">#&gt;        program            race    sex  ever  grad stick</span>
-<span class="co">#&gt;         &lt;char&gt;          &lt;char&gt; &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span>
-<span class="co">#&gt;  1:      Civil           Asian Female    17    12  70.6</span>
-<span class="co">#&gt;  2:      Civil           Black Female    54    28  51.9</span>
-<span class="co">#&gt;  3:      Civil           White Female   329   232  70.5</span>
-<span class="co">#&gt;  4:      Civil           Asian   Male    37    24  64.9</span>
-<span class="co">#&gt;  5:      Civil           Black   Male    98    43  43.9</span>
-<span class="co">#&gt; ---                                                    </span>
-<span class="co">#&gt; 27: Mechanical           Asian   Male   122    77  63.1</span>
-<span class="co">#&gt; 28: Mechanical           Black   Male   214   100  46.7</span>
-<span class="co">#&gt; 29: Mechanical Hispanic/Latinx   Male    76    47  61.8</span>
-<span class="co">#&gt; 30: Mechanical Native American   Male    14     8  57.1</span>
-<span class="co">#&gt; 31: Mechanical           White   Male  1940  1265  65.2</span>
+<p>We do some data conditioning before presenting the results. Even with students and institutions de-identified, privacy is at risk for small populations, so we omit observations with fewer than 10 students ever enrolled.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Omit before graphing</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">ever</span> <span class="op">&gt;=</span> <span class="fl">10</span><span class="op">]</span></code></pre></div>
+<p>We also omit rows with ambiguous values for race/ethnicity (International and Other/Unknown). Having graphed the results in advance, we find that the small population subset removed Native American students from all but one of the disciplines—so we add them to the list of observations to omit.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># data table printing option</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.topn <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
 
-<span class="va">mw</span> <span class="op">&lt;-</span> <span class="va">mw</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, race_sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span><span class="op">)</span>, <span class="va">stick</span><span class="op">)</span><span class="op">]</span>
-<span class="va">mw</span>
-<span class="co">#&gt;        program             race_sex stick</span>
-<span class="co">#&gt;         &lt;char&gt;               &lt;char&gt; &lt;num&gt;</span>
-<span class="co">#&gt;  1:      Civil         Asian Female  70.6</span>
-<span class="co">#&gt;  2:      Civil         Black Female  51.9</span>
-<span class="co">#&gt;  3:      Civil         White Female  70.5</span>
-<span class="co">#&gt;  4:      Civil           Asian Male  64.9</span>
-<span class="co">#&gt;  5:      Civil           Black Male  43.9</span>
-<span class="co">#&gt; ---                                      </span>
-<span class="co">#&gt; 27: Mechanical           Asian Male  63.1</span>
-<span class="co">#&gt; 28: Mechanical           Black Male  46.7</span>
-<span class="co">#&gt; 29: Mechanical Hispanic/Latinx Male  61.8</span>
-<span class="co">#&gt; 30: Mechanical Native American Male  57.1</span>
-<span class="co">#&gt; 31: Mechanical           White Male  65.2</span>
+<span class="co"># Omit before graphing</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="va">race_sex</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%ilike%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"International|Other|Native"</span><span class="op">)</span><span class="op">]</span>
 
-<span class="va">mw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condition_multiway.html">condition_multiway</a></span><span class="op">(</span><span class="va">mw</span>, details <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">mw</span>
-<span class="co">#&gt;        program             race_sex med_program med_race_sex stick</span>
-<span class="co">#&gt;         &lt;fctr&gt;               &lt;fctr&gt;       &lt;num&gt;        &lt;num&gt; &lt;num&gt;</span>
-<span class="co">#&gt;  1:      Civil         Asian Female        64.9        70.85  70.6</span>
-<span class="co">#&gt;  2:      Civil         Black Female        64.9        56.95  51.9</span>
-<span class="co">#&gt;  3:      Civil         White Female        64.9        65.10  70.5</span>
-<span class="co">#&gt;  4:      Civil           Asian Male        64.9        63.90  64.9</span>
-<span class="co">#&gt;  5:      Civil           Black Male        64.9        45.90  43.9</span>
-<span class="co">#&gt; ---                                                               </span>
-<span class="co">#&gt; 27: Mechanical           Asian Male        63.1        63.90  63.1</span>
-<span class="co">#&gt; 28: Mechanical           Black Male        63.1        45.90  46.7</span>
-<span class="co">#&gt; 29: Mechanical Hispanic/Latinx Male        63.1        60.35  61.8</span>
-<span class="co">#&gt; 30: Mechanical Native American Male        63.1        57.10  57.1</span>
-<span class="co">#&gt; 31: Mechanical           White Male        63.1        65.10  65.2</span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># creating a multiway graph</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">mw</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">stick</span>, y <span class="op">=</span> <span class="va">race_sex</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+<span class="co"># Examine the result</span>
+<span class="va">DT</span>
+<span class="co">#&gt;        program             race_sex  ever  grad stick</span>
+<span class="co">#&gt;         &lt;char&gt;               &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span>
+<span class="co">#&gt;  1:      Civil         Asian Female    17    12  70.6</span>
+<span class="co">#&gt;  2:      Civil           Asian Male    37    24  64.9</span>
+<span class="co">#&gt;  3:      Civil         Black Female    54    28  51.9</span>
+<span class="co">#&gt; ---                                                  </span>
+<span class="co">#&gt; 29: Mechanical Hispanic/Latinx Male    76    47  61.8</span>
+<span class="co">#&gt; 30: Mechanical         White Female   291   195  67.0</span>
+<span class="co">#&gt; 31: Mechanical           White Male  1940  1265  65.2</span></code></pre></div>
+<p>Condition the data for graphing using <code><a href="../reference/condition_multiway.html">condition_multiway()</a></code>. The comments give a brief clue to the purpose of each argument. We’ll use it here without lengthy explanation (covered in detail in a separate vignette).</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condition_multiway.html">condition_multiway</a></span><span class="op">(</span>
+  dframe <span class="op">=</span> <span class="va">DT</span>, <span class="co"># input data frame</span>
+  categ_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"race_sex"</span><span class="op">)</span>, <span class="co"># multiway categorical variables</span>
+  quant_col <span class="op">=</span> <span class="st">"stick"</span>, <span class="co"># multiway quantitative variable</span>
+  detail <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># do not return columns of details</span>
+  order_by <span class="op">=</span> <span class="st">"percent"</span>, <span class="co"># row and panel ordering method</span>
+  param_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grad"</span>, <span class="st">"ever"</span><span class="op">)</span> <span class="co"># parameters used for ordering</span>
+<span class="op">)</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">DT</span>
+<span class="co">#&gt;        program             race_sex  ever  grad stick</span>
+<span class="co">#&gt;         &lt;fctr&gt;               &lt;fctr&gt; &lt;num&gt; &lt;num&gt; &lt;num&gt;</span>
+<span class="co">#&gt;  1:      Civil         Asian Female    17    12  70.6</span>
+<span class="co">#&gt;  2:      Civil           Asian Male    37    24  64.9</span>
+<span class="co">#&gt;  3:      Civil         Black Female    54    28  51.9</span>
+<span class="co">#&gt; ---                                                  </span>
+<span class="co">#&gt; 29: Mechanical Hispanic/Latinx Male    76    47  61.8</span>
+<span class="co">#&gt; 30: Mechanical         White Female   291   195  67.0</span>
+<span class="co">#&gt; 31: Mechanical           White Male  1940  1265  65.2</span></code></pre></div>
+<p>Because stickiness is a percentage, we can use the “percent” method for ordering: panels are ordered by program stickiness (ignoring race/ethnicity and sex) and rows are ordered by race/sex stickiness (ignoring program).</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">DT</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">stick</span>, y <span class="op">=</span> <span class="va">race_sex</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span>, as.table <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">med_program</span><span class="op">)</span>,
-    linetype <span class="op">=</span> <span class="fl">2</span>
-  <span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>
-    x <span class="op">=</span> <span class="st">"Stickiness"</span>,
+    x <span class="op">=</span> <span class="st">"Stickiness (%)"</span>,
     y <span class="op">=</span> <span class="st">""</span>,
-    title <span class="op">=</span> <span class="st">"Practice data (not for research)"</span>,
-    caption <span class="op">=</span> <span class="st">"Source: midfielddata"</span>
+    title <span class="op">=</span> <span class="st">"Ordered by computed group metric"</span>,
+    caption <span class="op">=</span> <span class="st">"Source: midfielddata."</span>
   <span class="op">)</span></code></pre></div>
 <p><img src="../man/figures/art-006-case-study-stickiness-fig1-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><strong>Observations:</strong> The graph illustrates how the ordering of rows and panels are crucial to what Cleveland calls the “asymmetry in the perception of effects.” For example, consider the low stickiness of Hispanic/Latinx women in Civil Engineering (given their overall high stickiness across all programs) or the high stickiness of Hispanic/Latinx men in Industrial Engineering (given their overall low stickiness across all programs).</p>
+<p>Recall, however, that these are practice data, not research data—suitable for learning about student-record analysis, but not for drawing inferences about student performance.</p>
 </div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
@@ -474,7 +590,7 @@
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor" aria-hidden="true"></a>Complete script</h3>
 <p>The vignette code chunks are collected below in a single, condensed script.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>
