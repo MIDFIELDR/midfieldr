@@ -115,8 +115,6 @@ DT
 
 -   <a href="https://www.r-project.org/" target="_blank">R</a> (>=
     3.5.0)
--   <a href="https://midfieldr.github.io/midfielddata/" target="_blank">midfielddata</a>
-    for practice working with student unit records.
 -   <a href="https://rdatatable.gitlab.io/data.table/" target="_blank">data.table</a>
     recommended for data manipulation, but not required.  
 -   <a href="https://ggplot2.tidyverse.org/" target="_blank">ggplot2</a>
