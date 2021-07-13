@@ -116,7 +116,7 @@ DT
 -   <a href="https://www.r-project.org/" target="_blank">R</a> (>=
     3.5.0)
 -   <a href="https://rdatatable.gitlab.io/data.table/" target="_blank">data.table</a>
-    recommended for data manipulation, but not required.  
+    (>= 1.9.8)  
 -   <a href="https://ggplot2.tidyverse.org/" target="_blank">ggplot2</a>
     recommended for data graphics, but not required.
 

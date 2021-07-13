@@ -60,6 +60,7 @@ asp_ratio_mw <- function(data, categories) {
 
 ## Introduction 
 
+Data tables are useful in discussions with one's research team and are often included in publications for readers who want to see the values underlying the data graphics. 
  
 ### Outline
 
@@ -94,72 +95,43 @@ options(
 )
 ```
 
-```{r echo = FALSE}
-DT <- wrapr::build_frame(
-  "program", "race_sex", "stick", "med_program", "med_race_sex" |
-    "Civil", "Asian Female", 70.6, 58.9, 70.85 |
-    "Civil", "Black Female", 51.9, 58.9, 56.95 |
-    "Civil", "White Female", 70.5, 58.9, 65.1 |
-    "Civil", "Asian Male", 64.9, 58.9, 63.9 |
-    "Civil", "Black Male", 43.9, 58.9, 45.9 |
-    "Civil", "Hispanic/Latinx Male", 58.9, 58.9, 60.35 |
-    "Civil", "International Male", 42.9, 58.9, 52.95 |
-    "Civil", "Other/Unknown Male", 31.2, 58.9, 50 |
-    "Civil", "White Male", 68.3, 58.9, 65.1 |
-    "Electrical", "Asian Female", 71.1, 62.45, 70.85 |
-    "Electrical", "Black Female", 61.7, 62.45, 56.95 |
-    "Electrical", "Hispanic/Latinx Female", 71.4, 62.45, 72.05 |
-    "Electrical", "White Female", 63.2, 62.45, 65.1 |
-    "Electrical", "Asian Male", 64.5, 62.45, 63.9 |
-    "Electrical", "Black Male", 45.1, 62.45, 45.9 |
-    "Electrical", "Hispanic/Latinx Male", 55.2, 62.45, 60.35 |
-    "Electrical", "International Male", 59.2, 62.45, 52.95 |
-    "Electrical", "Other/Unknown Male", 50, 62.45, 50 |
-    "Electrical", "White Male", 63.7, 62.45, 65.1 |
-    "Industrial", "Asian Female", 50, 59.6, 70.85 |
-    "Industrial", "Black Female", 58.5, 59.6, 56.95 |
-    "Industrial", "White Female", 60.7, 59.6, 65.1 |
-    "Industrial", "Asian Male", 63.3, 59.6, 63.9 |
-    "Industrial", "Black Male", 53.8, 59.6, 45.9 |
-    "Industrial", "Hispanic/Latinx Male", 88, 59.6, 60.35 |
-    "Industrial", "International Male", 54.5, 59.6, 52.95 |
-    "Industrial", "White Male", 65, 59.6, 65.1 |
-    "Mechanical", "Asian Female", 82.6, 61.8, 70.85 |
-    "Mechanical", "Black Female", 55.4, 61.8, 56.95 |
-    "Mechanical", "Hispanic/Latinx Female", 72.7, 61.8, 72.05 |
-    "Mechanical", "White Female", 67, 61.8, 65.1 |
-    "Mechanical", "Asian Male", 63.1, 61.8, 63.9 |
-    "Mechanical", "Black Male", 46.7, 61.8, 45.9 |
-    "Mechanical", "Hispanic/Latinx Male", 61.8, 61.8, 60.35 |
-    "Mechanical", "International Male", 51.4, 61.8, 52.95 |
-    "Mechanical", "Native American Male", 57.1, 61.8, 57.1 |
-    "Mechanical", "Other/Unknown Male", 58.3, 61.8, 50 |
-    "Mechanical", "White Male", 65.2, 61.8, 65.1
-)
-setDT(DT)
-```
-
-
 ## Tabulating data
 
-Data tables are useful in discussions with one's research team and are often included in publications for readers who want to see the values underlying the data graphics. 
+In this example, we use the case study longitudinal stickiness results from the case study. View the data help page by running 
 
-Our example data are currently laid out in "block record" form [@Mount+Zumel:2019:fluid-data], where the `race_sex` key and the `program` key are both in columns and the response, stickiness, is in the last column. This layout is also called "tidy data"  [@Wickham+Grolemund:2017]. 
+``` r
+? study_student
+```
+
+These data are currently laid out in "block record" form [@Mount+Zumel:2019:fluid-data], where the `race_sex` key and the `program` key are both in columns and the response, stickiness, is in the last column. This layout is also called "tidy data"  [@Wickham+Grolemund:2017]. 
 
 The graphing package we use, ggplot2, is designed to work most effectively with block-record data, thus the block-record ("long") form is the default layout in midfieldr. 
 
+Before tabulating the data, we impose the same constraints we did in the case study by omitting: observations with fewer than 10 students ever enrolled; ambiguous values for race/ethnicity (International and Other/Unknown); and Native American students in this case they are absent from all but one discipline.  
+
+```{r}
+# Copy to avoid update by reference 
+DT <- copy(study_stickiness)
+
+# Omit before presenting
+DT <- DT[ever >= 10]
+DT <- DT[!race_sex %ilike% c("International|Other|Native")]
+```
+
+
 ```{r echo = FALSE}
-temp <- copy(DT)
-kable2html(temp, caption = "Table 1: Stickiness (block records)")
+kable2html(DT, caption = "Table 1: Stickiness (block records)")
 ```
 <br>
 
-However, the visual convention preferred by publishers and readers is a row-record ("wide") form, as illustrated by Table 2. The `race_sex` key is in the left column and the `program` key is in the column names. The stickiness findings lie at the row-column intersections. Note that in this form, the four NA observations we mentioned earlier are explicitly shown. 
+However, the visual convention preferred by publishers and readers is a row-record ("wide") form, as illustrated by Table 2. The `race_sex` key is in the left column and the `program` key is in the column names. The stickiness findings lie at the row-column intersections. Note that in this form, NA observations are explicitly shown. 
 
 ```{r echo = FALSE}
+temp <- copy(DT)
 temp[, race_sex := as.character(race_sex)]
 temp[, program := as.character(program)]
 temp <- dcast(temp, race_sex ~ program, value.var = "stick")
+setnames(temp, old = "race_sex", new = "Race/Ethnicity/Sex")
 kable2html(temp, caption = "Table 2: Stickiness (row records)")
 ```
 
@@ -176,7 +148,7 @@ Depending on your software background, you may have encountered a block-record/r
 In our example, we use `dcast()` from the data.table package to reshape the data for publication. We start by limiting the significant figures of floating-point numbers. 
 
 ```{r}
-# create a new memory location
+# Copy to prevent update by reference 
 block_form <- copy(DT)
 
 # limit significant digits
@@ -203,6 +175,15 @@ row_form <- dcast(row_form, race_sex ~ program, value.var = "stick")
 # examine the result
 row_form
 ```
+
+We can edit the column names for presentation, 
+
+```{r}
+setnames(row_form, 
+         old = c("race_sex"), 
+         new = c("Race/Ethnicity/Sex"))
+```
+
 
 This result is the source for Table 2, repeated below. 
 
@@ -248,9 +229,39 @@ We join the race/ethnicity and sex variables to construct our usual categories,
 # Merge the groups as usual
 DT[, race_sex := paste(race, sex)]
 
+# Subset the same populations as above
+DT <- DT[!race_sex %ilike% c("International|Other|Native")]
+
 # Examine the result
 DT
 ```
+
+```{r}
+tmp <- DT[, .N, by = c("program", "race_sex")]
+tmp
+
+# omit small populations
+tmp <- tmp[N >= 10]
+tmp
+
+tmp <- dcast(tmp, race_sex ~ program, value.va = N)
+tmp
+```
+
+
+
+
+
+
+```{r}
+tmp <- adorn_totals(tmp, where = c("row", "col"), na.rm = TRUE)
+setnames(tmp, 
+         old = c("race_sex"), 
+         new = c("Race/Ethnicity/Sex"))
+tmp
+```
+
+
 
 Use `tabyl()` to create the two-way frequency table of counts,  
 
@@ -272,7 +283,22 @@ DT <- adorn_totals(DT, where = c("row", "col"))
 DT
 ```
 
+And edit the column name
 
+```{r}
+setDT(DT)
+setnames(DT, 
+         old = c("race_sex"), 
+         new = c("Race/Ethnicity/Sex"))
+DT
+```
+
+The presentation verion:
+
+
+```{r echo = FALSE}
+kable2html(DT, caption = "Table 3: Number of students (with totals)")
+```
 
 
 
