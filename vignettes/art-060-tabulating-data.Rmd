@@ -60,80 +60,38 @@ asp_ratio_mw <- function(data, categories) {
 
 ## Introduction 
 
-Data tables are useful in discussions with one's research team and are often included in publications for readers who want to see the values underlying the data graphics. 
- 
-### Outline
+Data for analysis and graphing are often laid out in "block record" or "long" form with every key variable and response variable in their own columns  [@Mount+Zumel:2019:fluid-data]. We use this form regularly, for example, in preparing data for graphing using the ggplot2 package. However, the "row-record" or "wide" format is generally preferred for data tables in publications or for sharing with research collaborators. 
 
-- Practice tabulating multiway data  
+To illustrate the difference, consider the following small subset of the `study_stickiness` data. The first two columns are keys that uniquely identify rows and the third column is a response or "payload" column containing data. Database designers call this a "denormalized" form; many R users would recognize it as the so-called "tidy" form [@Wickham+Grolemund:2017].
 
-### In this vignette
-
-midfieldr functions 
- 
-- `condition_multiway()` 
-
-packages
-
-```{r}
-# packages used
-library("midfieldr")
-library("midfielddata")
-
-library("ggplot2")
-library("janitor")
-library("data.table")
-```
-
-We can control how a data.table is printed to the screen with the following options.  
-
-```{r}
-# optional code to control data.table printing
-options(
-  datatable.print.nrows = 10,
-  datatable.print.topn = 5,
-  datatable.print.class = TRUE
-)
-```
-
-## Tabulating data
-
-In this example, we use the case study longitudinal stickiness results from the case study. View the data help page by running 
-
-``` r
-? study_student
-```
-
-These data are currently laid out in "block record" form [@Mount+Zumel:2019:fluid-data], where the `race_sex` key and the `program` key are both in columns and the response, stickiness, is in the last column. This layout is also called "tidy data"  [@Wickham+Grolemund:2017]. 
-
-The graphing package we use, ggplot2, is designed to work most effectively with block-record data, thus the block-record ("long") form is the default layout in midfieldr. 
-
-Before tabulating the data, we impose the same constraints we did in the case study by omitting: observations with fewer than 10 students ever enrolled; ambiguous values for race/ethnicity (International and Other/Unknown); and Native American students in this case they are absent from all but one discipline.  
-
-```{r}
-# Copy to avoid update by reference 
-DT <- copy(study_stickiness)
-
-# Omit before presenting
-DT <- DT[ever >= 10]
-DT <- DT[!race_sex %ilike% c("International|Other|Native")]
-```
 
 
 ```{r echo = FALSE}
-kable2html(DT, caption = "Table 1: Stickiness (block records)")
+# Simple, short case to illustrate
+library("midfieldr")
+library("midfielddata")
+library("data.table")
+DT <- copy(study_stickiness)
+DT <- DT[program %chin% c("Civil", "Electrical", "Mechanical")]
+DT <- DT[race_sex %chin% c("Asian Female", "Black Female", "White Female")]
+DT <- DT[, .(race_sex, program, stick)]
+DT <- DT[order(race_sex, program)]
+
+long_data <- copy(DT)
+wide_data <- copy(DT)
+wide_data <- dcast(wide_data, race_sex ~ program, value.var = "stick")
+
+kable2html(long_data, caption = "Table 1. Block-record form")
 ```
 <br>
 
-However, the visual convention preferred by publishers and readers is a row-record ("wide") form, as illustrated by Table 2. The `race_sex` key is in the left column and the `program` key is in the column names. The stickiness findings lie at the row-column intersections. Note that in this form, NA observations are explicitly shown. 
+The same data are shown in row-record form in the table below. The leftmost column is still a key; the new column names contain the values of the second key; and the cells at the row-column intersections contain the response. We have lost the labels for the second key (`program`) and the response (`stick`), though the table caption includes the "stickiness" label to identify the cell content. 
+
 
 ```{r echo = FALSE}
-temp <- copy(DT)
-temp[, race_sex := as.character(race_sex)]
-temp[, program := as.character(program)]
-temp <- dcast(temp, race_sex ~ program, value.var = "stick")
-setnames(temp, old = "race_sex", new = "Race/Ethnicity/Sex")
-kable2html(temp, caption = "Table 2: Stickiness (row records)")
+kable2html(wide_data, caption = "Table 2. Row-record form")
 ```
+<br>
 
 Depending on your software background, you may have encountered a block-record/row-record transformation using any of these function pairs---a list adapted from [@Mount+Zumel:2019:fluid-data].  
 
@@ -145,17 +103,80 @@ Depending on your software background, you may have encountered a block-record/r
 - dcast / melt (data.table)
 - cast / melt (reshape2)
 
-In our example, we use `dcast()` from the data.table package to reshape the data for publication. We start by limiting the significant figures of floating-point numbers. 
+Because we work so often with multiway data (two keys, one response), the transformation between forms is easily accomplished using the data.table functions `dcast()` and `melt()`. For more complicated transformations---with multiple response variables for example---we recommend the cdata package [@Mount+Zumel:2020:cdata]. 
+ 
+### In this vignette
+
+Using the `study_student` and `study_stickiness` data sets included with midfieldr, we: 
+
+- Illustrate the block-record form using multiway data. 
+- Transform multiway block records to row records.
+- Transform multiway row-records to block-records. 
+- Create a two-way frequency table with row and column totals. 
+
+
+
+
+
+## Block-record form 
+
+If you are writing your own script to follow along, we start with these packages: 
 
 ```{r}
-# Copy to prevent update by reference 
-block_form <- copy(DT)
+# packages used
+library("midfieldr")
+library("janitor")
 
-# limit significant digits
-block_form[, stick := round(stick, 2)]
+# optional code to control data.table printing
+options(
+  datatable.print.nrows = 10,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
 ```
 
-If in the final result we want rows and columns ordered alphabetically, we convert factors to characters. 
+In this example, we use the case study longitudinal stickiness results from the case study. View the data help page by running 
+
+``` r
+? study_stickiness
+```
+
+These data are currently laid out in block-record form, where the `race_sex` key and the `program` key are both in their own columns and the response, stickiness, is in its own column. 
+
+Before tabulating the data, we impose the same constraints we did in the case study by omitting: observations with fewer than 10 students ever enrolled; Native American students because of their small numbers in all but one program; and ambiguous values for race/ethnicity (International and Other/Unknown).  
+
+```{r}
+# Copy to avoid update by reference 
+block_form <- copy(study_stickiness)
+
+# Omit before presenting
+block_form <- block_form[ever >= 10]
+block_form <- block_form[!race_sex %ilike% c("International|Other|Native")]
+
+# Examine the result
+block_form
+```
+
+We limit the data table to the three multiway variables. 
+
+```{r}
+# Three columns 
+block_form <- block_form[, .(program, race_sex, stick)]
+
+# examine the result
+block_form
+```
+
+Following is an HTML version of the data table in block-record form. 
+
+```{r echo = FALSE}
+kable2html(block_form, caption = "Table 3. Stickiness in block-record form")
+```
+
+
+## Transform block-records to row-records 
+
+If in the row-record form we want rows and columns ordered alphabetically, we convert factors to characters. 
 
 ```{r}
 # create a new memory location
@@ -166,7 +187,7 @@ row_form[, race_sex := as.character(race_sex)]
 row_form[, program := as.character(program)]
 ```
 
-`dcast()` is used to reshape the data frame from block-record form to row-record form. 
+Use `dcast()` to reshape the data frame from block-record form to row-record form. 
 
 ```{r}
 # reshape
@@ -184,15 +205,12 @@ setnames(row_form,
          new = c("Race/Ethnicity/Sex"))
 ```
 
-
-This result is the source for Table 2, repeated below. 
+Following is an HTML version of the data table in row-record form.   
 
 ```{r echo = FALSE}
-kable2html(temp, caption = "Table 2: Stickiness (row records)")
+kable2html(row_form, caption = "Table 4. Stickiness in row-record form")
 ```
 
-
-Other good tools for reshaping are provided in packages such as `reshape()` in base R, cdata  [@Mount+Zumel:2020:cdata], and tidyr [@Wickham+Henry:2020:tidyr]. 
 
 
 ### Exercise
@@ -201,106 +219,87 @@ Other good tools for reshaping are provided in packages such as `reshape()` in b
 
 
 
+## Transform row-records to block-records
 
+As Mount and Zumel state, "For coordinatized data, different layouts of rows and columns are demonstrably equivalent."---if the keys provide invariant "coordinates" to the data values, then one form is readily transformed to another. 
 
+In this example (again, a simple example with two coordinates and one response), we can use `melt()` to transform row records to block records. Note that we can re-establish the key label `program` and the response label `stick`. 
+
+```{r}
+melt(row_form, 
+     id.vars       = "Race/Ethnicity/Sex", 
+     measure.vars  = c("Civil", "Electrical", "Industrial", "Mechanical"), 
+     variable.name = "program", 
+     value.name    = "stick")
+```
+
+Working with student unit record data, `melt()` is particularly useful if a colleague provides you with data in row-record form and you need to transform it to block record for analysis or graphing. Again, for transformations with multiple response variables, we recommend the cdata package [@Mount+Zumel:2020:cdata].
 
 
 ## Tables with totals
 
-When data have not been summarized, as in the `study_student` data set for example, 
+Another commonly-encountered table in student unit record research is a summary table of the numbers of students in different groups. For this example, we use the `study_student` data. View its help page by running
 
-```{r}
-study_student
+``` r
+? study_student
 ```
 
-and what we want is a count of students by group, the result is a frequency table. The janitor package has convenient functions for creating frequency tables and adding row and column totals.
+If we focus on two categories, e.g., `program` and `race_sex`, the frequency of occurrences of the combinations of the levels of the two categories is a two-way frequency table. 
 
 ```{r}
-# To access the tabyl() and adorn_total() functions
-library("janitor")
-
 # Create a new memory location
 DT <- copy(study_student)
+
+# View the data
+DT
 ```
 
 We join the race/ethnicity and sex variables to construct our usual categories, 
-
 ```{r}
 # Merge the groups as usual
 DT[, race_sex := paste(race, sex)]
 
 # Subset the same populations as above
 DT <- DT[!race_sex %ilike% c("International|Other|Native")]
-
-# Examine the result
-DT
 ```
 
+Counting by the two grouping variables yields the frequency of the combinations of levels and omits the other columns. 
+
 ```{r}
-tmp <- DT[, .N, by = c("program", "race_sex")]
-tmp
+DT <- DT[, .N, by = c("program", "race_sex")]
 
 # omit small populations
-tmp <- tmp[N >= 10]
-tmp
-
-tmp <- dcast(tmp, race_sex ~ program, value.va = N)
-tmp
-```
-
-
-
-
-
-
-```{r}
-tmp <- adorn_totals(tmp, where = c("row", "col"), na.rm = TRUE)
-setnames(tmp, 
-         old = c("race_sex"), 
-         new = c("Race/Ethnicity/Sex"))
-tmp
-```
-
-
-
-Use `tabyl()` to create the two-way frequency table of counts,  
-
-```{r}
-# Create the two-way frequency table
-DT <- tabyl(DT, race_sex, program)
+DT <- DT[N >= 10]
 
 # Examine the result
 DT
 ```
 
-Use `adorn_totals()` to add row totals, column totals, or (as shown here) both, 
+Reshaping from block-record to row-record form creates the two-way frequency table. 
 
 ```{r}
-# Add row and column totals
-DT <- adorn_totals(DT, where = c("row", "col"))
+DT <- dcast(DT, race_sex ~ program, value.var = "N")
 
 # Examine the result
 DT
 ```
 
-And edit the column name
+With data of this sort, readers often wish to see row and column totals. The janitor package has the `adorn_totals()` function to do just that. You can sum rows, columns, or both. 
 
 ```{r}
-setDT(DT)
+DT <- adorn_totals(DT, where = c("row", "col"), na.rm = TRUE)
+
+DT
+```
+
+Following is an HTML version of these data. 
+
+```{r echo = FALSE}
 setnames(DT, 
          old = c("race_sex"), 
          new = c("Race/Ethnicity/Sex"))
-DT
+kable2html(DT, caption = "Table 5. Two-way frequency table with totals")
 ```
-
-The presentation verion:
-
-
-```{r echo = FALSE}
-kable2html(DT, caption = "Table 3: Number of students (with totals)")
-```
-
-
 
 
 
@@ -324,8 +323,7 @@ The vignette code chunks are collected below in a single, condensed script.
 ```{r eval = FALSE}
 # packages used
 library("midfieldr")
-library("data.table")
-library("ggplot2")
+library("janitor")
 
 # optional code to control data.table printing
 options(
@@ -333,7 +331,43 @@ options(
   datatable.print.topn = 5,
   datatable.print.class = TRUE
 )
+
+# Block-record form
+block_form <- copy(study_stickiness)
+block_form <- block_form[ever >= 10]
+block_form <- block_form[!race_sex %ilike% c("International|Other|Native")]
+block_form <- block_form[, .(program, race_sex, stick)]
+
+# Transform block-records to row-records
+row_form <- copy(block_form)
+row_form[, race_sex := as.character(race_sex)]
+row_form[, program := as.character(program)]
+row_form <- dcast(row_form, race_sex ~ program, value.var = "stick")
+setnames(row_form, 
+         old = c("race_sex"), 
+         new = c("Race/Ethnicity/Sex"))
+
+# Transform row-records to block-records
+melt(row_form, 
+     id.vars       = "Race/Ethnicity/Sex", 
+     measure.vars  = c("Civil", "Electrical", "Industrial", "Mechanical"), 
+     variable.name = "program", 
+     value.name    = "stick")
+
+# Tables with totals
+DT <- copy(study_student)
+DT[, race_sex := paste(race, sex)]
+DT <- DT[!race_sex %ilike% c("International|Other|Native")]
+DT <- DT[, .N, by = c("program", "race_sex")]
+DT <- DT[N >= 10]
+DT <- dcast(DT, race_sex ~ program, value.var = "N")
+DT <- adorn_totals(DT, where = c("row", "col"), na.rm = TRUE)
 ```
+
+
+
+
+
 
 ```{r echo = FALSE}
 # to change the CSS file for block quotes
