@@ -32,7 +32,7 @@ cip
 }
 \description{
 A data table based on the US National Center for Education Statistics
-(NCES), Integrated Postsecondary Education Data System (IPEDS), 2020
+(NCES), Integrated Postsecondary Education Data System (IPEDS), 2010
 CIP, \url{https://nces.ed.gov/ipeds/cipcode}. The data are codes and
 names for 1582 instructional programs organized on three levels: a
 2-digit series, a 4-digit series, and a 6-digit series.

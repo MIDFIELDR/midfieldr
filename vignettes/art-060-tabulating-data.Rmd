@@ -146,7 +146,7 @@ These data are currently laid out in block-record form, where the `race_sex` key
 Before tabulating the data, we impose the same constraints we did in the case study by omitting: observations with fewer than 10 students ever enrolled; Native American students because of their small numbers in all but one program; and ambiguous values for race/ethnicity (International and Other/Unknown).  
 
 ```{r}
-# Copy to avoid update by reference 
+# Copy to avoid update by reference
 block_form <- copy(study_stickiness)
 
 # Omit before presenting
@@ -160,7 +160,7 @@ block_form
 We limit the data table to the three multiway variables. 
 
 ```{r}
-# Three columns 
+# Three columns
 block_form <- block_form[, .(program, race_sex, stick)]
 
 # examine the result
@@ -200,9 +200,10 @@ row_form
 We can edit the column names for presentation, 
 
 ```{r}
-setnames(row_form, 
-         old = c("race_sex"), 
-         new = c("Race/Ethnicity/Sex"))
+setnames(row_form,
+  old = c("race_sex"),
+  new = c("Race/Ethnicity/Sex")
+)
 ```
 
 Following is an HTML version of the data table in row-record form.   
@@ -226,11 +227,12 @@ As Mount and Zumel state, "For coordinatized data, different layouts of rows and
 In this example (again, a simple example with two coordinates and one response), we can use `melt()` to transform row records to block records. Note that we can re-establish the key label `program` and the response label `stick`. 
 
 ```{r}
-melt(row_form, 
-     id.vars       = "Race/Ethnicity/Sex", 
-     measure.vars  = c("Civil", "Electrical", "Industrial", "Mechanical"), 
-     variable.name = "program", 
-     value.name    = "stick")
+melt(row_form,
+  id.vars = "Race/Ethnicity/Sex",
+  measure.vars = c("Civil", "Electrical", "Industrial", "Mechanical"),
+  variable.name = "program",
+  value.name = "stick"
+)
 ```
 
 Working with student unit record data, `melt()` is particularly useful if a colleague provides you with data in row-record form and you need to transform it to block record for analysis or graphing. Again, for transformations with multiple response variables, we recommend the cdata package [@Mount+Zumel:2020:cdata].
@@ -295,9 +297,10 @@ DT
 Following is an HTML version of these data. 
 
 ```{r echo = FALSE}
-setnames(DT, 
-         old = c("race_sex"), 
-         new = c("Race/Ethnicity/Sex"))
+setnames(DT,
+  old = c("race_sex"),
+  new = c("Race/Ethnicity/Sex")
+)
 kable2html(DT, caption = "Table 5. Two-way frequency table with totals")
 ```
 
@@ -343,16 +346,18 @@ row_form <- copy(block_form)
 row_form[, race_sex := as.character(race_sex)]
 row_form[, program := as.character(program)]
 row_form <- dcast(row_form, race_sex ~ program, value.var = "stick")
-setnames(row_form, 
-         old = c("race_sex"), 
-         new = c("Race/Ethnicity/Sex"))
+setnames(row_form,
+  old = c("race_sex"),
+  new = c("Race/Ethnicity/Sex")
+)
 
 # Transform row-records to block-records
-melt(row_form, 
-     id.vars       = "Race/Ethnicity/Sex", 
-     measure.vars  = c("Civil", "Electrical", "Industrial", "Mechanical"), 
-     variable.name = "program", 
-     value.name    = "stick")
+melt(row_form,
+  id.vars = "Race/Ethnicity/Sex",
+  measure.vars = c("Civil", "Electrical", "Industrial", "Mechanical"),
+  variable.name = "program",
+  value.name = "stick"
+)
 
 # Tables with totals
 DT <- copy(study_student)
