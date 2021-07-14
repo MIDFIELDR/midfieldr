@@ -25,7 +25,7 @@ required variables \code{mcid}, \code{term}, and \code{level}.}
 on which the evaluation is based, default FALSE.}
 
 \item{span}{Optional numeric scalar, number of years to define timely
-completion. Values that are 100%, 150%, and 200% of the "scheduled
+completion. Values that are 100\%, 150\%, and 200\% of the "scheduled
 span" (\code{sched_span}) are commonly used. Default 6 years.}
 
 \item{sched_span}{Optional numeric scalar, the number of years an

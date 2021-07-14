@@ -39,7 +39,7 @@
 #' @param detail Optional flag to add columns reporting information
 #'        on which the evaluation is based, default FALSE.
 #' @param span Optional numeric scalar, number of years to define timely
-#'        completion. Values that are 100%, 150%, and 200% of the "scheduled
+#'        completion. Values that are 100\%, 150\%, and 200\% of the "scheduled
 #'        span" (\code{sched_span}) are commonly used. Default 6 years.
 #' @param sched_span Optional numeric scalar, the number of years an
 #'        institution officially schedules for completing a program. Default

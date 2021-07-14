@@ -10,7 +10,7 @@ add_institution(dframe, midfield_term)
 \item{dframe}{Data frame with required variable \code{mcid}.}
 
 \item{midfield_term}{MIDFIELD \code{term} data table or equivalent with
-required variables \code{mcid}, \code{institutiion}, \code{term}.}
+required variables \code{mcid}, \code{institution}, \code{term}.}
 }
 \value{
 A \code{data.table}  with the following properties:

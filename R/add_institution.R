@@ -12,7 +12,7 @@
 #'
 #' @param dframe Data frame with required variable \code{mcid}.
 #' @param midfield_term MIDFIELD \code{term} data table or equivalent with
-#'        required variables \code{mcid}, \code{institutiion}, \code{term}.
+#'        required variables \code{mcid}, \code{institution}, \code{term}.
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
 #'     \item Rows are not modified.
