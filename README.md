@@ -168,15 +168,31 @@ help("midfielddata-package")
 
 ## Contributing
 
--   To contribute to midfieldr, clone this repo locally and commit your
-    code on a separate branch. Please include runtime argument checks in
-    functions using *checkmate* and write unit tests for your code using
-    *tinytest*.
--   Please use the GitHub
+To contribute to midfieldr,
+
+-   Please clone this repo locally.  
+-   Commit your code on a separate branch.
+-   Use the *checkmate* package to include runtime argument checks in
+    functions.
+-   Use the *tinytest* package to write unit tests for your code. Save
+    tests in the `inst/tinytest/` directory.
+
+To provide feedback or report a bug,
+
+-   Use the GitHub
     <a href="https://github.com/MIDFIELDR/midfieldr/issues" target="_blank">Issues</a>
-    page to report bugs or provide feedback.
--   Participation in this open source project is subject to a [Code of
-    Conduct](CONDUCT.html).
+    page.
+-   Please run the package unit tests and report the results with your
+    bug report. Any user can run the package tests by installing the
+    *tinytest* package and running:
+
+``` r
+    test_results <- tinytest::test_package("midfieldr")
+    as.data.frame(test_results)
+```
+
+Participation in this open source project is subject to a [Code of
+Conduct](CONDUCT.html).
 
 ## Related work
 
