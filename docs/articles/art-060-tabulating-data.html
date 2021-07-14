@@ -94,7 +94,7 @@
       <h1 class="display-4" data-toc-skip>Tabulating data</h1>
                         <h4 data-toc-skip class="author">Richard Layton</h4>
             
-            <h4 data-toc-skip class="date">2021-07-11</h4>
+            <h4 data-toc-skip class="date">2021-07-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/master/vignettes/art-060-tabulating-data.Rmd" class="external-link"><code>vignettes/art-060-tabulating-data.Rmd</code></a></small>
       <div class="d-none name"><code>art-060-tabulating-data.Rmd</code></div>
@@ -106,48 +106,281 @@
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h2>
-<div id="outline" class="section level3">
-<h3 class="hasAnchor">
-<a href="#outline" class="anchor" aria-hidden="true"></a>Outline</h3>
+<p>Data for analysis and graphing are often laid out in “block record” or “long” form with every key variable and response variable in their own columns <span class="citation"><a href="#ref-Mount+Zumel:2019:fluid-data" role="doc-biblioref">[1]</a></span>. We use this form regularly, for example, in preparing data for graphing using the ggplot2 package. However, the “row-record” or “wide” format is generally preferred for data tables in publications or for sharing with research collaborators.</p>
+<p>To illustrate the difference, consider the following small subset of the <code>study_stickiness</code> data. The first two columns are keys that uniquely identify rows and the third column is a response or “payload” column containing data. Database designers call this a “denormalized” form; many R users would recognize it as the so-called “tidy” form <span class="citation"><a href="#ref-Wickham+Grolemund:2017" role="doc-biblioref">[2]</a></span>.</p>
+<table class="table table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
+<caption style="font-size: initial !important;">
+Table 1. Block-record form
+</caption>
+<thead><tr>
+<th style="text-align:left;">
+race_sex
+</th>
+<th style="text-align:left;">
+program
+</th>
+<th style="text-align:right;">
+stick
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:left;">
+Civil
+</td>
+<td style="text-align:right;">
+70.6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:left;">
+Electrical
+</td>
+<td style="text-align:right;">
+71.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:left;">
+Mechanical
+</td>
+<td style="text-align:right;">
+82.6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:left;">
+Civil
+</td>
+<td style="text-align:right;">
+51.9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:left;">
+Electrical
+</td>
+<td style="text-align:right;">
+61.7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:left;">
+Mechanical
+</td>
+<td style="text-align:right;">
+55.4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+White Female
+</td>
+<td style="text-align:left;">
+Civil
+</td>
+<td style="text-align:right;">
+70.5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+White Female
+</td>
+<td style="text-align:left;">
+Electrical
+</td>
+<td style="text-align:right;">
+63.2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+White Female
+</td>
+<td style="text-align:left;">
+Mechanical
+</td>
+<td style="text-align:right;">
+67.0
+</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>The same data are shown in row-record form in the table below. The leftmost column is still a key; the new column names contain the values of the second key; and the cells at the row-column intersections contain the response. We have lost the labels for the second key (<code>program</code>) and the response (<code>stick</code>), though the table caption includes the “stickiness” label to identify the cell content.</p>
+<table class="table table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
+<caption style="font-size: initial !important;">
+Table 2. Row-record form
+</caption>
+<thead><tr>
+<th style="text-align:left;">
+race_sex
+</th>
+<th style="text-align:right;">
+Civil
+</th>
+<th style="text-align:right;">
+Electrical
+</th>
+<th style="text-align:right;">
+Mechanical
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+70.6
+</td>
+<td style="text-align:right;">
+71.1
+</td>
+<td style="text-align:right;">
+82.6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+51.9
+</td>
+<td style="text-align:right;">
+61.7
+</td>
+<td style="text-align:right;">
+55.4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+White Female
+</td>
+<td style="text-align:right;">
+70.5
+</td>
+<td style="text-align:right;">
+63.2
+</td>
+<td style="text-align:right;">
+67.0
+</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>Depending on your software background, you may have encountered a block-record/row-record transformation using any of these function pairs—a list adapted from <span class="citation"><a href="#ref-Mount+Zumel:2019:fluid-data" role="doc-biblioref">[1]</a></span>.</p>
 <ul>
-<li>Practice tabulating multiway data</li>
+<li>pivot / anti-pivot or crosstab / shred (databases)</li>
+<li>pivot_to_rowrecs / unpivot_to_blocks (cdata)</li>
+<li>reshape “wide” / reshape “long” (R)</li>
+<li>pivot_wider / pivot_longer (tidyr)</li>
+<li>pivot / unpivot (Microsoft Excel)</li>
+<li>dcast / melt (data.table)</li>
+<li>cast / melt (reshape2)</li>
 </ul>
-</div>
+<p>Because we work so often with multiway data (two keys, one response), the transformation between forms is easily accomplished using the data.table functions <code><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast()</a></code> and <code><a href="https://Rdatatable.gitlab.io/data.table/reference/melt.data.table.html" class="external-link">melt()</a></code>. For more complicated transformations—with multiple response variables for example—we recommend the cdata package <span class="citation"><a href="#ref-Mount+Zumel:2020:cdata" role="doc-biblioref">[3]</a></span>.</p>
 <div id="in-this-vignette" class="section level3">
 <h3 class="hasAnchor">
 <a href="#in-this-vignette" class="anchor" aria-hidden="true"></a>In this vignette</h3>
-<p>midfieldr functions</p>
+<p>Using the <code>study_student</code> and <code>study_stickiness</code> data sets included with midfieldr, we:</p>
 <ul>
-<li><code><a href="../reference/condition_multiway.html">condition_multiway()</a></code></li>
+<li>Illustrate the block-record form using multiway data.</li>
+<li>Transform multiway block records to row records.</li>
+<li>Transform multiway row-records to block-records.</li>
+<li>Create a two-way frequency table with row and column totals.</li>
 </ul>
-<p>packages</p>
+</div>
+</div>
+<div id="block-record-form" class="section level2">
+<h2 class="hasAnchor">
+<a href="#block-record-form" class="anchor" aria-hidden="true"></a>Block-record form</h2>
+<p>If you are writing your own script to follow along, we start with these packages:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>
-
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sfirke/janitor" class="external-link">"janitor"</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span></code></pre></div>
-<p>We can control how a data.table is printed to the screen with the following options.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># optional code to control data.table printing</span>
+
+<span class="co"># optional code to control data.table printing</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>
   datatable.print.nrows <span class="op">=</span> <span class="fl">10</span>,
   datatable.print.topn <span class="op">=</span> <span class="fl">5</span>,
   datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
-</div>
-</div>
-<div id="tabulating-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#tabulating-data" class="anchor" aria-hidden="true"></a>Tabulating data</h2>
-<p>Data tables are useful in discussions with one’s research team and are often included in publications for readers who want to see the values underlying the data graphics.</p>
-<p>Our example data are currently laid out in “block record” form <span class="citation"><a href="#ref-Mount+Zumel:2019:fluid-data" role="doc-biblioref">[1]</a></span>, where the <code>race_sex</code> key and the <code>program</code> key are both in columns and the response, stickiness, is in the last column. This layout is also called “tidy data” <span class="citation"><a href="#ref-Wickham+Grolemund:2017" role="doc-biblioref">[2]</a></span>.</p>
-<p>The graphing package we use, ggplot2, is designed to work most effectively with block-record data, thus the block-record (“long”) form is the default layout in midfieldr.</p>
+<p>In this example, we use the case study longitudinal stickiness results from the case study. View the data help page by running</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="op">?</span> <span class="va">study_stickiness</span></code></pre></div>
+<p>These data are currently laid out in block-record form, where the <code>race_sex</code> key and the <code>program</code> key are both in their own columns and the response, stickiness, is in its own column.</p>
+<p>Before tabulating the data, we impose the same constraints we did in the case study by omitting: observations with fewer than 10 students ever enrolled; Native American students because of their small numbers in all but one program; and ambiguous values for race/ethnicity (International and Other/Unknown).</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Copy to avoid update by reference</span>
+<span class="va">block_form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_stickiness</span><span class="op">)</span>
+
+<span class="co"># Omit before presenting</span>
+<span class="va">block_form</span> <span class="op">&lt;-</span> <span class="va">block_form</span><span class="op">[</span><span class="va">ever</span> <span class="op">&gt;=</span> <span class="fl">10</span><span class="op">]</span>
+<span class="va">block_form</span> <span class="op">&lt;-</span> <span class="va">block_form</span><span class="op">[</span><span class="op">!</span><span class="va">race_sex</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%ilike%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"International|Other|Native"</span><span class="op">)</span><span class="op">]</span>
+
+<span class="co"># Examine the result</span>
+<span class="va">block_form</span>
+<span class="co">#&gt;        program               race_sex  ever  grad stick</span>
+<span class="co">#&gt;         &lt;char&gt;                 &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span>
+<span class="co">#&gt;  1:      Civil           Asian Female    17    12  70.6</span>
+<span class="co">#&gt;  2:      Civil             Asian Male    37    24  64.9</span>
+<span class="co">#&gt;  3:      Civil           Black Female    54    28  51.9</span>
+<span class="co">#&gt;  4:      Civil             Black Male    98    43  43.9</span>
+<span class="co">#&gt;  5:      Civil Hispanic/Latinx Female    10     5  50.0</span>
+<span class="co">#&gt; ---                                                    </span>
+<span class="co">#&gt; 27: Mechanical             Black Male   214   100  46.7</span>
+<span class="co">#&gt; 28: Mechanical Hispanic/Latinx Female    11     8  72.7</span>
+<span class="co">#&gt; 29: Mechanical   Hispanic/Latinx Male    76    47  61.8</span>
+<span class="co">#&gt; 30: Mechanical           White Female   291   195  67.0</span>
+<span class="co">#&gt; 31: Mechanical             White Male  1940  1265  65.2</span></code></pre></div>
+<p>We limit the data table to the three multiway variables.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Three columns</span>
+<span class="va">block_form</span> <span class="op">&lt;-</span> <span class="va">block_form</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">race_sex</span>, <span class="va">stick</span><span class="op">)</span><span class="op">]</span>
+
+<span class="co"># examine the result</span>
+<span class="va">block_form</span>
+<span class="co">#&gt;        program               race_sex stick</span>
+<span class="co">#&gt;         &lt;char&gt;                 &lt;char&gt; &lt;num&gt;</span>
+<span class="co">#&gt;  1:      Civil           Asian Female  70.6</span>
+<span class="co">#&gt;  2:      Civil             Asian Male  64.9</span>
+<span class="co">#&gt;  3:      Civil           Black Female  51.9</span>
+<span class="co">#&gt;  4:      Civil             Black Male  43.9</span>
+<span class="co">#&gt;  5:      Civil Hispanic/Latinx Female  50.0</span>
+<span class="co">#&gt; ---                                        </span>
+<span class="co">#&gt; 27: Mechanical             Black Male  46.7</span>
+<span class="co">#&gt; 28: Mechanical Hispanic/Latinx Female  72.7</span>
+<span class="co">#&gt; 29: Mechanical   Hispanic/Latinx Male  61.8</span>
+<span class="co">#&gt; 30: Mechanical           White Female  67.0</span>
+<span class="co">#&gt; 31: Mechanical             White Male  65.2</span></code></pre></div>
+<p>Following is an HTML version of the data table in block-record form.</p>
 <table class="table table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
 <caption style="font-size: initial !important;">
-Table 1: Stickiness (block records)
+Table 3. Stickiness in block-record form
 </caption>
 <thead><tr>
 <th style="text-align:left;">
@@ -159,12 +392,6 @@ race_sex
 <th style="text-align:right;">
 stick
 </th>
-<th style="text-align:right;">
-med_program
-</th>
-<th style="text-align:right;">
-med_race_sex
-</th>
 </tr></thead>
 <tbody>
 <tr>
@@ -177,11 +404,16 @@ Asian Female
 <td style="text-align:right;">
 70.6
 </td>
-<td style="text-align:right;">
-58.90
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil
+</td>
+<td style="text-align:left;">
+Asian Male
 </td>
 <td style="text-align:right;">
-70.85
+64.9
 </td>
 </tr>
 <tr>
@@ -194,46 +426,6 @@ Black Female
 <td style="text-align:right;">
 51.9
 </td>
-<td style="text-align:right;">
-58.90
-</td>
-<td style="text-align:right;">
-56.95
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Civil
-</td>
-<td style="text-align:left;">
-White Female
-</td>
-<td style="text-align:right;">
-70.5
-</td>
-<td style="text-align:right;">
-58.90
-</td>
-<td style="text-align:right;">
-65.10
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Civil
-</td>
-<td style="text-align:left;">
-Asian Male
-</td>
-<td style="text-align:right;">
-64.9
-</td>
-<td style="text-align:right;">
-58.90
-</td>
-<td style="text-align:right;">
-63.90
-</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -245,11 +437,16 @@ Black Male
 <td style="text-align:right;">
 43.9
 </td>
-<td style="text-align:right;">
-58.90
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil
+</td>
+<td style="text-align:left;">
+Hispanic/Latinx Female
 </td>
 <td style="text-align:right;">
-45.90
+50.0
 </td>
 </tr>
 <tr>
@@ -262,748 +459,266 @@ Hispanic/Latinx Male
 <td style="text-align:right;">
 58.9
 </td>
-<td style="text-align:right;">
-58.90
-</td>
-<td style="text-align:right;">
-60.35
-</td>
 </tr>
 <tr>
 <td style="text-align:left;">
 Civil
 </td>
-<td style="text-align:left;">
-International Male
-</td>
-<td style="text-align:right;">
-42.9
-</td>
-<td style="text-align:right;">
-58.90
-</td>
-<td style="text-align:right;">
-52.95
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Civil
-</td>
-<td style="text-align:left;">
-Other/Unknown Male
-</td>
-<td style="text-align:right;">
-31.2
-</td>
-<td style="text-align:right;">
-58.90
-</td>
-<td style="text-align:right;">
-50.00
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Civil
-</td>
-<td style="text-align:left;">
-White Male
-</td>
-<td style="text-align:right;">
-68.3
-</td>
-<td style="text-align:right;">
-58.90
-</td>
-<td style="text-align:right;">
-65.10
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical
-</td>
-<td style="text-align:left;">
-Asian Female
-</td>
-<td style="text-align:right;">
-71.1
-</td>
-<td style="text-align:right;">
-62.45
-</td>
-<td style="text-align:right;">
-70.85
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical
-</td>
-<td style="text-align:left;">
-Black Female
-</td>
-<td style="text-align:right;">
-61.7
-</td>
-<td style="text-align:right;">
-62.45
-</td>
-<td style="text-align:right;">
-56.95
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical
-</td>
-<td style="text-align:left;">
-Hispanic/Latinx Female
-</td>
-<td style="text-align:right;">
-71.4
-</td>
-<td style="text-align:right;">
-62.45
-</td>
-<td style="text-align:right;">
-72.05
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical
-</td>
-<td style="text-align:left;">
-White Female
-</td>
-<td style="text-align:right;">
-63.2
-</td>
-<td style="text-align:right;">
-62.45
-</td>
-<td style="text-align:right;">
-65.10
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical
-</td>
-<td style="text-align:left;">
-Asian Male
-</td>
-<td style="text-align:right;">
-64.5
-</td>
-<td style="text-align:right;">
-62.45
-</td>
-<td style="text-align:right;">
-63.90
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical
-</td>
-<td style="text-align:left;">
-Black Male
-</td>
-<td style="text-align:right;">
-45.1
-</td>
-<td style="text-align:right;">
-62.45
-</td>
-<td style="text-align:right;">
-45.90
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical
-</td>
-<td style="text-align:left;">
-Hispanic/Latinx Male
-</td>
-<td style="text-align:right;">
-55.2
-</td>
-<td style="text-align:right;">
-62.45
-</td>
-<td style="text-align:right;">
-60.35
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical
-</td>
-<td style="text-align:left;">
-International Male
-</td>
-<td style="text-align:right;">
-59.2
-</td>
-<td style="text-align:right;">
-62.45
-</td>
-<td style="text-align:right;">
-52.95
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical
-</td>
-<td style="text-align:left;">
-Other/Unknown Male
-</td>
-<td style="text-align:right;">
-50.0
-</td>
-<td style="text-align:right;">
-62.45
-</td>
-<td style="text-align:right;">
-50.00
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Electrical
-</td>
-<td style="text-align:left;">
-White Male
-</td>
-<td style="text-align:right;">
-63.7
-</td>
-<td style="text-align:right;">
-62.45
-</td>
-<td style="text-align:right;">
-65.10
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial
-</td>
-<td style="text-align:left;">
-Asian Female
-</td>
-<td style="text-align:right;">
-50.0
-</td>
-<td style="text-align:right;">
-59.60
-</td>
-<td style="text-align:right;">
-70.85
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial
-</td>
-<td style="text-align:left;">
-Black Female
-</td>
-<td style="text-align:right;">
-58.5
-</td>
-<td style="text-align:right;">
-59.60
-</td>
-<td style="text-align:right;">
-56.95
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial
-</td>
-<td style="text-align:left;">
-White Female
-</td>
-<td style="text-align:right;">
-60.7
-</td>
-<td style="text-align:right;">
-59.60
-</td>
-<td style="text-align:right;">
-65.10
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial
-</td>
-<td style="text-align:left;">
-Asian Male
-</td>
-<td style="text-align:right;">
-63.3
-</td>
-<td style="text-align:right;">
-59.60
-</td>
-<td style="text-align:right;">
-63.90
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial
-</td>
-<td style="text-align:left;">
-Black Male
-</td>
-<td style="text-align:right;">
-53.8
-</td>
-<td style="text-align:right;">
-59.60
-</td>
-<td style="text-align:right;">
-45.90
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial
-</td>
-<td style="text-align:left;">
-Hispanic/Latinx Male
-</td>
-<td style="text-align:right;">
-88.0
-</td>
-<td style="text-align:right;">
-59.60
-</td>
-<td style="text-align:right;">
-60.35
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial
-</td>
-<td style="text-align:left;">
-International Male
-</td>
-<td style="text-align:right;">
-54.5
-</td>
-<td style="text-align:right;">
-59.60
-</td>
-<td style="text-align:right;">
-52.95
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Industrial
-</td>
-<td style="text-align:left;">
-White Male
-</td>
-<td style="text-align:right;">
-65.0
-</td>
-<td style="text-align:right;">
-59.60
-</td>
-<td style="text-align:right;">
-65.10
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical
-</td>
-<td style="text-align:left;">
-Asian Female
-</td>
-<td style="text-align:right;">
-82.6
-</td>
-<td style="text-align:right;">
-61.80
-</td>
-<td style="text-align:right;">
-70.85
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical
-</td>
-<td style="text-align:left;">
-Black Female
-</td>
-<td style="text-align:right;">
-55.4
-</td>
-<td style="text-align:right;">
-61.80
-</td>
-<td style="text-align:right;">
-56.95
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical
-</td>
-<td style="text-align:left;">
-Hispanic/Latinx Female
-</td>
-<td style="text-align:right;">
-72.7
-</td>
-<td style="text-align:right;">
-61.80
-</td>
-<td style="text-align:right;">
-72.05
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical
-</td>
-<td style="text-align:left;">
-White Female
-</td>
-<td style="text-align:right;">
-67.0
-</td>
-<td style="text-align:right;">
-61.80
-</td>
-<td style="text-align:right;">
-65.10
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical
-</td>
-<td style="text-align:left;">
-Asian Male
-</td>
-<td style="text-align:right;">
-63.1
-</td>
-<td style="text-align:right;">
-61.80
-</td>
-<td style="text-align:right;">
-63.90
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical
-</td>
-<td style="text-align:left;">
-Black Male
-</td>
-<td style="text-align:right;">
-46.7
-</td>
-<td style="text-align:right;">
-61.80
-</td>
-<td style="text-align:right;">
-45.90
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical
-</td>
-<td style="text-align:left;">
-Hispanic/Latinx Male
-</td>
-<td style="text-align:right;">
-61.8
-</td>
-<td style="text-align:right;">
-61.80
-</td>
-<td style="text-align:right;">
-60.35
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical
-</td>
-<td style="text-align:left;">
-International Male
-</td>
-<td style="text-align:right;">
-51.4
-</td>
-<td style="text-align:right;">
-61.80
-</td>
-<td style="text-align:right;">
-52.95
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical
-</td>
-<td style="text-align:left;">
-Native American Male
-</td>
-<td style="text-align:right;">
-57.1
-</td>
-<td style="text-align:right;">
-61.80
-</td>
-<td style="text-align:right;">
-57.10
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical
-</td>
-<td style="text-align:left;">
-Other/Unknown Male
-</td>
-<td style="text-align:right;">
-58.3
-</td>
-<td style="text-align:right;">
-61.80
-</td>
-<td style="text-align:right;">
-50.00
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Mechanical
-</td>
-<td style="text-align:left;">
-White Male
-</td>
-<td style="text-align:right;">
-65.2
-</td>
-<td style="text-align:right;">
-61.80
-</td>
-<td style="text-align:right;">
-65.10
-</td>
-</tr>
-</tbody>
-</table>
-<p><br></p>
-<p>However, the visual convention preferred by publishers and readers is a row-record (“wide”) form, as illustrated by Table 2. The <code>race_sex</code> key is in the left column and the <code>program</code> key is in the column names. The stickiness findings lie at the row-column intersections. Note that in this form, the four NA observations we mentioned earlier are explicitly shown.</p>
-<table class="table table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
-<caption style="font-size: initial !important;">
-Table 2: Stickiness (row records)
-</caption>
-<thead><tr>
-<th style="text-align:left;">
-race_sex
-</th>
-<th style="text-align:right;">
-Civil
-</th>
-<th style="text-align:right;">
-Electrical
-</th>
-<th style="text-align:right;">
-Industrial
-</th>
-<th style="text-align:right;">
-Mechanical
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-Asian Female
-</td>
-<td style="text-align:right;">
-70.6
-</td>
-<td style="text-align:right;">
-71.1
-</td>
-<td style="text-align:right;">
-50.0
-</td>
-<td style="text-align:right;">
-82.6
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Asian Male
-</td>
-<td style="text-align:right;">
-64.9
-</td>
-<td style="text-align:right;">
-64.5
-</td>
-<td style="text-align:right;">
-63.3
-</td>
-<td style="text-align:right;">
-63.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Black Female
-</td>
-<td style="text-align:right;">
-51.9
-</td>
-<td style="text-align:right;">
-61.7
-</td>
-<td style="text-align:right;">
-58.5
-</td>
-<td style="text-align:right;">
-55.4
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Black Male
-</td>
-<td style="text-align:right;">
-43.9
-</td>
-<td style="text-align:right;">
-45.1
-</td>
-<td style="text-align:right;">
-53.8
-</td>
-<td style="text-align:right;">
-46.7
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Hispanic/Latinx Female
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-71.4
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-72.7
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Hispanic/Latinx Male
-</td>
-<td style="text-align:right;">
-58.9
-</td>
-<td style="text-align:right;">
-55.2
-</td>
-<td style="text-align:right;">
-88.0
-</td>
-<td style="text-align:right;">
-61.8
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-International Male
-</td>
-<td style="text-align:right;">
-42.9
-</td>
-<td style="text-align:right;">
-59.2
-</td>
-<td style="text-align:right;">
-54.5
-</td>
-<td style="text-align:right;">
-51.4
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Native American Male
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-57.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Other/Unknown Male
-</td>
-<td style="text-align:right;">
-31.2
-</td>
-<td style="text-align:right;">
-50.0
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-58.3
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 White Female
 </td>
 <td style="text-align:right;">
 70.5
 </td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Civil
+</td>
+<td style="text-align:left;">
+White Male
+</td>
+<td style="text-align:right;">
+68.3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical
+</td>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+71.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical
+</td>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+64.5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical
+</td>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+61.7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical
+</td>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+45.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical
+</td>
+<td style="text-align:left;">
+Hispanic/Latinx Female
+</td>
+<td style="text-align:right;">
+71.4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical
+</td>
+<td style="text-align:left;">
+Hispanic/Latinx Male
+</td>
+<td style="text-align:right;">
+55.2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical
+</td>
+<td style="text-align:left;">
+White Female
+</td>
 <td style="text-align:right;">
 63.2
 </td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Electrical
+</td>
+<td style="text-align:left;">
+White Male
+</td>
+<td style="text-align:right;">
+63.7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial
+</td>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+50.0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial
+</td>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+63.3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial
+</td>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+58.5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial
+</td>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+53.8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial
+</td>
+<td style="text-align:left;">
+Hispanic/Latinx Male
+</td>
+<td style="text-align:right;">
+88.0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial
+</td>
+<td style="text-align:left;">
+White Female
+</td>
 <td style="text-align:right;">
 60.7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Industrial
+</td>
+<td style="text-align:left;">
+White Male
+</td>
+<td style="text-align:right;">
+65.0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical
+</td>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+82.6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical
+</td>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+63.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical
+</td>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+55.4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical
+</td>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+46.7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical
+</td>
+<td style="text-align:left;">
+Hispanic/Latinx Female
+</td>
+<td style="text-align:right;">
+72.7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical
+</td>
+<td style="text-align:left;">
+Hispanic/Latinx Male
+</td>
+<td style="text-align:right;">
+61.8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mechanical
+</td>
+<td style="text-align:left;">
+White Female
 </td>
 <td style="text-align:right;">
 67.0
@@ -1011,16 +726,10 @@ White Female
 </tr>
 <tr>
 <td style="text-align:left;">
+Mechanical
+</td>
+<td style="text-align:left;">
 White Male
-</td>
-<td style="text-align:right;">
-68.3
-</td>
-<td style="text-align:right;">
-63.7
-</td>
-<td style="text-align:right;">
-65.0
 </td>
 <td style="text-align:right;">
 65.2
@@ -1028,59 +737,49 @@ White Male
 </tr>
 </tbody>
 </table>
-<p>Depending on your software background, you may have encountered a block-record/row-record transformation using any of these function pairs—a list adapted from <span class="citation"><a href="#ref-Mount+Zumel:2019:fluid-data" role="doc-biblioref">[1]</a></span>.</p>
-<ul>
-<li>pivot / anti-pivot or crosstab / shred (databases)</li>
-<li>pivot_to_rowrecs / unpivot_to_blocks (cdata)</li>
-<li>reshape “wide” / reshape “long” (R)</li>
-<li>pivot_wider / pivot_longer (tidyr)</li>
-<li>pivot / unpivot (Microsoft Excel)</li>
-<li>dcast / melt (data.table)</li>
-<li>cast / melt (reshape2)</li>
-</ul>
-<p>In our example, we use <code><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast()</a></code> from the data.table package to reshape the data for publication. We start by limiting the significant figures of floating-point numbers.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># create a new memory location</span>
-<span class="va">block_form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
-
-<span class="co"># limit significant digits</span>
-<span class="va">block_form</span><span class="op">[</span>, <span class="va">stick</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">stick</span>, <span class="fl">2</span><span class="op">)</span><span class="op">]</span></code></pre></div>
-<p>If in the final result we want rows and columns ordered alphabetically, we convert factors to characters.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+</div>
+<div id="transform-block-records-to-row-records" class="section level2">
+<h2 class="hasAnchor">
+<a href="#transform-block-records-to-row-records" class="anchor" aria-hidden="true"></a>Transform block-records to row-records</h2>
+<p>If in the row-record form we want rows and columns ordered alphabetically, we convert factors to characters.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># create a new memory location</span>
 <span class="va">row_form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">block_form</span><span class="op">)</span>
 
 <span class="co"># convert factors to characters</span>
 <span class="va">row_form</span><span class="op">[</span>, <span class="va">race_sex</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">race_sex</span><span class="op">)</span><span class="op">]</span>
 <span class="va">row_form</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span></code></pre></div>
-<p><code><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast()</a></code> is used to reshape the data frame from block-record form to row-record form.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>Use <code><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast()</a></code> to reshape the data frame from block-record form to row-record form.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># reshape</span>
 <span class="va">row_form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">row_form</span>, <span class="va">race_sex</span> <span class="op">~</span> <span class="va">program</span>, value.var <span class="op">=</span> <span class="st">"stick"</span><span class="op">)</span>
 
 <span class="co"># examine the result</span>
 <span class="va">row_form</span>
-<span class="co">#&gt;                   race_sex Civil Electrical Industrial Mechanical</span>
-<span class="co">#&gt;                     &lt;char&gt; &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span>
-<span class="co">#&gt;  1:           Asian Female  70.6       71.1       50.0       82.6</span>
-<span class="co">#&gt;  2:             Asian Male  64.9       64.5       63.3       63.1</span>
-<span class="co">#&gt;  3:           Black Female  51.9       61.7       58.5       55.4</span>
-<span class="co">#&gt;  4:             Black Male  43.9       45.1       53.8       46.7</span>
-<span class="co">#&gt;  5: Hispanic/Latinx Female    NA       71.4         NA       72.7</span>
-<span class="co">#&gt;  6:   Hispanic/Latinx Male  58.9       55.2       88.0       61.8</span>
-<span class="co">#&gt;  7:     International Male  42.9       59.2       54.5       51.4</span>
-<span class="co">#&gt;  8:   Native American Male    NA         NA         NA       57.1</span>
-<span class="co">#&gt;  9:     Other/Unknown Male  31.2       50.0         NA       58.3</span>
-<span class="co">#&gt; 10:           White Female  70.5       63.2       60.7       67.0</span>
-<span class="co">#&gt; 11:             White Male  68.3       63.7       65.0       65.2</span></code></pre></div>
-<p>This result is the source for Table 2, repeated below.</p>
+<span class="co">#&gt;                  race_sex Civil Electrical Industrial Mechanical</span>
+<span class="co">#&gt;                    &lt;char&gt; &lt;num&gt;      &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span>
+<span class="co">#&gt; 1:           Asian Female  70.6       71.1       50.0       82.6</span>
+<span class="co">#&gt; 2:             Asian Male  64.9       64.5       63.3       63.1</span>
+<span class="co">#&gt; 3:           Black Female  51.9       61.7       58.5       55.4</span>
+<span class="co">#&gt; 4:             Black Male  43.9       45.1       53.8       46.7</span>
+<span class="co">#&gt; 5: Hispanic/Latinx Female  50.0       71.4         NA       72.7</span>
+<span class="co">#&gt; 6:   Hispanic/Latinx Male  58.9       55.2       88.0       61.8</span>
+<span class="co">#&gt; 7:           White Female  70.5       63.2       60.7       67.0</span>
+<span class="co">#&gt; 8:             White Male  68.3       63.7       65.0       65.2</span></code></pre></div>
+<p>We can edit the column names for presentation,</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">row_form</span>,
+  old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"race_sex"</span><span class="op">)</span>,
+  new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Race/Ethnicity/Sex"</span><span class="op">)</span>
+<span class="op">)</span></code></pre></div>
+<p>Following is an HTML version of the data table in row-record form.</p>
 <table class="table table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
 <caption style="font-size: initial !important;">
-Table 2: Stickiness (row records)
+Table 4. Stickiness in row-record form
 </caption>
 <thead><tr>
 <th style="text-align:left;">
-race_sex
+Race/Ethnicity/Sex
 </th>
 <th style="text-align:right;">
 Civil
@@ -1169,7 +868,7 @@ Black Male
 Hispanic/Latinx Female
 </td>
 <td style="text-align:right;">
-NA
+50.0
 </td>
 <td style="text-align:right;">
 71.4
@@ -1196,57 +895,6 @@ Hispanic/Latinx Male
 </td>
 <td style="text-align:right;">
 61.8
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-International Male
-</td>
-<td style="text-align:right;">
-42.9
-</td>
-<td style="text-align:right;">
-59.2
-</td>
-<td style="text-align:right;">
-54.5
-</td>
-<td style="text-align:right;">
-51.4
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Native American Male
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-57.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Other/Unknown Male
-</td>
-<td style="text-align:right;">
-31.2
-</td>
-<td style="text-align:right;">
-50.0
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-58.3
 </td>
 </tr>
 <tr>
@@ -1285,7 +933,6 @@ White Male
 </tr>
 </tbody>
 </table>
-<p>Other good tools for reshaping are provided in packages such as <code><a href="https://rdrr.io/r/stats/reshape.html" class="external-link">reshape()</a></code> in base R, cdata <span class="citation"><a href="#ref-Mount+Zumel:2020:cdata" role="doc-biblioref">[3]</a></span>, and tidyr <span class="citation"><a href="#ref-Wickham+Henry:2020:tidyr" role="doc-biblioref">[4]</a></span>.</p>
 <div id="exercise" class="section level3">
 <h3 class="hasAnchor">
 <a href="#exercise" class="anchor" aria-hidden="true"></a>Exercise</h3>
@@ -1294,12 +941,46 @@ White Male
 </ol>
 </div>
 </div>
+<div id="transform-row-records-to-block-records" class="section level2">
+<h2 class="hasAnchor">
+<a href="#transform-row-records-to-block-records" class="anchor" aria-hidden="true"></a>Transform row-records to block-records</h2>
+<p>As Mount and Zumel state, “For coordinatized data, different layouts of rows and columns are demonstrably equivalent.”—if the keys provide invariant “coordinates” to the data values, then one form is readily transformed to another.</p>
+<p>In this example (again, a simple example with two coordinates and one response), we can use <code><a href="https://Rdatatable.gitlab.io/data.table/reference/melt.data.table.html" class="external-link">melt()</a></code> to transform row records to block records. Note that we can re-establish the key label <code>program</code> and the response label <code>stick</code>.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/melt.data.table.html" class="external-link">melt</a></span><span class="op">(</span><span class="va">row_form</span>,
+  id.vars <span class="op">=</span> <span class="st">"Race/Ethnicity/Sex"</span>,
+  measure.vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Civil"</span>, <span class="st">"Electrical"</span>, <span class="st">"Industrial"</span>, <span class="st">"Mechanical"</span><span class="op">)</span>,
+  variable.name <span class="op">=</span> <span class="st">"program"</span>,
+  value.name <span class="op">=</span> <span class="st">"stick"</span>
+<span class="op">)</span>
+<span class="co">#&gt;         Race/Ethnicity/Sex    program stick</span>
+<span class="co">#&gt;                     &lt;char&gt;     &lt;fctr&gt; &lt;num&gt;</span>
+<span class="co">#&gt;  1:           Asian Female      Civil  70.6</span>
+<span class="co">#&gt;  2:             Asian Male      Civil  64.9</span>
+<span class="co">#&gt;  3:           Black Female      Civil  51.9</span>
+<span class="co">#&gt;  4:             Black Male      Civil  43.9</span>
+<span class="co">#&gt;  5: Hispanic/Latinx Female      Civil  50.0</span>
+<span class="co">#&gt; ---                                        </span>
+<span class="co">#&gt; 28:             Black Male Mechanical  46.7</span>
+<span class="co">#&gt; 29: Hispanic/Latinx Female Mechanical  72.7</span>
+<span class="co">#&gt; 30:   Hispanic/Latinx Male Mechanical  61.8</span>
+<span class="co">#&gt; 31:           White Female Mechanical  67.0</span>
+<span class="co">#&gt; 32:             White Male Mechanical  65.2</span></code></pre></div>
+<p>Working with student unit record data, <code><a href="https://Rdatatable.gitlab.io/data.table/reference/melt.data.table.html" class="external-link">melt()</a></code> is particularly useful if a colleague provides you with data in row-record form and you need to transform it to block record for analysis or graphing. Again, for transformations with multiple response variables, we recommend the cdata package <span class="citation"><a href="#ref-Mount+Zumel:2020:cdata" role="doc-biblioref">[3]</a></span>.</p>
+</div>
 <div id="tables-with-totals" class="section level2">
 <h2 class="hasAnchor">
 <a href="#tables-with-totals" class="anchor" aria-hidden="true"></a>Tables with totals</h2>
-<p>When data have not been summarized, as in the <code>study_student</code> data set for example,</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">study_student</span>
+<p>Another commonly-encountered table in student unit record research is a summary table of the numbers of students in different groups. For this example, we use the <code>study_student</code> data. View its help page by running</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="op">?</span> <span class="va">study_student</span></code></pre></div>
+<p>If we focus on two categories, e.g., <code>program</code> and <code>race_sex</code>, the frequency of occurrences of the combinations of the levels of the two categories is a two-way frequency table.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Create a new memory location</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_student</span><span class="op">)</span>
+
+<span class="co"># View the data</span>
+<span class="va">DT</span>
 <span class="co">#&gt;              mcid   institution   cip6    program          race    sex</span>
 <span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;     &lt;char&gt;        &lt;char&gt; &lt;char&gt;</span>
 <span class="co">#&gt;    1: MID25783197 Institution M 140801      Civil         White   Male</span>
@@ -1326,91 +1007,274 @@ White Male
 <span class="co">#&gt; 8217:       20143             TRUE</span>
 <span class="co">#&gt; 8218:       20153             TRUE</span>
 <span class="co">#&gt; 8219:       20153             TRUE</span></code></pre></div>
-<p>and what we want is a count of students by group, the result is a frequency table. The janitor package has convenient functions for creating frequency tables and adding row and column totals.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># To access the tabyl() and adorn_total() functions</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sfirke/janitor" class="external-link">"janitor"</a></span><span class="op">)</span>
-
-<span class="co"># Create a new memory location</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_student</span><span class="op">)</span></code></pre></div>
 <p>We join the race/ethnicity and sex variables to construct our usual categories,</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Merge the groups as usual</span>
 <span class="va">DT</span><span class="op">[</span>, <span class="va">race_sex</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>
 
-<span class="co"># Examine the result</span>
-<span class="va">DT</span>
-<span class="co">#&gt;              mcid   institution   cip6    program          race    sex</span>
-<span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;     &lt;char&gt;        &lt;char&gt; &lt;char&gt;</span>
-<span class="co">#&gt;    1: MID25783197 Institution M 140801      Civil         White   Male</span>
-<span class="co">#&gt;    2: MID25783441 Institution M 140801      Civil         White   Male</span>
-<span class="co">#&gt;    3: MID25783553 Institution M 140801      Civil         White   Male</span>
-<span class="co">#&gt;    4: MID25784209 Institution M 140801      Civil International   Male</span>
-<span class="co">#&gt;    5: MID25784489 Institution M 140801      Civil         Asian Female</span>
-<span class="co">#&gt;   ---                                                                 </span>
-<span class="co">#&gt; 8215: MID26692926 Institution L 143501 Industrial         White   Male</span>
-<span class="co">#&gt; 8216: MID26693368 Institution L 143501 Industrial         White   Male</span>
-<span class="co">#&gt; 8217: MID26695626 Institution L 143501 Industrial         White   Male</span>
-<span class="co">#&gt; 8218: MID26696116 Institution L 143501 Industrial         White Female</span>
-<span class="co">#&gt; 8219: MID26696429 Institution L 143501 Industrial         White Female</span>
-<span class="co">#&gt;       timely_term data_sufficiency           race_sex</span>
-<span class="co">#&gt;            &lt;char&gt;           &lt;lgcl&gt;             &lt;char&gt;</span>
-<span class="co">#&gt;    1:       19923             TRUE         White Male</span>
-<span class="co">#&gt;    2:       19973             TRUE         White Male</span>
-<span class="co">#&gt;    3:       20073             TRUE         White Male</span>
-<span class="co">#&gt;    4:       20003             TRUE International Male</span>
-<span class="co">#&gt;    5:       19943             TRUE       Asian Female</span>
-<span class="co">#&gt;   ---                                                </span>
-<span class="co">#&gt; 8215:       20153             TRUE         White Male</span>
-<span class="co">#&gt; 8216:       20143             TRUE         White Male</span>
-<span class="co">#&gt; 8217:       20143             TRUE         White Male</span>
-<span class="co">#&gt; 8218:       20153             TRUE       White Female</span>
-<span class="co">#&gt; 8219:       20153             TRUE       White Female</span></code></pre></div>
-<p>Use <code><a href="https://rdrr.io/pkg/janitor/man/tabyl.html" class="external-link">tabyl()</a></code> to create the two-way frequency table of counts,</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Create the two-way frequency table</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/janitor/man/tabyl.html" class="external-link">tabyl</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">race_sex</span>, <span class="va">program</span><span class="op">)</span>
+<span class="co"># Subset the same populations as above</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="va">race_sex</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%ilike%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"International|Other|Native"</span><span class="op">)</span><span class="op">]</span></code></pre></div>
+<p>Counting by the two grouping variables yields the frequency of the combinations of levels and omits the other columns.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"race_sex"</span><span class="op">)</span><span class="op">]</span>
+
+<span class="co"># omit small populations</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">N</span> <span class="op">&gt;=</span> <span class="fl">10</span><span class="op">]</span>
 
 <span class="co"># Examine the result</span>
 <span class="va">DT</span>
-<span class="co">#&gt;                race_sex Civil Electrical Industrial Mechanical</span>
-<span class="co">#&gt;            Asian Female    17         38         40         23</span>
-<span class="co">#&gt;              Asian Male    37        197         60        122</span>
-<span class="co">#&gt;            Black Female    54        154         94         83</span>
-<span class="co">#&gt;              Black Male    98        304        106        214</span>
-<span class="co">#&gt;  Hispanic/Latinx Female    10         14          6         11</span>
-<span class="co">#&gt;    Hispanic/Latinx Male    56         67         25         76</span>
-<span class="co">#&gt;    International Female     1          8          5          3</span>
-<span class="co">#&gt;      International Male    14         71         22         37</span>
-<span class="co">#&gt;  Native American Female     0          3          1          5</span>
-<span class="co">#&gt;    Native American Male     7          8          1         14</span>
-<span class="co">#&gt;    Other/Unknown Female     6          8          3          8</span>
-<span class="co">#&gt;      Other/Unknown Male    16         28          2         48</span>
-<span class="co">#&gt;            White Female   329        193        234        291</span>
-<span class="co">#&gt;              White Male  1147       1366        494       1940</span></code></pre></div>
-<p>Use <code><a href="https://rdrr.io/pkg/janitor/man/adorn_totals.html" class="external-link">adorn_totals()</a></code> to add row totals, column totals, or (as shown here) both,</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Add row and column totals</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/janitor/man/adorn_totals.html" class="external-link">adorn_totals</a></span><span class="op">(</span><span class="va">DT</span>, where <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"row"</span>, <span class="st">"col"</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt;        program             race_sex     N</span>
+<span class="co">#&gt;         &lt;char&gt;               &lt;char&gt; &lt;int&gt;</span>
+<span class="co">#&gt;  1:      Civil           White Male  1147</span>
+<span class="co">#&gt;  2:      Civil         Asian Female    17</span>
+<span class="co">#&gt;  3:      Civil         White Female   329</span>
+<span class="co">#&gt;  4:      Civil           Black Male    98</span>
+<span class="co">#&gt;  5:      Civil         Black Female    54</span>
+<span class="co">#&gt; ---                                      </span>
+<span class="co">#&gt; 27: Industrial         White Female   234</span>
+<span class="co">#&gt; 28: Industrial         Black Female    94</span>
+<span class="co">#&gt; 29: Industrial           Asian Male    60</span>
+<span class="co">#&gt; 30: Industrial Hispanic/Latinx Male    25</span>
+<span class="co">#&gt; 31: Industrial         Asian Female    40</span></code></pre></div>
+<p>Reshaping from block-record to row-record form creates the two-way frequency table.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">race_sex</span> <span class="op">~</span> <span class="va">program</span>, value.var <span class="op">=</span> <span class="st">"N"</span><span class="op">)</span>
 
 <span class="co"># Examine the result</span>
+<span class="va">DT</span>
+<span class="co">#&gt;                  race_sex Civil Electrical Industrial Mechanical</span>
+<span class="co">#&gt;                    &lt;char&gt; &lt;int&gt;      &lt;int&gt;      &lt;int&gt;      &lt;int&gt;</span>
+<span class="co">#&gt; 1:           Asian Female    17         38         40         23</span>
+<span class="co">#&gt; 2:             Asian Male    37        197         60        122</span>
+<span class="co">#&gt; 3:           Black Female    54        154         94         83</span>
+<span class="co">#&gt; 4:             Black Male    98        304        106        214</span>
+<span class="co">#&gt; 5: Hispanic/Latinx Female    10         14         NA         11</span>
+<span class="co">#&gt; 6:   Hispanic/Latinx Male    56         67         25         76</span>
+<span class="co">#&gt; 7:           White Female   329        193        234        291</span>
+<span class="co">#&gt; 8:             White Male  1147       1366        494       1940</span></code></pre></div>
+<p>With data of this sort, readers often wish to see row and column totals. The janitor package has the <code><a href="https://rdrr.io/pkg/janitor/man/adorn_totals.html" class="external-link">adorn_totals()</a></code> function to do just that. You can sum rows, columns, or both.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/janitor/man/adorn_totals.html" class="external-link">adorn_totals</a></span><span class="op">(</span><span class="va">DT</span>, where <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"row"</span>, <span class="st">"col"</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+
 <span class="va">DT</span>
 <span class="co">#&gt;                race_sex Civil Electrical Industrial Mechanical Total</span>
 <span class="co">#&gt;            Asian Female    17         38         40         23   118</span>
 <span class="co">#&gt;              Asian Male    37        197         60        122   416</span>
 <span class="co">#&gt;            Black Female    54        154         94         83   385</span>
 <span class="co">#&gt;              Black Male    98        304        106        214   722</span>
-<span class="co">#&gt;  Hispanic/Latinx Female    10         14          6         11    41</span>
+<span class="co">#&gt;  Hispanic/Latinx Female    10         14         NA         11    35</span>
 <span class="co">#&gt;    Hispanic/Latinx Male    56         67         25         76   224</span>
-<span class="co">#&gt;    International Female     1          8          5          3    17</span>
-<span class="co">#&gt;      International Male    14         71         22         37   144</span>
-<span class="co">#&gt;  Native American Female     0          3          1          5     9</span>
-<span class="co">#&gt;    Native American Male     7          8          1         14    30</span>
-<span class="co">#&gt;    Other/Unknown Female     6          8          3          8    25</span>
-<span class="co">#&gt;      Other/Unknown Male    16         28          2         48    94</span>
 <span class="co">#&gt;            White Female   329        193        234        291  1047</span>
 <span class="co">#&gt;              White Male  1147       1366        494       1940  4947</span>
-<span class="co">#&gt;                   Total  1792       2459       1093       2875  8219</span></code></pre></div>
+<span class="co">#&gt;                   Total  1748       2333       1053       2760  7894</span></code></pre></div>
+<p>Following is an HTML version of these data.</p>
+<table class="table table" style="font-size: 11px; margin-left: auto; margin-right: auto;">
+<caption style="font-size: initial !important;">
+Table 5. Two-way frequency table with totals
+</caption>
+<thead><tr>
+<th style="text-align:left;">
+Race/Ethnicity/Sex
+</th>
+<th style="text-align:right;">
+Civil
+</th>
+<th style="text-align:right;">
+Electrical
+</th>
+<th style="text-align:right;">
+Industrial
+</th>
+<th style="text-align:right;">
+Mechanical
+</th>
+<th style="text-align:right;">
+Total
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+38
+</td>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:right;">
+118
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Asian Male
+</td>
+<td style="text-align:right;">
+37
+</td>
+<td style="text-align:right;">
+197
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:right;">
+122
+</td>
+<td style="text-align:right;">
+416
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Black Female
+</td>
+<td style="text-align:right;">
+54
+</td>
+<td style="text-align:right;">
+154
+</td>
+<td style="text-align:right;">
+94
+</td>
+<td style="text-align:right;">
+83
+</td>
+<td style="text-align:right;">
+385
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Black Male
+</td>
+<td style="text-align:right;">
+98
+</td>
+<td style="text-align:right;">
+304
+</td>
+<td style="text-align:right;">
+106
+</td>
+<td style="text-align:right;">
+214
+</td>
+<td style="text-align:right;">
+722
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hispanic/Latinx Female
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+35
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hispanic/Latinx Male
+</td>
+<td style="text-align:right;">
+56
+</td>
+<td style="text-align:right;">
+67
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:right;">
+76
+</td>
+<td style="text-align:right;">
+224
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+White Female
+</td>
+<td style="text-align:right;">
+329
+</td>
+<td style="text-align:right;">
+193
+</td>
+<td style="text-align:right;">
+234
+</td>
+<td style="text-align:right;">
+291
+</td>
+<td style="text-align:right;">
+1047
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+White Male
+</td>
+<td style="text-align:right;">
+1147
+</td>
+<td style="text-align:right;">
+1366
+</td>
+<td style="text-align:right;">
+494
+</td>
+<td style="text-align:right;">
+1940
+</td>
+<td style="text-align:right;">
+4947
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Total
+</td>
+<td style="text-align:right;">
+1748
+</td>
+<td style="text-align:right;">
+2333
+</td>
+<td style="text-align:right;">
+1053
+</td>
+<td style="text-align:right;">
+2760
+</td>
+<td style="text-align:right;">
+7894
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
@@ -1431,11 +1295,6 @@ White Male
 <div class="csl-right-inline">J. Mount and N. Zumel, <em><span class="nocase">cdata: Fluid Data Transformations</span></em>. R package version 1.1.6, 2020 [Online]. Available: <a href="https://CRAN.R-project.org/package=cdata" class="external-link">https://CRAN.R-project.org/package=cdata</a>
 </div>
 </div>
-<div id="ref-Wickham+Henry:2020:tidyr" class="csl-entry">
-<div class="csl-left-margin">[4] </div>
-<div class="csl-right-inline">H. Wickham and L. Henry, <em><span class="nocase">tidyr: Tidy Messy Data</span></em>. R package version 1.1.0, 2020 [Online]. Available: <a href="https://CRAN.R-project.org/package=tidyr" class="external-link">https://CRAN.R-project.org/package=tidyr</a>
-</div>
-</div>
 </div>
 </div>
 <div id="appendix" class="section level2">
@@ -1445,18 +1304,50 @@ White Male
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor" aria-hidden="true"></a>Complete script</h3>
 <p>The vignette code chunks are collected below in a single, condensed script.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sfirke/janitor" class="external-link">"janitor"</a></span><span class="op">)</span>
 
 <span class="co"># optional code to control data.table printing</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>
   datatable.print.nrows <span class="op">=</span> <span class="fl">10</span>,
   datatable.print.topn <span class="op">=</span> <span class="fl">5</span>,
   datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+<span class="op">)</span>
+
+<span class="co"># Block-record form</span>
+<span class="va">block_form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_stickiness</span><span class="op">)</span>
+<span class="va">block_form</span> <span class="op">&lt;-</span> <span class="va">block_form</span><span class="op">[</span><span class="va">ever</span> <span class="op">&gt;=</span> <span class="fl">10</span><span class="op">]</span>
+<span class="va">block_form</span> <span class="op">&lt;-</span> <span class="va">block_form</span><span class="op">[</span><span class="op">!</span><span class="va">race_sex</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%ilike%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"International|Other|Native"</span><span class="op">)</span><span class="op">]</span>
+<span class="va">block_form</span> <span class="op">&lt;-</span> <span class="va">block_form</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">race_sex</span>, <span class="va">stick</span><span class="op">)</span><span class="op">]</span>
+
+<span class="co"># Transform block-records to row-records</span>
+<span class="va">row_form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">block_form</span><span class="op">)</span>
+<span class="va">row_form</span><span class="op">[</span>, <span class="va">race_sex</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">race_sex</span><span class="op">)</span><span class="op">]</span>
+<span class="va">row_form</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span>
+<span class="va">row_form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">row_form</span>, <span class="va">race_sex</span> <span class="op">~</span> <span class="va">program</span>, value.var <span class="op">=</span> <span class="st">"stick"</span><span class="op">)</span>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">row_form</span>,
+  old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"race_sex"</span><span class="op">)</span>,
+  new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Race/Ethnicity/Sex"</span><span class="op">)</span>
+<span class="op">)</span>
+
+<span class="co"># Transform row-records to block-records</span>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/melt.data.table.html" class="external-link">melt</a></span><span class="op">(</span><span class="va">row_form</span>,
+  id.vars <span class="op">=</span> <span class="st">"Race/Ethnicity/Sex"</span>,
+  measure.vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Civil"</span>, <span class="st">"Electrical"</span>, <span class="st">"Industrial"</span>, <span class="st">"Mechanical"</span><span class="op">)</span>,
+  variable.name <span class="op">=</span> <span class="st">"program"</span>,
+  value.name <span class="op">=</span> <span class="st">"stick"</span>
+<span class="op">)</span>
+
+<span class="co"># Tables with totals</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_student</span><span class="op">)</span>
+<span class="va">DT</span><span class="op">[</span>, <span class="va">race_sex</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="va">race_sex</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%ilike%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"International|Other|Native"</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"race_sex"</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">N</span> <span class="op">&gt;=</span> <span class="fl">10</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">race_sex</span> <span class="op">~</span> <span class="va">program</span>, value.var <span class="op">=</span> <span class="st">"N"</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/janitor/man/adorn_totals.html" class="external-link">adorn_totals</a></span><span class="op">(</span><span class="va">DT</span>, where <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"row"</span>, <span class="st">"col"</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <style type="text/css">
 blockquote {
     padding: 10px 20px;
