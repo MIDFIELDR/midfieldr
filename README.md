@@ -7,7 +7,7 @@ Tools for Studying MIDFIELD Student Unit Record Data in R
 
 <!-- badges: start -->
 
-[![build](https://github.com/MIDFIELDR/midfieldr/workflows/build/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions)
+[![R-CMD-check](https://github.com/MIDFIELDR/midfieldr/workflows/R-CMD-check/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions)
 [![codecov](https://codecov.io/gh/MIDFIELDR/midfieldr/branch/main/graph/badge.svg?token=KcuCzBkLBP)](https://codecov.io/gh/MIDFIELDR/midfieldr)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/midfieldr)](http://cran.r-project.org/package=midfieldr)
 [![License: GPL
