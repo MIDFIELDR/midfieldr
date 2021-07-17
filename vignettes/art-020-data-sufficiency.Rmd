@@ -16,49 +16,11 @@ resource_files:
   - ../man/figures/art-020-data-sufficiency-fig2-1.png
 ---
 
-```{r include = FALSE}
-knitr::opts_chunk$set(fig.path = here::here(
-  "man/figures",
-  "art-020-data-sufficiency-"
-))
-knitr::opts_chunk$set(
-  echo = TRUE,
-  message = FALSE,
-  warning = FALSE,
-  collapse = TRUE,
-  comment = "#>",
-  error = FALSE,
-  fig.width = 6,
-  fig.asp = 1 / 1.6,
-  out.width = "70%",
-  fig.align = "center"
-)
-knitr::knit_hooks$set(inline = function(x) {
-  if (!is.numeric(x)) {
-    x
-  } else if (x >= 10000) {
-    prettyNum(round(x, 2), big.mark = ",")
-  } else {
-    prettyNum(round(x, 2))
-  }
-})
-kable2html <- function(x, font_size = NULL, caption = NULL) {
-  font_size <- ifelse(is.null(font_size), 11, font_size)
-  kable_in <- knitr::kable(x, format = "html", caption = caption)
-  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
-}
-asp_ratio_mw <- function(data, categories) {
-  cat1 <- categories[1] # panels
-  cat2 <- categories[2] # rows
-  nlevel1 <- nlevels(data[, get(cat1)])
-  nlevel2 <- nlevels(data[, get(cat2)])
-  r <- nlevel1 * nlevel2
-  q <- 32
-  asp_ratio1 <- (r + 2 * nlevel1) / q
-  asp_ratio2 <- (r + 2 * nlevel2) / q
-  ratios <- c(asp_ratio1, asp_ratio2)
-}
+```{r setup, include = FALSE}
+source("article-preamble.R")
+set_fig_path("art-020-data-sufficiency-")
 ```
+
 
 
 
@@ -90,7 +52,7 @@ In the figure we compare two first-time-in-college students admitted in differen
 
 <br>
 ```{r fig1, echo = FALSE, fig.asp = 5/10}
-library("data.table")
+suppressMessages(library("data.table"))
 library("ggplot2")
 
 # parameters
@@ -232,7 +194,7 @@ packages
 # packages used
 library("midfieldr")
 library("midfielddata")
-library("data.table")
+suppressMessages(library("data.table"))
 
 # optional code to format data.table printing
 options(
@@ -357,7 +319,7 @@ DT <- add_timely_term(DT,
 DT
 ```
  
-If the input data frame has an existing column name matching any of the added column names, the existing columns are deleted. For example, having examined the details, you can delete them (especially useful in an interactive session) by running the same code with details set to FALSE. 
+If the input data frame has an existing column name matching any of the added column names, the existing columns are deleted. For example, having examined the details, you can delete them (especially useful in an interactive session) by running the same code with detail set to FALSE. 
 
 ```{r}
 # remove detail
@@ -430,10 +392,10 @@ Now that our working data frame has `timely_term` and `institution` columns, we 
 
 ```
 
-Similar to `add_timely_term()`, this function has two required arguments and one optional `detail` argument. The details, in this case, add one extra column to show the institution's upper data limit. 
+Similar to `add_timely_term()`, this function has two required arguments and one optional `detail` argument that adds one extra column to show the institution's upper data limit. 
 
 ```{r}
-# add column with details
+# add detail columns
 DT <- add_data_sufficiency(DT,
   midfield_term = term,
   detail = TRUE
@@ -570,7 +532,7 @@ The vignette code chunks are collected below in a single, condensed script.
 # packages used
 library("midfieldr")
 library("midfielddata")
-library("data.table")
+suppressMessages(library("data.table"))
 
 # load data tables from midfielddata
 data(student, term, degree)

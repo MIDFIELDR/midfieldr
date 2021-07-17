@@ -8,12 +8,9 @@
 #' names for 1582 instructional programs organized on three levels: a
 #' 2-digit series, a 4-digit series, and a 6-digit series.
 #'
-#' The midfielddata taxonomy includes one non-IPEDS code:
-#' \describe{
-#'   \item{999999}{Undecided or Unspecified. For instances in which
-#'   institutions reported no program information or that students were
-#'   not enrolled in a program.}
-#' }
+#' The midfielddata taxonomy includes one non-IPEDS code (999999) for 
+#' Undecided or Unspecified, instances in which institutions reported no 
+#' program information or that students were not enrolled in a program.
 #'
 #' @format A \code{data.table} with 1582 rows and 6 columns keyed by the
 #' 6-digit CIP code:

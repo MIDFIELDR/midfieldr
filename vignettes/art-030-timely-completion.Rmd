@@ -17,48 +17,10 @@ resource_files:
   - ../man/figures/art-030-timely-completion-fig3-1.png
 ---
 
-```{r include = FALSE}
-knitr::opts_chunk$set(fig.path = here::here(
-  "man/figures",
-  "art-030-timely-completion-"
-))
-knitr::opts_chunk$set(
-  echo = TRUE,
-  message = FALSE,
-  warning = FALSE,
-  collapse = TRUE,
-  comment = "#>",
-  error = FALSE,
-  fig.width = 6,
-  fig.asp = 1 / 1.6,
-  out.width = "70%",
-  fig.align = "center"
-)
-knitr::knit_hooks$set(inline = function(x) {
-  if (!is.numeric(x)) {
-    x
-  } else if (x >= 10000) {
-    prettyNum(round(x, 2), big.mark = ",")
-  } else {
-    prettyNum(round(x, 2))
-  }
-})
-kable2html <- function(x, font_size = NULL, caption = NULL) {
-  font_size <- ifelse(is.null(font_size), 11, font_size)
-  kable_in <- knitr::kable(x, format = "html", caption = caption)
-  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
-}
-asp_ratio_mw <- function(data, categories) {
-  cat1 <- categories[1] # panels
-  cat2 <- categories[2] # rows
-  nlevel1 <- nlevels(data[, get(cat1)])
-  nlevel2 <- nlevels(data[, get(cat2)])
-  r <- nlevel1 * nlevel2
-  q <- 32
-  asp_ratio1 <- (r + 2 * nlevel1) / q
-  asp_ratio2 <- (r + 2 * nlevel2) / q
-  ratios <- c(asp_ratio1, asp_ratio2)
-}
+
+```{r setup, include = FALSE}
+source("article-preamble.R")
+set_fig_path("art-030-timely-completion-")
 ```
 
 
@@ -89,7 +51,7 @@ In the figure we compare the history of two students: both enter in Fall 2010 an
 <br>
 ```{r fig1, echo = FALSE, fig.asp = 5/10}
 library("ggplot2")
-library("data.table")
+suppressMessages(library("data.table"))
 callout_color <- "gray60"
 callout_line_size <- 0.3
 anno_size <- 3.5 # 3.5 approx 10 point
@@ -236,7 +198,7 @@ packages
 # Packages used
 library("midfieldr")
 library("midfielddata")
-library("data.table")
+suppressMessages(library("data.table"))
 library("ggplot2")
 
 # Optional code to control data.table printing
@@ -297,7 +259,7 @@ Now that our working data frame has a `timely_term` column, we use `add_completi
 ```r
 ? add_completion_timely
 ```
-This function has two required arguments and one optional `detail` argument. The input `dframe` must have a `timely_term` column.  The details, in this case, add two extra columns to show whether a program was completed, and if so, in what term. 
+This function has two required arguments and one optional `detail` argument. The input `dframe` must have a `timely_term` column.  In this case, `detail` adds three extra columns to show whether a program was completed, and if so, the term and degree CIP. 
 
 ```{r}
 # Add the completion timely column
@@ -338,7 +300,7 @@ Like the other midfieldr `add_*` functions, existing columns are deleted or over
 
 ### Exercises
 
-If we start with the result from above and add the details, 
+If we start with the result from above and add detail, 
 
 ```{r}
 # Assign a new memory location
@@ -434,31 +396,11 @@ Remove some unnecessary columns for less cluttered viewing.
 
 ```{r}
 # Improve viewing
-cols_we_want <- c("cip6", "completion", "completion_timely", "status")
+cols_we_want <- c("program", "cip6", "completion", "completion_timely", "status")
 DT <- DT[order(cip6), ..cols_we_want]
 
 # Examine the result
 options(datatable.print.topn = 12)
-DT
-```
-
-Recall that we have a data frame of case-study program CIP codes and names in the `study_program` data set. To review its hep page, run
-
-``` r
-? study_program
-```
-
-Join the program names to our working data frame and drop unnecessary columns, 
-
-```{r}
-# Join program names
-DT <- merge(DT, study_program, by = "cip6", all.x = TRUE)
-
-# Keep columns we need for grouping and summarizing
-cols_we_want <- c("status", "program")
-DT <- DT[, ..cols_we_want]
-
-# Examine the result
 DT
 ```
 
@@ -549,11 +491,11 @@ The vignette code chunks are collected below in a single, condensed script.
 # Packages used
 library("midfieldr")
 library("midfielddata")
-library("data.table")
+suppressMessages(library("data.table"))
 library("ggplot2")
-
-# Timely completion
 data(student, term, degree)
+
+# Determine whether completion is timely
 DT <- add_timely_term(study_student, midfield_term = term)
 DT <- add_completion_timely(
   dframe = DT,
@@ -561,7 +503,7 @@ DT <- add_completion_timely(
   detail = TRUE
 )
 
-# Compare programs by completion status
+# Explore: Compare programs by completion status
 DT[
   completion == TRUE & completion_timely == TRUE,
   status := "Timely grad"
@@ -571,10 +513,25 @@ DT[
   status := "Untimely grad"
 ]
 DT[completion == FALSE, status := "Non-completer"]
-DT <- merge(DT, study_program, by = "cip6", all.x = TRUE)
+cols_we_want <- c("program", "cip6", "completion", "completion_timely", "status")
+DT <- DT[order(cip6), ..cols_we_want]
 DT <- DT[, .(N_group = .N), by = .(program, status)]
-
-# Graph counts
+mw <- condition_multiway(DT,
+  categ_col = c("program", "status"),
+  quant_col = "N_group",
+  order_by = "sum",
+  detail = TRUE
+)
+ggplot(mw, aes(x = N_group, y = status)) +
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  scale_x_continuous(limits = c(0, 2000)) +
+  geom_point() +
+  labs(
+    x = "Number of students",
+    y = "",
+    title = "Practice data (not for research)",
+    caption = "Source: midfielddata"
+  )
 ```
 
 

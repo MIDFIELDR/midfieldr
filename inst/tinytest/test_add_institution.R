@@ -4,7 +4,7 @@ test_add_institution <- function() {
     # add_institution(dframe, midfield_term)
 
     # Needed for tinytest::build_install_test()
-    library("data.table")
+    suppressMessages(library("data.table"))
 
     # correct answer
     id_inst <- toy_student[, .(mcid, institution)]

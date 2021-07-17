@@ -38,7 +38,8 @@
 #' \itemize{
 #'     \item Rows are not modified.
 #'     \item Column \code{completion_timely} is added with an option to add
-#'           columns \code{completion} and \code{term_degree}.
+#'           columns \code{completion}, \code{term_degree}, and 
+#'           \code{cip6_degree}.
 #'     \item Grouping structures are not preserved.
 #' }
 #'
@@ -58,7 +59,7 @@ add_completion_timely <- function(dframe,
                                   detail = NULL) {
   on.exit(setkey(dframe, NULL), add = TRUE)
   on.exit(setkey(midfield_degree, NULL), add = TRUE)
-
+  
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
@@ -67,83 +68,88 @@ add_completion_timely <- function(dframe,
       "* Did you forget to write `detail = `?\n *"
     )
   )
-
+  
   # required arguments
   qassert(dframe, "d+")
   qassert(midfield_degree, "d+")
-
+  
   # optional arguments
   detail <- detail %?% FALSE
   qassert(detail, "B1") # boolean, missing values prohibited, length 1
-
+  
   # inputs modified (or not) by reference
   setDT(dframe)
   setDT(midfield_degree) # immediately subset, so side-effect OK
-
+  
   # required columns
   assert_names(colnames(dframe),
-    must.include = c("mcid", "timely_term")
+               must.include = c("mcid", "timely_term")
   )
   assert_names(colnames(midfield_degree),
-    must.include = c("mcid", "term")
+               must.include = c("mcid", "term")
   )
-
+  
   # class of required columns
   qassert(dframe[, mcid], "s+")
   qassert(dframe[, timely_term], "s+")
   qassert(midfield_degree[, mcid], "s+")
   qassert(midfield_degree[, term], "s+")
-
+  
   # bind names due to NSE notes in R CMD check
   completion_timely <- NULL
   term_degree <- NULL
   timely_term <- NULL
   completion <- NULL
-
+  
   # do the work
   # preserve column order except columns that match new columns
   names_dframe <- colnames(dframe)
-  cols_we_add <- c("term_degree", "completion", "completion_timely")
+  cols_we_add <- c(
+    "term_degree", 
+    "cip6_degree", 
+    "completion", 
+    "completion_timely"
+  )
   key_names <- names_dframe[!names_dframe %chin% cols_we_add]
   dframe <- dframe[, key_names, with = FALSE]
-
+  
   # subset midfield data table
   DT <- filter_match(midfield_degree,
-    match_to = dframe,
-    by_col = "mcid",
-    select = c("mcid", "term")
+                     match_to = dframe,
+                     by_col = "mcid",
+                     select = c("mcid", "term", "cip6")
   )
-
+  
   # rename term to term-degree
-  setnames(DT, old = "term", new = "term_degree")
-
+  setnames(DT, old = c("term", "cip6"), new = c("term_degree", "cip6_degree"))
+  
   # keep the first degree term
   setorderv(DT, c("mcid", "term_degree"))
   DT <- na.omit(DT, cols = c("term_degree"))
   DT <- DT[, .SD[1], by = "mcid"]
   setkey(DT, NULL)
-
+  
   # left-outer join, keep all rows of dframe
   dframe <- merge(dframe, DT, by = "mcid", all.x = TRUE)
-
+  
   # add program completion status column
   dframe[, completion := fifelse(is.na(term_degree), FALSE, TRUE)]
-
+  
   # evaluate, is the completion timely, TRUE / FALSE
   dframe[, completion_timely := fifelse(term_degree <= timely_term,
-    TRUE, FALSE,
-    na = FALSE
+                                        TRUE, FALSE,
+                                        na = FALSE
   )]
-
+  
   # restore column and row order
   set_colrow_order(dframe, key_names)
-
+  
   # include or omit the detail columns
   if (detail == FALSE) {
     cols_we_want <- c(key_names, "completion_timely")
     dframe <- dframe[, cols_we_want, with = FALSE]
   }
-
+  
   # enable printing (see data.table FAQ 2.23)
   dframe[]
 }

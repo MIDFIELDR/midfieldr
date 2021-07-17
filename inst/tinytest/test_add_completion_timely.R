@@ -7,7 +7,7 @@ test_add_completion_timely <- function() {
     #                       detail = NULL)
 
     # Needed for tinytest::build_install_test()
-    library("data.table")
+    suppressMessages(library("data.table"))
 
     # create answers
     DT <- toy_student[1:10, .(mcid)]
@@ -40,28 +40,28 @@ test_add_completion_timely <- function() {
             "MID25840802", "Institution M", "19951"      , TRUE  )
     setDT(DT_no_details)
     DT_with_details <- wrapr::build_frame(
-        "mcid"         , "institution"  , "timely_term", "term_degree",
-        "completion", "completion_timely" |
-            "MID25783939", "Institution M", "20053"      , "20031"      ,
-        TRUE        , TRUE                |
-            "MID25784402", "Institution M", "20103"      , NA_character_,
-        FALSE       , FALSE               |
-            "MID25805538", "Institution M", "20091"      , NA_character_,
-        FALSE       , FALSE               |
-            "MID25808099", "Institution M", "19923"      , "19903"      ,
-        TRUE        , TRUE                |
-            "MID25816437", "Institution M", "20113"      , NA_character_,
-        FALSE       , FALSE               |
-            "MID25826223", "Institution M", "19913"      , "19901"      ,
-        TRUE        , TRUE                |
-            "MID25828870", "Institution M", "19933"      , "19923"      ,
-        TRUE        , TRUE                |
-            "MID25831839", "Institution M", "20123"      , NA_character_,
-        FALSE       , FALSE               |
-            "MID25839453", "Institution M", "20111"      , NA_character_,
-        FALSE       , FALSE               |
-            "MID25840802", "Institution M", "19951"      , "19933"      ,
-        TRUE        , TRUE                )
+        "mcid"         , "institution"  , "timely_term", "term_degree", 
+        "cip6_degree", "completion", "completion_timely" |
+            "MID25783939", "Institution M", "20053"      , "20031"      , 
+        "010901"     , TRUE        , TRUE                |
+            "MID25784402", "Institution M", "20103"      , NA_character_, 
+        NA_character_, FALSE       , FALSE               |
+            "MID25805538", "Institution M", "20091"      , NA_character_, 
+        NA_character_, FALSE       , FALSE               |
+            "MID25808099", "Institution M", "19923"      , "19903"      , 
+        "521401"     , TRUE        , TRUE                |
+            "MID25816437", "Institution M", "20113"      , NA_character_, 
+        NA_character_, FALSE       , FALSE               |
+            "MID25826223", "Institution M", "19913"      , "19901"      , 
+        "131202"     , TRUE        , TRUE                |
+            "MID25828870", "Institution M", "19933"      , "19923"      , 
+        "140801"     , TRUE        , TRUE                |
+            "MID25831839", "Institution M", "20123"      , NA_character_, 
+        NA_character_, FALSE       , FALSE               |
+            "MID25839453", "Institution M", "20111"      , NA_character_, 
+        NA_character_, FALSE       , FALSE               |
+            "MID25840802", "Institution M", "19951"      , "19933"      , 
+        "520201"     , TRUE        , TRUE                )
     setDT(DT_with_details)
 
     # correct answers

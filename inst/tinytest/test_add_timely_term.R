@@ -8,7 +8,7 @@ test_add_timely_term <- function() {
     #                 span = NULL)
 
     # Needed for tinytest::build_install_test()
-    library("data.table")
+    suppressMessages(library("data.table"))
 
     # create case
     # x <- toy_student[1:10, .(mcid)]
@@ -61,7 +61,7 @@ test_add_timely_term <- function() {
     # arguments after ... must be named
     expect_error(add_timely_term(x,
                                  toy_term,
-                                 TRUE)) # details not named
+                                 TRUE)) # detail not named
     expect_error(add_timely_term(x,
                                  toy_term,
                                  detail = FALSE,

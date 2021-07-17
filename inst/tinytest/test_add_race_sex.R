@@ -4,7 +4,7 @@ test_add_race_sex <- function() {
     # add_race_sex(dframe, midfield_student)
 
     # Needed for tinytest::build_install_test()
-    library("data.table")
+    suppressMessages(library("data.table"))
 
     # create an answer
     # DT <- toy_degree[1:10, .(mcid, cip6)]

@@ -55,7 +55,7 @@ performed using data.table syntax.
 # packages used
 library("midfieldr")
 library("midfielddata")
-library("data.table")
+suppressMessages(library("data.table"))
 
 # Load the data tables
 data(student, term, degree)
@@ -141,7 +141,7 @@ library("midfieldr")
 help("midfieldr-package")
 ```
 
-<img src="man/figures/README-midfieldr-help-page-1.png" width="75%" />
+<img src="man/figures/README-midfieldr-help-page-1.png" width="75%" style="display: block; margin: auto;" />
 
 ## Install midfielddata
 
@@ -164,7 +164,7 @@ library("midfielddata")
 help("midfielddata-package")
 ```
 
-<img src="man/figures/README-midfielddata-help-page-1.png" width="75%" />
+<img src="man/figures/README-midfielddata-help-page-1.png" width="75%" style="display: block; margin: auto;" />
 
 ## Contributing
 

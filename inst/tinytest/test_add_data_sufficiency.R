@@ -7,7 +7,7 @@ test_add_data_sufficiency <- function() {
     #                      detail = NULL)
 
     # Needed for tinytest::build_install_test()
-    library("data.table")
+    suppressMessages(library("data.table"))
 
     # create answers
     DT <- toy_student[1:10, .(mcid)]

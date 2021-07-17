@@ -10,7 +10,7 @@ test_condition_multiway <- function() {
     #              param_col = NULL)
     
     # Needed for tinytest::build_install_test()
-    library("data.table")
+    suppressMessages(library("data.table"))
     options(
         datatable.print.nrows = 8,
         datatable.print.topn = 8,

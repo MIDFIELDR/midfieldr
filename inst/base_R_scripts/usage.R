@@ -1,7 +1,7 @@
 # packages used
 library("midfieldr")
 library("midfielddata")
-library("data.table")
+suppressMessages(library("data.table"))
 
 # Load the data tables
 data(student, term, degree)

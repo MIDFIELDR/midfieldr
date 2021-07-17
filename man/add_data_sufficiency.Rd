@@ -66,7 +66,7 @@ dframe <- add_timely_term(dframe, midfield_term = toy_term)
 add_data_sufficiency(dframe, midfield_term = toy_term)
 
 
-# Data sufficiency column with details
+# Data sufficiency column with detail
 add_data_sufficiency(dframe, midfield_term = toy_term, detail = TRUE)
 
 

@@ -15,37 +15,11 @@ resource_files: |
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(fig.path = here::here(
-  "man/figures",
-  "art-004-case-study-students-"
-))
-knitr::opts_chunk$set(
-  echo = TRUE,
-  message = FALSE,
-  warning = FALSE,
-  collapse = TRUE,
-  comment = "#>",
-  error = FALSE,
-  fig.width = 6,
-  fig.asp = 1 / 1.6,
-  out.width = "70%",
-  fig.align = "center"
-)
-knitr::knit_hooks$set(inline = function(x) {
-  if (!is.numeric(x)) {
-    x
-  } else if (x >= 10000) {
-    prettyNum(round(x, 2), big.mark = ",")
-  } else {
-    prettyNum(round(x, 2))
-  }
-})
-kable2html <- function(x, font_size = NULL, caption = NULL) {
-  font_size <- ifelse(is.null(font_size), 11, font_size)
-  kable_in <- knitr::kable(x, format = "html", caption = caption)
-  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
-}
+source("article-preamble.R")
+set_fig_path("art-004-case-study-students-")
 ```
+
+
 
 ## Introduction
 
@@ -89,7 +63,7 @@ If you are writing your own script to follow along, we start with these packages
 # packages used
 library("midfieldr")
 library("midfielddata")
-library("data.table")
+suppressMessages(library("data.table"))
 
 # optional code to control data.table printing
 options(
@@ -146,7 +120,7 @@ DT <- unique(DT)
 DT
 ```
 
-In general, the `term` data can include non-degree-seeking students. To limit the study to degree-seeking students only, we subset rows of `DT` with `mcid` values that match the `mcid` values in the `student` table (all students in th `student` data table are degree-seeking). As it happens, in this example all students are degree-seeking, so the results don't change. 
+In general, the `term` data can include non-degree-seeking students. To limit the study to degree-seeking students only, we subset rows of `DT` with `mcid` values that match the `mcid` values in the `student` table (all students in the `student` data table are degree-seeking). As it happens, in this example all students are degree-seeking, so the results don't change. 
 
 ```{r}
 # Limit the study to degree-seeking students
@@ -204,7 +178,7 @@ DT
 
 The data sufficiency criterion is that a study must be limited to students whose timely completion term is within the range of data provided by their institution.
 
-The midfieldr function `add_data_sufficiency` accesses finds the upper limit of their institution's data range, compares it to the timely completion term, and reports in a TRUE/FALSE column whether the data are sufficient. 
+The midfieldr function `add_data_sufficiency` finds the upper limit of their institution's data range, compares it to the timely completion term, and reports in a TRUE/FALSE column whether the data are sufficient. 
 
 ```{r}
 # Establish the criterion
@@ -299,7 +273,7 @@ The vignette code chunks are collected below in a single, condensed script.
 # packages used
 library("midfieldr")
 library("midfielddata")
-library("data.table")
+suppressMessages(library("data.table"))
 
 # load data tables from midfielddata
 data(student, term)

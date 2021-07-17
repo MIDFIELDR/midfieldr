@@ -7,7 +7,7 @@ test_condition_fye <- function() {
     #               fye_codes = NULL)   # default 140102
 
     # Needed for tinytest::build_install_test()
-    library("data.table")
+    suppressMessages(library("data.table"))
 
     # create an answer
     # DT <- toy_student[, .(mcid, race, sex)]

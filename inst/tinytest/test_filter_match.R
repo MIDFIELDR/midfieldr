@@ -8,7 +8,7 @@ test_filter_match <- function() {
     #              select = NULL)
 
     # Needed for tinytest::build_install_test()
-    library("data.table")
+    suppressMessages(library("data.table"))
 
     # example data frame for testing
     toy_student <- toy_student[, .(mcid, institution, race, sex)]

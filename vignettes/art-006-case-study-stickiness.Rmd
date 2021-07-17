@@ -18,47 +18,8 @@ editor_options:
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(fig.path = here::here(
-  "man/figures",
-  "art-006-case-study-stickiness-"
-))
-knitr::opts_chunk$set(
-  echo = TRUE,
-  message = FALSE,
-  warning = FALSE,
-  collapse = TRUE,
-  comment = "#>",
-  error = FALSE,
-  fig.width = 6,
-  fig.asp = 1 / 1.6,
-  out.width = "70%",
-  fig.align = "center"
-)
-knitr::knit_hooks$set(inline = function(x) {
-  if (!is.numeric(x)) {
-    x
-  } else if (x >= 10000) {
-    prettyNum(round(x, 2), big.mark = ",")
-  } else {
-    prettyNum(round(x, 2))
-  }
-})
-kable2html <- function(x, font_size = NULL, caption = NULL) {
-  font_size <- ifelse(is.null(font_size), 11, font_size)
-  kable_in <- knitr::kable(x, format = "html", caption = caption)
-  kableExtra::kable_styling(kable_input = kable_in, font_size = font_size)
-}
-asp_ratio_mw <- function(data, categories) {
-  cat1 <- categories[1] # panels
-  cat2 <- categories[2] # rows
-  nlevel1 <- nlevels(data[, get(cat1)])
-  nlevel2 <- nlevels(data[, get(cat2)])
-  r <- nlevel1 * nlevel2
-  q <- 32
-  asp_ratio1 <- (r + 2 * nlevel1) / q
-  asp_ratio2 <- (r + 2 * nlevel2) / q
-  ratios <- c(asp_ratio1, asp_ratio2)
-}
+source("article-preamble.R")
+set_fig_path("art-006-case-study-stickiness-")
 ```
 
 
@@ -119,7 +80,7 @@ If you are writing your own script to follow along, we start with these packages
 # packages used
 library("midfieldr")
 library("midfielddata")
-library("data.table")
+suppressMessages(library("data.table"))
 library("ggplot2")
 
 # optional code to control data.table printing
@@ -158,7 +119,7 @@ In the remainder of the vignette, we assume we're using the `study_student` data
 study_student
 ```
 
-The data sufficiency criterion has been applied. As usual, we use assign our working data frame to `DT`. 
+The data sufficiency criterion has been applied. As usual, we assign our working data frame to `DT`. 
 
 ```{r}
 # Create a new memory location to avoid updating by reference
@@ -351,7 +312,7 @@ DT <- condition_multiway(
   dframe = DT, # input data frame
   categ_col = c("program", "race_sex"), # multiway categorical variables
   quant_col = "stick", # multiway quantitative variable
-  detail = FALSE, # do not return columns of details
+  detail = FALSE, # do not return detail columns
   order_by = "percent", # stickiness (a percentage) used to order rows and panels
   param_col = c("grad", "ever") # parameters for computing group stickiness
 )
@@ -409,7 +370,7 @@ The vignette code chunks are collected below in a single, condensed script.
 # packages used
 library("midfieldr")
 library("midfielddata")
-library("data.table")
+suppressMessages(library("data.table"))
 library("ggplot2")
 
 # load data tables from midfielddata
@@ -441,7 +402,7 @@ DT <- condition_multiway(
   dframe = DT, # input data frame
   categ_col = c("program", "race_sex"), # multiway categorical variables
   quant_col = "stick", # multiway quantitative variable
-  detail = FALSE, # do not return columns of details
+  detail = FALSE, # do not return detail columns
   order_by = "percent", # stickiness (a percentage) used to order rows and panels
   param_col = c("grad", "ever") # parameters for computing group stickiness
 )
