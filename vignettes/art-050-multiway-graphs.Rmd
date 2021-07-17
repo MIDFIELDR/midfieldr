@@ -127,19 +127,17 @@ DT <- DT[!race_sex %ilike% c("International|Other|Native")]
 
 # Examine the result
 DT
-
-temp <- copy(DT)
 ```
  
 We process the data frame
 
 ```{r}
 # condition as multiway data
-DT <- condition_multiway(
+mw <- condition_multiway(
   dframe = DT, # input data frame
   categ_col = c("program", "race_sex"), # multiway categorical variables
   quant_col = "stick", # multiway quantitative variable
-  detail = FALSE, # do not return detail columns 
+  detail = FALSE, # do not return detail columns
   order_by = "percent", # row and panel ordering method
   param_col = c("grad", "ever") # parameters used for ordering
 )
@@ -148,24 +146,24 @@ DT <- condition_multiway(
 No change to the row and column structure, but as you can see, the previous character variables have been converted to factors, 
 
 ```{r}
-DT
+mw
 ```
 
 The levels of the factors are ordered non-alphabetically. `program` is now a factor with `r nlevels(DT[, program])` levels; `race_sex` is a factor with `r nlevels(DT[, race_sex])` levels. 
 
 ```{r}
 # first category is now a factor
-levels(DT$program)
+levels(mw$program)
 
 # second category is now a factor
-levels(DT$race_sex)
+levels(mw$race_sex)
 ```
 
 The values that determine the order of the levels can be obtained by using the `detail` argument. 
 
 ```{r}
 # return stickiness by category
-DT <- condition_multiway(
+mw <- condition_multiway(
   dframe = DT, # input data frame
   categ_col = c("program", "race_sex"), # multiway categorical variables
   quant_col = "stick", # multiway quantitative variable
@@ -182,14 +180,14 @@ By ordering the data by `program`, you can see that a given program has a single
 options(datatable.print.topn = 10)
 
 # programs have a median stickiness across race-sex groups
-DT[order(program)]
+mw[order(program)]
 ```
 
 Similarly, by ordering the data by `race_sex`, you can see that a given demographic group has a single value of `race_sex_stick` copied as many times as needed. 
 
 ```{r}
 # race_sex groupings have a median stickiness across programs
-DT[order(race_sex)]
+mw[order(race_sex)]
 ```
 
 
@@ -203,7 +201,7 @@ DT[order(race_sex)]
 ## Create a multiway graph
 
 ```{r include = FALSE}
-asp_ratio <- asp_ratio_mw(DT, categories = c("program", "race_sex"))
+asp_ratio <- asp_ratio_mw(mw, categories = c("program", "race_sex"))
 ```
 
 We use conventional ggplot2 functions to create the multiway graphs. 
@@ -214,7 +212,7 @@ By previously ordering the levels of the factors, we have structured the data so
 
 ```{r fig1, fig.asp = asp_ratio[1]}
 # create one multiway graph
-ggplot(data = DT, aes(x = stick, y = race_sex)) +
+ggplot(mw, aes(x = stick, y = race_sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   geom_vline(aes(xintercept = program_stick),
     linetype = 2,
@@ -258,7 +256,7 @@ To create the *dual multiway* graph, we swap the roles of the rows and panels.
 
 ```{r fig2, fig.asp = asp_ratio[2]}
 # create the dual multiway graph
-ggplot(data = DT, aes(x = stick, y = program)) +
+ggplot(mw, aes(x = stick, y = program)) +
   facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
   geom_vline(aes(xintercept = race_sex_stick),
     linetype = 2,
@@ -290,11 +288,13 @@ Both multiways should be created for discussion. Usually one or the other will c
 
 ## Panel and row ordering options 
 
-The `order_by` argument in `condition_multiway()` provides options for ordering the two categorical variables (panel order and row order) in a multiway graph. 
+The `order_by` argument in `condition_multiway()` provides options for ordering the two categorical variables (panel order and row order) in a multiway graph. The following values are possible for `order_by`: "percent", "median" (default), "mean", "sum", and "alphabet." 
+
+Many components of the following graphs are identical. To reduce duplication we set up a graphical template with a default data object (`DT`). To use the template, we use a replacement operator `%+%` and write `p %+% new_data` to substitute `new_data` for the default data set in `p`. 
 
 ```{r}
-# create a common graph framework to use in the example below
-p <- ggplot(data = temp, aes(x = stick, y = race_sex)) +
+# create a common graph framework to use in the examples below
+p <- ggplot(DT, aes(x = stick, y = race_sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   labs(
@@ -304,21 +304,21 @@ p <- ggplot(data = temp, aes(x = stick, y = race_sex)) +
   )
 ```
 
-The following values of `order_by` are possible:
 
-percent
+
+`order_by = "percent"` 
 : Orders by ratios computed by category. Used when the quantitative response variable is the ratio (in percent) of two columns of integer counts (the two columns are the numerator and denominator of the ratio), such as the ratio of graduates to ever-enrolled (stickiness) or the ratio of graduates to starters (graduation rate). The counts in the two columns are summed by category and ratios for that category are computed. These grouped ratios are used to order the levels of the categories. 
 
 : The graphs shown above are representative of this type of ordering. 
 
 : Requires the optional `param_col` argument with the names of the columns of the two terms of the ratio.
 
-median
-: (default) Orders by the median of values in the quantitative column grouped by category. Here, the only quantity manipulated is the 
+`order_by = "median"`  
+: (default) Orders by the median of values in the quantitative column grouped by category.
 
 ```{r fig3, fig.asp = asp_ratio[1]}
 dtf <- condition_multiway(
-  dframe = temp,
+  dframe = DT,
   categ_col = c("program", "race_sex"),
   quant_col = "stick",
   detail = TRUE
@@ -331,12 +331,12 @@ p %+% dtf +
   )
 ```
 
-mean
+`order_by = "mean"` 
 : Orders by the mean of values in the quantitative column grouped by category.
 
 ```{r fig4, fig.asp = asp_ratio[1]}
 dtf <- condition_multiway(
-  dframe = temp,
+  dframe = DT,
   categ_col = c("program", "race_sex"),
   quant_col = "stick",
   order_by = "mean",
@@ -350,18 +350,35 @@ p %+% dtf +
   )
 ```
 
-sum
-: Orders by the sum of values in the quantitative column grouped by category. Useful when the response variable is a count or frequency.
+`order_by = "alphabet"` 
+: Orders the levels of the categorical variables alphabetically. Rarely useful for perceiving effects, but can be useful for value look up.
+
+```{r fig6, fig.asp = asp_ratio[1]}
+dtf <- condition_multiway(
+  dframe = DT,
+  categ_col = c("program", "race_sex"),
+  quant_col = "stick",
+  order_by = "alphabet"
+)
+p %+% dtf +
+  labs(title = "Levels ordered alphbetically")
+```
+
+
+`order_by = "sum"` 
+: Orders by the sum of values in the quantitative column grouped by category. Useful when the response variable is a count or frequency. 
+
+: In this example, the quantitative variable is no longer stickiness so we create a new graph instead of using the template. 
 
 ```{r fig5, fig.asp = asp_ratio[1]}
 dtf <- condition_multiway(
-  dframe = temp,
+  dframe = DT,
   categ_col = c("program", "race_sex"),
   quant_col = "ever",
   order_by = "sum",
   detail = TRUE
 )
-ggplot(data = dtf, aes(x = ever, y = race_sex)) +
+ggplot(dtf, aes(x = ever, y = race_sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   geom_point(na.rm = TRUE) +
   scale_x_continuous(trans = "log2") +
@@ -375,20 +392,6 @@ ggplot(data = dtf, aes(x = ever, y = race_sex)) +
     title = "Levels ordered by count totals",
     caption = "Source: midfielddata"
   )
-```
-
-alphabet
-: Orders the levels of the categorical variables alphabetically. Rarely useful for perceiving effects, but can be useful for value look up.
-
-```{r fig6, fig.asp = asp_ratio[1]}
-dtf <- condition_multiway(
-  dframe = temp,
-  categ_col = c("program", "race_sex"),
-  quant_col = "stick",
-  order_by = "alphabet"
-)
-p %+% dtf +
-  labs(title = "Levels ordered alphbetically")
 ```
 
 
@@ -410,17 +413,126 @@ The vignette code chunks are collected below in a single, condensed script.
 ```{r eval = FALSE}
 # packages used
 library("midfieldr")
+library("midfielddata")
 suppressMessages(library("data.table"))
 library("ggplot2")
 
-# optional code to control data.table printing
 options(
   datatable.print.nrows = 10,
   datatable.print.topn = 5,
   datatable.print.class = TRUE
 )
 
+# Prepare data
+DT <- copy(study_stickiness)
+DT <- DT[ever >= 10]
+DT <- DT[!race_sex %ilike% c("International|Other|Native")]
+mw <- condition_multiway(
+  dframe = DT, # input data frame
+  categ_col = c("program", "race_sex"), # multiway categorical variables
+  quant_col = "stick", # multiway quantitative variable
+  detail = TRUE, # return detail columns
+  order_by = "percent", # row and panel ordering method
+  param_col = c("grad", "ever") # parameters used for ordering
+)
 
+# Create a multiway graph
+ggplot(mw, aes(x = stick, y = race_sex)) +
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_vline(aes(xintercept = program_stick),
+    linetype = 2,
+    color = "gray70"
+  ) +
+  geom_point(na.rm = TRUE) +
+  labs(
+    x = "Stickiness (%)",
+    y = "",
+    title = "Practice data (not for research)",
+    caption = "Source: midfielddata"
+  )
+
+# Create the dual multiway graph
+ggplot(mw, aes(x = stick, y = program)) +
+  facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
+  geom_vline(aes(xintercept = race_sex_stick),
+    linetype = 2,
+    color = "gray70"
+  ) +
+  geom_point(na.rm = TRUE) +
+  labs(
+    x = "Stickiness (%)",
+    y = "",
+    title = "Practice data (not for research)",
+    caption = "Source: midfielddata"
+  )
+
+# Panel and row ordering options
+p <- ggplot(DT, aes(x = stick, y = race_sex)) +
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  labs(
+    x = "Longitudinal stickiness (%)",
+    y = "",
+    caption = "Source: midfielddata"
+  )
+# median
+dtf <- condition_multiway(
+  dframe = DT,
+  categ_col = c("program", "race_sex"),
+  quant_col = "stick",
+  detail = TRUE
+)
+p %+% dtf +
+  labs(title = "Levels ordered by median values") +
+  geom_vline(aes(xintercept = program_stick),
+    linetype = 2,
+    col = "gray50"
+  )
+# mean
+dtf <- condition_multiway(
+  dframe = DT,
+  categ_col = c("program", "race_sex"),
+  quant_col = "stick",
+  order_by = "mean",
+  detail = TRUE
+)
+p %+% dtf +
+  labs(title = "Levels ordered by mean values") +
+  geom_vline(aes(xintercept = program_stick),
+    linetype = 2,
+    col = "gray50"
+  )
+# alphabet
+dtf <- condition_multiway(
+  dframe = DT,
+  categ_col = c("program", "race_sex"),
+  quant_col = "stick",
+  order_by = "alphabet"
+)
+p %+% dtf +
+  labs(title = "Levels ordered alphbetically")
+# sum
+dtf <- condition_multiway(
+  dframe = DT,
+  categ_col = c("program", "race_sex"),
+  quant_col = "ever",
+  order_by = "sum",
+  detail = TRUE
+)
+ggplot(dtf, aes(x = ever, y = race_sex)) +
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_point(na.rm = TRUE) +
+  scale_x_continuous(trans = "log2") +
+  geom_vline(aes(xintercept = program_ever),
+    linetype = 2,
+    col = "gray50"
+  ) +
+  labs(
+    x = "Number of students ever enrolled (log-2 scale)",
+    y = "",
+    title = "Levels ordered by count totals",
+    caption = "Source: midfielddata"
+  )
 ```
 
 ```{r echo = FALSE}
