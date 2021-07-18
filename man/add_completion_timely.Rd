@@ -23,7 +23,7 @@ A \code{data.table} with the following properties:
 \itemize{
     \item Rows are not modified.
     \item Column \code{completion_timely} is added with an option to add
-          columns \code{completion}, \code{term_degree}, and 
+          columns \code{completion}, \code{term_degree}, and
           \code{cip6_degree}.
     \item Grouping structures are not preserved.
 }

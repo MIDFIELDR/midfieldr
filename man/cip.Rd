@@ -38,8 +38,8 @@ names for 1582 instructional programs organized on three levels: a
 2-digit series, a 4-digit series, and a 6-digit series.
 }
 \details{
-The midfielddata taxonomy includes one non-IPEDS code (999999) for 
-Undecided or Unspecified, instances in which institutions reported no 
+The midfielddata taxonomy includes one non-IPEDS code (999999) for
+Undecided or Unspecified, instances in which institutions reported no
 program information or that students were not enrolled in a program.
 }
 \seealso{
