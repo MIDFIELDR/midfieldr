@@ -93,7 +93,7 @@
       <h1 class="display-4" data-toc-skip>Timely completion</h1>
                         <h4 data-toc-skip class="author">Richard Layton</h4>
             
-            <h4 data-toc-skip class="date">2021-07-14</h4>
+            <h4 data-toc-skip class="date">2021-07-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/master/vignettes/art-030-timely-completion.Rmd" class="external-link"><code>vignettes/art-030-timely-completion.Rmd</code></a></small>
       <div class="d-none name"><code>art-030-timely-completion.Rmd</code></div>
@@ -121,7 +121,7 @@
 <li>Student A is a first-time-in-college student. Their <em>TC</em> term is 6 academic years later, in Spring 2016.</li>
 <li>Student B is a transfer student, entering as a junior. Having already satisfied 2 years of program requirements, their <em>TC</em> term is 4 years later, in Spring 2014.</li>
 </ul>
-<p><br><img src="../man/figures/art-030-timely-completion-fig1-1.png" width="70%" style="display: block; margin: auto;"><br></p>
+<p><br><img src="../man/figures/art-030-timely-completion-fig1-1.png" width="80%" style="display: block; margin: auto;"><br></p>
 <p>Student A’s degree term is before their <em>TC</em> term. Their completion is timely and they would be counted among the program graduates.</p>
 <p>However, Student B’s degree term is after their <em>TC</em> term. Their completion is not timely and their graduation classification (for purposes of computing the persistence metric only) would be converted from graduate to non-graduate.</p>
 <div id="outline" class="section level3">
@@ -150,7 +150,7 @@
 <code class="sourceCode R"><span class="co"># Packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span>
 
 <span class="co"># Optional code to control data.table printing</span>
@@ -239,7 +239,7 @@
 <p>Now that our working data frame has a <code>timely_term</code> column, we use <code><a href="../reference/add_completion_timely.html">add_completion_timely()</a></code> to add a logical variable (TRUE/FALSE) that answers the question, “Is a program completion timely?” View its help page by running,</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">?</span> <span class="va">add_completion_timely</span></code></pre></div>
-<p>This function has two required arguments and one optional <code>detail</code> argument. The input <code>dframe</code> must have a <code>timely_term</code> column. The details, in this case, add two extra columns to show whether a program was completed, and if so, in what term.</p>
+<p>This function has two required arguments and one optional <code>detail</code> argument. The input <code>dframe</code> must have a <code>timely_term</code> column. In this case, <code>detail</code> adds three extra columns to show whether a program was completed, and if so, the term and degree CIP.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Add the completion timely column</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_timely.html">add_completion_timely</a></span><span class="op">(</span>
@@ -263,19 +263,32 @@
 <span class="co">#&gt; 8217: MID26697163 Institution L 141901 Mechanical Hispanic/Latinx   Male</span>
 <span class="co">#&gt; 8218: MID26697444 Institution L 141901 Mechanical           White   Male</span>
 <span class="co">#&gt; 8219: MID26697447 Institution L 141001 Electrical           Asian   Male</span>
-<span class="co">#&gt;       data_sufficiency timely_term term_degree completion completion_timely</span>
-<span class="co">#&gt;                 &lt;lgcl&gt;      &lt;char&gt;      &lt;char&gt;     &lt;lgcl&gt;            &lt;lgcl&gt;</span>
-<span class="co">#&gt;    1:             TRUE       20003       20001       TRUE              TRUE</span>
-<span class="co">#&gt;    2:             TRUE       19923       19911       TRUE              TRUE</span>
-<span class="co">#&gt;    3:             TRUE       19923        &lt;NA&gt;      FALSE             FALSE</span>
-<span class="co">#&gt;    4:             TRUE       19973       19963       TRUE              TRUE</span>
-<span class="co">#&gt;    5:             TRUE       20013       20001       TRUE              TRUE</span>
-<span class="co">#&gt;   ---                                                                      </span>
-<span class="co">#&gt; 8215:             TRUE       20163        &lt;NA&gt;      FALSE             FALSE</span>
-<span class="co">#&gt; 8216:             TRUE       20153       20141       TRUE              TRUE</span>
-<span class="co">#&gt; 8217:             TRUE       20143       20133       TRUE              TRUE</span>
-<span class="co">#&gt; 8218:             TRUE       20153       20151       TRUE              TRUE</span>
-<span class="co">#&gt; 8219:             TRUE       20163       20154       TRUE              TRUE</span></code></pre></div>
+<span class="co">#&gt;       data_sufficiency timely_term term_degree cip6_degree completion</span>
+<span class="co">#&gt;                 &lt;lgcl&gt;      &lt;char&gt;      &lt;char&gt;      &lt;char&gt;     &lt;lgcl&gt;</span>
+<span class="co">#&gt;    1:             TRUE       20003       20001      143501       TRUE</span>
+<span class="co">#&gt;    2:             TRUE       19923       19911      140801       TRUE</span>
+<span class="co">#&gt;    3:             TRUE       19923        &lt;NA&gt;        &lt;NA&gt;      FALSE</span>
+<span class="co">#&gt;    4:             TRUE       19973       19963      140801       TRUE</span>
+<span class="co">#&gt;    5:             TRUE       20013       20001      141001       TRUE</span>
+<span class="co">#&gt;   ---                                                                </span>
+<span class="co">#&gt; 8215:             TRUE       20163        &lt;NA&gt;        &lt;NA&gt;      FALSE</span>
+<span class="co">#&gt; 8216:             TRUE       20153       20141      141901       TRUE</span>
+<span class="co">#&gt; 8217:             TRUE       20143       20133      141901       TRUE</span>
+<span class="co">#&gt; 8218:             TRUE       20153       20151      240199       TRUE</span>
+<span class="co">#&gt; 8219:             TRUE       20163       20154      141001       TRUE</span>
+<span class="co">#&gt;       completion_timely</span>
+<span class="co">#&gt;                  &lt;lgcl&gt;</span>
+<span class="co">#&gt;    1:              TRUE</span>
+<span class="co">#&gt;    2:              TRUE</span>
+<span class="co">#&gt;    3:             FALSE</span>
+<span class="co">#&gt;    4:              TRUE</span>
+<span class="co">#&gt;    5:              TRUE</span>
+<span class="co">#&gt;   ---                  </span>
+<span class="co">#&gt; 8215:             FALSE</span>
+<span class="co">#&gt; 8216:              TRUE</span>
+<span class="co">#&gt; 8217:              TRUE</span>
+<span class="co">#&gt; 8218:              TRUE</span>
+<span class="co">#&gt; 8219:              TRUE</span></code></pre></div>
 <p>Interpreting the result:</p>
 <ul>
 <li>
@@ -324,7 +337,7 @@
 <div id="exercises" class="section level3">
 <h3 class="hasAnchor">
 <a href="#exercises" class="anchor" aria-hidden="true"></a>Exercises</h3>
-<p>If we start with the result from above and add the details,</p>
+<p>If we start with the result from above and add detail,</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Assign a new memory location</span>
 <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
@@ -400,82 +413,41 @@
 <p>Remove some unnecessary columns for less cluttered viewing.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Improve viewing</span>
-<span class="va">cols_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span>, <span class="st">"completion"</span>, <span class="st">"completion_timely"</span>, <span class="st">"status"</span><span class="op">)</span>
+<span class="va">cols_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"cip6"</span>, <span class="st">"completion"</span>, <span class="st">"completion_timely"</span>, <span class="st">"status"</span><span class="op">)</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">cip6</span><span class="op">)</span>, <span class="va">..cols_we_want</span><span class="op">]</span>
 
 <span class="co"># Examine the result</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.topn <span class="op">=</span> <span class="fl">12</span><span class="op">)</span>
 <span class="va">DT</span>
-<span class="co">#&gt;         cip6 completion completion_timely        status</span>
-<span class="co">#&gt;       &lt;char&gt;     &lt;lgcl&gt;            &lt;lgcl&gt;        &lt;char&gt;</span>
-<span class="co">#&gt;    1: 140801       TRUE              TRUE   Timely grad</span>
-<span class="co">#&gt;    2: 140801       TRUE              TRUE   Timely grad</span>
-<span class="co">#&gt;    3: 140801      FALSE             FALSE Non-completer</span>
-<span class="co">#&gt;    4: 140801      FALSE             FALSE Non-completer</span>
-<span class="co">#&gt;    5: 140801       TRUE              TRUE   Timely grad</span>
-<span class="co">#&gt;    6: 140801       TRUE              TRUE   Timely grad</span>
-<span class="co">#&gt;    7: 140801       TRUE              TRUE   Timely grad</span>
-<span class="co">#&gt;    8: 140801       TRUE              TRUE   Timely grad</span>
-<span class="co">#&gt;    9: 140801       TRUE              TRUE   Timely grad</span>
-<span class="co">#&gt;   10: 140801      FALSE             FALSE Non-completer</span>
-<span class="co">#&gt;   11: 140801       TRUE              TRUE   Timely grad</span>
-<span class="co">#&gt;   12: 140801      FALSE             FALSE Non-completer</span>
-<span class="co">#&gt;   ---                                                  </span>
-<span class="co">#&gt; 8208: 143501       TRUE             FALSE Untimely grad</span>
-<span class="co">#&gt; 8209: 143501       TRUE             FALSE Untimely grad</span>
-<span class="co">#&gt; 8210: 143501      FALSE             FALSE Non-completer</span>
-<span class="co">#&gt; 8211: 143501       TRUE              TRUE   Timely grad</span>
-<span class="co">#&gt; 8212: 143501       TRUE              TRUE   Timely grad</span>
-<span class="co">#&gt; 8213: 143501       TRUE              TRUE   Timely grad</span>
-<span class="co">#&gt; 8214: 143501       TRUE              TRUE   Timely grad</span>
-<span class="co">#&gt; 8215: 143501       TRUE              TRUE   Timely grad</span>
-<span class="co">#&gt; 8216: 143501      FALSE             FALSE Non-completer</span>
-<span class="co">#&gt; 8217: 143501       TRUE              TRUE   Timely grad</span>
-<span class="co">#&gt; 8218: 143501       TRUE              TRUE   Timely grad</span>
-<span class="co">#&gt; 8219: 143501       TRUE              TRUE   Timely grad</span></code></pre></div>
-<p>Recall that we have a data frame of case-study program CIP codes and names in the <code>study_program</code> data set. To review its hep page, run</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">?</span> <span class="va">study_program</span></code></pre></div>
-<p>Join the program names to our working data frame and drop unnecessary columns,</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Join program names</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">study_program</span>, by <span class="op">=</span> <span class="st">"cip6"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="co"># Keep columns we need for grouping and summarizing</span>
-<span class="va">cols_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"status"</span>, <span class="st">"program"</span><span class="op">)</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">..cols_we_want</span><span class="op">]</span>
-
-<span class="co"># Examine the result</span>
-<span class="va">DT</span>
-<span class="co">#&gt;              status    program</span>
-<span class="co">#&gt;              &lt;char&gt;     &lt;char&gt;</span>
-<span class="co">#&gt;    1:   Timely grad      Civil</span>
-<span class="co">#&gt;    2:   Timely grad      Civil</span>
-<span class="co">#&gt;    3: Non-completer      Civil</span>
-<span class="co">#&gt;    4: Non-completer      Civil</span>
-<span class="co">#&gt;    5:   Timely grad      Civil</span>
-<span class="co">#&gt;    6:   Timely grad      Civil</span>
-<span class="co">#&gt;    7:   Timely grad      Civil</span>
-<span class="co">#&gt;    8:   Timely grad      Civil</span>
-<span class="co">#&gt;    9:   Timely grad      Civil</span>
-<span class="co">#&gt;   10: Non-completer      Civil</span>
-<span class="co">#&gt;   11:   Timely grad      Civil</span>
-<span class="co">#&gt;   12: Non-completer      Civil</span>
-<span class="co">#&gt;   ---                         </span>
-<span class="co">#&gt; 8208: Untimely grad Industrial</span>
-<span class="co">#&gt; 8209: Untimely grad Industrial</span>
-<span class="co">#&gt; 8210: Non-completer Industrial</span>
-<span class="co">#&gt; 8211:   Timely grad Industrial</span>
-<span class="co">#&gt; 8212:   Timely grad Industrial</span>
-<span class="co">#&gt; 8213:   Timely grad Industrial</span>
-<span class="co">#&gt; 8214:   Timely grad Industrial</span>
-<span class="co">#&gt; 8215:   Timely grad Industrial</span>
-<span class="co">#&gt; 8216: Non-completer Industrial</span>
-<span class="co">#&gt; 8217:   Timely grad Industrial</span>
-<span class="co">#&gt; 8218:   Timely grad Industrial</span>
-<span class="co">#&gt; 8219:   Timely grad Industrial</span></code></pre></div>
+<span class="co">#&gt;          program   cip6 completion completion_timely        status</span>
+<span class="co">#&gt;           &lt;char&gt; &lt;char&gt;     &lt;lgcl&gt;            &lt;lgcl&gt;        &lt;char&gt;</span>
+<span class="co">#&gt;    1:      Civil 140801       TRUE              TRUE   Timely grad</span>
+<span class="co">#&gt;    2:      Civil 140801       TRUE              TRUE   Timely grad</span>
+<span class="co">#&gt;    3:      Civil 140801      FALSE             FALSE Non-completer</span>
+<span class="co">#&gt;    4:      Civil 140801      FALSE             FALSE Non-completer</span>
+<span class="co">#&gt;    5:      Civil 140801       TRUE              TRUE   Timely grad</span>
+<span class="co">#&gt;    6:      Civil 140801       TRUE              TRUE   Timely grad</span>
+<span class="co">#&gt;    7:      Civil 140801       TRUE              TRUE   Timely grad</span>
+<span class="co">#&gt;    8:      Civil 140801       TRUE              TRUE   Timely grad</span>
+<span class="co">#&gt;    9:      Civil 140801       TRUE              TRUE   Timely grad</span>
+<span class="co">#&gt;   10:      Civil 140801      FALSE             FALSE Non-completer</span>
+<span class="co">#&gt;   11:      Civil 140801       TRUE              TRUE   Timely grad</span>
+<span class="co">#&gt;   12:      Civil 140801      FALSE             FALSE Non-completer</span>
+<span class="co">#&gt;   ---                                                             </span>
+<span class="co">#&gt; 8208: Industrial 143501       TRUE             FALSE Untimely grad</span>
+<span class="co">#&gt; 8209: Industrial 143501       TRUE             FALSE Untimely grad</span>
+<span class="co">#&gt; 8210: Industrial 143501      FALSE             FALSE Non-completer</span>
+<span class="co">#&gt; 8211: Industrial 143501       TRUE              TRUE   Timely grad</span>
+<span class="co">#&gt; 8212: Industrial 143501       TRUE              TRUE   Timely grad</span>
+<span class="co">#&gt; 8213: Industrial 143501       TRUE              TRUE   Timely grad</span>
+<span class="co">#&gt; 8214: Industrial 143501       TRUE              TRUE   Timely grad</span>
+<span class="co">#&gt; 8215: Industrial 143501       TRUE              TRUE   Timely grad</span>
+<span class="co">#&gt; 8216: Industrial 143501      FALSE             FALSE Non-completer</span>
+<span class="co">#&gt; 8217: Industrial 143501       TRUE              TRUE   Timely grad</span>
+<span class="co">#&gt; 8218: Industrial 143501       TRUE              TRUE   Timely grad</span>
+<span class="co">#&gt; 8219: Industrial 143501       TRUE              TRUE   Timely grad</span></code></pre></div>
 <p>Group and summarize,</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Count students by program and completion status</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>N_group <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">status</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span>
@@ -494,7 +466,7 @@
 <span class="co">#&gt; 11: Industrial Non-completer     243</span>
 <span class="co">#&gt; 12: Industrial Untimely grad     172</span></code></pre></div>
 <p>In anticipation of the graph, we condition these multiway data with the categorical columns converted to factors with levels ordered by the total values of <code>N_group</code>.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Create factors with ordered levels</span>
 <span class="va">mw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condition_multiway.html">condition_multiway</a></span><span class="op">(</span><span class="va">DT</span>,
   categ_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"status"</span><span class="op">)</span>,
@@ -518,7 +490,7 @@
 <span class="co">#&gt; 11: Industrial Non-completer     243            1093           2131</span>
 <span class="co">#&gt; 12: Industrial Untimely grad     172            1093            918</span></code></pre></div>
 <p>Graph the numbers of students by completion status and program.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Graph the counts</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mw</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">N_group</span>, y <span class="op">=</span> <span class="va">status</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span>, as.table <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
@@ -530,9 +502,9 @@
     title <span class="op">=</span> <span class="st">"Practice data (not for research)"</span>,
     caption <span class="op">=</span> <span class="st">"Source: midfielddata"</span>
   <span class="op">)</span></code></pre></div>
-<p><img src="../man/figures/art-030-timely-completion-fig2-1.png" width="70%" style="display: block; margin: auto;"><br></p>
+<p><img src="../man/figures/art-030-timely-completion-fig2-1.png" width="80%" style="display: block; margin: auto;"><br></p>
 <p>A more useful comparison might be as a percentage of the total number in each program (panel).</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Compute percentage of total in a program</span>
 <span class="va">mw</span><span class="op">[</span>, <span class="va">pct_of_program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">N_group</span> <span class="op">/</span> <span class="va">program_N_group</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span>
 <span class="va">mw</span>
@@ -565,7 +537,7 @@
 <span class="co">#&gt; 11:           22.2</span>
 <span class="co">#&gt; 12:           15.7</span></code></pre></div>
 <p>Repeat the graph, but with percentage of program instead of numbers per program. The rows and panels remain ordered by the factor levels.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Graph percentages</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mw</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pct_of_program</span>, y <span class="op">=</span> <span class="va">status</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span>, as.table <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
@@ -577,7 +549,7 @@
     title <span class="op">=</span> <span class="st">"Practice data (not for research)"</span>,
     caption <span class="op">=</span> <span class="st">"Source: midfielddata"</span>
   <span class="op">)</span></code></pre></div>
-<p><img src="../man/figures/art-030-timely-completion-fig3-1.png" width="70%" style="display: block; margin: auto;"><br></p>
+<p><img src="../man/figures/art-030-timely-completion-fig3-1.png" width="80%" style="display: block; margin: auto;"><br></p>
 <p>We can see that while the four programs have about the same percentage of timely graduates (just over 60%), Industrial Engineering has the lowest fraction of non-completers and a higher fraction of untimely graduates.</p>
 <p>The graph can’t tell us why this is, but it does raise the question. While this particular question may not be significant, it does illustrate how exploratory data graphics can raise new research questions.</p>
 </div>
@@ -588,15 +560,15 @@
 <h3 class="hasAnchor">
 <a href="#complete-script" class="anchor" aria-hidden="true"></a>Complete script</h3>
 <p>The vignette code chunks are collected below in a single, condensed script.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span>
-
-<span class="co"># Timely completion</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span>, <span class="va">degree</span><span class="op">)</span>
+
+<span class="co"># Determine whether completion is timely</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">study_student</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_timely.html">add_completion_timely</a></span><span class="op">(</span>
   dframe <span class="op">=</span> <span class="va">DT</span>,
@@ -604,7 +576,7 @@
   detail <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span>
 
-<span class="co"># Compare programs by completion status</span>
+<span class="co"># Explore: Compare programs by completion status</span>
 <span class="va">DT</span><span class="op">[</span>
   <span class="va">completion</span> <span class="op">==</span> <span class="cn">TRUE</span> <span class="op">&amp;</span> <span class="va">completion_timely</span> <span class="op">==</span> <span class="cn">TRUE</span>,
   <span class="va">status</span> <span class="op">:=</span> <span class="st">"Timely grad"</span>
@@ -614,10 +586,25 @@
   <span class="va">status</span> <span class="op">:=</span> <span class="st">"Untimely grad"</span>
 <span class="op">]</span>
 <span class="va">DT</span><span class="op">[</span><span class="va">completion</span> <span class="op">==</span> <span class="cn">FALSE</span>, <span class="va">status</span> <span class="op">:=</span> <span class="st">"Non-completer"</span><span class="op">]</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">study_program</span>, by <span class="op">=</span> <span class="st">"cip6"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">cols_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"cip6"</span>, <span class="st">"completion"</span>, <span class="st">"completion_timely"</span>, <span class="st">"status"</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">cip6</span><span class="op">)</span>, <span class="va">..cols_we_want</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>N_group <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">status</span><span class="op">)</span><span class="op">]</span>
-
-<span class="co"># Graph counts</span></code></pre></div>
+<span class="va">mw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condition_multiway.html">condition_multiway</a></span><span class="op">(</span><span class="va">DT</span>,
+  categ_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"status"</span><span class="op">)</span>,
+  quant_col <span class="op">=</span> <span class="st">"N_group"</span>,
+  order_by <span class="op">=</span> <span class="st">"sum"</span>,
+  detail <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mw</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">N_group</span>, y <span class="op">=</span> <span class="va">status</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span>, as.table <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2000</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>
+    x <span class="op">=</span> <span class="st">"Number of students"</span>,
+    y <span class="op">=</span> <span class="st">""</span>,
+    title <span class="op">=</span> <span class="st">"Practice data (not for research)"</span>,
+    caption <span class="op">=</span> <span class="st">"Source: midfielddata"</span>
+  <span class="op">)</span></code></pre></div>
 </div>
 </div>
   </div>
