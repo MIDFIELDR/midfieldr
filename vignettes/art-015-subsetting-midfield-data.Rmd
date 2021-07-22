@@ -284,5 +284,33 @@ The vignette code chunks are collected below in a single, condensed script.
 ```{r eval=FALSE}
 # packages used
 library("midfieldr")
+library("midfielddata")
 suppressMessages(library("data.table"))
+options(
+  datatable.print.nrows = 10,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
+data(student, term, degree)
+
+# Subset by program code
+case_degree <- filter_match(degree,
+  match_to = study_program,
+  by_col = "cip6",
+  select = c("mcid", "institution", "cip6")
+)
+case_degree <- unique(case_degree)
+
+# Subset by ID
+case_student <- filter_match(student,
+  match_to = case_degree,
+  by_col = "mcid",
+  select = c("mcid", "transfer", "hours_transfer")
+)    
+case_student <- unique(case_student)
+case_student[, .N, by = "transfer"]
+
+# Merge program names
+case_degree <- merge(case_degree, study_program, by = "cip6", all.x = TRUE)
+case_degree[, .N, by = "program"]
 ```
