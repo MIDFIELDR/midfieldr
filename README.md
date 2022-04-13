@@ -20,30 +20,35 @@ records.
 
 ## Overview
 
-<a href="https://engineering.purdue.edu/MIDFIELD" target="_blank"><strong>MIDFIELD</strong></a>
-contains individual Student Unit Record (SUR) data for 1.7M students at
-33 US institutions (as of June 2021). MIDFIELD is large enough to permit
-grouping and summarizing by multiple characteristics, enabling
-researchers to examine student characteristics (race/ethnicity, sex,
-prior achievement) and curricular pathways (including coursework and
-major) by institution and over time.
+<a href="https://engineering.purdue.edu/MIDFIELD"
+target="_blank"><strong>MIDFIELD</strong></a> contains individual
+Student Unit Record (SUR) data for 1.7M students at 33 US institutions
+(as of June 2021). MIDFIELD is large enough to permit grouping and
+summarizing by multiple characteristics, enabling researchers to examine
+student characteristics (race/ethnicity, sex, prior achievement) and
+curricular pathways (including coursework and major) by institution and
+over time.
 
 **midfieldr** is an R package that provides tools for working with
 MIDFIELD SURs. The tools in midfieldr work equally well with the
 research data in MIDFIELD and the practice data in midfielddata.
 
-<a href="https://midfieldr.github.io/midfielddata/" target="_blank"><strong>midfielddata</strong></a>
-is an R package that provides practice data (a proportionate stratified
-sample of MIDFIELD) with longitudinal SURs for nearly 98,000
-undergraduates at 12 institutions from 1987–2016 organized in four data
-tables:
+<a href="https://midfieldr.github.io/midfielddata/"
+target="_blank"><strong>midfielddata</strong></a> is an R package that
+provides practice data (a proportionate stratified sample of MIDFIELD)
+with longitudinal SURs for nearly 98,000 undergraduates at 12
+institutions from 1987–2016 organized in four data tables:
 
-| Data set                                                                     | Each row is                           |  N rows | N columns |
-|:-----------------------------------------------------------------------------|:--------------------------------------|--------:|----------:|
-| [`student`](https://midfieldr.github.io/midfielddata/reference/student.html) | a student upon being admitted         |  97,640 |        13 |
-| [`course`](https://midfieldr.github.io/midfielddata/reference/course.html)   | a student in a course                 |    3.5M |        12 |
-| [`term`](https://midfieldr.github.io/midfielddata/reference/term.html)       | a student in a term                   | 728,000 |        13 |
-| [`degree`](https://midfieldr.github.io/midfielddata/reference/degree.html)   | a student who completes their program |  48,000 |         5 |
+<small>
+
+| Practice data table                                                          | Each row is                           | No. of rows | No. of columns |
+|:-----------------------------------------------------------------------------|:--------------------------------------|------------:|---------------:|
+| [`student`](https://midfieldr.github.io/midfielddata/reference/student.html) | a student upon being admitted         |      97,640 |             13 |
+| [`course`](https://midfieldr.github.io/midfielddata/reference/course.html)   | a student in a course                 |        3.5M |             12 |
+| [`term`](https://midfieldr.github.io/midfielddata/reference/term.html)       | a student in a term                   |     728,000 |             13 |
+| [`degree`](https://midfieldr.github.io/midfielddata/reference/degree.html)   | a student who completes their program |      48,000 |              5 |
+
+</small>
 
 ## Usage
 
@@ -89,34 +94,36 @@ DT <- DT[, .N, by = .(grad_status, sex, race)]
 DT
 #>     grad_status    sex            race     N
 #>          <char> <char>          <char> <int>
-#>  1:        grad   Male           White  7172
-#>  2:        grad   Male           Black   533
-#>  3:    non-grad   Male           White  4423
-#>  4:    non-grad   Male           Black   706
-#>  5:    non-grad   Male   Other/Unknown   113
+#>  1:        grad   Male           White  7125
+#>  2:        grad   Male           Black   530
+#>  3:    non-grad   Male           White  3911
+#>  4:    non-grad   Male           Black   683
+#>  5:        grad Female           White  1829
 #> ---                                         
-#> 24:        grad Female   Other/Unknown    35
-#> 25:        grad Female Native American    14
-#> 26:    non-grad Female   International    24
-#> 27:    non-grad Female Native American     7
+#> 24:    non-grad Female   International    24
+#> 25:    non-grad Female Hispanic/Latinx    31
+#> 26:    non-grad Female Native American     7
+#> 27:    non-grad Female           Asian   108
 #> 28:        grad   Male Native American    36
 ```
 
 ## Documentation
 
--   <a href="https://midfieldr.github.io/midfieldr/articles/" target="_blank">Articles.</a>
-    For a listing of all vignettes.
--   <a href="https://midfieldr.github.io/midfieldr/reference/" target="_blank">Reference (midfieldr).</a>
-    For a listing of all midfieldr functions and prepared data.
--   <a href="https://midfieldr.github.io/midfielddata/reference/" target="_blank">Reference (midfielddata).</a>
-    For a listing of the four practice MIDFIELD data tables.
+-   <a href="https://midfieldr.github.io/midfieldr/articles/"
+    target="_blank">Articles.</a> For a listing of all vignettes.
+-   <a href="https://midfieldr.github.io/midfieldr/reference/"
+    target="_blank">Reference (midfieldr).</a> For a listing of all
+    midfieldr functions and prepared data.
+-   <a href="https://midfieldr.github.io/midfielddata/reference/"
+    target="_blank">Reference (midfielddata).</a> For a listing of the
+    four practice MIDFIELD data tables.
 
 ## Requirements
 
--   <a href="https://www.r-project.org/" target="_blank">R</a> (>=
+-   <a href="https://www.r-project.org/" target="_blank">R</a> (\>=
     3.5.0)
--   <a href="https://rdatatable.gitlab.io/data.table/" target="_blank">data.table</a>
-    (>= 1.9.8)  
+-   <a href="https://rdatatable.gitlab.io/data.table/"
+    target="_blank">data.table</a> (\>= 1.9.8)  
 -   <a href="https://ggplot2.tidyverse.org/" target="_blank">ggplot2</a>
     recommended for data graphics, but not required.
 
@@ -180,8 +187,8 @@ To contribute to midfieldr,
 To provide feedback or report a bug,
 
 -   Use the GitHub
-    <a href="https://github.com/MIDFIELDR/midfieldr/issues" target="_blank">Issues</a>
-    page.
+    <a href="https://github.com/MIDFIELDR/midfieldr/issues"
+    target="_blank">Issues</a> page.
 -   Please run the package unit tests and report the results with your
     bug report. Any user can run the package tests by installing the
     *tinytest* package and running:
@@ -196,12 +203,12 @@ Conduct](CONDUCT.html).
 
 ## Related work
 
--   <a href="https://midfieldr.github.io/midfielddata/" target="_blank">midfielddata</a>
-    Sample of MIDFIELD student unit record data.
--   <a href="https://engineering.purdue.edu/MIDFIELD" target="_blank">MIDFIELD</a>
-    A partnership of US institutions.
--   <a href="https://midfieldr.github.io/2021-asee-workshop/" target="_blank">MIDFIELD workshops</a>
-    for additional information and tutorials.
+-   <a href="https://midfield.online/" target="_blank">MIDFIELD</a> a
+    partnership of US higher education institutions with engineering
+    programs.
+-   <a href="https://midfieldr.github.io/2021-asee-workshop/"
+    target="_blank">MIDFIELD workshops</a> for additional information
+    and tutorials.
 
 ## Acknowledgments
 
@@ -210,6 +217,6 @@ Foundation (EEC 1545667).
 
 ## License
 
-midfieldr is licensed under GPL (>= 2.0)  
+midfieldr is licensed under GPL (\>= 2.0)  
 © 2018 Richard Layton, Russell Long, Matthew Ohland, Susan Lord, and
 Marisa Orr

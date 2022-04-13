@@ -15,21 +15,17 @@ resource_files: |
 ---
 
 ```{r setup, include = FALSE}
-source("article-preamble.R")
+source("vignettes/article-preamble.R")
 set_fig_path("art-002-case-study-programs-")
 ```
 
-
-
-
-
 ## Introduction
 
-The case study is a tour of a typical workflow with student unit record data. For the sake of brevity, we focus on the logic of the analysis and leave the  detailed discussion of functions and arguments to later vignettes. 
+The case study is a condensed tour of a typical workflow with student unit record data. We provide the R code with minimum explanation and focus instead on the overall logic of the process. Other vignettes explore the details of the midfieldr functions.  
 
 Assuming you completed the introduction to the four data tables (in [Getting started](art-000-getting-started.html)), the case study has four parts:
 
-- *Case study programs* &#9665; You are here.
+- *Case study programs* &#9664; You are here.
 - [Case study students](art-004-case-study-students.html) 
 - [Case study stickiness](art-006-case-study-stickiness.html)
 - [Case study graduation rate](art-006-case-study-grad-rate.html)
@@ -69,17 +65,15 @@ library("midfieldr")
 suppressMessages(library("data.table"))
 
 # optional code to control data.table printing
-options(
-  datatable.print.nrows = 6,
-  datatable.print.topn = 3,
-  datatable.print.class = TRUE
-)
+options(datatable.print.nrows = 10,
+        datatable.print.topn = 5,
+        datatable.print.class = TRUE)
 ```
 
 midfieldr includes `cip`,  a data table of academic program codes and names. View its help page by running
 
 ```r
-# Type in the Console
+# type in the Console
 ? cip
 ```
 
@@ -91,7 +85,7 @@ We start with a text search of `cip` for `engineering` using `filter_search()`.
 # subset rows of the CIP data matching conditions
 pass01 <- filter_search(cip, "engineering")
 
-# Examine the result
+# examine the result
 pass01
 ```
 
@@ -102,27 +96,26 @@ cols_we_want <- c("cip2", "cip2name")
 unique(pass01[, ..cols_we_want])
 ```
 
-Only one of these (14) will have the programs we are looking for. So in our second pass, we can restrict our search to codes starting with 14. 
+Only one of these (14) will have the programs we are looking for. So in our second pass, we apply the filter to the results of the first pass and restrict our search to codes starting with 14. 
 
 ```{r}
+# subset the previous pass
 pass02 <- filter_search(pass01, "^14")
 
-# Examine the result
+# examine the result
 pass02
 ```
 
-In the next pass, let's try restricting our search to the four conventional terms: civil, electrical, industrial, and mechanical. The search is not case-sensitive. 
+In the next pass, applying the filter to the results of the second pass, let's try restricting our search to the four conventional terms: civil, electrical, industrial, and mechanical. The search is not case-sensitive. 
 
 ```{r}
 # optional code to control data.table printing
 options(datatable.print.topn = 13)
 
-pass03 <- filter_search(
-  pass02,
-  c("civil", "electrical", "industrial", "mechanical")
-)
+# subset the previous pass
+pass03 <- filter_search(pass02, c("civil", "electrical", "industrial", "mechanical"))
 
-# Examine the result
+# examine the result
 cols_we_want <- c("cip6", "cip6name")
 pass03[, ..cols_we_want]
 ```
@@ -130,9 +123,10 @@ pass03[, ..cols_we_want]
 In this result,  only Electromechanical Engineering is superfluous, so we can drop it in the next pass. 
 
 ```{r}
+# subset the previous pass
 pass04 <- filter_search(pass03, drop_text = "electromechanical")
 
-# Examine the result
+# examine the result
 pass04
 ```
 
@@ -146,10 +140,11 @@ We see that
 All MIDFIELD data tables that have a column of CIP codes use 6-digit codes. Therefore, for a case study, we only need the `cip6` column from the work above. The names we want (in this case), however, are at the 4-digit level. We can select the columns we need. 
 
 ```{r}
+# select columns from the previous pass
 cols_we_want <- c("cip6", "cip4name")
 case_cip <- pass04[, ..cols_we_want]
 
-# Examine the result
+# examine the result
 case_cip
 ```
 
@@ -163,17 +158,17 @@ We use the data.table `fcase()` function and `%ilike%` to add a `program` column
 View their help pages by running
 
 ``` r
-# Type in the Console
+# type in the Console
 ? `%ilike%`
 
 ? fcase
 ```
 
 ```{r}
-# Create a new memory location to avoid updating by reference
+# create a new memory location to avoid updating by reference
 case_program <- copy(case_cip)
 
-# Add a new column for custom program labels
+# add a new column for custom program labels
 case_program[, program := fcase(
   cip4name %ilike% "civil", "Civil",
   cip4name %ilike% "electrical", "Electrical",
@@ -181,17 +176,17 @@ case_program[, program := fcase(
   cip4name %ilike% "industrial", "Industrial"
 )]
 
-# Examine the result
+# examine the result
 case_program
 ```
 
 In subsequent work we need only the `cip6` and `program` values, so we can drop the `cip4name` column. 
 
 ```{r}
-# Drop an unnecessary column
+# drop an unnecessary column
 case_program[, cip4name := NULL]
 
-# Examine the result
+# examine the result
 case_program
 ```
 
@@ -210,7 +205,7 @@ We suggest saving intermediate results like these at each significant milestone 
 These results have been included with midfieldr as the built-in data set `study_program`. View its help page by running 
 
 ```r
-# Type in the Console
+# type in the Console
 ? study_program
 ```
 View the data frame, 
@@ -262,10 +257,7 @@ suppressMessages(library("data.table"))
 # identify program codes
 pass01 <- filter_search(cip, "engineering")
 pass02 <- filter_search(pass01, "^14")
-pass03 <- filter_search(
-  pass02,
-  c("civil", "electrical", "industrial", "mechanical")
-)
+pass03 <- filter_search(pass02, c("civil", "electrical", "industrial", "mechanical"))
 pass04 <- filter_search(pass03, drop_text = "electromechanical")
 cols_we_want <- c("cip6", "cip4name")
 case_cip <- pass04[, ..cols_we_want]
