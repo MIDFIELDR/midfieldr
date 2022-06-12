@@ -1,4 +1,4 @@
-Copyright 2018 by midfieldr authors
+Copyright 2018-2022 by midfieldr authors
 
 
 GNU General Public License
