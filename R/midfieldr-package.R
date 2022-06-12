@@ -11,6 +11,8 @@
 #' @importFrom wrapr stop_if_dot_args let `%?%`
 #'
 #' @importFrom stats na.omit median reorder
+#' 
+#' @importFrom Rdpack reprompt
 NULL
 
 

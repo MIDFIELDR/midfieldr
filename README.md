@@ -14,9 +14,8 @@ Tools for Studying MIDFIELD Student Unit Record Data in R
 v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 <!-- badges: end -->
 
-The goal of midfieldr is to provide tools for working with MIDFIELD
-data, a resource of longitudinal, de-identified, individual student unit
-records.
+The goal of midfieldr is to provide tools and guides for working with
+longitudinal data from the MIDFIELD database.
 
 ## Overview
 
@@ -30,8 +29,9 @@ curricular pathways (including coursework and major) by institution and
 over time.
 
 **midfieldr** is an R package that provides tools for working with
-MIDFIELD SURs. The tools in midfieldr work equally well with the
-research data in MIDFIELD and the practice data in midfielddata.
+MIDFIELD SURs. The tools in midfieldr work with the research data in the
+MIDFIELD database and with the practice data in the midfielddata
+package.
 
 <a href="https://midfieldr.github.io/midfielddata/"
 target="_blank"><strong>midfielddata</strong></a> is an R package that
@@ -274,5 +274,5 @@ Foundation (EEC 1545667).
 ## License
 
 midfieldr is licensed under GPL (\>= 2.0)  
-© 2018–2022 Richard Layton, Russell Long, Matthew Ohland, Susan Lord,
+© 2018–2022 Richard Layton, Russell Long, Susan Lord, Matthew Ohland,
 and Marisa Orr

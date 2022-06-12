@@ -1,7 +1,7 @@
 ---
 output: github_document
 bibliography: inst/REFERENCES.bib
-csl: inst/ieee-with-url.csl
+csl: inst/information-science-and-technology.csl
 link-citations: yes
 always_allow_html: true
 resource_files:
@@ -11,9 +11,36 @@ resource_files:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r setup, include = FALSE}
-source("vignettes/article-preamble.R")
-set_fig_path("README-")
+```{r setup, echo = FALSE}
+# code chunks
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = FALSE
+)
+
+# figures
+knitr::opts_chunk$set(
+    fig.path = "man/figures/README-", 
+    fig.width = 6,
+    fig.asp = 1 / 1.6,
+    out.width = "70%",
+    fig.align = "center"
+)
+
+# inline numbers
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
 ```
 
 ```{r echo = FALSE}
@@ -23,9 +50,6 @@ options(
   datatable.print.class = TRUE
 )
 ```
-
-
-
 
 
 # midfieldr
@@ -40,7 +64,7 @@ Tools for Studying MIDFIELD Student Unit Record Data in R
 <!-- badges: end -->
 
 
-The goal of midfieldr is to provide tools for working with MIDFIELD data, a resource of longitudinal, de-identified, individual student unit records.
+The goal of midfieldr is to provide tools and guides for working with longitudinal data from the MIDFIELD database.  
 
 
 
@@ -49,7 +73,7 @@ The goal of midfieldr is to provide tools for working with MIDFIELD data, a reso
 
 [**MIDFIELD**](https://engineering.purdue.edu/MIDFIELD){target="_blank"} contains individual Student Unit Record (SUR) data for 1.7M students at 21 US institutions (as of June 2022). MIDFIELD is large enough to permit grouping and summarizing by multiple characteristics, enabling researchers to examine student characteristics (race/ethnicity, sex, prior achievement) and curricular pathways (including coursework and major) by institution and over time. 
 
-**midfieldr** is an R package that provides tools for working with MIDFIELD SURs. The tools in midfieldr work equally well with the research data in MIDFIELD and the practice data in midfielddata. 
+**midfieldr** is an R package that provides tools for working with MIDFIELD SURs. The tools in midfieldr work with the research data in the MIDFIELD database and with the practice data in the midfielddata package.  
 
 [**midfielddata**](https://midfieldr.github.io/midfielddata/){target="_blank"} is an R package that provides practice data (a proportionate stratified sample of  MIDFIELD) with longitudinal SURs for nearly 98,000 undergraduates at 12 institutions from 1987–2016 organized in four data tables: 
 
@@ -286,6 +310,6 @@ This work is supported by a grant from the US National Science Foundation (EEC 1
 ## License
 
 midfieldr is licensed under GPL (>= 2.0)    
-&copy; 2018--2022 Richard Layton, Russell Long, Matthew Ohland, Susan Lord, and Marisa Orr    
+&copy; 2018--2022 Richard Layton, Russell Long, Susan Lord, Matthew Ohland, and Marisa Orr    
 
 
