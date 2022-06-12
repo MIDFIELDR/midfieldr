@@ -1,4 +1,4 @@
-Copyright 2018 by Richard Layton, Russell Long, Susan Lord, Matthew Ohland, and Marisa Orr
+Copyright 2018 by midfieldr authors
 
 
 GNU General Public License
