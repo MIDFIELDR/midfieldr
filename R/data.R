@@ -355,3 +355,27 @@
 #' @family toy-data
 #'
 "toy_degree"
+
+# -------------------------------------------------------------------
+
+#' Case-study subsetting results
+#'
+#' Results of the subsetting step in the case study of Civil, Electrical,
+#' Industrial, and Mechanical Engineering programs from midfielddata used 
+#' in the vignettes. 
+#'
+#' @format \code{data.table} with 65968 rows and 3 columns keyed by ID.
+#' \describe{
+#'
+#'  \item{mcid}{Character, anonymized student identifier}
+#'
+#'  \item{institution}{Character, anonymized institution name}
+#'
+#'  \item{timely_term}{Character, the last academic term in which a 
+#'  student's program completion would be considered timely, format YYYYT}
+#'
+#' }
+#'
+#' @family case-study-data
+#'
+"study_subsetting"

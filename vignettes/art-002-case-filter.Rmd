@@ -1,0 +1,184 @@
+---
+title: "Case study---subsetting"
+author: "Richard Layton"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
+output: rmarkdown::html_vignette
+csl: ../inst/information-science-and-technology.csl
+vignette: >
+  %\VignetteIndexEntry{Case study---subsetting}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+nocite: | 
+resource_files: |
+---
+
+```{r setup, include = FALSE}
+# code chunks
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  error = FALSE
+)
+
+# figures
+knitr::opts_chunk$set(
+    fig.path = "../man/figures/art-002-case-subset-", 
+    fig.width = 6,
+    fig.asp = 1 / 1.6,
+    out.width = "70%",
+    fig.align = "center"
+)
+
+# inline numbers
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+```
+
+Part 2 of a case study in five parts:
+
+- [Introduction.](art-001-case-introduction.html) Goals.  
+- [Subsetting.](art-002-case-filter.html) Filter observations and select variables.  
+- [Classifying.](art-003-case-classify.html) Construct variables that characterize or classify the record. 
+- [Summarizing.](art-004-case-summarize.html) Group variables and count observations.
+- [Displaying.](art-005-case-display.html) Create charts and tables for discussion.
+
+Overall, we use R packages midfieldr, midfielddata, data.table, and ggplot2 without detailed explanation.  We provide those details in separate vignettes.  
+
+
+## Preface
+
+The first step in our case study is to import the data and filter the observations (subset by rows) to retain the appropriate student records.
+
+If you are writing your own script to follow along, we start with these packages: 
+
+```{r}
+# Packages
+library("midfieldr")
+library("midfielddata")
+suppressPackageStartupMessages(library("data.table"))
+
+# data.table printing options
+options(
+  datatable.print.nrows = 6,
+  datatable.print.topn = 3,
+  datatable.print.class = TRUE
+)
+```
+
+## Load practice data
+
+For initial filtering, we load the `student` and `term` data tables. 
+ 
+```{r}
+# Load the midfielddata practice data
+data(student, term)
+```
+
+Using `copy()` to create the working data frame (`DT`), we can then make changes to `DT` *by reference* without affecting the `term` data frame. This allows us to use the original, unaltered `term` data frame when needed. 
+
+```{r}
+# Initialize the working data table
+DT <- copy(term)
+str(DT)
+```
+
+The result has `r nrow(DT)` observations. 
+
+**Subsetting.** Less clutter in the printout can be helpful to the reader, so I select the specific columns I know I'll need. Hence I can display the working data frame `DT` in tabular form, e.g., 
+
+```{r}
+# (Optional) Reduce printout clutter
+DT <- DT[, .(mcid, institution)]
+DT[]
+```
+
+In general, dropping unneeded columns is OK as long as those variables are not required at some later point. Of course, if you make a mistake you can always return to the point at which you nase the selection and add the missing column name(s) to the list. 
+
+## Determine timely completion term 
+
+A *timely completion term* is the last term in which a student's program completion would be considered timely, typically 6 years after admission. 
+
+**Classifying.** Here we add a variable with an estimated timely completion term for each student, constructed from information in the `term` data table. This classification of the record is required for the data sufficiency filter that follows.   
+
+```{r}
+# Add timely term variable 
+DT <- add_timely_term(DT, midfield_term = term)
+DT[]
+```
+
+We added a column, so no change in the number of observations. 
+
+## Filter for data sufficiency
+
+The time span (or range) of MIDFIELD data varies by institution. Student records at the upper and lower limits of a data range might have to be excluded from a study because the available data is insufficient to unambiguously estimate timely completion.  
+
+**Classifying.** Here, knowing the timely completion term, we add a logical variable indicating data sufficiency, constructed from information in the `term` data table.  
+
+```{r}
+# Add data sufficiency logical variable
+DT <- add_data_sufficiency(DT, midfield_term = term)
+```
+
+**Subsetting.**  We filter to retain observations for which the data are sufficient.   
+
+```{r}
+# Subset observations for data sufficiency
+DT <- DT[data_sufficiency == TRUE]
+DT[]
+```
+
+The result has `r nrow(DT)` observations. 
+
+## Filter for degree-seeking
+
+In a study of program stickiness, we want to exclude non-degree-seeking students. The `term` data table (and therefore `DT`) includes all students enrolled, degree-seeking or not. The `student` data table contains only students admitted as degree-seeking. 
+
+**Subsetting.** To filter for degree-seeking students, we retain only those students in `DT` whose IDs appear in `student`.
+
+```{r}
+# Subset observations for degree-seeking
+DT <- filter_match(DT, match_to = student, by_col = "mcid")
+DT[]
+```
+
+The result has `r nrow(DT)` observations. 
+
+## Filter for one observation per student
+
+The `term` data table has a separate row for every term a student was enrolled. Thus our working data frame can have multiple rows per student. 
+
+**Subsetting.**  In this particular case, it makes no difference which row we keep, so here we filter by retaining the first instance of a record by their ID.
+
+```{r}
+# Subset observations for unique students (first instance) 
+DT <- DT[, .SD[1], by = c("mcid")]
+DT[]
+```
+
+**Subsetting.**  Here too we can drop a column to reduce printout clutter.
+
+```{r}
+# (Optional) Reduce printout clutter
+DT[, data_sufficiency := NULL]
+DT[]
+```
+
+The result has `r nrow(DT)` observations. 
+
+## Closing
+
+The next part of the case study uses `DT` as shown above as a starting point. 
+
+Even at this early stage in the analysis, you can see how subsetting can depend on classifying observations. 
