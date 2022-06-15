@@ -80,6 +80,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-vignettes">Vignettes</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-vignettes">
     <a class="dropdown-item" href="articles/art-020-data-sufficiency.html">Data sufficiency</a>
+    <a class="dropdown-item" href="articles/art-010-program-codes.html">Program codes</a>
   </div>
 </li>
 <li class="nav-item">
@@ -122,7 +123,6 @@
 <p><a href="https://engineering.purdue.edu/MIDFIELD" target="_blank" class="external-link"><strong>MIDFIELD</strong></a> contains individual Student Unit Record (SUR) data for 1.7M students at 21 US institutions (as of June 2022). MIDFIELD is large enough to permit grouping and summarizing by multiple characteristics, enabling researchers to examine student characteristics (race/ethnicity, sex, prior achievement) and curricular pathways (including coursework and major) by institution and over time.</p>
 <p><strong>midfieldr</strong> is an R package that provides tools for working with MIDFIELD SURs. The tools in midfieldr work with the research data in the MIDFIELD database and with the practice data in the midfielddata package.</p>
 <p><a href="https://midfieldr.github.io/midfielddata/" target="_blank" class="external-link"><strong>midfielddata</strong></a> is an R package that provides practice data (a proportionate stratified sample of MIDFIELD) with longitudinal SURs for nearly 98,000 undergraduates at 12 institutions from 1987–2016 organized in four data tables:</p>
-<p><small></small></p>
 <table style="width:100%;" class="table">
 <colgroup>
 <col width="51%">
@@ -163,21 +163,20 @@
 </tr>
 </tbody>
 </table>
-<p></p>
 <p>All four data tables are keyed by student ID. Tables <code>student</code> and <code>degree</code> have one observation (row) per student. Tables <code>course</code> and <code>term</code> have multiple observations per student because students can be enrolled in more than one course in a term and more than one term over their program.</p>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<p>In a typical workflow, we filter (subset by row) student unit records to retain desired observations, assign classifications such as program, sex, or race/ethnicity, select variables (subset by column), group and summarize, and display the results in graphs or tables.</p>
-<p>Additional filtering is performed as needed at any point in the process. In outline, the steps are:</p>
+<p>The outline of our typical workflow is:</p>
 <ul>
-<li>filter</li>
-<li>classify</li>
-<li>count</li>
-<li>display</li>
+<li>Define the study parameters</li>
+<li>Transform the data to yield the observations of interest</li>
+<li>Calculate summary statistics and metrics</li>
+<li>Create tables and charts to display results</li>
+<li>Iterate</li>
 </ul>
-<p>In this brief usage example, we compare counts of engineering students by race/ethnicity, sex, and graduation status. Data manipulation is performed using data.table syntax.</p>
+<p>In this brief usage example, the goal is to tabulate counts of engineering students by race/ethnicity, sex, and graduation status. Data manipulation is performed using data.table syntax.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Packages used</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
@@ -188,58 +187,101 @@
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span>, <span class="va">degree</span><span class="op">)</span>
 
 <span class="co"># Initialize the working data table</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></code></pre></div>
-<p><strong>Filter.</strong> We use “filter” to mean subsetting by rows to retain observations with desired characteristics. In this example, we retain observations for which: 1) the span of terms in the data are sufficient for assessing program completion; 2) students are degree-seeking; and 3) students are enrolled in the programs of interest and in this example keeping the first instance only .</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Subset observations for data sufficiency</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span>
+
+<span class="co"># Filter observations for data sufficiency</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">]</span>
 
-<span class="co"># Subset observations for degree-seeking</span>
+<span class="co"># Filter observations for degree-seeking</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">DT</span>, match_to <span class="op">=</span> <span class="va">student</span>, by_col <span class="op">=</span> <span class="st">"mcid"</span><span class="op">)</span>
 
-<span class="co"># Subset observations for programs</span>
+<span class="co"># Filter observations for programs</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^14"</span><span class="op">]</span>
 
-<span class="co"># Subset observations for unique students (first instance) </span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></code></pre></div>
-<p><strong>Classify.</strong> Obtain 1) the students’ graduation status; and 2) student sex and race/ethnicity.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Determine graduation status</span>
+<span class="co"># Filter observations for unique students (first instance) </span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span>
+
+<span class="co"># Determine graduation status</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_completion_timely.html">add_completion_timely</a></span><span class="op">(</span><span class="va">DT</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span>
 <span class="va">DT</span><span class="op">[</span>, <span class="va">grad_status</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fifelse.html" class="external-link">fifelse</a></span><span class="op">(</span><span class="va">completion_timely</span>, <span class="st">"grad"</span>, <span class="st">"non-grad"</span><span class="op">)</span><span class="op">]</span>
 
-<span class="co"># Obtain sex and race/ethnicity</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_race_sex.html">add_race_sex</a></span><span class="op">(</span><span class="va">DT</span>, midfield_student <span class="op">=</span> <span class="va">student</span><span class="op">)</span></code></pre></div>
-<p><strong>Filter.</strong> Assume that the study design excludes students with race/ethnicity of “International” and “Other/Unknown”. Now that the race/ethnicity classification has been added, we can apply this filter.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Filter for specific race/ethnicity data  </span>
-<span class="va">rows_we_want</span> <span class="op">&lt;-</span> <span class="op">!</span><span class="va">DT</span><span class="op">$</span><span class="va">race</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"International"</span>, <span class="st">"Other/Unknown"</span><span class="op">)</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">rows_we_want</span><span class="op">]</span></code></pre></div>
-<p><strong>Count.</strong> Group and summarize by desired variables.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Count by the grouping variables</span>
-<span class="va">grouping_variables</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grad_status"</span>, <span class="st">"sex"</span>, <span class="st">"race"</span><span class="op">)</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="va">grouping_variables</span><span class="op">]</span></code></pre></div>
-<p><strong>Display.</strong> We use conventional data.table syntax for creating a readable table. For charts like those shown in the vignettes, we use the ggplot2 package.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Combine two columns to create a wide table</span>
+<span class="co"># Add demographics</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_race_sex.html">add_race_sex</a></span><span class="op">(</span><span class="va">DT</span>, midfield_student <span class="op">=</span> <span class="va">student</span><span class="op">)</span>
+
+<span class="co"># Filter for specific race/ethnicity data  </span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="va">race</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"International"</span>, <span class="st">"Other/Unknown"</span><span class="op">)</span><span class="op">]</span>
+
+<span class="co"># Calculate summary statistics</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grad_status"</span>, <span class="st">"sex"</span>, <span class="st">"race"</span><span class="op">)</span><span class="op">]</span>
+
+<span class="co"># Tabulate results</span>
 <span class="va">DT</span><span class="op">[</span>, <span class="va">race_sex</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT_display</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">race_sex</span> <span class="op">~</span> <span class="va">grad_status</span>, value.var <span class="op">=</span> <span class="st">"N"</span><span class="op">)</span>
-<span class="va">DT_display</span><span class="op">[</span><span class="op">]</span>
-<span class="co">#&gt;                   race_sex  grad non-grad</span>
-<span class="co">#&gt;                     &lt;char&gt; &lt;int&gt;    &lt;int&gt;</span>
-<span class="co">#&gt;  1:           Asian Female   126       81</span>
-<span class="co">#&gt;  2:             Asian Male   396      272</span>
-<span class="co">#&gt;  3:           Black Female   329      260</span>
-<span class="co">#&gt;  4:             Black Male   397      552</span>
-<span class="co">#&gt;  5: Hispanic/Latinx Female    64       28</span>
-<span class="co">#&gt;  6:   Hispanic/Latinx Male   197      133</span>
-<span class="co">#&gt;  7: Native American Female    10        6</span>
-<span class="co">#&gt;  8:   Native American Male    27       30</span>
-<span class="co">#&gt;  9:           White Female  1280      654</span>
-<span class="co">#&gt; 10:             White Male  4739     2974</span></code></pre></div>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">DT_display</span>, 
+         old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"race_sex"</span>, <span class="st">"grad"</span>, <span class="st">"non-grad"</span><span class="op">)</span>, 
+         new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Group"</span>, <span class="st">"Graduates"</span>, <span class="st">"Non-graduates"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>Tabulated results of usage example:</p>
+<table class="table">
+<thead><tr class="header">
+<th align="left">Group</th>
+<th align="right">Graduates</th>
+<th align="right">Non-graduates</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Asian Female</td>
+<td align="right">126</td>
+<td align="right">81</td>
+</tr>
+<tr class="even">
+<td align="left">Asian Male</td>
+<td align="right">396</td>
+<td align="right">272</td>
+</tr>
+<tr class="odd">
+<td align="left">Black Female</td>
+<td align="right">329</td>
+<td align="right">260</td>
+</tr>
+<tr class="even">
+<td align="left">Black Male</td>
+<td align="right">397</td>
+<td align="right">552</td>
+</tr>
+<tr class="odd">
+<td align="left">Hispanic/Latinx Female</td>
+<td align="right">64</td>
+<td align="right">28</td>
+</tr>
+<tr class="even">
+<td align="left">Hispanic/Latinx Male</td>
+<td align="right">197</td>
+<td align="right">133</td>
+</tr>
+<tr class="odd">
+<td align="left">Native American Female</td>
+<td align="right">10</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">Native American Male</td>
+<td align="right">27</td>
+<td align="right">30</td>
+</tr>
+<tr class="odd">
+<td align="left">White Female</td>
+<td align="right">1280</td>
+<td align="right">654</td>
+</tr>
+<tr class="even">
+<td align="left">White Male</td>
+<td align="right">4739</td>
+<td align="right">2974</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
@@ -270,13 +312,13 @@
 <h2 id="install-midfieldr">Install midfieldr<a class="anchor" aria-label="anchor" href="#install-midfieldr"></a>
 </h2>
 <p>midfieldr is not yet available from <a href="https://cran.r-project.org/" class="external-link">CRAN</a>. To install the development version of midfieldr from its <code>drat</code> repository, type in the Console:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install midfieldr from drat repo</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"midfieldr"</span>, 
                  repos <span class="op">=</span> <span class="st">"https://MIDFIELDR.github.io/drat/"</span>, 
                  type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></code></pre></div>
 <p>You can confirm a successful installation by running the following lines to bring up the package help page in the Help window.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"midfieldr-package"</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-midfieldr-help-page-1.png" width="75%" style="display: block; margin: auto;"></p>
@@ -285,14 +327,14 @@
 <h2 id="install-midfielddata">Install midfielddata<a class="anchor" aria-label="anchor" href="#install-midfielddata"></a>
 </h2>
 <p>Because of its size, installing the practice data takes time; please be patient and wait for the prompt “&gt;” to reappear. In the Console, run:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install midfielddata  </span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"midfielddata"</span>, 
                  repos <span class="op">=</span> <span class="st">"https://MIDFIELDR.github.io/drat/"</span>, 
                  type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span>
 <span class="co"># be patient</span></code></pre></div>
 <p>You can confirm a successful installation by running the following lines to bring up the package help page in the Help window.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"midfielddata-package"</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-midfielddata-help-page-1.png" width="75%" style="display: block; margin: auto;"></p>
@@ -313,7 +355,7 @@
 <li>Use the GitHub <a href="https://github.com/MIDFIELDR/midfieldr/issues" target="_blank" class="external-link">Issues</a> page.</li>
 <li>Please run the package unit tests and report the results with your bug report. Any user can run the package tests by installing the <em>tinytest</em> package and running:</li>
 </ul>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R">    <span class="va">test_results</span> <span class="op">&lt;-</span> <span class="fu">tinytest</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytest/man/test_package.html" class="external-link">test_package</a></span><span class="op">(</span><span class="st">"midfieldr"</span><span class="op">)</span>
     <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">test_results</span><span class="op">)</span></code></pre></div>
 <p>Participation in this open source project is subject to a <a href="CONDUCT.html">Code of Conduct</a>.</p>
