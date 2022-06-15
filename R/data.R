@@ -358,24 +358,33 @@
 
 # -------------------------------------------------------------------
 
-#' Case-study subsetting results
+#' Case-study reduced data
+#' 
+#' An intermediate result provided for the convenience of vignette users. 
+#' Data from the midfielddata package is reduced to the observations needed 
+#' to determine stickiness for the case study programs of  Civil, 
+#' Electrical, Industrial/Systems, and Mechanical Engineering. 
 #'
-#' Results of the subsetting step in the case study of Civil, Electrical,
-#' Industrial, and Mechanical Engineering programs from midfielddata used 
-#' in the vignettes. 
-#'
-#' @format \code{data.table} with 65968 rows and 3 columns keyed by ID.
+#' @format \code{data.table} with 7800 rows and 5 columns keyed by ID.
+#' 
 #' \describe{
 #'
 #'  \item{mcid}{Character, anonymized student identifier}
 #'
-#'  \item{institution}{Character, anonymized institution name}
+#'  \item{ever}{Character, abbreviation indicating a program in 
+#'  which the student was ever enrolled}
+#'  
+#'  \item{grad}{Character, abbreviation indicating the program 
+#'  from which the student graduated in a timely fashion}
 #'
-#'  \item{timely_term}{Character, the last academic term in which a 
-#'  student's program completion would be considered timely, format YYYYT}
+#'  \item{race}{Character, race/ethnicity as self-reported by the student, 
+#'  e.g., Asian, Black, Hispanic/LatinX, etc.}
+#'  
+#'  \item{sex}{Character, sex as self-reported by the student, 
+#'  values are Female, Male, and Unknown}
 #'
 #' }
 #'
 #' @family case-study-data
 #'
-"study_subsetting"
+"study_reduced_data"

@@ -53,6 +53,7 @@ different persistence metrics such as stickiness or graduation rate.
 Other case-study-data: 
 \code{\link{study_grad_rate}},
 \code{\link{study_program}},
+\code{\link{study_reduced_data}},
 \code{\link{study_stickiness}}
 }
 \concept{case-study-data}

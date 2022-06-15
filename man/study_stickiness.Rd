@@ -55,6 +55,7 @@ completion criterion.
 Other case-study-data: 
 \code{\link{study_grad_rate}},
 \code{\link{study_program}},
+\code{\link{study_reduced_data}},
 \code{\link{study_student}}
 }
 \concept{case-study-data}
