@@ -371,10 +371,10 @@
 #'
 #'  \item{mcid}{Character, anonymized student identifier}
 #'
-#'  \item{ever}{Character, abbreviation indicating a program in 
+#'  \item{program_ever}{Character, abbreviation indicating a program in 
 #'  which the student was ever enrolled}
 #'  
-#'  \item{grad}{Character, abbreviation indicating the program 
+#'  \item{program_grad}{Character, abbreviation indicating the program 
 #'  from which the student graduated in a timely fashion}
 #'
 #'  \item{race}{Character, race/ethnicity as self-reported by the student, 

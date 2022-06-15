@@ -39,16 +39,12 @@ provides practice data (a proportionate stratified sample of MIDFIELD)
 with longitudinal SURs for nearly 98,000 undergraduates at 12
 institutions from 1987–2016 organized in four data tables:
 
-<small>
-
 | Practice data table                                                          | Each row is                                | No. of rows | No. of columns |
 |:-----------------------------------------------------------------------------|:-------------------------------------------|------------:|---------------:|
 | [`student`](https://midfieldr.github.io/midfielddata/reference/student.html) | a student upon admission as degree-seeking |      97,640 |             13 |
 | [`course`](https://midfieldr.github.io/midfielddata/reference/course.html)   | a student in a course                      |        3.5M |             12 |
 | [`term`](https://midfieldr.github.io/midfielddata/reference/term.html)       | a student in a term                        |     728,000 |             13 |
 | [`degree`](https://midfieldr.github.io/midfielddata/reference/degree.html)   | a student upon completion of their program |      48,000 |              5 |
-
-</small>
 
 All four data tables are keyed by student ID. Tables `student` and
 `degree` have one observation (row) per student. Tables `course` and
@@ -58,22 +54,17 @@ their program.
 
 ## Usage
 
-In a typical workflow, we filter (subset by row) student unit records to
-retain desired observations, assign classifications such as program,
-sex, or race/ethnicity, select variables (subset by column), group and
-summarize, and display the results in graphs or tables.
+The outline of our typical workflow is:
 
-Additional filtering is performed as needed at any point in the process.
-In outline, the steps are:
+-   Define the study parameters
+-   Transform the data to yield the observations of interest
+-   Calculate summary statistics and metrics
+-   Create tables and charts to display results
+-   Iterate
 
--   filter
--   classify
--   count
--   display
-
-In this brief usage example, we compare counts of engineering students
-by race/ethnicity, sex, and graduation status. Data manipulation is
-performed using data.table syntax.
+In this brief usage example, the goal is to tabulate counts of
+engineering students by race/ethnicity, sex, and graduation status. Data
+manipulation is performed using data.table syntax.
 
 ``` r
 # Packages used
@@ -86,83 +77,56 @@ data(student, term, degree)
 
 # Initialize the working data table
 DT <- copy(term)
-```
 
-**Filter.** We use “filter” to mean subsetting by rows to retain
-observations with desired characteristics. In this example, we retain
-observations for which: 1) the span of terms in the data are sufficient
-for assessing program completion; 2) students are degree-seeking; and 3)
-students are enrolled in the programs of interest and in this example
-keeping the first instance only .
-
-``` r
-# Subset observations for data sufficiency
+# Filter observations for data sufficiency
 DT <- add_timely_term(DT, midfield_term = term)
 DT <- add_data_sufficiency(DT, midfield_term = term)
 DT <- DT[data_sufficiency == TRUE]
 
-# Subset observations for degree-seeking
+# Filter observations for degree-seeking
 DT <- filter_match(DT, match_to = student, by_col = "mcid")
 
-# Subset observations for programs
+# Filter observations for programs
 DT <- DT[cip6 %like% "^14"]
 
-# Subset observations for unique students (first instance) 
+# Filter observations for unique students (first instance) 
 DT <- DT[, .SD[1], by = c("mcid")]
-```
 
-**Classify.** Obtain 1) the students’ graduation status; and 2) student
-sex and race/ethnicity.
-
-``` r
 # Determine graduation status
 DT <- add_completion_timely(DT, midfield_degree = degree)
 DT[, grad_status := fifelse(completion_timely, "grad", "non-grad")]
 
-# Obtain sex and race/ethnicity
+# Add demographics
 DT <- add_race_sex(DT, midfield_student = student)
-```
 
-**Filter.** Assume that the study design excludes students with
-race/ethnicity of “International” and “Other/Unknown”. Now that the
-race/ethnicity classification has been added, we can apply this filter.
-
-``` r
 # Filter for specific race/ethnicity data  
-rows_we_want <- !DT$race %chin% c("International", "Other/Unknown")
-DT <- DT[rows_we_want]
-```
+DT <- DT[!race %chin% c("International", "Other/Unknown")]
 
-**Count.** Group and summarize by desired variables.
+# Calculate summary statistics
+DT <- DT[, .N, by = c("grad_status", "sex", "race")]
 
-``` r
-# Count by the grouping variables
-grouping_variables <- c("grad_status", "sex", "race")
-DT <- DT[, .N, by = grouping_variables]
-```
-
-**Display.** We use conventional data.table syntax for creating a
-readable table. For charts like those shown in the vignettes, we use the
-ggplot2 package.
-
-``` r
-# Combine two columns to create a wide table
+# Tabulate results
 DT[, race_sex := paste(race, sex)]
 DT_display <- dcast(DT, race_sex ~ grad_status, value.var = "N")
-DT_display[]
-#>                   race_sex  grad non-grad
-#>                     <char> <int>    <int>
-#>  1:           Asian Female   126       81
-#>  2:             Asian Male   396      272
-#>  3:           Black Female   329      260
-#>  4:             Black Male   397      552
-#>  5: Hispanic/Latinx Female    64       28
-#>  6:   Hispanic/Latinx Male   197      133
-#>  7: Native American Female    10        6
-#>  8:   Native American Male    27       30
-#>  9:           White Female  1280      654
-#> 10:             White Male  4739     2974
+setnames(DT_display, 
+         old = c("race_sex", "grad", "non-grad"), 
+         new = c("Group", "Graduates", "Non-graduates"))
 ```
+
+Tabulated results of usage example:
+
+| Group                  | Graduates | Non-graduates |
+|:-----------------------|----------:|--------------:|
+| Asian Female           |       126 |            81 |
+| Asian Male             |       396 |           272 |
+| Black Female           |       329 |           260 |
+| Black Male             |       397 |           552 |
+| Hispanic/Latinx Female |        64 |            28 |
+| Hispanic/Latinx Male   |       197 |           133 |
+| Native American Female |        10 |             6 |
+| Native American Male   |        27 |            30 |
+| White Female           |      1280 |           654 |
+| White Male             |      4739 |          2974 |
 
 ## Documentation
 
