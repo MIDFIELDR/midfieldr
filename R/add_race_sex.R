@@ -27,7 +27,7 @@
 #' @export
 #'
 #'
-add_race_sex <- function(dframe, midfield_student) {
+add_race_sex <- function(dframe, midfield_student = student) {
 
   # remove all keys
   on.exit(setkey(dframe, NULL))

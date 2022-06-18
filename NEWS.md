@@ -1,4 +1,11 @@
 
+## midfieldr 1.0.0.9021 / 2022-07
+
+- Revise data sufficiency to include lower limit exclusions
+- Edit function names and variable names
+- Reorganize case study and vignettes 
+
+
 ## midfieldr 1.0.0.9020 / 2021-07
 
 Significant changes from earlier versions, no backwards compatibility, prompting version number change to 1.0.0
@@ -24,7 +31,7 @@ Significant changes from earlier versions, no backwards compatibility, prompting
 
 ## midfieldr 0.1.0 / 2018-06
 
-- Development version public on GitHub
+- Initial development version public on GitHub
   
 <!-- major.minor.patch.dev -->
 <!-- MAJOR version when you make incompatible API changes ->

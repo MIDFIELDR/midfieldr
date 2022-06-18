@@ -24,3 +24,20 @@ set_colrow_order <- function(dframe, cols) {
   # order rows by using names as keys
   setkeyv(dframe, cols = cols)
 }
+
+# ------------------------------------------------------------------------
+# 
+#' Return column names not being added by the function
+#'
+#' Identifies the names of columns unaffected by the function operation. 
+#' Used by all midfieldr "add_" functions. Every column name being added 
+#' replaces existing columns of the same names if any. 
+#'
+#' @param dframe data frame
+#' @param new_cols character vector of column names added by the function
+#' @noRd
+find_old_cols <- function(dframe, new_cols) {
+    all_cols <- colnames(dframe)
+    old_cols <- all_cols[!all_cols %chin% new_cols]
+    return(old_cols)
+}

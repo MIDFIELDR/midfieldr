@@ -144,60 +144,10 @@
 #'
 #' }
 #'
-#' @seealso \code{\link{add_timely_term}} and
-#' \code{\link{add_data_sufficiency}}
-#'
 #' @family case-study-data
 "study_student"
 
-# -------------------------------------------------------------------
 
-#' Case-study stickiness results
-#'
-#' Longitudinal stickiness results for Civil, Electrical, Industrial, and
-#' Mechanical Engineering programs from midfielddata. Results are keyed by
-#' program, race/ethnicity, and sex. Used in the case study developed in the
-#' vignettes.
-#'
-#' Longitudinal stickiness is the ratio of the number of students graduating
-#' from a program to the number of students ever enrolled in the program over
-#' the time span of available data.
-#'
-#' Data are subset to satisfy the data sufficiency criterion and some
-#' graduates are reclassified as non-completers to satisfy the timely
-#' completion criterion.
-#'
-#' @format \code{data.table} with 55 rows and 6 columns keyed by
-#' program, race/ethnicity, and sex.
-#' \describe{
-#'
-#'   \item{program}{Character, program name assigned for grouping and
-#'   summarizing and for display in graphs and tables.}
-#'
-#'  \item{race}{Character, race/ethnicity as self-reported by the student,
-#'  e.g., Asian, Black, Hispanic/LatinX, etc.}
-#'
-#'  \item{sex}{Character, sex as self-reported by the student, values are
-#'  Female, Male, and Unknown.}
-#'
-#'  \item{ever}{Numerical, number of students ever enrolled in the program,
-#'  after subsetting for data sufficiency and small populations.}
-#'
-#'  \item{grad}{Numerical, number of students completing a program after
-#'  subsetting for data sufficiency and accounting for timely completion.}
-#'
-#'  \item{stick}{Numerical, program stickiness, the ratio of the number of
-#'  students completing a program to the number of students ever enrolled
-#'  in the program.}
-#'
-#' }
-#'
-#' @seealso \code{\link{add_data_sufficiency}},
-#' \code{\link{add_completion_timely}}
-#'
-#' @family case-study-data
-#'
-"study_stickiness"
 
 # -------------------------------------------------------------------
 
@@ -358,24 +308,21 @@
 
 # -------------------------------------------------------------------
 
-#' Case-study reduced data
+#' Case-study ever-enrolled data
 #' 
 #' An intermediate result provided for the convenience of vignette users. 
-#' Data from the midfielddata package is reduced to the observations needed 
-#' to determine stickiness for the case study programs of  Civil, 
+#' Data from the midfielddata package is reduced to observations of
+#' all students ever enrolled in the case study programs of  Civil, 
 #' Electrical, Industrial/Systems, and Mechanical Engineering. 
 #'
-#' @format \code{data.table} with 7800 rows and 5 columns keyed by ID.
+#' @format \code{data.table} with 7388 rows and 4 columns keyed by ID.
 #' 
 #' \describe{
 #'
 #'  \item{mcid}{Character, anonymized student identifier}
 #'
-#'  \item{program_ever}{Character, abbreviation indicating a program in 
+#'  \item{program}{Character, abbreviation indicating a program in 
 #'  which the student was ever enrolled}
-#'  
-#'  \item{program_grad}{Character, abbreviation indicating the program 
-#'  from which the student graduated in a timely fashion}
 #'
 #'  \item{race}{Character, race/ethnicity as self-reported by the student, 
 #'  e.g., Asian, Black, Hispanic/LatinX, etc.}
@@ -387,4 +334,79 @@
 #'
 #' @family case-study-data
 #'
-"study_reduced_data"
+"study_reduced_ever"
+
+# -------------------------------------------------------------------
+
+#' Case-study graduation data
+#' 
+#' An intermediate result provided for the convenience of vignette users. 
+#' Data from the midfielddata package is reduced to observations of
+#' all students graduating in timely fashion from the case study programs of  
+#' Civil, Electrical, Industrial/Systems, and Mechanical Engineering. 
+#'
+#' @format \code{data.table} with 3435 rows and 4 columns keyed by ID.
+#' 
+#' \describe{
+#'
+#'  \item{mcid}{Character, anonymized student identifier}
+#'
+#'  \item{program}{Character, abbreviation indicating a program the 
+#'  student completed}
+#'
+#'  \item{race}{Character, race/ethnicity as self-reported by the student, 
+#'  e.g., Asian, Black, Hispanic/LatinX, etc.}
+#'  
+#'  \item{sex}{Character, sex as self-reported by the student, 
+#'  values are Female, Male, and Unknown}
+#'
+#' }
+#'
+#' @family case-study-data
+#'
+"study_reduced_grad"
+
+
+
+
+# -------------------------------------------------------------------
+
+#' Case-study stickiness results
+#'
+#' An intermediate result provided for the convenience of vignette users. 
+#' Longitudinal stickiness results for Civil, Electrical, Industrial, and
+#' Mechanical Engineering programs from midfielddata. Results are keyed by
+#' program, race/ethnicity, and sex.
+#'
+#' Longitudinal stickiness is the ratio of the number of students graduating
+#' from a program to the number of students ever enrolled in the program over
+#' the time span of available data.
+#'
+#' @format \code{data.table} with 33 rows and 6 columns keyed by
+#' program, race/ethnicity, and sex.
+#' \describe{
+#'
+#'   \item{program}{Character, program name assigned for grouping and
+#'   summarizing and for display in graphs and tables.}
+#'
+#'  \item{race}{Character, race/ethnicity as self-reported by the student,
+#'  e.g., Asian, Black, Hispanic/LatinX, etc.}
+#'
+#'  \item{sex}{Character, sex as self-reported by the student, values are
+#'  Female, Male.}
+#'
+#'  \item{ever}{Numerical, number of students ever enrolled in the program,
+#'  after accounting for data sufficiency and timely completion.}
+#'
+#'  \item{grad}{Numerical, number of students completing a program, after
+#'  accounting for data sufficiency and timely completion.}
+#'
+#'  \item{stick}{Numerical, program stickiness, the ratio of the number of
+#'  students completing a program to the number of students ever enrolled
+#'  in the program.}
+#'
+#' }
+#'
+#' @family case-study-data
+#'
+"study_stickiness"

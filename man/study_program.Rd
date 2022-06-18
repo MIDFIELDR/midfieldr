@@ -31,7 +31,8 @@ graphs and tables.
 \seealso{
 Other case-study-data: 
 \code{\link{study_grad_rate}},
-\code{\link{study_reduced_data}},
+\code{\link{study_reduced_ever}},
+\code{\link{study_reduced_grad}},
 \code{\link{study_stickiness}},
 \code{\link{study_student}}
 }

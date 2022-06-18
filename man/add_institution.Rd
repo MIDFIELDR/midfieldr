@@ -50,9 +50,9 @@ nrow(DT2)
 }
 \seealso{
 Other add_*: 
-\code{\link{add_completion_timely}()},
 \code{\link{add_data_sufficiency}()},
 \code{\link{add_race_sex}()},
+\code{\link{add_timely_completion}()},
 \code{\link{add_timely_term}()}
 }
 \concept{add_*}

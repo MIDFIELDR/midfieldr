@@ -1,43 +1,38 @@
 
-#' Add a column of timely completion terms
-#'
-#' Add a column of academic term values to a data frame indicating the latest
-#' term by which a student can graduate and have it considered a timely
-#' completion. Student ID is the join-by variable; terms are encoded as
-#' character strings YYYYT. Obtains the information from the
-#' MIDFIELD \code{term} data table or equivalent.
+
+#' Calculate a timely completion term for every student 
+#' 
+#' Add a column of values to a data frame of Student Unit Record (SUR) 
+#' observations indicating the latest term by which a student can complete  
+#' their program and have it considered timely. An institution column is 
+#' returned as well.  
 #'
 #' The basic heuristic starts with \code{span} number of years for each student
 #' (default 6 years). The span for students admitted at a higher level than
 #' first year are reduced by one year for each full year the student is
-#' assumed to have completed.
-#'
-#' For example, a student admitted at the second-year level is assumed
-#' to have completed one year of a program, so their span is reduced by one
-#' year. Similarly, spans are reduced by two years for students admitted at
-#' the 3rd-year level and by three years for students admitted at the
-#' fourth-year level.
-#'
+#' assumed to have completed. For example, a student admitted at the 
+#' second-year level is assumed to have completed one year of a program, 
+#' so their span is reduced by one year.
+#' 
 #' The adjusted span of years is added to their starting term; the result is
 #' the timely completion term reported in the \code{timely_term} column.
 #'
-#' The timely completion term is used in two evaluations: filtering for data
-#' sufficiency (see \code{add_data_sufficiency()}) and assessing
-#' completion for timeliness (\code{add_completion_timely()}).
+#' The optional \code{details} argument returns the additional variables used 
+#' in determining the results: a student's initial term and level and the 
+#' adjusted span in years. 
 #'
-#' If \code{detail} is TRUE, additional column(s) that support the finding
-#' are returned as well. Here the extra columns are the student's initial
-#' (admission) term \code{term_i}, initial level \code{level_i}, and
-#' the adjusted span \code{adj_span}.
+#' @section Caution:
+#' Existing columns with the same names as the added columns are silently 
+#' overwritten.
 #'
-#' Existing columns with the same names as the added columns are overwritten.
-#'
-#' @param dframe Data frame with required variable \code{mcid}.
-#' @param midfield_term MIDFIELD \code{term} data table or equivalent with
-#'        required variables \code{mcid}, \code{term}, and \code{level}.
+#' @param dframe Data frame of student unit record (SUR) observations keyed 
+#'         by student ID. Required variable is \code{mcid}.
+#' @param midfield_term MIDFIELD term data frame keyed by student ID.  
+#'         Default is \code{term}. Required variables are \code{mcid}, 
+#'        \code{institution}, \code{term}, and \code{level}.
 #' @param ... Not used, forces later arguments to be used by name.
-#' @param detail Optional flag to add columns reporting information
-#'        on which the evaluation is based, default FALSE.
+#' @param details Optional logical value. TRUE returns the additional 
+#'         variables used in determining the results. Default is FALSE.
 #' @param span Optional numeric scalar, number of years to define timely
 #'        completion. Values that are 100\%, 150\%, and 200\% of the "scheduled
 #'        span" (\code{sched_span}) are commonly used. Default 6 years.
@@ -47,8 +42,8 @@
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
 #'     \item Rows are not modified.
-#'     \item Column \code{timely_term} is added with an option to add
-#'           columns \code{term_i}, \code{level_i}, and \code{adj_span}.
+#'     \item Columns \code{institution} and \code{timely_term} are added; 
+#'     additional columns are added via the \code{details} argument.  
 #'     \item Grouping structures are not preserved.
 #' }
 #'
@@ -63,132 +58,185 @@
 #'
 #'
 add_timely_term <- function(dframe,
-                            midfield_term,
+                            midfield_term = term,
                             ...,
-                            detail = NULL,
+                            details = NULL,
                             span = NULL,
                             sched_span = NULL) {
-
-  # remove all keys
-  on.exit(setkey(dframe, NULL))
-  on.exit(setkey(midfield_term, NULL), add = TRUE)
-
-  # required arguments
-  qassert(dframe, "d+")
-  qassert(midfield_term, "d+")
-
-  # assert arguments after dots used by name
-  wrapr::stop_if_dot_args(
-    substitute(list(...)),
-    paste(
-      "Arguments after ... must be named.\n",
-      "* Did you forget to write `detail = ` or `span = `?\n *"
+    
+    # remove keys if any 
+    on.exit(setkey(dframe, NULL))
+    on.exit(setkey(midfield_term, NULL), add = TRUE)
+    
+    # required arguments
+    qassert(dframe, "d+")
+    qassert(midfield_term, "d+")
+    
+    # assert arguments after dots used by name
+    wrapr::stop_if_dot_args(
+        substitute(list(...)),
+        paste(
+            "Arguments after ... must be named.\n",
+            "* Did you forget to write `details = ` or `span = `?\n *"
+        )
     )
-  )
+    
+    # optional arguments
+    details <- details %?% FALSE
+    span <- span %?% 6
+    sched_span <- sched_span %?% 4
+    
+    # optional arguments assertions
+    qassert(details, "B1")
+    assert_int(sched_span, lower = 0)
+    assert_int(span, lower = sched_span)
+    
+    # ensure data.table format
+    setDT(dframe)
+    setDT(midfield_term) # immediately subset, so no changes by reference
+    
+    # required columns
+    assert_names(colnames(dframe),
+                 must.include = c("mcid")
+    )
+    assert_names(colnames(midfield_term),
+                 must.include = c("mcid", "institution", "term", "level")
+    )
+    
+    # class of required columns
+    qassert(dframe[, mcid], "s+")
+    qassert(midfield_term[, mcid], "s+")
+    qassert(midfield_term[, institution], "s+")
+    qassert(midfield_term[, term], "s+")
+    qassert(midfield_term[, level], "s+")
+    
+    # bind names due to NSE notes in R CMD check
+    timely_term <- NULL
+    adj_span <- NULL
+    level_i <- NULL
+    term_i <- NULL
+    delta <- NULL
+    yyyy <- NULL
+    
+    # do the work
+    
+    # variables added by this function and functions called (if any)
+    initial_traits_cols <- c("institution", "term_i", "level_i")
+    new_cols <- c(initial_traits_cols, "adj_span", "timely_term")
+    
+    # retain original variables NOT in the vector of new columns 
+    old_cols <- find_old_cols(dframe, new_cols) 
+    dframe <- dframe[, .SD, .SDcols = old_cols]
+    
+    # add first recorded term_i, level_i, and institution 
+    DT <- add_initial_traits(dframe, midfield_term)
+    DT <- DT[, .SD, .SDcols = c("mcid", initial_traits_cols)]
+    
+    # begin constructing the timely term
+    DT[, `:=`(
+        yyyy = substr(term_i, 1, 4),
+        t    = substr(term_i, 5, 5)
+    )]
+    
+    # for month terms, (letters A, B, C, ...), set first term to zero
+    DT <- DT[t %chin% LETTERS | t %chin% letters, t := "0"]
+    
+    # make year and term numeric
+    DT[, `:=`(
+        yyyy = as.numeric(yyyy),
+        t    = as.numeric(t)
+    )] 
+    
+    # if first term is in summer, delay to the subsequent Fall
+    DT[t > 3, `:=`(yyyy = yyyy + 1, t = 1)]
+    
+    # reduce span by assumed number of completed years by level
+    DT[, delta := fcase(
+        level_i %like% "04", 3,
+        level_i %like% "03", 2,
+        level_i %like% "02", 1,
+        default = 0
+    )]
+    DT[, adj_span := span - delta]
+    
+    # use adj_span to construct estimated timely-completion term
+    DT[t == 0 | t == 1, timely_term := paste0(yyyy + adj_span - 1, 3)]
+    DT[t > 1, timely_term := paste0(yyyy + adj_span, 1)]
+    
+    # remove all but essential variables
+    DT <- DT[, .SD, .SDcols = c("mcid", new_cols)]
+    
+    # ensure no duplicate rows
+    setkeyv(DT, "mcid")
+    DT <- DT[, .SD[1], by = "mcid"]
+    
+    # left outer join new columns to dframe by key(s)
+    setkeyv(dframe, "mcid")
+    dframe <- DT[dframe]
+    
+    # apply details to select columns to return
+    if (details == TRUE){
+        final_cols <- c(old_cols, new_cols) 
+    } else {
+        final_cols <- c(old_cols, "institution", "timely_term")
+    }
+    dframe <- dframe[, .SD, .SDcols = final_cols]
+    
+    # old columns as keys, order columns and rows
+    set_colrow_order(dframe, old_cols)
+    
+    # enable printing (see data.table FAQ 2.23)
+    dframe[]  
+}
 
-  # optional arguments
-  detail <- detail %?% FALSE
-  span <- span %?% 6
-  sched_span <- sched_span %?% 4
 
-  # optional arguments assertions
-  qassert(detail, "B1")
-  assert_int(sched_span, lower = 0)
-  assert_int(span, lower = sched_span)
+# ------------------------------------------------------------------------
 
-  # input modified or not by reference
-  setDT(dframe)
-  setDT(midfield_term) # immediately subset, so side-effect OK
+# Add students' initial term, level, and institution
 
-  # required columns
-  assert_names(colnames(dframe),
-    must.include = c("mcid")
-  )
-  assert_names(colnames(midfield_term),
-    must.include = c("mcid", "term", "level")
-  )
-
-  # class of required columns
-  qassert(dframe[, mcid], "s+")
-  qassert(midfield_term[, mcid], "s+")
-  qassert(midfield_term[, term], "s+")
-  qassert(midfield_term[, level], "s+")
-
-  # bind names due to NSE notes in R CMD check
-  timely_term <- NULL
-  adj_span <- NULL
-  level_i <- NULL
-  delta <- NULL
-  yyyy <- NULL
-
-  # do the work
-  # condition dframe
-  # new columns that overwrite existing columns if any
-  new_cols <- c("term_i", "level_i", "adj_span", "timely_term")
-
-  # existing column names to keep and restore
-  names_dframe <- colnames(dframe)
-  keep_cols <- names_dframe[!names_dframe %chin% new_cols]
-  dframe <- dframe[, keep_cols, with = FALSE]
-
-  # condition subset of midfield table ------------------------------
-  DT <- filter_match(
-    dframe = midfield_term,
-    match_to = dframe,
-    by_col = "mcid",
-    select = c("mcid", "term", "level")
-  )
-
-  # separate term encoding
-  DT[, `:=`(
-    yyyy = as.numeric(substr(term, 1, 4)),
-    t = as.numeric(substr(term, 5, 5))
-  )]
-
-  # keep fall through summer terms, omit "month" terms A, B, etc.
-  DT <- DT[t %in% seq(1, 6)]
-
-  # retain the first recorded term by ID
-  setorderv(DT, c("mcid", "term"))
-  DT <- DT[, .SD[1], by = c("mcid")]
-  setnames(DT,
-    old = c("term", "level"),
-    new = c("term_i", "level_i")
-  )
-
-  # if first term is in summer, delay to the subsequent Fall
-  DT[t %in% c(4, 5, 6), `:=`(yyyy = yyyy + 1, t = 1)]
-
-  # reduce span by assumed number of completed years by level
-  DT[, delta := fcase(
-    level_i %like% "04", 3,
-    level_i %like% "03", 2,
-    level_i %like% "02", 1,
-    default = 0
-  )]
-  DT[, adj_span := span - delta]
-
-  # use adj_span to construct estimated term for timely-completion
-  DT[t == 1, timely_term := paste0(yyyy + adj_span - 1, 3)]
-  DT[t > 1, timely_term := paste0(yyyy + adj_span, 1)]
-
-  # remove intermediate variables
-  DT[, c("yyyy", "t", "delta") := NULL]
-
-  # left outer join DT to dframe -------------------------------------
-  setkeyv(DT, "mcid")
-  setkeyv(dframe, "mcid")
-  dframe <- DT[dframe]
-
-  # restore column and row order
-  set_colrow_order(dframe, keep_cols)
-
-  # drop the optional columns if detail not requested
-  if (detail == FALSE) {
-    keep_cols <- c(keep_cols, "timely_term")
-    dframe <- dframe[, keep_cols, with = FALSE]
-  }
-
-  # enable printing (see data.table FAQ 2.23)
-  dframe[]
+add_initial_traits <- function(dframe, midfield_term) {
+    
+    # remove keys if any 
+    on.exit(setkey(dframe, NULL))
+    on.exit(setkey(midfield_term, NULL), add = TRUE)
+    
+    # ensure data.table format, changes by reference 
+    setDT(dframe)
+    setDT(midfield_term)
+    
+    # variables added by this function and functions called (if any)
+    new_cols <- c("term_i", "level_i", "institution")
+    
+    # retain original variables NOT in the vector of new columns 
+    old_cols <- find_old_cols(dframe, new_cols) 
+    dframe <- dframe[, .SD, .SDcols = old_cols]
+    
+    # obtain new_cols keyed by ID
+    DT <- filter_match(
+        dframe = midfield_term,
+        match_to = dframe,
+        by_col = "mcid",
+        select = c("mcid", "term", "level", "institution")
+    )
+    
+    # retain first term by ID
+    setkeyv(DT, c("mcid", "term"))
+    DT <- DT[, .SD[1], by = c("mcid")]
+    
+    # rename new columns 
+    setnames(DT,
+             old = c("term", "level", "institution"),
+             new = c("term_i", "level_i", "institution")
+    )
+    
+    # left outer join new columns to dframe by key(s)
+    setkeyv(DT, "mcid")
+    setkeyv(dframe, "mcid")
+    dframe <- DT[dframe] 
+    
+    # old columns as keys, order columns and rows
+    set_colrow_order(dframe, old_cols)
+    
+    # enable printing (see data.table FAQ 2.23)
+    dframe[]  
 }

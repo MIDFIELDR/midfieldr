@@ -1,45 +1,46 @@
 
 
-#' Add a column to evaluate data sufficiency
+#' Determine data sufficiency for every student
 #'
-#' Add a column of logical values (TRUE/FALSE) to a data frame indicating
-#' whether the available data include a sufficient range of years to justify
-#' including a student in an analysis. Obtains the information from the
-#' MIDFIELD \code{term} data table or equivalent.
+#' Add a column of values to a data frame of Student Unit Record (SUR) 
+#' observations labeling each row for inclusion or exclusion based on data 
+#' sufficiency near the upper and lower bounds of an institution's data range. 
 #'
-#' Program completion is typically considered timely if it occurs within a
-#' specific span of years after admission. Students admitted too near the
-#' last term in the available data are generally excluded from a study because
-#' the data have insufficient range to fairly assess their records.
+#' The time span of MIDFIELD data varies by institution, each having 
+#' their own lower and upper bounds. For some student records at these 
+#' bounds, assessing program completion is unavoidably ambiguous. Such 
+#' records must be identified and excluded in most cases to prevent false 
+#' summary counts.
+#' 
+#' The \code{data_sufficiency} variable added to \code{dframe} contains 
+#' three possible values: \code{include} indicates that available data are 
+#' sufficient for estimating timely program completion;  
+#' \code{exclude-upper} indicates that data are insufficient at the 
+#' upper limit of a data range; \code{exclude-lower} that data are 
+#' insufficient at the lower limit.
+#' 
+#' The optional \code{details} argument returns the additional variables used in
+#' determining the results: a student's institution and the upper and lower 
+#' limits of its data range; and a student's initial term and level. 
+#' 
+#' @section Caution:
+#' Existing columns with the same names as the added columns are silently 
+#' overwritten.
 #'
-#' The input data frame \code{dframe} must include the \code{timely_term}
-#' column obtained using the \code{add_timely_term()} function. Students can be
-#' retained in a study if their estimated timely completion term is no later
-#' than the last term in their institution's data.
-#'
-#' If the result in the \code{data_sufficiency} column is TRUE, then then
-#' student should be included in the research. If FALSE, the student should
-#' be excluded before calculating any persistence metric involving program
-#' completion (graduation). The function itself performs no subsetting.
-#'
-#' If \code{detail} is TRUE, additional column(s) that support the finding
-#' are returned as well. Here the extra column is \code{inst_limit}, the latest
-#' term reported by the institution in the available data.
-#'
-#' Existing columns with the same names as the added columns are overwritten.
-#'
-#' @param dframe Data frame with required variables
-#'        \code{institution} and \code{timely_term}.
-#' @param midfield_term MIDFIELD \code{term} data table or equivalent
-#'        with required variables \code{institution} and \code{term}.
+#' @param dframe Data frame of student unit record (SUR) observations keyed 
+#'         by student ID. Required variables are \code{mcid} and 
+#'         \code{timely_term}. 
+#' @param midfield_term MIDFIELD term data frame keyed by student ID.  
+#'         Default is \code{term}. Required variables are \code{mcid}, 
+#'         \code{term}, and \code{level}. 
 #' @param ... Not used, forces later arguments to be used by name.
-#' @param detail Optional flag to add columns reporting information
-#'        on which the evaluation is based, default FALSE.
+#' @param details Optional logical value. TRUE returns the additional 
+#'         variables used in determining the results. Default is FALSE.
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
 #'     \item Rows are not modified.
-#'     \item Column \code{data_sufficiency} is added with an option to add
-#'           column \code{inst_limit}.
+#'     \item Column \code{data_sufficiency} is added; additional columns 
+#'     are added via the \code{details} argument.  
 #'     \item Grouping structures are not preserved.
 #' }
 #'
@@ -54,109 +55,149 @@
 #'
 #'
 add_data_sufficiency <- function(dframe,
-                                 midfield_term,
+                                 midfield_term = term,
                                  ...,
-                                 detail = NULL) {
-  # remove all keys
-  on.exit(setkey(dframe, NULL))
-  on.exit(setkey(midfield_term, NULL), add = TRUE)
+                                 details = NULL) {
+    # remove keys if any 
+    on.exit(setkey(dframe, NULL))
+    on.exit(setkey(midfield_term, NULL), add = TRUE)
+    
+    # assert arguments after dots used by name
+    wrapr::stop_if_dot_args(
+        substitute(list(...)),
+        paste(
+            "Arguments after ... must be named.\n",
+            "* Did you forget to write `detail = `?\n *"
+        )
+    )
 
   # required arguments
   qassert(dframe, "d+")
   qassert(midfield_term, "d+")
-
-  # assert arguments after dots used by name
-  wrapr::stop_if_dot_args(
-    substitute(list(...)),
-    paste(
-      "Arguments after ... must be named.\n",
-      "* Did you forget to write `detail = `?\n *"
-    )
-  )
-
+  
   # optional arguments
-  detail <- detail %?% FALSE
-  qassert(detail, "B1") # boolean, length = 1
+  details <- details %?% FALSE
+  qassert(details, "B1") # boolean, length = 1
 
-  # inputs modified (or not) by reference
+  # ensure data.table format, changes by reference 
   setDT(dframe)
-  setDT(midfield_term) # immediately subset, so side-effect OK
+  setDT(midfield_term)
 
   # required columns
   assert_names(colnames(dframe),
-    must.include = c("institution", "timely_term")
+               must.include = c("mcid", "timely_term")
   )
   assert_names(colnames(midfield_term),
-    must.include = c("institution", "term")
+               must.include = c("mcid", "institution", "term", "level")
   )
 
   # class of required columns
-  qassert(dframe[, institution], "s+")
+  qassert(dframe[, mcid], "s+")
   qassert(dframe[, timely_term], "s+")
-  qassert(midfield_term[, term], "s+")
+  qassert(midfield_term[, mcid], "s+")
   qassert(midfield_term[, institution], "s+")
+  qassert(midfield_term[, term], "s+")
+  qassert(midfield_term[, level], "s+")
 
   # bind names due to NSE notes in R CMD check
   data_sufficiency <- NULL
-  timely_term <- NULL
-  inst_limit <- NULL
+  upper_limit <- NULL
+  lower_limit <- NULL
+  term_i <- NULL
 
   # do the work
-  # preserve column order except columns that match new columns
-  names_dframe <- colnames(dframe)
-  cols_we_add <- c("inst_limit", "data_sufficiency")
-  key_names <- names_dframe[!names_dframe %chin% cols_we_add]
-  dframe <- dframe[, key_names, with = FALSE]
 
-  # from midfield_term, get institution last term
-  dframe <- add_inst_limit(dframe, midfield_term = midfield_term)
-
-  # assess the data sufficiency
-  dframe[, data_sufficiency := fifelse(timely_term <= inst_limit, TRUE, FALSE)]
-
-  # restore column and row order
-  set_colrow_order(dframe, key_names)
-
-  # include or omit the detail columns
-  if (detail == FALSE) {
-    cols_we_want <- c(key_names, "data_sufficiency")
-    dframe <- dframe[, cols_we_want, with = FALSE]
+  # variables added by this function and functions called (if any)
+  add_inst_limits_cols    <- c("lower_limit", "upper_limit")
+  new_cols <- c(add_inst_limits_cols, "data_sufficiency")
+  
+  # retain original variables NOT in the vector of new columns 
+  old_cols <- find_old_cols(dframe, new_cols) 
+  dframe <- dframe[, .SD, .SDcols = old_cols]
+  
+  # begin
+  DT <- copy(dframe)
+  
+  # obtain timely completion term
+  # DT <- add_timely_term(DT, midfield_term, details = TRUE)
+  
+  # obtain lower and upper institution data limits
+  DT <- add_inst_limits(DT, midfield_term)
+  
+  # default is include
+  DT[, data_sufficiency := "include"]
+  
+  # exclude if TC term exceeds upper limit
+  DT <- DT[timely_term > upper_limit, data_sufficiency := "exclude-upper"]
+  
+  # exclude if term_i == lower_limit
+  DT <- DT[term_i == lower_limit, data_sufficiency := "exclude-lower"]
+  
+  # remove all but essential variables
+  DT <- DT[, .SD, .SDcols = c("mcid", new_cols)]
+  
+  # ensure no duplicate rows
+  setkeyv(DT, "mcid")
+  DT <- DT[, .SD[1], by = "mcid"]
+  
+  # left outer join new columns to dframe by key(s)
+  setkeyv(dframe, "mcid")
+  dframe <- DT[dframe]
+  
+  # apply details to select columns to return
+  if (details == TRUE){
+      final_cols <- c(old_cols, new_cols) 
+  } else {
+      final_cols <- c(old_cols, "data_sufficiency")
   }
-
+  dframe <- dframe[, .SD, .SDcols = final_cols]
+  
+  # old columns as keys, order columns and rows
+  set_colrow_order(dframe, old_cols)
+  
   # enable printing (see data.table FAQ 2.23)
-  dframe[]
+  dframe[] 
 }
 
 # ------------------------------------------------------------------------
 
-# Add term range by institution
-#
-# Determine the latest academic term by institution in \code{midfield_term}.
-# Left-join by institution to \code{dframe} in a new column \code{inst_limit}.
-#
-# dframe            data frame that received added column
-# midfield_term     data frame of term attributes
-#
-add_inst_limit <- function(dframe, midfield_term) {
+# Add upper and lower limits of institution data range
 
-  # prepare dframe, preserve column order for return
-  # omit existing column(s) that match column(s) we add
-  setDT(dframe)
-  setDT(midfield_term)
-  added_cols <- c("inst_limit")
-  names_dframe <- colnames(dframe)
-  key_names <- names_dframe[!names_dframe %chin% added_cols]
-  dframe <- dframe[, key_names, with = FALSE]
-
-  # get max term by institution
-  cols_we_want <- c("institution", "term")
-  DT <- midfield_term[, cols_we_want, with = FALSE]
-  DT <- DT[, list(inst_limit = max(term)), by = "institution"]
-
-  # left-outer join, keep all rows of dframe
-  dframe <- merge(dframe, DT, by = "institution", all.x = TRUE)
-
-  # original columns as keys, order columns and rows
-  set_colrow_order(dframe, key_names)
-  return(dframe)
+add_inst_limits <- function(dframe, midfield_term) {
+    
+    # remove keys if any 
+    on.exit(setkey(dframe, NULL))
+    on.exit(setkey(midfield_term, NULL), add = TRUE)
+    
+    # ensure data.table format, changes by reference 
+    setDT(dframe)
+    setDT(midfield_term)
+    
+    # variables added by this function and functions called (if any)
+    new_cols  <- c("lower_limit", "upper_limit")
+    
+    # retain original variables NOT in the vector of new columns 
+    old_cols <- find_old_cols(dframe, new_cols) 
+    dframe <- dframe[, .SD, .SDcols = old_cols]
+    
+    # obtain new_cols keyed by institution, 
+    cols_we_want <- c("institution", "term")
+    DT <- midfield_term[, .SD, .SDcols = cols_we_want]
+    DT <- DT[, list(lower_limit = min(term), 
+                    upper_limit = max(term)), by = "institution"]
+    
+    # ensure no duplicate rows
+    DT <- unique(DT)
+    
+    # left outer join new columns to dframe by key(s)
+    setkeyv(DT, "institution")
+    setkeyv(dframe, "institution")
+    dframe <- DT[dframe] 
+    
+    # old columns as keys, order columns and rows
+    # set_colrow_order(dframe, old_cols)
+    
+    # enable printing (see data.table FAQ 2.23)
+    dframe[] 
 }
+

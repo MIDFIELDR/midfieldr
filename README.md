@@ -39,12 +39,12 @@ provides practice data (a proportionate stratified sample of MIDFIELD)
 with longitudinal SURs for nearly 98,000 undergraduates at 12
 institutions from 1987–2016 organized in four data tables:
 
-| Practice data table                                                          | Each row is                                | No. of rows | No. of columns |
-|:-----------------------------------------------------------------------------|:-------------------------------------------|------------:|---------------:|
-| [`student`](https://midfieldr.github.io/midfielddata/reference/student.html) | a student upon admission as degree-seeking |      97,640 |             13 |
-| [`course`](https://midfieldr.github.io/midfielddata/reference/course.html)   | a student in a course                      |        3.5M |             12 |
-| [`term`](https://midfieldr.github.io/midfielddata/reference/term.html)       | a student in a term                        |     728,000 |             13 |
-| [`degree`](https://midfieldr.github.io/midfielddata/reference/degree.html)   | a student upon completion of their program |      48,000 |              5 |
+| Data set                                                                     | Each row is                           | N rows | N columns |
+|:-----------------------------------------------------------------------------|:--------------------------------------|-------:|----------:|
+| [`student`](https://midfieldr.github.io/midfielddata/reference/student.html) | a student upon being admitted         |    98k |        13 |
+| [`course`](https://midfieldr.github.io/midfielddata/reference/course.html)   | a student in a course                 |   3.4M |        12 |
+| [`term`](https://midfieldr.github.io/midfielddata/reference/term.html)       | a student in a term                   |   711k |        13 |
+| [`degree`](https://midfieldr.github.io/midfielddata/reference/degree.html)   | a student who completes their program |    48k |         5 |
 
 All four data tables are keyed by student ID. Tables `student` and
 `degree` have one observation (row) per student. Tables `course` and
@@ -72,16 +72,18 @@ library("midfieldr")
 library("midfielddata")
 suppressPackageStartupMessages(library("data.table"))
 
-# Load the midfielddata practice data
+# Load the midfielddata practice data used here
 data(student, term, degree)
 
 # Initialize the working data table
 DT <- copy(term)
 
-# Filter observations for data sufficiency
-DT <- add_timely_term(DT, midfield_term = term)
-DT <- add_data_sufficiency(DT, midfield_term = term)
-DT <- DT[data_sufficiency == TRUE]
+# Used for data sufficiency and timely completion, accesses term data
+DT <- add_timely_term(DT)
+
+# Filter observations for data sufficiency, accesses term data
+DT <- add_data_sufficiency(DT)
+DT <- DT[data_sufficiency == "include"]
 
 # Filter observations for degree-seeking
 DT <- filter_match(DT, match_to = student, by_col = "mcid")
@@ -92,14 +94,16 @@ DT <- DT[cip6 %like% "^14"]
 # Filter observations for unique students (first instance) 
 DT <- DT[, .SD[1], by = c("mcid")]
 
-# Determine graduation status
-DT <- add_completion_timely(DT, midfield_degree = degree)
-DT[, grad_status := fifelse(completion_timely, "grad", "non-grad")]
+# Determine if program completion is timely, accesses degree data 
+DT <- add_timely_completion(DT)
+
+# Classify graduation status
+DT[, grad_status := fifelse(timely_completion, "grad", "non-grad")]
 
 # Add demographics
-DT <- add_race_sex(DT, midfield_student = student)
+DT <- add_race_sex(DT)
 
-# Filter for specific race/ethnicity data  
+# Filter for specific race/ethnicity data
 DT <- DT[!race %chin% c("International", "Other/Unknown")]
 
 # Calculate summary statistics
@@ -108,8 +112,8 @@ DT <- DT[, .N, by = c("grad_status", "sex", "race")]
 # Tabulate results
 DT[, race_sex := paste(race, sex)]
 DT_display <- dcast(DT, race_sex ~ grad_status, value.var = "N")
-setnames(DT_display, 
-         old = c("race_sex", "grad", "non-grad"), 
+setnames(DT_display,
+         old = c("race_sex", "grad", "non-grad"),
          new = c("Group", "Graduates", "Non-graduates"))
 ```
 
@@ -222,14 +226,6 @@ To provide feedback or report a bug,
 Participation in this open source project is subject to a [Code of
 Conduct](CONDUCT.html).
 
-## Related work
-
--   [MIDFIELD](https://midfield.online/) a partnership of US higher
-    education institutions with engineering programs.
--   [MIDFIELD
-    workshops](https://midfieldr.github.io/2022-midfield-institute/) for
-    additional information and tutorials.
-
 ## Acknowledgments
 
 This work is supported by a grant from the US National Science
@@ -237,6 +233,7 @@ Foundation (EEC 1545667).
 
 ## License
 
-midfieldr is licensed under GPL (\>= 2.0)  
+midfieldr is licensed under GPL (\>= 2.0) [(full
+license)](LICENSE.html)  
 © 2018–2022 Richard Layton, Russell Long, Susan Lord, Matthew Ohland,
-and Marisa Orr
+and Marisa Orr.

@@ -5,7 +5,7 @@
 \alias{study_stickiness}
 \title{Case-study stickiness results}
 \format{
-\code{data.table} with 55 rows and 6 columns keyed by
+\code{data.table} with 33 rows and 6 columns keyed by
 program, race/ethnicity, and sex.
 \describe{
 
@@ -16,13 +16,13 @@ program, race/ethnicity, and sex.
  e.g., Asian, Black, Hispanic/LatinX, etc.}
 
  \item{sex}{Character, sex as self-reported by the student, values are
- Female, Male, and Unknown.}
+ Female, Male.}
 
  \item{ever}{Numerical, number of students ever enrolled in the program,
- after subsetting for data sufficiency and small populations.}
+ after accounting for data sufficiency and timely completion.}
 
- \item{grad}{Numerical, number of students completing a program after
- subsetting for data sufficiency and accounting for timely completion.}
+ \item{grad}{Numerical, number of students completing a program, after
+ accounting for data sufficiency and timely completion.}
 
  \item{stick}{Numerical, program stickiness, the ratio of the number of
  students completing a program to the number of students ever enrolled
@@ -34,28 +34,22 @@ program, race/ethnicity, and sex.
 study_stickiness
 }
 \description{
+An intermediate result provided for the convenience of vignette users. 
 Longitudinal stickiness results for Civil, Electrical, Industrial, and
 Mechanical Engineering programs from midfielddata. Results are keyed by
-program, race/ethnicity, and sex. Used in the case study developed in the
-vignettes.
+program, race/ethnicity, and sex.
 }
 \details{
 Longitudinal stickiness is the ratio of the number of students graduating
 from a program to the number of students ever enrolled in the program over
 the time span of available data.
-
-Data are subset to satisfy the data sufficiency criterion and some
-graduates are reclassified as non-completers to satisfy the timely
-completion criterion.
 }
 \seealso{
-\code{\link{add_data_sufficiency}},
-\code{\link{add_completion_timely}}
-
 Other case-study-data: 
 \code{\link{study_grad_rate}},
 \code{\link{study_program}},
-\code{\link{study_reduced_data}},
+\code{\link{study_reduced_ever}},
+\code{\link{study_reduced_grad}},
 \code{\link{study_student}}
 }
 \concept{case-study-data}

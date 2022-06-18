@@ -2,86 +2,90 @@
 % Please edit documentation in R/add_data_sufficiency.R
 \name{add_data_sufficiency}
 \alias{add_data_sufficiency}
-\title{Add a column to evaluate data sufficiency}
+\title{Determine data sufficiency for every student}
 \usage{
-add_data_sufficiency(dframe, midfield_term, ..., detail = NULL)
+add_data_sufficiency(dframe, midfield_term = term, ..., details = NULL)
 }
 \arguments{
-\item{dframe}{Data frame with required variables
-\code{institution} and \code{timely_term}.}
+\item{dframe}{Data frame of student unit record (SUR) observations keyed 
+by student ID. Required variables are \code{mcid} and 
+\code{timely_term}.}
 
-\item{midfield_term}{MIDFIELD \code{term} data table or equivalent
-with required variables \code{institution} and \code{term}.}
+\item{midfield_term}{MIDFIELD term data frame keyed by student ID.
+Default is \code{term}. Required variables are \code{mcid}, 
+\code{term}, and \code{level}.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
-\item{detail}{Optional flag to add columns reporting information
-on which the evaluation is based, default FALSE.}
+\item{details}{Optional logical value. TRUE returns the additional 
+variables used in determining the results. Default is FALSE.}
 }
 \value{
 A \code{data.table}  with the following properties:
 \itemize{
     \item Rows are not modified.
-    \item Column \code{data_sufficiency} is added with an option to add
-          column \code{inst_limit}.
+    \item Column \code{data_sufficiency} is added; additional columns 
+    are added via the \code{details} argument.  
     \item Grouping structures are not preserved.
 }
 }
 \description{
-Add a column of logical values (TRUE/FALSE) to a data frame indicating
-whether the available data include a sufficient range of years to justify
-including a student in an analysis. Obtains the information from the
-MIDFIELD \code{term} data table or equivalent.
+Add a column of values to a data frame of Student Unit Record (SUR) 
+observations labeling each row for inclusion or exclusion based on data 
+sufficiency near the upper and lower bounds of an institution's data range.
 }
 \details{
-Program completion is typically considered timely if it occurs within a
-specific span of years after admission. Students admitted too near the
-last term in the available data are generally excluded from a study because
-the data have insufficient range to fairly assess their records.
+The time span of MIDFIELD data varies by institution, each having 
+their own lower and upper bounds. For some student records at these 
+bounds, assessing program completion is unavoidably ambiguous. Such 
+records must be identified and excluded in most cases to prevent false 
+summary counts.
 
-The input data frame \code{dframe} must include the \code{timely_term}
-column obtained using the \code{add_timely_term()} function. Students can be
-retained in a study if their estimated timely completion term is no later
-than the last term in their institution's data.
+The \code{data_sufficiency} variable added to \code{dframe} contains 
+three possible values: \code{include} indicates that available data are 
+sufficient for estimating timely program completion;  
+\code{exclude-upper} indicates that data are insufficient at the 
+upper limit of a data range; \code{exclude-lower} that data are 
+insufficient at the lower limit.
 
-If the result in the \code{data_sufficiency} column is TRUE, then then
-student should be included in the research. If FALSE, the student should
-be excluded before calculating any persistence metric involving program
-completion (graduation). The function itself performs no subsetting.
-
-If \code{detail} is TRUE, additional column(s) that support the finding
-are returned as well. Here the extra column is \code{inst_limit}, the latest
-term reported by the institution in the available data.
-
-Existing columns with the same names as the added columns are overwritten.
+The optional \code{details} argument returns the additional variables used in
+determining the results: a student's institution and the upper and lower 
+limits of its data range; and a student's initial term and level.
 }
+\section{Caution}{
+
+Existing columns with the same names as the added columns are silently 
+overwritten.
+}
+
 \examples{
-# Start with IDs and add institution and timely term
-dframe <- toy_student[1:10, .(mcid)]
-dframe <- add_institution(dframe, midfield_term = toy_term)
-dframe <- add_timely_term(dframe, midfield_term = toy_term)
-
-
-# Data sufficiency column
-add_data_sufficiency(dframe, midfield_term = toy_term)
-
-
-# Data sufficiency column with detail
-add_data_sufficiency(dframe, midfield_term = toy_term, detail = TRUE)
-
-
-# If present, existing data_sufficiency column is overwritten
-# Using dframe from above,
-DT1 <- add_data_sufficiency(dframe, midfield_term = toy_term)
-DT2 <- add_data_sufficiency(DT1, midfield_term = toy_term)
-all.equal(DT1, DT2)
-
+# Start with IDs
+# dframe <- toy_student[1:10, .(mcid)]
+# 
+# 
+# # Add the timely completion term, required for data sufficiency 
+# dframe <- add_timely_term(dframe, midfield_term = toy_term)
+# 
+# 
+# # Add the data sufficiency variable 
+# add_data_sufficiency(dframe, midfield_term = toy_term)
+# 
+# 
+# # Data sufficiency column with details
+# add_data_sufficiency(dframe, midfield_term = toy_term, details = TRUE)
+# 
+# 
+# # If present, existing data_sufficiency column is overwritten
+# # Using dframe from above,
+# DT1 <- add_data_sufficiency(dframe, midfield_term = toy_term)
+# DT2 <- add_data_sufficiency(DT1, midfield_term = toy_term)
+# all.equal(DT1, DT2)
 }
 \seealso{
 Other add_*: 
-\code{\link{add_completion_timely}()},
 \code{\link{add_institution}()},
 \code{\link{add_race_sex}()},
+\code{\link{add_timely_completion}()},
 \code{\link{add_timely_term}()}
 }
 \concept{add_*}

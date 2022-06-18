@@ -4,7 +4,7 @@
 \alias{add_race_sex}
 \title{Add columns for student race/ethnicity and sex}
 \usage{
-add_race_sex(dframe, midfield_student)
+add_race_sex(dframe, midfield_student = student)
 }
 \arguments{
 \item{dframe}{Data frame with required variable \code{mcid}.}
@@ -47,9 +47,9 @@ all.equal(DT1, DT2)
 }
 \seealso{
 Other add_*: 
-\code{\link{add_completion_timely}()},
 \code{\link{add_data_sufficiency}()},
 \code{\link{add_institution}()},
+\code{\link{add_timely_completion}()},
 \code{\link{add_timely_term}()}
 }
 \concept{add_*}

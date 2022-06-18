@@ -47,13 +47,11 @@ subset for data sufficiency and can be used as the starting point for
 different persistence metrics such as stickiness or graduation rate.
 }
 \seealso{
-\code{\link{add_timely_term}} and
-\code{\link{add_data_sufficiency}}
-
 Other case-study-data: 
 \code{\link{study_grad_rate}},
 \code{\link{study_program}},
-\code{\link{study_reduced_data}},
+\code{\link{study_reduced_ever}},
+\code{\link{study_reduced_grad}},
 \code{\link{study_stickiness}}
 }
 \concept{case-study-data}
