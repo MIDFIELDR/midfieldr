@@ -62,8 +62,10 @@ NULL
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
     ".",
+    # midfield data table names
+    "student", "term", "course", "degree", 
     # midfielddata column names
-    "mcid", "institution", "cip6", "race", "sex", "term",
+    "mcid", "institution", "cip6", "race", "sex", "term", "term_degree", 
     "degree", "hours_transfer", "hours_term", "transfer",
     "age", "us_citizen", "home_zip", "high_school", "sat_math",
     "sat_verbal", "act_comp", "level", "standing", "coop",

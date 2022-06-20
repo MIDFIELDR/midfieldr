@@ -117,10 +117,10 @@ data(student, term, degree)
 # Initialize the working data table
 DT <- copy(term)
 
-# Used for data sufficiency and timely completion, accesses term data
+# Timely completion term required for data sufficiency
 DT <- add_timely_term(DT)
 
-# Filter observations for data sufficiency, accesses term data
+# Filter for data sufficiency
 DT <- add_data_sufficiency(DT)
 DT <- DT[data_sufficiency == "include"]
 
@@ -134,10 +134,10 @@ DT <- DT[cip6 %like% "^14"]
 DT <- DT[, .SD[1], by = c("mcid")]
 
 # Determine if program completion is timely, accesses degree data 
-DT <- add_timely_completion(DT)
+DT <- add_completion_status(DT)
 
 # Classify graduation status
-DT[, grad_status := fifelse(timely_completion, "grad", "non-grad")]
+DT[, grad_status := fifelse(completion_status == "timely", "grad", "non-grad")]
 
 # Add demographics
 DT <- add_race_sex(DT)

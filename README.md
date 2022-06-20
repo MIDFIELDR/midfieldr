@@ -78,10 +78,10 @@ data(student, term, degree)
 # Initialize the working data table
 DT <- copy(term)
 
-# Used for data sufficiency and timely completion, accesses term data
+# Timely completion term required for data sufficiency
 DT <- add_timely_term(DT)
 
-# Filter observations for data sufficiency, accesses term data
+# Filter for data sufficiency
 DT <- add_data_sufficiency(DT)
 DT <- DT[data_sufficiency == "include"]
 
@@ -95,10 +95,10 @@ DT <- DT[cip6 %like% "^14"]
 DT <- DT[, .SD[1], by = c("mcid")]
 
 # Determine if program completion is timely, accesses degree data 
-DT <- add_timely_completion(DT)
+DT <- add_completion_status(DT)
 
 # Classify graduation status
-DT[, grad_status := fifelse(timely_completion, "grad", "non-grad")]
+DT[, grad_status := fifelse(completion_status == "timely", "grad", "non-grad")]
 
 # Add demographics
 DT <- add_race_sex(DT)
@@ -121,16 +121,16 @@ Tabulated results of usage example:
 
 | Group                  | Graduates | Non-graduates |
 |:-----------------------|----------:|--------------:|
-| Asian Female           |       126 |            81 |
-| Asian Male             |       396 |           272 |
-| Black Female           |       329 |           260 |
-| Black Male             |       397 |           552 |
-| Hispanic/Latinx Female |        64 |            28 |
-| Hispanic/Latinx Male   |       197 |           133 |
+| Asian Female           |       124 |            78 |
+| Asian Male             |       388 |           269 |
+| Black Female           |       309 |           248 |
+| Black Male             |       376 |           527 |
+| Hispanic/Latinx Female |        63 |            27 |
+| Hispanic/Latinx Male   |       188 |           130 |
 | Native American Female |        10 |             6 |
 | Native American Male   |        27 |            30 |
-| White Female           |      1280 |           654 |
-| White Male             |      4739 |          2974 |
+| White Female           |      1226 |           622 |
+| White Male             |      4527 |          2825 |
 
 ## Documentation
 

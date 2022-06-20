@@ -8,8 +8,10 @@
 #' Existing columns with the same names as the added columns are overwritten.
 #'
 #' @param dframe Data frame with required variable \code{mcid}.
+#' 
 #' @param midfield_student MIDFIELD \code{student} data table or equivalent
 #'        with required variables \code{mcid}, \code{race}, and \code{sex}.
+#'        
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
 #'     \item Rows are not modified.

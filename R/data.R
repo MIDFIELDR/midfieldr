@@ -308,44 +308,15 @@
 
 # -------------------------------------------------------------------
 
-#' Case-study ever-enrolled data
+#' Case-study stickiness observations
 #' 
 #' An intermediate result provided for the convenience of vignette users. 
-#' Data from the midfielddata package is reduced to observations of
-#' all students ever enrolled in the case study programs of  Civil, 
-#' Electrical, Industrial/Systems, and Mechanical Engineering. 
+#' Data from the midfielddata package is processed to obtain observations of
+#' students ever enrolled in, and those graduating in timely fashion from,
+#' the case study programs of Civil, Electrical, Industrial/Systems, and 
+#' Mechanical Engineering. Keyed by student ID. 
 #'
-#' @format \code{data.table} with 7388 rows and 4 columns keyed by ID.
-#' 
-#' \describe{
-#'
-#'  \item{mcid}{Character, anonymized student identifier}
-#'
-#'  \item{program}{Character, abbreviation indicating a program in 
-#'  which the student was ever enrolled}
-#'
-#'  \item{race}{Character, race/ethnicity as self-reported by the student, 
-#'  e.g., Asian, Black, Hispanic/LatinX, etc.}
-#'  
-#'  \item{sex}{Character, sex as self-reported by the student, 
-#'  values are Female, Male, and Unknown}
-#'
-#' }
-#'
-#' @family case-study-data
-#'
-"study_reduced_ever"
-
-# -------------------------------------------------------------------
-
-#' Case-study graduation data
-#' 
-#' An intermediate result provided for the convenience of vignette users. 
-#' Data from the midfielddata package is reduced to observations of
-#' all students graduating in timely fashion from the case study programs of  
-#' Civil, Electrical, Industrial/Systems, and Mechanical Engineering. 
-#'
-#' @format \code{data.table} with 3435 rows and 4 columns keyed by ID.
+#' @format \code{data.table} with 11212 rows and 5 columns keyed by ID.
 #' 
 #' \describe{
 #'
@@ -353,6 +324,10 @@
 #'
 #'  \item{program}{Character, abbreviation indicating a program the 
 #'  student completed}
+#'  
+#'  \item{group}{Character, indicating the grouping (\code{ever} or 
+#'  \code{grad}) to which the student belongs. Graduate IDs are a subset of 
+#'  ever enrolled IDs.} 
 #'
 #'  \item{race}{Character, race/ethnicity as self-reported by the student, 
 #'  e.g., Asian, Black, Hispanic/LatinX, etc.}
@@ -364,7 +339,7 @@
 #'
 #' @family case-study-data
 #'
-"study_reduced_grad"
+"study_stickiness_observ"
 
 
 

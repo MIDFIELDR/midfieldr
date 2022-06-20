@@ -4,7 +4,7 @@
 \alias{add_institution}
 \title{Add a column of institution names}
 \usage{
-add_institution(dframe, midfield_term)
+add_institution(dframe, midfield_term = term)
 }
 \arguments{
 \item{dframe}{Data frame with required variable \code{mcid}.}
@@ -50,9 +50,9 @@ nrow(DT2)
 }
 \seealso{
 Other add_*: 
+\code{\link{add_completion_status}()},
 \code{\link{add_data_sufficiency}()},
 \code{\link{add_race_sex}()},
-\code{\link{add_timely_completion}()},
 \code{\link{add_timely_term}()}
 }
 \concept{add_*}

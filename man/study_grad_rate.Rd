@@ -35,8 +35,7 @@ Data have also been subset to remove ambiguous levels of race/ethnicity.
 \seealso{
 Other case-study-data: 
 \code{\link{study_program}},
-\code{\link{study_reduced_ever}},
-\code{\link{study_reduced_grad}},
+\code{\link{study_stickiness_observ}},
 \code{\link{study_stickiness}},
 \code{\link{study_student}}
 }

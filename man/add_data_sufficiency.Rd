@@ -4,60 +4,56 @@
 \alias{add_data_sufficiency}
 \title{Determine data sufficiency for every student}
 \usage{
-add_data_sufficiency(dframe, midfield_term = term, ..., details = NULL)
+add_data_sufficiency(dframe, midfield_term = term)
 }
 \arguments{
 \item{dframe}{Data frame of student unit record (SUR) observations keyed 
 by student ID. Required variables are \code{mcid} and 
-\code{timely_term}.}
+\code{timely_term}. See also \code{add_timely_term()}.}
 
-\item{midfield_term}{MIDFIELD term data frame keyed by student ID.
-Default is \code{term}. Required variables are \code{mcid}, 
-\code{term}, and \code{level}.}
-
-\item{...}{Not used, forces later arguments to be used by name.}
-
-\item{details}{Optional logical value. TRUE returns the additional 
-variables used in determining the results. Default is FALSE.}
+\item{midfield_term}{Data frame of SUR term observations keyed 
+by student ID. Default is \code{term}. Required variables are 
+\code{mcid}, \code{institution}, \code{term}, and \code{level}.}
 }
 \value{
 A \code{data.table}  with the following properties:
 \itemize{
-    \item Rows are not modified.
-    \item Column \code{data_sufficiency} is added; additional columns 
-    are added via the \code{details} argument.  
-    \item Grouping structures are not preserved.
+ \item Rows are not modified.
+ \item Grouping structures are not preserved.
+ \item Columns listed below are added. \strong{Caution!} An existing column 
+ with the same name as one of the added columns is silently overwritten. 
+ Other columns are not modified. 
+}
+Columns added:
+\describe{
+ \item{\code{term_i}}{Character. Initial term of a student's longitudinal 
+ record, encoded YYYYT. Not overwritten if present in \code{dframe}.}
+ \item{\code{lower_limit}}{Character. Initial term of an institution's data 
+ range, encoded YYYYT}
+ \item{\code{upper_limit}}{Character. Final term of an institution's data 
+ range, encoded YYYYT}
+ \item{\code{data_sufficiency}}{Character. Label each observation for 
+ inclusion or exclusion based on data sufficiency. Possible values are: 
+ \code{include}, indicating that available data are sufficient for 
+ estimating timely program completion; \code{exclude-upper}, indicating 
+ that data are insufficient at the upper limit of a data range; and 
+ \code{exclude-lower}, indicating that data are insufficient at the 
+ lower limit.}
 }
 }
 \description{
-Add a column of values to a data frame of Student Unit Record (SUR) 
-observations labeling each row for inclusion or exclusion based on data 
-sufficiency near the upper and lower bounds of an institution's data range.
+Add a column to a data frame of Student Unit Record (SUR) 
+observations that labels each row for inclusion or exclusion based on data 
+sufficiency near the upper and lower bounds of an institution's data range. 
+Requires a MIDFIELD \code{term} data frame in the environment.
 }
 \details{
-The time span of MIDFIELD data varies by institution, each having 
-their own lower and upper bounds. For some student records at these 
-bounds, assessing program completion is unavoidably ambiguous. Such 
-records must be identified and excluded in most cases to prevent false 
-summary counts.
-
-The \code{data_sufficiency} variable added to \code{dframe} contains 
-three possible values: \code{include} indicates that available data are 
-sufficient for estimating timely program completion;  
-\code{exclude-upper} indicates that data are insufficient at the 
-upper limit of a data range; \code{exclude-lower} that data are 
-insufficient at the lower limit.
-
-The optional \code{details} argument returns the additional variables used in
-determining the results: a student's institution and the upper and lower 
-limits of its data range; and a student's initial term and level.
+The time span of MIDFIELD term data varies by institution, each having 
+their own lower and upper bounds. For some student records, being at or 
+near these bounds creates unavoidable ambiguity when trying to assess 
+program completion. Such records must be identified and in most cases 
+excluded to prevent false summary counts.
 }
-\section{Caution}{
-
-Existing columns with the same names as the added columns are silently 
-overwritten.
-}
-
 \examples{
 # Start with IDs
 # dframe <- toy_student[1:10, .(mcid)]
@@ -83,9 +79,9 @@ overwritten.
 }
 \seealso{
 Other add_*: 
+\code{\link{add_completion_status}()},
 \code{\link{add_institution}()},
 \code{\link{add_race_sex}()},
-\code{\link{add_timely_completion}()},
 \code{\link{add_timely_term}()}
 }
 \concept{add_*}

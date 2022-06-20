@@ -2,46 +2,48 @@
 
 #' Determine data sufficiency for every student
 #'
-#' Add a column of values to a data frame of Student Unit Record (SUR) 
-#' observations labeling each row for inclusion or exclusion based on data 
+#' Add a column to a data frame of Student Unit Record (SUR) 
+#' observations that labels each row for inclusion or exclusion based on data 
 #' sufficiency near the upper and lower bounds of an institution's data range. 
+#' Requires a MIDFIELD \code{term} data frame in the environment.  
 #'
-#' The time span of MIDFIELD data varies by institution, each having 
-#' their own lower and upper bounds. For some student records at these 
-#' bounds, assessing program completion is unavoidably ambiguous. Such 
-#' records must be identified and excluded in most cases to prevent false 
-#' summary counts.
-#' 
-#' The \code{data_sufficiency} variable added to \code{dframe} contains 
-#' three possible values: \code{include} indicates that available data are 
-#' sufficient for estimating timely program completion;  
-#' \code{exclude-upper} indicates that data are insufficient at the 
-#' upper limit of a data range; \code{exclude-lower} that data are 
-#' insufficient at the lower limit.
-#' 
-#' The optional \code{details} argument returns the additional variables used in
-#' determining the results: a student's institution and the upper and lower 
-#' limits of its data range; and a student's initial term and level. 
-#' 
-#' @section Caution:
-#' Existing columns with the same names as the added columns are silently 
-#' overwritten.
+#' The time span of MIDFIELD term data varies by institution, each having 
+#' their own lower and upper bounds. For some student records, being at or 
+#' near these bounds creates unavoidable ambiguity when trying to assess 
+#' program completion. Such records must be identified and in most cases 
+#' excluded to prevent false summary counts.
 #'
 #' @param dframe Data frame of student unit record (SUR) observations keyed 
 #'         by student ID. Required variables are \code{mcid} and 
-#'         \code{timely_term}. 
-#' @param midfield_term MIDFIELD term data frame keyed by student ID.  
-#'         Default is \code{term}. Required variables are \code{mcid}, 
-#'         \code{term}, and \code{level}. 
-#' @param ... Not used, forces later arguments to be used by name.
-#' @param details Optional logical value. TRUE returns the additional 
-#'         variables used in determining the results. Default is FALSE.
+#'         \code{timely_term}. See also \code{add_timely_term()}.
+#'         
+#' @param midfield_term Data frame of SUR term observations keyed 
+#'         by student ID. Default is \code{term}. Required variables are 
+#'         \code{mcid}, \code{institution}, \code{term}, and \code{level}. 
+#'         
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
-#'     \item Rows are not modified.
-#'     \item Column \code{data_sufficiency} is added; additional columns 
-#'     are added via the \code{details} argument.  
-#'     \item Grouping structures are not preserved.
+#'  \item Rows are not modified.
+#'  \item Grouping structures are not preserved.
+#'  \item Columns listed below are added. \strong{Caution!} An existing column 
+#'  with the same name as one of the added columns is silently overwritten. 
+#'  Other columns are not modified. 
+#' }
+#' Columns added:
+#' \describe{
+#'  \item{\code{term_i}}{Character. Initial term of a student's longitudinal 
+#'  record, encoded YYYYT. Not overwritten if present in \code{dframe}.}
+#'  \item{\code{lower_limit}}{Character. Initial term of an institution's data 
+#'  range, encoded YYYYT}
+#'  \item{\code{upper_limit}}{Character. Final term of an institution's data 
+#'  range, encoded YYYYT}
+#'  \item{\code{data_sufficiency}}{Character. Label each observation for 
+#'  inclusion or exclusion based on data sufficiency. Possible values are: 
+#'  \code{include}, indicating that available data are sufficient for 
+#'  estimating timely program completion; \code{exclude-upper}, indicating 
+#'  that data are insufficient at the upper limit of a data range; and 
+#'  \code{exclude-lower}, indicating that data are insufficient at the 
+#'  lower limit.}
 #' }
 #'
 #'
@@ -54,30 +56,14 @@
 #' @export
 #'
 #'
-add_data_sufficiency <- function(dframe,
-                                 midfield_term = term,
-                                 ...,
-                                 details = NULL) {
+add_data_sufficiency <- function(dframe, midfield_term = term) {
     # remove keys if any 
     on.exit(setkey(dframe, NULL))
     on.exit(setkey(midfield_term, NULL), add = TRUE)
-    
-    # assert arguments after dots used by name
-    wrapr::stop_if_dot_args(
-        substitute(list(...)),
-        paste(
-            "Arguments after ... must be named.\n",
-            "* Did you forget to write `detail = `?\n *"
-        )
-    )
 
   # required arguments
   qassert(dframe, "d+")
   qassert(midfield_term, "d+")
-  
-  # optional arguments
-  details <- details %?% FALSE
-  qassert(details, "B1") # boolean, length = 1
 
   # ensure data.table format, changes by reference 
   setDT(dframe)
@@ -101,6 +87,7 @@ add_data_sufficiency <- function(dframe,
 
   # bind names due to NSE notes in R CMD check
   data_sufficiency <- NULL
+  timely_term <- NULL
   upper_limit <- NULL
   lower_limit <- NULL
   term_i <- NULL
@@ -108,9 +95,9 @@ add_data_sufficiency <- function(dframe,
   # do the work
 
   # variables added by this function and functions called (if any)
-  add_inst_limits_cols    <- c("lower_limit", "upper_limit")
-  new_cols <- c(add_inst_limits_cols, "data_sufficiency")
-  
+  inst_limits_cols <- c("lower_limit", "upper_limit")
+  new_cols <- c( "term_i", inst_limits_cols, "data_sufficiency")
+
   # retain original variables NOT in the vector of new columns 
   old_cols <- find_old_cols(dframe, new_cols) 
   dframe <- dframe[, .SD, .SDcols = old_cols]
@@ -118,9 +105,9 @@ add_data_sufficiency <- function(dframe,
   # begin
   DT <- copy(dframe)
   
-  # obtain timely completion term
-  # DT <- add_timely_term(DT, midfield_term, details = TRUE)
-  
+  # add initial term term_i
+  DT <- add_initial_term(DT, midfield_term)
+
   # obtain lower and upper institution data limits
   DT <- add_inst_limits(DT, midfield_term)
   
@@ -144,12 +131,8 @@ add_data_sufficiency <- function(dframe,
   setkeyv(dframe, "mcid")
   dframe <- DT[dframe]
   
-  # apply details to select columns to return
-  if (details == TRUE){
-      final_cols <- c(old_cols, new_cols) 
-  } else {
-      final_cols <- c(old_cols, "data_sufficiency")
-  }
+  # select columns to return
+  final_cols <- c(old_cols, new_cols) 
   dframe <- dframe[, .SD, .SDcols = final_cols]
   
   # old columns as keys, order columns and rows
@@ -173,7 +156,12 @@ add_inst_limits <- function(dframe, midfield_term) {
     setDT(dframe)
     setDT(midfield_term)
     
-    # variables added by this function and functions called (if any)
+    # add institution if not present
+    if(!"institution" %chin% names(dframe)){
+        dframe <- add_institution(dframe, midfield_term = midfield_term)
+    }
+    
+    # variables added by this function
     new_cols  <- c("lower_limit", "upper_limit")
     
     # retain original variables NOT in the vector of new columns 
@@ -193,9 +181,6 @@ add_inst_limits <- function(dframe, midfield_term) {
     setkeyv(DT, "institution")
     setkeyv(dframe, "institution")
     dframe <- DT[dframe] 
-    
-    # old columns as keys, order columns and rows
-    # set_colrow_order(dframe, old_cols)
     
     # enable printing (see data.table FAQ 2.23)
     dframe[] 

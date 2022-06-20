@@ -8,7 +8,6 @@ add_timely_term(
   dframe,
   midfield_term = term,
   ...,
-  details = NULL,
   span = NULL,
   sched_span = NULL
 )
@@ -17,59 +16,65 @@ add_timely_term(
 \item{dframe}{Data frame of student unit record (SUR) observations keyed 
 by student ID. Required variable is \code{mcid}.}
 
-\item{midfield_term}{MIDFIELD term data frame keyed by student ID.
- Default is \code{term}. Required variables are \code{mcid}, 
-\code{institution}, \code{term}, and \code{level}.}
+\item{midfield_term}{Data frame of SUR term observations keyed 
+by student ID. Default is \code{term}. Required variables are 
+\code{mcid}, \code{term}, and \code{level}.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
-\item{details}{Optional logical value. TRUE returns the additional 
-variables used in determining the results. Default is FALSE.}
+\item{span}{Optional integer scalar, number of years to define timely
+completion. Commonly used values are are 100\%, 150\%, and 200\% of  
+\code{sched_span}. Default 6 years.}
 
-\item{span}{Optional numeric scalar, number of years to define timely
-completion. Values that are 100\%, 150\%, and 200\% of the "scheduled
-span" (\code{sched_span}) are commonly used. Default 6 years.}
-
-\item{sched_span}{Optional numeric scalar, the number of years an
+\item{sched_span}{Optional integer scalar, the number of years an
 institution officially schedules for completing a program. Default
 4 years.}
 }
 \value{
 A \code{data.table}  with the following properties:
 \itemize{
-    \item Rows are not modified.
-    \item Columns \code{institution} and \code{timely_term} are added; 
-    additional columns are added via the \code{details} argument.  
-    \item Grouping structures are not preserved.
+ \item Rows are not modified.
+ \item Grouping structures are not preserved.
+ \item Columns listed below are added. \strong{Caution!} An existing column 
+ with the same name as one of the added columns is silently overwritten. 
+ Other columns are not modified. 
+}
+Columns added:
+\describe{
+ \item{\code{term_i}}{Character. Initial term of a student's longitudinal 
+ record, encoded YYYYT}
+ \item{\code{level_i}}{Character. Student level (01 Freshman, 02 Sophomore, 
+ etc.) in their initial term}
+ \item{\code{adj_span}}{Numeric. Integer span of years for timely completion 
+ adjusted for a student's initial level.}
+ \item{\code{timely_term}}{Character. Latest term by which program 
+ completion would be considered timely for every student. Encoded YYYYT.}
 }
 }
 \description{
-Add a column of values to a data frame of Student Unit Record (SUR) 
-observations indicating the latest term by which a student can complete  
-their program and have it considered timely. An institution column is 
-returned as well.
+Add a column to a data frame of Student Unit Record (SUR) 
+observations that indicates the latest term by which program completion 
+would be considered timely for every student. Requires a MIDFIELD 
+\code{term} data frame in the environment.
 }
 \details{
-The basic heuristic starts with \code{span} number of years for each student
-(default 6 years). The span for students admitted at a higher level than
-first year are reduced by one year for each full year the student is
-assumed to have completed. For example, a student admitted at the 
+By "program completion" we mean an undergraduate earning their 
+baccalaureate degree. In many studies, students must complete their 
+programs in a specified time span, for example 4-, 6-, or 8-years after 
+admission. If they do, their completion is timely; if not, their completion 
+is untimely and they are grouped with the non-completers when computing 
+a metric such as graduation rate. 
+
+Our heuristic assigns \code{span} number of years (default is 6 years) to 
+every student. For students admitted at second-year level or higher, the 
+span is reduced by one year for each full year the student is assumed 
+to have completed. For example, a student admitted at the 
 second-year level is assumed to have completed one year of a program, 
 so their span is reduced by one year.
 
-The adjusted span of years is added to their starting term; the result is
-the timely completion term reported in the \code{timely_term} column.
-
-The optional \code{details} argument returns the additional variables used 
-in determining the results: a student's initial term and level and the 
-adjusted span in years.
+The adjusted span is added to the initial term to create the timely 
+completion term in the \code{timely_term} column.
 }
-\section{Caution}{
-
-Existing columns with the same names as the added columns are silently 
-overwritten.
-}
-
 \examples{
 # Using the toy data sets
 # DT <- toy_student[1:10, .(mcid)]
@@ -90,9 +95,9 @@ overwritten.
 }
 \seealso{
 Other add_*: 
+\code{\link{add_completion_status}()},
 \code{\link{add_data_sufficiency}()},
 \code{\link{add_institution}()},
-\code{\link{add_race_sex}()},
-\code{\link{add_timely_completion}()}
+\code{\link{add_race_sex}()}
 }
 \concept{add_*}

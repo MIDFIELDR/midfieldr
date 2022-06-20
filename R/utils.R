@@ -27,12 +27,11 @@ set_colrow_order <- function(dframe, cols) {
 
 # ------------------------------------------------------------------------
 # 
-#' Return column names not being added by the function
+#' Return column names not overwritten by the function
 #'
 #' Identifies the names of columns unaffected by the function operation. 
-#' Used by all midfieldr "add_" functions. Every column name being added 
-#' replaces existing columns of the same names if any. 
-#'
+#' Used by several midfieldr "add_" functions.
+#' 
 #' @param dframe data frame
 #' @param new_cols character vector of column names added by the function
 #' @noRd

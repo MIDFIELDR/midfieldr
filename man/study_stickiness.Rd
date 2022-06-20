@@ -48,8 +48,7 @@ the time span of available data.
 Other case-study-data: 
 \code{\link{study_grad_rate}},
 \code{\link{study_program}},
-\code{\link{study_reduced_ever}},
-\code{\link{study_reduced_grad}},
+\code{\link{study_stickiness_observ}},
 \code{\link{study_student}}
 }
 \concept{case-study-data}

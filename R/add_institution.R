@@ -31,7 +31,7 @@
 #'
 #'
 add_institution <- function(dframe,
-                            midfield_term) {
+                            midfield_term = term) {
 
   # remove all keys
   on.exit(setkey(dframe, NULL))
