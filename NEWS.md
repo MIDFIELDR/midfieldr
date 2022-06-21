@@ -1,13 +1,12 @@
 
 ## midfieldr 1.0.0.9021 / 2022-07
 
-- Eliminate the named-argument requirement for functions using `student`, 
-  `term`, and `degree` by assigning them as default arguments. Alternate 
-  names can still be used at he user's discretion. 
+- Eliminate the requirements for named arguments in functions using `student`, 
+  `term`, and `degree` by assigning them as default arguments. 
+- Reorganize case study and vignettes following a common outline
 - Revise data sufficiency to include lower limit exclusions
 - Functions return all supporting variables
 - Edit function names and variable names
-- Reorganize case study and vignettes 
 
 ## midfieldr 1.0.0.9020 / 2021-07
 

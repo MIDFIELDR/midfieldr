@@ -13,7 +13,7 @@ by student ID. Required variables are \code{mcid} and
 
 \item{midfield_term}{Data frame of SUR term observations keyed 
 by student ID. Default is \code{term}. Required variables are 
-\code{mcid}, \code{institution}, \code{term}, and \code{level}.}
+\code{mcid}, \code{institution}, and \code{term}.}
 }
 \value{
 A \code{data.table}  with the following properties:

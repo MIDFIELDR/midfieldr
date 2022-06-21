@@ -1,22 +1,34 @@
 
 #' Add columns for student race/ethnicity and sex
 #'
-#' Add columns for students' self-reported race/ethnicity and sex using
-#' student ID as the join-by variable. Obtains the information from the
-#' MIDFIELD \code{student} data table or equivalent.
-#'
-#' Existing columns with the same names as the added columns are overwritten.
-#'
-#' @param dframe Data frame with required variable \code{mcid}.
+#' Add columns to a data frame of Student Unit Record (SUR) 
+#' observations that labels each row with a student's race/ethnicity and sex. 
+#' Requires a MIDFIELD \code{student} data frame in the environment. 
 #' 
-#' @param midfield_student MIDFIELD \code{student} data table or equivalent
-#'        with required variables \code{mcid}, \code{race}, and \code{sex}.
+#' MIDFIELD student data includes the variables \code{race} (race/ethnicity) 
+#' and \code{sex} as self-reported to their institution. 
+#'
+#' @param dframe Data frame of student unit record (SUR) observations keyed 
+#'         by student ID. Required variable is \code{mcid}.
+#' 
+#' @param midfield_student Data frame of SUR student observations keyed 
+#'         by student ID. Default is \code{student}. Required variables are 
+#'         \code{mcid}, \code{race}, and \code{sex}.
 #'        
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
-#'     \item Rows are not modified.
-#'     \item Columns \code{race} and \code{sex} are added.
-#'     \item Grouping structures are not preserved.
+#'  \item Rows are not modified.
+#'  \item Grouping structures are not preserved.
+#'  \item Columns listed below are added. \strong{Caution!} An existing column 
+#'  with the same name as one of the added columns is silently overwritten. 
+#'  Other columns are not modified. 
+#' }
+#' Columns added:
+#' \describe{
+#'  \item{\code{race}}{Character, self-reported race/ethnicity, e.g., 
+#'  Asian, Black, Hispanic/LatinX, etc.}
+#'  \item{\code{sex}}{Character, self-reported sex, values are Female, Male, 
+#'  and Unknown}
 #' }
 #'
 #'

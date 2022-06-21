@@ -19,7 +19,7 @@
 #'         
 #' @param midfield_term Data frame of SUR term observations keyed 
 #'         by student ID. Default is \code{term}. Required variables are 
-#'         \code{mcid}, \code{institution}, \code{term}, and \code{level}. 
+#'         \code{mcid}, \code{institution}, and \code{term}. 
 #'         
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
@@ -74,7 +74,7 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
                must.include = c("mcid", "timely_term")
   )
   assert_names(colnames(midfield_term),
-               must.include = c("mcid", "institution", "term", "level")
+               must.include = c("mcid", "institution", "term")
   )
 
   # class of required columns
@@ -83,7 +83,6 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
   qassert(midfield_term[, mcid], "s+")
   qassert(midfield_term[, institution], "s+")
   qassert(midfield_term[, term], "s+")
-  qassert(midfield_term[, level], "s+")
 
   # bind names due to NSE notes in R CMD check
   data_sufficiency <- NULL

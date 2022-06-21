@@ -64,7 +64,15 @@ The outline of our typical workflow is:
 
 In this brief usage example, the goal is to tabulate counts of
 engineering students by race/ethnicity, sex, and graduation status. Data
-manipulation is performed using data.table syntax.
+processing is performed using data.table syntax. From the midfielddata
+package, we use data sets `student`, `term`, and `degree`. From the
+midfieldr package, we use the functions:
+
+-   `add_timely_term()`
+-   `add_data_sufficiency()`
+-   `filter_match()`
+-   `add_completion_status()`
+-   `add_race_sex()`
 
 ``` r
 # Packages used
@@ -79,58 +87,61 @@ data(student, term, degree)
 DT <- copy(term)
 
 # Timely completion term required for data sufficiency
-DT <- add_timely_term(DT)
+DT <- add_timely_term(DT, midfield_term = term)
 
 # Filter for data sufficiency
-DT <- add_data_sufficiency(DT)
+DT <- add_data_sufficiency(DT, midfield_term = term)
 DT <- DT[data_sufficiency == "include"]
 
 # Filter observations for degree-seeking
 DT <- filter_match(DT, match_to = student, by_col = "mcid")
 
-# Filter observations for programs
+# Filter observations for engineering programs
 DT <- DT[cip6 %like% "^14"]
 
-# Filter observations for unique students (first instance) 
+# Filter observations for unique students (first instance)
 DT <- DT[, .SD[1], by = c("mcid")]
 
-# Determine if program completion is timely, accesses degree data 
-DT <- add_completion_status(DT)
-
-# Classify graduation status
-DT[, grad_status := fifelse(completion_status == "timely", "grad", "non-grad")]
+# Determine if completion status is positive or negative
+DT <- add_completion_status(DT, midfield_degree = degree)
 
 # Add demographics
-DT <- add_race_sex(DT)
-
-# Filter for specific race/ethnicity data
-DT <- DT[!race %chin% c("International", "Other/Unknown")]
+DT <- add_race_sex(DT, midfield_student = student)
 
 # Calculate summary statistics
-DT <- DT[, .N, by = c("grad_status", "sex", "race")]
+DT <- DT[, .N, by = c("completion_status", "sex", "race")]
 
 # Tabulate results
 DT[, race_sex := paste(race, sex)]
-DT_display <- dcast(DT, race_sex ~ grad_status, value.var = "N")
+DT_display <- dcast(DT, race_sex ~ completion_status, value.var = "N")
+setcolorder(DT_display, c("race_sex", "positive"))
 setnames(DT_display,
-         old = c("race_sex", "grad", "non-grad"),
-         new = c("Group", "Graduates", "Non-graduates"))
+  old = c("race_sex", "positive", "negative"),
+  new = c("Group", "Positive outcome", "Negative outcome")
+)
 ```
 
-Tabulated results of usage example:
+Tabulated results of usage example. “Positive outcome” is the count of
+graduates completing their programs in no more than 6 years. “Negative
+outcome” is the sum of non-graduates plus graduates completing in more
+than 6 years.
 
-| Group                  | Graduates | Non-graduates |
-|:-----------------------|----------:|--------------:|
-| Asian Female           |       124 |            78 |
-| Asian Male             |       388 |           269 |
-| Black Female           |       309 |           248 |
-| Black Male             |       376 |           527 |
-| Hispanic/Latinx Female |        63 |            27 |
-| Hispanic/Latinx Male   |       188 |           130 |
-| Native American Female |        10 |             6 |
-| Native American Male   |        27 |            30 |
-| White Female           |      1226 |           622 |
-| White Male             |      4527 |          2825 |
+| Group                  | Positive outcome | Negative outcome |
+|:-----------------------|-----------------:|-----------------:|
+| Asian Female           |              124 |               78 |
+| Asian Male             |              388 |              269 |
+| Black Female           |              309 |              248 |
+| Black Male             |              376 |              527 |
+| Hispanic/Latinx Female |               63 |               27 |
+| Hispanic/Latinx Male   |              188 |              130 |
+| International Female   |               22 |               18 |
+| International Male     |              114 |              104 |
+| Native American Female |               10 |                6 |
+| Native American Male   |               27 |               30 |
+| Other/Unknown Female   |               29 |               17 |
+| Other/Unknown Male     |               71 |               75 |
+| White Female           |             1226 |              622 |
+| White Male             |             4527 |             2825 |
 
 ## Documentation
 

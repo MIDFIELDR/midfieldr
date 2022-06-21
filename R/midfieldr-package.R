@@ -22,11 +22,11 @@ NULL
 #' a resource of longitudinal, de-identified, individual student unit records.
 #'
 #' \href{https://engineering.purdue.edu/MIDFIELD}{MIDFIELD} contains individual
-#' Student Unit Record (SUR) data for 1.7M students at 33 US institutions (as
-#' of June 2021). MIDFIELD is large enough to permit grouping and summarizing
+#' Student Unit Record (SUR) data for 1.7M students at 21 US institutions (as
+#' of June 2022). MIDFIELD is large enough to permit grouping and summarizing
 #' by multiple characteristics, enabling researchers to examine student
 #' characteristics (race/ethnicity, sex, prior achievement) and curricular
-#' pathways (including coursework and major) by institution and over time.
+#' pathways (including coursework and program) by institution and over time.
 #'
 #' A proportionate stratified sample of these data (for practice) is
 #' available in

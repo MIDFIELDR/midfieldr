@@ -14,8 +14,8 @@
 #' is untimely and they are grouped with the non-completers when computing 
 #' a metric such as graduation rate. 
 #' 
-#' Completion is labeled timely if the student has completed their program and 
-#' the degree term is no later than their timely completion term. See also 
+#' Completion status is "positive" for students completing their programs 
+#' no later than their timely completion terms. See also 
 #' \code{add_timely_term()}. 
 #'
 #' @param dframe Data frame of student unit record (SUR) observations keyed 
@@ -24,7 +24,7 @@
 #'         
 #' @param midfield_degree Data frame of SUR degree observations keyed 
 #'         by student ID. Default is \code{degree}. Required variables are 
-#'         \code{mcid} and and \code{term_degree}.  
+#'         \code{mcid} and \code{term_degree}.  
 #'         
 #' @return A \code{data.table}  with the following properties:
 #' \itemize{
@@ -38,14 +38,13 @@
 #' \describe{
 #'  \item{\code{term_degree}}{Character. Term in which a program is completed. 
 #'  Encoded YYYYT.}
-#'  \item{\code{completion}}{Logical. TRUE indicates a student completed their 
-#'  program.}
+#'  \item{\code{completion}}{Logical. TRUE denotes students completing their 
+#'  programs.}
 #'  \item{\code{completion_status}}{Character. Label each observation to 
 #'  indicate program completion status. Possible values are: 
-#'  \code{timely}, indicating a program completed no later than the timely 
-#'  completion term; \code{untimely}, indicating a program completed after the 
-#'  timely completion term; and \code{uncompleted}, indicating a program not 
-#'  completed.}
+#'  \code{positive}, indicating programs completed no later than their timely 
+#'  completion term; and \code{negative}, indicating programs never completed 
+#'  as well as programs completed after their timely completion terms.}
 #' }
 #'
 #'
@@ -120,9 +119,9 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
 
   # evaluate, is the completion timely, TRUE / FALSE
   dframe[, completion_status := fifelse(term_degree <= timely_term,
-    "timely", 
-    "untimely",
-    na = "uncompleted"
+    "positive", 
+    "negative",
+    na = "negative"
   )]
 
   # select columns to return
