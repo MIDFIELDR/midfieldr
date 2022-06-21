@@ -39,12 +39,82 @@ provides practice data (a proportionate stratified sample of MIDFIELD)
 with longitudinal SURs for nearly 98,000 undergraduates at 12
 institutions from 1987–2016 organized in four data tables:
 
-| Data set                                                                     | Each row is                           | N rows | N columns |
-|:-----------------------------------------------------------------------------|:--------------------------------------|-------:|----------:|
-| [`student`](https://midfieldr.github.io/midfielddata/reference/student.html) | a student upon being admitted         |    98k |        13 |
-| [`course`](https://midfieldr.github.io/midfielddata/reference/course.html)   | a student in a course                 |   3.4M |        12 |
-| [`term`](https://midfieldr.github.io/midfielddata/reference/term.html)       | a student in a term                   |   711k |        13 |
-| [`degree`](https://midfieldr.github.io/midfielddata/reference/degree.html)   | a student who completes their program |    48k |         5 |
+<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;background-color: #c7eae5 !important;">
+Data set
+</th>
+<th style="text-align:left;background-color: #c7eae5 !important;">
+Each row is
+</th>
+<th style="text-align:right;background-color: #c7eae5 !important;">
+N rows
+</th>
+<th style="text-align:right;background-color: #c7eae5 !important;">
+N columns
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-family: monospace;color: black !important;background-color: white !important;">
+student
+</td>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+a student upon being admitted
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+98k
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-family: monospace;color: black !important;background-color: white !important;">
+course
+</td>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+a student in a course
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+3.4M
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+12
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-family: monospace;color: black !important;background-color: white !important;">
+term
+</td>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+a student in a term
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+711k
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-family: monospace;color: black !important;background-color: white !important;">
+degree
+</td>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+a student who completes their program
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+48k
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+5
+</td>
+</tr>
+</tbody>
+</table>
 
 All four data tables are keyed by student ID. Tables `student` and
 `degree` have one observation (row) per student. Tables `course` and
@@ -126,22 +196,177 @@ graduates completing their programs in no more than 6 years. “Negative
 outcome” is the sum of non-graduates plus graduates completing in more
 than 6 years.
 
-| Group                  | Positive outcome | Negative outcome |
-|:-----------------------|-----------------:|-----------------:|
-| Asian Female           |              124 |               78 |
-| Asian Male             |              388 |              269 |
-| Black Female           |              309 |              248 |
-| Black Male             |              376 |              527 |
-| Hispanic/Latinx Female |               63 |               27 |
-| Hispanic/Latinx Male   |              188 |              130 |
-| International Female   |               22 |               18 |
-| International Male     |              114 |              104 |
-| Native American Female |               10 |                6 |
-| Native American Male   |               27 |               30 |
-| Other/Unknown Female   |               29 |               17 |
-| Other/Unknown Male     |               71 |               75 |
-| White Female           |             1226 |              622 |
-| White Male             |             4527 |             2825 |
+<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;background-color: #c7eae5 !important;">
+Group
+</th>
+<th style="text-align:right;background-color: #c7eae5 !important;">
+Positive outcome
+</th>
+<th style="text-align:right;background-color: #c7eae5 !important;">
+Negative outcome
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Asian Female
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+124
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+78
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Asian Male
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+388
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+269
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Black Female
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+309
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+248
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Black Male
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+376
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+527
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Hispanic/Latinx Female
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+63
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+27
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Hispanic/Latinx Male
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+188
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+130
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+International Female
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+22
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+18
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+International Male
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+114
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+104
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Native American Female
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+10
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Native American Male
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+27
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+30
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Other/Unknown Female
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+29
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+17
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Other/Unknown Male
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+71
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+75
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+White Female
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+1226
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+622
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+White Male
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+4527
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+2825
+</td>
+</tr>
+</tbody>
+</table>
 
 ## Documentation
 

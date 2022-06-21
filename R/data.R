@@ -77,107 +77,6 @@
 #'
 "fye_start"
 
-# -------------------------------------------------------------------
-
-#' Case-study programs
-#'
-#' Data frame of 6-digit CIP codes and custom program names for Civil,
-#' Electrical, Industrial, and Mechanical Engineering programs
-#' from midfielddata. Used in the case study developed in the vignettes.
-#'
-#' Program names have been shortened for convenience when creating
-#' graphs and tables.
-#'
-#' @format \code{data.table} with 12 rows and 2 columns keyed by the
-#' 6-digit CIP code. The variables are:
-#' \describe{
-#'
-#'   \item{cip6}{Character, 6-digit code of a program.}
-#'
-#'   \item{program}{Character, program name assigned for grouping and
-#'   summarizing and for display in graphs and tables.}
-#'
-#' }
-#'
-#' @family case-study-data
-#'
-"study_program"
-
-# -------------------------------------------------------------------
-
-#' Case-study students
-#'
-#' Data frame of student attributes in the Civil, Electrical, Industrial,
-#' and Mechanical Engineering programs from midfielddata. These data are
-#' subset for data sufficiency and can be used as the starting point for
-#' different persistence metrics such as stickiness or graduation rate.
-#'
-#' @format \code{data.table} with 8219 rows and 8 columns keyed by
-#' student ID. The variables are:
-#' \describe{
-#'
-#'   \item{mcid}{Character, de-identified student ID.}
-#'
-#'   \item{institution}{Character, anonymized institution name, e.g.,
-#'   Institution A, Institution B, etc.}
-#'
-#'   \item{cip6}{Character, 6-digit code of a program in which a student
-#'   is enrolled.}
-#'
-#'   \item{program}{Character, program name assigned for grouping and
-#'   summarizing and for display in graphs and tables.}
-#'
-#'   \item{race}{Character, race/ethnicity as self-reported by the student,
-#'   e.g., Asian, Black, Hispanic/LatinX, etc.}
-#'
-#'   \item{sex}{Character, sex as self-reported by the student, values are
-#'   Female, Male, and Unknown.}
-#'
-#'   \item{timely_term}{Character, the last academic term in which program
-#'   completion would be considered timely for a given student,
-#'   format YYYYT.}
-#'
-#'   \item{data_sufficiency}{Logical, indicating whether the available data
-#'   include a sufficient range of years to justify including a student in
-#'   an analysis. Because the data sufficiency criterion has already been
-#'   evaluated, the values should all be TRUE.}
-#'
-#' }
-#'
-#' @family case-study-data
-"study_student"
-
-
-
-# -------------------------------------------------------------------
-
-#' Case-study graduation rate results
-#'
-#' Graduation rate metric results for Civil, Electrical,
-#' Industrial, and Mechanical Engineering programs from midfielddata. Results
-#' are grouped by program, race/ethnicity, and sex. Used in the case study
-#' developed in the vignettes.
-#'
-#' Graduation rate of a program is fraction of students starting in a
-#' program who graduate in that program.
-#'
-#' Data have also been subset to remove ambiguous levels of race/ethnicity.
-#'
-#' @format \code{data.table} with 32 rows and 3 columns keyed by
-#' program, race/ethnicity, and sex.
-#' \describe{
-#'
-#'  \item{program}{Character, instructional programs selected for study}
-#'
-#'  \item{race_sex}{Character, student race/ethnicity and sex}
-#'
-#'  \item{grad_rate}{Numerical, program graduation rate, a persistence metric}
-#'
-#' }
-#'
-#' @family case-study-data
-#'
-"study_grad_rate"
 
 # -------------------------------------------------------------------
 
@@ -291,7 +190,7 @@
 #'  \item{institution}{Character, anonymized institution name, e.g.,
 #'       Institution A, Institution B, etc.}
 #'
-#'  \item{term}{Character, academic year and term in which
+#'  \item{term_degree}{Character, academic year and term in which
 #'  a student completes their program, format YYYYT.}
 #'
 #'  \item{cip6}{Character, 6-digit CIP code of program in which a student

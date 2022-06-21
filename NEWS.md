@@ -1,12 +1,13 @@
 
 ## midfieldr 1.0.0.9021 / 2022-07
 
-- Eliminate the requirements for named arguments in functions using `student`, 
-  `term`, and `degree` by assigning them as default arguments. 
-- Reorganize case study and vignettes following a common outline
+- The `midfield_student` argument, in functions in which it appears, is assigned the default value `student` instead of NULL. The argument can be  omitted unless the intended data frame is called something other than `student`. 
+- Similarly, the `midfield_course`, `midfield_term`, and `midfield_degree` arguments, where they occur, are assigned the default values `course`, `term`, and `degree`. 
+- Reorganize the logical flow of the data processing in the case study and 
+  vignettes
 - Revise data sufficiency to include lower limit exclusions
 - Functions return all supporting variables
-- Edit function names and variable names
+- Edit function names and variable names, update tests
 
 ## midfieldr 1.0.0.9020 / 2021-07
 

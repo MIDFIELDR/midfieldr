@@ -24,7 +24,8 @@ knitr::opts_chunk$set(
   warning = FALSE,
   collapse = TRUE,
   comment = "#>",
-  error = FALSE
+  error = FALSE, 
+  cache = FALSE # speeds up repeats
 )
 
 # figures
@@ -74,13 +75,15 @@ In this vignette, we examine the contents of practice data from [midfielddata](h
 ```{r echo = FALSE}
 wrapr::build_frame(
     "Practice data table", "Each row is", "No. of rows", "No. of columns" |
-        "[`student`](https://midfieldr.github.io/midfielddata/reference/student.html)", "a degree-seeking student", "97,640", "13" |
-        "[`course`](https://midfieldr.github.io/midfielddata/reference/course.html)", "a student in a course", "3.5M", "12" |
-        "[`term`](https://midfieldr.github.io/midfielddata/reference/term.html)", "a student in a term", "728,000", "13" |
-        "[`degree`](https://midfieldr.github.io/midfielddata/reference/degree.html)", "a student who graduates", "48,000", "5"
+        "student" , "a degree-seeking student" , "97,640"  , "13" |
+        "course"  , "a student in a course"    , "3.5M"    , "12" |
+        "term"    , "a student in a term"      , "728,000" , "13" |
+        "degree"  , "a student who graduates"  , "48,000"  ,  "5"
 ) |>
     kableExtra::kbl(align = "llrr") |>
     kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+    kableExtra::row_spec(0, background = "#c7eae5") |>
+    kableExtra::column_spec(1, monospace = TRUE) |>
     kableExtra::column_spec(1:4, color = "black", background = "white")
 ```
 
@@ -127,8 +130,7 @@ ls()
 
 To load the `student` data from midfielddata into memory, we run
 
-```{r echo = FALSE, cache = FALSE}
-# cache = TRUE speeds up repeats
+```{r echo = FALSE}
 if (!exists("student")) data(student)
 ```
 
@@ -146,8 +148,7 @@ ls()
 
 If you look in the RStudio *Environment* pane, you should see `student` listed. We will typically load the data sets we need at the top of a script just after loading the midfielddata package. You need to load them only once in a session.  
 
-```{r echo = FALSE, cache = FALSE}
-# cache = TRUE speeds up repeats
+```{r echo = FALSE}
 if (!exists("course")) data(course)
 if (!exists("term")) data(term)
 if (!exists("degree")) data(degree)
@@ -388,69 +389,40 @@ Some packages have functions specialized for data frame summaries. Try this one-
 
 midfieldr functions are introduced in detail in subsequent vignettes, but we can introduce their general organization here. 
 
-<br>
-
-**`add_*`**    
-This family of functions takes working data frames as input and adds specific columns of interest without subsetting rows. 
-
 ```{r echo = FALSE}
 wrapr::build_frame(
   "Function", "Action" |
-    "add_completion_timely()", "Add a column to evaluate program completion" |
-    "add_data_sufficiency()", "Add a column to evaluate data sufficiency" |
-    "add_institution()", "Add a column of institution names" |
+    "add_*", "A family of functions that add columns to a data frame to classify observations." |
+    "add_completion_status()", "Determine program completion status for every student" |
+    "add_data_sufficiency()", "Determine data sufficiency for every student" |
     "add_race_sex()", "Add columns for student race/ethnicity and sex" |
-    "add_timely_term()", "Add a column of terms delimiting timely completion"
-) |>
-    kableExtra::kbl(align = "ll") |>
-    kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-    kableExtra::column_spec(1:2, color = "black", background = "white")
-```
-
-<br>
-
-**`filter_*`**    
-This family of functions takes working data frames as input and subsets rows that match conditions; selected columns are subset if specified.  
-
-```{r echo = FALSE}
-wrapr::build_frame(
-  "Function", "Action" |
+    "add_timely_term()", "Calculate a timely completion term for every student" |
+    "filter_*", "A family of functions that subset rows that match conditions." |
     "filter_match()", "Subset rows by matching values in shared key columns" |
-    "filter_search()", "Subset rows that include matches to search strings"
-) |>
-    kableExtra::kbl(align = "ll") |>
-    kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-    kableExtra::column_spec(1:2, color = "black", background = "white")
-```
-
-<br>
-
-**`condition_*`**    
-This family of functions takes highly-structured data frames as input and produces output data frames conditioned for particular tasks. 
-
-```{r echo = FALSE}
-wrapr::build_frame(
-  "Function", "Action" |
+    "filter_search()", "Subset rows that include matches to search strings" |
+    "condition_*", "A family of functions that transform data frames to condition data for specific tasks." |
     "condition_fye()", "Condition FYE data for multiple imputation" |
     "condition_multiway()", "Condition multiway data for graphing"
 ) |>
-    kableExtra::kbl(align = "ll") |>
+    kableExtra::kbl(align = "ll", col.names = NULL) |>
     kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-    kableExtra::column_spec(1:2, color = "black", background = "white")
+    kableExtra::column_spec(1, monospace = TRUE) |>
+    kableExtra::column_spec(1:2, color = "black", background = "white") |>
+    kableExtra::row_spec(c(1, 6, 9), background = "#c7eae5")
 ```
+
+
+
 
 
 ### Exercises
 
-View the help pages for the functions `add_timely_term()` and `add_completion_timely()`. 
+View the help pages for the functions `add_timely_term()` and `add_completion_status()`. 
 
 1. Summarize the difference(s) between the two functions. 
 2. Describe the manner in which one depends on the other.  
 
-View the help pages for the functions `add_institution()` and `add_race_sex()`.
 
-3. List similarities in what the two functions do. 
-4. List differences in what the two functions do. 
 
 ## References
 
@@ -472,7 +444,7 @@ We conclude each vignette by collecting its code chunks in a single, condensed s
 # packages used
 library("midfieldr")
 library("midfielddata")
-suppressMessages(library("data.table"))
+suppressPackageStartupMessages(library("data.table"))
 
 # loading data
 data(student)

@@ -41,27 +41,24 @@ MIDFIELD student data includes the variables \code{race} (race/ethnicity)
 and \code{sex} as self-reported to their institution.
 }
 \examples{
-# Add race and sex to a data frame of graduates
+# Start with an excerpt from the degree data set 
 dframe <- toy_degree[1:5, c("mcid", "cip6")]
+
+# Add columns for race/ethnicity and sex
 add_race_sex(dframe, midfield_student = toy_student)
 
-
-# Add race and sex to a data frame from the term table
+# Repeat with an example from the term data set 
 dframe <- toy_term[21:26, c("mcid", "institution", "level")]
 add_race_sex(dframe, midfield_student = toy_student)
 
-
-# If present, existing race and sex columns are overwritten
-# Using dframe from above,
-DT1 <- add_race_sex(dframe, midfield_student = toy_student)
-DT2 <- add_race_sex(DT1, midfield_student = toy_student)
-all.equal(DT1, DT2)
+# Existing race and sex columns, if any, are overwritten
+dframe[, c("race", "sex") := NA_character_]
+add_race_sex(dframe, midfield_student = toy_student)
 }
 \seealso{
 Other add_*: 
 \code{\link{add_completion_status}()},
 \code{\link{add_data_sufficiency}()},
-\code{\link{add_institution}()},
 \code{\link{add_timely_term}()}
 }
 \concept{add_*}

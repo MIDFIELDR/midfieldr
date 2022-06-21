@@ -46,10 +46,7 @@ the time span of available data.
 }
 \seealso{
 Other case-study-data: 
-\code{\link{study_grad_rate}},
-\code{\link{study_program}},
-\code{\link{study_stickiness_observ}},
-\code{\link{study_student}}
+\code{\link{study_stickiness_observ}}
 }
 \concept{case-study-data}
 \keyword{datasets}

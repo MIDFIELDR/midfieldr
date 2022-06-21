@@ -155,7 +155,7 @@ add_inst_limits <- function(dframe, midfield_term) {
     setDT(dframe)
     setDT(midfield_term)
     
-    # add institution if not present
+    # add_institution() in utils.R
     if(!"institution" %chin% names(dframe)){
         dframe <- add_institution(dframe, midfield_term = midfield_term)
     }

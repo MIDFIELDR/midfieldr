@@ -55,32 +55,22 @@ program completion. Such records must be identified and in most cases
 excluded to prevent false summary counts.
 }
 \examples{
-# Start with IDs
-# dframe <- toy_student[1:10, .(mcid)]
-# 
-# 
-# # Add the timely completion term, required for data sufficiency 
-# dframe <- add_timely_term(dframe, midfield_term = toy_term)
-# 
-# 
-# # Add the data sufficiency variable 
-# add_data_sufficiency(dframe, midfield_term = toy_term)
-# 
-# 
-# # Data sufficiency column with details
-# add_data_sufficiency(dframe, midfield_term = toy_term, details = TRUE)
-# 
-# 
-# # If present, existing data_sufficiency column is overwritten
-# # Using dframe from above,
-# DT1 <- add_data_sufficiency(dframe, midfield_term = toy_term)
-# DT2 <- add_data_sufficiency(DT1, midfield_term = toy_term)
-# all.equal(DT1, DT2)
+# Start with an excerpt from the student data set 
+dframe <- toy_student[1:10, .(mcid)]
+
+# Timely term column is required to add data sufficiency column
+dframe <- add_timely_term(dframe, midfield_term = toy_term)
+
+# Add data sufficiency column
+add_data_sufficiency(dframe, midfield_term = toy_term)
+
+# Existing data_sufficiency column, if any, is overwritten
+dframe[, data_sufficiency := NA_character_]
+add_data_sufficiency(dframe, midfield_term = toy_term)
 }
 \seealso{
 Other add_*: 
 \code{\link{add_completion_status}()},
-\code{\link{add_institution}()},
 \code{\link{add_race_sex}()},
 \code{\link{add_timely_term}()}
 }

@@ -38,10 +38,7 @@ Mechanical Engineering. Keyed by student ID.
 }
 \seealso{
 Other case-study-data: 
-\code{\link{study_grad_rate}},
-\code{\link{study_program}},
-\code{\link{study_stickiness}},
-\code{\link{study_student}}
+\code{\link{study_stickiness}}
 }
 \concept{case-study-data}
 \keyword{datasets}

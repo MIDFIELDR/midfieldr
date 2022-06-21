@@ -386,3 +386,86 @@ The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique s
 ## Closing
 
 Starting with the `student`, `term`, and `degree` data tables, we processed the data to obtain the observations needed to determine stickiness. This intermediate result is written to file. 
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+
+
+
+
+## Appendix
+
+### Complete script
+
+We conclude each vignette by collecting its code chunks in a single, condensed script for the convenience of those who wish to copy it into their own R file. 
+
+```{r}
+#| eval: false
+# Packages
+library("midfieldr")
+library("midfielddata")
+suppressPackageStartupMessages(library("data.table"))
+
+# Import data
+data(student, term, degree)
+
+# Gather ever enrolled
+DT <- copy(term)
+DT <- DT[, .(mcid, cip6)]
+DT <- unique(DT)
+
+# Filter for data sufficiency
+DT <- add_timely_term(DT, midfield_term = term)
+DT <- add_data_sufficiency(DT, midfield_term = term)
+DT <- DT[data_sufficiency == "include"]
+DT <- DT[, .(mcid, cip6)]
+
+# Filter for degree-seeking
+DT <- filter_match(DT, match_to = student, by_col = "mcid")
+
+# Filter by program
+study_program <- filter_search(cip, keep_text = c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+study_program <- study_program[, .(cip6, cip6name)]
+study_program[, program := fcase(
+    cip6 %like% "^1408", "CE", 
+    cip6 %like% "^1410", "EE", 
+    cip6 %like% "^1419", "ME", 
+    cip6 %between% c("142701", "143701"), "ISE"
+)]
+study_program[, cip6name := NULL]
+DT <- merge(DT, study_program, by = "cip6", all.x = TRUE)
+DT <- DT[!is.na(program)]
+DT[, cip6 := NULL]
+DT <- unique(DT)
+DT[, group := "ever"]
+ever <- copy(DT)
+
+# Gather graduate subset
+DT <- copy(degree)
+DT <- filter_match(DT, match_to = ever, by_col = "mcid")
+
+# Filter by completion status
+DT <- add_timely_term(DT, midfield_term = term)
+DT <- add_completion_status(DT, midfield_degree = degree)
+DT <- DT[completion_status == "positive"]
+DT <- DT[, .(mcid, cip6)]
+
+# Filter by program
+DT <- merge(DT, study_program, by = "cip6", all.x = TRUE)
+DT <- DT[!is.na(program)]
+DT <- DT[, .(mcid, program)]
+DT <- unique(DT)
+DT[, group := "grad"]
+
+# Join ever and grad
+DT <- rbindlist(list(DT, ever))
+
+# Add demographics
+DT <- add_race_sex(DT, midfield_student = student)
+```
+

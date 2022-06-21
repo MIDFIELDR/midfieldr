@@ -14,7 +14,7 @@ student ID.
  \item{institution}{Character, anonymized institution name, e.g.,
       Institution A, Institution B, etc.}
 
- \item{term}{Character, academic year and term in which
+ \item{term_degree}{Character, academic year and term in which
  a student completes their program, format YYYYT.}
 
  \item{cip6}{Character, 6-digit CIP code of program in which a student

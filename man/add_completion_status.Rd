@@ -56,30 +56,22 @@ no later than their timely completion terms. See also
 \code{add_timely_term()}.
 }
 \examples{
-# Start with IDs and add institution and timely term
-# dframe <- toy_student[1:10, .(mcid)]
-# dframe <- add_institution(dframe, midfield_term = toy_term)
-# dframe <- add_timely_term(dframe, midfield_term = toy_term)
-# 
-# 
-# # Timely completion column without detail
-# add_completion_timely(dframe, midfield_degree = toy_degree)
-# 
-# 
-# # Timely completion column with detail
-# add_completion_timely(dframe, midfield_degree = toy_degree, detail = TRUE)
-# 
-# 
-# # If present, existing completion_timely column is overwritten
-# DT1 <- add_completion_timely(dframe, midfield_degree = toy_degree)
-# DT2 <- add_completion_timely(DT1, midfield_degree = toy_degree)
-# all.equal(DT1, DT2)
+# Start with an excerpt from the student data set 
+dframe <- toy_student[1:10, .(mcid)]
 
+# Timely term column is required to add completion status column
+dframe <- add_timely_term(dframe, midfield_term = toy_term)
+
+# Add completion status column
+add_completion_status(dframe, midfield_degree = toy_degree)
+
+# Existing completion_status column, if any, is overwritten
+dframe[, completion_status := NA_character_]
+add_completion_status(dframe, midfield_degree = toy_degree)
 }
 \seealso{
 Other add_*: 
 \code{\link{add_data_sufficiency}()},
-\code{\link{add_institution}()},
 \code{\link{add_race_sex}()},
 \code{\link{add_timely_term}()}
 }
