@@ -174,12 +174,17 @@ condition_fye <- function(dframe,
   fye <- merge(fye, dframe, by = "mcid", all.x = TRUE)
 
   # subset midfield data table
-  DT <- filter_match(
-    dframe = midfield_term,
-    match_to = fye,
-    by_col = "mcid",
-    select = c("mcid", "term", "cip6")
-  )
+  # DT <- filter_match(
+  #   dframe = midfield_term,
+  #   match_to = fye,
+  #   by_col = "mcid",
+  #   select = c("mcid", "term", "cip6")
+  # )
+  
+  # Inner join using three columns of term
+  x <- midfield_term[, .(mcid, term, cip6)]
+  y <- unique(fye[, .(mcid)])
+  DT <- y[x, on = .(mcid), nomatch = NULL]
 
   # order rows by setting keys
   setkeyv(DT, c("mcid", "term"))

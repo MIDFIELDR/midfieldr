@@ -46,12 +46,13 @@ knitr::knit_hooks$set(inline = function(x) {
 })
 ```
 
-Part 2 of a case study in four parts:
+
+Part 2 of a case study in three parts:
 
 - [Goals.](art-001-case-goals.html) Describing the study parameters.  
 - [Data.](art-002-case-data.html) Transforming the data to yield the observations of interest.
-- [Metrics.](art-003-case-metrics.html) Calculating summary statistics and metrics.
-- [Displays.](art-004-case-displays.html) Creating tables and charts to display results.
+- [Results.](art-003-case-results.html) Calculating summary statistics and metrics and displaying the results. 
+
 
 
 
@@ -135,7 +136,7 @@ Some student records near the lower and upper terms that bound the available dat
 
 ```{r}
 # Calculate a timely completion term for every student
-DT <- add_timely_term(DT, midfield_term = term)
+DT <- add_timely_term(DT, term)
 DT[]
 ```
 
@@ -143,7 +144,7 @@ DT[]
 
 ```{r}
 # Determine data sufficiency for every student
-DT <- add_data_sufficiency(DT, midfield_term = term)
+DT <- add_data_sufficiency(DT, term)
 DT[]
 ```
 
@@ -168,11 +169,14 @@ The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique s
 
 In studying stickiness, we exclude non-degree-seeking students. We filter such students using the `student` data which contains only degree seeking students. 
 
-**Filtering.** Retain degree-seeking students only. 
+**Filtering.** An inner join with one column of `student` that returns all of the rows with matching IDs from both data frames. 
 
 ```{r}
-# Retain degree-seeking students
-DT <- filter_match(DT, match_to = student, by_col = "mcid")
+# Subset of student data frame to join
+cols_to_join <- student[, .(mcid)]
+
+# Inner join that filters DT
+DT <- cols_to_join[DT, on = .(mcid), nomatch = NULL]
 DT[]
 ```
 
@@ -203,24 +207,24 @@ study_program[]
 **Creating variables.** Add a variable to label each of these `r nrow(study_program)` programs with one of the four conventional program abbreviations we will use in comparing metrics, i.e., Civil (CE), Electrical (EE), Mechanical (ME), and Industrial/Systems Engineering (ISE). 
 
 ```{r}
-# Assign four program names by 6-digit CIP code
+# Assign four program names by CIP code
 study_program[, program := fcase(
     cip6 %like% "^1408", "CE", 
     cip6 %like% "^1410", "EE", 
     cip6 %like% "^1419", "ME", 
-    cip6 %between% c("142701", "143701"), "ISE"
+    cip6 %chin% c("142701", "143501", "143601", "143701"), "ISE"
 )]
 
 # Confirm that abbreviations match the longer program names
 print(study_program[, .(cip6name, program)])
 ```
 
-**Joining.** Having checked that the new abbreviations correctly represent the programs, we drop the `cip6name` variable and join the program names to the working data frame.  
+**Joining.** Having checked that the new abbreviations correctly represent the programs, we drop the `cip6name` variable and join the program names to the working data frame using a left-outer join. All rows of `DT` are returned.   
 
 ```{r}
-# Join program names to working data 
+# Left-outer join to DT
 study_program[, cip6name := NULL]
-DT <- merge(DT, study_program, by = "cip6", all.x = TRUE)
+DT <- study_program[DT, on = .(cip6)]
 DT[]
 ```
 
@@ -249,8 +253,8 @@ The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique s
 
 ```{r}
 # Conclude development of the ever-enrolled observations
-DT[, group := "ever"]
 ever <- copy(DT)
+ever[, group := "ever"]
 ever[]
 ```
 
@@ -264,29 +268,27 @@ ever[]
 
 ## Gather graduate subset
 
-**Copying.** Copy the `degree` data set to create a new working data frame (DT), leaving `degree` unaltered for later use.
+**Filtering.** Students potentially counted as graduates must be a subset of those in the ever enrolled population. We re-initialize the working data frame, retaining unique IDs only. 
 
 ```{r}
-# Begin development of the graduate observations
-DT <- copy(degree)
-str(DT)
+# Unique IDs of students ever enrolled in the study programs
+DT <- DT[, .(mcid)]
+DT <- unique(DT)
+DT[]
 ```
 
- 
-
-**Filtering.** Students potentially counted as graduates must be a subset of those in ever enrolled population. 
+**Filtering.** An inner join with two columns of `degree` that returns all of the rows with matching IDs from both data frames. In effect, the inner join filters DT
 
 ```{r}
-# Graduates must be a subset of ever-enrolled students
-DT <- filter_match(DT, match_to = ever, by_col = "mcid")
+# Subset of degree data frame to join
+cols_to_join <- degree[, .(mcid, cip6)]
+
+# Inner join that filters DT 
+DT <- cols_to_join[DT, on = .(mcid), nomatch = NULL]
 DT[]
 ```
 
 The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique students. These IDs have already been filtered for data sufficiency and  degree-seeking.
-
-
-
-
 
 
 
@@ -299,7 +301,7 @@ To be counted as a graduate in the stickiness metric, a student must complete th
 
 ```{r}
 # Calculate a timely completion term for every student
-DT <- add_timely_term(DT, midfield_term = term)
+DT <- add_timely_term(DT, term)
 DT[]
 ```
 
@@ -308,7 +310,7 @@ DT[]
 
 ```{r}
 # Determine program completion status for every student
-DT <- add_completion_status(DT, midfield_degree = degree)
+DT <- add_completion_status(DT, degree)
 DT[]
 ```
 
@@ -327,8 +329,8 @@ The result has `r nrow(DT)` unique observations.
 ## Filter by program
 
 ```{r}
-# Join program names to working data 
-DT <- merge(DT, study_program, by = "cip6", all.x = TRUE)
+# Left-outer join to DT 
+DT <- study_program[DT, on = .(cip6)]
 DT <- DT[!is.na(program)]
 
 # Unique observations
@@ -343,17 +345,18 @@ The result has `r nrow(DT)` unique observations.
 
 ```{r}
 # Conclude development of the graduate observations
-DT[, group := "grad"]
-DT[]
+grad <- copy(DT)
+grad[, group := "grad"]
+grad[]
 ```
 
-## Join ever and grad
+## Combine ever and grad
 
-**Joining.** Combine the data frames of ever-enrolled and graduates. 
+**Binding.** Combine two data frames by matching column names. 
 
 ```{r}
-# Join the two data frames 
-DT <- rbindlist(list(DT, ever))
+# Combine two data frames
+DT <- rbindlist(list(ever, grad), use.names = TRUE)
 DT[]
 ```
 
@@ -365,17 +368,49 @@ DT[]
 
 ## Add demographics
 
-**Creating variables.** Using information in `student`, we add variables for race/ethnicity and sex.
+**Creating variables.** Using columns from `student`, we add variables for race/ethnicity and sex using a left-outer join. All rows of `DT` are returned. 
 
 ```{r}
-# Add columns for student race/ethnicity and sex
-DT <- add_race_sex(DT, midfield_student = student)
+# Subset of student data frame to join
+cols_to_join <- student[, .(mcid, race, sex)]
+
+# Left-outer join to DT
+DT <- cols_to_join[DT, on = .(mcid)]
 DT[]
 ```
 
 The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique students. IDs labeled "grad" are a subset of those labeled "ever". 
 
-**Write to file.**  Results like these, used as inputs for calculating summary statistics and metrics, are often written to file as an intermediate result. In this case, the data frame above is bundled with midfieldr as `study_stickiness_observ`. 
+
+
+
+
+## Review 
+
+To better grasp the structure of these data, we can review selected sets of observations by ID. In the first example, the ID produces one observation only. The student was enrolled in Civil Engineering but completion, if any, was not timely. 
+
+```{r collapse = TRUE}
+DT[mcid == "MID26694225"]
+```
+
+In the next example, the ID produces two observations indicating that the student was enrolled in Civil Engineering and a timely graduate of that program. 
+
+```{r collapse = TRUE}
+DT[mcid == "MID25786154"]
+```
+
+In the next example, the ID produces two observations indicating that the student was enrolled in Electrical Engineering and in Mechanical Engineering but a timely graduate of neither program. 
+
+```{r collapse = TRUE}
+DT[mcid == "MID25868925"]
+```
+
+In the next example, the ID produces three observations indicating that the student was enrolled in Electrical Engineering and in Civil Engineering and a timely graduate of Civil.  
+
+```{r collapse = TRUE}
+DT[mcid == "MID26526757"]
+```
+
 
 
 
@@ -385,8 +420,10 @@ The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique s
 
 ## Closing
 
-Starting with the `student`, `term`, and `degree` data tables, we processed the data to obtain the observations needed to determine stickiness. This intermediate result is written to file. 
+Starting with the `student`, `term`, and `degree` data tables, we processed the data to obtain the observations needed to determine stickiness.  
 
+
+**Write to file.**  Results like these, used as inputs for calculating summary statistics and metrics, are often written to file as an intermediate result. In this case, the data frame above is bundled with midfieldr as `study_stickiness_observ`. 
 
 ## References
 
@@ -420,13 +457,14 @@ DT <- DT[, .(mcid, cip6)]
 DT <- unique(DT)
 
 # Filter for data sufficiency
-DT <- add_timely_term(DT, midfield_term = term)
-DT <- add_data_sufficiency(DT, midfield_term = term)
+DT <- add_timely_term(DT, term)
+DT <- add_data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include"]
 DT <- DT[, .(mcid, cip6)]
 
 # Filter for degree-seeking
-DT <- filter_match(DT, match_to = student, by_col = "mcid")
+cols_to_join <- student[, .(mcid)]
+DT <- cols_to_join[DT, on = .(mcid), nomatch = NULL]
 
 # Filter by program
 study_program <- filter_search(cip, keep_text = c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
@@ -435,37 +473,41 @@ study_program[, program := fcase(
     cip6 %like% "^1408", "CE", 
     cip6 %like% "^1410", "EE", 
     cip6 %like% "^1419", "ME", 
-    cip6 %between% c("142701", "143701"), "ISE"
+    cip6 %chin% c("142701", "143501", "143601", "143701"), "ISE"
 )]
 study_program[, cip6name := NULL]
-DT <- merge(DT, study_program, by = "cip6", all.x = TRUE)
+DT <- study_program[DT, on = .(cip6)]
 DT <- DT[!is.na(program)]
 DT[, cip6 := NULL]
 DT <- unique(DT)
-DT[, group := "ever"]
 ever <- copy(DT)
+ever[, group := "ever"]
 
 # Gather graduate subset
-DT <- copy(degree)
-DT <- filter_match(DT, match_to = ever, by_col = "mcid")
+DT <- DT[, .(mcid)]
+DT <- unique(DT)
+cols_to_join <- degree[, .(mcid, cip6)]
+DT <- cols_to_join[DT, on = .(mcid), nomatch = NULL]
 
 # Filter by completion status
 DT <- add_timely_term(DT, midfield_term = term)
-DT <- add_completion_status(DT, midfield_degree = degree)
+DT <- add_completion_status(DT, degree)
 DT <- DT[completion_status == "positive"]
 DT <- DT[, .(mcid, cip6)]
 
 # Filter by program
-DT <- merge(DT, study_program, by = "cip6", all.x = TRUE)
+DT <- study_program[DT, on = .(cip6)]
 DT <- DT[!is.na(program)]
 DT <- DT[, .(mcid, program)]
 DT <- unique(DT)
-DT[, group := "grad"]
+grad <- copy(DT)
+grad[, group := "grad"]
 
-# Join ever and grad
-DT <- rbindlist(list(DT, ever))
+# Combine two data frames and match the column names
+DT <- rbindlist(list(ever, grad), use.names = TRUE)
 
 # Add demographics
-DT <- add_race_sex(DT, midfield_student = student)
+cols_to_join <- student[, .(mcid, race, sex)]
+DT <- cols_to_join[DT, on = .(mcid)]
 ```
 

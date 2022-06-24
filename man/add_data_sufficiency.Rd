@@ -71,7 +71,6 @@ add_data_sufficiency(dframe, midfield_term = toy_term)
 \seealso{
 Other add_*: 
 \code{\link{add_completion_status}()},
-\code{\link{add_race_sex}()},
 \code{\link{add_timely_term}()}
 }
 \concept{add_*}

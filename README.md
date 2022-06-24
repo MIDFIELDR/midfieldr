@@ -140,9 +140,7 @@ midfieldr package, we use the functions:
 
 -   `add_timely_term()`
 -   `add_data_sufficiency()`
--   `filter_match()`
 -   `add_completion_status()`
--   `add_race_sex()`
 
 ``` r
 # Packages used
@@ -157,14 +155,15 @@ data(student, term, degree)
 DT <- copy(term)
 
 # Timely completion term required for data sufficiency
-DT <- add_timely_term(DT, midfield_term = term)
+DT <- add_timely_term(DT, term)
 
 # Filter for data sufficiency
-DT <- add_data_sufficiency(DT, midfield_term = term)
+DT <- add_data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include"]
 
-# Filter observations for degree-seeking
-DT <- filter_match(DT, match_to = student, by_col = "mcid")
+# Filter observations for degree-seeking using an inner join
+cols_to_join <- student[, .(mcid)]
+DT <- cols_to_join[DT, on = .(mcid), nomatch = NULL]
 
 # Filter observations for engineering programs
 DT <- DT[cip6 %like% "^14"]
@@ -172,11 +171,12 @@ DT <- DT[cip6 %like% "^14"]
 # Filter observations for unique students (first instance)
 DT <- DT[, .SD[1], by = c("mcid")]
 
-# Determine if completion status is positive or negative
-DT <- add_completion_status(DT, midfield_degree = degree)
+# Add completion status
+DT <- add_completion_status(DT, degree)
 
-# Add demographics
-DT <- add_race_sex(DT, midfield_student = student)
+# Add race and sex using a left outer join
+cols_to_join <- student[, .(mcid, race, sex)]
+DT <- cols_to_join[DT, on = .(mcid)]
 
 # Calculate summary statistics
 DT <- DT[, .N, by = c("completion_status", "sex", "race")]
@@ -193,8 +193,8 @@ setnames(DT_display,
 
 Tabulated results of usage example. “Positive outcome” is the count of
 graduates completing their programs in no more than 6 years. “Negative
-outcome” is the sum of non-graduates plus graduates completing in more
-than 6 years.
+outcome” is the sum of those graduating in more than 6 years plus those
+not graduating.
 
 <table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <thead>

@@ -96,11 +96,17 @@ add_institution <- function(dframe,
     N <- NULL
     
     # do the work
-    DT <- filter_match(midfield_term,
-                       match_to = dframe,
-                       by_col = "mcid",
-                       select = c("mcid", "institution", "term")
-    )
+    # DT <- filter_match(midfield_term,
+    #                    match_to = dframe,
+    #                    by_col = "mcid",
+    #                    select = c("mcid", "institution", "term")
+    # )
+    
+    # Inner join using three columns of term
+    x <- midfield_term[, .(mcid, institution, term)]
+    y <- unique(dframe[, .(mcid)])
+    DT <- y[x, on = .(mcid), nomatch = NULL]
+    
     
     # count terms at institutions
     DT <- DT[, .N, by = c("mcid", "institution")]

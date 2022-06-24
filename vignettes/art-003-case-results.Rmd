@@ -1,0 +1,86 @@
+---
+title: "Case study: Results"
+author: "Richard Layton"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
+output: rmarkdown::html_vignette
+csl: ../inst/information-science-and-technology.csl
+vignette: >
+  %\VignetteIndexEntry{Case study: Results}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+nocite: | 
+resource_files: |
+---
+
+```{r setup, include = FALSE}
+# code chunks
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = FALSE,
+  comment = "#>",
+  error = FALSE
+)
+
+# figures
+knitr::opts_chunk$set(
+    fig.path = "../man/figures/art-003-case-results-", 
+    fig.width = 6,
+    fig.asp = 1 / 1.6,
+    out.width = "70%",
+    fig.align = "center"
+)
+
+# inline numbers
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+```
+
+Part 3 of a case study in three parts:
+
+- [Goals.](art-001-case-goals.html) Describing the study parameters.  
+- [Data.](art-002-case-data.html) Transforming the data to yield the observations of interest.
+- [Results.](art-003-case-results.html) Calculating summary statistics and metrics and displaying the results. 
+
+
+
+```{r eval=FALSE}
+DT <- copy(study_stickiness_observ)
+x <- DT[, .N, by = c("group", "program", "race", "sex")]
+y <- dcast(x, program + sex + race ~ group, value.var = "N")
+y <- y[is.na(grad), grad := 0]
+y <- y[grad >= 10]
+y <- y[!race %chin% c("International", "Other/Unknown")]
+y[, stick := round(100 * grad / ever, 1)]
+y[, race_sex := paste(race, sex)]
+
+y[, program := fcase(
+    program %like% "CE", "Civil Engineering", 
+    program %like% "EE", "Electrical Engineering", 
+    program %like% "ME", "Mechanical Engineering", 
+    program %like% "ISE", "Industrial/Systems Engineering"
+)]
+
+z <- condition_multiway(y, 
+                        categ_col = c("program", "race_sex"), 
+                        quant_col = "stick", 
+                        order_by  = "percent", 
+                        param_col = c("grad", "ever"))
+
+library(ggplot2)
+ggplot(z, aes(x = stick, y = race_sex)) +
+    facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+    geom_point()  +
+    labs(x = "Stickiness, (%)", y = "")
+```
+

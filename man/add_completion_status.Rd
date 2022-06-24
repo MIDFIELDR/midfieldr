@@ -72,7 +72,6 @@ add_completion_status(dframe, midfield_degree = toy_degree)
 \seealso{
 Other add_*: 
 \code{\link{add_data_sufficiency}()},
-\code{\link{add_race_sex}()},
 \code{\link{add_timely_term}()}
 }
 \concept{add_*}

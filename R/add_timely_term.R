@@ -221,12 +221,24 @@ add_initial_term <- function(dframe, midfield_term) {
     dframe <- dframe[, .SD, .SDcols = old_cols]
     
     # obtain new_cols keyed by ID
-    DT <- filter_match(
-        dframe = midfield_term,
-        match_to = dframe,
-        by_col = "mcid",
-        select = c("mcid", "term")
-    )
+    # DT <- filter_match(
+    #     dframe = midfield_term,
+    #     match_to = dframe,
+    #     by_col = "mcid",
+    #     select = c("mcid", "term")
+    # )
+    
+    
+    
+    # Inner join using two columns of term
+    x <- midfield_term[, .(mcid, term)]
+    y <- unique(dframe[, .(mcid)])
+    DT <- y[x, on = .(mcid), nomatch = NULL]
+    
+    
+    
+    
+    
     
     # retain first term by ID
     setkeyv(DT, c("mcid", "term"))
@@ -268,13 +280,18 @@ add_initial_level <- function(dframe, midfield_term) {
     old_cols <- find_old_cols(dframe, new_cols) 
     dframe <- dframe[, .SD, .SDcols = old_cols]
     
-    # obtain new_cols keyed by ID
-    DT <- filter_match(
-        dframe = midfield_term,
-        match_to = dframe,
-        by_col = "mcid",
-        select = c("mcid", "term", "level")
-    )
+    # # obtain new_cols keyed by ID
+    # DT <- filter_match(
+    #     dframe = midfield_term,
+    #     match_to = dframe,
+    #     by_col = "mcid",
+    #     select = c("mcid", "term", "level")
+    # )
+    
+    # Inner join using three columns of term
+    x <- midfield_term[, .(mcid, term, level)]
+    y <- unique(dframe[, .(mcid)])
+    DT <- y[x, on = .(mcid), nomatch = NULL]
     
     # retain first term by ID
     setkeyv(DT, c("mcid", "term"))

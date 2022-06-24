@@ -11,18 +11,17 @@
 
  \item{mcid}{Character, anonymized student identifier}
 
- \item{program}{Character, abbreviation indicating a program the 
- student completed}
- 
- \item{group}{Character, indicating the grouping (\code{ever} or 
- \code{grad}) to which the student belongs. Graduate IDs are a subset of 
- ever enrolled IDs.} 
-
  \item{race}{Character, race/ethnicity as self-reported by the student, 
  e.g., Asian, Black, Hispanic/LatinX, etc.}
  
  \item{sex}{Character, sex as self-reported by the student, 
  values are Female, Male, and Unknown}
+ 
+ \item{program}{Character, abbreviation indicating a program the 
+ student completed}
+ 
+ \item{group}{Character, indicating the grouping (\code{ever} or 
+ \code{grad}) to which the student belongs.} 
 
 }
 }
@@ -38,6 +37,7 @@ Mechanical Engineering. Keyed by student ID.
 }
 \seealso{
 Other case-study-data: 
+\code{\link{study_starting_pool}},
 \code{\link{study_stickiness}}
 }
 \concept{case-study-data}

@@ -14,8 +14,17 @@ DT <- term[startsWith(term$cip6, "14"),
 DT <- unique(DT)
 
 # Ensure students are degree-seeking
-DT <- filter_match(DT, match_to = student, by_col = "mcid")
+# DT <- filter_match(DT, match_to = student, by_col = "mcid")
+# setDF(DT)
+
+
+# Inner join using three columns of term
+y <- unique(student[, .(mcid)])
+DT <- y[DT, on = .(mcid), nomatch = NULL]
 setDF(DT)
+
+
+
 
 # Estimate timely completion terms
 DT <- add_timely_term(DT, midfield_term = term)
@@ -32,7 +41,10 @@ setDF(DT)
 DT <- DT[DT$data_sufficiency == TRUE, , drop = FALSE]
 
 # Obtain race/ethnicity and sex
-DT <- add_race_sex(DT, midfield_student = student)
+# DT <- add_race_sex(DT, midfield_student = student)
+# Left-outer join race-sex
+cols_to_join <- student[, .(mcid, race, sex)]
+DT <- cols_to_join[DT, on = .(mcid)]
 setDF(DT)
 
 # Count by grouping variables

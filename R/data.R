@@ -207,6 +207,31 @@
 
 # -------------------------------------------------------------------
 
+#' Case-study observations starting pool
+#' 
+#' An intermediate result provided for the convenience of vignette users. 
+#' Data from the midfielddata package is processed to obtain observations 
+#' of students ever enrolled in the case study programs of Civil, Electrical, 
+#' Industrial/Systems, and Mechanical Engineering without filtering for 
+#' data sufficiency or timely completion. Keyed by student ID. 
+#'
+#' @format \code{data.table} with 161,696 rows and 2 columns keyed by ID.
+#' 
+#' \describe{
+#'
+#'  \item{mcid}{Character, anonymized student identifier}
+#'
+#'  \item{cip6}{Character, 6-digit CIP codes of programs in which students
+#'  are ever enrolled.}
+#'
+#' }
+#'
+#' @family case-study-data
+#'
+"study_starting_pool"
+
+# -------------------------------------------------------------------
+
 #' Case-study stickiness observations
 #' 
 #' An intermediate result provided for the convenience of vignette users. 
@@ -221,18 +246,17 @@
 #'
 #'  \item{mcid}{Character, anonymized student identifier}
 #'
-#'  \item{program}{Character, abbreviation indicating a program the 
-#'  student completed}
-#'  
-#'  \item{group}{Character, indicating the grouping (\code{ever} or 
-#'  \code{grad}) to which the student belongs. Graduate IDs are a subset of 
-#'  ever enrolled IDs.} 
-#'
 #'  \item{race}{Character, race/ethnicity as self-reported by the student, 
 #'  e.g., Asian, Black, Hispanic/LatinX, etc.}
 #'  
 #'  \item{sex}{Character, sex as self-reported by the student, 
 #'  values are Female, Male, and Unknown}
+#'  
+#'  \item{program}{Character, abbreviation indicating a program the 
+#'  student completed}
+#'  
+#'  \item{group}{Character, indicating the grouping (\code{ever} or 
+#'  \code{grad}) to which the student belongs.} 
 #'
 #' }
 #'

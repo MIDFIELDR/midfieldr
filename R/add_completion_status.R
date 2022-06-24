@@ -99,11 +99,16 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
   dframe <- dframe[, .SD, .SDcols = old_cols]
 
   # subset midfield data table
-  DT <- filter_match(midfield_degree,
-    match_to = dframe,
-    by_col = "mcid",
-    select = c("mcid", "term_degree")
-  )
+  # DT <- filter_match(midfield_degree,
+  #   match_to = dframe,
+  #   by_col = "mcid",
+  #   select = c("mcid", "term_degree")
+  # )
+ 
+  # Inner join using three columns of term
+  x <- midfield_degree[, .(mcid, term_degree)]
+  y <- unique(dframe[, .(mcid)])
+  DT <- y[x, on = .(mcid), nomatch = NULL]
 
   # keep the first degree term
   setorderv(DT, c("mcid", "term_degree"))

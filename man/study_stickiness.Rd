@@ -46,6 +46,7 @@ the time span of available data.
 }
 \seealso{
 Other case-study-data: 
+\code{\link{study_starting_pool}},
 \code{\link{study_stickiness_observ}}
 }
 \concept{case-study-data}

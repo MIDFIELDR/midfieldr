@@ -74,8 +74,4 @@ second_pass <- filter_search(first_pass, "engineering")
 filter_search(second_pass, drop_text = "technology")
 
 }
-\seealso{
-Other filter_*: 
-\code{\link{filter_match}()}
-}
 \concept{filter_*}
