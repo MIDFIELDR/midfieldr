@@ -72,15 +72,13 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-case-study">
     <a class="dropdown-item" href="articles/art-001-case-goals.html">Goals</a>
     <a class="dropdown-item" href="articles/art-002-case-data.html">Data</a>
-    <a class="dropdown-item" href="articles/art-003-case-metrics.html">Metrics</a>
-    <a class="dropdown-item" href="articles/art-004-case-displays.html">Displays</a>
+    <a class="dropdown-item" href="articles/art-003-case-results.html">Results</a>
   </div>
 </li>
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-vignettes">Vignettes</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-vignettes">
-    <a class="dropdown-item" href="articles/art-020-data-sufficiency.html">Data sufficiency</a>
-    <a class="dropdown-item" href="articles/art-010-program-codes.html">Program codes</a>
+    <a class="dropdown-item" href="articles/art-010-data-sufficiency.html">Data sufficiency</a>
   </div>
 </li>
 <li class="nav-item">
@@ -214,9 +212,7 @@ a student who completes their program
 <ul>
 <li><code><a href="reference/add_timely_term.html">add_timely_term()</a></code></li>
 <li><code><a href="reference/add_data_sufficiency.html">add_data_sufficiency()</a></code></li>
-<li><code><a href="reference/filter_match.html">filter_match()</a></code></li>
 <li><code><a href="reference/add_completion_status.html">add_completion_status()</a></code></li>
-<li><code><a href="reference/add_race_sex.html">add_race_sex()</a></code></li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Packages used</span>
@@ -231,14 +227,15 @@ a student who completes their program
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span>
 
 <span class="co"># Timely completion term required for data sufficiency</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span>
 
 <span class="co"># Filter for data sufficiency</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span><span class="op">]</span>
 
-<span class="co"># Filter observations for degree-seeking</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filter_match.html">filter_match</a></span><span class="op">(</span><span class="va">DT</span>, match_to <span class="op">=</span> <span class="va">student</span>, by_col <span class="op">=</span> <span class="st">"mcid"</span><span class="op">)</span>
+<span class="co"># Filter observations for degree-seeking using an inner join</span>
+<span class="va">cols_to_join</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">cols_to_join</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span>
 
 <span class="co"># Filter observations for engineering programs</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^14"</span><span class="op">]</span>
@@ -246,11 +243,12 @@ a student who completes their program
 <span class="co"># Filter observations for unique students (first instance)</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span>
 
-<span class="co"># Determine if completion status is positive or negative</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span>
+<span class="co"># Add completion status</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">degree</span><span class="op">)</span>
 
-<span class="co"># Add demographics</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_race_sex.html">add_race_sex</a></span><span class="op">(</span><span class="va">DT</span>, midfield_student <span class="op">=</span> <span class="va">student</span><span class="op">)</span>
+<span class="co"># Add race and sex using a left outer join</span>
+<span class="va">cols_to_join</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">cols_to_join</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># Calculate summary statistics</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"completion_status"</span>, <span class="st">"sex"</span>, <span class="st">"race"</span><span class="op">)</span><span class="op">]</span>
@@ -263,7 +261,7 @@ a student who completes their program
   old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"race_sex"</span>, <span class="st">"positive"</span>, <span class="st">"negative"</span><span class="op">)</span>,
   new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Group"</span>, <span class="st">"Positive outcome"</span>, <span class="st">"Negative outcome"</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
-<p>Tabulated results of usage example. “Positive outcome” is the count of graduates completing their programs in no more than 6 years. “Negative outcome” is the sum of non-graduates plus graduates completing in more than 6 years.</p>
+<p>Tabulated results of usage example. “Positive outcome” is the count of graduates completing their programs in no more than 6 years. “Negative outcome” is the sum of those graduating in more than 6 years plus those not graduating.</p>
 <table class="table  lightable-paper" style='font-family: "Arial Narrow", arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;'>
 <thead><tr>
 <th style="text-align:left;background-color: #c7eae5 !important;">
