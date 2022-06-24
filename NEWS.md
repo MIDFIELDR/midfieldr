@@ -1,5 +1,12 @@
 
-## midfieldr 1.0.0.9021 / 2021-07
+
+
+## midfieldr 1.0.0.9022 / 2021-07
+
+
+
+
+## midfieldr 1.0.0.9021 / 2021-06
 
 - The `midfield_student` argument, in functions in which it appears, is assigned the default value `student` instead of NULL. The argument can be  omitted unless the intended data frame is called something other than `student`. 
 - Similarly, the `midfield_course`, `midfield_term`, and `midfield_degree` arguments, where they occur, are assigned the default values `course`, `term`, and `degree`. 
