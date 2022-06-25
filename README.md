@@ -398,7 +398,8 @@ repository, type in the Console:
 # install midfieldr from drat repo
 install.packages("midfieldr", 
                  repos = "https://MIDFIELDR.github.io/drat/", 
-                 type = "source")
+                 type = "source", 
+                 dependencies = "Imports")
 ```
 
 You can confirm a successful installation by running the following lines
