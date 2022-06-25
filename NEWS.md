@@ -3,6 +3,7 @@
 
 ## midfieldr 1.0.0.9022 / 2021-07
 
+- Remove dependency on Rdpack
 
 
 

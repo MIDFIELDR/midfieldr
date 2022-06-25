@@ -52,6 +52,11 @@ Part 3 of a case study in three parts:
 - [Data.](art-002-case-data.html) Transforming the data to yield the observations of interest.
 - [Results.](art-003-case-results.html) Calculating summary statistics and metrics and displaying the results. 
 
+
+In this part, we use the midfieldr functions:  
+
+- `condition_multiway()` 
+
 ## Preface
 
 Our goal in this segment is to group and summarize the observations we saved previously, calculate the stickiness metric, and display the results. 
@@ -106,15 +111,7 @@ This operation is essentially a transformation from block records to row records
 
 ```{r}
 # Transform to row-record form
-DT <- dcast(DT, program + sex + race ~ group, value.var = "N")
-DT[]
-```
-
-In the `grad` column, a value of NA actually represents a count of zero graduates, so we convert NA to zero. 
-
-```{r}
-# Translate NA to zero graduates 
-DT <- DT[is.na(grad), grad := 0]
+DT <- dcast(DT, program + sex + race ~ group, value.var = "N", fill = 0)
 DT[]
 ```
 
@@ -125,9 +122,9 @@ DT[, stick := round(100 * grad / ever, 1)]
 DT[]
 ```
 
-In this form, the data re bundled with midfieldr as the `study_stickiness` data set. You can view its help page by running 
+In this form, the data are bundled with midfieldr as the `study_results` data set. You can view its help page by running 
 
-    ? study_stickiness
+    ? study_results
 
 ## Prepare for dissemination
 
@@ -153,11 +150,12 @@ DT[]
 
 ```{r}
 DT[, race_sex := paste(race, sex)]
+DT[, c("race", "sex") := NULL]
 setcolorder(DT, c("program", "race_sex"))
 DT[]
 ```
 
-**Recoding values.** Readers can more readily interpret our ta
+**Recoding values.** Readers can more readily interpret our charts and tables if the programs are un-abbreviated. 
 
 ```{r}
 DT[, program := fcase(
@@ -169,22 +167,21 @@ DT[, program := fcase(
 DT[]
 ```
 
-With one quantitative variable (stickiness) for every combination of the levels of two categorical variables (program and race/ethnicity/sex), these data are *multiway data* [@Cleveland:1993]. In a faceted chart of multiway data, the order of the rows and panels is critical for visualizing effects. 
+With one quantitative variable (stickiness) for every combination of the levels of two categorical variables (program and race/ethnicity/sex), these data are *multiway data* [@Cleveland:1993]. How one orders the categorical variables is critical for visualizing effects. 
 
 **Conditioning.** Convert the two categorical variables to ordered factors to support the ordering of rows and panels in the chart. 
 
 ```{r}
 # Convert categorical variables to factors
 DT <- condition_multiway(DT, 
-                        categ_col = c("program", "race_sex"), 
-                        quant_col = "stick", 
-                        detail = TRUE, 
+                        x = "stick", 
+                        yy = c("program", "race_sex"), 
                         order_by  = "percent", 
                         param_col = c("grad", "ever"))
 DT[]
 ```
 
-The column `program_stick` determines the order of the programs in the chart; `race_sex_stick` determines the order of the race/ethnicity/sex groupings.  
+The column `program_stick` determines the order of the programs in the chart; `race_sex_stick` determines the order of the race/ethnicity/sex groupings; the values in `stick` are the quantitative values to be graphed. 
 
 ## Charts
 
@@ -210,10 +207,18 @@ ggplot(DT, aes(x = stick, y = race_sex)) +
     labs(x = "Stickiness (%)", y = "")
 ```
 
+**Reminder.** These are practice data, not research data---suitable for learning about student-record analysis, but not for drawing inferences about student performance.
+
+The chart illustrates the importance of ordering the rows and panels. We would conclude that Industrial/Systems Engineering is the stickiest program of the four, followed by Civil, Mechanical, and Electrical in descending order. 
+
+Because rows are ordered, one expects a generally increasing trend within a panel. A response greater or smaller than expected creates a visual asymmetry. For example, Asian Female students are asymmetrically higher in Mechanical Engineering but asymmetrically lower in Industrial/Systems Engineering. 
+
+
+
 
 ## Tables
 
-Data tables are often need for publication. In this example, I place the ratio of grad to ever in parentheses followed by the stickiness result in percent.  
+Data tables are often needed for publication. In this example, we format the data in a conventional row-record form with the groups of people in the first column labeling the rows and the program names labeling the remaining columns. 
 
 ```{r}
 # Select the columns I want for the table
@@ -228,7 +233,7 @@ tbl[, program := fcase(
 )]
 
 # Combine three columns into one character column 
-tbl[, results := paste0("(", grad, "/", ever, ") ", stick)]
+tbl[, results := paste0("(", grad, "/", ever, ") ", format(stick, nsmall = 1))]
 
 # Transform from block records to row records 
 tbl <- dcast(tbl, race_sex ~ program, value.var = "results")
@@ -241,7 +246,7 @@ tbl <- tbl[order(race_sex)]
 setnames(tbl, old = "race_sex", new= "Group", skip_absent = TRUE)
 ```
 
-Program stickiness in percent with the ratio (`grad/ever`) in parentheses: the number of program graduates and the number of students ever enrolled in the program. Groups with numbers below our reporting threshold are omitted or denoted NA. 
+Program stickiness in percent with the ratio (`grad/ever`) in parentheses, i.e., the number of program graduates and the number of students ever enrolled in the program. Groups with numbers below our reporting threshold are denoted NA or omitted. 
 
 ```{r}
 #| echo: false
@@ -254,13 +259,11 @@ tbl |>
 ```
 
 
-
-
 ## Closing
 
-Starting with the 
+Starting with the prepared data (the case study observations), we compute longitudinal stickiness for four programs (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) grouped by program, race/ethnicity, and sex. We create a data table and charts to disseminate the results. 
 
-**Write to file.**   
+**Write to file.** Results like those just prior to the dissemination preparation step are often written to file as an intermediate result. In this case, the pre-dissemination data frame is bundled with midfieldr as `study_results`.
 
 ## References
 
@@ -276,4 +279,76 @@ Starting with the
 
 ### Complete script
 
-We conclude each vignette by collecting its code chunks in a single, condensed script for the convenience of those who wish to copy it into their own R file. 
+We conclude each vignette by collecting its code chunks in a single, condensed script for the convenience of those who wish to copy it into their own R file.
+
+```{r}
+#| eval: false
+# Packages
+library("midfieldr")
+suppressPackageStartupMessages(library("data.table"))
+suppressPackageStartupMessages(library("ggplot2"))
+
+# Printing options for data.table
+options(
+  datatable.print.nrows = 15,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
+
+# Copy the case study observations
+DT <- copy(study_observations)
+
+# Group and summarize
+DT <- DT[, .N, by = c("group", "program", "race", "sex")]
+
+# Compute the metric
+DT <- dcast(DT, program + sex + race ~ group, value.var = "N", fill = 0)
+DT[, stick := round(100 * grad / ever, 1)]
+
+# Prepare for dissemination
+DT <- DT[grad >= 10]
+DT <- DT[!race %chin% c("International", "Other/Unknown")]
+DT[, race_sex := paste(race, sex)]
+DT[, c("race", "sex") := NULL]
+setcolorder(DT, c("program", "race_sex"))
+DT[, program := fcase(
+    program %like% "CE", "Civil Engineering", 
+    program %like% "EE", "Electrical Engineering", 
+    program %like% "ME", "Mechanical Engineering", 
+    program %like% "ISE", "Industrial/Systems Engineering"
+)]
+
+# Convert categorical variables to factors
+DT <- condition_multiway(DT, 
+                        x = "stick", 
+                        yy = c("program", "race_sex"), 
+                        order_by  = "percent", 
+                        param_col = c("grad", "ever"))
+
+# Chart 1
+ggplot(DT, aes(x = stick, y = program)) +
+    facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
+    geom_point()  +
+    labs(x = "Stickiness (%)", y = "")
+
+# Chart 2
+ggplot(DT, aes(x = stick, y = race_sex)) +
+    facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+    geom_point()  +
+    labs(x = "Stickiness (%)", y = "")
+
+# Table
+tbl <- DT[, .(program, race_sex, grad, ever, stick)]
+tbl[, program := fcase(
+    program %like% "Civil Engineering", "Civil", 
+    program %like% "Electrical Engineering", "Electrical", 
+    program %like% "Mechanical Engineering", "Mechanical", 
+    program %like% "Industrial/Systems Engineering", "Industrial/Sys"
+)]
+tbl[, results := paste0("(", grad, "/", ever, ") ", format(stick, nsmall = 1))]
+tbl <- dcast(tbl, race_sex ~ program, value.var = "results")
+tbl[, race_sex := as.character(race_sex)]
+tbl <- tbl[order(race_sex)]
+setnames(tbl, old = "race_sex", new= "Group", skip_absent = TRUE)
+```
+

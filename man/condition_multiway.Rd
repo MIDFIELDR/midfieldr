@@ -4,34 +4,18 @@
 \alias{condition_multiway}
 \title{Condition multiway data for graphing}
 \usage{
-condition_multiway(
-  dframe,
-  categ_col,
-  quant_col,
-  ...,
-  detail = NULL,
-  order_by = NULL,
-  param_col = NULL
-)
+condition_multiway(dframe, x, yy, ..., order_by = NULL, param_col = NULL)
 }
 \arguments{
-\item{dframe}{Data frame with at least three columns: two categorical
-variables (columns can be character or factor) and one quantitative
-response variable (column must be numeric).}
+\item{dframe}{Data frame with at least one numeric variable and two 
+categorical variables (character or factor).}
 
-\item{categ_col}{Character vector with the names (in quotes) of the two
-categorical columns.}
+\item{x}{Character scalar, the quoted name of the numeric response variable.}
 
-\item{quant_col}{Character scalar with the name (in quotes) of the
-quantitative response column.}
+\item{yy}{Character vector, the quoted names of the two categorical 
+variables.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
-
-\item{detail}{Optional flag to retain the columns created to implement the
-ordering scheme, default FALSE. When TRUE, the extra columns are
-useful for graphing vertical reference lines---indicating, for
-instance, the panel median, mean, or total count---to visualize the
-quantity by which the panels are ordered.}
 
 \item{order_by}{Optional character scalar (in quotes) assigning the
        method for ordering the levels of the categorical variables.
@@ -74,8 +58,7 @@ A \code{data.table} with the following properties:
   \item Rows are not modified.
   \item The quantitative column is not modified.
   \item The two categorical columns are factors with levels ordered by
-        the method selected. Optionally, the additional columns (if any)
-        created to implement the ordering scheme can be retained.
+        the method selected.
   \item Grouping structures are not preserved.
 }
 }
@@ -84,7 +67,7 @@ Transform a data frame such that two categorical variables are factors
 with levels ordered for display in a Cleveland "multiway dot plot," where
 the ordering of the panels and rows are crucial to the perception of
 effects. In multiway data---as defined by
-\insertCite{Cleveland:1993;textual}{midfieldr}---there is a single
+Cleveland (1993)---there is a single
 quantitative value (or response) for every combination of levels
 of two categorical variables. Typically the quantitative column is used to
 order the levels of the two categorical columns.
@@ -100,10 +83,12 @@ bottom to top.
 
 Note that "multiway" in our context refers to the data structure and graph
 design defined by Cleveland, not to the methods of analysis described by
-\insertCite{Kroonenberg:2008;textual}{midfieldr}.
+Kroonenberg (2008).
 }
 \references{
-\insertAllCited{}
+Cleveland WS (1993). \emph{Visualizing Data}. Hobart Press, Summit, NJ.
+  
+  Kroonenberg PM (2008). \emph{Applied Multiway Data Analysis}. Wiley, Hoboken, NJ.
 }
 \seealso{
 Other condition_*: 

@@ -6,7 +6,7 @@
 #' with levels ordered for display in a Cleveland "multiway dot plot," where
 #' the ordering of the panels and rows are crucial to the perception of
 #' effects. In multiway data---as defined by
-#' \insertCite{Cleveland:1993;textual}{midfieldr}---there is a single
+#' Cleveland (1993)---there is a single
 #' quantitative value (or response) for every combination of levels
 #' of two categorical variables. Typically the quantitative column is used to
 #' order the levels of the two categorical columns.
@@ -21,22 +21,15 @@
 #'
 #' Note that "multiway" in our context refers to the data structure and graph
 #' design defined by Cleveland, not to the methods of analysis described by
-#' \insertCite{Kroonenberg:2008;textual}{midfieldr}.
+#' Kroonenberg (2008).
 #'
 #'
-#' @param dframe Data frame with at least three columns: two categorical
-#'        variables (columns can be character or factor) and one quantitative
-#'        response variable (column must be numeric).
-#' @param categ_col Character vector with the names (in quotes) of the two
-#'        categorical columns.
-#' @param quant_col Character scalar with the name (in quotes) of the
-#'        quantitative response column.
+#' @param dframe Data frame with at least one numeric variable and two 
+#'        categorical variables (character or factor). 
+#' @param x Character scalar, the quoted name of the numeric response variable.
+#' @param yy Character vector, the quoted names of the two categorical 
+#'         variables.
 #' @param ... Not used, forces later arguments to be used by name.
-#' @param detail Optional flag to retain the columns created to implement the
-#'        ordering scheme, default FALSE. When TRUE, the extra columns are
-#'        useful for graphing vertical reference lines---indicating, for
-#'        instance, the panel median, mean, or total count---to visualize the
-#'        quantity by which the panels are ordered.
 #' @param order_by Optional character scalar (in quotes) assigning the
 #'        method for ordering the levels of the categorical variables.
 #'        The following values are possible:
@@ -77,14 +70,15 @@
 #'   \item Rows are not modified.
 #'   \item The quantitative column is not modified.
 #'   \item The two categorical columns are factors with levels ordered by
-#'         the method selected. Optionally, the additional columns (if any)
-#'         created to implement the ordering scheme can be retained.
+#'         the method selected.
 #'   \item Grouping structures are not preserved.
 #' }
 #'
 #'
 #' @references
-#'   \insertAllCited{}
+#'   Cleveland WS (1993). \emph{Visualizing Data}. Hobart Press, Summit, NJ.
+#'   
+#'   Kroonenberg PM (2008). \emph{Applied Multiway Data Analysis}. Wiley, Hoboken, NJ.
 #'
 #'
 #' @family condition_*
@@ -94,10 +88,9 @@
 #'
 #'
 condition_multiway <- function(dframe,
-                               categ_col,
-                               quant_col,
+                               x,
+                               yy,
                                ...,
-                               detail = NULL,
                                order_by = NULL,
                                param_col = NULL) {
   on.exit(setkey(DT, NULL), add = TRUE)
@@ -107,8 +100,8 @@ condition_multiway <- function(dframe,
     substitute(list(...)),
     paste(
       "Arguments after ... must be named.\n",
-      "* Did you forget to write `detail = `\n",
-      "* or `order_by = ` or `param_col = ` ?\n"
+      "* Did you forget to write `order_by = `\n",
+      "* or `param_col = ` ?\n"
     )
   )
 
@@ -118,28 +111,25 @@ condition_multiway <- function(dframe,
   setDT(DT)
 
   # required columns
-  assert_names(colnames(DT), must.include = c(categ_col, quant_col))
+  assert_names(colnames(DT), must.include = c(x, yy))
 
   # class of required columns
-  qassert(DT[[quant_col]], "n+") # numeric, length 1 or more
+  qassert(DT[[x]], "n+") # numeric, length 1 or more
 
-  col_class <- DT[, categ_col, with = FALSE]
+  col_class <- DT[, yy, with = FALSE]
   col_class <- unlist(lapply(col_class, class))
   assert_subset(
     col_class,
     choices = c("character", "factor"),
     empty.ok = FALSE,
-    .var.name = "categ_col"
+    .var.name = "yy"
   )
 
   # other required arguments
-  qassert(categ_col, "S2") # string, missing values prohibited, length 2
-  qassert(quant_col, "S1") # string, missing values prohibited, length 1
+  qassert(x, "S1") # string, missing values prohibited, length 1
+  qassert(yy, "S2") # string, missing values prohibited, length 2
 
   # optional arguments
-  detail <- detail %?% FALSE
-  qassert(detail, "B1") # boolean, missing values prohibited, length 1
-
   order_by <- order_by %?% "median"
   qassert(order_by, "S1")
   assert_subset(
@@ -173,15 +163,13 @@ condition_multiway <- function(dframe,
   }
 
   # do the work
-  # column names to return if detail = FALSE
-  original_columns <- names(DT)
 
   # all methods treat categories as factors
-  DT[, (categ_col) := lapply(.SD, as.factor), .SDcols = categ_col]
+  DT[, (yy) := lapply(.SD, as.factor), .SDcols = yy]
 
   # multiway must have two and only two categories
-  categ_1 <- categ_col[[1]]
-  categ_2 <- categ_col[[2]]
+  categ_1 <- yy[[1]]
+  categ_2 <- yy[[2]]
 
   if (order_by == "alphabet") {
 
@@ -195,20 +183,20 @@ condition_multiway <- function(dframe,
     )
 
     # organize the return column order
-    setcolorder(DT, c(categ_col, quant_col))
+    setcolorder(DT, c(yy, x))
   } else if (order_by == "percent") {
 
     # percent-based metrics, e.g., stickiness or graduation rate
     # returns categories as factors with levels ordered by the metric
     DT <- order_by_percent(
       DT,
-      categ_col,
-      quant_col,
+      yy,
+      x,
       param_col
     )
 
     # organize the return column order
-    setcolorder(DT, c(categ_col, param_col, quant_col))
+    setcolorder(DT, c(yy, param_col, x))
   } else { # order_by = c("sum", "mean", "median")
 
     # function-based ordering returns categories as factors with levels
@@ -217,15 +205,12 @@ condition_multiway <- function(dframe,
       DT,
       categ_1,
       categ_2,
-      quant_col,
+      x,
       order_by
     )
 
     # organize the return column order
-    setcolorder(DT, c(categ_col, quant_col))
-  }
-  if (!detail) {
-    DT <- DT[, original_columns, with = FALSE]
+    setcolorder(DT, c(yy, x))
   }
   DT[]
 }
@@ -233,8 +218,8 @@ condition_multiway <- function(dframe,
 # internal functions
 # --------------------------------------------------------------------------
 order_by_percent <- function(dframe,
-                             categ_col,
-                             quant_col,
+                             yy,
+                             x,
                              param_col) {
 
   # avoid possible copy-by-reference side effects
@@ -254,7 +239,7 @@ order_by_percent <- function(dframe,
 
   # sum the two counts by the individual categories
   # provides columns needed to determine row and panel order
-  for (categ_i in categ_col) {
+  for (categ_i in yy) {
     for (count_i in param_col) {
       # execute expressions with column names as parameters
       wrapr::let(
@@ -277,13 +262,13 @@ order_by_percent <- function(dframe,
 
   # computing the metric for individual categories
   # used for ordering rows and panels
-  for (categ_i in categ_col) {
+  for (categ_i in yy) {
 
     # names of new columns, numerator and denominator of
     # category summary metric
     a <- paste(categ_i, count_col_min, sep = "_")
     b <- paste(categ_i, count_col_max, sep = "_")
-    new_col <- paste(categ_i, quant_col, sep = "_")
+    new_col <- paste(categ_i, x, sep = "_")
 
     # execute expressions with column names as parameters
     wrapr::let(
@@ -341,7 +326,7 @@ order_by_alphabet <- function(dframe,
 order_by_function <- function(dframe,
                               categ_1,
                               categ_2,
-                              quant_col,
+                              x,
                               order_by) {
 
   # avoid possible copy-by-reference side effects
@@ -352,11 +337,11 @@ order_by_function <- function(dframe,
   CATEG_2 <- NULL
   ORDER_1 <- NULL
   ORDER_2 <- NULL
-  QUANT_COL <- NULL
+  X <- NULL
 
   # create names for value variables
-  order_1 <- paste(categ_1, quant_col, sep = "_")
-  order_2 <- paste(categ_2, quant_col, sep = "_")
+  order_1 <- paste(categ_1, x, sep = "_")
+  order_2 <- paste(categ_2, x, sep = "_")
 
   # select function to apply
   if (order_by == "sum") {
@@ -376,11 +361,11 @@ order_by_function <- function(dframe,
       CATEG_2 = categ_2,
       ORDER_1 = order_1,
       ORDER_2 = order_2,
-      QUANT_COL = quant_col
+      X = x
     ),
     {
-      DT[, ORDER_1 := f(QUANT_COL, na.rm = TRUE), by = CATEG_1]
-      DT[, ORDER_2 := f(QUANT_COL, na.rm = TRUE), by = CATEG_2]
+      DT[, ORDER_1 := f(X, na.rm = TRUE), by = CATEG_1]
+      DT[, ORDER_2 := f(X, na.rm = TRUE), by = CATEG_2]
       DT[, CATEG_1 := reorder(CATEG_1, ORDER_1)]
       DT[, CATEG_2 := reorder(CATEG_2, ORDER_2)]
     }
