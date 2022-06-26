@@ -1,0 +1,299 @@
+---
+title: "Degree seeking (inner joins)"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
+output: rmarkdown::html_vignette
+csl: ../inst/information-science-and-technology.csl
+vignette: >
+  %\VignetteIndexEntry{Degree seeking (inner joins)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+nocite: | 
+resource_files: |
+---
+
+```{r setup}
+#| include: false
+
+# code chunks
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = FALSE,
+  comment = "#>",
+  error = FALSE
+)
+
+# figures
+knitr::opts_chunk$set(
+    fig.path = "../man/figures/art-020-degree-seeking-", 
+    fig.width = 6,
+    fig.asp = 1 / 1.6,
+    out.width = "70%",
+    fig.align = "center"
+)
+
+# inline numbers
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+```
+
+After subsetting longitudinal Student Unit Records (SURs) for data sufficiency, a typical second step is to restrict a study to students admitted as degree-seeking. 
+
+Within this context, this vignette illustrates using inner joins to filter observations using data.table syntax. We use MIDFIELD data, but no midfieldr functions are required.  
+
+
+
+
+## Method
+
+We filter observations to retain  degree-seeking students using an inner join with the `student` data table. This works because `student` (unlike `term`) contains degree-seeking SURs only. 
+
+
+
+
+
+## Population
+
+If you are writing your own script to follow along, we start with these packages:
+
+```{r}
+# Packages
+library("midfieldr")
+library("midfielddata")
+suppressPackageStartupMessages(library("data.table"))
+
+# Printing options for data.table
+options(
+  datatable.print.nrows = 55,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
+```
+
+**Importing.** Load the midfielddata data tables. 
+
+```{r}
+# Load data sets from midfielddata
+data(student, term)
+```
+
+**Data sufficiency.** To set up for filtering for degree-seeking, we start with the `term` data and filter for data sufficiency as described in the [Data sufficiency vignette](art-010-data-sufficiency.html). Those steps are reproduced here in condensed form without details. 
+
+```{r}
+# Filter for data sufficiency
+DT <- copy(term)
+DT <- add_timely_term(DT, term)
+DT <- add_data_sufficiency(DT, term)
+DT <- DT[data_sufficiency == "include"]
+
+# Drop unnecessary variables
+DT <- DT[, .(mcid, cip6)]
+DT <- unique(DT)
+DT[]
+```
+
+
+The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique IDs.  The number of unique students is smaller than the number of observations because some students change programs over their course of study. Here we have one row per unique combination of student (mcid) and program code (cip6).
+
+Retaining the CIP variable is not strictly necessary for degree-seeking filtering. We retain it here to assist in the inner-join examples. 
+
+
+
+
+
+## Inner joins
+
+An *inner join* is a merge operation between two data frame which returns only those records that match on selected variables between the two data frames.
+
+We use inner joins regularly to subset observations of our working data frames by shared columns in another data frame. To illustrate, we will filter our `DT` data by the IDs in the “toy” (exercise) data sets bundled with midfieldr. Using data.table syntax, we have two approaches: `merge()` and the `X[Y, j]` syntax. 
+
+**Using `merge()`.** Using the data.table `merge()` syntax, the `all = FALSE` argument creates the inner join. We first isolate the ID column in `toy_student`. Otherwise, all columns from both data frames would be returned. 
+
+```{r}
+# Isolate the IDs of the second data frame
+toy_select <- toy_student[, .(mcid)]
+
+# Inner join to filter the observations of the first data frame
+merge(DT, toy_select, by = c("mcid"), all = FALSE)
+```
+
+
+```{r}
+#| echo: false
+x <- merge(DT, toy_select, by = c("mcid"), all = FALSE)
+```
+
+The result has `r nrow(x)` observations of `r length(unique(x$mcid))` unique IDs.  
+
+Alternatively, one can include the ID selection within the merge operation.
+
+```{r}
+# Isolating the IDs inside the merge function 
+merge(DT, toy_student[, .(mcid)], by = c("mcid"), all = FALSE)
+```
+
+
+
+**Using `X[Y, j]`.** The second approach---computationally more efficient---uses the data.table `X[Y, j]` syntax. 
+
+```{r}
+# A more computationally efficient approach
+DT[toy_student, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
+```
+
+The `nomatch = NULL` argument makes the merge an inner join, the `on` argument defines the shared column to use in matching, and the `j` argument,`.(mcid, cip6)`, defines the columns from both data frames to return. 
+
+The way to read this code out loud is: "Take `DT`, retain rows where  `toy_student$mcid == DT$mcid`, then select columns `mcid` and `cip6`."
+
+For inner joins, `X[Y, j]` and  `Y[X, j]` produce the same result. 
+
+```{r}
+# Swap the roles of the two data frames
+toy_student[DT, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
+```
+
+**Confirm results.** We nullify the key automatically assigned by `merge()` and then compare the equality of results. 
+
+```{r}
+#| collapse: true
+
+# Three equivalent inner joins
+x <- merge(DT, toy_student[, .(mcid)], by = c("mcid"), all = FALSE)
+setkey(x, NULL)
+y <- DT[toy_student, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
+z <- toy_student[DT, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
+
+# Check equality 
+all.equal(x, y)
+all.equal(x, z)
+```
+
+
+**Selecting columns.** In either method, we can select columns from both data frames. The difference being that with `merge()` we select the columns by explicitly subsetting the two data frames.  
+
+```{r}
+# Selecting columns from both data frames using merge() 
+x <- merge(DT[, .(mcid)], toy_student[, .(mcid, institution)], by = c("mcid"), all = FALSE)
+setkey(x, NULL)
+x[]
+```
+
+In the `X[Y, j]` syntax, however, we can list the columns to be returned from both data frames in the `j` list, that is, `.(var1, var2, etc.)`, without subsetting the original two data frames.  
+
+```{r}
+#| collapse: true
+
+# Repeat using X[Y, j] syntax
+y <- DT[toy_student, .(mcid, institution), on = c("mcid"), nomatch = NULL]
+
+# Check equality 
+all.equal(x, y)
+```
+
+
+
+
+
+## Degree seeking
+
+Returning to the original context, we require only the IDs from our data sufficient data frame. 
+
+```{r}
+# Unique IDs that are data sufficient
+DT <- DT[, .(mcid)]
+DT <- unique(DT)
+DT[]
+```
+
+We now filter for degree seeking using the `student` data table. 
+
+```{r}
+DT <- DT[student, .(mcid), on = c("mcid"), nomatch = NULL]
+DT[]
+```
+
+The number of observations doesn't change because the practice data sets in midfielddata are all degree-seeking. This is not true of the research data available to MIDFIELD partners. 
+
+
+
+
+## Closing
+
+Starting with the `student` and `term` data tables, we filtered the data for data sufficiency and degree seeking, with a focus on applying inner joins using data.table syntax.  
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+
+
+
+
+## Appendix
+
+### Complete script
+
+We conclude each vignette by collecting its code chunks in a single, condensed script for the convenience of those who wish to copy it into their own R file. 
+
+```{r}
+#| eval: false
+
+# Packages
+library("midfieldr")
+library("midfielddata")
+suppressPackageStartupMessages(library("data.table"))
+
+# Printing options for data.table
+options(
+  datatable.print.nrows = 55,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
+
+# Load data sets from midfielddata
+data(student, term)
+
+# Filter for data sufficiency
+DT <- copy(term)
+DT <- add_timely_term(DT, term)
+DT <- add_data_sufficiency(DT, term)
+DT <- DT[data_sufficiency == "include"]
+DT <- DT[, .(mcid, cip6)]
+DT <- unique(DT)
+
+# Three equivalent inner joins
+x <- merge(DT, toy_student[, .(mcid)], by = c("mcid"), all = FALSE)
+setkey(x, NULL)
+y <- DT[toy_student, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
+z <- toy_student[DT, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
+all.equal(x, y)
+all.equal(x, z)
+
+# Selecting columns
+x <- merge(DT[, .(mcid)], toy_student[, .(mcid, institution)], by = c("mcid"), all = FALSE)
+setkey(x, NULL)
+y <- DT[toy_student, .(mcid, institution), on = c("mcid"), nomatch = NULL]
+all.equal(x, y)
+
+# Degree seeking
+DT <- DT[, .(mcid)]
+DT <- unique(DT)
+DT <- DT[student, .(mcid), on = c("mcid"), nomatch = NULL]
+```
+
+

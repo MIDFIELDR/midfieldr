@@ -3,9 +3,9 @@
 
 ## midfieldr 1.0.0.9022 / 2021-07
 
+- Add the degree seeking (inner joins) vignette
 - Complete the data sufficiency vignette
 - Remove dependency on Rdpack
-
 
 
 ## midfieldr 1.0.0.9021 / 2021-06
