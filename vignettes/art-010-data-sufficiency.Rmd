@@ -438,6 +438,7 @@ toy_DT[]
 **Filtering.** In most cases, we retain only those observations for which the data are sufficient. 
 
 ```{r}
+# Apply the data sufficiency criterion
 DT <- DT[data_sufficiency == "include"]
 DT[]
 ```
@@ -449,3 +450,73 @@ The result has `r nrow(DT)` unique observations.
 To prepare for applying the data sufficiency criterion, we first estimate students' timely completion terms using `add_timely_term()`. We then label observations for inclusion and exclusion using `add_data_sufficiency()`. 
 
 Subsetting a population for data sufficiency is typically the first filter applied to SUR data.
+
+## Appendix
+
+We conclude each vignette by collecting its code chunks in a single, condensed script for the convenience of those who wish to copy it into their own R file. 
+
+```{r}
+# Packages
+library("midfieldr")
+library("midfielddata")
+suppressPackageStartupMessages(library("data.table"))
+
+# Printing options for data.table
+options(
+  datatable.print.nrows = 55,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
+
+# Load data set from midfielddata
+data(term)
+DT <- copy(term)
+DT <- DT[, .(mcid)]
+DT <- unique(DT)
+
+# Timely completion term
+DT <- add_timely_term(DT, term)
+DT[mcid == "MID25783135"]
+DT[mcid == "MID26697689"]
+
+# Equivalent statements
+x <- add_timely_term(dframe = DT, midfield_term = term)
+y <- add_timely_term(DT, term)
+z <- add_timely_term(DT)
+all.equal(x, y)
+all.equal(x, z)
+
+# Using term data named something else
+toy_DT <- toy_student[, .(mcid)]
+toy_DT <- add_timely_term(toy_DT, toy_term)
+
+# Silent overwriting
+toy_DT <- toy_DT[, c("term_i", "level_i", "timely_term") := NULL]
+toy_DT <- add_timely_term(toy_DT, toy_term)
+
+# Data sufficiency
+DT <- DT[, .(mcid, timely_term)]
+DT <- add_data_sufficiency(DT, term)
+DT[mcid == "MID25783135"]
+DT[mcid == "MID25783156"]
+DT[mcid == "MID25783197"]
+
+# Equivalent statements
+x <- add_data_sufficiency(dframe = DT, midfield_term = term)
+y <- add_data_sufficiency(DT, term)
+z <- add_data_sufficiency(DT)
+all.equal(x, y)
+all.equal(x, z)
+
+# Using term data named something else
+toy_DT <- toy_DT[, .(mcid, timely_term)]
+toy_DT <- add_data_sufficiency(toy_DT, toy_term)
+
+# Silent overwriting
+toy_DT <- toy_DT[, c("lower_limit", "data_sufficiency") := NULL]
+toy_DT <- add_data_sufficiency(toy_DT, toy_term)
+
+# Apply the data sufficiency criterion
+DT <- DT[data_sufficiency == "include"]
+```
+
