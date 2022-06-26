@@ -105,7 +105,8 @@ Layton</h4>
 the upper and lower limits of a data range, a potential for false counts
 exists when a metric (such as graduation rate) requires knowledge of
 timely program completion. For such metrics, student records that
-produce problematic results are nearly always excluded from study.</p>
+produce problematic results due to insufficient data are nearly always
+excluded from study.</p>
 <div class="section level2">
 <h2 id="definitions">Definitions<a class="anchor" aria-label="anchor" href="#definitions"></a>
 </h2>
@@ -113,8 +114,8 @@ produce problematic results are nearly always excluded from study.</p>
 <dt>data range</dt>
 <dd>
 <p>The overall span of academic terms of student unit record data
-provided by an institution. The lower limit is the first non-summer
-term; the upper limit is the last non-summer term.</p>
+provided by an institution. We are particularly interested in the lower
+and upper limits of a continuous range.</p>
 </dd>
 <dt>timely completion term</dt>
 <dd>
@@ -262,7 +263,7 @@ data range</li>
 <code><a href="../reference/add_data_sufficiency.html">add_data_sufficiency()</a></code>.</p>
 </div>
 <div class="section level2">
-<h2 id="begin-analysis-with-term">Begin analysis with <code>term</code><a class="anchor" aria-label="anchor" href="#begin-analysis-with-term"></a>
+<h2 id="population">Population<a class="anchor" aria-label="anchor" href="#population"></a>
 </h2>
 <p>Of the four MIDFIELD data tables, <code>course</code> and
 <code>term</code> are the most inclusive, with observations of all
@@ -279,7 +280,7 @@ these packages:</p>
 
 <span class="co"># Printing options for data.table</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>
-  datatable.print.nrows <span class="op">=</span> <span class="fl">15</span>,
+  datatable.print.nrows <span class="op">=</span> <span class="fl">55</span>,
   datatable.print.topn <span class="op">=</span> <span class="fl">5</span>,
   datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
@@ -313,48 +314,48 @@ use.</p>
 <p>The result has 710,841 observations. We will usually note the number
 of observations as they change.</p>
 <p>To apply the data sufficiency criterion, two variables are required:
-a student’s ID and their timely completion term. Though not required for
-data sufficiency, most studies require that we also retain the CIP code
-of the students’ programs.</p>
-<p><strong>Filtering.</strong> At this point, many studies require at a
-minimum the student ID and their program CIP.</p>
+a student’s ID and their timely completion term.</p>
+<p><strong>Filtering.</strong> For illustrating the functions, we need
+start with the ID column only.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Retain the minimum number of columns</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></code></pre></div>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 <p>In this form, the data frame will have duplicate rows for the
 multiple terms in which a student is enrolled in a program. We filter
-for unique combinations of ID and program CIP code.</p>
+unique IDs.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">#&gt;                mcid   cip6</span>
-<span class="co">#&gt;              &lt;char&gt; &lt;char&gt;</span>
-<span class="co">#&gt;      1: MID25783135 520101</span>
-<span class="co">#&gt;      2: MID25783156 040201</span>
-<span class="co">#&gt;      3: MID25783162 140102</span>
-<span class="co">#&gt;      4: MID25783162 520301</span>
-<span class="co">#&gt;      5: MID25783162 521401</span>
-<span class="co">#&gt;     ---                   </span>
-<span class="co">#&gt; 161692: MID26697682 240101</span>
-<span class="co">#&gt; 161693: MID26697685 300000</span>
-<span class="co">#&gt; 161694: MID26697685 521201</span>
-<span class="co">#&gt; 161695: MID26697689 240101</span>
-<span class="co">#&gt; 161696: MID26697702 240101</span></code></pre>
+<pre><code><span class="co">#&gt;               mcid</span>
+<span class="co">#&gt;             &lt;char&gt;</span>
+<span class="co">#&gt;     1: MID25783135</span>
+<span class="co">#&gt;     2: MID25783156</span>
+<span class="co">#&gt;     3: MID25783162</span>
+<span class="co">#&gt;     4: MID25783178</span>
+<span class="co">#&gt;     5: MID25783188</span>
+<span class="co">#&gt;    ---            </span>
+<span class="co">#&gt; 94024: MID26697680</span>
+<span class="co">#&gt; 94025: MID26697682</span>
+<span class="co">#&gt; 94026: MID26697685</span>
+<span class="co">#&gt; 94027: MID26697689</span>
+<span class="co">#&gt; 94028: MID26697702</span></code></pre>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Count unique IDs</span>
 <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">mcid</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">#&gt; [1] 94028</span></code></pre>
-<p>The result has 161,696 observations of 94,028 unique students. The
-number of unique students is smaller than the number of observations
-because some students change programs over their course of study.</p>
+<p>The result has 94,028 unique observations.</p>
 </div>
 <div class="section level2">
-<h2 id="timely-completion-term">Timely completion term<a class="anchor" aria-label="anchor" href="#timely-completion-term"></a>
+<h2 id="add_timely_term">
+<code>add_timely_term()</code><a class="anchor" aria-label="anchor" href="#add_timely_term"></a>
 </h2>
 <p>Starting with a data frame of Student Unit Record (SUR) observations
 (like <code>DT</code> above) that includes an ID variable, we add a
-timely completion term column using <code><a href="../reference/add_timely_term.html">add_timely_term()</a></code>. Its
-arguments are:</p>
+timely completion term column using <code><a href="../reference/add_timely_term.html">add_timely_term()</a></code>.</p>
+<p>You can view the function help page by running,</p>
+<pre><code><span class="co"># Run in Console to view help page</span>
+<span class="op">?</span> <span class="va">add_timely_term</span></code></pre>
+<p>Its arguments are:</p>
 <dl>
 <dt><code>dframe</code></dt>
 <dd>
@@ -392,38 +393,51 @@ Sophomore, etc.) in their initial term</li>
 <code>adj_span</code> is the integer span of years for timely
 completion adjusted for a student’s initial level</li>
 </ul>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Display timely term and supporting variables </span>
-<span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">#&gt;                mcid   cip6 term_i     level_i adj_span timely_term</span>
-<span class="co">#&gt;              &lt;char&gt; &lt;char&gt; &lt;char&gt;      &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span>
-<span class="co">#&gt;      1: MID25783135 520101  19911 01 Freshman        6       19963</span>
-<span class="co">#&gt;      2: MID25783156 040201  20011 01 Freshman        6       20063</span>
-<span class="co">#&gt;      3: MID25783162 140102  19921 01 Freshman        6       19973</span>
-<span class="co">#&gt;      4: MID25783162 520301  19921 01 Freshman        6       19973</span>
-<span class="co">#&gt;      5: MID25783162 521401  19921 01 Freshman        6       19973</span>
-<span class="co">#&gt;     ---                                                           </span>
-<span class="co">#&gt; 161692: MID26697682 240101  20163 01 Freshman        6       20221</span>
-<span class="co">#&gt; 161693: MID26697685 300000  20151 01 Freshman        6       20203</span>
-<span class="co">#&gt; 161694: MID26697685 521201  20151 01 Freshman        6       20203</span>
-<span class="co">#&gt; 161695: MID26697689 240101  20163   04 Senior        3       20191</span>
-<span class="co">#&gt; 161696: MID26697702 240101  20161 01 Freshman        6       20213</span></code></pre>
-<p>Use the first row to check the results. The student’s initial term is
-Fall 1991 (encoded <code>19911</code>) and their initial level is
-<code>01 Freshman</code>. The number of years to timely completion is 6
-years, that is, academic years 1991–92, 92–93, 93–94, 94–95, 95–96,
-96–97. Thus their timely completion term is Spring 1997 (encoded
-<code>19963</code>) which agrees with the result shown.</p>
-<p>In the next-to-last row, a student’s initial term is Spring 2017
-(encoded <code>20163</code>) and their initial level is
-<code>04 Senior</code> from which we infer they have completed three
-years of their program, yielding an adjusted span of 3 years. Those
-three years would encompass terms <code>20163</code>–<code>20171</code>,
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span>
+<span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
+<pre><code><span class="co">#&gt;               mcid term_i     level_i adj_span timely_term</span>
+<span class="co">#&gt;             &lt;char&gt; &lt;char&gt;      &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span>
+<span class="co">#&gt;     1: MID25783135  19911 01 Freshman        6       19963</span>
+<span class="co">#&gt;     2: MID25783156  20011 01 Freshman        6       20063</span>
+<span class="co">#&gt;     3: MID25783162  19921 01 Freshman        6       19973</span>
+<span class="co">#&gt;     4: MID25783178  19946 01 Freshman        6       20003</span>
+<span class="co">#&gt;     5: MID25783188  19991 01 Freshman        6       20043</span>
+<span class="co">#&gt;    ---                                                    </span>
+<span class="co">#&gt; 94024: MID26697680  20163 01 Freshman        6       20221</span>
+<span class="co">#&gt; 94025: MID26697682  20163 01 Freshman        6       20221</span>
+<span class="co">#&gt; 94026: MID26697685  20151 01 Freshman        6       20203</span>
+<span class="co">#&gt; 94027: MID26697689  20163   04 Senior        3       20191</span>
+<span class="co">#&gt; 94028: MID26697702  20161 01 Freshman        6       20213</span></code></pre>
+<p><strong>Closer look.</strong> Let’s examine two specific observations
+to illustrate.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID25783135"</span><span class="op">]</span></code></pre></div>
+<pre><code><span class="co">#&gt;           mcid term_i     level_i adj_span timely_term</span>
+<span class="co">#&gt;         &lt;char&gt; &lt;char&gt;      &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span>
+<span class="co">#&gt; 1: MID25783135  19911 01 Freshman        6       19963</span></code></pre>
+<p>The student’s initial term is Fall 1991 (encoded <code>19911</code>)
+and their initial level is <code>01 Freshman</code>. The number of years
+to timely completion is 6 years, that is, academic years 1991–92, 92–93,
+93–94, 94–95, 95–96, 96–97. Thus their timely completion term is Spring
+1997 (encoded <code>19963</code>).</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID26697689"</span><span class="op">]</span></code></pre></div>
+<pre><code><span class="co">#&gt;           mcid term_i   level_i adj_span timely_term</span>
+<span class="co">#&gt;         &lt;char&gt; &lt;char&gt;    &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span>
+<span class="co">#&gt; 1: MID26697689  20163 04 Senior        3       20191</span></code></pre>
+<p>The student’s initial term is Spring 2017 (encoded
+<code>20163</code>) and their initial level is <code>04 Senior</code>
+from which we infer they have completed three years of their program,
+yielding an adjusted span of 3 years. Those three years would encompass
+terms <code>20163</code>–<code>20171</code>,
 <code>20173</code>–<code>20181</code>, and
 <code>20183</code>–<code>20191</code>, yielding a timely completion term
-of Fall 2019 (encoded <code>20191</code>) as shown.</p>
-<p>In usage, the following implementations yield identical results,</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+of Fall 2019 (encoded <code>20191</code>).</p>
+<p><strong>Usage.</strong> The following implementations yield identical
+results,</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Required arguments in order and explicitly named </span>
 <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
 
@@ -433,17 +447,23 @@ of Fall 2019 (encoded <code>20191</code>) as shown.</p>
 <span class="co"># Using the implicit default for the midfield_term argument</span>
 <span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
 
-<span class="co"># Equality test between two data tables</span>
+<span class="co"># Equality test between the data tables</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">z</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
-<p>If your term data set is named something other than
-<code>term</code>, the second argument is required. For example, using
-the “toy” data sets bundled with midfieldr and used in function
-examples,</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">toy_student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>, <span class="va">toy_term</span><span class="op">)</span></code></pre></div>
+<p>In the vignettes, I will typically write required arguments without
+names to remind us which midfielddata table is being used, e.g.,</p>
+<pre><code><span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></code></pre>
+<p>Your term data set can be named something other than
+<code>term</code>. For example, if we were working with the “toy”
+(exercise) data sets bundled with midfieldr, we would write something
+like this,</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Using term data named something else</span>
+<span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="va">toy_student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>
+<span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">toy_DT</span>, <span class="va">toy_term</span><span class="op">)</span>
+<span class="va">toy_DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
 <pre><code><span class="co">#&gt;            mcid term_i      level_i adj_span timely_term</span>
 <span class="co">#&gt;          &lt;char&gt; &lt;char&gt;       &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span>
 <span class="co">#&gt;  1: MID25784187  19885  01 Freshman        6       19943</span>
@@ -457,13 +477,259 @@ examples,</p>
 <span class="co">#&gt; 97: MID26691066  20103  01 Freshman        6       20161</span>
 <span class="co">#&gt; 98: MID26692025  20131    04 Senior        3       20153</span>
 <span class="co">#&gt; 99: MID26692254  20143 02 Sophomore        5       20191</span></code></pre>
-<p>In the vignettes, I will typically write the following to remind the
-user which of the midfielddata data sets is bing called upon.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></code></pre></div>
-<p>You can view the function help page by running in the Console,</p>
-<pre><code><span class="co"># Run in Console to view help page</span>
-<span class="op">?</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="op">)</span></code></pre>
+<p><strong>Caution! Silent overwriting!</strong> Existing columns with
+the same names as one of the added columns are deleted and replaced.</p>
+<p>Using the toy data to illustrate, I’ll drop the columns added by
+timely term except <code>adj_span</code>.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Drop three columns</span>
+<span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="va">toy_DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"term_i"</span>, <span class="st">"level_i"</span>, <span class="st">"timely_term"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span>
+<span class="va">toy_DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
+<pre><code><span class="co">#&gt;            mcid adj_span</span>
+<span class="co">#&gt;          &lt;char&gt;    &lt;num&gt;</span>
+<span class="co">#&gt;  1: MID25784187        6</span>
+<span class="co">#&gt;  2: MID25784974        5</span>
+<span class="co">#&gt;  3: MID25816209        5</span>
+<span class="co">#&gt;  4: MID25819358        5</span>
+<span class="co">#&gt;  5: MID25828870        6</span>
+<span class="co">#&gt; ---                     </span>
+<span class="co">#&gt; 95: MID26622664        4</span>
+<span class="co">#&gt; 96: MID26624815        6</span>
+<span class="co">#&gt; 97: MID26691066        6</span>
+<span class="co">#&gt; 98: MID26692025        3</span>
+<span class="co">#&gt; 99: MID26692254        5</span></code></pre>
+<p>Reapplying the function, the <code>adj_span</code> column is silently
+deleted and replaced.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">toy_DT</span>, <span class="va">toy_term</span><span class="op">)</span>
+<span class="va">toy_DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
+<pre><code><span class="co">#&gt;            mcid term_i      level_i adj_span timely_term</span>
+<span class="co">#&gt;          &lt;char&gt; &lt;char&gt;       &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span>
+<span class="co">#&gt;  1: MID25784187  19885  01 Freshman        6       19943</span>
+<span class="co">#&gt;  2: MID25784974  19883 02 Sophomore        5       19931</span>
+<span class="co">#&gt;  3: MID25816209  19881 02 Sophomore        5       19923</span>
+<span class="co">#&gt;  4: MID25819358  19946 02 Sophomore        5       19993</span>
+<span class="co">#&gt;  5: MID25828870  19881  01 Freshman        6       19933</span>
+<span class="co">#&gt; ---                                                     </span>
+<span class="co">#&gt; 95: MID26622664  20081    03 Junior        4       20113</span>
+<span class="co">#&gt; 96: MID26624815  20061  01 Freshman        6       20113</span>
+<span class="co">#&gt; 97: MID26691066  20103  01 Freshman        6       20161</span>
+<span class="co">#&gt; 98: MID26692025  20131    04 Senior        3       20153</span>
+<span class="co">#&gt; 99: MID26692254  20143 02 Sophomore        5       20191</span></code></pre>
+</div>
+<div class="section level2">
+<h2 id="add_data_sufficiency">
+<code>add_data_sufficiency()</code><a class="anchor" aria-label="anchor" href="#add_data_sufficiency"></a>
+</h2>
+<p>Continuing with a data frame of SUR observations, we add the data
+sufficiency column using <code><a href="../reference/add_data_sufficiency.html">add_data_sufficiency()</a></code>.</p>
+<p>You can view the function help page by running,</p>
+<pre><code><span class="op">?</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="op">)</span></code></pre>
+<p>Its arguments are:</p>
+<dl>
+<dt><code>dframe</code></dt>
+<dd>
+<p>Data frame of student unit record (SUR) observations keyed by student
+ID. Required variables are <code>mcid</code> and
+<code>timely_term</code>.</p>
+</dd>
+<dt><code>midfield_term</code></dt>
+<dd>
+<p>Data frame of SUR term observations keyed by student ID. Default is
+<code>term</code>. Required variables are <code>mcid</code>,
+<code>institution</code>, and <code>term</code>.</p>
+</dd>
+</dl>
+<p>The function adds four columns to the SUR data frame: the
+<code>data_sufficiency</code> result plus three supporting
+variables:</p>
+<dl>
+<dt><code>term_i</code></dt>
+<dd>
+<p>Character. Initial term of a student’s longitudinal record, encoded
+YYYYT. Not overwritten if present in dframe.</p>
+</dd>
+<dt><code>lower_limit</code></dt>
+<dd>
+<p>Character. Initial term of an institution’s data range, encoded
+YYYYT</p>
+</dd>
+<dt><code>upper_limit</code></dt>
+<dd>
+<p>Character. Final term of an institution’s data range, encoded
+YYYYT</p>
+</dd>
+</dl>
+<p>The data sufficiency column labels each observation for inclusion or
+exclusion. Possible values are:</p>
+<ul>
+<li>
+<code>include</code>, indicating that available data are sufficient
+for estimating timely program completion</li>
+<li>
+<code>exclude-upper</code>, indicating that data are insufficient at
+the upper limit of a data range<br>
+</li>
+<li>
+<code>exclude-lower</code>, indicating that data are insufficient at
+the lower limit.</li>
+</ul>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Drop unnecessary columns</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">timely_term</span><span class="op">)</span><span class="op">]</span>
+
+<span class="co"># Display data sufficiency and supporting variables</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span>
+<span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
+<pre><code><span class="co">#&gt;               mcid timely_term term_i lower_limit upper_limit data_sufficiency</span>
+<span class="co">#&gt;             &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span>
+<span class="co">#&gt;     1: MID25783135       19963  19911       19871       20036          include</span>
+<span class="co">#&gt;     2: MID25783156       20063  20011       19871       20036    exclude-upper</span>
+<span class="co">#&gt;     3: MID25783162       19973  19921       19871       20036          include</span>
+<span class="co">#&gt;     4: MID25783178       20003  19946       19871       20036          include</span>
+<span class="co">#&gt;     5: MID25783188       20043  19991       19871       20036    exclude-upper</span>
+<span class="co">#&gt;    ---                                                                        </span>
+<span class="co">#&gt; 94024: MID26697680       20221  20163       20021       20164    exclude-upper</span>
+<span class="co">#&gt; 94025: MID26697682       20221  20163       20021       20164    exclude-upper</span>
+<span class="co">#&gt; 94026: MID26697685       20203  20151       20021       20164    exclude-upper</span>
+<span class="co">#&gt; 94027: MID26697689       20191  20163       20021       20164    exclude-upper</span>
+<span class="co">#&gt; 94028: MID26697702       20213  20161       20021       20164    exclude-upper</span></code></pre>
+<p><strong>Closer look.</strong> Let’s examine three specific
+observations to illustrate. In these excerpts, the data range for the
+institution is Fall 1987 to Summer 2003.</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Student A</span>
+<span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID25783135"</span><span class="op">]</span></code></pre></div>
+<pre><code><span class="co">#&gt;           mcid timely_term term_i lower_limit upper_limit data_sufficiency</span>
+<span class="co">#&gt;         &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span>
+<span class="co">#&gt; 1: MID25783135       19963  19911       19871       20036          include</span></code></pre>
+<p>The student’s initial term is Fall 1991 so the lower-limit exclusion
+does not apply; the student’s timely completion term is Spring 1996, so
+the upper-limit exclusion does not apply. The record satisfies the data
+sufficiency criterion.</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Student B</span>
+<span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID25783156"</span><span class="op">]</span></code></pre></div>
+<pre><code><span class="co">#&gt;           mcid timely_term term_i lower_limit upper_limit data_sufficiency</span>
+<span class="co">#&gt;         &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span>
+<span class="co">#&gt; 1: MID25783156       20063  20011       19871       20036    exclude-upper</span></code></pre>
+<p>The student’s initial term is Fall 2001 so the lower-limit exclusion
+does not apply; the student’s timely completion term is Spring 2006, so
+the upper-limit exclusion does apply.</p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Student D</span>
+<span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID25783197"</span><span class="op">]</span></code></pre></div>
+<pre><code><span class="co">#&gt;           mcid timely_term term_i lower_limit upper_limit data_sufficiency</span>
+<span class="co">#&gt;         &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span>
+<span class="co">#&gt; 1: MID25783197       19923  19871       19871       20036    exclude-lower</span></code></pre>
+<p>The student’s initial term is Fall 1987 so the lower-limit exclusion
+applies.</p>
+<p><strong>Usage.</strong> The following implementations yield identical
+results,</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Required arguments in order and explicitly named </span>
+<span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
+
+<span class="co"># Required arguments in order, but not named   </span>
+<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span>
+
+<span class="co"># Using the implicit default for the midfield_term argument</span>
+<span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
+
+<span class="co"># Equality test between the data tables</span>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span>
+<span class="co">#&gt; [1] TRUE</span>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">z</span><span class="op">)</span>
+<span class="co">#&gt; [1] TRUE</span></code></pre></div>
+<p>Again, your term data set can be named something other than
+<code>term</code>. For example, using the “toy” data sets again,</p>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Using term data named something else</span>
+<span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="va">toy_DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">timely_term</span><span class="op">)</span><span class="op">]</span>
+<span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">toy_DT</span>, <span class="va">toy_term</span><span class="op">)</span>
+<span class="va">toy_DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
+<pre><code><span class="co">#&gt;            mcid timely_term term_i lower_limit upper_limit data_sufficiency</span>
+<span class="co">#&gt;          &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span>
+<span class="co">#&gt;  1: MID25784187       19943  19885       19881       19995          include</span>
+<span class="co">#&gt;  2: MID25784974       19931  19883       19881       19995          include</span>
+<span class="co">#&gt;  3: MID25816209       19923  19881       19881       19995    exclude-lower</span>
+<span class="co">#&gt;  4: MID25819358       19993  19946       19881       19995          include</span>
+<span class="co">#&gt;  5: MID25828870       19933  19881       19881       19995    exclude-lower</span>
+<span class="co">#&gt; ---                                                                        </span>
+<span class="co">#&gt; 95: MID26622664       20113  20081       19881       20081    exclude-upper</span>
+<span class="co">#&gt; 96: MID26624815       20113  20061       19881       20081    exclude-upper</span>
+<span class="co">#&gt; 97: MID26691066       20161  20103       20103       20143    exclude-lower</span>
+<span class="co">#&gt; 98: MID26692025       20153  20131       20103       20143    exclude-upper</span>
+<span class="co">#&gt; 99: MID26692254       20191  20143       20103       20143    exclude-upper</span></code></pre>
+<p><strong>Caution! Silent overwriting!</strong> In this case, existing
+columns with the same name as one of the added columns are deleted and
+replaced except for <code>term_i</code>.</p>
+<p>Using the toy data to illustrate, I’ll drop the columns added by data
+sufficiency except <code>upper_limit</code>.</p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Drop three columns</span>
+<span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="va">toy_DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lower_limit"</span>, <span class="st">"data_sufficiency"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span>
+<span class="va">toy_DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
+<pre><code><span class="co">#&gt;            mcid timely_term term_i upper_limit</span>
+<span class="co">#&gt;          &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span>
+<span class="co">#&gt;  1: MID25784187       19943  19885       19995</span>
+<span class="co">#&gt;  2: MID25784974       19931  19883       19995</span>
+<span class="co">#&gt;  3: MID25816209       19923  19881       19995</span>
+<span class="co">#&gt;  4: MID25819358       19993  19946       19995</span>
+<span class="co">#&gt;  5: MID25828870       19933  19881       19995</span>
+<span class="co">#&gt; ---                                           </span>
+<span class="co">#&gt; 95: MID26622664       20113  20081       20081</span>
+<span class="co">#&gt; 96: MID26624815       20113  20061       20081</span>
+<span class="co">#&gt; 97: MID26691066       20161  20103       20143</span>
+<span class="co">#&gt; 98: MID26692025       20153  20131       20143</span>
+<span class="co">#&gt; 99: MID26692254       20191  20143       20143</span></code></pre>
+<p>Reapplying the function, the <code>term_i</code> column is silently
+overwritten and the other three columns added as before.</p>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">toy_DT</span>, <span class="va">toy_term</span><span class="op">)</span>
+<span class="va">toy_DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
+<pre><code><span class="co">#&gt;            mcid timely_term term_i lower_limit upper_limit data_sufficiency</span>
+<span class="co">#&gt;          &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span>
+<span class="co">#&gt;  1: MID25784187       19943  19885       19881       19995          include</span>
+<span class="co">#&gt;  2: MID25784974       19931  19883       19881       19995          include</span>
+<span class="co">#&gt;  3: MID25816209       19923  19881       19881       19995    exclude-lower</span>
+<span class="co">#&gt;  4: MID25819358       19993  19946       19881       19995          include</span>
+<span class="co">#&gt;  5: MID25828870       19933  19881       19881       19995    exclude-lower</span>
+<span class="co">#&gt; ---                                                                        </span>
+<span class="co">#&gt; 95: MID26622664       20113  20081       19881       20081    exclude-upper</span>
+<span class="co">#&gt; 96: MID26624815       20113  20061       19881       20081    exclude-upper</span>
+<span class="co">#&gt; 97: MID26691066       20161  20103       20103       20143    exclude-lower</span>
+<span class="co">#&gt; 98: MID26692025       20153  20131       20103       20143    exclude-upper</span>
+<span class="co">#&gt; 99: MID26692254       20191  20143       20103       20143    exclude-upper</span></code></pre>
+<p><strong>Filtering.</strong> In most cases, we retain only those
+observations for which the data are sufficient.</p>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span><span class="op">]</span>
+<span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
+<pre><code><span class="co">#&gt;               mcid timely_term term_i lower_limit upper_limit data_sufficiency</span>
+<span class="co">#&gt;             &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span>
+<span class="co">#&gt;     1: MID25783135       19963  19911       19871       20036          include</span>
+<span class="co">#&gt;     2: MID25783162       19973  19921       19871       20036          include</span>
+<span class="co">#&gt;     3: MID25783178       20003  19946       19871       20036          include</span>
+<span class="co">#&gt;     4: MID25783195       19983  19931       19871       20036          include</span>
+<span class="co">#&gt;     5: MID25783220       20023  19971       19871       20036          include</span>
+<span class="co">#&gt;    ---                                                                        </span>
+<span class="co">#&gt; 63948: MID26697574       20113  20091       20021       20164          include</span>
+<span class="co">#&gt; 63949: MID26697576       20153  20101       20021       20164          include</span>
+<span class="co">#&gt; 63950: MID26697599       20153  20101       20021       20164          include</span>
+<span class="co">#&gt; 63951: MID26697615       20153  20101       20021       20164          include</span>
+<span class="co">#&gt; 63952: MID26697623       20153  20101       20021       20164          include</span></code></pre>
+<p>The result has 63,952 unique observations.</p>
+</div>
+<div class="section level2">
+<h2 id="closing">Closing<a class="anchor" aria-label="anchor" href="#closing"></a>
+</h2>
+<p>To prepare for applying the data sufficiency criterion, we first
+estimate students’ timely completion terms using
+<code><a href="../reference/add_timely_term.html">add_timely_term()</a></code>. We then label observations for inclusion
+and exclusion using <code><a href="../reference/add_data_sufficiency.html">add_data_sufficiency()</a></code>.</p>
+<p>Subsetting a population for data sufficiency is typically the first
+filter applied to SUR data.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

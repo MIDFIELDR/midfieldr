@@ -219,6 +219,11 @@ number of unique students is smaller than the number of observations
 because some students change programs over their course of study. Here
 we have one row per unique combination of student (<code>mcid</code>)
 and program code (<code>cip6</code>).</p>
+<p>In this form, the data are bundled with midfieldr as the
+<code>study_pool</code> data set. You can view its help page by
+running</p>
+<pre><code><span class="co"># Run in Console to view help page</span>
+<span class="op">?</span> <span class="va">study_pool</span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="filter-for-data-sufficiency">Filter for data sufficiency<a class="anchor" aria-label="anchor" href="#filter-for-data-sufficiency"></a>
@@ -230,7 +235,7 @@ completion term then data sufficiency.</p>
 <p><strong>Creating variables.</strong> Using information in
 <code>term</code>, we add the <code>timely_term</code> variable as well
 as supporting variables used in its construction.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Calculate a timely completion term for every student</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
@@ -247,10 +252,12 @@ as supporting variables used in its construction.</p>
 <span class="co">#&gt; 161694: MID26697685 521201  20151 01 Freshman        6       20203</span>
 <span class="co">#&gt; 161695: MID26697689 240101  20163   04 Senior        3       20191</span>
 <span class="co">#&gt; 161696: MID26697702 240101  20161 01 Freshman        6       20213</span></code></pre>
+<p>You may view the function’s help page by running</p>
+<pre><code><span class="op">?</span> <span class="va">add_timely_term</span></code></pre>
 <p><strong>Creating variables.</strong> Using information in
 <code>term</code>, we add the <code>data_sufficiency</code> variable as
 well as supporting variables used in its construction.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Determine data sufficiency for every student</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
@@ -280,9 +287,11 @@ well as supporting variables used in its construction.</p>
 <span class="co">#&gt; 161694:       20164    exclude-upper</span>
 <span class="co">#&gt; 161695:       20164    exclude-upper</span>
 <span class="co">#&gt; 161696:       20164    exclude-upper</span></code></pre>
+<p>You may view the function’s help page by running</p>
+<pre><code><span class="op">?</span> <span class="va">add_data_sufficiency</span></code></pre>
 <p><strong>Filtering.</strong> We filter to retain observations for
 which the data are sufficient then drop unnecessary columns.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Retain observations having sufficient data </span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
@@ -311,7 +320,7 @@ only degree seeking students.</p>
 <p><strong>Filtering.</strong> An inner join with one column of
 <code>student</code> that returns all of the rows with matching IDs from
 both data frames.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Subset of student data frame to join</span>
 <span class="va">cols_to_join</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>
 
@@ -350,7 +359,7 @@ Electrical Engineering 1410, Mechanical Engineering 1419, and
 Industrial/Systems Engineering 1427, 1435, 1436, and 1437.</p>
 <p><strong>Filtering</strong> Gather the 6-digit CIP codes for the
 programs in the case study. Drop unnecessary variables.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Gather program CIP codes</span>
 <span class="va">study_program</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, keep_text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1427"</span>, <span class="st">"^1435"</span>, <span class="st">"^1436"</span>, <span class="st">"^1437"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">study_program</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, <span class="va">cip6name</span><span class="op">)</span><span class="op">]</span>
@@ -372,12 +381,14 @@ programs in the case study. Drop unnecessary variables.</p>
 <span class="co">#&gt; 13: 143501                                        Industrial Engineering</span>
 <span class="co">#&gt; 14: 143601                                     Manufacturing Engineering</span>
 <span class="co">#&gt; 15: 143701                                           Operations Research</span></code></pre>
+<p>You may view the function’s help page by running</p>
+<pre><code><span class="op">?</span> <span class="va">filter_search</span></code></pre>
 <p><strong>Creating variables.</strong> Add a variable to label each of
 these 15 programs with one of the four conventional program
 abbreviations we will use in comparing metrics, i.e., Civil (CE),
 Electrical (EE), Mechanical (ME), and Industrial/Systems Engineering
 (ISE).</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Assign four program names by CIP code</span>
 <span class="va">study_program</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span>
     <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="st">"CE"</span>, 
@@ -409,7 +420,7 @@ Electrical (EE), Mechanical (ME), and Industrial/Systems Engineering
 correctly represent the programs, we drop the <code>cip6name</code>
 variable and join the program names to the working data frame using a
 left-outer join. All rows of <code>DT</code> are returned.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Left-outer join to DT</span>
 <span class="va">study_program</span><span class="op">[</span>, <span class="va">cip6name</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
@@ -429,7 +440,7 @@ left-outer join. All rows of <code>DT</code> are returned.</p>
 <span class="co">#&gt; 111932: 451001    &lt;NA&gt; MID26697623</span></code></pre>
 <p><strong>Filtering.</strong> All instances of NA programs are
 dropped.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Retain observations in our four programs </span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
@@ -450,7 +461,7 @@ dropped.</p>
 <p><strong>Filtering.</strong> A program label can be associated with
 multiple CIP codes. We drop the code and filter to remove duplicates to
 ensure unique combinations of ID and program.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Drop duplicate rows</span>
 <span class="va">DT</span><span class="op">[</span>, <span class="va">cip6</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
@@ -473,7 +484,7 @@ ensure unique combinations of ID and program.</p>
 group as “ever” enrolled to distinguish them from the group of graduates
 to be created next. Copy the data frame to a new name to save for
 later.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Conclude development of the ever-enrolled observations</span>
 <span class="va">ever</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
 <span class="va">ever</span><span class="op">[</span>, <span class="va">group</span> <span class="op">:=</span> <span class="st">"ever"</span><span class="op">]</span>
@@ -498,7 +509,7 @@ later.</p>
 <p><strong>Filtering.</strong> Students potentially counted as graduates
 must be a subset of those in the ever enrolled population. We
 re-initialize the working data frame, retaining unique IDs only.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Unique IDs of students ever enrolled in the study programs</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
@@ -519,7 +530,7 @@ re-initialize the working data frame, retaining unique IDs only.</p>
 <p><strong>Filtering.</strong> An inner join with two columns of
 <code>degree</code> that returns all of the rows with matching IDs from
 both data frames. In effect, the inner join filters DT</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Subset of degree data frame to join</span>
 <span class="va">cols_to_join</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
 
@@ -550,7 +561,7 @@ complete their program in a timely manner (default 6 years after
 admission, with reduced spans for some transfer students).</p>
 <p><strong>Add variables.</strong> Completion status requires the timely
 completion term variable.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Calculate a timely completion term for every student</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
@@ -570,7 +581,7 @@ completion term variable.</p>
 <p><strong>Creating variables.</strong> Using information in
 <code>degree</code>, we add the <code>completion_status</code> variable
 as well as supporting variables used in its construction.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Determine program completion status for every student</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">degree</span><span class="op">)</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
@@ -600,10 +611,12 @@ as well as supporting variables used in its construction.</p>
 <span class="co">#&gt; 5388:       TRUE          positive</span>
 <span class="co">#&gt; 5389:       TRUE          positive</span>
 <span class="co">#&gt; 5390:       TRUE          positive</span></code></pre>
+<p>You may view the function’s help page by running</p>
+<pre><code><span class="op">?</span> <span class="va">add_completion_status</span></code></pre>
 <p><strong>Filtering.</strong> Retain records with “positive” completion
 status (i.e. completion in 6 years or less) and drop unnecessary
 variables.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Retain timely completers</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">completion_status</span> <span class="op">==</span> <span class="st">"positive"</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
@@ -626,7 +639,7 @@ variables.</p>
 <div class="section level2">
 <h2 id="filter-by-program-1">Filter by program<a class="anchor" aria-label="anchor" href="#filter-by-program-1"></a>
 </h2>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Left-outer join to DT </span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span>
@@ -652,7 +665,7 @@ variables.</p>
 <p><strong>Creating variables.</strong> Add a variable to label this
 group as “grad” to distinguish them from the group of ever enrolled
 students created earlier.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Conclude development of the graduate observations</span>
 <span class="va">grad</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
 <span class="va">grad</span><span class="op">[</span>, <span class="va">group</span> <span class="op">:=</span> <span class="st">"grad"</span><span class="op">]</span>
@@ -676,7 +689,7 @@ students created earlier.</p>
 </h2>
 <p><strong>Binding.</strong> Combine two data frames by matching column
 names.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Combine two data frames</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">ever</span>, <span class="va">grad</span><span class="op">)</span>, use.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
@@ -700,7 +713,7 @@ names.</p>
 <p><strong>Creating variables.</strong> Using columns from
 <code>student</code>, we add variables for race/ethnicity and sex using
 a left-outer join. All rows of <code>DT</code> are returned.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Subset of student data frame to join</span>
 <span class="va">cols_to_join</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>
 
@@ -730,7 +743,7 @@ labeled “grad” are a subset of those labeled “ever”.</p>
 sets of observations by ID. In the first example, the ID produces one
 observation only. The student was enrolled in Civil Engineering but
 completion, if any, was not timely.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID26694225"</span><span class="op">]</span>
 <span class="co">#&gt;           mcid   race    sex program  group</span>
 <span class="co">#&gt;         &lt;char&gt; &lt;char&gt; &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span>
@@ -738,7 +751,7 @@ completion, if any, was not timely.</p>
 <p>In the next example, the ID produces two observations indicating that
 the student was enrolled in Civil Engineering and a timely graduate of
 that program.</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID25786154"</span><span class="op">]</span>
 <span class="co">#&gt;           mcid   race    sex program  group</span>
 <span class="co">#&gt;         &lt;char&gt; &lt;char&gt; &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span>
@@ -747,7 +760,7 @@ that program.</p>
 <p>In the next example, the ID produces two observations indicating that
 the student was enrolled in Electrical Engineering and in Mechanical
 Engineering but a timely graduate of neither program.</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID25868925"</span><span class="op">]</span>
 <span class="co">#&gt;           mcid   race    sex program  group</span>
 <span class="co">#&gt;         &lt;char&gt; &lt;char&gt; &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span>
@@ -756,7 +769,7 @@ Engineering but a timely graduate of neither program.</p>
 <p>In the next example, the ID produces three observations indicating
 that the student was enrolled in Electrical Engineering and in Civil
 Engineering and a timely graduate of Civil.</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID26526757"</span><span class="op">]</span>
 <span class="co">#&gt;           mcid   race    sex program  group</span>
 <span class="co">#&gt;         &lt;char&gt; &lt;char&gt; &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span>
@@ -776,7 +789,7 @@ determine stickiness.</p>
 <p><strong>Write to file.</strong> Results like these, used as inputs
 for calculating summary statistics and metrics, are often written to
 file as an intermediate result. In this case, the data frame above is
-bundled with midfieldr as <code>study_observations</code>. You can view
+bundled with midfieldr as <code>study_observations</code>. You may view
 its help page by running</p>
 <pre><code><span class="op">?</span> <span class="va">study_observations</span></code></pre>
 </div>
@@ -796,7 +809,7 @@ its help page by running</p>
 <p>We conclude each vignette by collecting its code chunks in a single,
 condensed script for the convenience of those who wish to copy it into
 their own R file.</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Packages</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>
