@@ -210,13 +210,11 @@
 #' Case-study starting pool
 #' 
 #' An intermediate result provided for the convenience of vignette users. 
-#' The starting pool of students ever enrolled in the four programs of the 
-#' case study. Keyed by student ID. 
+#' The starting pool of all students from the \code{term} practice data.
+#' Keyed by student ID. 
 #' 
 #' Starting with the midfielddata \code{term} practice data set, we extracted 
-#' every observation with CIP codes of the four engineering programs in the 
-#' case study: Civil, Electrical, Industrial/Systems, and Mechanical 
-#' Engineering. 
+#' every observation with unique combinations of ID and program CIP code. 
 #'
 #' @format \code{data.table} with 161,696 rows and 2 columns.
 #' 
