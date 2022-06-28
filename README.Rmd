@@ -136,8 +136,7 @@ DT <- add_data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include"]
 
 # Filter observations for degree-seeking using an inner join
-cols_to_join <- student[, .(mcid)]
-DT <- cols_to_join[DT, on = .(mcid), nomatch = NULL]
+DT <- DT[student, .(mcid, cip6, timely_term), on = c("mcid"), nomatch = NULL]
 
 # Filter observations for engineering programs
 DT <- DT[cip6 %like% "^14"]
@@ -149,8 +148,7 @@ DT <- DT[, .SD[1], by = c("mcid")]
 DT <- add_completion_status(DT, degree)
 
 # Add race and sex using a left outer join
-cols_to_join <- student[, .(mcid, race, sex)]
-DT <- cols_to_join[DT, on = .(mcid)]
+DT <- student[DT, .(completion_status, sex, race), on = c("mcid")]
 
 # Calculate summary statistics
 DT <- DT[, .N, by = c("completion_status", "sex", "race")]

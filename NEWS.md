@@ -3,9 +3,12 @@
 
 ## midfieldr 1.0.0.9022 / 2021-07
 
-- Add the degree seeking (inner joins) vignette
+- Correction to `condition_multiway()` for alphabetical ordering, revise 
+unit tests
+- Add the degree seeking (inner joins) and programs vignettes
 - Complete the data sufficiency vignette
 - Remove dependency on Rdpack
+
 
 
 ## midfieldr 1.0.0.9021 / 2021-06

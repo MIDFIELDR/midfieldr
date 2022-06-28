@@ -2,18 +2,18 @@
 % Please edit documentation in R/condition_fye.R
 \name{condition_fye}
 \alias{condition_fye}
-\title{Condition FYE data for multiple imputation}
+\title{Prepare FYE data for multiple imputation}
 \usage{
-condition_fye(dframe, midfield_term, ..., fye_codes = NULL)
+condition_fye(midfield_student, midfield_term, ..., fye_codes = NULL)
 }
 \arguments{
-\item{dframe}{Data frame of all degree-seeking engineering students in the
-database, with required variables \code{mcid}, \code{race},
-and \code{sex}.}
+\item{midfield_student}{Data frame of Student Unit Record (SUR) student observations, 
+keyed by student ID. Required variables 
+are \code{mcid}, \code{race}, and \code{sex}.}
 
-\item{midfield_term}{MIDFIELD \code{term} data table or equivalent
-with required variables \code{mcid}, \code{institution},
-\code{term}, and \code{cip6}.}
+\item{midfield_term}{Data frame of SUR term observations keyed 
+by student ID. Required variables are 
+\code{mcid}, \code{institution}, \code{term}, and \code{cip6}.}
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
@@ -21,40 +21,62 @@ with required variables \code{mcid}, \code{institution},
 identify FYE programs, default 140102. Codes must be 6-digit
 strings of numbers; regular expressions are prohibited.
 Non-engineering codes---those that do not start with
-14"---are ignored.}
+14---are ignored.}
 }
 \value{
-A \code{data.table} with the following properties:
+A \code{data.table} conditioned for later use as an input to the 
+mice R package for multiple imputation. The data have the following 
+properties:
 \itemize{
-    \item One row for every FYE student.
-    \item Columns for ID, institution, race, sex, and CIP code, all
-    except ID converted to factors. Additional columns in \code{dframe}
-    are dropped.
-    \item Grouping structures are not preserved.
-}
+ \item One row for every FYE student.  
+ \item Grouping structures are not preserved.
+ \item  Columns returned: 
+ \describe{
+   \item{\code{mcid}}{Character, anonymized student identifier. Returned 
+           as-is.}
+   \item{\code{race}}{Factor, race/ethnicity as self-reported by the 
+           student. An imputation predictor variable.}
+   \item{\code{sex}}{Factor, sex as self-reported by the 
+           student. An imputation predictor variable.} 
+   \item{\code{institution}}{Factor, anonymized institution name. An 
+           imputation predictor variable.} 
+   \item{\code{cip6}}{Factor, 6-digit CIP code of a student's known, 
+           post-FYE engineering program or NA representing missing 
+          values to be imputed.}
+ }}
 }
 \description{
-Filter first-year-engineering (FYE) students and prepare variables for
-predicting unknown starting majors. The prepared variables are institution,
-race, and sex (predictors) and cip6 (with missing values to be imputed).
-Obtains the requisite information from the MIDFIELD \code{term} data table
-or equivalent. Returns a data frame formatted for multiple imputation using
-the mice package.
+Constructs a data frame of Student Unit Records (SURs) of First-Year 
+Engineering (FYE) programs and conditions the data for later use as an 
+input to the mice R package for multiple imputation. Sets up three 
+variables as predictors (institution, race, and sex) and one variable to 
+be predicted (program CIP code) with NA values to be imputed. Requires 
+MIDFIELD \code{student} and \code{term} data frames in the environment.
 }
 \details{
-Some US institutions have first year engineering (FYE) programs, typically
-a common first year curriculum that is a prerequisite for declaring
-an engineering major. FYE programs are problematic for some persistence
-metrics. For example, in the conventional graduation rate metric, the only
-students who count as graduates are those who complete the same
-program in which they were admitted. But students cannot graduate in FYE;
-instead, upon completing FYE, they transition to a degree-granting
-engineering program.
+At some US institutions, First-Year Engineering (FYE) programs comprise a 
+common first year curriculum that is a prerequisite for declaring a  
+engineering major. In longitudinal studies, FYE programs can be problematic 
+when combining their observations with those of non-FYE institutions. 
+For example, suppose we are calculating a graduation rate for Mechanical 
+Engineering (ME) programs. By most definitions, the students starting in ME 
+constitute the pool; the fraction of the pool that graduates in ME is the 
+rate. FYE starters, even if they graduate in ME, are excluded from the 
+count because they did not start in ME. 
 
 Therefore, to include FYE students in any persistence metric requiring a
 degree-granting "starting" program, we have to predict the engineering
-program the FYE student would have declared had they not been required to
-enroll in FYE. \code{predict_fye()} sorts students into two categories:
+program (such as Electrical Engineering, Mechanical Engineering, etc.) 
+the FYE student would have declared had they not been required to
+enroll in FYE. The purpose of \code{condition_fye()} is to prepare the data 
+for making that prediction.
+}
+\section{Method}{
+ 
+The method requires MIDFIELD-style student and term data tables that 
+contain at a minimum the institutions being studied that also have FYE 
+programs. The function extracts all terms for all FYE students and sorts 
+them into two categories:
 
 \enumerate{
 \item{Students who complete an FYE and declare an engineering major.
@@ -65,22 +87,22 @@ enroll in FYE. \code{predict_fye()} sorts students into two categories:
     This is the more complicated case---the data provide no information
     regarding what engineering program the student would have declared
     originally had the institution not required them to enroll in FYE.
-    For these students, we treat the starting program as missing data be
+    For these students, we treat the starting program as missing data to be
     predicted using multiple imputation.}
 }
 
-The function extracts all terms for all FYE students from
-\code{midfield_term}. In cases where students enter FYE, change programs,
+In cases where students enter FYE, change programs,
 and re-enter FYE, only the first group of FYE terms is considered. Any
 programs before FYE are ignored. The first (if any) post-FYE program is
 identified. If the program is in engineering, the CIP is retained as
 their predicted starting major. If not, the CIP is replaced with NA to
 be treated as missing data for the imputation.
 
-Lastly, the predictor variables (institution, race, sex) and the imputed
-variable (cip6) are converted to unordered factors. The resulting data
-frame is ready for use as input for the mice package.
+Lastly, the predictor variables (institution, race, sex) and the predicted
+variable (6-digit CIP code) are converted to unordered factors. 
+The resulting data frame is ready for use as input for the mice package.
 }
+
 \examples{
 # # Using toy data
 # DT <- toy_student[, .(mcid, race, sex)]

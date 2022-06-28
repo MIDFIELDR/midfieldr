@@ -1,16 +1,18 @@
 
 
-#' @importFrom data.table setkey setkeyv setcolorder setnames setorderv
+
+#' @importFrom checkmate assert_data_frame assert_int qassert
+#' @importFrom checkmate assert_subset assert_names
+#' 
+#' @importFrom data.table setkey setkeyv setcolorder setnames setorderv setorder
 #' @importFrom data.table fcase fifelse copy as.data.table shift
 #' @importFrom data.table setDF setDT
 #' @importFrom data.table %chin% %like% .SD .N :=
-#'
-#' @importFrom checkmate assert_data_frame assert_int qassert
-#' @importFrom checkmate assert_subset assert_names
-#'
+#' 
+#' @importFrom stats na.omit reorder
+#' 
 #' @importFrom wrapr let stop_if_dot_args %?%
-#'
-#' @importFrom stats na.omit median reorder
+
 
 NULL
 

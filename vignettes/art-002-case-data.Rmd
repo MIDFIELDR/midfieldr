@@ -182,14 +182,11 @@ The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique s
 
 In studying stickiness, we exclude non-degree-seeking students. We filter such students using the `student` data which contains only degree seeking students. 
 
-**Filtering.** An inner join with one column of `student` that returns all of the rows with matching IDs from both data frames. 
+**Filtering.** An inner join with `student` that returns rows with matching IDs from both data frames, then selected columns.
 
 ```{r}
-# Subset of student data frame to join
-cols_to_join <- student[, .(mcid)]
-
 # Inner join that filters DT
-DT <- cols_to_join[DT, on = .(mcid), nomatch = NULL]
+DT <- DT[student, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
 DT[]
 ```
 
@@ -208,12 +205,12 @@ The `cip6` variable in our data is the 6-digit code for programs in which studen
 
 Having already searched the `cip` data set for our programs, we report the results: Civil Engineering CIPs start with 1408, Electrical Engineering 1410, Mechanical Engineering 1419, and Industrial/Systems Engineering 1427, 1435, 1436, and 1437. 
 
-**Filtering** Gather the 6-digit CIP codes for the programs in the case study. Drop unnecessary variables.  
+**Filtering** Gather the 6-digit CIP codes for the programs in the case study. Drop unnecessary variables.  We keep the `cip4name` because, in engineering at least, the 4-digit name tends to be a disciplinary or departmental name. 
 
 ```{r}
 # Gather program CIP codes
 study_program <- filter_search(cip, keep_text = c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
-study_program <- study_program[, .(cip6, cip6name)]
+study_program <- study_program[, .(cip6, cip4name)]
 study_program[]
 ```
 
@@ -233,15 +230,14 @@ study_program[, program := fcase(
 )]
 
 # Confirm that abbreviations match the longer program names
-print(study_program[, .(cip6name, program)])
+print(study_program[, .(cip4name, program)])
 ```
 
-**Joining.** Having checked that the new abbreviations correctly represent the programs, we drop the `cip6name` variable and join the program names to the working data frame using a left-outer join. All rows of `DT` are returned.   
+**Joining.** Having checked that the new abbreviations correctly represent the programs, we join the program names to the working data frame using a left-outer join and return selected rows.    
 
 ```{r}
 # Left-outer join to DT
-study_program[, cip6name := NULL]
-DT <- study_program[DT, on = .(cip6)]
+DT <- study_program[DT, .(mcid, cip6, program), on = c("cip6")]
 DT[]
 ```
 
@@ -294,14 +290,11 @@ DT <- unique(DT)
 DT[]
 ```
 
-**Filtering.** An inner join with two columns of `degree` that returns all of the rows with matching IDs from both data frames. In effect, the inner join filters DT
+**Filtering.** An inner join with `degree` that returns rows with matching IDs from both data frames, then selected columns. 
 
 ```{r}
-# Subset of degree data frame to join
-cols_to_join <- degree[, .(mcid, cip6)]
-
 # Inner join that filters DT 
-DT <- cols_to_join[DT, on = .(mcid), nomatch = NULL]
+DT <- DT[degree, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
 DT[]
 ```
 
@@ -349,13 +342,14 @@ The result has `r nrow(DT)` unique observations.
 
 ## Filter by program
 
+We join the program names to the working data frame using a left-outer join and return selected rows. We then filter to retain program names that are not NA. 
+
 ```{r}
 # Left-outer join to DT 
-DT <- study_program[DT, on = .(cip6)]
+DT <- study_program[DT, .(mcid, program), on = c("cip6")]
 DT <- DT[!is.na(program)]
 
 # Unique observations
-DT <- DT[, .(mcid, program)]
 DT <- unique(DT)
 DT[]
 ```
@@ -389,14 +383,14 @@ DT[]
 
 ## Add demographics
 
-**Creating variables.** Using columns from `student`, we add variables for race/ethnicity and sex using a left-outer join. All rows of `DT` are returned. 
+**Creating variables.** Using columns from `student`, we add variables for race/ethnicity and sex using a left-outer join. All rows and columns of DT are returned with two columns added from `student`. 
 
 ```{r}
-# Subset of student data frame to join
-cols_to_join <- student[, .(mcid, race, sex)]
+# Selecting columns from student
+student_cols <- student[, .(mcid, race, sex)]
 
-# Left-outer join to DT
-DT <- cols_to_join[DT, on = .(mcid)]
+# Add them to DT with a left outer join
+DT <- student_cols[DT, on = c("mcid")]
 DT[]
 ```
 
@@ -483,8 +477,7 @@ DT <- DT[data_sufficiency == "include"]
 DT <- DT[, .(mcid, cip6)]
 
 # Filter for degree-seeking
-cols_to_join <- student[, .(mcid)]
-DT <- cols_to_join[DT, on = .(mcid), nomatch = NULL]
+DT <- DT[student, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
 
 # Filter by program
 study_program <- filter_search(cip, keep_text = c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
@@ -495,8 +488,7 @@ study_program[, program := fcase(
     cip6 %like% "^1419", "ME", 
     cip6 %chin% c("142701", "143501", "143601", "143701"), "ISE"
 )]
-study_program[, cip6name := NULL]
-DT <- study_program[DT, on = .(cip6)]
+DT <- study_program[DT, .(mcid, cip6, program), on = c("cip6")]
 DT <- DT[!is.na(program)]
 DT[, cip6 := NULL]
 DT <- unique(DT)
@@ -506,8 +498,7 @@ ever[, group := "ever"]
 # Gather graduate subset
 DT <- DT[, .(mcid)]
 DT <- unique(DT)
-cols_to_join <- degree[, .(mcid, cip6)]
-DT <- cols_to_join[DT, on = .(mcid), nomatch = NULL]
+DT <- DT[degree, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
 
 # Filter by completion status
 DT <- add_timely_term(DT, midfield_term = term)
@@ -516,9 +507,8 @@ DT <- DT[completion_status == "positive"]
 DT <- DT[, .(mcid, cip6)]
 
 # Filter by program
-DT <- study_program[DT, on = .(cip6)]
+DT <- study_program[DT, .(mcid, program), on = c("cip6")]
 DT <- DT[!is.na(program)]
-DT <- DT[, .(mcid, program)]
 DT <- unique(DT)
 grad <- copy(DT)
 grad[, group := "grad"]
@@ -527,7 +517,7 @@ grad[, group := "grad"]
 DT <- rbindlist(list(ever, grad), use.names = TRUE)
 
 # Add demographics
-cols_to_join <- student[, .(mcid, race, sex)]
-DT <- cols_to_join[DT, on = .(mcid)]
+student_cols <- student[, .(mcid, race, sex)]
+DT <- student_cols[DT, on = c("mcid")]
 ```
 

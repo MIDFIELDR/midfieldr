@@ -18,7 +18,7 @@ resource_files: |
 
 # code chunks
 knitr::opts_chunk$set(
-  echo = FALSE,
+  echo = TRUE,
   message = FALSE,
   warning = FALSE,
   collapse = FALSE,
@@ -49,8 +49,429 @@ knitr::knit_hooks$set(inline = function(x) {
 
 After subsetting longitudinal Student Unit Records (SURs) for data sufficiency and degree seeking, a typical third step is to restrict a study to students enrolled in specific programs. 
 
+Programs are encoded in the MIDFIELD data sets in the `cip6` variable. To filter for programs under study, it is necessary to know the 6-digit codes for the desired programs. The `cip` data set in midfieldr provides a searchable source of CIP program names and codes.
+
+
+
+
+## Preface
+
+In the US, instructional programs are encoded by "CIP" codes. CIP is the acronym for *Classification of Instructional Programs*, a taxonomy of academic programs curated by the US Department of Education [@NCES:2010]. 
+The 2010 CIP codes are included with midfieldr in the data set `cip`. 
+
+The IPEDS standard encoding format is a two-digit number followed by a period, followed by a four-digit number, for example, 14.0102 [@NCES:2020]. MIDFIELD uses the same numerals, but omits the period, i.e., 140102, and stores the variable as a  character string. 
+
+
+
+
+
 ## Method
 
+We practice strategies of searching the `cip` data set for programs and grouping programs with user-assigned program names. 
+
+
+
+
+
+
+## Taxonomy
+
+Academic programs have three levels of codes and names:
+
+- 6-digit code, a specific program
+- 4-digit code, a group of 6-digit programs of comparable content 
+- 2-digit code, a grouping of 4-digit groups of related content 
+
+Specialties within a discipline are encoded at the 6-digit level, the discipline itself is represented by one or more 4-digit codes (roughly  corresponding to an academic department), and a collection of disciplines  are represented by one or more 2-digit codes (roughly corresponding to an academic college).  
+
+For example, Geotechnical Engineering (140802) is a specialty in  Civil Engineering (1408) which is a department in the college of Engineering (14). 
+
+```{r}
+#| echo: false
+
+library("midfieldr")
+df <- filter_search(cip, "^41")
+n41 <- nrow(df)
+n4102 <- nrow(filter_search(df, "^4102"))
+n4103 <- nrow(filter_search(df, "^4103"))
+name41 <- unique(df[, cip2name])
+
+df24 <- filter_search(cip, "^24")
+n24 <- nrow(df24)
+name24 <- unique(df24[, cip2name])
+
+df51 <- filter_search(cip, "^51")
+n51 <- nrow(df51)
+name51 <- unique(df51[, cip2name])
+
+df1313 <- filter_search(cip, "^1313")
+n1313 <- nrow(df1313)
+name1313 <- unique(df1313[, cip2name])
+```
+
+To illustrate the taxonomy in a little more detail, we show in the table the programs assigned to the 2-digit code 41, "`r name41`". This 2-digit grouping is subdivided into `r length(unique(df[, cip4]))` groups at the 4-digit level (codes 4100--4199) which are further subdivided into `r n41` programs at the 6-digit level (codes 410000--419999). 
+
+```{r}
+#| echo: false
+
+x <- filter_search(cip, "^41")
+x[2:9, cip2name := "\U02193"]
+x[c(4, 5, 7, 8), cip4name := "\U02193"]
+
+x |>
+    kableExtra::kbl(align = "rlrlrl") |>
+    kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+    kableExtra::row_spec(0, background = "#c7eae5") |>
+    kableExtra::column_spec(1:6, color = "black", background = "white")
+```
+
+A 2-digit program can include anywhere from four 4-digit programs (e.g., code 24 `r name24`) to `r n51` 4-digit programs (e.g., code 51 `r name51`). 
+
+And 4-digit programs include anywhere from one 6-digit program (e.g., code 4100 above) to `r n1313` 6-digit programs (e.g., code 1313 `r name1313`).
+
+Unfortunately, some disciplines can comprise more than one 4-digit code. For example, the programs that comprise the broad discipline of Industrial and Systems Engineering encompass four distinct 4-digit codes: 1427 Systems Engineering, 1435 Industrial Engineering, 1436 Manufacturing Engineering, and 1437 Operations Research. Hence the importance of being able to search all CIP data for programs of interest. 
+
+
+
+
+## Introduction to `cip`
+
+If you are writing your own script to follow along, we start with these packages: 
+
+```{r}
+# Packages
+library("midfieldr")
+suppressPackageStartupMessages(library("data.table"))
+
+# Printing options for data.table
+options(
+  datatable.print.nrows = 55,
+  datatable.print.topn = 3,
+  datatable.print.class = TRUE
+)
+```
+
+The CIP data is bundled with midfieldr. 
+
+```{r}
+#| collapse: true
+# Names of the CIP variables
+names(cip)
+```
+
+All variables in `cip` are character strings, which protects the leading zeros of some CIP codes. 
+
+```{r}
+# View cip
+cip
+```
+
+View the data set help page by running
+
+    # Run in Console to view help page
+    ? cip
+
+
+The number of unique programs.  
+
+```{r}
+#| collapse: true
+
+# 2-digit level
+sort(unique(cip$cip2))
+
+# 4-digit level
+length(unique(cip$cip4))
+
+# 6-digit level
+length(unique(cip$cip6))
+```
+
+A sample of program names (`sample()` uses a random number generator, so your result will differ from that shown). 
+
+```{r}
+#| echo: false
+set.seed(20210613)
+```
+
+```{r}
+#| collapse: true
+
+# 2-digit name sample
+sample(cip[, cip2name], 10)
+
+# 4-digit name sample
+sample(cip[, cip4name], 10)
+
+# 6-digit name sample
+sample(cip[, cip6name], 10)
+```
+
+```{r}
+#| echo: false
+set.seed(NULL)
+```
+
+
+
+
+
+
+## Using a keyword search
+
+`filter_search()` is the midfieldr function for searching the `cip` data set. View the help page by running
+
+    ? filter_search()
+
+The variables in `cip` are all characters and `filter_search()` subsets a data frame using character search terms. The arguments are: 
+
+- `dframe` data frame to be subset
+- `keep_text` character vector of search text for retaining rows, not case-sensitive 
+- `drop_text` (optional) character vector of search text for dropping rows
+- `select` (optional) character vector of column names to search and return, default all columns  
+
+For example, filtering the CIP data for all programs containing the word "engineering" yields `r nrow(filter_search(cip, "engineering"))` observations. 
+
+```{r}
+# Filter basics
+filter_search(dframe = cip, keep_text = "engineering")
+```
+
+The first two arguments in `filter_search()` do not have to be named explicitly, but the  optional `drop_text` and `select` arguments do.
+
+```{r}
+# Optional arguments drop_text and select
+filter_search(cip, 
+              "engineering", 
+              drop_text = c("related", "technology", "technologies"), 
+              select = c("cip6", "cip6name"))
+```
+
+Columns in `select`  are subset after filtering for `keep_text` and `drop_text`
+
+Suppose we want to find the CIP codes and names for all programs in Civil Engineering. The search is insensitive to case, so we start with the following code chunk. 
+
+``` r
+# Example 1 filter using keywords
+filter_search(cip, "civil")
+```
+
+```{r}
+#| echo: false
+filter_search(cip, "civil") |>
+    kableExtra::kbl(align = "rlrlrl") |>
+    kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+    kableExtra::row_spec(0, background = "#c7eae5") |>
+    kableExtra::column_spec(1:6, color = "black", background = "white")
+```
+
+The search returns some programs with Civilization in their names as well as Engineering Technology. If we wanted Civil Engineering only, we can use a sequence of function calls, where the outcome of the one operation is assigned to the first argument of the next operation.  
+
+The following code chunk could be read as, "Start with the `cip` data frame, then keep any rows in which 'civil' is detected, then keep any rows in which 'engineering' is detected, then drop any rows in which 'technology' is detected."
+
+```{r}
+#| results: hide
+# First search
+first_pass <- filter_search(cip, "civil")
+
+# Refine the search
+second_pass <- filter_search(first_pass, "engineering")
+
+# Refine further
+third_pass <- filter_search(second_pass, drop_text = "technology")
+```
+
+```{r}
+#| echo: false
+third_pass |>
+    kableExtra::kbl(align = "rlrlrl") |>
+    kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+    kableExtra::row_spec(0, background = "#c7eae5") |>
+    kableExtra::column_spec(1:6, color = "black", background = "white")
+```
+
+Seeing that all Civil Engineering programs have the same `cip4name`, we could have used  `keep_text = c("civil engineering")` to narrow the search to rows that match the full phrase. For example, 
+
+```{r}
+#| results: hide
+filter_search(cip, "civil engineering", drop_text = "technology")
+```
+
+produces the same result reported in the table above. 
+
+### Exercises
+
+1. Determine the set of 6-digit CIP codes you would expect to be used by a College of Business. 
+
+2. The social sciences 2-digit CIP does not necessarily include all possible social science programs. Let anthropology, economics, geography, linguistics, political science, jurisprudence, psychology, and sociology be defined a social sciences. Determine the set of 6-digit codes we would collect to study these programs. 
+
+
+
+
+
+
+## Using a numerical code search
+
+Suppose we want to study programs relating to German culture, language, and literature. Using  "german" for the `keep_text` value yields 
+
+```r
+# Search on text
+filter_search(cip, "german")
+```
+
+```{r}
+#| echo: false
+filter_search(cip, "german") |>
+    kableExtra::kbl(align = "rlrlrl") |>
+    kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+    kableExtra::row_spec(0, background = "#c7eae5") |>
+    kableExtra::column_spec(1:6, color = "black", background = "white")
+```
+
+From the 6-digit program names we find only two that are of interest, German Studies (050125) and German Language and Literature (160501). We use a character vector to assign these two codes to the `keep_text` argument. 
+ 
+```r
+# Search on codes
+filter_search(cip, c("050125", "160501"))
+```
+
+```{r }
+#| echo: false
+filter_search(cip, c("050125", "160501")) |>
+    kableExtra::kbl(align = "rlrlrl") |>
+    kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+    kableExtra::row_spec(0, background = "#c7eae5") |>
+    kableExtra::column_spec(1:6, color = "black", background = "white")
+```
+
+If the 6-digit codes are entered as integers, they produce an error. 
+ 
+```{r}
+#| error: TRUE
+#| purl: false
+#| collapse: true
+# Search that produces an error
+filter_search(cip, c(050125, 160501))
+```
+
+### Exercise
+
+1. In the Social sciences exercise in the previous section, searching for  "jurisprudence" produced two codes: "220203" and "220204." Search `cip` for these two codes and determine the 2-digit program to which they belong. 
+
+2. Do an initial search on the term, "history." From the results, 
+    - Identify the 2-digit CIP for history.   
+    - Use a numerical search for programs that start with that 2-digit CIP. 
+    - Subset for the 6-digit CIPs and 6-digit CIP names.  
+    - Assign the result to the object name `exercise_cip`.
+
+
+Answer given below to check your work. 
+
+```{r}
+#| echo: false
+# partial solution to exercise
+pass01 <- filter_search(cip, "history")
+pass02 <- filter_search(pass01, "^54")
+cols_we_want <- c("cip6", "cip6name")
+exercise_cip <- pass02[, ..cols_we_want]
+exercise_cip
+```
+
+
+
+## Using a regular expression search
+
+Specifying 4-digit codes yields a data frame all 6-digit programs containing the 4-digit string. We use the regular expression notation `^` to match the start of the strings.
+
+```r
+# example 3 filter using regular expressions
+filter_search(cip, c("^1410", "^1419"))
+```
+
+```{r}
+#| echo: false
+filter_search(cip, c("^1410", "^1419")) |>
+    kableExtra::kbl(align = "rlrlrl") |>
+    kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+    kableExtra::row_spec(0, background = "#c7eae5") |>
+    kableExtra::column_spec(1:6, color = "black", background = "white")
+```
+
+The 2-digit series represent the most general groupings of related programs. Here, the result includes all History programs. 
+
+```r
+# Search on 2-digit code
+filter_search(cip, "^54")
+```
+
+```{r}
+#| echo: false
+filter_search(cip, "^54") |>
+    kableExtra::kbl(align = "rlrlrl") |>
+    kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+    kableExtra::row_spec(0, background = "#c7eae5") |>
+    kableExtra::column_spec(1:6, color = "black", background = "white")
+```
+
+The series argument can include any combination of 2, 4, and 6-digit codes. It can also be passed to the function as a character vector. 
+
+```r
+# Search on vector of codes
+codes_we_want <- c("^24", "^4102", "^450202")
+filter_search(cip, codes_we_want)
+```
+
+```{r}
+#| echo: false
+codes_we_want <- c("^24", "^4102", "^450202")
+filter_search(cip, codes_we_want) |>
+    kableExtra::kbl(align = "rlrlrl") |>
+    kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+    kableExtra::row_spec(0, background = "#c7eae5") |>
+    kableExtra::column_spec(1:6, color = "black", background = "white")
+```
+
+
+
+
+## When search terms cannot be found
+
+If the `keep_text` argument includes terms that cannot be found in the CIP data frame, the unsuccessful terms are identified in a message and the successful terms produce the usual output. 
+
+For example, the following `keep_text` argument includes three search terms that are not present in the CIP data ("111111", "^55", and "Bogus") and two that are ("050125" and "160501").  
+
+```{r}
+#| collapse: true
+#| message: true
+# Unsuccessful terms produce a message
+sub_cip <- filter_search(cip, c("050125", "111111", "160501", "Bogus", "^55"))
+
+# But the successful terms are returned
+sub_cip
+```
+
+However, as seen earlier, if none of the search terms are found, an error occurs. 
+
+```{r}
+#| collapse: true
+#| error: true
+#| purl: false
+# When none of the search terms are found
+filter_search(cip, c("111111", "Bogus", "^55"))
+```
+
+
+
+
+## CIP data from another source
+
+If you use a CIP data set from another source, it must have the same structure as `cip`: six character columns named as follows,  
+
+```{r}
+#| collapse: true
+# Name and class of variables (columns) in cip
+unlist(lapply(cip, FUN = class))
+```
 
 
 
@@ -58,7 +479,145 @@ After subsetting longitudinal Student Unit Records (SURs) for data sufficiency a
 
 
 
-## Population
+## Assigning program names
+
+Programs in MIDFIELD data sets are encoded by 6-digit CIP codes. As we've shown, multiple 6-digit codes can be considered specialties within a larger program with a 4-digit code or even a set of distinct 4-digit codes. It is nearly always necessary therefore to assign our own program labels to groups of  6-digit codes to include all observations relevant to meet the needs of a study. 
+
+> To emphasize the point: When grouping and summarizing MIDFIELD data, it is usually necessary to group by one's own set of program names instead of the CIP codes and names directly. 
+
+We use our case study group of four engineering programs to illustrate several methods for adding a `program` column to the CIP data frame. 
+
+By searching `cip`, we can find that the 4-digit codes for the four engineering programs are: Civil (1408), Electrical (1410), Mechanical (1419), and Industrial/Systems (1427, 1435, 1436, and 1437). 
+
+We obtain their 6-digit CIP codes. The 4-digit names are appropriate here.  Our  task is to create a variable with custom program names. 
+
+```{r}
+# Changing the number of rows to print
+options(datatable.print.nrows = 15)
+
+# Four engineering programs
+study_program <- filter_search(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+
+# Retain the needed columns
+study_program <- study_program[, .(cip6, cip4name)]
+
+# Examine the result
+study_program[]
+```
+
+To make the assignments clear, our approach here will be to assign a new `program` column with NA values, then edit the new column values. 
+
+
+```{r}
+# Assign a new column
+study_program[, program := NA_character_]
+
+# Examine the result
+study_program[]
+```
+
+### 1. Use `cip4name %ilike%` to recode one value
+
+The `%like%` function is essentially a wrapper function around the base R `grepl()` function. The `%ilike%` version is case-insensitive. See its help page by running (the back-ticks facilitate a help search for terms starting with a symbol):
+
+``` r
+? `%like%`
+```
+
+In this approach, we search for one distinctive term only. We're using abbreviations for compact output. 
+
+```{r}
+# Recode program using the 4-digit name
+study_program[cip4name %ilike% "electrical",  program := "EE"]
+
+# Examine the result
+study_program[]
+```
+
+### 2. Use `cip6 %like%` to recode one value
+
+In our second approach, we use the `%like%` function again, but apply it to a CIP code. Here we use the regular expression `^1408` meaning "starts with 1408." 
+
+```{r}
+# Recode program using the 4-digit code
+study_program[cip6 %like% "^1408",  program := "CE"]
+
+# Examine the result
+study_program[]
+```
+
+
+### 3. Use `program := fcase()` to edit all values 
+
+In this approach, we use the data.table function `fcase()`, an implementation of the SQL CASE WHEN statement. The data.table function `%chin%` is like `%in%`, but for character vectors.
+
+```{r}
+# Recode all program values
+study_program[, program := fcase(
+    cip6 %like% "^1408", "CE", 
+    cip6 %like% "^1410", "EE", 
+    cip6 %like% "^1419", "ME", 
+    cip6 %chin% c("142701", "143501", "143601", "143701"), "ISE"
+)]
+
+# Examine the result
+study_program[]
+```
+
+Having completed labeling the programs, we can remove the original verbose `cip4nme` column. 
+
+```{r}
+# Delete a column
+study_program[, cip4name := NULL]
+
+# Examine the result
+study_program[]
+```
+
+
+### Exercises
+
+1. Obtain the 9 programs in the 2-digit program 54 History. 
+2. Add a `program` column with NA values. 
+3. Edit some of the values in the `program` column as follows:
+    - Rename both "General" and "Other" to "General History" 
+    - Shorten "History and Philosophy..." to "Sci/Tech History" 
+    - Shorten "American History ..." to "US History"
+    - Shorten "Public Applied ..." to "Public/Applied History"
+    - Others retain their 6-digit name
+3. Delete the `cip6name` column. 
+
+
+Answer given below to check your work. 
+
+```{r echo = FALSE}
+# exercise solution
+exercise_program <- copy(exercise_cip)
+exercise_program[, program := cip6name]
+exercise_program[
+  cip6name %ilike% "General",
+  program := "General History"
+]
+exercise_program[
+  cip6name %ilike% "Other",
+  program := "General History"
+]
+exercise_program[
+  cip6name %ilike% "Philosophy",
+  program := "Sci/Tech History"
+]
+exercise_program[
+  cip6name %ilike% "Public",
+  program := "Public/Applied History"
+]
+exercise_program[
+  cip6name %ilike% "United States",
+  program := "US History"
+]
+exercise_program[, cip6name := NULL]
+exercise_program[]
+```
+
 
 
 
@@ -68,12 +627,102 @@ After subsetting longitudinal Student Unit Records (SURs) for data sufficiency a
 
 ## Closing
 
+We introduced the taxonomy of academic programs established by the US Department of Education and its implementation in the midfieldr data set `cip`. 
+
+We outlined several search strategies for identifying programs of interest and methods for assigning custom program labels typically used for grouping and summarizing SUR observations. 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+## References
+
+<div id="refs"></div>
 
 
 ## Appendix
 
-We conclude each vignette by collecting its code chunks in a single, condensed script for the convenience of those who wish to copy it into their own R file. 
+We conclude each vignette by collecting its code chunks in a single, condensed script for the convenience of those who wish to copy it into their own R file.
+
+
+```{r}
+#| eval: false
+#| error: true
+#| purl: false
+
+# Packages
+library("midfieldr")
+suppressPackageStartupMessages(library("data.table"))
+
+# Printing options for data.table
+options(
+  datatable.print.nrows = 55,
+  datatable.print.topn = 3,
+  datatable.print.class = TRUE
+)
+
+# Introduction to cip
+names(cip)
+sort(unique(cip$cip2))
+length(unique(cip$cip4))
+length(unique(cip$cip6))
+sample(cip[, cip2name], 10)
+sample(cip[, cip4name], 10)
+sample(cip[, cip6name], 10)
+
+# Using a keyword search
+filter_search(dframe = cip, keep_text = "engineering")
+filter_search(cip, 
+              "engineering", 
+              drop_text = c("related", "technology", "technologies"), 
+              select = c("cip6", "cip6name"))
+filter_search(cip, "civil")
+first_pass <- filter_search(cip, "civil")
+second_pass <- filter_search(first_pass, "engineering")
+third_pass <- filter_search(second_pass, drop_text = "technology")
+filter_search(cip, "civil engineering", drop_text = "technology")
+
+# Using a numerical code search
+filter_search(cip, "german")
+filter_search(cip, c("050125", "160501"))
+
+# Using a regular expression search
+filter_search(cip, c("^1410", "^1419"))
+filter_search(cip, "^54")
+codes_we_want <- c("^24", "^4102", "^450202")
+filter_search(cip, codes_we_want)
+
+# When search terms cannot be found
+# filter_search(cip, c("050125", "111111", "160501", "Bogus", "^55"))
+# filter_search(cip, c("111111", "Bogus", "^55"))
+
+# CIP data from another source
+unlist(lapply(cip, FUN = class))
+
+# Assigning program names
+options(datatable.print.nrows = 15)
+study_program <- filter_search(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+study_program <- study_program[, .(cip6, cip4name)]
+study_program[, program := NA_character_]
+study_program[cip4name %ilike% "electrical",  program := "EE"]
+study_program[cip6 %like% "^1408",  program := "CE"]
+study_program[, program := fcase(
+    cip6 %like% "^1408", "CE", 
+    cip6 %like% "^1410", "EE", 
+    cip6 %like% "^1419", "ME", 
+    cip6 %chin% c("142701", "143501", "143601", "143701"), "ISE"
+)]
+study_program[, cip4name := NULL]
+```
+

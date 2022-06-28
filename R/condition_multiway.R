@@ -36,13 +36,15 @@
 #'        \itemize{
 #'
 #'        \item{"median"} {(default) Orders by the median of values in the
-#'        quantitative column grouped by category.}
+#'        quantitative column grouped by category. This is the order 
+#'        recommended by Cleveland when the quantitative variable is an 
+#'        integer count or frequency.}
 #'
 #'        \item{"mean"} {Orders by the mean of values in the quantitative
 #'        column grouped by category.}
 #'
 #'        \item{"sum"} {Orders by the sum of values in the quantitative
-#'        column grouped by category. Useful when the quantitative variable
+#'        column grouped by category. Useful also when the quantitative variable
 #'        is a count or frequency.}
 #'
 #'        \item{"percent"} {Orders by ratios computed by category. Used when
@@ -308,16 +310,12 @@ order_by_alphabet <- function(dframe,
       CATEG_2 = categ_2
     ),
     {
-      temp <- DT[, CATEG_1]
-      DT[, CATEG_1 := factor(
-        temp,
-        levels = sort((levels(temp)), decreasing = TRUE)
-      )]
-      temp <- DT[, CATEG_2]
-      DT[, CATEG_2 := factor(
-        temp,
-        levels = sort((levels(temp)), decreasing = TRUE)
-      )]
+        setDT(DT)
+        DT[, CATEG_1 := as.character(CATEG_1)]
+        DT[, CATEG_2 := as.character(CATEG_2)]
+        setorder(DT, -CATEG_1, -CATEG_2)
+        DT[, CATEG_1 := as.factor(CATEG_1)]
+        DT[, CATEG_2 := as.factor(CATEG_2)]
     }
   )
   DT[]

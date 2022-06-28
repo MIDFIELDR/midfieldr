@@ -23,13 +23,15 @@ variables.}
        \itemize{
 
        \item{"median"} {(default) Orders by the median of values in the
-       quantitative column grouped by category.}
+       quantitative column grouped by category. This is the order 
+       recommended by Cleveland when the quantitative variable is an 
+       integer count or frequency.}
 
        \item{"mean"} {Orders by the mean of values in the quantitative
        column grouped by category.}
 
        \item{"sum"} {Orders by the sum of values in the quantitative
-       column grouped by category. Useful when the quantitative variable
+       column grouped by category. Useful also when the quantitative variable
        is a count or frequency.}
 
        \item{"percent"} {Orders by ratios computed by category. Used when
