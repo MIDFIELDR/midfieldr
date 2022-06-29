@@ -1,11 +1,10 @@
 
 
 
-## midfieldr 1.0.0.9022 / 2021-07
-
+## midfieldr 1.0.0.9022 / 2021-06-29
 
 - Revise or add vignettes for data sufficiency, degree seeking (inner joins), 
-programs, completion
+programs, completion, and demographics (left outer joins)
 - Correction to `condition_multiway()` for alphabetical ordering, revise 
 unit tests
 - Remove dependency on Rdpack
