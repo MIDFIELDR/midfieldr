@@ -1,0 +1,419 @@
+---
+title: "Completion status"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
+output: rmarkdown::html_vignette
+csl: ../inst/information-science-and-technology.csl
+vignette: >
+  %\VignetteIndexEntry{Completion status}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+nocite: | 
+resource_files: |
+---
+
+```{r setup}
+#| include: false
+
+# code chunks
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = FALSE,
+  comment = "#>",
+  error = FALSE
+)
+
+# figures
+knitr::opts_chunk$set(
+    fig.path = "../man/figures/art-040-completion-", 
+    fig.width = 6,
+    fig.asp = 1 / 1.6,
+    out.width = "70%",
+    fig.align = "center"
+)
+
+# inline numbers
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+```
+
+After subsetting longitudinal Student Unit Records (SURs) for data sufficiency, degree seeking, and programs, a typical next step is to label the records with completion status---required for most metrics because graduation is the most significant measure of both program success and student success. 
+
+To be counted as a timely graduate, a student must satisfy the timely completion criterion. Depending on the purpose of the study, completion status can be used to filter observations or to group and summarize observations. 
+
+
+
+
+
+
+## Definitions
+
+program completion
+
+: Graduating from a baccalaureate program 
+
+timely completion criterion 
+
+: Completing a program in no more than a specified span of years, in many cases, within 6 years after admission, or possibly less for some transfer students. 
+
+
+
+
+
+## Method
+
+The method for labeling completion status is:
+
+- Completion is TRUE if a degree is recorded in the `degree` data table and FALSE otherwise.  
+- Completion status is "timely" if the degree term is no later than the timely term; "untimely" if later; and "NA" for non-completion. 
+
+
+
+## Population
+
+If you are writing your own script to follow along, we start with these packages:
+
+```{r}
+# Packages
+library("midfieldr")
+library("midfielddata")
+suppressPackageStartupMessages(library("data.table"))
+
+# Printing options for data.table
+options(
+  datatable.print.nrows = 55,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
+```
+
+**Importing.** Load the midfielddata data tables.
+
+```{r}
+# Load data sets from midfielddata
+data(student, term, degree)
+```
+
+**Filtering.** The steps from previous vignettes ([Data sufficiency](art-010-data-sufficiency.html) and  [Degree seeking](art-020-degree-seeking.html) are reproduced here in condensed form to yield the IDs of all students in the practice data satisfying data sufficiency and degree seeking. 
+
+```{r}
+# Filter for data sufficiency
+DT <- copy(term)
+DT <- add_timely_term(DT, term)
+DT <- add_data_sufficiency(DT, term)
+DT <- DT[data_sufficiency == "include"]
+
+# Filter for degree seeking
+DT <- DT[, .(mcid)]
+DT <- unique(DT)
+DT <- DT[student, .(mcid), on = c("mcid"), nomatch = NULL]
+DT[]
+```
+
+This data frame is adequate for demonstration purposes. 
+
+
+
+
+## `add_completion_status()` 
+
+You can view the function help page by running,
+
+    ? add_completion_status()
+
+Its arguments are:
+
+`dframe`
+
+: Data frame of student unit record (SUR) observations keyed by student ID. Required variables are `mcid` and `timely_term`.
+
+`midfield_degree`
+
+: Data frame of SUR degree observations keyed by student ID. Default is `degree`. Required variables are `mcid` and `term_degree`.
+
+The function adds three columns to the SUR data frame: the `completion_status` result plus two supporting variables:
+
+`term_degree`
+
+: Character. Term in which a program is completed. Encoded YYYYT.
+
+`completion`
+
+: Logical. TRUE denotes program completion; FALSE denotes non-completion. 
+
+The possible values for completion status are: 
+
+- "timely", program completion no later than `timely_term`
+- "untimely", program completion after `timely_term`
+- NA, non-completion. 
+
+
+**Add variables.** For demonstrating `add_completion_status()`, our working data frame must have columns for ID and the timely completion term. We use `add_timely_term()` again, though alternatively we could have retained the `timely_term` variable in  earlier code chunks. 
+
+```{r}
+# Add completion status
+DT <- add_timely_term(DT, term)
+DT <- add_completion_status(DT, degree)
+
+# Drop unnecessary columns
+DT[, c("term_i", "level_i", "adj_span") := NULL]
+DT[]
+```
+
+
+**Closer look.** Let’s examine three specific observations to illustrate the sense of the results.
+
+```{r}
+# Student F
+DT[mcid == "MID25783162"]
+```
+
+The student has a degree term, Spring 1997 (encoded `19963`), so completion is TRUE. Their degree term does not exceed their timely completion term, Spring 1998 (encoded `19973`), so their completion status is "timely".
+
+```{r}
+# Student G
+DT[mcid == "MID26696871"]
+```
+
+This student too has a degree term, Spring 2017 (encoded `20163`), so completion is TRUE. Their degree term exceeds their timely completion term, Spring 2016 (encoded `20153`), so their completion status is "untimely". 
+
+```{r}
+# Student H
+DT[mcid == "MID26697615"]
+```
+
+The student's degree term is NA indicating they did not graduate. Completion is therefore FALSE and completion status is also NA. 
+
+
+
+**Usage.** The following implementations yield identical results,
+
+```{r}
+#| collapse: true
+
+# Required arguments in order and explicitly named 
+x <- add_completion_status(dframe = DT, midfield_degree = degree)
+
+# Required arguments in order, but not named   
+y <- add_completion_status(DT, degree)
+
+# Using the implicit default for the midfield_term argument
+z <- add_completion_status(DT)
+
+# Equality test between the data tables
+all.equal(x, y)
+all.equal(x, z)
+```
+
+
+In the vignettes, I will typically write required arguments without names to remind us which midfielddata table is being used, e.g.,
+
+    add_timely_term(DT, term)
+
+Your degree data set can be named something other than `degree`. For example, if we were working with the “toy” (exercise) data sets bundled with midfieldr, we would write something like this,
+
+```{r}
+# Using degree data named something else
+toy_DT <- toy_student[, .(mcid)]
+toy_DT <- add_timely_term(toy_DT, toy_term)
+toy_DT <- add_completion_status(toy_DT, toy_degree)
+toy_DT[, c("term_i", "level_i", "adj_span") := NULL]
+toy_DT[]
+```
+
+
+
+
+
+**Caution! Silent overwriting!** In this case, existing columns with the same name as one of the added columns are deleted and replaced except.
+
+Using the toy data to illustrate, I’ll drop the columns added by timely term except `completion`
+
+```{r}
+# Drop two columns
+toy_DT <- toy_DT[, c("term_degree", "completion_status") := NULL]
+toy_DT[]
+```
+
+Reapplying the function, the `completion` column is silently deleted and replaced.
+
+```{r}
+# Reapply the function
+toy_DT <- add_completion_status(toy_DT, toy_degree)
+toy_DT[]
+```
+
+
+
+
+
+## Completion summaries
+
+If our research question requires us to count the frequency of observations by completion status, we can retain all observations and group and summarize.
+
+```{r}
+DT[, .N, by = c("completion_status")]
+```
+
+Or we might add a second grouping variable. 
+
+```{r}
+x <- DT[student, .(mcid, sex, completion_status), on = c("mcid"), nomatch = NULL]
+x <- x[, .N, by = c("sex", "completion_status")]
+setkeyv(x, c("completion_status", "sex"))
+x[]
+```
+
+
+
+## Completion filter
+
+If our research question requires us to extract timely graduates only, we can use completion status as a filter. 
+
+```{r}
+x <- DT[completion_status == "timely"]
+x[]
+```
+
+
+## Completion programs
+
+If our research question require the programs that graduates completed, we can use an inner join with `degree` and retain selected columns.
+
+```{r}
+DT <- DT[completion_status == "timely"]
+DT <- DT[degree, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
+DT[]
+```
+
+If we have a particular set of programs such as those developed in the case study vignettes, we can join our program names with another inner join. First, the case study program names and codes are loaded with midfieldr. View the data help page by running 
+
+    ? study_program_cips
+
+
+The case study program CIP codes and names are: 
+
+```{r}
+#| collapse: true
+study_program_cips[]
+```
+
+Inner-join the program names and retain only those graduating in the selected programs.
+ 
+```{r}
+DT <- DT[study_program_cips, .(mcid, program), on = c("cip6"), nomatch = NULL]
+DT[]
+```
+ 
+Again, a quick summary of program timely graduates.  
+
+```{r}
+DT[, .N, by = c("program")]
+```
+
+
+
+
+
+
+## Closing
+
+Starting with the student, term, and degree data tables, we filtered the data for data sufficiency and degree seeking. We explored the features of the `add_completion_status()` function and examined how the result might be used. 
+
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+## Appendix
+
+We conclude each vignette by collecting its code chunks in a single, condensed script for the convenience of those who wish to copy it into their own R file.
+
+
+```{r}
+#| eval: false
+
+# Packages
+library("midfieldr")
+library("midfielddata")
+suppressPackageStartupMessages(library("data.table"))
+
+# Printing options for data.table
+options(
+  datatable.print.nrows = 55,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
+
+# Load data sets from midfielddata
+data(student, term, degree)
+
+# Filter for data sufficiency
+DT <- copy(term)
+DT <- add_timely_term(DT, term)
+DT <- add_data_sufficiency(DT, term)
+DT <- DT[data_sufficiency == "include"]
+
+# Filter for degree seeking
+DT <- DT[, .(mcid)]
+DT <- unique(DT)
+DT <- DT[student, .(mcid), on = c("mcid"), nomatch = NULL]
+
+# Add completion status
+DT <- add_timely_term(DT, term)
+DT <- add_completion_status(DT, degree)
+DT[, c("term_i", "level_i", "adj_span") := NULL]
+
+# Closer look
+DT[mcid == "MID25783162"]
+DT[mcid == "MID26696871"]
+DT[mcid == "MID26697615"]
+
+# Equivalent statements 
+x <- add_completion_status(dframe = DT, midfield_degree = degree)
+y <- add_completion_status(DT, degree)
+z <- add_completion_status(DT)
+all.equal(x, y)
+all.equal(x, z)
+
+# Using degree data named something else
+toy_DT <- toy_student[, .(mcid)]
+toy_DT <- add_timely_term(toy_DT, toy_term)
+toy_DT <- add_completion_status(toy_DT, toy_degree)
+toy_DT[, c("term_i", "level_i", "adj_span") := NULL]
+
+# Caution. Overwriting. 
+toy_DT <- toy_DT[, c("term_degree", "completion_status") := NULL]
+toy_DT <- add_completion_status(toy_DT, toy_degree)
+
+# Completion summaries
+DT[, .N, by = c("completion_status")]
+x <- DT[student, .(mcid, sex, completion_status), on = c("mcid"), nomatch = NULL]
+x <- x[, .N, by = c("sex", "completion_status")]
+setkeyv(x, c("completion_status", "sex"))
+
+# Completion filter
+x <- DT[completion_status == "timely"]
+
+# Completion programs
+DT <- DT[completion_status == "timely"]
+DT <- DT[degree, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
+DT <- DT[study_program_cips, .(mcid, program), on = c("cip6"), nomatch = NULL]
+DT[, .N, by = c("program")]
+```
+

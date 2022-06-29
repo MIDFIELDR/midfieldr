@@ -14,7 +14,7 @@
 #' is untimely and they are grouped with the non-completers when computing 
 #' a metric such as graduation rate. 
 #' 
-#' Completion status is "positive" for students completing their programs 
+#' Completion status is "timely" for students completing their programs 
 #' no later than their timely completion terms. See also 
 #' \code{add_timely_term()}. 
 #'
@@ -42,9 +42,9 @@
 #'  programs.}
 #'  \item{\code{completion_status}}{Character. Label each observation to 
 #'  indicate program completion status. Possible values are: 
-#'  \code{positive}, indicating programs completed no later than their timely 
-#'  completion term; and \code{negative}, indicating programs never completed 
-#'  as well as programs completed after their timely completion terms.}
+#'  "timely", indicating program completion no later than the timely 
+#'  completion term; "untimely", indicating program completion after  
+#'  the timely completion term; and "NA" indicating non-completion.}
 #' }
 #'
 #'
@@ -97,13 +97,6 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
   # retain original variables NOT in the vector of new columns 
   old_cols <- find_old_cols(dframe, new_cols) 
   dframe <- dframe[, .SD, .SDcols = old_cols]
-
-  # subset midfield data table
-  # DT <- filter_match(midfield_degree,
-  #   match_to = dframe,
-  #   by_col = "mcid",
-  #   select = c("mcid", "term_degree")
-  # )
  
   # Inner join using three columns of term
   x <- midfield_degree[, .(mcid, term_degree)]
@@ -119,14 +112,14 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
   # left-outer join, keep all rows of dframe
   dframe <- merge(dframe, DT, by = "mcid", all.x = TRUE)
 
-  # add program completion status column
+  # T/F program was completed
   dframe[, completion := fifelse(is.na(term_degree), FALSE, TRUE)]
 
-  # evaluate, is the completion timely, TRUE / FALSE
+  # T/F/NA program was completed in timely manner
   dframe[, completion_status := fifelse(term_degree <= timely_term,
-    "positive", 
-    "negative",
-    na = "negative"
+    "timely", 
+    "untimely",
+    na = NA_character_
   )]
 
   # select columns to return

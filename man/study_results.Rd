@@ -46,7 +46,8 @@ completion.
 \seealso{
 Other case-study-data: 
 \code{\link{study_observations}},
-\code{\link{study_pool}}
+\code{\link{study_pool}},
+\code{\link{study_program_cips}}
 }
 \concept{case-study-data}
 \keyword{datasets}

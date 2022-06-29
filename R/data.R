@@ -232,11 +232,39 @@
 
 # -------------------------------------------------------------------
 
+#' Case-study program labels and CIP codes
+#' 
+#' An intermediate result provided for the convenience of vignette users. 
+#' Program CIP codes and labels of the four programs of the case study. 
+#' Keyed by 6-digit CIPs.
+#' 
+#' Starting with the midfieldr \code{cip} data set, we extracted the CIPs 
+#' of the four programs of the case study and assigned them a custom label 
+#' to be used for grouping and summarizing. 
+#'
+#' @format \code{data.table} with 15 rows and 2 columns.
+#' 
+#' \describe{
+#'
+#'  \item{cip6}{Character, 6-digit CIP program codes.}
+#'  
+#'  \item{program}{Character, abbreviated labels for four engineering programs. 
+#'  Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE" 
+#'  (Industrial/Systems Engineering), and  "ME" (Mechanical Engineering).}
+#'
+#' }
+#'
+#' @family case-study-data
+#'
+"study_program_cips"
+
+# -------------------------------------------------------------------
+
 #' Case-study observations
 #' 
 #' An intermediate result provided for the convenience of vignette users. 
-#' Post-processed observations of students ever enrolled in and graduating 
-#' from the four programs of the case study. Keyed by student ID.  
+#' Post-processed observations of students ever enrolled in as well as students 
+#' graduating from the four programs of the case study. Keyed by student ID.  
 #' 
 #' Starting with the case-study starting pool of students ever enrolled in the 
 #' four programs of the study (Civil, Electrical, Industrial/Systems, and 

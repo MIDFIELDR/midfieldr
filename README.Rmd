@@ -156,19 +156,19 @@ DT <- DT[, .N, by = c("completion_status", "sex", "race")]
 # Tabulate results
 DT[, race_sex := paste(race, sex)]
 DT_display <- dcast(DT, race_sex ~ completion_status, value.var = "N")
-setcolorder(DT_display, c("race_sex", "positive"))
+setcolorder(DT_display, c("race_sex", "timely", "untimely"))
 setnames(DT_display,
-  old = c("race_sex", "positive", "negative"),
-  new = c("Group", "Positive outcome", "Negative outcome")
+  old = c("race_sex", "timely", "untimely", "NA"),
+  new = c("Group", "Timely completion", "Untimely completion", "Did not complete")
 )
 ```
 
-Tabulated results of usage example. "Positive outcome" is the count of graduates completing their programs in no more than 6 years. "Negative outcome" is the sum of those graduating in more than 6 years plus those not graduating. 
+Tabulated results of usage example. "Timely completion" is the count of graduates completing their programs in no more than 6 years; "Untimely completion" is the count of those graduating in more than 6 years; "Did not complete" is the count of non-graduates. 
 
 ```{r}
 #| echo: false
 DT_display |>
-    kableExtra::kbl(align = "lrr") |>
+    kableExtra::kbl(align = "lrrr") |>
     kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
     kableExtra::row_spec(0, background = "#c7eae5") |>
     kableExtra::column_spec(1:3, color = "black", background = "white")

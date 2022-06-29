@@ -32,9 +32,9 @@ Columns added:
  programs.}
  \item{\code{completion_status}}{Character. Label each observation to 
  indicate program completion status. Possible values are: 
- \code{positive}, indicating programs completed no later than their timely 
- completion term; and \code{negative}, indicating programs never completed 
- as well as programs completed after their timely completion terms.}
+ "timely", indicating program completion no later than the timely 
+ completion term; "untimely", indicating program completion after  
+ the timely completion term; and "NA" indicating non-completion.}
 }
 }
 \description{
@@ -51,7 +51,7 @@ admission. If they do, their completion is timely; if not, their completion
 is untimely and they are grouped with the non-completers when computing 
 a metric such as graduation rate. 
 
-Completion status is "positive" for students completing their programs 
+Completion status is "timely" for students completing their programs 
 no later than their timely completion terms. See also 
 \code{add_timely_term()}.
 }

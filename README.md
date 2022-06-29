@@ -182,17 +182,17 @@ DT <- DT[, .N, by = c("completion_status", "sex", "race")]
 # Tabulate results
 DT[, race_sex := paste(race, sex)]
 DT_display <- dcast(DT, race_sex ~ completion_status, value.var = "N")
-setcolorder(DT_display, c("race_sex", "positive"))
+setcolorder(DT_display, c("race_sex", "timely", "untimely"))
 setnames(DT_display,
-  old = c("race_sex", "positive", "negative"),
-  new = c("Group", "Positive outcome", "Negative outcome")
+  old = c("race_sex", "timely", "untimely", "NA"),
+  new = c("Group", "Timely completion", "Untimely completion", "Did not complete")
 )
 ```
 
-Tabulated results of usage example. “Positive outcome” is the count of
-graduates completing their programs in no more than 6 years. “Negative
-outcome” is the sum of those graduating in more than 6 years plus those
-not graduating.
+Tabulated results of usage example. “Timely completion” is the count of
+graduates completing their programs in no more than 6 years; “Untimely
+completion” is the count of those graduating in more than 6 years; “Did
+not complete” is the count of non-graduates.
 
 <table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <thead>
@@ -201,10 +201,13 @@ not graduating.
 Group
 </th>
 <th style="text-align:right;background-color: #c7eae5 !important;">
-Positive outcome
+Timely completion
 </th>
 <th style="text-align:right;background-color: #c7eae5 !important;">
-Negative outcome
+Untimely completion
+</th>
+<th style="text-align:right;background-color: #c7eae5 !important;">
+Did not complete
 </th>
 </tr>
 </thead>
@@ -217,7 +220,10 @@ Asian Female
 124
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-78
+19
+</td>
+<td style="text-align:right;">
+59
 </td>
 </tr>
 <tr>
@@ -228,7 +234,10 @@ Asian Male
 388
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-269
+89
+</td>
+<td style="text-align:right;">
+180
 </td>
 </tr>
 <tr>
@@ -239,7 +248,10 @@ Black Female
 309
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-248
+47
+</td>
+<td style="text-align:right;">
+201
 </td>
 </tr>
 <tr>
@@ -250,7 +262,10 @@ Black Male
 376
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-527
+104
+</td>
+<td style="text-align:right;">
+423
 </td>
 </tr>
 <tr>
@@ -261,7 +276,10 @@ Hispanic/Latinx Female
 63
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-27
+6
+</td>
+<td style="text-align:right;">
+21
 </td>
 </tr>
 <tr>
@@ -272,7 +290,10 @@ Hispanic/Latinx Male
 188
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-130
+27
+</td>
+<td style="text-align:right;">
+103
 </td>
 </tr>
 <tr>
@@ -283,7 +304,10 @@ International Female
 22
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-18
+6
+</td>
+<td style="text-align:right;">
+12
 </td>
 </tr>
 <tr>
@@ -294,7 +318,10 @@ International Male
 114
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-104
+30
+</td>
+<td style="text-align:right;">
+74
 </td>
 </tr>
 <tr>
@@ -305,7 +332,10 @@ Native American Female
 10
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-6
+3
+</td>
+<td style="text-align:right;">
+3
 </td>
 </tr>
 <tr>
@@ -316,7 +346,10 @@ Native American Male
 27
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-30
+11
+</td>
+<td style="text-align:right;">
+19
 </td>
 </tr>
 <tr>
@@ -327,7 +360,10 @@ Other/Unknown Female
 29
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-17
+3
+</td>
+<td style="text-align:right;">
+14
 </td>
 </tr>
 <tr>
@@ -338,7 +374,10 @@ Other/Unknown Male
 71
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-75
+19
+</td>
+<td style="text-align:right;">
+56
 </td>
 </tr>
 <tr>
@@ -349,7 +388,10 @@ White Female
 1226
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-622
+154
+</td>
+<td style="text-align:right;">
+468
 </td>
 </tr>
 <tr>
@@ -360,7 +402,10 @@ White Male
 4527
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-2825
+634
+</td>
+<td style="text-align:right;">
+2191
 </td>
 </tr>
 </tbody>
