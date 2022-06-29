@@ -298,6 +298,29 @@
 "study_observations"
 
 
+# -------------------------------------------------------------------
+
+#' Case-study IDs
+#' 
+#' An intermediate result provided for the convenience of vignette users. 
+#' The IDs of students ever enrolled in the four programs of the study 
+#' (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) after 
+#' filtering for data sufficiency, degree seeking, program, and timely 
+#' completion. 
+#'
+#' @format \code{data.table} with 7133 rows and 1 column.
+#' 
+#' \describe{
+#'
+#'  \item{mcid}{Character, anonymized student identifier}
+#'
+#' }
+#'
+#' @family case-study-data
+#'
+"study_mcid"
+
+
 
 
 # -------------------------------------------------------------------

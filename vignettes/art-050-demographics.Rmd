@@ -1,0 +1,359 @@
+---
+title: "Demographics (left outer joins)"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
+output: rmarkdown::html_vignette
+csl: ../inst/information-science-and-technology.csl
+vignette: >
+  %\VignetteIndexEntry{Demographics (left outer joins)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+nocite: | 
+resource_files: |
+---
+
+```{r setup}
+#| include: false
+
+# code chunks
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = FALSE,
+  comment = "#>",
+  error = FALSE
+)
+
+# figures
+knitr::opts_chunk$set(
+  fig.path = "../man/figures/art-050-demographics-",
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+
+# inline numbers
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+```
+
+As our processing of longitudinal Student Unit Records (SURs) approaches completion, a typical step is adding columns for student race and sex (demographics). 
+
+Within this context, this vignette illustrates using left outer joins to add columns from any of the midfielddata tables to our working data frame. We use MIDFIELD data, but no midfieldr functions are required.
+
+## Method
+
+We add columns from midfielddata tables to a working data frame using a left-outer join. The usual shared column name to merge on is `mcid`. One of the most common joins is student demographics (race and sex) from the `student` table. 
+
+## Population 
+
+If you are writing your own script to follow along, we start with these packages:
+
+```{r}
+# Packages
+library("midfieldr")
+library("midfielddata")
+suppressPackageStartupMessages(library("data.table"))
+
+# Printing options for data.table
+options(
+  datatable.print.nrows = 15,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
+```
+
+**Importing.** Load the midfielddata data tables.
+
+```{r}
+# Load data sets from midfielddata
+data(student, term, degree)
+```
+
+Start with the student IDs from the case study vignettes. View its help page by running, 
+
+    ? study_mcid
+
+These data are the IDs of all students ever enrolled in four engineering programs: Civil, Electrical, Industrial/Systems, and Mechanical Engineering. 
+
+```{r}
+# A convenient set of IDs
+DT <- copy(study_mcid)
+DT[]
+```
+
+## Left outer joins
+
+An left outer join is a merge operation between two data frame which returns all observations (rows) of the "left" data frame and all the matching rows in the "right" data frame, where specified variables are used for matching.  
+
+Using data.table syntax, we have two approaches: `merge()` and the `Y[X, j]` syntax.
+
+**Using merge().** Using the data.table `merge()` syntax, the `all.x = TRUE` argument creates the left-outer join. To join only race and sex from `student`, we extract those columns before the join. 
+
+
+```{r}
+# Subset of student data frame to join
+cols_to_join <- student[, .(mcid, race, sex)]
+merge(DT, cols_to_join, by = c("mcid"), all.x = TRUE)
+```
+
+Alternatively, one can include the columns selection within the merge operation.
+
+```{r}
+merge(DT, student[, .(mcid, race, sex)], by = c("mcid"), all.x = TRUE)
+```
+
+**Using Y[X, j].** The second approach---computationally more efficient---uses the data.table `Y[X, j]` syntax were `X` is the "left" data (all rows returned) and `Y` the "right" (matching rows returned). 
+
+```{r}
+# Fresh start
+DT <- copy(study_mcid)
+
+# Left-outer join student to DT
+DT <- student[DT, .(mcid, race, sex), on = c("mcid")]
+DT[]
+```
+
+The  `on` argument defines the shared column to use in matching. The `j` argument, .(mcid, race, sex), defines the columns from both data frames to return. In the `Y[X, j, on]` configuration, all rows of `X` are returned plus matching rows from `Y` with NA in columns of `Y` where there is no match. 
+
+**Demonstrate equivalence.** Showing that the two approaches produce the same result. 
+
+```{r}
+#| collapse: true
+# Fresh start
+DT <- copy(study_mcid)
+x <- merge(DT, student[, .(mcid, race, sex)], by = c("mcid"), all.x = TRUE)
+setkey(x, NULL)
+y <- student[DT, .(mcid, race, sex), on = c("mcid")]
+all.equal(x, y)
+```
+
+**Order matters.** In the [Degree seeking (inner joins)](art-020-degree-seeking.html) vignette, we show that for inner joins  `X[Y, j]` and `Y[X, j]` return the same result. Not so with outer joins. 
+
+In left-outer joins, `Y[X, j]` returns all rows of `X` and `X[Y, j]` returns all rows of `Y`. 
+
+```{r}
+#| collapse: true
+
+# What we want
+x <- student[DT, .(mcid, race, sex), on = c("mcid")]
+
+# Not what we want
+y <- DT[student, .(mcid, race, sex), on = c("mcid")]
+
+# Equal?  
+all.equal(x, y)
+
+# Compare N rows
+nrow(x)
+
+nrow(y)
+```
+
+
+
+
+
+## Columns from `student`
+
+Above we added  the race and sex columns from `student` to a working data frame. Depending on the goals of a study, other columns could be added as well. 
+The variables available in `student` are:
+
+```{r}
+#| collapse: true
+
+# Variables in the practice data set
+names(student)
+```
+
+Adding transfer status and transfer credit hours.
+
+```{r}
+#| collapse: true
+
+# Fresh start
+DT <- copy(study_mcid)
+
+# Add variables from student to DT
+student[DT, .(mcid, transfer, hours_transfer), on = c("mcid")]
+```
+
+Adding SAT scores. 
+
+```{r}
+#| collapse: true
+
+# Add variables from student to DT
+student[DT, .(mcid, sat_math, sat_verbal), on = c("mcid")]
+```
+
+
+
+
+
+
+
+
+
+## Columns from `term`
+
+Joining variables from degree gives us the opportunity to show that in left-outer joins, where rows in `X` have multiple matches in `Y`, a row in `X` is added for every match in `Y`. 
+
+The variables available in `term` are:
+
+```{r}
+#| collapse: true
+
+# Variables in the practice data set
+names(term)
+```
+
+Adding institution. Because term has multiple rows per student (one row per term per ID), we get a row for every instance in `term` with a matching ID. Add a `unique()` function to remove duplicates.  
+
+```{r}
+#| collapse: true
+
+# Fresh start
+DT <- copy(study_mcid)
+
+# Add variables from term to DT
+x <- term[DT, .(mcid, institution), on = c("mcid")]
+x[]
+
+# Remove duplicate rows
+unique(x)
+```
+
+Add program. Here, after removing duplicates, we still have more rows that we started with because over time students switch majors resulting in more than one CIP code associated with their ID over the time span of the SURs. 
+
+```{r}
+#| collapse: true
+
+# Add variables from term to DT
+x <- term[DT, .(mcid, cip6), on = c("mcid")]
+unique(x)
+```
+
+
+
+
+
+
+
+
+## Columns from `degree`
+
+Joining variables from degree gives us the opportunity to show that in left-outer joins, where rows in `X` have no match in `Y`, the `Y` column values are NA.
+
+The variables available in `degree` are:
+
+```{r}
+#| collapse: true
+
+# Variables in the practice data set
+names(degree)
+```
+
+Add degree term and CIP. Where rows in `DT` have no match in `degree`, the `degree` column values are NA.  
+
+```{r}
+#| collapse: true
+
+# Add variables from degree to DT
+x <- degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
+x[]
+```
+
+
+
+
+
+
+
+
+
+## Closing
+
+Using data.table syntax, we demonstrate left outer joins for adding columns from midfielddata tables to a working data frame. 
+
+Adding student demographic columns is typical in MIDFIELD research because  race/ethnicity and sex are so often used for grouping and summarizing. 
+
+
+## References
+
+<div id="refs"></div>
+
+
+## Appendix
+
+We conclude each vignette by collecting its code chunks in a single, condensed script for the convenience of those who wish to copy it into their own R file.
+
+
+```{r}
+#| eval: false
+
+# Packages
+library("midfieldr")
+library("midfielddata")
+suppressPackageStartupMessages(library("data.table"))
+
+# Printing options for data.table
+options(
+  datatable.print.nrows = 15,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
+
+# Load data sets from midfielddata
+data(student, term, degree)
+
+# Using merge
+DT <- copy(study_mcid)
+cols_to_join <- student[, .(mcid, race, sex)]
+merge(DT, cols_to_join, by = c("mcid"), all.x = TRUE)
+merge(DT, student[, .(mcid, race, sex)], by = c("mcid"), all.x = TRUE)
+
+# Using Y[X, j]
+DT <- copy(study_mcid)
+student[DT, .(mcid, race, sex), on = c("mcid")]
+
+# Compare
+x <- merge(DT, student[, .(mcid, race, sex)], by = c("mcid"), all.x = TRUE)
+setkey(x, NULL)
+y <- student[DT, .(mcid, race, sex), on = c("mcid")]
+all.equal(x, y)
+
+# Order matters
+x <- student[DT, .(mcid, race, sex), on = c("mcid")]
+y <- DT[student, .(mcid, race, sex), on = c("mcid")]
+all.equal(x, y)
+nrow(x)
+nrow(y)
+
+# Columns from student
+names(student)
+DT <- copy(study_mcid)
+student[DT, .(mcid, transfer, hours_transfer), on = c("mcid")]
+student[DT, .(mcid, sat_math, sat_verbal), on = c("mcid")]
+
+# Columns from term
+names(term)
+DT <- copy(study_mcid)
+unique(term[DT, .(mcid, institution), on = c("mcid")])
+unique(term[DT, .(mcid, cip6), on = c("mcid")])
+
+# Columns from degree
+names(degree)
+degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
+```
+

@@ -29,6 +29,7 @@ every observation with unique combinations of ID and program CIP code.
 }
 \seealso{
 Other case-study-data: 
+\code{\link{study_mcid}},
 \code{\link{study_observations}},
 \code{\link{study_program_cips}},
 \code{\link{study_results}}
