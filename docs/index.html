@@ -80,6 +80,8 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-vignettes">
     <a class="dropdown-item" href="articles/art-010-data-sufficiency.html">Data sufficiency</a>
     <a class="dropdown-item" href="articles/art-020-degree-seeking.html">Degree seeking (inner joins)</a>
+    <a class="dropdown-item" href="articles/art-030-programs.html">Programs</a>
+    <a class="dropdown-item" href="articles/art-040-completion.html">Completion</a>
   </div>
 </li>
 <li class="nav-item">
@@ -235,8 +237,7 @@ a student who completes their program
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span><span class="op">]</span>
 
 <span class="co"># Filter observations for degree-seeking using an inner join</span>
-<span class="va">cols_to_join</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">cols_to_join</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">student</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span>, <span class="va">timely_term</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span>
 
 <span class="co"># Filter observations for engineering programs</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^14"</span><span class="op">]</span>
@@ -248,8 +249,7 @@ a student who completes their program
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">degree</span><span class="op">)</span>
 
 <span class="co"># Add race and sex using a left outer join</span>
-<span class="va">cols_to_join</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">cols_to_join</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">completion_status</span>, <span class="va">sex</span>, <span class="va">race</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># Calculate summary statistics</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"completion_status"</span>, <span class="st">"sex"</span>, <span class="st">"race"</span><span class="op">)</span><span class="op">]</span>
@@ -257,22 +257,25 @@ a student who completes their program
 <span class="co"># Tabulate results</span>
 <span class="va">DT</span><span class="op">[</span>, <span class="va">race_sex</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT_display</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">race_sex</span> <span class="op">~</span> <span class="va">completion_status</span>, value.var <span class="op">=</span> <span class="st">"N"</span><span class="op">)</span>
-<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">DT_display</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"race_sex"</span>, <span class="st">"positive"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">DT_display</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"race_sex"</span>, <span class="st">"timely"</span>, <span class="st">"untimely"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">DT_display</span>,
-  old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"race_sex"</span>, <span class="st">"positive"</span>, <span class="st">"negative"</span><span class="op">)</span>,
-  new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Group"</span>, <span class="st">"Positive outcome"</span>, <span class="st">"Negative outcome"</span><span class="op">)</span>
+  old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"race_sex"</span>, <span class="st">"timely"</span>, <span class="st">"untimely"</span>, <span class="st">"NA"</span><span class="op">)</span>,
+  new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Group"</span>, <span class="st">"Timely completion"</span>, <span class="st">"Untimely completion"</span>, <span class="st">"Did not complete"</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
-<p>Tabulated results of usage example. “Positive outcome” is the count of graduates completing their programs in no more than 6 years. “Negative outcome” is the sum of those graduating in more than 6 years plus those not graduating.</p>
+<p>Tabulated results of usage example. “Timely completion” is the count of graduates completing their programs in no more than 6 years; “Untimely completion” is the count of those graduating in more than 6 years; “Did not complete” is the count of non-graduates.</p>
 <table class="table  lightable-paper" style='font-family: "Arial Narrow", arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;'>
 <thead><tr>
 <th style="text-align:left;background-color: #c7eae5 !important;">
 Group
 </th>
 <th style="text-align:right;background-color: #c7eae5 !important;">
-Positive outcome
+Timely completion
 </th>
 <th style="text-align:right;background-color: #c7eae5 !important;">
-Negative outcome
+Untimely completion
+</th>
+<th style="text-align:right;background-color: #c7eae5 !important;">
+Did not complete
 </th>
 </tr></thead>
 <tbody>
@@ -284,7 +287,10 @@ Asian Female
 124
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-78
+19
+</td>
+<td style="text-align:right;">
+59
 </td>
 </tr>
 <tr>
@@ -295,7 +301,10 @@ Asian Male
 388
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-269
+89
+</td>
+<td style="text-align:right;">
+180
 </td>
 </tr>
 <tr>
@@ -306,7 +315,10 @@ Black Female
 309
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-248
+47
+</td>
+<td style="text-align:right;">
+201
 </td>
 </tr>
 <tr>
@@ -317,7 +329,10 @@ Black Male
 376
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-527
+104
+</td>
+<td style="text-align:right;">
+423
 </td>
 </tr>
 <tr>
@@ -328,7 +343,10 @@ Hispanic/Latinx Female
 63
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-27
+6
+</td>
+<td style="text-align:right;">
+21
 </td>
 </tr>
 <tr>
@@ -339,7 +357,10 @@ Hispanic/Latinx Male
 188
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-130
+27
+</td>
+<td style="text-align:right;">
+103
 </td>
 </tr>
 <tr>
@@ -350,7 +371,10 @@ International Female
 22
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-18
+6
+</td>
+<td style="text-align:right;">
+12
 </td>
 </tr>
 <tr>
@@ -361,7 +385,10 @@ International Male
 114
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-104
+30
+</td>
+<td style="text-align:right;">
+74
 </td>
 </tr>
 <tr>
@@ -372,7 +399,10 @@ Native American Female
 10
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-6
+3
+</td>
+<td style="text-align:right;">
+3
 </td>
 </tr>
 <tr>
@@ -383,7 +413,10 @@ Native American Male
 27
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-30
+11
+</td>
+<td style="text-align:right;">
+19
 </td>
 </tr>
 <tr>
@@ -394,7 +427,10 @@ Other/Unknown Female
 29
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-17
+3
+</td>
+<td style="text-align:right;">
+14
 </td>
 </tr>
 <tr>
@@ -405,7 +441,10 @@ Other/Unknown Male
 71
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-75
+19
+</td>
+<td style="text-align:right;">
+56
 </td>
 </tr>
 <tr>
@@ -416,7 +455,10 @@ White Female
 1226
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-622
+154
+</td>
+<td style="text-align:right;">
+468
 </td>
 </tr>
 <tr>
@@ -427,7 +469,10 @@ White Male
 4527
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-2825
+634
+</td>
+<td style="text-align:right;">
+2191
 </td>
 </tr>
 </tbody>
@@ -463,23 +508,24 @@ White Male
 </h2>
 <p>midfieldr is not yet available from <a href="https://cran.r-project.org/" class="external-link">CRAN</a>. To install the development version of midfieldr from its <code>drat</code> repository, type in the Console:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install midfieldr from drat repo</span>
+<code class="sourceCode R"><span class="co"># Install midfieldr from drat repo</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"midfieldr"</span>, 
                  repos <span class="op">=</span> <span class="st">"https://MIDFIELDR.github.io/drat/"</span>, 
-                 type <span class="op">=</span> <span class="st">"source"</span>, 
-                 dependencies <span class="op">=</span> <span class="st">"Imports"</span><span class="op">)</span></code></pre></div>
+                 type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></code></pre></div>
 <p>You can confirm a successful installation by running the following lines to bring up the package help page in the Help window.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"midfieldr-package"</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-midfieldr-help-page-1.png" width="75%" style="display: block; margin: auto;"></p>
+<figure><img src="reference/figures/README-midfieldr-help-page-1.png" style="width:75.0%" alt="midfieldr help page"><figcaption aria-hidden="true">
+midfieldr help page
+</figcaption></figure>
 </div>
 <div class="section level2">
 <h2 id="install-midfielddata">Install midfielddata<a class="anchor" aria-label="anchor" href="#install-midfielddata"></a>
 </h2>
 <p>Because of its size, installing the practice data takes time; please be patient and wait for the prompt “&gt;” to reappear. In the Console, run:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install midfielddata  </span>
+<code class="sourceCode R"><span class="co"># Install midfielddata  </span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"midfielddata"</span>, 
                  repos <span class="op">=</span> <span class="st">"https://MIDFIELDR.github.io/drat/"</span>, 
                  type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span>
@@ -488,7 +534,9 @@ White Male
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="st">"midfielddata-package"</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-midfielddata-help-page-1.png" width="75%" style="display: block; margin: auto;"></p>
+<figure><img src="reference/figures/README-midfielddata-help-page-1.png" style="width:75.0%" alt="midfielddata help page"><figcaption aria-hidden="true">
+midfielddata help page
+</figcaption></figure>
 </div>
 <div class="section level2">
 <h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
@@ -566,8 +614,8 @@ White Male
 <ul class="list-unstyled">
 <li><a href="https://github.com/MIDFIELDR/midfieldr/actions" class="external-link"><img src="https://github.com/MIDFIELDR/midfieldr/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://app.codecov.io/gh/MIDFIELDR/midfieldr" class="external-link"><img src="https://codecov.io/gh/MIDFIELDR/midfieldr/branch/main/graph/badge.svg?token=KcuCzBkLBP" alt="codecov"></a></li>
-<li><a href="https://cran.r-project.org/package=midfieldr" class="external-link"><img src="http://www.r-pkg.org/badges/version/midfieldr" alt="CRAN_Status_Badge"></a></li>
 <li><a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html" class="external-link"><img src="https://img.shields.io/badge/License-GPL%20v2-blue.svg" alt="License: GPL v2"></a></li>
+<li><a href="https://CRAN.R-project.org/package=docxtools" class="external-link"><img src="https://www.r-pkg.org/badges/version/midfieldr" alt="CRAN status"></a></li>
 </ul>
 </div>
 

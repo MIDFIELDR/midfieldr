@@ -58,6 +58,8 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-vignettes">
     <a class="dropdown-item" href="../articles/art-010-data-sufficiency.html">Data sufficiency</a>
     <a class="dropdown-item" href="../articles/art-020-degree-seeking.html">Degree seeking (inner joins)</a>
+    <a class="dropdown-item" href="../articles/art-030-programs.html">Programs</a>
+    <a class="dropdown-item" href="../articles/art-040-completion.html">Completion</a>
   </div>
 </li>
 <li class="nav-item">
@@ -92,7 +94,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Degree seeking (inner joins)</h1>
             
-            <h4 data-toc-skip class="date">2022-06-26</h4>
+            <h4 data-toc-skip class="date">2022-06-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-020-degree-seeking.Rmd" class="external-link"><code>vignettes/art-020-degree-seeking.Rmd</code></a></small>
       <div class="d-none name"><code>art-020-degree-seeking.Rmd</code></div>
@@ -212,7 +214,7 @@ would be returned.</p>
 <p>Alternatively, one can include the ID selection within the merge
 operation.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Isolating the IDs inside the merge function </span>
+<code class="sourceCode R"><span class="co"># Isolating the IDs inside the merge function</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">toy_student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, all <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">#&gt;             mcid   cip6</span>
 <span class="co">#&gt;           &lt;char&gt; &lt;char&gt;</span>
@@ -281,7 +283,7 @@ results.</p>
 <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">toy_student</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span>
 <span class="va">z</span> <span class="op">&lt;-</span> <span class="va">toy_student</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span>
 
-<span class="co"># Check equality </span>
+<span class="co"># Check equality</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">z</span><span class="op">)</span>
@@ -291,7 +293,7 @@ columns from both data frames. The difference being that with
 <code><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge()</a></code> we select the columns by explicitly subsetting the
 two data frames.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Selecting columns from both data frames using merge() </span>
+<code class="sourceCode R"><span class="co"># Selecting columns from both data frames using merge()</span>
 <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>, <span class="va">toy_student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">institution</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, all <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setkey.html" class="external-link">setkey</a></span><span class="op">(</span><span class="va">x</span>, <span class="cn">NULL</span><span class="op">)</span>
 <span class="va">x</span><span class="op">[</span><span class="op">]</span></code></pre></div>
@@ -316,7 +318,7 @@ two data frames.</p>
 <code class="sourceCode R"><span class="co"># Repeat using X[Y, j] syntax</span>
 <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">toy_student</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">institution</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span>
 
-<span class="co"># Check equality </span>
+<span class="co"># Check equality</span>
 <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/all.equal.data.table.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
 </div>

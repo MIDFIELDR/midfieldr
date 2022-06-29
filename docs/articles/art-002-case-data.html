@@ -58,6 +58,8 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-vignettes">
     <a class="dropdown-item" href="../articles/art-010-data-sufficiency.html">Data sufficiency</a>
     <a class="dropdown-item" href="../articles/art-020-degree-seeking.html">Degree seeking (inner joins)</a>
+    <a class="dropdown-item" href="../articles/art-030-programs.html">Programs</a>
+    <a class="dropdown-item" href="../articles/art-040-completion.html">Completion</a>
   </div>
 </li>
 <li class="nav-item">
@@ -92,7 +94,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Case study: Data</h1>
             
-            <h4 data-toc-skip class="date">2022-06-26</h4>
+            <h4 data-toc-skip class="date">2022-06-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-002-case-data.Rmd" class="external-link"><code>vignettes/art-002-case-data.Rmd</code></a></small>
       <div class="d-none name"><code>art-002-case-data.Rmd</code></div>
@@ -291,7 +293,7 @@ well as supporting variables used in its construction.</p>
 <p><strong>Filtering.</strong> We filter to retain observations for
 which the data are sufficient then drop unnecessary columns.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Retain observations having sufficient data </span>
+<code class="sourceCode R"><span class="co"># Retain observations having sufficient data</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
@@ -316,15 +318,12 @@ which the data are sufficient then drop unnecessary columns.</p>
 <p>In studying stickiness, we exclude non-degree-seeking students. We
 filter such students using the <code>student</code> data which contains
 only degree seeking students.</p>
-<p><strong>Filtering.</strong> An inner join with one column of
-<code>student</code> that returns all of the rows with matching IDs from
-both data frames.</p>
+<p><strong>Filtering.</strong> An inner join with <code>student</code>
+that returns rows with matching IDs from both data frames, then selected
+columns.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Subset of student data frame to join</span>
-<span class="va">cols_to_join</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>
-
-<span class="co"># Inner join that filters DT</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">cols_to_join</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span>
+<code class="sourceCode R"><span class="co"># Inner join that filters DT</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">student</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
 <pre><code><span class="co">#&gt;                mcid   cip6</span>
 <span class="co">#&gt;              &lt;char&gt; &lt;char&gt;</span>
@@ -357,29 +356,31 @@ programs, we report the results: Civil Engineering CIPs start with 1408,
 Electrical Engineering 1410, Mechanical Engineering 1419, and
 Industrial/Systems Engineering 1427, 1435, 1436, and 1437.</p>
 <p><strong>Filtering</strong> Gather the 6-digit CIP codes for the
-programs in the case study. Drop unnecessary variables.</p>
+programs in the case study. Drop unnecessary variables. We keep the
+<code>cip4name</code> because, in engineering at least, the 4-digit name
+tends to be a disciplinary or departmental name.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Gather program CIP codes</span>
 <span class="va">study_program</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, keep_text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1427"</span>, <span class="st">"^1435"</span>, <span class="st">"^1436"</span>, <span class="st">"^1437"</span><span class="op">)</span><span class="op">)</span>
-<span class="va">study_program</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, <span class="va">cip6name</span><span class="op">)</span><span class="op">]</span>
+<span class="va">study_program</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, <span class="va">cip4name</span><span class="op">)</span><span class="op">]</span>
 <span class="va">study_program</span><span class="op">[</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">#&gt;       cip6                                                      cip6name</span>
-<span class="co">#&gt;     &lt;char&gt;                                                        &lt;char&gt;</span>
-<span class="co">#&gt;  1: 140801                                    Civil Engineering, General</span>
-<span class="co">#&gt;  2: 140802                                      Geotechnical Engineering</span>
-<span class="co">#&gt;  3: 140803                                        Structural Engineering</span>
-<span class="co">#&gt;  4: 140804                        Transportation and Highway Engineering</span>
-<span class="co">#&gt;  5: 140805                                   Water Resources Engineering</span>
-<span class="co">#&gt;  6: 140899                                      Civil Engineering, Other</span>
-<span class="co">#&gt;  7: 141001        Electrical, Electronics and Communications Engineering</span>
-<span class="co">#&gt;  8: 141003                                 Laser and Optical Engineering</span>
-<span class="co">#&gt;  9: 141004                                Telecommunications Engineering</span>
-<span class="co">#&gt; 10: 141099 Electrical, Electronics and Communications Engineering, Other</span>
-<span class="co">#&gt; 11: 141901                                        Mechanical Engineering</span>
-<span class="co">#&gt; 12: 142701                                           Systems Engineering</span>
-<span class="co">#&gt; 13: 143501                                        Industrial Engineering</span>
-<span class="co">#&gt; 14: 143601                                     Manufacturing Engineering</span>
-<span class="co">#&gt; 15: 143701                                           Operations Research</span></code></pre>
+<pre><code><span class="co">#&gt;       cip6                                               cip4name</span>
+<span class="co">#&gt;     &lt;char&gt;                                                 &lt;char&gt;</span>
+<span class="co">#&gt;  1: 140801                                      Civil Engineering</span>
+<span class="co">#&gt;  2: 140802                                      Civil Engineering</span>
+<span class="co">#&gt;  3: 140803                                      Civil Engineering</span>
+<span class="co">#&gt;  4: 140804                                      Civil Engineering</span>
+<span class="co">#&gt;  5: 140805                                      Civil Engineering</span>
+<span class="co">#&gt;  6: 140899                                      Civil Engineering</span>
+<span class="co">#&gt;  7: 141001 Electrical, Electronics and Communications Engineering</span>
+<span class="co">#&gt;  8: 141003 Electrical, Electronics and Communications Engineering</span>
+<span class="co">#&gt;  9: 141004 Electrical, Electronics and Communications Engineering</span>
+<span class="co">#&gt; 10: 141099 Electrical, Electronics and Communications Engineering</span>
+<span class="co">#&gt; 11: 141901                                 Mechanical Engineering</span>
+<span class="co">#&gt; 12: 142701                                    Systems Engineering</span>
+<span class="co">#&gt; 13: 143501                                 Industrial Engineering</span>
+<span class="co">#&gt; 14: 143601                              Manufacturing Engineering</span>
+<span class="co">#&gt; 15: 143701                                    Operations Research</span></code></pre>
 <p>You may view the function’s help page by running</p>
 <pre><code><span class="op">?</span> <span class="va">filter_search</span></code></pre>
 <p><strong>Creating variables.</strong> Add a variable to label each of
@@ -390,72 +391,70 @@ Electrical (EE), Mechanical (ME), and Industrial/Systems Engineering
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Assign four program names by CIP code</span>
 <span class="va">study_program</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span>
-    <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="st">"CE"</span>, 
-    <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1410"</span>, <span class="st">"EE"</span>, 
-    <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1419"</span>, <span class="st">"ME"</span>, 
-    <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"142701"</span>, <span class="st">"143501"</span>, <span class="st">"143601"</span>, <span class="st">"143701"</span><span class="op">)</span>, <span class="st">"ISE"</span>
+  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="st">"CE"</span>,
+  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1410"</span>, <span class="st">"EE"</span>,
+  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1419"</span>, <span class="st">"ME"</span>,
+  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"142701"</span>, <span class="st">"143501"</span>, <span class="st">"143601"</span>, <span class="st">"143701"</span><span class="op">)</span>, <span class="st">"ISE"</span>
 <span class="op">)</span><span class="op">]</span>
 
 <span class="co"># Confirm that abbreviations match the longer program names</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">study_program</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6name</span>, <span class="va">program</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">#&gt;                                                          cip6name program</span>
-<span class="co">#&gt;                                                            &lt;char&gt;  &lt;char&gt;</span>
-<span class="co">#&gt;  1:                                    Civil Engineering, General      CE</span>
-<span class="co">#&gt;  2:                                      Geotechnical Engineering      CE</span>
-<span class="co">#&gt;  3:                                        Structural Engineering      CE</span>
-<span class="co">#&gt;  4:                        Transportation and Highway Engineering      CE</span>
-<span class="co">#&gt;  5:                                   Water Resources Engineering      CE</span>
-<span class="co">#&gt;  6:                                      Civil Engineering, Other      CE</span>
-<span class="co">#&gt;  7:        Electrical, Electronics and Communications Engineering      EE</span>
-<span class="co">#&gt;  8:                                 Laser and Optical Engineering      EE</span>
-<span class="co">#&gt;  9:                                Telecommunications Engineering      EE</span>
-<span class="co">#&gt; 10: Electrical, Electronics and Communications Engineering, Other      EE</span>
-<span class="co">#&gt; 11:                                        Mechanical Engineering      ME</span>
-<span class="co">#&gt; 12:                                           Systems Engineering     ISE</span>
-<span class="co">#&gt; 13:                                        Industrial Engineering     ISE</span>
-<span class="co">#&gt; 14:                                     Manufacturing Engineering     ISE</span>
-<span class="co">#&gt; 15:                                           Operations Research     ISE</span></code></pre>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">study_program</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip4name</span>, <span class="va">program</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">#&gt;                                                   cip4name program</span>
+<span class="co">#&gt;                                                     &lt;char&gt;  &lt;char&gt;</span>
+<span class="co">#&gt;  1:                                      Civil Engineering      CE</span>
+<span class="co">#&gt;  2:                                      Civil Engineering      CE</span>
+<span class="co">#&gt;  3:                                      Civil Engineering      CE</span>
+<span class="co">#&gt;  4:                                      Civil Engineering      CE</span>
+<span class="co">#&gt;  5:                                      Civil Engineering      CE</span>
+<span class="co">#&gt;  6:                                      Civil Engineering      CE</span>
+<span class="co">#&gt;  7: Electrical, Electronics and Communications Engineering      EE</span>
+<span class="co">#&gt;  8: Electrical, Electronics and Communications Engineering      EE</span>
+<span class="co">#&gt;  9: Electrical, Electronics and Communications Engineering      EE</span>
+<span class="co">#&gt; 10: Electrical, Electronics and Communications Engineering      EE</span>
+<span class="co">#&gt; 11:                                 Mechanical Engineering      ME</span>
+<span class="co">#&gt; 12:                                    Systems Engineering     ISE</span>
+<span class="co">#&gt; 13:                                 Industrial Engineering     ISE</span>
+<span class="co">#&gt; 14:                              Manufacturing Engineering     ISE</span>
+<span class="co">#&gt; 15:                                    Operations Research     ISE</span></code></pre>
 <p><strong>Joining.</strong> Having checked that the new abbreviations
-correctly represent the programs, we drop the <code>cip6name</code>
-variable and join the program names to the working data frame using a
-left-outer join. All rows of <code>DT</code> are returned.</p>
+correctly represent the programs, we join the program names to the
+working data frame using a left-outer join and return selected rows.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Left-outer join to DT</span>
-<span class="va">study_program</span><span class="op">[</span>, <span class="va">cip6name</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span>, <span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">#&gt;           cip6 program        mcid</span>
-<span class="co">#&gt;         &lt;char&gt;  &lt;char&gt;      &lt;char&gt;</span>
-<span class="co">#&gt;      1: 520101    &lt;NA&gt; MID25783135</span>
-<span class="co">#&gt;      2: 140102    &lt;NA&gt; MID25783162</span>
-<span class="co">#&gt;      3: 520301    &lt;NA&gt; MID25783162</span>
-<span class="co">#&gt;      4: 521401    &lt;NA&gt; MID25783162</span>
-<span class="co">#&gt;      5: 140102    &lt;NA&gt; MID25783178</span>
+<pre><code><span class="co">#&gt;                mcid   cip6 program</span>
+<span class="co">#&gt;              &lt;char&gt; &lt;char&gt;  &lt;char&gt;</span>
+<span class="co">#&gt;      1: MID25783135 520101    &lt;NA&gt;</span>
+<span class="co">#&gt;      2: MID25783162 140102    &lt;NA&gt;</span>
+<span class="co">#&gt;      3: MID25783162 520301    &lt;NA&gt;</span>
+<span class="co">#&gt;      4: MID25783162 521401    &lt;NA&gt;</span>
+<span class="co">#&gt;      5: MID25783178 140102    &lt;NA&gt;</span>
 <span class="co">#&gt;     ---                           </span>
-<span class="co">#&gt; 111928: 521401    &lt;NA&gt; MID26697576</span>
-<span class="co">#&gt; 111929: 110401    &lt;NA&gt; MID26697599</span>
-<span class="co">#&gt; 111930: 521201    &lt;NA&gt; MID26697599</span>
-<span class="co">#&gt; 111931: 500901    &lt;NA&gt; MID26697615</span>
-<span class="co">#&gt; 111932: 451001    &lt;NA&gt; MID26697623</span></code></pre>
+<span class="co">#&gt; 111928: MID26697576 521401    &lt;NA&gt;</span>
+<span class="co">#&gt; 111929: MID26697599 110401    &lt;NA&gt;</span>
+<span class="co">#&gt; 111930: MID26697599 521201    &lt;NA&gt;</span>
+<span class="co">#&gt; 111931: MID26697615 500901    &lt;NA&gt;</span>
+<span class="co">#&gt; 111932: MID26697623 451001    &lt;NA&gt;</span></code></pre>
 <p><strong>Filtering.</strong> All instances of NA programs are
 dropped.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Retain observations in our four programs </span>
+<code class="sourceCode R"><span class="co"># Retain observations in our four programs</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">#&gt;         cip6 program        mcid</span>
-<span class="co">#&gt;       &lt;char&gt;  &lt;char&gt;      &lt;char&gt;</span>
-<span class="co">#&gt;    1: 143501     ISE MID25783178</span>
-<span class="co">#&gt;    2: 140801      CE MID25783441</span>
-<span class="co">#&gt;    3: 141001      EE MID25783491</span>
-<span class="co">#&gt;    4: 143501     ISE MID25783912</span>
-<span class="co">#&gt;    5: 141901      ME MID25784025</span>
+<pre><code><span class="co">#&gt;              mcid   cip6 program</span>
+<span class="co">#&gt;            &lt;char&gt; &lt;char&gt;  &lt;char&gt;</span>
+<span class="co">#&gt;    1: MID25783178 143501     ISE</span>
+<span class="co">#&gt;    2: MID25783441 140801      CE</span>
+<span class="co">#&gt;    3: MID25783491 141001      EE</span>
+<span class="co">#&gt;    4: MID25783912 143501     ISE</span>
+<span class="co">#&gt;    5: MID25784025 141901      ME</span>
 <span class="co">#&gt;   ---                           </span>
-<span class="co">#&gt; 7657: 141901      ME MID26696958</span>
-<span class="co">#&gt; 7658: 141901      ME MID26696967</span>
-<span class="co">#&gt; 7659: 141901      ME MID26697163</span>
-<span class="co">#&gt; 7660: 141901      ME MID26697444</span>
-<span class="co">#&gt; 7661: 141001      EE MID26697447</span></code></pre>
+<span class="co">#&gt; 7657: MID26696958 141901      ME</span>
+<span class="co">#&gt; 7658: MID26696967 141901      ME</span>
+<span class="co">#&gt; 7659: MID26697163 141901      ME</span>
+<span class="co">#&gt; 7660: MID26697444 141901      ME</span>
+<span class="co">#&gt; 7661: MID26697447 141001      EE</span></code></pre>
 <p>The result has 7661 observations of 7133 unique students.</p>
 <p><strong>Filtering.</strong> A program label can be associated with
 multiple CIP codes. We drop the code and filter to remove duplicates to
@@ -465,19 +464,19 @@ ensure unique combinations of ID and program.</p>
 <span class="va">DT</span><span class="op">[</span>, <span class="va">cip6</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">#&gt;       program        mcid</span>
-<span class="co">#&gt;        &lt;char&gt;      &lt;char&gt;</span>
-<span class="co">#&gt;    1:     ISE MID25783178</span>
-<span class="co">#&gt;    2:      CE MID25783441</span>
-<span class="co">#&gt;    3:      EE MID25783491</span>
-<span class="co">#&gt;    4:     ISE MID25783912</span>
-<span class="co">#&gt;    5:      ME MID25784025</span>
+<pre><code><span class="co">#&gt;              mcid program</span>
+<span class="co">#&gt;            &lt;char&gt;  &lt;char&gt;</span>
+<span class="co">#&gt;    1: MID25783178     ISE</span>
+<span class="co">#&gt;    2: MID25783441      CE</span>
+<span class="co">#&gt;    3: MID25783491      EE</span>
+<span class="co">#&gt;    4: MID25783912     ISE</span>
+<span class="co">#&gt;    5: MID25784025      ME</span>
 <span class="co">#&gt;   ---                    </span>
-<span class="co">#&gt; 7656:      ME MID26696958</span>
-<span class="co">#&gt; 7657:      ME MID26696967</span>
-<span class="co">#&gt; 7658:      ME MID26697163</span>
-<span class="co">#&gt; 7659:      ME MID26697444</span>
-<span class="co">#&gt; 7660:      EE MID26697447</span></code></pre>
+<span class="co">#&gt; 7656: MID26696958      ME</span>
+<span class="co">#&gt; 7657: MID26696967      ME</span>
+<span class="co">#&gt; 7658: MID26697163      ME</span>
+<span class="co">#&gt; 7659: MID26697444      ME</span>
+<span class="co">#&gt; 7660: MID26697447      EE</span></code></pre>
 <p>The result has 7660 observations of 7133 unique students.</p>
 <p><strong>Creating variables.</strong> Add a variable to label this
 group as “ever” enrolled to distinguish them from the group of graduates
@@ -488,19 +487,19 @@ later.</p>
 <span class="va">ever</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
 <span class="va">ever</span><span class="op">[</span>, <span class="va">group</span> <span class="op">:=</span> <span class="st">"ever"</span><span class="op">]</span>
 <span class="va">ever</span><span class="op">[</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">#&gt;       program        mcid  group</span>
-<span class="co">#&gt;        &lt;char&gt;      &lt;char&gt; &lt;char&gt;</span>
-<span class="co">#&gt;    1:     ISE MID25783178   ever</span>
-<span class="co">#&gt;    2:      CE MID25783441   ever</span>
-<span class="co">#&gt;    3:      EE MID25783491   ever</span>
-<span class="co">#&gt;    4:     ISE MID25783912   ever</span>
-<span class="co">#&gt;    5:      ME MID25784025   ever</span>
+<pre><code><span class="co">#&gt;              mcid program  group</span>
+<span class="co">#&gt;            &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span>
+<span class="co">#&gt;    1: MID25783178     ISE   ever</span>
+<span class="co">#&gt;    2: MID25783441      CE   ever</span>
+<span class="co">#&gt;    3: MID25783491      EE   ever</span>
+<span class="co">#&gt;    4: MID25783912     ISE   ever</span>
+<span class="co">#&gt;    5: MID25784025      ME   ever</span>
 <span class="co">#&gt;   ---                           </span>
-<span class="co">#&gt; 7656:      ME MID26696958   ever</span>
-<span class="co">#&gt; 7657:      ME MID26696967   ever</span>
-<span class="co">#&gt; 7658:      ME MID26697163   ever</span>
-<span class="co">#&gt; 7659:      ME MID26697444   ever</span>
-<span class="co">#&gt; 7660:      EE MID26697447   ever</span></code></pre>
+<span class="co">#&gt; 7656: MID26696958      ME   ever</span>
+<span class="co">#&gt; 7657: MID26696967      ME   ever</span>
+<span class="co">#&gt; 7658: MID26697163      ME   ever</span>
+<span class="co">#&gt; 7659: MID26697444      ME   ever</span>
+<span class="co">#&gt; 7660: MID26697447      EE   ever</span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="gather-graduate-subset">Gather graduate subset<a class="anchor" aria-label="anchor" href="#gather-graduate-subset"></a>
@@ -526,15 +525,12 @@ re-initialize the working data frame, retaining unique IDs only.</p>
 <span class="co">#&gt; 7131: MID26697163</span>
 <span class="co">#&gt; 7132: MID26697444</span>
 <span class="co">#&gt; 7133: MID26697447</span></code></pre>
-<p><strong>Filtering.</strong> An inner join with two columns of
-<code>degree</code> that returns all of the rows with matching IDs from
-both data frames. In effect, the inner join filters DT</p>
+<p><strong>Filtering.</strong> An inner join with <code>degree</code>
+that returns rows with matching IDs from both data frames, then selected
+columns.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Subset of degree data frame to join</span>
-<span class="va">cols_to_join</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
-
-<span class="co"># Inner join that filters DT </span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">cols_to_join</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span>
+<code class="sourceCode R"><span class="co"># Inner join that filters DT</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">degree</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
 <pre><code><span class="co">#&gt;              mcid   cip6</span>
 <span class="co">#&gt;            &lt;char&gt; &lt;char&gt;</span>
@@ -599,17 +595,17 @@ as well as supporting variables used in its construction.</p>
 <span class="co">#&gt; 5390: MID26697447 141001  20111  01 Freshman        6       20163       20154</span>
 <span class="co">#&gt;       completion completion_status</span>
 <span class="co">#&gt;           &lt;lgcl&gt;            &lt;char&gt;</span>
-<span class="co">#&gt;    1:       TRUE          positive</span>
-<span class="co">#&gt;    2:       TRUE          positive</span>
-<span class="co">#&gt;    3:       TRUE          positive</span>
-<span class="co">#&gt;    4:       TRUE          positive</span>
-<span class="co">#&gt;    5:       TRUE          positive</span>
+<span class="co">#&gt;    1:       TRUE            timely</span>
+<span class="co">#&gt;    2:       TRUE            timely</span>
+<span class="co">#&gt;    3:       TRUE            timely</span>
+<span class="co">#&gt;    4:       TRUE            timely</span>
+<span class="co">#&gt;    5:       TRUE            timely</span>
 <span class="co">#&gt;   ---                             </span>
-<span class="co">#&gt; 5386:       TRUE          positive</span>
-<span class="co">#&gt; 5387:       TRUE          positive</span>
-<span class="co">#&gt; 5388:       TRUE          positive</span>
-<span class="co">#&gt; 5389:       TRUE          positive</span>
-<span class="co">#&gt; 5390:       TRUE          positive</span></code></pre>
+<span class="co">#&gt; 5386:       TRUE            timely</span>
+<span class="co">#&gt; 5387:       TRUE            timely</span>
+<span class="co">#&gt; 5388:       TRUE            timely</span>
+<span class="co">#&gt; 5389:       TRUE            timely</span>
+<span class="co">#&gt; 5390:       TRUE            timely</span></code></pre>
 <p>You may view the function’s help page by running</p>
 <pre><code><span class="op">?</span> <span class="va">add_completion_status</span></code></pre>
 <p><strong>Filtering.</strong> Retain records with “positive” completion
@@ -617,7 +613,7 @@ status (i.e. completion in 6 years or less) and drop unnecessary
 variables.</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Retain timely completers</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">completion_status</span> <span class="op">==</span> <span class="st">"positive"</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">completion_status</span> <span class="op">==</span> <span class="st">"timely"</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
 <pre><code><span class="co">#&gt;              mcid   cip6</span>
@@ -638,13 +634,15 @@ variables.</p>
 <div class="section level2">
 <h2 id="filter-by-program-1">Filter by program<a class="anchor" aria-label="anchor" href="#filter-by-program-1"></a>
 </h2>
+<p>We join the program names to the working data frame using a
+left-outer join and return selected rows. We then filter to retain
+program names that are not NA.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Left-outer join to DT </span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
+<code class="sourceCode R"><span class="co"># Left-outer join to DT</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># Unique observations</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">program</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
 <pre><code><span class="co">#&gt;              mcid program</span>
@@ -692,32 +690,33 @@ names.</p>
 <code class="sourceCode R"><span class="co"># Combine two data frames</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">ever</span>, <span class="va">grad</span><span class="op">)</span>, use.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">#&gt;        program        mcid  group</span>
-<span class="co">#&gt;         &lt;char&gt;      &lt;char&gt; &lt;char&gt;</span>
-<span class="co">#&gt;     1:     ISE MID25783178   ever</span>
-<span class="co">#&gt;     2:      CE MID25783441   ever</span>
-<span class="co">#&gt;     3:      EE MID25783491   ever</span>
-<span class="co">#&gt;     4:     ISE MID25783912   ever</span>
-<span class="co">#&gt;     5:      ME MID25784025   ever</span>
+<pre><code><span class="co">#&gt;               mcid program  group</span>
+<span class="co">#&gt;             &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span>
+<span class="co">#&gt;     1: MID25783178     ISE   ever</span>
+<span class="co">#&gt;     2: MID25783441      CE   ever</span>
+<span class="co">#&gt;     3: MID25783491      EE   ever</span>
+<span class="co">#&gt;     4: MID25783912     ISE   ever</span>
+<span class="co">#&gt;     5: MID25784025      ME   ever</span>
 <span class="co">#&gt;    ---                           </span>
-<span class="co">#&gt; 11208:      ME MID26696738   grad</span>
-<span class="co">#&gt; 11209:      EE MID26696771   grad</span>
-<span class="co">#&gt; 11210:      ME MID26696967   grad</span>
-<span class="co">#&gt; 11211:      ME MID26697163   grad</span>
-<span class="co">#&gt; 11212:      EE MID26697447   grad</span></code></pre>
+<span class="co">#&gt; 11208: MID26696738      ME   grad</span>
+<span class="co">#&gt; 11209: MID26696771      EE   grad</span>
+<span class="co">#&gt; 11210: MID26696967      ME   grad</span>
+<span class="co">#&gt; 11211: MID26697163      ME   grad</span>
+<span class="co">#&gt; 11212: MID26697447      EE   grad</span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="add-demographics">Add demographics<a class="anchor" aria-label="anchor" href="#add-demographics"></a>
 </h2>
 <p><strong>Creating variables.</strong> Using columns from
 <code>student</code>, we add variables for race/ethnicity and sex using
-a left-outer join. All rows of <code>DT</code> are returned.</p>
+a left-outer join. All rows and columns of DT are returned with two
+columns added from <code>student</code>.</p>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Subset of student data frame to join</span>
-<span class="va">cols_to_join</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>
+<code class="sourceCode R"><span class="co"># Selecting columns from student</span>
+<span class="va">student_cols</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>
 
-<span class="co"># Left-outer join to DT</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">cols_to_join</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>
+<span class="co"># Add them to DT with a left outer join</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student_cols</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
 <pre><code><span class="co">#&gt;               mcid            race    sex program  group</span>
 <span class="co">#&gt;             &lt;char&gt;          &lt;char&gt; &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span>
@@ -826,20 +825,18 @@ their own R file.</p>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># Filter for degree-seeking</span>
-<span class="va">cols_to_join</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">cols_to_join</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">student</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span>
 
 <span class="co"># Filter by program</span>
 <span class="va">study_program</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, keep_text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1427"</span>, <span class="st">"^1435"</span>, <span class="st">"^1436"</span>, <span class="st">"^1437"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">study_program</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, <span class="va">cip6name</span><span class="op">)</span><span class="op">]</span>
 <span class="va">study_program</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span>
-    <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="st">"CE"</span>, 
-    <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1410"</span>, <span class="st">"EE"</span>, 
-    <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1419"</span>, <span class="st">"ME"</span>, 
-    <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"142701"</span>, <span class="st">"143501"</span>, <span class="st">"143601"</span>, <span class="st">"143701"</span><span class="op">)</span>, <span class="st">"ISE"</span>
+  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="st">"CE"</span>,
+  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1410"</span>, <span class="st">"EE"</span>,
+  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1419"</span>, <span class="st">"ME"</span>,
+  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"142701"</span>, <span class="st">"143501"</span>, <span class="st">"143601"</span>, <span class="st">"143701"</span><span class="op">)</span>, <span class="st">"ISE"</span>
 <span class="op">)</span><span class="op">]</span>
-<span class="va">study_program</span><span class="op">[</span>, <span class="va">cip6name</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span>, <span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span><span class="op">[</span>, <span class="va">cip6</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
@@ -849,8 +846,7 @@ their own R file.</p>
 <span class="co"># Gather graduate subset</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
-<span class="va">cols_to_join</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">cols_to_join</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">degree</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span>
 
 <span class="co"># Filter by completion status</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span>
@@ -859,9 +855,8 @@ their own R file.</p>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># Filter by program</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">program</span><span class="op">)</span><span class="op">]</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
 <span class="va">grad</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
 <span class="va">grad</span><span class="op">[</span>, <span class="va">group</span> <span class="op">:=</span> <span class="st">"grad"</span><span class="op">]</span>
@@ -870,8 +865,8 @@ their own R file.</p>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">ever</span>, <span class="va">grad</span><span class="op">)</span>, use.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
 <span class="co"># Add demographics</span>
-<span class="va">cols_to_join</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>
-<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">cols_to_join</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></code></pre></div>
+<span class="va">student_cols</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>
+<span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student_cols</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

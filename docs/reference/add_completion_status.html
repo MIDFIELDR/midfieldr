@@ -40,6 +40,8 @@ degree data frame in the environment."><meta property="og:image" content="https:
   <div class="dropdown-menu" aria-labelledby="dropdown-vignettes">
     <a class="dropdown-item" href="../articles/art-010-data-sufficiency.html">Data sufficiency</a>
     <a class="dropdown-item" href="../articles/art-020-degree-seeking.html">Degree seeking (inner joins)</a>
+    <a class="dropdown-item" href="../articles/art-030-programs.html">Programs</a>
+    <a class="dropdown-item" href="../articles/art-040-completion.html">Completion</a>
   </div>
 </li>
 <li class="active nav-item">
@@ -115,9 +117,9 @@ by student ID. Default is <code>degree</code>. Required variables are
  <dt><code>completion_status</code></dt>
 <dd><p>Character. Label each observation to 
  indicate program completion status. Possible values are: 
- <code>positive</code>, indicating programs completed no later than their timely 
- completion term; and <code>negative</code>, indicating programs never completed 
- as well as programs completed after their timely completion terms.</p></dd>
+ "timely", indicating program completion no later than the timely 
+ completion term; "untimely", indicating program completion after  
+ the timely completion term; and "NA" indicating non-completion.</p></dd>
 
 
 </dl></div>
@@ -129,7 +131,7 @@ programs in a specified time span, for example 4-, 6-, or 8-years after
 admission. If they do, their completion is timely; if not, their completion 
 is untimely and they are grouped with the non-completers when computing 
 a metric such as graduation rate.</p>
-<p>Completion status is "positive" for students completing their programs 
+<p>Completion status is "timely" for students completing their programs 
 no later than their timely completion terms. See also 
 <code><a href="add_timely_term.html">add_timely_term()</a></code>.</p>
     </div>
@@ -146,10 +148,10 @@ no later than their timely completion terms. See also
 <span class="r-in"><span class="va">dframe</span> <span class="op">&lt;-</span> <span class="va">toy_student</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Timely term column is required to add completion status column</span></span>
-<span class="r-in"><span class="va">dframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">dframe</span>, midfield_term <span class="op">=</span> <span class="va">toy_term</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">dframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">dframe</span>, <span class="va">toy_term</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Add completion status column</span></span>
-<span class="r-in"><span class="fu">add_completion_status</span><span class="op">(</span><span class="va">dframe</span>, midfield_degree <span class="op">=</span> <span class="va">toy_degree</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">add_completion_status</span><span class="op">(</span><span class="va">dframe</span>, <span class="va">toy_degree</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            mcid term_i      level_i adj_span timely_term term_degree completion</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1: MID25784187  19885  01 Freshman        6       19943       19946       TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2: MID25784974  19883 02 Sophomore        5       19931        &lt;NA&gt;      FALSE</span>
@@ -162,16 +164,16 @@ no later than their timely completion terms. See also
 <span class="r-out co"><span class="r-pr">#&gt;</span>  9: MID25846316  19911  01 Freshman        6       19963       19951       TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10: MID25847220  19891  01 Freshman        6       19943       19933       TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     completion_status</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:          negative</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:          negative</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:          negative</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:          positive</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:          positive</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:          negative</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:          positive</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:          positive</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:          positive</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:          positive</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:          untimely</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:              &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:              &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:            timely</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:            timely</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:              &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:            timely</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:            timely</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:            timely</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:            timely</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Existing completion_status column, if any, is overwritten</span></span>
 <span class="r-in"><span class="va">dframe</span><span class="op">[</span>, <span class="va">completion_status</span> <span class="op">:=</span> <span class="cn">NA_character_</span><span class="op">]</span></span>
@@ -186,7 +188,7 @@ no later than their timely completion terms. See also
 <span class="r-out co"><span class="r-pr">#&gt;</span>  8: MID25845197  19905    03 Junior        4       19943              &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  9: MID25846316  19911  01 Freshman        6       19963              &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10: MID25847220  19891  01 Freshman        6       19943              &lt;NA&gt;</span>
-<span class="r-in"><span class="fu">add_completion_status</span><span class="op">(</span><span class="va">dframe</span>, midfield_degree <span class="op">=</span> <span class="va">toy_degree</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">add_completion_status</span><span class="op">(</span><span class="va">dframe</span>, <span class="va">toy_degree</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            mcid term_i      level_i adj_span timely_term term_degree completion</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1: MID25784187  19885  01 Freshman        6       19943       19946       TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2: MID25784974  19883 02 Sophomore        5       19931        &lt;NA&gt;      FALSE</span>
@@ -199,16 +201,16 @@ no later than their timely completion terms. See also
 <span class="r-out co"><span class="r-pr">#&gt;</span>  9: MID25846316  19911  01 Freshman        6       19963       19951       TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10: MID25847220  19891  01 Freshman        6       19943       19933       TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     completion_status</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:          negative</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:          negative</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:          negative</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:          positive</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:          positive</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:          negative</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:          positive</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:          positive</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:          positive</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:          positive</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:          untimely</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:              &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:              &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:            timely</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:            timely</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:              &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:            timely</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:            timely</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:            timely</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:            timely</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
