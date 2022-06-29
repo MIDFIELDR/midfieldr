@@ -9,9 +9,10 @@ Tools for Studying MIDFIELD Student Unit Record Data in R
 
 [![R-CMD-check](https://github.com/MIDFIELDR/midfieldr/workflows/R-CMD-check/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions)
 [![codecov](https://codecov.io/gh/MIDFIELDR/midfieldr/branch/main/graph/badge.svg?token=KcuCzBkLBP)](https://app.codecov.io/gh/MIDFIELDR/midfieldr)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/midfieldr)](https://cran.r-project.org/package=midfieldr)
 [![License: GPL
 v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/midfieldr)](https://CRAN.R-project.org/package=docxtools)
 <!-- badges: end -->
 
 The goal of midfieldr is to provide tools and guides for working with
@@ -438,11 +439,10 @@ To install the development version of midfieldr from its `drat`
 repository, type in the Console:
 
 ``` r
-# install midfieldr from drat repo
+# Install midfieldr from drat repo
 install.packages("midfieldr", 
                  repos = "https://MIDFIELDR.github.io/drat/", 
-                 type = "source", 
-                 dependencies = "Imports")
+                 type = "source")
 ```
 
 You can confirm a successful installation by running the following lines
@@ -453,7 +453,11 @@ library("midfieldr")
 help("midfieldr-package")
 ```
 
-<img src="man/figures/README-midfieldr-help-page-1.png" width="75%" style="display: block; margin: auto;" />
+<figure>
+<img src="man/figures/README-midfieldr-help-page-1.png"
+style="width:75.0%" alt="midfieldr help page" />
+<figcaption aria-hidden="true">midfieldr help page</figcaption>
+</figure>
 
 ## Install midfielddata
 
@@ -461,7 +465,7 @@ Because of its size, installing the practice data takes time; please be
 patient and wait for the prompt “\>” to reappear. In the Console, run:
 
 ``` r
-# install midfielddata  
+# Install midfielddata  
 install.packages("midfielddata", 
                  repos = "https://MIDFIELDR.github.io/drat/", 
                  type = "source")
@@ -476,7 +480,11 @@ library("midfielddata")
 help("midfielddata-package")
 ```
 
-<img src="man/figures/README-midfielddata-help-page-1.png" width="75%" style="display: block; margin: auto;" />
+<figure>
+<img src="man/figures/README-midfielddata-help-page-1.png"
+style="width:75.0%" alt="midfielddata help page" />
+<figcaption aria-hidden="true">midfielddata help page</figcaption>
+</figure>
 
 ## Contributing
 
