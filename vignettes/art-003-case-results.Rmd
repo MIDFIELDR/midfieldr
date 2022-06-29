@@ -26,11 +26,11 @@ knitr::opts_chunk$set(
 
 # figures
 knitr::opts_chunk$set(
-    fig.path = "../man/figures/art-003-case-results-", 
-    fig.width = 6,
-    fig.asp = 1 / 1.6,
-    out.width = "70%",
-    fig.align = "center"
+  fig.path = "../man/figures/art-003-case-results-",
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
 )
 
 # inline numbers
@@ -133,7 +133,7 @@ We take several additional steps to prepare the data for dissemination in  table
 **Filtering.** To preserve the anonymity of the people involved, we remove observations with 10 or fewer graduates.   
 
 ```{r}
-# Preserve anonymity 
+# Preserve anonymity
 DT <- DT[grad >= 10]
 DT[]
 ```
@@ -159,10 +159,10 @@ DT[]
 
 ```{r}
 DT[, program := fcase(
-    program %like% "CE", "Civil Engineering", 
-    program %like% "EE", "Electrical Engineering", 
-    program %like% "ME", "Mechanical Engineering", 
-    program %like% "ISE", "Industrial/Systems Engineering"
+  program %like% "CE", "Civil Engineering",
+  program %like% "EE", "Electrical Engineering",
+  program %like% "ME", "Mechanical Engineering",
+  program %like% "ISE", "Industrial/Systems Engineering"
 )]
 DT[]
 ```
@@ -173,11 +173,12 @@ With one quantitative variable (stickiness) for every combination of the levels 
 
 ```{r}
 # Convert categorical variables to factors
-DT <- condition_multiway(DT, 
-                        x = "stick", 
-                        yy = c("program", "race_sex"), 
-                        order_by  = "percent", 
-                        param_col = c("grad", "ever"))
+DT <- condition_multiway(DT,
+  x = "stick",
+  yy = c("program", "race_sex"),
+  order_by = "percent",
+  param_col = c("grad", "ever")
+)
 DT[]
 ```
 
@@ -197,9 +198,9 @@ In the first multiway chart, the rows are programs and panels are people, facili
 #| label: fig-stickiness-01
 #| fig-asp: 1.2
 ggplot(DT, aes(x = stick, y = program)) +
-    facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
-    geom_point()  +
-    labs(x = "Stickiness (%)", y = "")
+  facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
+  geom_point() +
+  labs(x = "Stickiness (%)", y = "")
 ```
 
 Alternatively, we can consider the dual chart, swapping the roles of the panels and rows.  Here the rows are people and panels are programs, facilitating comparisons of different people within a program.  Over many years of publishing research using MIDFIELD data, placing people on the rows of the multiway chart has been perhaps our most frequently used design. 
@@ -208,9 +209,9 @@ Alternatively, we can consider the dual chart, swapping the roles of the panels 
 #| label: fig-stickiness-02
 #| fig-asp: 1
 ggplot(DT, aes(x = stick, y = race_sex)) +
-    facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-    geom_point()  +
-    labs(x = "Stickiness (%)", y = "")
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_point() +
+  labs(x = "Stickiness (%)", y = "")
 ```
 
 **Reminder.** These are practice data, not research data---suitable for learning about student-record analysis, but not for drawing inferences about program attributes or student experiences. 
@@ -232,36 +233,36 @@ tbl <- DT[, .(program, race_sex, grad, ever, stick)]
 
 # Shorten the names that will appear in the header row
 tbl[, program := fcase(
-    program %like% "Civil Engineering", "Civil", 
-    program %like% "Electrical Engineering", "Electrical", 
-    program %like% "Mechanical Engineering", "Mechanical", 
-    program %like% "Industrial/Systems Engineering", "Industrial/Sys"
+  program %like% "Civil Engineering", "Civil",
+  program %like% "Electrical Engineering", "Electrical",
+  program %like% "Mechanical Engineering", "Mechanical",
+  program %like% "Industrial/Systems Engineering", "Industrial/Sys"
 )]
 
-# Combine three columns into one character column 
+# Combine three columns into one character column
 tbl[, results := paste0("(", grad, "/", ever, ") ", format(stick, nsmall = 1))]
 
-# Transform from block records to row records 
+# Transform from block records to row records
 tbl <- dcast(tbl, race_sex ~ program, value.var = "results")
 
-# Change factor to character so the rows can b alphabetized 
+# Change factor to character so the rows can b alphabetized
 tbl[, race_sex := as.character(race_sex)]
 tbl <- tbl[order(race_sex)]
 
 # Edit one column header
-setnames(tbl, old = "race_sex", new= "Group", skip_absent = TRUE)
+setnames(tbl, old = "race_sex", new = "Group", skip_absent = TRUE)
 ```
 
 Program stickiness in percent with the ratio (`grad/ever`) in parentheses, i.e., the number of program graduates and the number of students ever enrolled in the program. Groups with numbers below our reporting threshold are denoted NA or omitted. 
 
 ```{r}
 #| echo: false
-tbl |> 
-    kableExtra::kbl(align = "lrrrr") |>
-    kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-    kableExtra::row_spec(0, background = "#c7eae5") |>
-    # kableExtra::column_spec(1, monospace = TRUE) |>
-    kableExtra::column_spec(1:5, color = "black", background = "white")
+tbl |>
+  kableExtra::kbl(align = "lrrrr") |>
+  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+  kableExtra::row_spec(0, background = "#c7eae5") |>
+  # kableExtra::column_spec(1, monospace = TRUE) |>
+  kableExtra::column_spec(1:5, color = "black", background = "white")
 ```
 
 
@@ -316,43 +317,44 @@ DT[, race_sex := paste(race, sex)]
 DT[, c("race", "sex") := NULL]
 setcolorder(DT, c("program", "race_sex"))
 DT[, program := fcase(
-    program %like% "CE", "Civil Engineering", 
-    program %like% "EE", "Electrical Engineering", 
-    program %like% "ME", "Mechanical Engineering", 
-    program %like% "ISE", "Industrial/Systems Engineering"
+  program %like% "CE", "Civil Engineering",
+  program %like% "EE", "Electrical Engineering",
+  program %like% "ME", "Mechanical Engineering",
+  program %like% "ISE", "Industrial/Systems Engineering"
 )]
 
 # Convert categorical variables to factors
-DT <- condition_multiway(DT, 
-                        x = "stick", 
-                        yy = c("program", "race_sex"), 
-                        order_by  = "percent", 
-                        param_col = c("grad", "ever"))
+DT <- condition_multiway(DT,
+  x = "stick",
+  yy = c("program", "race_sex"),
+  order_by = "percent",
+  param_col = c("grad", "ever")
+)
 
 # Chart 1
 ggplot(DT, aes(x = stick, y = program)) +
-    facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
-    geom_point()  +
-    labs(x = "Stickiness (%)", y = "")
+  facet_wrap(vars(race_sex), ncol = 1, as.table = FALSE) +
+  geom_point() +
+  labs(x = "Stickiness (%)", y = "")
 
 # Chart 2
 ggplot(DT, aes(x = stick, y = race_sex)) +
-    facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-    geom_point()  +
-    labs(x = "Stickiness (%)", y = "")
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_point() +
+  labs(x = "Stickiness (%)", y = "")
 
 # Table
 tbl <- DT[, .(program, race_sex, grad, ever, stick)]
 tbl[, program := fcase(
-    program %like% "Civil Engineering", "Civil", 
-    program %like% "Electrical Engineering", "Electrical", 
-    program %like% "Mechanical Engineering", "Mechanical", 
-    program %like% "Industrial/Systems Engineering", "Industrial/Sys"
+  program %like% "Civil Engineering", "Civil",
+  program %like% "Electrical Engineering", "Electrical",
+  program %like% "Mechanical Engineering", "Mechanical",
+  program %like% "Industrial/Systems Engineering", "Industrial/Sys"
 )]
 tbl[, results := paste0("(", grad, "/", ever, ") ", format(stick, nsmall = 1))]
 tbl <- dcast(tbl, race_sex ~ program, value.var = "results")
 tbl[, race_sex := as.character(race_sex)]
 tbl <- tbl[order(race_sex)]
-setnames(tbl, old = "race_sex", new= "Group", skip_absent = TRUE)
+setnames(tbl, old = "race_sex", new = "Group", skip_absent = TRUE)
 ```
 
