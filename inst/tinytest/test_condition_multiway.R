@@ -8,6 +8,9 @@ test_condition_multiway <- function() {
     #              order_by = NULL,
     #              param_col = NULL)
     
+    # when running internal checks 
+    # library("tinytest")
+    
     # Needed for tinytest::build_install_test()
     suppressMessages(library("data.table"))
     options(
@@ -19,223 +22,204 @@ test_condition_multiway <- function() {
     # create a multiway
     dframe <- wrapr::build_frame(
         "catg1"    , "catg2", "a", "b"   |
-            "urban"  , "men"  , 12  , 53 |
-            "urban"  , "women", 14  , 67 |
-            "rural"  , "men"  , 10  , 61 |
-            "rural"  , "women", 20  , 72 |
-            "suburb" , "men"  , 13  , 49 |
-            "suburb" , "women", 15  , 46 |
-            "village", "men"  , 32  , 66 |
-            "village", "women", 14  , 81)
+            "urban"  , "men"  , 112  , 153 |
+            "urban"  , "women", 214  , 1267 |
+            "rural"  , "men"  , 310  , 361 |
+            "rural"  , "women", 420  , 1472 |
+            "suburb" , "men"  , 513  , 549 |
+            "suburb" , "women", 615  , 1646 |
+            "village", "men"  , 732  , 766 |
+            "village", "women", 814  , 1881)
     dframe$metric <- round(dframe$a / dframe$b, 2)
     DT <- copy(dframe)
     setDT(DT)
     
     # apply the conditioning function
-    x <- c("metric")
-    yy <- c("catg1", "catg2")
-    mw <- condition_multiway(DT, x, yy)
-
-    
-    
-    
+    mw_med <- condition_multiway(DT, 
+                                 x = "a", 
+                                 yy = c("catg1", "catg2"), 
+                                 order_by = "median")
+    mw_pct <- condition_multiway(DT, 
+                                 x = "metric", 
+                                 yy = c("catg1", "catg2"), 
+                                 order_by = "percent", 
+                                 param_col = c("a", "b"))
     
     # Begin tests
     # input can be data.frame or data.table
     expect_equivalent(
-        condition_multiway(dframe, x, yy),
-        condition_multiway(DT, x, yy)
+        mw_med, 
+        condition_multiway(dframe,
+                           x = "a", 
+                           yy = c("catg1", "catg2"), 
+                           order_by = "median")
     )
+    
     # categories can be characters or factors
     expect_equivalent(
-        condition_multiway(DT, x, yy),
-        condition_multiway(mw[, .(catg1, catg2, a, b, metric)], x, yy)
+        condition_multiway(DT[, .(catg1, catg2, a)],
+                           x = "a", 
+                           yy = c("catg1", "catg2"), 
+                           order_by = "median"), 
+        condition_multiway(mw_med[, .(catg1, catg2, a)],
+                           x = "a", 
+                           yy = c("catg1", "catg2"), 
+                           order_by = "median")
     )
+    
     # overwrites default median columns
     expect_equivalent(
-        condition_multiway(dframe, x, yy),
-        condition_multiway(mw, x, yy)
+        condition_multiway(DT,
+                           x = "a", 
+                           yy = c("catg1", "catg2"), 
+                           order_by = "median"), 
+        condition_multiway(mw_med,
+                           x = "a", 
+                           yy = c("catg1", "catg2"), 
+                           order_by = "median")
     )
     
     # columns have expected class
-    expect_equal(class(mw[, catg1]), "factor")
-    expect_equal(class(mw[, catg2]), "factor")
-    expect_equal(class(mw[, metric]), "numeric")
-
+    expect_equal(class(mw_med[, catg1]), "factor")
+    expect_equal(class(mw_med[, catg2]), "factor")
+    expect_equal(class(mw_med[, a]), "numeric")
+    expect_equal(class(mw_med[, b]), "numeric")
+    expect_equal(class(mw_med[, metric]), "numeric")
+    
     # error when input arguments wrong class, NA, or NULL
-    expect_error(condition_multiway(dframe = as.list(dframe), x, yy))
-    expect_error(condition_multiway(dframe, as.list(x), yy))
-    expect_error(condition_multiway(dframe, x, as.list(yy)))
-    expect_error(condition_multiway(dframe = NULL, x, yy))
-    expect_error(condition_multiway(dframe, x = NULL, y))
-    expect_error(condition_multiway(dframe, x, yy = NULL))
-    expect_error(condition_multiway(dframe = NA, x, yy))
-
+    p <- "a"
+    q <- c("catg1", "catg2")
+    expect_error(condition_multiway(as.list(dframe), p, q))
+    expect_error(condition_multiway(dframe, as.list(p), q))
+    expect_error(condition_multiway(dframe, p, as.list(q)))
+    expect_error(condition_multiway(NULL, p, q))
+    expect_error(condition_multiway(dframe, NULL, q))
+    expect_error(condition_multiway(dframe, p, NULL))
+    expect_error(condition_multiway(NA, p, q))
+    
     # names specified in arguments are columns in dframe
-    expect_error(condition_multiway(dframe, x, yy = c("catg1", NA_character_)))
-    expect_error(condition_multiway(dframe, x = NA_character_, yy))
+    p <- "a"
+    q <- c("catg1", "catg2")
+    expect_error(condition_multiway(dframe, p, c("catg1", NA_character_)))
+    expect_error(condition_multiway(dframe, NA_character_, q))
     
     # arguments after ... must be named
+    p <- "metric"
+    q <- c("catg1", "catg2")
     expect_error(condition_multiway(dframe,
-                                    x,
-                                    yy,
+                                    p,
+                                    q,
                                     NULL,
                                     param_col = NULL))
     expect_error(condition_multiway(dframe,
-                                    x,
-                                    yy,
+                                    p, 
+                                    q,
                                     order_by = NULL,
                                     NULL))
-
-    # optional arguments
-    expect_error( # order_by = "percent" requires param_col
+    
+    # percent method requires param_col
+    p <- "metric"
+    q <- c("catg1", "catg2")
+    expect_error( 
         condition_multiway(dframe,
-                     x,
-                     yy,
-                     order_by = "percent",
-                     param_col = NULL)
+                           p,
+                           q,
+                           order_by = "percent",
+                           param_col = NULL)
     )
-    expect_error( # param_col must be numeric
+    # param_col must be numeric
+    expect_error( 
         condition_multiway(dframe,
-                     x,
-                     yy,
-                     order_by = "percent",
-                     param_col = c("catg1", "catg2"))
+                           p,
+                           q,
+                           order_by = "percent",
+                           param_col = c("catg1", "catg2"))
     )
+    
     # optional arguments. NULL method same as median
+    p <- "a"
+    q <- c("catg1", "catg2")
     expect_equal(
         condition_multiway(dframe,
-                           x,
-                           yy,
+                           p,
+                           q,
                            order_by = "median",
                            param_col = NULL),
         condition_multiway(dframe,
-                           x,
-                           yy,
+                           p,
+                           q,
                            order_by = NULL,
                            param_col = NULL)
     )
-    # optional arguments. order_by median correct
-    mw <- condition_multiway(dframe,
-                             x,
-                             yy,
-                             order_by = "median",
-                             param_col = NULL)
-    temp <- copy(DT)
-    temp[, col_check := stats::median(metric, na.rm = TRUE), by = catg1]
-    expect_equal(mw[, catg1_metric], temp[, col_check])
     
-    temp[, col_check := stats::median(metric, na.rm = TRUE), by = catg2]
-    expect_equal(mw[, catg2_metric], temp[, col_check])
-    
-    # optional arguments. order_by mean correct
-    mw <- condition_multiway(dframe,
-                             x,
-                             yy,
-                             order_by = "mean",
-                             param_col = NULL)
-    temp <- copy(DT)
-    temp[, col_check := mean(metric, na.rm = TRUE), by = catg1]
-    expect_equal(mw[, catg1_metric], temp[, col_check])
-    
-    temp[, col_check := mean(metric, na.rm = TRUE), by = catg2]
-    expect_equal(mw[, catg2_metric], temp[, col_check])
-    
-    # optional arguments. order_by percent correct
-    mw <- condition_multiway(dframe,
-                             x,
-                             yy,
-                             order_by = "percent",
-                             param_col = c("a", "b"))
-    
-    temp <- copy(DT)
-    temp[, sum_a := sum(a, na.rm = TRUE), by = catg1]
-    temp[, sum_b := sum(b, na.rm = TRUE), by = catg1]
-    temp[, chk_ratio := round(100 * sum_a / sum_b, 1), by = catg1]
-    expect_equal(mw[, catg1_metric], temp[, chk_ratio])
-    
-    temp[, sum_a := sum(a, na.rm = TRUE), by = catg2]
-    temp[, sum_b := sum(b, na.rm = TRUE), by = catg2]
-    temp[, chk_ratio := round(100 * sum_a / sum_b, 1), by = catg2]
-    expect_equal(mw[, catg2_metric], temp[, chk_ratio])
-    
-    # warning when param_col but order_by is not "percent" 
-    expect_warning(condition_multiway(dframe, x, yy, param_col = c("a", "b")))
-    
-    # optional arguments. order_by sum correct, when x is the "a" column
-    mw <- condition_multiway(dframe,
-                             x = "a",
-                             yy, 
-                             order_by = "sum")
-    temp <- copy(DT)
-    temp[, sum_a := sum(a, na.rm = TRUE), by = catg1]
-    temp[, sum_b := sum(b, na.rm = TRUE), by = catg1]
-    expect_equal(mw[, catg1_a], temp[, sum_a])
-    mw <- condition_multiway(dframe,
-                             x = "b",
-                             yy,
-                             order_by = "sum")
-    expect_equal(mw[, catg1_b], temp[, sum_b])
-    
-    # integer metrics unaffected
-    DT[, a := as.integer(a)]
-    mw <- condition_multiway(DT, x, yy)
-    expect_equal(class(mw$a), "integer")
-    
-    # order_by "alphabet" correct
-    z <- condition_multiway(dframe,
-                            x,
-                            yy,
-                            order_by = "alphabet")
+    # median method produces correct answers
+    temp <- DT[, lapply(.SD, median), .SDcols = c("a"), by = c("catg1")]
+    setnames(temp, "a", "catg1_median")
     expect_equal(
-        as.character(z$catg1),
-        sort(dframe$catg1, decreasing = TRUE)
+        temp[, .(catg1_median)], 
+        unique(mw_med[, .(catg1_median)])
     )
+    temp <- DT[, lapply(.SD, median), .SDcols = c("a"), by = c("catg2")]
+    setnames(temp, "a", "catg2_median")
     expect_equal(
-        as.character(z$catg2),
-        rev(dframe$catg2)
+        temp[, .(catg2_median)], 
+        unique(mw_med[, .(catg2_median)])
+    )
+    
+    # percent method produces correct answers 
+    # (condition_multiway rounds to one place)
+    temp <- DT[, lapply(.SD, sum), .SDcols = c("a", "b"), by = c("catg1")]
+    temp[, catg1_metric := round(100 * a / b, 1)]
+    expect_equal(
+        temp[, .(catg1_metric)], 
+        unique(mw_pct[, .(catg1_metric)])
+    )
+    temp <- DT[, lapply(.SD, sum), .SDcols = c("a", "b"), by = c("catg2")]
+    temp[, catg2_metric := round(100 * a / b, 1)]
+    expect_equal(
+        temp[, .(catg2_metric)], 
+        unique(mw_pct[, .(catg2_metric)])
     )
 
-    # ordering factors does not affect metric values
-    p <- condition_multiway(dframe,
-                      x,
-                      yy,
-                      order_by = "alphabet")
-    s <- p[, .(catg1, catg2, metric)]
-    q <- condition_multiway(dframe,
-                      x,
-                      yy,
-                      order_by = "median")
-    r <- condition_multiway(dframe,
-                      x,
-                      yy, 
-                      order_by = "sum")
-    u <- condition_multiway(dframe,
-                            x,
-                            yy,
+    # warning when param_col but order_by is not "percent" 
+    p <- "metric"
+    q <- c("catg1", "catg2")
+    expect_warning(condition_multiway(dframe, 
+                                      p, 
+                                      q, 
+                                      order_by = "median",
+                                      param_col = c("a", "b")))
+    
+    # integer metrics unaffected
+    p <- "a"
+    q <- c("catg1", "catg2")
+    temp <- copy(DT)
+    temp[, a := as.integer(a)]
+    temp <- condition_multiway(temp, p, q)
+    expect_equal(class(temp$a), "integer")
+
+    # ordering factors does not affect numeric columns
+    # inner join to check results
+    # median method
+    u <- condition_multiway(dframe, 
+                            x = "a", 
+                            yy = c("catg1", "catg2"))
+    u <- u[, .(catg1, catg2, a)]
+    u[, `:=`(catg1 = as.character(catg1), catg2 = as.character(catg2))]
+    v <- u[dframe, .(catg1, catg2, a), on = c("catg1", "catg2"), nomatch = NULL]
+    expect_equal(u, v)
+    
+    # percent metod
+    u <- condition_multiway(dframe, 
+                            x = "metric", 
+                            yy = c("catg1", "catg2"), 
                             order_by = "percent", 
                             param_col = c("a", "b"))
-    # Use left outer join into s
-    expect_equal(
-        s, 
-        p[s, .(catg1, catg2, metric), on = c("catg1", "catg2")]
-    )
-    expect_equal(
-        s, 
-        q[s, .(catg1, catg2, metric), on = c("catg1", "catg2")]
-    )
-    expect_equal(
-        s, 
-        r[s, .(catg1, catg2, metric), on = c("catg1", "catg2")]
-    )
-    expect_equal(
-        s, 
-        u[s, .(catg1, catg2, metric), on = c("catg1", "catg2")]
-    )
-    
-    
-    
-    
+    u <- u[, .(catg1, catg2, metric)]
+    u[, `:=`(catg1 = as.character(catg1), catg2 = as.character(catg2))]
+    v <- u[dframe, .(catg1, catg2, metric), on = c("catg1", "catg2"), nomatch = NULL]
+    expect_equal(u, v)
+
     invisible(NULL)
 }
 

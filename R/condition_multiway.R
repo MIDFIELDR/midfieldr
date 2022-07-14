@@ -1,86 +1,91 @@
 
 
-#' Condition multiway data for graphing
+#' Condition multiway data by ordering category levels
 #'
-#' Transform a data frame such that two categorical variables are factors
-#' with levels ordered for display in a Cleveland "multiway dot plot," where
-#' the ordering of the panels and rows are crucial to the perception of
-#' effects. In multiway data---as defined by
-#' Cleveland (1993)---there is a single
-#' quantitative value (or response) for every combination of levels
-#' of two categorical variables. Typically the quantitative column is used to
-#' order the levels of the two categorical columns.
+#' Transform a data frame such that two independent categorical variables are 
+#' factors with levels ordered for display in a multiway dot plot. Multiway 
+#' data comprise a single quantitative value (or response) for every 
+#' combination of levels of two categorical variables. The ordering of the 
+#' rows and panels is crucial to the perception of effects (Cleveland, 1993). 
+#' 
+#' In our context, "multiway" refers to the data structure and graph
+#' design defined by Cleveland (1993), not to the methods of analysis described 
+#' by Kroonenberg (2008).
+#' 
+#' Multiway data comprise three variables: a categorical variable of \emph{m} 
+#' levels; a second independent categorical variable of \emph{n} levels; and a 
+#' quantitative variable (or \emph{response}) of length \emph{mn} that 
+#' cross-classifies the categories, that is, there is a value of the 
+#' response for each combination of levels of the two categorical variables.
+#' 
+#' In a multiway dot plot, one category is encoded by the panels, the second 
+#' category is encoded by the rows of each panel, and the quantitative variable 
+#' is encoded along identical horizontal scales.  
 #'
-#' In the multiway dot plot, there are panels, the individual dot plots
-#' of the display, and there are levels, the rows of each panel. One category
-#' is encoded by the panels; the other by the rows. All panels have the same
-#' quantitative scale on the x-axis and the same organization of category
-#' levels on the y-axis. Panels and rows are ordered so that ordering scheme
-#' increases in "graph order", that is, increases from left to right and from
-#' bottom to top.
-#'
-#' Note that "multiway" in our context refers to the data structure and graph
-#' design defined by Cleveland, not to the methods of analysis described by
-#' Kroonenberg (2008).
 #'
 #'
-#' @param dframe Data frame with at least one numeric variable and two 
-#'        categorical variables (character or factor). 
-#' @param x Character scalar, the quoted name of the numeric response variable.
-#' @param yy Character vector, the quoted names of the two categorical 
-#'         variables.
+#' @param dframe Data frame with one numeric variable and two 
+#'        categorical variables of class character or factor. Two additional 
+#'        numeric columns required when using the "percent" ordering method. 
+#' @param x Character, name (in quotes) of the single multiway quantitative 
+#'        variable
+#' @param yy Character, vector of names (in quotes) of the two multiway 
+#'        categorical variables
 #' @param ... Not used, forces later arguments to be used by name.
-#' @param order_by Optional character scalar (in quotes) assigning the
-#'        method for ordering the levels of the categorical variables.
-#'        The following values are possible:
-#'        \itemize{
-#'
-#'        \item{"median"} {(default) Orders by the median of values in the
-#'        quantitative column grouped by category. This is the order 
-#'        recommended by Cleveland when the quantitative variable is an 
-#'        integer count or frequency.}
-#'
-#'        \item{"mean"} {Orders by the mean of values in the quantitative
-#'        column grouped by category.}
-#'
-#'        \item{"sum"} {Orders by the sum of values in the quantitative
-#'        column grouped by category. Useful also when the quantitative variable
-#'        is a count or frequency.}
-#'
-#'        \item{"percent"} {Orders by ratios computed by category. Used when
-#'        the quantitative response variable is the ratio (in percent) of two
-#'        columns of integer counts (frequencies). The counts are summed by
-#'        category to obtain grouped percentages used to order the levels of
-#'        the categorical variables. Requires two parameter columns be
-#'        identified in \code{param_col} and assumes that the parameter with
-#'        the larger column sum is the denominator of the ratio.}
-#'
-#'        \item{"alphabet"} {Orders the levels of the categorical variables
-#'        alphabetically. Rarely useful for perceiving effects, but can be
-#'        useful for value look up.}
-#'
-#'        }
-#' @param param_col Optional character vector with the names (in quotes)
-#'        of the columns used as parameters in the \code{order_by} method.
-#'        Currently supports \code{"percent"} method only---expects two column
-#'        names (in any order) of the integer count columns used to construct
-#'        the percentage response column.
-#'
-#'
-#' @return A \code{data.table} with the following properties:
+#' @param order_by Character, “median” (default) or “percent”, method of 
+#'        ordering the levels of the categories. The median method computes the 
+#'        medians of the quantitative column grouped by category. The percent 
+#'        method computes percentages based on the same ratio that produced the 
+#'        quantitative variable except grouped by category. 
+#' @param param_col Character vector with the names (in quotes) of the 
+#'        numerator and denominator columns that produced the quantitative 
+#'        variable, required when \code{order_by} is "percent". Names can be 
+#'        in any order; the algorithm assumes that the parameter with the 
+#'        larger column sum is the denominator of the ratio.
+#'        
+#' 
+#' @return A \code{data.table}  with the following properties:
 #' \itemize{
-#'   \item Rows are not modified.
-#'   \item The quantitative column is not modified.
-#'   \item The two categorical columns are factors with levels ordered by
-#'         the method selected.
-#'   \item Grouping structures are not preserved.
+#'  \item Rows are not modified.
+#'  \item Grouping structures are not preserved.
+#'  \item The columns specified by \code{yy} are converted to factors and 
+#'      ordered. Other columns are not modified. 
+#'  \item Two columns are added. \strong{Caution!} An existing column 
+#'  with the same name as one of the added columns is silently overwritten. 
 #' }
+#' Columns added:
+#' \describe{
+#'  \item{\code{Y_median} columns (when ordering method is "median")}{Numeric. 
+#'      Two columns of medians of the quantitative variable grouped by the 
+#'      categorical variables. The \code{Y} placeholder in the column name is 
+#'      replaced by a category name from \code{yy}. For example, suppose  
+#'      \code{yy = c("program", "people")} and \code{order_by = "median"}. 
+#'      The two new column names would be \code{program_median} and 
+#'      \code{people_median}.} 
+#'      
+#'  \item{\code{Y_X} columns (when ordering method is "percent")}{Numeric. Two 
+#'      columns of percentages based on the same ratio that produces the 
+#'      quantitative variable except grouped by the categorical variables. 
+#'      The \code{Y}  
+#'      placeholder in the column name is 
+#'      replaced by a category name from \code{yy}; the \code{X}  placeholder 
+#'      is replaced by the quantitative variable name in \code{x}. For example, 
+#'      suppose \code{yy = c("program", "people")}, and \code{x = "grad_rate"}, 
+#'      and \code{order_by = "percent"}. The two new column names  would be  
+#'      \code{program_grad_rate} and \code{people_grad_rate}.} 
+#'      
+#' }
+#' 
+#' 
+#' 
+#' 
 #'
 #'
 #' @references
 #'   Cleveland WS (1993). \emph{Visualizing Data}. Hobart Press, Summit, NJ.
 #'   
-#'   Kroonenberg PM (2008). \emph{Applied Multiway Data Analysis}. Wiley, Hoboken, NJ.
+#'   Kroonenberg PM (2008). \emph{Applied Multiway Data Analysis}. Wiley, 
+#'   Hoboken, NJ.
 #'
 #'
 #' @family condition_*
@@ -136,7 +141,8 @@ condition_multiway <- function(dframe,
   qassert(order_by, "S1")
   assert_subset(
     order_by,
-    choices = c("median", "mean", "sum", "percent", "alphabet"),
+    # choices = c("median", "mean", "sum", "percent", "alphabet"),
+    choices = c("median", "percent"), 
     empty.ok = FALSE,
     .var.name = "order_by"
   )
@@ -173,20 +179,22 @@ condition_multiway <- function(dframe,
   categ_1 <- yy[[1]]
   categ_2 <- yy[[2]]
 
-  if (order_by == "alphabet") {
-
-    # alphabetical order returns categories as factors with levels
-    # ordered in reverse alphabetical order such that the graph rows and
-    # panels are in alphabetical order from the top down
-    DT <- order_by_alphabet(
-      DT,
-      categ_1,
-      categ_2
-    )
-
-    # organize the return column order
-    setcolorder(DT, c(yy, x))
-  } else if (order_by == "percent") {
+  # if (order_by == "alphabet") {
+  # 
+  #   # alphabetical order returns categories as factors with levels
+  #   # ordered in reverse alphabetical order such that the graph rows and
+  #   # panels are in alphabetical order from the top down
+  #   DT <- order_by_alphabet(
+  #     DT,
+  #     categ_1,
+  #     categ_2
+  #   )
+  # 
+  #   # organize the return column order
+  #   setcolorder(DT, c(yy, x))
+  # } else 
+      
+if (order_by == "percent") {
 
     # percent-based metrics, e.g., stickiness or graduation rate
     # returns categories as factors with levels ordered by the metric
@@ -199,10 +207,10 @@ condition_multiway <- function(dframe,
 
     # organize the return column order
     setcolorder(DT, c(yy, param_col, x))
-  } else { # order_by = c("sum", "mean", "median")
+  } else { # order_by = "median"
 
     # function-based ordering returns categories as factors with levels
-    # ordered by category sum(), mean(), or median()
+    # ordered by category median()
     DT <- order_by_function(
       DT,
       categ_1,
@@ -286,40 +294,44 @@ order_by_percent <- function(dframe,
 
         # order factor levels by values in new column
         DT[, CATEG_I := reorder(CATEG_I, NEW_COL)]
+        
+        # drop A and B with the intermediate sums
+        DT[, A := NULL]
+        DT[, B := NULL]
       }
     )
   }
   DT[]
 }
 # --------------------------------------------------------------------------
-order_by_alphabet <- function(dframe,
-                              categ_1,
-                              categ_2) {
-
-  # avoid possible copy-by-reference side effects
-  DT <- copy(dframe)
-
-  # bind names due to NSE notes in R CMD check
-  CATEG_1 <- NULL
-  CATEG_2 <- NULL
-
-  # execute expressions with column names as parameters
-  wrapr::let(
-    c(
-      CATEG_1 = categ_1,
-      CATEG_2 = categ_2
-    ),
-    {
-        setDT(DT)
-        DT[, CATEG_1 := as.character(CATEG_1)]
-        DT[, CATEG_2 := as.character(CATEG_2)]
-        setorder(DT, -CATEG_1, -CATEG_2)
-        DT[, CATEG_1 := as.factor(CATEG_1)]
-        DT[, CATEG_2 := as.factor(CATEG_2)]
-    }
-  )
-  DT[]
-}
+# order_by_alphabet <- function(dframe,
+#                               categ_1,
+#                               categ_2) {
+# 
+#   # avoid possible copy-by-reference side effects
+#   DT <- copy(dframe)
+# 
+#   # bind names due to NSE notes in R CMD check
+#   CATEG_1 <- NULL
+#   CATEG_2 <- NULL
+# 
+#   # execute expressions with column names as parameters
+#   wrapr::let(
+#     c(
+#       CATEG_1 = categ_1,
+#       CATEG_2 = categ_2
+#     ),
+#     {
+#         setDT(DT)
+#         DT[, CATEG_1 := as.character(CATEG_1)]
+#         DT[, CATEG_2 := as.character(CATEG_2)]
+#         setorder(DT, -CATEG_1, -CATEG_2)
+#         DT[, CATEG_1 := as.factor(CATEG_1)]
+#         DT[, CATEG_2 := as.factor(CATEG_2)]
+#     }
+#   )
+#   DT[]
+# }
 # --------------------------------------------------------------------------
 order_by_function <- function(dframe,
                               categ_1,
@@ -337,21 +349,21 @@ order_by_function <- function(dframe,
   ORDER_2 <- NULL
   X <- NULL
 
-  # create names for value variables
-  order_1 <- paste(categ_1, x, sep = "_")
-  order_2 <- paste(categ_2, x, sep = "_")
-
-  # select function to apply
-  if (order_by == "sum") {
-    f <- sum
-  }
+  # select function to apply 
   if (order_by == "median") {
-    f <- stats::median
+      f <- stats::median
   }
-  if (order_by == "mean") {
-    f <- mean
-  }
+  # if (order_by == "sum") {
+  #   f <- sum
+  # }
+  # if (order_by == "mean") {
+  #   f <- mean
+  # }
 
+  # create names for value variables
+  order_1 <- paste(categ_1, order_by, sep = "_")
+  order_2 <- paste(categ_2, order_by, sep = "_")
+  
   # execute expressions with column names as parameters
   wrapr::let(
     c(

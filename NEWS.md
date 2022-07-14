@@ -1,6 +1,14 @@
 
 
 
+## midfieldr 1.0.0.9023 / 2021-07
+
+- Updated `condition_multiway()`, unit tests, and multiway vignette
+
+
+
+
+
 ## midfieldr 1.0.0.9022 / 2021-06-29
 
 - Revise or add vignettes for data sufficiency, degree seeking (inner joins), 
