@@ -1,13 +1,14 @@
 
 
 
+## midfieldr 1.0.0.9024 / 2021-07
+
+- item
+
+
 ## midfieldr 1.0.0.9023 / 2021-07
 
 - Updated `condition_multiway()`, unit tests, and multiway vignette
-
-
-
-
 
 ## midfieldr 1.0.0.9022 / 2021-06-29
 

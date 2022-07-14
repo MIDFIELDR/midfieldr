@@ -11,7 +11,7 @@
 #' baccalaureate degree. In many studies, students must complete their 
 #' programs in a specified time span, for example 4-, 6-, or 8-years after 
 #' admission. If they do, their completion is timely; if not, their completion 
-#' is untimely and they are grouped with the non-completers when computing 
+#' is late and they are grouped with the non-completers when computing 
 #' a metric such as graduation rate. 
 #' 
 #' Completion status is "timely" for students completing their programs 
@@ -37,13 +37,11 @@
 #' Columns added:
 #' \describe{
 #'  \item{\code{term_degree}}{Character. Term in which a program is completed. 
-#'  Encoded YYYYT.}
-#'  \item{\code{completion}}{Logical. TRUE denotes students completing their 
-#'  programs.}
+#'  Encoded YYYYT. Joined from \code{midfield_degree} data table.}
 #'  \item{\code{completion_status}}{Character. Label each observation to 
 #'  indicate program completion status. Possible values are: 
 #'  "timely", indicating program completion no later than the timely 
-#'  completion term; "untimely", indicating program completion after  
+#'  completion term; "late", indicating program completion after  
 #'  the timely completion term; and "NA" indicating non-completion.}
 #' }
 #'
@@ -87,12 +85,11 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
   completion_status <- NULL
   timely_term <- NULL
   term_degree <- NULL
-  completion <- NULL
 
   # do the work
 
   # variables added by this function and functions called (if any)
-  new_cols <- c("term_degree", "completion", "completion_status")
+  new_cols <- c("term_degree", "completion_status")
   
   # retain original variables NOT in the vector of new columns 
   old_cols <- find_old_cols(dframe, new_cols) 
@@ -112,13 +109,10 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
   # left-outer join, keep all rows of dframe
   dframe <- merge(dframe, DT, by = "mcid", all.x = TRUE)
 
-  # T/F program was completed
-  dframe[, completion := fifelse(is.na(term_degree), FALSE, TRUE)]
-
-  # T/F/NA program was completed in timely manner
+  # completion is timely, late, or NA
   dframe[, completion_status := fifelse(term_degree <= timely_term,
     "timely", 
-    "untimely",
+    "late",
     na = NA_character_
   )]
 

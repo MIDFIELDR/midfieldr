@@ -27,13 +27,11 @@ A \code{data.table}  with the following properties:
 Columns added:
 \describe{
  \item{\code{term_degree}}{Character. Term in which a program is completed. 
- Encoded YYYYT.}
- \item{\code{completion}}{Logical. TRUE denotes students completing their 
- programs.}
+ Encoded YYYYT. Joined from \code{midfield_degree} data table.}
  \item{\code{completion_status}}{Character. Label each observation to 
  indicate program completion status. Possible values are: 
  "timely", indicating program completion no later than the timely 
- completion term; "untimely", indicating program completion after  
+ completion term; "late", indicating program completion after  
  the timely completion term; and "NA" indicating non-completion.}
 }
 }
@@ -48,7 +46,7 @@ By "program completion" we mean an undergraduate earning their
 baccalaureate degree. In many studies, students must complete their 
 programs in a specified time span, for example 4-, 6-, or 8-years after 
 admission. If they do, their completion is timely; if not, their completion 
-is untimely and they are grouped with the non-completers when computing 
+is late and they are grouped with the non-completers when computing 
 a metric such as graduation rate. 
 
 Completion status is "timely" for students completing their programs 

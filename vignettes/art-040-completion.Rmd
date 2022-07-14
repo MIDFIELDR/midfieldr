@@ -132,7 +132,7 @@ You can view the function help page by running,
 
     ? add_completion_status()
 
-Its arguments are:
+**Arguments.**
 
 `dframe`
 
@@ -142,21 +142,15 @@ Its arguments are:
 
 : Data frame of SUR degree observations keyed by student ID. Default is `degree`. Required variables are `mcid` and `term_degree`.
 
-The function adds three columns to the SUR data frame: the `completion_status` result plus two supporting variables:
+**Columns added.**
 
 `term_degree`
 
-: Character. Term in which a program is completed. Encoded YYYYT.
+: Character. Term in which a program is completed. Encoded YYYYT. NA indicates non-completion. 
 
-`completion`
+`completion_status`
 
-: Logical. TRUE denotes program completion; FALSE denotes non-completion. 
-
-The possible values for completion status are: 
-
-- "timely", program completion no later than `timely_term`
-- "untimely", program completion after `timely_term`
-- NA, non-completion. 
+: Character. Completion status: "timely", indicating program completion no later than the timely completion term; "late", indicating program completion after the timely completion term; and "NA" indicating non-completion.
 
 
 **Add variables.** For demonstrating `add_completion_status()`, our working data frame must have columns for ID and the timely completion term. We use `add_timely_term()` again, though alternatively we could have retained the `timely_term` variable in  earlier code chunks. 
@@ -179,21 +173,21 @@ DT[]
 DT[mcid == "MID25783162"]
 ```
 
-The student has a degree term, Spring 1997 (encoded `19963`), so completion is TRUE. Their degree term does not exceed their timely completion term, Spring 1998 (encoded `19973`), so their completion status is "timely".
+The student has a degree term, Spring 1997 (encoded `19963`) indicating successful completion. Their degree term does not exceed their timely completion term, Spring 1998 (encoded `19973`), so their completion status is "timely".
 
 ```{r}
 # Student G
 DT[mcid == "MID26696871"]
 ```
 
-This student too has a degree term, Spring 2017 (encoded `20163`), so completion is TRUE. Their degree term exceeds their timely completion term, Spring 2016 (encoded `20153`), so their completion status is "untimely". 
+This student too has a degree term, Spring 2017 (encoded `20163`) indicating successful completion. Their degree term exceeds their timely completion term, Spring 2016 (encoded `20153`), so their completion status is "late". 
 
 ```{r}
 # Student H
 DT[mcid == "MID26697615"]
 ```
 
-The student's degree term is NA indicating they did not graduate. Completion is therefore FALSE and completion status is also NA. 
+The student's degree term is NA, indicating they did not complete their program. Thus completion status is NA as well. 
 
 
 

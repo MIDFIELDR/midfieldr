@@ -14,17 +14,17 @@ test_add_completion_status <- function() {
     # cat(wrapr::draw_frame(DT))
 
     DT <- wrapr::build_frame(
-        "mcid"         , "term_i", "level_i"     , "adj_span", "timely_term", "term_degree", "completion", "completion_status" |
-            "MID25784187", "19885" , "01 Freshman" , 6         , "19943"      , "19946"      , TRUE        , "untimely"          |
-            "MID25784974", "19883" , "02 Sophomore", 5         , "19931"      , NA_character_, FALSE       , NA_character_       |
-            "MID25816209", "19881" , "02 Sophomore", 5         , "19923"      , NA_character_, FALSE       , NA_character_       |
-            "MID25819358", "19946" , "02 Sophomore", 5         , "19993"      , "19963"      , TRUE        , "timely"            |
-            "MID25828870", "19881" , "01 Freshman" , 6         , "19933"      , "19923"      , TRUE        , "timely"            |
-            "MID25829749", "19995" , "03 Junior"   , 4         , "20033"      , NA_character_, FALSE       , NA_character_       |
-            "MID25841418", "19981" , "03 Junior"   , 4         , "20013"      , "19993"      , TRUE        , "timely"            |
-            "MID25845197", "19905" , "03 Junior"   , 4         , "19943"      , "19921"      , TRUE        , "timely"            |
-            "MID25846316", "19911" , "01 Freshman" , 6         , "19963"      , "19951"      , TRUE        , "timely"            |
-            "MID25847220", "19891" , "01 Freshman" , 6         , "19943"      , "19933"      , TRUE        , "timely"            )
+        "mcid"         , "term_i", "level_i"     , "adj_span", "timely_term", "term_degree"  , "completion_status" |
+            "MID25784187", "19885" , "01 Freshman" , 6         , "19943"      , "19946"      , "late"              |
+            "MID25784974", "19883" , "02 Sophomore", 5         , "19931"      , NA_character_, NA_character_       |
+            "MID25816209", "19881" , "02 Sophomore", 5         , "19923"      , NA_character_, NA_character_       |
+            "MID25819358", "19946" , "02 Sophomore", 5         , "19993"      , "19963"      , "timely"            |
+            "MID25828870", "19881" , "01 Freshman" , 6         , "19933"      , "19923"      , "timely"            |
+            "MID25829749", "19995" , "03 Junior"   , 4         , "20033"      , NA_character_, NA_character_       |
+            "MID25841418", "19981" , "03 Junior"   , 4         , "20013"      , "19993"      , "timely"            |
+            "MID25845197", "19905" , "03 Junior"   , 4         , "19943"      , "19921"      , "timely"            |
+            "MID25846316", "19911" , "01 Freshman" , 6         , "19963"      , "19951"      , "timely"            |
+            "MID25847220", "19891" , "01 Freshman" , 6         , "19943"      , "19933"      , "timely"            )
     setDT(DT)
 
     # correct answers
