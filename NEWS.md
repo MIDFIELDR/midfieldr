@@ -3,9 +3,7 @@
 
 ## midfieldr 1.0.0.9024 / 2021-07
 
-- Revise `add_completion_status()`, changing the three possible values to 
-  "timely", "late", or NA. Drop the `completion` column (same information  
-  available in the `term_degree` column). 
+- Revise `add_completion_status()`, changing the three possible values to "timely", "late", or NA. Drop the `completion` column (same information available in the `term_degree` column). 
 - Revise vignettes for consistent format.
 
 
@@ -20,10 +18,8 @@
 
 ## midfieldr 1.0.0.9022 / 2021-06-29
 
-- Revise or add vignettes for data sufficiency, degree seeking (inner joins), 
-programs, completion, and demographics (left outer joins)
-- Correction to `condition_multiway()` for alphabetical ordering, revise 
-unit tests
+- Revise or add vignettes for data sufficiency, degree seeking (inner joins), programs, completion, and demographics (left outer joins)
+- Correction to `condition_multiway()` for alphabetical ordering, revise unit tests
 - Remove dependency on Rdpack
 
 ## midfieldr 1.0.0.9021 / 2021-06
