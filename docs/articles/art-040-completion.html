@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9023</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9024</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,7 +96,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Completion status</h1>
             
-            <h4 data-toc-skip class="date">2022-07-14</h4>
+            <h4 data-toc-skip class="date">2022-07-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-040-completion.Rmd" class="external-link"><code>vignettes/art-040-completion.Rmd</code></a></small>
       <div class="d-none name"><code>art-040-completion.Rmd</code></div>
@@ -196,9 +196,11 @@ data satisfying data sufficiency and degree seeking.</p>
 <h2 id="add_completion_status">
 <code>add_completion_status()</code><a class="anchor" aria-label="anchor" href="#add_completion_status"></a>
 </h2>
-<p>You can view the function help page by running,</p>
-<pre><code><span class="op">?</span> <span class="fu"><a href="../reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="op">)</span></code></pre>
-<p>Its arguments are:</p>
+<p>View the help page by running</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Run in Console to view help page</span>
+<span class="op">?</span> <span class="va">add_completion_status</span></code></pre></div>
+<p><strong>Arguments.</strong></p>
 <dl>
 <dt><code>dframe</code></dt>
 <dd>
@@ -213,28 +215,21 @@ ID. Required variables are <code>mcid</code> and
 <code>term_degree</code>.</p>
 </dd>
 </dl>
-<p>The function adds three columns to the SUR data frame: the
-<code>completion_status</code> result plus two supporting variables:</p>
+<p><strong>Columns added.</strong></p>
 <dl>
 <dt><code>term_degree</code></dt>
 <dd>
-<p>Character. Term in which a program is completed. Encoded YYYYT.</p>
+<p>Character. Term in which a program is completed. Encoded YYYYT. NA
+indicates non-completion.</p>
 </dd>
-<dt><code>completion</code></dt>
+<dt><code>completion_status</code></dt>
 <dd>
-<p>Logical. TRUE denotes program completion; FALSE denotes
+<p>Character. Completion status: “timely”, indicating program completion
+no later than the timely completion term; “late”, indicating program
+completion after the timely completion term; and “NA” indicating
 non-completion.</p>
 </dd>
 </dl>
-<p>The possible values for completion status are:</p>
-<ul>
-<li>“timely”, program completion no later than
-<code>timely_term</code>
-</li>
-<li>“untimely”, program completion after <code>timely_term</code>
-</li>
-<li>NA, non-completion.</li>
-</ul>
 <p><strong>Add variables.</strong> For demonstrating
 <code><a href="../reference/add_completion_status.html">add_completion_status()</a></code>, our working data frame must have
 columns for ID and the timely completion term. We use
@@ -249,49 +244,49 @@ chunks.</p>
 <span class="co"># Drop unnecessary columns</span>
 <span class="va">DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"term_i"</span>, <span class="st">"level_i"</span>, <span class="st">"adj_span"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span>
 <span class="va">DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">#&gt;               mcid timely_term term_degree completion completion_status</span>
-<span class="co">#&gt;             &lt;char&gt;      &lt;char&gt;      &lt;char&gt;     &lt;lgcl&gt;            &lt;char&gt;</span>
-<span class="co">#&gt;     1: MID25783135       19963        &lt;NA&gt;      FALSE              &lt;NA&gt;</span>
-<span class="co">#&gt;     2: MID25783162       19973       19963       TRUE            timely</span>
-<span class="co">#&gt;     3: MID25783178       20003       20001       TRUE            timely</span>
-<span class="co">#&gt;     4: MID25783195       19983       19966       TRUE            timely</span>
-<span class="co">#&gt;     5: MID25783220       20023        &lt;NA&gt;      FALSE              &lt;NA&gt;</span>
-<span class="co">#&gt;    ---                                                                 </span>
-<span class="co">#&gt; 63948: MID26697574       20113       20113       TRUE            timely</span>
-<span class="co">#&gt; 63949: MID26697576       20153       20134       TRUE            timely</span>
-<span class="co">#&gt; 63950: MID26697599       20153       20143       TRUE            timely</span>
-<span class="co">#&gt; 63951: MID26697615       20153        &lt;NA&gt;      FALSE              &lt;NA&gt;</span>
-<span class="co">#&gt; 63952: MID26697623       20153       20153       TRUE            timely</span></code></pre>
+<pre><code><span class="co">#&gt;               mcid timely_term term_degree completion_status</span>
+<span class="co">#&gt;             &lt;char&gt;      &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span>
+<span class="co">#&gt;     1: MID25783135       19963        &lt;NA&gt;              &lt;NA&gt;</span>
+<span class="co">#&gt;     2: MID25783162       19973       19963            timely</span>
+<span class="co">#&gt;     3: MID25783178       20003       20001            timely</span>
+<span class="co">#&gt;     4: MID25783195       19983       19966            timely</span>
+<span class="co">#&gt;     5: MID25783220       20023        &lt;NA&gt;              &lt;NA&gt;</span>
+<span class="co">#&gt;    ---                                                      </span>
+<span class="co">#&gt; 63948: MID26697574       20113       20113            timely</span>
+<span class="co">#&gt; 63949: MID26697576       20153       20134            timely</span>
+<span class="co">#&gt; 63950: MID26697599       20153       20143            timely</span>
+<span class="co">#&gt; 63951: MID26697615       20153        &lt;NA&gt;              &lt;NA&gt;</span>
+<span class="co">#&gt; 63952: MID26697623       20153       20153            timely</span></code></pre>
 <p><strong>Closer look.</strong> Let’s examine three specific
 observations to illustrate the sense of the results.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Student F</span>
 <span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID25783162"</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">#&gt;           mcid timely_term term_degree completion completion_status</span>
-<span class="co">#&gt;         &lt;char&gt;      &lt;char&gt;      &lt;char&gt;     &lt;lgcl&gt;            &lt;char&gt;</span>
-<span class="co">#&gt; 1: MID25783162       19973       19963       TRUE            timely</span></code></pre>
+<pre><code><span class="co">#&gt;           mcid timely_term term_degree completion_status</span>
+<span class="co">#&gt;         &lt;char&gt;      &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span>
+<span class="co">#&gt; 1: MID25783162       19973       19963            timely</span></code></pre>
 <p>The student has a degree term, Spring 1997 (encoded
-<code>19963</code>), so completion is TRUE. Their degree term does not
-exceed their timely completion term, Spring 1998 (encoded
+<code>19963</code>) indicating successful completion. Their degree term
+does not exceed their timely completion term, Spring 1998 (encoded
 <code>19973</code>), so their completion status is “timely”.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Student G</span>
 <span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID26696871"</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">#&gt;           mcid timely_term term_degree completion completion_status</span>
-<span class="co">#&gt;         &lt;char&gt;      &lt;char&gt;      &lt;char&gt;     &lt;lgcl&gt;            &lt;char&gt;</span>
-<span class="co">#&gt; 1: MID26696871       20153       20163       TRUE          untimely</span></code></pre>
+<pre><code><span class="co">#&gt;           mcid timely_term term_degree completion_status</span>
+<span class="co">#&gt;         &lt;char&gt;      &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span>
+<span class="co">#&gt; 1: MID26696871       20153       20163              late</span></code></pre>
 <p>This student too has a degree term, Spring 2017 (encoded
-<code>20163</code>), so completion is TRUE. Their degree term exceeds
-their timely completion term, Spring 2016 (encoded <code>20153</code>),
-so their completion status is “untimely”.</p>
+<code>20163</code>) indicating successful completion. Their degree term
+exceeds their timely completion term, Spring 2016 (encoded
+<code>20153</code>), so their completion status is “late”.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Student H</span>
 <span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID26697615"</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">#&gt;           mcid timely_term term_degree completion completion_status</span>
-<span class="co">#&gt;         &lt;char&gt;      &lt;char&gt;      &lt;char&gt;     &lt;lgcl&gt;            &lt;char&gt;</span>
-<span class="co">#&gt; 1: MID26697615       20153        &lt;NA&gt;      FALSE              &lt;NA&gt;</span></code></pre>
-<p>The student’s degree term is NA indicating they did not graduate.
-Completion is therefore FALSE and completion status is also NA.</p>
+<pre><code><span class="co">#&gt;           mcid timely_term term_degree completion_status</span>
+<span class="co">#&gt;         &lt;char&gt;      &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span>
+<span class="co">#&gt; 1: MID26697615       20153        &lt;NA&gt;              &lt;NA&gt;</span></code></pre>
+<p>The student’s degree term is NA, indicating they did not complete
+their program. Thus completion status is NA as well.</p>
 <p><strong>Usage.</strong> The following implementations yield identical
 results,</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
@@ -323,19 +318,19 @@ like this,</p>
 <span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">toy_DT</span>, <span class="va">toy_degree</span><span class="op">)</span>
 <span class="va">toy_DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"term_i"</span>, <span class="st">"level_i"</span>, <span class="st">"adj_span"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span>
 <span class="va">toy_DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">#&gt;            mcid timely_term term_degree completion completion_status</span>
-<span class="co">#&gt;          &lt;char&gt;      &lt;char&gt;      &lt;char&gt;     &lt;lgcl&gt;            &lt;char&gt;</span>
-<span class="co">#&gt;  1: MID25784187       19943       19946       TRUE          untimely</span>
-<span class="co">#&gt;  2: MID25784974       19931        &lt;NA&gt;      FALSE              &lt;NA&gt;</span>
-<span class="co">#&gt;  3: MID25816209       19923        &lt;NA&gt;      FALSE              &lt;NA&gt;</span>
-<span class="co">#&gt;  4: MID25819358       19993       19963       TRUE            timely</span>
-<span class="co">#&gt;  5: MID25828870       19933       19923       TRUE            timely</span>
-<span class="co">#&gt; ---                                                                 </span>
-<span class="co">#&gt; 95: MID26622664       20113       20093       TRUE            timely</span>
-<span class="co">#&gt; 96: MID26624815       20113       20073       TRUE            timely</span>
-<span class="co">#&gt; 97: MID26691066       20161       20141       TRUE            timely</span>
-<span class="co">#&gt; 98: MID26692025       20153       20141       TRUE            timely</span>
-<span class="co">#&gt; 99: MID26692254       20191       20143       TRUE            timely</span></code></pre>
+<pre><code><span class="co">#&gt;            mcid timely_term term_degree completion_status</span>
+<span class="co">#&gt;          &lt;char&gt;      &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span>
+<span class="co">#&gt;  1: MID25784187       19943       19946              late</span>
+<span class="co">#&gt;  2: MID25784974       19931        &lt;NA&gt;              &lt;NA&gt;</span>
+<span class="co">#&gt;  3: MID25816209       19923        &lt;NA&gt;              &lt;NA&gt;</span>
+<span class="co">#&gt;  4: MID25819358       19993       19963            timely</span>
+<span class="co">#&gt;  5: MID25828870       19933       19923            timely</span>
+<span class="co">#&gt; ---                                                      </span>
+<span class="co">#&gt; 95: MID26622664       20113       20093            timely</span>
+<span class="co">#&gt; 96: MID26624815       20113       20073            timely</span>
+<span class="co">#&gt; 97: MID26691066       20161       20141            timely</span>
+<span class="co">#&gt; 98: MID26692025       20153       20141            timely</span>
+<span class="co">#&gt; 99: MID26692254       20191       20143            timely</span></code></pre>
 <p><strong>Caution! Silent overwriting!</strong> In this case, existing
 columns with the same name as one of the added columns are deleted and
 replaced except.</p>
@@ -345,38 +340,38 @@ timely term except <code>completion</code></p>
 <code class="sourceCode R"><span class="co"># Drop two columns</span>
 <span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="va">toy_DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"term_degree"</span>, <span class="st">"completion_status"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span>
 <span class="va">toy_DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">#&gt;            mcid timely_term completion</span>
-<span class="co">#&gt;          &lt;char&gt;      &lt;char&gt;     &lt;lgcl&gt;</span>
-<span class="co">#&gt;  1: MID25784187       19943       TRUE</span>
-<span class="co">#&gt;  2: MID25784974       19931      FALSE</span>
-<span class="co">#&gt;  3: MID25816209       19923      FALSE</span>
-<span class="co">#&gt;  4: MID25819358       19993       TRUE</span>
-<span class="co">#&gt;  5: MID25828870       19933       TRUE</span>
-<span class="co">#&gt; ---                                   </span>
-<span class="co">#&gt; 95: MID26622664       20113       TRUE</span>
-<span class="co">#&gt; 96: MID26624815       20113       TRUE</span>
-<span class="co">#&gt; 97: MID26691066       20161       TRUE</span>
-<span class="co">#&gt; 98: MID26692025       20153       TRUE</span>
-<span class="co">#&gt; 99: MID26692254       20191       TRUE</span></code></pre>
+<pre><code><span class="co">#&gt;            mcid timely_term</span>
+<span class="co">#&gt;          &lt;char&gt;      &lt;char&gt;</span>
+<span class="co">#&gt;  1: MID25784187       19943</span>
+<span class="co">#&gt;  2: MID25784974       19931</span>
+<span class="co">#&gt;  3: MID25816209       19923</span>
+<span class="co">#&gt;  4: MID25819358       19993</span>
+<span class="co">#&gt;  5: MID25828870       19933</span>
+<span class="co">#&gt; ---                        </span>
+<span class="co">#&gt; 95: MID26622664       20113</span>
+<span class="co">#&gt; 96: MID26624815       20113</span>
+<span class="co">#&gt; 97: MID26691066       20161</span>
+<span class="co">#&gt; 98: MID26692025       20153</span>
+<span class="co">#&gt; 99: MID26692254       20191</span></code></pre>
 <p>Reapplying the function, the <code>completion</code> column is
 silently deleted and replaced.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Reapply the function</span>
 <span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">toy_DT</span>, <span class="va">toy_degree</span><span class="op">)</span>
 <span class="va">toy_DT</span><span class="op">[</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">#&gt;            mcid timely_term term_degree completion completion_status</span>
-<span class="co">#&gt;          &lt;char&gt;      &lt;char&gt;      &lt;char&gt;     &lt;lgcl&gt;            &lt;char&gt;</span>
-<span class="co">#&gt;  1: MID25784187       19943       19946       TRUE          untimely</span>
-<span class="co">#&gt;  2: MID25784974       19931        &lt;NA&gt;      FALSE              &lt;NA&gt;</span>
-<span class="co">#&gt;  3: MID25816209       19923        &lt;NA&gt;      FALSE              &lt;NA&gt;</span>
-<span class="co">#&gt;  4: MID25819358       19993       19963       TRUE            timely</span>
-<span class="co">#&gt;  5: MID25828870       19933       19923       TRUE            timely</span>
-<span class="co">#&gt; ---                                                                 </span>
-<span class="co">#&gt; 95: MID26622664       20113       20093       TRUE            timely</span>
-<span class="co">#&gt; 96: MID26624815       20113       20073       TRUE            timely</span>
-<span class="co">#&gt; 97: MID26691066       20161       20141       TRUE            timely</span>
-<span class="co">#&gt; 98: MID26692025       20153       20141       TRUE            timely</span>
-<span class="co">#&gt; 99: MID26692254       20191       20143       TRUE            timely</span></code></pre>
+<pre><code><span class="co">#&gt;            mcid timely_term term_degree completion_status</span>
+<span class="co">#&gt;          &lt;char&gt;      &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span>
+<span class="co">#&gt;  1: MID25784187       19943       19946              late</span>
+<span class="co">#&gt;  2: MID25784974       19931        &lt;NA&gt;              &lt;NA&gt;</span>
+<span class="co">#&gt;  3: MID25816209       19923        &lt;NA&gt;              &lt;NA&gt;</span>
+<span class="co">#&gt;  4: MID25819358       19993       19963            timely</span>
+<span class="co">#&gt;  5: MID25828870       19933       19923            timely</span>
+<span class="co">#&gt; ---                                                      </span>
+<span class="co">#&gt; 95: MID26622664       20113       20093            timely</span>
+<span class="co">#&gt; 96: MID26624815       20113       20073            timely</span>
+<span class="co">#&gt; 97: MID26691066       20161       20141            timely</span>
+<span class="co">#&gt; 98: MID26692025       20153       20141            timely</span>
+<span class="co">#&gt; 99: MID26692254       20191       20143            timely</span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="completion-summaries">Completion summaries<a class="anchor" aria-label="anchor" href="#completion-summaries"></a>
@@ -390,7 +385,7 @@ group and summarize.</p>
 <span class="co">#&gt;               &lt;char&gt; &lt;int&gt;</span>
 <span class="co">#&gt; 1:              &lt;NA&gt; 23173</span>
 <span class="co">#&gt; 2:            timely 37047</span>
-<span class="co">#&gt; 3:          untimely  3732</span></code></pre>
+<span class="co">#&gt; 3:              late  3732</span></code></pre>
 <p>Or we might add a second grouping variable.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">student</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">sex</span>, <span class="va">completion_status</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span>
@@ -401,10 +396,10 @@ group and summarize.</p>
 <span class="co">#&gt;    &lt;char&gt;            &lt;char&gt; &lt;int&gt;</span>
 <span class="co">#&gt; 1: Female              &lt;NA&gt; 10566</span>
 <span class="co">#&gt; 2:   Male              &lt;NA&gt; 12607</span>
-<span class="co">#&gt; 3: Female            timely 18842</span>
-<span class="co">#&gt; 4:   Male            timely 18205</span>
-<span class="co">#&gt; 5: Female          untimely  1437</span>
-<span class="co">#&gt; 6:   Male          untimely  2295</span></code></pre>
+<span class="co">#&gt; 3: Female              late  1437</span>
+<span class="co">#&gt; 4:   Male              late  2295</span>
+<span class="co">#&gt; 5: Female            timely 18842</span>
+<span class="co">#&gt; 6:   Male            timely 18205</span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="completion-filter">Completion filter<a class="anchor" aria-label="anchor" href="#completion-filter"></a>
@@ -414,19 +409,19 @@ only, we can use completion status as a filter.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">completion_status</span> <span class="op">==</span> <span class="st">"timely"</span><span class="op">]</span>
 <span class="va">x</span><span class="op">[</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">#&gt;               mcid timely_term term_degree completion completion_status</span>
-<span class="co">#&gt;             &lt;char&gt;      &lt;char&gt;      &lt;char&gt;     &lt;lgcl&gt;            &lt;char&gt;</span>
-<span class="co">#&gt;     1: MID25783162       19973       19963       TRUE            timely</span>
-<span class="co">#&gt;     2: MID25783178       20003       20001       TRUE            timely</span>
-<span class="co">#&gt;     3: MID25783195       19983       19966       TRUE            timely</span>
-<span class="co">#&gt;     4: MID25783259       19941       19933       TRUE            timely</span>
-<span class="co">#&gt;     5: MID25783324       19973       19963       TRUE            timely</span>
-<span class="co">#&gt;    ---                                                                 </span>
-<span class="co">#&gt; 37043: MID26697553       20153       20133       TRUE            timely</span>
-<span class="co">#&gt; 37044: MID26697574       20113       20113       TRUE            timely</span>
-<span class="co">#&gt; 37045: MID26697576       20153       20134       TRUE            timely</span>
-<span class="co">#&gt; 37046: MID26697599       20153       20143       TRUE            timely</span>
-<span class="co">#&gt; 37047: MID26697623       20153       20153       TRUE            timely</span></code></pre>
+<pre><code><span class="co">#&gt;               mcid timely_term term_degree completion_status</span>
+<span class="co">#&gt;             &lt;char&gt;      &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span>
+<span class="co">#&gt;     1: MID25783162       19973       19963            timely</span>
+<span class="co">#&gt;     2: MID25783178       20003       20001            timely</span>
+<span class="co">#&gt;     3: MID25783195       19983       19966            timely</span>
+<span class="co">#&gt;     4: MID25783259       19941       19933            timely</span>
+<span class="co">#&gt;     5: MID25783324       19973       19963            timely</span>
+<span class="co">#&gt;    ---                                                      </span>
+<span class="co">#&gt; 37043: MID26697553       20153       20133            timely</span>
+<span class="co">#&gt; 37044: MID26697574       20113       20113            timely</span>
+<span class="co">#&gt; 37045: MID26697576       20153       20134            timely</span>
+<span class="co">#&gt; 37046: MID26697599       20153       20143            timely</span>
+<span class="co">#&gt; 37047: MID26697623       20153       20153            timely</span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="completion-programs">Completion programs<a class="anchor" aria-label="anchor" href="#completion-programs"></a>

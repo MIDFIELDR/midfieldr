@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9023</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9024</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,7 +96,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Multiway data and charts</h1>
             
-            <h4 data-toc-skip class="date">2022-07-14</h4>
+            <h4 data-toc-skip class="date">2022-07-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-060-multiway.Rmd" class="external-link"><code>vignettes/art-060-multiway.Rmd</code></a></small>
       <div class="d-none name"><code>art-060-multiway.Rmd</code></div>
@@ -300,6 +300,44 @@ variable.</p>
 <code>people</code>) are “character” class.</p>
 </div>
 <div class="section level2">
+<h2 id="condition_multiway">
+<code>condition_multiway()</code><a class="anchor" aria-label="anchor" href="#condition_multiway"></a>
+</h2>
+<p>Converts the categorical variables to factors ordered by the
+quantitative variable. View the help page by running</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Run in Console to view help page</span>
+<span class="op">?</span> <span class="va">condition_multiway</span></code></pre></div>
+<p><strong>Arguments:</strong></p>
+<dl>
+<dt><code>dframe</code></dt>
+<dd>
+<p>Data frame with multiway data in columns. Two additional numeric
+columns required when using the “percent” ordering method.</p>
+</dd>
+<dt><code>x</code></dt>
+<dd>
+<p>Name (in quotes) of the single multiway quantitative variable</p>
+</dd>
+<dt><code>yy</code></dt>
+<dd>
+<p>Vector of names (in quotes) of the two multiway categorical
+variables</p>
+</dd>
+<dt><code>order_by</code></dt>
+<dd>
+<p>“median” (default) or “percent”, method of ordering the levels of the
+categories.</p>
+</dd>
+<dt><code>param_col</code></dt>
+<dd>
+<p>Vector with the names (in quotes) of the numerator and denominator
+columns that produced the quantitative variable, required when order_by
+is “percent”.</p>
+</dd>
+</dl>
+</div>
+<div class="section level2">
 <h2 id="median-ordered-data">Median-ordered data<a class="anchor" aria-label="anchor" href="#median-ordered-data"></a>
 </h2>
 <p>For this example, we select the count of graduates
@@ -308,7 +346,7 @@ variable.</p>
 numbers of graduates.</p>
 <p>To minimize the number of columns in the printout, we select the
 three multiway variables and drop other columns.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Select multiway variables when quantity is count </span>
 <span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span>
 <span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="va">DT_count</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">people</span>, <span class="va">grad</span><span class="op">)</span><span class="op">]</span>
@@ -332,28 +370,6 @@ three multiway variables and drop other columns.</p>
 <span class="co">#&gt; 30: Mechanical             Black Male    65</span>
 <span class="co">#&gt; 31: Mechanical   Hispanic/Latinx Male    29</span>
 <span class="co">#&gt; 32: Mechanical             White Male   918</span></code></pre>
-<p><code><a href="../reference/condition_multiway.html">condition_multiway()</a></code> converts the categorical variables
-to factors ordered by the quantitative variable. View the help page by
-running</p>
-<pre><code><span class="op">?</span> <span class="fu"><a href="../reference/condition_multiway.html">condition_multiway</a></span><span class="op">(</span><span class="op">)</span></code></pre>
-<p>Its arguments are</p>
-<ul>
-<li>
-<code>dframe</code>: data frame that includes three columns of
-multiway data</li>
-<li>
-<code>x</code>: name (in quotes) of a single quantitative
-variable</li>
-<li>
-<code>yy</code>: vector of names (in quotes) of exactly two
-categorical variables</li>
-<li>
-<code>order_by</code>: “median” (default) or “percent” to assign the
-method of ordering the categories</li>
-<li>
-<code>param_col</code>: vector of two names (in quotes) of the
-columns used in the “percent” ordering method</li>
-</ul>
 <p>Applying <code><a href="../reference/condition_multiway.html">condition_multiway()</a></code>, we specify
 <code>"grad"</code> as the quantitative column, <code>"program"</code>
 and <code>"people"</code> as the two categorical columns, and
@@ -494,7 +510,7 @@ value is drawn as a vertical reference line in each panel.</p>
     <span class="va">common_scale_x_log10</span> <span class="op">+</span>
     <span class="va">common_labs</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-16-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-17-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>The programs are assigned to rows such that the program medians
 increase from bottom to top. Civil Engineering has the smallest median;
 Electrical Engineering the largest.</p>
@@ -513,7 +529,7 @@ column.</p>
     <span class="va">common_scale_x_log10</span> <span class="op">+</span>
     <span class="va">common_labs</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-17-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-18-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>Reading a multiway graph</p>
 <ul>
 <li>We can more effectively compare values within a panel than between
@@ -539,7 +555,7 @@ by encoding <em>people by rows</em> and <em>programs by panels</em>.</p>
     <span class="va">common_scale_x_log10</span> <span class="op">+</span>
     <span class="va">common_labs</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-18-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-19-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>In this chart, the visual asymmetries that stand out are</p>
 <ul>
 <li>Electrical Engineering, White Female, low given their overall
@@ -576,7 +592,7 @@ Civil Engineering is not apparent</li>
     <span class="va">common_scale_x_log10</span> <span class="op">+</span>
     <span class="va">common_labs</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-19-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-20-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>An ordering scheme based on the values of the quantitative variable
 is necessary if a multiway chart is to reveal how the response is
 affected by the categories.</p>
@@ -656,7 +672,7 @@ for sex in rows by assigning <code>color = sex</code> inside the
     <span class="va">common_labs</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#762A83"</span>, <span class="st">"#1B7837"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-22-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-23-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>By superposing data by sex, we facilitate a direct comparison of Male
 and Female students within a program and by race.</p>
 <p>Swapping rows and panels yields the next chart, in which we can
@@ -672,7 +688,7 @@ engineering programs, this chart clearly shows clusters by sex.</p>
     <span class="va">common_labs</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#762A83"</span>, <span class="st">"#1B7837"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-23-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-24-1.png" width="70%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="percentage-ordered-data">Percentage-ordered data<a class="anchor" aria-label="anchor" href="#percentage-ordered-data"></a>
@@ -781,7 +797,7 @@ encodes <em>programs by rows</em> and <em>people by panels</em>.</p>
     <span class="fu">common_geom_vline</span><span class="op">(</span><span class="va">DT_ratio</span><span class="op">$</span><span class="va">people_stick</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Stickiness"</span>, y <span class="op">=</span> <span class="st">""</span>, title <span class="op">=</span> <span class="st">"Engineering stickiness"</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-28-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-29-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>The visual asymmetries in this chart that stand out are</p>
 <ul>
 <li>Electrical Engineering, White Female, low given their overall
@@ -803,7 +819,7 @@ effectively. This is done far better in the second chart that encodes
     <span class="fu">common_geom_vline</span><span class="op">(</span><span class="va">DT_ratio</span><span class="op">$</span><span class="va">program_stick</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Stickiness"</span>, y <span class="op">=</span> <span class="st">""</span>, title <span class="op">=</span> <span class="st">"Engineering stickiness"</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-29-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-30-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>This chart shows a lot of variability. The visual asymmetries that
 stand out are</p>
 <ul>

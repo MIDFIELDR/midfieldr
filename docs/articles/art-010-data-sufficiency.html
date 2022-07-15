@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9023</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9024</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,7 +96,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Data sufficiency</h1>
             
-            <h4 data-toc-skip class="date">2022-07-14</h4>
+            <h4 data-toc-skip class="date">2022-07-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-010-data-sufficiency.Rmd" class="external-link"><code>vignettes/art-010-data-sufficiency.Rmd</code></a></small>
       <div class="d-none name"><code>art-010-data-sufficiency.Rmd</code></div>
@@ -354,11 +354,12 @@ unique IDs.</p>
 </h2>
 <p>Starting with a data frame of Student Unit Record (SUR) observations
 (like <code>DT</code> above) that includes an ID variable, we add a
-timely completion term column using <code><a href="../reference/add_timely_term.html">add_timely_term()</a></code>.</p>
-<p>You can view the function help page by running,</p>
-<pre><code><span class="co"># Run in Console to view help page</span>
-<span class="op">?</span> <span class="va">add_timely_term</span></code></pre>
-<p>Its arguments are:</p>
+timely completion term column using <code><a href="../reference/add_timely_term.html">add_timely_term()</a></code>. View
+the help page by running</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Run in Console to view help page</span>
+<span class="op">?</span> <span class="va">add_timely_term</span></code></pre></div>
+<p><strong>Arguments:</strong></p>
 <dl>
 <dt><code>dframe</code></dt>
 <dd>
@@ -383,19 +384,28 @@ Commonly used values are are 100%, 150%, and 200% of
 officially schedules for completing a program. Default 4 years.</p>
 </dd>
 </dl>
-<p>The function adds four columns to the SUR data frame: the
-<code>timely_term</code> result plus three supporting variables:</p>
-<ul>
-<li>
-<code>term_i</code> is the initial term of a student’s longitudinal
-record, encoded YYYYT</li>
-<li>
-<code>level_i</code> is the student level (01 Freshman, 02
-Sophomore, etc.) in their initial term</li>
-<li>
-<code>adj_span</code> is the integer span of years for timely
-completion adjusted for a student’s initial level</li>
-</ul>
+<p><strong>Columns added:</strong></p>
+<dl>
+<dt><code>term_i</code></dt>
+<dd>
+<p>Student initial term, encoded YYYYT.</p>
+</dd>
+<dt><code>level_i</code></dt>
+<dd>
+<p>Student level (01 Freshman, 02 Sophomore, etc.) in their initial
+term.</p>
+</dd>
+<dt><code>adj_span</code></dt>
+<dd>
+<p>Integer span of years for timely completion, adjusted for a student’s
+initial level</p>
+</dd>
+<dt><code>timely_term</code></dt>
+<dd>
+<p>Latest term by which program completion would be considered timely.
+Encoded YYYYT.</p>
+</dd>
+</dl>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Display timely term and supporting variables</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span>
@@ -525,10 +535,12 @@ deleted and replaced.</p>
 <code>add_data_sufficiency()</code><a class="anchor" aria-label="anchor" href="#add_data_sufficiency"></a>
 </h2>
 <p>Continuing with a data frame of SUR observations, we add the data
-sufficiency column using <code><a href="../reference/add_data_sufficiency.html">add_data_sufficiency()</a></code>.</p>
-<p>You can view the function help page by running,</p>
-<pre><code><span class="op">?</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="op">)</span></code></pre>
-<p>Its arguments are:</p>
+sufficiency column using <code><a href="../reference/add_data_sufficiency.html">add_data_sufficiency()</a></code>. View the
+help page by running</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Run in Console to view help page</span>
+<span class="op">?</span> <span class="va">add_data_sufficiency</span></code></pre></div>
+<p><strong>Arguments:</strong></p>
 <dl>
 <dt><code>dframe</code></dt>
 <dd>
@@ -543,37 +555,30 @@ ID. Required variables are <code>mcid</code> and
 <code>institution</code>, and <code>term</code>.</p>
 </dd>
 </dl>
-<p>The function adds four columns to the SUR data frame: the
-<code>data_sufficiency</code> result plus three supporting
-variables:</p>
+<p><strong>Columns added:</strong></p>
 <dl>
 <dt><code>term_i</code></dt>
 <dd>
-<p>Character. Initial term of a student’s longitudinal record, encoded
-YYYYT. Not overwritten if present in dframe.</p>
+<p>Student initial term, encoded YYYYT.</p>
 </dd>
 <dt><code>lower_limit</code></dt>
 <dd>
-<p>Character. Initial term of an institution’s data range, encoded
-YYYYT</p>
+<p>Initial term of an institution’s data range, encoded YYYYT.</p>
 </dd>
 <dt><code>upper_limit</code></dt>
 <dd>
-<p>Character. Final term of an institution’s data range, encoded
-YYYYT</p>
+<p>Final term of an institution’s data range, encoded YYYYT.</p>
+</dd>
+<dt><code>data_sufficiency</code></dt>
+<dd>
+<p>Label each observation for inclusion or exclusion based on data
+sufficiency: “include”, indicating that available data are sufficient
+for estimating timely program completion; “exclude-upper”, indicating
+that data are insufficient at the upper limit of a data range; or
+“exclude-lower”, indicating that data are insufficient at the lower
+limit.</p>
 </dd>
 </dl>
-<p>The data sufficiency column labels each observation for inclusion or
-exclusion. Possible values are:</p>
-<ul>
-<li>“include”, indicating that available data are sufficient for
-estimating timely program completion</li>
-<li>“exclude-upper”, indicating that data are insufficient at the upper
-limit of a data range<br>
-</li>
-<li>“exclude-lower”, indicating that data are insufficient at the lower
-limit.</li>
-</ul>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Drop unnecessary columns</span>
 <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">timely_term</span><span class="op">)</span><span class="op">]</span>
