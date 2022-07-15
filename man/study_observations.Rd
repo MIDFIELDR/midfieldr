@@ -26,9 +26,9 @@
 study_observations
 }
 \description{
-An intermediate result provided for the convenience of vignette users. 
-Post-processed observations of students ever enrolled in as well as students 
-graduating from the four programs of the case study. Keyed by student ID.
+Data table of post-processed observations of students ever enrolled in, and  
+students graduating from, the four programs of the case study. Keyed by 
+student ID. Provided for the convenience of vignette users.
 }
 \details{
 Starting with the case-study starting pool of students ever enrolled in the 
@@ -44,7 +44,6 @@ summarizing by race, sex, program, and group.
 \seealso{
 Other case-study-data: 
 \code{\link{study_mcid}},
-\code{\link{study_pool}},
 \code{\link{study_program_cips}},
 \code{\link{study_results}}
 }

@@ -28,8 +28,8 @@
 study_results
 }
 \description{
-An intermediate result provided for the convenience of vignette users. 
-Longitudinal stickiness keyed by program, race/ethnicity, and sex.
+Data table of longitudinal stickiness keyed by program, race/ethnicity, 
+and sex. Provided for the convenience of vignette users.
 }
 \details{
 Starting with the prepared data (the case study stickiness observations), 
@@ -47,7 +47,6 @@ completion.
 Other case-study-data: 
 \code{\link{study_mcid}},
 \code{\link{study_observations}},
-\code{\link{study_pool}},
 \code{\link{study_program_cips}}
 }
 \concept{case-study-data}

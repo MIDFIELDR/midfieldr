@@ -125,12 +125,6 @@ length(unique(DT$mcid))
 
 The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique students. The number of unique students is smaller than the number of observations because some students change programs over their course of study.  Here we have one row per unique combination of student (`mcid`) and program code (`cip6`).  
 
-In this form, the data are bundled with midfieldr as the `study_pool` data set. You can view its help page by running
-
-    # Run in Console to view help page
-    ? study_pool
-
-
 
 
 ## Filter for data sufficiency
@@ -145,9 +139,13 @@ DT <- add_timely_term(DT, term)
 DT[]
 ```
 
-You may view the function's help page by running
+You can view the help page by running
 
-    ? add_timely_term
+```{r}
+#| eval: false
+# Run in Console
+? add_timely_term
+```
 
 **Creating variables.** Using information in `term`, we add the  `data_sufficiency` variable as well as supporting variables used in its construction.
 
@@ -157,9 +155,13 @@ DT <- add_data_sufficiency(DT, term)
 DT[]
 ```
 
-You may view the function's help page by running
+You can view the help page by running
 
-    ? add_data_sufficiency
+```{r}
+#| eval: false
+# Run in Console
+? add_data_sufficiency
+```
 
 
 **Filtering.** We filter to retain observations for which the data are sufficient then drop unnecessary columns.   
@@ -215,9 +217,13 @@ study_program <- study_program[, .(cip6, cip4name)]
 study_program[]
 ```
 
-You may view the function's help page by running
+You can view the help page by running
 
-    ? filter_search
+```{r}
+#| eval: false
+# Run in Console
+? filter_search
+```
 
 **Creating variables.** Add a variable to label each of these `r nrow(study_program)` programs with one of the four conventional program abbreviations we will use in comparing metrics, i.e., Civil (CE), Electrical (EE), Mechanical (ME), and Industrial/Systems Engineering (ISE). 
 
@@ -234,7 +240,23 @@ study_program[, program := fcase(
 print(study_program[, .(cip4name, program)])
 ```
 
-**Joining.** Having checked that the new abbreviations correctly represent the programs, we join the program names to the working data frame using a left-outer join and return selected rows.    
+Having checked that the new abbreviations correctly represent the programs, we can finalize the data frame of program CIPs and names. 
+
+```{r}
+# Case study CIPs and program names
+study_program[, cip4name := NULL]
+study_program[]
+```
+
+This data frame is bundled with midfieldr as the `study_program_cips` data set. You can view the help page by running
+
+```{r}
+#| eval: false
+# Run in Console
+? study_program_cips
+```
+
+**Joining.** We join the program names to the working data frame using a left-outer join and return selected rows.    
 
 ```{r}
 # Left-outer join to DT
@@ -291,6 +313,14 @@ DT <- unique(DT)
 DT[]
 ```
 
+These IDs are bundled with midfieldr as the `study_mcid` data set. You can view the help page by running
+
+```{r}
+#| eval: false
+# Run in Console
+? study_mcid
+```
+
 **Filtering.** An inner join with `degree` that returns rows with matching IDs from both data frames, then selected columns. 
 
 ```{r}
@@ -325,9 +355,13 @@ DT <- add_completion_status(DT, degree)
 DT[]
 ```
 
-You may view the function's help page by running
+You can view the help page by running
 
-    ? add_completion_status
+```{r}
+#| eval: false
+# Run in Console
+? add_completion_status
+```
 
 **Filtering.** Retain records with "positive"  completion status (i.e. completion in 6 years or less) and drop unnecessary variables.
 
@@ -438,9 +472,16 @@ DT[mcid == "MID26526757"]
 
 Starting with the `student`, `term`, and `degree` data tables, we filtered the data for data sufficiency, degree seeking, program, and timely completion in four programs (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) and processed the data to obtain the observations needed to determine stickiness.  
 
-**Write to file.**  Results like these, used as inputs for calculating summary statistics and metrics, are often written to file as an intermediate result. In this case, the data frame above is bundled with midfieldr as `study_observations`. You may view its help page by running 
+**Write to file.**  Results like these, used as inputs for calculating summary statistics and metrics, are often written to file as an intermediate result. In this case, the data frame above is bundled with midfieldr as `study_observations`. You can view the help page (and data dictionary) by running
 
-    ? study_observations
+```{r}
+#| eval: false
+# Run in Console
+? study_observations
+```
+
+
+
 
 ## References
 

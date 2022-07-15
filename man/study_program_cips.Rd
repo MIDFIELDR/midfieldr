@@ -21,9 +21,9 @@
 study_program_cips
 }
 \description{
-An intermediate result provided for the convenience of vignette users. 
-Program CIP codes and labels of the four programs of the case study. 
-Keyed by 6-digit CIPs.
+Data table of program CIP codes and labels of the four programs of the 
+case study. Keyed by 6-digit CIPs. Provided for the convenience of vignette 
+users.
 }
 \details{
 Starting with the midfieldr \code{cip} data set, we extracted the CIPs 
@@ -34,7 +34,6 @@ to be used for grouping and summarizing.
 Other case-study-data: 
 \code{\link{study_mcid}},
 \code{\link{study_observations}},
-\code{\link{study_pool}},
 \code{\link{study_results}}
 }
 \concept{case-study-data}

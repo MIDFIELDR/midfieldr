@@ -88,10 +88,13 @@ DT <- copy(study_observations)
 DT[]
 ```
 
-View the data set help page by running
+You can view the help page (and data dictionary) by running
 
-    # Run in Console to view help page
-    ? study_observations
+```{r}
+#| eval: false
+# Run in Console
+? study_observations
+```
     
 ## Group and summarize
 
@@ -124,9 +127,13 @@ DT[, stick := round(100 * grad / ever, 1)]
 DT[]
 ```
 
-In this form, the data are bundled with midfieldr as the `study_results` data set. You can view its help page by running 
+In this form, the data are bundled with midfieldr as the `study_results` data set. You can view the help page (and data dictionary) by running
 
-    ? study_results
+```{r}
+#| eval: false
+# Run in Console
+? study_results
+```
 
 ## Prepare for dissemination
 
@@ -185,9 +192,13 @@ DT[]
 ```
 
 
-You may view the function's help page by running
+You can view the help page by running
 
-    ? condition_multiway
+```{r}
+#| eval: false
+# Run in Console
+? condition_multiway
+```
 
 
 The column `program_stick` determines the order of the programs in the chart; `people_stick` determines the order of the race/ethnicity/sex groupings; the values in `stick` are the quantitative values to be graphed. 
@@ -231,31 +242,27 @@ Data tables are often needed for publication. In this example, we format the dat
 
 ```{r}
 # Select the columns I want for the table
-tbl <- DT[, .(program, people, grad, ever, stick)]
+tbl <- DT[, .(program, people, stick)]
 
-# Combine three columns into one character column
-tbl[, results := paste0("(", grad, "/", ever, ") ", format(stick, nsmall = 1))]
+# Change factors to characters so rows/columns can be alphabetized
+tbl[, people := as.character(people)]
+tbl[, program := as.character(program)]
 
 # Transform from block records to row records
-tbl <- dcast(tbl, people ~ program, value.var = "results")
-
-# Change factor to character so the rows can b alphabetized
-tbl[, people := as.character(people)]
-tbl <- tbl[order(people)]
+tbl <- dcast(tbl, people ~ program, value.var = "stick")
 
 # Edit one column header
-setnames(tbl, old = "people", new = "Group", skip_absent = TRUE)
+setnames(tbl, old = "people", new = "People", skip_absent = TRUE)
 ```
 
-Program stickiness in percent with the ratio (`grad/ever`) in parentheses, i.e., the number of program graduates and the number of students ever enrolled in the program. Groups with numbers below our reporting threshold are denoted NA or omitted. 
-
+Groups with numbers below our reporting threshold are denoted NA or omitted. 
 ```{r}
 #| echo: false
 tbl |>
-  kableExtra::kbl(align = "lrrrr") |>
+  kableExtra::kbl(align = "lrrrr", 
+                  caption = "Table 1: Program stickiness (%)") |>
   kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
   kableExtra::row_spec(0, background = "#c7eae5") |>
-  # kableExtra::column_spec(1, monospace = TRUE) |>
   kableExtra::column_spec(1:5, color = "black", background = "white")
 ```
 
@@ -338,12 +345,11 @@ ggplot(DT, aes(x = stick, y = people)) +
   labs(x = "Stickiness (%)", y = "")
 
 # Table
-tbl <- DT[, .(program, people, grad, ever, stick)]
-tbl[, results := paste0("(", grad, "/", ever, ") ", format(stick, nsmall = 1))]
-tbl <- dcast(tbl, people ~ program, value.var = "results")
+tbl <- DT[, .(program, people, stick)]
 tbl[, people := as.character(people)]
-tbl <- tbl[order(people)]
-setnames(tbl, old = "people", new = "Group", skip_absent = TRUE)
+tbl[, program := as.character(program)]
+tbl <- dcast(tbl, people ~ program, value.var = "stick")
+setnames(tbl, old = "people", new = "People", skip_absent = TRUE)
 ```
 
 ```{r echo = FALSE}

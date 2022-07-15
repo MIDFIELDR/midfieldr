@@ -20,8 +20,9 @@ ID. The variables are:
 fye_start
 }
 \description{
-Degree-granting, engineering CIP codes that can be substituted for
-First-Year-Engineering (FYE) codes when required by a persistence metric.
+A data table of Degree-granting, engineering CIP codes that can be 
+substituted for First-Year-Engineering (FYE) codes when required by a 
+persistence metric.
 }
 \details{
 FYE is different from other non-degree-granting CIP designations such

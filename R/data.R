@@ -42,8 +42,9 @@
 
 #' Starting programs imputed for FYE students
 #'
-#' Degree-granting, engineering CIP codes that can be substituted for
-#' First-Year-Engineering (FYE) codes when required by a persistence metric.
+#' A data table of Degree-granting, engineering CIP codes that can be 
+#' substituted for First-Year-Engineering (FYE) codes when required by a 
+#' persistence metric.
 #'
 #' FYE is different from other non-degree-granting CIP designations such
 #' as "undecided" or "undeclared". FYE students are neither undecided nor
@@ -205,38 +206,14 @@
 #'
 "toy_degree"
 
-# -------------------------------------------------------------------
-
-#' Case-study starting pool
-#' 
-#' An intermediate result provided for the convenience of vignette users. 
-#' The starting pool of all students from the \code{term} practice data.
-#' Keyed by student ID. 
-#' 
-#' Starting with the midfielddata \code{term} practice data set, we extracted 
-#' every observation with unique combinations of ID and program CIP code. 
-#'
-#' @format \code{data.table} with 161,696 rows and 2 columns.
-#' 
-#' \describe{
-#'
-#'  \item{mcid}{Character, anonymized student identifier}
-#'
-#'  \item{cip6}{Character, 6-digit CIP program codes.}
-#'
-#' }
-#'
-#' @family case-study-data
-#'
-"study_pool"
 
 # -------------------------------------------------------------------
 
 #' Case-study program labels and CIP codes
 #' 
-#' An intermediate result provided for the convenience of vignette users. 
-#' Program CIP codes and labels of the four programs of the case study. 
-#' Keyed by 6-digit CIPs.
+#' Data table of program CIP codes and labels of the four programs of the 
+#' case study. Keyed by 6-digit CIPs. Provided for the convenience of vignette 
+#' users. 
 #' 
 #' Starting with the midfieldr \code{cip} data set, we extracted the CIPs 
 #' of the four programs of the case study and assigned them a custom label 
@@ -262,9 +239,9 @@
 
 #' Case-study observations
 #' 
-#' An intermediate result provided for the convenience of vignette users. 
-#' Post-processed observations of students ever enrolled in as well as students 
-#' graduating from the four programs of the case study. Keyed by student ID.  
+#' Data table of post-processed observations of students ever enrolled in, and  
+#' students graduating from, the four programs of the case study. Keyed by 
+#' student ID. Provided for the convenience of vignette users. 
 #' 
 #' Starting with the case-study starting pool of students ever enrolled in the 
 #' four programs of the study (Civil, Electrical, Industrial/Systems, and 
@@ -301,12 +278,11 @@
 # -------------------------------------------------------------------
 
 #' Case-study IDs
-#' 
-#' An intermediate result provided for the convenience of vignette users. 
-#' The IDs of students ever enrolled in the four programs of the study 
+#'
+#' Data table of IDs of students ever enrolled in the four programs of the study 
 #' (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) after 
-#' filtering for data sufficiency, degree seeking, program, and timely 
-#' completion. 
+#' filtering for data sufficiency, degree seeking, and program. Provided for 
+#' the convenience of vignette users. 
 #'
 #' @format \code{data.table} with 7133 rows and 1 column.
 #' 
@@ -326,9 +302,9 @@
 # -------------------------------------------------------------------
 
 #' Case-study results
-#'
-#' An intermediate result provided for the convenience of vignette users. 
-#' Longitudinal stickiness keyed by program, race/ethnicity, and sex.
+#' 
+#' Data table of longitudinal stickiness keyed by program, race/ethnicity, 
+#' and sex. Provided for the convenience of vignette users. 
 #' 
 #' Starting with the prepared data (the case study stickiness observations), 
 #' we compute longitudinal stickiness for the four programs of the study (Civil, 

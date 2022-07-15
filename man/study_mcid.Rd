@@ -17,16 +17,14 @@
 study_mcid
 }
 \description{
-An intermediate result provided for the convenience of vignette users. 
-The IDs of students ever enrolled in the four programs of the study 
+Data table of IDs of students ever enrolled in the four programs of the study 
 (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) after 
-filtering for data sufficiency, degree seeking, program, and timely 
-completion.
+filtering for data sufficiency, degree seeking, and program. Provided for 
+the convenience of vignette users.
 }
 \seealso{
 Other case-study-data: 
 \code{\link{study_observations}},
-\code{\link{study_pool}},
 \code{\link{study_program_cips}},
 \code{\link{study_results}}
 }

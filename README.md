@@ -181,17 +181,17 @@ DT <- student[DT, .(completion_status, sex, race), on = c("mcid")]
 DT <- DT[, .N, by = c("completion_status", "sex", "race")]
 
 # Tabulate results
-DT[, race_sex := paste(race, sex)]
-DT_display <- dcast(DT, race_sex ~ completion_status, value.var = "N")
-setcolorder(DT_display, c("race_sex", "timely", "late"))
+DT[, people := paste(race, sex)]
+DT_display <- dcast(DT, people ~ completion_status, value.var = "N")
+setcolorder(DT_display, c("people", "timely", "late"))
 setnames(DT_display,
-  old = c("race_sex", "timely", "late", "NA"),
-  new = c("Group", "Timely completion", "Late completion", "Did not complete")
+  old = c("people", "timely", "late", "NA"),
+  new = c("People", "Timely completion", "Late completion", "Did not complete")
 )
 ```
 
 Tabulated results of usage example. “Timely completion” is the count of
-graduates completing their programs in no more than 6 years; “Untimely
+graduates completing their programs in no more than 6 years; “Late
 completion” is the count of those graduating in more than 6 years; “Did
 not complete” is the count of non-graduates.
 
@@ -199,7 +199,7 @@ not complete” is the count of non-graduates.
 <thead>
 <tr>
 <th style="text-align:left;background-color: #c7eae5 !important;">
-Group
+People
 </th>
 <th style="text-align:right;background-color: #c7eae5 !important;">
 Timely completion
@@ -223,7 +223,7 @@ Asian Female
 <td style="text-align:right;color: black !important;background-color: white !important;">
 19
 </td>
-<td style="text-align:right;">
+<td style="text-align:right;color: black !important;background-color: white !important;">
 59
 </td>
 </tr>
@@ -237,7 +237,7 @@ Asian Male
 <td style="text-align:right;color: black !important;background-color: white !important;">
 89
 </td>
-<td style="text-align:right;">
+<td style="text-align:right;color: black !important;background-color: white !important;">
 180
 </td>
 </tr>
@@ -251,7 +251,7 @@ Black Female
 <td style="text-align:right;color: black !important;background-color: white !important;">
 47
 </td>
-<td style="text-align:right;">
+<td style="text-align:right;color: black !important;background-color: white !important;">
 201
 </td>
 </tr>
@@ -265,7 +265,7 @@ Black Male
 <td style="text-align:right;color: black !important;background-color: white !important;">
 104
 </td>
-<td style="text-align:right;">
+<td style="text-align:right;color: black !important;background-color: white !important;">
 423
 </td>
 </tr>
@@ -279,7 +279,7 @@ Hispanic/Latinx Female
 <td style="text-align:right;color: black !important;background-color: white !important;">
 6
 </td>
-<td style="text-align:right;">
+<td style="text-align:right;color: black !important;background-color: white !important;">
 21
 </td>
 </tr>
@@ -293,7 +293,7 @@ Hispanic/Latinx Male
 <td style="text-align:right;color: black !important;background-color: white !important;">
 27
 </td>
-<td style="text-align:right;">
+<td style="text-align:right;color: black !important;background-color: white !important;">
 103
 </td>
 </tr>
@@ -307,7 +307,7 @@ International Female
 <td style="text-align:right;color: black !important;background-color: white !important;">
 6
 </td>
-<td style="text-align:right;">
+<td style="text-align:right;color: black !important;background-color: white !important;">
 12
 </td>
 </tr>
@@ -321,7 +321,7 @@ International Male
 <td style="text-align:right;color: black !important;background-color: white !important;">
 30
 </td>
-<td style="text-align:right;">
+<td style="text-align:right;color: black !important;background-color: white !important;">
 74
 </td>
 </tr>
@@ -335,7 +335,7 @@ Native American Female
 <td style="text-align:right;color: black !important;background-color: white !important;">
 3
 </td>
-<td style="text-align:right;">
+<td style="text-align:right;color: black !important;background-color: white !important;">
 3
 </td>
 </tr>
@@ -349,7 +349,7 @@ Native American Male
 <td style="text-align:right;color: black !important;background-color: white !important;">
 11
 </td>
-<td style="text-align:right;">
+<td style="text-align:right;color: black !important;background-color: white !important;">
 19
 </td>
 </tr>
@@ -363,7 +363,7 @@ Other/Unknown Female
 <td style="text-align:right;color: black !important;background-color: white !important;">
 3
 </td>
-<td style="text-align:right;">
+<td style="text-align:right;color: black !important;background-color: white !important;">
 14
 </td>
 </tr>
@@ -377,7 +377,7 @@ Other/Unknown Male
 <td style="text-align:right;color: black !important;background-color: white !important;">
 19
 </td>
-<td style="text-align:right;">
+<td style="text-align:right;color: black !important;background-color: white !important;">
 56
 </td>
 </tr>
@@ -391,7 +391,7 @@ White Female
 <td style="text-align:right;color: black !important;background-color: white !important;">
 154
 </td>
-<td style="text-align:right;">
+<td style="text-align:right;color: black !important;background-color: white !important;">
 468
 </td>
 </tr>
@@ -405,7 +405,7 @@ White Male
 <td style="text-align:right;color: black !important;background-color: white !important;">
 634
 </td>
-<td style="text-align:right;">
+<td style="text-align:right;color: black !important;background-color: white !important;">
 2191
 </td>
 </tr>
@@ -449,6 +449,7 @@ You can confirm a successful installation by running the following lines
 to bring up the package help page in the Help window.
 
 ``` r
+# Run in Console
 library("midfieldr")
 help("midfieldr-package")
 ```
@@ -476,6 +477,7 @@ You can confirm a successful installation by running the following lines
 to bring up the package help page in the Help window.
 
 ``` r
+# Run in Console
 library("midfielddata")
 help("midfielddata-package")
 ```
