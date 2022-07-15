@@ -25,7 +25,7 @@ the convenience of vignette users.
 \seealso{
 Other case-study-data: 
 \code{\link{study_observations}},
-\code{\link{study_programs}},
+\code{\link{study_program}},
 \code{\link{study_results}}
 }
 \concept{case-study-data}
