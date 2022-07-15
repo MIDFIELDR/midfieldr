@@ -166,9 +166,10 @@ These data are bundled with midfieldr.</p>
 <span class="co">#&gt; 11210: MID26696967           White   Male      ME   grad</span>
 <span class="co">#&gt; 11211: MID26697163 Hispanic/Latinx   Male      ME   grad</span>
 <span class="co">#&gt; 11212: MID26697447           Asian   Male      EE   grad</span></code></pre>
-<p>View the data set help page by running</p>
-<pre><code><span class="co"># Run in Console to view help page</span>
-<span class="op">?</span> <span class="va">study_observations</span></code></pre>
+<p>You can view the help page (and data dictionary) by running</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Run in Console</span>
+<span class="op">?</span> <span class="va">study_observations</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="group-and-summarize">Group and summarize<a class="anchor" aria-label="anchor" href="#group-and-summarize"></a>
@@ -246,9 +247,11 @@ Zumel, 2019</a>)</span>. This step leaves the graphing variables
 <span class="co">#&gt; 54:      ME   Male   Other/Unknown    43    20  46.5</span>
 <span class="co">#&gt; 55:      ME   Male           White  1776   918  51.7</span></code></pre>
 <p>In this form, the data are bundled with midfieldr as the
-<code>study_results</code> data set. You can view its help page by
-running</p>
-<pre><code><span class="op">?</span> <span class="va">study_results</span></code></pre>
+<code>study_results</code> data set. You can view the help page (and
+data dictionary) by running</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Run in Console</span>
+<span class="op">?</span> <span class="va">study_results</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="prepare-for-dissemination">Prepare for dissemination<a class="anchor" aria-label="anchor" href="#prepare-for-dissemination"></a>
@@ -380,8 +383,10 @@ chart.</p>
 <span class="co">#&gt; 25:         34.2</span>
 <span class="co">#&gt; 26:         41.5</span>
 <span class="co">#&gt; 27:         49.5</span></code></pre>
-<p>You may view the function’s help page by running</p>
-<pre><code><span class="op">?</span> <span class="va">condition_multiway</span></code></pre>
+<p>You can view the help page by running</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Run in Console</span>
+<span class="op">?</span> <span class="va">condition_multiway</span></code></pre></div>
 <p>The column <code>program_stick</code> determines the order of the
 programs in the chart; <code>people_stick</code> determines the order of
 the race/ethnicity/sex groupings; the values in <code>stick</code> are
@@ -434,40 +439,38 @@ people in the first column labeling the rows and the program names
 labeling the remaining columns.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Select the columns I want for the table</span>
-<span class="va">tbl</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">people</span>, <span class="va">grad</span>, <span class="va">ever</span>, <span class="va">stick</span><span class="op">)</span><span class="op">]</span>
+<span class="va">tbl</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">people</span>, <span class="va">stick</span><span class="op">)</span><span class="op">]</span>
 
-<span class="co"># Combine three columns into one character column</span>
-<span class="va">tbl</span><span class="op">[</span>, <span class="va">results</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"("</span>, <span class="va">grad</span>, <span class="st">"/"</span>, <span class="va">ever</span>, <span class="st">") "</span>, <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">stick</span>, nsmall <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
+<span class="co"># Change factors to characters so rows/columns can be alphabetized</span>
+<span class="va">tbl</span><span class="op">[</span>, <span class="va">people</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">people</span><span class="op">)</span><span class="op">]</span>
+<span class="va">tbl</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># Transform from block records to row records</span>
-<span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">tbl</span>, <span class="va">people</span> <span class="op">~</span> <span class="va">program</span>, value.var <span class="op">=</span> <span class="st">"results"</span><span class="op">)</span>
-
-<span class="co"># Change factor to character so the rows can b alphabetized</span>
-<span class="va">tbl</span><span class="op">[</span>, <span class="va">people</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">people</span><span class="op">)</span><span class="op">]</span>
-<span class="va">tbl</span> <span class="op">&lt;-</span> <span class="va">tbl</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">people</span><span class="op">)</span><span class="op">]</span>
+<span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">tbl</span>, <span class="va">people</span> <span class="op">~</span> <span class="va">program</span>, value.var <span class="op">=</span> <span class="st">"stick"</span><span class="op">)</span>
 
 <span class="co"># Edit one column header</span>
-<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">tbl</span>, old <span class="op">=</span> <span class="st">"people"</span>, new <span class="op">=</span> <span class="st">"Group"</span>, skip_absent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<p>Program stickiness in percent with the ratio (<code>grad/ever</code>)
-in parentheses, i.e., the number of program graduates and the number of
-students ever enrolled in the program. Groups with numbers below our
-reporting threshold are denoted NA or omitted.</p>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">tbl</span>, old <span class="op">=</span> <span class="st">"people"</span>, new <span class="op">=</span> <span class="st">"People"</span>, skip_absent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+Groups with numbers below our reporting threshold are denoted NA or
+omitted.
 <table class="table  lightable-paper" style='font-family: "Arial Narrow", arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;'>
+<caption>
+Table 1: Program stickiness (%)
+</caption>
 <thead><tr>
 <th style="text-align:left;background-color: #c7eae5 !important;">
-Group
-</th>
-<th style="text-align:right;background-color: #c7eae5 !important;">
-Electrical
-</th>
-<th style="text-align:right;background-color: #c7eae5 !important;">
-Mechanical
+People
 </th>
 <th style="text-align:right;background-color: #c7eae5 !important;">
 Civil
 </th>
 <th style="text-align:right;background-color: #c7eae5 !important;">
+Electrical
+</th>
+<th style="text-align:right;background-color: #c7eae5 !important;">
 Industrial/Systems
+</th>
+<th style="text-align:right;background-color: #c7eae5 !important;">
+Mechanical
 </th>
 </tr></thead>
 <tbody>
@@ -476,16 +479,16 @@ Industrial/Systems
 Asian Female
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(14/36) 38.9
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-(13/22) 59.1
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
 NA
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(15/42) 35.7
+38.9
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+35.7
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+59.1
 </td>
 </tr>
 <tr>
@@ -493,16 +496,16 @@ NA
 Asian Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(86/189) 45.5
+50.0
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(58/118) 49.2
+45.5
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(17/34) 50.0
+52.3
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(34/65) 52.3
+49.2
 </td>
 </tr>
 <tr>
@@ -510,16 +513,16 @@ Asian Male
 Black Female
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(58/145) 40.0
+30.6
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(23/75) 30.7
+40.0
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(15/49) 30.6
+46.2
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(43/93) 46.2
+30.7
 </td>
 </tr>
 <tr>
@@ -527,16 +530,16 @@ Black Female
 Black Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(97/287) 33.8
+27.8
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(65/202) 32.2
+33.8
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(25/90) 27.8
+44.7
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(46/103) 44.7
+32.2
 </td>
 </tr>
 <tr>
@@ -544,16 +547,16 @@ Black Male
 Hispanic/Latinx Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(22/63) 34.9
+41.5
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(29/76) 38.2
+34.9
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(22/53) 41.5
+62.5
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(20/32) 62.5
+38.2
 </td>
 </tr>
 <tr>
@@ -561,16 +564,16 @@ Hispanic/Latinx Male
 White Female
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(55/173) 31.8
+51.3
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(109/261) 41.8
+31.8
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(156/304) 51.3
+53.8
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(126/234) 53.8
+41.8
 </td>
 </tr>
 <tr>
@@ -578,16 +581,16 @@ White Female
 White Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(509/1227) 41.5
+53.5
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(918/1776) 51.7
+41.5
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(558/1043) 53.5
+53.2
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-(263/494) 53.2
+51.7
 </td>
 </tr>
 </tbody>
@@ -692,12 +695,11 @@ their own R file.</p>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Stickiness (%)"</span>, y <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
 
 <span class="co"># Table</span>
-<span class="va">tbl</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">people</span>, <span class="va">grad</span>, <span class="va">ever</span>, <span class="va">stick</span><span class="op">)</span><span class="op">]</span>
-<span class="va">tbl</span><span class="op">[</span>, <span class="va">results</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"("</span>, <span class="va">grad</span>, <span class="st">"/"</span>, <span class="va">ever</span>, <span class="st">") "</span>, <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">stick</span>, nsmall <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
-<span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">tbl</span>, <span class="va">people</span> <span class="op">~</span> <span class="va">program</span>, value.var <span class="op">=</span> <span class="st">"results"</span><span class="op">)</span>
+<span class="va">tbl</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">people</span>, <span class="va">stick</span><span class="op">)</span><span class="op">]</span>
 <span class="va">tbl</span><span class="op">[</span>, <span class="va">people</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">people</span><span class="op">)</span><span class="op">]</span>
-<span class="va">tbl</span> <span class="op">&lt;-</span> <span class="va">tbl</span><span class="op">[</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">order</a></span><span class="op">(</span><span class="va">people</span><span class="op">)</span><span class="op">]</span>
-<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">tbl</span>, old <span class="op">=</span> <span class="st">"people"</span>, new <span class="op">=</span> <span class="st">"Group"</span>, skip_absent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="va">tbl</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span>
+<span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">tbl</span>, <span class="va">people</span> <span class="op">~</span> <span class="va">program</span>, value.var <span class="op">=</span> <span class="st">"stick"</span><span class="op">)</span>
+<span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">tbl</span>, old <span class="op">=</span> <span class="st">"people"</span>, new <span class="op">=</span> <span class="st">"People"</span>, skip_absent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <style type="text/css">
 blockquote {
     padding: 10px 20px;
