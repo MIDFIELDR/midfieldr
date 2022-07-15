@@ -9,10 +9,10 @@ Tools for Studying MIDFIELD Student Unit Record Data in R
 
 [![R-CMD-check](https://github.com/MIDFIELDR/midfieldr/workflows/R-CMD-check/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions)
 [![codecov](https://codecov.io/gh/MIDFIELDR/midfieldr/branch/main/graph/badge.svg?token=KcuCzBkLBP)](https://app.codecov.io/gh/MIDFIELDR/midfieldr)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/midfieldr)](https://CRAN.R-project.org/package=midfieldr)
 [![License: GPL
 v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/midfieldr)](https://CRAN.R-project.org/package=docxtools)
 <!-- badges: end -->
 
 The goal of midfieldr is to provide tools and guides for working with
@@ -183,10 +183,10 @@ DT <- DT[, .N, by = c("completion_status", "sex", "race")]
 # Tabulate results
 DT[, race_sex := paste(race, sex)]
 DT_display <- dcast(DT, race_sex ~ completion_status, value.var = "N")
-setcolorder(DT_display, c("race_sex", "timely", "untimely"))
+setcolorder(DT_display, c("race_sex", "timely", "late"))
 setnames(DT_display,
-  old = c("race_sex", "timely", "untimely", "NA"),
-  new = c("Group", "Timely completion", "Untimely completion", "Did not complete")
+  old = c("race_sex", "timely", "late", "NA"),
+  new = c("Group", "Timely completion", "Late completion", "Did not complete")
 )
 ```
 
@@ -205,7 +205,7 @@ Group
 Timely completion
 </th>
 <th style="text-align:right;background-color: #c7eae5 !important;">
-Untimely completion
+Late completion
 </th>
 <th style="text-align:right;background-color: #c7eae5 !important;">
 Did not complete

@@ -216,14 +216,16 @@ The result has `r nrow(DT)` unique observations.
 
 ## `add_timely_term()`
 
-Starting with a data frame of Student Unit Record (SUR) observations (like `DT` above) that includes an ID variable, we add a timely completion term column using `add_timely_term()`. 
+Starting with a data frame of Student Unit Record (SUR) observations (like `DT` above) that includes an ID variable, we add a timely completion term column using `add_timely_term()`. View the help page by running
 
-You can view the function help page by running, 
+```{r}
+#| eval: false
+# Run in Console to view help page
+? add_timely_term
+```
 
-    # Run in Console to view help page
-    ? add_timely_term
-    
-Its arguments are: 
+
+**Arguments:**
 
 `dframe`
 
@@ -241,11 +243,24 @@ Its arguments are:
 
 : Optional integer scalar, the number of years an institution officially schedules for completing a program. Default 4 years.
 
-The function adds four columns to the SUR data frame: the `timely_term` result  plus three supporting variables:  
+**Columns added:** 
 
-- `term_i` is the initial term of a student's longitudinal record, encoded YYYYT 
-- `level_i` is the student level (01 Freshman, 02 Sophomore, etc.) in their initial term
-- `adj_span` is the integer span of years for timely completion adjusted for a student's initial level
+`term_i`
+
+: Student initial term, encoded YYYYT. 
+
+`level_i`
+
+: Student level (01 Freshman, 02 Sophomore, etc.) in their initial term. 
+
+`adj_span`
+
+: Integer span of years for timely completion, adjusted for a student's initial level
+
+`timely_term`
+
+: Latest term by which program completion would be considered timely. Encoded YYYYT.
+
 
 ```{r}
 # Display timely term and supporting variables
@@ -323,13 +338,15 @@ toy_DT[]
 
 ## `add_data_sufficiency()`
 
-Continuing with a data frame of SUR observations, we add the data sufficiency column using `add_data_sufficiency()`. 
+Continuing with a data frame of SUR observations, we add the data sufficiency column using `add_data_sufficiency()`. View the help page by running
 
-You can view the function help page by running, 
+```{r}
+#| eval: false
+# Run in Console to view help page
+? add_data_sufficiency
+```
 
-    ? add_data_sufficiency()
-
-Its arguments are:
+**Arguments:**
 
 `dframe`
 
@@ -339,26 +356,24 @@ Its arguments are:
 
 : Data frame of SUR term observations keyed by student ID. Default is `term`. Required variables are `mcid`, `institution`, and `term`.
 
-The function adds four columns to the SUR data frame: the `data_sufficiency` result plus three supporting variables: 
+**Columns added:**
 
 `term_i`
 
-: Character. Initial term of a student's longitudinal record, encoded YYYYT. Not overwritten if present in dframe.
+: Student initial term, encoded YYYYT.  
 
 `lower_limit`
 
-: Character. Initial term of an institution's data range, encoded YYYYT
+: Initial term of an institution's data range, encoded YYYYT.
 
 `upper_limit`
 
-: Character. Final term of an institution's data range, encoded YYYYT
+: Final term of an institution's data range, encoded YYYYT.
 
+`data_sufficiency`
 
-The data sufficiency column labels each observation for inclusion or exclusion. Possible values are: 
+: Label each observation for inclusion or exclusion based on data sufficiency: "include", indicating that available data are sufficient for estimating timely program completion; "exclude-upper", indicating that data are insufficient at the upper limit of a data range; or "exclude-lower", indicating that data are insufficient at the lower limit.
 
-- "include", indicating that available data are sufficient for estimating timely program completion
-- "exclude-upper", indicating that data are insufficient at the upper limit of a data range  
-- "exclude-lower", indicating that data are insufficient at the lower limit.
 
 ```{r}
 # Drop unnecessary columns
