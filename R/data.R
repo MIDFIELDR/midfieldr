@@ -233,7 +233,7 @@
 #'
 #' @family case-study-data
 #'
-"study_program_cips"
+"study_programs"
 
 # -------------------------------------------------------------------
 

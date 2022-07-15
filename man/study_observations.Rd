@@ -44,7 +44,7 @@ summarizing by race, sex, program, and group.
 \seealso{
 Other case-study-data: 
 \code{\link{study_mcid}},
-\code{\link{study_program_cips}},
+\code{\link{study_programs}},
 \code{\link{study_results}}
 }
 \concept{case-study-data}
