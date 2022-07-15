@@ -98,7 +98,7 @@ suppressPackageStartupMessages(library("ggplot2"))
 
 # Printing options for data.table
 options(
-  datatable.print.nrows = 18, 
+  datatable.print.nrows = 18,
   datatable.print.topn = 8,
   datatable.print.class = TRUE
 )
@@ -132,7 +132,7 @@ You can view the help page (and data dictionary) by running
 **Filtering.** Human subject privacy is potentially at risk for small populations even with anonymized observations. Therefore, before tabulating or graphing the data for dissemination, we omit observations with fewer than 10 students ever enrolled. The magnitude of the bound (`ever >= 10`) can vary depending on one's data. 
 
 ```{r}
-# Protecting privacy of small populations 
+# Protecting privacy of small populations
 DT <- DT[ever >= 10]
 ```
 
@@ -232,7 +232,7 @@ For this example, we select the count of graduates (`grad`) as our quantitative 
 To minimize the number of columns in the printout, we select the three multiway variables and drop other columns. 
 
 ```{r}
-# Select multiway variables when quantity is count 
+# Select multiway variables when quantity is count
 DT_count <- copy(DT)
 DT_count <- DT_count[, .(program, people, grad)]
 DT_count[]
@@ -241,11 +241,12 @@ DT_count[]
 Applying `condition_multiway()`, we specify `"grad"` as the quantitative column, `"program"` and `"people"` as the two categorical columns, and `"median"` as the method of ordering levels.
 
 ```{r}
-# Convert categories to factors ordered by median 
-DT_count <- condition_multiway(DT_count, 
-                               x = "grad", 
-                               yy = c("program", "people"), 
-                               order_by = "median")
+# Convert categories to factors ordered by median
+DT_count <- condition_multiway(DT_count,
+  x = "grad",
+  yy = c("program", "people"),
+  order_by = "median"
+)
 DT_count[]
 ```
 
@@ -287,15 +288,17 @@ Because the `order_by` argument has a default value of "median", the following t
 ```{r}
 #| collapse: true
 # Using explicit order_by median
-p <- condition_multiway(DT_count, 
-                   x = "grad", 
-                   yy = c("program", "people"), 
-                   order_by = "median")
+p <- condition_multiway(DT_count,
+  x = "grad",
+  yy = c("program", "people"),
+  order_by = "median"
+)
 
 # Using implicit order_by median
-q <- condition_multiway(DT_count, 
-                   x = "grad", 
-                   yy = c("program", "people"))
+q <- condition_multiway(DT_count,
+  x = "grad",
+  yy = c("program", "people")
+)
 
 # Verify results identical
 all.equal(p, q)
@@ -321,21 +324,22 @@ We create a set of axis labels and scale specifications for a series of median-o
 ```{r}
 # Common x-scale and axis labels for median-ordered charts
 common_scale_x_log10 <- scale_x_log10(
-    limits = c(3, 1000), 
-    breaks = c(3, 10, 30, 100, 300, 1000), 
-    minor_breaks = c(seq(3, 10, 1), seq(20, 100, 10), seq(200, 1000, 100))
+  limits = c(3, 1000),
+  breaks = c(3, 10, 30, 100, 300, 1000),
+  minor_breaks = c(seq(3, 10, 1), seq(20, 100, 10), seq(200, 1000, 100))
 )
 common_labs <- labs(
-    x = "Number of graduates (log base 10 scale)", 
-    y = "", 
-    title = "Engineering graduates"
+  x = "Number of graduates (log base 10 scale)",
+  y = "",
+  title = "Engineering graduates"
 )
 
 # Draw vertical lines in panels
-common_geom_vline <- function(x){
-    geom_vline(aes(xintercept = x),
-               linetype = 2,
-               color = "gray70")
+common_geom_vline <- function(x) {
+  geom_vline(aes(xintercept = x),
+    linetype = 2,
+    color = "gray70"
+  )
 }
 ```
 
@@ -344,11 +348,11 @@ The first of two multiway charts encodes *programs by rows* and *people by  pane
 ```{r fig.asp = 0.8}
 # Two columns of panels
 ggplot(DT_count, aes(x = grad, y = program)) +
-    facet_wrap(vars(people), ncol = 2, as.table = FALSE) +
-    common_geom_vline(DT_count$people_median) +
-    common_scale_x_log10 +
-    common_labs +
-    geom_point()
+  facet_wrap(vars(people), ncol = 2, as.table = FALSE) +
+  common_geom_vline(DT_count$people_median) +
+  common_scale_x_log10 +
+  common_labs +
+  geom_point()
 ```
 
 
@@ -361,11 +365,11 @@ When space permits, however, laying out the panels in a single column can be use
 ```{r fig.asp = 1.6}
 # Programs encoded by rows
 ggplot(DT_count, aes(x = grad, y = program)) +
-    facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
-    common_geom_vline(DT_count$people_median) +
-    common_scale_x_log10 +
-    common_labs +
-    geom_point()
+  facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
+  common_geom_vline(DT_count$people_median) +
+  common_scale_x_log10 +
+  common_labs +
+  geom_point()
 ```
 
 Reading a multiway graph
@@ -380,11 +384,11 @@ However, this chart does not permit us to effectively compare the eight values f
 ```{r fig.asp = 1.3}
 # People encoded by rows
 ggplot(DT_count, aes(x = grad, y = people)) +
-    facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-    common_geom_vline(DT_count$program_median) +
-    common_scale_x_log10 +
-    common_labs +
-    geom_point()
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  common_geom_vline(DT_count$program_median) +
+  common_scale_x_log10 +
+  common_labs +
+  geom_point()
 ```
 
 In this chart, the visual asymmetries that stand out are 
@@ -418,10 +422,10 @@ DT_alpha[, people := factor(people, levels = sort(unique(people), decreasing = T
 
 # People encoded by rows, alphabetically
 ggplot(DT_alpha, aes(x = grad, y = people)) +
-    facet_wrap(vars(program), ncol = 1, as.table = TRUE) +
-    common_scale_x_log10 +
-    common_labs +
-    geom_point()
+  facet_wrap(vars(program), ncol = 1, as.table = TRUE) +
+  common_scale_x_log10 +
+  common_labs +
+  geom_point()
 ```
 
 An ordering scheme based on the values of the quantitative variable is necessary if a multiway chart is to reveal how the response is affected by the categories.
@@ -437,7 +441,7 @@ An ordering scheme based on the values of the quantitative variable is necessary
 To illustrate superposing data, we return to the data set with separate columns for race/ethnicity and sex. Let's use `grad` as our quantitative variable and omit unnecessary variables. 
 
 ```{r}
-# Select multiway variables with a superposed category 
+# Select multiway variables with a superposed category
 DT_count <- copy(DT)
 DT_count <- DT_count[, .(program, race, sex, grad)]
 DT_count[]
@@ -447,10 +451,11 @@ The superposed category is `sex`. The multiway data to be conditioned are
 `grad`, the quantitative variable, and `program` and `race`, the two categorical variables. 
 
 ```{r}
-# Convert categories to factors ordered by median 
-DT_count <- condition_multiway(DT_count, 
-                               x = "grad", 
-                               yy = c("program", "race"))
+# Convert categories to factors ordered by median
+DT_count <- condition_multiway(DT_count,
+  x = "grad",
+  yy = c("program", "race")
+)
 DT_count[]
 ```
 
@@ -462,12 +467,12 @@ Using conventional ggplot syntax, the aesthetics include `x` and `y`  as before.
 #| fig-asp: 0.8
 # Race/ethnicity encoded by rows, sex superposed
 ggplot(DT_count, aes(x = grad, y = race, color = sex)) +
-    facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-    common_geom_vline(DT_count$program_median) +
-    common_scale_x_log10 +
-    common_labs +
-    geom_point() +
-    scale_color_manual(values = c("#762A83", "#1B7837"))
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  common_geom_vline(DT_count$program_median) +
+  common_scale_x_log10 +
+  common_labs +
+  geom_point() +
+  scale_color_manual(values = c("#762A83", "#1B7837"))
 ```
 
 By superposing data by sex, we facilitate a direct comparison of Male and Female students within a program and by race. 
@@ -478,12 +483,12 @@ Swapping rows and panels yields the next chart, in which we can directly compare
 #| fig-asp: 0.8
 # Program encoded by rows, sex superposed
 ggplot(DT_count, aes(x = grad, y = program, color = sex)) +
-    facet_wrap(vars(race), ncol = 1, as.table = FALSE) +
-    common_geom_vline(DT_count$race_median) +
-    common_scale_x_log10 +
-    common_labs +
-    geom_point() +
-    scale_color_manual(values = c("#762A83", "#1B7837"))
+  facet_wrap(vars(race), ncol = 1, as.table = FALSE) +
+  common_geom_vline(DT_count$race_median) +
+  common_scale_x_log10 +
+  common_labs +
+  geom_point() +
+  scale_color_manual(values = c("#762A83", "#1B7837"))
 ```
 
 
@@ -500,7 +505,7 @@ ggplot(DT_count, aes(x = grad, y = program, color = sex)) +
 For persistence metrics such as stickiness or graduation rate, the quantitative variable is a ratio or percentage. Here, we return to the original case study results and select stickiness (`stick`) as the quantitative variable. 
 
 ```{r}
-# Select multiway variables when quantity is a percentage 
+# Select multiway variables when quantity is a percentage
 options(datatable.print.topn = 3)
 DT_ratio <- copy(DT)
 DT_ratio[, c("race", "sex") := NULL]
@@ -510,12 +515,13 @@ DT_ratio[]
 Because stickiness is a ratio, we set `order_by` to "percent" and assign `grad` and `ever` to the `param_col` argument. `condition_multiway()` then sums the `ever` and `grad` counts by category and produces grouped percentages to order the category levels. 
 
 ```{r}
-# Convert categories to factors ordered by group percentages 
-DT_ratio <- condition_multiway(DT_ratio, 
-                               x = "stick", 
-                               yy = c("program", "people"), 
-                               order_by = "percent", 
-                               param_col = c("grad", "ever"))
+# Convert categories to factors ordered by group percentages
+DT_ratio <- condition_multiway(DT_ratio,
+  x = "stick",
+  yy = c("program", "people"),
+  order_by = "percent",
+  param_col = c("grad", "ever")
+)
 DT_ratio[]
 ```
 
@@ -529,7 +535,7 @@ The following values agree with those in the `program_stick` variable above,
 #| collapse: true
 # Verify condition_multiway() output
 temp <- DT[, lapply(.SD, sum), .SDcols = c("ever", "grad"), by = c("program")]
-temp[, stick := round(100 *grad / ever, 1)]
+temp[, stick := round(100 * grad / ever, 1)]
 temp[]
 ```
 
@@ -539,7 +545,7 @@ And the next result agrees with the values in `people_stick`.
 #| collapse: true
 # Verify condition_multiway() output
 temp <- DT[, lapply(.SD, sum), .SDcols = c("ever", "grad"), by = c("people")]
-temp[, stick := round(100 *grad / ever, 1)]
+temp[, stick := round(100 * grad / ever, 1)]
 temp[]
 ```
 
@@ -559,10 +565,10 @@ The order of rows and panels has changed from the earlier charts.
 ```{r fig.asp = 1.6}
 # Programs encoded by rows
 ggplot(DT_ratio, aes(x = stick, y = program)) +
-    facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
-    common_geom_vline(DT_ratio$people_stick) +
-    labs(x = "Stickiness", y = "", title = "Engineering stickiness") +
-    geom_point()
+  facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
+  common_geom_vline(DT_ratio$people_stick) +
+  labs(x = "Stickiness", y = "", title = "Engineering stickiness") +
+  geom_point()
 ```
 
 The visual asymmetries in this chart that stand out are
@@ -578,10 +584,10 @@ Again, we cannot compare the eight values for a given program as effectively. Th
 ```{r fig.asp = 1.3}
 # People encoded by rows
 ggplot(DT_ratio, aes(x = stick, y = people)) +
-    facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-    common_geom_vline(DT_ratio$program_stick) +
-    labs(x = "Stickiness", y = "", title = "Engineering stickiness") +
-    geom_point()
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  common_geom_vline(DT_ratio$program_stick) +
+  labs(x = "Stickiness", y = "", title = "Engineering stickiness") +
+  geom_point()
 ```
 
 This chart shows a lot of variability. The visual asymmetries that stand out are 
@@ -615,7 +621,7 @@ tbl[]
 Use `dcast()` to transform the block records to row records. 
 
 ```{r}
-# Transform shape to row-record form 
+# Transform shape to row-record form
 tbl <- dcast(tbl, people ~ program, value.var = "grad")
 tbl[]
 ```
@@ -630,8 +636,10 @@ setnames(tbl, old = "people", new = "Group", skip_absent = TRUE)
 ```{r}
 #| echo: false
 tbl |>
-  kableExtra::kbl(align = "lrrrr", 
-                  caption = "Table 1: Number of engineering graduates") |>
+  kableExtra::kbl(
+    align = "lrrrr",
+    caption = "Table 1: Number of engineering graduates"
+  ) |>
   kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
   kableExtra::row_spec(0, background = "#c7eae5") |>
   kableExtra::column_spec(1:5, color = "black", background = "white")
@@ -667,7 +675,7 @@ tbl[]
 Now we can perform the transformation from block records to row records as we did above. 
 
 ```{r}
-# Transform shape to row-record form 
+# Transform shape to row-record form
 tbl <- dcast(tbl, people ~ program, value.var = "results")
 tbl[]
 ```
@@ -682,10 +690,12 @@ setnames(tbl, old = "people", new = "Group", skip_absent = TRUE)
 ```{r}
 #| echo: false
 tbl |>
-  kableExtra::kbl(align = "lrrrr", 
-                  caption = "Table 2: Percent stickiness of four engineering programs") |>
+  kableExtra::kbl(
+    align = "lrrrr",
+    caption = "Table 2: Percent stickiness of four engineering programs"
+  ) |>
   kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |> 
+  kableExtra::row_spec(0, background = "#c7eae5") |>
   kableExtra::column_spec(1:5, color = "black", background = "white") |>
   kableExtra::footnote(general = "Integers in parentheses give the ratio of students graduating to those ever enrolled that produces the percentage shown.")
 ```
@@ -745,7 +755,7 @@ suppressPackageStartupMessages(library("ggplot2"))
 
 # Printing options for data.table
 options(
-  datatable.print.nrows = 18, 
+  datatable.print.nrows = 18,
   datatable.print.topn = 8,
   datatable.print.class = TRUE
 )
@@ -771,109 +781,113 @@ setcolorder(DT, c("program", "people", "race", "sex"))
 # Median-ordered data
 DT_count <- copy(DT)
 DT_count <- DT_count[, .(program, people, grad)]
-DT_count <- condition_multiway(DT_count, 
-                               x = "grad", 
-                               yy = c("program", "people"), 
-                               order_by = "median")
+DT_count <- condition_multiway(DT_count,
+  x = "grad",
+  yy = c("program", "people"),
+  order_by = "median"
+)
 
 # Median-ordered charts
 common_scale_x_log10 <- scale_x_log10(
-    limits = c(3, 1000), 
-    breaks = c(3, 10, 30, 100, 300, 1000), 
-    minor_breaks = c(seq(3, 10, 1), seq(20, 100, 10), seq(200, 1000, 100))
+  limits = c(3, 1000),
+  breaks = c(3, 10, 30, 100, 300, 1000),
+  minor_breaks = c(seq(3, 10, 1), seq(20, 100, 10), seq(200, 1000, 100))
 )
 common_labs <- labs(
-    x = "Number of graduates (log base 10 scale)", 
-    y = "", 
-    title = "Engineering graduates"
+  x = "Number of graduates (log base 10 scale)",
+  y = "",
+  title = "Engineering graduates"
 )
-common_geom_vline <- function(x){
-    geom_vline(aes(xintercept = x),
-               linetype = 2,
-               color = "gray70")
+common_geom_vline <- function(x) {
+  geom_vline(aes(xintercept = x),
+    linetype = 2,
+    color = "gray70"
+  )
 }
 
 # Two-column layout
 ggplot(DT_count, aes(x = grad, y = program)) +
-    facet_wrap(vars(people), ncol = 2, as.table = FALSE) +
-    common_geom_vline(DT_count$people_median) +
-    common_scale_x_log10 +
-    common_labs +
-    geom_point()
+  facet_wrap(vars(people), ncol = 2, as.table = FALSE) +
+  common_geom_vline(DT_count$people_median) +
+  common_scale_x_log10 +
+  common_labs +
+  geom_point()
 
 # Programs encoded by rows
 ggplot(DT_count, aes(x = grad, y = program)) +
-    facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
-    common_geom_vline(DT_count$people_median) +
-    common_scale_x_log10 +
-    common_labs +
-    geom_point()
+  facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
+  common_geom_vline(DT_count$people_median) +
+  common_scale_x_log10 +
+  common_labs +
+  geom_point()
 
 # People encoded by rows
 ggplot(DT_count, aes(x = grad, y = people)) +
-    facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-    common_geom_vline(DT_count$program_median) +
-    common_scale_x_log10 +
-    common_labs +
-    geom_point()
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  common_geom_vline(DT_count$program_median) +
+  common_scale_x_log10 +
+  common_labs +
+  geom_point()
 
 # Avoid alphabetical order
 DT_alpha <- copy(DT)
 DT_alpha[, people := factor(people, levels = sort(unique(people), decreasing = TRUE))]
 ggplot(DT_alpha, aes(x = grad, y = people)) +
-    facet_wrap(vars(program), ncol = 1, as.table = TRUE) +
-    common_scale_x_log10 +
-    common_labs +
-    geom_point()
+  facet_wrap(vars(program), ncol = 1, as.table = TRUE) +
+  common_scale_x_log10 +
+  common_labs +
+  geom_point()
 
 # Multiway superposition
 DT_count <- copy(DT)
 DT_count <- DT_count[, .(program, race, sex, grad)]
-DT_count <- condition_multiway(DT_count, 
-                               x = "grad", 
-                               yy = c("program", "race"))
+DT_count <- condition_multiway(DT_count,
+  x = "grad",
+  yy = c("program", "race")
+)
 
 # Race/ethnicity encoded by rows
 ggplot(DT_count, aes(x = grad, y = race, color = sex)) +
-    facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-    common_geom_vline(DT_count$program_median) +
-    common_scale_x_log10 +
-    common_labs +
-    geom_point() +
-    scale_color_manual(values = c("#762A83", "#1B7837"))
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  common_geom_vline(DT_count$program_median) +
+  common_scale_x_log10 +
+  common_labs +
+  geom_point() +
+  scale_color_manual(values = c("#762A83", "#1B7837"))
 
 # Program encoded by rows
 ggplot(DT_count, aes(x = grad, y = program, color = sex)) +
-    facet_wrap(vars(race), ncol = 1, as.table = FALSE) +
-    common_geom_vline(DT_count$race_median) +
-    common_scale_x_log10 +
-    common_labs +
-    geom_point() +
-    scale_color_manual(values = c("#762A83", "#1B7837"))
+  facet_wrap(vars(race), ncol = 1, as.table = FALSE) +
+  common_geom_vline(DT_count$race_median) +
+  common_scale_x_log10 +
+  common_labs +
+  geom_point() +
+  scale_color_manual(values = c("#762A83", "#1B7837"))
 
 # Percentage-ordered data
 DT_ratio <- copy(DT)
 DT_ratio[, c("race", "sex") := NULL]
-DT_ratio <- condition_multiway(DT_ratio, 
-                               x = "stick", 
-                               yy = c("program", "people"), 
-                               order_by = "percent", 
-                               param_col = c("grad", "ever"))
+DT_ratio <- condition_multiway(DT_ratio,
+  x = "stick",
+  yy = c("program", "people"),
+  order_by = "percent",
+  param_col = c("grad", "ever")
+)
 
 # Percentage-ordered charts
 # Programs encoded by rows
 ggplot(DT_ratio, aes(x = stick, y = program)) +
-    facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
-    common_geom_vline(DT_ratio$people_stick) +
-    labs(x = "Stickiness", y = "", title = "Engineering stickiness") +
-    geom_point()
+  facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
+  common_geom_vline(DT_ratio$people_stick) +
+  labs(x = "Stickiness", y = "", title = "Engineering stickiness") +
+  geom_point()
 
 # People encoded by rows
 ggplot(DT_ratio, aes(x = stick, y = people)) +
-    facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-    common_geom_vline(DT_ratio$program_stick) +
-    labs(x = "Stickiness", y = "", title = "Engineering stickiness") +
-    geom_point()
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  common_geom_vline(DT_ratio$program_stick) +
+  labs(x = "Stickiness", y = "", title = "Engineering stickiness") +
+  geom_point()
 
 # Tabulating counts
 tbl <- copy(DT)
