@@ -3,7 +3,7 @@
 \docType{data}
 \name{study_program_labels}
 \alias{study_program_labels}
-\title{Case-study program labels and CIP codes}
+\title{Case-study program labels and codes}
 \format{
 \code{data.table} with 15 rows and 2 columns.
 
