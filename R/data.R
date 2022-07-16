@@ -209,7 +209,7 @@
 
 # -------------------------------------------------------------------
 
-#' Case-study program labels and CIP codes
+#' Case-study program labels and codes
 #' 
 #' Data table of program CIP codes and labels of the four programs of the 
 #' case study. Keyed by 6-digit CIPs. Provided for the convenience of vignette 
