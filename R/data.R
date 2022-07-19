@@ -40,26 +40,23 @@
 
 # -------------------------------------------------------------------
 
-#' Starting programs imputed for FYE students
+#' Predicted starting programs for FYE students
+#' 
+#' Predicted starting programs for all First-Year Engineering (FYE) students 
+#' in the midfielddata data tables. Keyed by student ID. Contains 
+#' 6-digit CIP codes that are substituted for the First-Year-Engineering (FYE) 
+#' CIP code when an analysis requires starting programs that are 
+#' degree-granting. Suitable for use with midfielddata practice data only.
 #'
-#' A data table of Degree-granting, engineering CIP codes that can be 
-#' substituted for First-Year-Engineering (FYE) codes when required by a 
-#' persistence metric.
+#' Starting programs in \code{fye_predicted_start} are the engineering 
+#' programs we predict that students would have declared had they not been 
+#' required to enroll in FYE. The prediction is based on their first post-FYE 
+#' program and a multivariate imputation suitable for multiple categorical 
+#' variables using the mice package. The predictor variables are institution, 
+#' race, and sex. The predicted variable is the 6-digit CIP code of a 
+#' degree-granting engineering program at their institution.
 #'
-#' FYE is different from other non-degree-granting CIP designations such
-#' as "undecided" or "undeclared". FYE students are neither undecided nor
-#' undeclared---they have been accepted by their institutions as
-#' Engineering majors.
-#'
-#' Starting programs in \code{fye_start} are the engineering programs we
-#' predict that students would have declared had they not been required to
-#' enroll in FYE. The prediction is based on their first post-FYE program and
-#' an imputation suitable for multiple categorical variables using the mice
-#' package. The predictor variables are institution, race, and sex. The
-#' predicted variable is the 6-digit CIP code of a degree-granting engineering
-#' program at their institution.
-#'
-#' \code{fye_start} holds only for the practice data in
+#' \code{fye_predicted_start} holds only for the practice data in
 #' midfielddata---these values cannot be commingled with the research
 #' database available to MIDFIELD partners.
 #'
@@ -76,7 +73,7 @@
 #'
 #' @family cip-data
 #'
-"fye_start"
+"fye_predicted_start"
 
 
 # -------------------------------------------------------------------

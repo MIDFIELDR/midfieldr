@@ -1,0 +1,215 @@
+---
+title: "FYE programs"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
+output: rmarkdown::html_vignette
+csl: ../inst/information-science-and-technology.csl
+vignette: >
+  %\VignetteIndexEntry{FYE programs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+nocite: |
+  @vanBuuren+Oudshoorn:2011
+resource_files: |
+---
+
+```{r setup}
+#| include: false
+
+# code chunks
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = FALSE,
+  comment = "#>",
+  error = FALSE
+)
+
+# figures
+knitr::opts_chunk$set(
+  fig.path = "../man/figures/art-060-multiway-charts-",
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+
+# inline numbers
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+```
+
+Working with longitudinal Student Unit Records (SURs) in Engineering specifically can be problematic when institutions have required First-Year Engineering (FYE) programs. In this vignette, we describe the issues and our approach to resolving them. 
+
+
+
+
+
+## Preface 
+
+At some US institutions, First-Year Engineering (FYE) programs comprise a common first year curriculum that is a prerequisite for declaring a engineering major. FYE programs can be problematic in longitudinal studies, especially when combining records from FYE and non-FYE institutions.  
+
+For example, suppose we are calculating a graduation rate for Mechanical Engineering (ME) programs. By most definitions of "graduation rate," the students starting in ME constitute the pool; the fraction of the pool that graduates in ME is the rate. FYE starters, even if they graduate in ME, are potentially excluded from the count because they are not members of the starting ME pool. 
+
+The analysis can also be flawed by failing to account for post-FYE students who do *not* transition to a degree-granting engineering program. Had they not been required to enroll in FYE, such students would have been members of *some* engineering programs' entering cohorts. Neglecting them reduces the size of the entering cohort of those degree-granting programs, falsely increasing their graduation rates. 
+
+Moreover, it would be poor methodology to group FYE students with students admitted as "undecided" or with "unknown" majors---FYE students are neither. 
+They were admitted as Engineering majors (CIP 14). We simply don't know to which 6-digit CIP, degree-granting program they intended to transition.  
+
+Therefore, to include FYE students in any analysis requiring a degree-granting "starting" program (e.g., graduation rate), we have to predict the engineering program (such as Electrical Engineering, Mechanical Engineering, etc.) the FYE student would have declared had they not been required to enroll in FYE. 
+
+The purpose of `preprocess_fye()` is to prepare the data for making that prediction. The prediction itself is performed using multivariate imputation. 
+
+## Definitions
+
+FYE
+
+: First-Year Engineering program, a common first year curriculum that is a prerequisite for declaring a engineering major at some US institutions.  
+
+multivariate imputation
+
+: Method of imputing missing data, in this case, predicting the CIP codes of the degree-granting programs FYE students would have declared had they not been required to enroll in FYE. We use the mice (multivariate imputation by chained equations) R package. 
+
+
+
+
+## Method
+
+Two approaches are described in this vignette. 
+
+**Using prepared predictions.** The `fye_predicted_start` data set bundled with midfieldr contains predicted starting programs for all FYE students in the  practice data tables. Suitable for use with midfielddata practice data only. You can view the help page (and data dictionary) by running
+
+```{r}
+#| eval: false
+# Run in Console
+? fye_predicted_start
+```
+ 
+
+**Performing your own imputation.** Apply `preprocess_fye()` to your `student` and `term` data tables to construct and preprocess a data frame as an input  to the mice R package for multiple imputation. The method is appropriate for  midfielddata practice data or MIDFIELD research data. You can view the help page by running
+
+```{r}
+#| eval: false
+# Run in Console
+? preprocess_fye()
+```
+ 
+
+
+
+
+
+## Load data
+
+If you are writing your own script to follow along, we start with these packages:
+
+```{r}
+# Packages
+library("midfieldr")
+library("midfielddata")
+suppressPackageStartupMessages(library("data.table"))
+
+# Only if performing your own imputation
+library("mice")
+
+# Printing options for data.table
+options(
+  datatable.print.nrows = 10,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
+```
+
+When using the prepared predictions, load `fye_start`, bundled with midfieldr. 
+```{r}
+# View the prepared predictions
+fye_predicted_start
+```
+
+When performing your own imputation, load `student` and `term` data tables from available sources: you can use the practice data from  midfielddata as we do in this vignette; or you can use the MIDFIELD research data if you have access. 
+
+```{r}
+# Load two data tables
+data(student, term)
+```
+
+
+## Using prepared predictions
+
+The goal is to identify Student Unit Records (SUR) of FYE students and replace the FYE program code (140102) with the predicted degree-granting program code in `fye_start`.  
+
+To illustrate the process, we use prepared data from the case study of four  programs (Civil, Electrical, Industrial/Systems, and Mechanical Engineering). 
+
+```{r}
+# Case study program codes and labels
+study_program_labels
+```
+
+
+```{r}
+# Case study ever enrolled IDs
+study_mcid
+```
+
+
+
+To illustrate using these data, let's suppose that we are trying to determine the number of students in the four majors of our case study (Civil, Electrical, Industrial, and Mechanical Engineering) at the start of their first year, second year, third year, etc.  FYE students who transition to these majors would appear in the `term` data in the second year and beyond, but not in the first year. In this example, therefore, we will focus on determining how to include FYE students in the first-year count. 
+
+We use two additional prepared data sets, `study_program` with the case-study CIP codes and program names, and `study_student`, all students ever enrolled in these programs. To see their help pages, run 
+
+```r
+# case study data sets 
+? study_program
+? study_student
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+
+
+
+## Appendix
+
+### Complete script
+
+The vignette code chunks are collected below in a single, condensed script. 
+
+```{r}
+#| eval: false
+
+
+
+```
+

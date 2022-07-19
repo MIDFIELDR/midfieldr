@@ -1,16 +1,20 @@
 
 
+## midfieldr 1.0.0.9025 / 2021-07
+
+- Editing some functions names and data names to be more descriptive.  
+- Change name of built-in `fye_start` data set to `fye_predicted_start` 
+- New `order_multiway_categories()` to replace `condition_multiway()`. Revised 
+  argument names. 
+- New `preprocess_fye()` to replace `condition_fye()` 
+
+
+
 
 ## midfieldr 1.0.0.9024 / 2021-07
 
 - Revise `add_completion_status()`, changing the three possible values to "timely", "late", or NA. Drop the `completion` column (same information available in the `term_degree` column). 
 - Revise vignettes for consistent format.
-
-
-
-
-
-
 
 ## midfieldr 1.0.0.9023 / 2021-07
 

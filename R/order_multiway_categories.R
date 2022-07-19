@@ -1,6 +1,6 @@
 
 
-#' Condition multiway data by ordering category levels
+#' Order categorical variables of multiway data 
 #'
 #' Transform a data frame such that two independent categorical variables are 
 #' factors with levels ordered for display in a multiway dot plot. Multiway 
@@ -27,19 +27,19 @@
 #' @param dframe Data frame with one numeric variable and two 
 #'        categorical variables of class character or factor. Two additional 
 #'        numeric columns required when using the "percent" ordering method. 
-#' @param x Character, name (in quotes) of the single multiway quantitative 
+#' @param quantity Character, name (in quotes) of the single multiway quantitative 
 #'        variable
-#' @param yy Character, vector of names (in quotes) of the two multiway 
+#' @param categories Character, vector of names (in quotes) of the two multiway 
 #'        categorical variables
 #' @param ... Not used, forces later arguments to be used by name.
-#' @param order_by Character, “median” (default) or “percent”, method of 
+#' @param method Character, “median” (default) or “percent”, method of 
 #'        ordering the levels of the categories. The median method computes the 
 #'        medians of the quantitative column grouped by category. The percent 
-#'        method computes percentages based on the same ratio that produced the 
-#'        quantitative variable except grouped by category. 
-#' @param param_col Character vector with the names (in quotes) of the 
+#'        method computes percentages based on the same ratio underlying the 
+#'        quantitative percentage variable except grouped by category. 
+#' @param ratio_of Character vector with the names (in quotes) of the 
 #'        numerator and denominator columns that produced the quantitative 
-#'        variable, required when \code{order_by} is "percent". Names can be 
+#'        variable, required when \code{method} is "percent". Names can be 
 #'        in any order; the algorithm assumes that the parameter with the 
 #'        larger column sum is the denominator of the ratio.
 #'        
@@ -48,31 +48,34 @@
 #' \itemize{
 #'  \item Rows are not modified.
 #'  \item Grouping structures are not preserved.
-#'  \item The columns specified by \code{yy} are converted to factors and 
-#'      ordered. Other columns are not modified. 
+#'  \item The columns specified by \code{categories} are converted to factors 
+#'      and ordered. Other columns are not modified. 
 #'  \item Two columns are added. \strong{Caution!} An existing column 
 #'  with the same name as one of the added columns is silently overwritten. 
 #' }
-#' Columns added:
+#' The names of the added columns incorporate the names of the multiway 
+#' variables. Columns added:
 #' \describe{
-#'  \item{\code{Y_median} columns (when ordering method is "median")}{Numeric. 
-#'      Two columns of medians of the quantitative variable grouped by the 
-#'      categorical variables. The \code{Y} placeholder in the column name is 
-#'      replaced by a category name from \code{yy}. For example, suppose  
-#'      \code{yy = c("program", "people")} and \code{order_by = "median"}. 
-#'      The two new column names would be \code{program_median} and 
-#'      \code{people_median}.} 
+#'  \item{\code{CATEGORY_median} columns (when ordering method is "median")}{
+#'      Numeric. Two columns of medians of the quantitative variable grouped 
+#'      by the categorical variables. The \code{CATEGORY} placeholder in 
+#'      the column name is replaced by a category name from the 
+#'      \code{categories} argument. For example, suppose 
+#'      \code{categories = c("program", "people")} and 
+#'      \code{method = "median"}. The two new column names would be 
+#'      \code{program_median} and \code{people_median}.} 
 #'      
-#'  \item{\code{Y_X} columns (when ordering method is "percent")}{Numeric. Two 
-#'      columns of percentages based on the same ratio that produces the 
-#'      quantitative variable except grouped by the categorical variables. 
-#'      The \code{Y}  
-#'      placeholder in the column name is 
-#'      replaced by a category name from \code{yy}; the \code{X}  placeholder 
-#'      is replaced by the quantitative variable name in \code{x}. For example, 
-#'      suppose \code{yy = c("program", "people")}, and \code{x = "grad_rate"}, 
-#'      and \code{order_by = "percent"}. The two new column names  would be  
-#'      \code{program_grad_rate} and \code{people_grad_rate}.} 
+#'  \item{\code{CATEGORY_QUANTITY} columns (when ordering method is "percent")}{
+#'      Numeric. Two columns of percentages based on the same ratio that 
+#'      produces the quantitative variable except grouped by the categorical 
+#'      variables. The \code{CATEGORY} placeholder in the column name is 
+#'      replaced by a category name from the \code{categories} argument; the 
+#'      \code{QUANTITY} placeholder is replaced by the quantitative variable 
+#'      name in the \code{quantity} argument. For example, suppose 
+#'      \code{categories = c("program", "people")}, and 
+#'      \code{quantity = "grad_rate"}, and \code{method = "percent"}. The two 
+#'      new column names  would be \code{program_grad_rate} and 
+#'      \code{people_grad_rate}.} 
 #'      
 #' }
 #' 
@@ -88,18 +91,17 @@
 #'   Hoboken, NJ.
 #'
 #'
-#' @family condition_*
 #'
 #'
 #' @export
 #'
 #'
-condition_multiway <- function(dframe,
-                               x,
-                               yy,
+order_multiway_categories <- function(dframe,
+                               quantity,
+                               categories,
                                ...,
-                               order_by = NULL,
-                               param_col = NULL) {
+                               method = NULL,
+                               ratio_of = NULL) {
   on.exit(setkey(DT, NULL), add = TRUE)
 
   # assert arguments after dots used by name
@@ -107,8 +109,8 @@ condition_multiway <- function(dframe,
     substitute(list(...)),
     paste(
       "Arguments after ... must be named.\n",
-      "* Did you forget to write `order_by = `\n",
-      "* or `param_col = ` ?\n"
+      "* Did you forget to write `method = `\n",
+      "* or `ratio_of = ` ?\n"
     )
   )
 
@@ -118,68 +120,68 @@ condition_multiway <- function(dframe,
   setDT(DT)
 
   # required columns
-  assert_names(colnames(DT), must.include = c(x, yy))
+  assert_names(colnames(DT), must.include = c(quantity, categories))
 
   # class of required columns
-  qassert(DT[[x]], "n+") # numeric, length 1 or more
+  qassert(DT[[quantity]], "n+") # numeric, length 1 or more
 
-  col_class <- DT[, yy, with = FALSE]
+  col_class <- DT[, categories, with = FALSE]
   col_class <- unlist(lapply(col_class, class))
   assert_subset(
     col_class,
     choices = c("character", "factor"),
     empty.ok = FALSE,
-    .var.name = "yy"
+    .var.name = "categories"
   )
 
   # other required arguments
-  qassert(x, "S1") # string, missing values prohibited, length 1
-  qassert(yy, "S2") # string, missing values prohibited, length 2
+  qassert(quantity, "S1") # string, missing values prohibited, length 1
+  qassert(categories, "S2") # string, missing values prohibited, length 2
 
   # optional arguments
-  order_by <- order_by %?% "median"
-  qassert(order_by, "S1")
+  method <- method %?% "median"
+  qassert(method, "S1")
   assert_subset(
-    order_by,
+    method,
     # choices = c("median", "mean", "sum", "percent", "alphabet"),
     choices = c("median", "percent"), 
     empty.ok = FALSE,
-    .var.name = "order_by"
+    .var.name = "method"
   )
 
-  if (order_by == "percent") {
-    qassert(param_col, "S2")
+  if (method == "percent") {
+    qassert(ratio_of, "S2")
     assert_subset(
-      param_col,
+      ratio_of,
       choices = names(DT),
       empty.ok = FALSE,
-      .var.name = "param_col"
+      .var.name = "ratio_of"
     )
     # columns must be numeric
-    col_class <- DT[, param_col, with = FALSE]
+    col_class <- DT[, ratio_of, with = FALSE]
     col_class <- unlist(lapply(col_class, class))
     checkmate::assert_subset(
       col_class,
       choices = c("numeric", "double", "integer"),
       empty.ok = FALSE,
-      .var.name = "param_col"
+      .var.name = "ratio_of"
     )
   } else {
-    if (!is.null(param_col)) {
-      warning("Unused argument 'param_col'.")
+    if (!is.null(ratio_of)) {
+      warning("Unused argument 'ratio_of'.")
     }
   }
 
   # do the work
 
   # all methods treat categories as factors
-  DT[, (yy) := lapply(.SD, as.factor), .SDcols = yy]
+  DT[, (categories) := lapply(.SD, as.factor), .SDcols = categories]
 
   # multiway must have two and only two categories
-  categ_1 <- yy[[1]]
-  categ_2 <- yy[[2]]
+  categ_1 <- categories[[1]]
+  categ_2 <- categories[[2]]
 
-  # if (order_by == "alphabet") {
+  # if (method == "alphabet") {
   # 
   #   # alphabetical order returns categories as factors with levels
   #   # ordered in reverse alphabetical order such that the graph rows and
@@ -191,23 +193,23 @@ condition_multiway <- function(dframe,
   #   )
   # 
   #   # organize the return column order
-  #   setcolorder(DT, c(yy, x))
+  #   setcolorder(DT, c(categories, quantity))
   # } else 
       
-if (order_by == "percent") {
+if (method == "percent") {
 
-    # percent-based metrics, e.g., stickiness or graduation rate
+    # ratio-based metrics, e.g., stickiness or graduation rate
     # returns categories as factors with levels ordered by the metric
     DT <- order_by_percent(
       DT,
-      yy,
-      x,
-      param_col
+      categories,
+      quantity,
+      ratio_of
     )
 
     # organize the return column order
-    setcolorder(DT, c(yy, param_col, x))
-  } else { # order_by = "median"
+    setcolorder(DT, c(categories, ratio_of, quantity))
+  } else { # method = "median"
 
     # function-based ordering returns categories as factors with levels
     # ordered by category median()
@@ -215,12 +217,12 @@ if (order_by == "percent") {
       DT,
       categ_1,
       categ_2,
-      x,
-      order_by
+      quantity,
+      method
     )
 
     # organize the return column order
-    setcolorder(DT, c(yy, x))
+    setcolorder(DT, c(categories, quantity))
   }
   DT[]
 }
@@ -228,9 +230,9 @@ if (order_by == "percent") {
 # internal functions
 # --------------------------------------------------------------------------
 order_by_percent <- function(dframe,
-                             yy,
-                             x,
-                             param_col) {
+                             categories,
+                             quantity,
+                             ratio_of) {
 
   # avoid possible copy-by-reference side effects
   DT <- copy(dframe)
@@ -243,14 +245,14 @@ order_by_percent <- function(dframe,
   NEW_COL <- NULL
 
   # replace NA in count columns with zero
-  DT[, (param_col) := lapply(.SD, function(x) {
-    fifelse(is.na(x), 0, x)
-  }), .SDcols = param_col]
+  DT[, (ratio_of) := lapply(.SD, function(quantity) {
+    fifelse(is.na(quantity), 0, quantity)
+  }), .SDcols = ratio_of]
 
   # sum the two counts by the individual categories
   # provides columns needed to determine row and panel order
-  for (categ_i in yy) {
-    for (count_i in param_col) {
+  for (categ_i in categories) {
+    for (count_i in ratio_of) {
       # execute expressions with column names as parameters
       wrapr::let(
         c(COUNT_I = count_i),
@@ -263,22 +265,22 @@ order_by_percent <- function(dframe,
   }
 
   # Determine the names of the columns used as the numerator and
-  # denominator of the percent. Assumes the smaller number is the numerator,
+  # denominator of the ratio. Assumes the smaller number is the numerator,
   # e.g., grad / ever or grad / start. Always more starters or ever-enrolled
   # overall (summing across all programs) than grads.
-  count_col_totals <- colSums(DT[, param_col, with = FALSE])
+  count_col_totals <- colSums(DT[, ratio_of, with = FALSE])
   count_col_min <- names(which.min(count_col_totals))
   count_col_max <- names(which.max(count_col_totals))
 
   # computing the metric for individual categories
   # used for ordering rows and panels
-  for (categ_i in yy) {
+  for (categ_i in categories) {
 
     # names of new columns, numerator and denominator of
     # category summary metric
     a <- paste(categ_i, count_col_min, sep = "_")
     b <- paste(categ_i, count_col_max, sep = "_")
-    new_col <- paste(categ_i, x, sep = "_")
+    new_col <- paste(categ_i, quantity, sep = "_")
 
     # execute expressions with column names as parameters
     wrapr::let(
@@ -336,8 +338,8 @@ order_by_percent <- function(dframe,
 order_by_function <- function(dframe,
                               categ_1,
                               categ_2,
-                              x,
-                              order_by) {
+                              quantity,
+                              method) {
 
   # avoid possible copy-by-reference side effects
   DT <- copy(dframe)
@@ -347,22 +349,22 @@ order_by_function <- function(dframe,
   CATEG_2 <- NULL
   ORDER_1 <- NULL
   ORDER_2 <- NULL
-  X <- NULL
+  QUANTITY <- NULL
 
   # select function to apply 
-  if (order_by == "median") {
+  if (method == "median") {
       f <- stats::median
   }
-  # if (order_by == "sum") {
+  # if (method == "sum") {
   #   f <- sum
   # }
-  # if (order_by == "mean") {
+  # if (method == "mean") {
   #   f <- mean
   # }
 
   # create names for value variables
-  order_1 <- paste(categ_1, order_by, sep = "_")
-  order_2 <- paste(categ_2, order_by, sep = "_")
+  order_1 <- paste(categ_1, method, sep = "_")
+  order_2 <- paste(categ_2, method, sep = "_")
   
   # execute expressions with column names as parameters
   wrapr::let(
@@ -371,11 +373,11 @@ order_by_function <- function(dframe,
       CATEG_2 = categ_2,
       ORDER_1 = order_1,
       ORDER_2 = order_2,
-      X = x
+      QUANTITY = quantity
     ),
     {
-      DT[, ORDER_1 := f(X, na.rm = TRUE), by = CATEG_1]
-      DT[, ORDER_2 := f(X, na.rm = TRUE), by = CATEG_2]
+      DT[, ORDER_1 := f(QUANTITY, na.rm = TRUE), by = CATEG_1]
+      DT[, ORDER_2 := f(QUANTITY, na.rm = TRUE), by = CATEG_2]
       DT[, CATEG_1 := reorder(CATEG_1, ORDER_1)]
       DT[, CATEG_2 := reorder(CATEG_2, ORDER_2)]
     }

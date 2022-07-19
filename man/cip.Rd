@@ -44,7 +44,7 @@ program information or that students were not enrolled in a program.
 }
 \seealso{
 Other cip-data: 
-\code{\link{fye_start}}
+\code{\link{fye_predicted_start}}
 }
 \concept{cip-data}
 \keyword{datasets}

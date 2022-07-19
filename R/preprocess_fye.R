@@ -22,7 +22,7 @@
 #' degree-granting "starting" program, we have to predict the engineering
 #' program (such as Electrical Engineering, Mechanical Engineering, etc.) 
 #' the FYE student would have declared had they not been required to
-#' enroll in FYE. The purpose of \code{condition_fye()} is to prepare the data 
+#' enroll in FYE. The purpose of \code{preprocess_fye()} is to prepare the data 
 #' for making that prediction. 
 #'
 #' @param midfield_student Data frame of Student Unit Record (SUR) student observations, 
@@ -92,18 +92,17 @@
 #' variable (6-digit CIP code) are converted to unordered factors. 
 #' The resulting data frame is ready for use as input for the mice package.
 #'
-#' @family condition_*
 #'
 #'
 #'
-#' @example man/examples/condition_fye_exa.R
+#' @example man/examples/preprocess_fye_exa.R
 #'
 #'
 #'
 #' @export
 #'
 #'
-condition_fye <- function(midfield_student,
+preprocess_fye <- function(midfield_student,
                           midfield_term,
                           ...,
                           fye_codes = NULL) {
