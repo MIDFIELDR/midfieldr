@@ -10,7 +10,7 @@
 #' The time span of MIDFIELD term data varies by institution, each having 
 #' their own lower and upper bounds. For some student records, being at or 
 #' near these bounds creates unavoidable ambiguity when trying to assess 
-#' program completion. Such records must be identified and in most cases 
+#' degree completion. Such records must be identified and in most cases 
 #' excluded to prevent false summary counts.
 #'
 #' @param dframe Data frame of student unit record (SUR) observations keyed 
@@ -40,7 +40,7 @@
 #'  \item{\code{data_sufficiency}}{Character. Label each observation for 
 #'  inclusion or exclusion based on data sufficiency. Possible values are: 
 #'  \code{include}, indicating that available data are sufficient for 
-#'  estimating timely program completion; \code{exclude-upper}, indicating 
+#'  estimating timely completion; \code{exclude-upper}, indicating 
 #'  that data are insufficient at the upper limit of a data range; and 
 #'  \code{exclude-lower}, indicating that data are insufficient at the 
 #'  lower limit.}

@@ -3,12 +3,15 @@
 #' Calculate a timely completion term for every student 
 #' 
 #' Add a column to a data frame of Student Unit Record (SUR) 
-#' observations that indicates the latest term by which program completion 
+#' observations that indicates the latest term by which degree completion 
 #' would be considered timely for every student. Requires a MIDFIELD 
 #' \code{term} data frame in the environment.  
 #' 
-#' By "program completion" we mean an undergraduate earning their 
-#' baccalaureate degree. In many studies, students must complete their 
+#' By "completion" we mean an undergraduate earning their first baccalaureate 
+#' degree (or degrees, for students earning more than one degree in the same 
+#' term). 
+#' 
+#' In many studies, students must complete their 
 #' programs in a specified time span, for example 4-, 6-, or 8-years after 
 #' admission. If they do, their completion is timely; if not, their completion 
 #' is untimely and they are grouped with the non-completers when computing 

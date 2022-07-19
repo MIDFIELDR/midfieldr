@@ -2,7 +2,7 @@
 % Please edit documentation in R/add_completion_status.R
 \name{add_completion_status}
 \alias{add_completion_status}
-\title{Determine program completion status for every student}
+\title{Determine completion status for every student}
 \usage{
 add_completion_status(dframe, midfield_degree = degree)
 }
@@ -26,32 +26,34 @@ A \code{data.table}  with the following properties:
 }
 Columns added:
 \describe{
- \item{\code{term_degree}}{Character. Term in which a program is completed. 
- Encoded YYYYT. Joined from \code{midfield_degree} data table.}
+ \item{\code{term_degree}}{Character. Term in which the first degree(s) are 
+ completed. Encoded YYYYT. Joined from \code{midfield_degree} data table.}
  \item{\code{completion_status}}{Character. Label each observation to 
- indicate program completion status. Possible values are: 
- "timely", indicating program completion no later than the timely 
- completion term; "late", indicating program completion after  
- the timely completion term; and "NA" indicating non-completion.}
+ indicate completion status. Possible values are: "timely", indicating 
+ completion no later than the timely completion term; "late", indicating 
+ completion after the timely completion term; and "NA" indicating 
+ non-completion.}
 }
 }
 \description{
 Add columns to a data frame of Student Unit Record (SUR) 
-observations that indicate whether a student completed their program, 
+observations that indicate whether a student completed a degree, 
 and if so, whether their completion was timely. Requires a MIDFIELD 
 \code{degree} data frame in the environment.
 }
 \details{
-By "program completion" we mean an undergraduate earning their 
-baccalaureate degree. In many studies, students must complete their 
-programs in a specified time span, for example 4-, 6-, or 8-years after 
-admission. If they do, their completion is timely; if not, their completion 
-is late and they are grouped with the non-completers when computing 
-a metric such as graduation rate. 
+By "completion" we mean an undergraduate earning their first baccalaureate 
+degree (or degrees, for students earning more than one degree in the same 
+term). Additional degrees, if any, earned later than the term of the first 
+degree are ignored. 
 
-Completion status is "timely" for students completing their programs 
-no later than their timely completion terms. See also 
-\code{add_timely_term()}.
+In many studies, students must complete a degree in a specified 
+time span, for example 4-, 6-, or 8-years after admission. If they do, their 
+completion is timely; if not, their completion is late and they are grouped 
+with the non-completers when computing a metric such as graduation rate. 
+
+Completion status is "timely" for students completing a degree no later than 
+their timely completion terms. See also \code{add_timely_term()}.
 }
 \examples{
 # Start with an excerpt from the student data set 
