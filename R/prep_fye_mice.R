@@ -1,42 +1,55 @@
 
-#' Prepare FYE data for multiple imputation
+#' Prepare FYE data for multivariate imputation
 #' 
 #' Constructs a data frame of Student Unit Records (SURs) of First-Year 
 #' Engineering (FYE) programs and conditions the data for later use as an 
-#' input to the mice R package for multiple imputation. Sets up three 
+#' input to the mice R package for multivariate imputation. Sets up three 
 #' variables as predictors (institution, race, and sex) and one variable to 
 #' be predicted (program CIP code) with NA values to be imputed. Requires 
 #' MIDFIELD \code{student} and \code{term} data frames in the environment.
 #' 
-#' At some US institutions, First-Year Engineering (FYE) programs comprise a 
-#' common first year curriculum that is a prerequisite for declaring a  
-#' engineering major. In longitudinal studies, FYE programs can be problematic 
-#' when combining their observations with those of non-FYE institutions. 
-#' For example, suppose we are calculating a graduation rate for Mechanical 
-#' Engineering (ME) programs. By most definitions, the students starting in ME 
-#' constitute the pool; the fraction of the pool that graduates in ME is the 
-#' rate. FYE starters, even if they graduate in ME, are excluded from the 
-#' count because they did not start in ME. 
-#'
-#' Therefore, to include FYE students in any persistence metric requiring a
-#' degree-granting "starting" program, we have to predict the engineering
-#' program (such as Electrical Engineering, Mechanical Engineering, etc.) 
-#' the FYE student would have declared had they not been required to
-#' enroll in FYE. The purpose of \code{preprocess_fye()} is to prepare the data 
+#' At some US institutions, engineering students are required to complete 
+#' a First-Year Engineering (FYE) program as a prerequisite for admission to 
+#' their chosen engineering major, e.g., Electrical Engineering, Mechanical 
+#' Engineering, etc. For these degree-granting programs, a metric such as 
+#' graduation rate requires a count of “starters” in the major. To avoid 
+#' miscounting starters at FYE institutions, the FYE records require special 
+#' care.
+#' 
+#' To illustrate the potential for miscounting starters, suppose we wish to 
+#' calculate a graduation rate for Mechanical Engineering (ME). Students 
+#' starting in ME constitute the starting pool and the fraction of the pool 
+#' graduating in ME is the graduation rate. At FYE institutions, an ME program 
+#' would typically define their starting 
+#' pool as the post-FYE cohort entering their program. This may be the best 
+#' information available, but it invariably undercounts starters by failing 
+#' to account for FYE students who do not transition (post-FYE) to a 
+#' degree-granting engineering program. These students may have left the 
+#' institution or switched to another major. In either case, had they not 
+#' been required to enroll in FYE they would have started in a degree-granting 
+#' engineering major---some of them in ME. By not accounting for these students, 
+#' the count of ME starters is artificially low resulting in an ME graduation 
+#' rate that is artificially high. The same is true for every degree-granting 
+#' engineering discipline in an FYE institution.
+#' 
+#' Therefore, to avoid miscounting starters at FYE institutions, we have to 
+#' predict the 6-digit CIP codes of the degree-granting engineering programs 
+#' that FYE students would have declared had they not been required to enroll 
+#' in FYE. The purpose of \code{prep_fye_mice()} is to prepare the data 
 #' for making that prediction. 
 #'
-#' @param midfield_student Data frame of Student Unit Record (SUR) student observations, 
-#'         keyed by student ID. Required variables 
-#'         are \code{mcid}, \code{race}, and \code{sex}.
+#' @param midfield_student Data frame of Student Unit Record (SUR) student 
+#'         observations, keyed by student ID. Default is \code{student}. 
+#'         Required variables are \code{mcid}, \code{race}, and \code{sex}.
 #'        
 #' @param midfield_term Data frame of SUR term observations keyed 
-#'         by student ID. Required variables are 
+#'         by student ID. Default is \code{term}. Required variables are 
 #'         \code{mcid}, \code{institution}, \code{term}, and \code{cip6}.
 #'        
 #' @param ... Not used, forces later arguments to be used by name.
 #' 
 #' @param fye_codes Optional character vector of 6-digit CIP codes to
-#'        identify FYE programs, default 140102. Codes must be 6-digit
+#'        identify FYE programs, default "140102". Codes must be 6-digit
 #'        strings of numbers; regular expressions are prohibited.
 #'        Non-engineering codes---those that do not start with
 #'        14---are ignored.
@@ -70,15 +83,16 @@
 #'
 #' \enumerate{
 #' \item{Students who complete an FYE and declare an engineering major.
-#'     This is the easy case--at the student's first opportunity, they
+#'     This is the easy case---at the student's first opportunity, they
 #'     enrolled in an engineering program of their choosing. We use that
-#'     program as the predicted  starting program.}
+#'     program as the predicted  starting program. This predicted value is 
+#'     assigned by \code{prep_fye_mice()}.}
 #' \item{Students who, after FYE, do not declare an engineering major.
 #'     This is the more complicated case---the data provide no information
 #'     regarding what engineering program the student would have declared
 #'     originally had the institution not required them to enroll in FYE.
 #'     For these students, we treat the starting program as missing data to be
-#'     predicted using multiple imputation.}
+#'     predicted using multivariate imputation.}
 #' }
 #' 
 #' In cases where students enter FYE, change programs,
@@ -95,17 +109,17 @@
 #'
 #'
 #'
-#' @example man/examples/preprocess_fye_exa.R
+#' @example man/examples/prep_fye_mice_exa.R
 #'
 #'
 #'
 #' @export
 #'
 #'
-preprocess_fye <- function(midfield_student,
-                          midfield_term,
-                          ...,
-                          fye_codes = NULL) {
+prep_fye_mice <- function(midfield_student = student,
+                           midfield_term = term,
+                           ...,
+                           fye_codes = NULL) {
 
   # remove all keys
   on.exit(setkey(midfield_student, NULL))

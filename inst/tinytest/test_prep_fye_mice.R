@@ -1,7 +1,7 @@
-test_preprocess_fye <- function() {
+test_prep_fye_mice <- function() {
 
     # usage
-    # preprocess_fye(midfield_student,   # mcid, race, sex
+    # prep_fye_mice(midfield_student,   # mcid, race, sex
     #               midfield_term,      # term
     #               ...,
     #               fye_codes = NULL)   # default 140102
@@ -17,7 +17,7 @@ test_preprocess_fye <- function() {
     )
 
     # create an answer
-    # DT <- preprocess_fye(toy_student, toy_term)
+    # DT <- prep_fye_mice(toy_student, toy_term)
     # cat(wrapr::draw_frame(DT))
 
     # test case
@@ -45,11 +45,11 @@ test_preprocess_fye <- function() {
     # Correct answer
     expect_equal(
         DT,
-        preprocess_fye(toy_student, toy_term)
+        prep_fye_mice(toy_student, toy_term)
     )
 
     # Results are factors except for ID
-    DT <- preprocess_fye(toy_student, toy_term)
+    DT <- prep_fye_mice(toy_student, toy_term)
     expect_equal(class(DT[, mcid]), "character")
     expect_equal(class(DT[, institution]), "factor")
     expect_equal(class(DT[, race]), "factor")
@@ -63,7 +63,7 @@ test_preprocess_fye <- function() {
     )
 
      # extra columns are dropped, add column for cip6
-     DT <- preprocess_fye(toy_student, toy_term)
+     DT <- prep_fye_mice(toy_student, toy_term)
      expect_equal(
          names(DT),
          c("mcid", "institution", "race", "sex", "cip6")
@@ -72,18 +72,18 @@ test_preprocess_fye <- function() {
     # CIPs must be 6-digit, number characters only, start with 14
     x <- toy_student[, .(mcid, race, sex)]
     expect_error(
-        preprocess_fye(x, toy_term, fye_codes = c("14", "1410", "143501"))
+        prep_fye_mice(x, toy_term, fye_codes = c("14", "1410", "143501"))
     )
     expect_error(
-        preprocess_fye(x, toy_term, fye_codes = c("^14350", "143501"))
+        prep_fye_mice(x, toy_term, fye_codes = c("^14350", "143501"))
     )
     expect_error(
-        preprocess_fye(x, toy_term, fye_codes = c("543501", "143501"))
+        prep_fye_mice(x, toy_term, fye_codes = c("543501", "143501"))
     )
 
     # multiple CIP codes starting with 14 can be assigned to FYE
     # create an answer
-    # DT <- preprocess_fye(toy_student, toy_term,
+    # DT <- prep_fye_mice(toy_student, toy_term,
     #                     fye_codes = c("140101", "140102", "149999"))
     # cat(wrapr::draw_frame(DT))
     DT <- wrapr::build_frame(
@@ -113,16 +113,16 @@ test_preprocess_fye <- function() {
     # Correct answer
     expect_equal(
         DT,
-        preprocess_fye(toy_student, toy_term, fye_codes = c("140101", "140102", "149999"))
+        prep_fye_mice(toy_student, toy_term, fye_codes = c("140101", "140102", "149999"))
     )
     
     # CIP must start with 14
     expect_error(
-        preprocess_fye(toy_student, toy_term, fye_codes = c("140101", "140102", "999999"))
+        prep_fye_mice(toy_student, toy_term, fye_codes = c("140101", "140102", "999999"))
     )
 
     invisible(NULL)
 }
 
-test_preprocess_fye()
+test_prep_fye_mice()
 

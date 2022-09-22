@@ -1,7 +1,7 @@
-test_order_multiway_categories <- function() {
+test_order_multiway <- function() {
     
     # usage 
-    # order_multiway_categories(dframe,
+    # order_multiway(dframe,
     #              quantity,
     #              categories,
     #              ..., 
@@ -35,11 +35,11 @@ test_order_multiway_categories <- function() {
     setDT(DT)
     
     # apply the conditioning function
-    mw_med <- order_multiway_categories(DT, 
+    mw_med <- order_multiway(DT, 
                                  quantity = "a", 
                                  categories = c("catg1", "catg2"), 
                                  method = "median")
-    mw_pct <- order_multiway_categories(DT, 
+    mw_pct <- order_multiway(DT, 
                                  quantity = "metric", 
                                  categories = c("catg1", "catg2"), 
                                  method = "percent", 
@@ -49,7 +49,7 @@ test_order_multiway_categories <- function() {
     # input can be data.frame or data.table
     expect_equivalent(
         mw_med, 
-        order_multiway_categories(dframe,
+        order_multiway(dframe,
                            quantity = "a", 
                            categories = c("catg1", "catg2"), 
                            method = "median")
@@ -57,11 +57,11 @@ test_order_multiway_categories <- function() {
     
     # categories can be characters or factors
     expect_equivalent(
-        order_multiway_categories(DT[, .(catg1, catg2, a)],
+        order_multiway(DT[, .(catg1, catg2, a)],
                            quantity = "a", 
                            categories = c("catg1", "catg2"), 
                            method = "median"), 
-        order_multiway_categories(mw_med[, .(catg1, catg2, a)],
+        order_multiway(mw_med[, .(catg1, catg2, a)],
                            quantity = "a", 
                            categories = c("catg1", "catg2"), 
                            method = "median")
@@ -69,11 +69,11 @@ test_order_multiway_categories <- function() {
     
     # overwrites default median columns
     expect_equivalent(
-        order_multiway_categories(DT,
+        order_multiway(DT,
                            quantity = "a", 
                            categories = c("catg1", "catg2"), 
                            method = "median"), 
-        order_multiway_categories(mw_med,
+        order_multiway(mw_med,
                            quantity = "a", 
                            categories = c("catg1", "catg2"), 
                            method = "median")
@@ -89,29 +89,29 @@ test_order_multiway_categories <- function() {
     # error when input arguments wrong class, NA, or NULL
     p <- "a"
     q <- c("catg1", "catg2")
-    expect_error(order_multiway_categories(as.list(dframe), p, q))
-    expect_error(order_multiway_categories(dframe, as.list(p), q))
-    expect_error(order_multiway_categories(dframe, p, as.list(q)))
-    expect_error(order_multiway_categories(NULL, p, q))
-    expect_error(order_multiway_categories(dframe, NULL, q))
-    expect_error(order_multiway_categories(dframe, p, NULL))
-    expect_error(order_multiway_categories(NA, p, q))
+    expect_error(order_multiway(as.list(dframe), p, q))
+    expect_error(order_multiway(dframe, as.list(p), q))
+    expect_error(order_multiway(dframe, p, as.list(q)))
+    expect_error(order_multiway(NULL, p, q))
+    expect_error(order_multiway(dframe, NULL, q))
+    expect_error(order_multiway(dframe, p, NULL))
+    expect_error(order_multiway(NA, p, q))
     
     # names specified in arguments are columns in dframe
     p <- "a"
     q <- c("catg1", "catg2")
-    expect_error(order_multiway_categories(dframe, p, c("catg1", NA_character_)))
-    expect_error(order_multiway_categories(dframe, NA_character_, q))
+    expect_error(order_multiway(dframe, p, c("catg1", NA_character_)))
+    expect_error(order_multiway(dframe, NA_character_, q))
     
     # arguments after ... must be named
     p <- "metric"
     q <- c("catg1", "catg2")
-    expect_error(order_multiway_categories(dframe,
+    expect_error(order_multiway(dframe,
                                     p,
                                     q,
                                     NULL,
                                     ratio_of = NULL))
-    expect_error(order_multiway_categories(dframe,
+    expect_error(order_multiway(dframe,
                                     p, 
                                     q,
                                     method = NULL,
@@ -121,7 +121,7 @@ test_order_multiway_categories <- function() {
     p <- "metric"
     q <- c("catg1", "catg2")
     expect_error( 
-        order_multiway_categories(dframe,
+        order_multiway(dframe,
                            p,
                            q,
                            method = "percent",
@@ -129,7 +129,7 @@ test_order_multiway_categories <- function() {
     )
     # ratio_of must be numeric
     expect_error( 
-        order_multiway_categories(dframe,
+        order_multiway(dframe,
                            p,
                            q,
                            method = "percent",
@@ -140,12 +140,12 @@ test_order_multiway_categories <- function() {
     p <- "a"
     q <- c("catg1", "catg2")
     expect_equal(
-        order_multiway_categories(dframe,
+        order_multiway(dframe,
                            p,
                            q,
                            method = "median",
                            ratio_of = NULL),
-        order_multiway_categories(dframe,
+        order_multiway(dframe,
                            p,
                            q,
                            method = NULL,
@@ -167,7 +167,7 @@ test_order_multiway_categories <- function() {
     )
     
     # percent method produces correct answers 
-    # (order_multiway_categories rounds to one place)
+    # (order_multiway rounds to one place)
     temp <- DT[, lapply(.SD, sum), .SDcols = c("a", "b"), by = c("catg1")]
     temp[, catg1_metric := round(100 * a / b, 1)]
     expect_equal(
@@ -184,7 +184,7 @@ test_order_multiway_categories <- function() {
     # warning when ratio_of but method is not "percent" 
     p <- "metric"
     q <- c("catg1", "catg2")
-    expect_warning(order_multiway_categories(dframe, 
+    expect_warning(order_multiway(dframe, 
                                       p, 
                                       q, 
                                       method = "median",
@@ -195,13 +195,13 @@ test_order_multiway_categories <- function() {
     q <- c("catg1", "catg2")
     temp <- copy(DT)
     temp[, a := as.integer(a)]
-    temp <- order_multiway_categories(temp, p, q)
+    temp <- order_multiway(temp, p, q)
     expect_equal(class(temp$a), "integer")
 
     # ordering factors does not affect numeric columns
     # inner join to check results
     # median method
-    u <- order_multiway_categories(dframe, 
+    u <- order_multiway(dframe, 
                             quantity = "a", 
                             categories = c("catg1", "catg2"))
     u <- u[, .(catg1, catg2, a)]
@@ -210,7 +210,7 @@ test_order_multiway_categories <- function() {
     expect_equal(u, v)
     
     # percent method
-    u <- order_multiway_categories(dframe, 
+    u <- order_multiway(dframe, 
                             quantity = "metric", 
                             categories = c("catg1", "catg2"), 
                             method = "percent", 
@@ -223,7 +223,7 @@ test_order_multiway_categories <- function() {
     invisible(NULL)
 }
 
-test_order_multiway_categories()
+test_order_multiway()
 
 
 

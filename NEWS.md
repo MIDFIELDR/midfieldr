@@ -1,5 +1,14 @@
 
 
+
+## midfieldr 1.0.0.9026 / 2021-09
+
+- Add FYE function and vignette
+- Revise multiway function name
+
+
+
+
 ## midfieldr 1.0.0.9025 / 2021-07
 
 - Editing some functions names and data names to be more descriptive.  
@@ -7,9 +16,6 @@
 - New `order_multiway_categories()` to replace `condition_multiway()`. Revised 
   argument names. 
 - New `preprocess_fye()` to replace `condition_fye()` 
-
-
-
 
 ## midfieldr 1.0.0.9024 / 2021-07
 

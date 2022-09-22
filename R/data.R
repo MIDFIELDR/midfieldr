@@ -40,40 +40,44 @@
 
 # -------------------------------------------------------------------
 
-#' Predicted starting programs for FYE students
+#' Predicted proxy programs for FYE students
 #' 
-#' Predicted starting programs for all First-Year Engineering (FYE) students 
+#' Predicted proxy programs for all First-Year Engineering (FYE) students 
 #' in the midfielddata data tables. Keyed by student ID. Contains 
 #' 6-digit CIP codes that are substituted for the First-Year-Engineering (FYE) 
 #' CIP code when an analysis requires starting programs that are 
 #' degree-granting. Suitable for use with midfielddata practice data only.
 #'
-#' Starting programs in \code{fye_predicted_start} are the engineering 
+#' Proxy programs in \code{fye_proxy} are the engineering 
 #' programs we predict that students would have declared had they not been 
-#' required to enroll in FYE. The prediction is based on their first post-FYE 
-#' program and a multivariate imputation suitable for multiple categorical 
+#' required to enroll in FYE. The data set includes all FYE students---those 
+#' admitted to engineering in their first term as well as those who switch to 
+#' Engineering from non-engineering programs.
+#' 
+#' The prediction is based on students' first post-FYE programs and a 
+#' multivariate imputation suitable for multiple categorical 
 #' variables using the mice package. The predictor variables are institution, 
 #' race, and sex. The predicted variable is the 6-digit CIP code of a 
 #' degree-granting engineering program at their institution.
 #'
-#' \code{fye_predicted_start} holds only for the practice data in
+#' \code{fye_proxy} holds only for the practice data in
 #' midfielddata---these values cannot be commingled with the research
 #' database available to MIDFIELD partners.
 #'
-#' @format \code{data.table} with 5033 rows and 2 columns keyed by student
+#' @format \code{data.table} with 4492 rows and 2 columns keyed by student
 #' ID. The variables are:
 #' \describe{
 #'
 #'   \item{mcid}{Character, de-identified student ID.}
 #'
-#'   \item{start}{Character, 6-digit CIP code of the predicted starting
+#'   \item{proxy}{Character, 6-digit CIP code of the predicted proxy
 #'   program.}
 #'
 #'  }
 #'
 #' @family cip-data
 #'
-"fye_predicted_start"
+"fye_proxy"
 
 
 # -------------------------------------------------------------------

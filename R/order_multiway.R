@@ -96,7 +96,7 @@
 #' @export
 #'
 #'
-order_multiway_categories <- function(dframe,
+order_multiway <- function(dframe,
                                quantity,
                                categories,
                                ...,
