@@ -93,6 +93,10 @@
 #'
 #'
 #'
+#' @example man/examples/order_multiway_exa.R
+#'
+#'
+#'
 #' @export
 #'
 #'
