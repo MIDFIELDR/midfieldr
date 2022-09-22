@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9025</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9026</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,7 +61,8 @@
     <a class="dropdown-item" href="../articles/art-030-programs.html">Programs</a>
     <a class="dropdown-item" href="../articles/art-040-completion.html">Completion status</a>
     <a class="dropdown-item" href="../articles/art-050-demographics.html">Demographics (left outer joins)</a>
-    <a class="dropdown-item" href="../articles/art-060-multiway.html">Multiway data and chatrs</a>
+    <a class="dropdown-item" href="../articles/art-060-multiway.html">Multiway data and charts</a>
+    <a class="dropdown-item" href="../articles/art-070-fye.html">FYE programs</a>
   </div>
 </li>
 <li class="nav-item">
@@ -96,7 +97,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Multiway data and charts</h1>
             
-            <h4 data-toc-skip class="date">2022-07-19</h4>
+            <h4 data-toc-skip class="date">2022-09-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-060-multiway.Rmd" class="external-link"><code>vignettes/art-060-multiway.Rmd</code></a></small>
       <div class="d-none name"><code>art-060-multiway.Rmd</code></div>
@@ -151,10 +152,9 @@ from four engineering programs (Civil, Electrical, Industrial/Systems,
 and Mechanical Engineering) grouped by program, race/ethnicity, and sex.
 These data have been filtered for data sufficiency, degree seeking,
 program, and (for graduates) timely completion.</p>
-<p>We prepare the data for use as input to
-<code><a href="../reference/order_multiway_categories.html">order_multiway_categories()</a></code> and use the results to
-construct multiway charts ordered by category median values and by
-category percentage values.</p>
+<p>We prepare the data for use as input to <code><a href="../reference/order_multiway.html">order_multiway()</a></code>
+and use the results to construct multiway charts ordered by category
+median values and by category percentage values.</p>
 <p><strong>Reminder.</strong> These are practice data, not research
 data—suitable for learning about student-record analysis, but not for
 drawing inferences about program attributes or student experiences.</p>
@@ -254,9 +254,9 @@ which race/ethnicity values are ambiguous.</p>
 <div class="section level2">
 <h2 id="preparing-the-categorical-variables">Preparing the categorical variables<a class="anchor" aria-label="anchor" href="#preparing-the-categorical-variables"></a>
 </h2>
-<p>Before we apply the <code><a href="../reference/order_multiway_categories.html">order_multiway_categories()</a></code>
-function, we edit the categorical variables to create the forms we want
-in the final charts or tables.</p>
+<p>Before we apply the <code><a href="../reference/order_multiway.html">order_multiway()</a></code> function, we edit
+the categorical variables to create the forms we want in the final
+charts or tables.</p>
 <p><strong>Recoding.</strong> The first multiway categorical variable is
 <code>program</code>. To improve the readability of the charts, we
 recode the program abbreviations.</p>
@@ -300,14 +300,14 @@ variable.</p>
 <code>people</code>) are “character” class.</p>
 </div>
 <div class="section level2">
-<h2 id="order_multiway_categories">
-<code>order_multiway_categories()</code><a class="anchor" aria-label="anchor" href="#order_multiway_categories"></a>
+<h2 id="order_multiway">
+<code>order_multiway()</code><a class="anchor" aria-label="anchor" href="#order_multiway"></a>
 </h2>
 <p>Converts the categorical variables to factors ordered by the
 quantitative variable. You can view the help page by running</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Run in Console</span></span>
-<span><span class="op">?</span> <span class="va">order_multiway_categories</span></span></code></pre></div>
+<span><span class="op">?</span> <span class="va">order_multiway</span></span></code></pre></div>
 <p><strong>Arguments:</strong></p>
 <dl>
 <dt><code>dframe</code></dt>
@@ -355,8 +355,8 @@ categorical variables.</li>
 </h2>
 <p>For this example, we select the count of graduates
 (<code>grad</code>) as our quantitative variable and use
-<code><a href="../reference/order_multiway_categories.html">order_multiway_categories()</a></code> to order the categories by
-median numbers of graduates.</p>
+<code><a href="../reference/order_multiway.html">order_multiway()</a></code> to order the categories by median numbers
+of graduates.</p>
 <p>To minimize the number of columns in the printout, we select the
 three multiway variables and drop other columns.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -383,13 +383,13 @@ three multiway variables and drop other columns.</p>
 <span><span class="co">#&gt; 30: Mechanical             Black Male    65</span></span>
 <span><span class="co">#&gt; 31: Mechanical   Hispanic/Latinx Male    29</span></span>
 <span><span class="co">#&gt; 32: Mechanical             White Male   918</span></span></code></pre>
-<p>Applying <code><a href="../reference/order_multiway_categories.html">order_multiway_categories()</a></code>, we specify
+<p>Applying <code><a href="../reference/order_multiway.html">order_multiway()</a></code>, we specify
 <code>"grad"</code> as the quantitative column, <code>"program"</code>
 and <code>"people"</code> as the two categorical columns, and
 <code>"median"</code> as the method of ordering levels.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert categories to factors ordered by median</span></span>
-<span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway_categories.html">order_multiway_categories</a></span><span class="op">(</span><span class="va">DT_count</span>,</span>
+<span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span><span class="op">(</span><span class="va">DT_count</span>,</span>
 <span>  quantity <span class="op">=</span> <span class="st">"grad"</span>,</span>
 <span>  categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"people"</span><span class="op">)</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"median"</span></span>
@@ -426,7 +426,7 @@ values independently.</p>
 <p>The following values agree with those in the
 <code>program_median</code> variable above,</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Verify order_multiway_categories() output</span></span>
+<code class="sourceCode R"><span><span class="co"># Verify order_multiway() output</span></span>
 <span><span class="va">temp</span> <span class="op">&lt;-</span> <span class="va">DT_count</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">.SD</span>, <span class="va">median</span><span class="op">)</span>, .SDcols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grad"</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">temp</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt;               program  grad</span></span>
@@ -438,7 +438,7 @@ values independently.</p>
 <p>And the next result agrees with the values in
 <code>people_median</code>.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Verify order_multiway_categories() output</span></span>
+<code class="sourceCode R"><span><span class="co"># Verify order_multiway() output</span></span>
 <span><span class="va">temp</span> <span class="op">&lt;-</span> <span class="va">DT_count</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">.SD</span>, <span class="va">median</span><span class="op">)</span>, .SDcols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grad"</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"people"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">temp</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                    people  grad</span></span>
@@ -470,14 +470,14 @@ by increasing median value as expected.</p>
 “median”, the following two code chunks produce identical results.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Using explicit median method</span></span>
-<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway_categories.html">order_multiway_categories</a></span><span class="op">(</span><span class="va">DT_count</span>,</span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span><span class="op">(</span><span class="va">DT_count</span>,</span>
 <span>  quantity <span class="op">=</span> <span class="st">"grad"</span>,</span>
 <span>  categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"people"</span><span class="op">)</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"median"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Using implicit median method</span></span>
-<span><span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway_categories.html">order_multiway_categories</a></span><span class="op">(</span><span class="va">DT_count</span>,</span>
+<span><span class="va">q</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span><span class="op">(</span><span class="va">DT_count</span>,</span>
 <span>  quantity <span class="op">=</span> <span class="st">"grad"</span>,</span>
 <span>  categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"people"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -650,7 +650,7 @@ conditioned are <code>grad</code>, the quantitative variable, and
 variables.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert categories to factors ordered by median</span></span>
-<span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway_categories.html">order_multiway_categories</a></span><span class="op">(</span><span class="va">DT_count</span>,</span>
+<span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span><span class="op">(</span><span class="va">DT_count</span>,</span>
 <span>  quantity <span class="op">=</span> <span class="st">"grad"</span>,</span>
 <span>  categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"race"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -732,12 +732,12 @@ as the quantitative variable.</p>
 <span><span class="co">#&gt; 32: Mechanical             White Male  1776   918  51.7</span></span></code></pre>
 <p>Because stickiness is a ratio, we set <code>method</code> to
 “percent” and assign <code>grad</code> and <code>ever</code> to the
-<code>ratio_of</code> argument. <code><a href="../reference/order_multiway_categories.html">order_multiway_categories()</a></code>
-then sums the <code>ever</code> and <code>grad</code> counts by category
-and produces grouped percentages to order the category levels.</p>
+<code>ratio_of</code> argument. <code><a href="../reference/order_multiway.html">order_multiway()</a></code> then sums
+the <code>ever</code> and <code>grad</code> counts by category and
+produces grouped percentages to order the category levels.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert categories to factors ordered by group percentages</span></span>
-<span><span class="va">DT_ratio</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway_categories.html">order_multiway_categories</a></span><span class="op">(</span><span class="va">DT_ratio</span>,</span>
+<span><span class="va">DT_ratio</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span><span class="op">(</span><span class="va">DT_ratio</span>,</span>
 <span>  quantity <span class="op">=</span> <span class="st">"stick"</span>,</span>
 <span>  categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"people"</span><span class="op">)</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"percent"</span>,</span>
@@ -775,7 +775,7 @@ the group stickiness values independently.</p>
 <p>The following values agree with those in the
 <code>program_stick</code> variable above,</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Verify order_multiway_categories() output</span></span>
+<code class="sourceCode R"><span><span class="co"># Verify order_multiway() output</span></span>
 <span><span class="va">temp</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">.SD</span>, <span class="va">sum</span><span class="op">)</span>, .SDcols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ever"</span>, <span class="st">"grad"</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">temp</span><span class="op">[</span>, <span class="va">stick</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">grad</span> <span class="op">/</span> <span class="va">ever</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">temp</span><span class="op">[</span><span class="op">]</span></span>
@@ -788,7 +788,7 @@ the group stickiness values independently.</p>
 <p>And the next result agrees with the values in
 <code>people_stick</code>.</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Verify order_multiway_categories() output</span></span>
+<code class="sourceCode R"><span><span class="co"># Verify order_multiway() output</span></span>
 <span><span class="va">temp</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">.SD</span>, <span class="va">sum</span><span class="op">)</span>, .SDcols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ever"</span>, <span class="st">"grad"</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"people"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">temp</span><span class="op">[</span>, <span class="va">stick</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">grad</span> <span class="op">/</span> <span class="va">ever</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">temp</span><span class="op">[</span><span class="op">]</span></span>
@@ -1384,7 +1384,7 @@ script.</p>
 <span><span class="co"># Median-ordered data</span></span>
 <span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="va">DT_count</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">people</span>, <span class="va">grad</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway_categories.html">order_multiway_categories</a></span><span class="op">(</span><span class="va">DT_count</span>,</span>
+<span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span><span class="op">(</span><span class="va">DT_count</span>,</span>
 <span>  quantity <span class="op">=</span> <span class="st">"grad"</span>,</span>
 <span>  categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"people"</span><span class="op">)</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"median"</span></span>
@@ -1444,7 +1444,7 @@ script.</p>
 <span><span class="co"># Multiway superposition</span></span>
 <span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="va">DT_count</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">race</span>, <span class="va">sex</span>, <span class="va">grad</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway_categories.html">order_multiway_categories</a></span><span class="op">(</span><span class="va">DT_count</span>,</span>
+<span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span><span class="op">(</span><span class="va">DT_count</span>,</span>
 <span>  quantity <span class="op">=</span> <span class="st">"grad"</span>,</span>
 <span>  categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"race"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -1470,7 +1470,7 @@ script.</p>
 <span><span class="co"># Percentage-ordered data</span></span>
 <span><span class="va">DT_ratio</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">DT_ratio</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">DT_ratio</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway_categories.html">order_multiway_categories</a></span><span class="op">(</span><span class="va">DT_ratio</span>,</span>
+<span><span class="va">DT_ratio</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span><span class="op">(</span><span class="va">DT_ratio</span>,</span>
 <span>  quantity <span class="op">=</span> <span class="st">"stick"</span>,</span>
 <span>  categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"people"</span><span class="op">)</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"percent"</span>,</span>

@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9025</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9026</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,7 +53,7 @@
     <a class="dropdown-item" href="../articles/art-003-case-results.html">Results</a>
   </div>
 </li>
-<li class="nav-item dropdown">
+<li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-vignettes">Vignettes</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-vignettes">
     <a class="dropdown-item" href="../articles/art-010-data-sufficiency.html">Data sufficiency</a>
@@ -61,7 +61,8 @@
     <a class="dropdown-item" href="../articles/art-030-programs.html">Programs</a>
     <a class="dropdown-item" href="../articles/art-040-completion.html">Completion status</a>
     <a class="dropdown-item" href="../articles/art-050-demographics.html">Demographics (left outer joins)</a>
-    <a class="dropdown-item" href="../articles/art-060-multiway.html">Multiway data and chatrs</a>
+    <a class="dropdown-item" href="../articles/art-060-multiway.html">Multiway data and charts</a>
+    <a class="dropdown-item" href="../articles/art-070-fye.html">FYE programs</a>
   </div>
 </li>
 <li class="nav-item">
@@ -96,7 +97,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>FYE programs</h1>
             
-            <h4 data-toc-skip class="date">2022-07-19</h4>
+            <h4 data-toc-skip class="date">2022-09-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-070-fye.Rmd" class="external-link"><code>vignettes/art-070-fye.Rmd</code></a></small>
       <div class="d-none name"><code>art-070-fye.Rmd</code></div>
@@ -104,44 +105,43 @@
 
     
     
-<p>Working with longitudinal Student Unit Records (SURs) in Engineering
-specifically can be problematic when institutions have required
-First-Year Engineering (FYE) programs. In this vignette, we describe the
-issues and our approach to resolving them.</p>
+<p>At some US institutions, engineering students are required to
+complete a First-Year Engineering (FYE) program as a prerequisite for
+declaring an engineering major. Administratively, degree-granting
+engineering programs such as Electrical Engineering or Mechanical
+Engineering treat their incoming post-FYE students as their “starting”
+cohorts. However, when computing a metric that requires a count of
+starters—graduation rate, for example—FYE records must be treated with
+special care to avoid a miscount.</p>
 <div class="section level2">
-<h2 id="preface">Preface<a class="anchor" aria-label="anchor" href="#preface"></a>
+<h2 id="avoiding-a-starter-miscount">Avoiding a starter miscount<a class="anchor" aria-label="anchor" href="#avoiding-a-starter-miscount"></a>
 </h2>
-<p>At some US institutions, First-Year Engineering (FYE) programs
-comprise a common first year curriculum that is a prerequisite for
-declaring a engineering major. FYE programs can be problematic in
-longitudinal studies, especially when combining records from FYE and
-non-FYE institutions.</p>
-<p>For example, suppose we are calculating a graduation rate for
-Mechanical Engineering (ME) programs. By most definitions of “graduation
-rate,” the students starting in ME constitute the pool; the fraction of
-the pool that graduates in ME is the rate. FYE starters, even if they
-graduate in ME, are potentially excluded from the count because they are
-not members of the starting ME pool.</p>
-<p>The analysis can also be flawed by failing to account for post-FYE
-students who do <em>not</em> transition to a degree-granting engineering
-program. Had they not been required to enroll in FYE, such students
-would have been members of <em>some</em> engineering programs’ entering
-cohorts. Neglecting them reduces the size of the entering cohort of
-those degree-granting programs, falsely increasing their graduation
-rates.</p>
-<p>Moreover, it would be poor methodology to group FYE students with
-students admitted as “undecided” or with “unknown” majors—FYE students
-are neither. They were admitted as Engineering majors (CIP 14). We
-simply don’t know to which 6-digit CIP, degree-granting program they
-intended to transition.</p>
-<p>Therefore, to include FYE students in any analysis requiring a
-degree-granting “starting” program (e.g., graduation rate), we have to
-predict the engineering program (such as Electrical Engineering,
-Mechanical Engineering, etc.) the FYE student would have declared had
-they not been required to enroll in FYE.</p>
-<p>The purpose of <code><a href="../reference/preprocess_fye.html">preprocess_fye()</a></code> is to prepare the data
-for making that prediction. The prediction itself is performed using
-multivariate imputation.</p>
+<p>To illustrate the potential for miscounting starters, suppose we wish
+to calculate a graduation rate for Mechanical Engineering (ME). Students
+starting in ME constitute the starting pool and the fraction of the pool
+graduating in ME is the graduation rate.</p>
+<p>At FYE institutions, an ME program would typically define their
+starting pool as the post-FYE cohort entering their program. This may be
+the best information available, but it invariably undercounts starters
+by failing to account for FYE students who do not transition (post-FYE)
+to degree-granting engineering programs—students who may have left the
+institution or switched to other (non-engineering) majors. In either
+case, these students would have been starters in degree-granting
+engineering majors—some of them in ME—had they not been required to
+first complete FYE. By neglecting these students, the count of ME
+starters is artificially low resulting in an ME graduation rate that is
+artificially high. The same is true for every degree-granting
+engineering discipline in an FYE institution.</p>
+<p>Because of the special nature of FYE programs, we cannot address
+starter miscounts by grouping FYE students with those admitted with
+“undecided” or “unknown” CIP codes—FYE students are neither. They were
+admitted as Engineering majors (2-digit CIP 14). We simply don’t know to
+which degree-granting program (6-digit CIP) they intended to
+transition.</p>
+<p>Therefore, to avoid miscounting starters at FYE institutions, we have
+to predict the 6-digit CIP codes of the degree-granting engineering
+programs that FYE students would have declared had they not been
+required to enroll in FYE.</p>
 </div>
 <div class="section level2">
 <h2 id="definitions">Definitions<a class="anchor" aria-label="anchor" href="#definitions"></a>
@@ -149,114 +149,89 @@ multivariate imputation.</p>
 <dl>
 <dt>FYE</dt>
 <dd>
-<p>First-Year Engineering program, a common first year curriculum that
-is a prerequisite for declaring a engineering major at some US
+<p>First-Year Engineering program, a common-first-year curriculum that
+is a prerequisite for declaring an engineering major at some US
 institutions.</p>
+</dd>
+<dt>switcher</dt>
+<dd>
+<p>A student who changes majors. In dealing with FYE records, we are
+concerned with switchers into or out of Engineering at the 2-digit
+program level (CIP 14).</p>
+</dd>
+<dt>FYE proxy</dt>
+<dd>
+<p>The degree-granting engineering program we predict an FYE student
+would have declared had they not been required to enroll in FYE. The
+proxy acts as a substitute for FYE as needed. Applies to students
+admitted to Engineering in their first term as well as switchers into
+Engineering.</p>
 </dd>
 <dt>multivariate imputation</dt>
 <dd>
-<p>Method of imputing missing data, in this case, predicting the CIP
-codes of the degree-granting programs FYE students would have declared
-had they not been required to enroll in FYE. We use the mice
-(multivariate imputation by chained equations) R package.</p>
+<p>Method of imputing missing categorical data, in this case, the
+6-digit CIP codes of FYE proxy programs.</p>
 </dd>
 </dl>
 </div>
 <div class="section level2">
 <h2 id="method">Method<a class="anchor" aria-label="anchor" href="#method"></a>
 </h2>
-<p>Two approaches are described in this vignette.</p>
-<p><strong>Using prepared predictions.</strong> The
-<code>fye_predicted_start</code> data set bundled with midfieldr
-contains predicted starting programs for all FYE students in the
-practice data tables. Suitable for use with midfielddata practice data
-only. You can view the help page (and data dictionary) by running</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Run in Console</span></span>
-<span><span class="op">?</span> <span class="va">fye_predicted_start</span></span></code></pre></div>
-<p><strong>Performing your own imputation.</strong> Apply
-<code><a href="../reference/preprocess_fye.html">preprocess_fye()</a></code> to your <code>student</code> and
-<code>term</code> data tables to construct and preprocess a data frame
-as an input to the mice R package for multiple imputation. The method is
-appropriate for midfielddata practice data or MIDFIELD research data.
-You can view the help page by running</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Run in Console</span></span>
-<span><span class="op">?</span> <span class="fu"><a href="../reference/preprocess_fye.html">preprocess_fye</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="load-data">Load data<a class="anchor" aria-label="anchor" href="#load-data"></a>
-</h2>
+<p>We describe two approaches for treating FYE student records: using a
+prepared FYE proxy data set; and creating an FYE proxy data set.</p>
+<p><strong>Using prepared FYE proxies.</strong> The
+<code>fye_proxy</code> data set included with midfieldr contains
+predicted starting programs for all FYE students in the practice data
+tables. Only suitable for use with midfielddata practice data.</p>
+<p><strong>Creating FYE proxies.</strong> We apply
+<code><a href="../reference/prep_fye_mice.html">prep_fye_mice()</a></code> to the <code>student</code> and
+<code>term</code> data tables to construct a data frame suitable for
+imputation using the mice R package. Applied to the midfielddata
+practice data, users can reproduce the <code>fye_proxy</code> data set.
+Applied to MIDFIELD research data, users can construct their own FYE
+proxies.</p>
 <p>If you are writing your own script to follow along, we start with
 these packages:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Only if performing your own imputation</span></span>
+<span><span class="co"># Only if creating your own FYE proxies</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/amices/mice" class="external-link">"mice"</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Printing options for data.table</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span></span>
-<span>  datatable.print.nrows <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  datatable.print.nrows <span class="op">=</span> <span class="fl">17</span>,</span>
 <span>  datatable.print.topn <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>When using the prepared predictions, load <code>fye_start</code>,
-bundled with midfieldr.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># View the prepared predictions</span></span>
-<span><span class="va">fye_predicted_start</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;              mcid  start</span></span>
-<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;    1: MID25783162 140801</span></span>
-<span><span class="co">#&gt;    2: MID25783166 141001</span></span>
-<span><span class="co">#&gt;    3: MID25783167 140901</span></span>
-<span><span class="co">#&gt;    4: MID25783178 140701</span></span>
-<span><span class="co">#&gt;    5: MID25783197 140701</span></span>
-<span><span class="co">#&gt;   ---                   </span></span>
-<span><span class="co">#&gt; 5029: MID26648422 141901</span></span>
-<span><span class="co">#&gt; 5030: MID26648484 140901</span></span>
-<span><span class="co">#&gt; 5031: MID26648508 140201</span></span>
-<span><span class="co">#&gt; 5032: MID26648517 140201</span></span>
-<span><span class="co">#&gt; 5033: MID26648553 140701</span></span></code></pre>
-<p>When performing your own imputation, load <code>student</code> and
-<code>term</code> data tables from available sources: you can use the
-practice data from midfielddata as we do in this vignette; or you can
-use the MIDFIELD research data if you have access.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load two data tables</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="using-prepared-predictions">Using prepared predictions<a class="anchor" aria-label="anchor" href="#using-prepared-predictions"></a>
+<h2 id="using-prepared-fye-proxies">Using prepared FYE proxies<a class="anchor" aria-label="anchor" href="#using-prepared-fye-proxies"></a>
 </h2>
-<p>The goal is to identify Student Unit Records (SUR) of FYE students
-and replace the FYE program code (140102) with the predicted
-degree-granting program code in <code>fye_start</code>.</p>
-<p>To illustrate the process, we use prepared data from the case study
-of four programs (Civil, Electrical, Industrial/Systems, and Mechanical
-Engineering).</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Case study program codes and labels</span></span>
-<span><span class="va">study_program_labels</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;       cip6 program</span></span>
-<span><span class="co">#&gt;     &lt;char&gt;  &lt;char&gt;</span></span>
-<span><span class="co">#&gt;  1: 140801      CE</span></span>
-<span><span class="co">#&gt;  2: 140802      CE</span></span>
-<span><span class="co">#&gt;  3: 140803      CE</span></span>
-<span><span class="co">#&gt;  4: 140804      CE</span></span>
-<span><span class="co">#&gt;  5: 140805      CE</span></span>
-<span><span class="co">#&gt; ---               </span></span>
-<span><span class="co">#&gt; 11: 141901      ME</span></span>
-<span><span class="co">#&gt; 12: 142701     ISE</span></span>
-<span><span class="co">#&gt; 13: 143501     ISE</span></span>
-<span><span class="co">#&gt; 14: 143601     ISE</span></span>
-<span><span class="co">#&gt; 15: 143701     ISE</span></span></code></pre>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Case study ever enrolled IDs</span></span>
+<p>The prepared proxies can be used with the midfielddata practice data
+only.</p>
+<p>To illustrate our procedure for using the prepared FYE proxies, we
+start with the four engineering programs of the case study developed in
+earlier vignettes. As if we were <em>preparing</em> to compute
+graduation rates, we <em>identify starters</em> in Civil, Electrical,
+Industrial/Systems, and Mechanical Engineering.</p>
+<p>In this example, the basic steps are to start with all students ever
+enrolled in the case study programs, filter for first-term information
+only, replace first-term FYE program codes with the prepared FYE
+proxies, and filter the result to retain starters in the case study
+programs.</p>
+<div class="section level3">
+<h3 id="population">Population<a class="anchor" aria-label="anchor" href="#population"></a>
+</h3>
+<p>The data set <code>study_mcid</code> (included with midfieldr)
+contains the IDs of students ever enrolled in four programs (Civil,
+Electrical, Industrial/Systems, and Mechanical Engineering) after
+filtering for data sufficiency, degree seeking, and program.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Case study IDs of ever enrolled</span></span>
 <span><span class="va">study_mcid</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;              mcid</span></span>
 <span><span class="co">#&gt;            &lt;char&gt;</span></span>
@@ -271,27 +246,945 @@ Engineering).</p>
 <span><span class="co">#&gt; 7131: MID26697163</span></span>
 <span><span class="co">#&gt; 7132: MID26697444</span></span>
 <span><span class="co">#&gt; 7133: MID26697447</span></span></code></pre>
-<p>To illustrate using these data, let’s suppose that we are trying to
-determine the number of students in the four majors of our case study
-(Civil, Electrical, Industrial, and Mechanical Engineering) at the start
-of their first year, second year, third year, etc. FYE students who
-transition to these majors would appear in the <code>term</code> data in
-the second year and beyond, but not in the first year. In this example,
-therefore, we will focus on determining how to include FYE students in
-the first-year count.</p>
-<p>We use two additional prepared data sets, <code>study_program</code>
-with the case-study CIP codes and program names, and
-<code>study_student</code>, all students ever enrolled in these
-programs. To see their help pages, run</p>
+<p>The data set <code>study_program_labels</code> (included with
+midfieldr) contains the CIP codes and abbreviated labels for the case
+study programs.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">study_program_labels</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;       cip6 program</span></span>
+<span><span class="co">#&gt;     &lt;char&gt;  &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1: 140801      CE</span></span>
+<span><span class="co">#&gt;  2: 140802      CE</span></span>
+<span><span class="co">#&gt;  3: 140803      CE</span></span>
+<span><span class="co">#&gt;  4: 140804      CE</span></span>
+<span><span class="co">#&gt;  5: 140805      CE</span></span>
+<span><span class="co">#&gt;  6: 140899      CE</span></span>
+<span><span class="co">#&gt;  7: 141001      EE</span></span>
+<span><span class="co">#&gt;  8: 141003      EE</span></span>
+<span><span class="co">#&gt;  9: 141004      EE</span></span>
+<span><span class="co">#&gt; 10: 141099      EE</span></span>
+<span><span class="co">#&gt; 11: 141901      ME</span></span>
+<span><span class="co">#&gt; 12: 142701     ISE</span></span>
+<span><span class="co">#&gt; 13: 143501     ISE</span></span>
+<span><span class="co">#&gt; 14: 143601     ISE</span></span>
+<span><span class="co">#&gt; 15: 143701     ISE</span></span></code></pre>
+<p>The <code>fye_proxy</code> data set (also included with midfieldr)
+contains the proxy programs for <em>all FYE students</em> (including
+switchers) in the practice data set. The <code>proxy</code> variable
+gives the predicted 6-digit CIP code. (The code that produced the proxy
+data set is described in detail below in the <em>Creating FYE
+proxies</em> section.)</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Predicted starting programs for practice data</span></span>
+<span><span class="va">fye_proxy</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;              mcid  proxy</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783162 141001</span></span>
+<span><span class="co">#&gt;    2: MID25783178 140701</span></span>
+<span><span class="co">#&gt;    3: MID25783197 140701</span></span>
+<span><span class="co">#&gt;    4: MID25783259 140801</span></span>
+<span><span class="co">#&gt;    5: MID25783388 141901</span></span>
+<span><span class="co">#&gt;   ---                   </span></span>
+<span><span class="co">#&gt; 4488: MID26648422 141001</span></span>
+<span><span class="co">#&gt; 4489: MID26648484 141001</span></span>
+<span><span class="co">#&gt; 4490: MID26648508 140701</span></span>
+<span><span class="co">#&gt; 4491: MID26648517 141001</span></span>
+<span><span class="co">#&gt; 4492: MID26648553 140201</span></span></code></pre>
+<p>We use the midfielddata <code>term</code> table for its
+<code>term</code> and <code>cip6</code> variables, keyed by student
+ID.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load data from midfielddata</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display selected columns</span></span>
+<span><span class="va">term</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;                mcid   term   cip6</span></span>
+<span><span class="co">#&gt;              &lt;char&gt; &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;      1: MID25783135  19911 520101</span></span>
+<span><span class="co">#&gt;      2: MID25783135  19913 520101</span></span>
+<span><span class="co">#&gt;      3: MID25783156  20011 040201</span></span>
+<span><span class="co">#&gt;      4: MID25783156  20013 040201</span></span>
+<span><span class="co">#&gt;      5: MID25783156  20021 040201</span></span>
+<span><span class="co">#&gt;     ---                          </span></span>
+<span><span class="co">#&gt; 710837: MID26697685  20164 521201</span></span>
+<span><span class="co">#&gt; 710838: MID26697689  20163 240101</span></span>
+<span><span class="co">#&gt; 710839: MID26697702  20161 240101</span></span>
+<span><span class="co">#&gt; 710840: MID26697702  20163 240101</span></span>
+<span><span class="co">#&gt; 710841: MID26697702  20164 240101</span></span></code></pre>
+<p>You can view the help pages (and data dictionaries) by running</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Run in Console</span></span>
+<span><span class="op">?</span> <span class="va">study_mcid</span></span>
+<span><span class="op">?</span> <span class="va">study_program_labels</span></span>
+<span><span class="op">?</span> <span class="va">fye_proxy</span></span>
+<span><span class="op">?</span> <span class="va">term</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="start-with-ids">Start with IDs<a class="anchor" aria-label="anchor" href="#start-with-ids"></a>
+</h3>
+<p><strong>Joining.</strong> Starting with the IDs as our working data
+frame, we join the <code>term</code> and <code>cip6</code> columns from
+the <code>term</code> table, creating one row per term per student
+ID.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># case study data sets </span></span>
-<span><span class="op">?</span> <span class="va">study_program</span></span>
-<span><span class="op">?</span> <span class="va">study_student</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Create working data frame</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_mcid</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Left-outer join, term into IDs</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;               mcid   term   cip6</span></span>
+<span><span class="co">#&gt;             &lt;char&gt; &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MID25783178  19946 140102</span></span>
+<span><span class="co">#&gt;     2: MID25783178  19951 140102</span></span>
+<span><span class="co">#&gt;     3: MID25783178  19953 140102</span></span>
+<span><span class="co">#&gt;     4: MID25783178  19956 140102</span></span>
+<span><span class="co">#&gt;     5: MID25783178  19961 140102</span></span>
+<span><span class="co">#&gt;    ---                          </span></span>
+<span><span class="co">#&gt; 74782: MID26697447  20134 141001</span></span>
+<span><span class="co">#&gt; 74783: MID26697447  20141 141001</span></span>
+<span><span class="co">#&gt; 74784: MID26697447  20143 141001</span></span>
+<span><span class="co">#&gt; 74785: MID26697447  20151 141001</span></span>
+<span><span class="co">#&gt; 74786: MID26697447  20153 141001</span></span></code></pre>
+<p><strong>Filtering.</strong> To identify starters for a graduation
+rate calculation, we are interested in the programs to which students
+are first admitted. Therefore, we order the rows by ID and term, then
+filter to retain their first term only. The resulting <code>cip6</code>
+column contains students’ first-term CIP program codes.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Retain initial term</span></span>
+<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">DT</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"term"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;              mcid   term   cip6</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783178  19946 140102</span></span>
+<span><span class="co">#&gt;    2: MID25783441  19921 140102</span></span>
+<span><span class="co">#&gt;    3: MID25783491  19961 140102</span></span>
+<span><span class="co">#&gt;    4: MID25783912  19971 140102</span></span>
+<span><span class="co">#&gt;    5: MID25784025  19891 140102</span></span>
+<span><span class="co">#&gt;   ---                          </span></span>
+<span><span class="co">#&gt; 7129: MID26696958  20111 141901</span></span>
+<span><span class="co">#&gt; 7130: MID26696967  20101 141901</span></span>
+<span><span class="co">#&gt; 7131: MID26697163  20101 140101</span></span>
+<span><span class="co">#&gt; 7132: MID26697444  20101 141901</span></span>
+<span><span class="co">#&gt; 7133: MID26697447  20111 140701</span></span></code></pre>
+<p><strong>Data set-aside.</strong> These data are set aside under a
+different name for use in the section on <em>Summarizing FYE
+proxies</em>.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create an intermediate data set for later analysis</span></span>
+<span><span class="va">direct_start</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">cip6</span> <span class="op">!=</span> <span class="st">"140102"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="process-the-proxies">Process the proxies<a class="anchor" aria-label="anchor" href="#process-the-proxies"></a>
+</h3>
+<p><strong>Subsetting.</strong> Switchers are excluded from a graduation
+rate metric, so we have to prevent switcher proxies (if any) from being
+joined to the working data frame. We extract a subset of the data
+containing first-term FYE students only.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create an FYE subset of first-term students</span></span>
+<span><span class="va">first_term_fye_mcid</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">cip6</span> <span class="op">==</span> <span class="st">"140102"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">first_term_fye_mcid</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;              mcid</span></span>
+<span><span class="co">#&gt;            &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783178</span></span>
+<span><span class="co">#&gt;    2: MID25783441</span></span>
+<span><span class="co">#&gt;    3: MID25783491</span></span>
+<span><span class="co">#&gt;    4: MID25783912</span></span>
+<span><span class="co">#&gt;    5: MID25784025</span></span>
+<span><span class="co">#&gt;   ---            </span></span>
+<span><span class="co">#&gt; 1272: MID26610236</span></span>
+<span><span class="co">#&gt; 1273: MID26610246</span></span>
+<span><span class="co">#&gt; 1274: MID26610951</span></span>
+<span><span class="co">#&gt; 1275: MID26611035</span></span>
+<span><span class="co">#&gt; 1276: MID26612408</span></span></code></pre>
+<p><strong>Joining.</strong> We join the FYE proxies to the
+first-term-FYE subset.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Join FYE proxies to first-term-FYE subset</span></span>
+<span><span class="va">fye</span> <span class="op">&lt;-</span> <span class="va">fye_proxy</span><span class="op">[</span><span class="va">first_term_fye_mcid</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">proxy</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">fye</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;              mcid  proxy</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783178 140701</span></span>
+<span><span class="co">#&gt;    2: MID25783441 140801</span></span>
+<span><span class="co">#&gt;    3: MID25783491 141001</span></span>
+<span><span class="co">#&gt;    4: MID25783912 143501</span></span>
+<span><span class="co">#&gt;    5: MID25784025 141901</span></span>
+<span><span class="co">#&gt;   ---                   </span></span>
+<span><span class="co">#&gt; 1272: MID26610236 140801</span></span>
+<span><span class="co">#&gt; 1273: MID26610246 141901</span></span>
+<span><span class="co">#&gt; 1274: MID26610951 140801</span></span>
+<span><span class="co">#&gt; 1275: MID26611035 143501</span></span>
+<span><span class="co">#&gt; 1276: MID26612408 141901</span></span></code></pre>
+<p><strong>Joining.</strong> Rejoin the subset to add the
+<code>proxy</code> column to the working data frame. NA values in the
+<code>proxy</code> column indicate non-FYE students.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Join the proxies to the working data frame</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">fye</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span>, <span class="va">proxy</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;              mcid   cip6  proxy</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783178 140102 140701</span></span>
+<span><span class="co">#&gt;    2: MID25783441 140102 140801</span></span>
+<span><span class="co">#&gt;    3: MID25783491 140102 141001</span></span>
+<span><span class="co">#&gt;    4: MID25783912 140102 143501</span></span>
+<span><span class="co">#&gt;    5: MID25784025 140102 141901</span></span>
+<span><span class="co">#&gt;   ---                          </span></span>
+<span><span class="co">#&gt; 7129: MID26696958 141901   &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7130: MID26696967 141901   &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7131: MID26697163 140101   &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7132: MID26697444 141901   &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7133: MID26697447 140701   &lt;NA&gt;</span></span></code></pre>
+</div>
+<div class="section level3">
+<h3 id="identify-starters">Identify starters<a class="anchor" aria-label="anchor" href="#identify-starters"></a>
+</h3>
+<p><strong>Create a variable.</strong> Predicted starting programs for
+FYE students are in the <code>proxy</code> column. Actual, recorded
+starting programs for non-FYE students are in the <code>cip6</code>
+column. Create the <code>start</code> column to combine the two.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Combine all starting CIPs</span></span>
+<span><span class="va">DT</span><span class="op">[</span>, <span class="va">start</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
+<span>  <span class="va">cip6</span> <span class="op">==</span> <span class="st">"140102"</span>, <span class="va">proxy</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op">!=</span> <span class="st">"140102"</span>, <span class="va">cip6</span></span>
+<span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;              mcid   cip6  proxy  start</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783178 140102 140701 140701</span></span>
+<span><span class="co">#&gt;    2: MID25783441 140102 140801 140801</span></span>
+<span><span class="co">#&gt;    3: MID25783491 140102 141001 141001</span></span>
+<span><span class="co">#&gt;    4: MID25783912 140102 143501 143501</span></span>
+<span><span class="co">#&gt;    5: MID25784025 140102 141901 141901</span></span>
+<span><span class="co">#&gt;   ---                                 </span></span>
+<span><span class="co">#&gt; 7129: MID26696958 141901   &lt;NA&gt; 141901</span></span>
+<span><span class="co">#&gt; 7130: MID26696967 141901   &lt;NA&gt; 141901</span></span>
+<span><span class="co">#&gt; 7131: MID26697163 140101   &lt;NA&gt; 140101</span></span>
+<span><span class="co">#&gt; 7132: MID26697444 141901   &lt;NA&gt; 141901</span></span>
+<span><span class="co">#&gt; 7133: MID26697447 140701   &lt;NA&gt; 140701</span></span></code></pre>
+<p><strong>Joining.</strong> We join the program abbreviations for the
+case study. A <code>program</code> value of NA indicates a starting
+program other than one of the four in the case study.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># New memory location for labels</span></span>
+<span><span class="va">join_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_program_labels</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Left-outer join, match by the CIPs in start</span></span>
+<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">join_labels</span>, old <span class="op">=</span> <span class="st">"cip6"</span>, new <span class="op">=</span> <span class="st">"start"</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">join_labels</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">start</span>, <span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"start"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;              mcid  start program</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt;  &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783441 140801      CE</span></span>
+<span><span class="co">#&gt;    2: MID25784209 140801      CE</span></span>
+<span><span class="co">#&gt;    3: MID25784709 140801      CE</span></span>
+<span><span class="co">#&gt;    4: MID25784843 140801      CE</span></span>
+<span><span class="co">#&gt;    5: MID25784945 140801      CE</span></span>
+<span><span class="co">#&gt;   ---                           </span></span>
+<span><span class="co">#&gt; 7129: MID26696116 270101    &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7130: MID26696178 140101    &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7131: MID26696771 140401    &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7132: MID26697163 140101    &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7133: MID26697447 140701    &lt;NA&gt;</span></span></code></pre>
+<p><strong>Filtering.</strong> We retain students starting in one of the
+four majors in the case study.</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Keep the four programs only</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;              mcid  start program</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt;  &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783441 140801      CE</span></span>
+<span><span class="co">#&gt;    2: MID25784209 140801      CE</span></span>
+<span><span class="co">#&gt;    3: MID25784709 140801      CE</span></span>
+<span><span class="co">#&gt;    4: MID25784843 140801      CE</span></span>
+<span><span class="co">#&gt;    5: MID25784945 140801      CE</span></span>
+<span><span class="co">#&gt;   ---                           </span></span>
+<span><span class="co">#&gt; 4889: MID26696484 141901      ME</span></span>
+<span><span class="co">#&gt; 4890: MID26696738 141901      ME</span></span>
+<span><span class="co">#&gt; 4891: MID26696958 141901      ME</span></span>
+<span><span class="co">#&gt; 4892: MID26696967 141901      ME</span></span>
+<span><span class="co">#&gt; 4893: MID26697444 141901      ME</span></span></code></pre>
+</div>
+<div class="section level3">
+<h3 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
+</h3>
+<p>This data frame is the starting pool for computing graduation rates
+for the case study programs.</p>
+<p>This step concludes the procedural outline for using FYE proxies with
+the midfielddata practice data.</p>
+<p><strong>Data set-aside.</strong> These data too are set aside under a
+different name for use in the section on <em>Summarizing FYE
+proxies</em>.</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create an intermediate data set for later analysis</span></span>
+<span><span class="va">predicted_start</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="creating-fye-proxies">Creating FYE proxies<a class="anchor" aria-label="anchor" href="#creating-fye-proxies"></a>
+</h2>
+<p>This section is optional if you are using the midfielddata practice
+data sets but required if you are using MIDFIELD research data.</p>
+<p>The procedure has two steps:</p>
+<ol style="list-style-type: decimal">
+<li><p>Use <code><a href="../reference/prep_fye_mice.html">prep_fye_mice()</a></code> from the midfieldr package to
+predict some of the FYE proxy CIPs, treat the remainder as missing
+values, and structure the data frame for imputation.</p></li>
+<li><p>Use <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice()</a></code> from the mice package to impute the
+6-digit CIP missing values.</p></li>
+</ol>
+<div class="section level3">
+<h3 id="population-1">Population<a class="anchor" aria-label="anchor" href="#population-1"></a>
+</h3>
+<p>We start with the <code>student</code> and <code>term</code> data
+tables, retaining all rows from your source data.</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load data sets from midfielddata</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span><span class="op">)</span></span></code></pre></div>
+<p>You can view the help pages (and data dictionaries) by running</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Run in Console</span></span>
+<span><span class="op">?</span> <span class="va">student</span></span>
+<span><span class="op">?</span> <span class="va">term</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="prep_fye_mice">
+<code>prep_fye_mice()</code><a class="anchor" aria-label="anchor" href="#prep_fye_mice"></a>
+</h3>
+<p>This function prepares FYE data for multivariate imputation. You can
+view the help page by running</p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Run in Console</span></span>
+<span><span class="op">?</span> <span class="va">prep_fye_mice</span></span></code></pre></div>
+<p><strong>Arguments:</strong></p>
+<dl>
+<dt>midfield_student</dt>
+<dd>
+<p>Data frame of student observations, keyed by student ID. Default is
+<code>student</code>. Required variables are <code>mcid</code>,
+<code>race</code>, and <code>sex</code>. Use all rows of your source
+<code>student</code> data table.</p>
+</dd>
+<dt>midfield_term</dt>
+<dd>
+<p>Data frame of term observations keyed by student ID. Default is
+<code>term</code>. Required variables are <code>mcid</code>,
+<code>institution</code>, <code>term</code>, and <code>cip6</code>. Use
+all rows of your source <code>term</code> data table.</p>
+</dd>
+<dt>fye_codes</dt>
+<dd>
+<p>Optional character vector of 6-digit CIP codes assigned to FYE
+programs. Default is “140102”.</p>
+</dd>
+</dl>
+<p><strong>Usage.</strong> The following implementations yield identical
+results,</p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Required arguments in order and explicitly named</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prep_fye_mice.html">prep_fye_mice</a></span><span class="op">(</span>midfield_student <span class="op">=</span> <span class="va">student</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Required arguments in order, but not named</span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prep_fye_mice.html">prep_fye_mice</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Using the implicit defaults</span></span>
+<span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prep_fye_mice.html">prep_fye_mice</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Equality test between the data tables</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">z</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p>Create the pre-processed FYE data frame. The function extracts all
+terms for all FYE students and sorts them into two categories:</p>
+<ol style="list-style-type: decimal">
+<li><p>Students who complete an FYE and declare an engineering major.
+This is the easy case—at the student’s first opportunity, they enrolled
+in an engineering program of their choosing. The CIPs of these programs
+are the <code>cip6</code> values returned by
+<code><a href="../reference/prep_fye_mice.html">prep_fye_mice()</a></code>.</p></li>
+<li><p>Students who, after FYE, do not declare an engineering major.
+This is the more complicated case—the data provide no information
+regarding what engineering program the student would have declared
+originally had the institution not required them to enroll in FYE. For
+these students, <code><a href="../reference/prep_fye_mice.html">prep_fye_mice()</a></code> assigns a <code>cip6</code>
+value of NA.</p></li>
+</ol>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create the working data frame</span></span>
+<span><span class="va">fye</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prep_fye_mice.html">prep_fye_mice</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">fye</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;              mcid   institution            race    sex   cip6</span></span>
+<span><span class="co">#&gt;            &lt;char&gt;        &lt;fctr&gt;          &lt;fctr&gt; &lt;fctr&gt; &lt;fctr&gt;</span></span>
+<span><span class="co">#&gt;    1: MID26060301 Institution C           Asian Female   &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;    2: MID25995980 Institution C Hispanic/Latinx Female   &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;    3: MID25997636 Institution C Hispanic/Latinx Female   &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;    4: MID26086310 Institution C Hispanic/Latinx Female   &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;    5: MID26000057 Institution C           White Female   &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   ---                                                        </span></span>
+<span><span class="co">#&gt; 4488: MID25844276 Institution M           White   Male 143501</span></span>
+<span><span class="co">#&gt; 4489: MID25846316 Institution M           White   Male 143501</span></span>
+<span><span class="co">#&gt; 4490: MID25847220 Institution M           White   Male 143501</span></span>
+<span><span class="co">#&gt; 4491: MID25848589 Institution M           White   Male 143501</span></span>
+<span><span class="co">#&gt; 4492: MID25828870 Institution M           White   Male 149999</span></span></code></pre>
+<p>The NA <code>cip6</code> entries are the missing data to be imputed
+using <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice()</a></code>.</p>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Number of students ever enrolled in an FYE program</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">fye</span><span class="op">$</span><span class="va">mcid</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 4492</span></span>
+<span></span>
+<span><span class="co"># Number of missing values to be imputed</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">fye</span><span class="op">$</span><span class="va">cip6</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 1689</span></span></code></pre></div>
+<p><strong>Set aside intermediate data.</strong> These data are also set
+aside for use in the section on <em>Summarizing FYE proxies</em>.</p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create an intermediate data set for later analysis</span></span>
+<span><span class="va">post_fye_start</span> <span class="op">&lt;-</span> <span class="va">fye</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">post_fye_start</span> <span class="op">&lt;-</span> <span class="va">post_fye_start</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="mice">
+<code>mice()</code><a class="anchor" aria-label="anchor" href="#mice"></a>
+</h3>
+<p>The mice package <span class="citation">(<a href="#ref-vanBuuren+Oudshoorn:2011" role="doc-biblioref">van Buuren
+&amp; Groothuis-Oudshoorn, 2011</a>)</span> implements multivariate
+imputation by chained equations (MICE). MICE is also known as “fully
+conditional specification” or “sequential regression multiple
+imputation” and is suitable for categorical variables such as ours <span class="citation">(<a href="#ref-azur2011" role="doc-biblioref">Azur et
+al., 2011</a>)</span>. Our computational procedure follows the approach
+suggested by Dhana <span class="citation">(<a href="#ref-dhana2017" role="doc-biblioref">2017</a>)</span>.</p>
+<p>The procedure assumes the missing CIP data—the NA values in the
+prepared data frame—are “missing at random” (MAR), that is, independent
+of the variables used to impute the missing values. This is the
+rationale for using data only from FYE institutions to impute the
+missing values—the existence of the missing data does depend on the
+institution type, FYE or non-FYE. Within the FYE data itself, however,
+we assume that the imputed starting majors are missing at random.</p>
+<p><strong>Framework.</strong> Our first use of <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice()</a></code> is
+to examine the imputation framework by calling the function with zero
+iterations on the <code>fye</code> data frame. (A warning may appear in
+your console. It can be ignored.) <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice()</a></code> produces a
+“multiply-imputed data set”, an R object of class “mids”.</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Imputation framework</span></span>
+<span><span class="va">framework</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice</a></span><span class="op">(</span><span class="va">fye</span>, maxit <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the results</span></span>
+<span><span class="va">framework</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; Class: mids</span></span>
+<span><span class="co">#&gt; Number of multiple imputations:  5 </span></span>
+<span><span class="co">#&gt; Imputation methods:</span></span>
+<span><span class="co">#&gt;        mcid institution        race         sex        cip6 </span></span>
+<span><span class="co">#&gt;          ""          ""          ""          ""   "polyreg" </span></span>
+<span><span class="co">#&gt; PredictorMatrix:</span></span>
+<span><span class="co">#&gt;             mcid institution race sex cip6</span></span>
+<span><span class="co">#&gt; mcid           0           1    1   1    1</span></span>
+<span><span class="co">#&gt; institution    0           0    1   1    1</span></span>
+<span><span class="co">#&gt; race           0           1    0   1    1</span></span>
+<span><span class="co">#&gt; sex            0           1    1   0    1</span></span>
+<span><span class="co">#&gt; cip6           0           1    1   1    0</span></span>
+<span><span class="co">#&gt; Number of logged events:  1 </span></span>
+<span><span class="co">#&gt;   it im dep     meth  out</span></span>
+<span><span class="co">#&gt; 1  0  0     constant mcid</span></span></code></pre>
+<p><strong>Imputation methods.</strong> We look more closely at two
+elements of this framework. The first is the imputation method
+vector.</p>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Imputation method</span></span>
+<span><span class="va">method_vector</span> <span class="op">&lt;-</span> <span class="va">framework</span><span class="op">[[</span><span class="st">"method"</span><span class="op">]</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the results</span></span>
+<span><span class="va">method_vector</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;        mcid institution        race         sex        cip6 </span></span>
+<span><span class="co">#&gt;          ""          ""          ""          ""   "polyreg"</span></span></code></pre>
+<p>The “polyreg” imputation method (polytomous logistic regression) is
+appropriate for data, like ours, comprising unordered categorical
+variables. Variable <code>cip6</code> is imputed using the polyreg
+method; the other variables, being predictors, are not imputed, thus
+their methods are empty.</p>
+<p>Had the method not been correctly assigned, we would assign it as
+follows,</p>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Manually assign the variable(s) being imputed</span></span>
+<span><span class="va">method_vector</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"polyreg"</span></span>
+<span></span>
+<span><span class="co"># Manually assign the variable(s) not being imputed</span></span>
+<span><span class="va">method_vector</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"institution"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">""</span></span>
+<span></span>
+<span><span class="co"># Display the results</span></span>
+<span><span class="va">method_vector</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;        mcid institution        race         sex        cip6 </span></span>
+<span><span class="co">#&gt;          ""          ""          ""          ""   "polyreg"</span></span></code></pre>
+<p><strong>Predictor matrix.</strong> The second element to review is
+the predictor matrix. A row label identifies the variable being
+predicted; the columns indicate the predictor variables.</p>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Imputation predictor matrix</span></span>
+<span><span class="va">predictor_matrix</span> <span class="op">&lt;-</span> <span class="va">framework</span><span class="op">[[</span><span class="st">"predictorMatrix"</span><span class="op">]</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the results</span></span>
+<span><span class="va">predictor_matrix</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;             mcid institution race sex cip6</span></span>
+<span><span class="co">#&gt; mcid           0           1    1   1    1</span></span>
+<span><span class="co">#&gt; institution    0           0    1   1    1</span></span>
+<span><span class="co">#&gt; race           0           1    0   1    1</span></span>
+<span><span class="co">#&gt; sex            0           1    1   0    1</span></span>
+<span><span class="co">#&gt; cip6           0           1    1   1    0</span></span></code></pre>
+<p>However, only those variables assigned a method are imputed. In our
+case, the only variable to be imputed is <code>cip6</code>, so the only
+row of this matrix that gets used is the last row.</p>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Predictor row for this example</span></span>
+<span><span class="va">predictor_matrix</span><span class="op">[</span><span class="st">"cip6"</span>, <span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;        mcid institution        race         sex        cip6 </span></span>
+<span><span class="co">#&gt;           0           1           1           1           0</span></span></code></pre>
+<p>What the zeros and ones tell us is that <code>cip6</code> is going to
+be predicted by institution, race, and sex.</p>
+<p>Had the default setting been incorrect, we can set them manually.
+Again, note that the bottom row is the only row we need because only the
+<code>cip6</code> variable is being imputed.</p>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Manually assign zero columns</span></span>
+<span><span class="va">predictor_matrix</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"cip6"</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Manually assign predictor columns</span></span>
+<span><span class="va">predictor_matrix</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"institution"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">predictor_matrix</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;             mcid institution race sex cip6</span></span>
+<span><span class="co">#&gt; mcid           0           0    0   0    0</span></span>
+<span><span class="co">#&gt; institution    0           0    0   0    0</span></span>
+<span><span class="co">#&gt; race           0           0    0   0    0</span></span>
+<span><span class="co">#&gt; sex            0           0    0   0    0</span></span>
+<span><span class="co">#&gt; cip6           0           1    1   1    0</span></span></code></pre>
+<p><strong>Imputing missing values.</strong> The three essential
+arguments for <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice()</a></code> are the <code>fye</code> data frame,
+the <code>method_vector</code>, and the <code>predictor_matrix</code>.
+The default <code>seed</code> argument is NULL, but by setting the seed
+as shown the vignette results are reproducible. Setting
+<code>printFlag = TRUE</code> displays progress in the console.</p>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># imputation</span></span>
+<span><span class="va">fye_mids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">fye</span>,</span>
+<span>  method <span class="op">=</span> <span class="va">method_vector</span>,</span>
+<span>  predictorMatrix <span class="op">=</span> <span class="va">predictor_matrix</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fl">20180624</span>,</span>
+<span>  printFlag <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># output in console with printFlag = TRUE</span></span>
+<span><span class="co"># &gt;  iter imp variable</span></span>
+<span><span class="co"># &gt;   1   1  cip6</span></span>
+<span><span class="co"># &gt;   1   2  cip6</span></span>
+<span><span class="co"># &gt;   1   3  cip6</span></span>
+<span><span class="co"># &gt;   1   4  cip6</span></span>
+<span><span class="co"># &gt;   1   5  cip6</span></span>
+<span><span class="co"># &gt;   ---</span></span>
+<span><span class="co"># &gt;   5   1  cip6</span></span>
+<span><span class="co"># &gt;   5   2  cip6</span></span>
+<span><span class="co"># &gt;   5   3  cip6</span></span>
+<span><span class="co"># &gt;   5   4  cip6</span></span>
+<span><span class="co"># &gt;   5   5  cip6</span></span></code></pre></div>
+<p><strong>Extract the result.</strong> We apply
+<code><a href="https://tidyr.tidyverse.org/reference/complete.html" class="external-link">mice::complete()</a></code> to extract the data from the
+<code>mids</code> object. The missing data have been replaced by imputed
+values.</p>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Extract data from the mids object</span></span>
+<span><span class="va">fye</span> <span class="op">&lt;-</span> <span class="fu">mice</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/complete.html" class="external-link">complete</a></span><span class="op">(</span><span class="va">fye_mids</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Convert to data.table structure</span></span>
+<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setDT.html" class="external-link">setDT</a></span><span class="op">(</span><span class="va">fye</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">fye</span> <span class="op">&lt;-</span> <span class="va">fye</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">fye</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;              mcid   institution            race    sex   cip6</span></span>
+<span><span class="co">#&gt;            &lt;char&gt;        &lt;fctr&gt;          &lt;fctr&gt; &lt;fctr&gt; &lt;fctr&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783162 Institution M           White   Male 141001</span></span>
+<span><span class="co">#&gt;    2: MID25783178 Institution M           Black   Male 140701</span></span>
+<span><span class="co">#&gt;    3: MID25783197 Institution M           White   Male 140701</span></span>
+<span><span class="co">#&gt;    4: MID25783259 Institution M           White   Male 140801</span></span>
+<span><span class="co">#&gt;    5: MID25783388 Institution M           White   Male 141901</span></span>
+<span><span class="co">#&gt;   ---                                                        </span></span>
+<span><span class="co">#&gt; 4488: MID26648422 Institution J           White   Male 141001</span></span>
+<span><span class="co">#&gt; 4489: MID26648484 Institution J Hispanic/Latinx   Male 141001</span></span>
+<span><span class="co">#&gt; 4490: MID26648508 Institution J   International Female 140701</span></span>
+<span><span class="co">#&gt; 4491: MID26648517 Institution J Hispanic/Latinx   Male 141001</span></span>
+<span><span class="co">#&gt; 4492: MID26648553 Institution J           White   Male 140201</span></span></code></pre>
+<p><strong>Detach <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice()</a></code>.</strong> Because the mice package
+masks the base R <code><a href="https://amices.org/mice/reference/cbind.html" class="external-link">rbind()</a></code> and <code><a href="https://amices.org/mice/reference/cbind.html" class="external-link">cbind()</a></code> functions
+as well as the tidyr <code><a href="https://tidyr.tidyverse.org/reference/complete.html" class="external-link">complete()</a></code> function (if you are using
+tidyr), we unload the package now that we’re done with it.</p>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/detach.html" class="external-link">detach</a></span><span class="op">(</span><span class="st">"package:mice"</span>, unload <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="post-processing">Post-processing<a class="anchor" aria-label="anchor" href="#post-processing"></a>
+</h3>
+<p><strong>Select columns.</strong> To use the result, we need only two
+columns: IDs and the the predicted starting programs..</p>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Subset the data</span></span>
+<span><span class="va">fye</span> <span class="op">&lt;-</span> <span class="va">fye</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">fye</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;              mcid   cip6</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;fctr&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783162 141001</span></span>
+<span><span class="co">#&gt;    2: MID25783178 140701</span></span>
+<span><span class="co">#&gt;    3: MID25783197 140701</span></span>
+<span><span class="co">#&gt;    4: MID25783259 140801</span></span>
+<span><span class="co">#&gt;    5: MID25783388 141901</span></span>
+<span><span class="co">#&gt;   ---                   </span></span>
+<span><span class="co">#&gt; 4488: MID26648422 141001</span></span>
+<span><span class="co">#&gt; 4489: MID26648484 141001</span></span>
+<span><span class="co">#&gt; 4490: MID26648508 140701</span></span>
+<span><span class="co">#&gt; 4491: MID26648517 141001</span></span>
+<span><span class="co">#&gt; 4492: MID26648553 140201</span></span></code></pre>
+<p><strong>Convert &amp; rename.</strong> We convert the CIP codes from
+factor to character and change the CIP variable name to
+<code>proxy</code> to distinguish it from other <code>cip6</code>
+variables in the data tables.</p>
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Convert factors</span></span>
+<span><span class="va">fye</span><span class="op">[</span>, <span class="va">cip6</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Identify the results as FYE proxies</span></span>
+<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">fye</span>, old <span class="op">=</span> <span class="st">"cip6"</span>, new <span class="op">=</span> <span class="st">"proxy"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">fye</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;              mcid  proxy</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783162 141001</span></span>
+<span><span class="co">#&gt;    2: MID25783178 140701</span></span>
+<span><span class="co">#&gt;    3: MID25783197 140701</span></span>
+<span><span class="co">#&gt;    4: MID25783259 140801</span></span>
+<span><span class="co">#&gt;    5: MID25783388 141901</span></span>
+<span><span class="co">#&gt;   ---                   </span></span>
+<span><span class="co">#&gt; 4488: MID26648422 141001</span></span>
+<span><span class="co">#&gt; 4489: MID26648484 141001</span></span>
+<span><span class="co">#&gt; 4490: MID26648508 140701</span></span>
+<span><span class="co">#&gt; 4491: MID26648517 141001</span></span>
+<span><span class="co">#&gt; 4492: MID26648553 140201</span></span></code></pre>
+<p>This process is how the built-in data set <code>fye_proxy</code> was
+constructed, using the same random number seed that we used above. To
+confirm they are identical,</p>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Verify that result matches the built-in data set</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">fye</span>, <span class="va">fye_proxy</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="conclusion-1">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion-1"></a>
+</h3>
+<p>If we were using these results to contribute to a graduation rate
+calculation, we would follow the steps outlined in the <em>Using
+prepared FYE proxies</em> section, substituting our <code>fye</code>
+data frame for the <code>fye_proxy</code> data provided with
+midfieldr.</p>
+<p>For a given set of <code>student</code> and <code>term</code> data
+tables, the imputation has to be performed only once. The results should
+be saved as a data file, similar to <code>fye_proxy</code> data set used
+with the midfielddata practice data. In data.table format one could
+write, for example,</p>
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Write data to file</span></span>
+<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fwrite.html" class="external-link">fwrite</a></span><span class="op">(</span><span class="va">fye</span>, file <span class="op">=</span> <span class="st">"data/my_fye_proxy.csv"</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="summarizing-the-fye-proxies">Summarizing the FYE proxies<a class="anchor" aria-label="anchor" href="#summarizing-the-fye-proxies"></a>
+</h2>
+<p>Here we summarize the final FYE proxy data set to see how many
+students our algorithm assigned to which engineering majors. Start by
+extracting the unique set of CIP codes from the proxy data set.</p>
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Identify unique CIP codes in the proxy data</span></span>
+<span><span class="va">proxy_cips</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">fye_proxy</span><span class="op">$</span><span class="va">proxy</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the results</span></span>
+<span><span class="va">proxy_cips</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;  [1] "140201" "140301" "140501" "140601" "140701" "140801" "140901" "141001"</span></span>
+<span><span class="co">#&gt;  [9] "141101" "141301" "141401" "141801" "141901" "142101" "143301" "143501"</span></span>
+<span><span class="co">#&gt; [17] "149999"</span></span></code></pre>
+<p>Obtain the program names from the <code>cip</code> data set (provided
+with midfieldr). We use the 4-digit names that in engineering generally
+represent department-level programs.</p>
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Obtain the 4-digit program names corresponding to these codes</span></span>
+<span><span class="va">proxy_program_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, keep_text <span class="op">=</span> <span class="va">proxy_cips</span><span class="op">)</span></span>
+<span><span class="va">proxy_program_names</span> <span class="op">&lt;-</span> <span class="va">proxy_program_names</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, program <span class="op">=</span> <span class="va">cip4name</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">proxy_program_names</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;       cip6                                                 program</span></span>
+<span><span class="co">#&gt;     &lt;char&gt;                                                  &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1: 140201   Aerospace, Aeronautical and Astronautical Engineering</span></span>
+<span><span class="co">#&gt;  2: 140301 Agricultural, Biological Engineering and Bioengineering</span></span>
+<span><span class="co">#&gt;  3: 140501                         Biomedical, Medical Engineering</span></span>
+<span><span class="co">#&gt;  4: 140601                        Ceramic Sciences and Engineering</span></span>
+<span><span class="co">#&gt;  5: 140701                                    Chemical Engineering</span></span>
+<span><span class="co">#&gt;  6: 140801                                       Civil Engineering</span></span>
+<span><span class="co">#&gt;  7: 140901                           Computer Engineering, General</span></span>
+<span><span class="co">#&gt;  8: 141001  Electrical, Electronics and Communications Engineering</span></span>
+<span><span class="co">#&gt;  9: 141101                                   Engineering Mechanics</span></span>
+<span><span class="co">#&gt; 10: 141301                                     Engineering Science</span></span>
+<span><span class="co">#&gt; 11: 141401         Environmental, Environmental Health Engineering</span></span>
+<span><span class="co">#&gt; 12: 141801                                   Materials Engineering</span></span>
+<span><span class="co">#&gt; 13: 141901                                  Mechanical Engineering</span></span>
+<span><span class="co">#&gt; 14: 142101                          Mining and Mineral Engineering</span></span>
+<span><span class="co">#&gt; 15: 143301                                Construction Engineering</span></span>
+<span><span class="co">#&gt; 16: 143501                                  Industrial Engineering</span></span>
+<span><span class="co">#&gt; 17: 149999                                      Engineering, Other</span></span></code></pre>
+<p>Join these names to the proxy data set, summarize by program, and
+order the rows by descending N.</p>
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Join these program names to the proxy data</span></span>
+<span><span class="va">proxy_programs</span> <span class="op">&lt;-</span> <span class="va">proxy_program_names</span><span class="op">[</span><span class="va">fye_proxy</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>cip6 <span class="op">=</span> <span class="va">proxy</span><span class="op">)</span><span class="op">]</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Count by program and order rows in descending magnitude</span></span>
+<span><span class="va">proxy_programs</span> <span class="op">&lt;-</span> <span class="va">proxy_programs</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">proxy_programs</span>, order <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">proxy_programs</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;                                                     program     N</span></span>
+<span><span class="co">#&gt;                                                      &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1:                                  Mechanical Engineering  1119</span></span>
+<span><span class="co">#&gt;  2:                                       Civil Engineering   691</span></span>
+<span><span class="co">#&gt;  3:  Electrical, Electronics and Communications Engineering   594</span></span>
+<span><span class="co">#&gt;  4:                           Computer Engineering, General   471</span></span>
+<span><span class="co">#&gt;  5:                                    Chemical Engineering   408</span></span>
+<span><span class="co">#&gt;  6:   Aerospace, Aeronautical and Astronautical Engineering   394</span></span>
+<span><span class="co">#&gt;  7:                                  Industrial Engineering   355</span></span>
+<span><span class="co">#&gt;  8: Agricultural, Biological Engineering and Bioengineering   107</span></span>
+<span><span class="co">#&gt;  9:                          Mining and Mineral Engineering   103</span></span>
+<span><span class="co">#&gt; 10:                                   Engineering Mechanics    96</span></span>
+<span><span class="co">#&gt; 11:                        Ceramic Sciences and Engineering    73</span></span>
+<span><span class="co">#&gt; 12:                                   Materials Engineering    62</span></span>
+<span><span class="co">#&gt; 13:                                     Engineering Science     6</span></span>
+<span><span class="co">#&gt; 14:         Environmental, Environmental Health Engineering     6</span></span>
+<span><span class="co">#&gt; 15:                         Biomedical, Medical Engineering     3</span></span>
+<span><span class="co">#&gt; 16:                                Construction Engineering     3</span></span>
+<span><span class="co">#&gt; 17:                                      Engineering, Other     1</span></span></code></pre>
+<p>The order of these majors is consistent with our expectations. For
+example, the National Science Foundation (NSF) reports that the 2012
+ranking of majors by enrollment in the US has Mechanical Engineering
+first, followed by Electrical, Civil, Chemical, Industrial, Aerospace,
+and Materials Engineering <span class="citation">(<a href="#ref-NSF:2014" role="doc-biblioref">NSF, 2014</a>)</span>.</p>
+<p>The NSF data table does not break out Computer Engineering as a
+separate observation—if we can assume that the NSF combined Computer
+Engineering with Electrical Engineering (a practice followed at many
+Engineering colleges), then combining them in our data produces the
+following,</p>
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Combine Electrical and Computer Engineering</span></span>
+<span><span class="va">new_row</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span></span>
+<span>  program <span class="op">=</span> <span class="st">"Electrical/Computer Engineering"</span>,</span>
+<span>  N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">proxy_programs</span><span class="op">[</span><span class="va">program</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%ilike%</a></span> <span class="st">"Electrical|Computer"</span>, <span class="va">N</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># New location in memory</span></span>
+<span><span class="va">rev_proxy_programs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">proxy_programs</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Drop the separate Electrical and Computer rows</span></span>
+<span><span class="va">rev_proxy_programs</span> <span class="op">&lt;-</span> <span class="va">rev_proxy_programs</span><span class="op">[</span><span class="op">!</span><span class="va">program</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%ilike%</a></span> <span class="st">"Electrical|Computer"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Bind the new row and order</span></span>
+<span><span class="va">rev_proxy_programs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">rev_proxy_programs</span>, <span class="va">new_row</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">rev_proxy_programs</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span><span class="op">)</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">rev_proxy_programs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;                                                  program     N</span></span>
+<span><span class="co">#&gt;                                                   &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:                                Mechanical Engineering  1119</span></span>
+<span><span class="co">#&gt; 2:                       Electrical/Computer Engineering  1065</span></span>
+<span><span class="co">#&gt; 3:                                     Civil Engineering   691</span></span>
+<span><span class="co">#&gt; 4:                                  Chemical Engineering   408</span></span>
+<span><span class="co">#&gt; 5: Aerospace, Aeronautical and Astronautical Engineering   394</span></span>
+<span><span class="co">#&gt; 6:                                Industrial Engineering   355</span></span></code></pre>
+<p>These are the same top six programs as the NSF list and the first
+four majors are in the same order. Aerospace and Industrial Engineering
+(rows 5 and 6) have swapped places compared to the NSF report.</p>
+<p>We conclude that the imputation is credible at least to the extent
+that the ranking of the majors is consistent with expectations.
+Additional work would be required to compare summaries by institution,
+race, or sex.</p>
+</div>
+<div class="section level2">
+<h2 id="quantifying-starter-miscounts">Quantifying starter miscounts<a class="anchor" aria-label="anchor" href="#quantifying-starter-miscounts"></a>
+</h2>
+<p>The main goal of predicting FYE proxies is to prevent starter
+miscounts. Here, we use the three “set-aside” data sets developed
+earlier to assess the potential for miscounts if FYE records are not
+treated as recommended. The three data sets are:</p>
+<dl>
+<dt><code>direct_start</code></dt>
+<dd>
+<p>First-term students admitted directly into one of the four case study
+programs; excludes FYE students.</p>
+</dd>
+<dt><code>post_fye_start</code></dt>
+<dd>
+<p>First-term direct starters plus a subset of the proxies returned by
+<code><a href="../reference/prep_fye_mice.html">prep_fye_mice()</a></code>, i.e., students who transition post-FYE to
+one of the case study programs.</p>
+</dd>
+<dt><code>predicted_start</code></dt>
+<dd>
+<p>First-term direct starters plus a subset of the proxies returned by
+<code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice()</a></code>, i.e., all FYE students predicted as starters in one
+of the case study programs.</p>
+</dd>
+</dl>
+<p>Beginning with the <code>direct_start</code> data, we add the four
+program labels by matching the CIP codes, filter for the four case study
+programs, and summarize by program.</p>
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Join the program abbreviations</span></span>
+<span><span class="va">direct</span> <span class="op">&lt;-</span> <span class="va">study_program_labels</span><span class="op">[</span><span class="va">direct_start</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, <span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="st">"cip6"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Retain the case study programs</span></span>
+<span><span class="va">direct</span> <span class="op">&lt;-</span> <span class="va">direct</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Count by program</span></span>
+<span><span class="va">direct</span> <span class="op">&lt;-</span> <span class="va">direct</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>direct <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"program"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">direct</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;    program direct</span></span>
+<span><span class="co">#&gt;     &lt;char&gt;  &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:     ISE    337</span></span>
+<span><span class="co">#&gt; 2:      ME   1294</span></span>
+<span><span class="co">#&gt; 3:      CE    763</span></span>
+<span><span class="co">#&gt; 4:      EE   1325</span></span></code></pre>
+<p>Post-FYE starters must be limited to non-switchers, that is, those
+with IDs in the <code>first_term_fye_mcid</code> data frame developed
+earlier.</p>
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Inner join between post-FYE and first-term FYE IDs</span></span>
+<span><span class="va">post_fye</span> <span class="op">&lt;-</span> <span class="va">first_term_fye_mcid</span><span class="op">[</span><span class="va">post_fye_start</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Repeat the program abbreviation and filter steps</span></span>
+<span><span class="va">post_fye</span> <span class="op">&lt;-</span> <span class="va">study_program_labels</span><span class="op">[</span><span class="va">post_fye</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span>, <span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">post_fye</span> <span class="op">&lt;-</span> <span class="va">post_fye</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">post_fye</span> <span class="op">&lt;-</span> <span class="va">post_fye</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>add_post_fye <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"program"</span><span class="op">]</span></span>
+<span><span class="va">post_fye</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;    program add_post_fye</span></span>
+<span><span class="co">#&gt;     &lt;char&gt;        &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:      CE          291</span></span>
+<span><span class="co">#&gt; 2:      EE          278</span></span>
+<span><span class="co">#&gt; 3:      ME          458</span></span>
+<span><span class="co">#&gt; 4:     ISE          146</span></span></code></pre>
+<p>These students are all FYE starters. Our definition for these data
+includes the direct-starters in <code>direct</code>. We add the two
+columns to obtain the desired result.</p>
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Join the two results</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">direct</span>, <span class="va">post_fye</span>, by <span class="op">=</span> <span class="st">"program"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Add the direct admissions to the post-FYE starters</span></span>
+<span><span class="va">DT</span><span class="op">[</span>, <span class="va">add_post_fye</span> <span class="op">:=</span> <span class="va">add_post_fye</span> <span class="op">+</span> <span class="va">direct</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;    program direct add_post_fye</span></span>
+<span><span class="co">#&gt;     &lt;char&gt;  &lt;int&gt;        &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:      CE    763         1054</span></span>
+<span><span class="co">#&gt; 2:      EE   1325         1603</span></span>
+<span><span class="co">#&gt; 3:     ISE    337          483</span></span>
+<span><span class="co">#&gt; 4:      ME   1294         1752</span></span></code></pre>
+<p>Lastly, summarize the predicted start data from <code><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice()</a></code>
+and join to the results.</p>
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Count by program</span></span>
+<span><span class="va">predicted</span> <span class="op">&lt;-</span> <span class="va">predicted_start</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>add_imputed <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"program"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Join</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">predicted</span>, by <span class="op">=</span> <span class="st">"program"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;    program direct add_post_fye add_imputed</span></span>
+<span><span class="co">#&gt;     &lt;char&gt;  &lt;int&gt;        &lt;int&gt;       &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:      CE    763         1054        1054</span></span>
+<span><span class="co">#&gt; 2:      EE   1325         1603        1603</span></span>
+<span><span class="co">#&gt; 3:     ISE    337          483         483</span></span>
+<span><span class="co">#&gt; 4:      ME   1294         1752        1753</span></span></code></pre>
+<p>Comparing the columns, we see that the imputed totals are identical
+to the direct admissions plus post-FYE starters in all but one case
+(ME). And in ME the difference between the two columns is only one
+student. That these values are practically identical is not a “research”
+finding—we are, after all, using practice data and only a four-program
+subset at that.</p>
+<p>To quantify the potential for miscounts, we compute the percentage of
+starters represented by the FYE starters.</p>
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Fraction of starters from FYE</span></span>
+<span><span class="va">DT</span><span class="op">[</span>, <span class="va">pct_fye</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="op">(</span><span class="va">add_imputed</span> <span class="op">-</span> <span class="va">direct</span><span class="op">)</span> <span class="op">/</span> <span class="va">add_imputed</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;    program direct add_post_fye add_imputed pct_fye</span></span>
+<span><span class="co">#&gt;     &lt;char&gt;  &lt;int&gt;        &lt;int&gt;       &lt;int&gt;   &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:      CE    763         1054        1054    27.6</span></span>
+<span><span class="co">#&gt; 2:      EE   1325         1603        1603    17.3</span></span>
+<span><span class="co">#&gt; 3:     ISE    337          483         483    30.2</span></span>
+<span><span class="co">#&gt; 4:      ME   1294         1752        1753    26.2</span></span></code></pre>
+<p>The results indicate (for these practice data at least) an
+under-count of 17% to 30% for degree-granting programs that exclude FYE
+proxies from their count of starters.</p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-azur2011" class="csl-entry">
+Azur, M. J., Stuart, E. A., Frangakis, C., &amp; Leaf, P. J. (2011).
+Multiple imputation by chained equations: <span>W</span>hat is it and
+how does it work? <em>International Journal of Methods in Psychiatric
+Research</em>, <em>20</em>(1), 40–49.
+</div>
+<div id="ref-dhana2017" class="csl-entry">
+Dhana, K. (2017). <em>Handling missing data with <span>MICE</span>
+package: A simple approach</em> (D. S. Plus, Ed.). <a href="https://datascienceplus.com/handling-missing-data-with-mice-package-a-simple-approach/" class="external-link uri">https://datascienceplus.com/handling-missing-data-with-mice-package-a-simple-approach/</a>.
+</div>
+<div id="ref-NSF:2014" class="csl-entry">
+NSF. (2014). <em><span class="nocase">Science and Engineering Indicators
+Report</span></em>. <span>National Science Foundation</span>. <a href="https://www.nsf.gov/nsb/sei/edTool/data/engineering-01.html" class="external-link">https://www.nsf.gov/nsb/sei/edTool/data/engineering-01.html</a>
+</div>
 <div id="ref-vanBuuren+Oudshoorn:2011" class="csl-entry">
 van Buuren, S., &amp; Groothuis-Oudshoorn, K. (2011). <span class="nocase">mice: Multivariate Imputation by Chained Equations in
 R</span>. <em>Journal of Statistical Software</em>, <em>45</em>(3),
@@ -307,6 +1200,118 @@ R</span>. <em>Journal of Statistical Software</em>, <em>45</em>(3),
 </h3>
 <p>The vignette code chunks are collected below in a single, condensed
 script.</p>
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Packages</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Only if creating your own FYE proxies</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/amices/mice" class="external-link">"mice"</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Printing options for data.table</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span></span>
+<span>  datatable.print.nrows <span class="op">=</span> <span class="fl">17</span>,</span>
+<span>  datatable.print.topn <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Using prepared FYE proxies</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Start with IDs</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_mcid</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">DT</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"term"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">direct_start</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">cip6</span> <span class="op">!=</span> <span class="st">"140102"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Process the proxies</span></span>
+<span><span class="va">first_term_fye_mcid</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">cip6</span> <span class="op">==</span> <span class="st">"140102"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">fye</span> <span class="op">&lt;-</span> <span class="va">fye_proxy</span><span class="op">[</span><span class="va">first_term_fye_mcid</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">proxy</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">fye</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span>, <span class="va">proxy</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Identify starters</span></span>
+<span><span class="va">DT</span><span class="op">[</span>, <span class="va">start</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
+<span>  <span class="va">cip6</span> <span class="op">==</span> <span class="st">"140102"</span>, <span class="va">proxy</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op">!=</span> <span class="st">"140102"</span>, <span class="va">cip6</span></span>
+<span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">join_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_program_labels</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">join_labels</span>, old <span class="op">=</span> <span class="st">"cip6"</span>, new <span class="op">=</span> <span class="st">"start"</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">join_labels</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">start</span>, <span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"start"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">predicted_start</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Creating FYE proxies</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># prep_fye_mice()</span></span>
+<span><span class="va">fye</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prep_fye_mice.html">prep_fye_mice</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">post_fye_start</span> <span class="op">&lt;-</span> <span class="va">fye</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">post_fye_start</span> <span class="op">&lt;-</span> <span class="va">post_fye_start</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># mice() method</span></span>
+<span><span class="va">framework</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice</a></span><span class="op">(</span><span class="va">fye</span>, maxit <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">method_vector</span> <span class="op">&lt;-</span> <span class="va">framework</span><span class="op">[[</span><span class="st">"method"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">method_vector</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"polyreg"</span></span>
+<span><span class="va">method_vector</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"institution"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">""</span></span>
+<span></span>
+<span><span class="co"># mice() predictor</span></span>
+<span><span class="va">predictor_matrix</span> <span class="op">&lt;-</span> <span class="va">framework</span><span class="op">[[</span><span class="st">"predictorMatrix"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">predictor_matrix</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"cip6"</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">predictor_matrix</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"institution"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># mice()</span></span>
+<span><span class="va">fye_mids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://amices.org/mice/reference/mice.html" class="external-link">mice</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">fye</span>,</span>
+<span>  method <span class="op">=</span> <span class="va">method_vector</span>,</span>
+<span>  predictorMatrix <span class="op">=</span> <span class="va">predictor_matrix</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fl">20180624</span>,</span>
+<span>  printFlag <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">fye</span> <span class="op">&lt;-</span> <span class="fu">mice</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/complete.html" class="external-link">complete</a></span><span class="op">(</span><span class="va">fye_mids</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setDT.html" class="external-link">setDT</a></span><span class="op">(</span><span class="va">fye</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/detach.html" class="external-link">detach</a></span><span class="op">(</span><span class="st">"package:mice"</span>, unload <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Post-processing</span></span>
+<span><span class="va">fye</span> <span class="op">&lt;-</span> <span class="va">fye</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">fye</span><span class="op">[</span>, <span class="va">cip6</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">fye</span>, old <span class="op">=</span> <span class="st">"cip6"</span>, new <span class="op">=</span> <span class="st">"proxy"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fwrite.html" class="external-link">fwrite</a></span><span class="op">(</span><span class="va">fye</span>, file <span class="op">=</span> <span class="st">"data/my_fye_proxy.csv"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Summarizing the FYE proxies</span></span>
+<span><span class="va">proxy_cips</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">fye_proxy</span><span class="op">$</span><span class="va">proxy</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">proxy_program_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, keep_text <span class="op">=</span> <span class="va">proxy_cips</span><span class="op">)</span></span>
+<span><span class="va">proxy_program_names</span> <span class="op">&lt;-</span> <span class="va">proxy_program_names</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, program <span class="op">=</span> <span class="va">cip4name</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">proxy_programs</span> <span class="op">&lt;-</span> <span class="va">proxy_program_names</span><span class="op">[</span><span class="va">fye_proxy</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>cip6 <span class="op">=</span> <span class="va">proxy</span><span class="op">)</span><span class="op">]</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">proxy_programs</span> <span class="op">&lt;-</span> <span class="va">proxy_programs</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">proxy_programs</span>, order <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Compare to NSF report</span></span>
+<span><span class="va">new_row</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span></span>
+<span>  program <span class="op">=</span> <span class="st">"Electrical/Computer Engineering"</span>,</span>
+<span>  N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">proxy_programs</span><span class="op">[</span><span class="va">program</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%ilike%</a></span> <span class="st">"Electrical|Computer"</span>, <span class="va">N</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">rev_proxy_programs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">proxy_programs</span><span class="op">)</span></span>
+<span><span class="va">rev_proxy_programs</span> <span class="op">&lt;-</span> <span class="va">rev_proxy_programs</span><span class="op">[</span><span class="op">!</span><span class="va">program</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%ilike%</a></span> <span class="st">"Electrical|Computer"</span><span class="op">]</span></span>
+<span><span class="va">rev_proxy_programs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">rev_proxy_programs</span>, <span class="va">new_row</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">rev_proxy_programs</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span><span class="op">)</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Quantifying starter miscounts</span></span>
+<span><span class="va">direct</span> <span class="op">&lt;-</span> <span class="va">study_program_labels</span><span class="op">[</span><span class="va">direct_start</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, <span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="st">"cip6"</span><span class="op">]</span></span>
+<span><span class="va">direct</span> <span class="op">&lt;-</span> <span class="va">direct</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">direct</span> <span class="op">&lt;-</span> <span class="va">direct</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>direct <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"program"</span><span class="op">]</span></span>
+<span><span class="va">post_fye</span> <span class="op">&lt;-</span> <span class="va">first_term_fye_mcid</span><span class="op">[</span><span class="va">post_fye_start</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">post_fye</span> <span class="op">&lt;-</span> <span class="va">study_program_labels</span><span class="op">[</span><span class="va">post_fye</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span>, <span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">post_fye</span> <span class="op">&lt;-</span> <span class="va">post_fye</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">post_fye</span> <span class="op">&lt;-</span> <span class="va">post_fye</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>add_post_fye <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"program"</span><span class="op">]</span></span>
+<span><span class="va">predicted</span> <span class="op">&lt;-</span> <span class="va">predicted_start</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>add_imputed <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"program"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">direct</span>, <span class="va">post_fye</span>, by <span class="op">=</span> <span class="st">"program"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">DT</span><span class="op">[</span>, <span class="va">add_post_fye</span> <span class="op">:=</span> <span class="va">add_post_fye</span> <span class="op">+</span> <span class="va">direct</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">predicted</span>, by <span class="op">=</span> <span class="st">"program"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">DT</span><span class="op">[</span>, <span class="va">pct_fye</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="op">(</span><span class="va">add_imputed</span> <span class="op">-</span> <span class="va">direct</span><span class="op">)</span> <span class="op">/</span> <span class="va">add_imputed</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
