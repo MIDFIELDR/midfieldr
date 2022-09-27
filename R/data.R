@@ -40,31 +40,30 @@
 
 # -------------------------------------------------------------------
 
-#' Predicted proxy programs for FYE students
+#' Starting program proxies for FYE students
 #' 
-#' Predicted proxy programs for all First-Year Engineering (FYE) students 
-#' in the midfielddata data tables. Keyed by student ID. Contains 
-#' 6-digit CIP codes that are substituted for the First-Year-Engineering (FYE) 
-#' CIP code when an analysis requires starting programs that are 
-#' degree-granting. Suitable for use with midfielddata practice data only.
-#'
-#' Proxy programs in \code{fye_proxy} are the engineering 
-#' programs we predict that students would have declared had they not been 
-#' required to enroll in FYE. The data set includes all FYE students---those 
-#' admitted to engineering in their first term as well as those who switch to 
-#' Engineering from non-engineering programs.
+#' Proxies are the degree-granting engineering programs we predict that 
+#' First-Year Engineering (FYE) students would have declared had they not been 
+#' required to enroll in FYE. Keyed by student ID. Proxies are provided for 
+#' all students in the midfielddata practice data who enroll in FYE in their 
+#' first term.
+#' 
+#' The proxy variable contains 6-digit CIP codes of degree-granting engineering 
+#' programs, e.g., Electrical Engineering, Mechanical Engineering, etc., that 
+#' are substituted for the FYE CIP code when an analysis requires 
+#' degree-granting starting programs. The most common application is a 
+#' graduation rate calculation. 
 #' 
 #' The prediction is based on students' first post-FYE programs and a 
-#' multivariate imputation suitable for multiple categorical 
-#' variables using the mice package. The predictor variables are institution, 
-#' race, and sex. The predicted variable is the 6-digit CIP code of a 
-#' degree-granting engineering program at their institution.
+#' multivariate imputation suitable for multiple categorical variables using 
+#' the mice package. The predictor variables are institution, race, and sex. 
+#' The predicted variable is the 6-digit CIP code of a degree-granting 
+#' engineering program at their institution.
 #'
-#' \code{fye_proxy} holds only for the practice data in
-#' midfielddata---these values cannot be commingled with the research
-#' database available to MIDFIELD partners.
+#' \code{fye_proxy} holds only for the practice data in midfielddata---these 
+#' values cannot be commingled with the MIDFIELD research database.
 #'
-#' @format \code{data.table} with 4492 rows and 2 columns keyed by student
+#' @format \code{data.table} with 3738 rows and 2 columns keyed by student
 #' ID. The variables are:
 #' \describe{
 #'
@@ -234,7 +233,7 @@
 #'
 #' @family case-study-data
 #'
-"study_program_labels"
+"study_programs"
 
 # -------------------------------------------------------------------
 
@@ -340,3 +339,44 @@
 #' @family case-study-data
 #'
 "study_results"
+
+
+
+# -------------------------------------------------------------------
+
+#' Case-study starters
+#' 
+#' Data table of students admitted in their first term to one of the four 
+#' engineering programs in the case study. Includes substitutions using FYE 
+#' proxies for students required to enroll in FYE programs. Provided for the 
+#' convenience of vignette users. 
+#' 
+#' Using the IDs of all students ever enrolled in the four programs 
+#' of the study (Civil, Electrical, Industrial/Systems, and Mechanical 
+#' Engineering), each student's first term CIP code is obtained from the 
+#' \code{term} data table. For a student admitted to an FYE program, 
+#' their CIP code is replaced by their FYE proxy from the \code{fye_proxy} 
+#' data set included with midfieldr. The data frame is filtered to retain 
+#' students starting in one of the four majors in the case study. 
+#' 
+#' The CIP variable is renamed \code{start} to distinguish it from other 
+#' midfieldr \code{cip6} variables because \code{start} contains predicted 
+#' program codes while the \code{cip6} variables contain actual student records. 
+#' 
+#' @format \code{data.table} with 4893 rows and 3 columns.
+#' 
+#' \describe{
+#' 
+#'  \item{mcid}{Character, anonymized student identifier}
+#'
+#'  \item{start}{Character, 6-digit CIP program codes.}
+#'  
+#'  \item{program}{Character, abbreviated labels for four engineering programs. 
+#'  Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE" 
+#'  (Industrial/Systems Engineering), and  "ME" (Mechanical Engineering).}
+#'
+#' }
+#'
+#' @family case-study-data
+#'
+"study_starters"

@@ -47,7 +47,8 @@ completion.
 Other case-study-data: 
 \code{\link{study_mcid}},
 \code{\link{study_observations}},
-\code{\link{study_program_labels}}
+\code{\link{study_programs}},
+\code{\link{study_starters}}
 }
 \concept{case-study-data}
 \keyword{datasets}

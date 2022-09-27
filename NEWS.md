@@ -6,6 +6,7 @@
 - Add FYE function and vignette
 - Revise multiway function name
 - Add order_multiway() examples
+- Add initial graduation rate vignette 
 
 
 

@@ -2,7 +2,7 @@ test_prep_fye_mice <- function() {
 
     # usage
     # prep_fye_mice(midfield_student,   # mcid, race, sex
-    #               midfield_term,      # term
+    #               midfield_term,      # term, institution
     #               ...,
     #               fye_codes = NULL)   # default 140102
 
@@ -22,7 +22,7 @@ test_prep_fye_mice <- function() {
 
     # test case
     DT <- wrapr::build_frame(
-        "mcid"         , "institution"  , "race"           , "sex"   , "cip6"        |
+        "mcid"         , "institution"  , "race"           , "sex"   , "proxy"       |
             "MID26060301", "Institution C", "Asian"          , "Female", NA_character_ |
             "MID25995980", "Institution C", "Hispanic/Latinx", "Female", NA_character_ |
             "MID25997636", "Institution C", "Hispanic/Latinx", "Female", NA_character_ |
@@ -35,12 +35,13 @@ test_prep_fye_mice <- function() {
             "MID25848589", "Institution M", "White"          , "Male"  , "143501"      |
             "MID25828870", "Institution M", "White"          , "Male"  , "149999"      )
     setDT(DT)
-    DT[, c("race", "sex", "institution", "cip6") :=
+    DT[, c("race", "sex", "institution", "proxy") :=
            list(as.factor(race),
                 as.factor(sex),
                 as.factor(institution),
-                as.factor(cip6)
+                as.factor(proxy)
            )]
+    # DT[]
 
     # Correct answer
     expect_equal(
@@ -54,19 +55,19 @@ test_prep_fye_mice <- function() {
     expect_equal(class(DT[, institution]), "factor")
     expect_equal(class(DT[, race]), "factor")
     expect_equal(class(DT[, sex]), "factor")
-    expect_equal(class(DT[, cip6]), "factor")
+    expect_equal(class(DT[, proxy]), "factor")
 
     # specific names of columns
      expect_equivalent(
         names(DT),
-        c("mcid", "institution", "race", "sex", "cip6")
+        c("mcid", "institution", "race", "sex", "proxy")
     )
 
      # extra columns are dropped, add column for cip6
      DT <- prep_fye_mice(toy_student, toy_term)
      expect_equal(
          names(DT),
-         c("mcid", "institution", "race", "sex", "cip6")
+         c("mcid", "institution", "race", "sex", "proxy")
      )
 
     # CIPs must be 6-digit, number characters only, start with 14
@@ -87,7 +88,7 @@ test_prep_fye_mice <- function() {
     #                     fye_codes = c("140101", "140102", "149999"))
     # cat(wrapr::draw_frame(DT))
     DT <- wrapr::build_frame(
-        "mcid"         , "institution"  , "race"           , "sex"   , "cip6"        |
+        "mcid"         , "institution"  , "race"           , "sex"   , "proxy"        |
             "MID25977316", "Institution B", "White"          , "Male"  , NA_character_ |
             "MID26060301", "Institution C", "Asian"          , "Female", NA_character_ |
             "MID25995980", "Institution C", "Hispanic/Latinx", "Female", NA_character_ |
@@ -103,11 +104,11 @@ test_prep_fye_mice <- function() {
             "MID25847220", "Institution M", "White"          , "Male"  , "143501"      |
             "MID25848589", "Institution M", "White"          , "Male"  , "143501"      )
     setDT(DT)
-    DT[, c("race", "sex", "institution", "cip6") :=
+    DT[, c("race", "sex", "institution", "proxy") :=
            list(as.factor(race),
                 as.factor(sex),
                 as.factor(institution),
-                as.factor(cip6)
+                as.factor(proxy)
            )]
 
     # Correct answer

@@ -3,9 +3,9 @@
 \docType{data}
 \name{fye_proxy}
 \alias{fye_proxy}
-\title{Predicted proxy programs for FYE students}
+\title{Starting program proxies for FYE students}
 \format{
-\code{data.table} with 4492 rows and 2 columns keyed by student
+\code{data.table} with 3738 rows and 2 columns keyed by student
 ID. The variables are:
 \describe{
 
@@ -20,28 +20,27 @@ ID. The variables are:
 fye_proxy
 }
 \description{
-Predicted proxy programs for all First-Year Engineering (FYE) students 
-in the midfielddata data tables. Keyed by student ID. Contains 
-6-digit CIP codes that are substituted for the First-Year-Engineering (FYE) 
-CIP code when an analysis requires starting programs that are 
-degree-granting. Suitable for use with midfielddata practice data only.
+Proxies are the degree-granting engineering programs we predict that 
+First-Year Engineering (FYE) students would have declared had they not been 
+required to enroll in FYE. Keyed by student ID. Proxies are provided for 
+all students in the midfielddata practice data who enroll in FYE in their 
+first term.
 }
 \details{
-Proxy programs in \code{fye_proxy} are the engineering 
-programs we predict that students would have declared had they not been 
-required to enroll in FYE. The data set includes all FYE students---those 
-admitted to engineering in their first term as well as those who switch to 
-Engineering from non-engineering programs.
+The proxy variable contains 6-digit CIP codes of degree-granting engineering 
+programs, e.g., Electrical Engineering, Mechanical Engineering, etc., that 
+are substituted for the FYE CIP code when an analysis requires 
+degree-granting starting programs. The most common application is a 
+graduation rate calculation. 
 
 The prediction is based on students' first post-FYE programs and a 
-multivariate imputation suitable for multiple categorical 
-variables using the mice package. The predictor variables are institution, 
-race, and sex. The predicted variable is the 6-digit CIP code of a 
-degree-granting engineering program at their institution.
+multivariate imputation suitable for multiple categorical variables using 
+the mice package. The predictor variables are institution, race, and sex. 
+The predicted variable is the 6-digit CIP code of a degree-granting 
+engineering program at their institution.
 
-\code{fye_proxy} holds only for the practice data in
-midfielddata---these values cannot be commingled with the research
-database available to MIDFIELD partners.
+\code{fye_proxy} holds only for the practice data in midfielddata---these 
+values cannot be commingled with the MIDFIELD research database.
 }
 \seealso{
 Other cip-data: 
