@@ -98,7 +98,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Demographics (left outer joins)</h1>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-10-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-050-demographics.Rmd" class="external-link"><code>vignettes/art-050-demographics.Rmd</code></a></small>
       <div class="d-none name"><code>art-050-demographics.Rmd</code></div>
@@ -153,6 +153,8 @@ Mechanical Engineering.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># A convenient set of IDs</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_mcid</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display results</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;              mcid</span></span>
 <span><span class="co">#&gt;            &lt;char&gt;</span></span>
@@ -185,36 +187,36 @@ creates the left-outer join. To join only race and sex from
 <code class="sourceCode R"><span><span class="co"># Subset of student data frame to join</span></span>
 <span><span class="va">cols_to_join</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">cols_to_join</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;              mcid            race    sex</span></span>
-<span><span class="co">#&gt;            &lt;char&gt;          &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;    1: MID25783178           Black   Male</span></span>
-<span><span class="co">#&gt;    2: MID25783441           White   Male</span></span>
-<span><span class="co">#&gt;    3: MID25783491           White   Male</span></span>
-<span><span class="co">#&gt;    4: MID25783912           White   Male</span></span>
-<span><span class="co">#&gt;    5: MID25784025           Black   Male</span></span>
-<span><span class="co">#&gt;   ---                                   </span></span>
-<span><span class="co">#&gt; 7129: MID26696958           White   Male</span></span>
-<span><span class="co">#&gt; 7130: MID26696967           White   Male</span></span>
-<span><span class="co">#&gt; 7131: MID26697163 Hispanic/Latinx   Male</span></span>
-<span><span class="co">#&gt; 7132: MID26697444           White   Male</span></span>
-<span><span class="co">#&gt; 7133: MID26697447           Asian   Male</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;              mcid   race    sex</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783178  Black   Male</span></span>
+<span><span class="co">#&gt;    2: MID25783441  White   Male</span></span>
+<span><span class="co">#&gt;    3: MID25783491  White   Male</span></span>
+<span><span class="co">#&gt;    4: MID25783912  White   Male</span></span>
+<span><span class="co">#&gt;    5: MID25784025  Black   Male</span></span>
+<span><span class="co">#&gt;   ---                          </span></span>
+<span><span class="co">#&gt; 7129: MID26696958  White   Male</span></span>
+<span><span class="co">#&gt; 7130: MID26696967  White   Male</span></span>
+<span><span class="co">#&gt; 7131: MID26697163 Latine   Male</span></span>
+<span><span class="co">#&gt; 7132: MID26697444  White   Male</span></span>
+<span><span class="co">#&gt; 7133: MID26697447  Asian   Male</span></span></code></pre>
 <p>Alternatively, one can include the columns selection within the merge
 operation.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;              mcid            race    sex</span></span>
-<span><span class="co">#&gt;            &lt;char&gt;          &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;    1: MID25783178           Black   Male</span></span>
-<span><span class="co">#&gt;    2: MID25783441           White   Male</span></span>
-<span><span class="co">#&gt;    3: MID25783491           White   Male</span></span>
-<span><span class="co">#&gt;    4: MID25783912           White   Male</span></span>
-<span><span class="co">#&gt;    5: MID25784025           Black   Male</span></span>
-<span><span class="co">#&gt;   ---                                   </span></span>
-<span><span class="co">#&gt; 7129: MID26696958           White   Male</span></span>
-<span><span class="co">#&gt; 7130: MID26696967           White   Male</span></span>
-<span><span class="co">#&gt; 7131: MID26697163 Hispanic/Latinx   Male</span></span>
-<span><span class="co">#&gt; 7132: MID26697444           White   Male</span></span>
-<span><span class="co">#&gt; 7133: MID26697447           Asian   Male</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;              mcid   race    sex</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783178  Black   Male</span></span>
+<span><span class="co">#&gt;    2: MID25783441  White   Male</span></span>
+<span><span class="co">#&gt;    3: MID25783491  White   Male</span></span>
+<span><span class="co">#&gt;    4: MID25783912  White   Male</span></span>
+<span><span class="co">#&gt;    5: MID25784025  Black   Male</span></span>
+<span><span class="co">#&gt;   ---                          </span></span>
+<span><span class="co">#&gt; 7129: MID26696958  White   Male</span></span>
+<span><span class="co">#&gt; 7130: MID26696967  White   Male</span></span>
+<span><span class="co">#&gt; 7131: MID26697163 Latine   Male</span></span>
+<span><span class="co">#&gt; 7132: MID26697444  White   Male</span></span>
+<span><span class="co">#&gt; 7133: MID26697447  Asian   Male</span></span></code></pre>
 <p><strong>Using Y[X, j].</strong> The second approach—computationally
 more efficient—uses the data.table <code>Y[X, j]</code> syntax were
 <code>X</code> is the “left” data (all rows returned) and <code>Y</code>
@@ -225,20 +227,22 @@ the “right” (matching rows returned).</p>
 <span></span>
 <span><span class="co"># Left-outer join student to DT</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display results</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;              mcid            race    sex</span></span>
-<span><span class="co">#&gt;            &lt;char&gt;          &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;    1: MID25783178           Black   Male</span></span>
-<span><span class="co">#&gt;    2: MID25783441           White   Male</span></span>
-<span><span class="co">#&gt;    3: MID25783491           White   Male</span></span>
-<span><span class="co">#&gt;    4: MID25783912           White   Male</span></span>
-<span><span class="co">#&gt;    5: MID25784025           Black   Male</span></span>
-<span><span class="co">#&gt;   ---                                   </span></span>
-<span><span class="co">#&gt; 7129: MID26696958           White   Male</span></span>
-<span><span class="co">#&gt; 7130: MID26696967           White   Male</span></span>
-<span><span class="co">#&gt; 7131: MID26697163 Hispanic/Latinx   Male</span></span>
-<span><span class="co">#&gt; 7132: MID26697444           White   Male</span></span>
-<span><span class="co">#&gt; 7133: MID26697447           Asian   Male</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;              mcid   race    sex</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783178  Black   Male</span></span>
+<span><span class="co">#&gt;    2: MID25783441  White   Male</span></span>
+<span><span class="co">#&gt;    3: MID25783491  White   Male</span></span>
+<span><span class="co">#&gt;    4: MID25783912  White   Male</span></span>
+<span><span class="co">#&gt;    5: MID25784025  Black   Male</span></span>
+<span><span class="co">#&gt;   ---                          </span></span>
+<span><span class="co">#&gt; 7129: MID26696958  White   Male</span></span>
+<span><span class="co">#&gt; 7130: MID26696967  White   Male</span></span>
+<span><span class="co">#&gt; 7131: MID26697163 Latine   Male</span></span>
+<span><span class="co">#&gt; 7132: MID26697444  White   Male</span></span>
+<span><span class="co">#&gt; 7133: MID26697447  Asian   Male</span></span></code></pre>
 <p>The <code>on</code> argument defines the shared column to use in
 matching. The <code>j</code> argument, .(mcid, race, sex), defines the
 columns from both data frames to return. In the <code>Y[X, j, on]</code>
@@ -358,6 +362,8 @@ function to remove duplicates.</p>
 <span></span>
 <span><span class="co"># Add variables from term to DT</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">institution</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display results</span></span>
 <span><span class="va">x</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt;               mcid   institution</span></span>
 <span><span class="co">#&gt;             &lt;char&gt;        &lt;char&gt;</span></span>
@@ -427,6 +433,8 @@ NA.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add variables from degree to DT</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term_degree</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display results</span></span>
 <span><span class="va">x</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt;              mcid term_degree   cip6</span></span>
 <span><span class="co">#&gt;            &lt;char&gt;      &lt;char&gt; &lt;char&gt;</span></span>
@@ -525,8 +533,7 @@ their own R file.</p>
 blockquote {
     padding: 10px 20px;
     margin: 0 0 20px;
-    font-size: 12px;
-    border-left: 0px solid
+    border-left: 0px
 }
 </style>
 </div>

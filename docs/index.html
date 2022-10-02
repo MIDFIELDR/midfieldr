@@ -125,22 +125,25 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p><a href="https://engineering.purdue.edu/MIDFIELD" target="_blank" class="external-link"><strong>MIDFIELD</strong></a> contains individual Student Unit Record (SUR) data for 1.7M students at 21 US institutions (as of June 2022). MIDFIELD is large enough to permit grouping and summarizing by multiple characteristics, enabling researchers to examine student characteristics (race/ethnicity, sex, prior achievement) and curricular pathways (including coursework and major) by institution and over time.</p>
-<p><strong>midfieldr</strong> is an R package that provides tools for working with MIDFIELD SURs. The tools in midfieldr work with the research data in the MIDFIELD database and with the practice data in the midfielddata package.</p>
+<p><a href="https://midfield.online" target="_blank" class="external-link"><strong>MIDFIELD</strong></a> (as of June 2022) contains Student Unit Records (SURs) of 1.7M undergraduates at nineteen US institutions from 1987 through 2018, though different institutions provide data over different time spans. MIDFIELD is large enough to permit summarizing by multiple characteristics such as race/ethnicity, sex, and program.</p>
+<p><strong>midfieldr</strong> is an R package that provides tools for working with MIDFIELD research data and with the practice data in the midfielddata R package.</p>
 <p><a href="https://midfieldr.github.io/midfielddata/" target="_blank" class="external-link"><strong>midfielddata</strong></a> is an R package that provides practice data (a proportionate stratified sample of MIDFIELD) with longitudinal SURs for nearly 98,000 undergraduates at 12 institutions from 1987–2016 organized in four data tables:</p>
 <table class="table  lightable-paper" style='font-family: "Arial Narrow", arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;'>
 <thead><tr>
 <th style="text-align:left;background-color: #c7eae5 !important;">
-Data set
+Practice data table
 </th>
 <th style="text-align:left;background-color: #c7eae5 !important;">
 Each row is
 </th>
 <th style="text-align:right;background-color: #c7eae5 !important;">
-N rows
+No. of rows
 </th>
 <th style="text-align:right;background-color: #c7eae5 !important;">
-N columns
+No. of columns
+</th>
+<th style="text-align:right;background-color: #c7eae5 !important;">
+Memory
 </th>
 </tr></thead>
 <tbody>
@@ -149,13 +152,16 @@ N columns
 student
 </td>
 <td style="text-align:left;color: black !important;background-color: white !important;">
-a student upon being admitted
+a degree-seeking student
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-98k
+97,640
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 13
+</td>
+<td style="text-align:right;">
+19 Mb
 </td>
 </tr>
 <tr>
@@ -166,10 +172,13 @@ course
 a student in a course
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-3.4M
+3.5M
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 12
+</td>
+<td style="text-align:right;">
+340 Mb
 </td>
 </tr>
 <tr>
@@ -180,10 +189,13 @@ term
 a student in a term
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-711k
+728,000
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 13
+</td>
+<td style="text-align:right;">
+80 Mb
 </td>
 </tr>
 <tr>
@@ -191,13 +203,16 @@ a student in a term
 degree
 </td>
 <td style="text-align:left;color: black !important;background-color: white !important;">
-a student who completes their program
+a student who graduates
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-48k
+48,000
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 5
+</td>
+<td style="text-align:right;">
+10.2 Mb
 </td>
 </tr>
 </tbody>
@@ -241,7 +256,7 @@ a student who completes their program
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Filter observations for degree-seeking using an inner join</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">student</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span>, <span class="va">timely_term</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span>, <span class="va">timely_term</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Filter observations for engineering programs</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^14"</span><span class="op">]</span></span>
@@ -255,11 +270,13 @@ a student who completes their program
 <span><span class="co"># Add race and sex using a left outer join</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">completion_status</span>, <span class="va">sex</span>, <span class="va">race</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
+<span><span class="co"># Create a new variable combining race and sex</span></span>
+<span><span class="va">DT</span><span class="op">[</span>, <span class="va">people</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
 <span><span class="co"># Calculate summary statistics</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"completion_status"</span>, <span class="st">"sex"</span>, <span class="st">"race"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"completion_status"</span>, <span class="st">"people"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Tabulate results</span></span>
-<span><span class="va">DT</span><span class="op">[</span>, <span class="va">people</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT_display</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">people</span> <span class="op">~</span> <span class="va">completion_status</span>, value.var <span class="op">=</span> <span class="st">"N"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">DT_display</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"people"</span>, <span class="st">"timely"</span>, <span class="st">"late"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">DT_display</span>,</span>
@@ -341,34 +358,6 @@ Black Male
 </tr>
 <tr>
 <td style="text-align:left;color: black !important;background-color: white !important;">
-Hispanic/Latinx Female
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-63
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-6
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-21
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-Hispanic/Latinx Male
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-188
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-27
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-103
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
 International Female
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
@@ -393,6 +382,34 @@ International Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 74
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Latine Female
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+63
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+6
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+21
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Latine Male
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+188
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+27
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+103
 </td>
 </tr>
 <tr>
@@ -561,8 +578,9 @@ midfielddata help page
 <li>Please run the package unit tests and report the results with your bug report. Any user can run the package tests by installing the <em>tinytest</em> package and running:</li>
 </ul>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span>    <span class="va">test_results</span> <span class="op">&lt;-</span> <span class="fu">tinytest</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytest/man/test_package.html" class="external-link">test_package</a></span><span class="op">(</span><span class="st">"midfieldr"</span><span class="op">)</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">test_results</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Detailed test results</span></span>
+<span><span class="va">test_results</span> <span class="op">&lt;-</span> <span class="fu">tinytest</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytest/man/test_package.html" class="external-link">test_package</a></span><span class="op">(</span><span class="st">"midfieldr"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">test_results</span><span class="op">)</span></span></code></pre></div>
 <p>Participation in this open source project is subject to a <a href="CONDUCT.html">Code of Conduct</a>.</p>
 </div>
 <div class="section level2">

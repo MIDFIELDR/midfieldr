@@ -98,7 +98,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Case study: Results</h1>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-10-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-003-case-results.Rmd" class="external-link"><code>vignettes/art-003-case-results.Rmd</code></a></small>
       <div class="d-none name"><code>art-003-case-results.Rmd</code></div>
@@ -106,19 +106,16 @@
 
     
     
-<p>Part 3 of a case study in three parts:</p>
-<ul>
-<li>
-<a href="art-001-case-goals.html">Goals.</a> Describing the study
-parameters.<br>
-</li>
-<li>
-<a href="art-002-case-data.html">Data.</a> Transforming the data to
-yield the observations of interest.</li>
-<li>
-<a href="art-003-case-results.html">Results.</a> Calculating summary
-statistics and metrics and displaying the results.</li>
-</ul>
+<p>Part 2 of a case study in three parts, illustrating how we work with
+longitudinal Student Unit Records (SUR).</p>
+<ol style="list-style-type: decimal">
+<li><p><a href="art-001-case-goals.html">Goals.</a> Briefly describe the
+study.</p></li>
+<li><p><a href="art-002-case-data.html">Data.</a> Transforming the data
+to yield the observations of interest.</p></li>
+<li><p>Results (this page). Calculating summary statistics and metrics
+and displaying the results.</p></li>
+</ol>
 <p>In this part, we use the midfieldr functions:</p>
 <ul>
 <li><code><a href="../reference/order_multiway.html">order_multiway()</a></code></li>
@@ -154,20 +151,22 @@ These data are included with midfieldr.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Copy the case study observations</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_observations</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;               mcid            race    sex program  group</span></span>
-<span><span class="co">#&gt;             &lt;char&gt;          &lt;char&gt; &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;     1: MID25783178           Black   Male     ISE   ever</span></span>
-<span><span class="co">#&gt;     2: MID25783441           White   Male      CE   ever</span></span>
-<span><span class="co">#&gt;     3: MID25783491           White   Male      EE   ever</span></span>
-<span><span class="co">#&gt;     4: MID25783912           White   Male     ISE   ever</span></span>
-<span><span class="co">#&gt;     5: MID25784025           Black   Male      ME   ever</span></span>
-<span><span class="co">#&gt;    ---                                                  </span></span>
-<span><span class="co">#&gt; 11208: MID26696738           White   Male      ME   grad</span></span>
-<span><span class="co">#&gt; 11209: MID26696771           White Female      EE   grad</span></span>
-<span><span class="co">#&gt; 11210: MID26696967           White   Male      ME   grad</span></span>
-<span><span class="co">#&gt; 11211: MID26697163 Hispanic/Latinx   Male      ME   grad</span></span>
-<span><span class="co">#&gt; 11212: MID26697447           Asian   Male      EE   grad</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;               mcid   race    sex program  group</span></span>
+<span><span class="co">#&gt;             &lt;char&gt; &lt;char&gt; &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MID25783178  Black   Male     ISE   ever</span></span>
+<span><span class="co">#&gt;     2: MID25783441  White   Male      CE   ever</span></span>
+<span><span class="co">#&gt;     3: MID25783491  White   Male      EE   ever</span></span>
+<span><span class="co">#&gt;     4: MID25783912  White   Male     ISE   ever</span></span>
+<span><span class="co">#&gt;     5: MID25784025  Black   Male      ME   ever</span></span>
+<span><span class="co">#&gt;    ---                                         </span></span>
+<span><span class="co">#&gt; 11208: MID26696738  White   Male      ME   grad</span></span>
+<span><span class="co">#&gt; 11209: MID26696771  White Female      EE   grad</span></span>
+<span><span class="co">#&gt; 11210: MID26696967  White   Male      ME   grad</span></span>
+<span><span class="co">#&gt; 11211: MID26697163 Latine   Male      ME   grad</span></span>
+<span><span class="co">#&gt; 11212: MID26697447  Asian   Male      EE   grad</span></span></code></pre>
 <p>You can view the help page (and data dictionary) by running</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Run in Console</span></span>
@@ -186,6 +185,8 @@ analytical goal. We can now group and summarize in one line of code.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Group and summarize</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group"</span>, <span class="st">"program"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;       group program            race    sex     N</span></span>
 <span><span class="co">#&gt;      &lt;char&gt;  &lt;char&gt;          &lt;char&gt; &lt;char&gt; &lt;int&gt;</span></span>
@@ -217,34 +218,39 @@ Zumel, 2019</a>)</span>. This step leaves the graphing variables
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Transform to row-record form</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">program</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">race</span> <span class="op">~</span> <span class="va">group</span>, value.var <span class="op">=</span> <span class="st">"N"</span>, fill <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;     program    sex            race  ever  grad</span></span>
 <span><span class="co">#&gt;      &lt;char&gt; &lt;char&gt;          &lt;char&gt; &lt;int&gt; &lt;int&gt;</span></span>
 <span><span class="co">#&gt;  1:      CE Female           Asian    16     9</span></span>
 <span><span class="co">#&gt;  2:      CE Female           Black    49    15</span></span>
-<span><span class="co">#&gt;  3:      CE Female Hispanic/Latinx    10     5</span></span>
-<span><span class="co">#&gt;  4:      CE Female   International     1     0</span></span>
+<span><span class="co">#&gt;  3:      CE Female   International     1     0</span></span>
+<span><span class="co">#&gt;  4:      CE Female          Latine    10     5</span></span>
 <span><span class="co">#&gt;  5:      CE Female   Other/Unknown     6     2</span></span>
 <span><span class="co">#&gt; ---                                           </span></span>
-<span><span class="co">#&gt; 51:      ME   Male Hispanic/Latinx    76    29</span></span>
-<span><span class="co">#&gt; 52:      ME   Male   International    36    16</span></span>
+<span><span class="co">#&gt; 51:      ME   Male   International    36    16</span></span>
+<span><span class="co">#&gt; 52:      ME   Male          Latine    76    29</span></span>
 <span><span class="co">#&gt; 53:      ME   Male Native American    14     4</span></span>
 <span><span class="co">#&gt; 54:      ME   Male   Other/Unknown    43    20</span></span>
 <span><span class="co">#&gt; 55:      ME   Male           White  1776   918</span></span></code></pre>
 <p>We calculate percent stickiness.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span>, <span class="va">stick</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">grad</span> <span class="op">/</span> <span class="va">ever</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="co"># Compute the metric</span></span>
+<span><span class="va">DT</span><span class="op">[</span>, <span class="va">stick</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">grad</span> <span class="op">/</span> <span class="va">ever</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;     program    sex            race  ever  grad stick</span></span>
 <span><span class="co">#&gt;      &lt;char&gt; &lt;char&gt;          &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
 <span><span class="co">#&gt;  1:      CE Female           Asian    16     9  56.2</span></span>
 <span><span class="co">#&gt;  2:      CE Female           Black    49    15  30.6</span></span>
-<span><span class="co">#&gt;  3:      CE Female Hispanic/Latinx    10     5  50.0</span></span>
-<span><span class="co">#&gt;  4:      CE Female   International     1     0   0.0</span></span>
+<span><span class="co">#&gt;  3:      CE Female   International     1     0   0.0</span></span>
+<span><span class="co">#&gt;  4:      CE Female          Latine    10     5  50.0</span></span>
 <span><span class="co">#&gt;  5:      CE Female   Other/Unknown     6     2  33.3</span></span>
 <span><span class="co">#&gt; ---                                                 </span></span>
-<span><span class="co">#&gt; 51:      ME   Male Hispanic/Latinx    76    29  38.2</span></span>
-<span><span class="co">#&gt; 52:      ME   Male   International    36    16  44.4</span></span>
+<span><span class="co">#&gt; 51:      ME   Male   International    36    16  44.4</span></span>
+<span><span class="co">#&gt; 52:      ME   Male          Latine    76    29  38.2</span></span>
 <span><span class="co">#&gt; 53:      ME   Male Native American    14     4  28.6</span></span>
 <span><span class="co">#&gt; 54:      ME   Male   Other/Unknown    43    20  46.5</span></span>
 <span><span class="co">#&gt; 55:      ME   Male           White  1776   918  51.7</span></span></code></pre>
@@ -265,84 +271,94 @@ involved, we remove observations with 10 or fewer graduates.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Preserve anonymity</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">grad</span> <span class="op">&gt;=</span> <span class="fl">10</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;     program    sex            race  ever  grad stick</span></span>
-<span><span class="co">#&gt;      &lt;char&gt; &lt;char&gt;          &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      CE Female           Black    49    15  30.6</span></span>
-<span><span class="co">#&gt;  2:      CE Female           White   304   156  51.3</span></span>
-<span><span class="co">#&gt;  3:      CE   Male           Asian    34    17  50.0</span></span>
-<span><span class="co">#&gt;  4:      CE   Male           Black    90    25  27.8</span></span>
-<span><span class="co">#&gt;  5:      CE   Male Hispanic/Latinx    53    22  41.5</span></span>
-<span><span class="co">#&gt; ---                                                 </span></span>
-<span><span class="co">#&gt; 27:      ME   Male           Black   202    65  32.2</span></span>
-<span><span class="co">#&gt; 28:      ME   Male Hispanic/Latinx    76    29  38.2</span></span>
-<span><span class="co">#&gt; 29:      ME   Male   International    36    16  44.4</span></span>
-<span><span class="co">#&gt; 30:      ME   Male   Other/Unknown    43    20  46.5</span></span>
-<span><span class="co">#&gt; 31:      ME   Male           White  1776   918  51.7</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;     program    sex          race  ever  grad stick</span></span>
+<span><span class="co">#&gt;      &lt;char&gt; &lt;char&gt;        &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt;  1:      CE Female         Black    49    15  30.6</span></span>
+<span><span class="co">#&gt;  2:      CE Female         White   304   156  51.3</span></span>
+<span><span class="co">#&gt;  3:      CE   Male         Asian    34    17  50.0</span></span>
+<span><span class="co">#&gt;  4:      CE   Male         Black    90    25  27.8</span></span>
+<span><span class="co">#&gt;  5:      CE   Male        Latine    53    22  41.5</span></span>
+<span><span class="co">#&gt; ---                                               </span></span>
+<span><span class="co">#&gt; 27:      ME   Male         Black   202    65  32.2</span></span>
+<span><span class="co">#&gt; 28:      ME   Male International    36    16  44.4</span></span>
+<span><span class="co">#&gt; 29:      ME   Male        Latine    76    29  38.2</span></span>
+<span><span class="co">#&gt; 30:      ME   Male Other/Unknown    43    20  46.5</span></span>
+<span><span class="co">#&gt; 31:      ME   Male         White  1776   918  51.7</span></span></code></pre>
 <p><strong>Filtering.</strong> Let us assume that our study focuses on
 “domestic” students of known race/ethnicity. In that case, we omit
 observations labeled “International” and Other/Unknown”.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Filter by study design</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="va">race</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"International"</span>, <span class="st">"Other/Unknown"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;     program    sex            race  ever  grad stick</span></span>
-<span><span class="co">#&gt;      &lt;char&gt; &lt;char&gt;          &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      CE Female           Black    49    15  30.6</span></span>
-<span><span class="co">#&gt;  2:      CE Female           White   304   156  51.3</span></span>
-<span><span class="co">#&gt;  3:      CE   Male           Asian    34    17  50.0</span></span>
-<span><span class="co">#&gt;  4:      CE   Male           Black    90    25  27.8</span></span>
-<span><span class="co">#&gt;  5:      CE   Male Hispanic/Latinx    53    22  41.5</span></span>
-<span><span class="co">#&gt; ---                                                 </span></span>
-<span><span class="co">#&gt; 23:      ME Female           White   261   109  41.8</span></span>
-<span><span class="co">#&gt; 24:      ME   Male           Asian   118    58  49.2</span></span>
-<span><span class="co">#&gt; 25:      ME   Male           Black   202    65  32.2</span></span>
-<span><span class="co">#&gt; 26:      ME   Male Hispanic/Latinx    76    29  38.2</span></span>
-<span><span class="co">#&gt; 27:      ME   Male           White  1776   918  51.7</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;     program    sex   race  ever  grad stick</span></span>
+<span><span class="co">#&gt;      &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt;  1:      CE Female  Black    49    15  30.6</span></span>
+<span><span class="co">#&gt;  2:      CE Female  White   304   156  51.3</span></span>
+<span><span class="co">#&gt;  3:      CE   Male  Asian    34    17  50.0</span></span>
+<span><span class="co">#&gt;  4:      CE   Male  Black    90    25  27.8</span></span>
+<span><span class="co">#&gt;  5:      CE   Male Latine    53    22  41.5</span></span>
+<span><span class="co">#&gt; ---                                        </span></span>
+<span><span class="co">#&gt; 23:      ME Female  White   261   109  41.8</span></span>
+<span><span class="co">#&gt; 24:      ME   Male  Asian   118    58  49.2</span></span>
+<span><span class="co">#&gt; 25:      ME   Male  Black   202    65  32.2</span></span>
+<span><span class="co">#&gt; 26:      ME   Male Latine    76    29  38.2</span></span>
+<span><span class="co">#&gt; 27:      ME   Male  White  1776   918  51.7</span></span></code></pre>
 <p><strong>Creating variables.</strong> We have found it useful to
 report such data with a variable that combines race/ethnicity and
 sex.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span>, <span class="va">people</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="co"># Create a variable </span></span>
+<span><span class="va">DT</span><span class="op">[</span>, <span class="va">people</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"people"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;     program               people  ever  grad stick</span></span>
-<span><span class="co">#&gt;      &lt;char&gt;               &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      CE         Black Female    49    15  30.6</span></span>
-<span><span class="co">#&gt;  2:      CE         White Female   304   156  51.3</span></span>
-<span><span class="co">#&gt;  3:      CE           Asian Male    34    17  50.0</span></span>
-<span><span class="co">#&gt;  4:      CE           Black Male    90    25  27.8</span></span>
-<span><span class="co">#&gt;  5:      CE Hispanic/Latinx Male    53    22  41.5</span></span>
-<span><span class="co">#&gt; ---                                               </span></span>
-<span><span class="co">#&gt; 23:      ME         White Female   261   109  41.8</span></span>
-<span><span class="co">#&gt; 24:      ME           Asian Male   118    58  49.2</span></span>
-<span><span class="co">#&gt; 25:      ME           Black Male   202    65  32.2</span></span>
-<span><span class="co">#&gt; 26:      ME Hispanic/Latinx Male    76    29  38.2</span></span>
-<span><span class="co">#&gt; 27:      ME           White Male  1776   918  51.7</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;     program       people  ever  grad stick</span></span>
+<span><span class="co">#&gt;      &lt;char&gt;       &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt;  1:      CE Black Female    49    15  30.6</span></span>
+<span><span class="co">#&gt;  2:      CE White Female   304   156  51.3</span></span>
+<span><span class="co">#&gt;  3:      CE   Asian Male    34    17  50.0</span></span>
+<span><span class="co">#&gt;  4:      CE   Black Male    90    25  27.8</span></span>
+<span><span class="co">#&gt;  5:      CE  Latine Male    53    22  41.5</span></span>
+<span><span class="co">#&gt; ---                                       </span></span>
+<span><span class="co">#&gt; 23:      ME White Female   261   109  41.8</span></span>
+<span><span class="co">#&gt; 24:      ME   Asian Male   118    58  49.2</span></span>
+<span><span class="co">#&gt; 25:      ME   Black Male   202    65  32.2</span></span>
+<span><span class="co">#&gt; 26:      ME  Latine Male    76    29  38.2</span></span>
+<span><span class="co">#&gt; 27:      ME   White Male  1776   918  51.7</span></span></code></pre>
 <p><strong>Recoding values.</strong> Readers can more readily interpret
 our charts and tables if the programs are un-abbreviated.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="co"># Recode values for charts and tables</span></span>
+<span><span class="va">DT</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
 <span>  <span class="va">program</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"CE"</span>, <span class="st">"Civil"</span>,</span>
 <span>  <span class="va">program</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"EE"</span>, <span class="st">"Electrical"</span>,</span>
 <span>  <span class="va">program</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"ME"</span>, <span class="st">"Mechanical"</span>,</span>
 <span>  <span class="va">program</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"ISE"</span>, <span class="st">"Industrial/Systems"</span></span>
 <span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;        program               people  ever  grad stick</span></span>
-<span><span class="co">#&gt;         &lt;char&gt;               &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      Civil         Black Female    49    15  30.6</span></span>
-<span><span class="co">#&gt;  2:      Civil         White Female   304   156  51.3</span></span>
-<span><span class="co">#&gt;  3:      Civil           Asian Male    34    17  50.0</span></span>
-<span><span class="co">#&gt;  4:      Civil           Black Male    90    25  27.8</span></span>
-<span><span class="co">#&gt;  5:      Civil Hispanic/Latinx Male    53    22  41.5</span></span>
-<span><span class="co">#&gt; ---                                                  </span></span>
-<span><span class="co">#&gt; 23: Mechanical         White Female   261   109  41.8</span></span>
-<span><span class="co">#&gt; 24: Mechanical           Asian Male   118    58  49.2</span></span>
-<span><span class="co">#&gt; 25: Mechanical           Black Male   202    65  32.2</span></span>
-<span><span class="co">#&gt; 26: Mechanical Hispanic/Latinx Male    76    29  38.2</span></span>
-<span><span class="co">#&gt; 27: Mechanical           White Male  1776   918  51.7</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;        program       people  ever  grad stick</span></span>
+<span><span class="co">#&gt;         &lt;char&gt;       &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt;  1:      Civil Black Female    49    15  30.6</span></span>
+<span><span class="co">#&gt;  2:      Civil White Female   304   156  51.3</span></span>
+<span><span class="co">#&gt;  3:      Civil   Asian Male    34    17  50.0</span></span>
+<span><span class="co">#&gt;  4:      Civil   Black Male    90    25  27.8</span></span>
+<span><span class="co">#&gt;  5:      Civil  Latine Male    53    22  41.5</span></span>
+<span><span class="co">#&gt; ---                                          </span></span>
+<span><span class="co">#&gt; 23: Mechanical White Female   261   109  41.8</span></span>
+<span><span class="co">#&gt; 24: Mechanical   Asian Male   118    58  49.2</span></span>
+<span><span class="co">#&gt; 25: Mechanical   Black Male   202    65  32.2</span></span>
+<span><span class="co">#&gt; 26: Mechanical  Latine Male    76    29  38.2</span></span>
+<span><span class="co">#&gt; 27: Mechanical   White Male  1776   918  51.7</span></span></code></pre>
 <p>With one quantitative variable (stickiness) for every combination of
 the levels of two categorical variables (program and
 race/ethnicity/sex), these data are <em>multiway data</em> <span class="citation">(<a href="#ref-Cleveland:1993" role="doc-biblioref">Cleveland, 1993</a>)</span>. How one orders the
@@ -358,33 +374,22 @@ chart.</p>
 <span>  method <span class="op">=</span> <span class="st">"percent"</span>,</span>
 <span>  ratio_of <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grad"</span>, <span class="st">"ever"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;        program               people  grad  ever stick program_stick</span></span>
-<span><span class="co">#&gt;         &lt;fctr&gt;               &lt;fctr&gt; &lt;num&gt; &lt;num&gt; &lt;num&gt;         &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      Civil         Black Female    15    49  30.6          50.4</span></span>
-<span><span class="co">#&gt;  2:      Civil         White Female   156   304  51.3          50.4</span></span>
-<span><span class="co">#&gt;  3:      Civil           Asian Male    17    34  50.0          50.4</span></span>
-<span><span class="co">#&gt;  4:      Civil           Black Male    25    90  27.8          50.4</span></span>
-<span><span class="co">#&gt;  5:      Civil Hispanic/Latinx Male    22    53  41.5          50.4</span></span>
-<span><span class="co">#&gt; ---                                                                </span></span>
-<span><span class="co">#&gt; 23: Mechanical         White Female   109   261  41.8          48.0</span></span>
-<span><span class="co">#&gt; 24: Mechanical           Asian Male    58   118  49.2          48.0</span></span>
-<span><span class="co">#&gt; 25: Mechanical           Black Male    65   202  32.2          48.0</span></span>
-<span><span class="co">#&gt; 26: Mechanical Hispanic/Latinx Male    29    76  38.2          48.0</span></span>
-<span><span class="co">#&gt; 27: Mechanical           White Male   918  1776  51.7          48.0</span></span>
-<span><span class="co">#&gt;     people_stick</span></span>
-<span><span class="co">#&gt;            &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:         38.4</span></span>
-<span><span class="co">#&gt;  2:         45.9</span></span>
-<span><span class="co">#&gt;  3:         48.0</span></span>
-<span><span class="co">#&gt;  4:         34.2</span></span>
-<span><span class="co">#&gt;  5:         41.5</span></span>
-<span><span class="co">#&gt; ---             </span></span>
-<span><span class="co">#&gt; 23:         45.9</span></span>
-<span><span class="co">#&gt; 24:         48.0</span></span>
-<span><span class="co">#&gt; 25:         34.2</span></span>
-<span><span class="co">#&gt; 26:         41.5</span></span>
-<span><span class="co">#&gt; 27:         49.5</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;        program       people  grad  ever stick program_stick people_stick</span></span>
+<span><span class="co">#&gt;         &lt;fctr&gt;       &lt;fctr&gt; &lt;num&gt; &lt;num&gt; &lt;num&gt;         &lt;num&gt;        &lt;num&gt;</span></span>
+<span><span class="co">#&gt;  1:      Civil Black Female    15    49  30.6          50.4         38.4</span></span>
+<span><span class="co">#&gt;  2:      Civil White Female   156   304  51.3          50.4         45.9</span></span>
+<span><span class="co">#&gt;  3:      Civil   Asian Male    17    34  50.0          50.4         48.0</span></span>
+<span><span class="co">#&gt;  4:      Civil   Black Male    25    90  27.8          50.4         34.2</span></span>
+<span><span class="co">#&gt;  5:      Civil  Latine Male    22    53  41.5          50.4         41.5</span></span>
+<span><span class="co">#&gt; ---                                                                     </span></span>
+<span><span class="co">#&gt; 23: Mechanical White Female   109   261  41.8          48.0         45.9</span></span>
+<span><span class="co">#&gt; 24: Mechanical   Asian Male    58   118  49.2          48.0         48.0</span></span>
+<span><span class="co">#&gt; 25: Mechanical   Black Male    65   202  32.2          48.0         34.2</span></span>
+<span><span class="co">#&gt; 26: Mechanical  Latine Male    29    76  38.2          48.0         41.5</span></span>
+<span><span class="co">#&gt; 27: Mechanical   White Male   918  1776  51.7          48.0         49.5</span></span></code></pre>
 <p>You can view the help page by running</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Run in Console</span></span>
@@ -452,8 +457,8 @@ labeling the remaining columns.</p>
 <span></span>
 <span><span class="co"># Edit one column header</span></span>
 <span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">tbl</span>, old <span class="op">=</span> <span class="st">"people"</span>, new <span class="op">=</span> <span class="st">"People"</span>, skip_absent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-Groups with numbers below our reporting threshold are denoted NA or
-omitted.
+<p>Groups with numbers below our reporting threshold are denoted NA or
+omitted.</p>
 <table class="table  lightable-paper" style='font-family: "Arial Narrow", arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;'>
 <caption>
 Table 1: Program stickiness (%)
@@ -546,7 +551,7 @@ Black Male
 </tr>
 <tr>
 <td style="text-align:left;color: black !important;background-color: white !important;">
-Hispanic/Latinx Male
+Latine Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 41.5
@@ -706,8 +711,7 @@ their own R file.</p>
 blockquote {
     padding: 10px 20px;
     margin: 0 0 20px;
-    font-size: 12px;
-    border-left: 0px solid
+    border-left: 0px
 }
 </style>
 </div>

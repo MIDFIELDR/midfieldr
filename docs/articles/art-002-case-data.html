@@ -98,7 +98,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Case study: Data</h1>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-10-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-002-case-data.Rmd" class="external-link"><code>vignettes/art-002-case-data.Rmd</code></a></small>
       <div class="d-none name"><code>art-002-case-data.Rmd</code></div>
@@ -106,25 +106,22 @@
 
     
     
-<p>Part 2 of a case study in three parts:</p>
-<ul>
-<li>
-<a href="art-001-case-goals.html">Goals.</a> Describing the study
-parameters.<br>
-</li>
-<li>
-<a href="art-002-case-data.html">Data.</a> Transforming the data to
-yield the observations of interest.</li>
-<li>
-<a href="art-003-case-results.html">Results.</a> Calculating summary
-statistics and metrics and displaying the results.</li>
-</ul>
+<p>Part 2 of a case study in three parts, illustrating how we work with
+longitudinal Student Unit Records (SUR).</p>
+<ol style="list-style-type: decimal">
+<li><p><a href="art-001-case-goals.html">Goals.</a> Briefly describe the
+study.</p></li>
+<li><p>Data (this page). Transforming the data to yield the observations
+of interest.</p></li>
+<li><p><a href="art-003-case-results.html">Results.</a> Calculating
+summary statistics and metrics and displaying the results.</p></li>
+</ol>
 <p>In this part, we use the midfieldr functions:</p>
 <ul>
-<li><code><a href="../reference/add_completion_status.html">add_completion_status()</a></code></li>
-<li><code><a href="../reference/add_data_sufficiency.html">add_data_sufficiency()</a></code></li>
-<li><code><a href="../reference/add_timely_term.html">add_timely_term()</a></code></li>
-<li><code><a href="../reference/filter_search.html">filter_search()</a></code></li>
+<li><p><code><a href="../reference/add_completion_status.html">add_completion_status()</a></code></p></li>
+<li><p><code><a href="../reference/add_data_sufficiency.html">add_data_sufficiency()</a></code></p></li>
+<li><p><code><a href="../reference/add_timely_term.html">add_timely_term()</a></code></p></li>
+<li><p><code><a href="../reference/filter_search.html">filter_search()</a></code></p></li>
 </ul>
 <div class="section level2">
 <h2 id="preface">Preface<a class="anchor" aria-label="anchor" href="#preface"></a>
@@ -201,6 +198,8 @@ combinations of student ID and program CIP.</p>
 <code class="sourceCode R"><span><span class="co"># Minimize the dimensions of the data</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;                mcid   cip6</span></span>
 <span><span class="co">#&gt;              &lt;char&gt; &lt;char&gt;</span></span>
@@ -238,6 +237,8 @@ as supporting variables used in its construction.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate a timely completion term for every student</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;                mcid   cip6 term_i     level_i adj_span timely_term</span></span>
 <span><span class="co">#&gt;              &lt;char&gt; &lt;char&gt; &lt;char&gt;      &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
@@ -262,6 +263,8 @@ well as supporting variables used in its construction.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Determine data sufficiency for every student</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;                mcid   cip6     level_i adj_span timely_term term_i lower_limit</span></span>
 <span><span class="co">#&gt;              &lt;char&gt; &lt;char&gt;      &lt;char&gt;    &lt;num&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
@@ -299,6 +302,8 @@ which the data are sufficient then drop unnecessary columns.</p>
 <code class="sourceCode R"><span><span class="co"># Retain observations having sufficient data</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;                mcid   cip6</span></span>
 <span><span class="co">#&gt;              &lt;char&gt; &lt;char&gt;</span></span>
@@ -327,6 +332,8 @@ columns.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Inner join that filters DT</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">student</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;                mcid   cip6</span></span>
 <span><span class="co">#&gt;              &lt;char&gt; &lt;char&gt;</span></span>
@@ -366,6 +373,8 @@ tends to be a disciplinary or departmental name.</p>
 <code class="sourceCode R"><span><span class="co"># Gather program CIP codes</span></span>
 <span><span class="va">study_program</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span><span class="va">cip</span>, keep_text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1427"</span>, <span class="st">"^1435"</span>, <span class="st">"^1436"</span>, <span class="st">"^1437"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">study_program</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, <span class="va">cip4name</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">study_program</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;       cip6                                               cip4name</span></span>
 <span><span class="co">#&gt;     &lt;char&gt;                                                 &lt;char&gt;</span></span>
@@ -426,6 +435,8 @@ programs, we can finalize the data frame of program CIPs and names.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Case study CIPs and program names</span></span>
 <span><span class="va">study_program</span><span class="op">[</span>, <span class="va">cip4name</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">study_program</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;       cip6 program</span></span>
 <span><span class="co">#&gt;     &lt;char&gt;  &lt;char&gt;</span></span>
@@ -455,6 +466,8 @@ data frame using a left-outer join and return selected rows.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Left-outer join to DT</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_program</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span>, <span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;                mcid   cip6 program</span></span>
 <span><span class="co">#&gt;              &lt;char&gt; &lt;char&gt;  &lt;char&gt;</span></span>
@@ -474,6 +487,8 @@ dropped.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retain observations in our four programs</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;              mcid   cip6 program</span></span>
 <span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt;  &lt;char&gt;</span></span>
@@ -496,6 +511,8 @@ ensure unique combinations of ID and program.</p>
 <code class="sourceCode R"><span><span class="co"># Drop duplicate rows</span></span>
 <span><span class="va">DT</span><span class="op">[</span>, <span class="va">cip6</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;              mcid program</span></span>
 <span><span class="co">#&gt;            &lt;char&gt;  &lt;char&gt;</span></span>
@@ -519,6 +536,8 @@ later.</p>
 <code class="sourceCode R"><span><span class="co"># Conclude development of the ever-enrolled observations</span></span>
 <span><span class="va">ever</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">ever</span><span class="op">[</span>, <span class="va">group</span> <span class="op">:=</span> <span class="st">"ever"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">ever</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;              mcid program  group</span></span>
 <span><span class="co">#&gt;            &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span></span>
@@ -544,6 +563,8 @@ re-initialize the working data frame, retaining unique IDs only.</p>
 <code class="sourceCode R"><span><span class="co"># Unique IDs of students ever enrolled in the study programs</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;              mcid</span></span>
 <span><span class="co">#&gt;            &lt;char&gt;</span></span>
@@ -569,6 +590,8 @@ columns.</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Inner join that filters DT</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">degree</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;              mcid   cip6</span></span>
 <span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt;</span></span>
@@ -597,6 +620,8 @@ completion term variable.</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate a timely completion term for every student</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;              mcid   cip6 term_i      level_i adj_span timely_term</span></span>
 <span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt; &lt;char&gt;       &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
@@ -617,6 +642,8 @@ as well as supporting variables used in its construction.</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Determine completion status for every student</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">degree</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;              mcid   cip6 term_i      level_i adj_span timely_term term_degree</span></span>
 <span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt; &lt;char&gt;       &lt;char&gt;    &lt;num&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
@@ -655,6 +682,8 @@ variables.</p>
 <code class="sourceCode R"><span><span class="co"># Retain timely completers</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">completion_status</span> <span class="op">==</span> <span class="st">"timely"</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;              mcid   cip6</span></span>
 <span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt;</span></span>
@@ -684,6 +713,8 @@ program names that are not NA.</p>
 <span></span>
 <span><span class="co"># Unique observations</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;              mcid program</span></span>
 <span><span class="co">#&gt;            &lt;char&gt;  &lt;char&gt;</span></span>
@@ -706,6 +737,8 @@ students created earlier.</p>
 <code class="sourceCode R"><span><span class="co"># Conclude development of the graduate observations</span></span>
 <span><span class="va">grad</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">grad</span><span class="op">[</span>, <span class="va">group</span> <span class="op">:=</span> <span class="st">"grad"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">grad</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;              mcid program  group</span></span>
 <span><span class="co">#&gt;            &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span></span>
@@ -729,6 +762,8 @@ names.</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Combine two data frames</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">ever</span>, <span class="va">grad</span><span class="op">)</span>, use.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;               mcid program  group</span></span>
 <span><span class="co">#&gt;             &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span></span>
@@ -757,20 +792,22 @@ columns added from <code>student</code>.</p>
 <span></span>
 <span><span class="co"># Add them to DT with a left outer join</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student_cols</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;               mcid            race    sex program  group</span></span>
-<span><span class="co">#&gt;             &lt;char&gt;          &lt;char&gt; &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;     1: MID25783178           Black   Male     ISE   ever</span></span>
-<span><span class="co">#&gt;     2: MID25783441           White   Male      CE   ever</span></span>
-<span><span class="co">#&gt;     3: MID25783491           White   Male      EE   ever</span></span>
-<span><span class="co">#&gt;     4: MID25783912           White   Male     ISE   ever</span></span>
-<span><span class="co">#&gt;     5: MID25784025           Black   Male      ME   ever</span></span>
-<span><span class="co">#&gt;    ---                                                  </span></span>
-<span><span class="co">#&gt; 11208: MID26696738           White   Male      ME   grad</span></span>
-<span><span class="co">#&gt; 11209: MID26696771           White Female      EE   grad</span></span>
-<span><span class="co">#&gt; 11210: MID26696967           White   Male      ME   grad</span></span>
-<span><span class="co">#&gt; 11211: MID26697163 Hispanic/Latinx   Male      ME   grad</span></span>
-<span><span class="co">#&gt; 11212: MID26697447           Asian   Male      EE   grad</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;               mcid   race    sex program  group</span></span>
+<span><span class="co">#&gt;             &lt;char&gt; &lt;char&gt; &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MID25783178  Black   Male     ISE   ever</span></span>
+<span><span class="co">#&gt;     2: MID25783441  White   Male      CE   ever</span></span>
+<span><span class="co">#&gt;     3: MID25783491  White   Male      EE   ever</span></span>
+<span><span class="co">#&gt;     4: MID25783912  White   Male     ISE   ever</span></span>
+<span><span class="co">#&gt;     5: MID25784025  Black   Male      ME   ever</span></span>
+<span><span class="co">#&gt;    ---                                         </span></span>
+<span><span class="co">#&gt; 11208: MID26696738  White   Male      ME   grad</span></span>
+<span><span class="co">#&gt; 11209: MID26696771  White Female      EE   grad</span></span>
+<span><span class="co">#&gt; 11210: MID26696967  White   Male      ME   grad</span></span>
+<span><span class="co">#&gt; 11211: MID26697163 Latine   Male      ME   grad</span></span>
+<span><span class="co">#&gt; 11212: MID26697447  Asian   Male      EE   grad</span></span></code></pre>
 <p>The result has 11,212 observations of 7133 unique students. IDs
 labeled “grad” are a subset of those labeled “ever”.</p>
 </div>
@@ -782,38 +819,42 @@ sets of observations by ID. In the first example, the ID produces one
 observation only. The student was enrolled in Civil Engineering but
 completion, if any, was not timely.</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID26694225"</span><span class="op">]</span></span>
-<span><span class="co">#&gt;           mcid   race    sex program  group</span></span>
+<code class="sourceCode R"><span><span class="co"># Display one student by ID</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID26694225"</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;           mcid   race    sex program  group</span></span>
 <span><span class="co">#&gt;         &lt;char&gt; &lt;char&gt; &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1: MID26694225  White   Male      CE   ever</span></span></code></pre></div>
+<span><span class="co">#&gt; 1: MID26694225  White   Male      CE   ever</span></span></code></pre>
 <p>In the next example, the ID produces two observations indicating that
 the student was enrolled in Civil Engineering and a timely graduate of
 that program.</p>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID25786154"</span><span class="op">]</span></span>
-<span><span class="co">#&gt;           mcid   race    sex program  group</span></span>
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Display one student by ID</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID25786154"</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;           mcid   race    sex program  group</span></span>
 <span><span class="co">#&gt;         &lt;char&gt; &lt;char&gt; &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1: MID25786154  White Female      CE   ever</span></span>
-<span><span class="co">#&gt; 2: MID25786154  White Female      CE   grad</span></span></code></pre></div>
+<span><span class="co">#&gt; 2: MID25786154  White Female      CE   grad</span></span></code></pre>
 <p>In the next example, the ID produces two observations indicating that
 the student was enrolled in Electrical Engineering and in Mechanical
 Engineering but a timely graduate of neither program.</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID25868925"</span><span class="op">]</span></span>
-<span><span class="co">#&gt;           mcid   race    sex program  group</span></span>
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Display one student by ID</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID25868925"</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;           mcid   race    sex program  group</span></span>
 <span><span class="co">#&gt;         &lt;char&gt; &lt;char&gt; &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1: MID25868925  Asian Female      EE   ever</span></span>
-<span><span class="co">#&gt; 2: MID25868925  Asian Female      ME   ever</span></span></code></pre></div>
+<span><span class="co">#&gt; 2: MID25868925  Asian Female      ME   ever</span></span></code></pre>
 <p>In the next example, the ID produces three observations indicating
 that the student was enrolled in Electrical Engineering and in Civil
 Engineering and a timely graduate of Civil.</p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID26526757"</span><span class="op">]</span></span>
-<span><span class="co">#&gt;           mcid   race    sex program  group</span></span>
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Display one student by ID</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID26526757"</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;           mcid   race    sex program  group</span></span>
 <span><span class="co">#&gt;         &lt;char&gt; &lt;char&gt; &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1: MID26526757  Asian Female      CE   ever</span></span>
 <span><span class="co">#&gt; 2: MID26526757  Asian Female      EE   ever</span></span>
-<span><span class="co">#&gt; 3: MID26526757  Asian Female      CE   grad</span></span></code></pre></div>
+<span><span class="co">#&gt; 3: MID26526757  Asian Female      CE   grad</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="closing">Closing<a class="anchor" aria-label="anchor" href="#closing"></a>
@@ -829,7 +870,7 @@ for calculating summary statistics and metrics, are often written to
 file as an intermediate result. In this case, the data frame above is
 included with midfieldr as <code>study_observations</code>. You can view
 the help page (and data dictionary) by running</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Run in Console</span></span>
 <span><span class="op">?</span> <span class="va">study_observations</span></span></code></pre></div>
 </div>
@@ -849,7 +890,7 @@ R package version 1.14.2. <a href="https://CRAN.R-project.org/package=data.tab
 <p>We conclude each vignette by collecting its code chunks in a single,
 condensed script for the convenience of those who wish to copy it into
 their own R file.</p>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span></span>
@@ -916,8 +957,7 @@ their own R file.</p>
 blockquote {
     padding: 10px 20px;
     margin: 0 0 20px;
-    font-size: 12px;
-    border-left: 0px solid
+    border-left: 0px
 }
 </style>
 </div>

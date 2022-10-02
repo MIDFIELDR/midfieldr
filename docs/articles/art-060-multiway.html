@@ -98,7 +98,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Multiway data and charts</h1>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-10-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-060-multiway.Rmd" class="external-link"><code>vignettes/art-060-multiway.Rmd</code></a></small>
       <div class="d-none name"><code>art-060-multiway.Rmd</code></div>
@@ -142,6 +142,19 @@ one for each combination of levels of <em>three</em> categories; the
 rows and panels encode the first two categories as usual; <em>p</em>
 data markers encode the third category on each row. In general, clarity
 suffers for <em>p</em> &gt; 2.</p>
+</dd>
+<dt>program stickiness</dt>
+<dd>
+<p>The ratio <span class="math inline">\((S)\)</span> of the number of
+students graduating from a program <span class="math inline">\((N_g)\)</span> to the number of students ever
+enrolled in the program <span class="math inline">\((N_e)\)</span>.
+<span class="math display">\[
+S=\frac{N_g}{N_e}
+\]</span></p>
+</dd>
+<dd>
+We use stickiness in this vignette to illustrate a feature of the
+<code><a href="../reference/order_multiway.html">order_multiway()</a></code> function.
 </dd>
 </dl>
 </div>
@@ -187,7 +200,7 @@ included with midfieldr.</p>
 <span><span class="co">#&gt;      &lt;char&gt; &lt;char&gt;          &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
 <span><span class="co">#&gt;  1:      CE Female           Asian    16     9  56.2</span></span>
 <span><span class="co">#&gt;  2:      CE Female           Black    49    15  30.6</span></span>
-<span><span class="co">#&gt;  3:      CE Female Hispanic/Latinx    10     5  50.0</span></span>
+<span><span class="co">#&gt;  3:      CE Female          Latine    10     5  50.0</span></span>
 <span><span class="co">#&gt;  4:      CE Female   International     1     0   0.0</span></span>
 <span><span class="co">#&gt;  5:      CE Female   Other/Unknown     6     2  33.3</span></span>
 <span><span class="co">#&gt;  6:      CE Female           White   304   156  51.3</span></span>
@@ -197,7 +210,7 @@ included with midfieldr.</p>
 <span><span class="co">#&gt; 48:      ME Female           White   261   109  41.8</span></span>
 <span><span class="co">#&gt; 49:      ME   Male           Asian   118    58  49.2</span></span>
 <span><span class="co">#&gt; 50:      ME   Male           Black   202    65  32.2</span></span>
-<span><span class="co">#&gt; 51:      ME   Male Hispanic/Latinx    76    29  38.2</span></span>
+<span><span class="co">#&gt; 51:      ME   Male          Latine    76    29  38.2</span></span>
 <span><span class="co">#&gt; 52:      ME   Male   International    36    16  44.4</span></span>
 <span><span class="co">#&gt; 53:      ME   Male Native American    14     4  28.6</span></span>
 <span><span class="co">#&gt; 54:      ME   Male   Other/Unknown    43    20  46.5</span></span>
@@ -232,25 +245,25 @@ which race/ethnicity values are ambiguous.</p>
 <code class="sourceCode R"><span><span class="co"># Ambiguous race/ethnicity values</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="va">race</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"International"</span>, <span class="st">"Other/Unknown"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;     program    sex            race  ever  grad stick</span></span>
-<span><span class="co">#&gt;      &lt;char&gt; &lt;char&gt;          &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      CE Female           Asian    16     9  56.2</span></span>
-<span><span class="co">#&gt;  2:      CE Female           Black    49    15  30.6</span></span>
-<span><span class="co">#&gt;  3:      CE Female Hispanic/Latinx    10     5  50.0</span></span>
-<span><span class="co">#&gt;  4:      CE Female           White   304   156  51.3</span></span>
-<span><span class="co">#&gt;  5:      CE   Male           Asian    34    17  50.0</span></span>
-<span><span class="co">#&gt;  6:      CE   Male           Black    90    25  27.8</span></span>
-<span><span class="co">#&gt;  7:      CE   Male Hispanic/Latinx    53    22  41.5</span></span>
-<span><span class="co">#&gt;  8:      CE   Male           White  1043   558  53.5</span></span>
-<span><span class="co">#&gt; ---                                                 </span></span>
-<span><span class="co">#&gt; 25:      ME Female           Asian    22    13  59.1</span></span>
-<span><span class="co">#&gt; 26:      ME Female           Black    75    23  30.7</span></span>
-<span><span class="co">#&gt; 27:      ME Female Hispanic/Latinx    10     4  40.0</span></span>
-<span><span class="co">#&gt; 28:      ME Female           White   261   109  41.8</span></span>
-<span><span class="co">#&gt; 29:      ME   Male           Asian   118    58  49.2</span></span>
-<span><span class="co">#&gt; 30:      ME   Male           Black   202    65  32.2</span></span>
-<span><span class="co">#&gt; 31:      ME   Male Hispanic/Latinx    76    29  38.2</span></span>
-<span><span class="co">#&gt; 32:      ME   Male           White  1776   918  51.7</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;     program    sex   race  ever  grad stick</span></span>
+<span><span class="co">#&gt;      &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt;  1:      CE Female  Asian    16     9  56.2</span></span>
+<span><span class="co">#&gt;  2:      CE Female  Black    49    15  30.6</span></span>
+<span><span class="co">#&gt;  3:      CE Female Latine    10     5  50.0</span></span>
+<span><span class="co">#&gt;  4:      CE Female  White   304   156  51.3</span></span>
+<span><span class="co">#&gt;  5:      CE   Male  Asian    34    17  50.0</span></span>
+<span><span class="co">#&gt;  6:      CE   Male  Black    90    25  27.8</span></span>
+<span><span class="co">#&gt;  7:      CE   Male Latine    53    22  41.5</span></span>
+<span><span class="co">#&gt;  8:      CE   Male  White  1043   558  53.5</span></span>
+<span><span class="co">#&gt; ---                                        </span></span>
+<span><span class="co">#&gt; 25:      ME Female  Asian    22    13  59.1</span></span>
+<span><span class="co">#&gt; 26:      ME Female  Black    75    23  30.7</span></span>
+<span><span class="co">#&gt; 27:      ME Female Latine    10     4  40.0</span></span>
+<span><span class="co">#&gt; 28:      ME Female  White   261   109  41.8</span></span>
+<span><span class="co">#&gt; 29:      ME   Male  Asian   118    58  49.2</span></span>
+<span><span class="co">#&gt; 30:      ME   Male  Black   202    65  32.2</span></span>
+<span><span class="co">#&gt; 31:      ME   Male Latine    76    29  38.2</span></span>
+<span><span class="co">#&gt; 32:      ME   Male  White  1776   918  51.7</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="preparing-the-categorical-variables">Preparing the categorical variables<a class="anchor" aria-label="anchor" href="#preparing-the-categorical-variables"></a>
@@ -278,25 +291,25 @@ variable.</p>
 <span><span class="va">DT</span><span class="op">[</span>, <span class="va">people</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"people"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;        program                 people            race    sex  ever  grad stick</span></span>
-<span><span class="co">#&gt;         &lt;char&gt;                 &lt;char&gt;          &lt;char&gt; &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      Civil           Asian Female           Asian Female    16     9  56.2</span></span>
-<span><span class="co">#&gt;  2:      Civil           Black Female           Black Female    49    15  30.6</span></span>
-<span><span class="co">#&gt;  3:      Civil Hispanic/Latinx Female Hispanic/Latinx Female    10     5  50.0</span></span>
-<span><span class="co">#&gt;  4:      Civil           White Female           White Female   304   156  51.3</span></span>
-<span><span class="co">#&gt;  5:      Civil             Asian Male           Asian   Male    34    17  50.0</span></span>
-<span><span class="co">#&gt;  6:      Civil             Black Male           Black   Male    90    25  27.8</span></span>
-<span><span class="co">#&gt;  7:      Civil   Hispanic/Latinx Male Hispanic/Latinx   Male    53    22  41.5</span></span>
-<span><span class="co">#&gt;  8:      Civil             White Male           White   Male  1043   558  53.5</span></span>
-<span><span class="co">#&gt; ---                                                                           </span></span>
-<span><span class="co">#&gt; 25: Mechanical           Asian Female           Asian Female    22    13  59.1</span></span>
-<span><span class="co">#&gt; 26: Mechanical           Black Female           Black Female    75    23  30.7</span></span>
-<span><span class="co">#&gt; 27: Mechanical Hispanic/Latinx Female Hispanic/Latinx Female    10     4  40.0</span></span>
-<span><span class="co">#&gt; 28: Mechanical           White Female           White Female   261   109  41.8</span></span>
-<span><span class="co">#&gt; 29: Mechanical             Asian Male           Asian   Male   118    58  49.2</span></span>
-<span><span class="co">#&gt; 30: Mechanical             Black Male           Black   Male   202    65  32.2</span></span>
-<span><span class="co">#&gt; 31: Mechanical   Hispanic/Latinx Male Hispanic/Latinx   Male    76    29  38.2</span></span>
-<span><span class="co">#&gt; 32: Mechanical             White Male           White   Male  1776   918  51.7</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;        program        people   race    sex  ever  grad stick</span></span>
+<span><span class="co">#&gt;         &lt;char&gt;        &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt;  1:      Civil  Asian Female  Asian Female    16     9  56.2</span></span>
+<span><span class="co">#&gt;  2:      Civil  Black Female  Black Female    49    15  30.6</span></span>
+<span><span class="co">#&gt;  3:      Civil Latine Female Latine Female    10     5  50.0</span></span>
+<span><span class="co">#&gt;  4:      Civil  White Female  White Female   304   156  51.3</span></span>
+<span><span class="co">#&gt;  5:      Civil    Asian Male  Asian   Male    34    17  50.0</span></span>
+<span><span class="co">#&gt;  6:      Civil    Black Male  Black   Male    90    25  27.8</span></span>
+<span><span class="co">#&gt;  7:      Civil   Latine Male Latine   Male    53    22  41.5</span></span>
+<span><span class="co">#&gt;  8:      Civil    White Male  White   Male  1043   558  53.5</span></span>
+<span><span class="co">#&gt; ---                                                         </span></span>
+<span><span class="co">#&gt; 25: Mechanical  Asian Female  Asian Female    22    13  59.1</span></span>
+<span><span class="co">#&gt; 26: Mechanical  Black Female  Black Female    75    23  30.7</span></span>
+<span><span class="co">#&gt; 27: Mechanical Latine Female Latine Female    10     4  40.0</span></span>
+<span><span class="co">#&gt; 28: Mechanical  White Female  White Female   261   109  41.8</span></span>
+<span><span class="co">#&gt; 29: Mechanical    Asian Male  Asian   Male   118    58  49.2</span></span>
+<span><span class="co">#&gt; 30: Mechanical    Black Male  Black   Male   202    65  32.2</span></span>
+<span><span class="co">#&gt; 31: Mechanical   Latine Male Latine   Male    76    29  38.2</span></span>
+<span><span class="co">#&gt; 32: Mechanical    White Male  White   Male  1776   918  51.7</span></span></code></pre>
 <p>At this point, the multiway categories (<code>programs</code> and
 <code>people</code>) are “character” class.</p>
 </div>
@@ -365,25 +378,25 @@ three multiway variables and drop other columns.</p>
 <span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="va">DT_count</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">people</span>, <span class="va">grad</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT_count</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;        program                 people  grad</span></span>
-<span><span class="co">#&gt;         &lt;char&gt;                 &lt;char&gt; &lt;int&gt;</span></span>
-<span><span class="co">#&gt;  1:      Civil           Asian Female     9</span></span>
-<span><span class="co">#&gt;  2:      Civil           Black Female    15</span></span>
-<span><span class="co">#&gt;  3:      Civil Hispanic/Latinx Female     5</span></span>
-<span><span class="co">#&gt;  4:      Civil           White Female   156</span></span>
-<span><span class="co">#&gt;  5:      Civil             Asian Male    17</span></span>
-<span><span class="co">#&gt;  6:      Civil             Black Male    25</span></span>
-<span><span class="co">#&gt;  7:      Civil   Hispanic/Latinx Male    22</span></span>
-<span><span class="co">#&gt;  8:      Civil             White Male   558</span></span>
-<span><span class="co">#&gt; ---                                        </span></span>
-<span><span class="co">#&gt; 25: Mechanical           Asian Female    13</span></span>
-<span><span class="co">#&gt; 26: Mechanical           Black Female    23</span></span>
-<span><span class="co">#&gt; 27: Mechanical Hispanic/Latinx Female     4</span></span>
-<span><span class="co">#&gt; 28: Mechanical           White Female   109</span></span>
-<span><span class="co">#&gt; 29: Mechanical             Asian Male    58</span></span>
-<span><span class="co">#&gt; 30: Mechanical             Black Male    65</span></span>
-<span><span class="co">#&gt; 31: Mechanical   Hispanic/Latinx Male    29</span></span>
-<span><span class="co">#&gt; 32: Mechanical             White Male   918</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;        program        people  grad</span></span>
+<span><span class="co">#&gt;         &lt;char&gt;        &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1:      Civil  Asian Female     9</span></span>
+<span><span class="co">#&gt;  2:      Civil  Black Female    15</span></span>
+<span><span class="co">#&gt;  3:      Civil Latine Female     5</span></span>
+<span><span class="co">#&gt;  4:      Civil  White Female   156</span></span>
+<span><span class="co">#&gt;  5:      Civil    Asian Male    17</span></span>
+<span><span class="co">#&gt;  6:      Civil    Black Male    25</span></span>
+<span><span class="co">#&gt;  7:      Civil   Latine Male    22</span></span>
+<span><span class="co">#&gt;  8:      Civil    White Male   558</span></span>
+<span><span class="co">#&gt; ---                               </span></span>
+<span><span class="co">#&gt; 25: Mechanical  Asian Female    13</span></span>
+<span><span class="co">#&gt; 26: Mechanical  Black Female    23</span></span>
+<span><span class="co">#&gt; 27: Mechanical Latine Female     4</span></span>
+<span><span class="co">#&gt; 28: Mechanical  White Female   109</span></span>
+<span><span class="co">#&gt; 29: Mechanical    Asian Male    58</span></span>
+<span><span class="co">#&gt; 30: Mechanical    Black Male    65</span></span>
+<span><span class="co">#&gt; 31: Mechanical   Latine Male    29</span></span>
+<span><span class="co">#&gt; 32: Mechanical    White Male   918</span></span></code></pre>
 <p>Applying <code><a href="../reference/order_multiway.html">order_multiway()</a></code>, we specify
 <code>"grad"</code> as the quantitative column, <code>"program"</code>
 and <code>"people"</code> as the two categorical columns, and
@@ -396,25 +409,25 @@ and <code>"people"</code> as the two categorical columns, and
 <span>  method <span class="op">=</span> <span class="st">"median"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">DT_count</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;        program                 people  grad program_median people_median</span></span>
-<span><span class="co">#&gt;         &lt;fctr&gt;                 &lt;fctr&gt; &lt;int&gt;          &lt;num&gt;         &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      Civil           Asian Female     9           19.5          13.5</span></span>
-<span><span class="co">#&gt;  2:      Civil           Black Female    15           19.5          33.0</span></span>
-<span><span class="co">#&gt;  3:      Civil Hispanic/Latinx Female     5           19.5           5.5</span></span>
-<span><span class="co">#&gt;  4:      Civil           White Female   156           19.5         117.5</span></span>
-<span><span class="co">#&gt;  5:      Civil             Asian Male    17           19.5          46.0</span></span>
-<span><span class="co">#&gt;  6:      Civil             Black Male    25           19.5          55.5</span></span>
-<span><span class="co">#&gt;  7:      Civil   Hispanic/Latinx Male    22           19.5          22.0</span></span>
-<span><span class="co">#&gt;  8:      Civil             White Male   558           19.5         533.5</span></span>
-<span><span class="co">#&gt; ---                                                                     </span></span>
-<span><span class="co">#&gt; 25: Mechanical           Asian Female    13           43.5          13.5</span></span>
-<span><span class="co">#&gt; 26: Mechanical           Black Female    23           43.5          33.0</span></span>
-<span><span class="co">#&gt; 27: Mechanical Hispanic/Latinx Female     4           43.5           5.5</span></span>
-<span><span class="co">#&gt; 28: Mechanical           White Female   109           43.5         117.5</span></span>
-<span><span class="co">#&gt; 29: Mechanical             Asian Male    58           43.5          46.0</span></span>
-<span><span class="co">#&gt; 30: Mechanical             Black Male    65           43.5          55.5</span></span>
-<span><span class="co">#&gt; 31: Mechanical   Hispanic/Latinx Male    29           43.5          22.0</span></span>
-<span><span class="co">#&gt; 32: Mechanical             White Male   918           43.5         533.5</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;        program        people  grad program_median people_median</span></span>
+<span><span class="co">#&gt;         &lt;fctr&gt;        &lt;fctr&gt; &lt;int&gt;          &lt;num&gt;         &lt;num&gt;</span></span>
+<span><span class="co">#&gt;  1:      Civil  Asian Female     9           19.5          13.5</span></span>
+<span><span class="co">#&gt;  2:      Civil  Black Female    15           19.5          33.0</span></span>
+<span><span class="co">#&gt;  3:      Civil Latine Female     5           19.5           5.5</span></span>
+<span><span class="co">#&gt;  4:      Civil  White Female   156           19.5         117.5</span></span>
+<span><span class="co">#&gt;  5:      Civil    Asian Male    17           19.5          46.0</span></span>
+<span><span class="co">#&gt;  6:      Civil    Black Male    25           19.5          55.5</span></span>
+<span><span class="co">#&gt;  7:      Civil   Latine Male    22           19.5          22.0</span></span>
+<span><span class="co">#&gt;  8:      Civil    White Male   558           19.5         533.5</span></span>
+<span><span class="co">#&gt; ---                                                            </span></span>
+<span><span class="co">#&gt; 25: Mechanical  Asian Female    13           43.5          13.5</span></span>
+<span><span class="co">#&gt; 26: Mechanical  Black Female    23           43.5          33.0</span></span>
+<span><span class="co">#&gt; 27: Mechanical Latine Female     4           43.5           5.5</span></span>
+<span><span class="co">#&gt; 28: Mechanical  White Female   109           43.5         117.5</span></span>
+<span><span class="co">#&gt; 29: Mechanical    Asian Male    58           43.5          46.0</span></span>
+<span><span class="co">#&gt; 30: Mechanical    Black Male    65           43.5          55.5</span></span>
+<span><span class="co">#&gt; 31: Mechanical   Latine Male    29           43.5          22.0</span></span>
+<span><span class="co">#&gt; 32: Mechanical    White Male   918           43.5         533.5</span></span></code></pre>
 <p>The function adds two columns (<code>program_median</code> and
 <code>people_median</code>) to display the computed median values used
 to order the factors. In the median method, the new column names are a
@@ -442,16 +455,16 @@ values independently.</p>
 <code class="sourceCode R"><span><span class="co"># Verify order_multiway() output</span></span>
 <span><span class="va">temp</span> <span class="op">&lt;-</span> <span class="va">DT_count</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">.SD</span>, <span class="va">median</span><span class="op">)</span>, .SDcols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grad"</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"people"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">temp</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt;                    people  grad</span></span>
-<span><span class="co">#&gt;                    &lt;fctr&gt; &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:           Asian Female  13.5</span></span>
-<span><span class="co">#&gt; 2:           Black Female  33.0</span></span>
-<span><span class="co">#&gt; 3: Hispanic/Latinx Female   5.5</span></span>
-<span><span class="co">#&gt; 4:           White Female 117.5</span></span>
-<span><span class="co">#&gt; 5:             Asian Male  46.0</span></span>
-<span><span class="co">#&gt; 6:             Black Male  55.5</span></span>
-<span><span class="co">#&gt; 7:   Hispanic/Latinx Male  22.0</span></span>
-<span><span class="co">#&gt; 8:             White Male 533.5</span></span></code></pre></div>
+<span><span class="co">#&gt;           people  grad</span></span>
+<span><span class="co">#&gt;           &lt;fctr&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:  Asian Female  13.5</span></span>
+<span><span class="co">#&gt; 2:  Black Female  33.0</span></span>
+<span><span class="co">#&gt; 3: Latine Female   5.5</span></span>
+<span><span class="co">#&gt; 4:  White Female 117.5</span></span>
+<span><span class="co">#&gt; 5:    Asian Male  46.0</span></span>
+<span><span class="co">#&gt; 6:    Black Male  55.5</span></span>
+<span><span class="co">#&gt; 7:   Latine Male  22.0</span></span>
+<span><span class="co">#&gt; 8:    White Male 533.5</span></span></code></pre></div>
 <p>In the output, you can see that both categories are “factor” class:
 <code>program</code> is a factor with 4 levels; <code>people</code> is a
 factor with 8 levels; and neither is ordered alphabetically—ordering is
@@ -464,9 +477,8 @@ by increasing median value as expected.</p>
 <span></span>
 <span><span class="co"># Verify second category is a factor</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">DT_count</span><span class="op">$</span><span class="va">people</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Hispanic/Latinx Female" "Asian Female"           "Hispanic/Latinx Male"  </span></span>
-<span><span class="co">#&gt; [4] "Black Female"           "Asian Male"             "Black Male"            </span></span>
-<span><span class="co">#&gt; [7] "White Female"           "White Male"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "Latine Female" "Asian Female"  "Latine Male"   "Black Female" </span></span>
+<span><span class="co">#&gt; [5] "Asian Male"    "Black Male"    "White Female"  "White Male"</span></span></code></pre></div>
 <p>Because the <code>method</code> argument has a default value of
 “median”, the following two code chunks produce identical results.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
@@ -528,7 +540,7 @@ value is drawn as a vertical reference line in each panel.</p>
 <span>  <span class="va">common_scale_x_log10</span> <span class="op">+</span></span>
 <span>  <span class="va">common_labs</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-17-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-median-two-columns-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>The programs are assigned to rows such that the program medians
 increase from bottom to top. Civil Engineering has the smallest median;
 Electrical Engineering the largest.</p>
@@ -547,7 +559,7 @@ column.</p>
 <span>  <span class="va">common_scale_x_log10</span> <span class="op">+</span></span>
 <span>  <span class="va">common_labs</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-18-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-median-one-column-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>Reading a multiway graph</p>
 <ul>
 <li>We can more effectively compare values within a panel than between
@@ -573,7 +585,7 @@ by encoding <em>people by rows</em> and <em>programs by panels</em>.</p>
 <span>  <span class="va">common_scale_x_log10</span> <span class="op">+</span></span>
 <span>  <span class="va">common_labs</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-19-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-people-encoded-rows-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>In this chart, the visual asymmetries that stand out are</p>
 <ul>
 <li>Electrical Engineering, White Female, low given their overall
@@ -600,7 +612,7 @@ Civil Engineering is not apparent</li>
 <li>etc.</li>
 </ul>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Create alphabetical odering</span></span>
+<code class="sourceCode R"><span><span class="co"># Create alphabetical ordering</span></span>
 <span><span class="va">DT_alpha</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">DT_alpha</span><span class="op">[</span>, <span class="va">people</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">people</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">people</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -610,7 +622,7 @@ Civil Engineering is not apparent</li>
 <span>  <span class="va">common_scale_x_log10</span> <span class="op">+</span></span>
 <span>  <span class="va">common_labs</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-20-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-avoid-alphbetical-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>An ordering scheme based on the values of the quantitative variable
 is necessary if a multiway chart is to reveal how the response is
 affected by the categories.</p>
@@ -626,25 +638,25 @@ as our quantitative variable and omit unnecessary variables.</p>
 <span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">DT_count</span> <span class="op">&lt;-</span> <span class="va">DT_count</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">race</span>, <span class="va">sex</span>, <span class="va">grad</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT_count</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;        program            race    sex  grad</span></span>
-<span><span class="co">#&gt;         &lt;char&gt;          &lt;char&gt; &lt;char&gt; &lt;int&gt;</span></span>
-<span><span class="co">#&gt;  1:      Civil           Asian Female     9</span></span>
-<span><span class="co">#&gt;  2:      Civil           Black Female    15</span></span>
-<span><span class="co">#&gt;  3:      Civil Hispanic/Latinx Female     5</span></span>
-<span><span class="co">#&gt;  4:      Civil           White Female   156</span></span>
-<span><span class="co">#&gt;  5:      Civil           Asian   Male    17</span></span>
-<span><span class="co">#&gt;  6:      Civil           Black   Male    25</span></span>
-<span><span class="co">#&gt;  7:      Civil Hispanic/Latinx   Male    22</span></span>
-<span><span class="co">#&gt;  8:      Civil           White   Male   558</span></span>
-<span><span class="co">#&gt; ---                                        </span></span>
-<span><span class="co">#&gt; 25: Mechanical           Asian Female    13</span></span>
-<span><span class="co">#&gt; 26: Mechanical           Black Female    23</span></span>
-<span><span class="co">#&gt; 27: Mechanical Hispanic/Latinx Female     4</span></span>
-<span><span class="co">#&gt; 28: Mechanical           White Female   109</span></span>
-<span><span class="co">#&gt; 29: Mechanical           Asian   Male    58</span></span>
-<span><span class="co">#&gt; 30: Mechanical           Black   Male    65</span></span>
-<span><span class="co">#&gt; 31: Mechanical Hispanic/Latinx   Male    29</span></span>
-<span><span class="co">#&gt; 32: Mechanical           White   Male   918</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;        program   race    sex  grad</span></span>
+<span><span class="co">#&gt;         &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1:      Civil  Asian Female     9</span></span>
+<span><span class="co">#&gt;  2:      Civil  Black Female    15</span></span>
+<span><span class="co">#&gt;  3:      Civil Latine Female     5</span></span>
+<span><span class="co">#&gt;  4:      Civil  White Female   156</span></span>
+<span><span class="co">#&gt;  5:      Civil  Asian   Male    17</span></span>
+<span><span class="co">#&gt;  6:      Civil  Black   Male    25</span></span>
+<span><span class="co">#&gt;  7:      Civil Latine   Male    22</span></span>
+<span><span class="co">#&gt;  8:      Civil  White   Male   558</span></span>
+<span><span class="co">#&gt; ---                               </span></span>
+<span><span class="co">#&gt; 25: Mechanical  Asian Female    13</span></span>
+<span><span class="co">#&gt; 26: Mechanical  Black Female    23</span></span>
+<span><span class="co">#&gt; 27: Mechanical Latine Female     4</span></span>
+<span><span class="co">#&gt; 28: Mechanical  White Female   109</span></span>
+<span><span class="co">#&gt; 29: Mechanical  Asian   Male    58</span></span>
+<span><span class="co">#&gt; 30: Mechanical  Black   Male    65</span></span>
+<span><span class="co">#&gt; 31: Mechanical Latine   Male    29</span></span>
+<span><span class="co">#&gt; 32: Mechanical  White   Male   918</span></span></code></pre>
 <p>The superposed category is <code>sex</code>. The multiway data to be
 conditioned are <code>grad</code>, the quantitative variable, and
 <code>program</code> and <code>race</code>, the two categorical
@@ -656,25 +668,25 @@ variables.</p>
 <span>  categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"race"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">DT_count</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;        program            race  grad    sex program_median race_median</span></span>
-<span><span class="co">#&gt;         &lt;fctr&gt;          &lt;fctr&gt; &lt;int&gt; &lt;char&gt;          &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      Civil           Asian     9 Female           19.5        16.0</span></span>
-<span><span class="co">#&gt;  2:      Civil           Black    15 Female           19.5        44.5</span></span>
-<span><span class="co">#&gt;  3:      Civil Hispanic/Latinx     5 Female           19.5        14.0</span></span>
-<span><span class="co">#&gt;  4:      Civil           White   156 Female           19.5       209.5</span></span>
-<span><span class="co">#&gt;  5:      Civil           Asian    17   Male           19.5        16.0</span></span>
-<span><span class="co">#&gt;  6:      Civil           Black    25   Male           19.5        44.5</span></span>
-<span><span class="co">#&gt;  7:      Civil Hispanic/Latinx    22   Male           19.5        14.0</span></span>
-<span><span class="co">#&gt;  8:      Civil           White   558   Male           19.5       209.5</span></span>
-<span><span class="co">#&gt; ---                                                                   </span></span>
-<span><span class="co">#&gt; 25: Mechanical           Asian    13 Female           43.5        16.0</span></span>
-<span><span class="co">#&gt; 26: Mechanical           Black    23 Female           43.5        44.5</span></span>
-<span><span class="co">#&gt; 27: Mechanical Hispanic/Latinx     4 Female           43.5        14.0</span></span>
-<span><span class="co">#&gt; 28: Mechanical           White   109 Female           43.5       209.5</span></span>
-<span><span class="co">#&gt; 29: Mechanical           Asian    58   Male           43.5        16.0</span></span>
-<span><span class="co">#&gt; 30: Mechanical           Black    65   Male           43.5        44.5</span></span>
-<span><span class="co">#&gt; 31: Mechanical Hispanic/Latinx    29   Male           43.5        14.0</span></span>
-<span><span class="co">#&gt; 32: Mechanical           White   918   Male           43.5       209.5</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;        program   race  grad    sex program_median race_median</span></span>
+<span><span class="co">#&gt;         &lt;fctr&gt; &lt;fctr&gt; &lt;int&gt; &lt;char&gt;          &lt;num&gt;       &lt;num&gt;</span></span>
+<span><span class="co">#&gt;  1:      Civil  Asian     9 Female           19.5        16.0</span></span>
+<span><span class="co">#&gt;  2:      Civil  Black    15 Female           19.5        44.5</span></span>
+<span><span class="co">#&gt;  3:      Civil Latine     5 Female           19.5        14.0</span></span>
+<span><span class="co">#&gt;  4:      Civil  White   156 Female           19.5       209.5</span></span>
+<span><span class="co">#&gt;  5:      Civil  Asian    17   Male           19.5        16.0</span></span>
+<span><span class="co">#&gt;  6:      Civil  Black    25   Male           19.5        44.5</span></span>
+<span><span class="co">#&gt;  7:      Civil Latine    22   Male           19.5        14.0</span></span>
+<span><span class="co">#&gt;  8:      Civil  White   558   Male           19.5       209.5</span></span>
+<span><span class="co">#&gt; ---                                                          </span></span>
+<span><span class="co">#&gt; 25: Mechanical  Asian    13 Female           43.5        16.0</span></span>
+<span><span class="co">#&gt; 26: Mechanical  Black    23 Female           43.5        44.5</span></span>
+<span><span class="co">#&gt; 27: Mechanical Latine     4 Female           43.5        14.0</span></span>
+<span><span class="co">#&gt; 28: Mechanical  White   109 Female           43.5       209.5</span></span>
+<span><span class="co">#&gt; 29: Mechanical  Asian    58   Male           43.5        16.0</span></span>
+<span><span class="co">#&gt; 30: Mechanical  Black    65   Male           43.5        44.5</span></span>
+<span><span class="co">#&gt; 31: Mechanical Latine    29   Male           43.5        14.0</span></span>
+<span><span class="co">#&gt; 32: Mechanical  White   918   Male           43.5       209.5</span></span></code></pre>
 <p>In this example, <code>program</code> and <code>race</code> are
 factors, ordered by median number of graduates while <code>sex</code>
 remains an unordered character variable.</p>
@@ -691,7 +703,7 @@ for sex in rows by assigning <code>color = sex</code> inside the
 <span>  <span class="va">common_labs</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#762A83"</span>, <span class="st">"#1B7837"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-23-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-race-sex-superposed-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>By superposing data by sex, we facilitate a direct comparison of Male
 and Female students within a program and by race.</p>
 <p>Swapping rows and panels yields the next chart, in which we can
@@ -707,7 +719,7 @@ engineering programs, this chart clearly shows clusters by sex.</p>
 <span>  <span class="va">common_labs</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#762A83"</span>, <span class="st">"#1B7837"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-24-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-program-sex-superposed-1.png" width="70%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="percentage-ordered-data">Percentage-ordered data<a class="anchor" aria-label="anchor" href="#percentage-ordered-data"></a>
@@ -722,15 +734,15 @@ as the quantitative variable.</p>
 <span><span class="va">DT_ratio</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">DT_ratio</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="va">DT_ratio</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;        program                 people  ever  grad stick</span></span>
-<span><span class="co">#&gt;         &lt;char&gt;                 &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      Civil           Asian Female    16     9  56.2</span></span>
-<span><span class="co">#&gt;  2:      Civil           Black Female    49    15  30.6</span></span>
-<span><span class="co">#&gt;  3:      Civil Hispanic/Latinx Female    10     5  50.0</span></span>
-<span><span class="co">#&gt; ---                                                    </span></span>
-<span><span class="co">#&gt; 30: Mechanical             Black Male   202    65  32.2</span></span>
-<span><span class="co">#&gt; 31: Mechanical   Hispanic/Latinx Male    76    29  38.2</span></span>
-<span><span class="co">#&gt; 32: Mechanical             White Male  1776   918  51.7</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;        program        people  ever  grad stick</span></span>
+<span><span class="co">#&gt;         &lt;char&gt;        &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt;  1:      Civil  Asian Female    16     9  56.2</span></span>
+<span><span class="co">#&gt;  2:      Civil  Black Female    49    15  30.6</span></span>
+<span><span class="co">#&gt;  3:      Civil Latine Female    10     5  50.0</span></span>
+<span><span class="co">#&gt; ---                                           </span></span>
+<span><span class="co">#&gt; 30: Mechanical    Black Male   202    65  32.2</span></span>
+<span><span class="co">#&gt; 31: Mechanical   Latine Male    76    29  38.2</span></span>
+<span><span class="co">#&gt; 32: Mechanical    White Male  1776   918  51.7</span></span></code></pre>
 <p>Because stickiness is a ratio, we set <code>method</code> to
 “percent” and assign <code>grad</code> and <code>ever</code> to the
 <code>ratio_of</code> argument. <code><a href="../reference/order_multiway.html">order_multiway()</a></code> then sums
@@ -745,24 +757,15 @@ produces grouped percentages to order the category levels.</p>
 <span>  ratio_of <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grad"</span>, <span class="st">"ever"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">DT_ratio</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;        program                 people  grad  ever stick program_stick</span></span>
-<span><span class="co">#&gt;         &lt;fctr&gt;                 &lt;fctr&gt; &lt;num&gt; &lt;num&gt; &lt;num&gt;         &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      Civil           Asian Female     9    16  56.2          50.5</span></span>
-<span><span class="co">#&gt;  2:      Civil           Black Female    15    49  30.6          50.5</span></span>
-<span><span class="co">#&gt;  3:      Civil Hispanic/Latinx Female     5    10  50.0          50.5</span></span>
-<span><span class="co">#&gt; ---                                                                  </span></span>
-<span><span class="co">#&gt; 30: Mechanical             Black Male    65   202  32.2          48.0</span></span>
-<span><span class="co">#&gt; 31: Mechanical   Hispanic/Latinx Male    29    76  38.2          48.0</span></span>
-<span><span class="co">#&gt; 32: Mechanical             White Male   918  1776  51.7          48.0</span></span>
-<span><span class="co">#&gt;     people_stick</span></span>
-<span><span class="co">#&gt;            &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:         44.0</span></span>
-<span><span class="co">#&gt;  2:         38.4</span></span>
-<span><span class="co">#&gt;  3:         48.9</span></span>
-<span><span class="co">#&gt; ---             </span></span>
-<span><span class="co">#&gt; 30:         34.2</span></span>
-<span><span class="co">#&gt; 31:         41.5</span></span>
-<span><span class="co">#&gt; 32:         49.5</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;        program        people  grad  ever stick program_stick people_stick</span></span>
+<span><span class="co">#&gt;         &lt;fctr&gt;        &lt;fctr&gt; &lt;num&gt; &lt;num&gt; &lt;num&gt;         &lt;num&gt;        &lt;num&gt;</span></span>
+<span><span class="co">#&gt;  1:      Civil  Asian Female     9    16  56.2          50.5         44.0</span></span>
+<span><span class="co">#&gt;  2:      Civil  Black Female    15    49  30.6          50.5         38.4</span></span>
+<span><span class="co">#&gt;  3:      Civil Latine Female     5    10  50.0          50.5         48.9</span></span>
+<span><span class="co">#&gt; ---                                                                      </span></span>
+<span><span class="co">#&gt; 30: Mechanical    Black Male    65   202  32.2          48.0         34.2</span></span>
+<span><span class="co">#&gt; 31: Mechanical   Latine Male    29    76  38.2          48.0         41.5</span></span>
+<span><span class="co">#&gt; 32: Mechanical    White Male   918  1776  51.7          48.0         49.5</span></span></code></pre>
 <p>The function again converts the categories to factors and adds two
 columns (<code>program_stick</code> and <code>people_stick</code>) to
 display the computed percentages used to order the factors. In the
@@ -793,16 +796,16 @@ the group stickiness values independently.</p>
 <span><span class="va">temp</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">.SD</span>, <span class="va">sum</span><span class="op">)</span>, .SDcols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ever"</span>, <span class="st">"grad"</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"people"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">temp</span><span class="op">[</span>, <span class="va">stick</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">grad</span> <span class="op">/</span> <span class="va">ever</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">temp</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt;                    people  ever  grad stick</span></span>
-<span><span class="co">#&gt;                    &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:           Asian Female   116    51  44.0</span></span>
-<span><span class="co">#&gt; 2:           Black Female   362   139  38.4</span></span>
-<span><span class="co">#&gt; 3: Hispanic/Latinx Female    47    23  48.9</span></span>
-<span><span class="co">#&gt; 4:           White Female   972   446  45.9</span></span>
-<span><span class="co">#&gt; 5:             Asian Male   406   195  48.0</span></span>
-<span><span class="co">#&gt; 6:             Black Male   682   233  34.2</span></span>
-<span><span class="co">#&gt; 7:   Hispanic/Latinx Male   224    93  41.5</span></span>
-<span><span class="co">#&gt; 8:             White Male  4540  2248  49.5</span></span></code></pre></div>
+<span><span class="co">#&gt;           people  ever  grad stick</span></span>
+<span><span class="co">#&gt;           &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:  Asian Female   116    51  44.0</span></span>
+<span><span class="co">#&gt; 2:  Black Female   362   139  38.4</span></span>
+<span><span class="co">#&gt; 3: Latine Female    47    23  48.9</span></span>
+<span><span class="co">#&gt; 4:  White Female   972   446  45.9</span></span>
+<span><span class="co">#&gt; 5:    Asian Male   406   195  48.0</span></span>
+<span><span class="co">#&gt; 6:    Black Male   682   233  34.2</span></span>
+<span><span class="co">#&gt; 7:   Latine Male   224    93  41.5</span></span>
+<span><span class="co">#&gt; 8:    White Male  4540  2248  49.5</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="percentage-ordered-charts">Percentage-ordered charts<a class="anchor" aria-label="anchor" href="#percentage-ordered-charts"></a>
@@ -817,7 +820,7 @@ encodes <em>programs by rows</em> and <em>people by panels</em>.</p>
 <span>  <span class="fu">common_geom_vline</span><span class="op">(</span><span class="va">DT_ratio</span><span class="op">$</span><span class="va">people_stick</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Stickiness"</span>, y <span class="op">=</span> <span class="st">""</span>, title <span class="op">=</span> <span class="st">"Engineering stickiness"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-29-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-engr-stick-program-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>The visual asymmetries in this chart that stand out are</p>
 <ul>
 <li>Electrical Engineering, White Female, low given their overall
@@ -839,7 +842,7 @@ effectively. This is done far better in the second chart that encodes
 <span>  <span class="fu">common_geom_vline</span><span class="op">(</span><span class="va">DT_ratio</span><span class="op">$</span><span class="va">program_stick</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Stickiness"</span>, y <span class="op">=</span> <span class="st">""</span>, title <span class="op">=</span> <span class="st">"Engineering stickiness"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="../reference/figures/art-060-multiway-charts-unnamed-chunk-30-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="../reference/figures/art-060-multiway-engr-stick-people-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>This chart shows a lot of variability. The visual asymmetries that
 stand out are</p>
 <ul>
@@ -868,31 +871,31 @@ program. Start by selecting the desired variables only.</p>
 <span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="va">tbl</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">people</span>, <span class="va">grad</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">tbl</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;        program                 people  grad</span></span>
-<span><span class="co">#&gt;         &lt;char&gt;                 &lt;char&gt; &lt;int&gt;</span></span>
-<span><span class="co">#&gt;  1:      Civil           Asian Female     9</span></span>
-<span><span class="co">#&gt;  2:      Civil           Black Female    15</span></span>
-<span><span class="co">#&gt;  3:      Civil Hispanic/Latinx Female     5</span></span>
-<span><span class="co">#&gt; ---                                        </span></span>
-<span><span class="co">#&gt; 30: Mechanical             Black Male    65</span></span>
-<span><span class="co">#&gt; 31: Mechanical   Hispanic/Latinx Male    29</span></span>
-<span><span class="co">#&gt; 32: Mechanical             White Male   918</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;        program        people  grad</span></span>
+<span><span class="co">#&gt;         &lt;char&gt;        &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1:      Civil  Asian Female     9</span></span>
+<span><span class="co">#&gt;  2:      Civil  Black Female    15</span></span>
+<span><span class="co">#&gt;  3:      Civil Latine Female     5</span></span>
+<span><span class="co">#&gt; ---                               </span></span>
+<span><span class="co">#&gt; 30: Mechanical    Black Male    65</span></span>
+<span><span class="co">#&gt; 31: Mechanical   Latine Male    29</span></span>
+<span><span class="co">#&gt; 32: Mechanical    White Male   918</span></span></code></pre>
 <p>Use <code><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast()</a></code> to transform the block records to row
 records.</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Transform shape to row-record form</span></span>
 <span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">tbl</span>, <span class="va">people</span> <span class="op">~</span> <span class="va">program</span>, value.var <span class="op">=</span> <span class="st">"grad"</span><span class="op">)</span></span>
 <span><span class="va">tbl</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;                    people Civil Electrical Industrial/Systems Mechanical</span></span>
-<span><span class="co">#&gt;                    &lt;char&gt; &lt;int&gt;      &lt;int&gt;              &lt;int&gt;      &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1:           Asian Female     9         14                 15         13</span></span>
-<span><span class="co">#&gt; 2:             Asian Male    17         86                 34         58</span></span>
-<span><span class="co">#&gt; 3:           Black Female    15         58                 43         23</span></span>
-<span><span class="co">#&gt; 4:             Black Male    25         97                 46         65</span></span>
-<span><span class="co">#&gt; 5: Hispanic/Latinx Female     5          6                  8          4</span></span>
-<span><span class="co">#&gt; 6:   Hispanic/Latinx Male    22         22                 20         29</span></span>
-<span><span class="co">#&gt; 7:           White Female   156         55                126        109</span></span>
-<span><span class="co">#&gt; 8:             White Male   558        509                263        918</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;           people Civil Electrical Industrial/Systems Mechanical</span></span>
+<span><span class="co">#&gt;           &lt;char&gt; &lt;int&gt;      &lt;int&gt;              &lt;int&gt;      &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:  Asian Female     9         14                 15         13</span></span>
+<span><span class="co">#&gt; 2:    Asian Male    17         86                 34         58</span></span>
+<span><span class="co">#&gt; 3:  Black Female    15         58                 43         23</span></span>
+<span><span class="co">#&gt; 4:    Black Male    25         97                 46         65</span></span>
+<span><span class="co">#&gt; 5: Latine Female     5          6                  8          4</span></span>
+<span><span class="co">#&gt; 6:   Latine Male    22         22                 20         29</span></span>
+<span><span class="co">#&gt; 7:  White Female   156         55                126        109</span></span>
+<span><span class="co">#&gt; 8:    White Male   558        509                263        918</span></span></code></pre>
 <p>Edit one column name and print the table.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Edit column header</span></span>
@@ -989,7 +992,7 @@ Black Male
 </tr>
 <tr>
 <td style="text-align:left;color: black !important;background-color: white !important;">
-Hispanic/Latinx Female
+Latine Female
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 5
@@ -1006,7 +1009,7 @@ Hispanic/Latinx Female
 </tr>
 <tr>
 <td style="text-align:left;color: black !important;background-color: white !important;">
-Hispanic/Latinx Male
+Latine Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 22
@@ -1075,15 +1078,15 @@ single table.</p>
 <span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="va">tbl</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, <span class="va">people</span>, <span class="va">grad</span>, <span class="va">ever</span>, <span class="va">stick</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">tbl</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;        program                 people  grad  ever stick</span></span>
-<span><span class="co">#&gt;         &lt;char&gt;                 &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      Civil           Asian Female     9    16  56.2</span></span>
-<span><span class="co">#&gt;  2:      Civil           Black Female    15    49  30.6</span></span>
-<span><span class="co">#&gt;  3:      Civil Hispanic/Latinx Female     5    10  50.0</span></span>
-<span><span class="co">#&gt; ---                                                    </span></span>
-<span><span class="co">#&gt; 30: Mechanical             Black Male    65   202  32.2</span></span>
-<span><span class="co">#&gt; 31: Mechanical   Hispanic/Latinx Male    29    76  38.2</span></span>
-<span><span class="co">#&gt; 32: Mechanical             White Male   918  1776  51.7</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;        program        people  grad  ever stick</span></span>
+<span><span class="co">#&gt;         &lt;char&gt;        &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span></span>
+<span><span class="co">#&gt;  1:      Civil  Asian Female     9    16  56.2</span></span>
+<span><span class="co">#&gt;  2:      Civil  Black Female    15    49  30.6</span></span>
+<span><span class="co">#&gt;  3:      Civil Latine Female     5    10  50.0</span></span>
+<span><span class="co">#&gt; ---                                           </span></span>
+<span><span class="co">#&gt; 30: Mechanical    Black Male    65   202  32.2</span></span>
+<span><span class="co">#&gt; 31: Mechanical   Latine Male    29    76  38.2</span></span>
+<span><span class="co">#&gt; 32: Mechanical    White Male   918  1776  51.7</span></span></code></pre>
 <p>In this step, we concatenate a character string with the ratio of
 integers in parentheses followed by the resulting percentage value.
 e.g., <code>(9/16) 56.2</code>.</p>
@@ -1091,31 +1094,31 @@ e.g., <code>(9/16) 56.2</code>.</p>
 <code class="sourceCode R"><span><span class="co"># Construct new cell values</span></span>
 <span><span class="va">tbl</span><span class="op">[</span>, <span class="va">results</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"("</span>, <span class="va">grad</span>, <span class="st">"/"</span>, <span class="va">ever</span>, <span class="st">") "</span>, <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">stick</span>, nsmall <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">tbl</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;        program                 people  grad  ever stick         results</span></span>
-<span><span class="co">#&gt;         &lt;char&gt;                 &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;          &lt;char&gt;</span></span>
-<span><span class="co">#&gt;  1:      Civil           Asian Female     9    16  56.2     (9/16) 56.2</span></span>
-<span><span class="co">#&gt;  2:      Civil           Black Female    15    49  30.6    (15/49) 30.6</span></span>
-<span><span class="co">#&gt;  3:      Civil Hispanic/Latinx Female     5    10  50.0     (5/10) 50.0</span></span>
-<span><span class="co">#&gt; ---                                                                    </span></span>
-<span><span class="co">#&gt; 30: Mechanical             Black Male    65   202  32.2   (65/202) 32.2</span></span>
-<span><span class="co">#&gt; 31: Mechanical   Hispanic/Latinx Male    29    76  38.2    (29/76) 38.2</span></span>
-<span><span class="co">#&gt; 32: Mechanical             White Male   918  1776  51.7 (918/1776) 51.7</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;        program        people  grad  ever stick         results</span></span>
+<span><span class="co">#&gt;         &lt;char&gt;        &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;          &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:      Civil  Asian Female     9    16  56.2     (9/16) 56.2</span></span>
+<span><span class="co">#&gt;  2:      Civil  Black Female    15    49  30.6    (15/49) 30.6</span></span>
+<span><span class="co">#&gt;  3:      Civil Latine Female     5    10  50.0     (5/10) 50.0</span></span>
+<span><span class="co">#&gt; ---                                                           </span></span>
+<span><span class="co">#&gt; 30: Mechanical    Black Male    65   202  32.2   (65/202) 32.2</span></span>
+<span><span class="co">#&gt; 31: Mechanical   Latine Male    29    76  38.2    (29/76) 38.2</span></span>
+<span><span class="co">#&gt; 32: Mechanical    White Male   918  1776  51.7 (918/1776) 51.7</span></span></code></pre>
 <p>Now we can perform the transformation from block records to row
 records as we did above.</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Transform shape to row-record form</span></span>
 <span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">tbl</span>, <span class="va">people</span> <span class="op">~</span> <span class="va">program</span>, value.var <span class="op">=</span> <span class="st">"results"</span><span class="op">)</span></span>
 <span><span class="va">tbl</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;                    people           Civil      Electrical Industrial/Systems</span></span>
-<span><span class="co">#&gt;                    &lt;char&gt;          &lt;char&gt;          &lt;char&gt;             &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:           Asian Female     (9/16) 56.2    (14/36) 38.9       (15/42) 35.7</span></span>
-<span><span class="co">#&gt; 2:             Asian Male    (17/34) 50.0   (86/189) 45.5       (34/65) 52.3</span></span>
-<span><span class="co">#&gt; 3:           Black Female    (15/49) 30.6   (58/145) 40.0       (43/93) 46.2</span></span>
-<span><span class="co">#&gt; 4:             Black Male    (25/90) 27.8   (97/287) 33.8      (46/103) 44.7</span></span>
-<span><span class="co">#&gt; 5: Hispanic/Latinx Female     (5/10) 50.0     (6/14) 42.9        (8/13) 61.5</span></span>
-<span><span class="co">#&gt; 6:   Hispanic/Latinx Male    (22/53) 41.5    (22/63) 34.9       (20/32) 62.5</span></span>
-<span><span class="co">#&gt; 7:           White Female  (156/304) 51.3   (55/173) 31.8     (126/234) 53.8</span></span>
-<span><span class="co">#&gt; 8:             White Male (558/1043) 53.5 (509/1227) 41.5     (263/494) 53.2</span></span>
+<pre><code><span><span class="co">#&gt;           people           Civil      Electrical Industrial/Systems</span></span>
+<span><span class="co">#&gt;           &lt;char&gt;          &lt;char&gt;          &lt;char&gt;             &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1:  Asian Female     (9/16) 56.2    (14/36) 38.9       (15/42) 35.7</span></span>
+<span><span class="co">#&gt; 2:    Asian Male    (17/34) 50.0   (86/189) 45.5       (34/65) 52.3</span></span>
+<span><span class="co">#&gt; 3:  Black Female    (15/49) 30.6   (58/145) 40.0       (43/93) 46.2</span></span>
+<span><span class="co">#&gt; 4:    Black Male    (25/90) 27.8   (97/287) 33.8      (46/103) 44.7</span></span>
+<span><span class="co">#&gt; 5: Latine Female     (5/10) 50.0     (6/14) 42.9        (8/13) 61.5</span></span>
+<span><span class="co">#&gt; 6:   Latine Male    (22/53) 41.5    (22/63) 34.9       (20/32) 62.5</span></span>
+<span><span class="co">#&gt; 7:  White Female  (156/304) 51.3   (55/173) 31.8     (126/234) 53.8</span></span>
+<span><span class="co">#&gt; 8:    White Male (558/1043) 53.5 (509/1227) 41.5     (263/494) 53.2</span></span>
 <span><span class="co">#&gt;         Mechanical</span></span>
 <span><span class="co">#&gt;             &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1:    (13/22) 59.1</span></span>
@@ -1222,7 +1225,7 @@ Black Male
 </tr>
 <tr>
 <td style="text-align:left;color: black !important;background-color: white !important;">
-Hispanic/Latinx Female
+Latine Female
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 (5/10) 50.0
@@ -1239,7 +1242,7 @@ Hispanic/Latinx Female
 </tr>
 <tr>
 <td style="text-align:left;color: black !important;background-color: white !important;">
-Hispanic/Latinx Male
+Latine Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 (22/53) 41.5
@@ -1509,8 +1512,7 @@ script.</p>
 blockquote {
     padding: 10px 20px;
     margin: 0 0 20px;
-    font-size: 12px;
-    border-left: 0px solid
+    border-left: 0px
 }
 </style>
 </div>

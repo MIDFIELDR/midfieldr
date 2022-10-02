@@ -98,7 +98,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Data sufficiency</h1>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-10-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-010-data-sufficiency.Rmd" class="external-link"><code>vignettes/art-010-data-sufficiency.Rmd</code></a></small>
       <div class="d-none name"><code>art-010-data-sufficiency.Rmd</code></div>
@@ -329,7 +329,10 @@ start with the ID column only.</p>
 multiple terms in which a student is enrolled in a program. We filter
 unique IDs.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Filter for unique IDs</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;               mcid</span></span>
 <span><span class="co">#&gt;             &lt;char&gt;</span></span>
@@ -411,6 +414,8 @@ Encoded YYYYT.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Display timely term and supporting variables</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;               mcid term_i     level_i adj_span timely_term</span></span>
 <span><span class="co">#&gt;             &lt;char&gt; &lt;char&gt;      &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
@@ -428,7 +433,8 @@ Encoded YYYYT.</p>
 <p><strong>Closer look.</strong> Let’s examine two specific observations
 to illustrate.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID25783135"</span><span class="op">]</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Display one student by ID</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID25783135"</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;           mcid term_i     level_i adj_span timely_term</span></span>
 <span><span class="co">#&gt;         &lt;char&gt; &lt;char&gt;      &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1: MID25783135  19911 01 Freshman        6       19963</span></span></code></pre>
@@ -438,7 +444,8 @@ to timely completion is 6 years, that is, academic years 1991–92, 92–93,
 93–94, 94–95, 95–96, 96–97. Thus their timely completion term is Spring
 1997 (encoded <code>19963</code>).</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID26697689"</span><span class="op">]</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Display one student by ID</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MID26697689"</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;           mcid term_i   level_i adj_span timely_term</span></span>
 <span><span class="co">#&gt;         &lt;char&gt; &lt;char&gt;    &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1: MID26697689  20163 04 Senior        3       20191</span></span></code></pre>
@@ -478,6 +485,8 @@ like this,</p>
 <code class="sourceCode R"><span><span class="co"># Using term data named something else</span></span>
 <span><span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="va">toy_student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">toy_DT</span>, <span class="va">toy_term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">toy_DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;            mcid term_i      level_i adj_span timely_term</span></span>
 <span><span class="co">#&gt;          &lt;char&gt; &lt;char&gt;       &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
@@ -499,6 +508,8 @@ timely term except <code>adj_span</code>.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Drop three columns</span></span>
 <span><span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="va">toy_DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"term_i"</span>, <span class="st">"level_i"</span>, <span class="st">"timely_term"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">toy_DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;            mcid adj_span</span></span>
 <span><span class="co">#&gt;          &lt;char&gt;    &lt;num&gt;</span></span>
@@ -516,7 +527,10 @@ timely term except <code>adj_span</code>.</p>
 <p>Reapplying the function, the <code>adj_span</code> column is silently
 deleted and replaced.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">toy_DT</span>, <span class="va">toy_term</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Demontsrate overwriting</span></span>
+<span><span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">toy_DT</span>, <span class="va">toy_term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">toy_DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;            mcid term_i      level_i adj_span timely_term</span></span>
 <span><span class="co">#&gt;          &lt;char&gt; &lt;char&gt;       &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
@@ -587,6 +601,8 @@ limit.</p>
 <span></span>
 <span><span class="co"># Display data sufficiency and supporting variables</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;               mcid timely_term term_i lower_limit upper_limit data_sufficiency</span></span>
 <span><span class="co">#&gt;             &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span></span>
@@ -654,6 +670,8 @@ results,</p>
 <code class="sourceCode R"><span><span class="co"># Using term data named something else</span></span>
 <span><span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="va">toy_DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">timely_term</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">toy_DT</span>, <span class="va">toy_term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">toy_DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;            mcid timely_term term_i lower_limit upper_limit data_sufficiency</span></span>
 <span><span class="co">#&gt;          &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span></span>
@@ -676,6 +694,8 @@ sufficiency except <code>upper_limit</code>.</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Drop three columns</span></span>
 <span><span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="va">toy_DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lower_limit"</span>, <span class="st">"data_sufficiency"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">toy_DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;            mcid timely_term term_i upper_limit</span></span>
 <span><span class="co">#&gt;          &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
@@ -694,6 +714,8 @@ sufficiency except <code>upper_limit</code>.</p>
 overwritten and the other three columns added as before.</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">toy_DT</span>, <span class="va">toy_term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">toy_DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;            mcid timely_term term_i lower_limit upper_limit data_sufficiency</span></span>
 <span><span class="co">#&gt;          &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span></span>
@@ -713,6 +735,8 @@ observations for which the data are sufficient.</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Apply the data sufficiency criterion</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;               mcid timely_term term_i lower_limit upper_limit data_sufficiency</span></span>
 <span><span class="co">#&gt;             &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span></span>
@@ -818,6 +842,13 @@ their own R file.</p>
 <span></span>
 <span><span class="co"># Apply the data sufficiency criterion</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span><span class="op">]</span></span></code></pre></div>
+<style type="text/css">
+blockquote {
+    padding: 10px 20px;
+    margin: 0 0 20px;
+    border-left: 0px
+}
+</style>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

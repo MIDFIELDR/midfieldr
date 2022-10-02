@@ -98,7 +98,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Starters and FYE programs</h1>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-10-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-070-fye.Rmd" class="external-link"><code>vignettes/art-070-fye.Rmd</code></a></small>
       <div class="d-none name"><code>art-070-fye.Rmd</code></div>
@@ -153,10 +153,10 @@ required to enroll in FYE.</p>
 is a prerequisite for declaring an engineering major at some US
 institutions.</p>
 </dd>
-<dt>switcher</dt>
+<dt>migrator</dt>
 <dd>
 <p>A student who changes majors. In dealing with FYE records, we are
-concerned with switchers into or out of Engineering at the 2-digit
+concerned with migrators into or out of Engineering at the 2-digit
 program level (CIP 14).</p>
 </dd>
 <dt>FYE proxy</dt>
@@ -636,7 +636,7 @@ might apply, e.g., data sufficiency, would remove information
 potentially useful to the prediction process without benefiting the
 process.</p>
 <p>The function extracts all terms for all FYE students, including
-switchers, and returns one row per student with columns for institution,
+migrators, and returns one row per student with columns for institution,
 race, sex, and proxy CIP code if any.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create the working data frame</span></span>
@@ -644,19 +644,19 @@ race, sex, and proxy CIP code if any.</p>
 <span></span>
 <span><span class="co"># Display the result</span></span>
 <span><span class="va">fye</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;              mcid   institution            race    sex  proxy</span></span>
-<span><span class="co">#&gt;            &lt;char&gt;        &lt;fctr&gt;          &lt;fctr&gt; &lt;fctr&gt; &lt;fctr&gt;</span></span>
-<span><span class="co">#&gt;    1: MID26060301 Institution C           Asian Female   &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;    2: MID25995980 Institution C Hispanic/Latinx Female   &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;    3: MID25997636 Institution C Hispanic/Latinx Female   &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;    4: MID26086310 Institution C Hispanic/Latinx Female   &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;    5: MID26000057 Institution C           White Female   &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;   ---                                                        </span></span>
-<span><span class="co">#&gt; 4488: MID25844276 Institution M           White   Male 143501</span></span>
-<span><span class="co">#&gt; 4489: MID25846316 Institution M           White   Male 143501</span></span>
-<span><span class="co">#&gt; 4490: MID25847220 Institution M           White   Male 143501</span></span>
-<span><span class="co">#&gt; 4491: MID25848589 Institution M           White   Male 143501</span></span>
-<span><span class="co">#&gt; 4492: MID25828870 Institution M           White   Male 149999</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;              mcid   institution   race    sex  proxy</span></span>
+<span><span class="co">#&gt;            &lt;char&gt;        &lt;fctr&gt; &lt;fctr&gt; &lt;fctr&gt; &lt;fctr&gt;</span></span>
+<span><span class="co">#&gt;    1: MID26060301 Institution C  Asian Female   &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;    2: MID25995980 Institution C Latine Female   &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;    3: MID25997636 Institution C Latine Female   &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;    4: MID26086310 Institution C Latine Female   &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;    5: MID26000057 Institution C  White Female   &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   ---                                               </span></span>
+<span><span class="co">#&gt; 4488: MID25844276 Institution M  White   Male 143501</span></span>
+<span><span class="co">#&gt; 4489: MID25846316 Institution M  White   Male 143501</span></span>
+<span><span class="co">#&gt; 4490: MID25847220 Institution M  White   Male 143501</span></span>
+<span><span class="co">#&gt; 4491: MID25848589 Institution M  White   Male 143501</span></span>
+<span><span class="co">#&gt; 4492: MID25828870 Institution M  White   Male 149999</span></span></code></pre>
 <p>The function identifies the CIP code, if any, of the first post-FYE
 program in which the student enrolls. This treatment yields two possible
 outcomes for values in the <code>proxy</code> column:</p>
@@ -912,7 +912,7 @@ character.</p>
 <span><span class="co">#&gt; 4491: MID26648517 141001</span></span>
 <span><span class="co">#&gt; 4492: MID26648553 140201</span></span></code></pre>
 <p><strong>Filtering.</strong> For imputing missing values we used all
-students ever enrolled in FYE, including switchers. In use, however, the
+students ever enrolled in FYE, including migrators. In use, however, the
 proxies are substitutes for students starting in FYE. Therefore, we
 filter to retain the proxies of first-term FYE students only.</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
@@ -1356,6 +1356,13 @@ script.</p>
 <span><span class="va">rev_proxy</span> <span class="op">&lt;-</span> <span class="va">rev_proxy</span><span class="op">[</span><span class="op">!</span><span class="va">program</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%ilike%</a></span> <span class="st">"Electrical|Computer"</span><span class="op">]</span></span>
 <span><span class="va">rev_proxy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">rev_proxy</span>, <span class="va">new_row</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">rev_proxy</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span><span class="op">)</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<style type="text/css">
+blockquote {
+    padding: 10px 20px;
+    margin: 0 0 20px;
+    border-left: 0px
+}
+</style>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

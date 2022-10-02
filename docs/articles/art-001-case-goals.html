@@ -98,7 +98,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Case study: Goals</h1>
             
-            <h4 data-toc-skip class="date">2022-09-27</h4>
+            <h4 data-toc-skip class="date">2022-10-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-001-case-goals.Rmd" class="external-link"><code>vignettes/art-001-case-goals.Rmd</code></a></small>
       <div class="d-none name"><code>art-001-case-goals.Rmd</code></div>
@@ -106,67 +106,112 @@
 
     
     
-<p>Part 1 of a condensed study illustrating how we work with
+<p>Part 1 of a case study in three parts, illustrating how we work with
 longitudinal Student Unit Records (SUR).</p>
-<p>For reproducibility, we provide all the case-study code but without
-detailed explanations of syntax, functions, or arguments. Instead, we
-focus on the rationale underlying our process.</p>
-<p>We use these R packages:</p>
-<ul>
-<li>
-<a href="https://midfieldr.github.io/midfieldr/">midfieldr</a> for
-tools to work with SURs</li>
-<li>
-<a href="https://midfieldr.github.io/midfielddata/" class="external-link">midfielddata</a>
-for practice data</li>
-<li>
-<a href="https://rdatatable.gitlab.io/data.table/" class="external-link">data.table</a>
-for manipulating data</li>
-<li>
-<a href="https://ggplot2.tidyverse.org/" class="external-link">ggplot2</a> for creating
-charts</li>
-</ul>
-<p>For detailed discussion of midfieldr functions, see the collection of
-package <a href="https://midfieldr.github.io/midfieldr/articles/">vignettes</a>.</p>
+<ol style="list-style-type: decimal">
+<li><p>Goals (this page). Introducing the study.</p></li>
+<li><p><a href="art-002-case-data.html">Data.</a> Transforming the data
+to yield the observations of interest.</p></li>
+<li><p><a href="art-003-case-results.html">Results.</a> Calculating
+summary statistics and metrics and displaying the results.</p></li>
+</ol>
 <div class="section level2">
-<h2 id="outline">Outline<a class="anchor" aria-label="anchor" href="#outline"></a>
+<h2 id="definitions">Definitions<a class="anchor" aria-label="anchor" href="#definitions"></a>
 </h2>
-<p>We present the study in three parts:</p>
-<ul>
-<li>
-<a href="art-001-case-goals.html">Goals.</a> Describing the study
-parameters.<br>
-</li>
-<li>
-<a href="art-002-case-data.html">Data.</a> Transforming the data to
-yield the observations of interest.</li>
-<li>
-<a href="art-003-case-results.html">Results.</a> Calculating summary
-statistics and metrics and displaying the results.</li>
-</ul>
+<dl>
+<dt>student unit records (SUR)</dt>
+<dd>
+<p>Registrar’s student-level data compiled by an institution and
+anonymized and curated by the MIDFIELD data steward. SURs include
+personal information (e.g., age, sex, and race/ethnicity), enrollment
+information (e.g., institution, program, and grade level), and academic
+information (e.g., courses, grades, and degrees). MIDFIELD data are
+organized into four tables—student, course, term, and degree—keyed by
+student ID.</p>
+</dd>
+<dt>program stickiness</dt>
+<dd>
+<p>The ratio <span class="math inline">\((S)\)</span> of the number of
+students graduating from a program <span class="math inline">\((N_g)\)</span> to the number of students ever
+enrolled in the program <span class="math inline">\((N_e)\)</span>.
+<span class="math display">\[
+S=\frac{N_g}{N_e}
+\]</span></p>
+</dd>
+<dd>
+Stickiness is a more-inclusive alternative to graduation rate as a
+measure of of a program’s success in attracting, keeping, and graduating
+their undergraduates. All students excluded by the conventional
+definition of graduation rate are included in the stickiness metric:
+part-time, transfers, admitted in any term, and migrators <span class="citation">(<a href="#ref-Ohland+Orr+others:2012" role="doc-biblioref">Ohland et al., 2012</a>)</span>.
+</dd>
+</dl>
 </div>
 <div class="section level2">
 <h2 id="goals">Goals<a class="anchor" aria-label="anchor" href="#goals"></a>
 </h2>
-<p>The goal of the case study is to compare the “stickiness” of Civil,
-Electrical, Industrial, and Mechanical Engineering programs with
-students grouped by race/ethnicity and sex.</p>
-<p><em>Program stickiness</em> is the ratio of the number of students
-graduating from a program to the number of students ever enrolled in the
-program—a measure of a program’s success in attracting, keeping, and
-graduating their undergraduates.</p>
-<style type="text/css">
-blockquote {
-    padding: 10px 20px;
-    margin: 0 0 20px;
-    font-size: 12px;
-    border-left: 0px solid
-}
-</style>
+<p>The technical goal of the case study is to compare the program
+stickiness of Civil, Electrical, Industrial, and Mechanical Engineering
+programs with students grouped by race/ethnicity and sex.</p>
+<p>The meta-goal of the case study is to illustrate a typical procedure
+for working with SUR data.</p>
+</div>
+<div class="section level2">
+<h2 id="what-the-case-study-does">What the case study does<a class="anchor" aria-label="anchor" href="#what-the-case-study-does"></a>
+</h2>
+<ul>
+<li><p>We focus on our procedures and underlying rationale for working
+with SURs.</p></li>
+<li><p>For reproducibility, we provide all the necessary code.</p></li>
+<li><p>We use the <a href="https://rdatatable.gitlab.io/data.table/" class="external-link">data.table</a> package
+instead of base R or the dplyr package for speed, memory efficiency, and
+concise transforms via the []-indexing operator.</p></li>
+<li><p>We use the <a href="https://ggplot2.tidyverse.org/" class="external-link">ggplot2</a>
+package instead of base R or lattice (or other R packages) because:
+ggplot2’s layered approach allows plots to evolve (or devolve) with
+minimal changes to code; easily-invoked facets and legends simplify
+multivariate exploration; and its popularity yields extensive online
+help.</p></li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="what-the-case-study-does-not-do">What the case study does not do<a class="anchor" aria-label="anchor" href="#what-the-case-study-does-not-do"></a>
+</h2>
+<ul>
+<li><p>For brevity in the case study, we do not explain the details of
+midfieldr syntax, functions, or arguments. Those details are covered in
+other <a href="https://midfieldr.github.io/midfieldr/articles/">vignettes</a>.</p></li>
+<li><p>We do not explain data.table or ggplot2 syntax except for
+selected functions. Such details are available in numerous online
+resources including the <a href="https://rdatatable.gitlab.io/data.table/" class="external-link">data.table</a> and <a href="https://ggplot2.tidyverse.org/" class="external-link">ggplot2</a> home pages.</p></li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-Dowle+Srinivasan:2021:data.table" class="csl-entry">
+Dowle, M., &amp; Srinivasan, A. (2021). <em><span class="nocase">data.table: Extension of data.frame</span></em>.
+R package version 1.14.2. <a href="https://CRAN.R-project.org/package=data.table" class="external-link">https://CRAN.R-project.org/package=data.table</a>
+</div>
+<div id="ref-Ohland+Orr+others:2012" class="csl-entry">
+Ohland, M., Orr, M., Layton, R., Lord, S., &amp; Long, R. (2012). <span class="nocase">Introducing stickiness as a versatile metric of
+engineering persistence</span>. <em><span class="nocase">Proceedings of
+the Frontiers in Education Conference</span></em>, 1–5.
+</div>
+<div id="ref-Wickham:2016:ggplot2" class="csl-entry">
+Wickham, H. (2016). <em><span class="nocase">ggplot2: Elegant Graphics
+for Data Analysis</span></em>. <span>ISBN 978-3-319-24277-4</span>;
+Springer-Verlag New York. <a href="https://ggplot2.tidyverse.org" class="external-link">https://ggplot2.tidyverse.org</a>
+</div>
+</div>
+<style type="text/css">
+blockquote {
+    padding: 10px 20px;
+    margin: 0 0 20px;
+    border-left: 0px
+}
+</style>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
