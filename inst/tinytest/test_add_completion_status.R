@@ -4,7 +4,7 @@ test_add_completion_status <- function() {
     # add_completion_status(dframe, midfield_degree = degree)
 
     # Needed for tinytest::build_install_test()
-    suppressMessages(library("data.table"))
+    suppressPackageStartupMessages(library("data.table"))
 
     # create answers
     dframe <- toy_student[1:10, .(mcid)]

@@ -20,7 +20,7 @@ longitudinal data from the MIDFIELD database.
 
 ## Overview
 
-<a href="https://engineering.purdue.edu/MIDFIELD"
+<a href="https://midfield.online"
 target="_blank"><strong>MIDFIELD</strong></a> contains individual
 Student Unit Record (SUR) data for 1.7M students at 21 US institutions
 (as of June 2022). MIDFIELD is large enough to permit grouping and

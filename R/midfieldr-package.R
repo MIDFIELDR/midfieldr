@@ -22,7 +22,7 @@ NULL
 #' The goal of midfieldr is to provide tools for working with MIDFIELD data,
 #' a resource of longitudinal, de-identified, individual student unit records.
 #'
-#' \href{https://engineering.purdue.edu/MIDFIELD}{MIDFIELD} contains individual
+#' \href{https://midfield.online}{MIDFIELD} contains individual
 #' Student Unit Record (SUR) data for 1.7M students at 21 US institutions (as
 #' of June 2022). MIDFIELD is large enough to permit grouping and summarizing
 #' by multiple characteristics, enabling researchers to examine student

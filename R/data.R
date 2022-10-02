@@ -102,7 +102,7 @@
 #'  institution.}
 #'
 #'  \item{race}{Character, race/ethnicity as self-reported by the student,
-#'  e.g., Asian, Black, Hispanic/LatinX, etc.}
+#'  e.g., Asian, Black, Latine, etc.}
 #'
 #'  \item{sex}{character, sex as self-reported by the student, possible
 #'  values are Female, Male, and Unknown.}

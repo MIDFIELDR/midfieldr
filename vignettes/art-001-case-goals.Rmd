@@ -10,6 +10,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 nocite: | 
+  @Dowle+Srinivasan:2021:data.table, @Wickham:2016:ggplot2
 resource_files: |
 ---
 
@@ -45,32 +46,83 @@ knitr::knit_hooks$set(inline = function(x) {
 })
 ```
 
-Part 1 of a condensed study illustrating how we work with longitudinal Student Unit Records (SUR). 
+Part 1 of a case study in three parts, illustrating how we work with longitudinal Student Unit Records (SUR). 
 
-For reproducibility, we provide all the case-study code but without detailed explanations of syntax, functions, or arguments. Instead, we focus on the rationale underlying our process.  
+1. Goals (this page). Introducing the study.   
 
-We use these R packages:
+2. [Data.](art-002-case-data.html) Transforming the data to yield the observations of interest.
 
-- [midfieldr](https://midfieldr.github.io/midfieldr/) for tools to work with SURs
-- [midfielddata](https://midfieldr.github.io/midfielddata/) for practice data
-- [data.table](https://rdatatable.gitlab.io/data.table/) for manipulating data 
-- [ggplot2](https://ggplot2.tidyverse.org/) for creating charts
+3. [Results.](art-003-case-results.html) Calculating summary statistics and metrics and displaying the results. 
 
-For detailed discussion of midfieldr functions, see the collection of package [vignettes](https://midfieldr.github.io/midfieldr/articles/). 
 
-## Outline
 
-We present the study in three parts:
 
-- [Goals.](art-001-case-goals.html) Describing the study parameters.  
-- [Data.](art-002-case-data.html) Transforming the data to yield the observations of interest.
-- [Results.](art-003-case-results.html) Calculating summary statistics and metrics and displaying the results. 
+
+
+## Definitions
+
+student unit records (SUR)
+
+: Registrar’s student-level data compiled by an institution and anonymized and curated by the MIDFIELD data steward. SURs include personal information (e.g., age, sex, and race/ethnicity), enrollment information (e.g., institution, program, and grade level), and academic information (e.g., courses, grades, and degrees). MIDFIELD data are organized into four tables---student, course, term, and degree---keyed by student ID.
+
+program stickiness
+
+: The ratio $(S)$ of the number of students graduating from a program $(N_g)$ to the number of students ever enrolled in the program $(N_e)$.
+$$
+S=\frac{N_g}{N_e}
+$$
+: Stickiness is a more-inclusive alternative to graduation rate as a measure of of a program's success in attracting, keeping, and graduating their undergraduates. All students excluded by the conventional definition of graduation rate are included in the stickiness metric: part-time, transfers, admitted in any term, and migrators [@Ohland+Orr+others:2012]. 
+
+ 
+
+
+
 
 ## Goals
 
-The goal of the case study is to compare the "stickiness" of Civil, Electrical, Industrial, and Mechanical Engineering programs with students grouped by race/ethnicity and sex. 
+The technical goal of the case study is to compare the program stickiness of Civil, Electrical, Industrial, and Mechanical Engineering programs with students grouped by race/ethnicity and sex. 
 
-*Program stickiness* is the ratio of the number of students graduating from a program to the number of students ever enrolled in the program---a measure of a program's success in attracting, keeping, and graduating their undergraduates. 
+The meta-goal of the case study is to illustrate a typical procedure for working with SUR data. 
+
+
+
+
+
+
+## What the case study does
+
+- We focus on our procedures and underlying rationale for working with SURs. 
+
+- For reproducibility, we provide all the necessary code. 
+
+- We use the [data.table](https://rdatatable.gitlab.io/data.table/)  package instead of base R or the dplyr package for speed, memory efficiency, and concise transforms via the []-indexing operator.
+
+- We use the [ggplot2](https://ggplot2.tidyverse.org/) package instead of base R or lattice (or other R packages) because: ggplot2's layered approach allows  plots to evolve (or devolve) with minimal changes to code; easily-invoked facets and legends simplify multivariate exploration; and its popularity yields extensive online help. 
+
+
+
+
+
+
+
+
+
+## What the case study does not do
+
+
+- For brevity in the case study, we do not explain the details of midfieldr syntax, functions, or arguments. Those details are covered in other  [vignettes](https://midfieldr.github.io/midfieldr/articles/). 
+
+- We do not explain data.table or ggplot2 syntax except for selected functions. Such details are available in numerous online resources including the [data.table](https://rdatatable.gitlab.io/data.table/) and [ggplot2](https://ggplot2.tidyverse.org/) home pages. 
+
+
+
+
+
+
+
+## References
+
+<div id="refs"></div>
 
 ```{r echo = FALSE}
 # to change the CSS file for block quotes
@@ -82,9 +134,7 @@ knitr::opts_chunk$set(echo = FALSE)
 blockquote {
     padding: 10px 20px;
     margin: 0 0 20px;
-    font-size: 12px;
-    border-left: 0px solid
+    border-left: 0px
 }
 ```
 
-## References

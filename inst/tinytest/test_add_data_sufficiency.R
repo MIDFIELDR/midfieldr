@@ -4,7 +4,7 @@ test_add_data_sufficiency <- function() {
     # add_data_sufficiency(dframe, midfield_term = term)
 
     # Needed for tinytest::build_install_test()
-    suppressMessages(library("data.table"))
+    suppressPackageStartupMessages(library("data.table"))
 
     # create answers
     library(midfieldr)

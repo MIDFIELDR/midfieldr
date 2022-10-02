@@ -504,7 +504,7 @@ unlist(lapply(cip, FUN = class))
 
 Programs in MIDFIELD data sets are encoded by 6-digit CIP codes. As we've shown, multiple 6-digit codes can be considered specialties within a larger program with a 4-digit code or even a set of distinct 4-digit codes. It is nearly always necessary therefore to assign our own program labels to groups of  6-digit codes to include all observations relevant to meet the needs of a study. 
 
-> To emphasize the point: When grouping and summarizing MIDFIELD data, it is usually necessary to group by one's own set of program names instead of the CIP codes and names directly. 
+> To emphasize the point: When grouping and summarizing MIDFIELD data, it is usually necessary to group by one's own set of program names instead of the CIP codes and names directly.
 
 We use our case study group of four engineering programs to illustrate several methods for adding a `program` column to the CIP data frame. 
 
@@ -517,13 +517,13 @@ We obtain their 6-digit CIP codes. The 4-digit names are appropriate here.  Our 
 options(datatable.print.nrows = 15)
 
 # Four engineering programs
-study_program <- filter_search(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+four_programs <- filter_search(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
 
 # Retain the needed columns
-study_program <- study_program[, .(cip6, cip4name)]
+four_programs <- four_programs[, .(cip6, cip4name)]
 
 # Examine the result
-study_program[]
+four_programs[]
 ```
 
 To make the assignments clear, our approach here will be to assign a new `program` column with NA values, then edit the new column values. 
@@ -531,10 +531,10 @@ To make the assignments clear, our approach here will be to assign a new `progra
 
 ```{r}
 # Assign a new column
-study_program[, program := NA_character_]
+four_programs[, program := NA_character_]
 
 # Examine the result
-study_program[]
+four_programs[]
 ```
 
 ### 1. Use `cip4name %ilike%` to recode one value
@@ -551,10 +551,10 @@ In this approach, we search for one distinctive term only. We're using abbreviat
 
 ```{r}
 # Recode program using the 4-digit name
-study_program[cip4name %ilike% "electrical", program := "EE"]
+four_programs[cip4name %ilike% "electrical", program := "EE"]
 
 # Examine the result
-study_program[]
+four_programs[]
 ```
 
 ### 2. Use `cip6 %like%` to recode one value
@@ -563,10 +563,10 @@ In our second approach, we use the `%like%` function again, but apply it to a CI
 
 ```{r}
 # Recode program using the 4-digit code
-study_program[cip6 %like% "^1408", program := "CE"]
+four_programs[cip6 %like% "^1408", program := "CE"]
 
 # Examine the result
-study_program[]
+four_programs[]
 ```
 
 
@@ -576,7 +576,7 @@ In this approach, we use the data.table function `fcase()`, an implementation of
 
 ```{r}
 # Recode all program values
-study_program[, program := fcase(
+four_programs[, program := fcase(
   cip6 %like% "^1408", "CE",
   cip6 %like% "^1410", "EE",
   cip6 %like% "^1419", "ME",
@@ -584,18 +584,39 @@ study_program[, program := fcase(
 )]
 
 # Examine the result
-study_program[]
+four_programs[]
 ```
 
 Having completed labeling the programs, we can remove the original verbose `cip4nme` column. 
 
 ```{r}
 # Delete a column
-study_program[, cip4name := NULL]
+four_programs[, cip4name := NULL]
 
 # Examine the result
-study_program[]
+four_programs[]
 ```
+
+This data frame is included with midfieldr as the `study_programs` data set. You can view the help page (and data dictionary) by running
+
+```{r}
+#| eval: false
+
+# Run in Console
+? study_programs
+```
+
+**Confirming results.** Verify the results agree with the data included with midfieldr.
+
+```{r}
+#| collapse: true
+
+# Verify results
+all.equal(four_programs, study_programs)
+```
+
+
+
 
 
 ### Exercises
@@ -728,26 +749,26 @@ codes_we_want <- c("^24", "^4102", "^450202")
 filter_search(cip, codes_we_want)
 
 # When search terms cannot be found
-# filter_search(cip, c("050125", "111111", "160501", "Bogus", "^55"))
-# filter_search(cip, c("111111", "Bogus", "^55"))
+filter_search(cip, c("050125", "111111", "160501", "Bogus", "^55"))
+filter_search(cip, c("111111", "Bogus", "^55"))
 
 # CIP data from another source
 unlist(lapply(cip, FUN = class))
 
 # Assigning program names
 options(datatable.print.nrows = 15)
-study_program <- filter_search(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
-study_program <- study_program[, .(cip6, cip4name)]
-study_program[, program := NA_character_]
-study_program[cip4name %ilike% "electrical", program := "EE"]
-study_program[cip6 %like% "^1408", program := "CE"]
-study_program[, program := fcase(
+four_programs <- filter_search(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+four_programs <- four_programs[, .(cip6, cip4name)]
+four_programs[, program := NA_character_]
+four_programs[cip4name %ilike% "electrical", program := "EE"]
+four_programs[cip6 %like% "^1408", program := "CE"]
+four_programs[, program := fcase(
   cip6 %like% "^1408", "CE",
   cip6 %like% "^1410", "EE",
   cip6 %like% "^1419", "ME",
   cip6 %chin% c("142701", "143501", "143601", "143701"), "ISE"
 )]
-study_program[, cip4name := NULL]
+four_programs[, cip4name := NULL]
 ```
 
 ```{r echo = FALSE}
@@ -760,7 +781,6 @@ knitr::opts_chunk$set(echo = FALSE)
 blockquote {
     padding: 10px 20px;
     margin: 0 0 20px;
-    font-size: 12px;
-    border-left: 0px solid
+    border-left: 0px
 }
 ```

@@ -8,7 +8,7 @@ test_filter_search <- function() {
     #               select = NULL)
 
     # Needed for tinytest::build_install_test()
-    suppressMessages(library("data.table"))
+    suppressPackageStartupMessages(library("data.table"))
 
     # test case
     music_cip <- wrapr::build_frame(
