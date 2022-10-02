@@ -14,7 +14,9 @@ nocite: |
 resource_files: |
 ---
 
-```{r setup, include = FALSE}
+```{r setup}
+#| include: false
+
 # code chunks
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -47,18 +49,26 @@ knitr::knit_hooks$set(inline = function(x) {
 ```
 
 
-Part 2 of a case study in three parts:
+Part 2 of a case study in three parts, illustrating how we work with longitudinal Student Unit Records (SUR). 
 
 1. [Goals.](art-001-case-goals.html) Briefly describe the study.   
+
 2. Data (this page). Transforming the data to yield the observations of interest.
+
 3. [Results.](art-003-case-results.html) Calculating summary statistics and metrics and displaying the results. 
 
 In this part, we use the midfieldr functions:  
 
 - `add_completion_status()` 
+
 - `add_data_sufficiency()`
+
 - `add_timely_term()`
+
 - `filter_search()` 
+
+
+
 
 ## Preface
 
@@ -117,6 +127,8 @@ The result has `r nrow(DT)` observations. We will usually note the number of obs
 # Minimize the dimensions of the data
 DT <- DT[, .(mcid, cip6)]
 DT <- unique(DT)
+
+# Display the result
 DT[]
 
 # Count unique IDs
@@ -136,6 +148,8 @@ Some student records near the lower and upper terms that bound the available dat
 ```{r}
 # Calculate a timely completion term for every student
 DT <- add_timely_term(DT, term)
+
+# Display the result
 DT[]
 ```
 
@@ -152,6 +166,8 @@ You can view the help page by running
 ```{r}
 # Determine data sufficiency for every student
 DT <- add_data_sufficiency(DT, term)
+
+# Display the result
 DT[]
 ```
 
@@ -170,6 +186,8 @@ You can view the help page by running
 # Retain observations having sufficient data
 DT <- DT[data_sufficiency == "include"]
 DT <- DT[, .(mcid, cip6)]
+
+# Display the result
 DT[]
 ```
 
@@ -190,6 +208,8 @@ In studying stickiness, we exclude non-degree-seeking students. We filter such s
 ```{r}
 # Inner join that filters DT
 DT <- DT[student, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
+
+# Display the result
 DT[]
 ```
 
@@ -214,6 +234,8 @@ Having already searched the `cip` data set for our programs, we report the resul
 # Gather program CIP codes
 study_program <- filter_search(cip, keep_text = c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
 study_program <- study_program[, .(cip6, cip4name)]
+
+# Display the result
 study_program[]
 ```
 
@@ -245,6 +267,8 @@ Having checked that the new abbreviations correctly represent the programs, we c
 ```{r}
 # Case study CIPs and program names
 study_program[, cip4name := NULL]
+
+# Display the result
 study_program[]
 ```
 
@@ -261,6 +285,8 @@ This data frame is included with midfieldr as the `study_programs` data set. You
 ```{r}
 # Left-outer join to DT
 DT <- study_program[DT, .(mcid, cip6, program), on = c("cip6")]
+
+# Display the result
 DT[]
 ```
 
@@ -269,6 +295,8 @@ DT[]
 ```{r}
 # Retain observations in our four programs
 DT <- DT[!is.na(program)]
+
+# Display the result
 DT[]
 ```
 
@@ -280,6 +308,8 @@ The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique s
 # Drop duplicate rows
 DT[, cip6 := NULL]
 DT <- unique(DT)
+
+# Display the result
 DT[]
 ```
 
@@ -291,6 +321,8 @@ The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique s
 # Conclude development of the ever-enrolled observations
 ever <- copy(DT)
 ever[, group := "ever"]
+
+# Display the result
 ever[]
 ```
 
@@ -310,6 +342,8 @@ ever[]
 # Unique IDs of students ever enrolled in the study programs
 DT <- DT[, .(mcid)]
 DT <- unique(DT)
+
+# Display the result
 DT[]
 ```
 
@@ -326,6 +360,8 @@ These IDs are included with midfieldr as the `study_mcid` data set. You can view
 ```{r}
 # Inner join that filters DT
 DT <- DT[degree, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
+
+# Display the result
 DT[]
 ```
 
@@ -343,6 +379,8 @@ To be counted as a graduate in the stickiness metric, a student must complete th
 ```{r}
 # Calculate a timely completion term for every student
 DT <- add_timely_term(DT, term)
+
+# Display the result
 DT[]
 ```
 
@@ -352,6 +390,8 @@ DT[]
 ```{r}
 # Determine completion status for every student
 DT <- add_completion_status(DT, degree)
+
+# Display the result
 DT[]
 ```
 
@@ -369,6 +409,8 @@ You can view the help page by running
 # Retain timely completers
 DT <- DT[completion_status == "timely"]
 DT <- DT[, .(mcid, cip6)]
+
+# Display the result
 DT[]
 ```
 
@@ -386,6 +428,8 @@ DT <- DT[!is.na(program)]
 
 # Unique observations
 DT <- unique(DT)
+
+# Display the result
 DT[]
 ```
 
@@ -397,8 +441,14 @@ The result has `r nrow(DT)` unique observations.
 # Conclude development of the graduate observations
 grad <- copy(DT)
 grad[, group := "grad"]
+
+# Display the result
 grad[]
 ```
+
+
+
+
 
 ## Combine ever and grad
 
@@ -407,6 +457,8 @@ grad[]
 ```{r}
 # Combine two data frames
 DT <- rbindlist(list(ever, grad), use.names = TRUE)
+
+# Display the result
 DT[]
 ```
 
@@ -426,6 +478,8 @@ student_cols <- student[, .(mcid, race, sex)]
 
 # Add them to DT with a left outer join
 DT <- student_cols[DT, on = c("mcid")]
+
+# Display the result
 DT[]
 ```
 
@@ -439,25 +493,37 @@ The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique s
 
 To better grasp the structure of these data, we can review selected sets of observations by ID. In the first example, the ID produces one observation only. The student was enrolled in Civil Engineering but completion, if any, was not timely. 
 
-```{r collapse = TRUE}
+```{r}
+#| collaspe: true
+
+# Display one student by ID
 DT[mcid == "MID26694225"]
 ```
 
 In the next example, the ID produces two observations indicating that the student was enrolled in Civil Engineering and a timely graduate of that program. 
 
-```{r collapse = TRUE}
+```{r}
+#| collaspe: true
+
+# Display one student by ID
 DT[mcid == "MID25786154"]
 ```
 
 In the next example, the ID produces two observations indicating that the student was enrolled in Electrical Engineering and in Mechanical Engineering but a timely graduate of neither program. 
 
-```{r collapse = TRUE}
+```{r}
+#| collaspe: true
+
+# Display one student by ID
 DT[mcid == "MID25868925"]
 ```
 
 In the next example, the ID produces three observations indicating that the student was enrolled in Electrical Engineering and in Civil Engineering and a timely graduate of Civil.  
 
-```{r collapse = TRUE}
+```{r}
+#| collaspe: true
+
+# Display one student by ID
 DT[mcid == "MID26526757"]
 ```
 
@@ -499,6 +565,7 @@ We conclude each vignette by collecting its code chunks in a single, condensed s
 
 ```{r}
 #| eval: false
+
 # Packages
 library("midfieldr")
 library("midfielddata")
@@ -563,7 +630,9 @@ student_cols <- student[, .(mcid, race, sex)]
 DT <- student_cols[DT, on = c("mcid")]
 ```
 
-```{r echo = FALSE}
+```{r}
+#| echo: false
+
 # to change the CSS file for block quotes
 # per https://github.com/rstudio/rmarkdown/issues/732
 knitr::opts_chunk$set(echo = FALSE)

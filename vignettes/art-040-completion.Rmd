@@ -118,6 +118,8 @@ DT <- DT[data_sufficiency == "include"]
 DT <- DT[, .(mcid)]
 DT <- unique(DT)
 DT <- DT[student, .(mcid), on = c("mcid"), nomatch = NULL]
+
+# Display the result
 DT[]
 ```
 
@@ -166,6 +168,8 @@ DT <- add_completion_status(DT, degree)
 
 # Drop unnecessary columns
 DT[, c("term_i", "level_i", "adj_span") := NULL]
+
+# Display the result
 DT[]
 ```
 
@@ -227,6 +231,8 @@ toy_DT <- toy_student[, .(mcid)]
 toy_DT <- add_timely_term(toy_DT, toy_term)
 toy_DT <- add_completion_status(toy_DT, toy_degree)
 toy_DT[, c("term_i", "level_i", "adj_span") := NULL]
+
+# Display the result
 toy_DT[]
 ```
 
@@ -241,6 +247,8 @@ Using the toy data to illustrate, I’ll drop the columns added by timely term e
 ```{r}
 # Drop two columns
 toy_DT <- toy_DT[, c("term_degree", "completion_status") := NULL]
+
+# Display the result
 toy_DT[]
 ```
 
@@ -249,6 +257,8 @@ Reapplying the function, the `completion` column is silently deleted and replace
 ```{r}
 # Reapply the function
 toy_DT <- add_completion_status(toy_DT, toy_degree)
+
+# Display the result
 toy_DT[]
 ```
 
@@ -270,6 +280,8 @@ Or we might add a second grouping variable.
 x <- DT[student, .(mcid, sex, completion_status), on = c("mcid"), nomatch = NULL]
 x <- x[, .N, by = c("sex", "completion_status")]
 setkeyv(x, c("completion_status", "sex"))
+
+# Display the result
 x[]
 ```
 
@@ -281,6 +293,8 @@ If our research question requires us to extract timely graduates only, we can us
 
 ```{r}
 x <- DT[completion_status == "timely"]
+
+# Display the result
 x[]
 ```
 
@@ -292,6 +306,8 @@ If our research question require the programs that graduates completed, we can u
 ```{r}
 DT <- DT[completion_status == "timely"]
 DT <- DT[degree, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
+
+# Display the result
 DT[]
 ```
 
@@ -314,6 +330,8 @@ Inner-join the program names and retain only those graduating in the selected pr
  
 ```{r}
 DT <- DT[study_programs, .(mcid, program), on = c("cip6"), nomatch = NULL]
+
+# Display the result
 DT[]
 ```
  
@@ -419,7 +437,8 @@ DT <- DT[study_programs, .(mcid, program), on = c("cip6"), nomatch = NULL]
 DT[, .N, by = c("program")]
 ```
 
-```{r echo = FALSE}
+```{r}
+#| echo: false
 # to change the CSS file for block quotes
 # per https://github.com/rstudio/rmarkdown/issues/732
 knitr::opts_chunk$set(echo = FALSE)

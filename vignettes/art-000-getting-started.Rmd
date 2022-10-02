@@ -70,7 +70,9 @@ The MIDFIELD Student Unit Records (SUR) are registrar's student-level data compi
 
 In this vignette, we examine the practice data in [midfielddata](https://midfieldr.github.io/midfielddata/), an R data package containing a proportionate stratified sample of the MIDFIELD research data---longitudinal SURs for nearly 98,000 undergraduates at 12 institutions from  1987--2016 as summarized below. 
 
-```{r echo = FALSE}
+```{r}
+#| echo: false
+
 wrapr::build_frame(
   "Practice data table", "Each row is", "No. of rows", "No. of columns", "Memory" |
     "student", "a degree-seeking student", "97,640", "13", "19 Mb" |
@@ -103,12 +105,12 @@ wrapr::build_frame(
 If you are writing your own script to follow along, we start with these packages: 
 
 ```{r}
-# packages used
+# Packages used
 library("midfieldr")
 library("midfielddata")
 suppressPackageStartupMessages(library("data.table"))
 
-# optional code to control data.table printing
+# Printing options for data.table
 options(
   datatable.print.nrows = 6,
   datatable.print.topn = 3,
@@ -122,13 +124,15 @@ options(
 Use `data()` to load the midfielddata data tables into memory for use. For example, after loading the package with `library("midfielddata")` as we did above, you can run `ls()` to see that the environment contains zero objects, 
 
 ```{r}
-# the names of objects in the environment
+# Names of objects in the environment
 ls()
 ```
 
 To load the `student` data from midfielddata into memory, we run
 
-```{r echo = FALSE}
+```{r}
+#| echo: false
+
 if (!exists("student")) data(student)
 ```
 
@@ -140,20 +144,24 @@ data(student)
 Checking the environment again, 
 
 ```{r}
-# the names of objects in the environment
+# Names of objects in the environment
 ls()
 ```
 
 If you look in the RStudio *Environment* pane, you should see `student` listed. We will typically load the data sets we need at the top of a script just after loading the midfielddata package. You need to load them only once in a session.  
 
-```{r echo = FALSE}
+```{r}
+#| echo: false
+
 if (!exists("course")) data(course)
-if (!exists("term")) data(term)
+if (!exists("term"))   data(term)
 if (!exists("degree")) data(degree)
 ```
 
-```r
-# load remaining data used in this vignette
+```{r}
+#| eval: false
+
+# Load remaining data used in this vignette
 data(course)
 data(term)
 data(degree)
@@ -162,12 +170,14 @@ data(degree)
 Checking the environment again, 
 
 ```{r}
-# the names of objects in the environment
+# Names of objects in the environment
 ls()
 ```
 
 
-```{r echo = FALSE}
+```{r}
+#| echo: false
+
 # cip
 n_cip <- nrow(unique(cip))
 
@@ -213,6 +223,7 @@ size_courses <- "349 MB"
 
 ```{r}
 #| eval: false
+
 # Run in Console
 ? student
 ```
@@ -220,7 +231,7 @@ size_courses <- "349 MB"
 Each observation is a unique student keyed by student ID. Student IDs and institution names are de-identified but are consistent across the four data sets. To see the data structure, run
 
 ```{r}
-# view the structure of the data set
+# View the structure of the data set
 str(student)
 ```
 
@@ -258,6 +269,7 @@ sort(unique(student$race))
 
 ```{r}
 #| eval: false
+
 # Run in Console
 ? course
 ```
@@ -265,7 +277,7 @@ sort(unique(student$race))
 Each observation is one course in one term for one student keyed by student ID and a combination of course, abbreviation, number, and section. To see the data structure, run
 
 ```{r}
-# view the structure of the data set
+# View the structure of the data set
 str(course)
 ```
 
@@ -274,7 +286,6 @@ Of the four practice data sets in midfielddata, `course` is by far the largest, 
 The number of unique students.  
 
 ```{r}
-# number of unique IDs
 length(unique(course$mcid))
 ```
  
@@ -287,7 +298,6 @@ summary(course$hours_course)
 Examine a categorical variable and its values. 
 
 ```{r}
-# type of courses
 sort(unique(course$type))
 ```
 
@@ -303,6 +313,7 @@ sort(unique(course$type))
 
 ```{r}
 #| eval: false
+
 # Run in Console
 ? term
 ```
@@ -316,7 +327,6 @@ str(term)
 `term` has `r obs_terms` observations and occupies approximately `r size_terms` of memory. The number of unique students is found by, 
 
 ```{r}
-# number of unique IDs
 length(unique(term$mcid))
 ```
 
@@ -350,6 +360,7 @@ sort(unique(term$standing))
 
 ```{r}
 #| eval: false
+
 # Run in Console
 ? degree
 ```
@@ -363,7 +374,6 @@ str(degree)
 `degree` has `r obs_degrees` observations and occupies approximately `r size_degrees` memory. The number of unique students is found by
 
 ```{r}
-# number of unique IDs
 length(unique(degree$mcid))
 ```
 
@@ -395,7 +405,9 @@ Some packages have functions specialized for data frame summaries. Try this one-
 
 Here we outline the midfieldr functions. They are discussed in greater detail in the vignettes.  
 
-```{r echo = FALSE}
+```{r}
+#| echo: false
+
 wrapr::build_frame(
   "Function", "Action" |
     "add_completion_status()", "Determine degree completion status for every student" |
@@ -441,12 +453,13 @@ We conclude each vignette by collecting its code chunks in a single, condensed s
 
 ```{r}
 #| eval: false
-# packages used
+
+# Packages used
 library("midfieldr")
 library("midfielddata")
 suppressPackageStartupMessages(library("data.table"))
 
-# loading data
+# Loading data
 data(student)
 data(course)
 data(term)
@@ -482,8 +495,9 @@ sort(unique(degree$degree))
 degree[is.na(degree)]
 ```
 
+```{r}
+#| echo: false
 
-```{r echo = FALSE}
 # to change the CSS file for block quotes
 # per https://github.com/rstudio/rmarkdown/issues/732
 knitr::opts_chunk$set(echo = FALSE)
@@ -493,7 +507,6 @@ knitr::opts_chunk$set(echo = FALSE)
 blockquote {
     padding: 10px 20px;
     margin: 0 0 20px;
-    font-size: 12px;
-    border-left: 0px solid
+    border-left: 0px
 }
 ```

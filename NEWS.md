@@ -7,7 +7,8 @@
 - Revise multiway function name
 - Add order_multiway() examples
 - Add initial graduation rate vignette 
-
+- Add README to tests directory
+- Consistent comments and R code chunk commands
 
 
 

@@ -21,17 +21,15 @@ longitudinal data from the MIDFIELD database.
 ## Overview
 
 <a href="https://midfield.online"
-target="_blank"><strong>MIDFIELD</strong></a> contains individual
-Student Unit Record (SUR) data for 1.7M students at 21 US institutions
-(as of June 2022). MIDFIELD is large enough to permit grouping and
-summarizing by multiple characteristics, enabling researchers to examine
-student characteristics (race/ethnicity, sex, prior achievement) and
-curricular pathways (including coursework and major) by institution and
-over time.
+target="_blank"><strong>MIDFIELD</strong></a> (as of June 2022) contains
+Student Unit Records (SURs) of 1.7M undergraduates at nineteen US
+institutions from 1987 through 2018, though different institutions
+provide data over different time spans. MIDFIELD is large enough to
+permit summarizing by multiple characteristics such as race/ethnicity,
+sex, and program.
 
 **midfieldr** is an R package that provides tools for working with
-MIDFIELD SURs. The tools in midfieldr work with the research data in the
-MIDFIELD database and with the practice data in the midfielddata
+MIDFIELD research data and with the practice data in the midfielddata R
 package.
 
 <a href="https://midfieldr.github.io/midfielddata/"
@@ -44,16 +42,19 @@ institutions from 1987–2016 organized in four data tables:
 <thead>
 <tr>
 <th style="text-align:left;background-color: #c7eae5 !important;">
-Data set
+Practice data table
 </th>
 <th style="text-align:left;background-color: #c7eae5 !important;">
 Each row is
 </th>
 <th style="text-align:right;background-color: #c7eae5 !important;">
-N rows
+No. of rows
 </th>
 <th style="text-align:right;background-color: #c7eae5 !important;">
-N columns
+No. of columns
+</th>
+<th style="text-align:right;background-color: #c7eae5 !important;">
+Memory
 </th>
 </tr>
 </thead>
@@ -63,13 +64,16 @@ N columns
 student
 </td>
 <td style="text-align:left;color: black !important;background-color: white !important;">
-a student upon being admitted
+a degree-seeking student
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-98k
+97,640
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 13
+</td>
+<td style="text-align:right;">
+19 Mb
 </td>
 </tr>
 <tr>
@@ -80,10 +84,13 @@ course
 a student in a course
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-3.4M
+3.5M
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 12
+</td>
+<td style="text-align:right;">
+340 Mb
 </td>
 </tr>
 <tr>
@@ -94,10 +101,13 @@ term
 a student in a term
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-711k
+728,000
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 13
+</td>
+<td style="text-align:right;">
+80 Mb
 </td>
 </tr>
 <tr>
@@ -105,13 +115,16 @@ a student in a term
 degree
 </td>
 <td style="text-align:left;color: black !important;background-color: white !important;">
-a student who completes their program
+a student who graduates
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-48k
+48,000
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 5
+</td>
+<td style="text-align:right;">
+10.2 Mb
 </td>
 </tr>
 </tbody>
@@ -163,7 +176,7 @@ DT <- add_data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include"]
 
 # Filter observations for degree-seeking using an inner join
-DT <- DT[student, .(mcid, cip6, timely_term), on = c("mcid"), nomatch = NULL]
+DT <- student[DT, .(mcid, cip6, timely_term), on = c("mcid"), nomatch = NULL]
 
 # Filter observations for engineering programs
 DT <- DT[cip6 %like% "^14"]
@@ -177,11 +190,13 @@ DT <- add_completion_status(DT, degree)
 # Add race and sex using a left outer join
 DT <- student[DT, .(completion_status, sex, race), on = c("mcid")]
 
+# Create a new variable combining race and sex
+DT[, people := paste(race, sex)]
+
 # Calculate summary statistics
-DT <- DT[, .N, by = c("completion_status", "sex", "race")]
+DT <- DT[, .N, by = c("completion_status", "people")]
 
 # Tabulate results
-DT[, people := paste(race, sex)]
 DT_display <- dcast(DT, people ~ completion_status, value.var = "N")
 setcolorder(DT_display, c("people", "timely", "late"))
 setnames(DT_display,
@@ -271,34 +286,6 @@ Black Male
 </tr>
 <tr>
 <td style="text-align:left;color: black !important;background-color: white !important;">
-Hispanic/Latinx Female
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-63
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-6
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-21
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-Hispanic/Latinx Male
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-188
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-27
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-103
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
 International Female
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
@@ -323,6 +310,34 @@ International Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 74
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Latine Female
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+63
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+6
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+21
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Latine Male
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+188
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+27
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+103
 </td>
 </tr>
 <tr>
@@ -509,8 +524,9 @@ To provide feedback or report a bug,
     *tinytest* package and running:
 
 ``` r
-    test_results <- tinytest::test_package("midfieldr")
-    as.data.frame(test_results)
+# Detailed test results
+test_results <- tinytest::test_package("midfieldr")
+as.data.frame(test_results)
 ```
 
 Participation in this open source project is subject to a [Code of

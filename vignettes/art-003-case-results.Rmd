@@ -15,7 +15,9 @@ nocite: |
 resource_files: |
 ---
 
-```{r setup, include = FALSE}
+```{r setup}
+#| include: false
+
 # code chunks
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -47,16 +49,21 @@ knitr::knit_hooks$set(inline = function(x) {
 })
 ```
 
-Part 3 of a case study in three parts:
+Part 2 of a case study in three parts, illustrating how we work with longitudinal Student Unit Records (SUR). 
 
-1. [Goals.](art-001-case-goals.html) Briefly describe the study.  
+1. [Goals.](art-001-case-goals.html) Briefly describe the study.   
+
 2. [Data.](art-002-case-data.html) Transforming the data to yield the observations of interest.
+
 3. Results (this page). Calculating summary statistics and metrics and displaying the results. 
 
 
 In this part, we use the midfieldr functions:  
 
 - `order_multiway()` 
+
+
+
 
 ## Preface
 
@@ -78,6 +85,9 @@ options(
 )
 ```
 
+
+
+
 ## Import data
 
 **Copying.** Copy the data file `study_observations` containing the final set of case study "ever" and "grad" observations as developed in the previous segment. These data are included with midfieldr.
@@ -85,6 +95,8 @@ options(
 ```{r}
 # Copy the case study observations
 DT <- copy(study_observations)
+
+# Display the result
 DT[]
 ```
 
@@ -95,6 +107,9 @@ You can view the help page (and data dictionary) by running
 # Run in Console
 ? study_observations
 ```
+   
+   
+   
     
 ## Group and summarize
 
@@ -105,8 +120,13 @@ These grouping variables are columns in the data set (`race`, `sex`, `program`, 
 ```{r}
 # Group and summarize
 DT <- DT[, .N, by = c("group", "program", "race", "sex")]
+
+# Display the result
 DT[]
 ```
+
+
+
 
 ## Compute metric
 
@@ -117,13 +137,18 @@ This operation is essentially a transformation from block records to row records
 ```{r}
 # Transform to row-record form
 DT <- dcast(DT, program + sex + race ~ group, value.var = "N", fill = 0)
+
+# Display the result
 DT[]
 ```
 
 We calculate percent stickiness. 
 
 ```{r}
+# Compute the metric
 DT[, stick := round(100 * grad / ever, 1)]
+
+# Display the result
 DT[]
 ```
 
@@ -135,6 +160,9 @@ In this form, the data are included with midfieldr as the `study_results` data s
 ? study_results
 ```
 
+
+
+
 ## Prepare for dissemination
 
 We take several additional steps to prepare the data for dissemination in  tables or charts.  
@@ -144,6 +172,8 @@ We take several additional steps to prepare the data for dissemination in  table
 ```{r}
 # Preserve anonymity
 DT <- DT[grad >= 10]
+
+# Display the result
 DT[]
 ```
 
@@ -152,27 +182,35 @@ DT[]
 ```{r}
 # Filter by study design
 DT <- DT[!race %chin% c("International", "Other/Unknown")]
+
+# Display the result
 DT[]
 ```
 
 **Creating variables.** We have found it useful to report such data with a variable that combines race/ethnicity and sex. 
 
 ```{r}
+# Create a variable 
 DT[, people := paste(race, sex)]
 DT[, c("race", "sex") := NULL]
 setcolorder(DT, c("program", "people"))
+
+# Display the result
 DT[]
 ```
 
 **Recoding values.** Readers can more readily interpret our charts and tables if the programs are un-abbreviated. 
 
 ```{r}
+# Recode values for charts and tables
 DT[, program := fcase(
   program %like% "CE", "Civil",
   program %like% "EE", "Electrical",
   program %like% "ME", "Mechanical",
   program %like% "ISE", "Industrial/Systems"
 )]
+
+# Display the result
 DT[]
 ```
 
@@ -188,6 +226,8 @@ DT <- order_multiway(DT,
   method = "percent",
   ratio_of = c("grad", "ever")
 )
+
+# Display the result
 DT[]
 ```
 
@@ -196,12 +236,16 @@ You can view the help page by running
 
 ```{r}
 #| eval: false
+
 # Run in Console
 ? order_multiway
 ```
 
 
 The column `program_stick` determines the order of the programs in the chart; `people_stick` determines the order of the race/ethnicity/sex groupings; the values in `stick` are the quantitative values to be graphed. 
+
+
+
 
 ## Charts
 
@@ -210,6 +254,7 @@ In the first multiway chart, the rows are programs and panels are people, facili
 ```{r}
 #| label: fig-stickiness-01
 #| fig-asp: 1.2
+
 ggplot(DT, aes(x = stick, y = program)) +
   facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
   geom_point() +
@@ -221,6 +266,7 @@ Alternatively, we can consider the dual chart, swapping the roles of the panels 
 ```{r}
 #| label: fig-stickiness-02
 #| fig-asp: 1
+
 ggplot(DT, aes(x = stick, y = people)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   geom_point() +
@@ -256,8 +302,10 @@ setnames(tbl, old = "people", new = "People", skip_absent = TRUE)
 ```
 
 Groups with numbers below our reporting threshold are denoted NA or omitted. 
+
 ```{r}
 #| echo: false
+
 tbl |>
   kableExtra::kbl(
     align = "lrrrr",
@@ -269,11 +317,18 @@ tbl |>
 ```
 
 
+
+
+
 ## Closing
 
 Starting with the prepared data (the case study observations), we compute longitudinal stickiness for four programs (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) grouped by program, race/ethnicity, and sex. We create a data table and charts to disseminate the results. 
 
 **Write to file.** Results like those just prior to the dissemination preparation step are often written to file as an intermediate result. In this case, the pre-dissemination data frame is included with midfieldr as `study_results`.
+
+
+
+
 
 ## References
 
@@ -291,6 +346,7 @@ We conclude each vignette by collecting its code chunks in a single, condensed s
 
 ```{r}
 #| eval: false
+
 # Packages
 library("midfieldr")
 suppressPackageStartupMessages(library("data.table"))
