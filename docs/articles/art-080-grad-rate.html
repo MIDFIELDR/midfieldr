@@ -99,7 +99,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Graduation rate</h1>
             
-            <h4 data-toc-skip class="date">2022-10-10</h4>
+            <h4 data-toc-skip class="date">2022-10-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-080-grad-rate.Rmd" class="external-link"><code>vignettes/art-080-grad-rate.Rmd</code></a></small>
       <div class="d-none name"><code>art-080-grad-rate.Rmd</code></div>
@@ -108,46 +108,57 @@
     
     
 <p>Graduation rate is a widely used, though flawed, measure of academic
-performance. The American Council on Education estimates that the
-conventional definition of graduation rate may exclude up to 60% of
-students at 4-year institutions <span class="citation">(<a href="#ref-Cook+Hartle:2011" role="doc-biblioref">Cook &amp; Hartle,
+performance.</p>
+<p>The American Council on Education estimates that the conventional
+definition of graduation rate may exclude up to 60% of students at
+4-year institutions <span class="citation">(<a href="#ref-Cook+Hartle:2011" role="doc-biblioref">Cook &amp; Hartle,
 2011</a>)</span>. Nevertheless, as Cook and Hartle explain,</p>
 <blockquote>
 <p>… in the eyes of the public, policy makers, and the media, graduation
 rate is a clear, simple, and logical—if often misleading—number.</p>
 </blockquote>
 <p>Recognizing that graduation rate is a popular metric, we illustrate
-an improved longitudinal graduation rate calculation that includes many
-(though not all) of the students excluded by the conventional
-definition.</p>
+an improved graduation rate calculation that includes many (though not
+all) of the students excluded by the conventional definition.</p>
+<p>Users can disregard the First-Year Engineering (FYE) content in this
+vignette if they are working exclusively with either non-engineering
+programs or engineering at non-FYE institutions. For users working with
+FYE programs, the <a href="art-071-using-fye-proxies.html">Using FYE
+proxies</a> vignette is a prerequisite.</p>
 <div class="section level2">
-<h2 id="a-more-inclusive-definition">A more inclusive definition<a class="anchor" aria-label="anchor" href="#a-more-inclusive-definition"></a>
+<h2 id="definitions">Definitions<a class="anchor" aria-label="anchor" href="#definitions"></a>
 </h2>
-<p>In general, graduation rate is the fraction of starters completing
-their program in a timely manner.</p>
 <dl>
+<dt>Graduation rate (general)</dt>
+<dd>
+<p>The fraction of starters completing their programs in a timely
+manner. The specific definitions given below differ in how they define
+starters, with the MIDFIELD definition being more inclusive.</p>
+</dd>
 <dt>IPEDS graduation rate</dt>
 <dd>
 <p>In the US, the Integrated Postsecondary Education Data System (IPEDS)
 defines “graduation rate” as the fraction of a cohort of full-time,
 first-time, degree-seeking undergraduates who complete their program
 within a percentage (100%, 150%, or 200%) of the “normal” time
-(typically 4 years) as defined by the institution <span class="citation">(<a href="#ref-IPEDS:2020" role="doc-biblioref">NCES-IPEDS, 2020</a>)</span>. IPEDS excludes
+(typically 4 years) as defined by the institution. IPEDS excludes
 students who attend college part-time, who transfer between
-institutions, and who start college in Winter or Spring terms.</p>
+institutions, and who start in Winter or Spring terms <span class="citation">(<a href="#ref-IPEDS:2020" role="doc-biblioref">NCES-IPEDS, 2020</a>)</span>.</p>
 </dd>
 <dt>MIDFIELD graduation rate</dt>
 <dd>
-<p>The MIDFIELD definition of graduation rate includes starters who are
-part-time, transfers, or admitted in any term.</p>
+<p>The fraction of a cohort of degree-seeking undergraduates who
+complete their program in a timely manner (typically 6 years). MIDFIELD
+includes students who attend college part-time, who transfer between
+institutions, and who start in any term. The table summarizes the
+comparison between the IPEDS and MIDFIELD graduation rate
+definitions.</p>
 </dd>
 </dl>
-<p>The table summarizes the comparison between the two definitions of
-graduation rate.</p>
 <table class="table  lightable-paper" style='font-family: "Arial Narrow", arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;'>
 <thead><tr>
 <th style="text-align:left;background-color: #c7eae5 !important;">
-Constraints
+Item
 </th>
 <th style="text-align:left;background-color: #c7eae5 !important;">
 IPEDS
@@ -215,60 +226,72 @@ included
 Timely completion span adjusted for level at entry
 </td>
 </tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-migrators:
-</td>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-see below
-</td>
-<td style="text-align:left;">
-see below
-</td>
-<td style="text-align:left;">
-A heuristic could be developed for extending the completion span
-</td>
-</tr>
 </tbody>
 </table>
-<p><strong>Migrators.</strong> Students who change majors (migrators)
-are problematic in determining graduation rate. Migrators are generally
-included in the count of starters of their first program. After
-migrating, should they graduate in a timely manner, whether they are
-included in the count of graduates of their new program depends on the
-CIP level for which graduation rate is calculated. We have four possible
-cases:</p>
+<dl>
+<dt>FYE</dt>
+<dd>
+<p>First-Year Engineering program, a common-first-year curriculum that
+is a prerequisite for declaring an engineering major at some US
+institutions. Denoted by its own CIP code, FYE is not a degree-granting
+program.</p>
+</dd>
+<dt>FYE proxy</dt>
+<dd>
+<p>Our estimate of the degree-granting engineering program in which an
+FYE student in their first term would have started had they not been
+required to start in FYE. The proxy, a 6-digit CIP code, acts as a
+substitute for the FYE CIP code when gathering starters.</p>
+</dd>
+<dt>migrator</dt>
+<dd>
+<p>A student who changes majors. In computing graduation rate, whether a
+student is a migrator depends on the level at which a “program” is
+defined: institutional, 2-digit CIP, or 4-digit CIP.</p>
+</dd>
+</dl>
+</div>
+<div class="section level2">
+<h2 id="migrators">Migrators<a class="anchor" aria-label="anchor" href="#migrators"></a>
+</h2>
+<p>Migrators are problematic in determining graduation rate. In their
+first-term program, they count as starters. After migrating however,
+should they graduate in a timely manner, whether they are included in
+the count of graduates depends on the CIP level for which graduation
+rate is calculated.</p>
+<p><strong>Four possible cases</strong> that depend on CIP level</p>
 <ul>
 <li><p>Graduation rate computed at the institution level includes all
-migrators within the institution. For example, migrators from
-Engineering (CIP 14) who graduate in Business (CIP 52) are included in
-the count of institution starters and graduates. IPEDS defines this rate
-as the <em>institution completion rate.</em></p></li>
+migrators within the institution. For example, starters Engineering (CIP
+14) who graduate in Business (CIP 52) are included in the count of
+institution graduates. IPEDS defines this rate as the <em>institution
+completion rate.</em></p></li>
 <li><p>Computing at the 2-digit CIP level includes migrator graduates
-within the same 2-digit CIP and excludes others. For example, migrators
-from Electrical Engineering (CIP 1410) who graduate in Mechanical
-Engineering (CIP 1419) are included in the count of Engineering starters
-and graduates (CIP 14). Migrators from Engineering who graduate in
-Business are excluded from the Business graduate count.</p></li>
+within the same 2-digit CIP and excludes others. For example, starters
+in Electrical Engineering (CIP 1410) who graduate in Mechanical
+Engineering (CIP 1419) are included in the count of Engineering
+graduates (CIP 14). But starters in Engineering graduating in Business
+(CIP 52) are excluded from the count of Business graduates.</p></li>
 <li><p>Computing at the 4-digit CIP level is similar. For example,
-migrators from Laser and Optical Engineering (CIP 141003) who graduate
-in Telecommunications Engineering (CIP 141004) are included in the count
-of Electrical Engineering starters and graduates (CIP 1410). Migrators
-from Electrical Engineering who graduate in Mechanical Engineering are
-excluded from the Mechanical Engineering graduate count.</p></li>
+starters in Laser and Optical Engineering (CIP 141003) who graduate in
+Telecommunications Engineering (CIP 141004) are included in the count of
+Electrical Engineering graduates (CIP 1410). But starters in Electrical
+Engineering graduating in Mechanical Engineering (CIP 1419) are excluded
+from the count of Mechanical Engineering graduates.</p></li>
 <li><p>Computing at the 6-digit CIP level excludes all migrator
 graduates, though this case is rarely used.</p></li>
 </ul>
 <p><strong>No extensions for migrators.</strong> Because a migrator may
 have to complete remedial work in their new program, their time to
 graduation may exceed the defined acceptable span (typically 6 years).
-The graduation rate definition has no mechanism for extending the
-completion span even if both the student and faculty of the new program
-consider the student’s graduation timely.</p>
-<p>The IPEDS definition of graduation rate excludes such an extension.
-MIDFIELD currently has no mechanism to extend the completion span for
-migrators either, though a more inclusive heuristic could be
-developed.</p>
+Yet graduation rate as defined has no mechanism for extending the timely
+completion span. (Developing such a heuristic for MIDFIELD data is a
+potential topic of future work.)</p>
+</div>
+<div class="section level2">
+<h2 id="work-in-progress">Work in progress<a class="anchor" aria-label="anchor" href="#work-in-progress"></a>
+</h2>
+<p>The remainder of the vignette is still a work in progress.</p>
 </div>
 <div class="section level2">
 <h2 id="population">Population<a class="anchor" aria-label="anchor" href="#population"></a>
@@ -990,20 +1013,8 @@ data—suitable for learning about student-record analysis, but not for
 drawing inferences about program attributes or student experiences.</p>
 </div>
 <div class="section level2">
-<h2 id="appendix">Appendix<a class="anchor" aria-label="anchor" href="#appendix"></a>
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div class="section level3">
-<h3 id="complete-script">Complete script<a class="anchor" aria-label="anchor" href="#complete-script"></a>
-</h3>
-<p>The vignette code chunks are collected below in a single, condensed
-script.</p>
-<style type="text/css">
-blockquote {
-    padding: 10px 20px;
-    margin: 0 0 20px;
-    border-left: 0px
-}
-</style>
 <div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
 <div id="ref-Cook+Hartle:2011" class="csl-entry">
 Cook, B., &amp; Hartle, T. W. (2011). <span class="nocase">Why
@@ -1016,6 +1027,24 @@ NCES-IPEDS. (2020). <em><span>IPEDS Survey Methodology</span></em>.
 2020-07-29]. <a href="https://nces.ed.gov/ipeds/ReportYourData/IpedsSurveyMethodology" class="external-link">https://nces.ed.gov/ipeds/ReportYourData/IpedsSurveyMethodology</a>
 </div>
 </div>
+</div>
+<div class="section level2">
+<h2 id="appendix">Appendix<a class="anchor" aria-label="anchor" href="#appendix"></a>
+</h2>
+<div class="section level3">
+<h3 id="complete-script">Complete script<a class="anchor" aria-label="anchor" href="#complete-script"></a>
+</h3>
+<p>The vignette code chunks are collected below in a single, condensed
+script.</p>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Script</span></span></code></pre></div>
+<style type="text/css">
+blockquote {
+    padding: 10px 20px;
+    margin: 0 0 20px;
+    border-left: 0px
+}
+</style>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

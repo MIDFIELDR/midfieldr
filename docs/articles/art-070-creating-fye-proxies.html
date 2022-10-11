@@ -99,7 +99,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Creating FYE proxies</h1>
             
-            <h4 data-toc-skip class="date">2022-10-10</h4>
+            <h4 data-toc-skip class="date">2022-10-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-070-creating-fye-proxies.Rmd" class="external-link"><code>vignettes/art-070-creating-fye-proxies.Rmd</code></a></small>
       <div class="d-none name"><code>art-070-creating-fye-proxies.Rmd</code></div>
@@ -107,8 +107,11 @@
 
     
     
-<p>Part 1 of 2 parts illustrating how we work with First-Year
-Engineering (FYE) programs when a count of “starters” is needed.</p>
+<p>Part 1 of a development in two parts for working with engineering
+programs illustrating our treatment of First-Year Engineering (FYE)
+programs when counting starters. Users working exclusively with either
+non-engineering programs or engineering at non-FYE institutions can
+disregard this vignette.</p>
 <ol style="list-style-type: decimal">
 <li><p>Creating FYE proxies (this page). Estimating the 6-digit CIP
 codes of the degree-granting engineering programs that FYE students
@@ -116,8 +119,8 @@ would have declared in their first term had they not been required to
 enroll in FYE</p></li>
 <li><p><a href="art-071-using-fye-proxies.html">Using FYE proxies</a>.
 Incorporating a set of prepared FYE proxies with other first-term CIP
-codes when a count of starters in degree-granting engineering programs
-is required.</p></li>
+codes to construct a data frame of starters. Suitable for
+multi-institutional (FYE and non-FYE) studies.</p></li>
 </ol>
 <div class="section level2">
 <h2 id="preface">Preface<a class="anchor" aria-label="anchor" href="#preface"></a>
@@ -164,26 +167,26 @@ required to enroll in FYE.</p>
 <dd>
 <p>First-Year Engineering program, a common-first-year curriculum that
 is a prerequisite for declaring an engineering major at some US
-institutions.</p>
-</dd>
-<dt>migrator</dt>
-<dd>
-<p>A student who changes majors. In dealing with FYE records, we are
-concerned with migrators into or out of Engineering at the 2-digit
-program level (CIP 14).</p>
+institutions. Denoted by its own CIP code, FYE is not a degree-granting
+program.</p>
 </dd>
 <dt>FYE proxy</dt>
 <dd>
-<p>The degree-granting engineering program we estimate an FYE student
-would have declared had they not been required to enroll in FYE. The
-proxy, a 6-digit CIP code, acts as a substitute for the FYE CIP code as
-needed. Applies only to students enrolled in FYE in their first
-term.</p>
+<p>Our estimate of the degree-granting engineering program in which an
+FYE student in their first term would have started had they not been
+required to start in FYE. The proxy, a 6-digit CIP code, acts as a
+substitute for the FYE CIP code when gathering starters.</p>
+</dd>
+<dt>migrator</dt>
+<dd>
+<p>A student who changes majors. In creating FYE proxies, we are
+concerned with migration into or out of Engineering at the 2-digit level
+only (CIP 14).</p>
 </dd>
 <dt>multiple imputation</dt>
 <dd>
-<p>Method of imputing missing categorical data, in this case, the
-6-digit CIP codes of FYE proxy programs.</p>
+<p>Method of imputing missing categorical data, in this case, imputing
+the 6-digit CIP codes of FYE proxies.</p>
 </dd>
 </dl>
 </div>
@@ -917,72 +920,11 @@ R</span>. <em>Journal of Statistical Software</em>, <em>45</em>(3),
 <h2 id="appendix">Appendix<a class="anchor" aria-label="anchor" href="#appendix"></a>
 </h2>
 <div class="section level3">
-<h3 id="missing-data-chart">Missing data chart<a class="anchor" aria-label="anchor" href="#missing-data-chart"></a>
-</h3>
-<p>Script for creating the chart of percent missing data grouped by
-category.</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># New memory location</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">fye_missing_proxy</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Convert factors to characters</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">.SD</span>, <span class="va">as.character</span><span class="op">)</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co"># Overall percentage missing proxies</span></span>
-<span><span class="va">overall_miss</span> <span class="op">&lt;-</span> <span class="fl">100</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">proxy</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Determine percent missing proxies by category</span></span>
-<span><span class="va">missing_fraction</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">DT</span>, <span class="va">cat_level</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">DT</span><span class="op">[</span>, <span class="va">group</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
-<span>      <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">proxy</span><span class="op">)</span>, <span class="st">"missing"</span>, </span>
-<span>      default <span class="op">=</span> <span class="st">"not_missing"</span></span>
-<span>  <span class="op">)</span><span class="op">]</span></span>
-<span>  <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group"</span>, <span class="st">"cat_level"</span><span class="op">)</span><span class="op">]</span></span>
-<span>  <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">cat_level</span> <span class="op">~</span> <span class="va">group</span>, value.var <span class="op">=</span> <span class="st">"N"</span><span class="op">)</span></span>
-<span>  <span class="va">DT</span><span class="op">[</span>, <span class="va">pct_miss</span> <span class="op">:=</span> <span class="fl">100</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">missing</span> <span class="op">/</span> <span class="op">(</span><span class="va">missing</span> <span class="op">+</span> <span class="va">not_missing</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
-<span>  <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cat_level</span>, <span class="va">pct_miss</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>cat_level <span class="op">=</span> <span class="va">institution</span>, <span class="va">proxy</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">inst</span> <span class="op">&lt;-</span> <span class="fu">missing_fraction</span><span class="op">(</span><span class="va">y</span>, cat_level <span class="op">=</span> <span class="st">"institution"</span><span class="op">)</span></span>
-<span><span class="va">inst</span><span class="op">[</span>, <span class="va">category</span> <span class="op">:=</span> <span class="st">"institution"</span><span class="op">]</span></span>
-<span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>cat_level <span class="op">=</span> <span class="va">race</span>, <span class="va">proxy</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">race</span> <span class="op">&lt;-</span> <span class="fu">missing_fraction</span><span class="op">(</span><span class="va">y</span>, cat_level <span class="op">=</span> <span class="st">"race"</span><span class="op">)</span></span>
-<span><span class="va">race</span><span class="op">[</span>, <span class="va">category</span> <span class="op">:=</span> <span class="st">"race"</span><span class="op">]</span></span>
-<span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>cat_level <span class="op">=</span> <span class="va">sex</span>, <span class="va">proxy</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">sex</span> <span class="op">&lt;-</span> <span class="fu">missing_fraction</span><span class="op">(</span><span class="va">y</span>, cat_level <span class="op">=</span> <span class="st">"sex"</span><span class="op">)</span></span>
-<span><span class="va">sex</span><span class="op">[</span>, <span class="va">category</span> <span class="op">:=</span> <span class="st">"sex"</span><span class="op">]</span></span>
-<span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">inst</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pct_miss</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html" class="external-link">reorder</a></span><span class="op">(</span><span class="va">cat_level</span>, <span class="va">pct_miss</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">overall_miss</span>, linetype <span class="op">=</span> <span class="fl">2</span>, color <span class="op">=</span> <span class="st">"gray35"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html" class="external-link">reorder</a></span><span class="op">(</span><span class="va">category</span>, <span class="va">pct_miss</span><span class="op">)</span><span class="op">)</span>, </span>
-<span>               as.table <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>               scales <span class="op">=</span> <span class="st">"free_y"</span>,</span>
-<span>               space <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"FYE proxy missing values (%)"</span>, y <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span>, <span class="fl">5</span><span class="op">)</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>panel.grid.minor.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span></span>
-<span>  filename <span class="op">=</span> <span class="st">"man/figures/art-070-creating-fye-proxies-pct-missing.png"</span>,</span>
-<span>  plot <span class="op">=</span> <span class="va">p</span>,</span>
-<span>  width <span class="op">=</span> <span class="fl">7</span>,</span>
-<span>  height <span class="op">=</span> <span class="fl">0.4</span> <span class="op">*</span> <span class="fl">7</span>,</span>
-<span>  units <span class="op">=</span> <span class="st">"in"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
 <h3 id="complete-script">Complete script<a class="anchor" aria-label="anchor" href="#complete-script"></a>
 </h3>
 <p>The vignette code chunks are collected below in a single, condensed
 script.</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfieldr" class="external-link">"midfieldr"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/MIDFIELDR/midfielddata" class="external-link">"midfielddata"</a></span><span class="op">)</span></span>
@@ -1092,6 +1034,59 @@ script.</p>
 <span></span>
 <span><span class="co"># Confirming results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">fye</span>, <span class="va">fye_proxy</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="missing-data-chart">Missing data chart<a class="anchor" aria-label="anchor" href="#missing-data-chart"></a>
+</h3>
+<p>Script for creating the chart of percent missing data grouped by
+category.</p>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># New memory location</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">fye_missing_proxy</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Convert factors to characters</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">.SD</span>, <span class="va">as.character</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Overall percentage missing proxies</span></span>
+<span><span class="va">overall_miss</span> <span class="op">&lt;-</span> <span class="fl">100</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">proxy</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Determine percent missing proxies by category</span></span>
+<span><span class="va">missing_fraction</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">DT</span>, <span class="va">cat_level</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">DT</span><span class="op">[</span>, <span class="va">group</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">proxy</span><span class="op">)</span>, <span class="st">"missing"</span>, </span>
+<span>      default <span class="op">=</span> <span class="st">"not_missing"</span></span>
+<span>  <span class="op">)</span><span class="op">]</span></span>
+<span>  <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group"</span>, <span class="st">"cat_level"</span><span class="op">)</span><span class="op">]</span></span>
+<span>  <span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">cat_level</span> <span class="op">~</span> <span class="va">group</span>, value.var <span class="op">=</span> <span class="st">"N"</span><span class="op">)</span></span>
+<span>  <span class="va">DT</span><span class="op">[</span>, <span class="va">pct_miss</span> <span class="op">:=</span> <span class="fl">100</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">missing</span> <span class="op">/</span> <span class="op">(</span><span class="va">missing</span> <span class="op">+</span> <span class="va">not_missing</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
+<span>  <span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cat_level</span>, <span class="va">pct_miss</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>cat_level <span class="op">=</span> <span class="va">institution</span>, <span class="va">proxy</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">inst</span> <span class="op">&lt;-</span> <span class="fu">missing_fraction</span><span class="op">(</span><span class="va">y</span>, cat_level <span class="op">=</span> <span class="st">"institution"</span><span class="op">)</span></span>
+<span><span class="va">inst</span><span class="op">[</span>, <span class="va">category</span> <span class="op">:=</span> <span class="st">"institution"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>cat_level <span class="op">=</span> <span class="va">race</span>, <span class="va">proxy</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">race</span> <span class="op">&lt;-</span> <span class="fu">missing_fraction</span><span class="op">(</span><span class="va">y</span>, cat_level <span class="op">=</span> <span class="st">"race"</span><span class="op">)</span></span>
+<span><span class="va">race</span><span class="op">[</span>, <span class="va">category</span> <span class="op">:=</span> <span class="st">"race"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>cat_level <span class="op">=</span> <span class="va">sex</span>, <span class="va">proxy</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">sex</span> <span class="op">&lt;-</span> <span class="fu">missing_fraction</span><span class="op">(</span><span class="va">y</span>, cat_level <span class="op">=</span> <span class="st">"sex"</span><span class="op">)</span></span>
+<span><span class="va">sex</span><span class="op">[</span>, <span class="va">category</span> <span class="op">:=</span> <span class="st">"sex"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">inst</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pct_miss</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html" class="external-link">reorder</a></span><span class="op">(</span><span class="va">cat_level</span>, <span class="va">pct_miss</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">overall_miss</span>, linetype <span class="op">=</span> <span class="fl">2</span>, color <span class="op">=</span> <span class="st">"gray35"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span>rows <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html" class="external-link">reorder</a></span><span class="op">(</span><span class="va">category</span>, <span class="va">pct_miss</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>               as.table <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>               scales <span class="op">=</span> <span class="st">"free_y"</span>,</span>
+<span>               space <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"FYE proxy missing values (%)"</span>, y <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span>, <span class="fl">5</span><span class="op">)</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>panel.grid.minor.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <style type="text/css">
 blockquote {
     padding: 10px 20px;

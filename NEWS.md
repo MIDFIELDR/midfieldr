@@ -1,4 +1,10 @@
 
+## midfieldr 1.0.0.9027 / 2021-10
+
+- Split FYE into two vignettes
+- Continue working on graduation rate vignette 
+
+
 
 
 ## midfieldr 1.0.0.9026 / 2021-09
