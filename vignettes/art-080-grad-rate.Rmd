@@ -47,40 +47,47 @@ knitr::knit_hooks$set(inline = function(x) {
 })
 ```
 
-Graduation rate is a widely used, though flawed, measure of academic performance. The American Council on Education estimates that the conventional definition of graduation rate may exclude up to 60% of students at 4-year institutions [@Cook+Hartle:2011]. Nevertheless, as Cook and Hartle explain, 
+Graduation rate is a widely used, though flawed, measure of academic performance. 
+
+The American Council on Education estimates that the conventional definition of graduation rate may exclude up to 60% of students at 4-year institutions [@Cook+Hartle:2011]. Nevertheless, as Cook and Hartle explain, 
 
 > ... in the eyes of the public, policy makers, and the media, graduation
 > rate is a clear, simple, and logical---if often misleading---number.
 
-Recognizing that graduation rate is a popular metric, we illustrate an improved longitudinal graduation rate calculation that includes many (though not all) of the students excluded by the conventional definition. 
+Recognizing that graduation rate is a popular metric, we illustrate an improved graduation rate calculation that includes many (though not all) of the students excluded by the conventional definition. 
+
+Users can disregard the First-Year Engineering (FYE) content in this vignette if they are working exclusively with either non-engineering programs or  engineering at non-FYE institutions. For users working with FYE programs, the  [Using FYE proxies](art-071-using-fye-proxies.html) vignette is a prerequisite.  
 
 
 
 
 
-## A more inclusive definition
 
-In general, graduation rate is the fraction of starters completing their program in a timely manner. 
+
+
+
+## Definitions
+
+Graduation rate (general)
+
+: The fraction of starters completing their programs in a timely manner. The specific definitions given below differ in how they define starters, with the MIDFIELD definition being more inclusive. 
 
 IPEDS graduation rate
 
-: In the US, the Integrated Postsecondary Education Data System (IPEDS) defines "graduation rate" as the fraction of a cohort of full-time, first-time, degree-seeking undergraduates who complete their program within a percentage (100%, 150%, or 200%) of the "normal" time (typically 4 years) as defined by the institution [@IPEDS:2020]. IPEDS excludes students who attend college part-time, who transfer between institutions, and who start college in Winter or Spring terms.   
+: In the US, the Integrated Postsecondary Education Data System (IPEDS) defines "graduation rate" as the fraction of a cohort of full-time, first-time, degree-seeking undergraduates who complete their program within a percentage (100%, 150%, or 200%) of the "normal" time (typically 4 years) as defined by the institution. IPEDS excludes students who attend college part-time, who transfer between institutions, and who start in Winter or Spring terms [@IPEDS:2020].   
 
 MIDFIELD graduation rate
 
-: The MIDFIELD definition of graduation rate includes starters who are part-time, transfers, or admitted in any term.
-
-The table summarizes the comparison between the two definitions of graduation rate. 
-
+: The fraction of a cohort of degree-seeking undergraduates who complete their program in a timely manner (typically 6 years). MIDFIELD includes students who attend college part-time, who transfer between institutions, and who start in any term. The table summarizes the comparison between the IPEDS and MIDFIELD graduation rate definitions. 
+   
 ```{r echo = FALSE}
 suppressPackageStartupMessages(library("data.table"))
 DT <- wrapr::build_frame(
-  "Constraints", "IPEDS", "MIDFIELD", "MIDFIELD notes" |
+  "Item", "IPEDS", "MIDFIELD", "MIDFIELD notes" |
     "completion span:", "4, 6, or 8 years", "4, 6, or 8 years", "Typical usage is 6 years" |
     "students admitted in:", "Summer/Fall only", "any term", "" |
     "part-time students are:", "excluded", "included", "Timely completion same as full-time students" |
-    "transfer students are:", "excluded", "included", "Timely completion span adjusted for level at entry" |
-    "migrators:", "see below", "see below", "A heuristic could be developed for extending the completion span"
+    "transfer students are:", "excluded", "included", "Timely completion span adjusted for level at entry" 
 )
 
 DT |>
@@ -90,23 +97,47 @@ DT |>
   kableExtra::row_spec(c(0), background = "#c7eae5")
 ```
 
-**Migrators.** Students who change majors (migrators) are problematic in determining graduation rate. Migrators are generally included in the count of starters of their first program. After migrating, should they graduate in a timely manner, whether they are included in the count of graduates of their new program depends on the CIP level for which graduation rate is calculated. We have four possible cases:   
 
-- Graduation rate computed at the institution level includes all migrators within the institution. For example, migrators from Engineering (CIP 14) who graduate in Business (CIP 52) are included in the count of institution starters and graduates. IPEDS defines this rate as the *institution completion rate.*
 
-- Computing at the 2-digit CIP level includes migrator graduates within the same 2-digit CIP and excludes others. For example, migrators from Electrical Engineering (CIP 1410) who graduate in Mechanical Engineering (CIP 1419) are included in the count of Engineering starters and graduates (CIP 14). Migrators from Engineering who graduate in Business are excluded from the Business graduate count.
 
-- Computing at the 4-digit CIP level is similar. For example, migrators from Laser and Optical Engineering (CIP 141003) who graduate in Telecommunications Engineering (CIP 141004) are included in the count of Electrical Engineering starters and graduates (CIP 1410). Migrators from Electrical Engineering who graduate in Mechanical Engineering are excluded from the Mechanical Engineering graduate count. 
+FYE
+
+: First-Year Engineering program, a common-first-year curriculum that is a prerequisite for declaring an engineering major at some US institutions. Denoted by its own CIP code, FYE is not a degree-granting program. 
+
+FYE proxy
+
+: Our estimate of the degree-granting engineering program in which an FYE student in their first term would have started had they not been required to start in FYE. The proxy, a 6-digit CIP code, acts as a substitute for the FYE CIP code when gathering starters.
+
+migrator
+
+: A student who changes majors. In computing graduation rate, whether a student is a migrator depends on the level at which a "program" is defined: institutional, 2-digit CIP, or 4-digit CIP.  
+
+
+
+
+
+## Migrators
+
+Migrators are problematic in determining graduation rate. In their first-term program, they count as starters. After migrating however, should they graduate in a timely manner, whether they are included in the count of graduates depends on the CIP level for which graduation rate is calculated. 
+
+**Four possible cases** that depend on CIP level 
+
+- Graduation rate computed at the institution level includes all migrators within the institution. For example, starters Engineering (CIP 14) who graduate in Business (CIP 52) are included in the count of institution graduates. IPEDS defines this rate as the *institution completion rate.*
+
+- Computing at the 2-digit CIP level includes migrator graduates within the same 2-digit CIP and excludes others. For example, starters in Electrical Engineering (CIP 1410) who graduate in Mechanical Engineering (CIP 1419) are included in the count of Engineering graduates (CIP 14). But starters in Engineering graduating in Business (CIP 52) are excluded from the count of Business graduates. 
+
+- Computing at the 4-digit CIP level is similar. For example, starters in Laser and Optical Engineering (CIP 141003) who graduate in Telecommunications Engineering (CIP 141004) are included in the count of Electrical Engineering graduates (CIP 1410). But starters in Electrical Engineering graduating in Mechanical Engineering (CIP 1419) are excluded from the count of Mechanical Engineering graduates. 
 
 - Computing at the 6-digit CIP level excludes all migrator graduates, though this case is rarely used.   
 
-**No extensions for migrators.** Because a migrator may have to complete remedial work in their new program, their time to graduation may exceed the defined acceptable span (typically 6 years). The graduation rate definition has no mechanism for extending the completion span even if both the student and faculty of the new program consider the student's graduation timely.
-
-The IPEDS definition of graduation rate excludes such an extension. MIDFIELD currently has no mechanism to extend the completion span for migrators either, though a more inclusive heuristic could be developed.
+**No extensions for migrators.** Because a migrator may have to complete remedial work in their new program, their time to graduation may exceed the defined acceptable span (typically 6 years). Yet graduation rate as defined has no mechanism for extending the timely completion span. (Developing such a heuristic for MIDFIELD data is a potential topic of future work.)
 
 
 
 
+## Work in progress
+
+The remainder of the vignette is still a work in progress. 
 
 
 ## Population
@@ -483,6 +514,20 @@ ggplot(DT, aes(x = rate, y = people)) +
 
 **Reminder.** These are practice data, not research data---suitable for learning about student-record analysis, but not for drawing inferences about program attributes or student experiences.
 
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+
+
+
 ## Appendix
 
 ### Complete script
@@ -490,7 +535,7 @@ ggplot(DT, aes(x = rate, y = people)) +
 The vignette code chunks are collected below in a single, condensed script. 
 
 ```{r}
-
+# Script
 ```
 
 
