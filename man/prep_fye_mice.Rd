@@ -2,7 +2,7 @@
 % Please edit documentation in R/prep_fye_mice.R
 \name{prep_fye_mice}
 \alias{prep_fye_mice}
-\title{Prepare FYE data for multivariate imputation}
+\title{Prepare FYE data for multiple imputation}
 \usage{
 prep_fye_mice(
   midfield_student = student,
@@ -22,18 +22,17 @@ by student ID. Default is \code{term}. Required variables are
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
-\item{fye_codes}{Optional character vector of 6-digit CIP codes to
-identify FYE programs, default "140102". Codes must be 6-digit
-strings of numbers; regular expressions are prohibited.
-Non-engineering codes---those that do not start with
-14---are ignored.}
+\item{fye_codes}{Optional character vector of 6-digit CIP codes to identify 
+FYE programs, default "140102". Codes must be 6-digit strings of 
+numbers; regular expressions are prohibited. Non-engineering 
+codes---those that do not start with 14---produce an error.}
 }
 \value{
 A \code{data.table} conditioned for later use as an input to the 
-mice R package for multivariate imputation. The data have the following 
+mice R package for multiple imputation. The data have the following 
 properties:
 \itemize{
- \item One row for every FYE student.  
+ \item One row for every FYE student, first-term and migrator. 
  \item Grouping structures are not preserved.
  \item  Columns returned: 
  \describe{
@@ -53,10 +52,10 @@ properties:
 \description{
 Constructs a data frame of Student Unit Records (SURs) of First-Year 
 Engineering (FYE) programs and conditions the data for later use as an 
-input to the mice R package for multivariate imputation. Sets up three 
-variables as predictors (institution, race, and sex) and one variable to 
-be predicted (program CIP code). Requires  MIDFIELD \code{student} and 
-\code{term} data frames in the environment.
+input to the mice R package for multiple imputation. Sets up three 
+variables as predictors (institution, race/ethnicity, and sex) and one 
+variable to be estimated (program CIP code). Requires  MIDFIELD 
+\code{student} and \code{term} data frames in the environment.
 }
 \details{
 At some US institutions, engineering students are required to complete a  
@@ -72,27 +71,39 @@ To illustrate the potential for miscounting starters, suppose we wish to
 calculate a Mechanical Engineering (ME) graduation rate. Students 
 starting in ME constitute the starting pool and the fraction of that pool 
 graduating in ME is the graduation rate. At FYE institutions, an ME program 
-would typically define their starting 
-pool as the post-FYE cohort entering their program. This may be the best 
-information available, but it invariably undercounts starters by failing to 
-account for FYE students who do not transition (post-FYE) to degree-granting 
-engineering programs---students who may have left the institution or 
-switched to non-engineering majors. In either case, in the absence of the 
-FYE requirement, some of these students would have been ME starters. By 
-neglecting these students, the count of ME starters is artificially low 
-resulting in an ME graduation rate that is artificially high. The same is 
-true for every degree-granting engineering discipline in an FYE institution. 
+would typically define their starting pool as the post-FYE cohort entering 
+their program. This may be the best information available, but it invariably 
+undercounts starters by failing to account for FYE students who do not 
+transition (post-FYE) to degree-granting engineering programs---students who 
+may have left the institution or switched to non-engineering majors. In 
+either case, in the absence of the FYE requirement, some of these students 
+would have been ME starters. By neglecting these students, the count of ME 
+starters is artificially low resulting in an ME graduation rate that is 
+artificially high. The same is true for every degree-granting engineering 
+discipline in an FYE institution. 
 
 Therefore, to avoid miscounting starters at FYE institutions, we have to 
-predict an "FYE proxy", that is, the 6-digit CIP codes of the 
+estimate an "FYE proxy", that is, the 6-digit CIP codes of the 
 degree-granting engineering programs that FYE students would have declared 
 had they not been required to enroll in FYE. The purpose of 
-\code{prep_fye_mice()} is to prepare the data for making that prediction.
+\code{prep_fye_mice()} is to prepare the data for making that estimation. 
+
+After running \code{prep_fye_mice()} but before running \code{mice()}, one
+can edit variables or add variables to create a custom set of predictors. 
+The mice package expects all predictors and the proxy variables to be 
+factors. Do not delete the institution variable because it ensures that a 
+student's imputed program is available at their institution. 
+
+In addition, ensure that the only missing values are in the proxy column. 
+Other variables are expected to be complete (no NA values). A value of 
+"unknown" in a predictor column, e.g., race/ethnicity or sex, is an 
+acceptable value, not missing data. Observations with missing or unknown 
+values in the ID or institution columns (if any) should be removed.
 }
 \section{Method}{
  
 The function extracts all terms for all FYE students, including those who 
-change majors to enter Engineering after their first term, and identifies 
+migrate to enter Engineering after their first term, and identifies 
 the first post-FYE program in which they enroll, if any. This 
 treatment yields two possible outcomes for values returned in the 
 \code{proxy} column:

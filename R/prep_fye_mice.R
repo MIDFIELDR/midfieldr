@@ -1,12 +1,12 @@
 
-#' Prepare FYE data for multivariate imputation
+#' Prepare FYE data for multiple imputation
 #' 
 #' Constructs a data frame of Student Unit Records (SURs) of First-Year 
 #' Engineering (FYE) programs and conditions the data for later use as an 
-#' input to the mice R package for multivariate imputation. Sets up three 
-#' variables as predictors (institution, race, and sex) and one variable to 
-#' be predicted (program CIP code). Requires  MIDFIELD \code{student} and 
-#' \code{term} data frames in the environment.
+#' input to the mice R package for multiple imputation. Sets up three 
+#' variables as predictors (institution, race/ethnicity, and sex) and one 
+#' variable to be estimated (program CIP code). Requires  MIDFIELD 
+#' \code{student} and \code{term} data frames in the environment.
 #' 
 #' At some US institutions, engineering students are required to complete a  
 #' First-Year Engineering (FYE) program as a prerequisite for declaring an 
@@ -21,22 +21,34 @@
 #' calculate a Mechanical Engineering (ME) graduation rate. Students 
 #' starting in ME constitute the starting pool and the fraction of that pool 
 #' graduating in ME is the graduation rate. At FYE institutions, an ME program 
-#' would typically define their starting 
-#' pool as the post-FYE cohort entering their program. This may be the best 
-#' information available, but it invariably undercounts starters by failing to 
-#' account for FYE students who do not transition (post-FYE) to degree-granting 
-#' engineering programs---students who may have left the institution or 
-#' switched to non-engineering majors. In either case, in the absence of the 
-#' FYE requirement, some of these students would have been ME starters. By 
-#' neglecting these students, the count of ME starters is artificially low 
-#' resulting in an ME graduation rate that is artificially high. The same is 
-#' true for every degree-granting engineering discipline in an FYE institution. 
+#' would typically define their starting pool as the post-FYE cohort entering 
+#' their program. This may be the best information available, but it invariably 
+#' undercounts starters by failing to account for FYE students who do not 
+#' transition (post-FYE) to degree-granting engineering programs---students who 
+#' may have left the institution or switched to non-engineering majors. In 
+#' either case, in the absence of the FYE requirement, some of these students 
+#' would have been ME starters. By neglecting these students, the count of ME 
+#' starters is artificially low resulting in an ME graduation rate that is 
+#' artificially high. The same is true for every degree-granting engineering 
+#' discipline in an FYE institution. 
 #' 
 #' Therefore, to avoid miscounting starters at FYE institutions, we have to 
-#' predict an "FYE proxy", that is, the 6-digit CIP codes of the 
+#' estimate an "FYE proxy", that is, the 6-digit CIP codes of the 
 #' degree-granting engineering programs that FYE students would have declared 
 #' had they not been required to enroll in FYE. The purpose of 
-#' \code{prep_fye_mice()} is to prepare the data for making that prediction. 
+#' \code{prep_fye_mice()} is to prepare the data for making that estimation. 
+#' 
+#' After running \code{prep_fye_mice()} but before running \code{mice()}, one
+#' can edit variables or add variables to create a custom set of predictors. 
+#' The mice package expects all predictors and the proxy variables to be 
+#' factors. Do not delete the institution variable because it ensures that a 
+#' student's imputed program is available at their institution. 
+#' 
+#' In addition, ensure that the only missing values are in the proxy column. 
+#' Other variables are expected to be complete (no NA values). A value of 
+#' "unknown" in a predictor column, e.g., race/ethnicity or sex, is an 
+#' acceptable value, not missing data. Observations with missing or unknown 
+#' values in the ID or institution columns (if any) should be removed. 
 #'
 #' @param midfield_student Data frame of Student Unit Record (SUR) student 
 #'         observations, keyed by student ID. Default is \code{student}. 
@@ -48,17 +60,16 @@
 #'        
 #' @param ... Not used, forces later arguments to be used by name.
 #' 
-#' @param fye_codes Optional character vector of 6-digit CIP codes to
-#'        identify FYE programs, default "140102". Codes must be 6-digit
-#'        strings of numbers; regular expressions are prohibited.
-#'        Non-engineering codes---those that do not start with
-#'        14---are ignored.
+#' @param fye_codes Optional character vector of 6-digit CIP codes to identify 
+#'        FYE programs, default "140102". Codes must be 6-digit strings of 
+#'        numbers; regular expressions are prohibited. Non-engineering 
+#'        codes---those that do not start with 14---produce an error. 
 #'        
 #' @return A \code{data.table} conditioned for later use as an input to the 
-#' mice R package for multivariate imputation. The data have the following 
+#' mice R package for multiple imputation. The data have the following 
 #' properties:
 #' \itemize{
-#'  \item One row for every FYE student.  
+#'  \item One row for every FYE student, first-term and migrator. 
 #'  \item Grouping structures are not preserved.
 #'  \item  Columns returned: 
 #'  \describe{
@@ -77,7 +88,7 @@
 #'
 #' @section Method: 
 #' The function extracts all terms for all FYE students, including those who 
-#' change majors to enter Engineering after their first term, and identifies 
+#' migrate to enter Engineering after their first term, and identifies 
 #' the first post-FYE program in which they enroll, if any. This 
 #' treatment yields two possible outcomes for values returned in the 
 #' \code{proxy} column:
@@ -148,15 +159,12 @@ prep_fye_mice <- function(midfield_student = student,
   qassert(fye_codes, "s+")
 
   # fye_codes: must be engineering (start with "14")
-  x <- as.data.table(fye_codes)
-  x[, cip2 := substr(fye_codes, 1, 2)]
   assert_subset(
-    x[, cip2],
-    choices = c("14")
+      substr(fye_codes, 1, 2),
+      choices = c("14")
   )
 
   # inputs modified (or not) by reference
-  # dframe <- copy(as.data.table(midfield_student)) # dframe not the function output
   setDT(midfield_student) # immediately subset, so side-effect OK
   setDT(midfield_term) # immediately subset, so side-effect OK
 
@@ -168,122 +176,82 @@ prep_fye_mice <- function(midfield_student = student,
     must.include = c("mcid", "institution", "term", "cip6")
   )
   
-  # extract minimum set of columns
-  dframe <- midfield_student[, .(mcid, race, sex)]
-
   # class of required columns
-  qassert(dframe[, mcid], "s+")
-  qassert(dframe[, race], "s+")
-  qassert(dframe[, sex], "s+")
+  qassert(midfield_student[, mcid], "s+")
+  qassert(midfield_student[, race], "s+")
+  qassert(midfield_student[, sex], "s+")
   qassert(midfield_term[, mcid], "s+")
   qassert(midfield_term[, institution], "s+")
   qassert(midfield_term[, term], "s+")
   qassert(midfield_term[, cip6], "s+")
 
   # bind names due to NSE notes in R CMD check
-  next_cip6 <- NULL
-  next_cip2 <- NULL
-  cip2 <- NULL
-  x <- NULL
+  proxy <- NULL
 
-  # do the work
-  # all degree-seeking engineering students
-  latest_id <- dframe[, unique(mcid)]
-
-  # degree-seeking engr and an FYE term
-  rows_we_want <- midfield_term$mcid %chin% latest_id &
-    midfield_term$cip6 %chin% fye_codes
-  fye <- midfield_term[rows_we_want, .(mcid, institution)]
-
-  # remove key when finished
+  # Do the work
+  
+  # All FYE students, all terms
+  fye <- midfield_term[cip6 %chin% fye_codes, .(mcid, institution)]
   on.exit(setkey(fye, NULL), add = TRUE)
-
-  # fye has ID and institution columns
+  
+  # Limit to degree-seeking IDs (inner join)
+  # The fye data frame is the function output after we add 
+  # the FYE proxy CIP variable, institution, race, and sex
+  fye <- midfield_student[fye, .(mcid, institution), on = c("mcid"), nomatch = NULL]
   fye <- unique(fye)
-
-  # institution in fye replaces institution (if any) in dframe
-  # if ("institution" %chin% names(dframe)) {
-  #   dframe[, institution := NULL]
-  # }
-
-  # join, result has FYE ID, institution, race, sex
-  fye <- merge(fye, dframe, by = "mcid", all.x = TRUE)
-
-  # subset midfield data table
-  # DT <- filter_match(
-  #   dframe = midfield_term,
-  #   match_to = fye,
-  #   by_col = "mcid",
-  #   select = c("mcid", "term", "cip6")
-  # )
   
-  # Inner join using three columns of term
-  # x <- midfield_term[, .(mcid, term, cip6)]
-  # y <- unique(fye[, .(mcid)])
-  # DT <- y[x, on = .(mcid), nomatch = NULL]
-  DT <- fye[midfield_term, .(mcid, term, cip6), on = c("mcid"), nomatch = NULL]
+  # Working data frame to gather proxies (left-outer join)
+  DT <- midfield_term[fye, .(mcid, institution, term, cip6), on = c("mcid")]
   on.exit(setkey(DT, NULL), add = TRUE)
+  DT <- unique(DT)
   
-  # order rows by setting keys
+  # Order rows and create proxy variable as CIP in following term 
   setkeyv(DT, c("mcid", "term"))
-
-  # determine the CIP in the immediately following term, keyed by ID
-  DT[, next_cip6 := shift(.SD, n = 1, fill = NA, type = "lead"),
-    by = "mcid",
-    .SDcols = "cip6"
+  DT[, proxy := shift(.SD, n = 1, fill = NA, type = "lead"),
+     by = "mcid",
+     .SDcols = "cip6"
   ]
-
-  # omit rows for which the next term is FYE
-  DT <- DT[!next_cip6 %chin% fye_codes]
-
-  # omit rows in which consecutive CIPs are identical
-  DT <- DT[cip6 != next_cip6]
-
-  # add 2-digit codes
-  DT[, `:=`(
-    cip2 = substr(cip6, 1, 2),
-    next_cip2 = substr(next_cip6, 1, 2)
-  )]
-
-  # at least one of the cip2 must be engineering
-  DT <- DT[cip2 == "14" | next_cip2 == "14"]
-
-  # keep rows in which the cip6 (term, not next term) is FYE
+  
+  # Omit rows for which the proxy is FYE, retaining 
+  # rows with student's last FYE term
+  DT <- DT[!proxy %chin% fye_codes]
+  
+  # Omit rows in which consecutive CIPs are identical
+  DT <- DT[cip6 != proxy]
+  
+  # Keep rows in which the term cip6 is FYE
   DT <- DT[cip6 %chin% fye_codes]
-
-  # keep the first term instance (some students enter FYE twice)
-  DT <- DT[, .SD[1], by = "mcid"]
-
+  
+  # Ensure row order, keep the first instance by ID, thereby
+  # omitting rows for students entering FYE twice
+  setkeyv(DT, c("mcid", "term"))
+  DT <- DT[, .SD[1], by = c("mcid")]
+  
   # subset to retain those who transition to engr major after FYE
-  DT <- DT[next_cip2 == "14"]
-
-  # assign predicted engr major to replace FYE code
-  DT[, cip6 := next_cip6]
-
-  # drop unneeded columns
-  DT <- DT[, .(mcid, cip6)]
-
-  # fye currently has ID, institution, race, sex
-  # join to original, introduces NA to cip6
-  fye <- merge(fye, DT, by = "mcid", all.x = TRUE)
-
-  # predictor variables and target variables to factors
-  # rename cip6 as proxy
+  DT <- DT[proxy %like% "^14"]
+  
+  # Drop unnecessary columns. This DT contains the known CIPs of 
+  # FYE students who transition to an ENGR major post-FYE
+  DT <- DT[, .(mcid, proxy)]
+  
+  # Merge known transition CIPs to ever FYE (left-outer join)
+  fye <- DT[fye, on = c("mcid")]
+  
+  # Add race and sex (left-outer join). Ensure uniqueness.
+  fye <- midfield_student[fye, .(mcid, race, sex, institution, proxy), on = c("mcid")]
+  fye <- unique(fye)
+  
+  # Convert to factors to prepare for mice()
   fye[, `:=`(
-    institution = as.factor(institution),
-    proxy = as.factor(cip6),
-    race = as.factor(race),
-    sex = as.factor(sex)
+      race = as.factor(race),
+      sex = as.factor(sex), 
+      institution = as.factor(institution),
+      proxy = as.factor(proxy)
   )]
-
-  # keep required columns only
-  cols_we_want <- c("mcid", "institution", "race", "sex", "proxy")
-  fye <- fye[, .SD, .SDcols = cols_we_want]
-  setcolorder(fye, cols_we_want)
-
+  
   # reorder rows
   setkeyv(fye, c("institution", "proxy", "sex", "race"))
-
+  
   # enable printing (see data.table FAQ 2.23)
   fye[]
 }

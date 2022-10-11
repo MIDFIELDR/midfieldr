@@ -42,7 +42,7 @@
 
 #' Starting program proxies for FYE students
 #' 
-#' Proxies are the degree-granting engineering programs we predict that 
+#' Proxies are the degree-granting engineering programs we estimate that 
 #' First-Year Engineering (FYE) students would have declared had they not been 
 #' required to enroll in FYE. Keyed by student ID. Proxies are provided for 
 #' all students in the midfielddata practice data who enroll in FYE in their 
@@ -54,10 +54,10 @@
 #' degree-granting starting programs. The most common application is a 
 #' graduation rate calculation. 
 #' 
-#' The prediction is based on students' first post-FYE programs and a 
-#' multivariate imputation suitable for multiple categorical variables using 
+#' The estimation is based on students' first post-FYE programs and a 
+#' multiple imputation suitable for categorical variables using 
 #' the mice package. The predictor variables are institution, race, and sex. 
-#' The predicted variable is the 6-digit CIP code of a degree-granting 
+#' The estimated variable is the 6-digit CIP code of a degree-granting 
 #' engineering program at their institution.
 #'
 #' \code{fye_proxy} holds only for the practice data in midfielddata---these 
@@ -69,7 +69,7 @@
 #'
 #'   \item{mcid}{Character, de-identified student ID.}
 #'
-#'   \item{proxy}{Character, 6-digit CIP code of the predicted proxy
+#'   \item{proxy}{Character, 6-digit CIP code of the estimated proxy
 #'   program.}
 #'
 #'  }
@@ -360,10 +360,10 @@
 #' students starting in one of the four majors in the case study. 
 #' 
 #' The CIP variable is renamed \code{start} to distinguish it from other 
-#' midfieldr \code{cip6} variables because \code{start} contains predicted 
+#' midfieldr \code{cip6} variables because \code{start} contains estimated 
 #' program codes while the \code{cip6} variables contain actual student records. 
 #' 
-#' @format \code{data.table} with 4893 rows and 3 columns.
+#' @format \code{data.table} with 4896 rows and 3 columns.
 #' 
 #' \describe{
 #' 

@@ -5,7 +5,7 @@
 \alias{study_starters}
 \title{Case-study starters}
 \format{
-\code{data.table} with 4893 rows and 3 columns.
+\code{data.table} with 4896 rows and 3 columns.
 
 \describe{
 
@@ -38,7 +38,7 @@ data set included with midfieldr. The data frame is filtered to retain
 students starting in one of the four majors in the case study. 
 
 The CIP variable is renamed \code{start} to distinguish it from other 
-midfieldr \code{cip6} variables because \code{start} contains predicted 
+midfieldr \code{cip6} variables because \code{start} contains estimated 
 program codes while the \code{cip6} variables contain actual student records.
 }
 \seealso{

@@ -22,18 +22,18 @@ test_prep_fye_mice <- function() {
 
     # test case
     DT <- wrapr::build_frame(
-        "mcid"         , "institution"  , "race"    , "sex"   , "proxy"       |
-            "MID26060301", "Institution C", "Asian" , "Female", NA_character_ |
-            "MID25995980", "Institution C", "Latine", "Female", NA_character_ |
-            "MID25997636", "Institution C", "Latine", "Female", NA_character_ |
-            "MID26086310", "Institution C", "Latine", "Female", NA_character_ |
-            "MID26000057", "Institution C", "White" , "Female", NA_character_ |
-            "MID26614720", "Institution J", "Asian" , "Male"  , NA_character_ |
-            "MID26593796", "Institution J", "White" , "Male"  , NA_character_ |
-            "MID25846316", "Institution M", "White" , "Male"  , "143501"      |
-            "MID25847220", "Institution M", "White" , "Male"  , "143501"      |
-            "MID25848589", "Institution M", "White" , "Male"  , "143501"      |
-            "MID25828870", "Institution M", "White" , "Male"  , "149999"      )
+        "mcid"         , "race"  , "sex"   , "institution"  , "proxy"       |
+            "MID26060301", "Asian" , "Female", "Institution C", NA_character_ |
+            "MID25995980", "Latine", "Female", "Institution C", NA_character_ |
+            "MID25997636", "Latine", "Female", "Institution C", NA_character_ |
+            "MID26086310", "Latine", "Female", "Institution C", NA_character_ |
+            "MID26000057", "White" , "Female", "Institution C", NA_character_ |
+            "MID26614720", "Asian" , "Male"  , "Institution J", NA_character_ |
+            "MID26593796", "White" , "Male"  , "Institution J", NA_character_ |
+            "MID25848589", "White" , "Male"  , "Institution M", "143501"      |
+            "MID25846316", "White" , "Male"  , "Institution M", "143501"      |
+            "MID25847220", "White" , "Male"  , "Institution M", "143501"      |
+            "MID25828870", "White" , "Male"  , "Institution M", "149999"      )
     setDT(DT)
     DT[, c("race", "sex", "institution", "proxy") :=
            list(as.factor(race),
@@ -60,14 +60,14 @@ test_prep_fye_mice <- function() {
     # specific names of columns
      expect_equivalent(
         names(DT),
-        c("mcid", "institution", "race", "sex", "proxy")
+        c("mcid", "race", "sex", "institution", "proxy")
     )
 
      # extra columns are dropped, add column for cip6
      DT <- prep_fye_mice(toy_student, toy_term)
      expect_equal(
          names(DT),
-         c("mcid", "institution", "race", "sex", "proxy")
+         c("mcid", "race", "sex", "institution", "proxy")
      )
 
     # CIPs must be 6-digit, number characters only, start with 14
@@ -88,21 +88,21 @@ test_prep_fye_mice <- function() {
     #                     fye_codes = c("140101", "140102", "149999"))
     # cat(wrapr::draw_frame(DT))
     DT <- wrapr::build_frame(
-        "mcid"         , "institution"  , "race"    , "sex"   , "proxy"       |
-            "MID25977316", "Institution B", "White" , "Male"  , NA_character_ |
-            "MID26060301", "Institution C", "Asian" , "Female", NA_character_ |
-            "MID25995980", "Institution C", "Latine", "Female", NA_character_ |
-            "MID25997636", "Institution C", "Latine", "Female", NA_character_ |
-            "MID26086310", "Institution C", "Latine", "Female", NA_character_ |
-            "MID26000057", "Institution C", "White" , "Female", NA_character_ |
-            "MID26231601", "Institution E", "White" , "Female", NA_character_ |
-            "MID26171165", "Institution E", "Latine", "Male"  , NA_character_ |
-            "MID26614720", "Institution J", "Asian" , "Male"  , NA_character_ |
-            "MID26593796", "Institution J", "White" , "Male"  , NA_character_ |
-            "MID25828870", "Institution M", "White" , "Male"  , "140801"      |
-            "MID25846316", "Institution M", "White" , "Male"  , "143501"      |
-            "MID25847220", "Institution M", "White" , "Male"  , "143501"      |
-            "MID25848589", "Institution M", "White" , "Male"  , "143501"      )
+        "mcid"         , "race"  , "sex"   , "institution"  , "proxy"       |
+            "MID25977316", "White" , "Male"  , "Institution B", NA_character_ |
+            "MID26060301", "Asian" , "Female", "Institution C", NA_character_ |
+            "MID25995980", "Latine", "Female", "Institution C", NA_character_ |
+            "MID25997636", "Latine", "Female", "Institution C", NA_character_ |
+            "MID26086310", "Latine", "Female", "Institution C", NA_character_ |
+            "MID26000057", "White" , "Female", "Institution C", NA_character_ |
+            "MID26231601", "White" , "Female", "Institution E", NA_character_ |
+            "MID26171165", "Latine", "Male"  , "Institution E", NA_character_ |
+            "MID26614720", "Asian" , "Male"  , "Institution J", NA_character_ |
+            "MID26593796", "White" , "Male"  , "Institution J", NA_character_ |
+            "MID25828870", "White" , "Male"  , "Institution M", "140801"      |
+            "MID25848589", "White" , "Male"  , "Institution M", "143501"      |
+            "MID25846316", "White" , "Male"  , "Institution M", "143501"      |
+            "MID25847220", "White" , "Male"  , "Institution M", "143501"      )
     setDT(DT)
     DT[, c("race", "sex", "institution", "proxy") :=
            list(as.factor(race),

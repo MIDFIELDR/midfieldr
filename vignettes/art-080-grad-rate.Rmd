@@ -109,7 +109,7 @@ The IPEDS definition of graduation rate excludes such an extension. MIDFIELD cur
 
 
 
-## Data
+## Population
 
 If you are writing your own script to follow along, we start with these packages:
 
@@ -128,6 +128,141 @@ options(
 )
 ```
 
+**Importing.** Load the midfielddata data tables.
+
+```{r}
+# Load data sets from midfielddata
+data(student, term, degree)
+```
+
+**Filtering.** The steps from previous vignettes ([Data sufficiency](art-010-data-sufficiency.html) and  [Degree seeking](art-020-degree-seeking.html) are reproduced here in condensed form to yield the IDs of all students (in all majors) in the practice data satisfying data sufficiency and degree seeking. 
+
+```{r}
+# Create a working data frame, IDs only
+DT <- term[, .(mcid)]
+
+# Minimize the dimension
+DT <- unique(DT)
+
+# Filter for data sufficiency
+DT <- add_timely_term(DT, term)
+DT <- add_data_sufficiency(DT, term)
+DT <- DT[data_sufficiency == "include"]
+
+# Filter for degree seeking
+DT <- DT[, .(mcid)]
+DT <- unique(DT)
+DT <- student[DT, .(mcid), on = c("mcid"), nomatch = NULL]
+
+# Display the result
+DT[]
+```
+
+**Subsetting `cip`.** Steps from the [Programs](art-030-programs.html) vignette are reproduced here in condensed form to yield the abbreviated program names and 6-digit CIP codes of the four programs in the case study plus First-Year Engineering (FYE). 
+
+```{r}
+# Obtain CIP codes and names
+four_programs <- filter_search(
+    cip, 
+    keep_text = c("140102", "^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"), 
+    select = c("cip6")
+    )
+
+# Assign custom program names
+four_programs[, program := fcase(
+  cip6 %chin% "140102", "FYE", 
+  cip6 %like% "^1408", "CE",
+  cip6 %like% "^1410", "EE",
+  cip6 %like% "^1419", "ME",
+  cip6 %chin% c("142701", "143501", "143601", "143701"), "ISE" 
+)]
+
+# Display the result
+four_programs[]
+```
+
+## Gather starters
+
+```{r}
+# Inner join for all terms for these IDs
+DT <- term[DT, .(mcid, term, cip6), on = c("mcid"), nomatch = NULL]
+
+# Retain initial term
+setorderv(DT, cols = c("mcid", "term"))
+DT <- DT[, .SD[1], by = c("mcid")]
+DT <- DT[, .(mcid, cip6)]
+
+# Display the result
+DT[]
+```
+
+Extract FYE
+
+```{r}
+fye <- DT[cip6 == "140102"]
+fye[]
+
+fye <- fye_proxy[fye, .(mcid, proxy), on = c("mcid")]
+fye[]
+
+# rejoin
+DT <- fye[DT, on = c("mcid")]
+DT[]
+
+# Combine all starting CIPs
+DT[, start := fcase(
+  cip6 == "140102", proxy,
+  cip6 != "140102", cip6
+)]
+
+# Display the result
+DT[]
+```
+
+
+
+
+
+Join the program names and filter. 
+
+```{r}
+setnames(four_programs, old = "cip6", new = "start")
+DT[]
+
+DT <- four_programs[DT, .(mcid, program), on = c("start")]
+DT[]
+
+
+DT <- DT[!is.na(program)]
+DT <- unique(DT)
+DT[]
+```
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## stuff
+
 The data set `study_starters` (included with midfieldr) contains the IDs of students starting in four programs (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) after filtering for data sufficiency, degree seeking, and program. Starters include FYE proxies. (Deriving these data from the source data tables is described in [Starters and FYE programs](art-070-fye.html)).
 
 ```{r}
@@ -142,23 +277,13 @@ The data set `study_observations` (included with midfieldr) contains the graduat
 study_observations
 ```
 
-**Importing.** We use the midfielddata `student` table for its `race` and `sex`  variables, keyed by student ID.
-
-```{r}
-# Load data from midfielddata
-data(student)
-
-# Display selected columns
-student[, .(mcid, race, sex)]
-```
 
 
 
 
 
 
-
-## Gather starters
+## Gather starters 2
 
 Our case study starters have already been gathered in `study_starters`. Here we select the two variables we need, rename the program variable to prepare for a merge operation later, and add a `group` variable for later use in grouping and summarizing. 
 
