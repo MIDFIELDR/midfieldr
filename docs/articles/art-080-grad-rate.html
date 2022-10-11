@@ -62,7 +62,8 @@
     <a class="dropdown-item" href="../articles/art-040-completion.html">Completion status</a>
     <a class="dropdown-item" href="../articles/art-050-demographics.html">Demographics (left outer joins)</a>
     <a class="dropdown-item" href="../articles/art-060-multiway.html">Multiway data and charts</a>
-    <a class="dropdown-item" href="../articles/art-070-fye.html">FYE programs</a>
+    <a class="dropdown-item" href="../articles/art-070-creating-fye-proxies.html">Creating FYE proxies</a>
+    <a class="dropdown-item" href="../articles/art-071-using-fye-proxies.html">Using FYE proxies</a>
     <a class="dropdown-item" href="../articles/art-080-grad-rate.html">Graduation rate</a>
   </div>
 </li>
@@ -98,7 +99,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Graduation rate</h1>
             
-            <h4 data-toc-skip class="date">2022-10-02</h4>
+            <h4 data-toc-skip class="date">2022-10-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-080-grad-rate.Rmd" class="external-link"><code>vignettes/art-080-grad-rate.Rmd</code></a></small>
       <div class="d-none name"><code>art-080-grad-rate.Rmd</code></div>
@@ -270,7 +271,7 @@ migrators either, though a more inclusive heuristic could be
 developed.</p>
 </div>
 <div class="section level2">
-<h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
+<h2 id="population">Population<a class="anchor" aria-label="anchor" href="#population"></a>
 </h2>
 <p>If you are writing your own script to follow along, we start with
 these packages:</p>
@@ -287,6 +288,240 @@ these packages:</p>
 <span>  datatable.print.topn <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  datatable.print.class <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p><strong>Importing.</strong> Load the midfielddata data tables.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load data sets from midfielddata</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span>, <span class="va">degree</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Filtering.</strong> The steps from previous vignettes (<a href="art-010-data-sufficiency.html">Data sufficiency</a> and <a href="art-020-degree-seeking.html">Degree seeking</a> are reproduced
+here in condensed form to yield the IDs of all students (in all majors)
+in the practice data satisfying data sufficiency and degree seeking.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create a working data frame, IDs only</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Minimize the dimension</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Filter for data sufficiency</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Filter for degree seeking</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;               mcid</span></span>
+<span><span class="co">#&gt;             &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MID25783135</span></span>
+<span><span class="co">#&gt;     2: MID25783162</span></span>
+<span><span class="co">#&gt;     3: MID25783178</span></span>
+<span><span class="co">#&gt;     4: MID25783195</span></span>
+<span><span class="co">#&gt;     5: MID25783220</span></span>
+<span><span class="co">#&gt;    ---            </span></span>
+<span><span class="co">#&gt; 63948: MID26697574</span></span>
+<span><span class="co">#&gt; 63949: MID26697576</span></span>
+<span><span class="co">#&gt; 63950: MID26697599</span></span>
+<span><span class="co">#&gt; 63951: MID26697615</span></span>
+<span><span class="co">#&gt; 63952: MID26697623</span></span></code></pre>
+<p><strong>Subsetting <code>cip</code>.</strong> Steps from the <a href="art-030-programs.html">Programs</a> vignette are reproduced here
+in condensed form to yield the abbreviated program names and 6-digit CIP
+codes of the four programs in the case study plus First-Year Engineering
+(FYE).</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Obtain CIP codes and names</span></span>
+<span><span class="va">four_programs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_search.html">filter_search</a></span><span class="op">(</span></span>
+<span>    <span class="va">cip</span>, </span>
+<span>    keep_text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"140102"</span>, <span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1427"</span>, <span class="st">"^1435"</span>, <span class="st">"^1436"</span>, <span class="st">"^1437"</span><span class="op">)</span>, </span>
+<span>    select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Assign custom program names</span></span>
+<span><span class="va">four_programs</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="st">"140102"</span>, <span class="st">"FYE"</span>, </span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="st">"CE"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1410"</span>, <span class="st">"EE"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1419"</span>, <span class="st">"ME"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"142701"</span>, <span class="st">"143501"</span>, <span class="st">"143601"</span>, <span class="st">"143701"</span><span class="op">)</span>, <span class="st">"ISE"</span> </span>
+<span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">four_programs</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;       cip6 program</span></span>
+<span><span class="co">#&gt;     &lt;char&gt;  &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1: 140102     FYE</span></span>
+<span><span class="co">#&gt;  2: 140801      CE</span></span>
+<span><span class="co">#&gt;  3: 140802      CE</span></span>
+<span><span class="co">#&gt;  4: 140803      CE</span></span>
+<span><span class="co">#&gt;  5: 140804      CE</span></span>
+<span><span class="co">#&gt;  6: 140805      CE</span></span>
+<span><span class="co">#&gt;  7: 140899      CE</span></span>
+<span><span class="co">#&gt;  8: 141001      EE</span></span>
+<span><span class="co">#&gt;  9: 141003      EE</span></span>
+<span><span class="co">#&gt; 10: 141004      EE</span></span>
+<span><span class="co">#&gt; 11: 141099      EE</span></span>
+<span><span class="co">#&gt; 12: 141901      ME</span></span>
+<span><span class="co">#&gt; 13: 142701     ISE</span></span>
+<span><span class="co">#&gt; 14: 143501     ISE</span></span>
+<span><span class="co">#&gt; 15: 143601     ISE</span></span>
+<span><span class="co">#&gt; 16: 143701     ISE</span></span></code></pre>
+</div>
+<div class="section level2">
+<h2 id="gather-starters">Gather starters<a class="anchor" aria-label="anchor" href="#gather-starters"></a>
+</h2>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Inner join for all terms for these IDs</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Retain initial term</span></span>
+<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">DT</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"term"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;               mcid   cip6</span></span>
+<span><span class="co">#&gt;             &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MID25783135 520101</span></span>
+<span><span class="co">#&gt;     2: MID25783162 140102</span></span>
+<span><span class="co">#&gt;     3: MID25783178 140102</span></span>
+<span><span class="co">#&gt;     4: MID25783195 040201</span></span>
+<span><span class="co">#&gt;     5: MID25783220 110101</span></span>
+<span><span class="co">#&gt;    ---                   </span></span>
+<span><span class="co">#&gt; 63948: MID26697574 450701</span></span>
+<span><span class="co">#&gt; 63949: MID26697576 520301</span></span>
+<span><span class="co">#&gt; 63950: MID26697599 521201</span></span>
+<span><span class="co">#&gt; 63951: MID26697615 500901</span></span>
+<span><span class="co">#&gt; 63952: MID26697623 451001</span></span></code></pre>
+<p>Extract FYE</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fye</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">cip6</span> <span class="op">==</span> <span class="st">"140102"</span><span class="op">]</span></span>
+<span><span class="va">fye</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;              mcid   cip6</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783162 140102</span></span>
+<span><span class="co">#&gt;    2: MID25783178 140102</span></span>
+<span><span class="co">#&gt;    3: MID25783441 140102</span></span>
+<span><span class="co">#&gt;    4: MID25783491 140102</span></span>
+<span><span class="co">#&gt;    5: MID25783830 140102</span></span>
+<span><span class="co">#&gt;   ---                   </span></span>
+<span><span class="co">#&gt; 2933: MID26612303 140102</span></span>
+<span><span class="co">#&gt; 2934: MID26612374 140102</span></span>
+<span><span class="co">#&gt; 2935: MID26612408 140102</span></span>
+<span><span class="co">#&gt; 2936: MID26614122 140102</span></span>
+<span><span class="co">#&gt; 2937: MID26618099 140102</span></span></code></pre>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fye</span> <span class="op">&lt;-</span> <span class="va">fye_proxy</span><span class="op">[</span><span class="va">fye</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">proxy</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">fye</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;              mcid  proxy</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783162 140801</span></span>
+<span><span class="co">#&gt;    2: MID25783178 140701</span></span>
+<span><span class="co">#&gt;    3: MID25783441 140801</span></span>
+<span><span class="co">#&gt;    4: MID25783491 141001</span></span>
+<span><span class="co">#&gt;    5: MID25783830 141001</span></span>
+<span><span class="co">#&gt;   ---                   </span></span>
+<span><span class="co">#&gt; 2933: MID26612303 140901</span></span>
+<span><span class="co">#&gt; 2934: MID26612374 140901</span></span>
+<span><span class="co">#&gt; 2935: MID26612408 141901</span></span>
+<span><span class="co">#&gt; 2936: MID26614122 140701</span></span>
+<span><span class="co">#&gt; 2937: MID26618099 140701</span></span></code></pre>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># rejoin</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">fye</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;               mcid  proxy   cip6</span></span>
+<span><span class="co">#&gt;             &lt;char&gt; &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MID25783135   &lt;NA&gt; 520101</span></span>
+<span><span class="co">#&gt;     2: MID25783162 140801 140102</span></span>
+<span><span class="co">#&gt;     3: MID25783178 140701 140102</span></span>
+<span><span class="co">#&gt;     4: MID25783195   &lt;NA&gt; 040201</span></span>
+<span><span class="co">#&gt;     5: MID25783220   &lt;NA&gt; 110101</span></span>
+<span><span class="co">#&gt;    ---                          </span></span>
+<span><span class="co">#&gt; 63948: MID26697574   &lt;NA&gt; 450701</span></span>
+<span><span class="co">#&gt; 63949: MID26697576   &lt;NA&gt; 520301</span></span>
+<span><span class="co">#&gt; 63950: MID26697599   &lt;NA&gt; 521201</span></span>
+<span><span class="co">#&gt; 63951: MID26697615   &lt;NA&gt; 500901</span></span>
+<span><span class="co">#&gt; 63952: MID26697623   &lt;NA&gt; 451001</span></span></code></pre>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Combine all starting CIPs</span></span>
+<span><span class="va">DT</span><span class="op">[</span>, <span class="va">start</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
+<span>  <span class="va">cip6</span> <span class="op">==</span> <span class="st">"140102"</span>, <span class="va">proxy</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op">!=</span> <span class="st">"140102"</span>, <span class="va">cip6</span></span>
+<span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Display the result</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;               mcid  proxy   cip6  start</span></span>
+<span><span class="co">#&gt;             &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MID25783135   &lt;NA&gt; 520101 520101</span></span>
+<span><span class="co">#&gt;     2: MID25783162 140801 140102 140801</span></span>
+<span><span class="co">#&gt;     3: MID25783178 140701 140102 140701</span></span>
+<span><span class="co">#&gt;     4: MID25783195   &lt;NA&gt; 040201 040201</span></span>
+<span><span class="co">#&gt;     5: MID25783220   &lt;NA&gt; 110101 110101</span></span>
+<span><span class="co">#&gt;    ---                                 </span></span>
+<span><span class="co">#&gt; 63948: MID26697574   &lt;NA&gt; 450701 450701</span></span>
+<span><span class="co">#&gt; 63949: MID26697576   &lt;NA&gt; 520301 520301</span></span>
+<span><span class="co">#&gt; 63950: MID26697599   &lt;NA&gt; 521201 521201</span></span>
+<span><span class="co">#&gt; 63951: MID26697615   &lt;NA&gt; 500901 500901</span></span>
+<span><span class="co">#&gt; 63952: MID26697623   &lt;NA&gt; 451001 451001</span></span></code></pre>
+<p>Join the program names and filter.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">four_programs</span>, old <span class="op">=</span> <span class="st">"cip6"</span>, new <span class="op">=</span> <span class="st">"start"</span><span class="op">)</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;               mcid  proxy   cip6  start</span></span>
+<span><span class="co">#&gt;             &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MID25783135   &lt;NA&gt; 520101 520101</span></span>
+<span><span class="co">#&gt;     2: MID25783162 140801 140102 140801</span></span>
+<span><span class="co">#&gt;     3: MID25783178 140701 140102 140701</span></span>
+<span><span class="co">#&gt;     4: MID25783195   &lt;NA&gt; 040201 040201</span></span>
+<span><span class="co">#&gt;     5: MID25783220   &lt;NA&gt; 110101 110101</span></span>
+<span><span class="co">#&gt;    ---                                 </span></span>
+<span><span class="co">#&gt; 63948: MID26697574   &lt;NA&gt; 450701 450701</span></span>
+<span><span class="co">#&gt; 63949: MID26697576   &lt;NA&gt; 520301 520301</span></span>
+<span><span class="co">#&gt; 63950: MID26697599   &lt;NA&gt; 521201 521201</span></span>
+<span><span class="co">#&gt; 63951: MID26697615   &lt;NA&gt; 500901 500901</span></span>
+<span><span class="co">#&gt; 63952: MID26697623   &lt;NA&gt; 451001 451001</span></span></code></pre>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">four_programs</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"start"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;               mcid program</span></span>
+<span><span class="co">#&gt;             &lt;char&gt;  &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MID25783135    &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;     2: MID25783162      CE</span></span>
+<span><span class="co">#&gt;     3: MID25783178    &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;     4: MID25783195    &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;     5: MID25783220    &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;    ---                    </span></span>
+<span><span class="co">#&gt; 63948: MID26697574    &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 63949: MID26697576    &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 63950: MID26697599    &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 63951: MID26697615    &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 63952: MID26697623    &lt;NA&gt;</span></span></code></pre>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;              mcid program</span></span>
+<span><span class="co">#&gt;            &lt;char&gt;  &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MID25783162      CE</span></span>
+<span><span class="co">#&gt;    2: MID25783441      CE</span></span>
+<span><span class="co">#&gt;    3: MID25783491      EE</span></span>
+<span><span class="co">#&gt;    4: MID25783830      EE</span></span>
+<span><span class="co">#&gt;    5: MID25783912     ISE</span></span>
+<span><span class="co">#&gt;   ---                    </span></span>
+<span><span class="co">#&gt; 5501: MID26696642      EE</span></span>
+<span><span class="co">#&gt; 5502: MID26696738      ME</span></span>
+<span><span class="co">#&gt; 5503: MID26696958      ME</span></span>
+<span><span class="co">#&gt; 5504: MID26696967      ME</span></span>
+<span><span class="co">#&gt; 5505: MID26697444      ME</span></span></code></pre>
+</div>
+<div class="section level2">
+<h2 id="stuff">stuff<a class="anchor" aria-label="anchor" href="#stuff"></a>
+</h2>
 <p>The data set <code>study_starters</code> (included with midfieldr)
 contains the IDs of students starting in four programs (Civil,
 Electrical, Industrial/Systems, and Mechanical Engineering) after
@@ -294,7 +529,7 @@ filtering for data sufficiency, degree seeking, and program. Starters
 include FYE proxies. (Deriving these data from the source data tables is
 described in <a href="art-070-fye.html">Starters and FYE
 programs</a>).</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Case study starters</span></span>
 <span><span class="va">study_starters</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;              mcid  start program</span></span>
@@ -305,17 +540,17 @@ programs</a>).</p>
 <span><span class="co">#&gt;    4: MID25784025 141901      ME</span></span>
 <span><span class="co">#&gt;    5: MID25784209 140801      CE</span></span>
 <span><span class="co">#&gt;   ---                           </span></span>
-<span><span class="co">#&gt; 4889: MID26696642 141001      EE</span></span>
-<span><span class="co">#&gt; 4890: MID26696738 141901      ME</span></span>
-<span><span class="co">#&gt; 4891: MID26696958 141901      ME</span></span>
-<span><span class="co">#&gt; 4892: MID26696967 141901      ME</span></span>
-<span><span class="co">#&gt; 4893: MID26697444 141901      ME</span></span></code></pre>
+<span><span class="co">#&gt; 4892: MID26696642 141001      EE</span></span>
+<span><span class="co">#&gt; 4893: MID26696738 141901      ME</span></span>
+<span><span class="co">#&gt; 4894: MID26696958 141901      ME</span></span>
+<span><span class="co">#&gt; 4895: MID26696967 141901      ME</span></span>
+<span><span class="co">#&gt; 4896: MID26697444 141901      ME</span></span></code></pre>
 <p>The data set <code>study_observations</code> (included with
 midfieldr) contains the graduates of the case study programs as well as
 those ever enrolled, which we ignore for this metric. (Deriving these
 data from the source data tables is described in <a href="art-002-case-data.html">Case study: Data</a>) These graduates have
 been filtered for timely completion.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Case study graduates</span></span>
 <span><span class="va">study_observations</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;               mcid   race    sex program  group</span></span>
@@ -331,38 +566,16 @@ been filtered for timely completion.</p>
 <span><span class="co">#&gt; 11210: MID26696967  White   Male      ME   grad</span></span>
 <span><span class="co">#&gt; 11211: MID26697163 Latine   Male      ME   grad</span></span>
 <span><span class="co">#&gt; 11212: MID26697447  Asian   Male      EE   grad</span></span></code></pre>
-<p><strong>Importing.</strong> We use the midfielddata
-<code>student</code> table for its <code>race</code> and
-<code>sex</code> variables, keyed by student ID.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load data from midfielddata</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Display selected columns</span></span>
-<span><span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;               mcid            race    sex</span></span>
-<span><span class="co">#&gt;             &lt;char&gt;          &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;     1: MID25783135           White   Male</span></span>
-<span><span class="co">#&gt;     2: MID25783147           White Female</span></span>
-<span><span class="co">#&gt;     3: MID25783156           White Female</span></span>
-<span><span class="co">#&gt;     4: MID25783162           White   Male</span></span>
-<span><span class="co">#&gt;     5: MID25783166           White   Male</span></span>
-<span><span class="co">#&gt;    ---                                   </span></span>
-<span><span class="co">#&gt; 97636: MID26697680   Other/Unknown Female</span></span>
-<span><span class="co">#&gt; 97637: MID26697682           White   Male</span></span>
-<span><span class="co">#&gt; 97638: MID26697685           White   Male</span></span>
-<span><span class="co">#&gt; 97639: MID26697689 Native American   Male</span></span>
-<span><span class="co">#&gt; 97640: MID26697702           White   Male</span></span></code></pre>
 </div>
 <div class="section level2">
-<h2 id="gather-starters">Gather starters<a class="anchor" aria-label="anchor" href="#gather-starters"></a>
+<h2 id="gather-starters-2">Gather starters 2<a class="anchor" aria-label="anchor" href="#gather-starters-2"></a>
 </h2>
 <p>Our case study starters have already been gathered in
 <code>study_starters</code>. Here we select the two variables we need,
 rename the program variable to prepare for a merge operation later, and
 add a <code>group</code> variable for later use in grouping and
 summarizing.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a working data frame</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_starters</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">program</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -382,11 +595,11 @@ summarizing.</p>
 <span><span class="co">#&gt;    4: MID25784025            ME  start</span></span>
 <span><span class="co">#&gt;    5: MID25784209            CE  start</span></span>
 <span><span class="co">#&gt;   ---                                 </span></span>
-<span><span class="co">#&gt; 4889: MID26696642            EE  start</span></span>
-<span><span class="co">#&gt; 4890: MID26696738            ME  start</span></span>
-<span><span class="co">#&gt; 4891: MID26696958            ME  start</span></span>
-<span><span class="co">#&gt; 4892: MID26696967            ME  start</span></span>
-<span><span class="co">#&gt; 4893: MID26697444            ME  start</span></span></code></pre>
+<span><span class="co">#&gt; 4892: MID26696642            EE  start</span></span>
+<span><span class="co">#&gt; 4893: MID26696738            ME  start</span></span>
+<span><span class="co">#&gt; 4894: MID26696958            ME  start</span></span>
+<span><span class="co">#&gt; 4895: MID26696967            ME  start</span></span>
+<span><span class="co">#&gt; 4896: MID26697444            ME  start</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="gather-graduates">Gather graduates<a class="anchor" aria-label="anchor" href="#gather-graduates"></a>
@@ -394,7 +607,7 @@ summarizing.</p>
 <p>Case study graduates are a subset of <code>study_observations</code>.
 We filter for the graduates and rename the program variable to prepare
 for a merge operation later.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Filter for graduates only</span></span>
 <span><span class="va">grad</span> <span class="op">&lt;-</span> <span class="va">study_observations</span><span class="op">[</span><span class="va">group</span> <span class="op">==</span> <span class="st">"grad"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">program</span>, <span class="va">group</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -419,7 +632,7 @@ for a merge operation later.</p>
 <p><strong>Adding variables.</strong> We use a left-outer join to add
 starting programs to the graduates data. An NA represents a graduate not
 starting in one of the case study programs.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">join_cols</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">program_start</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">grad</span> <span class="op">&lt;-</span> <span class="va">join_cols</span><span class="op">[</span><span class="va">grad</span>, on <span class="op">=</span> <span class="st">"mcid"</span><span class="op">]</span></span>
 <span></span>
@@ -431,7 +644,7 @@ starting in one of the case study programs.</p>
 <span><span class="co">#&gt;    2: MID25783441            CE           CE   grad</span></span>
 <span><span class="co">#&gt;    3: MID25783491            EE           EE   grad</span></span>
 <span><span class="co">#&gt;    4: MID25783912           ISE          ISE   grad</span></span>
-<span><span class="co">#&gt;    5: MID25784489          &lt;NA&gt;           CE   grad</span></span>
+<span><span class="co">#&gt;    5: MID25784489            ME           CE   grad</span></span>
 <span><span class="co">#&gt;   ---                                              </span></span>
 <span><span class="co">#&gt; 3548: MID26696738            ME           ME   grad</span></span>
 <span><span class="co">#&gt; 3549: MID26696771          &lt;NA&gt;           EE   grad</span></span>
@@ -441,7 +654,7 @@ starting in one of the case study programs.</p>
 <p><strong>Filtering.</strong> For graduation rate we want graduates who
 started in their completed program. Retain rows in which start and grad
 programs match.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">grad</span> <span class="op">&lt;-</span> <span class="va">grad</span><span class="op">[</span><span class="va">program_start</span> <span class="op">==</span> <span class="va">program_grad</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Display the result</span></span>
@@ -454,13 +667,13 @@ programs match.</p>
 <span><span class="co">#&gt;    4: MID25784709            CE           CE   grad</span></span>
 <span><span class="co">#&gt;    5: MID25784843            CE           CE   grad</span></span>
 <span><span class="co">#&gt;   ---                                              </span></span>
-<span><span class="co">#&gt; 2072: MID26696337            CE           CE   grad</span></span>
-<span><span class="co">#&gt; 2073: MID26696429           ISE          ISE   grad</span></span>
-<span><span class="co">#&gt; 2074: MID26696642            EE           EE   grad</span></span>
-<span><span class="co">#&gt; 2075: MID26696738            ME           ME   grad</span></span>
-<span><span class="co">#&gt; 2076: MID26696967            ME           ME   grad</span></span></code></pre>
+<span><span class="co">#&gt; 2073: MID26696337            CE           CE   grad</span></span>
+<span><span class="co">#&gt; 2074: MID26696429           ISE          ISE   grad</span></span>
+<span><span class="co">#&gt; 2075: MID26696642            EE           EE   grad</span></span>
+<span><span class="co">#&gt; 2076: MID26696738            ME           ME   grad</span></span>
+<span><span class="co">#&gt; 2077: MID26696967            ME           ME   grad</span></span></code></pre>
 <p>The starting program is no longer needed.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Drop an unnecessary variable </span></span>
 <span><span class="va">grad</span><span class="op">[</span>, <span class="va">program_start</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span></span>
@@ -474,11 +687,11 @@ programs match.</p>
 <span><span class="co">#&gt;    4: MID25784709           CE   grad</span></span>
 <span><span class="co">#&gt;    5: MID25784843           CE   grad</span></span>
 <span><span class="co">#&gt;   ---                                </span></span>
-<span><span class="co">#&gt; 2072: MID26696337           CE   grad</span></span>
-<span><span class="co">#&gt; 2073: MID26696429          ISE   grad</span></span>
-<span><span class="co">#&gt; 2074: MID26696642           EE   grad</span></span>
-<span><span class="co">#&gt; 2075: MID26696738           ME   grad</span></span>
-<span><span class="co">#&gt; 2076: MID26696967           ME   grad</span></span></code></pre>
+<span><span class="co">#&gt; 2073: MID26696337           CE   grad</span></span>
+<span><span class="co">#&gt; 2074: MID26696429          ISE   grad</span></span>
+<span><span class="co">#&gt; 2075: MID26696642           EE   grad</span></span>
+<span><span class="co">#&gt; 2076: MID26696738           ME   grad</span></span>
+<span><span class="co">#&gt; 2077: MID26696967           ME   grad</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="combine-starters-and-graduates">Combine starters and graduates<a class="anchor" aria-label="anchor" href="#combine-starters-and-graduates"></a>
@@ -486,7 +699,7 @@ programs match.</p>
 <p><strong>Binding.</strong> Combine two data frames by matching column
 names. The structure of this data frame is designed to support the
 upcoming summarizing operation.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Rename the program variables to match before binding</span></span>
 <span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">DT</span>, old <span class="op">=</span> <span class="st">"program_start"</span>, new <span class="op">=</span> <span class="st">"program"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">grad</span>, old <span class="op">=</span> <span class="st">"program_grad"</span>, new <span class="op">=</span> <span class="st">"program"</span><span class="op">)</span></span>
@@ -504,18 +717,18 @@ upcoming summarizing operation.</p>
 <span><span class="co">#&gt;    4: MID25784025      ME  start</span></span>
 <span><span class="co">#&gt;    5: MID25784209      CE  start</span></span>
 <span><span class="co">#&gt;   ---                           </span></span>
-<span><span class="co">#&gt; 6965: MID26696337      CE   grad</span></span>
-<span><span class="co">#&gt; 6966: MID26696429     ISE   grad</span></span>
-<span><span class="co">#&gt; 6967: MID26696642      EE   grad</span></span>
-<span><span class="co">#&gt; 6968: MID26696738      ME   grad</span></span>
-<span><span class="co">#&gt; 6969: MID26696967      ME   grad</span></span></code></pre>
+<span><span class="co">#&gt; 6969: MID26696337      CE   grad</span></span>
+<span><span class="co">#&gt; 6970: MID26696429     ISE   grad</span></span>
+<span><span class="co">#&gt; 6971: MID26696642      EE   grad</span></span>
+<span><span class="co">#&gt; 6972: MID26696738      ME   grad</span></span>
+<span><span class="co">#&gt; 6973: MID26696967      ME   grad</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="add-demographics">Add demographics<a class="anchor" aria-label="anchor" href="#add-demographics"></a>
 </h2>
 <p><strong>Creating variables.</strong> Using columns from student, we
 add variables for race/ethnicity and sex using a left-outer join.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">program</span>, <span class="va">group</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Display the result</span></span>
@@ -528,11 +741,11 @@ add variables for race/ethnicity and sex using a left-outer join.</p>
 <span><span class="co">#&gt;    4: MID25784025      ME  start         Black   Male</span></span>
 <span><span class="co">#&gt;    5: MID25784209      CE  start International   Male</span></span>
 <span><span class="co">#&gt;   ---                                                </span></span>
-<span><span class="co">#&gt; 6965: MID26696337      CE   grad        Latine   Male</span></span>
-<span><span class="co">#&gt; 6966: MID26696429     ISE   grad         White Female</span></span>
-<span><span class="co">#&gt; 6967: MID26696642      EE   grad         White   Male</span></span>
-<span><span class="co">#&gt; 6968: MID26696738      ME   grad         White   Male</span></span>
-<span><span class="co">#&gt; 6969: MID26696967      ME   grad         White   Male</span></span></code></pre>
+<span><span class="co">#&gt; 6969: MID26696337      CE   grad        Latine   Male</span></span>
+<span><span class="co">#&gt; 6970: MID26696429     ISE   grad         White Female</span></span>
+<span><span class="co">#&gt; 6971: MID26696642      EE   grad         White   Male</span></span>
+<span><span class="co">#&gt; 6972: MID26696738      ME   grad         White   Male</span></span>
+<span><span class="co">#&gt; 6973: MID26696967      ME   grad         White   Male</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="group-and-summarize">Group and summarize<a class="anchor" aria-label="anchor" href="#group-and-summarize"></a>
@@ -543,7 +756,7 @@ their starting programs, grouped by race/ethnicity and sex.</p>
 <p>These grouping variables are columns in the data set (race, sex,
 program, and group)—a structure we designed to support this specific
 analytical goal. We can now group and summarize in one line of code.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Count by the grouping variables </span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group"</span>, <span class="st">"program"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -551,7 +764,7 @@ analytical goal. We can now group and summarize in one line of code.</p>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;       group program            race    sex     N</span></span>
 <span><span class="co">#&gt;      &lt;char&gt;  &lt;char&gt;          &lt;char&gt; &lt;char&gt; &lt;int&gt;</span></span>
-<span><span class="co">#&gt;   1:  start      CE           White   Male   665</span></span>
+<span><span class="co">#&gt;   1:  start      CE           White   Male   666</span></span>
 <span><span class="co">#&gt;   2:  start      EE           White   Male   879</span></span>
 <span><span class="co">#&gt;   3:  start     ISE           White   Male   198</span></span>
 <span><span class="co">#&gt;   4:  start      ME           Black   Male   132</span></span>
@@ -567,7 +780,7 @@ analytical goal. We can now group and summarize in one line of code.</p>
 <h2 id="compute-metric">Compute metric<a class="anchor" aria-label="anchor" href="#compute-metric"></a>
 </h2>
 <p>Transform.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Transform to row-record form</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">program</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">race</span> <span class="op">~</span> <span class="va">group</span>, value.var <span class="op">=</span> <span class="st">"N"</span>, fill <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span></span>
@@ -586,7 +799,7 @@ analytical goal. We can now group and summarize in one line of code.</p>
 <span><span class="co">#&gt; 51:      ME   Male Native American     1     7</span></span>
 <span><span class="co">#&gt; 52:      ME   Male   Other/Unknown    10    22</span></span>
 <span><span class="co">#&gt; 53:      ME   Male           White   583  1195</span></span></code></pre>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span>, <span class="va">rate</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">grad</span> <span class="op">/</span> <span class="va">start</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Display the result</span></span>
@@ -610,7 +823,7 @@ analytical goal. We can now group and summarize in one line of code.</p>
 </h2>
 <p>We take several additional steps to prepare the data for
 dissemination in tables or charts.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Preserve anonymity</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">grad</span> <span class="op">&gt;=</span> <span class="fl">10</span><span class="op">]</span></span>
 <span></span>
@@ -621,7 +834,7 @@ dissemination in tables or charts.</p>
 <span><span class="co">#&gt;  1:      CE Female         White    94   204  46.1</span></span>
 <span><span class="co">#&gt;  2:      CE   Male         Asian    11    21  52.4</span></span>
 <span><span class="co">#&gt;  3:      CE   Male         Black    17    55  30.9</span></span>
-<span><span class="co">#&gt;  4:      CE   Male         White   333   665  50.1</span></span>
+<span><span class="co">#&gt;  4:      CE   Male         White   333   666  50.0</span></span>
 <span><span class="co">#&gt;  5:      EE Female         Black    41   109  37.6</span></span>
 <span><span class="co">#&gt; ---                                               </span></span>
 <span><span class="co">#&gt; 21:      ME   Male         Black    33   132  25.0</span></span>
@@ -629,7 +842,7 @@ dissemination in tables or charts.</p>
 <span><span class="co">#&gt; 23:      ME   Male        Latine    13    44  29.5</span></span>
 <span><span class="co">#&gt; 24:      ME   Male Other/Unknown    10    22  45.5</span></span>
 <span><span class="co">#&gt; 25:      ME   Male         White   583  1195  48.8</span></span></code></pre>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Filter by study design</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="va">race</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"International"</span>, <span class="st">"Other/Unknown"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -640,7 +853,7 @@ dissemination in tables or charts.</p>
 <span><span class="co">#&gt;  1:      CE Female  White    94   204  46.1</span></span>
 <span><span class="co">#&gt;  2:      CE   Male  Asian    11    21  52.4</span></span>
 <span><span class="co">#&gt;  3:      CE   Male  Black    17    55  30.9</span></span>
-<span><span class="co">#&gt;  4:      CE   Male  White   333   665  50.1</span></span>
+<span><span class="co">#&gt;  4:      CE   Male  White   333   666  50.0</span></span>
 <span><span class="co">#&gt;  5:      EE Female  Black    41   109  37.6</span></span>
 <span><span class="co">#&gt;  6:      EE Female  White    33   117  28.2</span></span>
 <span><span class="co">#&gt;  7:      EE   Male  Asian    49   128  38.3</span></span>
@@ -653,13 +866,13 @@ dissemination in tables or charts.</p>
 <span><span class="co">#&gt; 14:     ISE   Male  Black    19    53  35.8</span></span>
 <span><span class="co">#&gt; 15:     ISE   Male Latine    10    19  52.6</span></span>
 <span><span class="co">#&gt; 16:     ISE   Male  White    98   198  49.5</span></span>
-<span><span class="co">#&gt; 17:      ME Female  White    59   177  33.3</span></span>
+<span><span class="co">#&gt; 17:      ME Female  White    60   178  33.7</span></span>
 <span><span class="co">#&gt; 18:      ME   Male  Asian    36    78  46.2</span></span>
 <span><span class="co">#&gt; 19:      ME   Male  Black    33   132  25.0</span></span>
 <span><span class="co">#&gt; 20:      ME   Male Latine    13    44  29.5</span></span>
 <span><span class="co">#&gt; 21:      ME   Male  White   583  1195  48.8</span></span>
 <span><span class="co">#&gt;     program    sex   race  grad start  rate</span></span></code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span>, <span class="va">people</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"people"</span><span class="op">)</span><span class="op">)</span></span>
@@ -671,7 +884,7 @@ dissemination in tables or charts.</p>
 <span><span class="co">#&gt;  1:      CE White Female    94   204  46.1</span></span>
 <span><span class="co">#&gt;  2:      CE   Asian Male    11    21  52.4</span></span>
 <span><span class="co">#&gt;  3:      CE   Black Male    17    55  30.9</span></span>
-<span><span class="co">#&gt;  4:      CE   White Male   333   665  50.1</span></span>
+<span><span class="co">#&gt;  4:      CE   White Male   333   666  50.0</span></span>
 <span><span class="co">#&gt;  5:      EE Black Female    41   109  37.6</span></span>
 <span><span class="co">#&gt;  6:      EE White Female    33   117  28.2</span></span>
 <span><span class="co">#&gt;  7:      EE   Asian Male    49   128  38.3</span></span>
@@ -684,13 +897,13 @@ dissemination in tables or charts.</p>
 <span><span class="co">#&gt; 14:     ISE   Black Male    19    53  35.8</span></span>
 <span><span class="co">#&gt; 15:     ISE  Latine Male    10    19  52.6</span></span>
 <span><span class="co">#&gt; 16:     ISE   White Male    98   198  49.5</span></span>
-<span><span class="co">#&gt; 17:      ME White Female    59   177  33.3</span></span>
+<span><span class="co">#&gt; 17:      ME White Female    60   178  33.7</span></span>
 <span><span class="co">#&gt; 18:      ME   Asian Male    36    78  46.2</span></span>
 <span><span class="co">#&gt; 19:      ME   Black Male    33   132  25.0</span></span>
 <span><span class="co">#&gt; 20:      ME  Latine Male    13    44  29.5</span></span>
 <span><span class="co">#&gt; 21:      ME   White Male   583  1195  48.8</span></span>
 <span><span class="co">#&gt;     program       people  grad start  rate</span></span></code></pre>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
 <span>  <span class="va">program</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"CE"</span>, <span class="st">"Civil"</span>,</span>
 <span>  <span class="va">program</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"EE"</span>, <span class="st">"Electrical"</span>,</span>
@@ -705,7 +918,7 @@ dissemination in tables or charts.</p>
 <span><span class="co">#&gt;  1:              Civil White Female    94   204  46.1</span></span>
 <span><span class="co">#&gt;  2:              Civil   Asian Male    11    21  52.4</span></span>
 <span><span class="co">#&gt;  3:              Civil   Black Male    17    55  30.9</span></span>
-<span><span class="co">#&gt;  4:              Civil   White Male   333   665  50.1</span></span>
+<span><span class="co">#&gt;  4:              Civil   White Male   333   666  50.0</span></span>
 <span><span class="co">#&gt;  5:         Electrical Black Female    41   109  37.6</span></span>
 <span><span class="co">#&gt;  6:         Electrical White Female    33   117  28.2</span></span>
 <span><span class="co">#&gt;  7:         Electrical   Asian Male    49   128  38.3</span></span>
@@ -718,13 +931,13 @@ dissemination in tables or charts.</p>
 <span><span class="co">#&gt; 14: Industrial/Systems   Black Male    19    53  35.8</span></span>
 <span><span class="co">#&gt; 15: Industrial/Systems  Latine Male    10    19  52.6</span></span>
 <span><span class="co">#&gt; 16: Industrial/Systems   White Male    98   198  49.5</span></span>
-<span><span class="co">#&gt; 17:         Mechanical White Female    59   177  33.3</span></span>
+<span><span class="co">#&gt; 17:         Mechanical White Female    60   178  33.7</span></span>
 <span><span class="co">#&gt; 18:         Mechanical   Asian Male    36    78  46.2</span></span>
 <span><span class="co">#&gt; 19:         Mechanical   Black Male    33   132  25.0</span></span>
 <span><span class="co">#&gt; 20:         Mechanical  Latine Male    13    44  29.5</span></span>
 <span><span class="co">#&gt; 21:         Mechanical   White Male   583  1195  48.8</span></span>
 <span><span class="co">#&gt;                program       people  grad start  rate</span></span></code></pre>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert categorical variables to factors</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span><span class="op">(</span><span class="va">DT</span>,</span>
 <span>  quantity <span class="op">=</span> <span class="st">"rate"</span>,</span>
@@ -737,27 +950,27 @@ dissemination in tables or charts.</p>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;                program       people  grad start  rate program_rate people_rate</span></span>
 <span><span class="co">#&gt;                 &lt;fctr&gt;       &lt;fctr&gt; &lt;num&gt; &lt;num&gt; &lt;num&gt;        &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:              Civil White Female    94   204  46.1         48.1        39.4</span></span>
+<span><span class="co">#&gt;  1:              Civil White Female    94   204  46.1         48.1        39.5</span></span>
 <span><span class="co">#&gt;  2:              Civil   Asian Male    11    21  52.4         48.1        42.5</span></span>
 <span><span class="co">#&gt;  3:              Civil   Black Male    17    55  30.9         48.1        31.8</span></span>
-<span><span class="co">#&gt;  4:              Civil   White Male   333   665  50.1         48.1        46.3</span></span>
+<span><span class="co">#&gt;  4:              Civil   White Male   333   666  50.0         48.1        46.3</span></span>
 <span><span class="co">#&gt;  5:         Electrical Black Female    41   109  37.6         37.6        36.4</span></span>
-<span><span class="co">#&gt;  6:         Electrical White Female    33   117  28.2         37.6        39.4</span></span>
+<span><span class="co">#&gt;  6:         Electrical White Female    33   117  28.2         37.6        39.5</span></span>
 <span><span class="co">#&gt;  7:         Electrical   Asian Male    49   128  38.3         37.6        42.5</span></span>
 <span><span class="co">#&gt;  8:         Electrical   Black Male    72   204  35.3         37.6        31.8</span></span>
 <span><span class="co">#&gt;  9:         Electrical  Latine Male    19    48  39.6         37.6        37.8</span></span>
 <span><span class="co">#&gt; 10:         Electrical   White Male   345   879  39.2         37.6        46.3</span></span>
 <span><span class="co">#&gt; 11: Industrial/Systems Black Female    14    42  33.3         46.2        36.4</span></span>
-<span><span class="co">#&gt; 12: Industrial/Systems White Female    48    96  50.0         46.2        39.4</span></span>
+<span><span class="co">#&gt; 12: Industrial/Systems White Female    48    96  50.0         46.2        39.5</span></span>
 <span><span class="co">#&gt; 13: Industrial/Systems   Asian Male    12    27  44.4         46.2        42.5</span></span>
 <span><span class="co">#&gt; 14: Industrial/Systems   Black Male    19    53  35.8         46.2        31.8</span></span>
 <span><span class="co">#&gt; 15: Industrial/Systems  Latine Male    10    19  52.6         46.2        37.8</span></span>
 <span><span class="co">#&gt; 16: Industrial/Systems   White Male    98   198  49.5         46.2        46.3</span></span>
-<span><span class="co">#&gt; 17:         Mechanical White Female    59   177  33.3         44.5        39.4</span></span>
-<span><span class="co">#&gt; 18:         Mechanical   Asian Male    36    78  46.2         44.5        42.5</span></span>
-<span><span class="co">#&gt; 19:         Mechanical   Black Male    33   132  25.0         44.5        31.8</span></span>
-<span><span class="co">#&gt; 20:         Mechanical  Latine Male    13    44  29.5         44.5        37.8</span></span>
-<span><span class="co">#&gt; 21:         Mechanical   White Male   583  1195  48.8         44.5        46.3</span></span>
+<span><span class="co">#&gt; 17:         Mechanical White Female    60   178  33.7         44.6        39.5</span></span>
+<span><span class="co">#&gt; 18:         Mechanical   Asian Male    36    78  46.2         44.6        42.5</span></span>
+<span><span class="co">#&gt; 19:         Mechanical   Black Male    33   132  25.0         44.6        31.8</span></span>
+<span><span class="co">#&gt; 20:         Mechanical  Latine Male    13    44  29.5         44.6        37.8</span></span>
+<span><span class="co">#&gt; 21:         Mechanical   White Male   583  1195  48.8         44.6        46.3</span></span>
 <span><span class="co">#&gt;                program       people  grad start  rate program_rate people_rate</span></span></code></pre>
 </div>
 <div class="section level2">
@@ -765,7 +978,7 @@ dissemination in tables or charts.</p>
 </h2>
 <p>Vertical dashed line is the graduation rate for the program as a
 whole.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">rate</span>, y <span class="op">=</span> <span class="va">people</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span>, as.table <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">program_rate</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
