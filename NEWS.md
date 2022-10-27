@@ -1,8 +1,10 @@
 
 ## midfieldr 1.0.0.9027 / 2021-10
 
-- Split FYE into two vignettes
+- Separate vignettes for FYE and starters 
+- To starters, add the case for non-FYE institutions
 - Continue working on graduation rate vignette 
+- Standardize vignette structure
 
 
 

@@ -10,7 +10,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 nocite: |
-  @Dowle+Srinivasan:2021:data.table, 
+  @Dowle+Srinivasan:2021:data.table,
   @Wickham:2016:ggplot2
 resource_files: |
 ---
@@ -58,20 +58,22 @@ Part 2 of a case study in three parts, illustrating how we work with longitudina
 3. Results (this page). Calculating summary statistics and metrics and displaying the results. 
 
 
-In this part, we use the midfieldr functions:  
-
-- `order_multiway()` 
-
-
-
-
-## Preface
+## Method 
 
 Our goal in this segment is to group and summarize the observations we saved previously, calculate the stickiness metric, and display the results. 
 
-If you are writing your own script to follow along, we start with these packages: 
+*Caveat:* The Student Unit Records included with midfieldr and midfielddata are practice data, not research data, suitable for practice working with SURs but not for drawing inferences about program attributes or student experiences.
+
+
+
+## Load practice data
+
+*Start a script*. If you are writing your own script to follow along, we use these packages in this vignette:
 
 ```{r}
+# Case study: Results
+# midfieldr vignette
+
 # Packages
 library("midfieldr")
 suppressPackageStartupMessages(library("data.table"))
@@ -85,33 +87,24 @@ options(
 )
 ```
 
-
-
-
-## Import data
-
-**Copying.** Copy the data file `study_observations` containing the final set of case study "ever" and "grad" observations as developed in the previous segment. These data are included with midfieldr.
+*Prepared data.* `study_observations`, included with midfieldr, contains post-processed observations of students ever enrolled in, and students  graduating from, the case study programs as developed in [Case study: Data](art-002-case-data.html).
 
 ```{r}
-# Copy the case study observations
+# View prepared data
+study_observations
+```
+
+## Group and summarize
+
+*Copying.* Prevents operations on `DT` from affecting `study_observations` by reference [@data.table-reference-semantics].
+
+```{r}
+# Working data frame
 DT <- copy(study_observations)
 
 # Display the result
 DT[]
 ```
-
-You can view the help page (and data dictionary) by running
-
-```{r}
-#| eval: false
-# Run in Console
-? study_observations
-```
-   
-   
-   
-    
-## Group and summarize
 
 To calculate stickiness, we want to count the number of students ever enrolled in each of our programs and the number of students graduating from the programs, grouped by race/ethnicity and sex.
 
@@ -147,19 +140,20 @@ We calculate percent stickiness.
 ```{r}
 # Compute the metric
 DT[, stick := round(100 * grad / ever, 1)]
+setkey(DT, NULL)
 
 # Display the result
 DT[]
 ```
 
-In this form, the data are included with midfieldr as the `study_results` data set. You can view the help page (and data dictionary) by running
+*Verify built-in data.* To avoid deriving this data frame each time it is needed in other vignettes, the same information is provided in the `study_results` data frame included with midfieldr. Here we verify that the two data frames are identical. 
 
 ```{r}
-#| eval: false
-# Run in Console
-? study_results
-```
+#| collapse: true
 
+# Verify built-in data
+all.equal(DT, study_results)
+```
 
 
 
@@ -167,7 +161,7 @@ In this form, the data are included with midfieldr as the `study_results` data s
 
 We take several additional steps to prepare the data for dissemination in  tables or charts.  
 
-**Filtering.** To preserve the anonymity of the people involved, we remove observations with 10 or fewer graduates.   
+*Filtering.* To preserve the anonymity of the people involved, we remove observations with 10 or fewer graduates.   
 
 ```{r}
 # Preserve anonymity
@@ -177,7 +171,7 @@ DT <- DT[grad >= 10]
 DT[]
 ```
 
-**Filtering.** Let us assume that our study focuses on "domestic" students of known race/ethnicity. In that case, we omit observations labeled "International" and Other/Unknown". 
+*Filtering.* Let us assume that our study focuses on "domestic" students of known race/ethnicity. In that case, we omit observations labeled "International" and Other/Unknown". 
 
 ```{r}
 # Filter by study design
@@ -187,7 +181,7 @@ DT <- DT[!race %chin% c("International", "Other/Unknown")]
 DT[]
 ```
 
-**Creating variables.** We have found it useful to report such data with a variable that combines race/ethnicity and sex. 
+*Creating variables.* We have found it useful to report such data with a variable that combines race/ethnicity and sex. 
 
 ```{r}
 # Create a variable 
@@ -199,7 +193,7 @@ setcolorder(DT, c("program", "people"))
 DT[]
 ```
 
-**Recoding values.** Readers can more readily interpret our charts and tables if the programs are un-abbreviated. 
+*Recoding values.* Readers can more readily interpret our charts and tables if the programs are un-abbreviated. 
 
 ```{r}
 # Recode values for charts and tables
@@ -216,7 +210,7 @@ DT[]
 
 With one quantitative variable (stickiness) for every combination of the levels of two categorical variables (program and race/ethnicity/sex), these data are *multiway data* [@Cleveland:1993]. How one orders the categorical variables is critical for visualizing effects. 
 
-**Conditioning.** Convert the two categorical variables to ordered factors to support the ordering of rows and panels in the chart. 
+*Conditioning.* Convert the two categorical variables to ordered factors to support the ordering of rows and panels in the chart. We use the midfieldr `order_multiway()` function. 
 
 ```{r}
 # Convert categorical variables to factors
@@ -229,16 +223,6 @@ DT <- order_multiway(DT,
 
 # Display the result
 DT[]
-```
-
-
-You can view the help page by running
-
-```{r}
-#| eval: false
-
-# Run in Console
-? order_multiway
 ```
 
 
@@ -272,8 +256,6 @@ ggplot(DT, aes(x = stick, y = people)) +
   geom_point() +
   labs(x = "Stickiness (%)", y = "")
 ```
-
-**Reminder.** These are practice data, not research data---suitable for learning about student-record analysis, but not for drawing inferences about program attributes or student experiences. 
 
 The chart illustrates the importance of ordering the rows and panels. We would conclude that Industrial/Systems Engineering is the stickiest program of the four, followed by Civil, Mechanical, and Electrical in descending order. 
 
@@ -322,12 +304,9 @@ tbl |>
 
 ## Closing
 
-Starting with the prepared data (the case study observations), we compute longitudinal stickiness for four programs (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) grouped by program, race/ethnicity, and sex. We create a data table and charts to disseminate the results. 
+Starting with the prepared data (the case study observations), we compute longitudinal stickiness for four programs (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) grouped by program, race/ethnicity, and sex. 
 
-**Write to file.** Results like those just prior to the dissemination preparation step are often written to file as an intermediate result. In this case, the pre-dissemination data frame is included with midfieldr as `study_results`.
-
-
-
+Pre-dissemination results are written to file for possible later use. We filter selected records and create a data table and charts for dissemination. 
 
 
 ## References
@@ -342,7 +321,9 @@ Starting with the prepared data (the case study observations), we compute longit
 
 ## Appendix
 
-We conclude each vignette by collecting its code chunks in a single, condensed script for the convenience of those who wish to copy it into their own R file.
+### Complete script
+
+The case study code chunks are collected below in a single, condensed script. 
 
 ```{r}
 #| eval: false
@@ -410,16 +391,26 @@ tbl <- dcast(tbl, people ~ program, value.var = "stick")
 setnames(tbl, old = "people", new = "People", skip_absent = TRUE)
 ```
 
-```{r echo = FALSE}
-# to change the CSS file for block quotes
+
+```{r}
+#| echo: false
+
+# to change the CSS file
 # per https://github.com/rstudio/rmarkdown/issues/732
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{css}
 blockquote {
-    padding: 10px 20px;
-    margin: 0 0 20px;
+    padding:     10px 20px;
+    margin:      0 0 20px;
     border-left: 0px
+}
+caption {
+    color:       #525252;
+    text-align:  left;
+    font-weight: normal;
+    font-size:   medium;
+    line-height: 1.5;
 }
 ```

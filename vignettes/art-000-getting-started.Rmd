@@ -49,13 +49,41 @@ knitr::knit_hooks$set(inline = function(x) {
 ```
 
 
-## Introduction 
 
-Before beginning our survey of student unit record (SUR) data, check that the necessary prerequisites have been met: 
 
-- [Requirements](../index.html#requirements)
-- [Install midfieldr](../index.html#install-midfieldr) 
-- [Install midfielddata](../index.html#install-midfielddata)
+## Student unit records 
+
+The MIDFIELD Student Unit Records (SUR) are registrar's student-level data compiled by an institution and anonymized and curated by the MIDFIELD data steward. SURs include personal information (e.g., age, sex, and race/ethnicity), enrollment information (e.g., institution, program, and grade level), and academic information (e.g., courses, grades, and degrees). MIDFIELD data are organized into four tables---student, course, term, and degree---keyed by student ID. 
+
+From the MIDFIELD *research* data, we've taken a proportionate stratified sample and made it available as a *practice* data set in  [midfielddata](https://midfieldr.github.io/midfielddata/)---an R data package containing anonymized SURs for nearly 98,000 undergraduates at 12 institutions from 1987--2016. Table 1 briefly introduces the four data tables.
+
+```{r}
+#| echo: false
+
+wrapr::build_frame(
+    "Practice data table", "Each row is", "No. of rows", "No. of columns", "Memory" |
+        "course" , "a student in a course"   , "3,439,936", "12", "340 Mb" |
+        "term"   , "a student in a term"     ,   "710,841", "13",  "80 Mb" |
+        "student", "a degree-seeking student",    "97,640", "13",  "19 Mb" |
+        "degree" , "a student who graduates" ,    "47,499",  "5",  "10.2 Mb"
+) |>
+    kableExtra::kbl(align = "llrrr", 
+                    caption = "Table 1: Attributes of the practice data tables in midfielddata") |>
+    kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+    kableExtra::row_spec(0, background = "#c7eae5") |>
+    kableExtra::column_spec(1, monospace = TRUE) |>
+    kableExtra::column_spec(1:4, color = "black", background = "white")
+```
+
+
+
+## Method
+
+Prerequisites: 
+
+- [Requirements.](../index.html#requirements) R and data.table.
+- [midfieldr.](../index.html#install-midfieldr) Install and check. 
+- [midfielddata.](../index.html#install-midfielddata) Install and check. 
 
 In this vignette, we
 
@@ -63,48 +91,19 @@ In this vignette, we
 - Inspect the four data tables 
 - Preview the midfieldr functions 
 
-
-## Student unit record data 
-
-The MIDFIELD Student Unit Records (SUR) are registrar's student-level data compiled by an institution and anonymized and curated by the MIDFIELD data steward. SURs include personal information (e.g., age, sex, and race/ethnicity), enrollment information (e.g., institution, program, and grade level), and academic information (e.g., courses, grades, and degrees). MIDFIELD data are organized into four tables---student, course, term, and degree---keyed by student ID. 
-
-In this vignette, we examine the practice data in [midfielddata](https://midfieldr.github.io/midfielddata/), an R data package containing a proportionate stratified sample of the MIDFIELD research data---longitudinal SURs for nearly 98,000 undergraduates at 12 institutions from  1987--2016 as summarized below. 
-
-```{r}
-#| echo: false
-
-wrapr::build_frame(
-  "Practice data table", "Each row is", "No. of rows", "No. of columns", "Memory" |
-    "student", "a degree-seeking student", "97,640", "13", "19 Mb" |
-    "course", "a student in a course", "3.5M", "12", "340 Mb" |
-    "term", "a student in a term", "728,000", "13", "80 Mb" |
-    "degree", "a student who graduates", "48,000", "5", "10.2 Mb"
-) |>
-  kableExtra::kbl(align = "llrrr") |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1, monospace = TRUE) |>
-  kableExtra::column_spec(1:4, color = "black", background = "white")
-```
-
-
-
-
-
-
-
-
-
-
+*Caveat:* The Student Unit Records included with midfieldr and midfielddata are practice data, not research data, suitable for practice working with SURs but not for drawing inferences about program attributes or student experiences.
 
 
 
 
 ## Load practice data
 
-If you are writing your own script to follow along, we start with these packages: 
+*Start a script*. If you are writing your own script to follow along, we use these packages in this vignette:
 
 ```{r}
+# Getting started
+# midfieldr vignette
+
 # Packages used
 library("midfieldr")
 library("midfielddata")
@@ -118,10 +117,9 @@ options(
 )
 ```
 
+*Load data* from the midfielddata package. 
 
-
-
-Use `data()` to load the midfielddata data tables into memory for use. For example, after loading the package with `library("midfielddata")` as we did above, you can run `ls()` to see that the environment contains zero objects, 
+Use `data()` to load the practice data tables into memory for use. For example, after loading the package with `library("midfielddata")` as we did above, you can run `ls()` to see that the environment contains zero objects, 
 
 ```{r}
 # Names of objects in the environment
@@ -131,14 +129,8 @@ ls()
 To load the `student` data from midfielddata into memory, we run
 
 ```{r}
-#| echo: false
-
-if (!exists("student")) data(student)
-```
-
-```r
-# loading a data set 
-data(student)
+# Load practice data
+data(student, package = "midfielddata")
 ```
 
 Checking the environment again, 
@@ -148,23 +140,21 @@ Checking the environment again,
 ls()
 ```
 
-If you look in the RStudio *Environment* pane, you should see `student` listed. We will typically load the data sets we need at the top of a script just after loading the midfielddata package. You need to load them only once in a session.  
+If you look in the RStudio *Environment* pane, you should see `student` listed. We will typically load the data sets we need at the top of a script just after loading the midfielddata package. You need to load them only once in a script.  
 
 ```{r}
 #| echo: false
 
-if (!exists("course")) data(course)
-if (!exists("term"))   data(term)
-if (!exists("degree")) data(degree)
+if (!exists("course")) data(course, package = "midfielddata")
+if (!exists("term"))   data(term, package = "midfielddata")
+if (!exists("degree")) data(degree, package = "midfielddata")
 ```
 
 ```{r}
 #| eval: false
 
 # Load remaining data used in this vignette
-data(course)
-data(term)
-data(degree)
+data(course, term, degree, package = "midfielddata")
 ```
 
 Checking the environment again, 
@@ -219,7 +209,7 @@ size_courses <- "349 MB"
 
 ## Inspect the `student` data
 
-`student` is a table of `r var_students` student-related variables for the students in the sample, collected at the time they were admitted to their institutions as degree-seeking undergraduates. You can view the help page (and data dictionary) by running
+`student` is a table of `r var_students` student-related variables for  degree-seeking students at the time they were admitted to their institutions. You can view the help page (and data dictionary) by running
 
 ```{r}
 #| eval: false
@@ -238,6 +228,8 @@ str(student)
 `student` has `r obs_students` observations and occupies approximately `r size_students` memory. We can confirm that the student IDs are unique by running, 
 
 ```{r}
+nrow(student)
+
 length(unique(student$mcid))
 ```
 
@@ -263,9 +255,14 @@ sort(unique(student$race))
 2. Determine the possible values in the `transfer` column. 
 3. Determine the median `sat_verbal` score.
 
+
+
+
+
+
 ## Inspect the `course` data
 
-`course` is a table of `r var_courses` course-related variables for the students in the sample. You can view the help page (and data dictionary) by running
+`course` is a data frame of `r var_courses` course-related variables with observations of students who complete a course or remain in a course beyond their institution's course-withdrawal deadline. You can view the help page (and data dictionary) by running
 
 ```{r}
 #| eval: false
@@ -274,16 +271,16 @@ sort(unique(student$race))
 ? course
 ```
 
-Each observation is one course in one term for one student keyed by student ID and a combination of course, abbreviation, number, and section. To see the data structure, run
+Each observation is one course in one term for one student keyed by student ID. To see the data structure, run
 
 ```{r}
 # View the structure of the data set
 str(course)
 ```
 
-Of the four practice data sets in midfielddata, `course` is by far the largest, with `r obs_courses` observations and occupying `r size_courses` of memory. Depending on your machine, loading `course` can cause a noticeable delay in execution time (13 seconds on my machine), so you probably want to load it only when needed. 
+Of the four practice data sets in midfielddata, `course` is by far the largest, with `r obs_courses` observations and occupying `r size_courses` of memory. Depending on your machine, loading `course` can cause a noticeable delay in execution time, so you probably want to load it only when needed. 
 
-The number of unique students.  
+To be recorded in `course` (unlike `student`), students can be non-degree-seeking but they must complete a course. The number of unique students in `course` is given by, 
 
 ```{r}
 length(unique(course$mcid))
@@ -307,9 +304,14 @@ sort(unique(course$type))
 2. Determine the range of terms in `term` column. 
 3. Determine the possible values in the `grade` column. 
 
+
+
+
+
+
 ## Inspect the `term` data
 
-`term` is a table of `r var_terms` term-related variables for the students in the sample. You can view the help page (and data dictionary) by running
+`term` is a data frame of `r var_terms` term-related variables with  observations of students who complete a term or remain in a program beyond their institution's term-withdrawal deadline. You can view the help page (and data dictionary) by running
 
 ```{r}
 #| eval: false
@@ -318,19 +320,19 @@ sort(unique(course$type))
 ? term
 ```
 
-Each observation is one term for one student keyed by student ID and term. To see the data structure, run
+Each observation is one term for one student keyed by student ID. To see the data structure, run
 
 ```{r}
 str(term)
 ```
 
-`term` has `r obs_terms` observations and occupies approximately `r size_terms` of memory. The number of unique students is found by, 
+`term` has `r obs_terms` observations and occupies approximately `r size_terms` of memory. 
+
+To be recorded in `term` (unlike `student`), students can be non-degree-seeking but they must complete a term. The number of unique students in `term` is given by, 
 
 ```{r}
 length(unique(term$mcid))
 ```
-
-The number of unique students in `student` and `term` are not the same. To be recorded in `student`, students must be degree-seeking. To be recorded in `term`, students must complete a term. The data can include degree-seekers who fail to complete a term as well as term-completers not seeking a degree---hence the difference in numbers
 
 Summarize some of the quantitative variables. 
 
@@ -348,15 +350,22 @@ sort(unique(term$level))
 sort(unique(term$standing))
 ```
 
+
+
+
 ### Exercises
 
 1. Determine the possible values in the `coop` column. 
 2. Determine the range of terms in `term` column. 
 3. Determine the median value of the `gpa_cumul` column. 
 
+
+
+
+
 ## Inspect the `degree` data
 
-`degree` is a table of `r var_degrees` degree-related variables for the students in the sample. You can view the help page (and data dictionary) by running
+`degree` is a table of `r var_degrees` degree-related variables with observations of students who complete their program(s). You can view the help page (and data dictionary) by running
 
 ```{r}
 #| eval: false
@@ -365,19 +374,35 @@ sort(unique(term$standing))
 ? degree
 ```
 
-Each observation is a unique student keyed by student ID. To see the data structure, run
+Each observation is a unique combination of student and degree keyed by student ID. To see the data structure, run
 
 ```{r}
 str(degree)
 ```
 
-`degree` has `r obs_degrees` observations and occupies approximately `r size_degrees` memory. The number of unique students is found by
+`degree` has `r obs_degrees` observations and occupies approximately `r size_degrees` memory. We can confirm that the student IDs are unique by running, 
 
 ```{r}
+nrow(degree)
+
 length(unique(degree$mcid))
 ```
 
-Thus we have `r obs_degrees` graduates (in `degree`) from the `r obs_students` students admitted (in `student`). 
+Had the practice data included students earning a double degree (or more) in the same term, then the number of rows would exceed the number of unique IDs. 
+
+By student ID, the students in `degree` are a subset of the students in `student`. We can confirm by running the following, where a sum of `r length(unique(degree$mcid))`  indicates that all IDs in `degree` are present in `student`. 
+
+```{r}
+# Isolate IDs
+degree_mcid  <- unique(degree$mcid)
+student_mcid <- unique(student$mcid)
+
+# Sum of logical results, 1 for every TRUE, 0 for every FALSE
+sum(degree_mcid %chin% student_mcid)
+```
+
+
+  
 
 Examine some categorical variables and their values. 
 
@@ -397,35 +422,41 @@ degree[is.na(degree)]
 
 Some packages have functions specialized for data frame summaries. Try this one---you may find it useful in future data explorations. 
 
-1. Install the `skimr` package, load it with `library("skimr")`, and run `skim(x)`, where `x` is one of the data tables, for example, `skim(student)`, `skim(degree)`, etc.  
+1. Install the `skimr` package, load it with `library("skimr")`, and run `skim(x)`, where `x` is one of the data tables, for example, 
 
+```{r}
+#| eval: false
+
+library(skimr)
+skim(student)
+skim(degree)
+```
 
 
 ## Review the midfieldr functions
 
-Here we outline the midfieldr functions. They are discussed in greater detail in the vignettes.  
+Table 2 lists the functions in midfieldr and briefly describes what they do. The vignettes give examples of usage.     
 
 ```{r}
 #| echo: false
 
 wrapr::build_frame(
-  "Function", "Action" |
-    "add_completion_status()", "Determine degree completion status for every student" |
-    "add_data_sufficiency()", "Determine data sufficiency for every student" |
-    "add_timely_term()", "Calculate a timely completion term for every student" |
-    "filter_search()", "Subset rows that include matches to search strings" |
-    "order_multiway()", "Condition multiway data for graphing" |
-    "prep_fye_mice()", "Construct and format FYE data for multiple imputation"
+    "Function", "Action" |
+        "add_completion_status()", "Determine degree completion status for every student" |
+        "add_data_sufficiency()", "Determine data sufficiency for every student" |
+        "add_timely_term()", "Calculate a timely completion term for every student" |
+        "filter_search()", "Subset rows that include matches to search strings" |
+        "order_multiway()", "Condition multiway data for graphing" |
+        "prep_fye_mice()", "Construct and format FYE data for multiple imputation" |
+        "select_required()", "Select variables required by other midfieldr functions"
 ) |>
-  kableExtra::kbl(align = "ll") |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::column_spec(1, monospace = TRUE) |>
-  kableExtra::column_spec(1:2, color = "black", background = "white") |>
-  kableExtra::row_spec(c(0), background = "#c7eae5")
+    kableExtra::kbl(align = "ll", 
+                    caption = "Table 2: Summary of midfieldr functions") |>
+    kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+    kableExtra::column_spec(1, monospace = TRUE) |>
+    kableExtra::column_spec(1:2, color = "black", background = "white") |>
+    kableExtra::row_spec(c(0), background = "#c7eae5")
 ```
-
-
-
 
 
 ### Exercises
@@ -434,6 +465,70 @@ View the help pages for the functions `add_timely_term()` and `add_completion_st
 
 1. Summarize the difference(s) between the two functions. 
 2. Describe the manner in which one depends on the other.  
+
+
+
+
+
+## R help
+
+This section is primarily for users fairly new to R. 
+
+R's built-in help system is an essential part of solving problems you might encounter. Here we provide a short list of R help features applied to midfieldr and midfielddata content. 
+
+**Help function.** From the R Console you can use `?` or `help()`. For example, the following commands yield the same result:
+
+```{r}
+#| eval: false
+
+# Type in the Console
+help("add_timely_term")
+? add_timely_term
+```
+
+The help function can also be used to learn more about data sets included with midfieldr and midfielddata. 
+
+```{r}
+#| eval: false
+
+# Type in the Console
+? cip
+```
+
+**Data.** Use the `data()` function to view the names of the data sets included with a package. 
+
+```{r}
+#| eval: false
+
+# Type in the Console
+data(package = "midfieldr")
+#> Data sets in package 'midfieldr':
+#> 
+#> cip                      
+#> fye_proxy                
+#> study_mcid               
+#> ...                
+```
+
+**List functions.** Use `lsf.str()` to list all functions in a package and their arguments, 
+
+```{r}
+# Type in the Console
+lsf.str("package:midfieldr")
+```
+
+**Run examples.** Use the `example()` function to run the function examples that are included with a package.
+
+```{r}
+#| eval: false
+
+# Type in the Console
+example("add_timely_term")
+```
+
+
+
+
 
 
 
@@ -449,7 +544,9 @@ View the help pages for the functions `add_timely_term()` and `add_completion_st
 
 ## Appendix
 
-We conclude each vignette by collecting its code chunks in a single, condensed script for the convenience of those who wish to copy it into their own R file. 
+### Complete script
+
+The vignette code chunks are collected below in a single, condensed script. 
 
 ```{r}
 #| eval: false
@@ -460,10 +557,10 @@ library("midfielddata")
 suppressPackageStartupMessages(library("data.table"))
 
 # Loading data
-data(student)
-data(course)
-data(term)
-data(degree)
+data(student, package = "midfielddata")
+data(course, package = "midfielddata")
+data(term, package = "midfielddata")
+data(degree, package = "midfielddata")
 
 # student
 str(student)
@@ -498,15 +595,22 @@ degree[is.na(degree)]
 ```{r}
 #| echo: false
 
-# to change the CSS file for block quotes
+# to change the CSS file
 # per https://github.com/rstudio/rmarkdown/issues/732
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{css}
 blockquote {
-    padding: 10px 20px;
-    margin: 0 0 20px;
+    padding:     10px 20px;
+    margin:      0 0 20px;
     border-left: 0px
+}
+caption {
+    color:       #525252;
+    text-align:  left;
+    font-weight: normal;
+    font-size:   medium;
+    line-height: 1.5;
 }
 ```

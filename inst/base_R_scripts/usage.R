@@ -4,7 +4,7 @@ library("midfielddata")
 suppressPackageStartupMessages(library("data.table"))
 
 # Load the data tables
-data(student, term, degree)
+data(student, term, degree, package = c("midfielddata"))
 
 # Filter for engineering programs
 setDF(term)

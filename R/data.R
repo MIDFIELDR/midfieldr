@@ -299,6 +299,12 @@
 
 
 
+
+
+
+
+
+
 # -------------------------------------------------------------------
 
 #' Case-study results
@@ -363,7 +369,7 @@
 #' midfieldr \code{cip6} variables because \code{start} contains estimated 
 #' program codes while the \code{cip6} variables contain actual student records. 
 #' 
-#' @format \code{data.table} with 4896 rows and 3 columns.
+#' @format \code{data.table} with 5790 rows and 3 columns.
 #' 
 #' \describe{
 #' 

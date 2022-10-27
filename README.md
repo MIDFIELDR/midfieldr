@@ -28,17 +28,27 @@ provide data over different time spans. MIDFIELD is large enough to
 permit summarizing by multiple characteristics such as race/ethnicity,
 sex, and program.
 
-**midfieldr** is an R package that provides tools for working with
-MIDFIELD research data and with the practice data in the midfielddata R
-package.
+Access to the MIDFIELD research database is currently limited to
+MIDFIELD partner institutions. However, a sample of the data are
+accessible via the midfielddata R package.
 
-<a href="https://midfieldr.github.io/midfielddata/"
-target="_blank"><strong>midfielddata</strong></a> is an R package that
-provides practice data (a proportionate stratified sample of MIDFIELD)
-with longitudinal SURs for nearly 98,000 undergraduates at 12
-institutions from 1987–2016 organized in four data tables:
+**midfieldr** is an R package that provides tools for working with
+MIDFIELD SURs, both MIDFIELD research data and midfielddata practice
+data.
+
+[**midfielddata**](https://midfieldr.github.io/midfielddata/) is an R
+data package that provides a proportionate stratified sample of the
+MIDFIELD research data. The sample contains anonymized SURs for nearly
+98,000 undergraduates at 12 institutions from 1987–2016. We refer these
+sample data tables as the MIDFIELD *practice* data, suitable for
+practice working with SURs but not for drawing inferences about program
+attributes or student experiences. The practice data are characterized
+in Table 1.
 
 <table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
+<caption>
+Table 1: Attributes of the practice data tables in midfielddata
+</caption>
 <thead>
 <tr>
 <th style="text-align:left;background-color: #c7eae5 !important;">
@@ -61,6 +71,40 @@ Memory
 <tbody>
 <tr>
 <td style="text-align:left;font-family: monospace;color: black !important;background-color: white !important;">
+course
+</td>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+a student in a course
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+3,439,936
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+12
+</td>
+<td style="text-align:right;">
+340 Mb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-family: monospace;color: black !important;background-color: white !important;">
+term
+</td>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+a student in a term
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+710,841
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+13
+</td>
+<td style="text-align:right;">
+80 Mb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-family: monospace;color: black !important;background-color: white !important;">
 student
 </td>
 <td style="text-align:left;color: black !important;background-color: white !important;">
@@ -78,47 +122,13 @@ a degree-seeking student
 </tr>
 <tr>
 <td style="text-align:left;font-family: monospace;color: black !important;background-color: white !important;">
-course
-</td>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-a student in a course
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-3.5M
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-12
-</td>
-<td style="text-align:right;">
-340 Mb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;font-family: monospace;color: black !important;background-color: white !important;">
-term
-</td>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-a student in a term
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-728,000
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-13
-</td>
-<td style="text-align:right;">
-80 Mb
-</td>
-</tr>
-<tr>
-<td style="text-align:left;font-family: monospace;color: black !important;background-color: white !important;">
 degree
 </td>
 <td style="text-align:left;color: black !important;background-color: white !important;">
 a student who graduates
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-48,000
+47,499
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 5
@@ -130,31 +140,32 @@ a student who graduates
 </tbody>
 </table>
 
-All four data tables are keyed by student ID. Tables `student` and
-`degree` have one observation (row) per student. Tables `course` and
-`term` have multiple observations per student because students can be
-enrolled in more than one course in a term and more than one term over
-their program.
+All four data tables (in both the research data and the practice data)
+are keyed by student ID. The `course` table has multiple observations
+(rows) per student with one observation per student per course. The
+`term` table also has multiple rows per student, with one observation
+per student per term. The `student` and `degree` tables each have one
+observation per student.
 
 ## Usage
 
 The outline of our typical workflow is:
 
--   Define the study parameters
--   Transform the data to yield the observations of interest
--   Calculate summary statistics and metrics
--   Create tables and charts to display results
--   Iterate
+- Define the study parameters
+- Transform the data to yield the observations of interest
+- Calculate summary statistics and metrics
+- Create tables and charts to display results
+- Assess findings and iterate.
 
-In this brief usage example, the goal is to tabulate counts of
-engineering students by race/ethnicity, sex, and graduation status. Data
-processing is performed using data.table syntax. From the midfielddata
-package, we use data sets `student`, `term`, and `degree`. From the
-midfieldr package, we use the functions:
+To illustrate usage, we tabulate counts of engineering students by
+race/ethnicity, sex, and graduation status. Data processing is performed
+using data.table syntax. From the midfielddata package, we use data sets
+`student`, `term`, and `degree`. From the midfieldr package, we use the
+functions:
 
--   `add_timely_term()`
--   `add_data_sufficiency()`
--   `add_completion_status()`
+- `add_timely_term()`
+- `add_data_sufficiency()`
+- `add_completion_status()`
 
 ``` r
 # Packages used
@@ -162,16 +173,16 @@ library("midfieldr")
 library("midfielddata")
 suppressPackageStartupMessages(library("data.table"))
 
-# Load the midfielddata practice data used here
-data(student, term, degree)
+# Load the practice data
+data(student, term, degree, package = "midfielddata")
 
-# Initialize the working data table
+# Initialize the working data frame
 DT <- copy(term)
 
-# Timely completion term required for data sufficiency
+# Add timely completion term variable
 DT <- add_timely_term(DT, term)
 
-# Filter for data sufficiency
+# Filter observations for data sufficiency
 DT <- add_data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include"]
 
@@ -184,33 +195,38 @@ DT <- DT[cip6 %like% "^14"]
 # Filter observations for unique students (first instance)
 DT <- DT[, .SD[1], by = c("mcid")]
 
-# Add completion status
+# Add completion status variable
 DT <- add_completion_status(DT, degree)
 
-# Add race and sex using a left outer join
+# Add race/ethnicity and sex variables using a left outer join
 DT <- student[DT, .(completion_status, sex, race), on = c("mcid")]
 
-# Create a new variable combining race and sex
+# Create a variable combining race/ethnicity and sex
 DT[, people := paste(race, sex)]
 
-# Calculate summary statistics
+# Count number of observations by group
 DT <- DT[, .N, by = c("completion_status", "people")]
 
-# Tabulate results
+# Transform to row-record form for display
 DT_display <- dcast(DT, people ~ completion_status, value.var = "N")
 setcolorder(DT_display, c("people", "timely", "late"))
+setkeyv(DT_display, c("people"))
 setnames(DT_display,
-  old = c("people", "timely", "late", "NA"),
-  new = c("People", "Timely completion", "Late completion", "Did not complete")
-)
+         old = c("people", "timely", "late", "NA"),
+         new = c("People", "Timely completion", "Late completion", "Did not complete"))
 ```
 
-Tabulated results of usage example. “Timely completion” is the count of
-graduates completing their programs in no more than 6 years; “Late
-completion” is the count of those graduating in more than 6 years; “Did
-not complete” is the count of non-graduates.
+Tabulated results of usage example are shown in Table 2, ordered
+alphabetically. “Timely completion” is the count of graduates completing
+their programs in no more than 6 years; “Late completion” is the count
+of those graduating in more than 6 years; “Did not complete” is the
+count of non-graduates.
 
 <table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
+<caption>
+Table 2: Completion status of engineering undergraduates in the practice
+data
+</caption>
 <thead>
 <tr>
 <th style="text-align:left;background-color: #c7eae5 !important;">
@@ -429,23 +445,22 @@ White Male
 
 ## Documentation
 
--   <a href="https://midfieldr.github.io/midfieldr/articles/"
-    target="_blank">Articles.</a> For a listing of all vignettes.
--   <a href="https://midfieldr.github.io/midfieldr/reference/"
-    target="_blank">Reference (midfieldr).</a> For a listing of all
-    midfieldr functions and prepared data.
--   <a href="https://midfieldr.github.io/midfielddata/reference/"
-    target="_blank">Reference (midfielddata).</a> For a listing of the
-    four practice MIDFIELD data tables.
+- <a href="https://midfieldr.github.io/midfieldr/articles/"
+  target="_blank">Articles.</a> For a listing of all vignettes.
+- <a href="https://midfieldr.github.io/midfieldr/reference/"
+  target="_blank">Reference (midfieldr).</a> For a listing of all
+  midfieldr functions and prepared data.
+- <a href="https://midfieldr.github.io/midfielddata/reference/"
+  target="_blank">Reference (midfielddata).</a> For a listing of the
+  four practice MIDFIELD data tables.
 
 ## Requirements
 
--   <a href="https://www.r-project.org/" target="_blank">R</a> (\>=
-    3.5.0)
--   <a href="https://rdatatable.gitlab.io/data.table/"
-    target="_blank">data.table</a> (\>= 1.9.8)  
--   <a href="https://ggplot2.tidyverse.org/" target="_blank">ggplot2</a>
-    recommended for data graphics, but not required.
+- <a href="https://www.r-project.org/" target="_blank">R</a> (\>= 3.5.0)
+- <a href="https://rdatatable.gitlab.io/data.table/"
+  target="_blank">data.table</a> (\>= 1.9.8)  
+- <a href="https://ggplot2.tidyverse.org/" target="_blank">ggplot2</a>
+  recommended for data graphics, but not required.
 
 ## Install midfieldr
 
@@ -469,11 +484,8 @@ library("midfieldr")
 help("midfieldr-package")
 ```
 
-<figure>
 <img src="man/figures/README-midfieldr-help-page-1.png"
-style="width:75.0%" alt="midfieldr help page" />
-<figcaption aria-hidden="true">midfieldr help page</figcaption>
-</figure>
+style="width:100.0%" />
 
 ## Install midfielddata
 
@@ -497,31 +509,27 @@ library("midfielddata")
 help("midfielddata-package")
 ```
 
-<figure>
 <img src="man/figures/README-midfielddata-help-page-1.png"
-style="width:75.0%" alt="midfielddata help page" />
-<figcaption aria-hidden="true">midfielddata help page</figcaption>
-</figure>
+style="width:100.0%" />
 
 ## Contributing
 
 To contribute to midfieldr,
 
--   Please clone this repo locally.  
--   Commit your code on a separate branch.
--   Use the *checkmate* package to include runtime argument checks in
-    functions.
--   Use the *tinytest* package to write unit tests for your code. Save
-    tests in the `inst/tinytest/` directory.
+- Please clone this repo locally.  
+- Commit your contribution on a separate branch.
+- If you submit a function, please use the *checkmate* package to
+  include runtime argument checks and the *tinytest* package to write
+  unit tests for your code. Save tests in the `inst/tinytest/`
+  directory.
 
 To provide feedback or report a bug,
 
--   Use the GitHub
-    <a href="https://github.com/MIDFIELDR/midfieldr/issues"
-    target="_blank">Issues</a> page.
--   Please run the package unit tests and report the results with your
-    bug report. Any user can run the package tests by installing the
-    *tinytest* package and running:
+- Use the GitHub <a href="https://github.com/MIDFIELDR/midfieldr/issues"
+  target="_blank">Issues</a> page.
+- Please run the package unit tests and report the results with your bug
+  report. Any user can run the package tests by installing the
+  *tinytest* package and running:
 
 ``` r
 # Detailed test results

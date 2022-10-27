@@ -19,7 +19,7 @@ resource_files: |
 
 # code chunks
 knitr::opts_chunk$set(
-  echo = FALSE,
+  echo = TRUE,
   message = FALSE,
   warning = FALSE,
   collapse = FALSE,
@@ -46,126 +46,123 @@ knitr::knit_hooks$set(inline = function(x) {
     prettyNum(round(x, 2))
   }
 })
+
+# accented text
+accent <- function (text_string){
+    kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
+}
 ```
 
-The time span (or range) of MIDFIELD data varies by institution. At the upper and lower limits of a data range, a potential for false counts exists when a metric (such as graduation rate) requires knowledge of timely degree  completion.  For such metrics, student records that produce problematic results due to insufficient data are nearly always excluded from study. 
-
-
-
+The time span (or range) of MIDFIELD data varies by institution. At the upper and lower limits of a data range, a potential for false counts exists when a metric (such as graduation rate) requires knowledge of timely degree completion. For such metrics, student records that produce problematic results due to insufficient data are nearly always excluded from study.
 
 ## Definitions
 
 data range
 
-: The overall span of academic terms of student unit record data provided by an institution. We are particularly interested in the lower and upper limits of a continuous range.   
+:   The overall span of academic terms of student unit record data provided by an institution. We are particularly interested in the lower and upper limits of a continuous range.
 
-timely completion term  
+timely completion term
 
-: The last term in which a student's degree completion would be considered timely. In many cases the timely completion (TC) term is 6 years after admission. The TC term can be adjusted to account for transfer credits. (Currently, we do not include an adjustment for co-ops.)
+:   The last term in which a student's degree completion would be considered timely. In many cases the timely completion (TC) term is 6 years after admission. The TC term can be adjusted to account for transfer credits. (Currently, we do not include an adjustment for co-ops.)
 
 data sufficiency criterion
 
-: Student records are limited to those for which available data are sufficient to assess timely completion without biased counts of completers or non-completers. 
-
-
-
-
-
+:   Student records are limited to those for which available data are sufficient to assess timely completion without biased counts of completers or non-completers.
 
 ## Upper-limit data sufficiency
 
-For students admitted too near the upper limit of their institution’s data range, the available data cover an insufficient number of years to know if completion is timely. To illustrate, in the figure we compare two students admitted in different terms with representative time spans shown for timely completion. In this scenario, we assume institution data is available from 1986 to 1996.
+For students admitted too near the upper limit of their institution's data range, the available data cover an insufficient number of years to know if completion is timely. To illustrate, in the figure we compare two students admitted in different terms with representative time spans shown for timely completion. In this scenario, we assume institution data is available from 1986 to 1996.
 
 <br>
 
-![](../man/figures/art-010-data-sufficiency-upper.png){width="80%"}
+![](../man/figures/art-010-data-sufficiency-upper.png){width="100%"}
 
 <br>
 
 Student A
 
-: Student A enters in 1988 with a timely completion (TC) term in 1994.  In both of the following cases, the data sufficiency criterion is satisfied and the records are included in a study.
+:   Student A enters in 1988 with a timely completion (TC) term in 1994. In both of the following cases, the data sufficiency criterion is satisfied and the records are included in a study.
 
-- A-1: First time in college (FTIC), so we know their first term is their entry term (i.e., they are not a continuing student) and we can determine their TC term.
-- A-2: Transfer student, and we know their first term in a MIDFIELD institution. We have no knowledge of how much time was spent accumulating their pre-MIDFIELD credit hours, but we can estimate a TC term with respect to their MIDFIELD entry level. 
+-   A-1: First time in college (FTIC), so we know their first term is their entry term (i.e., they are not a continuing student) and we can determine their TC term.
+
+-   A-2: Transfer student, and we know their first term in a MIDFIELD institution. We have no knowledge of how much time was spent accumulating their pre-MIDFIELD credit hours, but we can estimate a TC term with respect to their MIDFIELD entry level.
 
 Student B
 
-: Student B enters in 1993 with a TC term in 1998, two years beyond the range of the data. We have several possible cases,  
+:   Student B enters in 1993 with a TC term in 1998, two years beyond the range of the data. We have several possible cases,
 
-- B-1: Before the data limit, the student completes their program (timely and known)
-- B-2: Before the data limit, the student leaves the data base (untimely and known)
-- B-3: After the data limit, the student completes before their TC term (timely but unknown)
-- B-4: After the data limit, the student completes after their TC term  or fails to complete  (untimely and unknown)     
+-   B-1: Before the data limit, the student completes their program (timely and known)
+
+-   B-2: Before the data limit, the student leaves the data base (untimely and known)
+
+-   B-3: After the data limit, the student completes before their TC term (timely but unknown)
+
+-   B-4: After the data limit, the student completes after their TC term or fails to complete (untimely and unknown)
 
 Because of unknown outcomes in cases B-3 and B-4, including case B-1 and B-2 invariably produces a miscount of completers and non-completers. Thus the criterion is not satisfied and student B records are excluded from the study.
 
-
-
-
 ## Lower-limit data sufficiency
 
-To determine data sufficiency record exclusions at the lower limit of the data range, we compare a student's first term (non-summer) to the first term of the data range (also non-summer). When these two terms are identical, the complete unit record is excluded. We illustrate with the three scenarios described below. 
+To determine data sufficiency record exclusions at the lower limit of the data range, we compare a student's first term (non-summer) to the first term of the data range (also non-summer). When these two terms are identical, the complete unit record is excluded. We illustrate with the three scenarios described below.
 
 <br>
 
-![](../man/figures/art-010-data-sufficiency-lower.png){width="80%"}
+![](../man/figures/art-010-data-sufficiency-lower.png){width="100%"}
 
 <br>
 
 Student C
 
-: Student C makes their first appearance in the database in a term following the data lower limit. The conditions for student C (FTIC or transfer) are identical to those for student A, thus student C is included in a study. 
+:   Student C makes their first appearance in the database in a term following the data lower limit. The conditions for student C (FTIC or transfer) are identical to those for student A, thus student C is included in a study.
 
 Student D
 
-: Student D enters the institution before the lower limit of the data range (a "continuing" student) or they enter the institution at the lower limit precisely.  
+:   Student D enters the institution before the lower limit of the data range (a "continuing" student) or they enter the institution at the lower limit precisely.
 
-- D-1: If student D is continuing, regardless of status (FTIC or transfer), making an estimate of their TC term invariably leads to false counts because we have no knowledge of how much time was spent accumulating credit hours at their MIDFIELD institution before the lower data limit. Including D-1 also produces false counts because of student E (discussed below). 
-- D-2: If student D is not continuing, that is, their first time entry to a MIDFIELD institution is at the lower data limit (here, 1986), we would include them in a study if we could. Unfortunately, we cannot distinguish them from continuing students. Having to exclude D-1 inherently excludes D-2 as well. 
+-   D-1: If student D is continuing, regardless of status (FTIC or transfer), making an estimate of their TC term invariably leads to false counts because we have no knowledge of how much time was spent accumulating credit hours at their MIDFIELD institution before the lower data limit. Including D-1 also produces false counts because of student E (discussed below).
+
+-   D-2: If student D is not continuing, that is, their first time entry to a MIDFIELD institution is at the lower data limit (here, 1986), we would include them in a study if we could. Unfortunately, we cannot distinguish them from continuing students. Having to exclude D-1 inherently excludes D-2 as well.
 
 Student E
 
-: Student E enters the institution at the same time as continuing student D but leaves the database before the data lower limit term.
+:   Student E enters the institution at the same time as continuing student D but leaves the database before the data lower limit term.
 
-- E-1: Student E did not timely-complete their program. In this case, if we include student D our count of *non-completers* is low (E-1 cases are missing), resulting in an inflated ratio of completers to non-completers.
-- E-2: Student E did timely-complete their program. Here, if we include student D our count of *completers* is low (E-2 cases are missing), resulting in a diminished ratio of completers to non-completers. 
+-   E-1: Student E did not timely-complete their program. In this case, if we include student D our count of *non-completers* is low (E-1 cases are missing), resulting in an inflated ratio of completers to non-completers.
+
+-   E-2: Student E did timely-complete their program. Here, if we include student D our count of *completers* is low (E-2 cases are missing), resulting in a diminished ratio of completers to non-completers.
 
 The balance of these two effects is unknowable. Since student E cannot possibly be included, Student D must also be excluded.
 
-
-
-
-
 ## Method
 
-The data sufficiency criterion is applied when a metric requires counting the number of students who complete their programs in a timely fashion. Specific student unit records at the upper and lower limits of an institution's data range must be excluded to prevent false counts due to insufficient data. 
+Specific student unit records at the upper and lower limits of an institution's data range must be excluded to prevent false counts due to insufficient data. Based on the discussion above, two specific filters are implemented:
 
-The method for applying the data sufficiency criterion is to exclude observations that 
+-   *Lower limit.* All IDs extant in the non-summer lower limit of an institution's data range are labeled for possible exclusion.
 
-- are present in the non-summer lower limit of the institution data range 
-- have a timely completion term that exceeds the upper limit of the data range
+-   *Upper limit.* All IDs for which the timely completion term exceeds the upper limit of the institution's data range are labeled for possible exclusion.
 
-This is the method implemented by `add_data_sufficiency()`. 
+This vignette in the MIDFIELD workflow. 
 
+1. Planning  
+1. Initial processing  
+    - `r accent("Data sufficiency")`  
+    - Degree seeking  
+    - Identify programs  
+1. Blocs  
+1. Grouping variables  
+1. Metrics  
+1. Results  
 
+*Caveat:* The Student Unit Records included with midfieldr and midfielddata are practice data, not research data, suitable for practice working with SURs but not for drawing inferences about program attributes or student experiences.
 
+## Load practice data
 
-
-
-
-## Population
-
-Of the four MIDFIELD data tables, `course` and `term` are the most inclusive, with observations of all students enrolled in a course in a term. Since `term` is the smaller of the two, we generally start an analysis with the term data frame. 
-
-If you are writing your own script to follow along, we start with these packages: 
-
-```{r}
-# Set echo for remainder of vignette
-knitr::opts_chunk$set(echo = TRUE)
-```
+*Start a script*. If you are writing your own script to follow along, we use these packages in this vignette:
 
 ```{r}
+# Data sufficiency
+# midfieldr vignette
+
 # Packages
 library("midfieldr")
 library("midfielddata")
@@ -174,34 +171,79 @@ suppressPackageStartupMessages(library("data.table"))
 # Printing options for data.table
 options(
   datatable.print.nrows = 55,
-  datatable.print.topn = 5,
+  datatable.print.topn = 3,
   datatable.print.class = TRUE
 )
 ```
 
-**Importing.** Load the midfielddata data table. Copy the `term` data set to create the working data frame (`DT`), leaving `term` unaltered for later use. 
+*Load source data.* MIDFIELD practice data tables as described in [Getting started](art-000-getting-started.html). Of the four MIDFIELD data tables, `course` and `term` are the most inclusive. The smaller of the two, `term`, is often selected for initial processing.
 
 ```{r}
-# Load data set from midfielddata
-data(term)
-
-# Create a working data frame
-DT <- copy(term)
-str(DT)
+# Load practice data
+data(term, package = "midfielddata")
 ```
 
-The result has `r nrow(DT)` observations. We will usually note the number of observations as they change. 
 
-To apply the data sufficiency criterion, two variables are required: a student's ID and their timely completion term.
 
-**Filtering.** For illustrating the functions, we need start with the ID column only.  
+
+
+
+## `select_required()`
+
+A convenience function to reduce the dimensions of a MIDFIELD data table at the start of a session by selecting only those columns typically required by other midfieldr functions. Operates on a data frame to retain columns having names that match or partially match search terms. Rows are unaffected. 
+
+Using this function is optional. The primary benefit is reducing screen clutter when viewing data frames during an interactive session. The disadvantage is that the deleted columns are unavailable unless you first set aside a copy of the source file or reload it using `data()` when you need it. 
+
+*Arguments*
+
+- **`dframe`** &nbsp; MIDFIELD data frame, typically `student`, `term`, or `degree`. 
+
+- **`select`** &nbsp; Optional character vector of column names to retain, default `c("mcid", "institution", "race", "sex", "^term", "cip6", "level")`. 
+
+*Output*
+
+```{r}
+# Create a copy of the source file
+source_term <- copy(term)
+
+# Work with required midfieldr variables only
+term <- select_required(source_term)
+
+# Display the result
+term[]
+```
+
+In an interactive session, this result is much less cluttered than the original source file. 
+
+```{r}
+#| collapse: true
+
+# Display the source file
+source_term[]
+```
+
+
+
+
+## Initial processing
+
+*Copying.* Prevents operations on `DT` from affecting `term` by reference [@data.table-reference-semantics].
+
+```{r}
+# Working data frame
+DT <- copy(term)
+```
+
+As just shown, the data frame has `r nrow(DT)` observations. We will usually note the number of observations as they change.
+
+*Selecting.* We start with the ID column only.
 
 ```{r}
 # Retain the minimum number of columns
 DT <- DT[, .(mcid)]
 ```
 
-In this form, the data frame will have duplicate rows for the multiple terms in which a student is enrolled in a program. We filter unique IDs. 
+*Filtering.* Duplicate rows are present because term data has one row per student per term. We filter for unique IDs.
 
 ```{r}
 # Filter for unique IDs
@@ -222,77 +264,20 @@ The result has `r nrow(DT)` unique observations.
 
 ## `add_timely_term()`
 
-Starting with a data frame of Student Unit Record (SUR) observations (like `DT` above) that includes an ID variable, we add a timely completion term column using `add_timely_term()`. You can view the help page by running
+Add a column to a data frame of Student Unit Record (SUR) observations that indicates the latest term by which degree completion would be considered timely for every student.
 
-```{r}
-#| eval: false
-# Run in Console
-? add_timely_term
-```
+*Arguments*
 
+- **`dframe`** &nbsp; Data frame of student unit record (SUR) observations keyed by student ID. Required variable (column) is `mcid`.
 
-**Arguments:**
+- **`midfield_term`** &nbsp; Data frame of SUR term observations keyed by student ID. Default is `term`. Required variables (columns) are `mcid`, `term`, and `level`.
 
-`dframe`
+- **`span`** &nbsp; Optional integer scalar, number of years to define timely completion. Commonly used values are are 100%, 150%, and 200% of `sched_span`. Default 6 years. Argument to be used by name.
 
-: Data frame of student unit record (SUR) observations keyed by student ID. Required variable (column) is `mcid`.
-
-`midfield_term`	
-
-: Data frame of SUR term observations keyed by student ID. Default is `term`. Required variables (columns) are `mcid`, `term`, and `level`. 
-
-`span`	
-
-: Optional integer scalar, number of years to define timely completion. Commonly used values are are 100%, 150%, and 200% of `sched_span`. Default 6 years.
-
-`sched_span`
-
-: Optional integer scalar, the number of years an institution officially schedules for completing a program. Default 4 years.
-
-**Columns added:** 
-
-`term_i`
-
-: Student initial term, encoded YYYYT. 
-
-`level_i`
-
-: Student level (01 Freshman, 02 Sophomore, etc.) in their initial term. 
-
-`adj_span`
-
-: Integer span of years for timely completion, adjusted for a student's initial level
-
-`timely_term`
-
-: Latest term by which degree completion would be considered timely. Encoded YYYYT.
+- **`sched_span`** &nbsp; Optional integer scalar, the number of years an institution officially schedules for completing a program. Default 4 years. Argument to be used by name.
 
 
-```{r}
-# Display timely term and supporting variables
-DT <- add_timely_term(DT, term)
-
-# Display the result
-DT[]
-```
-
-**Closer look.** Let's examine two specific observations to illustrate.
-
-```{r}
-# Display one student by ID
-DT[mcid == "MID25783135"]
-```
-
-The student's initial term is Fall 1991 (encoded `19911`) and their initial level is `01 Freshman`. The number of years to timely completion is 6 years, that is, academic years 1991--92, 92--93, 93--94, 94--95, 95--96, 96--97. Thus their timely completion term is Spring 1997 (encoded `19963`). 
-
-```{r}
-# Display one student by ID
-DT[mcid == "MID26697689"]
-```
-
-The student's initial term is Spring 2017 (encoded `20163`) and their initial level is `04 Senior` from which we infer they have completed three years of their program, yielding an adjusted span of 3 years. Those three years would encompass terms `20163`--`20171`, `20173`--`20181`, and `20183`--`20191`, yielding a timely completion term of Fall 2019 (encoded `20191`). 
-
-**Usage.** The following implementations yield identical results, 
+*Equivalent usage.*  &nbsp; The following implementations yield identical results,
 
 ```{r}
 #| collapse: true
@@ -310,24 +295,67 @@ all.equal(x, y)
 all.equal(x, z)
 ```
 
-In the vignettes, I will typically write required arguments without names to remind us which midfielddata table is being used, e.g., 
-
-    add_timely_term(DT, term)
     
-Your term data set can be named something other than `term`. For example, if we were working with the "toy" (exercise) data sets included with midfieldr, we would write something like this, 
+*Output.* &nbsp; Adds the following columns to the data frame. 
+
+- **`term_i`** &nbsp; Student initial term, encoded YYYYT.
+
+- **`level_i`** &nbsp; Student level (01 Freshman, 02 Sophomore, etc.) in their initial term.
+
+- **`adj_span`** &nbsp; Integer span of years for timely completion, adjusted for a student's initial level
+
+- **`timely_term`** &nbsp; Latest term by which degree completion would be considered timely. Encoded YYYYT.
 
 ```{r}
-# Using term data named something else
-toy_DT <- toy_student[, .(mcid)]
-toy_DT <- add_timely_term(toy_DT, toy_term)
+# Display timely term and supporting variables
+DT <- add_timely_term(DT, term)
+
+# Display the result
+DT[]
+```
+
+
+
+### Closer look
+
+Let's examine two specific observations to illustrate.
+
+```{r}
+# Display one student by ID
+DT[mcid == "MID25783135"]
+```
+
+The student's initial term is Fall 1991 (encoded `19911`) and their initial level is `01 Freshman`. The number of years to timely completion is 6 years, that is, academic years 1991--92, 92--93, 93--94, 94--95, 95--96, 96--97. Thus their timely completion term is Spring 1997 (encoded `19963`).
+
+```{r}
+# Display one student by ID
+DT[mcid == "MID26697689"]
+```
+
+The student's initial term is Spring 2017 (encoded `20163`) and their initial level is `04 Senior` from which we infer they have completed three years of their program, yielding an adjusted span of 3 years. Those three years would encompass terms `20163`--`20171`, `20173`--`20181`, and `20183`--`20191`, yielding a timely completion term of Fall 2019 (encoded `20191`).
+
+### Alternate source names
+
+Arguments of midfieldr functions accept alternate names, should the source-data file names in your workspace be named something other than `student`, `term`, etc. For example, if we were working with the "toy" (exercise) data sets included with midfieldr, we might write something like this,
+
+```{r}
+# A toy set of IDs
+toy_mcid <- toy_student[, .(mcid)]
+
+# Using source data named something else
+toy_DT <- add_timely_term(dframe = toy_mcid, midfield_term = toy_term)
+
+# Equivalently
+toy_DT <- add_timely_term(toy_mcid, toy_term)
 
 # Display the result
 toy_DT[]
 ```
 
-**Caution! Silent overwriting!**  Existing columns with the same names as one of the added columns are deleted and replaced. 
 
-Using the toy data to illustrate, I'll drop the columns added by timely term except `adj_span`.
+### Silent overwriting
+
+Existing columns with the same names as one of the added columns are deleted and replaced. Using the toy data to illustrate, we drop the columns added by timely term except `adj_span`.
 
 ```{r}
 # Drop three columns
@@ -337,96 +365,28 @@ toy_DT <- toy_DT[, c("term_i", "level_i", "timely_term") := NULL]
 toy_DT[]
 ```
 
-Reapplying the function, the `adj_span` column is silently deleted and replaced. 
+Reapplying the function, the `adj_span` column is silently deleted and replaced.
 
 ```{r}
-# Demontsrate overwriting
+# Demonstrate overwriting
 toy_DT <- add_timely_term(toy_DT, toy_term)
 
 # Display the result
 toy_DT[]
 ```
 
-
-
-
-
-
-
 ## `add_data_sufficiency()`
 
-Continuing with a data frame of SUR observations, we add the data sufficiency column using `add_data_sufficiency()`. You can view the help page by running
+Add a column to a data frame of Student Unit Record (SUR) observations that labels each row for inclusion or exclusion based on data sufficiency near the upper and lower bounds of an institution's data range.
 
-```{r}
-#| eval: false
-# Run in Console
-? add_data_sufficiency
-```
+*Arguments*
 
-**Arguments:**
+- **`dframe`** &nbsp; Data frame of student unit record (SUR) observations keyed by student ID. Required variables are `mcid` and `timely_term`.
 
-`dframe`
-
-: Data frame of student unit record (SUR) observations keyed by student ID. Required variables are `mcid` and `timely_term`.
-
-`midfield_term`
-
-: Data frame of SUR term observations keyed by student ID. Default is `term`. Required variables are `mcid`, `institution`, and `term`.
-
-**Columns added:**
-
-`term_i`
-
-: Student initial term, encoded YYYYT.  
-
-`lower_limit`
-
-: Initial term of an institution's data range, encoded YYYYT.
-
-`upper_limit`
-
-: Final term of an institution's data range, encoded YYYYT.
-
-`data_sufficiency`
-
-: Label each observation for inclusion or exclusion based on data sufficiency: "include", indicating that available data are sufficient for estimating timely degree completion; "exclude-upper", indicating that data are insufficient at the upper limit of a data range; or "exclude-lower", indicating that data are insufficient at the lower limit.
+- **`midfield_term`** &nbsp; Data frame of SUR term observations keyed by student ID. Default is `term`. Required variables are `mcid`, `institution`, and `term`.
 
 
-```{r}
-# Drop unnecessary columns
-DT <- DT[, .(mcid, timely_term)]
-
-# Display data sufficiency and supporting variables
-DT <- add_data_sufficiency(DT, term)
-
-# Display the result
-DT[]
-```
-
-**Closer look.** Let's examine three specific observations to illustrate. In these excerpts, the data range for the institution is Fall 1987 to Summer 2003.
-
-```{r}
-# Student A
-DT[mcid == "MID25783135"]
-```
-
-The student's initial term is Fall 1991 so the lower-limit exclusion does not apply; the student's timely completion term is Spring 1996, so the upper-limit exclusion does not apply. The record satisfies the data sufficiency criterion.   
-
-```{r}
-# Student B
-DT[mcid == "MID25783156"]
-```
-
-The student's initial term is Fall 2001 so the lower-limit exclusion does not apply; the student's timely completion term is Spring 2006, so the upper-limit exclusion does apply. 
-
-```{r}
-# Student D
-DT[mcid == "MID25783197"]
-```
-
-The student's initial term is Fall 1987 so the lower-limit exclusion applies.
-
-**Usage.** The following implementations yield identical results, 
+*Equivalent usage.*  &nbsp; The following implementations yield identical results,
 
 ```{r}
 #| collapse: true
@@ -444,50 +404,75 @@ all.equal(x, y)
 all.equal(x, z)
 ```
 
-Again, your term data set can be named something other than `term`. For example, using the "toy" data sets again, 
+*Output.* &nbsp; Adds the following columns to the data frame. 
+
+- **`term_i`** &nbsp; Student initial term, encoded YYYYT.
+
+- **`lower_limit`** &nbsp; Initial term of an institution's data range, encoded YYYYT.
+
+- **`upper_limit`** &nbsp; Final term of an institution's data range, encoded YYYYT.
+
+- **`data_sufficiency`** &nbsp;  Label each observation for inclusion or exclusion based on data sufficiency: "include", indicating that available data are sufficient for estimating timely degree completion; "exclude-upper", indicating that data are insufficient at the upper limit of a data range; or "exclude-lower", indicating that data are insufficient at the lower limit.
 
 ```{r}
-# Using term data named something else
-toy_DT <- toy_DT[, .(mcid, timely_term)]
-toy_DT <- add_data_sufficiency(toy_DT, toy_term)
+# Retain required variables only
+DT <- DT[, .(mcid, timely_term)]
 
-# Display the result
-toy_DT[]
-```
-
-**Caution! Silent overwriting!** In this case, existing columns with the same name as one of the added columns are deleted and replaced except for `term_i`. 
-
-Using the toy data to illustrate, I'll drop the columns added by data sufficiency except `upper_limit`. 
-
-```{r}
-# Drop three columns
-toy_DT <- toy_DT[, c("lower_limit", "data_sufficiency") := NULL]
-
-# Display the result
-toy_DT[]
-```
-
-Reapplying the function, the `term_i` column is silently overwritten and the other three columns added as before. 
-
-```{r}
-toy_DT <- add_data_sufficiency(toy_DT, toy_term)
-
-# Display the result
-toy_DT[]
-```
-
-**Filtering.** In most cases, we retain only those observations for which the data are sufficient. 
-
-```{r}
-# Apply the data sufficiency criterion
-DT <- DT[data_sufficiency == "include"]
+# Obtain data sufficiency and supporting variables
+DT <- add_data_sufficiency(DT, term)
 
 # Display the result
 DT[]
 ```
 
-The result has `r nrow(DT)` unique observations. 
+Similar to the details described in the previous section, `add_data_sufficiency()` accepts [Alternate source names] and uses [Silent overwriting] when existing columns have the same name as one of the added columns. 
 
+
+### Closer look
+
+Let's examine three specific observations to illustrate. In these excerpts, the data range for the institution is Fall 1987 to Summer 2003.
+
+```{r}
+# Student A
+DT[mcid == "MID25783135"]
+```
+
+The student's initial term is Fall 1991 so the lower-limit exclusion does not apply; the student's timely completion term is Spring 1996, so the upper-limit exclusion does not apply. The record satisfies the data sufficiency criterion.
+
+```{r}
+# Student B
+DT[mcid == "MID25783156"]
+```
+
+The student's initial term is Fall 2001 so the lower-limit exclusion does not apply; the student's timely completion term is Spring 2006, so the upper-limit exclusion does apply.
+
+```{r}
+# Student D
+DT[mcid == "MID25783197"]
+```
+
+The student's initial term is Fall 1987 so the lower-limit exclusion applies.
+
+
+
+
+## Case study
+
+Collecting in one code chunk the essential data sufficiency elements and retaining only those observations for whom the result is "include". 
+
+```{r}
+# Reset the working data frame
+DT <- copy(term)
+
+# Filter for data sufficiency
+DT <- add_timely_term(DT, term)
+DT <- add_data_sufficiency(DT, term)
+DT <- DT[data_sufficiency == "include", .(mcid)]
+DT <- unique(DT)
+
+# Display the result
+DT[]
+```
 
 
 
@@ -495,9 +480,10 @@ The result has `r nrow(DT)` unique observations.
 
 ## Closing
 
-To prepare for applying the data sufficiency criterion, we first estimate students' timely completion terms using `add_timely_term()`. We then label observations for inclusion and exclusion using `add_data_sufficiency()`. 
+We use `add_timely_term()` to add a variable with a student's estimated timely completion term. We use `add_data_sufficiency()` to add a variable that labels each observation for inclusion or exclusion based on data sufficiency at the upper and lower limits of an institution's data range. 
 
-Subsetting a population for data sufficiency is typically the first filter applied to SUR data.
+
+
 
 
 
@@ -511,9 +497,12 @@ Subsetting a population for data sufficiency is typically the first filter appli
 
 
 
+
 ## Appendix
 
-We conclude each vignette by collecting its code chunks in a single, condensed script for the convenience of those who wish to copy it into their own R file. 
+### Complete script
+
+The vignette code chunks are collected below in a single, condensed script.
 
 ```{r}
 #| eval: false
@@ -531,7 +520,7 @@ options(
 )
 
 # Load data set from midfielddata
-data(term)
+data(term, package = "midfielddata")
 DT <- copy(term)
 DT <- DT[, .(mcid)]
 DT <- unique(DT)
@@ -584,15 +573,23 @@ DT <- DT[data_sufficiency == "include"]
 
 ```{r}
 #| echo: false
-# to change the CSS file for block quotes
+
+# to change the CSS file
 # per https://github.com/rstudio/rmarkdown/issues/732
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{css}
 blockquote {
-    padding: 10px 20px;
-    margin: 0 0 20px;
+    padding:     10px 20px;
+    margin:      0 0 20px;
     border-left: 0px
+}
+caption {
+    color:       #525252;
+    text-align:  left;
+    font-weight: normal;
+    font-size:   medium;
+    line-height: 1.5;
 }
 ```

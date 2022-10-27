@@ -47,6 +47,11 @@ knitr::knit_hooks$set(inline = function(x) {
     prettyNum(round(x, 2))
   }
 })
+
+# accented text
+accent <- function (text_string){
+    kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
+}
 ```
 
 In working with longitudinal Student Unit Records (SURs), we regularly encounter data structured as *multiway data*. We explore that data visually using *multiway dot plots* as described by William Cleveland [-@Cleveland:1993, 302--306]. Quotations, unless noted otherwise, are from this source.
@@ -65,7 +70,7 @@ multiway chart
 
 multiway superposition
 
-: Multiway data can be extended to include a third category of *p* levels; the quantitative response has length *mnp*, one for each combination of levels of *three* categories; the rows and panels encode the first two categories as usual; *p* data markers encode the third category on each row. In general, clarity suffers for *p* > 2. 
+: Multiway data can be extended to include a third category of *p* levels; the quantitative response has length *mnp*, one for each combination of levels of *three* categories; the rows and panels encode the first two categories as usual; *p* data markers encode the third category on each row. Clarity usually requires that *p = 2* but not more.  
 
 program stickiness
 
@@ -73,7 +78,6 @@ program stickiness
 $$
 S=\frac{N_g}{N_e}
 $$
-: We use stickiness in this vignette to illustrate a feature of the `order_multiway()` function. 
  
 
 
@@ -81,11 +85,22 @@ $$
 
 ## Method
 
-We start with a data set from the case study [Results vignette](art-003-case-results.html), containing data from  four engineering programs (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) grouped by program, race/ethnicity, and sex. These data have been filtered for data sufficiency, degree seeking, program, and (for graduates) timely completion. 
+We start with the results data frame from the [Case study: Results](art-003-case-results.html) vignette, containing data from  four engineering programs (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) grouped by program, race/ethnicity, and sex. These data have been filtered for data sufficiency, degree seeking, and program, and graduates are filtered for  timely completion. 
 
 We prepare the data for use as input to `order_multiway()` and use the results to construct multiway charts ordered by category median values and by category percentage values. 
 
-**Reminder.** These are practice data, not research data---suitable for learning about student-record analysis, but not for drawing inferences about program attributes or student experiences.
+This vignette in the MIDFIELD workflow. 
+
+1. Planning  
+1. Initial processing  
+1. Blocs  
+1. Grouping variables  
+1. Metrics  
+1. Results  
+    - `r accent("Multiway charts")`  
+    - `r accent("Tables")`  
+
+*Caveat:* The Student Unit Records included with midfieldr and midfielddata are practice data, not research data, suitable for practice working with SURs but not for drawing inferences about program attributes or student experiences.
 
 
 
@@ -93,11 +108,14 @@ We prepare the data for use as input to `order_multiway()` and use the results t
 
 
 
-## Summarized data
+## Load practice data
 
-If you are writing your own script to follow along, we start with these packages:
+*Start a script*. If you are writing your own script to follow along, we use these packages in this vignette:
 
 ```{r}
+# Multiway data and charts
+# midfieldr vignette
+
 # Packages
 library("midfieldr")
 suppressPackageStartupMessages(library("data.table"))
@@ -111,46 +129,46 @@ options(
 )
 ```
 
-**Loading.** The data file `study_results` is included with midfieldr. 
+*Prepared data.* `study_results`, included with midfieldr, contains stickiness results as developed in [Case study: Results](art-003-case-results.html).
 
 ```{r}
-# View the case study results
+#| collapse: true
+
+# Display prepared data
+study_results
+```
+
+
+
+
+
+
+
+
+## Initial processing
+
+*Copying.* Prevents operations on `DT` from affecting `study_results` by reference  [@data.table-reference-semantics].
+
+```{r}
+# Working data frame
 DT <- copy(study_results)
-DT[]
 ```
 
-You can view the help page (and data dictionary) by running
-
-```{r}
-#| eval: false
-# Run in Console
-? study_results
-```
-
-
-
-
-
-
-
-
-## Filtering before dissemination
-
-**Filtering.** Human subject privacy is potentially at risk for small populations even with anonymized observations. Therefore, before tabulating or graphing the data for dissemination, we omit observations with fewer than 10 students ever enrolled. The magnitude of the bound (`ever >= 10`) can vary depending on one's data. 
+*Filtering.* Human subject privacy is potentially at risk for small populations even with anonymized observations. Therefore, before tabulating or graphing the data for dissemination, we omit observations with fewer than 10 students ever enrolled. The magnitude of the bound (`ever >= 10`) can vary depending on one's data. 
 
 ```{r}
 # Protecting privacy of small populations
 DT <- DT[ever >= 10]
 ```
 
-**Filtering.**  Having reviewed these specific results in advance, we find that the small-population filter (in this case) removes Native American students from all but one of the programs---so we omit them as well.
+*Filtering.*  Having reviewed these specific results in advance, we find that the small-population filter (in this case) removes Native American students from all but one of the programs---so we omit them as well.
 
 ```{r}
 # Optional filter
 DT <- DT[!race %chin% c("Native American")]
 ```
 
-**Filtering.** In many studies we also omit rows in which race/ethnicity values are ambiguous. 
+*Filtering.* In many studies we also omit rows in which race/ethnicity values are ambiguous. 
 
 ```{r}
 # Ambiguous race/ethnicity values
@@ -159,11 +177,14 @@ DT[]
 ```
 
 
+
+
+
 ## Preparing the categorical variables
 
 Before we apply the `order_multiway()` function, we edit the categorical variables to create the forms we want in the final charts or tables.  
 
-**Recoding.** The first multiway categorical variable is `program`. To improve the readability of the charts, we recode the program abbreviations.
+*Recoding.* The first multiway categorical variable is `program`. To improve the readability of the charts, we recode the program abbreviations.
 
 ```{r}
 # Recode for panel and row labels
@@ -175,7 +196,7 @@ DT[, program := fcase(
 )]
 ```
 
-**Creating a variable.** We combine `race` and `sex` into a single categorical variable (denoted `people`) as our second, independent categorical variable. 
+*Creating a variable.* We combine `race` and `sex` into a single categorical variable (denoted `people`) as our second, independent categorical variable. 
 
 ```{r}
 # Create a new category
@@ -190,42 +211,50 @@ At this point, the multiway categories (`programs` and `people`) are "character"
 
 ## `order_multiway()`
 
-Converts the categorical variables to factors ordered by the quantitative variable. You can view the help page by running
+Converts the categorical variables to factors ordered by the quantitative variable. 
+
+*Arguments*
+
+- **`dframe`** &nbsp; Data frame with multiway data in columns. Two additional numeric columns required when using the percentage ordering method. 
+
+- **`quantity`** &nbsp; Name (in quotes) of the single multiway quantitative variable.
+
+- **`categories`** &nbsp; Vector of names (in quotes) of the two multiway categorical variables.
+
+- **`method`** &nbsp; “median” (default) or “percent”, method of ordering the levels of the categories. If used, argument to be used by name.
+
+- **`ratio_of`** &nbsp; Vector with the names (in quotes) of the numerator and denominator columns that produced the quantitative variable, required when using percentage ordering method. Argument to be used by name.
+
+
+*Equivalent usage.*  &nbsp; The following implementations yield identical results,
 
 ```{r}
-#| eval: false
-# Run in Console
-? order_multiway
+#| collapse: true
+# Required arguments in order and explicitly named
+x <- order_multiway(dframe = DT, 
+                    quantity = "grad", 
+                    categories = c("program", "people"), 
+                    method = "median")
+
+# Required arguments in order, but not named
+y <- order_multiway(DT, "grad", c("program", "people"), method = "median")
+
+# Using the implicit default for method
+z <- order_multiway(DT, "grad", c("program", "people"))
+
+# Equality test between the data tables
+all.equal(x, y)
+all.equal(x, z)
 ```
 
-**Arguments:**
 
-`dframe`
 
-: Data frame with multiway data in columns. Two additional numeric columns required when using the percentage ordering method.  
+*Output.* &nbsp; Adds two columns to the data frame containing the computed values that determine the ordering of factors. The column names and values depend on the ordering method: 
 
-`quantity`
+- **`method = "median"`**  &nbsp;  Yields medians of the quantitative variable grouped by the categorical variables. 
 
-: Name (in quotes) of the single multiway quantitative variable.
+- **`method = "percent"`**  &nbsp;  Yields percentages based on the same ratio that produces the quantitative variable but grouped by the categorical variables.
 
-`categories`
-
-: Vector of names (in quotes) of the two multiway categorical variables.
-
-`method`
-
-: “median” (default) or “percent”, method of ordering the levels of the categories.
-
-`ratio_of`
-
-: Vector with the names (in quotes) of the numerator and denominator columns that produced the quantitative variable, required when using percentage ordering method.  
-
-**Columns added:**
-
-Two columns of calculated summaries of the quantitative variable grouped by the categories. The column names and values depend on the ordering method: 
-
-- `method = "median"` yields medians of the quantitative variable grouped by the categorical variables. 
-- `method = "percent"` yields percentages based on the same ratio that produces the quantitative variable but grouped by the categorical variables.
 
 
 
@@ -265,6 +294,7 @@ The following values agree with those in the `program_median` variable above,
 
 ```{r}
 #| collapse: true
+
 # Verify order_multiway() output
 temp <- DT_count[, lapply(.SD, median), .SDcols = c("grad"), by = c("program")]
 temp[]
@@ -274,6 +304,7 @@ And the next result agrees with the values in `people_median`.
 
 ```{r}
 #| collapse: true
+
 # Verify order_multiway() output
 temp <- DT_count[, lapply(.SD, median), .SDcols = c("grad"), by = c("people")]
 temp[]
@@ -283,35 +314,13 @@ In the output, you can see that both categories are "factor" class: `program` is
 
 ```{r}
 #| collapse: true
+
 # Verify first category is a factor
 levels(DT_count$program)
 
 # Verify second category is a factor
 levels(DT_count$people)
 ```
-
-Because the `method` argument has a default value of "median", the following two code chunks produce identical results. 
-
-```{r}
-#| collapse: true
-# Using explicit median method
-p <- order_multiway(DT_count,
-  quantity = "grad",
-  categories = c("program", "people"),
-  method = "median"
-)
-
-# Using implicit median method
-q <- order_multiway(DT_count,
-  quantity = "grad",
-  categories = c("program", "people")
-)
-
-# Verify results identical
-all.equal(p, q)
-```
-
-
 
 
 
@@ -354,6 +363,8 @@ The first of two multiway charts encodes *programs by rows* and *people by  pane
 
 ```{r median-two-columns}
 #| fig-asp: 0.8
+#| fig-cap: "Figure 1. Rows and columns ordered by median values."
+
 # Two columns of panels
 ggplot(DT_count, aes(x = grad, y = program)) +
   facet_wrap(vars(people), ncol = 2, as.table = FALSE) +
@@ -363,8 +374,7 @@ ggplot(DT_count, aes(x = grad, y = program)) +
   geom_point()
 ```
 
-
-The programs are assigned to rows such that the program medians increase from bottom to top. Civil Engineering has the smallest median; Electrical Engineering the largest.  
+<br>The programs are assigned to rows such that the program medians increase from bottom to top. Civil Engineering has the smallest median; Electrical Engineering the largest.  
 
 We drew the chart above in two columns to illustrate the graph order of panels. Hispanic/LatinX Female students have the smallest median number of graduates, followed by Asian Female students, Hispanic/LatinX Male students, Black Female students, etc.
 
@@ -372,6 +382,8 @@ When space permits, however, laying out the panels in a single column can be use
 
 ```{r median-one-column}
 #| fig-asp: 1.6
+#| fig-cap: "Figure 2. Redraw the panels in one column."
+
 # Programs encoded by rows
 ggplot(DT_count, aes(x = grad, y = program)) +
   facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
@@ -381,7 +393,7 @@ ggplot(DT_count, aes(x = grad, y = program)) +
   geom_point()
 ```
 
-Reading a multiway graph
+<br>Reading a multiway graph
 
 - We can more effectively compare values within a panel than between panels.
 - Because rows are ordered, one expects a generally increasing trend within a panel. A response greater or smaller than expected creates a visual asymmetry. The interesting stories are often in these visual anomalies.
@@ -392,6 +404,8 @@ However, this chart does not permit us to effectively compare the eight values f
 
 ```{r people-encoded-rows}
 #| fig-asp: 1.3
+#| fig-cap: "Figure 3. Switching the row and column assignments of categorical variables." 
+
 # People encoded by rows
 ggplot(DT_count, aes(x = grad, y = people)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
@@ -401,7 +415,7 @@ ggplot(DT_count, aes(x = grad, y = people)) +
   geom_point()
 ```
 
-In this chart, the visual asymmetries that stand out are 
+<br>In this chart, the visual asymmetries that stand out are 
 
 - Electrical Engineering, White Female, low given their overall rank
 - Mechanical Engineering, Black Female, low given their overall rank
@@ -427,6 +441,8 @@ The effects seen in the previous chart are not revealed.
 
 ```{r avoid-alphbetical}
 #| fig-asp: 1.3
+#| fig-cap: "Figure 4. Alphabetical ordering conceals patterns in the data."
+
 # Create alphabetical ordering
 DT_alpha <- copy(DT)
 DT_alpha[, people := factor(people, levels = sort(unique(people), decreasing = TRUE))]
@@ -439,7 +455,7 @@ ggplot(DT_alpha, aes(x = grad, y = people)) +
   geom_point()
 ```
 
-An ordering scheme based on the values of the quantitative variable is necessary if a multiway chart is to reveal how the response is affected by the categories.
+<br>An ordering scheme based on the values of the quantitative variable is necessary if a multiway chart is to reveal how the response is affected by the categories.
 
 
 
@@ -476,6 +492,8 @@ Using conventional ggplot syntax, the aesthetics include `x` and `y`  as before.
 
 ```{r race-sex-superposed}
 #| fig-asp: 0.8
+#| fig-cap: "Figure 5. Using superposition to display three categories."
+
 # Race/ethnicity encoded by rows, sex superposed
 ggplot(DT_count, aes(x = grad, y = race, color = sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
@@ -486,12 +504,14 @@ ggplot(DT_count, aes(x = grad, y = race, color = sex)) +
   scale_color_manual(values = c("#762A83", "#1B7837"))
 ```
 
-By superposing data by sex, we facilitate a direct comparison of Male and Female students within a program and by race. 
+<br>By superposing data by sex, we facilitate a direct comparison of Male and Female students within a program and by race. 
 
 Swapping rows and panels yields the next chart, in which we can directly compare Male and Female students within their race/ethnicity category across programs.  Because men tend to outnumber women in engineering programs, this chart clearly shows clusters by sex. 
 
 ```{r program-sex-superposed}
 #| fig-asp: 0.8
+#| fig-cap: "Figure 6. Switching the row and column assignments of two categorical variables."
+
 # Program encoded by rows, sex superposed
 ggplot(DT_count, aes(x = grad, y = program, color = sex)) +
   facet_wrap(vars(race), ncol = 1, as.table = FALSE) +
@@ -544,6 +564,7 @@ The following values agree with those in the `program_stick` variable above,
 
 ```{r}
 #| collapse: true
+
 # Verify order_multiway() output
 temp <- DT[, lapply(.SD, sum), .SDcols = c("ever", "grad"), by = c("program")]
 temp[, stick := round(100 * grad / ever, 1)]
@@ -554,6 +575,7 @@ And the next result agrees with the values in `people_stick`.
 
 ```{r}
 #| collapse: true
+
 # Verify order_multiway() output
 temp <- DT[, lapply(.SD, sum), .SDcols = c("ever", "grad"), by = c("people")]
 temp[, stick := round(100 * grad / ever, 1)]
@@ -569,12 +591,14 @@ temp[]
 
 ## Percentage-ordered charts
 
-Here the quantitative variable is group stickiness. The first chart encodes *programs by rows* and *people by  panels*.
+Here the quantitative variable is group stickiness. The first chart encodes *programs by rows* and *people by  panels*. Row-order is determined by  program stickiness computed over all students; panel order is determined by people stickiness computed over all programs. 
 
 The order of rows and panels has changed from the earlier charts. 
 
 ```{r engr-stick-program}
 #| fig-asp: 1.6
+#| fig-cap: "Figure 7. Rows and column ordered by percentages."
+
 # Programs encoded by rows
 ggplot(DT_ratio, aes(x = stick, y = program)) +
   facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
@@ -583,7 +607,7 @@ ggplot(DT_ratio, aes(x = stick, y = program)) +
   geom_point()
 ```
 
-The visual asymmetries in this chart that stand out are
+<br>The visual asymmetries in this chart that stand out are
 
 - Electrical Engineering, White Female, low given their overall rank
 - Hispanic/LatinX Female, Mechanical Engineering, low given their overall rank
@@ -595,6 +619,8 @@ Again, we cannot compare the eight values for a given program as effectively. Th
 
 ```{r engr-stick-people}
 #| fig-asp: 1.3
+#| fig-cap: "Figure 8. Switching the row and column assignments of categorical variables."
+
 # People encoded by rows
 ggplot(DT_ratio, aes(x = stick, y = people)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
@@ -603,7 +629,7 @@ ggplot(DT_ratio, aes(x = stick, y = people)) +
   geom_point()
 ```
 
-This chart shows a lot of variability. The visual asymmetries that stand out are 
+<br>This chart shows a lot of variability. The visual asymmetries that stand out are 
 
 - Hispanic/LatinX Female and Male, Industrial/Systems Engineering, high given their overall rank
 - Asian Female, Civil and Mechanical Engineering, high given their overall rank
@@ -648,6 +674,7 @@ setnames(tbl, old = "people", new = "Group", skip_absent = TRUE)
 
 ```{r}
 #| echo: false
+
 tbl |>
   kableExtra::kbl(
     align = "lrrrr",
@@ -702,6 +729,7 @@ setnames(tbl, old = "people", new = "Group", skip_absent = TRUE)
 
 ```{r}
 #| echo: false
+
 tbl |>
   kableExtra::kbl(
     align = "lrrrr",
@@ -725,17 +753,6 @@ We used longitudinal SURs to illustrate the structure of multiway data and creat
 We used two methods of ordering the rows and panels of multiway charts: by grouped medians when data are summary counts and by grouped percentages when data are ratios or percentages. 
 
 We illustrated that visual perception of effects is more practicable within a panel than between panels. Our advice (and Cleveland's) is to encode the levels of each category by rows in at least one chart. Thus the minimum number of exploratory charts is the number of independent categorical variables. 
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -916,18 +933,28 @@ tbl <- dcast(tbl, people ~ program, value.var = "results")
 setnames(tbl, old = "people", new = "Group", skip_absent = TRUE)
 ```
 
+
 ```{r}
 #| echo: false
-# to change the CSS file for block quotes
+
+# to change the CSS file
 # per https://github.com/rstudio/rmarkdown/issues/732
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{css}
 blockquote {
-    padding: 10px 20px;
-    margin: 0 0 20px;
+    padding:     10px 20px;
+    margin:      0 0 20px;
     border-left: 0px
 }
+caption {
+    color:       #525252;
+    text-align:  left;
+    font-weight: normal;
+    font-size:   medium;
+    line-height: 1.5;
+}
 ```
+
 

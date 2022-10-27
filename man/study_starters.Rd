@@ -5,7 +5,7 @@
 \alias{study_starters}
 \title{Case-study starters}
 \format{
-\code{data.table} with 4896 rows and 3 columns.
+\code{data.table} with 5790 rows and 3 columns.
 
 \describe{
 

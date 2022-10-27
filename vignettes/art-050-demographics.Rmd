@@ -46,21 +46,49 @@ knitr::knit_hooks$set(inline = function(x) {
     prettyNum(round(x, 2))
   }
 })
+
+# accented text
+accent <- function (text_string){
+    kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
+}
 ```
 
-As our processing of longitudinal Student Unit Records (SURs) approaches completion, a typical step is adding columns for student race and sex (demographics). 
+Depending on the goals of a study, additional variables from the MIDFIELD data tables are added to one's working data frame to prepare for additional data manipulation, grouping, and summarizing.  Student demographics is one of the most common examples. 
 
-Within this context, this vignette illustrates using left outer joins to add columns from any of the midfielddata tables to our working data frame. We use MIDFIELD data, but no midfieldr functions are required.
 
 ## Method
 
-We add columns from midfielddata tables to a working data frame using a left-outer join. The usual shared column name to merge on is `mcid`. One of the most common joins is student demographics (race and sex) from the `student` table. 
+We add MIDFIELD variables to a working data frame using a left-outer join by ID. We demonstrate syntax from both base R and data.table. 
 
-## Population 
+Our most common join is student demographics (race/ethnicity and sex) from the `student` table. Yet variables can be joined from any of the MIDFIELD data tables---we illustrate by adding columns from `student`, `term`, and `degree`. 
 
-If you are writing your own script to follow along, we start with these packages:
+This vignette in the MIDFIELD workflow.   
+
+1. Planning  
+1. Initial processing 
+1. Blocs  
+1. Grouping variables  
+    - `r accent("Demographics")`  
+1. Metrics  
+1. Results    
+
+*Caveat:* The Student Unit Records included with midfieldr and midfielddata are practice data, not research data, suitable for practice working with SURs but not for drawing inferences about program attributes or student experiences.
+
+
+
+
+
+
+
+
+## Load practice data
+
+*Start a script*. If you are writing your own script to follow along, we use these packages in this vignette:
 
 ```{r}
+# Programs
+# midfieldr vignette
+
 # Packages
 library("midfieldr")
 library("midfielddata")
@@ -74,30 +102,64 @@ options(
 )
 ```
 
-**Importing.** Load the midfielddata data tables.
+*Load source data.* MIDFIELD practice data tables as described in [Getting started](art-000-getting-started.html). 
 
 ```{r}
-# Load data sets from midfielddata
-data(student, term, degree)
+# Load practice data sets
+data(student, term, degree, package = "midfielddata")
 ```
 
-Start with the student IDs from the case study vignettes. You can view the help page (and data dictionary) by running
+*Prepared data.* `study_mcid`, included with midfieldr, contains the IDs of students ever enrolled in the case study programs as developed in [Case study: Data](art-002-case-data.html).
 
 ```{r}
-#| eval: false
-# Run in Console
-? study_mcid
+#| collapse: true
+
+# Display prepared data
+study_mcid
 ```
 
-These data are the IDs of all students ever enrolled in four engineering programs: Civil, Electrical, Industrial/Systems, and Mechanical Engineering. 
+
+
+
+
+
+## Initial processing
+
+*Optional.* Reduce the dimensions of MIDFIELD data tables. Code reproduced from [Data sufficiency](art-010-data-sufficiency.html). 
 
 ```{r}
-# A convenient set of IDs
+#| collapse: true
+
+# Optional. Set aside the source files in case they are needed
+source_student <- copy(student)
+source_term    <- copy(term)
+source_degree  <- copy(degree)
+
+# Work with required midfieldr variables only
+student <- select_required(source_student)
+term    <- select_required(source_term)
+degree  <- select_required(source_degree)
+
+# View top few rows of the result
+head(student, n = 3L)
+
+head(term, n = 3L)
+
+head(degree, n = 3L)
+```
+
+
+*Copying.* Prevents operations on `DT` from affecting `study_mcid` by reference  [@data.table-reference-semantics].
+
+```{r}
+# Working data frame
 DT <- copy(study_mcid)
 
 # Display results
 DT[]
 ```
+
+
 
 ## Left outer joins
 
@@ -105,7 +167,7 @@ An left outer join is a merge operation between two data frame which returns all
 
 Using data.table syntax, we have two approaches: `merge()` and the `Y[X, j]` syntax.
 
-**Using merge().** Using the data.table `merge()` syntax, the `all.x = TRUE` argument creates the left-outer join. To join only race and sex from `student`, we extract those columns before the join. 
+*Using merge().* Using the data.table `merge()` syntax, the `all.x = TRUE` argument creates the left-outer join. To join only race and sex from `student`, we extract those columns before the join. 
 
 
 ```{r}
@@ -120,7 +182,7 @@ Alternatively, one can include the columns selection within the merge operation.
 merge(DT, student[, .(mcid, race, sex)], by = c("mcid"), all.x = TRUE)
 ```
 
-**Using Y[X, j].** The second approach---computationally more efficient---uses the data.table `Y[X, j]` syntax were `X` is the "left" data (all rows returned) and `Y` the "right" (matching rows returned). 
+*Using Y[X, j].* The second approach---computationally more efficient---uses the data.table `Y[X, j]` syntax were `X` is the "left" data (all rows returned) and `Y` the "right" (matching rows returned). 
 
 ```{r}
 # Fresh start
@@ -135,7 +197,7 @@ DT[]
 
 The  `on` argument defines the shared column to use in matching. The `j` argument, .(mcid, race, sex), defines the columns from both data frames to return. In the `Y[X, j, on]` configuration, all rows of `X` are returned plus matching rows from `Y` with NA in columns of `Y` where there is no match. 
 
-**Demonstrate equivalence.** Showing that the two approaches produce the same result. 
+*Demonstrate equivalence.* Showing that the two approaches produce the same result. 
 
 ```{r}
 #| collapse: true
@@ -147,7 +209,7 @@ y <- student[DT, .(mcid, race, sex), on = c("mcid")]
 all.equal(x, y)
 ```
 
-**Order matters.** In the [Degree seeking (inner joins)](art-020-degree-seeking.html) vignette, we show that for inner joins  `X[Y, j]` and `Y[X, j]` return the same result. Not so with outer joins. 
+*Order matters.* In the [Degree seeking (inner joins)](art-020-degree-seeking.html) vignette, we show that for inner joins  `X[Y, j]` and `Y[X, j]` return the same result. Not so with outer joins. 
 
 In left-outer joins, `Y[X, j]` returns all rows of `X` and `X[Y, j]` returns all rows of `Y`. 
 
@@ -176,16 +238,17 @@ nrow(y)
 ## Columns from `student`
 
 Above we added  the race and sex columns from `student` to a working data frame. Depending on the goals of a study, other columns could be added as well. 
-The variables available in `student` are:
+
+The variables available in `source_student` are:
 
 ```{r}
 #| collapse: true
 
 # Variables in the practice data set
-names(student)
+names(source_student)
 ```
 
-Adding transfer status and transfer credit hours.
+Adding transfer status and transfer credit hours. This example illustrates a case in which the original source file is needed because the columns we want were deleted by `select_required()`. 
 
 ```{r}
 #| collapse: true
@@ -194,7 +257,7 @@ Adding transfer status and transfer credit hours.
 DT <- copy(study_mcid)
 
 # Add variables from student to DT
-student[DT, .(mcid, transfer, hours_transfer), on = c("mcid")]
+source_student[DT, .(mcid, transfer, hours_transfer), on = c("mcid")]
 ```
 
 Adding SAT scores. 
@@ -203,7 +266,7 @@ Adding SAT scores.
 #| collapse: true
 
 # Add variables from student to DT
-student[DT, .(mcid, sat_math, sat_verbal), on = c("mcid")]
+source_student[DT, .(mcid, sat_math, sat_verbal), on = c("mcid")]
 ```
 
 
@@ -218,16 +281,16 @@ student[DT, .(mcid, sat_math, sat_verbal), on = c("mcid")]
 
 Joining variables from degree gives us the opportunity to show that in left-outer joins, where rows in `X` have multiple matches in `Y`, a row in `X` is added for every match in `Y`. 
 
-The variables available in `term` are:
+The variables available in `source_term` are:
 
 ```{r}
 #| collapse: true
 
 # Variables in the practice data set
-names(term)
+names(source_term)
 ```
 
-Adding institution. Because term has multiple rows per student (one row per term per ID), we get a row for every instance in `term` with a matching ID. Add a `unique()` function to remove duplicates.  
+Adding hours and GPA per term. 
 
 ```{r}
 #| collapse: true
@@ -236,26 +299,41 @@ Adding institution. Because term has multiple rows per student (one row per term
 DT <- copy(study_mcid)
 
 # Add variables from term to DT
-x <- term[DT, .(mcid, institution), on = c("mcid")]
+DT <- source_term[DT, .(mcid, institution, term, hours_term, gpa_term), on = c("mcid")]
+setkeyv(DT, c("mcid", "term"))
 
 # Display results
-x[]
-
-# Remove duplicate rows
-unique(x)
+DT[]
 ```
 
-Add program. Here, after removing duplicates, we still have more rows that we started with because over time students switch majors resulting in more than one CIP code associated with their ID over the time span of the SURs. 
+Some data in `term` are known to have two rows for the same term where we would expect one row per student per term. For example, the SUR below shows two entries for the Spring 1994 term (encoded `19933`) that are different only in the `hours_cumul` and `gpa_cumul` values.  
 
 ```{r}
-#| collapse: true
 
-# Add variables from term to DT
-x <- term[DT, .(mcid, cip6), on = c("mcid")]
-unique(x)
+options(datatable.print.nrows = 20)
+setkeyv(source_term, c("mcid", "term"))
+
+source_term[mcid == "MID25988779"][1:5]
+```
+
+```{r}
+source_term[mcid == "MID26292075"][1:5]
+```
+
+```{r}
+source_term[mcid == "MID26437765"][1:5]
 ```
 
 
+
+```{r}
+
+
+
+DT[duplicated(DT)][institution == "Institution G"]
+
+
+```
 
 
 
@@ -266,13 +344,13 @@ unique(x)
 
 Joining variables from degree gives us the opportunity to show that in left-outer joins, where rows in `X` have no match in `Y`, the `Y` column values are NA.
 
-The variables available in `degree` are:
+The variables available in `source_degree` are:
 
 ```{r}
 #| collapse: true
 
 # Variables in the practice data set
-names(degree)
+names(source_degree)
 ```
 
 Add degree term and CIP. Where rows in `DT` have no match in `degree`, the `degree` column values are NA.  
@@ -281,10 +359,7 @@ Add degree term and CIP. Where rows in `DT` have no match in `degree`, the `degr
 #| collapse: true
 
 # Add variables from degree to DT
-x <- degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
-
-# Display results
-x[]
+source_degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
 ```
 
 
@@ -307,10 +382,12 @@ Adding student demographic columns is typical in MIDFIELD research because  race
 <div id="refs"></div>
 
 
+
 ## Appendix
 
-We conclude each vignette by collecting its code chunks in a single, condensed script for the convenience of those who wish to copy it into their own R file.
+### Complete script
 
+The vignette code chunks are collected below in a single, condensed script. 
 
 ```{r}
 #| eval: false
@@ -328,7 +405,7 @@ options(
 )
 
 # Load data sets from midfielddata
-data(student, term, degree)
+data(student, term, degree, package = "midfielddata")
 
 # Using merge
 DT <- copy(study_mcid)
@@ -370,17 +447,26 @@ names(degree)
 degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
 ```
 
+
 ```{r}
 #| echo: false
-# to change the CSS file for block quotes
+
+# to change the CSS file
 # per https://github.com/rstudio/rmarkdown/issues/732
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{css}
 blockquote {
-    padding: 10px 20px;
-    margin: 0 0 20px;
+    padding:     10px 20px;
+    margin:      0 0 20px;
     border-left: 0px
+}
+caption {
+    color:       #525252;
+    text-align:  left;
+    font-weight: normal;
+    font-size:   medium;
+    line-height: 1.5;
 }
 ```

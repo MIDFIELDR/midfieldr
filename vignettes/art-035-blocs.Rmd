@@ -1,0 +1,206 @@
+---
+title: "Blocs"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
+output: rmarkdown::html_vignette
+csl: ../inst/information-science-and-technology.csl
+vignette: >
+  %\VignetteIndexEntry{Blocs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+nocite: |
+  @Dowle+Srinivasan:2021:data.table
+resource_files: |
+---
+
+```{r setup}
+#| include: false
+
+# code chunks
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = FALSE,
+  comment = "#>",
+  error = FALSE
+)
+
+# figures
+knitr::opts_chunk$set(
+  fig.path = "../man/figures/art-035-blocs-",
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+
+# inline numbers
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+
+# accented text
+accent <- function (text_string){
+    kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
+}
+```
+
+
+Filtering for data sufficiency and degree-seeking are generally independent of a study's goals. The next filter is not. The goals of an analysis---the people studied, the metrics used---determine which groups of students, or *blocs*, we have to gather. 
+
+Different metrics require different blocs. For example, for a graduation rate calculation we gather starters and their graduating subset. For stickiness, we gather students ever-enrolled and their graduating subset. Blocs are refined further by filtering on programs. 
+
+
+## Definitions
+
+bloc
+
+: A grouping of SURs dealt with as a unit, for example, starters, ever-enrolled, graduates, transfers, traditional, non-traditional, migrators, etc. 
+
+
+
+## Method
+
+The most commonly encountered blocs are starters, ever-enrolled, and graduates of specified programs. Here we demonstrate gathering ever-enrolled and graduates. Starters are treated in their own vignettes, [Starters](art-080-starters.html) and [FYE proxies](art-070-fye-proxies.html). Once a bloc of records is complete (with CIP codes), we usually join and filter on the program labels defined during initial processing. 
+
+This vignette in the MIDFIELD workflow. 
+
+1. Planning  
+1. Initial processing  
+1. Blocs  
+    - `r accent("Ever-enrolled in programs")`
+    - `r accent("Graduates of programs")`
+    - Completion status  
+    - FYE proxies 
+    - Starters in programs
+1. Grouping variables  
+1. Metrics  
+1. Results  
+
+*Caveat:* The Student Unit Records included with midfieldr and midfielddata are practice data, not research data, suitable for practice working with SURs but not for drawing inferences about program attributes or student experiences.
+
+
+
+
+## Load practice data
+
+*Start a script*. If you are writing your own script to follow along, we use these packages in this vignette:
+
+```{r}
+# Blocs
+# midfieldr vignette
+
+# Packages
+library("midfieldr")
+library("midfielddata")
+suppressPackageStartupMessages(library("data.table"))
+
+# Printing options for data.table
+options(
+  datatable.print.nrows = 17,
+  datatable.print.topn = 5,
+  datatable.print.class = TRUE
+)
+```
+
+*Load source data.* MIDFIELD practice data tables as described in [Getting started](art-000-getting-started.html).
+
+```{r}
+# Load practice data sets
+data(student, term, degree, package = "midfielddata")
+```
+
+*Optional.* A step to reduce the number of columns in the source data table(s) to the minimum number required by midfieldr functions. Particularly useful in interactive sessions when viewing the data tables at various stages of an analysis. 
+
+```{r}
+#| collapse: true
+
+# Select required midfieldr variables
+student <- select_required(student)
+term <- select_required(term)
+degree <- select_required(degree)
+
+# View top few rows of the result
+head(student, n = 3L)
+
+head(term, n = 3L)
+
+head(term, n = 3L)
+```
+
+*Prepared data.* `study_programs`, included with midfieldr, contains the CIP codes and custom program names for the case study as developed in [Programs](art-030-programs.html#case-study).
+
+```{r}
+#| collapse: true
+
+# Display prepared data
+study_programs
+```
+
+
+In this vignette I can derive the case study `study_mcid` for later use instead of the "case study" vignettes
+
+
+## Closing
+
+TBD
+
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+
+
+
+## Appendix
+
+### Complete script
+
+The vignette code chunks are collected below in a single, condensed script.  
+
+```{r}
+#| eval: false
+
+
+
+```
+
+
+```{r}
+#| echo: false
+
+# to change the CSS file
+# per https://github.com/rstudio/rmarkdown/issues/732
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{css}
+blockquote {
+    padding:     10px 20px;
+    margin:      0 0 20px;
+    border-left: 0px
+}
+caption {
+    color:       #525252;
+    text-align:  left;
+    font-weight: normal;
+    font-size:   medium;
+    line-height: 1.5;
+}
+```
+
