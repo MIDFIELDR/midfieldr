@@ -5,7 +5,7 @@
 \alias{toy_degree}
 \title{Degree data for examples}
 \format{
-\code{data.table} with 64 rows and 5 columns keyed by
+\code{data.table} with 65 rows and 4 columns keyed by
 student ID.
 \describe{
 
@@ -20,17 +20,14 @@ student ID.
  \item{cip6}{Character, 6-digit CIP code of program in which a student
  earns a degree.}
 
- \item{degree}{Character, type of degree awarded, e.g., Bachelor's
- Degree, Bachelor of Arts, Bachelor of Science, etc.}
-
 }
 }
 \usage{
 toy_degree
 }
 \description{
-A small subset by row and column of the MIDFIELD degree table
-for use in package examples.
+A small subset of the \code{degree} practice data for use in package 
+and vignette examples.
 }
 \seealso{
 Other toy-data: 

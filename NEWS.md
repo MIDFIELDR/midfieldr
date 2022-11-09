@@ -1,32 +1,41 @@
 
+## midfieldr 1.0.0.9028 / 2021-11
+
+- Rename `filter_search()` to `filter_cip()` to better capture its purpose. Made `cip` the default data frame to search. Permits usage like `filter_cip("engineering")` where the first argument can be the `keep_text` character vector of search strings, yet unnamed. 
+- Continue editing vignettes for consistent organization and prose.  
+- Add `same_content()` convenience function. 
+- Add "Groupings" vignette. 
+
+
+
 ## midfieldr 1.0.0.9027 / 2021-10
 
-- Separate vignettes for FYE and starters 
-- To starters, add the case for non-FYE institutions
-- Continue working on graduation rate vignette 
-- Standardize vignette structure
-
+- Separate the vignettes for FYE and starters. 
+- To starters, add the case for non-FYE institutions.
+- Edit vignettes for consistent organization and prose. 
+- Add `select_required()`. 
+- Add planning and blocs vignettes. 
 
 
 
 ## midfieldr 1.0.0.9026 / 2021-09
 
-- Add FYE function and vignette
-- Revise multiway function name
-- Add order_multiway() examples
-- Add initial graduation rate vignette 
-- Add README to tests directory
-- Consistent comments and R code chunk commands
+- Add FYE function and vignette.
+- Revise multiway function name.
+- Add order_multiway() examples.
+- Add initial graduation rate vignette. 
+- Add README to tests directory.
+- Consistent comments and R code chunk commands.
 
 
 
 ## midfieldr 1.0.0.9025 / 2021-07
 
 - Editing some functions names and data names to be more descriptive.  
-- Change name of built-in `fye_start` data set to `fye_predicted_start` 
+- Change name of built-in `fye_start` data set to `fye_predicted_start`. 
 - New `order_multiway_categories()` to replace `condition_multiway()`. Revised 
   argument names. 
-- New `preprocess_fye()` to replace `condition_fye()` 
+- New `preprocess_fye()` to replace `condition_fye()`. 
 
 ## midfieldr 1.0.0.9024 / 2021-07
 
@@ -35,30 +44,30 @@
 
 ## midfieldr 1.0.0.9023 / 2021-07
 
-- Updated `condition_multiway()`, unit tests, and multiway vignette
+- Updated `condition_multiway()`, unit tests, and multiway vignette.
 
 ## midfieldr 1.0.0.9022 / 2021-06-29
 
-- Revise or add vignettes for data sufficiency, degree seeking (inner joins), programs, completion, and demographics (left outer joins)
-- Correction to `condition_multiway()` for alphabetical ordering, revise unit tests
-- Remove dependency on Rdpack
+- Revise or add vignettes for data sufficiency, degree seeking (inner joins), programs, completion, and demographics (left outer joins).
+- Correction to `condition_multiway()` for alphabetical ordering, revise unit tests.
+- Remove dependency on Rdpack.
 
 ## midfieldr 1.0.0.9021 / 2021-06
 
 - The `midfield_student` argument, in functions in which it appears, is assigned the default value `student` instead of NULL. The argument can be  omitted unless the intended data frame is called something other than `student`. 
 - Similarly, the `midfield_course`, `midfield_term`, and `midfield_degree` arguments, where they occur, are assigned the default values `course`, `term`, and `degree`. 
-- Reorganize the logical flow of the data processing in the case study and vignettes to reflect our latest thinking on the order in which filters are applied
-- Functions return all supporting variables, delete the optional "details" arguments
-- Edit function names and variable names, update unit tests
-- Temporarily remove vignettes that have not been updated
-- Make inner joins explicit, delete `add_filter_match()`
-- Revise data sufficiency to include lower limit exclusions
-- Make left-outer joins explicit, delete `add_race_sex()`
+- Reorganize the logical flow of the data processing in the case study and vignettes to reflect our latest thinking on the order in which filters are applied.
+- Functions return all supporting variables, delete the optional "details" arguments.
+- Edit function names and variable names, update unit tests.
+- Temporarily remove vignettes that have not been updated.
+- Make inner joins explicit, delete `add_filter_match()`.
+- Revise data sufficiency to include lower limit exclusions.
+- Make left-outer joins explicit, delete `add_race_sex()`.
 
 ## midfieldr 1.0.0.9020 / 2021-06
 
 Significant changes from earlier versions, no backwards compatibility, 
-prompting version number change to 1.0.0
+prompting version number change to 1.0.0.
 
 - Change names of practice data tables to match the names of the research data
 - Edit practice data values for consistency with research data values 

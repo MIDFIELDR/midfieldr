@@ -9,9 +9,10 @@ The goal of midfieldr is to provide tools for working with MIDFIELD data,
 a resource of longitudinal, de-identified, individual student unit records.
 }
 \details{
-\href{https://midfield.online}{MIDFIELD} contains individual
-Student Unit Record (SUR) data for 1.7M students at 21 US institutions (as
-of June 2022). MIDFIELD is large enough to permit grouping and summarizing
+\href{https://midfield.online}{MIDFIELD} (as of June 2022) contains Student 
+Unit Records (SURs) of 1.7M undergraduates at nineteen US institutions from 
+1987 through 2018, though different institutions provide data over different 
+time spans. MIDFIELD is large enough to permit grouping and summarizing
 by multiple characteristics, enabling researchers to examine student
 characteristics (race/ethnicity, sex, prior achievement) and curricular
 pathways (including coursework and program) by institution and over time.

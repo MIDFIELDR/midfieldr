@@ -45,7 +45,7 @@ completion.
 }
 \seealso{
 Other case-study-data: 
-\code{\link{study_mcid}},
+\code{\link{study_ever}},
 \code{\link{study_observations}},
 \code{\link{study_programs}},
 \code{\link{study_starters}}

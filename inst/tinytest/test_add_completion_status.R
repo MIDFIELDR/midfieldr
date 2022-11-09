@@ -39,7 +39,6 @@ test_add_completion_status <- function() {
         add_completion_status(DT, toy_degree)
     )
 
-
     # midfield_degree argument must be degree or equivalent
     expect_error(
         add_completion_status(DT, midfield_degree = toy_student)

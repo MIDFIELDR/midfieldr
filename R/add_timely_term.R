@@ -2,20 +2,18 @@
 
 #' Calculate a timely completion term for every student 
 #' 
-#' Add a column to a data frame of Student Unit Record (SUR) 
-#' observations that indicates the latest term by which degree completion 
-#' would be considered timely for every student. Requires a MIDFIELD 
-#' \code{term} data frame in the environment.  
+#' Add a column to a data frame of Student Unit Record (SUR) observations that 
+#' indicates the latest term by which degree completion  would be considered 
+#' timely for every student.  
 #' 
 #' By "completion" we mean an undergraduate earning their first baccalaureate 
 #' degree (or degrees, for students earning more than one degree in the same 
 #' term). 
 #' 
-#' In many studies, students must complete their 
-#' programs in a specified time span, for example 4-, 6-, or 8-years after 
-#' admission. If they do, their completion is timely; if not, their completion 
-#' is untimely and they are grouped with the non-completers when computing 
-#' a metric such as graduation rate. 
+#' In many studies, students must complete their programs in a specified time 
+#' span, for example 4-, 6-, or 8-years after admission. If they do, their 
+#' completion is timely; if not, their completion is late and they are grouped 
+#' with the non-completers when computing a metric such as graduation rate. 
 #' 
 #' Our heuristic assigns \code{span} number of years (default is 6 years) to 
 #' every student. For students admitted at second-year level or higher, the 
@@ -187,7 +185,7 @@ add_timely_term <- function(dframe,
     setkeyv(DT, "mcid")
     DT <- DT[, .SD[1], by = "mcid"]
     
-    # left outer join new columns to dframe by key(s)
+    # left join new columns to dframe by key(s)
     setkeyv(dframe, "mcid")
     dframe <- DT[dframe]
     
@@ -253,7 +251,7 @@ add_initial_term <- function(dframe, midfield_term) {
              new = c("term_i")
     )
     
-    # left outer join new columns to dframe by key(s)
+    # left join new columns to dframe by key(s)
     setkeyv(DT, "mcid")
     setkeyv(dframe, "mcid")
     dframe <- DT[dframe] 
@@ -306,7 +304,7 @@ add_initial_level <- function(dframe, midfield_term) {
              new = c("level_i")
     )
     
-    # left outer join new columns to dframe by key(s)
+    # left join new columns to dframe by key(s)
     setkeyv(DT, "mcid")
     setkeyv(dframe, "mcid")
     dframe <- DT[dframe] 

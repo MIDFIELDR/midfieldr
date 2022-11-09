@@ -5,13 +5,11 @@
 \alias{study_starters}
 \title{Case-study starters}
 \format{
-\code{data.table} with 5790 rows and 3 columns.
+\code{data.table} with 5790 rows and 2 columns.
 
 \describe{
 
  \item{mcid}{Character, anonymized student identifier}
-
- \item{start}{Character, 6-digit CIP program codes.}
  
  \item{program}{Character, abbreviated labels for four engineering programs. 
  Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE" 
@@ -23,19 +21,18 @@
 study_starters
 }
 \description{
-Data table of students admitted in their first term to one of the four 
-engineering programs in the case study. Includes substitutions using FYE 
-proxies for students required to enroll in FYE programs. Provided for the 
-convenience of vignette users.
+Data table of students considered starters in one of the four engineering 
+programs in the case study (Civil, Electrical, Industrial/Systems, and 
+Mechanical Engineering). Includes substitutions of FYE proxies for students 
+required to enroll in FYE programs. Provided for the convenience of vignette 
+users.
 }
 \details{
-Using the IDs of all students ever enrolled in the four programs 
-of the study (Civil, Electrical, Industrial/Systems, and Mechanical 
-Engineering), each student's first term CIP code is obtained from the 
-\code{term} data table. For a student admitted to an FYE program, 
-their CIP code is replaced by their FYE proxy from the \code{fye_proxy} 
-data set included with midfieldr. The data frame is filtered to retain 
-students starting in one of the four majors in the case study. 
+The \code{student} and \code{term} source data are filtered for data 
+sufficiency and degree-seeking. We filter for a student’s first term 
+(ignoring terms with a CIP for undecided/unspecified). We identify the 
+program(s) of which a student can be considered a starter, substituting  
+an FYE proxy when a starting program is FYE. We then filter by program. 
 
 The CIP variable is renamed \code{start} to distinguish it from other 
 midfieldr \code{cip6} variables because \code{start} contains estimated 
@@ -43,7 +40,7 @@ program codes while the \code{cip6} variables contain actual student records.
 }
 \seealso{
 Other case-study-data: 
-\code{\link{study_mcid}},
+\code{\link{study_ever}},
 \code{\link{study_observations}},
 \code{\link{study_programs}},
 \code{\link{study_results}}

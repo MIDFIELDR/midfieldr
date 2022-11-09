@@ -54,8 +54,7 @@ Constructs a data frame of Student Unit Records (SURs) of First-Year
 Engineering (FYE) programs and conditions the data for later use as an 
 input to the mice R package for multiple imputation. Sets up three 
 variables as predictors (institution, race/ethnicity, and sex) and one 
-variable to be estimated (program CIP code). Requires  MIDFIELD 
-\code{student} and \code{term} data frames in the environment.
+variable to be estimated (program CIP code).
 }
 \details{
 At some US institutions, engineering students are required to complete a  

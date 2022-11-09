@@ -1,0 +1,402 @@
+---
+title: "Graduates"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
+output: rmarkdown::html_vignette
+csl: ../inst/information-science-and-technology.csl
+vignette: >
+  %\VignetteIndexEntry{Graduates}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+nocite: |
+  @Dowle+Srinivasan:2021:data.table
+resource_files: |
+---
+
+```{r setup}
+#| include: false
+
+# code chunks
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = FALSE,
+  comment = "#>",
+  error = FALSE
+)
+
+# figures
+knitr::opts_chunk$set(
+  fig.path = "../man/figures/art-080-graduates-",
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+
+# inline numbers
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+
+# data.table printout
+options(
+  datatable.print.nrows = 6,
+  datatable.print.topn = 3,
+  datatable.print.class = TRUE
+)
+
+# accented text
+accent <- function (text_string){
+    kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
+}
+```
+
+Completion status is required for any metric involving graduation. 
+
+
+This vignette in the MIDFIELD workflow. 
+
+1. Planning  
+1. Initial processing  
+1. `r accent("Blocs")`  
+    - Ever-enrolled  
+    - FYE proxies  
+    - Starters  
+    - `r accent("Graduates")`  
+1. Groupings  
+1. Metrics  
+1. Displays 
+
+
+## Definitions
+
+degree completion
+
+: Graduating from a baccalaureate program 
+
+timely completion criterion 
+
+: Completing a program in no more than a specified span of years, in many cases, within 6 years after admission, or possibly less for some transfer students. 
+
+
+
+
+## Method
+
+After filtering source SURs for data sufficiency and degree-seeking, completion status can be determined independent of any other blocs. In many cases however, the graduates we want are a subset of a bloc already identified. 
+
+1. Filter the source SURs for data sufficiency and degree-seeking. If graduates are a subset of another bloc, e.g., starters or ever-enrolled, obtain that bloc first. 
+
+1. Determine each student's timely completion term. 
+
+1. Use `degree` to determine whether a student completes their program and in what term. 
+
+1. Compare the degree term (if any) to the timely completion term and label completion status as "timely", "late", or "NA." 
+
+4. If specific majors are being studied, add program labels and filter. 
+
+
+
+*Caveat:* &nbsp; The Student Unit Records included with midfieldr and midfielddata are practice data, not research data, suitable for practice working with SURs but not for drawing inferences about program attributes or student experiences.
+
+
+
+
+
+
+
+
+## Load data
+
+*Open.* &nbsp; If you are writing your own script to follow along, we use these packages in this vignette:
+
+
+```{r}
+# midfieldr: Completion status
+
+# Packages
+library("midfieldr")
+library("midfielddata")
+suppressPackageStartupMessages(library("data.table"))
+```
+
+*Load.* &nbsp; MIDFIELD practice data tables. Described in [Getting started](art-000-getting-started.html).
+
+```{r}
+# Load practice data
+data(student, term, degree, package = "midfielddata")
+```
+
+*Loads with midfieldr.* 
+
+- `study_programs` (derived in [Programs](art-040-programs.html#case-study)).
+
+
+
+
+
+
+## Initial processing
+
+*(Optional) Select.* &nbsp; Columns required by midfieldr functions. Code reproduced from [Getting started](art-000-getting-started.html#reusable-code).  
+
+```{r}
+# Optional. Copy of source files with all variables
+source_student <- copy(student)
+source_term    <- copy(term)
+source_degree  <- copy(degree)
+
+# Optional. Select variables required by midfieldr functions
+student <- select_required(source_student)
+term    <- select_required(source_term)
+degree  <- select_required(source_degree)
+```
+
+*Work.* &nbsp; Using `copy()` avoids *by-reference* effects  [@data.table-reference-semantics].
+
+```{r}
+# Working data frame
+DT <- copy(term)
+```
+
+*Data sufficiency.*  &nbsp; Filter to satisfy the data sufficiency criterion. Code reproduced from [Data sufficiency](art-020-data-sufficiency.html#reusable-code).
+
+```{r}
+# Filter for data sufficiency, output unique IDs
+DT <- add_timely_term(DT, term)
+DT <- add_data_sufficiency(DT, term)
+DT <- DT[data_sufficiency == "include", .(mcid)]
+DT <- unique(DT)
+```
+
+*Degree seeking.* &nbsp; Filter to retain degree seeking students via an inner join with `student`. Code reproduced from [Degree seeking](art-030-degree-seeking.html#reusable-code).  
+
+```{r}
+# Filter for degree seeking, output unique IDs
+DT <- student[DT, .(mcid), on = c("mcid"), nomatch = NULL]
+DT <- unique(DT)
+DT[]
+```
+
+
+
+
+
+
+
+## `add_completion_status()` 
+
+Add columns to a data frame of Student Unit Record (SUR) observations that indicate whether a student completed a degree, and if so, whether their completion was timely.
+
+*Arguments.*
+
+- **`dframe`** &nbsp; Data frame of student unit record (SUR) observations keyed by student ID. Required variables are `mcid` and `timely_term`.
+
+- **`midfield_degree`** &nbsp; Data frame of SUR degree observations keyed by student ID. Default is `degree`. Required variables are `mcid` and `term_degree`.
+
+*Equivalent usage.*  &nbsp; The following implementations yield identical results,
+
+```{r}
+#| collapse: true
+# Timely term required before completion status
+w <- add_timely_term(DT, term)
+
+# Required arguments in order and explicitly named
+x <- add_completion_status(dframe = w, midfield_degree = degree)
+
+# Required arguments in order, but not named
+y <- add_completion_status(w, degree)
+
+# Using the implicit default for the midfield_degree argument
+z <- add_completion_status(w)
+
+# Demonstrate equivalence
+same_content(x, y)
+same_content(x, z)
+```
+
+
+*Output.* &nbsp; Adds the following columns to the data frame. 
+
+- **`term_degree`** &nbsp; Character. Term in which a program is completed. Encoded YYYYT. NA indicates non-completion. 
+
+- **`completion_status`** &nbsp; Character. Completion status: "timely", indicating degree completion no later than the timely completion term; "late", indicating completion after the timely completion term; and "NA" indicating non-completion.
+
+The input `dframe` must have columns for ID and the timely completion term. We use `add_timely_term()` again, though alternatively we could have retained the `timely_term` variable in  earlier code chunks. 
+
+```{r}
+# Timely term required before completion status
+DT <- add_timely_term(DT, term)
+
+# Drop unnecessary columns
+DT[, c("term_i", "level_i", "adj_span") := NULL]
+
+# Add completion status and supporting variables
+DT <- add_completion_status(DT, degree)
+DT[]
+```
+
+Similar to the details described in the data sufficiency vignette, `add_completion_status()` accepts [Alternate source names](art-020-data-sufficiency.html#alternate-source-names) and uses [Silent overwriting](art-020-data-sufficiency.html#silent-overwriting) when existing columns have the same name as one of the added columns. 
+
+
+
+### Closer look
+
+Examining the records of selected students in detail. 
+
+*Example 1.* &nbsp; The student has a degree term, Spring 1997 (encoded `19963`) indicating successful completion. Their degree term does not exceed their timely completion term, Spring 1998 (encoded `19973`), so their completion status is "timely".
+
+```{r}
+#| collapse: true
+
+# Display one student by ID
+DT[mcid == "MID25783162"]
+```
+
+*Example 2.* &nbsp; This student too has a degree term, Spring 2017 (encoded `20163`) indicating successful completion. Their degree term exceeds their timely completion term, Spring 2016 (encoded `20153`), so their completion status is "late". 
+
+```{r}
+#| collapse: true
+
+# Display one student by ID
+DT[mcid == "MID26696871"]
+```
+
+*Example 3.* &nbsp; The student's degree term is NA, indicating they did not complete their program. Thus completion status is NA as well. 
+
+```{r}
+#| collapse: true
+
+# Display one student by ID
+DT[mcid == "MID26697615"]
+```
+
+
+
+
+
+
+
+
+
+## Common use cases 
+
+### Completion summaries
+
+If our research question requires us to count the frequency of observations by completion status, we can retain all observations and group and summarize.
+
+```{r}
+DT[, .N, by = c("completion_status")]
+```
+
+Or we might add a second grouping variable. 
+
+```{r}
+# Inner join 
+x <- student[DT, on = c("mcid"), nomatch = NULL]
+setkeyv(x, c("completion_status", "sex"))
+
+# Display the result
+x[, .N, by = c("completion_status", "sex")]
+```
+
+
+
+
+
+### Degrees earned
+
+If we need to identify the programs in which students earned degrees, we add a column of degree codes from `degree` and retain selected columns. Rows with NA values indicate non-completion. 
+
+```{r}
+# Add CIP of degree earned with left-outer join
+DT <- degree[DT, .(mcid, cip6, completion_status), on = c("mcid")]
+DT[]
+```
+
+If our study requires us to extract timely graduates only, we use completion status as a filter. 
+
+```{r}
+# Extracting timely graduates only
+DT[completion_status == "timely"]
+```
+
+
+## Graduates
+
+TBD
+
+
+## Filter by program
+
+For many of the blocs we gather, the final step is to filter by program. Here, for example, the term "completers" could mean "completers in our case study programs."
+
+*Filter.*  &nbsp; Join program labels and filter to retain the desired programs. Code adapted from [Groupings](art-090-groupings.html). 
+
+```{r}
+# Filter by program via an inner join
+DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
+DT <- unique(DT)
+DT[]
+```
+ 
+
+
+
+## Reusable code
+
+*Preparation.* &nbsp; The baseline data frame we preserved earlier is the intake for this section. 
+
+```{r}
+# DT <- copy(baseline)
+```
+
+*Topic.* &nbsp; A summary code chunk for ready reference.   
+
+```{r}
+
+```
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+
+
+```{r}
+#| echo: false
+
+# to change the CSS file
+# per https://github.com/rstudio/rmarkdown/issues/732
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{css}
+blockquote {
+    padding:     10px 20px;
+    margin:      0 0 20px;
+    border-left: 0px
+}
+caption {
+    color:       #525252;
+    text-align:  left;
+    font-weight: normal;
+    font-size:   medium;
+    line-height: 1.5;
+}
+```
+

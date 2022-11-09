@@ -11,12 +11,12 @@
 #' Several midfieldr functions are designed to operate on one or more of the 
 #' MIDFIELD data tables, usually \code{student}, \code{term}, or \code{degree}. 
 #' This family of functions requires only a small subset of available 
-#' variables, e.g., \code{mcid}, \code{cip6}, or \code{term}. We have 
-#' identified the names of all required variables and collected 
-#' appropriate search strings in the default \code{select} vector. 
+#' variables, e.g., \code{mcid}, \code{cip6}, or \code{term}. The required 
+#' columns are built in to the function. The \code{select} argument is used to 
+#' add search strings to the default vector. 
 #' 
-#' The column names of \code{dframe} are searched for matches or partial matches 
-#' in \code{select} using \code{grep()}, thus search terms can include regular 
+#' The column names of \code{midfield_x} are searched for matches or 
+#' partial matches using \code{grep()}, thus search terms can include regular 
 #' expressions. Variables with names that match or partially match the search 
 #' terms are returned; all other columns are dropped. Rows are unaffected. 
 #' Search terms not present are silently ignored. 
@@ -26,12 +26,12 @@
 #' better suited to that task. Here, we specialize the column selection to 
 #' serve midfieldr functions. 
 #'
-#' @param dframe Data frame from which columns are selected, typically 
-#'        \code{student}, \code{term}, or \code{degree}. 
+#' @param midfield_x Data frame from which columns are selected, typically 
+#'        \code{student}, \code{term}, \code{degree} or their subsets. 
 #' @param ... Not used, force later arguments to be used by name.
-#' @param select Optional character vector of column names to return,
-#'        default \code{c("mcid", "institution", "race", "sex", "^term", 
-#'        "cip6", "level")}.
+#' @param select_add Optional character vector of search terms to add to the default 
+#'        vector given by \code{c("mcid", "institution", "race", "sex", 
+#'        "^term", "cip6", "level")}. 
 #' @return A \code{data.table} with the following properties:
 #' \itemize{
 #'     \item Rows are not modified. 
@@ -44,38 +44,40 @@
 #' @family select_*
 #'
 #'
-# @example man/examples/select_required_exa.R
+#' @example man/examples/select_required_exa.R
 #'
 #'
 #' @export
 #'
 #'
-select_required <- function(dframe, ..., select = NULL) {
+select_required <- function(midfield_x, ..., select_add = NULL) {
 
   # remove all keys
-  on.exit(setkey(dframe, NULL))
+  on.exit(setkey(midfield_x, NULL))
 
   # required argument
-  qassert(dframe, "d+")
+  qassert(midfield_x, "d+")
 
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     paste(
       "Arguments after ... must be named.\n",
-      "* Did you forget to write `select = `?\n *"
+      "* Did you forget to write `select_add = `?\n *"
     )
   )
 
   # optional arguments
-  select <- select %?% c("mcid", "institution", "race", "sex", "^term", "cip6", 
-                         "level")
+  default_select <- c("mcid", "institution", "race", "sex", "^term", "cip6", 
+                      "level")
+  select <- c(default_select, select_add)
+  select <- unique(select)
   
   # assertions for optional arguments
   qassert(select, "s+") # missing is OK
 
   # input modified (or not) by reference
-  setDT(dframe)
+  setDT(midfield_x)
 
   # required columns
   # NA
@@ -85,7 +87,7 @@ select_required <- function(dframe, ..., select = NULL) {
   # NA
 
   # do the work
-  DT <- copy(dframe)
+  DT <- copy(midfield_x)
   on.exit(setkey(DT, NULL))
   
   # Create one string separated by OR
@@ -101,11 +103,12 @@ select_required <- function(dframe, ..., select = NULL) {
   DT <- DT[, .SD, .SDcols = cols_we_want]
 
   # stop if all columns have been eliminated
-  if (abs(ncol(dframe) - 0) < .Machine$double.eps^0.5) {
+  if (length(names(DT)) < .Machine$double.eps^0.5) {
     stop(
       paste(
         "The result is empty. Possible causes are:\n",
-        "* 'dframe' contained no matches to terms in 'select'.\n"
+        "* Column names of the input data frame\n", 
+        "  do not match any of the search terms.\n"
       ),
       call. = FALSE
     )

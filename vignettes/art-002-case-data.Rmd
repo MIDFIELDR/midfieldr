@@ -226,7 +226,7 @@ CIP codes and names are included with midfieldr in the `cip` data set. We have s
 
 ```{r}
 # Gather program CIP codes
-case_programs <- filter_search(cip, keep_text = c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+case_programs <- filter_cip(cip, keep_text = c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
 case_programs <- case_programs[, .(cip6, cip4name)]
 
 # Display the result
@@ -309,16 +309,6 @@ ever[, group := "ever"]
 
 # Display the result
 ever[]
-```
-
-*Verify built-in data.* To avoid deriving these IDs each time they are needed in other vignettes, they are provided in the `study_mcid` data frame included with midfieldr. Here we verify that the two data frames are identical. 
-
-```{r}
-#| collapse: true
-
-# Verify built-in data
-unique_IDs <- unique(ever[, .(mcid)])
-all.equal(unique_IDs, study_mcid)
 ```
 
 
@@ -456,7 +446,7 @@ DT[]
 # Selecting columns from student
 student_cols <- student[, .(mcid, race, sex)]
 
-# Add them to DT with a left outer join
+# Add them to DT with a left join
 DT <- student_cols[DT, on = c("mcid")]
 
 # Display the result
@@ -470,8 +460,8 @@ The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique s
 ```{r}
 #| collapse: true
 
-# Verify built-in data
-all.equal(DT, study_observations)
+# Demonstrate equivalence
+same_content(DT, study_observations)
 ```
 
 
@@ -567,7 +557,7 @@ DT <- DT[, .(mcid, cip6)]
 DT <- DT[student, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
 
 # Filter by program
-study_program <- filter_search(cip, keep_text = c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+study_program <- filter_cip(cip, keep_text = c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
 study_program <- study_program[, .(cip6, cip6name)]
 study_program[, program := fcase(
   cip6 %like% "^1408", "CE",

@@ -1,0 +1,493 @@
+---
+title: "Starters"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
+output: rmarkdown::html_vignette
+csl: ../inst/information-science-and-technology.csl
+vignette: >
+  %\VignetteIndexEntry{Starters}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+nocite: |
+  @Dowle+Srinivasan:2021:data.table
+resource_files: |
+---
+
+```{r setup}
+#| include: false
+
+# code chunks
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = FALSE,
+  comment = "#>",
+  error = FALSE
+)
+
+# figures
+knitr::opts_chunk$set(
+  fig.path = "../man/figures/art-070-starters-",
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+
+# inline numbers
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+
+# data.table printout
+options(
+  datatable.print.nrows = 15,
+  datatable.print.topn = 3,
+  datatable.print.class = TRUE
+)
+
+# accented text
+accent <- function (text_string){
+    kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
+}
+```
+
+A degree-seeking student enrolled in their first degree-granting program is a *starter* in that program. Identifying starters is typically performed as part of a graduation rate calculation, though it can also be a useful measure in its own right. 
+
+This vignette in the MIDFIELD workflow.   
+
+1. Planning  
+1. Initial processing  
+1. `r accent("Blocs")`  
+    - Ever-enrolled  
+    - FYE proxies  
+    - `r accent("Starters")`  
+    - Graduates    
+1. Groupings  
+1. Metrics  
+1. Displays 
+
+## Special cases
+
+In two special cases, an entering student's CIP code does not correspond to a degree-granting program. The first case includes records for which a CIP is unspecified or reported as "undecided". In MIDFIELD data, both conditions are encoded as CIP 999999. Students may *enter* with this CIP but we do not consider them *starters* until and if they enroll in a degree-granting  program. 
+
+The second case is more nuanced. At some US institutions, engineering students are required to complete a First-Year Engineering (FYE) program as a prerequisite for declaring an engineering major. These students are admitted as Engineering majors but we don't know to which degree-granting program they intended to transition. FYE students are *starters* in Engineering (CIP 14) and are treated as such if one limits a study to programs at the 2-digit CIP level. Otherwise, we use [FYE proxies](art-060-fye-proxies.html)---our estimates of the degree-granting engineering programs (6-digit CIP level) that FYE students would have declared had they not been required to enroll in FYE.
+
+Our procedure for identifying starters accommodate both special cases.
+
+
+
+
+
+
+
+
+## Definitions
+
+starter
+
+: A degree-seeking student in their initial term enrolled in a degree-granting program. 
+
+entry term
+
+: A student's first term in the database. 
+
+start term
+
+: The first term in which a student can be considered a starter. Identical to the entry term unless the student enters as undecided/unspecified. 
+
+undecided/unspecified
+
+: The MIDFIELD taxonomy includes the non-IPEDS code (CIP 999999) for Undecided or Unspecified indicating instances in which a student has not declared a major or an institution had not recorded a program. 
+
+FYE
+
+: First-Year Engineering program, a common-first-year curriculum that is a prerequisite for declaring an engineering major at some US institutions. Denoted by its own CIP code, FYE is not a degree-granting program. 
+
+FYE proxy
+
+: Our estimate of the degree-granting engineering program in which an FYE student would have enrolled had they not been required to enroll in FYE. The proxy, a 6-digit CIP code, denotes the program of which the FYE student can be considered a starter.
+
+
+
+
+## Method
+
+We use `student` and `term` to identify starters. 
+
+1. Filter the source SURs for data sufficiency and degree-seeking. 
+
+2. Filter for a student's first term (ignoring terms with a CIP for  undecided/unspecified).  
+
+3. Identify the program(s) of which a student can be considered a starter. Substitute an FYE proxy when a starting program is FYE. 
+
+4. Filter by program. 
+
+*Caveat:* &nbsp; The Student Unit Records included with midfieldr and midfielddata are practice data, not research data, suitable for practice working with SURs but not for drawing inferences about program attributes or student experiences.
+
+
+
+
+
+## Load data
+
+*Open.* &nbsp; If you are writing your own script to follow along, we use these packages in this vignette:
+
+```{r}
+# midfieldr: Starters
+
+# Packages
+library("midfieldr")
+library("midfielddata")
+suppressPackageStartupMessages(library("data.table"))
+```
+
+*Load.* &nbsp; MIDFIELD practice data tables. Described in [Getting started](art-000-getting-started.html).
+
+```{r}
+# Load practice data
+data(student, term, package = "midfielddata")
+```
+
+*Loads with midfieldr.* 
+
+- `study_programs` (derived in [Programs](art-040-programs.html#case-study)). 
+
+- `fye_proxy` (derived in [FYE proxies](art-060-fye-proxies.html)). 
+
+
+
+
+
+
+
+
+
+
+
+
+## Initial processing
+
+*(Optional) Select.* &nbsp; Columns required by midfieldr functions. Code reproduced from [Getting started](art-000-getting-started.html#reusable-code).  
+
+```{r}
+# Optional. Copy of source files with all variables
+source_student <- copy(student)
+source_term    <- copy(term)
+
+# Optional. Select variables required by midfieldr functions
+student <- select_required(source_student)
+term    <- select_required(source_term)
+```
+
+*Work.* &nbsp; Using `copy()` avoids *by-reference* effects  [@data.table-reference-semantics].
+
+```{r}
+# Working data frame
+DT <- copy(term)
+```
+
+*Data sufficiency.*  &nbsp; Filter to satisfy the data sufficiency criterion. Code reproduced from [Data sufficiency](art-020-data-sufficiency.html#reusable-code).
+
+```{r}
+# Filter for data sufficiency, output unique IDs
+DT <- add_timely_term(DT, term)
+DT <- add_data_sufficiency(DT, term)
+DT <- DT[data_sufficiency == "include", .(mcid)]
+DT <- unique(DT)
+```
+
+*Degree seeking.* &nbsp; Filter to retain degree seeking students via an inner join with `student`. Code reproduced from [Degree seeking](art-030-degree-seeking.html#reusable-code).  
+
+```{r}
+# Filter for degree seeking, output unique IDs
+DT <- student[DT, .(mcid), on = c("mcid"), nomatch = NULL]
+DT <- unique(DT)
+```
+
+We preserve this data frame as a baseline for examples in the vignette.   
+
+```{r}
+baseline <- copy(DT)
+```
+
+
+
+
+## Isolate the start term
+
+The *start term* is the first term in which a student can be considered a starter, that is, they are degree-seeking and not recorded as undecided/unspecified. 
+
+*Add variables*. &nbsp;  Left join to add terms and CIPs for these students. 
+
+```{r}
+# Term into DT left join
+DT <- term[DT, .(mcid, term, cip6), on = c("mcid")]
+DT[]
+```
+
+*Filter.*  &nbsp; We remove observations of undecided/unspecified (CIP 999999). Any rows remaining for the same IDs will have CIPs of degree-granting program (or FYE), allowing us to infer their preferred starting programs. 
+
+```{r}
+# Remove undecided/unspecified
+DT <- DT[!cip6 %like% "999999"]
+```
+
+*Filter.* &nbsp; Order rows by ID and term, then filter to retain the start term observation. Given the (remote) chance that a student enrolls in two majors in their start term, we use `.SD[which.min()]` instead of  the faster  `.SD[1]`. 
+
+```{r}
+# Retain observations of the earliest remaining terms by ID
+setorderv(DT, cols = c("mcid", "term"))
+DT <- DT[, .SD[which.min(term)], by = "mcid"]
+```
+
+*Filter.* &nbsp; Remove unnecessary variables and filter for unique observations. 
+
+```{r}
+# Unique combinations of ID and CIP
+DT <- DT[, .(mcid, cip6)]
+DT <- unique(DT)
+DT[]
+```
+
+
+
+
+
+
+## Starters without FYE
+
+If and only if our study excluded Engineering programs that require FYE, the 
+data frame just derived would be the desired bloc of starters. 
+
+In such a case, we would rename `cip6` to `start` to make explicit that the CIP codes in this column represent programs of which the students can be considered starters. The code would have the form  
+
+    # Not run 
+    X <- X[, .(mcid, start = cip6)]
+
+which would retain the ID variable and change the name of the CIP variable. 
+
+
+
+
+
+## Starters with FYE
+
+*Add a variable.*  &nbsp; Merge `fye_proxy` with the working data frame and drop the `term` variable. The left join introduces NA in the proxy column for students not assigned an FYE proxy.  
+
+```{r}
+# Join the proxies to the working data frame
+DT <- fye_proxy[DT, on = c("mcid")]
+DT[]
+```
+
+*Create a variable.*  &nbsp;  Estimated starting programs for FYE students are in the `proxy` column. Actual, recorded starting programs for non-FYE students are in the `cip6` column. Create the `start` column to combine the two. 
+
+```{r}
+# Combine all starting CIPs
+DT[, start := fcase(
+  cip6 == "140102", proxy,
+  cip6 != "140102", cip6
+)]
+DT[]
+```
+
+*Select.* &nbsp;  Omit unnecessary columns. 
+
+```{r}
+# Omit unnecessary columns.
+DT[, `:=`(cip6 = NULL, proxy = NULL)]
+DT[]
+```
+
+
+
+
+
+
+
+### Closer look
+
+Examining the records of selected students in detail.
+
+*Example 1.* &nbsp; In our results, this student is a starter in CIP 140801 (Civil Engineering).
+
+```{r}
+#| collapse: true
+
+# Analysis result
+DT[mcid == "MID25816220"]
+```
+
+An excerpt from their record in `term` shows them enrolled in CIP 999999 (undecided/unspecified) for three terms followed by CIP 140801. While they entered as undecided/unspecified, we consider them a starter in Civil Engineering.   
+
+```{r}
+#| collapse: true
+
+# Order rows of source table
+setkeyv(term, c("mcid", "term"))
+
+# Sequence of term records
+term[mcid == "MID25816220", .(mcid, term, cip6)][1:5]
+```
+
+*Example 2.* &nbsp; In our results, this student is a starter in CIP 140701 (Chemical Engineering).  
+
+```{r}
+#| collapse: true
+
+# Analysis result
+DT[mcid == "MID25783178"]
+```
+
+An excerpt from their record in `term` shows them enrolled in CIP 140102 (FYE) for five terms followed by CIP 140701. They transitioned post-FYE to Chemical Engineering and we consider them a starter in that program. 
+
+```{r}
+#| collapse: true
+
+# Sequence of term records
+term[mcid == "MID25783178", .(mcid, term, cip6)][1:7]
+```
+
+*Example 3.* &nbsp;  In our results, this student is a starter in CIP 140801 (Civil Engineering). 
+
+```{r}
+#| collapse: true
+
+# Analysis result
+DT[mcid == "MID25783162"]
+```
+
+An excerpt from their record in `term` shows them enrolled in CIP 140102 (FYE) for two terms followed by CIP 520301 (Accounting). Because they transitioned post-FYE to a non-engineering major, we consider them a starter in their imputed FYE proxy program, in this case Civil Engineering. 
+
+```{r}
+#| collapse: true
+
+# Sequence of term records
+term[mcid == "MID25783162", .(mcid, term, cip6)][1:4]
+```
+
+
+## Filter by program
+
+*Filter.*  &nbsp; Because "starter" usually means "starter in specific programs," this bloc concludes with a filter by program. Code adapted from [Groupings](art-090-groupings.html#program-labels). 
+
+```{r}
+# Rename cip6 as start
+join_labels <- copy(study_programs)
+join_labels <- join_labels[, .(program, start = cip6)]
+
+# Filter by program
+DT <- join_labels[DT, on = c("start"), nomatch = NULL]
+DT[, start := NULL]
+DT <- unique(DT)
+DT[]
+```
+
+```{r}
+#| eval: false
+#| echo: false
+
+# Run manually 
+# Writing external files
+setkey(DT, mcid)
+setkey(DT, NULL)
+study_starters <- copy(DT)
+usethis::use_data(study_starters, overwrite = TRUE)
+```
+
+
+
+
+
+
+
+
+
+## Reusable code
+
+*Preparation.* &nbsp; The baseline data frame we preserved earlier is the intake for this section.
+
+```{r}
+DT <- copy(baseline)
+```
+
+*Starters.* &nbsp; A summary code chunk for ready reference. 
+
+```{r}
+# Isolate starting term
+DT <- term[DT, .(mcid, term, cip6), on = c("mcid")]
+DT <- DT[!cip6 %like% "999999"]
+setorderv(DT, cols = c("mcid", "term"))
+DT <- DT[, .SD[which.min(term)], by = "mcid"]
+DT <- DT[, .(mcid, cip6)]
+DT <- unique(DT)
+
+# For starters without FYE, rename cip6 as start, omit the proxy steps 
+
+# Continue for starters with FYE
+DT <- fye_proxy[DT, .(mcid, cip6, proxy), on = c("mcid")]
+DT[, start := fcase(
+  cip6 == "140102", proxy,
+  cip6 != "140102", cip6
+)]
+DT <- DT[, .(mcid, start)]
+
+# Filter by program on start
+join_labels <- copy(study_programs)
+join_labels <- join_labels[, .(program, start = cip6)]
+DT <- join_labels[DT, on = c("start"), nomatch = NULL]
+DT[, start := NULL]
+DT <- unique(DT)
+```
+
+*Verify built-in data.* &nbsp; `study_starters`, included with midfieldr, contains the case study information developed above. Here we verify that the two data frames have the same content.  
+
+```{r}
+#| collapse: true
+
+# Demonstrate equivalence
+same_content(DT, study_starters)
+```
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+
+```{r}
+#| echo: false
+
+# to change the CSS file
+# per https://github.com/rstudio/rmarkdown/issues/732
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{css}
+blockquote {
+    padding:     10px 20px;
+    margin:      0 0 20px;
+    border-left: 0px
+}
+caption {
+    color:       #525252;
+    text-align:  left;
+    font-weight: normal;
+    font-size:   medium;
+    line-height: 1.5;
+}
+```

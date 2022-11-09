@@ -5,7 +5,7 @@
 \alias{toy_term}
 \title{Term data for examples}
 \format{
-\code{data.table} with 169 rows and 6 columns keyed by
+\code{data.table} with 150 rows and 5 columns keyed by
 student ID.
 \describe{
 
@@ -21,16 +21,14 @@ student ID.
 
  \item{level}{Character, 01 Freshman, 02 Sophomore, etc.}
 
- \item{hours_term}{Numeric, credit hours earned in the term.}
-
 }
 }
 \usage{
 toy_term
 }
 \description{
-A small subset by row and column of the MIDFIELD term table
-for use in package examples.
+A small subset of the \code{term} practice data for use in package 
+and vignette examples.
 }
 \seealso{
 Other toy-data: 

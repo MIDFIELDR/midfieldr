@@ -1,0 +1,633 @@
+---
+title: "Groupings"
+date: "`r Sys.Date()`"
+link-citations: yes
+bibliography: ../inst/REFERENCES.bib
+output: rmarkdown::html_vignette
+csl: ../inst/information-science-and-technology.csl
+vignette: >
+  %\VignetteIndexEntry{Groupings}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+nocite: |
+  @Dowle+Srinivasan:2021:data.table
+resource_files: |
+---
+
+```{r setup}
+#| include: false
+
+# code chunks
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = FALSE,
+  comment = "#>",
+  error = FALSE
+)
+
+# figures
+knitr::opts_chunk$set(
+  fig.path = "../man/figures/art-090-groupings-",
+  fig.width = 6,
+  fig.asp = 1 / 1.6,
+  out.width = "70%",
+  fig.align = "center"
+)
+
+# inline numbers
+knitr::knit_hooks$set(inline = function(x) {
+  if (!is.numeric(x)) {
+    x
+  } else if (x >= 10000) {
+    prettyNum(round(x, 2), big.mark = ",")
+  } else {
+    prettyNum(round(x, 2))
+  }
+})
+
+# data.table printout
+options(
+  datatable.print.nrows = 6,
+  datatable.print.topn = 3,
+  datatable.print.class = TRUE
+)
+
+# accented text
+accent <- function (text_string){
+    kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
+}
+```
+
+We add grouping variables from the MIDFIELD data tables to our blocs in progress. We select these variables to provide the aggregating categories we want for a particular metric. Program labels and student demographics are two of the most common sets of grouping variables we use. 
+
+This vignette in the MIDFIELD workflow.   
+
+1. Planning  
+1. Initial processing 
+1. Blocs  
+1. `r accent("Groupings")`  
+    - `r accent("Program labels")` 
+    - `r accent("Demographics")` 
+    - `r accent("Other variables")`  
+1. Metrics  
+1. Displays  
+
+
+
+## Method
+
+We join grouping variables to a bloc after initial processing (data sufficiency and degree seeking) and any other subsetting criteria that define a bloc. The two most common join operations are:
+
+- *Program labels* &nbsp; using an inner join on CIPs. Inner joins are described in detail in [Degree seeking](art-030-degree-seeking.html).
+
+- *Demographics* &nbsp; using a left join on IDs. Left joins are described in detail in [Blocs](art-050-blocs.html). 
+
+Other variables too can be usefully joined for grouping operations. We include examples from `student`, `term`, and `degree`. 
+
+
+
+*Caveat:* &nbsp; The Student Unit Records included with midfieldr and midfielddata are practice data, not research data, suitable for practice working with SURs but not for drawing inferences about program attributes or student experiences.
+
+
+
+
+
+
+
+
+## Load data
+
+*Open.* &nbsp; If you are writing your own script to follow along, we use these packages in this vignette:
+
+
+```{r}
+# midfieldr: Groupings
+
+# Packages
+library("midfieldr")
+library("midfielddata")
+suppressPackageStartupMessages(library("data.table"))
+```
+
+*Load.* &nbsp; MIDFIELD practice data tables. Described in [Getting started](art-000-getting-started.html).
+
+```{r}
+# Load practice data
+data(student, term, degree, package = "midfielddata")
+```
+
+*Loads with midfieldr.* 
+
+- `study_programs` (derived in [Programs](art-040-programs.html#case-study)).
+
+
+
+
+
+
+
+## Initial processing
+
+*(Optional) Select.* &nbsp; Columns required by midfieldr functions. Code reproduced from [Getting started](art-000-getting-started.html#reusable-code). 
+
+```{r}
+# Optional. Copy of source files with all variables
+source_student <- copy(student)
+source_term    <- copy(term)
+source_degree  <- copy(degree)
+
+# Optional. Select variables required by midfieldr functions
+student <- select_required(source_student)
+term    <- select_required(source_term)
+degree  <- select_required(source_degree)
+```
+
+*Work.* &nbsp; Using `copy()` avoids *by-reference* effects  [@data.table-reference-semantics].
+
+```{r}
+# Working data frame
+DT <- copy(term)
+```
+
+*Data sufficiency.*  &nbsp; Filter to satisfy the data sufficiency criterion. Code reproduced from [Data sufficiency](art-020-data-sufficiency.html#reusable-code).
+
+```{r}
+# Filter for data sufficiency, output unique IDs
+DT <- add_timely_term(DT, term)
+DT <- add_data_sufficiency(DT, term)
+DT <- DT[data_sufficiency == "include", .(mcid)]
+DT <- unique(DT)
+```
+
+*Degree seeking.* &nbsp; Filter to retain degree seeking students via an inner join with `student`. Code reproduced from [Degree seeking](art-030-degree-seeking.html#reusable-code).  
+
+```{r}
+# Filter for degree seeking, output unique IDs
+DT <- student[DT, .(mcid), on = c("mcid"), nomatch = NULL]
+DT <- unique(DT)
+```
+
+*Baseline copies.* &nbsp; We preserve the current data frame for examples that join by ID. 
+
+```{r}
+# Reusable starting state with ID
+baseline_mcid <- copy(DT)
+baseline_mcid[]
+```
+
+We join a CIP variable for examples that join by CIP. 
+
+```{r}
+# Reusable starting state with CIP
+baseline_cip <- term[DT, .(mcid, cip6), on = c("mcid")]
+baseline_cip <- unique(baseline_cip)
+baseline_cip[]
+```
+
+
+
+
+
+## Program labels
+
+At this point in a typical workflow, we have an SUR bloc in progress and a data frame of program labels (similar to `study_programs`). Both data frames have a 6-digit CIP variable to join by.
+
+Program labels serve two main functions:
+
+- *Filtering variable* &nbsp; to finalize a bloc. For example, "starters" or "graduates" usually mean starters or graduates *in specific programs*. Thus a bloc procedure typically concludes with a program filter as in  [Ever-enrolled](art-050-blocs.html#filter-by-program), [Starters](art-070-starters.html#filter-by-program), or [Graduates](art-080-graduates.html#filter-by-program). 
+
+- *Grouping variable* &nbsp; for summarizing data. Having filtered a bloc to retain records in specific programs, the program label is retained and used with other grouping variables such as race/ethnicity and sex when computing and comparing metrics. Because of its role in groupings, the program label join is developed in detail in this vignette.
+
+*Rationale for the inner join.* &nbsp; An inner join accomplishes two tasks: adds a column of program labels to the bloc; and filters the bloc to retain only those observations with CIPs matching the desired programs. 
+
+*Work.* &nbsp; The CIP baseline data frame we preserved earlier is the intake for this section. 
+
+```{r}
+# Reusable starting state
+DT <- copy(baseline_cip)
+```
+
+*Filtering.* &nbsp; An inner join adds the program label and filters for matching CIPs. 
+
+```{r}
+# Join program labels via inner join
+DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
+DT[]
+```
+
+We can see the filtering effect by noting that the baseline data frame had `r nrow(baseline_cip)` observations while the inner join on the selected programs returned `r nrow(DT)` observations. We can also verify the selected programs, e.g., 
+
+```{r}
+#| collapse: true
+
+# Verify program labels
+sort(unique(DT$program))
+
+# Verify program CIP codes
+sort(unique(DT$cip6))
+```
+
+Students can migrate between majors having different 6-digit CIP codes, but those codes might be grouped under a single program label. A common example in Engineering is the "Industrial/Systems Engineering" label we assign to following CIP codes: 
+
+- 142701 Systems Engineering
+- 143501 Industrial Engineering
+- 143601 Manufacturing Engineering
+- 143701 Operations Research
+
+A student migrating among these CIPs would appear in multiple rows in the current bloc, yet we would not consider their change of CIP a change of major. The next step addresses this anomaly.  
+
+*Select.* &nbsp; Drop the CIP code.  
+
+```{r}
+# Prepare to filter
+DT[, cip6 := NULL]
+DT[]
+```
+
+*Filter.* &nbsp; Filter for unique observations.   
+
+```{r}
+# Case study ever enrolled
+DT <- unique(DT)
+DT[]
+```
+
+The difference in the number of observations indicates that this example includes one student in ISE with two CIPs. We examine that student's record below. 
+
+### Closer look
+
+Examining the records of selected students in detail.
+
+*Example 1.* &nbsp; This student's `term` record includes CIP 142701 (Systems Engineering) and CIP 143501 (Industrial Engineering), both of which are majors in our combined Industrial/Systems Engineering (ISE) major,  illustrating our rationale for filtering for unique observations by ID/program pairs and not ID/CIP pairs.
+
+```{r}
+#| collapse: true
+
+# All terms, one ID 
+x <- term[mcid == "MID26530540", .(mcid, cip6)]
+
+# Join case study program labels
+x <- study_programs[x, on = c("cip6")]
+
+# Unique CIPs for this student
+unique(x)
+```
+
+
+
+
+
+
+## Demographics
+
+Demographic variables (race/ethnicity and sex) are regularly left-joined to blocs for grouping and summarizing.
+
+*Work.* &nbsp; The ID baseline data frame we preserved earlier is the intake for this section. 
+
+```{r}
+# Reusable starting state
+DT <- copy(baseline_mcid)
+DT[]
+```
+
+*Select.* &nbsp; From `student`, select the join-by variable (student ID) and the variables we want to add. By selecting columns here, we don't have to select columns in the join operation to follow.  
+
+```{r}
+# Extract desired columns
+cols_we_want <- student[, .(mcid, race, sex)]
+cols_we_want[]
+```
+
+*Add variables.* &nbsp; Left join two data frames, retaining all variables from both.  
+
+```{r}
+# Add demographics
+DT <- cols_we_want[DT, on = c("mcid")]
+DT[]
+```
+
+
+### Unknown `race` or `sex` 
+
+We often want to remove records for which race/ethnicity or sex are "unknown". 
+
+```{r}
+#| collapse: true
+
+# Display values
+unique(DT$race)
+unique(DT$sex)
+```
+
+*Filter.* &nbsp;  In data.table syntax, we can use `x %ilike% pattern` as a case-insensitive wrapper around `grepl()` to find matches and partial matches. 
+
+```{r}
+# Remove records with unknown race/ethnicity, if any
+DT <- DT[!race %ilike% "unknown"]
+DT[]
+```
+
+In this example, we have no "unknown" values for `sex`. If we had, the filter would be similar, e.g.
+
+```{r}
+#| eval: false
+# Remove records with unknown sex, if any
+DT[!sex %ilike% "unknown"]
+```
+
+Alternatively, these statements can be combined by negating (`!`) an OR (`|`) statement. 
+
+```{r}
+#| eval: false
+# Remove unknowns in either of two columns 
+DT[!(race %ilike% "unknown" | sex %ilike% "unknown")]
+```
+
+With "unknowns" removed, the `race` and `sex` values are: 
+
+```{r}
+#| collapse: true
+
+sort(unique(DT$race))
+sort(unique(DT$sex))
+```
+
+
+
+
+
+
+
+
+
+
+### Add `origin`
+
+`origin` is a demographic variable we use to distinguish "domestic" students from "international" students. The variable is a recoding of the `race` variable. 
+
+*Add a variable.* &nbsp; Assuming that race/ethnicity "unknown" have been removed, we use a conditional assignment to create the "origin" variable. 
+
+```{r}
+# Two values for origin
+DT[, origin := fifelse(race == "International", "International", "Domestic")]
+DT[]
+```
+
+With "unknowns" removed, the `origin` values are: 
+
+```{r}
+#| collapse: true
+
+sort(unique(DT$origin))
+```
+
+
+
+### Add `people`
+
+`people` is a demographic variable we use in many of our summaries. The variable combines the `race` and `sex` variables.
+
+*Add a variable.* &nbsp; We combine race/ethnicity and sex to create a grouping variable. 
+
+```{r}
+DT[, people := paste(race, sex)]
+DT[]
+```
+
+With "unknowns" removed, the `people` values are: 
+
+```{r}
+#| collapse: true
+
+sort(unique(DT$people))
+```
+
+
+
+
+## Other variables
+
+Depending on one's research question, any number of MIDFIELD variables might be used for grouping records. In this section we illustrate joining other variables from `student`, `term`, and `degree` to a working data frame. 
+
+We use the original source files copied earlier because some variables we want to use were removed when we applied `select_required()`. 
+
+
+
+### From `student` 
+
+*Work.* &nbsp; Reset the working data frame. 
+
+```{r}
+# Reusable starting state
+DT <- copy(baseline_mcid)
+DT[]
+```
+
+The available variables in the source `student` data are: 
+
+```{r}
+#| collapse: true
+
+# Variables in the practice data set
+names(source_student)
+```
+
+*Select.* &nbsp; Select our variables and the key (ID). 
+
+```{r}
+# Extract desired columns
+cols_we_want <- source_student[, .(mcid, transfer, hours_transfer)]
+```
+
+*Add variables.* &nbsp; Left join to add new columns. 
+
+```{r}
+# Add desired columns
+cols_we_want[DT, on = c("mcid")]
+```
+
+
+
+
+
+
+
+
+### From `term` 
+
+
+*Work.* &nbsp; Reset the working data frame. 
+
+```{r}
+# Reusable starting state
+DT <- copy(baseline_mcid)
+```
+
+The available variables in the source `term` data are: 
+
+```{r}
+#| collapse: true
+
+# Variables in the practice data set
+names(source_term)
+```
+
+*Select.* &nbsp; Select our variables and the key (ID). 
+
+```{r}
+# Extract desired columns
+cols_we_want <- source_term[, .(mcid, term, hours_term, gpa_term)]
+```
+
+*Add variables.* &nbsp; Left join to add new columns. 
+
+```{r}
+# Add desired columns
+cols_we_want[DT, on = c("mcid")]
+```
+
+```{r}
+#| echo: false
+
+x <- cols_we_want[DT, on = c("mcid")]
+y <- nrow(x)
+z <- length(unique(x$mcid))
+```
+
+*Rows in X with multiple matches in Y.* &nbsp; Consistent with the left join matching rules, students in enrolled in multiple terms will have multiple rows in the joined data frame. Thus this result has `r y` observations of `r z` unique students. 
+
+
+
+
+
+
+### From `degree` 
+
+
+*Work.* &nbsp; Reset the working data frame. 
+
+```{r}
+# Reusable starting state
+DT <- copy(baseline_mcid)
+DT[]
+```
+
+The available variables in  the source `degree` data are: 
+
+```{r}
+#| collapse: true
+
+# Variables in the practice data set
+names(source_degree)
+```
+
+*Select.* &nbsp; Select two variables and the key (ID). 
+
+```{r}
+# Extract desired columns
+cols_we_want <- source_degree[, .(mcid, cip6, degree)]
+```
+
+*Add variables.* &nbsp; Left join to add new columns. 
+
+```{r}
+# Add desired columns
+cols_we_want[DT, on = c("mcid")]
+```
+
+
+```{r}
+#| echo: false
+
+x <- cols_we_want[DT, on = c("mcid")]
+y <- length(unique(x$mcid))
+z <- sum(complete.cases(x))
+```
+
+*Rows in X with no match in Y.* &nbsp; Consistent with the left join matching rules, students in `DT` who do not graduate will have NA values in the  `term_degree` and `cip6` columns of the joined data tables. Thus this result has `r y` unique students of whom `r z` earned degrees. 
+
+
+
+
+
+
+
+
+
+
+
+
+## Reusable code
+
+### Program labels
+
+*Preparation.* &nbsp; The CIP baseline data frame we preserved earlier is the intake for this section.  
+
+```{r}
+DT <- copy(baseline_cip)
+```
+
+*Program labels.* &nbsp; A summary code chunk for ready reference. In gathering a bloc of *starters*, the join-by variable might be `start` instead of `cip6`. 
+
+```{r}
+# Filter by program
+DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
+DT[, cip6 := NULL]
+DT <- unique(DT)
+```
+
+### Demographics 
+
+*Preparation.* &nbsp; The ID baseline data frame we preserved earlier is the intake for this section. 
+
+```{r}
+DT <- copy(baseline_mcid)
+```
+
+*Demographics.* &nbsp; A summary code chunk for ready reference.   
+
+```{r}
+# Join race/ethnicity and sex
+cols_we_want <- student[, .(mcid, race, sex)]
+DT <- cols_we_want[DT, on = c("mcid")]
+```
+
+
+
+
+
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+```{r}
+#| echo: false
+
+# to change the CSS file
+# per https://github.com/rstudio/rmarkdown/issues/732
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{css}
+blockquote {
+    padding:     10px 20px;
+    margin:      0 0 20px;
+    border-left: 0px
+}
+caption {
+    color:       #525252;
+    text-align:  left;
+    font-weight: normal;
+    font-size:   medium;
+    line-height: 1.5;
+}
+```

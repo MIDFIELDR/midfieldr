@@ -82,11 +82,11 @@
 # -------------------------------------------------------------------
 
 #' Student data for examples
+#' 
+#' A small subset of the \code{student} practice data for use in package 
+#' and vignette examples.
 #'
-#' A small subset by row and column of the MIDFIELD student table
-#' for use in package examples.
-#'
-#' @format \code{data.table} with 100 rows and 6 columns keyed by
+#' @format \code{data.table} with 99 rows and 4 columns keyed by
 #' student ID.
 #' \describe{
 #'
@@ -94,12 +94,6 @@
 #'
 #'  \item{institution}{Character, de-identified institution name, e.g.,
 #'   Institution A, Institution B, etc.}
-#'
-#'  \item{transfer}{Character, stating whether the student is a First-Time in
-#'  College students or a First-Time Transfer student.}
-#'
-#'  \item{hours_transfer}{Numeric, transfer hours accepted at the
-#'  institution.}
 #'
 #'  \item{race}{Character, race/ethnicity as self-reported by the student,
 #'  e.g., Asian, Black, Latine, etc.}
@@ -117,8 +111,8 @@
 
 #' Course data for examples
 #'
-#' A small subset by row and column of the MIDFIELD course table
-#' for use in package examples.
+#' A small subset of the \code{course} practice data for use in package 
+#' and vignette examples.
 #'
 #' @format \code{data.table} with 4616 rows and 6 columns keyed by
 #' student ID.
@@ -148,10 +142,10 @@
 
 #' Term data for examples
 #'
-#' A small subset by row and column of the MIDFIELD term table
-#' for use in package examples.
+#' A small subset of the \code{term} practice data for use in package 
+#' and vignette examples.
 #'
-#' @format \code{data.table} with 169 rows and 6 columns keyed by
+#' @format \code{data.table} with 150 rows and 5 columns keyed by
 #' student ID.
 #' \describe{
 #'
@@ -167,8 +161,6 @@
 #'
 #'  \item{level}{Character, 01 Freshman, 02 Sophomore, etc.}
 #'
-#'  \item{hours_term}{Numeric, credit hours earned in the term.}
-#'
 #' }
 #'
 #' @family toy-data
@@ -179,10 +171,10 @@
 
 #' Degree data for examples
 #'
-#' A small subset by row and column of the MIDFIELD degree table
-#' for use in package examples.
+#' A small subset of the \code{degree} practice data for use in package 
+#' and vignette examples.
 #'
-#' @format \code{data.table} with 64 rows and 5 columns keyed by
+#' @format \code{data.table} with 65 rows and 4 columns keyed by
 #' student ID.
 #' \describe{
 #'
@@ -196,9 +188,6 @@
 #'
 #'  \item{cip6}{Character, 6-digit CIP code of program in which a student
 #'  earns a degree.}
-#'
-#'  \item{degree}{Character, type of degree awarded, e.g., Bachelor's
-#'  Degree, Bachelor of Arts, Bachelor of Science, etc.}
 #'
 #' }
 #'
@@ -275,32 +264,6 @@
 "study_observations"
 
 
-# -------------------------------------------------------------------
-
-#' Case-study IDs
-#'
-#' Data table of IDs of students ever enrolled in the four programs of the study 
-#' (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) after 
-#' filtering for data sufficiency, degree seeking, and program. Provided for 
-#' the convenience of vignette users. 
-#'
-#' @format \code{data.table} with 7133 rows and 1 column.
-#' 
-#' \describe{
-#'
-#'  \item{mcid}{Character, anonymized student identifier}
-#'
-#' }
-#'
-#' @family case-study-data
-#'
-"study_mcid"
-
-
-
-
-
-
 
 
 
@@ -352,30 +315,27 @@
 
 #' Case-study starters
 #' 
-#' Data table of students admitted in their first term to one of the four 
-#' engineering programs in the case study. Includes substitutions using FYE 
-#' proxies for students required to enroll in FYE programs. Provided for the 
-#' convenience of vignette users. 
+#' Data table of students considered starters in one of the four engineering 
+#' programs in the case study (Civil, Electrical, Industrial/Systems, and 
+#' Mechanical Engineering). Includes substitutions of FYE proxies for students 
+#' required to enroll in FYE programs. Provided for the convenience of vignette 
+#' users. 
 #' 
-#' Using the IDs of all students ever enrolled in the four programs 
-#' of the study (Civil, Electrical, Industrial/Systems, and Mechanical 
-#' Engineering), each student's first term CIP code is obtained from the 
-#' \code{term} data table. For a student admitted to an FYE program, 
-#' their CIP code is replaced by their FYE proxy from the \code{fye_proxy} 
-#' data set included with midfieldr. The data frame is filtered to retain 
-#' students starting in one of the four majors in the case study. 
+#' The \code{student} and \code{term} source data are filtered for data 
+#' sufficiency and degree-seeking. We filter for a student’s first term 
+#' (ignoring terms with a CIP for undecided/unspecified). We identify the 
+#' program(s) of which a student can be considered a starter, substituting  
+#' an FYE proxy when a starting program is FYE. We then filter by program. 
 #' 
 #' The CIP variable is renamed \code{start} to distinguish it from other 
 #' midfieldr \code{cip6} variables because \code{start} contains estimated 
 #' program codes while the \code{cip6} variables contain actual student records. 
 #' 
-#' @format \code{data.table} with 5790 rows and 3 columns.
+#' @format \code{data.table} with 5790 rows and 2 columns.
 #' 
 #' \describe{
 #' 
 #'  \item{mcid}{Character, anonymized student identifier}
-#'
-#'  \item{start}{Character, 6-digit CIP program codes.}
 #'  
 #'  \item{program}{Character, abbreviated labels for four engineering programs. 
 #'  Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE" 
@@ -386,3 +346,29 @@
 #' @family case-study-data
 #'
 "study_starters"
+
+
+# -------------------------------------------------------------------
+
+#' Case-study ever enrolled
+#' 
+#' Data table of IDs of students ever enrolled in the four programs of the study 
+#' (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) after 
+#' filtering for data sufficiency, degree seeking, and program. Provided for 
+#' the convenience of vignette users. 
+#' 
+#' @format \code{data.table} with 7660 rows and 2 columns.
+#' 
+#' \describe{
+#' 
+#'  \item{mcid}{Character, anonymized student identifier}
+#'  
+#'  \item{program}{Character, abbreviated labels for four engineering programs. 
+#'  Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE" 
+#'  (Industrial/Systems Engineering), and  "ME" (Mechanical Engineering).}
+#'
+#' }
+#'
+#' @family case-study-data
+#'
+"study_ever"

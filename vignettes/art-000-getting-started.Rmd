@@ -46,6 +46,18 @@ knitr::knit_hooks$set(inline = function(x) {
     prettyNum(round(x, 2))
   }
 })
+
+# data.table printout
+options(
+  datatable.print.nrows = 6,
+  datatable.print.topn = 3,
+  datatable.print.class = TRUE
+)
+
+# accented text
+# accent <- function (text_string){
+#     kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
+# }
 ```
 
 
@@ -55,10 +67,12 @@ knitr::knit_hooks$set(inline = function(x) {
 
 The MIDFIELD Student Unit Records (SUR) are registrar's student-level data compiled by an institution and anonymized and curated by the MIDFIELD data steward. SURs include personal information (e.g., age, sex, and race/ethnicity), enrollment information (e.g., institution, program, and grade level), and academic information (e.g., courses, grades, and degrees). MIDFIELD data are organized into four tables---student, course, term, and degree---keyed by student ID. 
 
-From the MIDFIELD *research* data, we've taken a proportionate stratified sample and made it available as a *practice* data set in  [midfielddata](https://midfieldr.github.io/midfielddata/)---an R data package containing anonymized SURs for nearly 98,000 undergraduates at 12 institutions from 1987--2016. Table 1 briefly introduces the four data tables.
+From the MIDFIELD *research* data, we've taken a proportionate stratified sample and made it available as a *practice* data set in  [midfielddata](https://midfieldr.github.io/midfielddata/)---an R data package containing anonymized SURs for nearly 98,000 undergraduates at 12 institutions from 1987--2016. Table 1 briefly introduces the four practice data tables.
 
 ```{r}
 #| echo: false
+
+library("midfieldr")
 
 wrapr::build_frame(
     "Practice data table", "Each row is", "No. of rows", "No. of columns", "Memory" |
@@ -77,28 +91,97 @@ wrapr::build_frame(
 
 
 
+
+
+
 ## Method
 
-Prerequisites: 
+With required packages installed (per the [main page](../index.html)), we start  with midfieldr by: 
 
-- [Requirements.](../index.html#requirements) R and data.table.
-- [midfieldr.](../index.html#install-midfieldr) Install and check. 
-- [midfielddata.](../index.html#install-midfielddata) Install and check. 
+- Reviewing R help functions
+- Inspecting the four practice data tables 
+- Introducing midfieldr functions
 
-In this vignette, we
+*Names of source data tables.* &nbsp; When a source data table is an argument of a midfieldr function, the default names are `student`, `course`, `term`, and `degree`. Alternate names can be used if desired. 
 
-- Load the practice data from midfielddata
-- Inspect the four data tables 
-- Preview the midfieldr functions 
+*Names of variables.* &nbsp; midfieldr functions are designed to work with variables names given in the source data tables with no mechanism for substitutions. Help pages denote the variable names that are required.  
 
-*Caveat:* The Student Unit Records included with midfieldr and midfielddata are practice data, not research data, suitable for practice working with SURs but not for drawing inferences about program attributes or student experiences.
+*Caveat.*  &nbsp;  The Student Unit Records included with midfieldr and midfielddata are practice data, not research data, suitable for practice working with SURs but not for drawing inferences about program attributes or student experiences.
 
 
 
 
-## Load practice data
 
-*Start a script*. If you are writing your own script to follow along, we use these packages in this vignette:
+## R help
+
+This section is primarily for users fairly new to R. R's built-in help system is an essential part of solving problems you might encounter. Here we provide a short list of R help features applied to midfieldr content. 
+
+To start, load the midfieldr package. 
+
+```{r}
+# Type in the Console
+library("midfieldr")
+```
+
+*Help function.*  &nbsp;  From the R Console you can use `?` or `help()`. For example, the following commands yield the same result:
+
+```{r}
+#| eval: false
+
+# Type in the Console
+help("add_timely_term")
+? add_timely_term
+```
+
+The help function can also be used to learn more about data sets included with midfieldr and midfielddata. 
+
+```{r}
+#| eval: false
+
+# Type in the Console
+? cip
+```
+
+*Data.* &nbsp; Use the `data()` function to view the names of the data sets included with a package. 
+
+```{r}
+#| eval: false
+
+# Type in the Console
+data(package = "midfieldr")
+#> Data sets in package 'midfieldr':
+#> 
+#> cip                      
+#> fye_proxy                
+#> study_ever               
+#> ...                
+```
+
+*List functions.*  &nbsp;  Use `lsf.str()` to list all functions in a package and their arguments, 
+
+```{r}
+# Type in the Console
+lsf.str("package:midfieldr")
+```
+
+*Run examples.*  &nbsp;  Use the `example()` function to run the function examples that are included with a package.
+
+```{r}
+#| eval: false
+
+# Type in the Console
+example("add_timely_term")
+```
+
+
+
+
+
+
+
+## Load data
+
+*Open.* &nbsp; If you are writing your own script to follow along, we use these packages in this vignette:
 
 ```{r}
 # Getting started
@@ -108,18 +191,9 @@ In this vignette, we
 library("midfieldr")
 library("midfielddata")
 suppressPackageStartupMessages(library("data.table"))
-
-# Printing options for data.table
-options(
-  datatable.print.nrows = 6,
-  datatable.print.topn = 3,
-  datatable.print.class = TRUE
-)
 ```
 
-*Load data* from the midfielddata package. 
-
-Use `data()` to load the practice data tables into memory for use. For example, after loading the package with `library("midfielddata")` as we did above, you can run `ls()` to see that the environment contains zero objects, 
+*Load data tables.*  &nbsp; Use `data()` to load the practice data tables into memory for use. For example, after loading the package with `library("midfielddata")` as we did above, you can run `ls()` to see that the environment contains zero objects, 
 
 ```{r}
 # Names of objects in the environment
@@ -129,6 +203,14 @@ ls()
 To load the `student` data from midfielddata into memory, we run
 
 ```{r}
+#| echo: false
+
+if (!exists("student")) data(student, package = "midfielddata")
+```
+
+```{r}
+#| eval: false
+
 # Load practice data
 data(student, package = "midfielddata")
 ```
@@ -153,7 +235,7 @@ if (!exists("degree")) data(degree, package = "midfielddata")
 ```{r}
 #| eval: false
 
-# Load remaining data used in this vignette
+# Load remaining practice data
 data(course, term, degree, package = "midfielddata")
 ```
 
@@ -433,25 +515,28 @@ skim(degree)
 ```
 
 
-## Review the midfieldr functions
 
-Table 2 lists the functions in midfieldr and briefly describes what they do. The vignettes give examples of usage.     
+
+## Functions
+
+The functions in midfieldr are briefly described in Table 2 with additional information available on the midfieldr [Reference](reference/index.html) page. Detailed examples of usage are distributed throughout the vignettes. Two of the helper functions are discussed in sections below.   
 
 ```{r}
 #| echo: false
 
 wrapr::build_frame(
-    "Function", "Action" |
-        "add_completion_status()", "Determine degree completion status for every student" |
-        "add_data_sufficiency()", "Determine data sufficiency for every student" |
-        "add_timely_term()", "Calculate a timely completion term for every student" |
-        "filter_search()", "Subset rows that include matches to search strings" |
-        "order_multiway()", "Condition multiway data for graphing" |
-        "prep_fye_mice()", "Construct and format FYE data for multiple imputation" |
-        "select_required()", "Select variables required by other midfieldr functions"
+"Function", "Action" |
+"add_completion_status()", "Determine degree completion status for every student"|
+"add_data_sufficiency()", "Determine data sufficiency for every student"|
+"add_timely_term()", "Determine a timely completion term for every student"|
+"filter_cip()", "Subset rows of CIP data to match search strings"|
+"order_multiway()", "Order the categories of multiway data for graphing"|
+"prep_fye_mice()", "Construct and format FYE data for multiple imputation"|
+"same_content()", "Test for equal content in two data tables"|
+"select_required()", "Reduce number of columns of a MIDFIELD source data table"
 ) |>
     kableExtra::kbl(align = "ll", 
-                    caption = "Table 2: Summary of midfieldr functions") |>
+                    caption = "Table 2: Functions provided in midfieldr.") |>
     kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
     kableExtra::column_spec(1, monospace = TRUE) |>
     kableExtra::column_spec(1:2, color = "black", background = "white") |>
@@ -459,72 +544,146 @@ wrapr::build_frame(
 ```
 
 
-### Exercises
-
-View the help pages for the functions `add_timely_term()` and `add_completion_status()`. 
-
-1. Summarize the difference(s) between the two functions. 
-2. Describe the manner in which one depends on the other.  
 
 
 
 
+## `select_required()`
 
-## R help
+A midfieldr convenience function to reduce the number of columns of a MIDFIELD data table after loading. Using this function is optional. 
 
-This section is primarily for users fairly new to R. 
+`select_required()` selects only those columns typically required by other midfieldr functions. Operates on a data frame to retain columns having names that match or partially match search terms. Rows are unaffected. 
 
-R's built-in help system is an essential part of solving problems you might encounter. Here we provide a short list of R help features applied to midfieldr and midfielddata content. 
+The primary benefit is reducing screen clutter when viewing data frames during an interactive session. The disadvantage is that the deleted columns are unavailable unless you first set aside a copy of the source file or reload it using `data()` when you need it. 
 
-**Help function.** From the R Console you can use `?` or `help()`. For example, the following commands yield the same result:
+
+*Arguments.*
+
+- **`midfield_x`** &nbsp; MIDFIELD data frame, typically `student`, `term`, or `degree`. 
+
+- **`select_add`** &nbsp; Optional character vector of search terms to add to the default vector given by `c("mcid", "institution", "race", "sex", "^term", "cip6", "level")`. Argument, if used, must be used by name.
+
+*Before.* &nbsp; The original source file. 
+
+```{r}
+#| collapse: true
+# Create a copy of the source file
+source_term <- copy(term)
+source_term[]
+```
+
+*After* &nbsp; The output retains only the variables required by other midfieldr functions.  
+
+```{r}
+# Select variables required by midfieldr functions
+term <- select_required(source_term)
+term[]
+```
+
+*Equivalent usage.* &nbsp; The following implementations yield identical results
+
+```{r}
+#| collapse: true
+
+# Required argument explicitly named
+x <- select_required(midfield_x = term)
+
+# Required argument not named
+y <- select_required(term)
+
+# Optional argument, if used, must be named. NULL yields the default columns. 
+z <- select_required(term, select_add = NULL)
+```
+
+
+## `same_content()` 
+
+In the code chunk just above, we claim the three results are equivalent. To verify that the three data tables have the same content, we use `same_content()`, a midfieldr function that wraps `all.equal()` for data.table objects that ignores row order, column order, and keys (if any). 
+
+*Arguments.*
+
+- **`x`, `y`** &nbsp; Two data frames or data.tables to compare. 
+
+*Example.* &nbsp; Demonstrate the equivalence of the data tables from the previous section. 
+
+```{r}
+#| collapse: true
+# Demonstrate equivalence
+same_content(x, y)
+same_content(x, z)
+```
+
+Demonstrate that row and column order are ignored. 
+
+```{r}
+#| collapse: true
+
+# Two columns from student, use key to order rows
+x <- student[, .(mcid, institution)]
+setkey(x, mcid)
+x[]
+
+# Same information with different row order, column order, and key
+y <- student[, .(institution, mcid)]
+setkey(y, institution)
+y[]
+
+# Demonstrate equivalence
+same_content(x, y)
+```
+
+If the two data tables do not have the same content, the printout indicates the types of differences. 
+
+```{r}
+#| collapse: true
+# Demonstrate non-equivalence
+same_content(student, degree)
+```
+
+
+
+
+
+
+
+
+
+
+
+## Reusable code
+
+We often conclude a vignette with a *Reusable code* section in two parts. 
+
+- The first section, *Preparation*, describes the immediate prerequisites or "intake" required by the reusable code chunk.   
+
+- The second section (labeled by the topic) provides the reusable code---a condensed version of midfieldr functionality explored in the vignette. In some cases the code can be used as-is; in others, the code must be edited to suit the goals of the project. 
+
+*Preparation.* &nbsp; In this case, the only intakes are the source data tables.  
 
 ```{r}
 #| eval: false
 
-# Type in the Console
-help("add_timely_term")
-? add_timely_term
+# Load source data
+data(student, term, degree, package = "midfielddata")
 ```
 
-The help function can also be used to learn more about data sets included with midfieldr and midfielddata. 
+*Initial data processing.* &nbsp; A summary code chunk for ready reference.  
 
 ```{r}
-#| eval: false
+# Optional. Copy of source files with all variables
+source_student <- copy(student)
+source_term    <- copy(term)
+source_degree  <- copy(degree)
 
-# Type in the Console
-? cip
+# Optional. Select variables required by midfieldr functions
+student <- select_required(source_student)
+term    <- select_required(source_term)
+degree  <- select_required(source_degree)
 ```
 
-**Data.** Use the `data()` function to view the names of the data sets included with a package. 
 
-```{r}
-#| eval: false
 
-# Type in the Console
-data(package = "midfieldr")
-#> Data sets in package 'midfieldr':
-#> 
-#> cip                      
-#> fye_proxy                
-#> study_mcid               
-#> ...                
-```
 
-**List functions.** Use `lsf.str()` to list all functions in a package and their arguments, 
-
-```{r}
-# Type in the Console
-lsf.str("package:midfieldr")
-```
-
-**Run examples.** Use the `example()` function to run the function examples that are included with a package.
-
-```{r}
-#| eval: false
-
-# Type in the Console
-example("add_timely_term")
-```
 
 
 
@@ -538,65 +697,10 @@ example("add_timely_term")
 
 
 
-
-
-
-
-## Appendix
-
-### Complete script
-
-The vignette code chunks are collected below in a single, condensed script. 
-
-```{r}
-#| eval: false
-
-# Packages used
-library("midfieldr")
-library("midfielddata")
-suppressPackageStartupMessages(library("data.table"))
-
-# Loading data
-data(student, package = "midfielddata")
-data(course, package = "midfielddata")
-data(term, package = "midfielddata")
-data(degree, package = "midfielddata")
-
-# student
-str(student)
-length(unique(student$mcid))
-summary(student$sat_math)
-summary(student$age)
-sort(unique(student$sex))
-sort(unique(student$race))
-
-# course
-str(course)
-length(unique(course$mcid))
-summary(course$hours_course)
-sort(unique(course$type))
-
-# term
-str(term)
-length(unique(term$mcid))
-summary(term$hours_term)
-summary(term$gpa_term)
-sort(unique(term$level))
-sort(unique(term$standing))
-
-# degree
-str(degree)
-length(unique(degree$mcid))
-sort(unique(degree$institution))
-sort(unique(degree$degree))
-degree[is.na(degree)]
-```
-
 ```{r}
 #| echo: false
 
-# to change the CSS file
-# per https://github.com/rstudio/rmarkdown/issues/732
+# to change the CSS file per https://github.com/rstudio/rmarkdown/issues/732
 knitr::opts_chunk$set(echo = FALSE)
 ```
 

@@ -122,7 +122,7 @@ add_institution <- function(dframe,
         dframe[, institution := NULL]
     }
     
-    # left outer join, keep all rows of dframe
+    # left join, keep all rows of dframe
     setkeyv(DT, "mcid")
     setkeyv(dframe, "mcid")
     dframe <- DT[dframe]

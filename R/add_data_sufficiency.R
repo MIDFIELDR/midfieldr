@@ -2,10 +2,9 @@
 
 #' Determine data sufficiency for every student
 #'
-#' Add a column to a data frame of Student Unit Record (SUR) 
-#' observations that labels each row for inclusion or exclusion based on data 
-#' sufficiency near the upper and lower bounds of an institution's data range. 
-#' Requires a MIDFIELD \code{term} data frame in the environment.  
+#' Add a column to a data frame of Student Unit Record (SUR) observations that 
+#' labels each row for inclusion or exclusion based on data sufficiency near 
+#' the upper and lower bounds of an institution's data range.  
 #'
 #' The time span of MIDFIELD term data varies by institution, each having 
 #' their own lower and upper bounds. For some student records, being at or 
@@ -126,7 +125,7 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
   setkeyv(DT, "mcid")
   DT <- DT[, .SD[1], by = "mcid"]
   
-  # left outer join new columns to dframe by key(s)
+  # left join new columns to dframe by key(s)
   setkeyv(dframe, "mcid")
   dframe <- DT[dframe]
   
@@ -176,7 +175,7 @@ add_inst_limits <- function(dframe, midfield_term) {
     # ensure no duplicate rows
     DT <- unique(DT)
     
-    # left outer join new columns to dframe by key(s)
+    # left join new columns to dframe by key(s)
     setkeyv(DT, "institution")
     setkeyv(dframe, "institution")
     dframe <- DT[dframe] 

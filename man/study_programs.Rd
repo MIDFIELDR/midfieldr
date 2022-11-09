@@ -32,7 +32,7 @@ to be used for grouping and summarizing.
 }
 \seealso{
 Other case-study-data: 
-\code{\link{study_mcid}},
+\code{\link{study_ever}},
 \code{\link{study_observations}},
 \code{\link{study_results}},
 \code{\link{study_starters}}

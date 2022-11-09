@@ -7,8 +7,10 @@ tinytest, tests are scripts interspersed with statements that perform checks.
 
 Package testing is set up as follows: 
 
-1. In the DESCRIPTION file, tinytest is added to Suggests:. 
-
+1. Test scripts are located in midfieldr/inst/tinytest/.   
+   Filenames start with `test_`, for example, `test_filter_search.R`.  
+   Usually one file per function.  
+  
 2. The midfieldr/tests/ directory contains an R file named tinytest.R that 
    contains the following script:  
 
@@ -16,9 +18,7 @@ Package testing is set up as follows:
        tinytest::test_package("midfieldr" )
      }
 
-3. The midfieldr/inst/tinytest/ directory contains the test file R scripts, 
-   generally one file per package function. The filenames all start with `test`, 
-   for exmaple, `test_filter_search.R`. 
+3. In the DESCRIPTION file, tinytest is added to Suggests:. 
   
 midfieldr and midfielddata users can run the tinytest tests themselves by 
 installing tinytest and running: 

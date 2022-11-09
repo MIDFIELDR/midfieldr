@@ -4,17 +4,17 @@
 \alias{select_required}
 \title{Select required midfieldr variables}
 \usage{
-select_required(dframe, ..., select = NULL)
+select_required(midfield_x, ..., select_add = NULL)
 }
 \arguments{
-\item{dframe}{Data frame from which columns are selected, typically 
-\code{student}, \code{term}, or \code{degree}.}
+\item{midfield_x}{Data frame from which columns are selected, typically 
+\code{student}, \code{term}, \code{degree} or their subsets.}
 
 \item{...}{Not used, force later arguments to be used by name.}
 
-\item{select}{Optional character vector of column names to return,
-default \code{c("mcid", "institution", "race", "sex", "^term", 
-"cip6", "level")}.}
+\item{select_add}{Optional character vector of search terms to add to the default 
+vector given by \code{c("mcid", "institution", "race", "sex", 
+"^term", "cip6", "level")}.}
 }
 \value{
 A \code{data.table} with the following properties:
@@ -37,12 +37,12 @@ an analysis.
 Several midfieldr functions are designed to operate on one or more of the 
 MIDFIELD data tables, usually \code{student}, \code{term}, or \code{degree}. 
 This family of functions requires only a small subset of available 
-variables, e.g., \code{mcid}, \code{cip6}, or \code{term}. We have 
-identified the names of all required variables and collected 
-appropriate search strings in the default \code{select} vector. 
+variables, e.g., \code{mcid}, \code{cip6}, or \code{term}. The required 
+columns are built in to the function. The \code{select} argument is used to 
+add search strings to the default vector. 
 
-The column names of \code{dframe} are searched for matches or partial matches 
-in \code{select} using \code{grep()}, thus search terms can include regular 
+The column names of \code{midfield_x} are searched for matches or 
+partial matches using \code{grep()}, thus search terms can include regular 
 expressions. Variables with names that match or partially match the search 
 terms are returned; all other columns are dropped. Rows are unaffected. 
 Search terms not present are silently ignored. 
@@ -51,5 +51,36 @@ One could use this function to select columns from a non-MIDFIELD data frame,
 but with no benefit to the user---conventional column selection syntax is 
 better suited to that task. Here, we specialize the column selection to 
 serve midfieldr functions.
+}
+\examples{
+# Default character vector for selecting columns
+default_cols<- c("mcid", "institution", "race", "sex", "^term", "cip6", "level")
+
+# Create one string separated by OR
+search_pattern <- paste(default_cols, collapse = "|")
+
+# Find names of columns matching or partially matching 
+x <- select_required(toy_student) 
+names(x)
+grepl(search_pattern, names(x))
+
+x <- select_required(toy_term) 
+names(x)
+grepl(search_pattern, names(x))
+
+x <- select_required(toy_degree) 
+names(x)
+grepl(search_pattern, names(x))
+
+x <- select_required(toy_course) 
+names(x)
+grepl(search_pattern, names(x))
+
+# Adding search terms
+x <- select_required(toy_course, select_add = c("abbrev", "number", "grade")) 
+names(x)
+
+
+
 }
 \concept{select_*}

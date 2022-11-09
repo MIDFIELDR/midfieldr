@@ -5,7 +5,7 @@
 \alias{toy_student}
 \title{Student data for examples}
 \format{
-\code{data.table} with 100 rows and 6 columns keyed by
+\code{data.table} with 99 rows and 4 columns keyed by
 student ID.
 \describe{
 
@@ -13,12 +13,6 @@ student ID.
 
  \item{institution}{Character, de-identified institution name, e.g.,
   Institution A, Institution B, etc.}
-
- \item{transfer}{Character, stating whether the student is a First-Time in
- College students or a First-Time Transfer student.}
-
- \item{hours_transfer}{Numeric, transfer hours accepted at the
- institution.}
 
  \item{race}{Character, race/ethnicity as self-reported by the student,
  e.g., Asian, Black, Latine, etc.}
@@ -32,8 +26,8 @@ student ID.
 toy_student
 }
 \description{
-A small subset by row and column of the MIDFIELD student table
-for use in package examples.
+A small subset of the \code{student} practice data for use in package 
+and vignette examples.
 }
 \seealso{
 Other toy-data: 

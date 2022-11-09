@@ -42,10 +42,9 @@ Columns added:
 }
 }
 \description{
-Add a column to a data frame of Student Unit Record (SUR) 
-observations that labels each row for inclusion or exclusion based on data 
-sufficiency near the upper and lower bounds of an institution's data range. 
-Requires a MIDFIELD \code{term} data frame in the environment.
+Add a column to a data frame of Student Unit Record (SUR) observations that 
+labels each row for inclusion or exclusion based on data sufficiency near 
+the upper and lower bounds of an institution's data range.
 }
 \details{
 The time span of MIDFIELD term data varies by institution, each having 

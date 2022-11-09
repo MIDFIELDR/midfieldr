@@ -39,8 +39,8 @@ data.
 [**midfielddata**](https://midfieldr.github.io/midfielddata/) is an R
 data package that provides a proportionate stratified sample of the
 MIDFIELD research data. The sample contains anonymized SURs for nearly
-98,000 undergraduates at 12 institutions from 1987–2016. We refer these
-sample data tables as the MIDFIELD *practice* data, suitable for
+98,000 undergraduates at 12 institutions from 1987–2016. We refer to
+these sample data tables as the MIDFIELD *practice* data, suitable for
 practice working with SURs but not for drawing inferences about program
 attributes or student experiences. The practice data are characterized
 in Table 1.
@@ -149,23 +149,18 @@ observation per student.
 
 ## Usage
 
-The outline of our typical workflow is:
+The outline of a typical workflow is:
 
-- Define the study parameters
-- Transform the data to yield the observations of interest
-- Calculate summary statistics and metrics
+- Plan which records, programs, and metrics to use
+- Gather relevant blocs of records
+- Join appropriate grouping variables
+- Compute metrics
 - Create tables and charts to display results
 - Assess findings and iterate.
 
 To illustrate usage, we tabulate counts of engineering students by
 race/ethnicity, sex, and graduation status. Data processing is performed
-using data.table syntax. From the midfielddata package, we use data sets
-`student`, `term`, and `degree`. From the midfieldr package, we use the
-functions:
-
-- `add_timely_term()`
-- `add_data_sufficiency()`
-- `add_completion_status()`
+using data.table syntax.
 
 ``` r
 # Packages used
@@ -176,18 +171,22 @@ suppressPackageStartupMessages(library("data.table"))
 # Load the practice data
 data(student, term, degree, package = "midfielddata")
 
-# Initialize the working data frame
-DT <- copy(term)
+# Reduce dimensions of source data tables
+student <- select_required(student)
+term    <- select_required(term)
+degree  <- select_required(degree)
 
-# Add timely completion term variable
-DT <- add_timely_term(DT, term)
+# Initialize the working data frame
+DT <- term[, .(mcid, cip6)]
 
 # Filter observations for data sufficiency
+DT <- add_timely_term(DT, term)
 DT <- add_data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include"]
 
-# Filter observations for degree-seeking using an inner join
-DT <- student[DT, .(mcid, cip6, timely_term), on = c("mcid"), nomatch = NULL]
+# Inner join to filter observations for degree-seeking
+cols_we_want <- student[, .(mcid)]
+DT <- cols_we_want[DT, on = c("mcid"), nomatch = NULL]
 
 # Filter observations for engineering programs
 DT <- DT[cip6 %like% "^14"]
@@ -198,17 +197,21 @@ DT <- DT[, .SD[1], by = c("mcid")]
 # Add completion status variable
 DT <- add_completion_status(DT, degree)
 
-# Add race/ethnicity and sex variables using a left outer join
-DT <- student[DT, .(completion_status, sex, race), on = c("mcid")]
+# Left join to add race/ethnicity and sex variables (omit unknowns)
+cols_we_want <- student[, .(mcid, race, sex)]
+DT <- student[DT, on = c("mcid")]
+DT <- DT[!(race %ilike% "unknown" | sex %ilike% "unknown")]
 
 # Create a variable combining race/ethnicity and sex
 DT[, people := paste(race, sex)]
 
-# Count number of observations by group
-DT <- DT[, .N, by = c("completion_status", "people")]
+# Aggregate observations by groupings
+DT_display <- DT[, .N, by = c("completion_status", "people")]
 
-# Transform to row-record form for display
-DT_display <- dcast(DT, people ~ completion_status, value.var = "N")
+# Transform to row-record form
+DT_display <- dcast(DT_display, people ~ completion_status, value.var = "N")
+
+# Prepare the table for display 
 setcolorder(DT_display, c("people", "timely", "late"))
 setkeyv(DT_display, c("people"))
 setnames(DT_display,
@@ -382,34 +385,6 @@ Native American Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 19
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-Other/Unknown Female
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-29
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-3
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-14
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-Other/Unknown Male
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-71
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-19
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-56
 </td>
 </tr>
 <tr>

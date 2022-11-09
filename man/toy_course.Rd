@@ -29,8 +29,8 @@ student ID.
 toy_course
 }
 \description{
-A small subset by row and column of the MIDFIELD course table
-for use in package examples.
+A small subset of the \code{course} practice data for use in package 
+and vignette examples.
 }
 \seealso{
 Other toy-data: 
