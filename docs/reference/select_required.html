@@ -20,7 +20,7 @@ an analysis."><meta property="og:image" content="https://midfieldr.github.io/mid
     
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9027</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9028</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,17 +42,17 @@ an analysis."><meta property="og:image" content="https://midfieldr.github.io/mid
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-vignettes">Vignettes</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-vignettes">
-    <a class="dropdown-item" href="../articles/art-009-planning.html">Planning</a>
-    <a class="dropdown-item" href="../articles/art-010-data-sufficiency.html">Data sufficiency</a>
-    <a class="dropdown-item" href="../articles/art-020-degree-seeking.html">Degree seeking (inner joins)</a>
-    <a class="dropdown-item" href="../articles/art-030-programs.html">Programs</a>
-    <a class="dropdown-item" href="../articles/art-035-blocs.html">Blocs</a>
-    <a class="dropdown-item" href="../articles/art-040-completion.html">Completion status</a>
-    <a class="dropdown-item" href="../articles/art-070-fye-proxies.html">FYE proxies</a>
-    <a class="dropdown-item" href="../articles/art-080-starters.html">Starters</a>
-    <a class="dropdown-item" href="../articles/art-050-demographics.html">Demographics (left outer joins)</a>
-    <a class="dropdown-item" href="../articles/art-090-grad-rate.html">Graduation rate</a>
-    <a class="dropdown-item" href="../articles/art-060-multiway.html">Multiway data and charts</a>
+    <a class="dropdown-item" href="../articles/art-010-planning.html">Planning</a>
+    <a class="dropdown-item" href="../articles/art-020-data-sufficiency.html">Data sufficiency</a>
+    <a class="dropdown-item" href="../articles/art-030-degree-seeking.html">Degree seeking</a>
+    <a class="dropdown-item" href="../articles/art-040-programs.html">Programs</a>
+    <a class="dropdown-item" href="../articles/art-050-blocs.html">Blocs</a>
+    <a class="dropdown-item" href="../articles/art-060-fye-proxies.html">FYE proxies</a>
+    <a class="dropdown-item" href="../articles/art-070-starters.html">Starters</a>
+    <a class="dropdown-item" href="../articles/art-080-graduates.html">Graduates</a>
+    <a class="dropdown-item" href="../articles/art-090-groupings.html">Groupings</a>
+    <a class="dropdown-item" href="../articles/art-100-grad-rate.html">Graduation rate</a>
+    <a class="dropdown-item" href="../articles/art-120-multiway.html">Multiway data and charts</a>
   </div>
 </li>
 <li class="active nav-item">
@@ -93,24 +93,24 @@ an analysis.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">select_required</span><span class="op">(</span><span class="va">dframe</span>, <span class="va">...</span>, select <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">select_required</span><span class="op">(</span><span class="va">midfield_x</span>, <span class="va">...</span>, select_add <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>dframe</dt>
+    <dl><dt>midfield_x</dt>
 <dd><p>Data frame from which columns are selected, typically 
-<code>student</code>, <code>term</code>, or <code>degree</code>.</p></dd>
+<code>student</code>, <code>term</code>, <code>degree</code> or their subsets.</p></dd>
 
 
 <dt>...</dt>
 <dd><p>Not used, force later arguments to be used by name.</p></dd>
 
 
-<dt>select</dt>
-<dd><p>Optional character vector of column names to return,
-default <code>c("mcid", "institution", "race", "sex", "^term", 
-"cip6", "level")</code>.</p></dd>
+<dt>select_add</dt>
+<dd><p>Optional character vector of search terms to add to the default 
+vector given by <code>c("mcid", "institution", "race", "sex", 
+"^term", "cip6", "level")</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -127,11 +127,11 @@ default <code>c("mcid", "institution", "race", "sex", "^term",
     <p>Several midfieldr functions are designed to operate on one or more of the 
 MIDFIELD data tables, usually <code>student</code>, <code>term</code>, or <code>degree</code>. 
 This family of functions requires only a small subset of available 
-variables, e.g., <code>mcid</code>, <code>cip6</code>, or <code>term</code>. We have 
-identified the names of all required variables and collected 
-appropriate search strings in the default <code>select</code> vector.</p>
-<p>The column names of <code>dframe</code> are searched for matches or partial matches 
-in <code>select</code> using <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep()</a></code>, thus search terms can include regular 
+variables, e.g., <code>mcid</code>, <code>cip6</code>, or <code>term</code>. The required 
+columns are built in to the function. The <code>select</code> argument is used to 
+add search strings to the default vector.</p>
+<p>The column names of <code>midfield_x</code> are searched for matches or 
+partial matches using <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep()</a></code>, thus search terms can include regular 
 expressions. Variables with names that match or partially match the search 
 terms are returned; all other columns are dropped. Rows are unaffected. 
 Search terms not present are silently ignored.</p>
@@ -141,6 +141,49 @@ better suited to that task. Here, we specialize the column selection to
 serve midfieldr functions.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Default character vector for selecting columns</span></span></span>
+<span class="r-in"><span><span class="va">default_cols</span><span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"institution"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>, <span class="st">"^term"</span>, <span class="st">"cip6"</span>, <span class="st">"level"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Create one string separated by OR</span></span></span>
+<span class="r-in"><span><span class="va">search_pattern</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">default_cols</span>, collapse <span class="op">=</span> <span class="st">"|"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Find names of columns matching or partially matching </span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">select_required</span><span class="op">(</span><span class="va">toy_student</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mcid"        "institution" "race"        "sex"        </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="va">search_pattern</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE TRUE TRUE TRUE</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">select_required</span><span class="op">(</span><span class="va">toy_term</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mcid"        "institution" "term"        "cip6"        "level"      </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="va">search_pattern</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE TRUE TRUE TRUE TRUE</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">select_required</span><span class="op">(</span><span class="va">toy_degree</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mcid"        "institution" "term_degree" "cip6"       </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="va">search_pattern</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE TRUE TRUE TRUE</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">select_required</span><span class="op">(</span><span class="va">toy_course</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mcid"        "institution" "term"       </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="va">search_pattern</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE TRUE TRUE</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Adding search terms</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">select_required</span><span class="op">(</span><span class="va">toy_course</span>, select_add <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"abbrev"</span>, <span class="st">"number"</span>, <span class="st">"grade"</span><span class="op">)</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mcid"        "institution" "term"        "abbrev"      "number"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6] "grade"      </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
