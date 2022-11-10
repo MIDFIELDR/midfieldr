@@ -4,7 +4,7 @@ test_select_required <- function() {
     # select_required(midfield_x, select_add = NULL)
 
     # Needed for tinytest::build_install_test()
-    suppressPackageStartupMessages(library("data.table"))
+    library("data.table")
 
     
     # Default character vector for selecting columns

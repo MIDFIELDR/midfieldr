@@ -12,7 +12,7 @@ test_order_multiway <- function() {
     # library("tinytest")
     
     # Needed for tinytest::build_install_test()
-    suppressPackageStartupMessages(library("data.table"))
+    library("data.table")
     options(
         datatable.print.nrows = 8,
         datatable.print.topn = 8,

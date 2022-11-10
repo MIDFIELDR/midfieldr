@@ -56,8 +56,8 @@ options(
 )
 
 # accented text
-accent <- function (text_string){
-    kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
+accent <- function(text_string) {
+  kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
 }
 ```
 
@@ -108,13 +108,17 @@ FYE proxy
 
 : Our estimate of the degree-granting engineering program in which an FYE student would have enrolled had they not been required to enroll in FYE. The proxy, a 6-digit CIP code, denotes the program of which the FYE student can be considered a starter.
 
-starter
+bloc
 
-: A degree-seeking student in their initial term enrolled in a degree-granting program. 
+: A grouping of SURs dealt with as a unit, for example, starters, ever-enrolled, graduates, transfers, traditional, non-traditional, migrators, etc. 
 
-migrator
+starters
 
-: A student who leaves one program to enroll in another. Also called *switchers.*
+: Bloc of degree-seeking students in their initial terms enrolled in degree-granting programs. 
+
+migrators
+
+: Bloc of students who leave one program to enroll in another. Also called *switchers.*
 
 multiple imputation
 
@@ -165,8 +169,8 @@ For a given set of source files, FYE proxies need be created only once and writt
 # Packages
 library("midfieldr")
 library("midfielddata")
-suppressPackageStartupMessages(library("data.table"))
-suppressPackageStartupMessages(library("ggplot2"))
+library("data.table")
+library("ggplot2")
 library("mice")
 ```
 
@@ -195,11 +199,11 @@ This is one case in which data sufficiency and degree seeking filters are not us
 ```{r}
 # Optional. Copy of source files with all variables
 source_student <- copy(student)
-source_term    <- copy(term)
+source_term <- copy(term)
 
 # Optional. Select variables required by midfieldr functions
 student <- select_required(source_student)
-term    <- select_required(source_term)
+term <- select_required(source_term)
 ```
 
 
@@ -272,7 +276,7 @@ The output of `prep_fye_mive()` should contain missing values in the proxy colum
 Checking that all variables except `proxy` are complete. 
 
 ```{r}
-#| collapse: true 
+#| collapse: true
 
 # Number of unique IDs
 x <- length(unique(DT$mcid))
@@ -287,7 +291,7 @@ all.equal(x, y)
 Number of missing observations in `proxy`.  
 
 ```{r}
-#| collapse: true 
+#| collapse: true
 
 # Number NAs in proxy
 sum(is.na(DT$proxy))
@@ -308,11 +312,11 @@ That a CIP is missing, therefore, is unlikely to be related to a specific CIP va
 # Number of proxies to be imputed
 (N_impute <- sum(is.na(DT$proxy)))
 
-# Number of observations with complete predictor information 
+# Number of observations with complete predictor information
 (N_complete <- sum(complete.cases(DT[, .(mcid, race, sex, institution)])))
 
 # Percent missing proxies
-(percent_missing = round(100 * N_impute / N_complete, 3))
+(percent_missing <- round(100 * N_impute / N_complete, 3))
 ```
 
 As shown here, the overall percentage of missing data is `r percent_missing`%, suggesting we set the number of imputations to `r round(percent_missing, 0)`.
@@ -320,7 +324,7 @@ As shown here, the overall percentage of missing data is `r percent_missing`%, s
 ```{r}
 #| collapse: true
 
-# For the "m" argument in mice() 
+# For the "m" argument in mice()
 (m_imputations <- round(percent_missing, 0))
 ```
 
@@ -430,9 +434,9 @@ opt_DT <- opt_DT[race != "Other/Unknown"]
 
 # Create origin variable
 opt_DT[, origin := fcase(
-    race != "International", "Domestic", 
-    race == "International", "International", 
-    default = NA_character_
+  race != "International", "Domestic",
+  race == "International", "International",
+  default = NA_character_
 )]
 opt_DT <- opt_DT[!is.na(origin)]
 
@@ -478,7 +482,7 @@ opt_DT[]
 *Filtering.* &nbsp;  Ensure complete cases except in `proxy`. 
 
 ```{r}
-# Identify complete cases in predictor variables 
+# Identify complete cases in predictor variables
 rows_we_want <- complete.cases(opt_DT[, .(mcid, people, institution, year)])
 
 # Filter for complete predictors
@@ -533,7 +537,7 @@ For the practice data, 5 iterations of `r m_imputations`  imputations takes abou
 ```{r}
 #| echo: false
 
-# load DT_mids, don't have to repeatedly run mice() 
+# load DT_mids, don't have to repeatedly run mice()
 load(here::here("R", "sysdata.rda"))
 ```
 
@@ -543,7 +547,7 @@ load(here::here("R", "sysdata.rda"))
 # Impute missing proxy data
 DT_mids <- mice(
   data = DT,
-  m = m_imputations, 
+  m = m_imputations,
   maxit = 5, # default
   method = method_vector,
   predictorMatrix = predictor_matrix,
@@ -757,14 +761,14 @@ start <- fye_proxy[first_term, .(mcid, cip6, proxy), on = c("mcid")]
 
 # Distinguish FYE from direct matriculants
 start[, matric := fcase(
-    is.na(proxy), "direct",
-    !is.na(proxy), "fye"
+  is.na(proxy), "direct",
+  !is.na(proxy), "fye"
 )]
 
 # Create start variable
 start[, start := fcase(
- matric == "fye", proxy, 
- matric == "direct", cip6
+  matric == "fye", proxy,
+  matric == "direct", cip6
 )]
 
 # Filter to retain case study program starters
@@ -819,7 +823,7 @@ DT <- prep_fye_mice(student, term)
 # Percentage missing data suggests number of imputations
 N_impute <- sum(is.na(DT$proxy))
 N_complete <- sum(complete.cases(DT[, .(mcid, race, sex, institution)]))
-m_imputations = round(100 * N_impute / N_complete, 0)
+m_imputations <- round(100 * N_impute / N_complete, 0)
 
 # Setting up mice()
 framework <- mice(DT, maxit = 0)
@@ -897,8 +901,8 @@ overall_miss <- 100 * round(nrow(x[is.na(proxy)]) / nrow(x), 3)
 # Function for determining percent missing proxies by category
 missing_fraction <- function(DT, cat_level) {
   DT[, group := fcase(
-      is.na(proxy), "missing", 
-      default = "not_missing"
+    is.na(proxy), "missing",
+    default = "not_missing"
   )]
   DT <- DT[, .N, by = c("group", "cat_level")]
   DT <- dcast(DT, cat_level ~ group, value.var = "N")
@@ -924,15 +928,17 @@ sex[, category := "sex"]
 # Gather results and plot
 DT <- rbindlist(list(inst, race, sex))
 p <- ggplot(DT, aes(x = pct_miss, y = reorder(cat_level, pct_miss))) +
-    geom_vline(xintercept = overall_miss, linetype = 2, color = "gray35") +
-    geom_point(size = 2) +
-    facet_grid(rows = vars(reorder(category, pct_miss)), 
-               as.table = TRUE, 
-               scales = "free_y",
-               space = "free_y") +
-    labs(x = "FYE proxy missing values (%)", y = "") +
-    scale_x_continuous(breaks = seq(0, 100, 5), limits = c(20, 50)) +
-    theme(panel.grid.minor.x = element_blank())
+  geom_vline(xintercept = overall_miss, linetype = 2, color = "gray35") +
+  geom_point(size = 2) +
+  facet_grid(
+    rows = vars(reorder(category, pct_miss)),
+    as.table = TRUE,
+    scales = "free_y",
+    space = "free_y"
+  ) +
+  labs(x = "FYE proxy missing values (%)", y = "") +
+  scale_x_continuous(breaks = seq(0, 100, 5), limits = c(20, 50)) +
+  theme(panel.grid.minor.x = element_blank())
 ```
 
 ```{r}

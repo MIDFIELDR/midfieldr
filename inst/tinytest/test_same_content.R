@@ -4,7 +4,7 @@ test_same_content <- function() {
     # same_content(x, y)
 
     # Needed for tinytest::build_install_test()
-    suppressPackageStartupMessages(library("data.table"))
+    library("data.table")
 
     # test cases
     alpha <- letters[1:5]

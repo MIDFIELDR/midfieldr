@@ -10,7 +10,7 @@ filter_cip(cip, "civil engineering", drop_text = "technology")
 filter_cip(cip, keep_text = c("050125", "160501"))
 
 
-# subset using regular expressions
+# Subset using regular expressions
 filter_cip(cip, keep_text = "^54")
 filter_cip(cip, keep_text = c("^1407", "^1408"))
 

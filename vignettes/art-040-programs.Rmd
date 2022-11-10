@@ -55,8 +55,8 @@ options(
 )
 
 # accented text
-accent <- function (text_string){
-    kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
+accent <- function(text_string) {
+  kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
 }
 ```
 
@@ -164,8 +164,10 @@ x[2:9, cip2name := "\U2003\U02193"]
 x[c(4, 5, 7, 8), cip4name := "\U2003\U02193"]
 
 x |>
-  kableExtra::kbl(align = "rlrlrl", 
-                  caption = "Table 1: CIP taxonomy") |>
+  kableExtra::kbl(
+    align = "rlrlrl",
+    caption = "Table 1: CIP taxonomy"
+  ) |>
   kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
   kableExtra::row_spec(0, background = "#c7eae5") |>
   kableExtra::column_spec(1:6, color = "black", background = "white")
@@ -195,7 +197,7 @@ Unfortunately, some disciplines can comprise more than one 4-digit code. For exa
 
 # Packages
 library("midfieldr")
-suppressPackageStartupMessages(library("data.table"))
+library("data.table")
 ```
 
 *Loads with midfieldr.* 
@@ -295,7 +297,7 @@ w <- filter_cip(dframe = cip, keep_text = c("engineering"))
 # First two arguments in order, but not named
 x <- filter_cip(cip, c("engineering"))
 
-# Dropping vector notation when one element only 
+# Dropping vector notation when one element only
 y <- filter_cip(cip, "engineering")
 
 # Demonstrate equivalence
@@ -365,7 +367,7 @@ The following code chunk could be read as, "Start with the `cip` data frame, the
 first_pass <- filter_cip(cip, keep_text = "civil")
 
 # Refine the search
-second_pass <- filter_cip(first_pass, keep_text= "engineering")
+second_pass <- filter_cip(first_pass, keep_text = "engineering")
 
 # Refine further
 third_pass <- filter_cip(second_pass, drop_text = "technology")
@@ -731,10 +733,10 @@ case_study_programs <- filter_cip(c("^1408", "^1410", "^1419", "^1427", "^1435",
 ```{r}
 # Recode program labels
 case_study_programs[, program := fcase(
-    cip6 %like% "^1408", "CE",
-    cip6 %like% "^1410", "EE",
-    cip6 %like% "^1419", "ME",
-    cip6 %chin% c("142701", "143501", "143601", "143701"), "ISE"
+  cip6 %like% "^1408", "CE",
+  cip6 %like% "^1410", "EE",
+  cip6 %like% "^1419", "ME",
+  cip6 %chin% c("142701", "143501", "143601", "143701"), "ISE"
 )]
 case_study_programs <- case_study_programs[, .(cip6, program)]
 ```

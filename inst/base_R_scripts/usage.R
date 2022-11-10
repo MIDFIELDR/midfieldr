@@ -1,7 +1,7 @@
 # packages used
 library("midfieldr")
 library("midfielddata")
-suppressPackageStartupMessages(library("data.table"))
+library("data.table")
 
 # Load the data tables
 data(student, term, degree, package = c("midfielddata"))

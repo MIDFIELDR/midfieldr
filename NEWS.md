@@ -2,10 +2,10 @@
 ## midfieldr 1.0.0.9028 / 2021-11
 
 - Rename `filter_search()` to `filter_cip()` to better capture its purpose. Made `cip` the default data frame to search. Permits usage like `filter_cip("engineering")` where the first argument can be the `keep_text` character vector of search strings, yet unnamed. 
-- Continue editing vignettes for consistent organization and prose.  
+- Edit all vignettes for consistent organization and prose.  
+- Finished first complete draft of "Graduation rate" vignette. 
 - Add `same_content()` convenience function. 
 - Add "Groupings" vignette. 
-
 
 
 ## midfieldr 1.0.0.9027 / 2021-10

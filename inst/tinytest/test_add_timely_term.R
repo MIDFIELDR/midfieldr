@@ -10,7 +10,7 @@ test_add_timely_term <- function() {
     # )
 
     # Needed for tinytest::build_install_test()
-    suppressPackageStartupMessages(library("data.table"))
+    library("data.table")
 
     # create case
     # library("midfieldr")

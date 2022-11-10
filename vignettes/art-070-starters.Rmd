@@ -55,8 +55,8 @@ options(
 )
 
 # accented text
-accent <- function (text_string){
-    kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
+accent <- function(text_string) {
+  kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
 }
 ```
 
@@ -77,11 +77,15 @@ This vignette in the MIDFIELD workflow.
 
 ## Special cases
 
-In two special cases, an entering student's CIP code does not correspond to a degree-granting program. The first case includes records for which a CIP is unspecified or reported as "undecided". In MIDFIELD data, both conditions are encoded as CIP 999999. Students may *enter* with this CIP but we do not consider them *starters* until and if they enroll in a degree-granting  program. 
+In two special cases, an entering student's CIP code does not correspond to a degree-granting program. Our procedure for identifying starters accommodate both special cases.
+
+The first case includes records for which a CIP is unspecified or reported as "undecided". In MIDFIELD data, both conditions are encoded as CIP 999999. Students may *enter* with this CIP but we do not consider them *starters* until and if they enroll in a degree-granting  program. 
 
 The second case is more nuanced. At some US institutions, engineering students are required to complete a First-Year Engineering (FYE) program as a prerequisite for declaring an engineering major. These students are admitted as Engineering majors but we don't know to which degree-granting program they intended to transition. FYE students are *starters* in Engineering (CIP 14) and are treated as such if one limits a study to programs at the 2-digit CIP level. Otherwise, we use [FYE proxies](art-060-fye-proxies.html)---our estimates of the degree-granting engineering programs (6-digit CIP level) that FYE students would have declared had they not been required to enroll in FYE.
 
-Our procedure for identifying starters accommodate both special cases.
+One additional special case should be mentioned. Gathering a bloc of starters for the conventional graduation rate metric entails more constraints---and  therefore excludes more students---than the procedure developed here. Details are given in [Graduation rate](art-100-grad-rate.html).   
+
+
 
 
 
@@ -92,9 +96,13 @@ Our procedure for identifying starters accommodate both special cases.
 
 ## Definitions
 
-starter
+bloc
 
-: A degree-seeking student in their initial term enrolled in a degree-granting program. 
+: A grouping of SURs dealt with as a unit, for example, starters, ever-enrolled, graduates, transfers, traditional, non-traditional, migrators, etc. 
+
+starters
+
+: Bloc of degree-seeking students in their initial terms enrolled in degree-granting programs. 
 
 entry term
 
@@ -147,7 +155,7 @@ We use `student` and `term` to identify starters.
 # Packages
 library("midfieldr")
 library("midfielddata")
-suppressPackageStartupMessages(library("data.table"))
+library("data.table")
 ```
 
 *Load.* &nbsp; MIDFIELD practice data tables. Described in [Getting started](art-000-getting-started.html).
@@ -181,11 +189,11 @@ data(student, term, package = "midfielddata")
 ```{r}
 # Optional. Copy of source files with all variables
 source_student <- copy(student)
-source_term    <- copy(term)
+source_term <- copy(term)
 
 # Optional. Select variables required by midfieldr functions
 student <- select_required(source_student)
-term    <- select_required(source_term)
+term <- select_required(source_term)
 ```
 
 *Work.* &nbsp; Using `copy()` avoids *by-reference* effects  [@data.table-reference-semantics].
@@ -396,7 +404,7 @@ DT[]
 #| eval: false
 #| echo: false
 
-# Run manually 
+# Run manually
 # Writing external files
 setkey(DT, mcid)
 setkey(DT, NULL)
@@ -431,7 +439,7 @@ DT <- DT[, .SD[which.min(term)], by = "mcid"]
 DT <- DT[, .(mcid, cip6)]
 DT <- unique(DT)
 
-# For starters without FYE, rename cip6 as start, omit the proxy steps 
+# For starters without FYE, rename cip6 as start, omit the proxy steps
 
 # Continue for starters with FYE
 DT <- fye_proxy[DT, .(mcid, cip6, proxy), on = c("mcid")]

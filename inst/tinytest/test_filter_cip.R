@@ -8,7 +8,7 @@ test_filter_cip <- function() {
     #               select = NULL)
 
     # Needed for tinytest::build_install_test()
-    suppressPackageStartupMessages(library("data.table"))
+    library("data.table")
 
     # test case
     music_cip <- wrapr::build_frame(

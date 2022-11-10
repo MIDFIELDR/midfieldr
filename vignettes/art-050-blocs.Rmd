@@ -55,8 +55,8 @@ options(
 )
 
 # accented text
-accent <- function (text_string){
-    kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
+accent <- function(text_string) {
+  kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
 }
 ```
 
@@ -95,9 +95,9 @@ ever-enrolled
 
 : Bloc of students whose term records include a specified program in at least one term. 
 
-migrator
+migrators
 
-: A student who leaves one program to enroll in another at the same institution. Also called *switchers*.
+: Bloc of students who leave one program to enroll in another. Also called *switchers.*
 
 
 
@@ -131,7 +131,7 @@ We use left joins to add variables to a working data frame and filter for studen
 # Packages
 library("midfieldr")
 library("midfielddata")
-suppressPackageStartupMessages(library("data.table"))
+library("data.table")
 ```
 
 *Load.* &nbsp; MIDFIELD practice data tables. Described in [Getting started](art-000-getting-started.html).
@@ -159,13 +159,13 @@ data(student, term, degree, package = "midfielddata")
 ```{r}
 # Optional. Copy of source files with all variables
 source_student <- copy(student)
-source_term    <- copy(term)
-source_degree  <- copy(degree)
+source_term <- copy(term)
+source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
 student <- select_required(source_student)
-term    <- select_required(source_term)
-degree  <- select_required(source_degree)
+term <- select_required(source_term)
+degree <- select_required(source_degree)
 ```
 
 *Work.* &nbsp; Using `copy()` avoids *by-reference* effects  [@data.table-reference-semantics].
@@ -235,7 +235,7 @@ merge(DT, cols_we_want, by = c("mcid"), all.x = TRUE)
 Alternatively, one can select `Y` columns within the merge operation.
 
 ```{r}
-# merge(X, Y, by) left join 
+# merge(X, Y, by) left join
 merge(DT, term[, .(mcid, cip6)], by = c("mcid"), all.x = TRUE)
 ```
 
@@ -271,7 +271,7 @@ term[DT, .(mcid, cip6), on = c("mcid")]
 x <- merge(DT, term[, .(mcid, cip6)], by = c("mcid"), all.x = TRUE)
 setkey(x, NULL)
 
-# Y[X, j, on] left join 
+# Y[X, j, on] left join
 y <- term[DT, .(mcid, cip6), on = c("mcid")]
 
 # Demonstrate equivalence
@@ -331,7 +331,7 @@ x <- degree[DT, .(mcid, term_degree), on = c("mcid")]
 # Not what we want
 y <- DT[degree, .(mcid, term_degree), on = c("mcid")]
 
-# Same content? 
+# Same content?
 same_content(x, y)
 
 # Compare N rows
@@ -391,7 +391,7 @@ DT[]
 #| eval: false
 #| echo: false
 
-# Run manually 
+# Run manually
 # Writing external files
 setkey(DT, mcid)
 setkey(DT, NULL)

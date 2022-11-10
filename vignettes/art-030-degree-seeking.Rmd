@@ -55,8 +55,8 @@ options(
 )
 
 # accented text
-accent <- function (text_string){
-    kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
+accent <- function(text_string) {
+  kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
 }
 ```
 
@@ -100,7 +100,7 @@ By design, the `student` data table contains records of degree-seeking students 
 # Packages
 library("midfieldr")
 library("midfielddata")
-suppressPackageStartupMessages(library("data.table"))
+library("data.table")
 ```
 
 *Load.* &nbsp; MIDFIELD practice data tables. Described in [Getting started](art-000-getting-started.html).
@@ -121,11 +121,11 @@ data(student, term, package = "midfielddata")
 ```{r}
 # Optional. Copy of source files with all variables
 source_student <- copy(student)
-source_term    <- copy(term)
+source_term <- copy(term)
 
 # Optional. Select variables required by midfieldr functions
 student <- select_required(source_student)
-term    <- select_required(source_term)
+term <- select_required(source_term)
 ```
 
 *Work.* &nbsp; Using `copy()` avoids *by-reference* effects  [@data.table-reference-semantics]..
@@ -220,16 +220,12 @@ DT[student, .(mcid), on = c("mcid"), nomatch = NULL]
 w <- merge(DT, cols_we_want, by = c("mcid"), all = FALSE)
 # merge(Y, X)
 x <- merge(cols_we_want, DT, by = c("mcid"), all = FALSE)
-# X[Y]  
+# X[Y]
 y <- DT[student, .(mcid), on = c("mcid"), nomatch = NULL]
 # Y[X]
 z <- student[DT, .(mcid), on = c("mcid"), nomatch = NULL]
 
-# Remove keys introduced by merge()
-setkey(w, NULL)
-setkey(x, NULL)
-
-# Demonstrate equivalence 
+# Demonstrate equivalence
 same_content(w, x)
 same_content(w, y)
 same_content(w, z)
@@ -263,7 +259,7 @@ y[]
 
 ```{r}
 #| collapse: true
-# Demonstrate equivalence 
+# Demonstrate equivalence
 same_content(x, y)
 ```
 

@@ -9,7 +9,7 @@ test_prep_fye_mice <- function() {
     # Needed for tinytest::build_install_test()
     data("toy_student")
     data("toy_term")
-    suppressPackageStartupMessages(library("data.table"))
+    library("data.table")
     options(
         datatable.print.nrows = 8,
         datatable.print.topn = 8,

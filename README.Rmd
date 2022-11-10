@@ -85,18 +85,20 @@ Access to the MIDFIELD research database is currently limited to MIDFIELD partne
 #| echo: false
 
 wrapr::build_frame(
-    "Practice data table", "Each row is", "No. of rows", "No. of columns", "Memory" |
-        "course" , "a student in a course"   , "3,439,936", "12", "340 Mb" |
-        "term"   , "a student in a term"     ,   "710,841", "13",  "80 Mb" |
-        "student", "a degree-seeking student",    "97,640", "13",  "19 Mb" |
-        "degree" , "a student who graduates" ,    "47,499",  "5",  "10.2 Mb"
+  "Practice data table", "Each row is", "No. of rows", "No. of columns", "Memory" |
+    "course", "a student in a course", "3,439,936", "12", "340 Mb" |
+    "term", "a student in a term", "710,841", "13", "80 Mb" |
+    "student", "a degree-seeking student", "97,640", "13", "19 Mb" |
+    "degree", "a student who graduates", "47,499", "5", "10.2 Mb"
 ) |>
-    kableExtra::kbl(align = "llrrr", 
-                    caption = "Table 1: Attributes of the practice data tables in midfielddata") |>
-    kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-    kableExtra::row_spec(0, background = "#c7eae5") |>
-    kableExtra::column_spec(1, monospace = TRUE) |>
-    kableExtra::column_spec(1:4, color = "black", background = "white")
+  kableExtra::kbl(
+    align = "llrrr",
+    caption = "Table 1: Attributes of the practice data tables in midfielddata"
+  ) |>
+  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+  kableExtra::row_spec(0, background = "#c7eae5") |>
+  kableExtra::column_spec(1, monospace = TRUE) |>
+  kableExtra::column_spec(1:4, color = "black", background = "white")
 ```
 
 All four data tables (in both the research data and the practice data) are keyed by student ID. The `course` table  has multiple observations (rows) per student with one observation per student per course. The `term` table also has multiple rows per student, with one observation per student per term. The `student` and `degree` tables each have one observation per student. 
@@ -118,15 +120,15 @@ To illustrate usage, we tabulate counts of engineering students by race/ethnicit
 # Packages used
 library("midfieldr")
 library("midfielddata")
-suppressPackageStartupMessages(library("data.table"))
+library("data.table")
 
 # Load the practice data
 data(student, term, degree, package = "midfielddata")
 
 # Reduce dimensions of source data tables
 student <- select_required(student)
-term    <- select_required(term)
-degree  <- select_required(degree)
+term <- select_required(term)
+degree <- select_required(degree)
 
 # Initialize the working data frame
 DT <- term[, .(mcid, cip6)]
@@ -163,12 +165,13 @@ DT_display <- DT[, .N, by = c("completion_status", "people")]
 # Transform to row-record form
 DT_display <- dcast(DT_display, people ~ completion_status, value.var = "N")
 
-# Prepare the table for display 
+# Prepare the table for display
 setcolorder(DT_display, c("people", "timely", "late"))
 setkeyv(DT_display, c("people"))
 setnames(DT_display,
-         old = c("people", "timely", "late", "NA"),
-         new = c("People", "Timely completion", "Late completion", "Did not complete"))
+  old = c("people", "timely", "late", "NA"),
+  new = c("People", "Timely completion", "Late completion", "Did not complete")
+)
 ```
 
 Tabulated results of usage example are shown in Table 2, ordered alphabetically. "Timely completion" is the count of graduates completing their programs in no more than 6 years; "Late completion" is the count of those graduating in more than 6 years; "Did not complete" is the count of non-graduates. 

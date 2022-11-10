@@ -33,7 +33,7 @@ knitr::opts_chunk$set(
   fig.path = "../man/figures/art-100-graduation-rate-",
   fig.width = 6,
   fig.asp = 1 / 1.6,
-  out.width = "70%",
+  out.width = "80%",
   fig.align = "center"
 )
 
@@ -56,8 +56,8 @@ options(
 )
 
 # accented text
-accent <- function (text_string){
-    kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
+accent <- function(text_string) {
+  kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
 }
 ```
 
@@ -88,30 +88,31 @@ This vignette in the MIDFIELD workflow.
 
 graduation rate (general) 
 
-: Graduation rate $(G)$ is the ratio of the number of starter-completers $(N_{sc})$ to the number of starters $(N_s)$, 
+: Graduation rate $(G)$ is the ratio of the number of starter-graduates  $(N_{sg})$ to the number of starters $(N_s)$, 
 $$
-G=\frac{N_{sc}}{N_s}
+G=\frac{N_{sg}}{N_s}
 $$
 
-starter
 
-: A degree-seeking student enrolled in their first term in a degree-granting program. 
+bloc
 
-starter-completer
+: A grouping of SURs dealt with as a unit, for example, starters, ever-enrolled, graduates, transfers, traditional, non-traditional, migrators, etc. 
 
-: The subset of starters who graduate with a “timely” completion status from  their starting program. 
+starters
 
-degree completion
+: Bloc of degree-seeking students enrolled in their first term in  degree-granting programs. 
 
-: Graduating from a baccalaureate program 
+starter-graduates
+
+: Subset of the starters bloc who are graduates (timely completers) from their starting programs. 
 
 timely completion criterion 
 
-: Completing a program in no more than a specified span of years, in many cases, within 6 years after admission, or possibly less for some transfer students. 
+: Completing a program in no more than a specified span of years, in many cases, within 6 years after admission (150% of the "normal" 4-year span), or possibly less for some transfer students.
 
-migrator
+migrators
 
-: A student who leaves one program to enroll in another at  the same institution. Also called *switchers.*
+: Bloc of students who leave one program to enroll in another at the same institution. Also called *switchers.*
 
 undecided/unspecified
 
@@ -125,31 +126,27 @@ undecided/unspecified
 
 ## Starters and migrators
 
-Migrators can be problematic in determining graduation rate. The metric accounts them starters in their original program but potentially ignores them in their subsequent programs.  
-
-Relationships among migrators, starters, and completers of a given program *P* are illustrated in Figure 1.  The overall rectangle represents all students ever enrolled in program *P*. Combined regions 2 and 4 represent all graduates who completed program *P* within 6 years.
+Relationships among migrators, starters, and graduates (timely completers) of a given program *P* are illustrated in Figure 1.  The overall rectangle represents all students ever enrolled in program *P*. The interior rectangle represents all program *P* graduates, including migrators. 
 
 - Region 1 represents the graduation rate denominator $(N_s)$. 
 
-- Region 2, a subset of region 1, represents the graduation rate numerator $(N_{sc})$.  
+- Region 2, a subset of region 1, represents the graduation rate numerator $(N_{sg})$.  
 
-- Region 3 students are counted as starters in their original programs. 
+- The un-shaded region represents students excluded from the graduation rate metric, depending on how "program" is defined as discussed below. 
 
-- Region 4, a subset of region 3, represents migrators who complete program *P*.  
-
-![Figure 1. How starters, migrators, and completers relate as sets.](../man/figures/art-090-venn-diagram.png){width="100%"}
+![Figure 1. How starters, migrators, and timely completers relate as sets.](../man/figures/art-100-venn-diagram.png){width="100%"}
  
-<br>When calculating graduation rate, whether migrator-completers (region 4) are included in the count of graduates depends how a program is defined in terms of CIP codes.  
+<br>When calculating graduation rate, whether migrator-graduates are included in the count of graduates depends how a program is defined in terms of CIP codes.  
  
-- *Institution level*. Graduation rate computed at the institution level includes all migrators within the institution. For example, starters in  Engineering (CIP 14) who graduate in Business (CIP 52) are both starters and completers at the institution level. IPEDS defines this rate as the *institution completion rate.*
+- *Institution level*. Graduation rate computed at the institution level includes all migrators within the institution. For example, starters in  Engineering (CIP 14) who graduate in Business (CIP 52) are both starters and timely completers at the institution level. IPEDS defines this rate as the *institution completion rate.*
 
-- *2-digit CIP*. Graduation rate includes migrator graduates within the same 2-digit CIP. For example, starters in Engineering (CIP 14) graduating in Business (CIP 52) are excluded from the count of Business graduates, but migrators within Engineering (all 6-digit CIP codes starting with 14) are both starters and completers in Engineering.
+- *2-digit CIP*. Graduation rate includes migrator graduates within the same 2-digit CIP. For example, starters in Engineering (CIP 14) graduating in Business (CIP 52) are excluded from the count of Business graduates, but migrators within Engineering (all 6-digit CIP codes starting with 14) are both starters and timely completers in Engineering.
 
-- *4-digit CIP*. Similar to the 2-digit case. For example, starters in Electrical Engineering (CIP 1410) graduating in Mechanical Engineering (CIP 1419) are excluded from the count of Mechanical Engineering graduates, but migrators within Electrical Engineering (all 6-digit CIP codes starting with 1410) are both starters and completers in Electrical Engineering. 
+- *4-digit CIP*. Similar to the 2-digit case. For example, starters in Electrical Engineering (CIP 1410) graduating in Mechanical Engineering (CIP 1419) are excluded from the count of Mechanical Engineering graduates, but migrators within Electrical Engineering (all 6-digit CIP codes starting with 1410) are both starters and timely completers in Electrical Engineering. 
 
 - *6-digit CIP*. Rarely used. Graduation rate at this CIP level excludes all migrators from the count of graduates. 
 
-- *Multiple CIPs*. In some cases, a single program or major includes different  4-digit CIPs. For example, migrators between Systems Engineering (CIP 1427), Industrial Engineering (CIP 1435), Manufacturing Engineering (CIP 1436), and Operations Research (CIP 1437) might be considered both starters and completers in a general program of Industrial & Systems Engineering.
+- *Multiple CIPs*. In some cases, a single program or major includes different  4-digit CIPs. For example, migrators between Systems Engineering (CIP 1427), Industrial Engineering (CIP 1435), Manufacturing Engineering (CIP 1436), and Operations Research (CIP 1437) might be considered both starters and timely completers in a general program of Industrial & Systems Engineering.
 
 Because a migrator may have to complete remedial work in their new program, their time to graduation may exceed the defined acceptable span (typically 6 years). Yet graduation rate has no mechanism for extending the timely completion span. (Developing such a heuristic for MIDFIELD data is a potential topic of future work.)
 
@@ -172,18 +169,18 @@ graduation rate (MIDFIELD)
    
 ```{r}
 #| echo: false
-suppressPackageStartupMessages(library("data.table"))
+library("data.table")
 wrapr::build_frame(
-    "Item", "IPEDS", "MIDFIELD", "MIDFIELD notes" |
-        "completion span:", "4, 6, or 8 years", "4, 6, or 8 years", "Typical usage is 6 years" |
-        "students admitted in:", "Summer/Fall only", "any term", "" |
-        "part-time students are:", "excluded", "included", "Timely completion same as full-time students" |
-        "transfer students are:", "excluded", "included", "Timely completion span adjusted for level at entry" 
+  "Item", "IPEDS", "MIDFIELD", "MIDFIELD notes" |
+    "completion span:", "4, 6, or 8 years", "4, 6, or 8 years", "Typical usage is 6 years" |
+    "students admitted in:", "Summer/Fall only", "any term", "" |
+    "part-time students are:", "excluded", "included", "Timely completion same as full-time students" |
+    "transfer students are:", "excluded", "included", "Timely completion span adjusted for level at entry"
 ) |>
-    kableExtra::kbl(align = "llll", caption = "Table 1: Comparing graduation rate definitions") |>
-    kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-    kableExtra::column_spec(1:2, color = "black", background = "white") |>
-    kableExtra::row_spec(c(0), background = "#c7eae5")
+  kableExtra::kbl(align = "llll", caption = "Table 1: Comparing graduation rate definitions") |>
+  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+  kableExtra::column_spec(1:2, color = "black", background = "white") |>
+  kableExtra::row_spec(c(0), background = "#c7eae5")
 ```
 
 <br>
@@ -199,14 +196,19 @@ First-Year Engineering (FYE) starters
 
 ## Method
 
-- steps
+Demonstrating the following elements of a MIDFIELD workflow.  
 
-- steps 
+1. *Planning.*  &nbsp; The metric is graduation rate. Required blocs are starters and the subset of starters who graduate in their starting major. Grouping variables are program, race/ethnicity, and sex. Programs are the four Engineering programs used throughout. 
 
- 
+1. *Initial processing.* &nbsp; Filter the source SURs for data sufficiency and degree-seeking.
 
+1. *Blocs.* &nbsp; Gather starters, filter by program. Gather graduates, filter by program, filter by starters' IDs and programs. 
 
+1. *Groupings.* &nbsp; Add grouping variables. 
 
+1. *Metrics* &nbsp; Summarize by grouping variables and compute graduation rate. 
+
+1. *Displays* &nbsp; Create multiway chart and results table. 
 
 *Caveat:* The Student Unit Records included with midfieldr and midfielddata are practice data, not research data, suitable for practice working with SURs but not for drawing inferences about program attributes or student experiences.
 
@@ -226,8 +228,8 @@ First-Year Engineering (FYE) starters
 # Packages
 library("midfieldr")
 library("midfielddata")
-suppressPackageStartupMessages(library("data.table"))
-suppressPackageStartupMessages(library("ggplot2"))
+library("data.table")
+library("ggplot2")
 ```
 
 *Load.* &nbsp; MIDFIELD practice data tables. Described in [Getting started](art-000-getting-started.html).
@@ -256,13 +258,13 @@ data(student, term, degree, package = "midfielddata")
 ```{r}
 # Optional. Copy of source files with all variables
 source_student <- copy(student)
-source_term    <- copy(term)
-source_degree  <- copy(degree)
+source_term <- copy(term)
+source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
 student <- select_required(source_student)
-term    <- select_required(source_term)
-degree    <- select_required(source_degree)
+term <- select_required(source_term)
+degree <- select_required(source_degree)
 ```
 
 *Work.* &nbsp; Using `copy()` avoids *by-reference* effects  [@data.table-reference-semantics].
@@ -291,58 +293,59 @@ DT <- student[DT, .(mcid), on = c("mcid"), nomatch = NULL]
 DT[]
 ```
 
+We preserve this data frame as a baseline for examples in the vignette.  
+
+```{r}
+baseline <- copy(DT)
+```
+
+
 
 
 
 
 ## Starters 
 
-We identify starters and their CIP codes before assigning and filtering for programs. 
-
-*Create start variable.* Isolate the starting term and create the `start` variable. Code reproduced from [Starters](art-070-starters.html). 
+*Preparation.* &nbsp; The baseline data frame we preserved earlier is the intake for this section.
 
 ```{r}
-# Filter for initial term
+# Reset the working data frame
+DT <- copy(baseline)
+```
+
+*Starters.* &nbsp; The summary code chunk from [Starters](art-070-starters.html)
+
+```{r}
+# Isolate starting term
 DT <- term[DT, .(mcid, term, cip6), on = c("mcid")]
 DT <- DT[!cip6 %like% "999999"]
 setorderv(DT, cols = c("mcid", "term"))
-DT <- DT[, .SD[1], by = c("mcid")]
+DT <- DT[, .SD[which.min(term)], by = "mcid"]
+DT <- DT[, .(mcid, cip6)]
+DT <- unique(DT)
 
-# Create start variable
+# Continue for starters with FYE
 DT <- fye_proxy[DT, .(mcid, cip6, proxy), on = c("mcid")]
 DT[, start := fcase(
   cip6 == "140102", proxy,
   cip6 != "140102", cip6
 )]
-DT[]
-```
+DT <- DT[, .(mcid, start)]
 
-*Filter by program.* We join the case study programs labels to the data frame and filter to retain the desired programs. Code reproduced from [Starters](art-070-starters.html). 
-
-```{r}
-# Filter by program
+# Filter by program on start
 join_labels <- copy(study_programs)
-setnames(join_labels, old = "cip6", new = "start")
-DT <- join_labels[DT, on = c("start")]
-DT <- DT[!is.na(program)]
-setcolorder(DT, c("mcid", "start"))
-DT[]
+join_labels <- join_labels[, .(program, start = cip6)]
+DT <- join_labels[DT, on = c("start"), nomatch = NULL]
+DT[, start := NULL]
+DT <- unique(DT)
 ```
 
-*Copying.* Prevents operations on `starters` from affecting `DT` by reference [@data.table-reference-semantics]. 
+*Copy.* &nbsp; To prepare for joining with graduates. 
 
 ```{r}
-# Set aside for later use
+# Prepare for joining
+setcolorder(DT, c("mcid"))
 starters <- copy(DT)
-```
-
-*Create variables.* Add a group column with value `start` throughout to distinguish these observations from the observations of starters we derived earlier. 
-
-```{r}
-# Prepare the graduates
-starters <- DT[, .(mcid, program)]
-starters[, group := "start"]
-starters <- unique(starters)
 starters[]
 ```
 
@@ -350,76 +353,171 @@ starters[]
 
 
 
+
+
 ## Graduates
 
-In a graduation rate calculation, graduates are a subset starters. Thus, referring to Figure 1, the starters derived above correspond to region 1 and the graduates we derive next correspond to region 2. 
-
-*Copy.* Prevents operations on `DT` from affecting `starters` by reference  [@data.table-reference-semantics].
+*Preparation.* &nbsp; The baseline data frame we preserved earlier is the intake for this section.
 
 ```{r}
-# Working data frame
-DT <- copy(starters)
+# Reset the working data frame
+DT <- copy(baseline)
 ```
 
-*Select.* We can start with the IDs only. 
+*Graduates* &nbsp; The summary code chunk from [Graduates](art-080-graduates.html)
 
 ```{r}
-# Isolate IDs
-DT <- DT[, .(mcid)]
+# Gather graduates and their degree CIPs
+DT <- add_timely_term(DT, term)
+DT <- add_completion_status(DT, degree)
+DT <- DT[completion_status == "timely"]
+DT <- degree[DT, .(mcid, cip6), on = c("mcid")]
+
+# Filter by program
+DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
+DT[, cip6 := NULL]
 DT <- unique(DT)
 DT[]
 ```
 
-The result has `r length(unique(DT$mcid))` unique IDs. These IDs, as a subset of starters, have already been filtered for data sufficiency and degree seeking. The next step is to determine the CIP code of the program from which they graduate. 
 
-*Add variables*. Add the degree information using a left-outer join with `degree`. The CIP code is the program (if any) from which the student graduated. 
+
+
+
+
+
+## Starter-graduates 
+
+This section introduces new material---not adapted from the reusable code sections of other vignettes. 
+
+For a graduation rate metric, a timely completer is counted among the graduates only if they start and complete the same program. 
+
+*Filter.* &nbsp; Use an inner join to filter the graduates by ID and program to match the IDs and programs of starters. 
 
 ```{r}
-# Add degree information
-DT <- degree[DT, on = "mcid"]
-DT[]
+# Starter-graduates
+DT <- starters[DT, on = c("mcid", "program"), nomatch = NULL]
 ```
 
-*Filter by program.* Like we did for starters earlier, we join the case study program labels to the data frame and filter to retain the desired programs. Code reproduced from [Starters](art-070-starters.html). 
+*Copy.* &nbsp; To prepare for joining with starters. 
 
 ```{r}
-# Filter by program
-DT <- study_programs[DT, on = c("cip6")]
-DT <- DT[!is.na(program)]
-DT[]
-```
-
-*Completion status.* Add columns for timely completion term and completion status. Filter to retain observations for which completion is timely. Code reproduced from [Completion status](art-080-graduates.html). 
-
-```{r}
-# Add completion status
-DT <- add_timely_term(DT, term)
-DT <- add_completion_status(DT, degree)
-DT[, c("term_i", "level_i", "adj_span") := NULL]
-DT <- DT[completion_status == "timely"]
-DT[]
-```
-
-*Prepare for joining.* Rename the data frame to distinguish it from starters before merging. 
-
-```{r}
-# Rename to distinguish graduates from starters before merging
+# Prepare for joining
+setcolorder(DT, c("mcid"))
 graduates <- copy(DT)
 ```
 
-The result has `r nrow(graduates)` observations of `r length(unique(graduates$mcid))` unique IDs.  These two numbers are not necessarily equal in all cases. Had students in this example earned more than one degree in a term, the number of observations would be greater than the number of unique students. 
+### Closer look
 
-## Combine observations
+Examining the records of selected students in detail.
 
-To set up the data frame for grouping and summarizing, we want to combine the `starters` and `graduates` data frames. 
+*Example 1.*  &nbsp; The student is a starter and a timely completer in Industrial/Systems Engineering (ISE). They appear in both blocs. 
 
 ```{r}
-# Rename program variable before merging
-starters  <- starters[, .(mcid, program_start = program)]
-graduates <- graduates[, .(mcid, program_grad = program)]
+#| collapse: true
 
-# Combine using a left join 
-DT <- graduates[starters, on = "mcid"]
+# Same ID in different blocs
+mcid_we_want <- "MID25783912"
+starters[mcid == mcid_we_want]
+
+graduates[mcid == mcid_we_want]
+```
+
+*Example 2.*  &nbsp; The student is a starter in Electrical Engineering (EE). They are excluded from the graduation rate starter-graduate bloc because they did not complete EE. From `degree` we find that they completed CIP 143501 (ISE), one of the study programs. They are also excluded from a count of ISE graduates because they weren't a ISE starter. 
+
+```{r}
+#| collapse: true
+
+# Same ID in different blocs
+mcid_we_want <- "MID25784893"
+starters[mcid == mcid_we_want]
+
+graduates[mcid == mcid_we_want]
+
+degree[mcid == mcid_we_want, .(mcid, cip6)]
+```
+
+*Example 3.*  &nbsp; The student is a starter in Civil Engineering (CE). They are excluded from the graduation rate starter-graduate bloc because they did not complete CE. From  `degree` we find that they completed CIP 521401 (Marketing). They would also be excluded from a count of Marketing graduates because they weren't a Marketing starter. 
+
+```{r}
+#| collapse: true
+
+# Same ID in different blocs
+mcid_we_want <- "MID25783162"
+starters[mcid == mcid_we_want]
+
+graduates[mcid == mcid_we_want]
+
+degree[mcid == mcid_we_want, .(mcid, cip6)]
+```
+
+
+
+
+
+
+## Groupings
+
+One of our grouping variables (`program`) is already included in the data frames. The next grouping variable is `bloc` to distinguish starters from graduates when the two data frames are combined.
+
+*Add a variable.* &nbsp; Label starters and graduates. 
+
+```{r}
+# For grouping by bloc
+starters[, bloc := "starters"]
+graduates[, bloc := "graduates"]
+```
+
+*Join.* &nbsp; Combine the two blocs to prepare for summarizing. A student starting and graduating in the same program now has two observations in these data: one as a starter and one as a graduate. 
+
+```{r}
+# Prepare for summarizing
+DT <- rbindlist(list(starters, graduates))
+DT[]
+```
+
+*Add variables.* &nbsp; Demographics from [Groupings](art-090-groupings.html#reusable-code)
+
+```{r}
+# Join race/ethnicity and sex
+cols_we_want <- student[, .(mcid, race, sex)]
+DT <- cols_we_want[DT, on = c("mcid")]
+DT[]
+```
+
+
+
+
+## Graduation rate
+
+```{r}
+#| echo: false
+options(datatable.print.topn = 7)
+```
+
+*Summarize.* &nbsp; Count the numbers of observations for each combination of the grouping variables. 
+
+```{r}
+# Count observations by group
+grouping_variables <- c("bloc", "program", "sex", "race")
+DT <- DT[, .N, by = grouping_variables]
+setorderv(DT, grouping_variables)
+DT[]
+```
+
+*Reshape.* &nbsp; Transform to row-record form to set up the graduation rate calculation. transform the *N* column into two columns, one for starters and one for graduates. 
+
+```{r}
+# Prepare to compute metric
+DT <- dcast(DT, program + sex + race ~ bloc, value.var = "N", fill = 0)
+DT[]
+```
+
+*Create a variable.*  &nbsp; Compute the metric. 
+
+```{r}
+# Compute metric
+DT[, rate := round(100 * graduates / starters, 1)]
 DT[]
 ```
 
@@ -427,20 +525,116 @@ DT[]
 
 
 
-
-## Reusable code
-
-*Preparation.* &nbsp; The data frame we preserved earlier is the intake for the reusable code chunk below.  
+## Prepare for dissemination
 
 ```{r}
-# DT <- copy(baseline)
+#| echo: false
+options(datatable.print.topn = 3)
 ```
 
-*Topic.* &nbsp; A summary code chunk for ready reference.   
+*Filter.* &nbsp; Let us assume that our study focuses on “domestic” students of known race/ethnicity. In that case, we omit observations labeled “International” and "Other/Unknown”.
 
 ```{r}
-
+# Study design assumption
+DT <- DT[!race %chin% c("International", "Other/Unknown")]
+DT[]
 ```
+
+*Filter.* &nbsp; To preserve the anonymity of the people involved, we remove observations with fewer than 10 graduates.
+
+```{r}
+# Preserve anonymity
+DT <- DT[graduates >= 10]
+DT[]
+```
+
+*Add a variable.* &nbsp; We combine race/ethnicity and sex to create a combined grouping variable. 
+
+```{r}
+# Create a combined category
+DT[, people := paste(race, sex)]
+DT[, `:=`(race = NULL, sex = NULL)]
+setcolorder(DT, c("program", "people"))
+DT[]
+```
+
+*Recode.* &nbsp;  Readers can more readily interpret our charts and tables if the programs are un-abbreviated.
+
+```{r}
+# Recode values for chart and table readability
+DT[, program := fcase(
+  program %like% "CE", "Civil",
+  program %like% "EE", "Electrical",
+  program %like% "ME", "Mechanical",
+  program %like% "ISE", "Industrial/Systems"
+)]
+DT[]
+```
+
+
+
+
+## Displays
+
+
+*Order factors.* &nbsp; Order the levels of the categories. Code adapted from [Multiway data and charts](art-120-multiway.html). 
+
+```{r}
+# Order the categories
+DT <- order_multiway(DT,
+  quantity   = "rate",
+  categories = c("program", "people"),
+  method     = "percent",
+  ratio_of   = c("graduates", "starters")
+)
+DT[]
+```
+
+
+*Multiway chart.* &nbsp; Code adapted from [Multiway data and charts](art-120-multiway.html). 
+
+```{r fig2}
+#| fig-asp: 1
+#| fig-cap: "Figure 2: Graduation rates of four Engineering majors."
+
+ggplot(DT, aes(x = rate, y = people)) +
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_vline(aes(xintercept = program_rate), linetype = 2, linewidth = 0.5) +
+  geom_point() +
+  labs(x = "Graduation rate (%)", y = "")
+```
+
+<br>
+
+*Results table.* &nbsp; Code adapted from [Multiway data and charts](art-120-multiway.html).
+
+```{r}
+# Select variables and remove factors
+display_table <- copy(DT)
+display_table <- display_table[, .(program, people, rate)]
+display_table[, people := as.character(people)]
+display_table[, program := as.character(program)]
+
+# Construct table
+display_table <- dcast(display_table, people ~ program, value.var = "rate")
+setnames(display_table,
+  old = c("people"),
+  new = c("People"),
+  skip_absent = TRUE
+)
+display_table[]
+```
+
+(Optional) Format the table nearer to publication quality. Here I use `kable()` from the knitr package. 
+
+```{r}
+knitr::kable(display_table,
+  align = "lrrrr",
+  caption = "Table 2: Graduation rates (%) of four Engineering majors."
+)
+```
+
+
 
 
 
@@ -449,8 +643,6 @@ DT[]
 ## References
 
 <div id="refs"></div>
-
-
 
 
 
