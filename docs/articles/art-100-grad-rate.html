@@ -66,6 +66,7 @@
     <a class="dropdown-item" href="../articles/art-080-graduates.html">Graduates</a>
     <a class="dropdown-item" href="../articles/art-090-groupings.html">Groupings</a>
     <a class="dropdown-item" href="../articles/art-100-grad-rate.html">Graduation rate</a>
+    <a class="dropdown-item" href="../articles/art-110-stickiness.html">Stickiness</a>
     <a class="dropdown-item" href="../articles/art-120-multiway.html">Multiway data and charts</a>
   </div>
 </li>
@@ -101,7 +102,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Graduation rate</h1>
             
-            <h4 data-toc-skip class="date">2022-11-10</h4>
+            <h4 data-toc-skip class="date">2022-11-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-100-grad-rate.Rmd" class="external-link"><code>vignettes/art-100-grad-rate.Rmd</code></a></small>
       <div class="d-none name"><code>art-100-grad-rate.Rmd</code></div>
@@ -195,22 +196,26 @@ declared a major or an institution had not recorded a program.</p>
 <div class="section level2">
 <h2 id="starters-and-migrators">Starters and migrators<a class="anchor" aria-label="anchor" href="#starters-and-migrators"></a>
 </h2>
-<p>Relationships among migrators, starters, and graduates (timely
-completers) of a given program <em>P</em> are illustrated in Figure 1.
-The overall rectangle represents all students ever enrolled in program
-<em>P</em>. The interior rectangle represents all program <em>P</em>
-graduates, including migrators.</p>
+<p>As they pertain to the graduation rate metric, relationships among
+starters, migrators, and graduates (timely completers) of a given
+program <em>P</em> are illustrated in Figure 1.</p>
 <ul>
-<li><p>Region 1 represents the graduation rate denominator <span class="math inline">\((N_s)\)</span>.</p></li>
-<li><p>Region 2, a subset of region 1, represents the graduation rate
-numerator <span class="math inline">\((N_{sg})\)</span>.</p></li>
-<li><p>The un-shaded region represents students excluded from the
-graduation rate metric, depending on how “program” is defined as
+<li><p>The overall rectangle represents the set of students ever
+enrolled in program <em>P</em>.</p></li>
+<li><p>The interior rectangle represents the set of graduates (timely
+completers) of program <em>P</em>.</p></li>
+<li><p>Region 1 (shaded) represents the graduation rate denominator
+<span class="math inline">\((N_s)\)</span>, the set of starters in
+program <em>P</em>.</p></li>
+<li><p>Region 2 (shaded) represents the graduation rate numerator <span class="math inline">\((N_{sg})\)</span>, the subset of starters who are
+also graduates of program <em>P</em>.</p></li>
+<li><p>Region 3 (unshaded) represents the set of students excluded from
+the graduation rate metric, depending on how “program” is defined as
 discussed below.</p></li>
 </ul>
 <div class="figure">
-<img src="../reference/figures/art-100-venn-diagram.png" style="width:100.0%" alt=""><p class="caption">Figure 1. How starters, migrators, and timely
-completers relate as sets.</p>
+<img src="../reference/figures/art-100-venn-diagram.png" style="width:100.0%" alt=""><p class="caption">Figure 1. Graduation rate metric. Starters,
+migrators, and timely completers.</p>
 </div>
 <p><br>When calculating graduation rate, whether migrator-graduates are
 included in the count of graduates depends how a program is defined in
@@ -243,11 +248,6 @@ Engineering (CIP 1436), and Operations Research (CIP 1437) might be
 considered both starters and timely completers in a general program of
 Industrial &amp; Systems Engineering.</p></li>
 </ul>
-<p>Because a migrator may have to complete remedial work in their new
-program, their time to graduation may exceed the defined acceptable span
-(typically 6 years). Yet graduation rate has no mechanism for extending
-the timely completion span. (Developing such a heuristic for MIDFIELD
-data is a potential topic of future work.)</p>
 </div>
 <div class="section level2">
 <h2 id="who-is-a-starter">Who is a starter?<a class="anchor" aria-label="anchor" href="#who-is-a-starter"></a>
@@ -700,7 +700,7 @@ combination of the grouping variables.</p>
 <span><span class="co">#&gt; 100:  starters      ME   Male   Other/Unknown    27</span></span>
 <span><span class="co">#&gt; 101:  starters      ME   Male           White  1465</span></span></code></pre>
 <p><em>Reshape.</em>   Transform to row-record form to set up the
-graduation rate calculation. transform the <em>N</em> column into two
+graduation rate calculation. Transform the <em>N</em> column into two
 columns, one for starters and one for graduates.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Prepare to compute metric</span></span>
@@ -766,20 +766,24 @@ labeled “International” and “Other/Unknown”.</p>
 <span><span class="co">#&gt; 38:      ME   Male Native American         1        8  12.5</span></span>
 <span><span class="co">#&gt; 39:      ME   Male           White       615     1465  42.0</span></span></code></pre>
 <p><em>Filter.</em>   To preserve the anonymity of the people involved,
-we remove observations with fewer than 10 graduates.</p>
+we remove observations with fewer than <code>N_threshold</code>
+graduates. With the research data, we typically set this threshold to
+10; with the practice data, we demonstrate the procedure using a
+threshold of 5.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Preserve anonymity</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">graduates</span> <span class="op">&gt;=</span> <span class="fl">10</span><span class="op">]</span></span>
+<span><span class="va">N_threshold</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">graduates</span> <span class="op">&gt;=</span> <span class="va">N_threshold</span><span class="op">]</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;     program    sex   race graduates starters  rate</span></span>
 <span><span class="co">#&gt;      &lt;char&gt; &lt;char&gt; &lt;char&gt;     &lt;int&gt;    &lt;int&gt; &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      CE Female  White       101      243  41.6</span></span>
-<span><span class="co">#&gt;  2:      CE   Male  Asian        12       24  50.0</span></span>
-<span><span class="co">#&gt;  3:      CE   Male  Black        17       63  27.0</span></span>
+<span><span class="co">#&gt;  1:      CE Female  Asian         6       12  50.0</span></span>
+<span><span class="co">#&gt;  2:      CE Female  Black         8       36  22.2</span></span>
+<span><span class="co">#&gt;  3:      CE Female  White       101      243  41.6</span></span>
 <span><span class="co">#&gt; ---                                               </span></span>
-<span><span class="co">#&gt; 21:      ME   Male  Black        41      156  26.3</span></span>
-<span><span class="co">#&gt; 22:      ME   Male Latine        13       47  27.7</span></span>
-<span><span class="co">#&gt; 23:      ME   Male  White       615     1465  42.0</span></span></code></pre>
+<span><span class="co">#&gt; 27:      ME   Male  Black        41      156  26.3</span></span>
+<span><span class="co">#&gt; 28:      ME   Male Latine        13       47  27.7</span></span>
+<span><span class="co">#&gt; 29:      ME   Male  White       615     1465  42.0</span></span></code></pre>
 <p><em>Add a variable.</em>   We combine race/ethnicity and sex to
 create a combined grouping variable.</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
@@ -790,15 +794,15 @@ create a combined grouping variable.</p>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;     program       people graduates starters  rate</span></span>
 <span><span class="co">#&gt;      &lt;char&gt;       &lt;char&gt;     &lt;int&gt;    &lt;int&gt; &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      CE White Female       101      243  41.6</span></span>
-<span><span class="co">#&gt;  2:      CE   Asian Male        12       24  50.0</span></span>
-<span><span class="co">#&gt;  3:      CE   Black Male        17       63  27.0</span></span>
+<span><span class="co">#&gt;  1:      CE Asian Female         6       12  50.0</span></span>
+<span><span class="co">#&gt;  2:      CE Black Female         8       36  22.2</span></span>
+<span><span class="co">#&gt;  3:      CE White Female       101      243  41.6</span></span>
 <span><span class="co">#&gt; ---                                              </span></span>
-<span><span class="co">#&gt; 21:      ME   Black Male        41      156  26.3</span></span>
-<span><span class="co">#&gt; 22:      ME  Latine Male        13       47  27.7</span></span>
-<span><span class="co">#&gt; 23:      ME   White Male       615     1465  42.0</span></span></code></pre>
+<span><span class="co">#&gt; 27:      ME   Black Male        41      156  26.3</span></span>
+<span><span class="co">#&gt; 28:      ME  Latine Male        13       47  27.7</span></span>
+<span><span class="co">#&gt; 29:      ME   White Male       615     1465  42.0</span></span></code></pre>
 <p><em>Recode.</em>   Readers can more readily interpret our charts and
-tables if the programs are un-abbreviated.</p>
+tables if the programs are unabbreviated.</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Recode values for chart and table readability</span></span>
 <span><span class="va">DT</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
@@ -810,13 +814,13 @@ tables if the programs are un-abbreviated.</p>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;        program       people graduates starters  rate</span></span>
 <span><span class="co">#&gt;         &lt;char&gt;       &lt;char&gt;     &lt;int&gt;    &lt;int&gt; &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      Civil White Female       101      243  41.6</span></span>
-<span><span class="co">#&gt;  2:      Civil   Asian Male        12       24  50.0</span></span>
-<span><span class="co">#&gt;  3:      Civil   Black Male        17       63  27.0</span></span>
+<span><span class="co">#&gt;  1:      Civil Asian Female         6       12  50.0</span></span>
+<span><span class="co">#&gt;  2:      Civil Black Female         8       36  22.2</span></span>
+<span><span class="co">#&gt;  3:      Civil White Female       101      243  41.6</span></span>
 <span><span class="co">#&gt; ---                                                 </span></span>
-<span><span class="co">#&gt; 21: Mechanical   Black Male        41      156  26.3</span></span>
-<span><span class="co">#&gt; 22: Mechanical  Latine Male        13       47  27.7</span></span>
-<span><span class="co">#&gt; 23: Mechanical   White Male       615     1465  42.0</span></span></code></pre>
+<span><span class="co">#&gt; 27: Mechanical   Black Male        41      156  26.3</span></span>
+<span><span class="co">#&gt; 28: Mechanical  Latine Male        13       47  27.7</span></span>
+<span><span class="co">#&gt; 29: Mechanical   White Male       615     1465  42.0</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="displays">Displays<a class="anchor" aria-label="anchor" href="#displays"></a>
@@ -835,21 +839,24 @@ charts</a>.</p>
 <span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;        program       people graduates starters  rate program_rate people_rate</span></span>
 <span><span class="co">#&gt;         &lt;fctr&gt;       &lt;fctr&gt;     &lt;num&gt;    &lt;num&gt; &lt;num&gt;        &lt;num&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:      Civil White Female       101      243  41.6         42.8        35.4</span></span>
-<span><span class="co">#&gt;  2:      Civil   Asian Male        12       24  50.0         42.8        39.8</span></span>
-<span><span class="co">#&gt;  3:      Civil   Black Male        17       63  27.0         42.8        29.8</span></span>
+<span><span class="co">#&gt;  1:      Civil Asian Female         6       12  50.0         42.3        40.4</span></span>
+<span><span class="co">#&gt;  2:      Civil Black Female         8       36  22.2         42.3        30.0</span></span>
+<span><span class="co">#&gt;  3:      Civil White Female       101      243  41.6         42.3        35.4</span></span>
 <span><span class="co">#&gt; ---                                                                          </span></span>
-<span><span class="co">#&gt; 21: Mechanical   Black Male        41      156  26.3         38.7        29.8</span></span>
-<span><span class="co">#&gt; 22: Mechanical  Latine Male        13       47  27.7         38.7        35.7</span></span>
-<span><span class="co">#&gt; 23: Mechanical   White Male       615     1465  42.0         38.7        41.1</span></span></code></pre>
+<span><span class="co">#&gt; 27: Mechanical   Black Male        41      156  26.3         38.7        29.8</span></span>
+<span><span class="co">#&gt; 28: Mechanical  Latine Male        13       47  27.7         38.7        35.7</span></span>
+<span><span class="co">#&gt; 29: Mechanical   White Male       615     1465  42.0         38.7        41.1</span></span></code></pre>
 <p><em>Multiway chart.</em>   Code adapted from <a href="art-120-multiway.html#percentage-ordered-charts">Multiway data and
 charts</a>.</p>
+<p>The vertical reference line is the aggregate graduation rate of the
+program, independent of race/ethnicity and sex.</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">rate</span>, y <span class="op">=</span> <span class="va">people</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span>, as.table <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">program_rate</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="fl">2</span>, linewidth <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Graduation rate (%)"</span>, y <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Graduation rate (%)"</span>, y <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">65</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="../reference/figures/art-100-graduation-rate-fig2-1.png" alt="Figure 2: Graduation rates of four Engineering majors." width="80%"><p class="caption">
 Figure 2: Graduation rates of four Engineering majors.
@@ -873,14 +880,16 @@ charts</a>.</p>
 <span>  skip_absent <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">display_table</span><span class="op">[</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;          People Civil Electrical Industrial/Systems Mechanical</span></span>
-<span><span class="co">#&gt;          &lt;char&gt; &lt;num&gt;      &lt;num&gt;              &lt;num&gt;      &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:   Asian Male  50.0       35.9               46.9       40.7</span></span>
-<span><span class="co">#&gt; 2: Black Female    NA       36.4               28.6       22.0</span></span>
-<span><span class="co">#&gt; 3:   Black Male  27.0       31.6               35.0       26.3</span></span>
-<span><span class="co">#&gt; 4:  Latine Male  32.4       38.5               52.4       27.7</span></span>
-<span><span class="co">#&gt; 5: White Female  41.6       25.4               43.3       30.1</span></span>
-<span><span class="co">#&gt; 6:   White Male  44.7       36.8               41.3       42.0</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;           People Civil Electrical Industrial/Systems Mechanical</span></span>
+<span><span class="co">#&gt;           &lt;char&gt; &lt;num&gt;      &lt;num&gt;              &lt;num&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:  Asian Female  50.0       30.4                 NA       50.0</span></span>
+<span><span class="co">#&gt; 2:    Asian Male  50.0       35.9               46.9       40.7</span></span>
+<span><span class="co">#&gt; 3:  Black Female  22.2       36.4               28.6       22.0</span></span>
+<span><span class="co">#&gt; 4:    Black Male  27.0       31.6               35.0       26.3</span></span>
+<span><span class="co">#&gt; 5: Latine Female    NA       38.5               55.6         NA</span></span>
+<span><span class="co">#&gt; 6:   Latine Male  32.4       38.5               52.4       27.7</span></span>
+<span><span class="co">#&gt; 7:  White Female  41.6       25.4               43.3       30.1</span></span>
+<span><span class="co">#&gt; 8:    White Male  44.7       36.8               41.3       42.0</span></span></code></pre>
 <p>(Optional) Format the table nearer to publication quality. Here I use
 <code>kable()</code> from the knitr package.</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
@@ -912,6 +921,23 @@ Mechanical
 <tbody>
 <tr>
 <td style="text-align:left;">
+Asian Female
+</td>
+<td style="text-align:right;">
+50.0
+</td>
+<td style="text-align:right;">
+30.4
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+50.0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 Asian Male
 </td>
 <td style="text-align:right;">
@@ -932,7 +958,7 @@ Asian Male
 Black Female
 </td>
 <td style="text-align:right;">
-NA
+22.2
 </td>
 <td style="text-align:right;">
 36.4
@@ -959,6 +985,23 @@ Black Male
 </td>
 <td style="text-align:right;">
 26.3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Latine Female
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+38.5
+</td>
+<td style="text-align:right;">
+55.6
+</td>
+<td style="text-align:right;">
+NA
 </td>
 </tr>
 <tr>
@@ -1014,6 +1057,8 @@ White Male
 </tr>
 </tbody>
 </table>
+<p>A value of NA indicates a group removed because the number of
+graduates was below the threshold set to preserve anonymity.</p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
