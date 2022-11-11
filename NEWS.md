@@ -1,5 +1,6 @@
 
-## midfieldr 1.0.0.9028 / 2021-11
+
+## midfieldr 1.0.0.9028 / 2022-11
 
 - Rename `filter_search()` to `filter_cip()` to better capture its purpose. Made `cip` the default data frame to search. Permits usage like `filter_cip("engineering")` where the first argument can be the `keep_text` character vector of search strings, yet unnamed. 
 - Edit all vignettes for consistent organization and prose.  
@@ -7,8 +8,7 @@
 - Add `same_content()` convenience function. 
 - Add "Groupings" vignette. 
 
-
-## midfieldr 1.0.0.9027 / 2021-10
+## midfieldr 1.0.0.9027 / 2022-10
 
 - Separate the vignettes for FYE and starters. 
 - To starters, add the case for non-FYE institutions.
@@ -16,9 +16,7 @@
 - Add `select_required()`. 
 - Add planning and blocs vignettes. 
 
-
-
-## midfieldr 1.0.0.9026 / 2021-09
+## midfieldr 1.0.0.9026 / 2022-09
 
 - Add FYE function and vignette.
 - Revise multiway function name.
@@ -26,8 +24,6 @@
 - Add initial graduation rate vignette. 
 - Add README to tests directory.
 - Consistent comments and R code chunk commands.
-
-
 
 ## midfieldr 1.0.0.9025 / 2021-07
 
