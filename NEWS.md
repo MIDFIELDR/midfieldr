@@ -6,6 +6,7 @@
 - Edit all vignettes for consistent organization and prose.  
 - Finished first complete draft of "Graduation rate" vignette. 
 - Add `same_content()` convenience function. 
+- Add "Stickiness" vignette
 - Add "Groupings" vignette. 
 
 ## midfieldr 1.0.0.9027 / 2022-10

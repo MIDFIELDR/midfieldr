@@ -126,15 +126,19 @@ undecided/unspecified
 
 ## Starters and migrators
 
-Relationships among migrators, starters, and graduates (timely completers) of a given program *P* are illustrated in Figure 1.  The overall rectangle represents all students ever enrolled in program *P*. The interior rectangle represents all program *P* graduates, including migrators. 
+As they pertain to the graduation rate metric, relationships among starters, migrators, and graduates (timely completers) of a given program *P* are illustrated in Figure 1. 
 
-- Region 1 represents the graduation rate denominator $(N_s)$. 
+- The overall rectangle represents the set of students ever enrolled in program *P*. 
 
-- Region 2, a subset of region 1, represents the graduation rate numerator $(N_{sg})$.  
+- The interior rectangle represents the set of graduates (timely completers) of program *P*.  
 
-- The un-shaded region represents students excluded from the graduation rate metric, depending on how "program" is defined as discussed below. 
+- Region 1 (shaded) represents the graduation rate denominator $(N_s)$, the set of starters in program *P*. 
 
-![Figure 1. How starters, migrators, and timely completers relate as sets.](../man/figures/art-100-venn-diagram.png){width="100%"}
+- Region 2 (shaded) represents the graduation rate numerator $(N_{sg})$, the subset of starters who are also graduates of program *P*.   
+
+- Region 3 (unshaded) represents the set of students excluded from the graduation rate metric, depending on how "program" is defined as discussed below. 
+
+![Figure 1. Graduation rate metric. Starters, migrators, and timely completers.](../man/figures/art-100-venn-diagram.png){width="100%"}
  
 <br>When calculating graduation rate, whether migrator-graduates are included in the count of graduates depends how a program is defined in terms of CIP codes.  
  
@@ -148,7 +152,6 @@ Relationships among migrators, starters, and graduates (timely completers) of a 
 
 - *Multiple CIPs*. In some cases, a single program or major includes different  4-digit CIPs. For example, migrators between Systems Engineering (CIP 1427), Industrial Engineering (CIP 1435), Manufacturing Engineering (CIP 1436), and Operations Research (CIP 1437) might be considered both starters and timely completers in a general program of Industrial & Systems Engineering.
 
-Because a migrator may have to complete remedial work in their new program, their time to graduation may exceed the defined acceptable span (typically 6 years). Yet graduation rate has no mechanism for extending the timely completion span. (Developing such a heuristic for MIDFIELD data is a potential topic of future work.)
 
 
 
@@ -505,7 +508,7 @@ setorderv(DT, grouping_variables)
 DT[]
 ```
 
-*Reshape.* &nbsp; Transform to row-record form to set up the graduation rate calculation. transform the *N* column into two columns, one for starters and one for graduates. 
+*Reshape.* &nbsp; Transform to row-record form to set up the graduation rate calculation. Transform the *N* column into two columns, one for starters and one for graduates. 
 
 ```{r}
 # Prepare to compute metric
@@ -540,14 +543,14 @@ DT <- DT[!race %chin% c("International", "Other/Unknown")]
 DT[]
 ```
 
-*Filter.* &nbsp; To preserve the anonymity of the people involved, we remove observations with fewer than 10 graduates.
+*Filter.* &nbsp; To preserve the anonymity of the people involved, we remove observations with fewer than `N_threshold` graduates. With the research data, we typically set this threshold to 10; with the practice data, we demonstrate the procedure using a threshold of 5. 
 
 ```{r}
 # Preserve anonymity
-DT <- DT[graduates >= 10]
+N_threshold <- 5
+DT <- DT[graduates >= N_threshold]
 DT[]
 ```
-
 *Add a variable.* &nbsp; We combine race/ethnicity and sex to create a combined grouping variable. 
 
 ```{r}
@@ -558,7 +561,7 @@ setcolorder(DT, c("program", "people"))
 DT[]
 ```
 
-*Recode.* &nbsp;  Readers can more readily interpret our charts and tables if the programs are un-abbreviated.
+*Recode.* &nbsp;  Readers can more readily interpret our charts and tables if the programs are unabbreviated.
 
 ```{r}
 # Recode values for chart and table readability
@@ -593,18 +596,27 @@ DT[]
 
 *Multiway chart.* &nbsp; Code adapted from [Multiway data and charts](art-120-multiway.html#percentage-ordered-charts). 
 
+The vertical reference line is the aggregate graduation rate of the program, independent of race/ethnicity and sex. 
+
 ```{r fig2}
-#| fig-asp: 1
+#| fig-asp: 1.1
 #| fig-cap: "Figure 2: Graduation rates of four Engineering majors."
 
 ggplot(DT, aes(x = rate, y = people)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   geom_vline(aes(xintercept = program_rate), linetype = 2, linewidth = 0.5) +
   geom_point() +
-  labs(x = "Graduation rate (%)", y = "")
+  labs(x = "Graduation rate (%)", y = "") +
+  scale_x_continuous(limits = c(20, 65))
 ```
 
 <br>
+
+```{r}
+#| echo: false
+options(datatable.print.topn = 10)
+```
+
 
 *Results table.* &nbsp; Code adapted from [Multiway data and charts](art-120-multiway.html#tabulating-counts).
 
@@ -634,7 +646,7 @@ knitr::kable(display_table,
 )
 ```
 
-
+A value of NA indicates a group removed because the number of graduates was below the threshold set to preserve anonymity. 
 
 
 
