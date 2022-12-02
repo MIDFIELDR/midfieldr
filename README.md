@@ -15,26 +15,27 @@ status](https://www.r-pkg.org/badges/version/midfieldr)](https://CRAN.R-project.
 MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.html)
 <!-- badges: end -->
 
-The goal of ‘midfieldr’ is to provide tools and guides for working with
+The goal of ‘midfieldr’ is to provide tools and methods for working with
 longitudinal data from the MIDFIELD database.
 
 ## Overview
 
-[**MIDFIELD**](https://midfield.online) is a database containing (as of
-October, 2022) individual SUR data for 1.7M undergraduate students at 19
-US institutions from 1987 through 2018. Access to the MIDFIELD research
-database is currently limited to MIDFIELD partner institutions. However,
-a sample of the data are accessible via the ‘midfielddata’ R package.
+Provides tools for working with registrar’s data from
+[**MIDFIELD**](https://midfield.online), a database containing (as of
+October, 2022) Student Unit Records (SURs) for 1.7M undergraduate
+students at 19 US institutions from 1987 through 2018.
 
-**midfieldr** is an ‘R’ package that provides tools for working with
-MIDFIELD research data and with ‘midfielddata’ practice data.
+Access to the research database is currently limited to MIDFIELD partner
+institutions, but a sample of the data is available in the ‘R’ data
+package [**‘midfielddata’**](https://midfieldr.github.io/midfielddata/),
+providing practice data and documentation of anonymized SURs for
+approximately 98,000 students at three US institutions from 1988 through
+2018. These practice data, characterized in Table 1, are a proportionate
+stratified sample of the MIDFIELD database.
 
-[**midfielddata**](https://midfieldr.github.io/midfielddata/) is an ‘R’
-data package providing practice data and documentation of anonymized
-SURs for approximately 98,000 students at three US institutions from
-1988 through 2018 organized in four tables: `course`, `term`, `student`,
-and `degree.` These data are a proportionate stratified sample of the
-MIDFIELD database. The practice data are characterized in Table 1.
+The tools in **‘midfieldr’** are designed to work with both data
+collections: the MIDFIELD research database and the **‘midfielddata’**
+practice data.
 
 <table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
@@ -135,14 +136,14 @@ All data tables are keyed by student ID. The `course` table has multiple
 observations (rows) per student with one observation per student per
 course per term. The `term` table also has multiple rows per student,
 with one observation per student per term. The `degree` table has one
-observation per student per degree and the `student` table has one
-observation per student.
+observation per student per degree and `student` has one observation per
+student.
 
-The data in ‘midfielddata’ are practice data, suitable for learning to
-work with Student Unit Records (SURs) generally. Unlike the MIDFIELD
-research database, the data tables in ‘midfielddata’ are not research
-data; they are not suitable for drawing inferences about program
-attributes or student experiences.
+*Caveat.*   The data in ‘midfielddata’ are practice data, suitable for
+learning to work with Student Unit Records (SURs) generally. Unlike the
+MIDFIELD research database, the data tables in ‘midfielddata’ are not
+research data; they are not suitable for drawing inferences about
+program attributes or student experiences.
 
 ## Usage
 
@@ -418,20 +419,21 @@ White Male
 
 ## Documentation
 
-- [Articles.](https://midfieldr.github.io/midfieldr/articles/) For a
-  listing of all vignettes.
-- [Reference
-  (‘midfieldr’).](https://midfieldr.github.io/midfieldr/reference/) For
-  a listing of all ‘midfieldr’ functions and prepared data.
-- [Reference
-  (‘midfielddata’).](https://midfieldr.github.io/midfielddata/reference/)
-  For a listing of the four practice MIDFIELD data tables.
+- [Vignettes](https://midfieldr.github.io/midfieldr/articles/)   for
+  details on usage and methods.  
+- [Reference page
+  ‘midfieldr’](https://midfieldr.github.io/midfieldr/reference/)   for
+  function help pages.
+- [Reference page
+  ‘midfielddata’](https://midfieldr.github.io/midfielddata/reference/)  
+  for help pages and data dictionaries for `student`, `course`, `term`,
+  and `degree`.
 
 ## Requirements
 
-- [R](https://www.r-project.org/) (\>= 3.5.0)
-- [data.table](https://rdatatable.gitlab.io/data.table/) (\>= 1.9.8)  
-- [ggplot2](https://ggplot2.tidyverse.org/) recommended for data
+- [‘R’](https://www.r-project.org/) (\>= 3.5.0)
+- [‘data.table’](https://rdatatable.gitlab.io/data.table/) (\>= 1.9.8)  
+- [‘ggplot2’](https://ggplot2.tidyverse.org/) recommended for data
   graphics, but not required.
 
 ## Install ‘midfieldr’
@@ -452,8 +454,8 @@ to bring up the package help page in the Help window.
 
 ``` r
 # Run in Console
-library("midfieldr")
-help("midfieldr-package")
+library(midfieldr)
+help(midfieldr-package)
 ```
 
 <img src="man/figures/README-midfieldr-help-page-1.png"
@@ -477,7 +479,7 @@ to bring up the package help page in the Help window.
 
 ``` r
 # Run in Console
-library("midfielddata")
+library(midfielddata)
 help("midfielddata-package")
 ```
 
@@ -512,14 +514,11 @@ as.data.frame(test_results)
 Participation in this open source project is subject to a [Code of
 Conduct](CONDUCT.html).
 
+## License
+
+[MIT](LICENSE.html) + file [LICENSE](LICENSE-text.html)
+
 ## Acknowledgments
 
 This work is supported by a grant from the US National Science
 Foundation (EEC 1545667).
-
-## License
-
-‘midfieldr’ is licensed under GPL (\>= 2.0) [(full
-license)](LICENSE.html)  
-© 2018–2023 Richard Layton, Russell Long, Susan Lord, Matthew Ohland,
-and Marisa Orr.
