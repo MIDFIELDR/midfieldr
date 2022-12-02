@@ -3,7 +3,7 @@
 
 # midfieldr
 
-Tools for Studying MIDFIELD Student Unit Record Data in R
+Tools for Studying MIDFIELD Student Unit Record Data in ‘R’
 
 <!-- badges: start -->
 
@@ -11,43 +11,34 @@ Tools for Studying MIDFIELD Student Unit Record Data in R
 [![codecov](https://codecov.io/gh/MIDFIELDR/midfieldr/branch/main/graph/badge.svg?token=KcuCzBkLBP)](https://app.codecov.io/gh/MIDFIELDR/midfieldr)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/midfieldr)](https://CRAN.R-project.org/package=midfieldr)
-[![License: GPL
-v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+[![License:
+MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.html)
 <!-- badges: end -->
 
-The goal of midfieldr is to provide tools and guides for working with
+The goal of ‘midfieldr’ is to provide tools and guides for working with
 longitudinal data from the MIDFIELD database.
 
 ## Overview
 
-<a href="https://midfield.online"
-target="_blank"><strong>MIDFIELD</strong></a> (as of June 2022) contains
-Student Unit Records (SURs) of 1.7M undergraduates at nineteen US
-institutions from 1987 through 2018, though different institutions
-provide data over different time spans. MIDFIELD is large enough to
-permit summarizing by multiple characteristics such as race/ethnicity,
-sex, and program.
+[**MIDFIELD**](https://midfield.online) is a database containing (as of
+October, 2022) individual SUR data for 1.7M undergraduate students at 19
+US institutions from 1987 through 2018. Access to the MIDFIELD research
+database is currently limited to MIDFIELD partner institutions. However,
+a sample of the data are accessible via the ‘midfielddata’ R package.
 
-Access to the MIDFIELD research database is currently limited to
-MIDFIELD partner institutions. However, a sample of the data are
-accessible via the midfielddata R package.
+**midfieldr** is an ‘R’ package that provides tools for working with
+MIDFIELD research data and with ‘midfielddata’ practice data.
 
-**midfieldr** is an R package that provides tools for working with
-MIDFIELD SURs, both MIDFIELD research data and midfielddata practice
-data.
-
-[**midfielddata**](https://midfieldr.github.io/midfielddata/) is an R
-data package that provides a proportionate stratified sample of the
-MIDFIELD research data. The sample contains anonymized SURs for nearly
-98,000 undergraduates at 12 institutions from 1987–2016. We refer to
-these sample data tables as the MIDFIELD *practice* data, suitable for
-practice working with SURs but not for drawing inferences about program
-attributes or student experiences. The practice data are characterized
-in Table 1.
+[**midfielddata**](https://midfieldr.github.io/midfielddata/) is an ‘R’
+data package providing practice data and documentation of anonymized
+SURs for approximately 98,000 students at three US institutions from
+1988 through 2018 organized in four tables: `course`, `term`, `student`,
+and `degree.` These data are a proportionate stratified sample of the
+MIDFIELD database. The practice data are characterized in Table 1.
 
 <table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
-Table 1: Attributes of the practice data tables in midfielddata
+Table 1: Attributes of the practice data tables in ‘midfielddata’
 </caption>
 <thead>
 <tr>
@@ -77,13 +68,13 @@ course
 a student in a course
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-3,439,936
+3,289,532
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 12
 </td>
 <td style="text-align:right;">
-340 Mb
+324 Mb
 </td>
 </tr>
 <tr>
@@ -94,13 +85,13 @@ term
 a student in a term
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-710,841
+639,915
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 13
 </td>
 <td style="text-align:right;">
-80 Mb
+73 Mb
 </td>
 </tr>
 <tr>
@@ -111,13 +102,13 @@ student
 a degree-seeking student
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-97,640
+97,555
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 13
 </td>
 <td style="text-align:right;">
-19 Mb
+18 Mb
 </td>
 </tr>
 <tr>
@@ -128,24 +119,30 @@ degree
 a student who graduates
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-47,499
+49,543
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
 5
 </td>
 <td style="text-align:right;">
-10.2 Mb
+5 Mb
 </td>
 </tr>
 </tbody>
 </table>
 
-All four data tables (in both the research data and the practice data)
-are keyed by student ID. The `course` table has multiple observations
-(rows) per student with one observation per student per course. The
-`term` table also has multiple rows per student, with one observation
-per student per term. The `student` and `degree` tables each have one
+All data tables are keyed by student ID. The `course` table has multiple
+observations (rows) per student with one observation per student per
+course per term. The `term` table also has multiple rows per student,
+with one observation per student per term. The `degree` table has one
+observation per student per degree and the `student` table has one
 observation per student.
+
+The data in ‘midfielddata’ are practice data, suitable for learning to
+work with Student Unit Records (SURs) generally. Unlike the MIDFIELD
+research database, the data tables in ‘midfielddata’ are not research
+data; they are not suitable for drawing inferences about program
+attributes or student experiences.
 
 ## Usage
 
@@ -164,17 +161,17 @@ using data.table syntax.
 
 ``` r
 # Packages used
-library("midfieldr")
-library("midfielddata")
-suppressPackageStartupMessages(library("data.table"))
+library(midfieldr)
+library(midfielddata)
+library(data.table)
 
 # Load the practice data
 data(student, term, degree, package = "midfielddata")
 
 # Reduce dimensions of source data tables
 student <- select_required(student)
-term    <- select_required(term)
-degree  <- select_required(degree)
+term <- select_required(term)
+degree <- select_required(degree)
 
 # Initialize the working data frame
 DT <- term[, .(mcid, cip6)]
@@ -209,14 +206,15 @@ DT[, people := paste(race, sex)]
 DT_display <- DT[, .N, by = c("completion_status", "people")]
 
 # Transform to row-record form
-DT_display <- dcast(DT_display, people ~ completion_status, value.var = "N")
+DT_display <- dcast(DT_display, people ~ completion_status, value.var = "N", fill = 0)
 
-# Prepare the table for display 
+# Prepare the table for display
 setcolorder(DT_display, c("people", "timely", "late"))
 setkeyv(DT_display, c("people"))
 setnames(DT_display,
-         old = c("people", "timely", "late", "NA"),
-         new = c("People", "Timely completion", "Late completion", "Did not complete"))
+  old = c("people", "timely", "late", "NA"),
+  new = c("People", "Timely completion", "Late completion", "Did not complete")
+)
 ```
 
 Tabulated results of usage example are shown in Table 2, ordered
@@ -252,13 +250,13 @@ Did not complete
 Asian Female
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-124
+87
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-19
+4
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-59
+43
 </td>
 </tr>
 <tr>
@@ -266,13 +264,13 @@ Asian Female
 Asian Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-388
+315
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-89
+19
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-180
+163
 </td>
 </tr>
 <tr>
@@ -280,13 +278,13 @@ Asian Male
 Black Female
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-309
+26
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-47
+3
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-201
+39
 </td>
 </tr>
 <tr>
@@ -294,13 +292,13 @@ Black Female
 Black Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-376
+80
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-104
+5
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-423
+84
 </td>
 </tr>
 <tr>
@@ -308,13 +306,13 @@ Black Male
 International Female
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-22
+110
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-6
+9
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-12
+51
 </td>
 </tr>
 <tr>
@@ -322,13 +320,13 @@ International Female
 International Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-114
+501
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-30
+41
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-74
+280
 </td>
 </tr>
 <tr>
@@ -336,13 +334,13 @@ International Male
 Latine Female
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-63
+36
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-6
+3
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-21
+31
 </td>
 </tr>
 <tr>
@@ -350,13 +348,13 @@ Latine Female
 Latine Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-188
+181
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-27
+19
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-103
+102
 </td>
 </tr>
 <tr>
@@ -364,13 +362,13 @@ Latine Male
 Native American Female
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-10
+2
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-3
+0
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-3
+2
 </td>
 </tr>
 <tr>
@@ -378,13 +376,13 @@ Native American Female
 Native American Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-27
+13
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-11
+3
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-19
+6
 </td>
 </tr>
 <tr>
@@ -392,13 +390,13 @@ Native American Male
 White Female
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-1226
+985
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-154
+51
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-468
+386
 </td>
 </tr>
 <tr>
@@ -406,13 +404,13 @@ White Female
 White Male
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-4527
+4100
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-634
+269
 </td>
 <td style="text-align:right;color: black !important;background-color: white !important;">
-2191
+2034
 </td>
 </tr>
 </tbody>
@@ -420,31 +418,30 @@ White Male
 
 ## Documentation
 
-- <a href="https://midfieldr.github.io/midfieldr/articles/"
-  target="_blank">Articles.</a> For a listing of all vignettes.
-- <a href="https://midfieldr.github.io/midfieldr/reference/"
-  target="_blank">Reference (midfieldr).</a> For a listing of all
-  midfieldr functions and prepared data.
-- <a href="https://midfieldr.github.io/midfielddata/reference/"
-  target="_blank">Reference (midfielddata).</a> For a listing of the
-  four practice MIDFIELD data tables.
+- [Articles.](https://midfieldr.github.io/midfieldr/articles/) For a
+  listing of all vignettes.
+- [Reference
+  (‘midfieldr’).](https://midfieldr.github.io/midfieldr/reference/) For
+  a listing of all ‘midfieldr’ functions and prepared data.
+- [Reference
+  (‘midfielddata’).](https://midfieldr.github.io/midfielddata/reference/)
+  For a listing of the four practice MIDFIELD data tables.
 
 ## Requirements
 
-- <a href="https://www.r-project.org/" target="_blank">R</a> (\>= 3.5.0)
-- <a href="https://rdatatable.gitlab.io/data.table/"
-  target="_blank">data.table</a> (\>= 1.9.8)  
-- <a href="https://ggplot2.tidyverse.org/" target="_blank">ggplot2</a>
-  recommended for data graphics, but not required.
+- [R](https://www.r-project.org/) (\>= 3.5.0)
+- [data.table](https://rdatatable.gitlab.io/data.table/) (\>= 1.9.8)  
+- [ggplot2](https://ggplot2.tidyverse.org/) recommended for data
+  graphics, but not required.
 
-## Install midfieldr
+## Install ‘midfieldr’
 
-midfieldr is not yet available from [CRAN](https://cran.r-project.org/).
-To install the development version of midfieldr from its `drat`
-repository, type in the Console:
+‘midfieldr’ is not yet available from
+[CRAN](https://cran.r-project.org/). To install the development version
+of ‘midfieldr’ from its ‘drat’ repository, type in the Console:
 
 ``` r
-# Install midfieldr from drat repo
+# Install 'midfieldr' from drat repo
 install.packages("midfieldr", 
                  repos = "https://MIDFIELDR.github.io/drat/", 
                  type = "source")
@@ -489,7 +486,7 @@ style="width:100.0%" />
 
 ## Contributing
 
-To contribute to midfieldr,
+To contribute to ‘midfieldr’,
 
 - Please clone this repo locally.  
 - Commit your contribution on a separate branch.
@@ -500,8 +497,8 @@ To contribute to midfieldr,
 
 To provide feedback or report a bug,
 
-- Use the GitHub <a href="https://github.com/MIDFIELDR/midfieldr/issues"
-  target="_blank">Issues</a> page.
+- Use the GitHub [Issues](https://github.com/MIDFIELDR/midfieldr/issues)
+  page.
 - Please run the package unit tests and report the results with your bug
   report. Any user can run the package tests by installing the
   *tinytest* package and running:
@@ -522,7 +519,7 @@ Foundation (EEC 1545667).
 
 ## License
 
-midfieldr is licensed under GPL (\>= 2.0) [(full
+‘midfieldr’ is licensed under GPL (\>= 2.0) [(full
 license)](LICENSE.html)  
-© 2018–2022 Richard Layton, Russell Long, Susan Lord, Matthew Ohland,
+© 2018–2023 Richard Layton, Russell Long, Susan Lord, Matthew Ohland,
 and Marisa Orr.

@@ -1,4 +1,9 @@
 
+## midfieldr 1.0.0.9029 / 2022-12
+
+- Revise to accommodate new data sample in 'midfielddata'
+
+
 
 ## midfieldr 1.0.0.9028 / 2022-11
 

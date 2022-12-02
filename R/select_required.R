@@ -51,69 +51,69 @@
 #'
 #'
 select_required <- function(midfield_x, ..., select_add = NULL) {
-
-  # remove all keys
-  on.exit(setkey(midfield_x, NULL))
-
-  # required argument
-  qassert(midfield_x, "d+")
-
-  # assert arguments after dots used by name
-  wrapr::stop_if_dot_args(
-    substitute(list(...)),
-    paste(
-      "Arguments after ... must be named.\n",
-      "* Did you forget to write `select_add = `?\n *"
+    
+    # remove all keys
+    on.exit(setkey(midfield_x, NULL))
+    
+    # required argument
+    qassert(midfield_x, "d+")
+    
+    # assert arguments after dots used by name
+    wrapr::stop_if_dot_args(
+        substitute(list(...)),
+        paste(
+            "Arguments after ... must be named.\n",
+            "* Did you forget to write `select_add = `?\n *"
+        )
     )
-  )
-
-  # optional arguments
-  default_select <- c("mcid", "institution", "race", "sex", "^term", "cip6", 
-                      "level")
-  select <- c(default_select, select_add)
-  select <- unique(select)
-  
-  # assertions for optional arguments
-  qassert(select, "s+") # missing is OK
-
-  # input modified (or not) by reference
-  setDT(midfield_x)
-
-  # required columns
-  # NA
-  # class of required columns
-  # NA
-  # bind names due to NSE notes in R CMD check
-  # NA
-
-  # do the work
-  DT <- copy(midfield_x)
-  on.exit(setkey(DT, NULL))
-  
-  # Create one string separated by OR
-  search_pattern <- paste(select, collapse = "|")
-  
-  # Find names of columns matching or partially matching 
-  cols_we_want  <- grep(search_pattern, 
-                        names(DT), 
-                        ignore.case = TRUE, 
-                        value = TRUE)
- 
-  # Select with conventional data.table syntax
-  DT <- DT[, .SD, .SDcols = cols_we_want]
-
-  # stop if all columns have been eliminated
-  if (length(names(DT)) < .Machine$double.eps^0.5) {
-    stop(
-      paste(
-        "The result is empty. Possible causes are:\n",
-        "* Column names of the input data frame\n", 
-        "  do not match any of the search terms.\n"
-      ),
-      call. = FALSE
-    )
-  }
-
-  # enable printing (see data.table FAQ 2.23)
-  DT[]
+    
+    # optional arguments
+    default_select <- c("mcid", "institution", "race", "sex", "^term", "cip6", 
+                        "level")
+    select <- c(default_select, select_add)
+    select <- unique(select)
+    
+    # assertions for optional arguments
+    qassert(select, "s+") # missing is OK
+    
+    # input modified (or not) by reference
+    setDT(midfield_x)
+    
+    # required columns
+    # NA
+    # class of required columns
+    # NA
+    # bind names due to NSE notes in R CMD check
+    # NA
+    
+    # do the work
+    DT <- copy(midfield_x)
+    on.exit(setkey(DT, NULL))
+    
+    # Create one string separated by OR
+    search_pattern <- paste(select, collapse = "|")
+    
+    # Find names of columns matching or partially matching 
+    cols_we_want  <- grep(search_pattern, 
+                          names(DT), 
+                          ignore.case = TRUE, 
+                          value = TRUE)
+    
+    # Select with conventional data.table syntax
+    DT <- DT[, .SD, .SDcols = cols_we_want]
+    
+    # stop if all columns have been eliminated
+    if (length(names(DT)) < .Machine$double.eps^0.5) {
+        stop(
+            paste(
+                "The result is empty. Possible causes are:\n",
+                "* Column names of the input data frame\n", 
+                "  do not match any of the search terms.\n"
+            ),
+            call. = FALSE
+        )
+    }
+    
+    # enable printing (see data.table FAQ 2.23)
+    DT[]
 }

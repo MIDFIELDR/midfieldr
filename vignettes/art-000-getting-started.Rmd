@@ -67,7 +67,7 @@ options(
 
 The MIDFIELD Student Unit Records (SUR) are registrar's student-level data compiled by an institution and anonymized and curated by the MIDFIELD data steward. SURs include personal information (e.g., age, sex, and race/ethnicity), enrollment information (e.g., institution, program, and grade level), and academic information (e.g., courses, grades, and degrees). MIDFIELD data are organized into four tables---student, course, term, and degree---keyed by student ID. 
 
-From the MIDFIELD *research* data, we've taken a proportionate stratified sample and made it available as a *practice* data set in  [midfielddata](https://midfieldr.github.io/midfielddata/)---an R data package containing anonymized SURs for nearly 98,000 undergraduates at 12 institutions from 1987--2016. Table 1 briefly introduces the four practice data tables.
+From the MIDFIELD *research* data, we've taken a proportionate stratified sample and made it available as a *practice* data set in  [midfielddata](https://midfieldr.github.io/midfielddata/)---an R data package containing anonymized SURs for nearly 98,000 undergraduates at three institutions from 1988--2018. Table 1 briefly introduces the four practice data tables.
 
 ```{r}
 #| echo: false
@@ -108,7 +108,7 @@ With required packages installed (per the [main page](../index.html#requirements
 
 *Names of variables.* &nbsp; midfieldr functions are designed to work with variables names given in the source data tables with no mechanism for substitutions. Help pages denote the variable names that are required.  
 
-*Caveat.*  &nbsp;  The Student Unit Records included with midfieldr and midfielddata are practice data, not research data, suitable for practice working with SURs but not for drawing inferences about program attributes or student experiences.
+*Caveat.*  &nbsp; The data in ‘midfielddata’ are practice data, suitable for learning to work with Student Unit Records (SURs) generally. Unlike the MIDFIELD research database, the data tables in ‘midfielddata’ are not research data; they are not suitable for drawing inferences about program attributes or student experiences.
 
 
 
@@ -258,7 +258,7 @@ n_cip <- nrow(unique(cip))
 # student
 obs_students <- nrow(student)
 var_students <- ncol(student)
-size_students <- "19 MB"
+size_students <- "13 MB"
 
 # degree
 n_id_degrees <- nrow(unique(degree[, .(mcid)]))
@@ -266,7 +266,7 @@ n_graduates <- nrow(unique(degree[!is.na(degree), .(mcid)]))
 n_term <- nrow(unique(degree[, .(term)]))
 obs_degrees <- nrow(degree)
 var_degrees <- ncol(degree)
-size_degrees <- "10 MB"
+size_degrees <- "5 MB"
 
 # term
 n_id_terms <- nrow(unique(term[, .(mcid)]))
@@ -276,7 +276,7 @@ n_institutions <- nrow(unique(term[, .(institution)]))
 n_programs_terms <- nrow(unique(term[, .(institution, cip6)]))
 n_terms <- nrow(unique(term[, .(term)]))
 year_span <- c(substr(min(term[, term]), 1, 4), substr(max(term[, term]), 1, 4))
-size_terms <- "82 MB"
+size_terms <- "73 MB"
 
 # course
 n_id_courses <- nrow(unique(course[, .(mcid)]))
@@ -284,7 +284,7 @@ n_courses <- nrow(unique(course[, .(institution, abbrev, number)]))
 n_term_course <- nrow(unique(course[, .(term)]))
 obs_courses <- nrow(course)
 var_courses <- ncol(course)
-size_courses <- "349 MB"
+size_courses <- "324 MB"
 ```
 
 
@@ -322,7 +322,7 @@ Summarize some of the quantitative variables.
 ```{r}
 summary(student$sat_math)
 
-summary(student$age)
+summary(student$act_comp)
 ```
 
 Examine a few of the categorical variables and their values. 
@@ -464,7 +464,7 @@ Each observation is a unique combination of student and degree keyed by student 
 str(degree)
 ```
 
-`degree` has `r obs_degrees` observations and occupies approximately `r size_degrees` memory. We can confirm that the student IDs are unique by running, 
+`degree` has `r obs_degrees` observations and occupies approximately `r size_degrees` memory.  The practice data include students earning a double degree (or more), thus the number of rows exceeds the number of unique IDs.
 
 ```{r}
 nrow(degree)
@@ -472,7 +472,7 @@ nrow(degree)
 length(unique(degree$mcid))
 ```
 
-Had the practice data included students earning a double degree (or more) in the same term, then the number of rows would exceed the number of unique IDs. 
+ 
 
 By student ID, the students in `degree` are a subset of the students in `student`. We can confirm by running the following, where a sum of `r length(unique(degree$mcid))`  indicates that all IDs in `degree` are present in `student`. 
 
@@ -485,15 +485,12 @@ student_mcid <- unique(student$mcid)
 sum(degree_mcid %chin% student_mcid)
 ```
 
-
-  
-
 Examine some categorical variables and their values. 
 
 ```{r}
 sort(unique(degree$institution))
 
-sort(unique(degree$degree))
+sample(unique(degree$degree), 10)
 ```
 
 Checking if any of the degrees are recorded as NA results in an empty table, thus all the students in `degree` are graduates. 
