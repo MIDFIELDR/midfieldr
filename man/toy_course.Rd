@@ -9,19 +9,19 @@
 student ID.
 \describe{
 
- \item{mcid}{Character, anonymized student ID.}
+\item{mcid}{Character, anonymized student ID.}
 
- \item{institution}{Character, de-identified institution name, e.g.,
-      Institution A, Institution B, etc.}
+\item{institution}{Character, de-identified institution name, e.g.,
+Institution A, Institution B, etc.}
 
- \item{term}{Character, academic year and term, format YYYYT.}
+\item{term}{Character, academic year and term, format YYYYT.}
 
- \item{abbrev}{Character, course alphabetical identifier, e.g. ENGR, MATH,
- ENGL.}
+\item{abbrev}{Character, course alphabetical identifier, e.g. ENGR, MATH,
+ENGL.}
 
- \item{number}{Character, course numeric identifier, e.g. 101, 3429.}
+\item{number}{Character, course numeric identifier, e.g. 101, 3429.}
 
- \item{grade}{Character, course grade, e.g., A+, A, A-, B+, I, NG, etc.}
+\item{grade}{Character, course grade, e.g., A+, A, A-, B+, I, NG, etc.}
 
 }
 }
@@ -29,7 +29,7 @@ student ID.
 toy_course
 }
 \description{
-A small subset of the \code{course} practice data for use in package 
+A small subset of the \code{course} practice data for use in package
 and vignette examples.
 }
 \seealso{

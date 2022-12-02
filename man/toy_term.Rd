@@ -9,17 +9,17 @@
 student ID.
 \describe{
 
- \item{mcid}{Character, de-identified student ID.}
+\item{mcid}{Character, de-identified student ID.}
 
- \item{institution}{Character, de-identified institution name, e.g.,
-      Institution A, Institution B, etc.}
+\item{institution}{Character, de-identified institution name, e.g.,
+Institution A, Institution B, etc.}
 
- \item{term}{Character, academic year and term, format YYYYT.}
+\item{term}{Character, academic year and term, format YYYYT.}
 
- \item{cip6}{Character, 6-digit CIP code of program in which a student
- is enrolled in a term.}
+\item{cip6}{Character, 6-digit CIP code of program in which a student
+is enrolled in a term.}
 
- \item{level}{Character, 01 Freshman, 02 Sophomore, etc.}
+\item{level}{Character, 01 Freshman, 02 Sophomore, etc.}
 
 }
 }
@@ -27,7 +27,7 @@ student ID.
 toy_term
 }
 \description{
-A small subset of the \code{term} practice data for use in package 
+A small subset of the \code{term} practice data for use in package
 and vignette examples.
 }
 \seealso{

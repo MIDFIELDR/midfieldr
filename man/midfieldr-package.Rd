@@ -9,9 +9,9 @@ The goal of midfieldr is to provide tools for working with MIDFIELD data,
 a resource of longitudinal, de-identified, individual student unit records.
 }
 \details{
-\href{https://midfield.online}{MIDFIELD} (as of June 2022) contains Student 
-Unit Records (SURs) of 1.7M undergraduates at nineteen US institutions from 
-1987 through 2018, though different institutions provide data over different 
+\href{https://midfield.online}{MIDFIELD} (as of June 2022) contains Student
+Unit Records (SURs) of 1.7M undergraduates at nineteen US institutions from
+1987 through 2018, though different institutions provide data over different
 time spans. MIDFIELD is large enough to permit grouping and summarizing
 by multiple characteristics, enabling researchers to examine student
 characteristics (race/ethnicity, sex, prior achievement) and curricular
@@ -24,10 +24,10 @@ data package with longitudinal student unit-records for 98,000
 undergraduates at 12 institutions from  1987--2016 organized in four data
 tables:
 \itemize{
- \item {\href{https://midfieldr.github.io/midfielddata/reference/student.html}{student}}
- \item {\href{https://midfieldr.github.io/midfielddata/reference/course.html}{course}}
- \item {\href{https://midfieldr.github.io/midfielddata/reference/term.html}{term}}
- \item {\href{https://midfieldr.github.io/midfielddata/reference/degree.html}{degree}}
+\item {\href{https://midfieldr.github.io/midfielddata/reference/student.html}{student}}
+\item {\href{https://midfieldr.github.io/midfielddata/reference/course.html}{course}}
+\item {\href{https://midfieldr.github.io/midfielddata/reference/term.html}{term}}
+\item {\href{https://midfieldr.github.io/midfielddata/reference/degree.html}{degree}}
 }
 
 The tools in midfieldr work equally well with the practice data in

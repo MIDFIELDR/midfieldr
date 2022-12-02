@@ -9,16 +9,16 @@
 student ID.
 \describe{
 
- \item{mcid}{Character, anonymized student ID.}
+\item{mcid}{Character, anonymized student ID.}
 
- \item{institution}{Character, anonymized institution name, e.g.,
-      Institution A, Institution B, etc.}
+\item{institution}{Character, anonymized institution name, e.g.,
+Institution A, Institution B, etc.}
 
- \item{term_degree}{Character, academic year and term in which
- a student completes their program, format YYYYT.}
+\item{term_degree}{Character, academic year and term in which
+a student completes their program, format YYYYT.}
 
- \item{cip6}{Character, 6-digit CIP code of program in which a student
- earns a degree.}
+\item{cip6}{Character, 6-digit CIP code of program in which a student
+earns a degree.}
 
 }
 }
@@ -26,7 +26,7 @@ student ID.
 toy_degree
 }
 \description{
-A small subset of the \code{degree} practice data for use in package 
+A small subset of the \code{degree} practice data for use in package
 and vignette examples.
 }
 \seealso{

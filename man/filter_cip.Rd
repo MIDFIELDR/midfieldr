@@ -29,10 +29,10 @@ default all columns.}
 \value{
 A \code{data.table} with the following properties:
 \itemize{
-    \item Rows matching elements of \code{keep_text} but excluding rows
-          matching elements of \code{drop_text}.
-    \item All columns or those specified by \code{select}.
-    \item Grouping structures are not preserved.
+\item Rows matching elements of \code{keep_text} but excluding rows
+matching elements of \code{drop_text}.
+\item All columns or those specified by \code{select}.
+\item Grouping structures are not preserved.
 }
 }
 \description{
@@ -41,12 +41,12 @@ a vector of character strings. Columns are not subset unless selected in
 an optional argument.
 }
 \details{
-The function is designed to permit usage such as 
-\code{filter_cip(character_vector)} in which the position of the first two 
-arguments is ignored if and only if the first argument is both unnamed and 
-a character vector. In this case, the character vector is assigned to the 
-\code{keep_text} argument and the \code{cip} data set included with 
-midfieldr is assigned (by default) to the \code{dframe} argument. 
+The function is designed to permit usage such as
+\code{filter_cip(character_vector)} in which the position of the first two
+arguments is ignored if and only if the first argument is both unnamed and
+a character vector. In this case, the character vector is assigned to the
+\code{keep_text} argument and the \code{cip} data set included with
+midfieldr is assigned (by default) to the \code{dframe} argument.
 
 Search terms can include regular expressions. Uses \code{grepl()},
 therefore non-character columns (if any) that can be coerced to

@@ -9,18 +9,18 @@
 
 \describe{
 
- \item{program}{Character, academic program label.}
+\item{program}{Character, academic program label.}
 
- \item{race}{Character, self-reported race/ethnicity.}
+\item{race}{Character, self-reported race/ethnicity.}
 
- \item{sex}{Character, self-reported sex.}
+\item{sex}{Character, self-reported sex.}
 
- \item{ever}{Numerical, number of students ever enrolled in a program.}
+\item{ever}{Numerical, number of students ever enrolled in a program.}
 
- \item{grad}{Numerical, number of students completing a program.}
+\item{grad}{Numerical, number of students completing a program.}
 
- \item{stick}{Numerical, program stickiness, the ratio \code{grad} to 
- \code{ever}, in percent.}
+\item{stick}{Numerical, program stickiness, the ratio \code{grad} to
+\code{ever}, in percent.}
 
 }
 }
@@ -28,19 +28,19 @@
 study_results
 }
 \description{
-Data table of longitudinal stickiness keyed by program, race/ethnicity, 
+Data table of longitudinal stickiness keyed by program, race/ethnicity,
 and sex. Provided for the convenience of vignette users.
 }
 \details{
-Starting with the prepared data (the case study stickiness observations), 
-we compute longitudinal stickiness for the four programs of the study (Civil, 
-Electrical, Industrial/Systems, and Mechanical Engineering) grouped by 
-program, race/ethnicity, and sex. 
+Starting with the prepared data (the case study stickiness observations),
+we compute longitudinal stickiness for the four programs of the study (Civil,
+Electrical, Industrial/Systems, and Mechanical Engineering) grouped by
+program, race/ethnicity, and sex.
 
 Longitudinal stickiness is the ratio of the number of students graduating
 from a program to the number of students ever enrolled in the program over
-the time span of available data. Results are based on data that have been 
-filtered for data sufficiency, degree seeking, program, and timely 
+the time span of available data. Results are based on data that have been
+filtered for data sufficiency, degree seeking, program, and timely
 completion.
 }
 \seealso{

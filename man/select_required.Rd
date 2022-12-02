@@ -7,49 +7,49 @@
 select_required(midfield_x, ..., select_add = NULL)
 }
 \arguments{
-\item{midfield_x}{Data frame from which columns are selected, typically 
+\item{midfield_x}{Data frame from which columns are selected, typically
 \code{student}, \code{term}, \code{degree} or their subsets.}
 
 \item{...}{Not used, force later arguments to be used by name.}
 
-\item{select_add}{Optional character vector of search terms to add to the default 
+\item{select_add}{Optional character vector of search terms to add to the default
 vector given by \code{c("mcid", "institution", "race", "sex", 
-"^term", "cip6", "level")}.}
+       "^term", "cip6", "level")}.}
 }
 \value{
 A \code{data.table} with the following properties:
 \itemize{
-    \item Rows are not modified. 
-    \item Columns with names that match or partially match the values 
-          in \code{select}.
-    \item Grouping structures are not preserved.
+\item Rows are not modified.
+\item Columns with names that match or partially match the values
+in \code{select}.
+\item Grouping structures are not preserved.
 }
 }
 \description{
-Subset a data frame, selecting columns by matching or partially matching a 
-vector of character strings. A convenience function to reduce the dimensions 
-of a MIDFIELD data table at the start of a session by selecting only those 
-columns typically required by other midfieldr functions. Particularly useful 
-in interactive sessions when viewing the data tables at various stages of  
+Subset a data frame, selecting columns by matching or partially matching a
+vector of character strings. A convenience function to reduce the dimensions
+of a MIDFIELD data table at the start of a session by selecting only those
+columns typically required by other midfieldr functions. Particularly useful
+in interactive sessions when viewing the data tables at various stages of
 an analysis.
 }
 \details{
-Several midfieldr functions are designed to operate on one or more of the 
-MIDFIELD data tables, usually \code{student}, \code{term}, or \code{degree}. 
-This family of functions requires only a small subset of available 
-variables, e.g., \code{mcid}, \code{cip6}, or \code{term}. The required 
-columns are built in to the function. The \code{select} argument is used to 
-add search strings to the default vector. 
+Several midfieldr functions are designed to operate on one or more of the
+MIDFIELD data tables, usually \code{student}, \code{term}, or \code{degree}.
+This family of functions requires only a small subset of available
+variables, e.g., \code{mcid}, \code{cip6}, or \code{term}. The required
+columns are built in to the function. The \code{select} argument is used to
+add search strings to the default vector.
 
-The column names of \code{midfield_x} are searched for matches or 
-partial matches using \code{grep()}, thus search terms can include regular 
-expressions. Variables with names that match or partially match the search 
-terms are returned; all other columns are dropped. Rows are unaffected. 
-Search terms not present are silently ignored. 
+The column names of \code{midfield_x} are searched for matches or
+partial matches using \code{grep()}, thus search terms can include regular
+expressions. Variables with names that match or partially match the search
+terms are returned; all other columns are dropped. Rows are unaffected.
+Search terms not present are silently ignored.
 
-One could use this function to select columns from a non-MIDFIELD data frame, 
-but with no benefit to the user---conventional column selection syntax is 
-better suited to that task. Here, we specialize the column selection to 
+One could use this function to select columns from a non-MIDFIELD data frame,
+but with no benefit to the user---conventional column selection syntax is
+better suited to that task. Here, we specialize the column selection to
 serve midfieldr functions.
 }
 \examples{

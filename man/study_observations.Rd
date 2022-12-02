@@ -9,16 +9,16 @@
 
 \describe{
 
- \item{mcid}{Character, anonymized student identifier}
+\item{mcid}{Character, anonymized student identifier}
 
- \item{race}{Character, self-reported race/ethnicity.}
+\item{race}{Character, self-reported race/ethnicity.}
 
- \item{sex}{Character, self-reported sex.}
- 
- \item{program}{Character, academic program label.}
- 
- \item{group}{Character, indicating the grouping (\code{ever} or 
- \code{grad}) to which an observation belongs.} 
+\item{sex}{Character, self-reported sex.}
+
+\item{program}{Character, academic program label.}
+
+\item{group}{Character, indicating the grouping (\code{ever} or
+\code{grad}) to which an observation belongs.}
 
 }
 }
@@ -26,19 +26,19 @@
 study_observations
 }
 \description{
-Data table of post-processed observations of students ever enrolled in, and  
-students graduating from, the four programs of the case study. Keyed by 
+Data table of post-processed observations of students ever enrolled in, and
+students graduating from, the four programs of the case study. Keyed by
 student ID. Provided for the convenience of vignette users.
 }
 \details{
-Starting with the case-study starting pool of students ever enrolled in the 
-four programs of the study (Civil, Electrical, Industrial/Systems, and 
-Mechanical Engineering), we filtered the data for data sufficiency, 
-degree seeking, program, and timely completion. 
+Starting with the case-study starting pool of students ever enrolled in the
+four programs of the study (Civil, Electrical, Industrial/Systems, and
+Mechanical Engineering), we filtered the data for data sufficiency,
+degree seeking, program, and timely completion.
 
-A data frame of "ever enrolled" and a data frame of "timely graduates" 
-were bound using shared column names and are distinguished in the 
-\code{group} variable.  This data structure facilitates grouping and 
+A data frame of "ever enrolled" and a data frame of "timely graduates"
+were bound using shared column names and are distinguished in the
+\code{group} variable.  This data structure facilitates grouping and
 summarizing by race, sex, program, and group.
 }
 \seealso{

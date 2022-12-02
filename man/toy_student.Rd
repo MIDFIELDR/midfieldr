@@ -9,16 +9,16 @@
 student ID.
 \describe{
 
- \item{mcid}{Character, de-identified student ID.}
+\item{mcid}{Character, de-identified student ID.}
 
- \item{institution}{Character, de-identified institution name, e.g.,
-  Institution A, Institution B, etc.}
+\item{institution}{Character, de-identified institution name, e.g.,
+Institution A, Institution B, etc.}
 
- \item{race}{Character, race/ethnicity as self-reported by the student,
- e.g., Asian, Black, Latine, etc.}
+\item{race}{Character, race/ethnicity as self-reported by the student,
+e.g., Asian, Black, Latine, etc.}
 
- \item{sex}{character, sex as self-reported by the student, possible
- values are Female, Male, and Unknown.}
+\item{sex}{character, sex as self-reported by the student, possible
+values are Female, Male, and Unknown.}
 
 }
 }
@@ -26,7 +26,7 @@ student ID.
 toy_student
 }
 \description{
-A small subset of the \code{student} practice data for use in package 
+A small subset of the \code{student} practice data for use in package
 and vignette examples.
 }
 \seealso{

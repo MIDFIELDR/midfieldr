@@ -14,86 +14,86 @@ order_multiway(
 )
 }
 \arguments{
-\item{dframe}{Data frame with one numeric variable and two 
-categorical variables of class character or factor. Two additional 
+\item{dframe}{Data frame with one numeric variable and two
+categorical variables of class character or factor. Two additional
 numeric columns required when using the "percent" ordering method.}
 
-\item{quantity}{Character, name (in quotes) of the single multiway quantitative 
+\item{quantity}{Character, name (in quotes) of the single multiway quantitative
 variable}
 
-\item{categories}{Character, vector of names (in quotes) of the two multiway 
+\item{categories}{Character, vector of names (in quotes) of the two multiway
 categorical variables}
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
-\item{method}{Character, “median” (default) or “percent”, method of 
-ordering the levels of the categories. The median method computes the 
-medians of the quantitative column grouped by category. The percent 
-method computes percentages based on the same ratio underlying the 
+\item{method}{Character, “median” (default) or “percent”, method of
+ordering the levels of the categories. The median method computes the
+medians of the quantitative column grouped by category. The percent
+method computes percentages based on the same ratio underlying the
 quantitative percentage variable except grouped by category.}
 
-\item{ratio_of}{Character vector with the names (in quotes) of the 
-numerator and denominator columns that produced the quantitative 
-variable, required when \code{method} is "percent". Names can be 
-in any order; the algorithm assumes that the parameter with the 
+\item{ratio_of}{Character vector with the names (in quotes) of the
+numerator and denominator columns that produced the quantitative
+variable, required when \code{method} is "percent". Names can be
+in any order; the algorithm assumes that the parameter with the
 larger column sum is the denominator of the ratio.}
 }
 \value{
 A \code{data.table}  with the following properties:
 \itemize{
- \item Rows are not modified.
- \item Grouping structures are not preserved.
- \item The columns specified by \code{categories} are converted to factors 
-     and ordered. Other columns are not modified. 
- \item Two columns are added. \strong{Caution!} An existing column 
- with the same name as one of the added columns is silently overwritten. 
+\item Rows are not modified.
+\item Grouping structures are not preserved.
+\item The columns specified by \code{categories} are converted to factors
+and ordered. Other columns are not modified.
+\item Two columns are added. \strong{Caution!} An existing column
+with the same name as one of the added columns is silently overwritten.
 }
-The names of the added columns incorporate the names of the multiway 
+The names of the added columns incorporate the names of the multiway
 variables. Columns added:
 \describe{
- \item{\code{CATEGORY_median} columns (when ordering method is "median")}{
-     Numeric. Two columns of medians of the quantitative variable grouped 
-     by the categorical variables. The \code{CATEGORY} placeholder in 
-     the column name is replaced by a category name from the 
-     \code{categories} argument. For example, suppose 
-     \code{categories = c("program", "people")} and 
-     \code{method = "median"}. The two new column names would be 
-     \code{program_median} and \code{people_median}.} 
-     
- \item{\code{CATEGORY_QUANTITY} columns (when ordering method is "percent")}{
-     Numeric. Two columns of percentages based on the same ratio that 
-     produces the quantitative variable except grouped by the categorical 
-     variables. The \code{CATEGORY} placeholder in the column name is 
-     replaced by a category name from the \code{categories} argument; the 
-     \code{QUANTITY} placeholder is replaced by the quantitative variable 
-     name in the \code{quantity} argument. For example, suppose 
-     \code{categories = c("program", "people")}, and 
-     \code{quantity = "grad_rate"}, and \code{method = "percent"}. The two 
-     new column names  would be \code{program_grad_rate} and 
-     \code{people_grad_rate}.} 
-     
+\item{\code{CATEGORY_median} columns (when ordering method is "median")}{
+Numeric. Two columns of medians of the quantitative variable grouped
+by the categorical variables. The \code{CATEGORY} placeholder in
+the column name is replaced by a category name from the
+\code{categories} argument. For example, suppose
+\code{categories = c("program", "people")} and
+\code{method = "median"}. The two new column names would be
+\code{program_median} and \code{people_median}.}
+
+\item{\code{CATEGORY_QUANTITY} columns (when ordering method is "percent")}{
+Numeric. Two columns of percentages based on the same ratio that
+produces the quantitative variable except grouped by the categorical
+variables. The \code{CATEGORY} placeholder in the column name is
+replaced by a category name from the \code{categories} argument; the
+\code{QUANTITY} placeholder is replaced by the quantitative variable
+name in the \code{quantity} argument. For example, suppose
+\code{categories = c("program", "people")}, and
+\code{quantity = "grad_rate"}, and \code{method = "percent"}. The two
+new column names  would be \code{program_grad_rate} and
+\code{people_grad_rate}.}
+
 }
 }
 \description{
-Transform a data frame such that two independent categorical variables are 
-factors with levels ordered for display in a multiway dot plot. Multiway 
-data comprise a single quantitative value (or response) for every 
-combination of levels of two categorical variables. The ordering of the 
+Transform a data frame such that two independent categorical variables are
+factors with levels ordered for display in a multiway dot plot. Multiway
+data comprise a single quantitative value (or response) for every
+combination of levels of two categorical variables. The ordering of the
 rows and panels is crucial to the perception of effects (Cleveland, 1993).
 }
 \details{
 In our context, "multiway" refers to the data structure and graph
-design defined by Cleveland (1993), not to the methods of analysis described 
+design defined by Cleveland (1993), not to the methods of analysis described
 by Kroonenberg (2008).
 
-Multiway data comprise three variables: a categorical variable of \emph{m} 
-levels; a second independent categorical variable of \emph{n} levels; and a 
-quantitative variable (or \emph{response}) of length \emph{mn} that 
-cross-classifies the categories, that is, there is a value of the 
+Multiway data comprise three variables: a categorical variable of \emph{m}
+levels; a second independent categorical variable of \emph{n} levels; and a
+quantitative variable (or \emph{response}) of length \emph{mn} that
+cross-classifies the categories, that is, there is a value of the
 response for each combination of levels of the two categorical variables.
 
-In a multiway dot plot, one category is encoded by the panels, the second 
-category is encoded by the rows of each panel, and the quantitative variable 
+In a multiway dot plot, one category is encoded by the panels, the second
+category is encoded by the rows of each panel, and the quantitative variable
 is encoded along identical horizontal scales.
 }
 \examples{
@@ -141,7 +141,7 @@ order_multiway(dframe,
 }
 \references{
 Cleveland WS (1993). \emph{Visualizing Data}. Hobart Press, Summit, NJ.
-  
-  Kroonenberg PM (2008). \emph{Applied Multiway Data Analysis}. Wiley, 
-  Hoboken, NJ.
+
+Kroonenberg PM (2008). \emph{Applied Multiway Data Analysis}. Wiley,
+Hoboken, NJ.
 }

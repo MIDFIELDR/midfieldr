@@ -9,11 +9,11 @@
 
 \describe{
 
- \item{mcid}{Character, anonymized student identifier}
- 
- \item{program}{Character, abbreviated labels for four engineering programs. 
- Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE" 
- (Industrial/Systems Engineering), and  "ME" (Mechanical Engineering).}
+\item{mcid}{Character, anonymized student identifier}
+
+\item{program}{Character, abbreviated labels for four engineering programs.
+Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE"
+(Industrial/Systems Engineering), and  "ME" (Mechanical Engineering).}
 
 }
 }
@@ -21,21 +21,21 @@
 study_starters
 }
 \description{
-Data table of students considered starters in one of the four engineering 
-programs in the case study (Civil, Electrical, Industrial/Systems, and 
-Mechanical Engineering). Includes substitutions of FYE proxies for students 
-required to enroll in FYE programs. Provided for the convenience of vignette 
+Data table of students considered starters in one of the four engineering
+programs in the case study (Civil, Electrical, Industrial/Systems, and
+Mechanical Engineering). Includes substitutions of FYE proxies for students
+required to enroll in FYE programs. Provided for the convenience of vignette
 users.
 }
 \details{
-The \code{student} and \code{term} source data are filtered for data 
-sufficiency and degree-seeking. We filter for a student’s first term 
-(ignoring terms with a CIP for undecided/unspecified). We identify the 
-program(s) of which a student can be considered a starter, substituting  
-an FYE proxy when a starting program is FYE. We then filter by program. 
+The \code{student} and \code{term} source data are filtered for data
+sufficiency and degree-seeking. We filter for a student’s first term
+(ignoring terms with a CIP for undecided/unspecified). We identify the
+program(s) of which a student can be considered a starter, substituting
+an FYE proxy when a starting program is FYE. We then filter by program.
 
-The CIP variable is renamed \code{start} to distinguish it from other 
-midfieldr \code{cip6} variables because \code{start} contains estimated 
+The CIP variable is renamed \code{start} to distinguish it from other
+midfieldr \code{cip6} variables because \code{start} contains estimated
 program codes while the \code{cip6} variables contain actual student records.
 }
 \seealso{

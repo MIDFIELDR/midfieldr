@@ -9,11 +9,11 @@
 
 \describe{
 
- \item{mcid}{Character, anonymized student identifier}
- 
- \item{program}{Character, abbreviated labels for four engineering programs. 
- Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE" 
- (Industrial/Systems Engineering), and  "ME" (Mechanical Engineering).}
+\item{mcid}{Character, anonymized student identifier}
+
+\item{program}{Character, abbreviated labels for four engineering programs.
+Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE"
+(Industrial/Systems Engineering), and  "ME" (Mechanical Engineering).}
 
 }
 }
@@ -21,9 +21,9 @@
 study_ever
 }
 \description{
-Data table of IDs of students ever enrolled in the four programs of the study 
-(Civil, Electrical, Industrial/Systems, and Mechanical Engineering) after 
-filtering for data sufficiency, degree seeking, and program. Provided for 
+Data table of IDs of students ever enrolled in the four programs of the study
+(Civil, Electrical, Industrial/Systems, and Mechanical Engineering) after
+filtering for data sufficiency, degree seeking, and program. Provided for
 the convenience of vignette users.
 }
 \seealso{
