@@ -2,8 +2,8 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 <br>`midfieldr` is an `R` package that provides tools and methods for
-studying undergraduate student-level records from the MIDFIELD database,
-of which the `midfielddata` package supplies a practice-data sample.
+studying undergraduate student-level records from the MIDFIELD database.
+Practice data supplied by `midfielddata`.
 
 ![](https://github.com/MIDFIELDR/midfieldr/blob/main/docs/logo.png?raw=true)
 
@@ -19,16 +19,12 @@ status](https://www.r-pkg.org/badges/version/midfieldr)](https://CRAN.R-project.
 
 ## Introduction
 
-`midfieldr` provides functions designed to operate on data frames
-structured like MIDFIELD data, that is, in four datasets with the same
-row and column organization and variable names. The `midfielddata`
-package provides a data sample in the expected form.
-
-MIDFIELD data are undergraduate “student-level” data, information about
-individual students such as student age, sex, race/ethnicity; every
-course with credit hours and grades; and every term with academic
-standing, grade point average, institution, program, and baccalaureate
-degrees.
+`midfieldr` provides functions for working with undergraduate
+“student-level” data from the MIDFIELD database. Data at the
+“student-level” refers to information about individual students
+including demographics, programs, academic standing, courses, grades,
+and degrees. For [more information](#more-information) on data
+structure, see the companion `R` package `midfielddata`.
 
 `midfieldr` services include:
 
@@ -59,9 +55,14 @@ format(Sys.Date(), "%Y-%m-%d")
 #> [1] "2022-12-06"
 ```
 
+*Note on syntax.*   We use `data.table` syntax for data manipulation.
+Other systems, e.g., base R or `dplyr`, could be used instead; each
+system has its strengths. Users are welcome to translate our examples to
+their preferred syntax.
+
 ## Usage
 
-The outline of a typical workflow is:
+A typical workflow for studying student-level records includes:
 
 - Plan which records, programs, and metrics to use
 - Gather relevant blocs of records
@@ -70,9 +71,8 @@ The outline of a typical workflow is:
 - Create tables and charts to display results
 - Assess findings and iterate.
 
-To illustrate, we tabulate counts of engineering students by
-race/ethnicity, sex, and graduation status. Data processing is performed
-using data.table syntax.
+In this example, we summarize the graduation status of engineering
+students by race/ethnicity and sex.
 
 ``` r
 # For data manipulation
