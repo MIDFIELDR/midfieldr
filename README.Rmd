@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
   warning = FALSE,
-  collapse = FALSE,
+  collapse = TRUE,
   comment = "#>",
   error = FALSE
 )
@@ -57,52 +57,53 @@ options(
 ```
 
 
-# midfieldr
+<br>`midfieldr` is an `R` package that provides tools and methods for studying undergraduate student-level records from the MIDFIELD database, of which the `midfielddata` package supplies a practice-data sample. 
 
-Tools for Studying MIDFIELD Student Unit Record Data in 'R'
+![](https://github.com/MIDFIELDR/midfieldr/blob/main/docs/logo.png?raw=true)
 
 <!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/midfieldr)](https://CRAN.R-project.org/package=midfieldr)
 [![R-CMD-check](https://github.com/MIDFIELDR/midfieldr/workflows/R-CMD-check/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions)
 [![codecov](https://codecov.io/gh/MIDFIELDR/midfieldr/branch/main/graph/badge.svg?token=KcuCzBkLBP)](https://app.codecov.io/gh/MIDFIELDR/midfieldr)
-[![CRAN status](https://www.r-pkg.org/badges/version/midfieldr)](https://CRAN.R-project.org/package=midfieldr)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.html)
+
+<!-- [![CRAN check](https://badges.cranchecks.info/summary/midfieldr.svg)](https://cran.r-project.org/web/checks/check_results_midfieldr.html) -->
 <!-- badges: end -->
 
 
-The goal of 'midfieldr' is to provide tools and methods for working with longitudinal data from the MIDFIELD database.  
 
-## Overview 
+## Introduction
 
+`midfieldr` provides functions designed to operate on data frames structured like MIDFIELD data, that is, in four datasets with the same row and column organization and variable names. The `midfielddata` package provides a data sample in the expected form. 
 
-Provides tools for working with registrar's data from [**MIDFIELD**](https://midfield.online), a database containing (as of October, 2022) Student Unit Records (SURs) for 1.7M undergraduate students at 19 US institutions from 1987 through 2018. 
+MIDFIELD data are undergraduate "student-level" data, information about  individual students such as student age, sex, race/ethnicity; every course with  credit hours and grades; and every term with academic standing, grade point average, institution, program, and baccalaureate degrees. 
 
-Access to the research database is currently limited to MIDFIELD partner institutions, but a sample of the data is available in the 'R' data package [**'midfielddata'**](https://midfieldr.github.io/midfielddata/), providing practice data and documentation of anonymized SURs for approximately 98,000 students at three US institutions from 1988 through 2018. These practice data, characterized in Table 1, are a proportionate stratified sample of the MIDFIELD database. 
+`midfieldr` services include: 
 
-The tools in **'midfieldr'** are designed to work with both data collections: the MIDFIELD research database and the **'midfielddata'** practice data.
+- `add_completion_status()` Determine completion status for every student
+- `add_data_sufficiency()` Determine data sufficiency for every student
+- `add_timely_term()` Calculate a timely completion term for every student
+- `filter_cip()` Subset rows that include matches to search strings
+- `order_multiway()` Order categorical variables of multiway data
+- `prep_fye_mice()` Prepare FYE data for multiple imputation
+- `same_content()` Test for equal content between two data tables
+- `select_required()` Select required midfieldr variables
+
 
 ```{r}
-#| echo: false
+# Tools and methods
+library(midfieldr)
+packageVersion("midfieldr")
 
-wrapr::build_frame(
-  "Practice data table", "Each row is", "No. of rows", "No. of columns", "Memory" |
-    "course" , "a student in a course"   , "3,289,532", "12", "324 Mb" |
-    "term"   , "a student in a term"     ,   "639,915", "13",  "73 Mb" |
-    "student", "a degree-seeking student",    "97,555", "13",  "18 Mb" |
-    "degree" , "a student who graduates" ,    "49,543",  "5",   "5 Mb"
-) |>
-  kableExtra::kbl(
-    align = "llrrr",
-    caption = "Table 1: Attributes of the practice data tables in 'midfielddata'"
-  ) |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1, monospace = TRUE) |>
-  kableExtra::column_spec(1:4, color = "black", background = "white")
+# Practice data
+library(midfielddata)
+packageVersion("midfielddata")
+
+# Rendered
+format(Sys.Date(), "%Y-%m-%d")
 ```
 
-All data tables are keyed by student ID. The `course` table  has multiple observations (rows) per student with one observation per student per course per term. The `term` table also has multiple rows per student, with one observation per student per term. The `degree` table has one observation per student per degree and `student` has one observation per student. 
 
-*Caveat.* &nbsp; The data in 'midfielddata' are practice data, suitable for learning to work with Student Unit Records (SURs) generally. Unlike the MIDFIELD research database, the data tables in 'midfielddata' are not research data; they are not suitable for drawing inferences about program attributes or student experiences.
+
 
 ## Usage
 
@@ -115,22 +116,28 @@ The outline of a typical workflow is:
 - Create tables and charts to display results
 - Assess findings and iterate.
 
-To illustrate usage, we tabulate counts of engineering students by race/ethnicity, sex, and graduation status. Data processing is performed using data.table syntax. 
+To illustrate, we tabulate counts of engineering students by race/ethnicity, sex, and graduation status. Data processing is performed using data.table syntax. 
 
 ```{r}
-# Packages used
-library(midfieldr)
-library(midfielddata)
+# For data manipulation
 library(data.table)
 
 # Load the practice data
-data(student, term, degree, package = "midfielddata")
+data(student, term, degree)
+```
 
+Reduce initial dimensions of data tables using `select_required()`. 
+
+```{r}
 # Reduce dimensions of source data tables
 student <- select_required(student)
 term <- select_required(term)
 degree <- select_required(degree)
+```
 
+Filter for data sufficiency using `add_timely_term()` and `add_data_sufficiency()`. 
+
+```{r}
 # Initialize the working data frame
 DT <- term[, .(mcid, cip6)]
 
@@ -138,7 +145,11 @@ DT <- term[, .(mcid, cip6)]
 DT <- add_timely_term(DT, term)
 DT <- add_data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include"]
+```
 
+Determine completion status using `add_completion_status()`. 
+
+```{r}
 # Inner join to filter observations for degree-seeking
 cols_we_want <- student[, .(mcid)]
 DT <- cols_we_want[DT, on = c("mcid"), nomatch = NULL]
@@ -151,7 +162,11 @@ DT <- DT[, .SD[1], by = c("mcid")]
 
 # Add completion status variable
 DT <- add_completion_status(DT, degree)
+```
 
+Aggregate observations by groupings and display results.
+
+```{r}
 # Left join to add race/ethnicity and sex variables (omit unknowns)
 cols_we_want <- student[, .(mcid, race, sex)]
 DT <- student[DT, on = c("mcid")]
@@ -190,11 +205,6 @@ DT_display |>
 
 
 
-## Documentation
-
-- [Vignettes](https://midfieldr.github.io/midfieldr/articles/) &nbsp; for details on usage and methods.   
-- [Reference page 'midfieldr'](https://midfieldr.github.io/midfieldr/reference/)  &nbsp; for function help pages. 
-- [Reference page 'midfielddata'](https://midfieldr.github.io/midfielddata/reference/)  &nbsp; for help pages and data dictionaries for `student`, `course`, `term`, and `degree`.   
 
 
 
@@ -202,114 +212,55 @@ DT_display |>
 
 
 
-## Requirements {#requirements}
+## Installation
 
-- ['R'](https://www.r-project.org/) (>= 3.5.0)
-- ['data.table'](https://rdatatable.gitlab.io/data.table/) (>= 1.9.8)   
-- ['ggplot2'](https://ggplot2.tidyverse.org/) recommended for data graphics, but not required.
-
-
-
-
-
-
-## Install 'midfieldr' {#install-midfieldr}
-
-'midfieldr' is not yet available from [CRAN](https://cran.r-project.org/). To install the development version of 'midfieldr' from its 'drat' repository, type in the Console: 
-
-``` r
-# Install 'midfieldr' from drat repo
-install.packages("midfieldr", 
-                 repos = "https://MIDFIELDR.github.io/drat/", 
-                 type = "source")
-```
-
-You can confirm a successful installation by running the following lines to bring up the package help page in the Help window. 
+Install with: 
 
 ```{r}
 #| eval: false
-
-# Run in Console
-library(midfieldr)
-help(midfieldr-package)
+install.packages("midfieldr",
+  repos = "https://MIDFIELDR.github.io/drat/",
+  type = "source"
+)
 ```
 
-![](man/figures/README-midfieldr-help-page-1.png){width="100%"}
-
-
-
-
-## Install midfielddata {#install-midfielddata}
-
-Because of its size, installing the practice data takes time; please be patient and wait for the prompt “>” to reappear. In the Console, run:
-
-``` r
-# Install midfielddata  
-install.packages("midfielddata", 
-                 repos = "https://MIDFIELDR.github.io/drat/", 
-                 type = "source")
-# be patient
-``` 
-
-You can confirm a successful installation by running the following lines to bring up the package help page in the Help window. 
+Alternatively, you can install the development version from the MIDFIELD GitHub repository:
 
 ```{r}
 #| eval: false
-
-# Run in Console
-library(midfielddata)
-help("midfielddata-package")
-```
-
-![](man/figures/README-midfielddata-help-page-1.png){width="100%"}
-
-
-
-
-
-## Contributing
-
-To contribute to 'midfieldr',
-
-- Please clone this repo locally.  
-- Commit your contribution on a separate branch.
-- If you submit a function, please use the _checkmate_ package to include runtime argument checks and the _tinytest_ package to write unit tests for your code. Save tests in the `inst/tinytest/` directory. 
-
-To provide feedback or report a bug,  
-
-- Use the GitHub [Issues](https://github.com/MIDFIELDR/midfieldr/issues) page. 
-- Please run the package unit tests and report the results with your bug report. Any user can run the package tests by installing the _tinytest_ package and running: 
-
-```{r}
-#| eval: false
-
-# Detailed test results
-test_results <- tinytest::test_package("midfieldr")
-as.data.frame(test_results)
+install.packages("devtools")
+devtools::install_github("MIDFIELDR/midfieldr")
 ```
 
 
-Participation in this open source project is subject to a [Code of Conduct](CONDUCT.html).
-
-
-
-## License
-
-[MIT](LICENSE.html) + file [LICENSE](LICENSE-text.html)
 
 
 
 
+
+
+
+
+
+## More information
+
+[`midfielddata`](https://midfieldr.github.io/midfielddata/)
+
+: A companion `R` package containing a proportionate, stratified sample of the  MIDFIELD database to practice using the tools and methods provided by `midfieldr`.  
+
+
+[MIDFIELD](https://midfield.online/)
+
+: A database of student-level records for approximately 1.7M undergraduates at nineteen US institutions from 1987 through 2018, of which `midfielddata`  provides a sample. The full research database is currently accessible to MIDFIELD partner institutions only. 
+ 
+ 
+ 
+ 
+ 
+ 
 ## Acknowledgments
 
 This work is supported by a grant from the US National Science Foundation (EEC 1545667).
-
-
-
-
-
-
-
 
 ```{r}
 #| echo: false

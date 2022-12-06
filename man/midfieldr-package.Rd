@@ -3,37 +3,32 @@
 \docType{package}
 \name{midfieldr-package}
 \alias{midfieldr-package}
-\title{Tools for Studying MIDFIELD Student Unit Record Data in R}
+\title{Tools and Methods for Working with MIDFIELD Data in 'R'}
+\source{
+Data provided by MIDFIELD: \url{https://midfield.online/}.
+}
 \description{
-The goal of midfieldr is to provide tools for working with MIDFIELD data,
-a resource of longitudinal, de-identified, individual student unit records.
+Provides tools and demonstrates methods for working with individual
+undergraduate student unit records (registrar's data) in 'R'. Tools include
+filters for program codes, data sufficiency, and timely completion. Methods
+include gathering blocs of records, computing quantitative metrics such as
+graduation rate, and creating charts to visualize comparisons. 'midfieldr' is
+designed to work with data from the MIDFIELD research database, a sample of
+which is available in the 'midfielddata' data package.
 }
 \details{
-\href{https://midfield.online}{MIDFIELD} (as of June 2022) contains Student
-Unit Records (SURs) of 1.7M undergraduates at nineteen US institutions from
-1987 through 2018, though different institutions provide data over different
-time spans. MIDFIELD is large enough to permit grouping and summarizing
-by multiple characteristics, enabling researchers to examine student
-characteristics (race/ethnicity, sex, prior achievement) and curricular
-pathways (including coursework and program) by institution and over time.
+\href{https://midfield.online/}{MIDFIELD} is a database containing (as of October,
+2022) individual Student Unit Records (SURs) for 1.7M undergraduate students
+at 19 US institutions from 1987 through 2018. Access to the MIDFIELD research
+database is currently limited to MIDFIELD partner institutions, but a sample
+of the data is available in the 'midfielddata' package.
 
-A proportionate stratified sample of these data (for practice) is
-available in
-\href{https://midfieldr.github.io/midfielddata/}{midfielddata}, an R
-data package with longitudinal student unit-records for 98,000
-undergraduates at 12 institutions from  1987--2016 organized in four data
-tables:
-\itemize{
-\item {\href{https://midfieldr.github.io/midfielddata/reference/student.html}{student}}
-\item {\href{https://midfieldr.github.io/midfielddata/reference/course.html}{course}}
-\item {\href{https://midfieldr.github.io/midfielddata/reference/term.html}{term}}
-\item {\href{https://midfieldr.github.io/midfielddata/reference/degree.html}{degree}}
-}
+\href{https://midfieldr.github.io/midfielddata/}{'midfielddata'} is a companion
+'R' data package that provides anonymized SURs for approximately 98,000
+students at three US institutions from 1988 through 2018 organized in four
+tables --- \code{student}, \code{course}, \code{term}, and \code{degree} --- keyed by student ID.
 
-The tools in midfieldr work equally well with the practice data in
-midfielddata and the research data in MIDFIELD.
-
-This work is supported by a grant from the US National Science
-Foundation (EEC 1545667).
+This work is supported by a grant from the US National Science Foundation
+(EEC 1545667).
 }
 \concept{package}

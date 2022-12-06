@@ -1,6 +1,4 @@
 
-
-
 #' @importFrom checkmate assert_data_frame assert_int qassert
 #' @importFrom checkmate assert_subset assert_names
 #' 
@@ -12,53 +10,38 @@
 #' @importFrom stats na.omit reorder
 #' 
 #' @importFrom wrapr let stop_if_dot_args %?%
-
-
 NULL
 
-
-#' Tools for Studying MIDFIELD Student Unit Record Data in R
+#' Tools and Methods for Working with MIDFIELD Data in 'R'
 #'
-#' The goal of midfieldr is to provide tools for working with MIDFIELD data,
-#' a resource of longitudinal, de-identified, individual student unit records.
+#' Provides tools and demonstrates methods for working with individual
+#' undergraduate student unit records (registrar's data) in 'R'. Tools include
+#' filters for program codes, data sufficiency, and timely completion. Methods
+#' include gathering blocs of records, computing quantitative metrics such as
+#' graduation rate, and creating charts to visualize comparisons. 'midfieldr' is
+#' designed to work with data from the MIDFIELD research database, a sample of
+#' which is available in the 'midfielddata' data package.
 #'
-#' \href{https://midfield.online}{MIDFIELD} (as of June 2022) contains Student 
-#' Unit Records (SURs) of 1.7M undergraduates at nineteen US institutions from 
-#' 1987 through 2018, though different institutions provide data over different 
-#' time spans. MIDFIELD is large enough to permit grouping and summarizing
-#' by multiple characteristics, enabling researchers to examine student
-#' characteristics (race/ethnicity, sex, prior achievement) and curricular
-#' pathways (including coursework and program) by institution and over time.
+#' [MIDFIELD](https://midfield.online/) is a database containing (as of October,
+#' 2022) individual Student Unit Records (SURs) for 1.7M undergraduate students
+#' at 19 US institutions from 1987 through 2018. Access to the MIDFIELD research
+#' database is currently limited to MIDFIELD partner institutions, but a sample
+#' of the data is available in the 'midfielddata' package.
+#' 
+#' ['midfielddata'](https://midfieldr.github.io/midfielddata/) is a companion
+#' 'R' data package that provides anonymized SURs for approximately 98,000
+#' students at three US institutions from 1988 through 2018 organized in four
+#' tables --- `student`, `course`, `term`, and `degree` --- keyed by student ID.
+#' 
+#' This work is supported by a grant from the US National Science Foundation
+#' (EEC 1545667).
 #'
-#' A proportionate stratified sample of these data (for practice) is
-#' available in
-#' \href{https://midfieldr.github.io/midfielddata/}{midfielddata}, an R
-#' data package with longitudinal student unit-records for 98,000
-#' undergraduates at 12 institutions from  1987--2016 organized in four data
-#' tables:
-#' \itemize{
-#'  \item {\href{https://midfieldr.github.io/midfielddata/reference/student.html}{student}}
-#'  \item {\href{https://midfieldr.github.io/midfielddata/reference/course.html}{course}}
-#'  \item {\href{https://midfieldr.github.io/midfielddata/reference/term.html}{term}}
-#'  \item {\href{https://midfieldr.github.io/midfielddata/reference/degree.html}{degree}}
-#' }
-#'
-#' The tools in midfieldr work equally well with the practice data in
-#' midfielddata and the research data in MIDFIELD.
-#'
-#' This work is supported by a grant from the US National Science
-#' Foundation (EEC 1545667).
-#'
-#'
+#' @source Data provided by MIDFIELD: \url{https://midfield.online/}.
 #' @docType package
-#' @name midfieldr-package
-#'
-#'
 #' @family package
-#'
-#'
+#' @name midfieldr-package
+#'   
 NULL
-
 
 # bind names due to NSE notes in R CMD check
 if (getRversion() >= "2.15.1") {
@@ -67,12 +50,12 @@ if (getRversion() >= "2.15.1") {
     # midfield data table names
     "student", "term", "course", "degree", 
     # midfielddata column names
-    "mcid", "institution", "cip6", "race", "sex", "term", "term_degree", 
-    "degree", "hours_transfer", "hours_term", "transfer",
-    "age_desc", "age", "us_citizen", "home_zip", "high_school", "sat_math",
-    "sat_verbal", "act_comp", "level", "standing", "coop",
-    "hours_term_attempt", "gpa_term", "hours_cumul_attempt",
-    "hours_cumul", "gpa_cumul", "abbrev", "number", "section",
-    "hours_course", "type", "pass_fail", "grade", "faculty_rank"
+    "abbrev", "act_comp", "age_desc", "cip6", "coop", "course", "degree", 
+    "discipline_midfield", "faculty_rank", "gpa_cumul", "gpa_term", "grade", 
+    "high_school", "home_zip", "hours_course", "hours_cumul", 
+    "hours_cumul_attempt", "hours_term", "hours_term_attempt", "hours_transfer", 
+    "institution", "level", "mcid", "number", "race", "sat_math", "sat_verbal", 
+    "section", "sex", "standing", "term", "term_course", "term_degree", 
+    "transfer", "type", "us_citizen"
   ))
 }
