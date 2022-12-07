@@ -101,7 +101,7 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><p><br><code>midfieldr</code> is an <code>R</code> package that provides tools and methods for studying undergraduate student-level records from the MIDFIELD database, of which the <code>midfielddata</code> package supplies a practice-data sample.</p>
+  <main id="main" class="col-md-9"><p><br><code>midfieldr</code> is an R package that provides tools and methods for studying undergraduate student-level records from the MIDFIELD database. Practice data supplied by <code>midfielddata</code>.</p>
 <p><img src="https://github.com/MIDFIELDR/midfieldr/blob/main/docs/logo.png?raw=true"></p>
 <!-- badges: start -->
 
@@ -110,8 +110,7 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p><code>midfieldr</code> provides functions designed to operate on data frames structured like MIDFIELD data, that is, in four datasets with the same row and column organization and variable names. The <code>midfielddata</code> package provides a data sample in the expected form.</p>
-<p>MIDFIELD data are undergraduate “student-level” data, information about individual students such as student age, sex, race/ethnicity; every course with credit hours and grades; and every term with academic standing, grade point average, institution, program, and baccalaureate degrees.</p>
+<p><code>midfieldr</code> provides functions for working with undergraduate “student-level” data from the MIDFIELD database. Data at the “student-level” refers to information about individual students including demographics, programs, academic standing, courses, grades, and degrees. For <a href="#more-information">more information</a> on data structure, see the companion <code>R</code> package <code>midfielddata</code>.</p>
 <p><code>midfieldr</code> services include:</p>
 <ul>
 <li>
@@ -145,11 +144,12 @@
 <span><span class="co"># Rendered</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"%Y-%m-%d"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "2022-12-06"</span></span></code></pre></div>
+<p><em>Note on syntax.</em>   We use <code>data.table</code> syntax for data manipulation. Other systems, e.g., base R or <code>dplyr</code>, could be used instead; each system has its strengths. Users are welcome to translate our examples to their preferred syntax.</p>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<p>The outline of a typical workflow is:</p>
+<p>A typical workflow for studying student-level records includes:</p>
 <ul>
 <li>Plan which records, programs, and metrics to use</li>
 <li>Gather relevant blocs of records</li>
@@ -158,7 +158,7 @@
 <li>Create tables and charts to display results</li>
 <li>Assess findings and iterate.</li>
 </ul>
-<p>To illustrate, we tabulate counts of engineering students by race/ethnicity, sex, and graduation status. Data processing is performed using data.table syntax.</p>
+<p>In this example, we summarize the graduation status of engineering students by race/ethnicity and sex.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># For data manipulation</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
@@ -194,7 +194,7 @@
 <span></span>
 <span><span class="co"># Add completion status variable</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">degree</span><span class="op">)</span></span></code></pre></div>
-<p>Aggregate observations by groupings and display results.</p>
+<p>Aggregate observations by groupings.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Left join to add race/ethnicity and sex variables (omit unknowns)</span></span>
 <span><span class="va">cols_we_want</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span>
@@ -205,9 +205,10 @@
 <span><span class="va">DT</span><span class="op">[</span>, <span class="va">people</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Aggregate observations by groupings</span></span>
-<span><span class="va">DT_display</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"completion_status"</span>, <span class="st">"people"</span><span class="op">)</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co"># Transform to row-record form</span></span>
+<span><span class="va">DT_display</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"completion_status"</span>, <span class="st">"people"</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<p>Reshape and display results.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Transform to row-record form</span></span>
 <span><span class="va">DT_display</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">DT_display</span>, <span class="va">people</span> <span class="op">~</span> <span class="va">completion_status</span>, value.var <span class="op">=</span> <span class="st">"N"</span>, fill <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Prepare the table for display</span></span>
@@ -217,7 +218,6 @@
 <span>  old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"people"</span>, <span class="st">"timely"</span>, <span class="st">"late"</span>, <span class="st">"NA"</span><span class="op">)</span>,</span>
 <span>  new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"People"</span>, <span class="st">"Timely completion"</span>, <span class="st">"Late completion"</span>, <span class="st">"Did not complete"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Tabulated results of usage example are shown in Table 2, ordered alphabetically. “Timely completion” is the count of graduates completing their programs in no more than 6 years; “Late completion” is the count of those graduating in more than 6 years; “Did not complete” is the count of non-graduates.</p>
 <table class="table  lightable-paper" style='font-family: "Arial Narrow", arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;'>
 <caption>
 Table 2: Completion status of engineering undergraduates in the practice data
@@ -407,18 +407,19 @@ White Male
 </tr>
 </tbody>
 </table>
+<p>“Timely completion” is the count of graduates completing their programs in no more than 6 years; “Late completion” is the count of those graduating in more than 6 years; “Did not complete” is the count of non-graduates.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>Install with:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"midfieldr"</span>,</span>
 <span>  repos <span class="op">=</span> <span class="st">"https://MIDFIELDR.github.io/drat/"</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"source"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Alternatively, you can install the development version from the MIDFIELD GitHub repository:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"MIDFIELDR/midfieldr"</span><span class="op">)</span></span></code></pre></div>
 </div>

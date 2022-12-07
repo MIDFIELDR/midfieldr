@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-<br>`midfieldr` is an `R` package that provides tools and methods for
+<br>`midfieldr` is an R package that provides tools and methods for
 studying undergraduate student-level records from the MIDFIELD database.
 Practice data supplied by `midfielddata`.
 
@@ -121,7 +121,7 @@ DT <- DT[, .SD[1], by = c("mcid")]
 DT <- add_completion_status(DT, degree)
 ```
 
-Aggregate observations by groupings and display results.
+Aggregate observations by groupings.
 
 ``` r
 # Left join to add race/ethnicity and sex variables (omit unknowns)
@@ -134,7 +134,11 @@ DT[, people := paste(race, sex)]
 
 # Aggregate observations by groupings
 DT_display <- DT[, .N, by = c("completion_status", "people")]
+```
 
+Reshape and display results.
+
+``` r
 # Transform to row-record form
 DT_display <- dcast(DT_display, people ~ completion_status, value.var = "N", fill = 0)
 
@@ -146,12 +150,6 @@ setnames(DT_display,
   new = c("People", "Timely completion", "Late completion", "Did not complete")
 )
 ```
-
-Tabulated results of usage example are shown in Table 2, ordered
-alphabetically. “Timely completion” is the count of graduates completing
-their programs in no more than 6 years; “Late completion” is the count
-of those graduating in more than 6 years; “Did not complete” is the
-count of non-graduates.
 
 <table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
@@ -345,6 +343,11 @@ White Male
 </tr>
 </tbody>
 </table>
+
+“Timely completion” is the count of graduates completing their programs
+in no more than 6 years; “Late completion” is the count of those
+graduating in more than 6 years; “Did not complete” is the count of
+non-graduates.
 
 ## Installation
 
