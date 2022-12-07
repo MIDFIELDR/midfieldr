@@ -9,26 +9,15 @@ always_allow_html: true
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r setup}
-#| echo: false
-
-# code chunks
+#| include: false
 knitr::opts_chunk$set(
-  echo = TRUE,
-  message = FALSE,
-  warning = FALSE,
+  echo = TRUE, 
   collapse = TRUE,
   comment = "#>",
-  error = FALSE
-)
-
-# figures
-knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
-  fig.width = 6,
-  fig.asp = 1 / 1.6,
-  out.width = "70%",
-  fig.align = "center"
+  out.width = "100%"
 )
+options(datatable.print.class = TRUE)
 
 # inline numbers
 knitr::knit_hooks$set(inline = function(x) {
@@ -41,18 +30,6 @@ knitr::knit_hooks$set(inline = function(x) {
   }
 })
 ```
-
-```{r}
-#| echo: false
-
-# Printing options for data.table
-options(
-  datatable.print.nrows = 10,
-  datatable.print.topn = 5,
-  datatable.print.class = TRUE
-)
-```
-
 
 <br>`midfieldr` is an R package that provides tools and methods for studying undergraduate student-level records from the MIDFIELD database. Practice data supplied by `midfielddata`. 
 
@@ -70,20 +47,21 @@ options(
 
 ## Introduction
 
-`midfieldr` provides functions for working with undergraduate "student-level" data from the MIDFIELD database. Data at the "student-level" refers to information about individual students including demographics, programs, academic standing, courses, grades, and degrees. For [more information] on data structure, see the companion `R` package `midfielddata`. 
+`midfieldr` provides functions for working with undergraduate "student-level" data from the MIDFIELD database. Data at the "student-level" refers to information about individual students including demographics, programs, academic standing, courses, grades, and degrees. Practice data are supplied by the companion R package `midfielddata`  ([more information]).
 
-
-`midfieldr` services include: 
+`midfieldr` provides these functions for processing student-level data: 
 
 - `add_completion_status()` Determine completion status for every student
 - `add_data_sufficiency()` Determine data sufficiency for every student
 - `add_timely_term()` Calculate a timely completion term for every student
-- `filter_cip()` Subset rows that include matches to search strings
-- `order_multiway()` Order categorical variables of multiway data
+- `filter_cip()` Filter CIP data to match search strings
 - `prep_fye_mice()` Prepare FYE data for multiple imputation
-- `same_content()` Test for equal content between two data tables
-- `select_required()` Select required midfieldr variables
+- `select_required()` Select required `midfieldr` variables
 
+Additional functions for processing intermediate results: 
+
+- `order_multiway()` Order categorical variables of multiway data
+- `same_content()` Test for equal content between two data tables
 
 ```{r}
 # Tools and methods
@@ -100,27 +78,22 @@ format(Sys.Date(), "%Y-%m-%d")
 
 *Note on syntax.* &nbsp; We use `data.table` syntax for data manipulation. Other systems, e.g., base R or `dplyr`, could be used instead; each system has its strengths. Users are welcome to translate our examples to their preferred syntax. 
 
+```{r}
+# For data manipulation
+library(data.table)
+packageVersion("data.table")
+```
+
+
 
 
 
 
 ## Usage
 
-A typical workflow for studying student-level records includes:  
-
-- Plan which records, programs, and metrics to use 
-- Gather relevant blocs of records
-- Join appropriate grouping variables 
-- Compute metrics 
-- Create tables and charts to display results
-- Assess findings and iterate.
-
-In this example, we summarize the graduation status of engineering students by race/ethnicity and sex. 
+In this example, we gather all students ever enrolled in Engineering and summarize their graduation status (in any major), grouping by race/ethnicity and sex. 
 
 ```{r}
-# For data manipulation
-library(data.table)
-
 # Load the practice data
 data(student, term, degree)
 ```
@@ -132,6 +105,9 @@ Reduce initial dimensions of data tables using `select_required()`.
 student <- select_required(student)
 term <- select_required(term)
 degree <- select_required(degree)
+
+# View example result
+term
 ```
 
 Filter for data sufficiency using `add_timely_term()` and `add_data_sufficiency()`. 
@@ -144,9 +120,12 @@ DT <- term[, .(mcid, cip6)]
 DT <- add_timely_term(DT, term)
 DT <- add_data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include"]
+
+# View result
+DT
 ```
 
-Determine completion status using `add_completion_status()`. 
+Filter for degree-seeking students ever enrolled in Engineering. 
 
 ```{r}
 # Inner join to filter observations for degree-seeking
@@ -159,8 +138,18 @@ DT <- DT[cip6 %like% "^14"]
 # Filter observations for unique students (first instance)
 DT <- DT[, .SD[1], by = c("mcid")]
 
+# View result
+DT
+```
+
+Determine completion status using `add_completion_status()`. 
+
+```{r}
 # Add completion status variable
 DT <- add_completion_status(DT, degree)
+
+# View result
+DT
 ```
 
 Aggregate observations by groupings.
@@ -176,6 +165,10 @@ DT[, people := paste(race, sex)]
 
 # Aggregate observations by groupings
 DT_display <- DT[, .N, by = c("completion_status", "people")]
+
+# View result
+setorderv(DT_display, c("completion_status", "people"))
+DT_display
 ```
 
 Reshape and display results. 
@@ -196,7 +189,7 @@ setnames(DT_display,
 ```{r}
 #| echo: false
 DT_display |>
-  kableExtra::kbl(align = "lrrr", caption = "Table 2: Completion status of engineering undergraduates in the practice data") |>
+  kableExtra::kbl(align = "lrrr", caption = "Table 1: Completion status of engineering undergraduates in the practice data") |>
   kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
   kableExtra::row_spec(0, background = "#c7eae5") |>
   kableExtra::column_spec(1:4, color = "black", background = "white")
@@ -247,12 +240,16 @@ devtools::install_github("MIDFIELDR/midfieldr")
 
 [`midfielddata`](https://midfieldr.github.io/midfielddata/)
 
-: A companion `R` package containing a proportionate, stratified sample of the  MIDFIELD database to practice using the tools and methods provided by `midfieldr`.  
+: A companion R package containing a proportionate, stratified sample of the  MIDFIELD database to practice using the tools and methods provided by `midfieldr`.  
 
 
 [MIDFIELD](https://midfield.online/)
 
 : A database of student-level records for approximately 1.7M undergraduates at nineteen US institutions from 1987 through 2018, of which `midfielddata`  provides a sample. The full research database is currently accessible to MIDFIELD partner institutions only. 
+
+[MIDFIELD Institute](https://midfieldr.github.io/2022-midfield-institute/)
+
+: Materials from the 2022 workshop, including an introduction to R for beginners, chart basics with `ggplot2`, and data basics with `data.table`. 
 
 
 
