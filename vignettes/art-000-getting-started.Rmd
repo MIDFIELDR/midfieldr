@@ -1,39 +1,24 @@
 ---
 title: "Getting started"
-date: "`r Sys.Date()`"
-link-citations: yes
-bibliography: ../inst/REFERENCES.bib
-output: rmarkdown::html_vignette
-csl: ../inst/information-science-and-technology.csl
 vignette: >
   %\VignetteIndexEntry{Getting started}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-nocite: |
-  @Dowle+Srinivasan:2021:data.table,  
-  @Waring+Quinn:2022:skimr
-resource_files: |
+output: rmarkdown::html_vignette
+date: "`r Sys.Date()`"
+csl: ../inst/information-science-and-technology.csl
+bibliography: ../inst/REFERENCES.bib
+link-citations: yes
 ---
 
-```{r setup, include = FALSE}
+```{r setup}
+#| include: false
 # code chunks
 knitr::opts_chunk$set(
   echo = TRUE,
-  message = FALSE,
-  warning = FALSE,
   collapse = TRUE,
-  comment = "#>",
-  error = FALSE,
-  cache = FALSE # speeds up repeats
-)
-
-# figures
-knitr::opts_chunk$set(
-  fig.path = "../man/figures/art-000-getting-started-",
-  fig.width = 6,
-  fig.asp = 1 / 1.6,
-  out.width = "70%",
-  fig.align = "center"
+  comment = "#>", 
+  fig.path = "../man/figures/art-000-getting-started-"
 )
 
 # inline numbers
@@ -48,49 +33,32 @@ knitr::knit_hooks$set(inline = function(x) {
 })
 
 # data.table printout
-options(
-  datatable.print.nrows = 6,
-  datatable.print.topn = 3,
-  datatable.print.class = TRUE
-)
+options(datatable.print.nrows = 6,
+        datatable.print.topn = 3,
+        datatable.print.class = FALSE)
 
 # accented text
-# accent <- function (text_string){
-#     kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
-# }
+accent <- function (text_string){
+    kableExtra::text_spec(text_string, color = "#b35806", bold = TRUE)
+}
 ```
 
+Familiarity with the MIDFIELD data structure is a prerequisite for working with `midfieldr` functions so we start by inspecting the practice data in [`midfielddata`](https://midfieldr.github.io/midfielddata/), a companion R package that provides anonymized student-level records for 98,000 undergraduates at three US institutions from 1988 through 2018. 
 
-
-
-## Student unit records 
-
-The MIDFIELD Student Unit Records (SUR) are registrar's student-level data compiled by an institution and anonymized and curated by the MIDFIELD data steward. SURs include personal information (e.g., age, sex, and race/ethnicity), enrollment information (e.g., institution, program, and grade level), and academic information (e.g., courses, grades, and degrees). MIDFIELD data are organized into four tables---student, course, term, and degree---keyed by student ID. 
-
-From the MIDFIELD *research* data, we've taken a proportionate stratified sample and made it available as a *practice* data set in  [midfielddata](https://midfieldr.github.io/midfielddata/)---an R data package containing anonymized SURs for nearly 98,000 undergraduates at three institutions from 1988--2018. Table 1 briefly introduces the four practice data tables.
+The practice data are organized in four datasets keyed by student ID.  
 
 ```{r}
 #| echo: false
-
-library("midfieldr")
-
-wrapr::build_frame(
-  "Practice data table", "Each row is", "No. of rows", "No. of columns", "Memory" |
-    "course", "a student in a course", "3,439,936", "12", "340 Mb" |
-    "term", "a student in a term", "710,841", "13", "80 Mb" |
-    "student", "a degree-seeking student", "97,640", "13", "19 Mb" |
-    "degree", "a student who graduates", "47,499", "5", "10.2 Mb"
-) |>
-  kableExtra::kbl(
-    align = "llrrr",
-    caption = "Table 1: Attributes of the practice data tables in midfielddata"
-  ) |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+load("R/sysdata.rda")
+practice_data_summary |>
+  kableExtra::kbl(align = "llrrrr", caption = "Table 1. Practice datasets in `midfielddata`.") |>
+  kableExtra::kable_paper(lightable_options = "basic", full_width = FALSE) |>
   kableExtra::row_spec(0, background = "#c7eae5") |>
   kableExtra::column_spec(1, monospace = TRUE) |>
-  kableExtra::column_spec(1:4, color = "black", background = "white")
+  kableExtra::column_spec(1:6, color = "black", background = "white")
 ```
 
+The data in `midfielddata` are a proportionate stratified sample of the MIDFIELD database, but are *not suitable for drawing inferences* about program attributes or student experiences---`midfielddata` are for *practice*, not research. 
 
 
 
@@ -98,385 +66,238 @@ wrapr::build_frame(
 
 ## Method
 
-With required packages installed (per the [main page](../index.html#requirements)), we start  with midfieldr by: 
+In this vignette: 
 
-- Inspecting the four practice data tables 
-- Introducing midfieldr functions
+- Overview of each dataset 
+- Summary of variables typically encountered when using `midfieldr` functions
+- Closer look: For one student, all records in all datasets 
+- Introduce helper functions `select_required()` and `same_content()` 
 
-*Names of source data tables.* &nbsp; When a source data table is an argument of a midfieldr function, the default names are `student`, `course`, `term`, and `degree`. Alternate names can be used if desired. 
-
-*Names of variables.* &nbsp; midfieldr functions are designed to work with variables names given in the source data tables with no mechanism for substitutions. Help pages denote the variable names that are required.  
-
-*Caveat.*  &nbsp; The data in ‘midfielddata’ are practice data, suitable for learning to work with Student Unit Records (SURs) generally. Unlike the MIDFIELD research database, the data tables in ‘midfielddata’ are not research data; they are not suitable for drawing inferences about program attributes or student experiences.
-
-
-
+*Notes on syntax.* &nbsp; We use `data.table` for data manipulation. Some users may prefer base R or `dplyr`. Each system has its strengths---users are welcome to translate our examples to their preferred syntax.  
 
 
 
 
 ## Load data
 
-*Open.* &nbsp; If you are writing your own script to follow along, we use these packages in this vignette:
+*Start.* &nbsp; If you are writing your own script to follow along, we use these packages in this vignette:
 
 ```{r}
-# Getting started
-# midfieldr vignette
-
-# Packages used
-library("midfieldr")
-library("midfielddata")
-library("data.table")
+# midfieldr: Getting started
+library(midfieldr)
+library(midfielddata)
+library(data.table)
 ```
 
-*Load data tables.*  &nbsp; Use `data()` to load the practice data tables into memory for use. For example, after loading the package with `library("midfielddata")` as we did above, you can run `ls()` to see that the environment contains zero objects, 
+*Load data tables.*  &nbsp; Data tables can be loaded individually or collectively as needed.  
 
 ```{r}
-# Names of objects in the environment
-ls()
-```
+# Load one table as needed
+data(student)
 
-To load the `student` data from midfielddata into memory, we run
-
-```{r}
-#| echo: false
-
-if (!exists("student")) data(student, package = "midfielddata")
-```
-
-```{r}
-#| eval: false
-
-# Load practice data
-data(student, package = "midfielddata")
-```
-
-Checking the environment again, 
-
-```{r}
-# Names of objects in the environment
-ls()
-```
-
-If you look in the RStudio *Environment* pane, you should see `student` listed. We will typically load the data sets we need at the top of a script just after loading the midfielddata package. You need to load them only once in a script.  
-
-```{r}
-#| echo: false
-
-if (!exists("course")) data(course, package = "midfielddata")
-if (!exists("term")) data(term, package = "midfielddata")
-if (!exists("degree")) data(degree, package = "midfielddata")
-```
-
-```{r}
-#| eval: false
-
-# Load remaining practice data
-data(course, term, degree, package = "midfielddata")
-```
-
-Checking the environment again, 
-
-```{r}
-# Names of objects in the environment
-ls()
-```
-
-
-```{r}
-#| echo: false
-
-# cip
-n_cip <- nrow(unique(cip))
-
-# student
-obs_students <- nrow(student)
-var_students <- ncol(student)
-size_students <- "13 MB"
-
-# degree
-n_id_degrees <- nrow(unique(degree[, .(mcid)]))
-n_graduates <- nrow(unique(degree[!is.na(degree), .(mcid)]))
-n_term <- nrow(unique(degree[, .(term)]))
-obs_degrees <- nrow(degree)
-var_degrees <- ncol(degree)
-size_degrees <- "5 MB"
-
-# term
-n_id_terms <- nrow(unique(term[, .(mcid)]))
-obs_terms <- nrow(term)
-var_terms <- ncol(term)
-n_institutions <- nrow(unique(term[, .(institution)]))
-n_programs_terms <- nrow(unique(term[, .(institution, cip6)]))
-n_terms <- nrow(unique(term[, .(term)]))
-year_span <- c(substr(min(term[, term]), 1, 4), substr(max(term[, term]), 1, 4))
-size_terms <- "73 MB"
-
-# course
-n_id_courses <- nrow(unique(course[, .(mcid)]))
-n_courses <- nrow(unique(course[, .(institution, abbrev, number)]))
-n_term_course <- nrow(unique(course[, .(term)]))
-obs_courses <- nrow(course)
-var_courses <- ncol(course)
-size_courses <- "324 MB"
+# Or load multiple tables
+data(course, term, degree)
 ```
 
 
 
 
+## `student`
 
-## Inspect the `student` data
-
-`student` is a table of `r var_students` student-related variables for  degree-seeking students at the time they were admitted to their institutions. You can view the help page (and data dictionary) by running
+Run `?student` to view its help page and data dictionary. Contains one observation per student. Data are assumed to be current at the time the student was admitted to their institution. 
 
 ```{r}
-#| eval: false
-
-# Run in Console
-? student
+student
 ```
 
-Each observation is a unique student keyed by student ID. Student IDs and institution names are de-identified but are consistent across the four data sets. To see the data structure, run
+Student IDs and institution names have been anonymized to remove identifiable information. 
 
 ```{r}
-# View the structure of the data set
-str(student)
+# Anonymized IDs
+sample(student$mcid, 8)
+
+# Anonymized institutions
+sort(unique(student$institution))
 ```
 
-`student` has `r obs_students` observations and occupies approximately `r size_students` memory. We can confirm that the student IDs are unique by running, 
+Race/ethnicity and sex are often used as grouping variables.
 
 ```{r}
-nrow(student)
-
-length(unique(student$mcid))
-```
-
-Summarize some of the quantitative variables. 
-
-```{r}
-summary(student$sat_math)
-
-summary(student$act_comp)
-```
-
-Examine a few of the categorical variables and their values. 
-
-```{r}
-sort(unique(student$sex))
-
+# Possible values
 sort(unique(student$race))
+
+# Possible values
+sort(unique(student$sex))
 ```
 
-### Exercises
- 
-1. Determine the possible values in the `institution` column. 
-2. Determine the possible values in the `transfer` column. 
-3. Determine the median `sat_verbal` score.
-
-
-
-
-
-
-## Inspect the `course` data
-
-`course` is a data frame of `r var_courses` course-related variables with observations of students who complete a course or remain in a course beyond their institution's course-withdrawal deadline. You can view the help page (and data dictionary) by running
+Counts in each category. 
 
 ```{r}
-#| eval: false
+# N by institution
+student[order(institution), .N, by = "institution"]
 
-# Run in Console
-? course
+# N by race
+student[order(race), .N, by = "race"]
+
+# N by sex
+student[order(sex), .N, by = "sex"]
 ```
 
-Each observation is one course in one term for one student keyed by student ID. To see the data structure, run
+
+
+
+
+
+
+## `course`
+
+Run `?course` to view its help page and data dictionary. Contains one observation per student per course.  
 
 ```{r}
-# View the structure of the data set
-str(course)
+course
 ```
 
-Of the four practice data sets in midfielddata, `course` is by far the largest, with `r obs_courses` observations and occupying `r size_courses` of memory. Depending on your machine, loading `course` can cause a noticeable delay in execution time, so you probably want to load it only when needed. 
-
-To be recorded in `course` (unlike `student`), students can be non-degree-seeking but they must complete a course. The number of unique students in `course` is given by, 
+The `abbrev`, `number`, and `discipline_midfield` columns have no NA values, so they might be useful if one is filtering for specific course types. The `course` column, on the other hand, has a high number of NA values. 
 
 ```{r}
-length(unique(course$mcid))
-```
- 
-Summarize a quantitative variable. 
+# Many NA values in this column
+sum(is.na(course$course))
 
-```{r}
-summary(course$hours_course)
+# No NA values in these columns.
+sum(is.na(course$abbrev))
+sum(is.na(course$number))
+sum(is.na(course$discipline_midfield))
 ```
 
-Examine a categorical variable and its values. 
+
+
+
+
+
+
+
+
+
+## `term`
+
+Run `?term` to view its help page and data dictionary. Contains one observation per student per term.  
 
 ```{r}
-sort(unique(course$type))
+term
 ```
 
-### Exercises
+Terms are encoded `YYYYT`, where 
 
-1. Determine the possible values in the `faculty_rank` column. 
-2. Determine the range of terms in `term` column. 
-3. Determine the possible values in the `grade` column. 
+- `YYYY` is the year at the start of the academic year, and  
+- `T` encodes the semester or quarter---Fall (`1`), Winter (`2`), Spring (`3`), and Summer (`4`, `5`, and `6`)---within an academic year
 
+For example, for academic year 1995--96, 
 
+- `19951` encodes Fall 95--96
+- `19953` encodes Spring 95--96
+- `19954` encodes Summer 95--96 (first session)
 
-
-
-
-## Inspect the `term` data
-
-`term` is a data frame of `r var_terms` term-related variables with  observations of students who complete a term or remain in a program beyond their institution's term-withdrawal deadline. You can view the help page (and data dictionary) by running
+Different institutions supply data over different time spans. 
 
 ```{r}
-#| eval: false
-
-# Run in Console
-? term
+# Range of data by institution
+term[, .(min_term = min(term), max_term = max(term)), by = "institution"]
 ```
 
-Each observation is one term for one student keyed by student ID. To see the data structure, run
+Programs are encoded in the `cip6` variable, a 6-digit character based on the 2010 Classification of Instructional Programs (CIP) [@NCES:2010]. CIP codes are explored in detail in [Programs](art-040-programs.html). 
 
 ```{r}
-str(term)
+# A sample of cip6 values
+sort(unique(sample(term$cip6, 8)))
 ```
 
-`term` has `r obs_terms` observations and occupies approximately `r size_terms` of memory. 
-
-To be recorded in `term` (unlike `student`), students can be non-degree-seeking but they must complete a term. The number of unique students in `term` is given by, 
+Student level is used when determining timely completion terms of transfer students.
 
 ```{r}
-length(unique(term$mcid))
-```
-
-Summarize some of the quantitative variables. 
-
-```{r}
-summary(term$hours_term)
-
-summary(term$gpa_term)
-```
-
-Examine some categorical variables and their values.  
-
-```{r}
+# Possible values
 sort(unique(term$level))
-
-sort(unique(term$standing))
 ```
 
 
 
 
-### Exercises
-
-1. Determine the possible values in the `coop` column. 
-2. Determine the range of terms in `term` column. 
-3. Determine the median value of the `gpa_cumul` column. 
 
 
+## `degree`
 
+Run `?degree` to view its help page and data dictionary. This dataset contains records for graduates only, thus the number of unique students in `degree` (`r length(unique(degree$mcid))`) is less than the number of students in the other three datasets (`r length(unique(student$mcid))`). 
 
-
-## Inspect the `degree` data
-
-`degree` is a table of `r var_degrees` degree-related variables with observations of students who complete their program(s). You can view the help page (and data dictionary) by running
+Contains one observation per student per degree. The `term_degree` and `cip6` variables indicate when and from which program a student graduates. 
 
 ```{r}
-#| eval: false
-
-# Run in Console
-? degree
+degree
 ```
 
-Each observation is a unique combination of student and degree keyed by student ID. To see the data structure, run
+Number of degrees earned per student. 
 
 ```{r}
-str(degree)
+# Count students by number of degrees
+by_id <- degree[, .(degree_count = .N), by = "mcid"]
+by_id[, .(N_students = .N), by = "degree_count"]
 ```
 
-`degree` has `r obs_degrees` observations and occupies approximately `r size_degrees` memory.  The practice data include students earning a double degree (or more), thus the number of rows exceeds the number of unique IDs.
+
+
+
+
+
+## Closer look
+
+We display the records for one specific student, using their ID to subset each dataset.  
 
 ```{r}
-nrow(degree)
-
-length(unique(degree$mcid))
+# One student ID
+id_we_want <- "MCID3112192438"
 ```
 
- 
-
-By student ID, the students in `degree` are a subset of the students in `student`. We can confirm by running the following, where a sum of `r length(unique(degree$mcid))`  indicates that all IDs in `degree` are present in `student`. 
+*Student.* &nbsp; As expected, `student` yields one row per student.
 
 ```{r}
-# Isolate IDs
-degree_mcid <- unique(degree$mcid)
-student_mcid <- unique(student$mcid)
-
-# Sum of logical results, 1 for every TRUE, 0 for every FALSE
-sum(degree_mcid %chin% student_mcid)
+# Observations for a selected ID
+student[mcid == id_we_want]
 ```
 
-Examine some categorical variables and their values. 
+*Course.* &nbsp; For this student, the records span `r nrow(course[mcid == id_we_want])` rows, one row per course. 
 
 ```{r}
-sort(unique(degree$institution))
-
-sample(unique(degree$degree), 10)
+# Observations for a selected ID
+course[mcid == id_we_want]
 ```
 
-Checking if any of the degrees are recorded as NA results in an empty table, thus all the students in `degree` are graduates. 
+*Term.* &nbsp; Here, the records span `r nrow(term[mcid == id_we_want])` rows, one row per term. 
 
 ```{r}
-degree[is.na(degree)]
+# Observations for a selected ID
+term[mcid == id_we_want]
 ```
 
-### Exercises
-
-Some packages have functions specialized for data frame summaries. Try this one---you may find it useful in future data explorations. 
-
-1. Install the `skimr` package, load it with `library("skimr")`, and run `skim(x)`, where `x` is one of the data tables, for example, 
+*Degree.* &nbsp; In this example, the records span `r nrow(degree[mcid == id_we_want])` rows, one row per degree. The degrees were earned in the same term, Spring 2009. 
 
 ```{r}
-#| eval: false
-
-library(skimr)
-skim(student)
-skim(degree)
+# Observations for a selected ID
+degree[mcid == id_we_want]
 ```
 
-
-
-
-## Functions
-
-The functions in midfieldr are briefly described in Table 2 with additional information available on the midfieldr [Reference](reference/reference/index.html) page. Detailed examples of usage are distributed throughout the vignettes. Two of the helper functions are discussed in sections below.   
+Not all students with more than one degree earn them in the same term. For example, the next student earned a degree in 1996 and a second degree in 1999. In most analyses, only the first baccalaureate degree would be used.
 
 ```{r}
-#| echo: false
-
-wrapr::build_frame(
-  "Function", "Action" |
-    "add_completion_status()", "Determine degree completion status for every student" |
-    "add_data_sufficiency()", "Determine data sufficiency for every student" |
-    "add_timely_term()", "Determine a timely completion term for every student" |
-    "filter_cip()", "Subset rows of CIP data to match search strings" |
-    "order_multiway()", "Order the categories of multiway data for graphing" |
-    "prep_fye_mice()", "Construct and format FYE data for multiple imputation" |
-    "same_content()", "Test for equal content in two data tables" |
-    "select_required()", "Reduce number of columns of a MIDFIELD source data table"
-) |>
-  kableExtra::kbl(
-    align = "ll",
-    caption = "Table 2: Functions provided in midfieldr."
-  ) |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::column_spec(1, monospace = TRUE) |>
-  kableExtra::column_spec(1:2, color = "black", background = "white") |>
-  kableExtra::row_spec(c(0), background = "#c7eae5")
+# Observations for a different ID
+degree[mcid == "MCID3111315508"]
 ```
+
+
+
+
+
+
+
+
+
 
 
 
@@ -501,7 +322,6 @@ The primary benefit is reducing screen clutter when viewing data frames during a
 *Before.* &nbsp; The original source file. 
 
 ```{r}
-#| collapse: true
 # Create a copy of the source file
 source_term <- copy(term)
 source_term[]
@@ -518,8 +338,6 @@ term[]
 *Equivalent usage.* &nbsp; The following implementations yield identical results
 
 ```{r}
-#| collapse: true
-
 # Required argument explicitly named
 x <- select_required(midfield_x = term)
 
@@ -542,7 +360,6 @@ In the code chunk just above, we claim the three results are equivalent. To veri
 *Example.* &nbsp; Demonstrate the equivalence of the data tables from the previous section. 
 
 ```{r}
-#| collapse: true
 # Demonstrate equivalence
 same_content(x, y)
 same_content(x, z)
@@ -551,8 +368,6 @@ same_content(x, z)
 Demonstrate that row and column order are ignored. 
 
 ```{r}
-#| collapse: true
-
 # Two columns from student, use key to order rows
 x <- student[, .(mcid, institution)]
 setkey(x, mcid)
@@ -570,7 +385,6 @@ same_content(x, y)
 If the two data tables do not have the same content, the printout indicates the types of differences. 
 
 ```{r}
-#| collapse: true
 # Demonstrate non-equivalence
 same_content(student, degree)
 ```
@@ -585,21 +399,14 @@ same_content(student, degree)
 
 
 
-## Reusable code: Getting started
+## Reusable code
 
-We often conclude a vignette with a *Reusable code* section in two parts. 
-
-- The first section, *Preparation*, describes the immediate prerequisites or "intake" required by the reusable code chunk.   
-
-- The second section (labeled by the topic) provides the reusable code---a condensed version of midfieldr functionality explored in the vignette. In some cases the code can be used as-is; in others, the code must be edited to suit the goals of the project. 
-
-*Preparation.* &nbsp; In this case, the only intakes are the source data tables.  
+*Preparation.* &nbsp; The immediate prerequisites or “intake” required by the reusable code chunk are the source data tables.  
 
 ```{r}
 #| eval: false
-
 # Load source data
-data(student, term, degree, package = "midfielddata")
+data(student, term, degree)
 ```
 
 *Initial data processing.* &nbsp; A summary code chunk for ready reference.  
@@ -618,38 +425,5 @@ degree <- select_required(source_degree)
 
 
 
-
-
-
-
-
-
-
-
 ## References
 
-<div id="refs"></div>
-
-
-
-```{r}
-#| echo: false
-
-# to change the CSS file per https://github.com/rstudio/rmarkdown/issues/732
-knitr::opts_chunk$set(echo = FALSE)
-```
-
-```{css}
-blockquote {
-    padding:     10px 20px;
-    margin:      0 0 20px;
-    border-left: 0px
-}
-caption {
-    color:       #525252;
-    text-align:  left;
-    font-weight: normal;
-    font-size:   medium;
-    line-height: 1.5;
-}
-```

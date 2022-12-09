@@ -1,9 +1,9 @@
 ---
-output: github_document
-bibliography: inst/REFERENCES.bib
-csl: inst/information-science-and-technology.csl
-link-citations: yes
-always_allow_html: true
+output: github_document 
+csl: inst/information-science-and-technology.csl 
+bibliography: inst/REFERENCES.bib 
+always_allow_html: true 
+link-citations: yes 
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -11,13 +11,18 @@ always_allow_html: true
 ```{r setup}
 #| include: false
 knitr::opts_chunk$set(
-  echo = TRUE, 
+  echo = TRUE,
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
+  fig.path = "man/figures/README-"
 )
-options(datatable.print.class = TRUE)
+
+# data.table printout
+options(
+  datatable.print.nrows = 6,
+  datatable.print.topn = 3,
+  datatable.print.class = FALSE
+)
 
 # inline numbers
 knitr::knit_hooks$set(inline = function(x) {
@@ -45,9 +50,10 @@ knitr::knit_hooks$set(inline = function(x) {
 
 
 
+
 ## Introduction
 
-`midfieldr` provides functions for working with undergraduate "student-level" data from the MIDFIELD database. Data at the "student-level" refers to information about individual students including demographics, programs, academic standing, courses, grades, and degrees. Practice data are supplied by the companion R package `midfielddata`  ([more information]).
+`midfieldr` provides functions for working with undergraduate "student-level" data from the MIDFIELD database. Data at the "student-level" refers to information about individual students including, for example, demographics, programs, academic standing, courses, grades, and degrees. Practice data are supplied by the companion R package `midfielddata`  (more information [[here]](#more-information)).
 
 `midfieldr` provides these functions for processing student-level data: 
 
@@ -63,25 +69,13 @@ Additional functions for processing intermediate results:
 - `order_multiway()` Order categorical variables of multiway data
 - `same_content()` Test for equal content between two data tables
 
-```{r}
-# Tools and methods
-library(midfieldr)
-packageVersion("midfieldr")
-
-# Practice data
-library(midfielddata)
-packageVersion("midfielddata")
-
-# Rendered
-format(Sys.Date(), "%Y-%m-%d")
-```
-
-*Note on syntax.* &nbsp; We use `data.table` syntax for data manipulation. Other systems, e.g., base R or `dplyr`, could be used instead; each system has its strengths. Users are welcome to translate our examples to their preferred syntax. 
+*Notes on syntax.* &nbsp; We use `data.table` for data manipulation. Some users may prefer base R or `dplyr`. Each system has its strengths---users are welcome to translate our examples to their preferred syntax.
 
 ```{r}
-# For data manipulation
-library(data.table)
-packageVersion("data.table")
+format(Sys.Date(), "%Y-%m-%d") # Today's date
+packageVersion("midfieldr")    # Student-level records tools and methods
+packageVersion("midfielddata") # Student-level records practice data 
+packageVersion("data.table")   # For data manipulation
 ```
 
 
@@ -91,16 +85,20 @@ packageVersion("data.table")
 
 ## Usage
 
-In this example, we gather all students ever enrolled in Engineering and summarize their graduation status (in any major), grouping by race/ethnicity and sex. 
+In this example, we gather all students ever enrolled in Engineering and summarize their graduation status (in any major), grouping by race/ethnicity and sex. If you are writing your own script to follow along, we use these packages in this vignette:
+
+```{r}
+library(midfieldr)
+library(midfielddata)
+library(data.table)
+```
+
+Load the practice data. Reduce initial dimensions of data tables using `select_required()`. 
 
 ```{r}
 # Load the practice data
 data(student, term, degree)
-```
 
-Reduce initial dimensions of data tables using `select_required()`. 
-
-```{r}
 # Reduce dimensions of source data tables
 student <- select_required(student)
 term <- select_required(term)
@@ -222,11 +220,11 @@ Alternatively, you can install the development version from the MIDFIELD GitHub 
 
 ```{r}
 #| eval: false
-install.packages("devtools")
-devtools::install_github("MIDFIELDR/midfieldr")
+install.packages("pak")
+pak::pkg_install("MIDFIELDR/midfieldr")
 ```
 
-
+Link to installation instructions for `midfielddata` below. 
 
 
 
@@ -240,7 +238,7 @@ devtools::install_github("MIDFIELDR/midfieldr")
 
 [`midfielddata`](https://midfieldr.github.io/midfielddata/)
 
-: A companion R package containing a proportionate, stratified sample of the  MIDFIELD database to practice using the tools and methods provided by `midfieldr`.  
+: A companion R data package that supplies anonymized student-level records for 98,000 undergraduates from the MIDFIELD database. Provides practice data for the tools and methods of `midfieldr`. 
 
 
 [MIDFIELD](https://midfield.online/)
