@@ -110,7 +110,7 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p><code>midfieldr</code> provides functions for working with undergraduate “student-level” data from the MIDFIELD database. Data at the “student-level” refers to information about individual students including demographics, programs, academic standing, courses, grades, and degrees. Practice data are supplied by the companion R package <code>midfielddata</code> (<a href="#more-information">more information</a>).</p>
+<p><code>midfieldr</code> provides functions for working with undergraduate “student-level” data from the MIDFIELD database. Data at the “student-level” refers to information about individual students including, for example, demographics, programs, academic standing, courses, grades, and degrees. Practice data are supplied by the companion R package <code>midfielddata</code> (more information <a href="#more-information">[here]</a>).</p>
 <p><code>midfieldr</code> provides these functions for processing student-level data:</p>
 <ul>
 <li>
@@ -133,58 +133,47 @@
 <li>
 <code><a href="reference/same_content.html">same_content()</a></code> Test for equal content between two data tables</li>
 </ul>
+<p><em>Notes on syntax.</em>   We use <code>data.table</code> for data manipulation. Some users may prefer base R or <code>dplyr</code>. Each system has its strengths—users are welcome to translate our examples to their preferred syntax.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Tools and methods</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://midfieldr.github.io/midfieldr/">midfieldr</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"midfieldr"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"%Y-%m-%d"</span><span class="op">)</span> <span class="co"># Today's date</span></span>
+<span><span class="co">#&gt; [1] "2022-12-09"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"midfieldr"</span><span class="op">)</span>    <span class="co"># Student-level records tools and methods</span></span>
 <span><span class="co">#&gt; [1] '1.0.0.9029'</span></span>
-<span></span>
-<span><span class="co"># Practice data</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://midfieldr.github.io/midfielddata/" class="external-link">midfielddata</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"midfielddata"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"midfielddata"</span><span class="op">)</span> <span class="co"># Student-level records practice data </span></span>
 <span><span class="co">#&gt; [1] '0.2.0'</span></span>
-<span></span>
-<span><span class="co"># Rendered</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"%Y-%m-%d"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "2022-12-07"</span></span></code></pre></div>
-<p><em>Note on syntax.</em>   We use <code>data.table</code> syntax for data manipulation. Other systems, e.g., base R or <code>dplyr</code>, could be used instead; each system has its strengths. Users are welcome to translate our examples to their preferred syntax.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># For data manipulation</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"data.table"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"data.table"</span><span class="op">)</span>   <span class="co"># For data manipulation</span></span>
 <span><span class="co">#&gt; [1] '1.14.6'</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<p>In this example, we gather all students ever enrolled in Engineering and summarize their graduation status (in any major), grouping by race/ethnicity and sex.</p>
+<p>In this example, we gather all students ever enrolled in Engineering and summarize their graduation status (in any major), grouping by race/ethnicity and sex. If you are writing your own script to follow along, we use these packages in this vignette:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://midfieldr.github.io/midfieldr/">midfieldr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://midfieldr.github.io/midfielddata/" class="external-link">midfielddata</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span></code></pre></div>
+<p>Load the practice data. Reduce initial dimensions of data tables using <code><a href="reference/select_required.html">select_required()</a></code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load the practice data</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span>, <span class="va">degree</span><span class="op">)</span></span></code></pre></div>
-<p>Reduce initial dimensions of data tables using <code><a href="reference/select_required.html">select_required()</a></code>.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Reduce dimensions of source data tables</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span>, <span class="va">degree</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Reduce dimensions of source data tables</span></span>
 <span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_required.html">select_required</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></span>
 <span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_required.html">select_required</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
 <span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_required.html">select_required</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># View example result</span></span>
 <span><span class="va">term</span></span>
-<span><span class="co">#&gt;                   mcid   institution   term   cip6          level</span></span>
-<span><span class="co">#&gt;                 &lt;char&gt;        &lt;char&gt; &lt;char&gt; &lt;char&gt;         &lt;char&gt;</span></span>
-<span><span class="co">#&gt;      1: MCID3111142225 Institution B  19881 140901  01 First-year</span></span>
-<span><span class="co">#&gt;      2: MCID3111142283 Institution J  19881 240102  01 First-year</span></span>
-<span><span class="co">#&gt;      3: MCID3111142283 Institution J  19883 240102  01 First-year</span></span>
-<span><span class="co">#&gt;      4: MCID3111142283 Institution J  19885 190601  01 First-year</span></span>
-<span><span class="co">#&gt;      5: MCID3111142283 Institution J  19891 190601 02 Second-year</span></span>
-<span><span class="co">#&gt;     ---                                                          </span></span>
-<span><span class="co">#&gt; 639911: MCID3112898886 Institution B  20181 500501  01 First-year</span></span>
-<span><span class="co">#&gt; 639912: MCID3112898890 Institution B  20181 451101  01 First-year</span></span>
-<span><span class="co">#&gt; 639913: MCID3112898894 Institution B  20181 451001  01 First-year</span></span>
-<span><span class="co">#&gt; 639914: MCID3112898895 Institution B  20181 302001  01 First-year</span></span>
-<span><span class="co">#&gt; 639915: MCID3112898940 Institution B  20181 050103  01 First-year</span></span></code></pre></div>
+<span><span class="co">#&gt;                   mcid   institution  term   cip6         level</span></span>
+<span><span class="co">#&gt;      1: MCID3111142225 Institution B 19881 140901 01 First-year</span></span>
+<span><span class="co">#&gt;      2: MCID3111142283 Institution J 19881 240102 01 First-year</span></span>
+<span><span class="co">#&gt;      3: MCID3111142283 Institution J 19883 240102 01 First-year</span></span>
+<span><span class="co">#&gt;     ---                                                        </span></span>
+<span><span class="co">#&gt; 639913: MCID3112898894 Institution B 20181 451001 01 First-year</span></span>
+<span><span class="co">#&gt; 639914: MCID3112898895 Institution B 20181 302001 01 First-year</span></span>
+<span><span class="co">#&gt; 639915: MCID3112898940 Institution B 20181 050103 01 First-year</span></span></code></pre></div>
 <p>Filter for data sufficiency using <code><a href="reference/add_timely_term.html">add_timely_term()</a></code> and <code><a href="reference/add_data_sufficiency.html">add_data_sufficiency()</a></code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Initialize the working data frame</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -196,33 +185,23 @@
 <span><span class="co"># View result</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                   mcid   cip6       level_i adj_span timely_term term_i</span></span>
-<span><span class="co">#&gt;                 &lt;char&gt; &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt; &lt;char&gt;</span></span>
 <span><span class="co">#&gt;      1: MCID3111142689 090401 01 First-year        6       19941  19883</span></span>
 <span><span class="co">#&gt;      2: MCID3111142782 260101 01 First-year        6       19941  19883</span></span>
 <span><span class="co">#&gt;      3: MCID3111142782 260101 01 First-year        6       19941  19883</span></span>
-<span><span class="co">#&gt;      4: MCID3111142782 260101 01 First-year        6       19941  19883</span></span>
-<span><span class="co">#&gt;      5: MCID3111142782 260101 01 First-year        6       19941  19883</span></span>
 <span><span class="co">#&gt;     ---                                                                </span></span>
-<span><span class="co">#&gt; 531415: MCID3112800920 240199 01 First-year        6       20153  20101</span></span>
-<span><span class="co">#&gt; 531416: MCID3112870009 240102 01 First-year        6       20003  19951</span></span>
 <span><span class="co">#&gt; 531417: MCID3112870009 240102 01 First-year        6       20003  19951</span></span>
 <span><span class="co">#&gt; 531418: MCID3112870009 240102 01 First-year        6       20003  19951</span></span>
 <span><span class="co">#&gt; 531419: MCID3112870009 240102 01 First-year        6       20003  19951</span></span>
 <span><span class="co">#&gt;         lower_limit upper_limit data_sufficiency</span></span>
-<span><span class="co">#&gt;              &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span></span>
 <span><span class="co">#&gt;      1:       19881       20181          include</span></span>
 <span><span class="co">#&gt;      2:       19881       20096          include</span></span>
 <span><span class="co">#&gt;      3:       19881       20096          include</span></span>
-<span><span class="co">#&gt;      4:       19881       20096          include</span></span>
-<span><span class="co">#&gt;      5:       19881       20096          include</span></span>
 <span><span class="co">#&gt;     ---                                         </span></span>
-<span><span class="co">#&gt; 531415:       19881       20181          include</span></span>
-<span><span class="co">#&gt; 531416:       19881       20181          include</span></span>
 <span><span class="co">#&gt; 531417:       19881       20181          include</span></span>
 <span><span class="co">#&gt; 531418:       19881       20181          include</span></span>
 <span><span class="co">#&gt; 531419:       19881       20181          include</span></span></code></pre></div>
 <p>Filter for degree-seeking students ever enrolled in Engineering.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Inner join to filter observations for degree-seeking</span></span>
 <span><span class="va">cols_we_want</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">cols_we_want</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
@@ -236,66 +215,46 @@
 <span><span class="co"># View result</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                  mcid   cip6        level_i adj_span timely_term term_i</span></span>
-<span><span class="co">#&gt;                &lt;char&gt; &lt;char&gt;         &lt;char&gt;    &lt;num&gt;      &lt;char&gt; &lt;char&gt;</span></span>
 <span><span class="co">#&gt;     1: MCID3111142965 140102  01 First-year        6       19941  19883</span></span>
 <span><span class="co">#&gt;     2: MCID3111145102 140102  01 First-year        6       19941  19883</span></span>
 <span><span class="co">#&gt;     3: MCID3111146537 141001 02 Second-year        5       19931  19883</span></span>
-<span><span class="co">#&gt;     4: MCID3111146674 141001  01 First-year        6       19941  19883</span></span>
-<span><span class="co">#&gt;     5: MCID3111150194 140102  01 First-year        6       19941  19883</span></span>
 <span><span class="co">#&gt;    ---                                                                 </span></span>
-<span><span class="co">#&gt; 10397: MCID3112619484 141001  01 First-year        6       20181  20123</span></span>
-<span><span class="co">#&gt; 10398: MCID3112619666 141901  01 First-year        6       20181  20123</span></span>
 <span><span class="co">#&gt; 10399: MCID3112641399 141901  01 First-year        6       20181  20123</span></span>
 <span><span class="co">#&gt; 10400: MCID3112641535 141901  01 First-year        6       20173  20121</span></span>
 <span><span class="co">#&gt; 10401: MCID3112698681 141901  01 First-year        6       20171  20113</span></span>
 <span><span class="co">#&gt;        lower_limit upper_limit data_sufficiency</span></span>
-<span><span class="co">#&gt;             &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span></span>
 <span><span class="co">#&gt;     1:       19881       20096          include</span></span>
 <span><span class="co">#&gt;     2:       19881       20096          include</span></span>
 <span><span class="co">#&gt;     3:       19881       20096          include</span></span>
-<span><span class="co">#&gt;     4:       19881       20096          include</span></span>
-<span><span class="co">#&gt;     5:       19881       20096          include</span></span>
 <span><span class="co">#&gt;    ---                                         </span></span>
-<span><span class="co">#&gt; 10397:       19881       20181          include</span></span>
-<span><span class="co">#&gt; 10398:       19881       20181          include</span></span>
 <span><span class="co">#&gt; 10399:       19881       20181          include</span></span>
 <span><span class="co">#&gt; 10400:       19881       20181          include</span></span>
 <span><span class="co">#&gt; 10401:       19881       20181          include</span></span></code></pre></div>
 <p>Determine completion status using <code><a href="reference/add_completion_status.html">add_completion_status()</a></code>.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add completion status variable</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">degree</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># View result</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                  mcid   cip6        level_i adj_span timely_term term_i</span></span>
-<span><span class="co">#&gt;                &lt;char&gt; &lt;char&gt;         &lt;char&gt;    &lt;num&gt;      &lt;char&gt; &lt;char&gt;</span></span>
 <span><span class="co">#&gt;     1: MCID3111142965 140102  01 First-year        6       19941  19883</span></span>
 <span><span class="co">#&gt;     2: MCID3111145102 140102  01 First-year        6       19941  19883</span></span>
 <span><span class="co">#&gt;     3: MCID3111146537 141001 02 Second-year        5       19931  19883</span></span>
-<span><span class="co">#&gt;     4: MCID3111146674 141001  01 First-year        6       19941  19883</span></span>
-<span><span class="co">#&gt;     5: MCID3111150194 140102  01 First-year        6       19941  19883</span></span>
 <span><span class="co">#&gt;    ---                                                                 </span></span>
-<span><span class="co">#&gt; 10397: MCID3112619484 141001  01 First-year        6       20181  20123</span></span>
-<span><span class="co">#&gt; 10398: MCID3112619666 141901  01 First-year        6       20181  20123</span></span>
 <span><span class="co">#&gt; 10399: MCID3112641399 141901  01 First-year        6       20181  20123</span></span>
 <span><span class="co">#&gt; 10400: MCID3112641535 141901  01 First-year        6       20173  20121</span></span>
 <span><span class="co">#&gt; 10401: MCID3112698681 141901  01 First-year        6       20171  20113</span></span>
 <span><span class="co">#&gt;        lower_limit upper_limit data_sufficiency term_degree completion_status</span></span>
-<span><span class="co">#&gt;             &lt;char&gt;      &lt;char&gt;           &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span></span>
 <span><span class="co">#&gt;     1:       19881       20096          include       19901            timely</span></span>
 <span><span class="co">#&gt;     2:       19881       20096          include       19893            timely</span></span>
 <span><span class="co">#&gt;     3:       19881       20096          include       19913            timely</span></span>
-<span><span class="co">#&gt;     4:       19881       20096          include       19921            timely</span></span>
-<span><span class="co">#&gt;     5:       19881       20096          include       19923            timely</span></span>
 <span><span class="co">#&gt;    ---                                                                       </span></span>
-<span><span class="co">#&gt; 10397:       19881       20181          include       20133            timely</span></span>
-<span><span class="co">#&gt; 10398:       19881       20181          include        &lt;NA&gt;              &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 10399:       19881       20181          include       20163            timely</span></span>
 <span><span class="co">#&gt; 10400:       19881       20181          include       20143            timely</span></span>
 <span><span class="co">#&gt; 10401:       19881       20181          include       20181              late</span></span></code></pre></div>
 <p>Aggregate observations by groupings.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Left join to add race/ethnicity and sex variables (omit unknowns)</span></span>
 <span><span class="va">cols_we_want</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
@@ -310,46 +269,16 @@
 <span><span class="co"># View result</span></span>
 <span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">DT_display</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"completion_status"</span>, <span class="st">"people"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">DT_display</span></span>
-<span><span class="co">#&gt;     completion_status                 people     N</span></span>
-<span><span class="co">#&gt;                &lt;char&gt;                 &lt;char&gt; &lt;int&gt;</span></span>
-<span><span class="co">#&gt;  1:              &lt;NA&gt;           Asian Female    43</span></span>
-<span><span class="co">#&gt;  2:              &lt;NA&gt;             Asian Male   163</span></span>
-<span><span class="co">#&gt;  3:              &lt;NA&gt;           Black Female    39</span></span>
-<span><span class="co">#&gt;  4:              &lt;NA&gt;             Black Male    84</span></span>
-<span><span class="co">#&gt;  5:              &lt;NA&gt;   International Female    51</span></span>
-<span><span class="co">#&gt;  6:              &lt;NA&gt;     International Male   280</span></span>
-<span><span class="co">#&gt;  7:              &lt;NA&gt;          Latine Female    31</span></span>
-<span><span class="co">#&gt;  8:              &lt;NA&gt;            Latine Male   102</span></span>
-<span><span class="co">#&gt;  9:              &lt;NA&gt; Native American Female     2</span></span>
-<span><span class="co">#&gt; 10:              &lt;NA&gt;   Native American Male     6</span></span>
-<span><span class="co">#&gt; 11:              &lt;NA&gt;           White Female   386</span></span>
-<span><span class="co">#&gt; 12:              &lt;NA&gt;             White Male  2034</span></span>
-<span><span class="co">#&gt; 13:              late           Asian Female     4</span></span>
-<span><span class="co">#&gt; 14:              late             Asian Male    19</span></span>
-<span><span class="co">#&gt; 15:              late           Black Female     3</span></span>
-<span><span class="co">#&gt; 16:              late             Black Male     5</span></span>
-<span><span class="co">#&gt; 17:              late   International Female     9</span></span>
-<span><span class="co">#&gt; 18:              late     International Male    41</span></span>
-<span><span class="co">#&gt; 19:              late          Latine Female     3</span></span>
-<span><span class="co">#&gt; 20:              late            Latine Male    19</span></span>
-<span><span class="co">#&gt; 21:              late   Native American Male     3</span></span>
-<span><span class="co">#&gt; 22:              late           White Female    51</span></span>
-<span><span class="co">#&gt; 23:              late             White Male   269</span></span>
-<span><span class="co">#&gt; 24:            timely           Asian Female    87</span></span>
-<span><span class="co">#&gt; 25:            timely             Asian Male   315</span></span>
-<span><span class="co">#&gt; 26:            timely           Black Female    26</span></span>
-<span><span class="co">#&gt; 27:            timely             Black Male    80</span></span>
-<span><span class="co">#&gt; 28:            timely   International Female   110</span></span>
-<span><span class="co">#&gt; 29:            timely     International Male   501</span></span>
-<span><span class="co">#&gt; 30:            timely          Latine Female    36</span></span>
-<span><span class="co">#&gt; 31:            timely            Latine Male   181</span></span>
-<span><span class="co">#&gt; 32:            timely Native American Female     2</span></span>
-<span><span class="co">#&gt; 33:            timely   Native American Male    13</span></span>
-<span><span class="co">#&gt; 34:            timely           White Female   985</span></span>
-<span><span class="co">#&gt; 35:            timely             White Male  4100</span></span>
-<span><span class="co">#&gt;     completion_status                 people     N</span></span></code></pre></div>
+<span><span class="co">#&gt;     completion_status               people    N</span></span>
+<span><span class="co">#&gt;  1:              &lt;NA&gt;         Asian Female   43</span></span>
+<span><span class="co">#&gt;  2:              &lt;NA&gt;           Asian Male  163</span></span>
+<span><span class="co">#&gt;  3:              &lt;NA&gt;         Black Female   39</span></span>
+<span><span class="co">#&gt; ---                                            </span></span>
+<span><span class="co">#&gt; 33:            timely Native American Male   13</span></span>
+<span><span class="co">#&gt; 34:            timely         White Female  985</span></span>
+<span><span class="co">#&gt; 35:            timely           White Male 4100</span></span></code></pre></div>
 <p>Reshape and display results.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Transform to row-record form</span></span>
 <span><span class="va">DT_display</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">DT_display</span>, <span class="va">people</span> <span class="op">~</span> <span class="va">completion_status</span>, value.var <span class="op">=</span> <span class="st">"N"</span>, fill <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span></span>
@@ -555,21 +484,22 @@ White Male
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>Install with:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"midfieldr"</span>,</span>
 <span>  repos <span class="op">=</span> <span class="st">"https://MIDFIELDR.github.io/drat/"</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"source"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Alternatively, you can install the development version from the MIDFIELD GitHub repository:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"MIDFIELDR/midfieldr"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="http://pak.r-lib.org/reference/pkg_install.html" class="external-link">pkg_install</a></span><span class="op">(</span><span class="st">"MIDFIELDR/midfieldr"</span><span class="op">)</span></span></code></pre></div>
+<p>Link to installation instructions for <code>midfielddata</code> below.</p>
 </div>
 <div class="section level2">
 <h2 id="more-information">More information<a class="anchor" aria-label="anchor" href="#more-information"></a>
 </h2>
 <p><a href="https://midfieldr.github.io/midfielddata/" class="external-link"><code>midfielddata</code></a><br>
-A companion R package containing a proportionate, stratified sample of the MIDFIELD database to practice using the tools and methods provided by <code>midfieldr</code>.</p>
+A companion R data package that supplies anonymized student-level records for 98,000 undergraduates from the MIDFIELD database. Provides practice data for the tools and methods of <code>midfieldr</code>.</p>
 <p><a href="https://midfield.online/" class="external-link">MIDFIELD</a><br>
 A database of student-level records for approximately 1.7M undergraduates at nineteen US institutions from 1987 through 2018, of which <code>midfielddata</code> provides a sample. The full research database is currently accessible to MIDFIELD partner institutions only.</p>
 <p><a href="https://midfieldr.github.io/2022-midfield-institute/" class="external-link">MIDFIELD Institute</a><br>
@@ -579,6 +509,20 @@ Materials from the 2022 workshop, including an introduction to R for beginners, 
 <h2 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>
 </h2>
 <p>This work is supported by a grant from the US National Science Foundation (EEC 1545667).</p>
+<style type="text/css">
+blockquote {
+    padding:     10px 20px;
+    margin:      0 0 20px;
+    border-left: 0px
+}
+caption {
+    color:       #525252;
+    text-align:  left;
+    font-weight: normal;
+    font-size:   medium;
+    line-height: 1.5;
+}
+</style>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
