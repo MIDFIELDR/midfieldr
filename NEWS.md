@@ -3,6 +3,7 @@
 
 - Revise to accommodate new data sample in 'midfielddata'
 - Revise README and pkgdown settings
+- Add man/rmd/ for shared .Rmd fragments 
 
 
 
