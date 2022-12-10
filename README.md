@@ -508,6 +508,12 @@ beginners, chart basics with `ggplot2`, and data basics with
 This work is supported by a grant from the US National Science
 Foundation (EEC 1545667).
 
+## References
+
+<div id="refs">
+
+</div>
+
 <style type="text/css">
 blockquote {
     padding:     10px 20px;
