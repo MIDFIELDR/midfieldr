@@ -2,10 +2,8 @@
 ## midfieldr 1.0.0.9029 / 2022-12
 
 - Revise to accommodate new data sample in 'midfielddata'
-- Revise README and pkgdown settings
 - Add man/rmd/ for shared .Rmd fragments 
-
-
+- Revise README and pkgdown settings
 
 ## midfieldr 1.0.0.9028 / 2022-11
 
