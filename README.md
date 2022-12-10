@@ -49,7 +49,7 @@ are welcome to translate our examples to their preferred syntax.
 
 ``` r
 format(Sys.Date(), "%Y-%m-%d") # Today's date
-#> [1] "2022-12-08"
+#> [1] "2022-12-09"
 packageVersion("midfieldr")    # Student-level records tools and methods
 #> [1] '1.0.0.9029'
 packageVersion("midfielddata") # Student-level records practice data 
@@ -469,3 +469,18 @@ beginners, chart basics with `ggplot2`, and data basics with
 
 This work is supported by a grant from the US National Science
 Foundation (EEC 1545667).
+
+<style type="text/css">
+blockquote {
+    padding:     10px 20px;
+    margin:      0 0 20px;
+    border-left: 0px
+}
+caption {
+    color:       #525252;
+    text-align:  left;
+    font-weight: normal;
+    font-size:   medium;
+    line-height: 1.5;
+}
+</style>
