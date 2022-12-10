@@ -96,7 +96,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Planning</h1>
             
-            <h4 data-toc-skip class="date">2022-12-09</h4>
+            <h4 data-toc-skip class="date">2022-12-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MIDFIELDR/midfieldr/blob/HEAD/vignettes/art-010-planning.Rmd" class="external-link"><code>vignettes/art-010-planning.Rmd</code></a></small>
       <div class="d-none name"><code>art-010-planning.Rmd</code></div>
@@ -199,40 +199,48 @@ curated by the US Department of Education <span class="citation">(<a href="#ref-
 </dd>
 <dt>metric</dt>
 <dd>
-<p>A quantitative measure derived from SURs. Includes statistical
-measures such as counts of program starters or graduates as well as
-comparative ratios such as graduation rate or stickiness. Typically
-involves comparisons of specific blocs of students and programs.</p>
+<p>A quantitative measure derived from student-level data. Includes
+statistical measures such as counts of program starters or graduates as
+well as comparative ratios such as graduation rate or stickiness.
+Typically involves comparisons of specific blocs of students and
+programs.</p>
 </dd>
 <dt>bloc</dt>
 <dd>
-<p>A grouping of SURs dealt with as a unit, for example, starters,
-students ever-enrolled, graduates, transfer students, traditional and
-non-traditional students, migrators, etc.</p>
+<p>A grouping of student-level data dealt with as a unit, for example,
+starters, students ever-enrolled, graduates, transfer students,
+traditional and non-traditional students, migrators, etc.</p>
 </dd>
 <dt>grouping variables</dt>
 <dd>
-<p>Student-level, detailed data in the SURs that further characterize a
-bloc of records, typically used to create bloc subsets for comparison,
-for example, program, race/ethnicity, sex, age, grade level, grades,
-etc.</p>
+<p>Detailed information in the student-level data that further
+characterize a bloc of records, typically used to create bloc subsets
+for comparison, for example, program, race/ethnicity, sex, age, grade
+level, grades, etc.</p>
 </dd>
 </dl>
 </div>
 <div class="section level2">
 <h2 id="which-records">Which records?<a class="anchor" aria-label="anchor" href="#which-records"></a>
 </h2>
-<p>There are currently two collections of MIDFIELD data:</p>
-<ul>
-<li><p><em>Research data:</em> Complete institutional registrar’s data,
-all students, all programs, for approximately 1.7 M undergraduates at 19
-US institutions from 1987–2018. Available to <a href="https://midfield.online/" class="external-link">MIDFIELD</a> partners.</p></li>
-<li><p><em>Practice data:</em> Approximately 98,000 undergraduates in
-200 majors at 12 US institutions from 1987–2016. A proportionate
-stratified sample of the MIDFIELD research data. Publicly available in
-the <a href="https://midfieldr.github.io/midfielddata/" class="external-link">midfielddata</a>
-R data package.</p></li>
-</ul>
+<p>There are currently two points of access to MIDFIELD data:</p>
+<dl>
+<dt><a href="https://midfield.online/" class="external-link">MIDFIELD</a></dt>
+<dd>
+<p>A database of anonymized student-level records for approximately 1.7M
+undergraduates at nineteen US institutions from 1987–2018, of which
+<code>midfielddata</code> provides a sample. This research database is
+currently accessible to MIDFIELD partner institutions only.</p>
+</dd>
+<dt><a href="https://midfieldr.github.io/midfielddata/" class="external-link"><code>midfielddata</code></a></dt>
+<dd>
+<p>An R data package that supplies anonymized student-level records for
+98,000 undergraduates at three US institutions from 1988–2018. A sample
+of the MIDFIELD database, <code>midfielddata</code> provides practice
+data for the tools and methods in the <code>midfieldr</code>
+package.</p>
+</dd>
+</dl>
 <p>Records in both collections are organized in four tables—student,
 course, term, and degree—keyed by student ID. Details in <a href="art-000-getting-started.html">Getting started</a>.</p>
 <p>To maintain confidentiality, the practice data include fewer
@@ -241,27 +249,26 @@ generally a subset of those in the research data. Thus a researcher
 transitioning from working with the practice data to the research data
 will find that their practice scripts will work with the research data
 with only minor modifications (if any).</p>
-<p><em>Caveat.</em>   The data in ‘midfielddata’ are practice data,
-suitable for learning to work with Student Unit Records (SURs)
-generally. Unlike the MIDFIELD research database, the data tables in
-‘midfielddata’ are not research data; they are not suitable for drawing
-inferences about program attributes or student experiences.</p>
+<p><em>Reminder.</em>   The data in <code>midfielddata</code> are
+practice data, suitable for learning to work with student-level data
+generally but not for drawing inferences about program attributes or
+student experiences. MIDFIELD data are for research;
+<code>midfielddata</code> is for practice.</p>
 <div class="section level3">
 <h3 id="load-data">Load data<a class="anchor" aria-label="anchor" href="#load-data"></a>
 </h3>
-<p><em>Practice data.</em>   Loaded from the midfielddata package using
-<code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code>, e.g.,</p>
+<p><em>Practice data.</em>   Load from the midfielddata package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load practice data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">course</span>, <span class="va">term</span>, <span class="va">degree</span>, package <span class="op">=</span> <span class="st">"midfielddata"</span><span class="op">)</span></span></code></pre></div>
-<p><em>Research data.</em>   Assuming one has access, import data via
-the user’s preferred file read function, e.g.,</p>
+<p><em>Research data.</em>   Assuming one has MIDFIELD access, import
+data via the user’s preferred file read function, e.g.,</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Not run</span></span>
-<span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"path_to_student_data"</span><span class="op">)</span></span>
-<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"path_to_course_data"</span><span class="op">)</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"path_to_term_data"</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"path_to_degree_data"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"path_to_student_research_data"</span><span class="op">)</span></span>
+<span><span class="va">course</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"path_to_course_research_data"</span><span class="op">)</span></span>
+<span><span class="va">term</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"path_to_term_research_data"</span><span class="op">)</span></span>
+<span><span class="va">degree</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="st">"path_to_degree_research_data"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
