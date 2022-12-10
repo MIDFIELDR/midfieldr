@@ -19,13 +19,14 @@ status](https://www.r-pkg.org/badges/version/midfieldr)](https://CRAN.R-project.
 
 ## Introduction
 
-`midfieldr` provides functions for working with undergraduate
-“student-level” data from the MIDFIELD database. Data at the
-“student-level” refers to information about individual students
-including, for example, demographics, programs, academic standing,
-courses, grades, and degrees. Practice data are supplied by the
-companion R package `midfielddata` (more information
-[\[here\]](#more-information)).
+Provides tools and demonstrates methods for working with individual
+undergraduate student-level records (registrar’s data) in ‘R’. Tools
+include filters for program codes, data sufficiency, and timely
+completion. Methods include gathering blocs of records, computing
+quantitative metrics such as graduation rate, and creating charts to
+visualize comparisons. ‘midfieldr’ is designed to work with data from
+the MIDFIELD research database, a sample of which is available in the
+‘midfielddata’ data package.
 
 `midfieldr` provides these functions for processing student-level data:
 
@@ -43,19 +44,23 @@ Additional functions for processing intermediate results:
 - `order_multiway()` Order categorical variables of multiway data
 - `same_content()` Test for equal content between two data tables
 
-*Notes on syntax.*   We use `data.table` for data manipulation. Some
-users may prefer base R or `dplyr`. Each system has its strengths—users
-are welcome to translate our examples to their preferred syntax.
+*Note on syntax.*   In our examples, we use `data.table` for data
+manipulation and `ggplot2` for charts. Some users may prefer base R,
+`dplyr` (for data), or `lattice` (for charts). Each system has its
+strengths—users are welcome to translate our examples to their preferred
+syntax.
 
 ``` r
 format(Sys.Date(), "%Y-%m-%d") # Today's date
-#> [1] "2022-12-09"
+#> [1] "2022-12-10"
 packageVersion("midfieldr")    # Student-level records tools and methods
 #> [1] '1.0.0.9029'
 packageVersion("midfielddata") # Student-level records practice data 
 #> [1] '0.2.0'
 packageVersion("data.table")   # For data manipulation
 #> [1] '1.14.6'
+packageVersion("ggplot2")      # For data manipulation
+#> [1] '3.4.0'
 ```
 
 ## Usage
@@ -449,16 +454,17 @@ Link to installation instructions for `midfielddata` below.
 
 ## More information
 
-[`midfielddata`](https://midfieldr.github.io/midfielddata/)  
-A companion R data package that supplies anonymized student-level
-records for 98,000 undergraduates from the MIDFIELD database. Provides
-practice data for the tools and methods of `midfieldr`.
-
 [MIDFIELD](https://midfield.online/)  
-A database of student-level records for approximately 1.7M
-undergraduates at nineteen US institutions from 1987 through 2018, of
-which `midfielddata` provides a sample. The full research database is
-currently accessible to MIDFIELD partner institutions only.
+A database of anonymized student-level records for approximately 1.7M
+undergraduates at nineteen US institutions from 1987–2018, of which
+`midfielddata` provides a sample. This research database is currently
+accessible to MIDFIELD partner institutions only.
+
+[`midfielddata`](https://midfieldr.github.io/midfielddata/)  
+An R data package that supplies anonymized student-level records for
+98,000 undergraduates at three US institutions from 1988–2018. A sample
+of the MIDFIELD database, `midfielddata` provides practice data for the
+tools and methods in the `midfieldr` package.
 
 [MIDFIELD Institute](https://midfieldr.github.io/2022-midfield-institute/)  
 Materials from the 2022 workshop, including an introduction to R for

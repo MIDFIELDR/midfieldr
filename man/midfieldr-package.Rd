@@ -8,25 +8,19 @@
 Data provided by MIDFIELD: \url{https://midfield.online/}.
 }
 \description{
-Provides tools and demonstrates methods for working with individual
-undergraduate student unit records (registrar's data) in 'R'. Tools include
-filters for program codes, data sufficiency, and timely completion. Methods
-include gathering blocs of records, computing quantitative metrics such as
-graduation rate, and creating charts to visualize comparisons. 'midfieldr' is
-designed to work with data from the MIDFIELD research database, a sample of
-which is available in the 'midfielddata' data package.
+Provides tools and demonstrates methods for working with individual undergraduate student-level records (registrar's data) in 'R'. Tools include filters for program codes, data sufficiency, and timely completion. Methods include gathering blocs of records, computing quantitative metrics such as graduation rate, and creating charts to visualize comparisons. 'midfieldr' is designed to work with data from the MIDFIELD research database, a sample of which is available in the 'midfielddata' data package.
 }
 \details{
-\href{https://midfield.online/}{MIDFIELD} is a database containing (as of October,
-2022) individual Student Unit Records (SURs) for 1.7M undergraduate students
-at 19 US institutions from 1987 through 2018. Access to the MIDFIELD research
-database is currently limited to MIDFIELD partner institutions, but a sample
-of the data is available in the 'midfielddata' package.
+\href{https://midfield.online/}{MIDFIELD} A database of anonymized student-level
+records for approximately 1.7M undergraduates at nineteen US institutions
+from 1987--2018, of which \code{midfielddata}  provides a sample. This research
+database is currently accessible to MIDFIELD partner institutions only.
 
-\href{https://midfieldr.github.io/midfielddata/}{'midfielddata'} is a companion
-'R' data package that provides anonymized SURs for approximately 98,000
-students at three US institutions from 1988 through 2018 organized in four
-tables --- \code{student}, \code{course}, \code{term}, and \code{degree} --- keyed by student ID.
+\href{https://midfieldr.github.io/midfielddata/}{\code{midfielddata}} An R data package
+that supplies anonymized student-level records for 98,000 undergraduates at
+three US institutions from 1988--2018. A sample of the MIDFIELD database,
+\code{midfielddata} provides practice data for the tools and methods in the
+\code{midfieldr} package.
 
 This work is supported by a grant from the US National Science Foundation
 (EEC 1545667).
