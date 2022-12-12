@@ -85,7 +85,7 @@
 #' Student data for examples
 #' 
 #' A small subset of the \code{student} practice data for use in package 
-#' and vignette examples.
+#' examples and articles. 
 #'
 #' @format \code{data.table} with 99 rows and 4 columns keyed by
 #' student ID.

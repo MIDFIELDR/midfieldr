@@ -12,26 +12,18 @@
 #' @importFrom wrapr let stop_if_dot_args %?%
 NULL
 
-#' Tools and Methods for Working with MIDFIELD Data in 'R'
+#' Tools and Methods for Working with MIDFIELD Data in R
 #'
-#' ```{r child = "man/rmd/note-description-paragraph.Rmd"}
+#' ```{r child = "man/rmd/note-description-paragraph.Rmd"} 
 #' ```
 #' 
-#' [MIDFIELD](https://midfield.online/) A database of anonymized student-level
-#' records for approximately 1.7M undergraduates at nineteen US institutions
-#' from 1987--2018, of which `midfielddata`  provides a sample. This research
-#' database is currently accessible to MIDFIELD partner institutions only.
-#'
-#' [`midfielddata`](https://midfieldr.github.io/midfielddata/) An R data package
-#' that supplies anonymized student-level records for 98,000 undergraduates at
-#' three US institutions from 1988--2018. A sample of the MIDFIELD database,
-#' `midfielddata` provides practice data for the tools and methods in the
-#' `midfieldr` package.
+#' ```{r child = "man/rmd/note-midfielddata-and-midfield.Rmd"} 
+#' ````
 #' 
-#' This work is supported by a grant from the US National Science Foundation
-#' (EEC 1545667).
+#' ```{r child = "man/rmd/note-nsf-grant.Rmd"}
+#' ```
 #'
-#' @source Data provided by MIDFIELD: \url{https://midfield.online/}.
+#' @source Data provided by MIDFIELD: \url{https://midfield.online/}. 
 #' @docType package
 #' @family package
 #' @name midfieldr-package

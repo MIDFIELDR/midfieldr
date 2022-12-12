@@ -2,7 +2,7 @@
 #' Test for equal content between two data tables
 #' 
 #' Test of data equality between data.table objects. Convenience function 
-#' used in vignettes. 
+#' used in package articles. 
 #'
 #' Wrapper around \code{all.equal()} for class data.table that ignores row 
 #' order, column order, and data.table keys. Both inputs must be date frames. 

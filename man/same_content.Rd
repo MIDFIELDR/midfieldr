@@ -19,7 +19,7 @@ and \code{y}.
 }
 \description{
 Test of data equality between data.table objects. Convenience function
-used in vignettes.
+used in package articles.
 }
 \details{
 Wrapper around \code{all.equal()} for class data.table that ignores row

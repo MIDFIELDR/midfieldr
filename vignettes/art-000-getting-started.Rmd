@@ -19,8 +19,7 @@ always_allow_html: true
 knitr::opts_chunk$set(fig.path = "../man/figures/art-000-")
 ```
 
-
-Familiarity with the MIDFIELD data structure is a prerequisite for working with `midfieldr` functions so we start by inspecting the practice data in [`midfielddata`](https://midfieldr.github.io/midfielddata/), a companion R package that provides anonymized student-level records for 98,000 undergraduates at three US institutions from 1988 through 2018. 
+Familiarity with the MIDFIELD data structure is a prerequisite for working with midfieldr functions so we start by inspecting the practice data in [midfielddata](https://midfieldr.github.io/midfielddata/), a companion R package that provides anonymized student-level records for 98,000 undergraduates at three US institutions from 1988 through 2018. 
 
 The practice data are organized in four datasets keyed by student ID.  
 
@@ -33,7 +32,7 @@ wrapr::build_frame(
     "student", "one student"           , "97,555"  , "97,555"   , 13L      , "17.3 MB"  |
     "degree" , "one student per degree", "49,543"  , "49,665"   ,  5L      , "5.2 MB"   
 ) |>
-  kableExtra::kbl(align = "llrrrr", caption = "Table 1. Practice datasets in `midfielddata`.") |>
+  kableExtra::kbl(align = "llrrrr", caption = "Table 1. Practice datasets in midfielddata.") |>
   kableExtra::kable_paper(lightable_options = "basic", full_width = FALSE) |>
   kableExtra::row_spec(0, background = "#c7eae5") |>
   kableExtra::column_spec(1, monospace = TRUE) |>
@@ -56,14 +55,12 @@ wrapr::build_frame(
 
 ## Method
 
-In this vignette: 
+In this article: 
 
 - Overview of each dataset 
-- Summary of variables typically encountered when using `midfieldr` functions
+- Summary of variables typically encountered when using midfieldr functions
 - Closer look: For one student, all records in all datasets 
 - Introduce helper functions `select_required()` and `same_content()` 
-
-*Notes on syntax.* &nbsp; We use `data.table` for data manipulation. Some users may prefer base R or `dplyr`. Each system has its strengths---users are welcome to translate our examples to their preferred syntax.  
 
 ```{r child = "../man/rmd/note-practice-not-research.Rmd"}
 ```
@@ -75,7 +72,7 @@ In this vignette:
 
 ## Load data
 
-*Start.* &nbsp; If you are writing your own script to follow along, we use these packages in this vignette:
+*Start.* &nbsp; If you are writing your own script to follow along, we use these packages in this article:
 
 ```{r}
 library(midfieldr)
@@ -100,7 +97,7 @@ data(course, term, degree)
 
 ## `student`
 
-Run `?student` to view its help page and data dictionary. Contains one observation per student. Data are assumed to be current at the time the student was admitted to their institution. 
+Contains one observation per student. Data are assumed to be current at the time the student was admitted to their institution. Navigate to data dictionary via `?student`. 
 
 ```{r}
 student
@@ -147,7 +144,7 @@ student[order(sex), .N, by = "sex"]
 
 ## `course`
 
-Run `?course` to view its help page and data dictionary. Contains one observation per student per course.  
+Contains one observation per student per course.  Navigate to data dictionary via `?course`.
 
 ```{r}
 course
@@ -176,7 +173,7 @@ sum(is.na(course$discipline_midfield))
 
 ## `term`
 
-Run `?term` to view its help page and data dictionary. Contains one observation per student per term.  
+Contains one observation per student per term. Navigate to data dictionary via `?term`.
 
 ```{r}
 term
@@ -221,9 +218,9 @@ sort(unique(term$level))
 
 ## `degree`
 
-Run `?degree` to view its help page and data dictionary. This dataset contains records for graduates only, thus the number of unique students in `degree` (`r length(unique(degree$mcid))`) is less than the number of students in the other three datasets (`r length(unique(student$mcid))`). 
+Contains one observation per student per degree. Navigate to data dictionary via `?degree`.
 
-Contains one observation per student per degree. The `term_degree` and `cip6` variables indicate when and from which program a student graduates. 
+This dataset contains records for graduates only, thus the number of observations in `degree` (`r nrow(degree)`) is less than the number of observations in `student` (`r nrow(student)`). The `term_degree` and `cip6` variables indicate when and from which program a student graduates.  
 
 ```{r}
 degree
@@ -315,20 +312,18 @@ The primary benefit is reducing screen clutter when viewing data frames during a
 
 - **`select_add`** &nbsp; Optional character vector of search terms to add to the default vector given by `c("mcid", "institution", "race", "sex", "^term", "cip6", "level")`. Argument, if used, must be used by name.
 
-*Before.* &nbsp; The original source file. 
-
-```{r}
-# Create a copy of the source file
-source_term <- copy(term)
-source_term[]
-```
-
-*After* &nbsp; The output retains only the variables required by other midfieldr functions.  
+For example, term records are significantly more compact if we select this minimum set of columns.  
 
 ```{r}
 # Select variables required by midfieldr functions
-term <- select_required(source_term)
-term[]
+select_required(term)
+```
+
+We can add columns if we need them. 
+
+```{r}
+# Select additional columns
+select_required(term, select_add = c("gpa_term"))
 ```
 
 *Equivalent usage.* &nbsp; The following implementations yield identical results

@@ -27,7 +27,7 @@ toy_student
 }
 \description{
 A small subset of the \code{student} practice data for use in package
-and vignette examples.
+examples and articles.
 }
 \seealso{
 Other toy-data: 
