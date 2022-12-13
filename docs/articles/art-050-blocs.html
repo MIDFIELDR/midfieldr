@@ -111,14 +111,14 @@ working data frame and filter on those variables to construct the
 desired bloc.</p>
 <p>Different metrics require different blocs. Graduation rate, for
 example, requires starters and their graduating subset; stickiness
-requires ever-enrolled and their graduating subset. Subsequent vignettes
+requires ever-enrolled and their graduating subset. Subsequent articles
 describe <a href="art-060-fye-proxies.html">FYE proxies</a> (special
-case of starters), <a href="art-070-starters.html">Starters</a>, and <a href="art-080-graduates.html">Graduates</a>. This vignette treats the
+case of starters), <a href="art-070-starters.html">Starters</a>, and <a href="art-080-graduates.html">Graduates</a>. This article treats the
 <em>ever-enrolled</em> bloc and left joins generally.</p>
 <p>Because a bloc is usually defined for specific programs, the final
 filter applied in gathering a bloc is often an <em>inner join</em> to
 filter by program labels, developed in <a href="art-040-programs.html#reusable-code">Programs</a>.</p>
-<p>This vignette in the MIDFIELD workflow.</p>
+<p>This article in the MIDFIELD workflow.</p>
 <ol style="list-style-type: decimal">
 <li>Planning<br>
 </li>
@@ -178,17 +178,16 @@ degree-seeking.</p></li>
 <li><p>Gather ever-enrolled</p></li>
 <li><p>Filter by program.</p></li>
 </ol>
-<p><em>Reminder.</em>   The data in <code>midfielddata</code> are
-practice data, suitable for learning to work with student-level data
-generally but not for drawing inferences about program attributes or
-student experiences. MIDFIELD data are for research;
-<code>midfielddata</code> is for practice.</p>
+<p><em>Reminder.</em>   midfielddata is suitable for learning to work
+with student-level data but not for drawing inferences about program
+attributes or student experiences. midfielddata supplies practice data,
+not research data.</p>
 </div>
 <div class="section level2">
 <h2 id="load-data">Load data<a class="anchor" aria-label="anchor" href="#load-data"></a>
 </h2>
 <p><em>Open.</em>   If you are writing your own script to follow along,
-we use these packages in this vignette:</p>
+we use these packages in this article:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://midfieldr.github.io/midfieldr/">midfieldr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://midfieldr.github.io/midfielddata/" class="external-link">midfielddata</a></span><span class="op">)</span></span>
@@ -241,7 +240,7 @@ via an inner join with <code>student</code>. Code reproduced from <a href="art-0
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span></code></pre></div>
 <p>We preserve this data frame as a baseline for examples in the
-vignette.</p>
+article.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">baseline</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -286,11 +285,7 @@ from which we extract the ID and CIP columns before the join.</p>
 <span><span class="co">#&gt;      1: MCID3111142689 090401</span></span>
 <span><span class="co">#&gt;      2: MCID3111142782 260101</span></span>
 <span><span class="co">#&gt;      3: MCID3111142782 260101</span></span>
-<span><span class="co">#&gt;      4: MCID3111142782 260101</span></span>
-<span><span class="co">#&gt;      5: MCID3111142782 260101</span></span>
 <span><span class="co">#&gt;     ---                      </span></span>
-<span><span class="co">#&gt; 531415: MCID3112800920 240199</span></span>
-<span><span class="co">#&gt; 531416: MCID3112870009 240102</span></span>
 <span><span class="co">#&gt; 531417: MCID3112870009 240102</span></span>
 <span><span class="co">#&gt; 531418: MCID3112870009 240102</span></span>
 <span><span class="co">#&gt; 531419: MCID3112870009 240102</span></span></code></pre></div>
@@ -303,11 +298,7 @@ operation.</p>
 <span><span class="co">#&gt;      1: MCID3111142689 090401</span></span>
 <span><span class="co">#&gt;      2: MCID3111142782 260101</span></span>
 <span><span class="co">#&gt;      3: MCID3111142782 260101</span></span>
-<span><span class="co">#&gt;      4: MCID3111142782 260101</span></span>
-<span><span class="co">#&gt;      5: MCID3111142782 260101</span></span>
 <span><span class="co">#&gt;     ---                      </span></span>
-<span><span class="co">#&gt; 531415: MCID3112800920 240199</span></span>
-<span><span class="co">#&gt; 531416: MCID3112870009 240102</span></span>
 <span><span class="co">#&gt; 531417: MCID3112870009 240102</span></span>
 <span><span class="co">#&gt; 531418: MCID3112870009 240102</span></span>
 <span><span class="co">#&gt; 531419: MCID3112870009 240102</span></span></code></pre></div>
@@ -340,11 +331,7 @@ on</li>
 <span><span class="co">#&gt;      1: MCID3111142689 090401</span></span>
 <span><span class="co">#&gt;      2: MCID3111142782 260101</span></span>
 <span><span class="co">#&gt;      3: MCID3111142782 260101</span></span>
-<span><span class="co">#&gt;      4: MCID3111142782 260101</span></span>
-<span><span class="co">#&gt;      5: MCID3111142782 260101</span></span>
 <span><span class="co">#&gt;     ---                      </span></span>
-<span><span class="co">#&gt; 531415: MCID3112800920 240199</span></span>
-<span><span class="co">#&gt; 531416: MCID3112870009 240102</span></span>
 <span><span class="co">#&gt; 531417: MCID3112870009 240102</span></span>
 <span><span class="co">#&gt; 531418: MCID3112870009 240102</span></span>
 <span><span class="co">#&gt; 531419: MCID3112870009 240102</span></span></code></pre></div>
@@ -559,7 +546,7 @@ caption {
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by <a href="https://github.com/graphdr" class="external-link">Richard Layton</a>, Russell Long, Matthew Ohland, Marisa Orr, Susan Lord, US National Science Foundation.</p>
+<p>Developed by <a href="https://github.com/graphdr" class="external-link">Richard Layton</a>, Russell Long, Matthew Ohland, Marisa Orr, Susan Lord.</p>
 </div>
 
 <div class="pkgdown-footer-right">
