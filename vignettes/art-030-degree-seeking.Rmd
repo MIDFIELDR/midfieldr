@@ -19,7 +19,7 @@ always_allow_html: true
 knitr::opts_chunk$set(fig.path = "../man/figures/art-030-")
 ```
 
-Most analyses of Student Unit Records (SURs) omit records of students not seeking degrees. We use an *inner join* merging operation as a degree-seeking filter. This article treats degree seeking and inner joins generally.
+Most analyses of student-level records omit records of students not seeking degrees. We use an *inner join* merging operation as a degree-seeking filter. This article treats degree seeking and inner joins generally.
 
 This article in the MIDFIELD workflow.  
 
@@ -43,16 +43,15 @@ By design, the `student` data table contains records of degree-seeking students 
 
 1. Filter for degree seeking. 
 
-```{r child = "../man/rmd/note-practice-not-research.Rmd"}
+```{r child = "../man/rmd/note-for-practice-only-2.Rmd"}
 ```
-
 
 
 
 
 ## Load data
 
-*Open.* &nbsp; If you are writing your own script to follow along, we use these packages in this article:
+*Start.* &nbsp; If you are writing your own script to follow along, we use these packages in this article:
 
 ```{r}
 library(midfieldr)
@@ -60,10 +59,10 @@ library(midfielddata)
 library(data.table)
 ```
 
-*Load.* &nbsp; MIDFIELD practice data tables. Described in [Getting started](art-000-getting-started.html#load-data).
+*Load.* &nbsp; Practice datasets. View data dictionaries via `?student`, `?term`.  
 
 ```{r}
-# Load data
+# Load practice data
 data(student, term)
 ```
 
@@ -73,7 +72,7 @@ data(student, term)
 
 ## Initial processing
 
-*(Optional) Select.* &nbsp; Columns required by midfieldr functions. Code reproduced from [Getting started](art-000-getting-started.html#reusable-code). 
+*Select (optional).* &nbsp; Reduce the number of columns. Code reproduced from [Getting started](art-000-getting-started.html#reusable-code). 
 
 ```{r}
 # Optional. Copy of source files with all variables
@@ -85,7 +84,7 @@ student <- select_required(source_student)
 term <- select_required(source_term)
 ```
 
-*Work.* &nbsp; Using `copy()` avoids *by-reference* effects  [@data.table-reference-semantics].
+*Initialize.* &nbsp; Assign a working data frame. 
 
 ```{r}
 # Working data frame
@@ -171,8 +170,6 @@ DT[student, .(mcid), on = c("mcid"), nomatch = NULL]
 *Demonstrate equivalence.* &nbsp; Showing that the two approaches produce the same result and that, for inner joins, `X` and `Y` are interchangeable. 
 
 ```{r}
-#| collapse: true
-
 # merge(X, Y)
 w <- merge(DT, cols_we_want, by = c("mcid"), all = FALSE)
 # merge(Y, X)
@@ -194,28 +191,23 @@ same_content(w, z)
 In either method, we can select columns from both data frames. Using `merge()` we select the columns by explicitly subsetting the two data frames.  
 
 ```{r}
-#| collapse: true
-
 # Selecting columns from both data frames, merge() inner join
 x <- merge(DT[, .(mcid)], student[, .(mcid, institution)], by = c("mcid"), all = FALSE)
 setkey(x, NULL)
-x[]
+x
 ```
 
 In the `X[Y, j]` syntax, however, we can list the columns to be returned from both data frames in the `j` list, that is, `.(var1, var2, etc.)`, without subsetting the original two data frames.  
 
 ```{r}
-#| collapse: true
-
 # Selecting columns from both data frames, X[Y] inner join
 y <- DT[student, .(mcid, institution), on = c("mcid"), nomatch = NULL]
-y[]
+y
 ```
 
 *Demonstrate equivalence.* &nbsp; Showing that the two approaches produce the same result. 
 
 ```{r}
-#| collapse: true
 # Demonstrate equivalence
 same_content(x, y)
 ```
@@ -227,12 +219,12 @@ same_content(x, y)
 
 ## Degree seeking
 
-*Work.* &nbsp; The baseline data frame we preserved earlier is the intake for this section. 
+*Continue.* &nbsp; The baseline data frame we preserved earlier is the intake for this section. 
 
 ```{r}
 # Reusable starting state
 DT <- copy(baseline)
-DT[]
+DT
 ```
 
 *Filter.* Use an inner join with `student` to filter `DT` to retain degree-seeking students. 
@@ -247,7 +239,7 @@ DT <- student[DT, .(mcid), on = c("mcid"), nomatch = NULL]
 ```{r}
 # One observation per ID
 DT <- unique(DT)
-DT[]
+DT
 ```
 
 
@@ -255,7 +247,7 @@ DT[]
 
 
 
-## Reusable code: Degree seeking
+## Reusable code
 
 *Preparation.* &nbsp; The baseline data frame we preserved earlier is the intake for this section.
 
@@ -279,10 +271,11 @@ DT <- unique(DT)
 
 
 
-
-
-
-
+<!-- ## References -->
+<!-- <div id="refs"> -->
 
 ```{r child = "../man/rmd/common-closing.Rmd"}
 ```
+
+<!-- draw a line if there are no references to end the article  -->
+---

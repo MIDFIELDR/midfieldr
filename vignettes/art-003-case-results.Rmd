@@ -33,7 +33,7 @@ Part 2 of a case study in three parts, illustrating how we work with longitudina
 
 Our goal in this segment is to group and summarize the observations we saved previously, calculate the stickiness metric, and display the results. 
 
-```{r child = "../man/rmd/note-practice-not-research.Rmd"}
+```{r child = "../man/rmd/note-for-practice-only-2.Rmd"}
 ```
 
 
@@ -45,10 +45,6 @@ Our goal in this segment is to group and summarize the observations we saved pre
 *Start a script*. If you are writing your own script to follow along, we use these packages in this article:
 
 ```{r}
-# Case study: Results
-# midfieldr article
-
-# Packages
 library(midfieldr)
 library(data.table)
 library(ggplot2)
@@ -77,7 +73,7 @@ study_observations
 DT <- copy(study_observations)
 
 # Display the result
-DT[]
+DT
 ```
 
 To calculate stickiness, we want to count the number of students ever enrolled in each of our programs and the number of students graduating from the programs, grouped by race/ethnicity and sex.
@@ -89,7 +85,7 @@ These grouping variables are columns in the data set (`race`, `sex`, `program`, 
 DT <- DT[, .N, by = c("group", "program", "race", "sex")]
 
 # Display the result
-DT[]
+DT
 ```
 
 
@@ -106,7 +102,7 @@ This operation is essentially a transformation from block records to row records
 DT <- dcast(DT, program + sex + race ~ group, value.var = "N", fill = 0)
 
 # Display the result
-DT[]
+DT
 ```
 
 We calculate percent stickiness. 
@@ -117,16 +113,26 @@ DT[, stick := round(100 * grad / ever, 1)]
 setkey(DT, NULL)
 
 # Display the result
-DT[]
+DT
 ```
 
 *Verify built-in data.* To avoid deriving this data frame each time it is needed in other articles, the same information is provided in the `study_results` data frame included with midfieldr. Here we verify that the two data frames are identical. 
 
 ```{r}
-#| collapse: true
-
 # Demonstrate equivalence
 same_content(DT, study_results)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+
+# Run manually
+# Writing external files
+setkey(DT, program, sex, race)
+setkey(DT, NULL)
+study_results <- copy(DT)
+usethis::use_data(study_results, overwrite = TRUE)
 ```
 
 
@@ -142,7 +148,7 @@ We take several additional steps to prepare the data for dissemination in  table
 DT <- DT[grad >= 10]
 
 # Display the result
-DT[]
+DT
 ```
 
 *Filtering.* Let us assume that our study focuses on "domestic" students of known race/ethnicity. In that case, we omit observations labeled "International" and Other/Unknown". 
@@ -152,7 +158,7 @@ DT[]
 DT <- DT[!race %chin% c("International", "Other/Unknown")]
 
 # Display the result
-DT[]
+DT
 ```
 
 *Creating variables.* We have found it useful to report such data with a variable that combines race/ethnicity and sex. 
@@ -164,7 +170,7 @@ DT[, c("race", "sex") := NULL]
 setcolorder(DT, c("program", "people"))
 
 # Display the result
-DT[]
+DT
 ```
 
 *Recoding values.* Readers can more readily interpret our charts and tables if the programs are unabbreviated. 
@@ -179,7 +185,7 @@ DT[, program := fcase(
 )]
 
 # Display the result
-DT[]
+DT
 ```
 
 With one quantitative variable (stickiness) for every combination of the levels of two categorical variables (program and race/ethnicity/sex), these data are *multiway data* [@Cleveland:1993]. How one orders the categorical variables is critical for visualizing effects. 
@@ -196,7 +202,7 @@ DT <- order_multiway(DT,
 )
 
 # Display the result
-DT[]
+DT
 ```
 
 
@@ -261,7 +267,6 @@ Groups with numbers below our reporting threshold are denoted NA or omitted.
 
 ```{r}
 #| echo: false
-
 tbl |>
   kableExtra::kbl(
     align = "lrrrr",

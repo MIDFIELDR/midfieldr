@@ -1,38 +1,31 @@
 
 #' Subset rows that include matches to search strings
 #'
-#' Subset a data frame, retaining rows that match or partially match
-#' a vector of character strings. Columns are not subset unless selected in
-#' an optional argument.
-#' 
-#' The function is designed to permit usage such as 
-#' \code{filter_cip(character_vector)} in which the position of the first two 
-#' arguments is ignored if and only if the first argument is both unnamed and 
-#' a character vector. In this case, the character vector is assigned to the 
-#' \code{keep_text} argument and the \code{cip} data set included with 
-#' midfieldr is assigned (by default) to the \code{dframe} argument. 
+#' Subset a CIP data frame, retaining rows that match or partially match a
+#' vector of character strings. Columns are not subset unless selected in an
+#' optional argument.
 #'
-#' Search terms can include regular expressions. Uses \code{grepl()},
-#' therefore non-character columns (if any) that can be coerced to
-#' character are also searched for matches. Columns are subset by
-#' the values in \code{select} after the search concludes.
+#' Search terms can include regular expressions. Uses `grepl()``, therefore
+#' non-character columns (if any) that can be coerced to character are also
+#' searched for matches. Columns are subset by the values in `select` after the
+#' search concludes.
 #'
-#' If none of the optional arguments are specified, the function returns
-#' the original data frame.
+#' If none of the optional arguments are specified, the function returns the
+#' original data frame.
 #'
-#' @param dframe Data frame to be searched. Default \code{cip}.
-#' @param keep_text Optional character vector of search text for retaining
-#'        rows, default NULL.
-#' @param ... Not used, force later arguments to be used by name.
+#' @param keep_text Character vector of search text for retaining rows, 
+#'        not case-sensitive. Can be empty if `drop_text` is used. 
+#' @param ... Not used, force later arguments to be used by name
 #' @param drop_text Optional character vector of search text for dropping
 #'        rows, default NULL.
+#' @param cip Data frame to be searched. Default `cip`.
 #' @param select Optional character vector of column names to return,
 #'        default all columns.
-#' @return A \code{data.table} with the following properties:
+#' @return A `data.table` subset of `cip` with the following properties:
 #' \itemize{
-#'     \item Rows matching elements of \code{keep_text} but excluding rows
-#'           matching elements of \code{drop_text}.
-#'     \item All columns or those specified by \code{select}.
+#'     \item Rows matching elements of `keep_text`` but excluding rows
+#'           matching elements of `drop_text`.
+#'     \item All columns or those specified by `select`.
 #'     \item Grouping structures are not preserved.
 #' }
 #'
@@ -46,24 +39,11 @@
 #' @export
 #'
 #'
-filter_cip <- function(dframe = cip,
-                       keep_text = NULL,
+filter_cip <- function(keep_text = NULL,
                        ...,
                        drop_text = NULL,
+                       cip = NULL, 
                        select = NULL) {
-    
-    # Permit default CIP and unnamed keep_text the only argument 
-    # If first argument is text, assume it is keep_text
-    if (isTRUE(all.equal(class(dframe), "character")) & is.null(keep_text)) {
-        keep_text <- dframe
-        dframe <- cip
-    }
-    
-    # remove all keys
-    on.exit(setkey(dframe, NULL))
-    
-    # required argument
-    qassert(dframe, "d+")
     
     # assert arguments after dots used by name
     wrapr::stop_if_dot_args(
@@ -75,12 +55,21 @@ filter_cip <- function(dframe = cip,
     )
     
     # optional arguments
+    cipx   <- cip %?% midfieldr::cip
+    dframe <- copy(cipx)
     select <- select %?% names(dframe)
+    
+    # remove all keys
+    on.exit(setkey(dframe, NULL))
+    
+    # required argument
+    qassert(dframe, "d+")
     
     # return if no work is being done
     if (identical(select, names(dframe)) &
         is.null(keep_text) &
         is.null(drop_text)) {
+        setkey(dframe, NULL)
         return(dframe)
     }
     
@@ -111,7 +100,7 @@ filter_cip <- function(dframe = cip,
         stop(
             paste(
                 "The search result is empty. Possible causes are:\n",
-                "* 'dframe' contained no matches to terms in 'keep_text'.\n",
+                "* 'cip' contained no matches to terms in 'keep_text'.\n",
                 "* 'drop_text' eliminated all remaining rows."
             ),
             call. = FALSE

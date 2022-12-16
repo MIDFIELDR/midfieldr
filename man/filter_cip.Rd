@@ -4,87 +4,67 @@
 \alias{filter_cip}
 \title{Subset rows that include matches to search strings}
 \usage{
-filter_cip(
-  dframe = cip,
-  keep_text = NULL,
-  ...,
-  drop_text = NULL,
-  select = NULL
-)
+filter_cip(keep_text = NULL, ..., drop_text = NULL, cip = NULL, select = NULL)
 }
 \arguments{
-\item{dframe}{Data frame to be searched. Default \code{cip}.}
+\item{keep_text}{Character vector of search text for retaining rows,
+not case-sensitive. Can be empty if \code{drop_text} is used.}
 
-\item{keep_text}{Optional character vector of search text for retaining
-rows, default NULL.}
-
-\item{...}{Not used, force later arguments to be used by name.}
+\item{...}{Not used, force later arguments to be used by name}
 
 \item{drop_text}{Optional character vector of search text for dropping
 rows, default NULL.}
+
+\item{cip}{Data frame to be searched. Default \code{cip}.}
 
 \item{select}{Optional character vector of column names to return,
 default all columns.}
 }
 \value{
-A \code{data.table} with the following properties:
+A \code{data.table} subset of \code{cip} with the following properties:
 \itemize{
-\item Rows matching elements of \code{keep_text} but excluding rows
-matching elements of \code{drop_text}.
-\item All columns or those specified by \code{select}.
+\item Rows matching elements of \verb{keep_text`` but excluding rows matching elements of }drop_text\verb{. \\item All columns or those specified by }select`.
 \item Grouping structures are not preserved.
 }
 }
 \description{
-Subset a data frame, retaining rows that match or partially match
-a vector of character strings. Columns are not subset unless selected in
-an optional argument.
+Subset a CIP data frame, retaining rows that match or partially match a
+vector of character strings. Columns are not subset unless selected in an
+optional argument.
 }
 \details{
-The function is designed to permit usage such as
-\code{filter_cip(character_vector)} in which the position of the first two
-arguments is ignored if and only if the first argument is both unnamed and
-a character vector. In this case, the character vector is assigned to the
-\code{keep_text} argument and the \code{cip} data set included with
-midfieldr is assigned (by default) to the \code{dframe} argument.
+Search terms can include regular expressions. Uses \verb{grepl()``, therefore non-character columns (if any) that can be coerced to character are also searched for matches. Columns are subset by the values in }select` after the
+search concludes.
 
-Search terms can include regular expressions. Uses \code{grepl()},
-therefore non-character columns (if any) that can be coerced to
-character are also searched for matches. Columns are subset by
-the values in \code{select} after the search concludes.
-
-If none of the optional arguments are specified, the function returns
-the original data frame.
+If none of the optional arguments are specified, the function returns the
+original data frame.
 }
 \examples{
 # Subset using keywords
-filter_cip(cip, keep_text = "engineering")
+filter_cip(keep_text = "engineering")
 
 
 # drop_text argument, when used, must be named
-filter_cip(cip, "civil engineering", drop_text = "technology")
+filter_cip("civil engineering", drop_text = "technology")
 
 
 # Subset using numerical codes
-filter_cip(cip, keep_text = c("050125", "160501"))
+filter_cip(keep_text = c("050125", "160501"))
 
 
 # Subset using regular expressions
-filter_cip(cip, keep_text = "^54")
-filter_cip(cip, keep_text = c("^1407", "^1408"))
+filter_cip(keep_text = "^54")
+filter_cip(keep_text = c("^1407", "^1408"))
 
 
 # Select columns
-filter_cip(cip,
-  keep_text = "^54",
-  select = c("cip6", "cip4name")
-)
+filter_cip(keep_text = "^54", select = c("cip6", "cip4name"))
 
 
 # Multiple passes to narrow the results
-first_pass <- filter_cip(cip, "civil")
-second_pass <- filter_cip(first_pass, "engineering")
-filter_cip(second_pass, drop_text = "technology")
+first_pass <- filter_cip("civil")
+second_pass <- filter_cip("engineering", cip = first_pass)
+filter_cip(drop_text = "technology", cip = second_pass)
 
 }
 \concept{filter_*}

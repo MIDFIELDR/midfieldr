@@ -37,7 +37,7 @@ Our data processing goal is to reduce the source data tables to the specific obs
 
 The analysis is organized to produce two data frames---students ever enrolled in the programs and students graduating from the programs---that are joined and written to file as a starting point for [Case study: Results](art-003-case-results.html). 
 
-```{r child = "../man/rmd/note-practice-not-research.Rmd"}
+```{r child = "../man/rmd/note-for-practice-only-2.Rmd"}
 ```
 
 
@@ -49,10 +49,6 @@ The analysis is organized to produce two data frames---students ever enrolled in
 *Start a script*. If you are writing your own script to follow along, we use these packages in this article:
 
 ```{r}
-# Case study: Data
-# midfieldr article
-
-# Packages
 library(midfieldr)
 library(midfielddata)
 library(data.table)
@@ -85,8 +81,6 @@ data(student, term, degree)
 *Optional.* Reduce the dimensions of MIDFIELD data tables. A convenience function to reduce the dimensions of a MIDFIELD data table at the start of a session by selecting only those columns typically required by other midfieldr functions. 
 
 ```{r}
-#| collapse: true
-
 # Work with required midfieldr variables only
 student <- select_required(student)
 term <- select_required(term)
@@ -100,7 +94,7 @@ degree <- select_required(degree)
 DT <- copy(term)
 
 # Display result
-DT[]
+DT
 ```
 
 The result has `r nrow(DT)` observations. We will usually note the number of observations as they change. 
@@ -113,7 +107,7 @@ DT <- DT[, .(mcid, cip6)]
 DT <- unique(DT)
 
 # Display the result
-DT[]
+DT
 
 # Count unique IDs
 length(unique(DT$mcid))
@@ -134,7 +128,7 @@ Some student records near the lower and upper terms that bound the available dat
 DT <- add_timely_term(DT, term)
 
 # Display the result
-DT[]
+DT
 ```
 
 *Creating variables.* Using information in `term`, we add the  `data_sufficiency` variable as well as supporting variables used in its construction.
@@ -144,7 +138,7 @@ DT[]
 DT <- add_data_sufficiency(DT, term)
 
 # Display the result
-DT[]
+DT
 ```
 
 *Filtering.* We filter to retain observations for which the data are sufficient then drop unnecessary columns.   
@@ -155,7 +149,7 @@ DT <- DT[data_sufficiency == "include"]
 DT <- DT[, .(mcid, cip6)]
 
 # Display the result
-DT[]
+DT
 ```
 
 The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique students.
@@ -177,7 +171,7 @@ In studying stickiness, we exclude non-degree-seeking students. We filter such s
 DT <- student[DT, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
 
 # Display the result
-DT[]
+DT
 ```
 
 The result has `r nrow(DT)` observations. (No change is expected in this example because all students in the midfielddata practice data are degree-seeking.) 
@@ -197,11 +191,11 @@ CIP codes and names are included with midfieldr in the `cip` data set. We have s
 
 ```{r}
 # Gather program CIP codes
-case_programs <- filter_cip(cip, keep_text = c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+case_programs <- filter_cip(keep_text = c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
 case_programs <- case_programs[, .(cip6, cip4name)]
 
 # Display the result
-case_programs[]
+case_programs
 ```
 
 *Creating variables.* Add a variable to label each of these `r nrow(case_programs)` programs with one of the four conventional program abbreviations we will use in comparing metrics, i.e., Civil (CE), Electrical (EE), Mechanical (ME), and Industrial/Systems Engineering (ISE). 
@@ -226,7 +220,7 @@ Having checked that the new abbreviations correctly represent the programs, we c
 case_programs[, cip4name := NULL]
 
 # Display the result
-case_programs[]
+case_programs
 ```
 
 
@@ -243,7 +237,7 @@ case_programs[]
 DT <- case_programs[DT, .(mcid, cip6, program), on = c("cip6")]
 
 # Display the result
-DT[]
+DT
 ```
 
 *Filtering.*  All instances of NA programs are dropped.
@@ -253,7 +247,7 @@ DT[]
 DT <- DT[!is.na(program)]
 
 # Display the result
-DT[]
+DT
 ```
 
 The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique students.
@@ -266,7 +260,7 @@ DT[, cip6 := NULL]
 DT <- unique(DT)
 
 # Display the result
-DT[]
+DT
 ```
 
 The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique students.
@@ -279,7 +273,7 @@ ever <- copy(DT)
 ever[, group := "ever"]
 
 # Display the result
-ever[]
+ever
 ```
 
 
@@ -297,7 +291,7 @@ DT <- DT[, .(mcid)]
 DT <- unique(DT)
 
 # Display the result
-DT[]
+DT
 ```
 
 *Filtering.* An inner join with `degree` that returns rows with matching IDs from both data frames, then selected columns. 
@@ -307,7 +301,7 @@ DT[]
 DT <- DT[degree, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
 
 # Display the result
-DT[]
+DT
 ```
 
 The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique students. These IDs have already been filtered for data sufficiency and  degree-seeking.
@@ -326,7 +320,7 @@ To be counted as a graduate in the stickiness metric, a student must complete th
 DT <- add_timely_term(DT, term)
 
 # Display the result
-DT[]
+DT
 ```
 
 
@@ -337,7 +331,7 @@ DT[]
 DT <- add_completion_status(DT, degree)
 
 # Display the result
-DT[]
+DT
 ```
 
 *Filtering.* Retain records with "positive"  completion status (i.e. completion in 6 years or less) and drop unnecessary variables.
@@ -348,7 +342,7 @@ DT <- DT[completion_status == "timely"]
 DT <- DT[, .(mcid, cip6)]
 
 # Display the result
-DT[]
+DT
 ```
 
 The result has `r nrow(DT)` unique observations.
@@ -371,7 +365,7 @@ DT <- DT[!is.na(program)]
 DT <- unique(DT)
 
 # Display the result
-DT[]
+DT
 ```
 
 The result has `r nrow(DT)` unique observations.
@@ -384,7 +378,7 @@ grad <- copy(DT)
 grad[, group := "grad"]
 
 # Display the result
-grad[]
+grad
 ```
 
 
@@ -400,7 +394,7 @@ grad[]
 DT <- rbindlist(list(ever, grad), use.names = TRUE)
 
 # Display the result
-DT[]
+DT
 ```
 
 
@@ -421,16 +415,26 @@ student_cols <- student[, .(mcid, race, sex)]
 DT <- student_cols[DT, on = c("mcid")]
 
 # Display the result
-DT[]
+DT
 ```
 
 The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique students. IDs labeled "grad" are a subset of those labeled "ever". 
 
+```{r}
+#| eval: false
+#| echo: false
+
+# Run manually to create external data file
+setkey(DT, mcid)
+setkey(DT, NULL)
+study_observations <- copy(DT)
+usethis::use_data(study_observations, overwrite = TRUE)
+```
+
+
 *Verify built-in data.* To avoid deriving this data frame each time it is needed in other articles, the same information is provided in the `study_observations` data frame included with midfieldr. Here we verify that the two data frames are identical. 
 
 ```{r}
-#| collapse: true
-
 # Demonstrate equivalence
 same_content(DT, study_observations)
 ```
@@ -442,8 +446,6 @@ same_content(DT, study_observations)
 To better grasp the structure of these data, we can review selected sets of observations by ID. In the first example, the ID produces one observation only. The student was enrolled in Civil Engineering but completion, if any, was not timely. 
 
 ```{r}
-#| collaspe: true
-
 # Display one student by ID
 DT[mcid == "MID26694225"]
 ```
@@ -451,8 +453,6 @@ DT[mcid == "MID26694225"]
 In the next example, the ID produces two observations indicating that the student was enrolled in Civil Engineering and a timely graduate of that program. 
 
 ```{r}
-#| collaspe: true
-
 # Display one student by ID
 DT[mcid == "MID25786154"]
 ```
@@ -460,8 +460,6 @@ DT[mcid == "MID25786154"]
 In the next example, the ID produces two observations indicating that the student was enrolled in Electrical Engineering and in Mechanical Engineering but a timely graduate of neither program. 
 
 ```{r}
-#| collaspe: true
-
 # Display one student by ID
 DT[mcid == "MID25868925"]
 ```
@@ -469,8 +467,6 @@ DT[mcid == "MID25868925"]
 In the next example, the ID produces three observations indicating that the student was enrolled in Electrical Engineering and in Civil Engineering and a timely graduate of Civil.  
 
 ```{r}
-#| collaspe: true
-
 # Display one student by ID
 DT[mcid == "MID26526757"]
 ```
@@ -488,7 +484,12 @@ Starting with the `student`, `term`, and `degree` data tables, we filtered the d
 
 
 
-
+<!-- ## References -->
+<!-- <div id="refs"> -->
 
 ```{r child = "../man/rmd/common-closing.Rmd"}
 ```
+
+<!-- draw a line if there are no references to end the article  -->
+
+---

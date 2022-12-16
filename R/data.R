@@ -64,7 +64,7 @@
 #' \code{fye_proxy} holds only for the practice data in midfielddata---these 
 #' values cannot be commingled with the MIDFIELD research database.
 #'
-#' @format \code{data.table} with 3738 rows and 2 columns keyed by student
+#' @format \code{data.table} with 4623 rows and 2 columns keyed by student
 #' ID. The variables are:
 #' \describe{
 #'
@@ -243,7 +243,7 @@
 #' \code{group} variable.  This data structure facilitates grouping and 
 #' summarizing by race, sex, program, and group.  
 #'
-#' @format \code{data.table} with 11,212 rows and 5 columns.
+#' @format \code{data.table} with 8906 rows and 5 columns.
 #' 
 #' \describe{
 #'
@@ -287,7 +287,7 @@
 #' filtered for data sufficiency, degree seeking, program, and timely 
 #' completion. 
 #'
-#' @format \code{data.table} with 55 rows and 6 columns.
+#' @format \code{data.table} with 50 rows and 6 columns.
 #' 
 #' \describe{
 #'
@@ -358,7 +358,7 @@
 #' filtering for data sufficiency, degree seeking, and program. Provided for 
 #' the convenience of vignette users. 
 #' 
-#' @format \code{data.table} with 7660 rows and 2 columns.
+#' @format \code{data.table} with 5653 rows and 2 columns.
 #' 
 #' \describe{
 #' 

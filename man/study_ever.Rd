@@ -5,7 +5,7 @@
 \alias{study_ever}
 \title{Case-study ever enrolled}
 \format{
-\code{data.table} with 7660 rows and 2 columns.
+\code{data.table} with 5653 rows and 2 columns.
 
 \describe{
 

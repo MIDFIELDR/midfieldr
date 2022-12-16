@@ -62,7 +62,7 @@ In this article:
 - Closer look: For one student, all records in all datasets 
 - Introduce helper functions `select_required()` and `same_content()` 
 
-```{r child = "../man/rmd/note-practice-not-research.Rmd"}
+```{r child = "../man/rmd/note-for-practice-only-1.Rmd"}
 ```
 
 
@@ -90,14 +90,14 @@ data(student)
 data(course, term, degree)
 ```
 
-
+View data dictionaries via `?student`, `?course`, `?term`, or `?degree`. 
 
 
 
 
 ## `student`
 
-Contains one observation per student. Data are assumed to be current at the time the student was admitted to their institution. Navigate to data dictionary via `?student`. 
+Contains one observation per student. Data are assumed to be current at the time the student was admitted to their institution.
 
 ```{r}
 student
@@ -144,7 +144,7 @@ student[order(sex), .N, by = "sex"]
 
 ## `course`
 
-Contains one observation per student per course.  Navigate to data dictionary via `?course`.
+Contains one observation per student per course.
 
 ```{r}
 course
@@ -173,7 +173,7 @@ sum(is.na(course$discipline_midfield))
 
 ## `term`
 
-Contains one observation per student per term. Navigate to data dictionary via `?term`.
+Contains one observation per student per term. 
 
 ```{r}
 term
@@ -218,7 +218,7 @@ sort(unique(term$level))
 
 ## `degree`
 
-Contains one observation per student per degree. Navigate to data dictionary via `?degree`.
+Contains one observation per student per degree. 
 
 This dataset contains records for graduates only, thus the number of observations in `degree` (`r nrow(degree)`) is less than the number of observations in `student` (`r nrow(student)`). The `term_degree` and `cip6` variables indicate when and from which program a student graduates.  
 
@@ -326,7 +326,19 @@ We can add columns if we need them.
 select_required(term, select_add = c("gpa_term"))
 ```
 
-*Equivalent usage.* &nbsp; The following implementations yield identical results
+
+
+
+
+## `same_content()` 
+
+A midfieldr function that wraps `all.equal()` for data.table objects and ignores row order, column order, and keys (if any). Convenient for checking that two data.tables contain the same content. 
+
+*Arguments.*
+
+- **`x`, `y`** &nbsp; Two data frames or data.tables to compare. 
+
+*Example.* &nbsp; Demonstrate that the following implementations of `select_required()` yield identical results 
 
 ```{r}
 # Required argument explicitly named
@@ -337,20 +349,7 @@ y <- select_required(term)
 
 # Optional argument, if used, must be named. NULL yields the default columns.
 z <- select_required(term, select_add = NULL)
-```
 
-
-## `same_content()` 
-
-In the code chunk just above, we claim the three results are equivalent. To verify that the three data tables have the same content, we use `same_content()`, a midfieldr function that wraps `all.equal()` for data.table objects that ignores row order, column order, and keys (if any). 
-
-*Arguments.*
-
-- **`x`, `y`** &nbsp; Two data frames or data.tables to compare. 
-
-*Example.* &nbsp; Demonstrate the equivalence of the data tables from the previous section. 
-
-```{r}
 # Demonstrate equivalence
 same_content(x, y)
 same_content(x, z)
@@ -362,12 +361,12 @@ Demonstrate that row and column order are ignored.
 # Two columns from student, use key to order rows
 x <- student[, .(mcid, institution)]
 setkey(x, mcid)
-x[]
+x
 
 # Same information with different row order, column order, and key
 y <- student[, .(institution, mcid)]
 setkey(y, institution)
-y[]
+y
 
 # Demonstrate equivalence
 same_content(x, y)
@@ -400,7 +399,9 @@ same_content(student, degree)
 data(student, term, degree)
 ```
 
-*Initial data processing.* &nbsp; A summary code chunk for ready reference.  
+*Initial data processing.* &nbsp; A summary code chunk for ready reference. 
+
+The `copy()` function ensures that "by-reference" changes to `student`, for example, have no effect on `source_student` [@data.table-reference-semantics]. Thus the `source_*` objects retain all the original columns, if needed later.
 
 ```{r}
 # Optional. Copy of source files with all variables
@@ -418,8 +419,9 @@ degree  <- select_required(source_degree)
 
 
 
+## References
 
-
+<div id="refs">
 
 ```{r child = "../man/rmd/common-closing.Rmd"}
 ```

@@ -1,12 +1,15 @@
 test_filter_cip <- function() {
 
     # usage
-    # filter_cip(dframe,
-    #               keep_text = NULL,
-    #               ...,
-    #               drop_text = NULL,
-    #               select = NULL)
-
+    # filter_cip(keep_text = NULL,
+    #            ...,
+    #            drop_text = NULL,
+    #            cip = NULL, 
+    #            select = NULL)
+    
+    # uncomment for internal manual testing
+    # library(tinytest)
+    
     # Needed for tinytest::build_install_test()
     library("data.table")
 
@@ -36,56 +39,41 @@ test_filter_cip <- function() {
     setDT(ans)
 
     # Result is correct
-    expect_equal(ans,
-                 unique(filter_cip(music_cip, select = select_these)))
+    expect_equal(unique(filter_cip(cip = music_cip, select = select_these)), ans)
 
     # Arguments before ... do not have to be named if ordered correctly
     expect_equal(
-        filter_cip(keep_text = c("500913"), dframe = music_cip),
-        filter_cip(music_cip, c("500913"))
+        filter_cip(keep_text = c("500913"), cip = music_cip),
+        filter_cip(c("500913"), cip = music_cip)
     )
 
-    # Data returned unaltered if keep_text and drop_text are NULL
+    # Correct result with keep and select
     expect_equal(
-        filter_cip(music_cip, keep_text = "Conducting", select = "cip6"),
+        filter_cip(keep_text = "Conducting", cip = music_cip, select = "cip6"),
         music_cip[cip6name =="Conducting", .(cip6)]
     )
 
-    # Correct result if search terms found in columns not selected for return
-    setkey(music_cip, NULL)
-    expect_equal(
-        filter_cip(music_cip, keep_text = NULL, drop_text = NULL),
-        music_cip
-    )
-
     # Data returned unaltered if no arguments do anything
-    expect_equal(
-        filter_cip(music_cip,
-                      keep_text = NULL,
-                      drop_text = NULL,
-                      select = NULL),
-        music_cip
-    )
+    expect_equal(filter_cip(cip = music_cip), setkey(music_cip, NULL))
 
     # Select alone produces correct columns
-    expect_equal(select_these,
-                 colnames(filter_cip(music_cip, select = select_these)))
+    expect_equal(colnames(filter_cip(cip = music_cip, select = select_these)),
+                 select_these)
 
     # Result is empty if drop_text is all-inclusive
     expect_error(
-        filter_cip(music_cip, drop_text = music_codes),
+        filter_cip(cip = music_cip, drop_text = music_codes),
     )
 
     # Result is empty if keep_text is misspelled and therefore not found
     expect_error(
-        filter_cip(music_cip, keep_text = "Brasss")
+        filter_cip(keep_text = "Brasss", cip = music_cip)
     )
 
     # Message if some keep_text not found
     incorrect_cip_text <- c("Bogus", "111111")
     expect_message(
-        filter_cip(music_cip,
-                      keep_text = c(music_codes, incorrect_cip_text))
+        filter_cip(keep_text = c(music_codes, incorrect_cip_text), cip = music_cip)
     )
 
     # Non-character columns coerced to text
@@ -94,14 +82,14 @@ test_filter_cip <- function() {
     DT[, x_int  := .I]
     DT[, x_lgcl := TRUE]
 
-    expect_equal(DT, filter_cip(DT, "Music"))
-    expect_equal(DT[x_int == 11L], filter_cip(DT, "11"))
-    expect_equivalent(DT, filter_cip(DT, "TRUE"))
+    # expect_equal(filter_cip("Music", cip = DT))
+    expect_equal(filter_cip("11", cip = DT), DT[x_int == 11L])
+    expect_equivalent(filter_cip("TRUE", cip = DT), DT)
 
-    # Default `cip` permits unnamed keep_text in first position
+    # Default `cip`
     expect_equal(
         filter_cip("500913"),
-        filter_cip(dframe = cip, keep_text = c("500913"))
+        filter_cip(keep_text = c("500913"), cip = cip)
     )
     
     # function output not printed

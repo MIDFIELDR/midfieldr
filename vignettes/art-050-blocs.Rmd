@@ -19,11 +19,11 @@ always_allow_html: true
 knitr::opts_chunk$set(fig.path = "../man/figures/art-050-")
 ```
 
-A *bloc* is a grouping of Student Unit Records (SURs) dealt with as a unit, for example, a grouping of starters in a program, graduates of a program, or ever enrolled in a program. We often use a *left join* merging operation to add one or more variables to a working data frame and filter on those variables to construct the desired bloc. 
+A *bloc* is a grouping of student-level records dealt with as a unit, for example, a grouping of starters in a program, graduates of a program, or ever enrolled in a program. We often use a *left join* merging operation to add one or more variables to a working data frame and filter on those variables to construct the desired bloc. 
 
 Different metrics require different blocs. Graduation rate, for example, requires starters and their graduating subset; stickiness requires ever-enrolled and their graduating subset. Subsequent articles describe [FYE proxies](art-060-fye-proxies.html) (special case of starters), [Starters](art-070-starters.html), and [Graduates](art-080-graduates.html). This article treats the *ever-enrolled* bloc and left joins generally. 
 
-Because a bloc is usually defined for specific programs, the final filter applied in gathering a bloc is often an *inner join* to filter by program labels, developed in [Programs](art-040-programs.html#reusable-code). 
+Because a bloc is usually defined for specific programs, the final filter applied in gathering a bloc is often an *inner join* to filter by program labels, as derived in [Programs](art-040-programs.html#reusable-code). 
 
 This article in the MIDFIELD workflow. 
 
@@ -69,8 +69,10 @@ We use left joins to add variables to a working data frame and filter for studen
 
 1. Filter by program. 
 
-```{r child = "../man/rmd/note-practice-not-research.Rmd"}
+```{r child = "../man/rmd/note-for-practice-only-2.Rmd"}
 ```
+
+
 
 
 
@@ -79,8 +81,7 @@ We use left joins to add variables to a working data frame and filter for studen
 
 ## Load data
 
-*Open.* &nbsp; If you are writing your own script to follow along, we use these packages in this article:
-
+*Start.* &nbsp; If you are writing your own script to follow along, we use these packages in this article:
 
 ```{r}
 library(midfieldr)
@@ -88,16 +89,16 @@ library(midfielddata)
 library(data.table)
 ```
 
-*Load.* &nbsp; MIDFIELD practice data tables. Described in [Getting started](art-000-getting-started.html).
+*Load.* &nbsp; Practice datasets. View data dictionaries via `?student`, `?term`, `?degree`.  
 
 ```{r}
 # Load practice data
 data(student, term, degree)
 ```
 
-*Loads with midfieldr.* 
+*Loads with midfieldr.* &nbsp; Prepared data, derived in [Programs](art-040-programs.html#reusable-code). View data dictionary via `?study_programs`. 
 
-- `study_programs` (derived in [Programs](art-040-programs.html#reusable-code)). 
+- `study_programs` 
 
 
 
@@ -108,7 +109,7 @@ data(student, term, degree)
 
 ## Initial processing
 
-*(Optional) Select.* &nbsp; Columns required by midfieldr functions. Code reproduced from [Getting started](art-000-getting-started.html#reusable-code). 
+*Select (optional).* &nbsp; Reduce the number of columns. Code reproduced from [Getting started](art-000-getting-started.html#reusable-code). 
 
 ```{r}
 # Optional. Copy of source files with all variables
@@ -122,7 +123,7 @@ term <- select_required(source_term)
 degree <- select_required(source_degree)
 ```
 
-*Work.* &nbsp; Using `copy()` avoids *by-reference* effects  [@data.table-reference-semantics].
+*Initialize.* &nbsp; Assign a working data frame. 
 
 ```{r}
 # Working data frame
@@ -219,8 +220,6 @@ term[DT, .(mcid, cip6), on = c("mcid")]
 *Demonstrate equivalence.* Showing that the two approaches produce the same result. 
 
 ```{r}
-#| collapse: true
-
 # merge(X, Y, by) left join
 x <- merge(DT, term[, .(mcid, cip6)], by = c("mcid"), all.x = TRUE)
 setkey(x, NULL)
@@ -277,8 +276,6 @@ options(datatable.print.topn = 3)
 - `X[Y, j, on]` returns all rows of `Y`
 
 ```{r}
-#| collapse: true
-
 # What we want
 x <- degree[DT, .(mcid, term_degree), on = c("mcid")]
 
@@ -339,7 +336,12 @@ DT <- unique(DT)
 DT[]
 ```
 
+*Verify prepared data.* &nbsp; `study_ever`, included with midfieldr, contains the case study information developed above. Here we verify that the two data frames have the same content.  
 
+```{r}
+# Demonstrate equivalence
+same_content(DT, study_ever)
+```
 
 ```{r}
 #| eval: false
@@ -360,7 +362,7 @@ usethis::use_data(study_ever, overwrite = TRUE)
 
 
 
-## Reusable code: Blocs
+## Reusable code
 
 *Preparation.* &nbsp; The baseline data frame we preserved earlier is the intake for this section.
 
@@ -381,19 +383,15 @@ DT[, cip6 := NULL]
 DT <- unique(DT)
 ```
 
-*Verify built-in data.* &nbsp; `study_ever`, included with midfieldr, contains the case study information developed above. Here we verify that the two data frames have the same content.  
-
-```{r}
-#| collapse: true
-
-# Demonstrate equivalence
-same_content(DT, study_ever)
-```
 
 
 
 
 
+<!-- ## References -->
+<!-- <div id="refs"> -->
 
 ```{r child = "../man/rmd/common-closing.Rmd"}
 ```
+
+---

@@ -1,13 +1,14 @@
 
 ## midfieldr 1.0.0.9029 / 2022-12
 
-- Revise to accommodate new data sample in 'midfielddata'
+- Revise to accommodate new data sample in midfielddata
+- Rework arguments of `filter_cip()` for ease of use
 - Add man/rmd/ for shared .Rmd fragments 
 - Revise README and pkgdown settings
 
 ## midfieldr 1.0.0.9028 / 2022-11
 
-- Rename `filter_search()` to `filter_cip()` to better capture its purpose. Made `cip` the default data frame to search. Permits usage like `filter_cip("engineering")` where the first argument can be the `keep_text` character vector of search strings, yet unnamed. 
+- Rename `filter_search()` to `filter_cip()` to better capture its purpose. Made `cip` the default data frame to search.
 - Edit all vignettes for consistent organization and prose.  
 - Finished first complete draft of "Graduation rate" vignette. 
 - Add `same_content()` convenience function. 

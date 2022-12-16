@@ -5,7 +5,7 @@
 \alias{fye_proxy}
 \title{Starting program proxies for FYE students}
 \format{
-\code{data.table} with 3738 rows and 2 columns keyed by student
+\code{data.table} with 4623 rows and 2 columns keyed by student
 ID. The variables are:
 \describe{
 

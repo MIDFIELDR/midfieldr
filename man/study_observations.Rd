@@ -5,7 +5,7 @@
 \alias{study_observations}
 \title{Case-study observations}
 \format{
-\code{data.table} with 11,212 rows and 5 columns.
+\code{data.table} with 8906 rows and 5 columns.
 
 \describe{
 

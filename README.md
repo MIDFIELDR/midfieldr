@@ -54,7 +54,7 @@ welcome to translate our examples to their preferred syntax.
 
 ``` r
 format(Sys.Date(), "%Y-%m-%d") # Today's date
-#> [1] "2022-12-12"
+#> [1] "2022-12-13"
 packageVersion("midfieldr")    # Tools and methods
 #> [1] '1.0.0.9029'
 packageVersion("midfielddata") # Practice data 
@@ -429,6 +429,11 @@ in no more than 6 years; “Late completion” is the count of those
 graduating in more than 6 years; “Did not complete” is the count of
 non-graduates.
 
+*Reminder.*   midfielddata is suitable for learning to work with
+student-level data but not for drawing inferences about program
+attributes or student experiences. midfielddata supplies practice data,
+not research data.
+
 ## Installation
 
 Install with:
@@ -476,6 +481,29 @@ number 1545667.
 
 ## References
 
+<div id="refs">
+
+
+
+
+
+
+
+<style type="text/css">
+blockquote {
+    padding:     10px 20px;
+    margin:      0 0 20px;
+    border-left: 0px
+}
+caption {
+    color:       #525252;
+    text-align:  left;
+    font-weight: normal;
+    font-size:   medium;
+    line-height: 1.5;
+}
+</style>
+
 <div id="refs" class="references csl-bib-body hanging-indent"
 line-spacing="2">
 
@@ -513,18 +541,3 @@ R package version 1.0.10. <https://CRAN.R-project.org/package=dplyr>
 </div>
 
 </div>
-
-<style type="text/css">
-blockquote {
-    padding:     10px 20px;
-    margin:      0 0 20px;
-    border-left: 0px
-}
-caption {
-    color:       #525252;
-    text-align:  left;
-    font-weight: normal;
-    font-size:   medium;
-    line-height: 1.5;
-}
-</style>
