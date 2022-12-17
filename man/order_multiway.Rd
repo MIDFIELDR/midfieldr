@@ -39,12 +39,14 @@ in any order; the algorithm assumes that the parameter with the
 larger column sum is the denominator of the ratio.}
 }
 \value{
-A \code{data.table}  with the following properties:
+A \code{data.table} with the following properties:
 \itemize{
 \item Rows are not modified.
 \item Grouping structures are not preserved.
 \item The columns specified by \code{categories} are converted to factors
-and ordered. Other columns are not modified.
+and ordered.
+\item The column specified by \code{quantity} is converted to type double if it
+is an integer.
 \item Two columns are added. \strong{Caution!} An existing column
 with the same name as one of the added columns is silently overwritten.
 }
@@ -58,7 +60,7 @@ the column name is replaced by a category name from the
 \code{categories} argument. For example, suppose
 \code{categories = c("program", "people")} and
 \code{method = "median"}. The two new column names would be
-\code{program_median} and \code{people_median}.}
+\code{program_median} and \code{people_median.}}
 
 \item{\code{CATEGORY_QUANTITY} columns (when ordering method is "percent")}{
 Numeric. Two columns of percentages based on the same ratio that
@@ -70,27 +72,27 @@ name in the \code{quantity} argument. For example, suppose
 \code{categories = c("program", "people")}, and
 \code{quantity = "grad_rate"}, and \code{method = "percent"}. The two
 new column names  would be \code{program_grad_rate} and
-\code{people_grad_rate}.}
+\code{people_grad_rate.}}
 
 }
 }
 \description{
 Transform a data frame such that two independent categorical variables are
-factors with levels ordered for display in a multiway dot plot. Multiway
-data comprise a single quantitative value (or response) for every
-combination of levels of two categorical variables. The ordering of the
-rows and panels is crucial to the perception of effects (Cleveland, 1993).
+factors with levels ordered for display in a multiway dot plot. Multiway data
+comprise a single quantitative value (or response) for every combination of
+levels of two categorical variables. The ordering of the rows and panels is
+crucial to the perception of effects (Cleveland, 1993).
 }
 \details{
-In our context, "multiway" refers to the data structure and graph
-design defined by Cleveland (1993), not to the methods of analysis described
-by Kroonenberg (2008).
+In our context, "multiway" refers to the data structure and graph design
+defined by Cleveland (1993), not to the methods of analysis described by
+Kroonenberg (2008).
 
-Multiway data comprise three variables: a categorical variable of \emph{m}
-levels; a second independent categorical variable of \emph{n} levels; and a
-quantitative variable (or \emph{response}) of length \emph{mn} that
-cross-classifies the categories, that is, there is a value of the
-response for each combination of levels of the two categorical variables.
+Multiway data comprise three variables: a categorical variable of \emph{m} levels;
+a second independent categorical variable of \emph{n} levels; and a quantitative
+variable (or \emph{response}) of length \emph{mn} that cross-classifies the categories,
+that is, there is a value of the response for each combination of levels of
+the two categorical variables.
 
 In a multiway dot plot, one category is encoded by the panels, the second
 category is encoded by the rows of each panel, and the quantitative variable

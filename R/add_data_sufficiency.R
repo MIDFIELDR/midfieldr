@@ -1,47 +1,46 @@
 
-
 #' Determine data sufficiency for every student
 #'
-#' Add a column to a data frame of Student Unit Record (SUR) observations that 
-#' labels each row for inclusion or exclusion based on data sufficiency near 
-#' the upper and lower bounds of an institution's data range.  
+#' Add a column to a data frame of student-level records that labels each row
+#' for inclusion or exclusion based on data sufficiency near the upper and lower
+#' bounds of an institution's data range.
 #'
-#' The time span of MIDFIELD term data varies by institution, each having 
-#' their own lower and upper bounds. For some student records, being at or 
-#' near these bounds creates unavoidable ambiguity when trying to assess 
-#' degree completion. Such records must be identified and in most cases 
-#' excluded to prevent false summary counts.
+#' The time span of MIDFIELD term data varies by institution, each having their
+#' own lower and upper bounds. For some student records, being at or near these
+#' bounds creates unavoidable ambiguity when trying to assess degree completion.
+#' Such records must be identified and in most cases excluded to prevent false
+#' summary counts.
 #'
-#' @param dframe Data frame of student unit record (SUR) observations keyed 
-#'         by student ID. Required variables are \code{mcid} and 
-#'         \code{timely_term}. See also \code{add_timely_term()}.
+#' @param dframe Data frame of student-level records keyed by student ID.
+#'   Required variables are `mcid` and `timely_term`. See also
+#'   `add_timely_term()`.
+#'
+#' @param midfield_term Data frame of student-level term observations keyed by
+#'   student ID. Default is `term`. Required variables are `mcid`,
+#'   `institution`, and `term`.
 #'         
-#' @param midfield_term Data frame of SUR term observations keyed 
-#'         by student ID. Default is \code{term}. Required variables are 
-#'         \code{mcid}, \code{institution}, and \code{term}. 
-#'         
-#' @return A \code{data.table}  with the following properties:
+#' @return A `data.table`  with the following properties:
 #' \itemize{
 #'  \item Rows are not modified.
 #'  \item Grouping structures are not preserved.
-#'  \item Columns listed below are added. \strong{Caution!} An existing column 
+#'  \item Columns listed below are added. __Caution!__ An existing column 
 #'  with the same name as one of the added columns is silently overwritten. 
 #'  Other columns are not modified. 
 #' }
 #' Columns added:
 #' \describe{
-#'  \item{\code{term_i}}{Character. Initial term of a student's longitudinal 
-#'  record, encoded YYYYT. Not overwritten if present in \code{dframe}.}
-#'  \item{\code{lower_limit}}{Character. Initial term of an institution's data 
+#'  \item{`term_i`}{Character. Initial term of a student's longitudinal 
+#'  record, encoded YYYYT. Not overwritten if present in `dframe.`}
+#'  \item{`lower_limit`}{Character. Initial term of an institution's data 
 #'  range, encoded YYYYT}
-#'  \item{\code{upper_limit}}{Character. Final term of an institution's data 
+#'  \item{`upper_limit`}{Character. Final term of an institution's data 
 #'  range, encoded YYYYT}
-#'  \item{\code{data_sufficiency}}{Character. Label each observation for 
+#'  \item{`data_sufficiency`}{Character. Label each observation for 
 #'  inclusion or exclusion based on data sufficiency. Possible values are: 
-#'  \code{include}, indicating that available data are sufficient for 
-#'  estimating timely completion; \code{exclude-upper}, indicating 
+#'  `include`, indicating that available data are sufficient for 
+#'  estimating timely completion; `exclude-upper`, indicating 
 #'  that data are insufficient at the upper limit of a data range; and 
-#'  \code{exclude-lower}, indicating that data are insufficient at the 
+#'  `exclude`-lower, indicating that data are insufficient at the 
 #'  lower limit.}
 #' }
 #'

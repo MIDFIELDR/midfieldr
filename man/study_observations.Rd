@@ -9,15 +9,15 @@
 
 \describe{
 
-\item{mcid}{Character, anonymized student identifier}
+\item{\code{mcid}}{Character, anonymized student identifier}
 
-\item{race}{Character, self-reported race/ethnicity.}
+\item{\code{race}}{Character, self-reported race/ethnicity.}
 
-\item{sex}{Character, self-reported sex.}
+\item{\code{sex}}{Character, self-reported sex.}
 
-\item{program}{Character, academic program label.}
+\item{\code{program}}{Character, academic program label.}
 
-\item{group}{Character, indicating the grouping (\code{ever} or
+\item{\code{group}}{Character, indicating the grouping (\code{ever} or
 \code{grad}) to which an observation belongs.}
 
 }

@@ -5,7 +5,7 @@
 #' vector of character strings. Columns are not subset unless selected in an
 #' optional argument.
 #'
-#' Search terms can include regular expressions. Uses `grepl()``, therefore
+#' Search terms can include regular expressions. Uses `grepl()`, therefore
 #' non-character columns (if any) that can be coerced to character are also
 #' searched for matches. Columns are subset by the values in `select` after the
 #' search concludes.
@@ -23,7 +23,7 @@
 #'        default all columns.
 #' @return A `data.table` subset of `cip` with the following properties:
 #' \itemize{
-#'     \item Rows matching elements of `keep_text`` but excluding rows
+#'     \item Rows matching elements of `keep_text` but excluding rows
 #'           matching elements of `drop_text`.
 #'     \item All columns or those specified by `select`.
 #'     \item Grouping structures are not preserved.

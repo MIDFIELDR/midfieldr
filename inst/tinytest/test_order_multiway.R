@@ -190,13 +190,13 @@ test_order_multiway <- function() {
                                       method = "median",
                                       ratio_of = c("a", "b")))
     
-    # integer metrics unaffected
+    # integer metrics made double
     p <- "a"
     q <- c("catg1", "catg2")
     temp <- copy(DT)
     temp[, a := as.integer(a)]
     temp <- order_multiway(temp, p, q)
-    expect_equal(class(temp$a), "integer")
+    expect_equal(class(temp$a), "numeric")
 
     # ordering factors does not affect numeric columns
     # inner join to check results

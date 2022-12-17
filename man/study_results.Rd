@@ -9,17 +9,17 @@
 
 \describe{
 
-\item{program}{Character, academic program label.}
+\item{\code{program}}{Character, academic program label.}
 
-\item{race}{Character, self-reported race/ethnicity.}
+\item{\code{race}}{Character, self-reported race/ethnicity.}
 
-\item{sex}{Character, self-reported sex.}
+\item{\code{sex}}{Character, self-reported sex.}
 
-\item{ever}{Numerical, number of students ever enrolled in a program.}
+\item{\code{ever}}{Numerical, number of students ever enrolled in a program.}
 
-\item{grad}{Numerical, number of students completing a program.}
+\item{\code{grad}}{Numerical, number of students completing a program.}
 
-\item{stick}{Numerical, program stickiness, the ratio \code{grad} to
+\item{\code{stick}}{Numerical, program stickiness, the ratio \code{grad} to
 \code{ever}, in percent.}
 
 }

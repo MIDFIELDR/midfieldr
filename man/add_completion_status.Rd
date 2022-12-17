@@ -7,16 +7,15 @@
 add_completion_status(dframe, midfield_degree = degree)
 }
 \arguments{
-\item{dframe}{Data frame of student unit record (SUR) observations keyed
-by student ID. Required variables are \code{mcid} and
-\code{timely_term}.}
+\item{dframe}{Data frame of student-level records keyed by student ID.
+Required variables are \code{mcid} and \code{timely_term.}}
 
-\item{midfield_degree}{Data frame of SUR degree observations keyed
-by student ID. Default is \code{degree}. Required variables are
-\code{mcid} and \code{term_degree}.}
+\item{midfield_degree}{Data frame of student-level degree observations keyed
+by student ID. Default is \code{degree.} Required variables are \code{mcid}
+and \code{term_degree.}}
 }
 \value{
-A \code{data.table}  with the following properties:
+A \code{data.table} with the following properties:
 \itemize{
 \item Rows are not modified.
 \item Grouping structures are not preserved.
@@ -36,9 +35,8 @@ non-completion.}
 }
 }
 \description{
-Add columns to a data frame of Student Unit Record (SUR) observations that
-indicate whether a student completed a degree, and if so, whether their
-completion was timely.
+Add columns to a data frame of student-level records that indicate whether a
+student completed a degree, and if so, whether their completion was timely.
 }
 \details{
 By "completion" we mean an undergraduate earning their first baccalaureate

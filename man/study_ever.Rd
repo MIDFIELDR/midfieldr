@@ -9,9 +9,9 @@
 
 \describe{
 
-\item{mcid}{Character, anonymized student identifier}
+\item{\code{mcid}}{Character, anonymized student identifier}
 
-\item{program}{Character, abbreviated labels for four engineering programs.
+\item{\code{program}}{Character, abbreviated labels for four engineering programs.
 Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE"
 (Industrial/Systems Engineering), and  "ME" (Mechanical Engineering).}
 

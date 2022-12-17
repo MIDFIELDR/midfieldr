@@ -18,15 +18,16 @@ Either TRUE or a description of the differences between \code{x}
 and \code{y}.
 }
 \description{
-Test of data equality between data.table objects. Convenience function
-used in package articles.
+Test of data equality between data.table objects. Convenience function used
+in package articles.
 }
 \details{
-Wrapper around \code{all.equal()} for class data.table that ignores row
-order, column order, and data.table keys. Both inputs must be date frames.
+Wrapper around \code{all.equal()} for class data.table that ignores row order,
+column order, and data.table keys. Both inputs must be date frames.
 Equivalent to:
 
-\code{all.equal(target, current, ignore.row.order = TRUE, ignore.col.order = TRUE)}
+\code{all.equal(target, current, ignore.row.order = TRUE, ignore.col.order =
+TRUE)}
 }
 \examples{
 # Same information and ignore row order, column order

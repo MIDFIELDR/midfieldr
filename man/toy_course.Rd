@@ -5,23 +5,22 @@
 \alias{toy_course}
 \title{Course data for examples}
 \format{
-\code{data.table} with 4616 rows and 6 columns keyed by
-student ID.
+\code{data.table} with 4616 rows and 6 columns keyed by student ID.
 \describe{
 
-\item{mcid}{Character, anonymized student ID.}
+\item{\code{mcid}}{Character, anonymized student ID.}
 
-\item{institution}{Character, de-identified institution name, e.g.,
+\item{\code{institution}}{Character, de-identified institution name, e.g.,
 Institution A, Institution B, etc.}
 
-\item{term}{Character, academic year and term, format YYYYT.}
+\item{\code{term}}{Character, academic year and term, format YYYYT.}
 
-\item{abbrev}{Character, course alphabetical identifier, e.g. ENGR, MATH,
+\item{\code{abbrev}}{Character, course alphabetical identifier, e.g. ENGR, MATH,
 ENGL.}
 
-\item{number}{Character, course numeric identifier, e.g. 101, 3429.}
+\item{\code{number}}{Character, course numeric identifier, e.g. 101, 3429.}
 
-\item{grade}{Character, course grade, e.g., A+, A, A-, B+, I, NG, etc.}
+\item{\code{grade}}{Character, course grade, e.g., A+, A, A-, B+, I, NG, etc.}
 
 }
 }
@@ -29,8 +28,8 @@ ENGL.}
 toy_course
 }
 \description{
-A small subset of the \code{course} practice data for use in package
-and vignette examples.
+A small subset of the \code{course} practice data for use in package and vignette
+examples.
 }
 \seealso{
 Other toy-data: 

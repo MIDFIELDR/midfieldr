@@ -1,0 +1,335 @@
+---
+title: "Graduates"
+vignette: >
+  %\VignetteIndexEntry{Graduates}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+link-citations: yes
+always_allow_html: true
+---
+
+```{r child = "../man/rmd/common-setup.Rmd"}
+```
+
+```{r}
+#| include: false
+knitr::opts_chunk$set(fig.path = "../man/figures/art-080-")
+```
+
+An undergraduate student who completes their program and earns their first degree is a *completer*. To be counted among their program's *graduates* however usually depends on whether they satisfy the criterion for *timely completion*. We derive a *completion status* variable to filter student-level records to obtain a bloc of graduates.  
+
+This vignette in the MIDFIELD workflow. 
+
+1. Planning  
+1. Initial processing  
+1. `r accent("Blocs")`  
+    - Ever-enrolled  
+    - FYE proxies  
+    - Starters  
+    - `r accent("Graduates")`  
+1. Groupings  
+1. Metrics  
+1. Displays 
+
+
+
+
+
+
+## Definitions
+
+```{r child = "../man/rmd/define-bloc.Rmd"}
+``` 
+
+completers
+
+: Bloc of students who complete their baccalaureate programs, earning their first degrees.  
+
+timely completion criterion 
+
+: Completing a program in no more than a specified span of years, in many cases, within 6 years after admission (150% of the "normal" 4-year span), or possibly less for some transfer students.
+
+completion status
+
+: A derived midfieldr variable indicating whether a student completes a degree, and if so, whether their completion was timely. Possible values are "timely", "late", and "NA". Late completers are often excluded from a count of  "graduates."
+
+graduates
+
+: Bloc of timely completers. In casual usage, a "graduate" might mean all completers, but in the midfieldr context we intend to restrict the definition to timely completers unless noted otherwise. 
+
+
+
+
+
+
+## Method
+
+A bloc of graduates (timely completers) can be determined independent of other blocs. 
+
+1. Filter source student-level records for data sufficiency and degree-seeking. 
+
+1. Determine completion status. 
+
+1. Filter graduates (timely completers).  
+
+1. Filter by degree program. 
+
+The next step might be to subset the graduates if necessary to meet the needs of the metric. For example, the graduation rate metric requires graduates to be a subset of starters in the same program. We postpone this step until treating the metrics. 
+
+
+
+
+```{r child = "../man/rmd/note-for-practice-only-2.Rmd"}
+```
+
+
+
+
+
+
+
+
+## Load data
+
+*Start.* &nbsp; If you are writing your own script to follow along, we use these packages in this article:
+
+```{r}
+library(midfieldr)
+library(midfielddata)
+library(data.table)
+```
+
+*Load.* &nbsp; Practice datasets. View data dictionaries via `?student`, `?term`, `?degree`.  
+
+```{r}
+# Load practice data
+data(student, term, degree)
+```
+
+*Loads with midfieldr.* &nbsp; Prepared data. View data dictionary via `?study_programs`. 
+
+- `study_programs`  (derived in [Programs](art-040-programs.html#assigning-program-names)). 
+
+
+
+
+
+
+
+## Initial processing
+
+*Select (optional).* &nbsp; Reduce the number of columns. Code reproduced from [Getting started](art-000-getting-started.html#reusable-code). 
+
+```{r}
+# Optional. Copy of source files with all variables
+source_student <- copy(student)
+source_term <- copy(term)
+source_degree <- copy(degree)
+
+# Optional. Select variables required by midfieldr functions
+student <- select_required(source_student)
+term <- select_required(source_term)
+degree <- select_required(source_degree)
+```
+
+*Initialize.* &nbsp; Assign a working data frame. 
+
+```{r}
+# Working data frame
+DT <- copy(term)
+```
+
+*Data sufficiency.*  &nbsp; Filter to satisfy the data sufficiency criterion. Code reproduced from [Data sufficiency](art-020-data-sufficiency.html#reusable-code).
+
+```{r}
+# Filter for data sufficiency, output unique IDs
+DT <- add_timely_term(DT, term)
+DT <- add_data_sufficiency(DT, term)
+DT <- DT[data_sufficiency == "include", .(mcid)]
+DT <- unique(DT)
+```
+
+*Degree seeking.* &nbsp; Filter to retain degree seeking students via an inner join with `student`. Code reproduced from [Degree seeking](art-030-degree-seeking.html#reusable-code).  
+
+```{r}
+# Filter for degree seeking, output unique IDs
+DT <- student[DT, .(mcid), on = c("mcid"), nomatch = NULL]
+DT <- unique(DT)
+```
+
+We preserve this data frame as a baseline for examples in the article.  
+
+```{r}
+baseline <- copy(DT)
+```
+
+
+
+
+
+
+## `add_completion_status()` 
+
+Add columns to a data frame of student-level records that indicate whether a student completed a degree, and if so, whether their completion was timely.
+
+The input data frame must have columns for ID and the timely completion term. We use `add_timely_term()` again, though alternatively we could have retained the `timely_term` variable from previous code chunks. 
+
+```{r}
+# Timely term required before completion status
+DT <- add_timely_term(DT, term)
+
+# Drop unnecessary columns
+DT[, c("term_i", "level_i", "adj_span") := NULL]
+```
+
+*Arguments.*
+
+- **`dframe`** &nbsp; Data frame of student-level records keyed by student ID. Required variables are `mcid` and `timely_term`.
+
+- **`midfield_degree`** &nbsp; Data frame of student-level degree observations keyed by student ID. Default is `degree`. Required variables are `mcid` and `term_degree`.
+
+*Equivalent usage.*  &nbsp; The following implementations yield identical results,
+
+```{r}
+# Required arguments in order and explicitly named
+x <- add_completion_status(dframe = DT, midfield_degree = degree)
+
+# Required arguments in order, but not named
+y <- add_completion_status(DT, degree)
+
+# Using the implicit default for the midfield_degree argument
+z <- add_completion_status(DT)
+
+# Demonstrate equivalence
+same_content(x, y)
+same_content(x, z)
+```
+
+*Output.* &nbsp; Adds the following columns to the data frame. 
+
+- **`term_degree`** &nbsp; Character. Term in which a program is completed. Encoded YYYYT. NA indicates non-completion. 
+
+- **`completion_status`** &nbsp; Character. Completion status: "timely", indicating degree completion no later than the timely completion term; "late", indicating completion after the timely completion term; and "NA" indicating non-completion.
+
+```{r}
+# Add completion status and supporting variables
+DT <- add_completion_status(DT, degree)
+DT[]
+```
+
+Similar to the details described in the data sufficiency vignette, `add_completion_status()` accepts [Alternate source names](art-020-data-sufficiency.html#alternate-source-names) and uses [Silent overwriting](art-020-data-sufficiency.html#silent-overwriting) when existing columns have the same name as one of the added columns. 
+
+
+
+### Closer look
+
+Examining the records of selected students in detail. 
+
+*Example 1.* &nbsp; The student has a degree term, Spring 1997 (encoded `19963`) indicating successful completion. Their degree term does not exceed their timely completion term, Spring 1998 (encoded `19973`), so their completion status is "timely".
+
+```{r}
+# Display one student by ID
+DT[mcid == "MID25783162"]
+```
+
+*Example 2.* &nbsp; This student too has a degree term, Spring 2017 (encoded `20163`) indicating successful completion. Their degree term exceeds their timely completion term, Spring 2016 (encoded `20153`), so their completion status is "late". 
+
+```{r}
+# Display one student by ID
+DT[mcid == "MID26696871"]
+```
+
+*Example 3.* &nbsp; The student's degree term is NA, indicating they did not complete their program. Thus completion status is NA as well. 
+
+```{r}
+# Display one student by ID
+DT[mcid == "MID26697615"]
+```
+
+
+
+
+## Graduates
+
+Defining "graduates" as timely completers, we filter to retain records for which completion status is "timely". This data set comprises all timely graduates in the practice data. 
+
+```{r}
+# Graduates
+DT <- DT[completion_status == "timely"]
+
+# Filter for unique IDs
+DT <- DT[, .(mcid)]
+DT <- unique(DT)
+DT[]
+```
+
+
+
+## Filter by program
+
+In this case, "filter by program" means to filter by *degree program.* Hence we join variables from `degree` to obtain the CIP codes of the graduates. 
+
+*Add variables.* &nbsp; Left join with selected variables from `degree`. 
+
+```{r}
+# Add degree CIP codes
+cols_we_want <- degree[, .(mcid, cip6)]
+DT <- cols_we_want[DT, on = c("mcid")]
+DT[]
+```
+
+If our IDs are all graduates, there should be no NA values in the CIP column after joining. We check as follows, where the result is the integer number of rows with an incomplete case, i.e., an NA in either column. The result is zero. 
+
+```{r}
+# Verify no NAs in CIP column
+sum(!complete.cases(DT))
+```
+
+*Filter.*  &nbsp; Join program labels and filter to retain the desired programs. Code adapted from [Groupings](art-090-groupings.html#reusable-code). 
+
+```{r}
+# Filter by program
+DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
+DT[, cip6 := NULL]
+DT <- unique(DT)
+DT[]
+```
+ 
+ 
+ 
+
+
+
+## Reusable code: Graduates
+
+*Preparation.* &nbsp; The baseline data frame we preserved earlier is the intake for this section. 
+
+```{r}
+DT <- copy(baseline)
+```
+
+*Graduates.* &nbsp; A summary code chunk for ready reference. 
+
+```{r}
+# Gather graduates and their degree CIPs
+DT <- add_timely_term(DT, term)
+DT <- add_completion_status(DT, degree)
+DT <- DT[completion_status == "timely"]
+DT <- degree[DT, .(mcid, cip6), on = c("mcid")]
+
+# Filter by program
+DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
+DT[, cip6 := NULL]
+DT <- unique(DT)
+```
+
+
+
+
+
+```{r child = "../man/rmd/common-closing.Rmd"}
+```
+
+---

@@ -13,25 +13,24 @@ add_timely_term(
 )
 }
 \arguments{
-\item{dframe}{Data frame of student unit record (SUR) observations keyed
-by student ID. Required variable is \code{mcid}.}
+\item{dframe}{Data frame of student-level records keyed by student ID.
+Required variable is \code{mcid.}}
 
-\item{midfield_term}{Data frame of SUR term observations keyed
-by student ID. Default is \code{term}. Required variables are
-\code{mcid}, \code{term}, and \code{level}.}
+\item{midfield_term}{Data frame of student-level term observations keyed by
+student ID. Default is \code{term.} Required variables are \code{mcid}, \code{term}, and
+\code{level.}}
 
 \item{...}{Not used, forces later arguments to be used by name.}
 
 \item{span}{Optional integer scalar, number of years to define timely
 completion. Commonly used values are are 100\\%, 150\\%, and 200\\% of
-\code{sched_span}. Default 6 years.}
+\code{sched_span.} Default 6 years.}
 
-\item{sched_span}{Optional integer scalar, the number of years an
-institution officially schedules for completing a program. Default
-4 years.}
+\item{sched_span}{Optional integer scalar, the number of years an institution
+officially schedules for completing a program. Default 4 years.}
 }
 \value{
-A \code{data.table}  with the following properties:
+A \code{data.table} with the following properties:
 \itemize{
 \item Rows are not modified.
 \item Grouping structures are not preserved.
@@ -52,9 +51,9 @@ completion would be considered timely for every student. Encoded YYYYT.}
 }
 }
 \description{
-Add a column to a data frame of Student Unit Record (SUR) observations that
-indicates the latest term by which degree completion  would be considered
-timely for every student.
+Add a column to a data frame of student-level records that indicates the
+latest term by which degree completion  would be considered timely for every
+student.
 }
 \details{
 By "completion" we mean an undergraduate earning their first baccalaureate
@@ -66,12 +65,12 @@ span, for example 4-, 6-, or 8-years after admission. If they do, their
 completion is timely; if not, their completion is late and they are grouped
 with the non-completers when computing a metric such as graduation rate.
 
-Our heuristic assigns \code{span} number of years (default is 6 years) to
-every student. For students admitted at second-year level or higher, the
-span is reduced by one year for each full year the student is assumed
-to have completed. For example, a student admitted at the
-second-year level is assumed to have completed one year of a program,
-so their span is reduced by one year.
+Our heuristic assigns \code{span} number of years (default is 6 years) to every
+student. For students admitted at second-year level or higher, the span is
+reduced by one year for each full year the student is assumed to have
+completed. For example, a student admitted at the second-year level is
+assumed to have completed one year of a program, so their span is reduced by
+one year.
 
 The adjusted span is added to the initial term to create the timely
 completion term in the \code{timely_term} column.

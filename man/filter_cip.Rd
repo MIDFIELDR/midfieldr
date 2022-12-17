@@ -23,7 +23,9 @@ default all columns.}
 \value{
 A \code{data.table} subset of \code{cip} with the following properties:
 \itemize{
-\item Rows matching elements of \verb{keep_text`` but excluding rows matching elements of }drop_text\verb{. \\item All columns or those specified by }select`.
+\item Rows matching elements of \code{keep_text} but excluding rows
+matching elements of \code{drop_text}.
+\item All columns or those specified by \code{select}.
 \item Grouping structures are not preserved.
 }
 }
@@ -33,7 +35,9 @@ vector of character strings. Columns are not subset unless selected in an
 optional argument.
 }
 \details{
-Search terms can include regular expressions. Uses \verb{grepl()``, therefore non-character columns (if any) that can be coerced to character are also searched for matches. Columns are subset by the values in }select` after the
+Search terms can include regular expressions. Uses \code{grepl()}, therefore
+non-character columns (if any) that can be coerced to character are also
+searched for matches. Columns are subset by the values in \code{select} after the
 search concludes.
 
 If none of the optional arguments are specified, the function returns the

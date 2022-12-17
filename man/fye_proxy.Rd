@@ -9,9 +9,9 @@
 ID. The variables are:
 \describe{
 
-\item{mcid}{Character, de-identified student ID.}
+\item{\code{mcid}}{Character, de-identified student ID.}
 
-\item{proxy}{Character, 6-digit CIP code of the estimated proxy
+\item{\code{proxy}}{Character, 6-digit CIP code of the estimated proxy
 program.}
 
 }
@@ -22,9 +22,9 @@ fye_proxy
 \description{
 Proxies are the degree-granting engineering programs we estimate that
 First-Year Engineering (FYE) students would have declared had they not been
-required to enroll in FYE. Keyed by student ID. Proxies are provided for
-all students in the midfielddata practice data who enroll in FYE in their
-first term.
+required to enroll in FYE. Keyed by student ID. Proxies are provided for all
+students in the midfielddata practice data who enroll in FYE in their first
+term.
 }
 \details{
 The proxy variable contains 6-digit CIP codes of degree-granting engineering
@@ -33,11 +33,11 @@ are substituted for the FYE CIP code when an analysis requires
 degree-granting starting programs. The most common application is a
 graduation rate calculation.
 
-The estimation is based on students' first post-FYE programs and a
-multiple imputation suitable for categorical variables using
-the mice package. The predictor variables are institution, race, and sex.
-The estimated variable is the 6-digit CIP code of a degree-granting
-engineering program at their institution.
+The estimation is based on students' first post-FYE programs and a multiple
+imputation suitable for categorical variables using the mice package. The
+predictor variables are institution, race, and sex. The estimated variable is
+the 6-digit CIP code of a degree-granting engineering program at their
+institution.
 
 \code{fye_proxy} holds only for the practice data in midfielddata---these
 values cannot be commingled with the MIDFIELD research database.

@@ -44,17 +44,17 @@ Additional functions for processing intermediate results:
 - `same_content()` Test for equal content between two data tables
 
 *Notes on syntax.*   Throughout this work, we use the data.table package
-for data manipulation ([Dowle & Srinivasan,
+for data manipulation ([Dowle and Srinivasan
 2022](#ref-Dowle+Srinivasan:2022:data.table)) and the ggplot2 package
-for charts ([Wickham, 2016](#ref-Wickham:2016:ggplot2)). Some users may
-prefer base R or dplyr for data ([Wickham et al.,
-2022](#ref-Wickham:2022:dplyr)), or lattice for charts ([Sarkar,
+for charts ([Wickham 2016](#ref-Wickham:2016:ggplot2)). Some users may
+prefer base R or dplyr for data ([Wickham et al.
+2022](#ref-Wickham:2022:dplyr)), or lattice for charts ([Sarkar
 2008](#ref-Sarkar:2008)). Each system has its strengths—users are
 welcome to translate our examples to their preferred syntax.
 
 ``` r
 format(Sys.Date(), "%Y-%m-%d") # Today's date
-#> [1] "2022-12-13"
+#> [1] "2022-12-16"
 packageVersion("midfieldr")    # Tools and methods
 #> [1] '1.0.0.9029'
 packageVersion("midfielddata") # Practice data 
@@ -504,39 +504,38 @@ caption {
 }
 </style>
 
-<div id="refs" class="references csl-bib-body hanging-indent"
-line-spacing="2">
+<div id="refs" class="references csl-bib-body hanging-indent">
 
 <div id="ref-Dowle+Srinivasan:2022:data.table" class="csl-entry">
 
-Dowle, M., & Srinivasan, A. (2022). *<span
-class="nocase">d</span>ata.table: Extension of ‘data.frame‘*.
+Dowle, Matt, and Arun Srinivasan. 2022. *<span
+class="nocase">d</span>ata.table: Extension of ‘Data.frame‘*.
 R package version 1.14.6.
-<https://CRAN.R-project.org/package=data.table>
+<https://CRAN.R-project.org/package=data.table>.
 
 </div>
 
 <div id="ref-Sarkar:2008" class="csl-entry">
 
-Sarkar, D. (2008). *<span class="nocase">lattice: Multivariate Data
-Visualization with R</span>*. Springer.
-<http://lmdvr.r-forge.r-project.org>
+Sarkar, Deepayan. 2008. *<span class="nocase">lattice: Multivariate Data
+Visualization with R</span>*. New York: Springer.
+<http://lmdvr.r-forge.r-project.org>.
 
 </div>
 
 <div id="ref-Wickham:2016:ggplot2" class="csl-entry">
 
-Wickham, H. (2016). *<span class="nocase">ggplot2: Elegant Graphics for
-Data Analysis</span>*. ISBN 978-3-319-24277-4; Springer-Verlag New York.
-<https://ggplot2.tidyverse.org>
+Wickham, Hadley. 2016. *<span class="nocase">ggplot2: Elegant Graphics
+for Data Analysis</span>*. ISBN 978-3-319-24277-4; Springer-Verlag New
+York. <https://ggplot2.tidyverse.org>.
 
 </div>
 
 <div id="ref-Wickham:2022:dplyr" class="csl-entry">
 
-Wickham, H., François, R., Henry, L., & Müller, K. (2022). *<span
-class="nocase">dplyr: A Grammar of Data Manipulation</span>*.
-R package version 1.0.10. <https://CRAN.R-project.org/package=dplyr>
+Wickham, Hadley, Romain François, Lionel Henry, and Kirill Müller. 2022.
+*<span class="nocase">dplyr: A Grammar of Data Manipulation</span>*.
+R package version 1.0.10. <https://CRAN.R-project.org/package=dplyr>.
 
 </div>
 

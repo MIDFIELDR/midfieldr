@@ -5,13 +5,13 @@
 \alias{study_starters}
 \title{Case-study starters}
 \format{
-\code{data.table} with 5790 rows and 2 columns.
+\code{data.table} with 4053 rows and 2 columns.
 
 \describe{
 
-\item{mcid}{Character, anonymized student identifier}
+\item{\code{mcid}}{Character, anonymized student identifier}
 
-\item{program}{Character, abbreviated labels for four engineering programs.
+\item{\code{program}}{Character, abbreviated labels for four engineering programs.
 Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE"
 (Industrial/Systems Engineering), and  "ME" (Mechanical Engineering).}
 

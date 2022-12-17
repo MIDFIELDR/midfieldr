@@ -1,64 +1,62 @@
 
-
-#' Calculate a timely completion term for every student 
-#' 
-#' Add a column to a data frame of Student Unit Record (SUR) observations that 
-#' indicates the latest term by which degree completion  would be considered 
-#' timely for every student.  
-#' 
-#' By "completion" we mean an undergraduate earning their first baccalaureate 
-#' degree (or degrees, for students earning more than one degree in the same 
-#' term). 
-#' 
-#' In many studies, students must complete their programs in a specified time 
-#' span, for example 4-, 6-, or 8-years after admission. If they do, their 
-#' completion is timely; if not, their completion is late and they are grouped 
-#' with the non-completers when computing a metric such as graduation rate. 
-#' 
-#' Our heuristic assigns \code{span} number of years (default is 6 years) to 
-#' every student. For students admitted at second-year level or higher, the 
-#' span is reduced by one year for each full year the student is assumed 
-#' to have completed. For example, a student admitted at the 
-#' second-year level is assumed to have completed one year of a program, 
-#' so their span is reduced by one year.
-#' 
-#' The adjusted span is added to the initial term to create the timely 
-#' completion term in the \code{timely_term} column.
+#' Calculate a timely completion term for every student
 #'
-#' @param dframe Data frame of student unit record (SUR) observations keyed 
-#'         by student ID. Required variable is \code{mcid}.
-#'         
-#' @param midfield_term Data frame of SUR term observations keyed 
-#'         by student ID. Default is \code{term}. Required variables are 
-#'         \code{mcid}, \code{term}, and \code{level}.         
-#'        
+#' Add a column to a data frame of student-level records that indicates the
+#' latest term by which degree completion  would be considered timely for every
+#' student.
+#' 
+#' By "completion" we mean an undergraduate earning their first baccalaureate
+#' degree (or degrees, for students earning more than one degree in the same
+#' term).
+#'
+#' In many studies, students must complete their programs in a specified time
+#' span, for example 4-, 6-, or 8-years after admission. If they do, their
+#' completion is timely; if not, their completion is late and they are grouped
+#' with the non-completers when computing a metric such as graduation rate.
+#'
+#' Our heuristic assigns `span` number of years (default is 6 years) to every
+#' student. For students admitted at second-year level or higher, the span is
+#' reduced by one year for each full year the student is assumed to have
+#' completed. For example, a student admitted at the second-year level is
+#' assumed to have completed one year of a program, so their span is reduced by
+#' one year.
+#'
+#' The adjusted span is added to the initial term to create the timely
+#' completion term in the `timely_term` column.
+#'
+#' @param dframe Data frame of student-level records keyed by student ID.
+#'   Required variable is `mcid.`
+#'
+#' @param midfield_term Data frame of student-level term observations keyed by
+#'   student ID. Default is `term.` Required variables are `mcid`, `term`, and
+#'   `level.`
+#'
 #' @param ... Not used, forces later arguments to be used by name.
-#'         
+#'
 #' @param span Optional integer scalar, number of years to define timely
-#'        completion. Commonly used values are are 100\%, 150\%, and 200\% of  
-#'        \code{sched_span}. Default 6 years.
+#'   completion. Commonly used values are are 100\%, 150\%, and 200\% of
+#'   `sched_span.` Default 6 years.
+#'
+#' @param sched_span Optional integer scalar, the number of years an institution
+#'   officially schedules for completing a program. Default 4 years.
 #'        
-#' @param sched_span Optional integer scalar, the number of years an
-#'        institution officially schedules for completing a program. Default
-#'        4 years.
-#'        
-#' @return A \code{data.table}  with the following properties:
+#' @return A `data.table` with the following properties:
 #' \itemize{
 #'  \item Rows are not modified.
 #'  \item Grouping structures are not preserved.
-#'  \item Columns listed below are added. \strong{Caution!} An existing column 
+#'  \item Columns listed below are added. __Caution!__ An existing column 
 #'  with the same name as one of the added columns is silently overwritten. 
 #'  Other columns are not modified. 
 #' }
 #' Columns added:
 #' \describe{
-#'  \item{\code{term_i}}{Character. Initial term of a student's longitudinal 
+#'  \item{`term_i`}{Character. Initial term of a student's longitudinal 
 #'  record, encoded YYYYT}
-#'  \item{\code{level_i}}{Character. Student level (01 Freshman, 02 Sophomore, 
+#'  \item{`level_i`}{Character. Student level (01 Freshman, 02 Sophomore, 
 #'  etc.) in their initial term}
-#'  \item{\code{adj_span}}{Numeric. Integer span of years for timely completion 
+#'  \item{`adj_span`}{Numeric. Integer span of years for timely completion 
 #'  adjusted for a student's initial level.}
-#'  \item{\code{timely_term}}{Character. Latest term by which program 
+#'  \item{`timely_term`}{Character. Latest term by which program 
 #'  completion would be considered timely for every student. Encoded YYYYT.}
 #' }
 #'

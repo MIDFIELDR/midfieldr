@@ -9,17 +9,17 @@
 student ID.
 \describe{
 
-\item{mcid}{Character, de-identified student ID.}
+\item{\code{mcid}}{Character, de-identified student ID.}
 
-\item{institution}{Character, de-identified institution name, e.g.,
+\item{\code{institution}}{Character, de-identified institution name, e.g.,
 Institution A, Institution B, etc.}
 
-\item{term}{Character, academic year and term, format YYYYT.}
+\item{\code{term}}{Character, academic year and term, format YYYYT.}
 
-\item{cip6}{Character, 6-digit CIP code of program in which a student
+\item{\code{cip6}}{Character, 6-digit CIP code of program in which a student
 is enrolled in a term.}
 
-\item{level}{Character, 01 Freshman, 02 Sophomore, etc.}
+\item{\code{level}}{Character, 01 Freshman, 02 Sophomore, etc.}
 
 }
 }

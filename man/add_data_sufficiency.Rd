@@ -7,13 +7,13 @@
 add_data_sufficiency(dframe, midfield_term = term)
 }
 \arguments{
-\item{dframe}{Data frame of student unit record (SUR) observations keyed
-by student ID. Required variables are \code{mcid} and
-\code{timely_term}. See also \code{add_timely_term()}.}
+\item{dframe}{Data frame of student-level records keyed by student ID.
+Required variables are \code{mcid} and \code{timely_term}. See also
+\code{add_timely_term()}.}
 
-\item{midfield_term}{Data frame of SUR term observations keyed
-by student ID. Default is \code{term}. Required variables are
-\code{mcid}, \code{institution}, and \code{term}.}
+\item{midfield_term}{Data frame of student-level term observations keyed by
+student ID. Default is \code{term}. Required variables are \code{mcid},
+\code{institution}, and \code{term}.}
 }
 \value{
 A \code{data.table}  with the following properties:
@@ -27,7 +27,7 @@ Other columns are not modified.
 Columns added:
 \describe{
 \item{\code{term_i}}{Character. Initial term of a student's longitudinal
-record, encoded YYYYT. Not overwritten if present in \code{dframe}.}
+record, encoded YYYYT. Not overwritten if present in \code{dframe.}}
 \item{\code{lower_limit}}{Character. Initial term of an institution's data
 range, encoded YYYYT}
 \item{\code{upper_limit}}{Character. Final term of an institution's data
@@ -37,21 +37,21 @@ inclusion or exclusion based on data sufficiency. Possible values are:
 \code{include}, indicating that available data are sufficient for
 estimating timely completion; \code{exclude-upper}, indicating
 that data are insufficient at the upper limit of a data range; and
-\code{exclude-lower}, indicating that data are insufficient at the
+\code{exclude}-lower, indicating that data are insufficient at the
 lower limit.}
 }
 }
 \description{
-Add a column to a data frame of Student Unit Record (SUR) observations that
-labels each row for inclusion or exclusion based on data sufficiency near
-the upper and lower bounds of an institution's data range.
+Add a column to a data frame of student-level records that labels each row
+for inclusion or exclusion based on data sufficiency near the upper and lower
+bounds of an institution's data range.
 }
 \details{
-The time span of MIDFIELD term data varies by institution, each having
-their own lower and upper bounds. For some student records, being at or
-near these bounds creates unavoidable ambiguity when trying to assess
-degree completion. Such records must be identified and in most cases
-excluded to prevent false summary counts.
+The time span of MIDFIELD term data varies by institution, each having their
+own lower and upper bounds. For some student records, being at or near these
+bounds creates unavoidable ambiguity when trying to assess degree completion.
+Such records must be identified and in most cases excluded to prevent false
+summary counts.
 }
 \examples{
 # Start with an excerpt from the student data set 

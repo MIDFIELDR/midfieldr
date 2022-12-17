@@ -9,9 +9,9 @@
 
 \describe{
 
-\item{cip6}{Character, 6-digit CIP program codes.}
+\item{\code{cip6}}{Character, 6-digit CIP program codes.}
 
-\item{program}{Character, abbreviated labels for four engineering programs.
+\item{\code{program}}{Character, abbreviated labels for four engineering programs.
 Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE"
 (Industrial/Systems Engineering), and  "ME" (Mechanical Engineering).}
 
@@ -21,14 +21,13 @@ Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE"
 study_programs
 }
 \description{
-Data table of program CIP codes and labels of the four programs of the
-case study. Keyed by 6-digit CIPs. Provided for the convenience of vignette
-users.
+Data table of program CIP codes and labels of the four programs of the case
+study. Keyed by 6-digit CIPs. Provided for the convenience of vignette users.
 }
 \details{
-Starting with the midfieldr \code{cip} data set, we extracted the CIPs
-of the four programs of the case study and assigned them a custom label
-to be used for grouping and summarizing.
+Starting with the midfieldr \code{cip} data set, we extracted the CIPs of the four
+programs of the case study and assigned them a custom label to be used for
+grouping and summarizing.
 }
 \seealso{
 Other case-study-data: 

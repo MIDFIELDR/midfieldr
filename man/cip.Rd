@@ -5,25 +5,25 @@
 \alias{cip}
 \title{Table of academic programs}
 \format{
-A \code{data.table} with 1582 rows and 6 columns keyed by the
+\code{data.table} with 1582 rows and 6 columns keyed by the
 6-digit CIP code:
 \describe{
 
-\item{cip6}{Character 6-digit code representing "specific
+\item{\code{cip6}}{Character 6-digit code representing "specific
 instructional programs" (US National Center for Education Statistics).}
 
-\item{cip6name}{Character program name at the 6-digit level}
+\item{\code{cip6name}}{Character program name at the 6-digit level}
 
-\item{cip4}{Character 4-digit code (the first 4 digits of \code{cip6})
+\item{\code{cip4}}{Character 4-digit code (the first 4 digits of \code{cip6})
 representing "intermediate groupings of programs that have
 comparable content and objectives."}
 
-\item{cip4name}{Character program name at the 4-digit level.}
+\item{\code{cip4name}}{Character program name at the 4-digit level.}
 
-\item{cip2}{Character 2-digit code (the first 2 digits of \code{cip6})
+\item{\code{cip2}}{Character 2-digit code (the first 2 digits of \code{cip6})
 representing "the most general groupings of related programs."}
 
-\item{cip2name}{Character program name at the 2-digit level.}
+\item{\code{cip2name}}{Character program name at the 2-digit level.}
 
 }
 }
