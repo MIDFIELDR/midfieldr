@@ -4,7 +4,7 @@
 <br>midfieldr is an R package that provides tools and methods for
 studying undergraduate student-level records from the MIDFIELD database.
 
-<img src="man/figures/logo.png" style="width:15.0%" />
+<img src="man/figures/logo.png" width="15%" />
 
 <!-- badges: start -->
 
