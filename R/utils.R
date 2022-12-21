@@ -1,17 +1,20 @@
 
-# internal utility functions
+# Internal utility functions
 
 # ------------------------------------------------------------------------
 #
 #' Set column order and row order
 #'
-#' Use the vector of column names in \code{cols} as the ordering argument
-#' in \code{data.table::setcolorder()} and as the key argument in
-#' \code{data.table::setkeyv()} to order the rows.
+#' Use the vector of column names in `cols` as the ordering argument in
+#' `data.table::setcolorder()`` and as the key argument in
+#' `data.table::setkeyv()` to order the rows.
 #'
 #' @param dframe data frame
+#' 
 #' @param cols character vector of column names to use as keys
+#' 
 #' @noRd
+#' 
 set_colrow_order <- function(dframe, cols) {
   on.exit(setkey(dframe, NULL))
 
@@ -33,11 +36,14 @@ set_colrow_order <- function(dframe, cols) {
 #' Used by several midfieldr "add_" functions.
 #' 
 #' @param dframe data frame
+#' 
 #' @param new_cols character vector of column names added by the function
+#' 
 #' @noRd
+#' 
 find_old_cols <- function(dframe, new_cols) {
-    all_cols <- colnames(dframe)
-    old_cols <- all_cols[!all_cols %chin% new_cols]
+    all_cols  <- colnames(dframe)
+    old_cols  <- all_cols[!all_cols %chin% new_cols]
     return(old_cols)
 }
 
@@ -48,18 +54,21 @@ find_old_cols <- function(dframe, new_cols) {
 #' Add a column of institution names
 #'
 #' Add a column of character values with institution names (or labels) using
-#' student ID as the join-by variable. Obtains the information from the
-#' MIDFIELD \code{term} data table or equivalent. In the MIDFIELD practice
-#' data, the labels are de-identified.
+#' student ID as the join-by variable. Obtains the information from the MIDFIELD
+#' `term` data table or equivalent. In the MIDFIELD practice data, the labels
+#' are de-identified.
 #'
-#' If a student is associated with more than one institution, the institution
-#' at which they completed the most terms is returned. An existing column with
-#' the same name as the added column is overwritten.
+#' If a student is associated with more than one institution, the institution at
+#' which they completed the most terms is returned. An existing column with the
+#' same name as the added column is overwritten.
 #'
-#' @param dframe Data frame with required variable \code{mcid}.
-#' @param midfield_term MIDFIELD \code{term} data table or equivalent with
-#'        required variables \code{mcid}, \code{institution}, \code{term}.
+#' @param dframe Data frame with required variable `mcid.`
+#'
+#' @param midfield_term MIDFIELD `term` data table or equivalent with required
+#'   variables `mcid`, `institution`, `term`.
+#'
 #' @noRd
+#' 
 add_institution <- function(dframe,
                             midfield_term = term) {
     
@@ -96,17 +105,10 @@ add_institution <- function(dframe,
     N <- NULL
     
     # do the work
-    # DT <- filter_match(midfield_term,
-    #                    match_to = dframe,
-    #                    by_col = "mcid",
-    #                    select = c("mcid", "institution", "term")
-    # )
-    
     # Inner join using three columns of term
     x <- midfield_term[, .(mcid, institution, term)]
     y <- unique(dframe[, .(mcid)])
     DT <- y[x, on = .(mcid), nomatch = NULL]
-    
     
     # count terms at institutions
     DT <- DT[, .N, by = c("mcid", "institution")]

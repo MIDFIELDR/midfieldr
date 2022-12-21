@@ -5,8 +5,9 @@
 \alias{fye_proxy}
 \title{Starting program proxies for FYE students}
 \format{
-\code{data.table} with 4623 rows and 2 columns keyed by student
-ID. The variables are:
+\code{data.table} with 4623 rows and 2 columns keyed by student ID. The
+variables are:
+
 \describe{
 
 \item{\code{mcid}}{Character, de-identified student ID.}
@@ -39,8 +40,8 @@ predictor variables are institution, race, and sex. The estimated variable is
 the 6-digit CIP code of a degree-granting engineering program at their
 institution.
 
-\code{fye_proxy} holds only for the practice data in midfielddata---these
-values cannot be commingled with the MIDFIELD research database.
+\code{fye_proxy} holds only for the practice data in midfielddata---these values
+cannot be commingled with the MIDFIELD research database.
 }
 \seealso{
 Other cip-data: 

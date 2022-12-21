@@ -6,6 +6,7 @@
 \title{Course data for examples}
 \format{
 \code{data.table} with 4616 rows and 6 columns keyed by student ID.
+
 \describe{
 
 \item{\code{mcid}}{Character, anonymized student ID.}
@@ -28,8 +29,9 @@ ENGL.}
 toy_course
 }
 \description{
-A small subset of the \code{course} practice data for use in package and vignette
-examples.
+Selected variables modeled on those in the \code{course} practice data for use in
+package examples and articles. Sampled from an early version of the practice
+data, the toy data are not a current practice data sample.
 }
 \seealso{
 Other toy-data: 

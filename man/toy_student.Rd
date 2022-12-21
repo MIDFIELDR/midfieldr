@@ -5,8 +5,8 @@
 \alias{toy_student}
 \title{Student data for examples}
 \format{
-\code{data.table} with 99 rows and 4 columns keyed by
-student ID.
+\code{data.table} with 99 rows and 4 columns keyed by student ID.
+
 \describe{
 
 \item{\code{mcid}}{Character, de-identified student ID.}
@@ -26,8 +26,9 @@ values are Female, Male, and Unknown.}
 toy_student
 }
 \description{
-A small subset of the \code{student} practice data for use in package examples and
-articles.
+Selected variables modeled on those in the \code{student} practice data for use in
+package examples and articles. Sampled from an early version of the practice
+data, the toy data are not a current practice data sample.
 }
 \seealso{
 Other toy-data: 

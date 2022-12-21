@@ -147,13 +147,30 @@ DT <- student[DT, .(mcid), on = c("mcid"), nomatch = NULL]
 DT <- unique(DT)
 ```
 
+*Verify prepared data.* &nbsp; Many analyses begin, as we do here, by filtering for data sufficiency and degree-seeking. For our convenience in subsequent articles, this set of IDs is included with midfieldr in the data set `baseline_mcid`. Here we verify that the two data frames have the same content.  
+
+```{r}
+# Demonstrate equivalence
+same_content(DT, baseline_mcid)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+
+# Run manually
+# Writing external files
+setkey(DT, mcid)
+setkey(DT, NULL)
+baseline_mcid <- copy(DT)
+usethis::use_data(baseline_mcid, overwrite = TRUE)
+```
+
 We preserve this data frame as a baseline for examples in the article.  
 
 ```{r}
 baseline <- copy(DT)
 ```
-
-
 
 
 
@@ -317,7 +334,7 @@ DT <- term[DT, .(mcid, cip6), on = c("mcid")]
 ```{r}
 # One observation per ID-CIP combination
 DT <- unique(DT)
-DT[]
+DT
 ```
 
 
@@ -332,26 +349,7 @@ DT[]
 DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
 DT[, cip6 := NULL]
 DT <- unique(DT)
-DT[]
-```
-
-*Verify prepared data.* &nbsp; `study_ever`, included with midfieldr, contains the case study information developed above. Here we verify that the two data frames have the same content.  
-
-```{r}
-# Demonstrate equivalence
-same_content(DT, study_ever)
-```
-
-```{r}
-#| eval: false
-#| echo: false
-
-# Run manually
-# Writing external files
-setkey(DT, mcid)
-setkey(DT, NULL)
-study_ever <- copy(DT)
-usethis::use_data(study_ever, overwrite = TRUE)
+DT
 ```
 
 
@@ -387,6 +385,10 @@ DT <- unique(DT)
 
 
 
+
+<!-- ## References -->
+
+<!-- <div id="refs"> -->
 
 ```{r child = "../man/rmd/common-closing.Rmd"}
 ```

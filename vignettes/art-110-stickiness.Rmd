@@ -1,0 +1,473 @@
+---
+title: "Stickiness"
+vignette: >
+  %\VignetteIndexEntry{Stickiness}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+link-citations: yes
+always_allow_html: true
+---
+
+```{r child = "../man/rmd/common-setup.Rmd"}
+```
+
+```{r}
+#| include: false
+knitr::opts_chunk$set(fig.path = "../man/figures/art-110-")
+```
+
+Stickiness is a more-inclusive alternative to graduation rate as a measure of a program's success in attracting, keeping, and graduating their undergraduates. All students excluded by a conventional graduation rate metric--including migrators---are included in the stickiness metric [@Ohland+Orr+others:2012]. 
+
+
+This vignette in the MIDFIELD workflow.   
+
+1. Planning  
+1. Initial processing  
+1. Blocs  
+1. Groupings  
+1. `r accent("Metrics")`    
+    - Graduation rate    
+    - `r accent("Stickiness")`  
+1. Displays  
+
+
+
+## Definitions
+
+```{r child = "../man/rmd/define-stickiness.Rmd"}
+``` 
+\[
+S = \frac{N_g}{N_e}
+\]
+
+```{r child = "../man/rmd/define-bloc.Rmd"}
+``` 
+
+```{r child = "../man/rmd/define-ever-enrolled.Rmd"}
+```  
+
+```{r child = "../man/rmd/define-graduates.Rmd"}
+```  
+
+```{r child = "../man/rmd/define-timely-completion-criterion.Rmd"}
+``` 
+
+```{r child = "../man/rmd/define-migrators.Rmd"}
+``` 
+
+
+
+
+
+## A more inclusive metric 
+
+Stickiness, in comparison to [graduation rate](art-100-grad-rate.html), has these characteristics:
+
+- Includes migrators, where graduation rate does not. 
+
+- Is based on the bloc of ever enrolled rather than starters, so there is no need for [FYE proxies](art-060-fye-proxies.html).
+
+- Counts all graduates (timely completers) in a program, eliminating the need to filter graduates based on their starting program. 
+
+- Like the MIDFIELD definition of graduation rate (in contrast to the IPEDS definition), includes students who attend college part-time, who transfer between institutions, and who start in any term. 
+
+As they pertain to the stickiness metric, relationships among starters, migrators, and graduates (timely completers) of a given program *P* are illustrated in Figure 1. 
+
+- The interior rectangle represents the stickiness numerator $(N_g)$, the set of graduates (timely completers) of program *P*.   
+
+- The overall rectangle represents the stickiness denominator $(N_e)$, the set of students ever enrolled in program *P*. 
+
+
+
+![Figure 1. Stickiness metric. Starters, migrators, and timely completers.](../man/figures/art-110-venn-diagram.png){width="100%"}
+ 
+<br> 
+
+
+
+
+
+
+## Method
+
+Demonstrating the following elements of a MIDFIELD workflow.  
+
+1. *Planning.*  &nbsp; The metric is stickiness. Required blocs are ever-enrolled and graduates. Grouping variables are program, race/ethnicity, and sex. Programs are the four Engineering programs used throughout. 
+
+1. *Initial processing.* &nbsp; Filter the student-level records for data sufficiency and degree-seeking.
+
+1. *Blocs.* &nbsp; Gather ever enrolled, filter by program. Gather graduates, filter by program. 
+
+1. *Groupings.* &nbsp; Add grouping variables. 
+
+1. *Metrics* &nbsp; Summarize by grouping variables and compute stickiness.  
+
+1. *Displays* &nbsp; Create multiway chart and results table. 
+
+```{r child = "../man/rmd/note-for-practice-only-2.Rmd"}
+```
+
+
+
+
+
+
+
+## Load data
+
+*Start.* &nbsp; If you are writing your own script to follow along, we use these packages in this article:
+
+```{r}
+library(midfieldr)
+library(midfielddata)
+library(data.table)
+library(ggplot2)
+```
+
+*Load.* &nbsp; Practice datasets. View data dictionaries via `?student`, `?term`, `?degree`.  
+
+```{r}
+# Load practice data
+data(student, term, degree)
+```
+
+*Loads with midfieldr.* &nbsp; Prepared data. View data dictionary via `?study_programs`, `?baseline_mcid`. 
+
+- `study_programs`  (derived in [Programs](art-040-programs.html#assigning-program-names)). 
+
+- `baseline_mcid`  (derived in [Blocs](art-050-blocs.html#initial-processing)).
+
+
+
+
+## Initial processing
+
+*Select (optional).* &nbsp; Reduce the number of columns. Code reproduced from [Getting started](art-000-getting-started.html#reusable-code). 
+
+```{r}
+# Optional. Copy of source files with all variables
+source_student <- copy(student)
+source_term <- copy(term)
+source_degree <- copy(degree)
+
+# Optional. Select variables required by midfieldr functions
+student <- select_required(source_student)
+term <- select_required(source_term)
+degree <- select_required(source_degree)
+```
+
+```{r child = "../man/rmd/note-baseline-mcid.Rmd"}
+```
+
+```{r}
+# Working data frame
+DT <- copy(baseline_mcid)
+```
+
+
+
+
+## Ever enrolled 
+
+*Ever enrolled.* &nbsp; The summary code chunk from [Blocs](art-050-blocs.html#reusable-code-blocs). 
+
+```{r}
+# Ever-enrolled bloc
+DT <- term[DT, .(mcid, cip6), on = c("mcid")]
+DT <- unique(DT)
+
+# Filter by program
+DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
+DT[, cip6 := NULL]
+DT <- unique(DT)
+DT
+```
+
+*Copy.* &nbsp; To prepare for joining with graduates. 
+
+```{r}
+# Prepare for joining
+setcolorder(DT, c("mcid"))
+ever_enrolled <- copy(DT)
+ever_enrolled
+```
+
+
+
+
+
+
+
+## Graduates
+
+*Initialize.* &nbsp; The data frame of baseline IDs is the intake for this section. 
+
+```{r}
+# Working data frame
+DT <- copy(baseline_mcid)
+```
+
+*Graduates* &nbsp; The summary code chunk from [Graduates](art-080-graduates.html#reusable-code)
+
+```{r}
+# Gather graduates and their degree CIPs
+DT <- add_timely_term(DT, term)
+DT <- add_completion_status(DT, degree)
+DT <- DT[completion_status == "timely"]
+DT <- degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
+
+# Filter by program and first-degree terms only 
+DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
+DT <- DT[, .SD[which.min(term_degree)], by = "mcid"]
+DT[, c("cip6", "term_degree") := NULL]
+DT <- unique(DT)
+DT
+```
+
+*Copy.* &nbsp; To prepare for joining with ever enrolled 
+
+```{r}
+# Prepare for joining
+setcolorder(DT, c("mcid"))
+graduates <- copy(DT)
+graduates
+```
+
+
+
+
+
+
+
+
+
+## Groupings
+
+One of our grouping variables (`program`) is already included in the data frames. The next grouping variable is `bloc` to distinguish starters from graduates when the two data frames are combined.
+
+*Add a variable.* &nbsp; Label ever enrolled and graduates. 
+
+```{r}
+# For grouping by bloc
+ever_enrolled[, bloc := "ever_enrolled"]
+graduates[, bloc := "graduates"]
+```
+
+*Join.* &nbsp; Combine the two blocs to prepare for summarizing. A graduate has two observations in these data: one as ever enrolled and one as a graduate. 
+
+```{r}
+# Prepare for summarizing
+DT <- rbindlist(list(ever_enrolled, graduates))
+DT
+```
+
+*Add variables.* &nbsp; Demographics from [Groupings](art-090-groupings.html#reusable-code)
+
+```{r}
+# Join race/ethnicity and sex
+cols_we_want <- student[, .(mcid, race, sex)]
+DT <- cols_we_want[DT, on = c("mcid")]
+DT
+```
+
+MIDFIELD research findings are regularly grouped by program, race/ethnicity, and sex, as illustrated here. However, applied to the practice data these groupings produce several groups with totals below the threshold we impose to preserve anonymity, introducing a number of NA values in the resulting charts and tables. These NAs are largely an artifact of applying these groupings to practice data.
+
+*Verify prepared data.* &nbsp; `study_observations`, included with midfieldr, contains the case study information developed above. Here we verify that the two data frames have the same content. 
+
+```{r}
+# Demonstrate equivalence
+same_content(DT, study_observations)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+
+# Run manually
+# Writing external files
+setkey(DT, mcid)
+setkey(DT, NULL)
+study_observations <- copy(DT)
+usethis::use_data(study_observations, overwrite = TRUE)
+```
+
+
+
+
+
+## Stickiness
+
+*Summarize.* &nbsp; Count the numbers of observations for each combination of the grouping variables. 
+
+```{r}
+# Count observations by group
+grouping_variables <- c("bloc", "program", "sex", "race")
+DT <- DT[, .N, by = grouping_variables]
+setorderv(DT, grouping_variables)
+DT
+```
+
+*Reshape.* &nbsp; Transform to row-record form to set up the stickiness metric  calculation. Transform the *N* column into two columns, one for ever-enrolled  and one for graduates. 
+
+```{r}
+# Prepare to compute metric
+DT <- dcast(DT, program + sex + race ~ bloc, value.var = "N", fill = 0)
+DT
+```
+
+*Create a variable.*  &nbsp; Compute the metric. 
+
+```{r}
+# Compute metric
+DT[, stickiness := round(100 * graduates / ever_enrolled, 1)]
+DT
+```
+
+*Verify prepared data.* &nbsp; `study_results`, included with midfieldr, contains the case study information developed above. Here we verify that the two data frames have the same content. 
+
+```{r}
+# Demonstrate equivalence
+same_content(DT, study_results)
+```
+
+```{r}
+#| eval: false
+#| echo: false
+
+# Run manually
+# Writing external files
+setkey(DT, program, sex, race)
+setkey(DT, NULL)
+study_results <- copy(DT)
+usethis::use_data(study_results, overwrite = TRUE)
+```
+
+
+
+
+
+
+
+
+## Prepare for dissemination
+
+*Filter.* &nbsp; To preserve the anonymity of the people involved, we remove observations with fewer than `N_threshold` graduates. With the research data, we typically set this threshold to 10; with the practice data, we demonstrate the procedure using a threshold of 5. 
+
+```{r}
+# Preserve anonymity
+N_threshold <- 5  # 10 for research data
+DT <- DT[graduates >= N_threshold]
+DT
+```
+
+*Recode.* &nbsp;  Readers can more readily interpret our charts and tables if the programs are unabbreviated.
+
+```{r}
+# Recode values for chart and table readability
+DT[, program := fcase(
+  program %like% "CE", "Civil",
+  program %like% "EE", "Electrical",
+  program %like% "ME", "Mechanical",
+  program %like% "ISE", "Industrial/Systems"
+)]
+DT
+```
+
+*Add a variable.* &nbsp; We combine race/ethnicity and sex to create a combined grouping variable. 
+
+```{r}
+# Create a combined category
+DT[, people := paste(race, sex)]
+DT[, `:=`(race = NULL, sex = NULL)]
+setcolorder(DT, c("program", "people"))
+DT
+```
+
+
+
+## Chart
+
+*Order factors.* &nbsp; Order the levels of the categories. Code adapted from [Multiway data and charts](art-120-multiway.html#percentage-ordered-data). 
+
+```{r}
+# Order the categories
+DT <- order_multiway(DT,
+  quantity   = "stickiness",
+  categories = c("program", "people"),
+  method     = "percent",
+  ratio_of   = c("graduates", "ever_enrolled")
+)
+DT
+```
+
+
+*Multiway chart.* &nbsp; Code adapted from [Multiway data and charts](art-120-multiway.html#percentage-ordered-charts). 
+
+The vertical reference line is the aggregate stickiness of the program, independent of race/ethnicity and sex. A missing data marker or missing group indicates the number of graduates was below the threshold set to preserve anonymity---largely an artifact of applying these groupings to practice data.
+
+```{r fig2}
+#| fig-asp: 1.1
+#| fig-cap: "Figure 2: Stickiness of four Engineering majors."
+
+ggplot(DT, aes(x = stickiness, y = people)) +
+  facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_vline(aes(xintercept = program_stickiness), linetype = 2, linewidth = 0.5) +
+  geom_point() +
+  labs(x = "Stickiness (%)", y = "") +
+  scale_x_continuous(limits = c(20, 90))
+```
+
+
+
+
+
+
+
+
+## Table
+
+*Results table.* &nbsp; Code adapted from [Multiway data and charts](art-120-multiway.html#tabulating-counts).
+
+```{r}
+# Select variables and remove factors
+display_table <- copy(DT)
+display_table <- display_table[, .(program, people, stickiness)]
+display_table[, people := as.character(people)]
+display_table[, program := as.character(program)]
+
+# Construct table
+display_table <- dcast(display_table, people ~ program, value.var = "stickiness")
+setnames(display_table,
+  old = c("people"),
+  new = c("People"),
+  skip_absent = TRUE
+)
+display_table
+```
+
+(Optional) Format the table nearer to publication quality. Here I use kableExtra package. 
+
+```{r}
+display_table |>
+  kableExtra::kbl(align = "lrrrr", caption = "Table 1: Stickiness (%) of four Engineering majors.") |>
+  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
+  kableExtra::row_spec(0, background = "#c7eae5") |>
+  kableExtra::column_spec(1:5, color = "black", background = "white")
+```
+
+A value of NA indicates a group removed because the number of graduates was below the threshold set to preserve anonymity. As noted earlier, these are largely an artifact of applying these groupings to practice data.
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+```{r child = "../man/rmd/common-closing.Rmd"}
+```
+
+---

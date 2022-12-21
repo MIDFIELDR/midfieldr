@@ -5,7 +5,7 @@
 \alias{study_observations}
 \title{Case-study observations}
 \format{
-\code{data.table} with 8906 rows and 5 columns.
+\code{data.table} with 8917 rows and 5 columns.
 
 \describe{
 
@@ -17,8 +17,8 @@
 
 \item{\code{program}}{Character, academic program label.}
 
-\item{\code{group}}{Character, indicating the grouping (\code{ever} or
-\code{grad}) to which an observation belongs.}
+\item{\code{bloc}}{Character, indicating the grouping (\code{ever_enrolled} or
+\code{graduates}) to which an observation belongs.}
 
 }
 }
@@ -33,20 +33,19 @@ student ID. Provided for the convenience of vignette users.
 \details{
 Starting with the case-study starting pool of students ever enrolled in the
 four programs of the study (Civil, Electrical, Industrial/Systems, and
-Mechanical Engineering), we filtered the data for data sufficiency,
-degree seeking, program, and timely completion.
+Mechanical Engineering), we filtered the data for data sufficiency, degree
+seeking, program, and timely completion.
 
-A data frame of "ever enrolled" and a data frame of "timely graduates"
-were bound using shared column names and are distinguished in the
-\code{group} variable.  This data structure facilitates grouping and
-summarizing by race, sex, program, and group.
+A data frame of "ever enrolled" and a data frame of "timely graduates" were
+bound using shared column names and are distinguished in the \code{bloc} variable.
+This data structure facilitates grouping and summarizing by race, sex,
+program, and group.
 }
 \seealso{
 Other case-study-data: 
-\code{\link{study_ever}},
+\code{\link{baseline_mcid}},
 \code{\link{study_programs}},
-\code{\link{study_results}},
-\code{\link{study_starters}}
+\code{\link{study_results}}
 }
 \concept{case-study-data}
 \keyword{datasets}

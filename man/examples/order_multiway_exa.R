@@ -10,7 +10,7 @@ class(dframe$people)
 
 # Class and levels after ordering
 mw1 <- order_multiway(dframe, 
-                      quantity = "stick", 
+                      quantity = "stickiness", 
                       categories = c("program", "people"))
 class(mw1$program)
 levels(mw1$program)
@@ -29,13 +29,13 @@ levels(mw2$program)
 
 # Levels after conditioning
 mw2 <- order_multiway(dframe, 
-                      quantity = "stick", 
+                      quantity = "stickiness", 
                       categories = c("program", "people"))
 levels(mw2$program) 
 
 # Ordering using percent method
 order_multiway(dframe, 
-               quantity = "stick", 
+               quantity = "stickiness", 
                categories = c("program", "people"), 
                method = "percent", 
-               ratio_of = c("grad", "ever"))
+               ratio_of = c("graduates", "ever_enrolled"))

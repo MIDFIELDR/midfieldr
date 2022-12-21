@@ -3,18 +3,19 @@
 
 #' Table of academic programs
 #'
-#' A data table based on the US National Center for Education Statistics
-#' (NCES), Integrated Postsecondary Education Data System (IPEDS), 2010
-#' CIP, \url{http://nces.ed.gov/ipeds/cipcode/}. The data are codes and
-#' names for 1582 instructional programs organized on three levels: a
-#' 2-digit series, a 4-digit series, and a 6-digit series.
+#' A data table based on the US National Center for Education Statistics (NCES),
+#' Integrated Postsecondary Education Data System (IPEDS), 2010 CIP,
+#' \url{http://nces.ed.gov/ipeds/cipcode/}. The data are codes and names for
+#' 1582 instructional programs organized on three levels: a 2-digit series, a
+#' 4-digit series, and a 6-digit series.
 #'
-#' The midfielddata taxonomy includes one non-IPEDS code (999999) for
-#' Undecided or Unspecified, instances in which institutions reported no
-#' program information or that students were not enrolled in a program.
+#' The midfielddata taxonomy includes one non-IPEDS code (999999) for Undecided
+#' or Unspecified, instances in which institutions reported no program
+#' information or that students were not enrolled in a program.
 #'
-#' @format `data.table` with 1582 rows and 6 columns keyed by the
-#' 6-digit CIP code:
+#' @format `data.table` with 1582 rows and 6 columns keyed by the 6-digit CIP
+#'   code:
+#' 
 #' \describe{
 #'
 #'   \item{`cip6`}{Character 6-digit code representing "specific
@@ -61,11 +62,12 @@
 #' the 6-digit CIP code of a degree-granting engineering program at their
 #' institution.
 #'
-#' `fye_proxy` holds only for the practice data in midfielddata---these
-#' values cannot be commingled with the MIDFIELD research database.
+#' `fye_proxy` holds only for the practice data in midfielddata---these values
+#' cannot be commingled with the MIDFIELD research database.
 #'
-#' @format `data.table` with 4623 rows and 2 columns keyed by student
-#' ID. The variables are:
+#' @format `data.table` with 4623 rows and 2 columns keyed by student ID. The
+#'   variables are:
+#' 
 #' \describe{
 #'
 #'   \item{`mcid`}{Character, de-identified student ID.}
@@ -79,16 +81,16 @@
 #'
 "fye_proxy"
 
-
 # -------------------------------------------------------------------
 
 #' Student data for examples
 #'
-#' A small subset of the `student` practice data for use in package examples and
-#' articles.
+#' Selected variables modeled on those in the `student` practice data for use in
+#' package examples and articles. Sampled from an early version of the practice
+#' data, the toy data are not a current practice data sample.
 #'
-#' @format `data.table` with 99 rows and 4 columns keyed by
-#' student ID.
+#' @format `data.table` with 99 rows and 4 columns keyed by student ID.
+#'
 #' \describe{
 #'
 #'  \item{`mcid`}{Character, de-identified student ID.}
@@ -105,17 +107,19 @@
 #' }
 #'
 #' @family toy-data
-#'
+#' 
 "toy_student"
 
 # -------------------------------------------------------------------
 
 #' Course data for examples
 #'
-#' A small subset of the `course` practice data for use in package and vignette
-#' examples.
+#' Selected variables modeled on those in the `course` practice data for use in
+#' package examples and articles. Sampled from an early version of the practice
+#' data, the toy data are not a current practice data sample.
 #'
 #' @format `data.table` with 4616 rows and 6 columns keyed by student ID.
+#' 
 #' \describe{
 #'
 #'  \item{`mcid`}{Character, anonymized student ID.}
@@ -142,11 +146,12 @@
 
 #' Term data for examples
 #'
-#' A small subset of the `term` practice data for use in package 
-#' and vignette examples.
+#' Selected variables modeled on those in the `term` practice data for use in
+#' package examples and articles. Sampled from an early version of the practice
+#' data, the toy data are not a current practice data sample.
 #'
-#' @format `data.table` with 150 rows and 5 columns keyed by
-#' student ID.
+#' @format `data.table` with 150 rows and 5 columns keyed by student ID.
+#'
 #' \describe{
 #'
 #'  \item{`mcid`}{Character, de-identified student ID.}
@@ -159,23 +164,26 @@
 #'  \item{`cip6`}{Character, 6-digit CIP code of program in which a student
 #'  is enrolled in a term.}
 #'
-#'  \item{`level`}{Character, 01 Freshman, 02 Sophomore, etc.}
+#'  \item{`level`}{Character, 01 Freshman, 02 Sophomore, etc. The equivalent 
+#'   values in the current practice data are 01 First-Year, 02-Second Year, 
+#'   etc.}
 #'
 #' }
 #'
 #' @family toy-data
-#'
+#' 
 "toy_term"
 
 # -------------------------------------------------------------------
 
 #' Degree data for examples
 #'
-#' A small subset of the `degree` practice data for use in package 
-#' and vignette examples.
+#' Selected variables modeled on those in the `degree` practice data for use in
+#' package examples and articles. Sampled from an early version of the practice
+#' data, the toy data are not a current practice data sample.
 #'
-#' @format `data.table` with 65 rows and 4 columns keyed by
-#' student ID.
+#' @format `data.table` with 65 rows and 4 columns keyed by student ID.
+#' 
 #' \describe{
 #'
 #'  \item{`mcid`}{Character, anonymized student ID.}
@@ -195,7 +203,6 @@
 #'
 "toy_degree"
 
-
 # -------------------------------------------------------------------
 
 #' Case-study program labels and codes
@@ -213,9 +220,10 @@
 #'
 #'  \item{`cip6`}{Character, 6-digit CIP program codes.}
 #'  
-#'  \item{`program`}{Character, abbreviated labels for four engineering programs. 
-#'  Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE" 
-#'  (Industrial/Systems Engineering), and  "ME" (Mechanical Engineering).}
+#'  \item{`program`}{Character, abbreviated labels for four engineering 
+#'  programs. Values are "CE" (Civil Engineering), "EE" (Electrical 
+#'  Engineering), "ISE" (Industrial/Systems Engineering), and  "ME" (Mechanical 
+#'  Engineering).}
 #'
 #' }
 #'
@@ -226,22 +234,22 @@
 # -------------------------------------------------------------------
 
 #' Case-study observations
-#' 
-#' Data table of post-processed observations of students ever enrolled in, and  
-#' students graduating from, the four programs of the case study. Keyed by 
-#' student ID. Provided for the convenience of vignette users. 
-#' 
-#' Starting with the case-study starting pool of students ever enrolled in the 
-#' four programs of the study (Civil, Electrical, Industrial/Systems, and 
-#' Mechanical Engineering), we filtered the data for data sufficiency, 
-#' degree seeking, program, and timely completion. 
-#' 
-#' A data frame of "ever enrolled" and a data frame of "timely graduates" 
-#' were bound using shared column names and are distinguished in the 
-#' \code{group} variable.  This data structure facilitates grouping and 
-#' summarizing by race, sex, program, and group.  
 #'
-#' @format `data.table` with 8906 rows and 5 columns.
+#' Data table of post-processed observations of students ever enrolled in, and
+#' students graduating from, the four programs of the case study. Keyed by
+#' student ID. Provided for the convenience of vignette users.
+#'
+#' Starting with the case-study starting pool of students ever enrolled in the
+#' four programs of the study (Civil, Electrical, Industrial/Systems, and
+#' Mechanical Engineering), we filtered the data for data sufficiency, degree
+#' seeking, program, and timely completion.
+#'
+#' A data frame of "ever enrolled" and a data frame of "timely graduates" were
+#' bound using shared column names and are distinguished in the `bloc` variable.
+#' This data structure facilitates grouping and summarizing by race, sex,
+#' program, and group.
+#'
+#' @format `data.table` with 8917 rows and 5 columns.
 #' 
 #' \describe{
 #'
@@ -253,8 +261,8 @@
 #'  
 #'  \item{`program`}{Character, academic program label.}
 #'  
-#'  \item{`group`}{Character, indicating the grouping (`ever` or 
-#'  `grad`) to which an observation belongs.} 
+#'  \item{`bloc`}{Character, indicating the grouping (`ever_enrolled` or 
+#'  `graduates`) to which an observation belongs.} 
 #'
 #' }
 #'
@@ -262,31 +270,22 @@
 #'
 "study_observations"
 
-
-
-
-
-
 # -------------------------------------------------------------------
 
 #' Case-study results
-#' 
-#' Data table of longitudinal stickiness keyed by program, race/ethnicity, 
-#' and sex. Provided for the convenience of vignette users. 
-#' 
-#' Starting with the prepared data (the case study stickiness observations), 
-#' we compute longitudinal stickiness for the four programs of the study (Civil, 
-#' Electrical, Industrial/Systems, and Mechanical Engineering) grouped by 
-#' program, race/ethnicity, and sex. 
-#' 
+#'
+#' Data table of longitudinal stickiness for the four programs of the case study
+#' (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) grouped
+#' by program, race/ethnicity, and sex. Provided for the convenience of vignette
+#' users.
+#'
 #' Longitudinal stickiness is the ratio of the number of students graduating
 #' from a program to the number of students ever enrolled in the program over
-#' the time span of available data. Results are based on data that have been 
-#' filtered for data sufficiency, degree seeking, program, and timely 
-#' completion. 
+#' the time span of available data. Results are based on data that have been
+#' filtered for data sufficiency, degree seeking, and timely completion.
 #'
 #' @format `data.table` with 50 rows and 6 columns.
-#' 
+#'
 #' \describe{
 #'
 #'  \item{`program`}{Character, academic program label.}
@@ -295,79 +294,36 @@
 #'
 #'  \item{`sex`}{Character, self-reported sex.}
 #'
-#'  \item{`ever`}{Numerical, number of students ever enrolled in a program.}
+#'  \item{`ever_enrolled`}{Numerical, number of students ever enrolled in a 
+#'  program.}
 #'
-#'  \item{`grad`}{Numerical, number of students completing a program.}
+#'  \item{`graduates`}{Numerical, number of students completing a program.}
 #'
-#'  \item{`stick`}{Numerical, program stickiness, the ratio `grad` to 
-#'  `ever`, in percent.}
+#'  \item{`stickiness`}{Numerical, program stickiness, the ratio `graduates` to
+#'  `ever_enrolled`, in percent.}
 #'
 #' }
 #'
 #' @family case-study-data
-#'
+#' 
 "study_results"
 
-
-
 # -------------------------------------------------------------------
 
-#' Case-study starters
-#' 
-#' Data table of students considered starters in one of the four engineering 
-#' programs in the case study (Civil, Electrical, Industrial/Systems, and 
-#' Mechanical Engineering). Includes substitutions of FYE proxies for students 
-#' required to enroll in FYE programs. Provided for the convenience of vignette 
-#' users. 
-#' 
-#' The `student` and `term` source data are filtered for data 
-#' sufficiency and degree-seeking. We filter for a student’s first term 
-#' (ignoring terms with a CIP for undecided/unspecified). We identify the 
-#' program(s) of which a student can be considered a starter, substituting  
-#' an FYE proxy when a starting program is FYE. We then filter by program. 
-#' 
-#' The CIP variable is renamed `start` to distinguish it from other 
-#' midfieldr `cip6` variables because `start` contains estimated 
-#' program codes while the `cip6` variables contain actual student records. 
-#' 
-#' @format `data.table` with 4053 rows and 2 columns.
-#' 
+#' Baseline ID bloc to start a typical analysis
+#'
+#' Data frame of IDs after processing the practice data for data sufficiency and
+#' degree seeking. Provides a convenient bloc to start many of the analysis
+#' illustrated in the package articles.
+#'
+#' @format `data.table` with 76875 rows and 1 column.
+#'
 #' \describe{
-#' 
+#'
 #'  \item{`mcid`}{Character, anonymized student identifier}
-#'  
-#'  \item{`program`}{Character, abbreviated labels for four engineering programs. 
-#'  Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE" 
-#'  (Industrial/Systems Engineering), and  "ME" (Mechanical Engineering).}
 #'
 #' }
 #'
 #' @family case-study-data
-#'
-"study_starters"
-
-
-# -------------------------------------------------------------------
-
-#' Case-study ever enrolled
 #' 
-#' Data table of IDs of students ever enrolled in the four programs of the study 
-#' (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) after 
-#' filtering for data sufficiency, degree seeking, and program. Provided for 
-#' the convenience of vignette users. 
-#' 
-#' @format `data.table` with 5653 rows and 2 columns.
-#' 
-#' \describe{
-#' 
-#'  \item{`mcid`}{Character, anonymized student identifier}
-#'  
-#'  \item{`program`}{Character, abbreviated labels for four engineering programs. 
-#'  Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE" 
-#'  (Industrial/Systems Engineering), and  "ME" (Mechanical Engineering).}
-#'
-#' }
-#'
-#' @family case-study-data
-#'
-"study_ever"
+"baseline_mcid"

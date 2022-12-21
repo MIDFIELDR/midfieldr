@@ -11,9 +11,10 @@
 
 \item{\code{cip6}}{Character, 6-digit CIP program codes.}
 
-\item{\code{program}}{Character, abbreviated labels for four engineering programs.
-Values are "CE" (Civil Engineering), "EE" (Electrical Engineering), "ISE"
-(Industrial/Systems Engineering), and  "ME" (Mechanical Engineering).}
+\item{\code{program}}{Character, abbreviated labels for four engineering
+programs. Values are "CE" (Civil Engineering), "EE" (Electrical
+Engineering), "ISE" (Industrial/Systems Engineering), and  "ME" (Mechanical
+Engineering).}
 
 }
 }
@@ -31,10 +32,9 @@ grouping and summarizing.
 }
 \seealso{
 Other case-study-data: 
-\code{\link{study_ever}},
+\code{\link{baseline_mcid}},
 \code{\link{study_observations}},
-\code{\link{study_results}},
-\code{\link{study_starters}}
+\code{\link{study_results}}
 }
 \concept{case-study-data}
 \keyword{datasets}

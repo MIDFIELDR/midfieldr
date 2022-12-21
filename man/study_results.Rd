@@ -15,12 +15,13 @@
 
 \item{\code{sex}}{Character, self-reported sex.}
 
-\item{\code{ever}}{Numerical, number of students ever enrolled in a program.}
+\item{\code{ever_enrolled}}{Numerical, number of students ever enrolled in a
+program.}
 
-\item{\code{grad}}{Numerical, number of students completing a program.}
+\item{\code{graduates}}{Numerical, number of students completing a program.}
 
-\item{\code{stick}}{Numerical, program stickiness, the ratio \code{grad} to
-\code{ever}, in percent.}
+\item{\code{stickiness}}{Numerical, program stickiness, the ratio \code{graduates} to
+\code{ever_enrolled}, in percent.}
 
 }
 }
@@ -28,27 +29,22 @@
 study_results
 }
 \description{
-Data table of longitudinal stickiness keyed by program, race/ethnicity,
-and sex. Provided for the convenience of vignette users.
+Data table of longitudinal stickiness for the four programs of the case study
+(Civil, Electrical, Industrial/Systems, and Mechanical Engineering) grouped
+by program, race/ethnicity, and sex. Provided for the convenience of vignette
+users.
 }
 \details{
-Starting with the prepared data (the case study stickiness observations),
-we compute longitudinal stickiness for the four programs of the study (Civil,
-Electrical, Industrial/Systems, and Mechanical Engineering) grouped by
-program, race/ethnicity, and sex.
-
 Longitudinal stickiness is the ratio of the number of students graduating
 from a program to the number of students ever enrolled in the program over
 the time span of available data. Results are based on data that have been
-filtered for data sufficiency, degree seeking, program, and timely
-completion.
+filtered for data sufficiency, degree seeking, and timely completion.
 }
 \seealso{
 Other case-study-data: 
-\code{\link{study_ever}},
+\code{\link{baseline_mcid}},
 \code{\link{study_observations}},
-\code{\link{study_programs}},
-\code{\link{study_starters}}
+\code{\link{study_programs}}
 }
 \concept{case-study-data}
 \keyword{datasets}

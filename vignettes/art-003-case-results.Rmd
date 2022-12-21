@@ -39,79 +39,69 @@ Our goal in this segment is to group and summarize the observations we saved pre
 
 
 
-## Load practice data
+## Load data
 
-*Start a script*. If you are writing your own script to follow along, we use these packages in this article:
+*Start.* &nbsp; If you are writing your own script to follow along, we use these packages in this article:
 
 ```{r}
 library(midfieldr)
 library(data.table)
 library(ggplot2)
-
-# Printing options for data.table
-options(
-  datatable.print.nrows = 15,
-  datatable.print.topn = 5,
-  datatable.print.class = TRUE
-)
 ```
 
-*Prepared data.* `study_observations`, included with midfieldr, contains post-processed observations of students ever enrolled in, and students  graduating from, the case study programs as developed in [Case study: Data](art-002-case-data.html).
+*Loads with midfieldr.* &nbsp; Prepared data. View data dictionary via `?study_observations`. 
 
-```{r}
-# View prepared data
-study_observations
-```
+- `study_observations`  (derived in [Case study: Data](art-002-case-data.html)). 
+
+
+
+
 
 ## Group and summarize
 
-*Copying.* Prevents operations on `DT` from affecting `study_observations` by reference [@data.table-reference-semantics].
+*Initialize.* &nbsp; Assign a working data frame. 
 
 ```{r}
 # Working data frame
 DT <- copy(study_observations)
-
-# Display the result
 DT
 ```
 
-To calculate stickiness, we want to count the number of students ever enrolled in each of our programs and the number of students graduating from the programs, grouped by race/ethnicity and sex.
+The study observations data frame is designed with one column for each grouping variable: `race`, `sex`, `program`, and `bloc`. 
 
-These grouping variables are columns in the data set (`race`, `sex`, `program`, and `group`)---a structure we designed to support this specific  analytical goal. We can now group and summarize in one line of code. 
+
+*Summarize.* &nbsp; Count the numbers of observations for each combination of the grouping variables. 
 
 ```{r}
 # Group and summarize
-DT <- DT[, .N, by = c("group", "program", "race", "sex")]
-
-# Display the result
+DT <- DT[, .N, by = c("bloc", "program", "race", "sex")]
 DT
 ```
 
 
+## Reshape
 
-
-## Compute metric
-
-Stickiness is the ratio of the number of graduates to the number of students ever enrolled in a program. To be able to divide `grad / ever` we would like these two values to be in the same row. The `dcast()` function accomplishes that for us. 
-
-This operation is essentially a transformation from block records to row records---a process known by a number of different names, e.g., pivot, crosstab, unstack, spread, or widen [@Mount+Zumel:2019:fluid-data].  This step  leaves the graphing variables (program, race/ethnicity, and sex) in place. 
+*Reshape.* &nbsp; Transform from block-record form to row-record form to set up the stickiness metric calculation. Transforms the *N* column into two columns, one for ever-enrolled and one for graduates.  This operation is essentially a transformation from block records to row records---a process known by a number of different names, e.g., pivot, crosstab, unstack, spread, or widen [@Mount+Zumel:2019:fluid-data].  This step  leaves the graphing variables (program, race/ethnicity, and sex) in place. 
 
 ```{r}
-# Transform to row-record form
-DT <- dcast(DT, program + sex + race ~ group, value.var = "N", fill = 0)
-
-# Display the result
+# Prepare to compute metric
+DT <- dcast(DT, program + sex + race ~ bloc, value.var = "N", fill = 0)
 DT
 ```
 
-We calculate percent stickiness. 
+
+
+
+## Compute the metric
+
+Stickiness is the ratio of the number of graduates to the number of students ever enrolled in a program.
+
+*Create a variable.*  &nbsp; "Stickiness" is the ratio of the number of graduates to the number of students ever enrolled in a program.  
 
 ```{r}
 # Compute the metric
-DT[, stick := round(100 * grad / ever, 1)]
+DT[, stickiness := round(100 * graduates / ever_enrolled, 1)]
 setkey(DT, NULL)
-
-# Display the result
 DT
 ```
 
@@ -122,17 +112,12 @@ DT
 same_content(DT, study_results)
 ```
 
-```{r}
-#| eval: false
-#| echo: false
 
-# Run manually
-# Writing external files
-setkey(DT, program, sex, race)
-setkey(DT, NULL)
-study_results <- copy(DT)
-usethis::use_data(study_results, overwrite = TRUE)
-```
+
+
+
+
+
 
 
 
@@ -144,7 +129,7 @@ We take several additional steps to prepare the data for dissemination in  table
 
 ```{r}
 # Preserve anonymity
-DT <- DT[grad >= 10]
+DT <- DT[graduates >= 10]
 
 # Display the result
 DT
@@ -194,10 +179,10 @@ With one quantitative variable (stickiness) for every combination of the levels 
 ```{r}
 # Convert categorical variables to factors
 DT <- order_multiway(DT,
-  quantity = "stick",
+  quantity = "stickiness",
   categories = c("program", "people"),
   method = "percent",
-  ratio_of = c("grad", "ever")
+  ratio_of = c("graduates", "ever_enrolled")
 )
 
 # Display the result
@@ -205,7 +190,7 @@ DT
 ```
 
 
-The column `program_stick` determines the order of the programs in the chart; `people_stick` determines the order of the race/ethnicity/sex groupings; the values in `stick` are the quantitative values to be graphed. 
+The column `program_stick` determines the order of the programs in the chart; `people_stick` determines the order of the race/ethnicity/sex groupings; the values in `stickiness` are the quantitative values to be graphed. 
 
 
 
@@ -218,7 +203,7 @@ In the first multiway chart, the rows are programs and panels are people, facili
 #| label: stickiness-01
 #| fig-asp: 1
 
-ggplot(DT, aes(x = stick, y = program)) +
+ggplot(DT, aes(x = stickiness, y = program)) +
   facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
   geom_point() +
   labs(x = "Stickiness (%)", y = "")
@@ -230,7 +215,7 @@ Alternatively, we can consider the dual chart, swapping the roles of the panels 
 #| label: stickiness-02
 #| fig-asp: 0.9
 
-ggplot(DT, aes(x = stick, y = people)) +
+ggplot(DT, aes(x = stickiness, y = people)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
   geom_point() +
   labs(x = "Stickiness (%)", y = "")
@@ -249,14 +234,14 @@ Data tables are often needed for publication. In this example, we format the dat
 
 ```{r}
 # Select the columns I want for the table
-tbl <- DT[, .(program, people, stick)]
+tbl <- DT[, .(program, people, stickiness)]
 
 # Change factors to characters so rows/columns can be alphabetized
 tbl[, people := as.character(people)]
 tbl[, program := as.character(program)]
 
 # Transform from block records to row records
-tbl <- dcast(tbl, people ~ program, value.var = "stick")
+tbl <- dcast(tbl, people ~ program, value.var = "stickiness")
 
 # Edit one column header
 setnames(tbl, old = "people", new = "People", skip_absent = TRUE)
@@ -280,13 +265,13 @@ tbl |>
 
 
 
-## Closing
-
-Starting with the prepared data (the case study observations), we compute longitudinal stickiness for four programs (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) grouped by program, race/ethnicity, and sex. 
-
-Pre-dissemination results are written to file for possible later use. We filter selected records and create a data table and charts for dissemination. 
 
 
+
+## References
+
+<div id="refs">
 
 ```{r child = "../man/rmd/common-closing.Rmd"}
 ```
+

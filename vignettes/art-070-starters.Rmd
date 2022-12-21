@@ -66,9 +66,8 @@ start term
 
 : The first term in which a student can be considered a starter. Identical to the entry term unless the student enters as undecided/unspecified. 
 
-undecided/unspecified
-
-: The MIDFIELD taxonomy includes the non-IPEDS code (CIP 999999) for Undecided or Unspecified indicating instances in which a student has not declared a major or an institution had not recorded a program. 
+```{r child = "../man/rmd/define-undecided.Rmd"}
+```
 
 ```{r child = "../man/rmd/define-fye-and-proxy.Rmd"}
 ``` 
@@ -113,9 +112,11 @@ library(data.table)
 data(student, term)
 ```
 
-*Loads with midfieldr.* &nbsp; Prepared data. View data dictionaries via `?study_programs`, `?fye_proxy`. 
+*Loads with midfieldr.* &nbsp; Prepared data. View data dictionaries via `?study_programs`, `?baseline_mcid`, `?fye_proxy`. 
 
 - `study_programs` (derived in [Programs](art-040-programs.html#assigning-program-names)). 
+
+- `baseline_mcid`  (derived in [Blocs](art-050-blocs.html#initial-processing)).
 
 - `fye_proxy` (derived in [FYE proxies](art-060-fye-proxies.html)). 
 
@@ -144,36 +145,14 @@ student <- select_required(source_student)
 term <- select_required(source_term)
 ```
 
-*Initialize.* &nbsp; Assign a working data frame. 
+```{r child = "../man/rmd/note-baseline-mcid.Rmd"}
+```
 
 ```{r}
 # Working data frame
-DT <- copy(term)
+DT <- copy(baseline_mcid)
 ```
 
-*Data sufficiency.*  &nbsp; Filter to satisfy the data sufficiency criterion. Code reproduced from [Data sufficiency](art-020-data-sufficiency.html#reusable-code).
-
-```{r}
-# Filter for data sufficiency, output unique IDs
-DT <- add_timely_term(DT, term)
-DT <- add_data_sufficiency(DT, term)
-DT <- DT[data_sufficiency == "include", .(mcid)]
-DT <- unique(DT)
-```
-
-*Degree seeking.* &nbsp; Filter to retain degree seeking students via an inner join with `student`. Code reproduced from [Degree seeking](art-030-degree-seeking.html#reusable-code).  
-
-```{r}
-# Filter for degree seeking, output unique IDs
-DT <- student[DT, .(mcid), on = c("mcid"), nomatch = NULL]
-DT <- unique(DT)
-```
-
-We preserve this data frame as a baseline for examples in the article.  
-
-```{r}
-baseline <- copy(DT)
-```
 
 
 
@@ -371,30 +350,16 @@ join_labels <- join_labels[, .(program, start = cip6)]
 
 # Filter by program
 DT <- join_labels[DT, on = c("start"), nomatch = NULL]
-DT[, start := NULL]
-DT <- unique(DT)
 DT
 ```
 
-*Verify prepared data.* &nbsp; `study_starters`, included with midfieldr, contains the case study information developed above. Here we verify that the two data frames have the same content.  
+*Select.*  &nbsp; Omit unnecessary variables. 
 
 ```{r}
-# Demonstrate equivalence
-same_content(DT, study_starters)
+DT <- DT[, .(mcid, program)]
+DT <- unique(DT)
+DT
 ```
-
-```{r}
-#| eval: false
-#| echo: false
-
-# Run manually
-# Writing external files
-setkey(DT, mcid)
-setkey(DT, NULL)
-study_starters <- copy(DT)
-usethis::use_data(study_starters, overwrite = TRUE)
-```
-
 
 
 
@@ -405,10 +370,10 @@ usethis::use_data(study_starters, overwrite = TRUE)
 
 ## Reusable code
 
-*Preparation.* &nbsp; The baseline data frame we preserved earlier is the intake for this section.
+*Preparation.* &nbsp; The data frame of baseline IDs is the intake for this section. 
 
 ```{r}
-DT <- copy(baseline)
+DT <- copy(baseline_mcid)
 ```
 
 *Starters.* &nbsp; Summary code chunks for ready reference. 
@@ -447,13 +412,16 @@ DT <- DT[, .(mcid, start)]
 join_labels <- copy(study_programs)
 join_labels <- join_labels[, .(program, start = cip6)]
 DT <- join_labels[DT, on = c("start"), nomatch = NULL]
-DT[, start := NULL]
+DT <- DT[, .(mcid, program)]
 DT <- unique(DT)
 ```
 
 
 
 
+<!-- ## References -->
+
+<!-- <div id="refs"> -->
 
 ```{r child = "../man/rmd/common-closing.Rmd"}
 ```

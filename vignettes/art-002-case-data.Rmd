@@ -32,7 +32,7 @@ Part 2 of a case study in three parts, illustrating how we work with longitudina
 
 ## Method
 
-Our data processing goal is to reduce the source data tables to the specific observations needed to compute our metrics. The data processing tasks include filtering observations (rows), creating, renaming, and recoding variables (columns), and joining data frames. 
+Our data processing goal is to reduce the source data tables to the specific observations needed to compute our metrics. The data processing tasks include filtering observations, creating, renaming, and recoding variables, and joining data frames. 
 
 The analysis is organized to produce two data frames---students ever enrolled in the programs and students graduating from the programs---that are joined and written to file as a starting point for [Case study: Results](art-003-case-results.html). 
 
@@ -43,41 +43,32 @@ The analysis is organized to produce two data frames---students ever enrolled in
 
 
 
-## Load practice data
 
-*Start a script*. If you are writing your own script to follow along, we use these packages in this article:
+
+
+## Load data
+
+*Start.* &nbsp; If you are writing your own script to follow along, we use these packages in this article:
 
 ```{r}
 library(midfieldr)
 library(midfielddata)
 library(data.table)
-
-# Printing options for data.table
-options(
-  datatable.print.nrows = 15,
-  datatable.print.topn = 5,
-  datatable.print.class = TRUE
-)
 ```
 
-
-
-
-
-*Load source data.* MIDFIELD practice data tables as described in [Getting started](art-000-getting-started.html).
+*Load.* &nbsp; Practice datasets. View data dictionaries via `?student`, `?term`, `?degree`.  
 
 ```{r}
-# Load practice data sets
+# Load practice data
 data(student, term, degree)
 ```
 
 
 
 
-
 ## Initial processing
 
-*Optional.* Reduce the dimensions of MIDFIELD data tables. A convenience function to reduce the dimensions of a MIDFIELD data table at the start of a session by selecting only those columns typically required by other midfieldr functions. 
+*Select (optional).* &nbsp; Reduce the number of columns to the minimum needed by the midfieldr functions. 
 
 ```{r}
 # Work with required midfieldr variables only
@@ -86,94 +77,72 @@ term <- select_required(term)
 degree <- select_required(degree)
 ```
 
-*Copying.* Prevents operations on `DT` from affecting `term` by reference  [@data.table-reference-semantics].
+*Initialize.* &nbsp; Assign a working data frame. We often start with the `term` dataset. 
 
 ```{r}
 # Working data frame
 DT <- copy(term)
-
-# Display result
 DT
 ```
 
-The result has `r nrow(DT)` observations. We will usually note the number of observations as they change. 
+The result has `r nrow(DT)` observations. In the case study, we will typically note the number of observations as they change. 
 
-*Filtering.* In this study, only two variables from the `term` data are needed to start: student ID `mcid` and program code `cip6`. We drop unnecessary columns then remove duplicate rows such that we have unique combinations of student ID and program CIP. 
 
-```{r}
-# Minimize the dimensions of the data
-DT <- DT[, .(mcid, cip6)]
-DT <- unique(DT)
-
-# Display the result
-DT
-
-# Count unique IDs
-length(unique(DT$mcid))
-```
-
-The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique students. The number of unique students is smaller than the number of observations because some students change programs over their course of study.  Here we have one row per unique combination of student (`mcid`) and program code (`cip6`).  
 
 
 
 ## Filter for data sufficiency
 
-Some student records near the lower and upper terms that bound the available data must be excluded to prevent false summaries involving timely degree  completion. To apply this filter, we determine the timely completion term then data sufficiency. 
+Some student records near the lower and upper terms that bound the available data must be excluded to prevent false summaries involving timely degree  completion. To apply this filter, we first determine the timely completion term. 
 
-*Creating variables.* Using information in `term`, we add the  `timely_term` variable as well as supporting variables used in its construction.
+*Add variables.*  &nbsp; Using information in `term`, we add the  `timely_term` variable as well as supporting variables used in its construction.
 
 ```{r}
-# Calculate a timely completion term for every student
+# Determine a timely completion term for every student
 DT <- add_timely_term(DT, term)
-
-# Display the result
 DT
 ```
 
-*Creating variables.* Using information in `term`, we add the  `data_sufficiency` variable as well as supporting variables used in its construction.
+*Add variables.*  &nbsp; Using information in `term`, we add the  `data_sufficiency` variable as well as supporting variables used in its construction.
 
 ```{r}
 # Determine data sufficiency for every student
 DT <- add_data_sufficiency(DT, term)
-
-# Display the result
 DT
 ```
 
-*Filtering.* We filter to retain observations for which the data are sufficient then drop unnecessary columns.   
+*Filter.* We filter to retain observations for which the data are sufficient then drop all but the ID variable.    
 
 ```{r}
 # Retain observations having sufficient data
 DT <- DT[data_sufficiency == "include"]
-DT <- DT[, .(mcid, cip6)]
-
-# Display the result
+DT <- DT[, .(mcid)]
+DT <- unique(DT)
 DT
 ```
 
-The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique students.
+The result has `r nrow(DT)` observations.
 
 
 
 
+## Filter for degree seeking
 
-
-
-## Filter for degree-seeking
-
-In studying stickiness, we exclude non-degree-seeking students. We filter such students using the `student` data which contains only degree seeking students. 
-
-*Filtering.* An inner join with `student` that returns rows with matching IDs from both data frames, then selected columns.
+*Filter.* &nbsp; Use an inner join with `student` to retain degree-seeking students only. 
 
 ```{r}
-# Inner join that filters DT
-DT <- student[DT, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
-
-# Display the result
+# Filter for degree seeking, output unique IDs
+DT <- student[DT, .(mcid), on = c("mcid"), nomatch = NULL]
+DT <- unique(DT)
 DT
 ```
 
-The result has `r nrow(DT)` observations. (No change is expected in this example because all students in the midfielddata practice data are degree-seeking.) 
+The result has `r nrow(DT)` observations. (No change is expected in this example because all students in the midfielddata practice data are degree-seeking.)  We preserve this data frame as a baseline set of IDs to be used again.  
+
+```{r}
+baseline <- copy(DT)
+```
+
 
 
 
@@ -182,44 +151,51 @@ The result has `r nrow(DT)` observations. (No change is expected in this example
 
 ## Identify programs
 
-The `cip6` variable in our data identifies the program in which a student is enrolled in a given term, based on the US *Classification of Instructional Programs* (CIP) codes. 
+In MIDFIELD datasets, the `cip6` variable identifies the 6-digit code for the program in which a student is enrolled in a given term, based on the US *Classification of Instructional Programs* (CIP) codes. 
 
-CIP codes and names are included with midfieldr in the `cip` data set. We have searched that information to obtain the CIP codes for the four programs in our case study: Civil Engineering CIPs start with 1408, Electrical Engineering 1410, Mechanical Engineering 1419, and Industrial/Systems Engineering 1427, 1435, 1436, and 1437. 
+CIP codes and names are included with midfieldr in the `cip` data set. We have already searched that information to obtain the CIP codes for the four programs in our case study: Civil Engineering CIPs start with 1408, Electrical Engineering 1410, Mechanical Engineering 1419, and Industrial/Systems Engineering 1427, 1435, 1436, and 1437. 
 
-*Filtering* Gather the 6-digit CIP codes for the programs in the case study. Drop unnecessary variables.  We keep the `cip4name` because, in engineering at least, the 4-digit name tends to be a disciplinary or departmental name. 
+From `cip`, we obtain all codes that start with any of the selected 4-digit codes. 
 
 ```{r}
-# Gather program CIP codes
-case_programs <- filter_cip(keep_text = c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
-case_programs <- case_programs[, .(cip6, cip4name)]
-
-# Display the result
-case_programs
+# Four engineering programs using 4-digit CIP codes
+selected_programs <- filter_cip(c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+selected_programs
 ```
 
-*Creating variables.* Add a variable to label each of these `r nrow(case_programs)` programs with one of the four conventional program abbreviations we will use in comparing metrics, i.e., Civil (CE), Electrical (EE), Mechanical (ME), and Industrial/Systems Engineering (ISE). 
+*Add a variable.* &nbsp;  User-defined program names are nearly always required. Add a variable to label each of these `r nrow(selected_programs)` programs with one of the four conventional program abbreviations we will use in comparing metrics, i.e., Civil (CE), Electrical (EE), Mechanical (ME), and Industrial/Systems Engineering (ISE). 
 
 ```{r}
-# Assign four program names by CIP code
-case_programs[, program := fcase(
+# Recode program labels. Edit as required. 
+selected_programs[, program := fcase(
   cip6 %like% "^1408", "CE",
   cip6 %like% "^1410", "EE",
   cip6 %like% "^1419", "ME",
   cip6 %chin% c("142701", "143501", "143601", "143701"), "ISE"
 )]
+```
+
+Confirm that the abbreviations match the original 4-digit CIP names. We also illustrate using `options()` to change the number of data.table rows to print. 
+
+```{r}
+# Preserve settings 
+op <- options()
+# Edit number of rows to print 
+options(datatable.print.nrows = 15)
 
 # Confirm that abbreviations match the longer program names
-case_programs[, .(cip4name, program)]
+selected_programs[, .(cip4name, program)]
 ```
+
 
 Having checked that the new abbreviations correctly represent the programs, we can finalize the data frame of program CIPs and names. 
 
 ```{r}
-# Case study CIPs and program names
-case_programs[, cip4name := NULL]
+selected_programs <- selected_programs[, .(cip6, program)]
+selected_programs
 
-# Display the result
-case_programs
+# Restore original settings
+options(op)
 ```
 
 
@@ -227,52 +203,58 @@ case_programs
 
 
 
-## Gather ever enrolled 
 
-*Joining.* We join the program names in `case_programs` to the working data frame using a left-outer join and return selected rows.    
+## Gather ever-enrolled
+
+*Reset* &nbsp; The data frame of baseline IDs is the intake for this section.
 
 ```{r}
-# Left-outer join to DT
-DT <- case_programs[DT, .(mcid, cip6, program), on = c("cip6")]
-
-# Display the result
+# IDs of data-sufficient, degree-seeking students
+DT <- copy(baseline)
 DT
 ```
 
-*Filtering.*  All instances of NA programs are dropped.
+The result has `r nrow(DT)` observations.
+
+*Left join (add a variable).* &nbsp; A left join merges `term` with `DT`,  returns all rows from `DT`, and returns rows from `term` that match on `mcid`---in effect, adding the `cip6` variable to `DT`. Additionally, because `term` contains multiple rows per ID, the merged data frame also has the possibility of multiple rows per ID.  
 
 ```{r}
-# Retain observations in our four programs
-DT <- DT[!is.na(program)]
-
-# Display the result
+# Left-outer join from term to DT
+DT <- term[DT, .(mcid, cip6), on = c("mcid")]
+DT <- unique(DT)
 DT
 ```
 
-The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique students.
+The result has `r nrow(DT)` observations.
 
-*Filtering.* A program label can be associated with multiple CIP codes. We drop the code and filter to remove duplicates to ensure unique combinations of ID and program. 
+*Inner join (add a variable, filter observations).* &nbsp; An inner join merges `study_programs` with `DT` and returns rows in both tables that match on `cip6`. In effect, we add a column of program labels to `DT` and simultaneously filter `DT` to retain rows that match the four case study programs only.  
+ 
+```{r}
+# Join program names and retain desired programs only 
+DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
+DT
+```
+
+The result has `r nrow(DT)` observations.
+
+*Filter.* &nbsp; Because students can change CIP codes but remain within the same labeled group (e.g., ISE), we drop the `cip6` code and filter for unique combinations of ID and program label. 
 
 ```{r}
-# Drop duplicate rows
+# Filter for unique ID-program combinations 
 DT[, cip6 := NULL]
 DT <- unique(DT)
-
-# Display the result
 DT
 ```
 
-The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique students.
+The result has `r nrow(DT)` observations.
 
-*Creating variables.* Add a variable to label this group as "ever" enrolled to distinguish them from the group of graduates to be created next. Copy the data frame to a new name to save for later. 
+*Copy.* &nbsp; Set aside the ever enrolled information under a new name to use later for joining with graduates.  
 
 ```{r}
-# Conclude development of the ever-enrolled observations
-ever <- copy(DT)
-ever[, group := "ever"]
-
-# Display the result
-ever
+# Prepare for joining
+setcolorder(DT, c("mcid", "program"))
+ever_enrolled <- copy(DT)
+ever_enrolled
 ```
 
 
@@ -280,194 +262,248 @@ ever
 
 
 
-## Subset for graduates
 
-*Filtering.* Students potentially counted as graduates must be a subset of those in the ever enrolled population. We re-initialize the working data frame, retaining unique IDs only. 
+## Gather graduates
+
+*Reset* &nbsp; The data frame of baseline IDs is the intake for this section. As before, the result has `r nrow(baseline)` observations.
 
 ```{r}
-# Unique IDs of students ever enrolled in the study programs
-DT <- DT[, .(mcid)]
-DT <- unique(DT)
-
-# Display the result
+# IDs of data-sufficient, degree-seeking students
+DT <- copy(baseline)
 DT
 ```
 
-*Filtering.* An inner join with `degree` that returns rows with matching IDs from both data frames, then selected columns. 
+*Add variables.*  &nbsp; We use `term` to again add the `timely_term` variable and its supporting variables.
 
 ```{r}
-# Inner join that filters DT
-DT <- DT[degree, .(mcid, cip6), on = c("mcid"), nomatch = NULL]
-
-# Display the result
-DT
-```
-
-The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique students. These IDs have already been filtered for data sufficiency and  degree-seeking.
-
-
-
-
-## Filter graduates by completion status
-
-To be counted as a graduate in the stickiness metric, a student must complete their program in a timely manner (default 6 years after admission, with reduced spans for some transfer students). 
-
-*Add variables.* Completion status requires the timely completion term variable. 
-
-```{r}
-# Calculate a timely completion term for every student
+# Add timely completion term 
 DT <- add_timely_term(DT, term)
-
-# Display the result
 DT
 ```
 
-
-*Creating variables.* Using information in `degree`, we add the `completion_status` variable as well as supporting variables used in its construction. 
+*Add variables.*  &nbsp; We use `degree` to add the `completion_status` variable and its supporting variables.
 
 ```{r}
-# Determine completion status for every student
+# Add completion status
 DT <- add_completion_status(DT, degree)
-
-# Display the result
 DT
 ```
 
-*Filtering.* Retain records with "positive"  completion status (i.e. completion in 6 years or less) and drop unnecessary variables.
+*Filter.*  &nbsp; Retain observations of timely completers only. Drop unnecessary variables. 
 
 ```{r}
 # Retain timely completers
 DT <- DT[completion_status == "timely"]
-DT <- DT[, .(mcid, cip6)]
-
-# Display the result
+DT <- DT[, .(mcid)]
 DT
 ```
 
-The result has `r nrow(DT)` unique observations.
+The result has `r nrow(DT)` observations.
 
-
-
-
-
-
-## Filter graduates by program
-
-We join the program names to the working data frame using a left-outer join and return selected rows. We then filter to retain program names that are not NA. 
+*Left join (add variables).*  &nbsp; We use a left-join with `degree` to add the CIP codes and terms of the degrees earned. 
 
 ```{r}
-# Left-outer join to DT
-DT <- case_programs[DT, .(mcid, program), on = c("cip6")]
-DT <- DT[!is.na(program)]
+DT <- degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
+DT
+```
 
-# Unique observations
+The result has `r nrow(DT)` observations.
+
+*Inner join (add a variable, filter observations)* &nbsp; Again, add a column of program labels and filter by program. 
+
+```{r}
+# Join programs
+DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
+DT
+```
+
+The result has `r nrow(DT)` observations.
+
+*Filter.* &nbsp; Students may have earned multiple degrees in different terms. We retain degrees earned in their first degree term only. 
+
+```{r}
+DT <- DT[, .SD[which.min(term_degree)], by = "mcid"]
+DT
+```
+
+The result has `r nrow(DT)` observations.
+
+*Filter.* &nbsp; Drop unnecessary variables and filter for unique observations of ID and program label. 
+
+```{r}
+# Filter for unique ID-program combinations 
+DT[, c("cip6", "term_degree") := NULL]
 DT <- unique(DT)
-
-# Display the result
 DT
 ```
 
-The result has `r nrow(DT)` unique observations.
-
-*Creating variables.* Add a variable to label this group as "grad" to distinguish them from the group of ever enrolled students created earlier.  
+*Copy.* &nbsp; Set aside the graduates information under a new name to use  for joining with ever enrolled.  
 
 ```{r}
-# Conclude development of the graduate observations
-grad <- copy(DT)
-grad[, group := "grad"]
-
-# Display the result
-grad
+# Prepare for joining
+setcolorder(DT, c("mcid", "program"))
+graduates <- copy(DT)
+graduates
 ```
 
 
+## Add groupings
 
+We plan to group the data by program, bloc, race/ethnicity, and sex. Program is already present. Bloc labels are added next. 
 
+*Add a variable.* &nbsp; We add a `bloc` variable to the ever enrolled and graduates data frames before joining. 
 
-## Combine ever and grad
+```{r}
+ever_enrolled[, bloc := "ever_enrolled"]
+graduates[, bloc := "graduates"]
+```
 
-*Binding.* Combine two data frames by matching column names. 
+*Join.* &nbsp; Combine the two data frames by rows, binding by matching column names. 
 
 ```{r}
 # Combine two data frames
-DT <- rbindlist(list(ever, grad), use.names = TRUE)
-
-# Display the result
+DT <- rbindlist(list(ever_enrolled, graduates), use.names = TRUE)
 DT
 ```
 
+The result has `r nrow(DT)` observations.
 
-
-
-
-
-
-## Add demographics
-
-*Creating variables.* Using columns from `student`, we add variables for race/ethnicity and sex using a left-outer join. All rows and columns of DT are returned with two columns added from `student`. 
+*Add variables.* &nbsp; Use a left join, matching on `mcid`, to add race/ethnicity and sex to the data frame. 
 
 ```{r}
-# Selecting columns from student
-student_cols <- student[, .(mcid, race, sex)]
-
-# Add them to DT with a left join
-DT <- student_cols[DT, on = c("mcid")]
-
-# Display the result
+# Join race/ethnicity and sex
+cols_we_want <- student[, .(mcid, race, sex)]
+DT <- cols_we_want[DT, on = c("mcid")]
 DT
 ```
 
-The result has `r nrow(DT)` observations of `r length(unique(DT$mcid))` unique students. IDs labeled "grad" are a subset of those labeled "ever". 
-
-```{r}
-#| eval: false
-#| echo: false
-
-# Run manually to create external data file
-setkey(DT, mcid)
-setkey(DT, NULL)
-study_observations <- copy(DT)
-usethis::use_data(study_observations, overwrite = TRUE)
-```
-
-
-*Verify built-in data.* To avoid deriving this data frame each time it is needed in other articles, the same information is provided in the `study_observations` data frame included with midfieldr. Here we verify that the two data frames are identical. 
+*Verify prepared data.* &nbsp; `study_observations`, included with midfieldr, contains the case study information developed above. Here we verify that the two data frames have the same content. 
 
 ```{r}
 # Demonstrate equivalence
 same_content(DT, study_observations)
 ```
 
+In this form, the observations are the starting point for part 3 of the case study. 
 
 
-## Review 
 
-To better grasp the structure of these data, we can review selected sets of observations by ID. In the first example, the ID produces one observation only. The student was enrolled in Civil Engineering but completion, if any, was not timely. 
+
+
+
+
+
+## Closer look
+
+We examine the study observations for a few specific students to better illustrate the structure of these data.  
+
+```{r}
+#| echo: false
+#| eval: false
+# Find example IDs
+
+x <- graduates[ever_enrolled, on = "mcid"]
+y <- x[is.na(program)]
+y$mcid[duplicated(y$mcid)]
+
+y <- x[!is.na(program)]
+y$mcid[duplicated(y$mcid)]
+
+x[program == i.program]
+
+mcid_we_want <- "MCID3112470255"
+DT[mcid == mcid_we_want]
+term[mcid == mcid_we_want]
+degree[mcid == mcid_we_want]
+```
+
+```{r}
+#| echo: false
+# Preserve settings 
+op <- options()
+
+# Edit number of rows to print 
+options(datatable.print.nrows = 15)
+```
+
+ 
+
+*Example 1.* &nbsp; This ID yields one observation only. The student was enrolled in Electrical Engineering but did not complete one of the four case study programs. 
 
 ```{r}
 # Display one student by ID
-DT[mcid == "MID26694225"]
+mcid_we_want <- "MCID3111171519"
+DT[mcid == mcid_we_want]
 ```
 
-In the next example, the ID produces two observations indicating that the student was enrolled in Civil Engineering and a timely graduate of that program. 
+A closer look at the student's `term` record confirms the result: the student was enrolled in CIP 141001 (Electrical Engineering) but switched to CIP 110701 (Computer Science). The `degree` record indicates that the student graduated in Computer Science. 
+
+```{r}
+# Closer look at term
+term[mcid == mcid_we_want]
+
+# Closer look at degree
+degree[mcid == mcid_we_want]
+```
+
+*Example 2.* &nbsp; This ID yields two observations indicating that the student was enrolled in Industrial/Systems Engineering and a timely graduate of that program.  
 
 ```{r}
 # Display one student by ID
-DT[mcid == "MID25786154"]
+mcid_we_want <- "MCID3111150194"
+DT[mcid == mcid_we_want]
 ```
 
-In the next example, the ID produces two observations indicating that the student was enrolled in Electrical Engineering and in Mechanical Engineering but a timely graduate of neither program. 
+The `term` and `degree` excerpts confirm those observations. 
+
+```{r}
+# Closer look at terms
+term[mcid == mcid_we_want]
+
+# Closer look at degree
+degree[mcid == mcid_we_want]
+```
+
+*Example 3.* &nbsp; This ID yields two observations indicating that the student was enrolled in Electrical Engineering and in Civil Engineering but a timely graduate of neither program. 
 
 ```{r}
 # Display one student by ID
-DT[mcid == "MID25868925"]
+mcid_we_want <- "MCID3111264877"
+DT[mcid == mcid_we_want]
 ```
 
-In the next example, the ID produces three observations indicating that the student was enrolled in Electrical Engineering and in Civil Engineering and a timely graduate of Civil.  
+The `term` excerpt agrees; the `degree` record shows they graduated in CIP 261399 (Biological and Biomedical Sciences). 
+
+```{r}
+# Closer look at term
+term[mcid == mcid_we_want]
+
+# Closer look at degree
+degree[mcid == mcid_we_want]
+```
+
+*Example 4.* &nbsp; This ID yields four observations indicating that the student was enrolled in Civil, Electrical, and Mechanical Engineering and a timely graduate of Mechanical.   
 
 ```{r}
 # Display one student by ID
-DT[mcid == "MID26526757"]
+mcid_we_want <- "MCID3112470255"
+DT[mcid == mcid_we_want]
+```
+
+The `term` and `degree` excerpts confirm those observations.
+
+```{r}
+# Closer look at term
+term[mcid == mcid_we_want]
+
+# Closer look at degree
+degree[mcid == mcid_we_want]
+```
+
+```{r}
+#| echo: false
+# Restore original settings
+options(op)
 ```
 
 
@@ -477,9 +513,6 @@ DT[mcid == "MID26526757"]
 
 
 
-## Closing
-
-Starting with the `student`, `term`, and `degree` data tables, we filtered the data for data sufficiency, degree seeking, program, and timely completion in four programs (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) and processed the data to obtain the observations needed to determine stickiness.  
 
 
 
@@ -488,7 +521,5 @@ Starting with the `student`, `term`, and `degree` data tables, we filtered the d
 
 ```{r child = "../man/rmd/common-closing.Rmd"}
 ```
-
-<!-- draw a line if there are no references to end the article  -->
 
 ---

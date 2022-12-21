@@ -47,17 +47,15 @@ completers
 
 : Bloc of students who complete their baccalaureate programs, earning their first degrees.  
 
-timely completion criterion 
-
-: Completing a program in no more than a specified span of years, in many cases, within 6 years after admission (150% of the "normal" 4-year span), or possibly less for some transfer students.
+```{r child = "../man/rmd/define-timely-completion-criterion.Rmd"}
+``` 
 
 completion status
 
 : A derived midfieldr variable indicating whether a student completes a degree, and if so, whether their completion was timely. Possible values are "timely", "late", and "NA". Late completers are often excluded from a count of  "graduates."
 
-graduates
-
-: Bloc of timely completers. In casual usage, a "graduate" might mean all completers, but in the midfieldr context we intend to restrict the definition to timely completers unless noted otherwise. 
+```{r child = "../man/rmd/define-graduates.Rmd"}
+``` 
 
 
 
@@ -77,9 +75,6 @@ A bloc of graduates (timely completers) can be determined independent of other b
 1. Filter by degree program. 
 
 The next step might be to subset the graduates if necessary to meet the needs of the metric. For example, the graduation rate metric requires graduates to be a subset of starters in the same program. We postpone this step until treating the metrics. 
-
-
-
 
 ```{r child = "../man/rmd/note-for-practice-only-2.Rmd"}
 ```
@@ -108,9 +103,11 @@ library(data.table)
 data(student, term, degree)
 ```
 
-*Loads with midfieldr.* &nbsp; Prepared data. View data dictionary via `?study_programs`. 
+*Loads with midfieldr.* &nbsp; Prepared data. View data dictionaries via `?study_programs`, `?baseline_mcid`. 
 
 - `study_programs`  (derived in [Programs](art-040-programs.html#assigning-program-names)). 
+
+- `baseline_mcid`  (derived in [Blocs](art-050-blocs.html#initial-processing)).
 
 
 
@@ -134,35 +131,12 @@ term <- select_required(source_term)
 degree <- select_required(source_degree)
 ```
 
-*Initialize.* &nbsp; Assign a working data frame. 
+```{r child = "../man/rmd/note-baseline-mcid.Rmd"}
+```
 
 ```{r}
 # Working data frame
-DT <- copy(term)
-```
-
-*Data sufficiency.*  &nbsp; Filter to satisfy the data sufficiency criterion. Code reproduced from [Data sufficiency](art-020-data-sufficiency.html#reusable-code).
-
-```{r}
-# Filter for data sufficiency, output unique IDs
-DT <- add_timely_term(DT, term)
-DT <- add_data_sufficiency(DT, term)
-DT <- DT[data_sufficiency == "include", .(mcid)]
-DT <- unique(DT)
-```
-
-*Degree seeking.* &nbsp; Filter to retain degree seeking students via an inner join with `student`. Code reproduced from [Degree seeking](art-030-degree-seeking.html#reusable-code).  
-
-```{r}
-# Filter for degree seeking, output unique IDs
-DT <- student[DT, .(mcid), on = c("mcid"), nomatch = NULL]
-DT <- unique(DT)
-```
-
-We preserve this data frame as a baseline for examples in the article.  
-
-```{r}
-baseline <- copy(DT)
+DT <- copy(baseline_mcid)
 ```
 
 
@@ -216,7 +190,7 @@ same_content(x, z)
 ```{r}
 # Add completion status and supporting variables
 DT <- add_completion_status(DT, degree)
-DT[]
+DT
 ```
 
 Similar to the details described in the data sufficiency vignette, `add_completion_status()` accepts [Alternate source names](art-020-data-sufficiency.html#alternate-source-names) and uses [Silent overwriting](art-020-data-sufficiency.html#silent-overwriting) when existing columns have the same name as one of the added columns. 
@@ -262,7 +236,7 @@ DT <- DT[completion_status == "timely"]
 # Filter for unique IDs
 DT <- DT[, .(mcid)]
 DT <- unique(DT)
-DT[]
+DT
 ```
 
 
@@ -274,10 +248,10 @@ In this case, "filter by program" means to filter by *degree program.* Hence we 
 *Add variables.* &nbsp; Left join with selected variables from `degree`. 
 
 ```{r}
-# Add degree CIP codes
-cols_we_want <- degree[, .(mcid, cip6)]
+# Add degree CIP codes and terms
+cols_we_want <- degree[, .(mcid, term_degree, cip6)]
 DT <- cols_we_want[DT, on = c("mcid")]
-DT[]
+DT
 ```
 
 If our IDs are all graduates, there should be no NA values in the CIP column after joining. We check as follows, where the result is the integer number of rows with an incomplete case, i.e., an NA in either column. The result is zero. 
@@ -287,14 +261,27 @@ If our IDs are all graduates, there should be no NA values in the CIP column aft
 sum(!complete.cases(DT))
 ```
 
-*Filter.*  &nbsp; Join program labels and filter to retain the desired programs. Code adapted from [Groupings](art-090-groupings.html#reusable-code). 
+*Filter.*  &nbsp; Join program labels and filter to retain the desired programs. 
+```{r}
+# Filter by program 
+DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
+DT
+```
+
+*Filter.*  &nbsp; Filter to retain observations in the first degree term only. Multiple degrees are allowed but only if they occur in the first degree term.  
 
 ```{r}
-# Filter by program
-DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
-DT[, cip6 := NULL]
+# Filter by first degree term 
+DT <- DT[, .SD[which.min(term_degree)], by = "mcid"]
+DT
+```
+
+*Filter.* &nbsp; Drop unnecessary variables and filter for unique observations of ID and degree program label.  
+
+```{r}
+DT[, c("cip6", "term_degree") := NULL]
 DT <- unique(DT)
-DT[]
+DT
 ```
  
  
@@ -302,32 +289,36 @@ DT[]
 
 
 
-## Reusable code: Graduates
+## Reusable code
 
-*Preparation.* &nbsp; The baseline data frame we preserved earlier is the intake for this section. 
+*Preparation.* &nbsp; The data frame of baseline IDs is the intake for this section. 
 
 ```{r}
-DT <- copy(baseline)
+DT <- copy(baseline_mcid)
 ```
 
 *Graduates.* &nbsp; A summary code chunk for ready reference. 
 
 ```{r}
-# Gather graduates and their degree CIPs
+# Gather graduates, degree CIPs and terms
 DT <- add_timely_term(DT, term)
 DT <- add_completion_status(DT, degree)
 DT <- DT[completion_status == "timely"]
-DT <- degree[DT, .(mcid, cip6), on = c("mcid")]
+DT <- degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
 
-# Filter by program
+# Filter by programs and first degree terms
 DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
-DT[, cip6 := NULL]
+DT <- DT[, .SD[which.min(term_degree)], by = "mcid"]
+DT[, c("cip6", "term_degree") := NULL]
 DT <- unique(DT)
 ```
 
 
 
 
+<!-- ## References -->
+
+<!-- <div id="refs"> -->
 
 ```{r child = "../man/rmd/common-closing.Rmd"}
 ```

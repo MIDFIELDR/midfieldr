@@ -5,8 +5,9 @@
 \alias{cip}
 \title{Table of academic programs}
 \format{
-\code{data.table} with 1582 rows and 6 columns keyed by the
-6-digit CIP code:
+\code{data.table} with 1582 rows and 6 columns keyed by the 6-digit CIP
+code:
+
 \describe{
 
 \item{\code{cip6}}{Character 6-digit code representing "specific
@@ -31,16 +32,16 @@ representing "the most general groupings of related programs."}
 cip
 }
 \description{
-A data table based on the US National Center for Education Statistics
-(NCES), Integrated Postsecondary Education Data System (IPEDS), 2010
-CIP, \url{http://nces.ed.gov/ipeds/cipcode/}. The data are codes and
-names for 1582 instructional programs organized on three levels: a
-2-digit series, a 4-digit series, and a 6-digit series.
+A data table based on the US National Center for Education Statistics (NCES),
+Integrated Postsecondary Education Data System (IPEDS), 2010 CIP,
+\url{http://nces.ed.gov/ipeds/cipcode/}. The data are codes and names for
+1582 instructional programs organized on three levels: a 2-digit series, a
+4-digit series, and a 6-digit series.
 }
 \details{
-The midfielddata taxonomy includes one non-IPEDS code (999999) for
-Undecided or Unspecified, instances in which institutions reported no
-program information or that students were not enrolled in a program.
+The midfielddata taxonomy includes one non-IPEDS code (999999) for Undecided
+or Unspecified, instances in which institutions reported no program
+information or that students were not enrolled in a program.
 }
 \seealso{
 Other cip-data: 
