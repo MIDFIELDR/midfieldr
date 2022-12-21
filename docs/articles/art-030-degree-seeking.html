@@ -62,6 +62,13 @@
     <a class="dropdown-item" href="../articles/art-030-degree-seeking.html">Degree seeking</a>
     <a class="dropdown-item" href="../articles/art-040-programs.html">Programs</a>
     <a class="dropdown-item" href="../articles/art-050-blocs.html">Blocs</a>
+    <a class="dropdown-item" href="../articles/art-060-fye-proxies.html">FYE proxies</a>
+    <a class="dropdown-item" href="../articles/art-070-starters.html">Starters</a>
+    <a class="dropdown-item" href="../articles/art-080-graduates.html">Graduates</a>
+    <a class="dropdown-item" href="../articles/art-090-groupings.html">Groupings</a>
+    <a class="dropdown-item" href="../articles/art-100-grad-rate.html">Graduation rate</a>
+    <a class="dropdown-item" href="../articles/art-110-stickiness.html">Stickiness</a>
+    <a class="dropdown-item" href="../articles/art-120-multiway.html">Multiway data and charts</a>
   </div>
 </li>
 <li class="nav-item">
@@ -103,9 +110,9 @@
 
     
     
-<p>Most analyses of Student Unit Records (SURs) omit records of students
-not seeking degrees. We use an <em>inner join</em> merging operation as
-a degree-seeking filter. This article treats degree seeking and inner
+<p>Most analyses of student-level records omit records of students not
+seeking degrees. We use an <em>inner join</em> merging operation as a
+degree-seeking filter. This article treats degree seeking and inner
 joins generally.</p>
 <p>This article in the MIDFIELD workflow.</p>
 <ol style="list-style-type: decimal">
@@ -142,30 +149,29 @@ students.</p>
 <li><p>Filter source SURs for data sufficiency.</p></li>
 <li><p>Filter for degree seeking.</p></li>
 </ol>
-<p><em>Reminder.</em>   midfielddata is suitable for learning to work
-with student-level data but not for drawing inferences about program
-attributes or student experiences. midfielddata supplies practice data,
-not research data.</p>
+<p><em>Reminder.</em>   midfielddata datasets are for practice, not
+research.</p>
 </div>
 <div class="section level2">
 <h2 id="load-data">Load data<a class="anchor" aria-label="anchor" href="#load-data"></a>
 </h2>
-<p><em>Open.</em>   If you are writing your own script to follow along,
+<p><em>Start.</em>   If you are writing your own script to follow along,
 we use these packages in this article:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://midfieldr.github.io/midfieldr/">midfieldr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://midfieldr.github.io/midfielddata/" class="external-link">midfielddata</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span></code></pre></div>
-<p><em>Load.</em>   MIDFIELD practice data tables. Described in <a href="art-000-getting-started.html#load-data">Getting started</a>.</p>
+<p><em>Load.</em>   Practice datasets. View data dictionaries via
+<code><a href="https://midfieldr.github.io/midfielddata/reference/student.html" class="external-link">?student</a></code>, <code><a href="https://midfieldr.github.io/midfielddata/reference/term.html" class="external-link">?term</a></code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load data</span></span>
+<code class="sourceCode R"><span><span class="co"># Load practice data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="initial-processing">Initial processing<a class="anchor" aria-label="anchor" href="#initial-processing"></a>
 </h2>
-<p><em>(Optional) Select.</em>   Columns required by midfieldr
-functions. Code reproduced from <a href="art-000-getting-started.html#reusable-code">Getting
+<p><em>Select (optional).</em>   Reduce the number of columns. Code
+reproduced from <a href="art-000-getting-started.html#reusable-code">Getting
 started</a>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Optional. Copy of source files with all variables</span></span>
@@ -175,9 +181,7 @@ started</a>.</p>
 <span><span class="co"># Optional. Select variables required by midfieldr functions</span></span>
 <span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_required.html">select_required</a></span><span class="op">(</span><span class="va">source_student</span><span class="op">)</span></span>
 <span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_required.html">select_required</a></span><span class="op">(</span><span class="va">source_term</span><span class="op">)</span></span></code></pre></div>
-<p><em>Work.</em>   Using <code><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy()</a></code> avoids
-<em>by-reference</em> effects <span class="citation">(<a href="#ref-data.table-reference-semantics" role="doc-biblioref">Dowle
-&amp; Srinivasan, 2022</a>)</span>.</p>
+<p><em>Initialize.</em>   Assign a working data frame.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Working data frame</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span></code></pre></div>
@@ -300,7 +304,7 @@ two data frames.</p>
 <code class="sourceCode R"><span><span class="co"># Selecting columns from both data frames, merge() inner join</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>, <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">institution</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, all <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setkey.html" class="external-link">setkey</a></span><span class="op">(</span><span class="va">x</span>, <span class="cn">NULL</span><span class="op">)</span></span>
-<span><span class="va">x</span><span class="op">[</span><span class="op">]</span></span>
+<span><span class="va">x</span></span>
 <span><span class="co">#&gt;                  mcid   institution</span></span>
 <span><span class="co">#&gt;     1: MCID3111142689 Institution B</span></span>
 <span><span class="co">#&gt;     2: MCID3111142782 Institution J</span></span>
@@ -316,7 +320,7 @@ two data frames.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Selecting columns from both data frames, X[Y] inner join</span></span>
 <span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">student</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">institution</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">y</span><span class="op">[</span><span class="op">]</span></span>
+<span><span class="va">y</span></span>
 <span><span class="co">#&gt;                  mcid   institution</span></span>
 <span><span class="co">#&gt;     1: MCID3111142689 Institution B</span></span>
 <span><span class="co">#&gt;     2: MCID3111142782 Institution J</span></span>
@@ -336,12 +340,12 @@ produce the same result.</p>
 <div class="section level2">
 <h2 id="degree-seeking">Degree seeking<a class="anchor" aria-label="anchor" href="#degree-seeking"></a>
 </h2>
-<p><em>Work.</em>   The baseline data frame we preserved earlier is the
-intake for this section.</p>
+<p><em>Continue.</em>   The baseline data frame we preserved earlier is
+the intake for this section.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Reusable starting state</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">baseline</span><span class="op">)</span></span>
-<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span>
+<span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                  mcid</span></span>
 <span><span class="co">#&gt;     1: MCID3111142689</span></span>
 <span><span class="co">#&gt;     2: MCID3111142782</span></span>
@@ -359,7 +363,7 @@ filter <code>DT</code> to retain degree-seeking students.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># One observation per ID</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
-<span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span>
+<span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                  mcid</span></span>
 <span><span class="co">#&gt;     1: MCID3111142689</span></span>
 <span><span class="co">#&gt;     2: MCID3111142782</span></span>
@@ -370,7 +374,7 @@ filter <code>DT</code> to retain degree-seeking students.</p>
 <span><span class="co">#&gt; 76875: MCID3112870009</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="reusable-code-degree-seeking">Reusable code: Degree seeking<a class="anchor" aria-label="anchor" href="#reusable-code-degree-seeking"></a>
+<h2 id="reusable-code">Reusable code<a class="anchor" aria-label="anchor" href="#reusable-code"></a>
 </h2>
 <p><em>Preparation.</em>   The baseline data frame we preserved earlier
 is the intake for this section.</p>
@@ -382,15 +386,8 @@ reference.</p>
 <code class="sourceCode R"><span><span class="co"># Filter for degree seeking, output unique IDs</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
-</h2>
-<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
-<div id="ref-data.table-reference-semantics" class="csl-entry">
-Dowle, M., &amp; Srinivasan, A. (2022). <em><span class="nocase">Reference semantics [data.table]</span></em>. <a href="https://rdatatable.gitlab.io/data.table/articles/datatable-reference-semantics.html" class="external-link">https://rdatatable.gitlab.io/data.table/articles/datatable-reference-semantics.html</a>
-</div>
-</div>
+<!-- ## References -->
+<!-- <div id="refs"> -->
 <style type="text/css">
 blockquote {
     padding:     10px 20px;
@@ -405,6 +402,7 @@ caption {
     line-height: 1.5;
 }
 </style>
+<hr>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
