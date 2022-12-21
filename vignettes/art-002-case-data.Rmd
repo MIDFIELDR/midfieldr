@@ -166,7 +166,7 @@ selected_programs
 *Add a variable.* &nbsp;  User-defined program names are nearly always required. Add a variable to label each of these `r nrow(selected_programs)` programs with one of the four conventional program abbreviations we will use in comparing metrics, i.e., Civil (CE), Electrical (EE), Mechanical (ME), and Industrial/Systems Engineering (ISE). 
 
 ```{r}
-# Recode program labels. Edit as required. 
+# Recode program labels. Edit as required.
 selected_programs[, program := fcase(
   cip6 %like% "^1408", "CE",
   cip6 %like% "^1410", "EE",
@@ -178,9 +178,9 @@ selected_programs[, program := fcase(
 Confirm that the abbreviations match the original 4-digit CIP names. We also illustrate using `options()` to change the number of data.table rows to print. 
 
 ```{r}
-# Preserve settings 
+# Preserve settings
 op <- options()
-# Edit number of rows to print 
+# Edit number of rows to print
 options(datatable.print.nrows = 15)
 
 # Confirm that abbreviations match the longer program names
@@ -230,7 +230,7 @@ The result has `r nrow(DT)` observations.
 *Inner join (add a variable, filter observations).* &nbsp; An inner join merges `study_programs` with `DT` and returns rows in both tables that match on `cip6`. In effect, we add a column of program labels to `DT` and simultaneously filter `DT` to retain rows that match the four case study programs only.  
  
 ```{r}
-# Join program names and retain desired programs only 
+# Join program names and retain desired programs only
 DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
 DT
 ```
@@ -240,7 +240,7 @@ The result has `r nrow(DT)` observations.
 *Filter.* &nbsp; Because students can change CIP codes but remain within the same labeled group (e.g., ISE), we drop the `cip6` code and filter for unique combinations of ID and program label. 
 
 ```{r}
-# Filter for unique ID-program combinations 
+# Filter for unique ID-program combinations
 DT[, cip6 := NULL]
 DT <- unique(DT)
 DT
@@ -276,7 +276,7 @@ DT
 *Add variables.*  &nbsp; We use `term` to again add the `timely_term` variable and its supporting variables.
 
 ```{r}
-# Add timely completion term 
+# Add timely completion term
 DT <- add_timely_term(DT, term)
 DT
 ```
@@ -331,7 +331,7 @@ The result has `r nrow(DT)` observations.
 *Filter.* &nbsp; Drop unnecessary variables and filter for unique observations of ID and program label. 
 
 ```{r}
-# Filter for unique ID-program combinations 
+# Filter for unique ID-program combinations
 DT[, c("cip6", "term_degree") := NULL]
 DT <- unique(DT)
 DT
@@ -419,10 +419,10 @@ degree[mcid == mcid_we_want]
 
 ```{r}
 #| echo: false
-# Preserve settings 
+# Preserve settings
 op <- options()
 
-# Edit number of rows to print 
+# Edit number of rows to print
 options(datatable.print.nrows = 15)
 ```
 
