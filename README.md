@@ -54,7 +54,7 @@ welcome to translate our examples to their preferred syntax.
 
 ``` r
 format(Sys.Date(), "%Y-%m-%d") # Today's date
-#> [1] "2022-12-21"
+#> [1] "2022-12-22"
 packageVersion("midfieldr") # Tools and methods
 #> [1] '1.0.0.9030'
 packageVersion("midfielddata") # Practice data
@@ -74,8 +74,7 @@ library(midfielddata)
 library(data.table)
 ```
 
-Load the practice data. Reduce initial dimensions of data tables using
-`select_required()`.
+Load the practice data. Reduce initial dimensions of data tables.
 
 ``` r
 # Load the practice data
@@ -98,8 +97,7 @@ term
 #> 639915: MCID3112898940 Institution B 20181 050103 01 First-year
 ```
 
-Filter for data sufficiency using `add_timely_term()` and
-`add_data_sufficiency()`.
+Filter for data sufficiency.
 
 ``` r
 # Initialize the working data frame
@@ -109,8 +107,6 @@ DT <- term[, .(mcid, cip6)]
 DT <- add_timely_term(DT, term)
 DT <- add_data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include"]
-
-# View result
 DT
 #>                   mcid   cip6       level_i adj_span timely_term term_i
 #>      1: MCID3111142689 090401 01 First-year        6       19941  19883
@@ -142,8 +138,6 @@ DT <- DT[cip6 %like% "^14"]
 
 # Filter observations for unique students (first instance)
 DT <- DT[, .SD[1], by = c("mcid")]
-
-# View result
 DT
 #>                  mcid   cip6        level_i adj_span timely_term term_i
 #>     1: MCID3111142965 140102  01 First-year        6       19941  19883
@@ -163,13 +157,11 @@ DT
 #> 10401:       19881       20181          include
 ```
 
-Determine completion status using `add_completion_status()`.
+Determine completion status.
 
 ``` r
 # Add completion status variable
 DT <- add_completion_status(DT, degree)
-
-# View result
 DT
 #>                  mcid   cip6        level_i adj_span timely_term term_i
 #>     1: MCID3111142965 140102  01 First-year        6       19941  19883
@@ -202,8 +194,6 @@ DT[, people := paste(race, sex)]
 
 # Aggregate observations by groupings
 DT_display <- DT[, .N, by = c("completion_status", "people")]
-
-# View result
 setorderv(DT_display, c("completion_status", "people"))
 DT_display
 #>     completion_status               people    N

@@ -76,7 +76,7 @@ library(midfielddata)
 library(data.table)
 ```
 
-Load the practice data. Reduce initial dimensions of data tables using `select_required()`. 
+Load the practice data. Reduce initial dimensions of data tables. 
 
 ```{r}
 # Load the practice data
@@ -91,7 +91,7 @@ degree <- select_required(degree)
 term
 ```
 
-Filter for data sufficiency using `add_timely_term()` and `add_data_sufficiency()`. 
+Filter for data sufficiency. 
 
 ```{r}
 # Initialize the working data frame
@@ -101,8 +101,6 @@ DT <- term[, .(mcid, cip6)]
 DT <- add_timely_term(DT, term)
 DT <- add_data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include"]
-
-# View result
 DT
 ```
 
@@ -118,18 +116,14 @@ DT <- DT[cip6 %like% "^14"]
 
 # Filter observations for unique students (first instance)
 DT <- DT[, .SD[1], by = c("mcid")]
-
-# View result
 DT
 ```
 
-Determine completion status using `add_completion_status()`. 
+Determine completion status. 
 
 ```{r}
 # Add completion status variable
 DT <- add_completion_status(DT, degree)
-
-# View result
 DT
 ```
 
@@ -146,8 +140,6 @@ DT[, people := paste(race, sex)]
 
 # Aggregate observations by groupings
 DT_display <- DT[, .N, by = c("completion_status", "people")]
-
-# View result
 setorderv(DT_display, c("completion_status", "people"))
 DT_display
 ```

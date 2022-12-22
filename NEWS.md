@@ -2,9 +2,10 @@
 
 ## midfieldr 1.0.0.9030 / 2022-12
 
-- Minor text edits in vignettes 
-
-
+- Package is ready for independent checking for correct functionality
+- Cleanup the data-raw file, embed all figure code in the vignettes
+- Edit for consistent figure dimensions
+- Minor text edits in vignettes
 
 ## midfieldr 1.0.0.9029 / 2022-12
 

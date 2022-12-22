@@ -259,19 +259,66 @@ As shown here, the overall percentage of missing data is `r percent_missing`%, s
 (m_imputations <- round(percent_missing, 0))
 ```
 
-*Chart.* &nbsp;  We set aside a copy of the current data frame to make the chart---the chart script is in the [appendix].  
+*Chart.* &nbsp; The chart displays the percent missing data by category. The `institution` category isn't used because the practice data contain FYE students in one institution only.  The vertical dashed line indicates the `r m_imputations`% percent missing data overall. 
 
 ```{r}
-# Set aside for the chart
-NA_proxies <- copy(DT)
+#| echo: false
+#| label: fig01
+#| fig.asp: 0.35
+#| fig-cap: "Figure 1: Percent missing data by category."
+
+# New memory location
+x <- copy(DT)
+
+# Convert factors to characters
+x <- x[, lapply(.SD, as.character)]
+
+# Overall percentage missing proxies
+overall_miss <- 100 * round(nrow(x[is.na(proxy)]) / nrow(x), 3)
+
+# Function for determining percent missing proxies by category
+missing_fraction <- function(DT, cat_level) {
+  DT[, group := fcase(
+    is.na(proxy), "missing",
+    default = "not_missing"
+  )]
+  DT <- DT[, .N, by = c("group", "cat_level")]
+  DT <- dcast(DT, cat_level ~ group, value.var = "N")
+  DT[, pct_miss := 100 * round(missing / (missing + not_missing), 3)]
+  DT <- DT[, .(cat_level, pct_miss)]
+}
+
+# Apply to institution category
+y <- x[, .(cat_level = institution, proxy)]
+inst <- missing_fraction(y, cat_level = "institution")
+inst[, category := "institution"]
+
+# Apply to race/ethnicity category
+y <- x[, .(cat_level = race, proxy)]
+race <- missing_fraction(y, cat_level = "race")
+race[, category := "race"]
+
+# Apply to sex category
+y <- x[, .(cat_level = sex, proxy)]
+sex <- missing_fraction(y, cat_level = "sex")
+sex[, category := "sex"]
+
+# Gather results and plot
+# Use race and sex only, only one institution
+df <- rbindlist(list(race, sex))
+ggplot(df, aes(x = pct_miss, y = reorder(cat_level, pct_miss))) +
+  geom_vline(xintercept = overall_miss, linetype = 2, color = "gray35") +
+  geom_point(size = 1.5) +
+  facet_grid(
+    rows = vars(reorder(category, pct_miss)),
+    as.table = TRUE,
+    scales = "free_y",
+    space = "free_y"
+  ) +
+  labs(x = "FYE proxy missing values (%)", y = "") +
+  scale_x_continuous(breaks = seq(0, 100, 5), limits = c(30, 55)) +
+  theme(panel.grid.minor.x = element_blank())
 ```
-
-The chart displays the percent missing data by category. The `institution` category isn't used because the practice data contain FYE students in one institution only.  The vertical dashed line indicates the `r m_imputations`% percent missing data overall. 
-
-![Figure1: Percent missing data by category.](../man/figures/art-060-pct-missing.png){width="100%"}
-
-
-
 
 
 ## Setting up `mice()`
@@ -771,85 +818,6 @@ Given the number of lines of code and the number of case-specific parameters inv
 ## References
 
 <div id="refs"></div>
-
-
-
-
-
-## Appendix
-
-Script for creating the chart of percent missing data grouped by category. 
-
-```{r}
-#| eval: false
-#| fig.asp: 0.6
-
-# New memory location
-x <- copy(NA_proxies)
-
-# Convert factors to characters
-x <- x[, lapply(.SD, as.character)]
-
-# Overall percentage missing proxies
-overall_miss <- 100 * round(nrow(x[is.na(proxy)]) / nrow(x), 3)
-
-# Function for determining percent missing proxies by category
-missing_fraction <- function(DT, cat_level) {
-  DT[, group := fcase(
-    is.na(proxy), "missing",
-    default = "not_missing"
-  )]
-  DT <- DT[, .N, by = c("group", "cat_level")]
-  DT <- dcast(DT, cat_level ~ group, value.var = "N")
-  DT[, pct_miss := 100 * round(missing / (missing + not_missing), 3)]
-  DT <- DT[, .(cat_level, pct_miss)]
-}
-
-# Apply to institution category
-y <- x[, .(cat_level = institution, proxy)]
-inst <- missing_fraction(y, cat_level = "institution")
-inst[, category := "institution"]
-
-# Apply to race/ethnicity category
-y <- x[, .(cat_level = race, proxy)]
-race <- missing_fraction(y, cat_level = "race")
-race[, category := "race"]
-
-# Apply to sex category
-y <- x[, .(cat_level = sex, proxy)]
-sex <- missing_fraction(y, cat_level = "sex")
-sex[, category := "sex"]
-
-# Gather results and plot
-# Use race and sex only, only one institution
-DT <- rbindlist(list(race, sex))
-p <- ggplot(DT, aes(x = pct_miss, y = reorder(cat_level, pct_miss))) +
-  geom_vline(xintercept = overall_miss, linetype = 2, color = "gray35") +
-  geom_point(size = 1.5) +
-  facet_grid(
-    rows = vars(reorder(category, pct_miss)),
-    as.table = TRUE,
-    scales = "free_y",
-    space = "free_y"
-  ) +
-  labs(x = "FYE proxy missing values (%)", y = "") +
-  scale_x_continuous(breaks = seq(0, 100, 5), limits = c(30, 55)) +
-  theme(panel.grid.minor.x = element_blank())
-```
-
-```{r}
-#| echo: false
-#| eval: false
-
-# Run manually to save figure
-ggsave(
-  filename = "man/figures/art-060-pct-missing.png",
-  plot = p,
-  width = 7,
-  height = 0.3 * 7,
-  units = "in"
-)
-```
 
 ```{r child = "../man/rmd/common-closing.Rmd"}
 ```

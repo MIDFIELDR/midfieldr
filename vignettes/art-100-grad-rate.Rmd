@@ -16,6 +16,7 @@ always_allow_html: true
 ```{r}
 #| include: false
 knitr::opts_chunk$set(fig.path = "../man/figures/art-100-")
+library("ggplot2")
 ```
 
 Graduation rate is a widely used, though flawed, measure of academic achievement.  
@@ -86,10 +87,104 @@ As they pertain to the graduation rate metric, relationships among starters, mig
 
 - Region 2 (shaded) represents the graduation rate numerator $(N_{sg})$, the subset of starters who are also graduates of program *P*.   
 
-- Region 3 (unshaded) represents the set of students excluded from the graduation rate metric, depending on how "program" is defined as discussed below. 
+- Region 3 (unshaded) represents the set of students excluded from the graduation rate metric, depending on how "program" is defined as discussed below.
 
-![Figure 1. Graduation rate metric. Starters, migrators, and timely completers.](../man/figures/art-100-venn-diagram.png){width="100%"}
- 
+```{r}
+#| echo: false
+#| label: fig01
+#| fig-width: 12
+#| fig-asp: 0.7
+#| fig-cap: "Figure 1. Graduation rate metric. Starters, migrators, and timely completers."
+
+df_tile <- data.frame(
+  x = rep(c(2, 4), 2), # centerline of rectangle
+  y = rep(c(1), each = 2), # centerline
+  z = factor(rep(1:2))
+)
+
+delta <- 0.02
+
+# x-position, center of circled numbers
+c1 <- 2.57
+c2 <- 1.75 # 1.55
+c3 <- 4 # 3.43
+c4 <- 4.25
+
+df_box1 <- data.frame(
+  x = c(1, 5, 5) + delta * c(-1, 1, 1),
+  y = c(0.5, 0.5, 1.5) + delta / 2 * c(-1, -1, 1)
+)
+df_box2 <- data.frame(
+  x = c(1, 1, 5) + delta * c(-1, -1, 1),
+  y = c(0.5, 1.5, 1.5) + delta / 2 * c(-1, 1, 1)
+)
+df_circ <- data.frame(x = c(c1, c2, c3, c4), y = c(1, 1, 1, 1.35))
+df_hash <- data.frame(
+  x = c(3, 3), xend = c(5, 5),
+  y = c(0.5, 1.5), yend = c(1.5, 0.5)
+)
+df_circ2 <- data.frame(x = 4, y = 0.99)
+
+ggplot(df_tile, aes(x, y)) +
+  geom_tile(aes(fill = z)) +
+  scale_x_continuous(breaks = seq(0, 16, 2)) +
+  scale_fill_manual(
+    values = c("#80cdc1", "white"), # "#dfc27d"  "#80cdc1"
+    aesthetics = c("colour", "fill")
+  ) +
+  geom_segment(
+    data = df_hash,
+    aes(x = x, xend = xend, y = y, yend = yend),
+    linewidth = 0.5,
+    color = "gray70"
+  ) +
+  # interior rectangle
+  geom_point(
+    data = data.frame(x = 3, y = 0.95),
+    aes(x = x, y = y),
+    shape = 22,
+    size = 190,
+    color = "gray30",
+    fill = "white",
+    alpha = 0.4
+  ) +
+  theme_void() +
+  theme(legend.position = "none") +
+  geom_line(data = df_box1, aes(x = x, y = y), linewidth = 1, linetype = 2) +
+  geom_line(data = df_box2, aes(x = x, y = y), linewidth = 1, linetype = 2) +
+  scale_y_continuous(limits = c(0.4, 1.6)) +
+  annotate("text",
+    x = c(c1, c2, c3, c4, 3, 3),
+    y = c(0.925, 1.45, 0.925, 1.45, 1.27, 1.55), # 1.37
+    label = c(
+      "", # starter-completers
+      "starters in program P",
+      "", #  migrator-completers
+      "migrators into program P",
+      "timely completers of program P",
+      "ever enrolled in program P"
+    ),
+    hjust = 0.5,
+    vjust = 0.5,
+    size = 6
+  ) +
+  geom_point(
+    data = df_circ[1:3, ],
+    aes(x = x, y = y),
+    shape = 21,
+    size = 18,
+    fill = c("transparent", "transparent", "white")
+  ) +
+  annotate("text",
+    x = df_circ$x[1:3],
+    y = df_circ$y[1:3],
+    label = c("2", "1", "3"),
+    hjust = 0.5,
+    vjust = 0.5,
+    size = 6
+  )
+```
+
 <br>When calculating graduation rate, whether migrator-graduates are included in the count of graduates depends how a program is defined in terms of CIP codes.  
  
 - *Institution level*. Graduation rate computed at the institution level includes all migrators within the institution. For example, starters in  Engineering (CIP 14) who graduate in Business (CIP 52) are both starters and timely completers at the institution level. IPEDS defines this rate as the *institution completion rate.*
@@ -511,7 +606,8 @@ DT
 
 The vertical reference line is the aggregate graduation rate of the program, independent of race/ethnicity and sex. A missing data marker or missing group indicates the number of graduates was below the threshold set to preserve anonymity---largely an artifact of applying these groupings to practice data.
 
-```{r fig2}
+```{r}
+#| label: fig02
 #| fig-asp: 1.1
 #| fig-cap: "Figure 2: Graduation rates of four Engineering majors."
 

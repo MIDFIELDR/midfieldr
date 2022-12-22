@@ -21,11 +21,11 @@ knitr::opts_chunk$set(fig.path = "../man/figures/art-003-")
 
 Part 3 of a case study in three parts, illustrating how we work with longitudinal student-level records. 
 
-1. [Goals.](art-001-case-goals.html) Briefly describe the study.   
+1. *Goals.* &nbsp; Introducing the study.   
 
-2. [Data.](art-002-case-data.html) Transforming the data to yield the observations of interest.
+2. *Data.* &nbsp; Transforming the data to yield the observations of interest.
 
-3. Results (this page). Calculating summary statistics and metrics and displaying the results. 
+3. *Results.* &nbsp; Summary statistics, metric, chart, and table.  
 
 
 ## Method 
@@ -69,6 +69,8 @@ DT
 
 The study observations data frame is designed with one column for each grouping variable: `race`, `sex`, `program`, and `bloc`. 
 
+```{r child = "../man/rmd/define-grouping-variables.Rmd"}
+```
 
 *Summarize.* &nbsp; Count the numbers of observations for each combination of the grouping variables. 
 
@@ -94,9 +96,17 @@ DT
 
 ## Compute the metric
 
-Stickiness is the ratio of the number of graduates to the number of students ever enrolled in a program.
+```{r child = "../man/rmd/define-metric.Rmd"}
+```
 
-*Create a variable.*  &nbsp; "Stickiness" is the ratio of the number of graduates to the number of students ever enrolled in a program.  
+```{r child = "../man/rmd/define-stickiness.Rmd"}
+```
+\[
+S = \frac{N_g}{N_e}
+\]
+
+
+*Create a variable.*  &nbsp; Compute stickiness.  
 
 ```{r}
 # Compute the metric
@@ -125,7 +135,7 @@ same_content(DT, study_results)
 
 We take several additional steps to prepare the data for dissemination in  tables or charts.  
 
-*Filtering.* To preserve the anonymity of the people involved, we remove observations with 10 or fewer graduates.   
+*Filtering.* To preserve the anonymity of the people involved, we remove observations with fewer than 10 graduates.   
 
 ```{r}
 # Preserve anonymity
@@ -133,6 +143,9 @@ DT <- DT[graduates >= 10]
 
 # Display the result
 DT
+```
+
+```{r child = "../man/rmd/note-grouping-NAs.Rmd"}
 ```
 
 *Filtering.* Let us assume that our study focuses on "domestic" students of known race/ethnicity. In that case, we omit observations labeled "International" and Other/Unknown". 
@@ -174,7 +187,10 @@ DT
 
 With one quantitative variable (stickiness) for every combination of the levels of two categorical variables (program and race/ethnicity/sex), these data are *multiway data* [@Cleveland:1993]. How one orders the categorical variables is critical for visualizing effects. 
 
-*Conditioning.* Convert the two categorical variables to ordered factors to support the ordering of rows and panels in the chart. We use the midfieldr `order_multiway()` function. 
+```{r child = "../man/rmd/define-multiway-data.Rmd"}
+``` 
+
+*Conditioning.* Convert the two categorical variables to ordered factors to support the ordering of rows and panels in the chart.
 
 ```{r}
 # Convert categorical variables to factors
@@ -189,8 +205,7 @@ DT <- order_multiway(DT,
 DT
 ```
 
-
-The column `program_stick` determines the order of the programs in the chart; `people_stick` determines the order of the race/ethnicity/sex groupings; the values in `stickiness` are the quantitative values to be graphed. 
+The column `program_stickiness` determines the order of the programs in the chart; `people_stickiness` determines the order of the race/ethnicity/sex groupings; the values in `stickiness` are the quantitative values to be graphed. 
 
 
 
@@ -199,31 +214,42 @@ The column `program_stick` determines the order of the programs in the chart; `p
 
 In the first multiway chart, the rows are programs and panels are people, facilitating comparisons of different program for a single group. Rows and panels are both ordered from bottom to top in order of increasing stickiness. 
 
+```{r child = "../man/rmd/define-multiway-chart.Rmd"}
+``` 
+
 ```{r}
-#| label: stickiness-01
-#| fig-asp: 1
+#| label: fig01
+#| fig-asp: 0.8
+#| fig-cap: "Figure 1: Stickiness with programs on rows."
 
 ggplot(DT, aes(x = stickiness, y = program)) +
   facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
+  geom_vline(aes(xintercept = people_stickiness), linetype = 2, color = "gray60") +
   geom_point() +
   labs(x = "Stickiness (%)", y = "")
 ```
+
+The vertical reference line is the overall stickiness of the people in a panel. 
 
 Alternatively, we can consider the dual chart, swapping the roles of the panels and rows.  Here the rows are people and panels are programs, facilitating comparisons of different people within a program.  Over many years of publishing research using MIDFIELD data, placing people on the rows of the multiway chart has been perhaps our most frequently used design. 
 
 ```{r}
-#| label: stickiness-02
-#| fig-asp: 0.9
+#| label: fig02
+#| fig-asp: 0.8
+#| fig-cap: "Figure 1: Stickiness with programs in panels."
 
 ggplot(DT, aes(x = stickiness, y = people)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
+  geom_vline(aes(xintercept = program_stickiness), linetype = 2, color = "gray60") +
   geom_point() +
   labs(x = "Stickiness (%)", y = "")
 ```
 
+The vertical reference line is the overall stickiness of the program in a panel.
+
 The chart illustrates the importance of ordering the rows and panels. We would conclude that Industrial/Systems Engineering is the stickiest program of the four, followed by Civil, Mechanical, and Electrical in descending order. 
 
-Because rows are ordered, one expects a generally increasing trend within a panel. A response greater or smaller than expected creates a visual asymmetry. For example, Asian Female students are asymmetrically higher in Mechanical Engineering but asymmetrically lower in Industrial/Systems Engineering. 
+Because rows are ordered, one expects a generally increasing trend within a panel. A response greater or smaller than expected creates a visual asymmetry. For example, Asian students are asymmetrically lower in Industrial/Systems Engineering. 
 
 
 

@@ -16,6 +16,7 @@ always_allow_html: true
 ```{r}
 #| include: false
 knitr::opts_chunk$set(fig.path = "../man/figures/art-020-")
+library(ggplot2)
 ```
 
 The time span (or range) of MIDFIELD data varies by institution. At the upper and lower limits of a data range, a potential for false counts exists when a metric (such as graduation rate) requires knowledge of timely degree completion. For such metrics, student records that produce problematic results due to insufficient data are nearly always excluded from study.
@@ -60,7 +61,121 @@ For students admitted too near the upper limit of their institution's data range
 
 <br>
 
-![Figure 1: Upper limit data sufficiency](../man/figures/art-020-data-sufficiency-upper.png){width="100%"}
+```{r}
+#| echo: false
+#| label: fig01
+#| fig-width: 8.4
+#| fig-cap: "Figure 1: Upper limit data sufficiency."
+
+# upper limit chart
+
+# parameters
+callout_color <- "gray60"
+callout_line_size <- 0.3
+anno_size <- 3.5 # 3.5 approx 10 point
+vert_baseline <- 1.07
+del <- 0.15 # delta y for dimension lines
+
+# vertical dim lines
+vert_dim_lines <- function(dt, cols) {
+  data <- copy(dt)
+  data[, .SD, .SDcols = cols]
+  geom_segment(
+    data = data,
+    na.rm = TRUE,
+    aes(
+      x = get(cols[1]),
+      xend = get(cols[1]),
+      y = get(cols[2]) - del,
+      yend = get(cols[2]) + del
+    ),
+    color = callout_color,
+    linewidth = callout_line_size,
+    linetype = 1
+  )
+}
+
+# construct coordinates
+coord <- wrapr::build_frame(
+  "id", "row", "dash1", "dash2", "arrow1", "arrow2", "arrowlabel", "labelx" |
+    "range", 3, NA, NA, 1986, 1996, "institution data range", 1989 |
+    "A", 2, NA, NA, 1988, 1994, "TC term", 1994 |
+    "B", 1, 1996, 1998, 1993, 1996, "TC term", 1998 |
+    "limit", 0.2, NA, NA, NA, NA, "upper data limit", 1996
+) |> data.table()
+
+# x scale ticks
+breaks_x <- sort(unique(coord[, round(c(dash1, dash2, arrow1, arrow2), 0)], na.rm = TRUE))
+
+ggplot() +
+  scale_x_continuous(breaks = breaks_x, limits = c(1983.5, 1999)) +
+  scale_y_continuous(limits = c(-0.5, 3.5)) +
+  labs(x = "Year", y = "") +
+  theme_light() +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  ) +
+  geom_segment( # arrows
+    data = coord[, .(row, arrow1, arrow2)],
+    na.rm = TRUE,
+    aes(x = arrow1, xend = arrow2, y = row, yend = row),
+    color = callout_color,
+    linewidth = callout_line_size,
+    arrow = arrow(
+      type = "closed",
+      length = unit(c(2, 2, 0), "mm"),
+      ends = c("both", rep("last", nrow(coord) - 1))
+    ),
+    arrow.fill = callout_color
+  ) +
+  geom_segment( # dashed lines
+    data = coord[, .(row, dash1, dash2)],
+    na.rm = TRUE,
+    aes(x = dash1, xend = dash2, y = row, yend = row),
+    color = callout_color,
+    linewidth = 1.5 * callout_line_size,
+    linetype = 2
+  ) +
+  geom_point( # entry dots
+    data = coord[id %chin% LETTERS, .(id, row, arrow1)],
+    na.rm = TRUE,
+    aes(x = arrow1, y = row),
+    size = 2,
+    color = callout_color
+  ) +
+  geom_segment(
+    aes(
+      x = 1996,
+      xend = 1996,
+      y = min(coord$row) - 2 * del,
+      yend = max(coord$row) + 2 * del
+    ),
+    color = callout_color,
+    linewidth = callout_line_size
+  ) +
+  vert_dim_lines(dt = coord, cols = c("dash2", "row")) +
+  vert_dim_lines(dt = coord[id %chin% LETTERS], cols = c("arrow2", "row")) +
+  vert_dim_lines(dt = coord[!id %chin% LETTERS], cols = c("arrow1", "row")) +
+  geom_text(
+    data = coord[, .(row, arrowlabel, labelx)],
+    na.rm = TRUE,
+    aes(x = labelx, y = row, label = arrowlabel),
+    vjust = 1.5,
+    hjust = -0.1
+  ) +
+  geom_text(
+    data = coord[id %chin% LETTERS, .(id, row)],
+    na.rm = TRUE,
+    aes(x = 1986, y = row, label = paste0("student ", id, ":")),
+    vjust = 0.5,
+    hjust = 1.25
+  )
+```
+
+
 
 Student A
 
@@ -90,7 +205,94 @@ To determine data sufficiency record exclusions at the lower limit of the data r
 
 <br>
 
-![Figure 2: Lower limit data sufficiency](../man/figures/art-020-data-sufficiency-lower.png){width="100%"}
+```{r}
+#| echo: false
+#| label: fig02
+#| fig.width: 8.4
+#| fig-cap: "Figure 2: Lower limit data sufficiency."
+
+# lower limit chart
+
+# construct coordinates
+coord <- wrapr::build_frame(
+  "id", "row", "dash1", "dash2", "arrow1", "arrow2", "arrowlabel", "labelx" |
+    "range", 4, NA, NA, 1986, 1996, "institution data range", 1989 |
+    "A", 3, NA, NA, 1986.5, 1992.5, "TC term", 1992.5 |
+    "C", 2, 1984, 1986, 1986, 1992, "TC term", 1992 |
+    "D", 1, 1984, 1985.8, NA, NA, "lower data limit", 1986
+) |> data.table()
+
+# x scale ticks
+breaks_x <- sort(unique(coord[, round(c(dash1, dash2, arrow1, arrow2), 0)], na.rm = TRUE))
+
+# lower limit graph
+ggplot() +
+  scale_x_continuous(breaks = breaks_x, limits = c(1981.5, 1997)) +
+  scale_y_continuous(limits = c(0.5, 4.5)) +
+  labs(x = "Year", y = "") +
+  theme_light() +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  ) +
+  geom_segment( # arrows
+    data = coord[, .(row, arrow1, arrow2)],
+    na.rm = TRUE,
+    aes(x = arrow1, xend = arrow2, y = row, yend = row),
+    color = callout_color,
+    linewidth = callout_line_size,
+    arrow = arrow(
+      type = "closed",
+      length = unit(2, "mm"),
+      ends = c("both", rep("last", nrow(coord) - 1))
+    ),
+    arrow.fill = callout_color
+  ) +
+  geom_segment( # dashed lines
+    data = coord[, .(row, dash1, dash2)],
+    na.rm = TRUE,
+    aes(x = dash1, xend = dash2, y = row, yend = row),
+    color = callout_color,
+    linewidth = 1.5 * callout_line_size,
+    linetype = 2
+  ) +
+  geom_point( # entry dots
+    data = coord[id %chin% LETTERS, .(id, row, arrow1)],
+    na.rm = TRUE,
+    aes(x = arrow1, y = row),
+    size = 2,
+    color = callout_color
+  ) +
+  geom_segment(
+    aes(
+      x = 1986,
+      xend = 1986,
+      y = min(coord$row) - 2 * del,
+      yend = max(coord$row) + 2 * del
+    ),
+    color = callout_color,
+    linewidth = callout_line_size
+  ) +
+  vert_dim_lines(dt = coord, cols = c("dash1", "row")) +
+  vert_dim_lines(dt = coord, cols = c("dash2", "row")) +
+  vert_dim_lines(dt = coord, cols = c("arrow2", "row")) +
+  geom_text(
+    data = coord[, .(row, arrowlabel, labelx)],
+    na.rm = TRUE,
+    aes(x = labelx, y = row, label = arrowlabel),
+    vjust = 1.5,
+    hjust = -0.1
+  ) +
+  geom_text(
+    data = coord[id %chin% LETTERS, .(id, row)],
+    na.rm = TRUE,
+    aes(x = 1984, y = row, label = paste0("student ", id, ":")),
+    vjust = 0.5,
+    hjust = 1.25
+  )
+```
 
 Student A
 
