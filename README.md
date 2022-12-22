@@ -56,7 +56,7 @@ welcome to translate our examples to their preferred syntax.
 format(Sys.Date(), "%Y-%m-%d") # Today's date
 #> [1] "2022-12-21"
 packageVersion("midfieldr") # Tools and methods
-#> [1] '1.0.0.9029'
+#> [1] '1.0.0.9030'
 packageVersion("midfielddata") # Practice data
 #> [1] '0.2.0'
 ```
