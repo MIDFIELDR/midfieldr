@@ -98,19 +98,14 @@ library("ggplot2")
 DT <- copy(study_results)
 ```
 
-*Filter.*  &nbsp; Human subject privacy is potentially at risk for small populations even with anonymized observations. Therefore, before tabulating or graphing the data for dissemination, we omit observations with fewer than 10 students ever enrolled. The magnitude of the bound (`graduates >= 10`) can vary depending on one's data. 
+*Filter.*  &nbsp; Human subject privacy is potentially at risk for small populations even with anonymized observations. Therefore, before tabulating or graphing the data for dissemination, we omit observations with fewer than 10 graduates. The magnitude of the bound (`graduates >= 10`) can vary depending on one's data. 
 
 ```{r}
 # Protecting privacy of small populations
 DT <- DT[graduates >= 10]
 ```
 
-*Filter.*  &nbsp; In many studies we also omit rows in which race/ethnicity values are ambiguous. 
-
-```{r}
-# Ambiguous race/ethnicity values
-DT <- DT[!race %chin% c("International", "Other/Unknown")]
-DT
+```{r child = "../man/rmd/note-grouping-NAs.Rmd"}
 ```
 
 
@@ -285,45 +280,38 @@ common_labs <- labs(
   y = "",
   title = "Engineering graduates"
 )
-
-# Draw vertical lines in panels
-common_geom_vline <- function(x) {
-  geom_vline(aes(xintercept = x),
-    linetype = 2,
-    color = "gray70"
-  )
-}
+ref_line_color <- "gray60"
 ```
 
 The first of two multiway charts encodes *programs by rows* and *people by  panels*. The `as.table = FALSE` argument places  rows and panels in "graphical order", that is, increasing from left to right and from bottom to top. The panel median value is drawn as a vertical reference line in each panel.
 
 ```{r median-two-columns}
-#| fig-asp: 0.7
+#| fig-asp: 0.8
 #| fig-cap: "Figure 1. Rows and columns ordered by median values."
 
 # Two columns of panels
 ggplot(DT_count, aes(x = graduates, y = program)) +
   facet_wrap(vars(people), ncol = 2, as.table = FALSE) +
-  common_geom_vline(DT_count$people_median) +
+  geom_vline(aes(xintercept = people_median), linetype = 2, color = ref_line_color) +
   common_scale_x_log10 +
   common_labs +
   geom_point()
 ```
 
-<br>The programs are assigned to rows such that the program medians increase from bottom to top. Civil Engineering has the smallest median; Mechanical Engineering the largest.  
+<br>The programs are assigned to rows such that the program medians increase from bottom to top. Industrial/Systems has the smallest median; Mechanical Engineering the largest.  
 
-We drew the chart above in two columns to illustrate the graph order of panels. Latina students have the smallest median number of graduates, followed by Asian Female students, Black Male students, Latino students, etc.
+We drew the chart above in two columns to illustrate the graph order of panels. Asian Female students have the smallest median number of graduates, followed by International Female, Other/Unknown Male, Black Male, etc.
 
 When space permits, however, laying out the panels in a single column can be useful for seeing effects. Here, we redraw the panels in one column. 
 
 ```{r median-one-column}
-#| fig-asp: 1.1
+#| fig-asp: 1.3
 #| fig-cap: "Figure 2. Redraw the panels in one column."
 
 # Programs encoded by rows
 ggplot(DT_count, aes(x = graduates, y = program)) +
   facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
-  common_geom_vline(DT_count$people_median) +
+  geom_vline(aes(xintercept = people_median), linetype = 2, color = ref_line_color) +
   common_scale_x_log10 +
   common_labs +
   geom_point()
@@ -334,28 +322,25 @@ ggplot(DT_count, aes(x = graduates, y = program)) +
 - We can more effectively compare values within a panel than between panels.
 - Because rows are ordered, one expects a generally increasing trend within a panel. A response greater or smaller than expected creates a visual asymmetry. The interesting stories are often in these visual anomalies.
 
-For example, the Asian Male panel shows a clear separation between two groupings of majors, Mechanical and Electrical compared to Civil and Industrial/Systems. 
+For example, the White Female panel shows a clear separation between two groupings of majors, Mechanical and Civil compared to Electrical and Industrial/Systems. 
 
 However, this chart does not permit us to effectively compare the eight values for a given program. For that we create a second multiway in which we switch the aesthetic roles of the  categories---in this example by encoding *people by rows* and *programs by panels*.
 
 ```{r people-encoded-rows}
-#| fig-asp: 1.0
+#| fig-asp: 1.1
 #| fig-cap: "Figure 3. Switching the row and column assignments of categorical variables."
 
 # People encoded by rows
 ggplot(DT_count, aes(x = graduates, y = people)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  common_geom_vline(DT_count$program_median) +
+  geom_vline(aes(xintercept = program_median), linetype = 2, color = ref_line_color) +
   common_scale_x_log10 +
   common_labs +
   geom_point()
 ```
 
-<br>In this chart, the visual asymmetries that stand out are 
+<br>In this chart, the visual asymmetry that stands out most is Electrical Engineering, White Female, low given their overall rank. 
 
-- Electrical Engineering, White Female, low given their overall rank
-- Civil Engineering, Asian Male, low given their overall rank
-- Overall, a number of groups are missing, having been excluded to protect human-subject privacy (a consequence of using practice data). 
 
 
 
@@ -370,7 +355,7 @@ In the next figure, the same data are plotted in alphabetical order, which revea
 
 
 ```{r avoid-alphbetical}
-#| fig-asp: 1.0
+#| fig-asp: 1.1
 #| fig-cap: "Figure 4. Alphabetical ordering conceals patterns in the data."
 
 # Create alphabetical ordering
@@ -417,13 +402,13 @@ In this example, `program` and `race` are factors, ordered by median number of g
 Using conventional ggplot syntax, the aesthetics include `x` and `y`  as before. We superpose data markers for sex in rows by assigning `color = sex` inside the `aes()` function. 
 
 ```{r race-sex-superposed}
-#| fig-asp: 0.7
+#| fig-asp: 0.8
 #| fig-cap: "Figure 5. Using superposition to display three categories."
 
 # Race/ethnicity encoded by rows, sex superposed
 ggplot(DT_count, aes(x = graduates, y = race, color = sex)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  common_geom_vline(DT_count$program_median) +
+  geom_vline(aes(xintercept = program_median), linetype = 2, color = ref_line_color) +
   common_scale_x_log10 +
   common_labs +
   geom_point(size = 2) +
@@ -435,13 +420,13 @@ ggplot(DT_count, aes(x = graduates, y = race, color = sex)) +
 Swapping rows and panels yields the next chart, in which we can directly compare Male and Female students within their race/ethnicity category across programs.  Because men tend to outnumber women in engineering programs, this chart clearly shows clusters by sex. 
 
 ```{r program-sex-superposed}
-#| fig-asp: 0.7
+#| fig-asp: 0.9
 #| fig-cap: "Figure 6. Switching the row and column assignments of two categorical variables."
 
 # Program encoded by rows, sex superposed
 ggplot(DT_count, aes(x = graduates, y = program, color = sex)) +
   facet_wrap(vars(race), ncol = 1, as.table = FALSE) +
-  common_geom_vline(DT_count$race_median) +
+  geom_vline(aes(xintercept = race_median), linetype = 2, color = ref_line_color) +
   common_scale_x_log10 +
   common_labs +
   geom_point(size = 2) +
@@ -518,13 +503,13 @@ Here the quantitative variable is group stickiness. The first chart encodes *pro
 The order of rows and panels has changed from the earlier charts. 
 
 ```{r engr-stickiness-program}
-#| fig-asp: 1.1
+#| fig-asp: 1.3
 #| fig-cap: "Figure 7. Rows and column ordered by percentages."
 
 # Programs encoded by rows
 ggplot(DT_ratio, aes(x = stickiness, y = program)) +
   facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
-  common_geom_vline(DT_ratio$people_stickiness) +
+  geom_vline(aes(xintercept = people_stickiness), linetype = 2, color = ref_line_color) +
   labs(x = "Stickiness", y = "", title = "Engineering stickiness") +
   geom_point()
 ```
@@ -543,7 +528,7 @@ Again, we cannot compare the eight values for a given program as effectively. Th
 # People encoded by rows
 ggplot(DT_ratio, aes(x = stickiness, y = people)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  common_geom_vline(DT_ratio$program_stickiness) +
+  geom_vline(aes(xintercept = program_stickiness), linetype = 2, color = ref_line_color) +
   labs(x = "Stickiness", y = "", title = "Engineering stickiness") +
   geom_point()
 ```
