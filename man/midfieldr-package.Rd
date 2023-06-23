@@ -15,6 +15,6 @@ Provides tools and demonstrates methods for working with individual undergraduat
 
 \href{https://midfieldr.github.io/midfielddata/}{midfielddata}.   An R data package that supplies anonymized student-level records for 98,000 undergraduates at three US institutions from 1988--2018. A sample of the MIDFIELD database, midfielddata provides practice data for the tools and methods in the midfieldr package.
 
-This work is supported by the National Science Foundation through grant number 1545667.
+This work is supported by the National Science Foundation through grant numbers 1545667 and 2142087.
 }
 \concept{package}

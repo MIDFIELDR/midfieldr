@@ -1,20 +1,21 @@
+# midfieldr 1.0.1 / 2023--06--23
 
+Initial CRAN submission
 
-## midfieldr 1.0.0.9030 / 2022-12
+# midfieldr 1.0.0.9030 / 2022--12
 
-- Package is ready for independent checking for correct functionality
 - Cleanup the data-raw file, embed all figure code in the vignettes
 - Edit for consistent figure dimensions
 - Minor text edits in vignettes
 
-## midfieldr 1.0.0.9029 / 2022-12
+# midfieldr 1.0.0.9029 / 2022-12
 
 - Revise to accommodate new data sample in midfielddata
 - Rework arguments of `filter_cip()` for ease of use
 - Add man/rmd/ for shared .Rmd fragments 
 - Revise README and pkgdown settings
 
-## midfieldr 1.0.0.9028 / 2022-11
+# midfieldr 1.0.0.9028 / 2022--11
 
 - Rename `filter_search()` to `filter_cip()` to better capture its purpose. Made `cip` the default data frame to search.
 - Edit all vignettes for consistent organization and prose.  
@@ -23,7 +24,7 @@
 - Add "Stickiness" vignette
 - Add "Groupings" vignette. 
 
-## midfieldr 1.0.0.9027 / 2022-10
+# midfieldr 1.0.0.9027 / 2022--10
 
 - Separate the vignettes for FYE and starters. 
 - To starters, add the case for non-FYE institutions.
@@ -31,7 +32,7 @@
 - Add `select_required()`. 
 - Add planning and blocs vignettes. 
 
-## midfieldr 1.0.0.9026 / 2022-09
+# midfieldr 1.0.0.9026 / 2022--09
 
 - Add FYE function and vignette.
 - Revise multiway function name.
@@ -40,7 +41,7 @@
 - Add README to tests directory.
 - Consistent comments and R code chunk commands.
 
-## midfieldr 1.0.0.9025 / 2021-07
+# midfieldr 1.0.0.9025 / 2021--07
 
 - Editing some functions names and data names to be more descriptive.  
 - Change name of built-in `fye_start` data set to `fye_predicted_start`. 
@@ -48,22 +49,22 @@
   argument names. 
 - New `preprocess_fye()` to replace `condition_fye()`. 
 
-## midfieldr 1.0.0.9024 / 2021-07
+# midfieldr 1.0.0.9024 / 2021--07
 
 - Revise `add_completion_status()`, changing the three possible values to "timely", "late", or NA. Drop the `completion` column (same information available in the `term_degree` column). 
 - Revise vignettes for consistent format.
 
-## midfieldr 1.0.0.9023 / 2021-07
+# midfieldr 1.0.0.9023 / 2021--07
 
 - Updated `condition_multiway()`, unit tests, and multiway vignette.
 
-## midfieldr 1.0.0.9022 / 2021-06-29
+# midfieldr 1.0.0.9022 / 2021--06--29
 
 - Revise or add vignettes for data sufficiency, degree seeking (inner joins), programs, completion, and demographics (left outer joins).
 - Correction to `condition_multiway()` for alphabetical ordering, revise unit tests.
 - Remove dependency on Rdpack.
 
-## midfieldr 1.0.0.9021 / 2021-06
+# midfieldr 1.0.0.9021 / 2021--06
 
 - The `midfield_student` argument, in functions in which it appears, is assigned the default value `student` instead of NULL. The argument can be  omitted unless the intended data frame is called something other than `student`. 
 - Similarly, the `midfield_course`, `midfield_term`, and `midfield_degree` arguments, where they occur, are assigned the default values `course`, `term`, and `degree`. 
@@ -75,7 +76,7 @@
 - Revise data sufficiency to include lower limit exclusions.
 - Make left-outer joins explicit, delete `add_race_sex()`.
 
-## midfieldr 1.0.0.9020 / 2021-06
+# midfieldr 1.0.0.9020 / 2021--06
 
 Significant changes from earlier versions, no backwards compatibility, 
 prompting version number change to 1.0.0.
@@ -99,7 +100,7 @@ prompting version number change to 1.0.0.
 - Revise vignettes to use new functions 
 
 
-## midfieldr 0.1.0 / 2018-06
+# midfieldr 0.1.0 / 2018--06
 
 - Initial development version public on GitHub
   

@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Stickiness</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<script>$(document).ready(function(){
+    if (typeof $('[data-toggle="tooltip"]').tooltip === 'function') {
+        $('[data-toggle="tooltip"]').tooltip();
+    }
+    if ($('[data-toggle="popover"]').popover === 'function') {
+        $('[data-toggle="popover"]').popover();
+    }
+});
+</script>
+<style type="text/css">
+.lightable-minimal {
+border-collapse: separate;
+border-spacing: 16px 1px;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-minimal td {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal th {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal thead tr:last-child th {
+border-bottom: 2px solid #00000050;
+empty-cells: hide;
+}
+.lightable-minimal tbody tr:first-child td {
+padding-top: 0.5em;
+}
+.lightable-minimal.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-minimal.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic {
+border-top: 0.16em solid #111111;
+border-bottom: 0.16em solid #111111;
+width: 100%;
+margin-bottom: 10px;
+margin: 10px 5px;
+}
+.lightable-classic tfoot tr td {
+border: 0;
+}
+.lightable-classic tfoot tr:first-child td {
+border-top: 0.14em solid #111111;
+}
+.lightable-classic caption {
+color: #222222;
+}
+.lightable-classic td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic thead tr:last-child th {
+border-bottom: 0.10em solid #111111;
+}
+.lightable-classic.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic-2 {
+border-top: 3px double #111111;
+border-bottom: 3px double #111111;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-classic-2 tfoot tr td {
+border: 0;
+}
+.lightable-classic-2 tfoot tr:first-child td {
+border-top: 3px double #111111;
+}
+.lightable-classic-2 caption {
+color: #222222;
+}
+.lightable-classic-2 td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic-2 th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic-2 tbody tr:last-child td {
+border-bottom: 3px double #111111;
+}
+.lightable-classic-2 thead tr:last-child th {
+border-bottom: 1px solid #111111;
+}
+.lightable-classic-2.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic-2.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #EEE;
+border-collapse: collapse;
+margin-bottom: 10px;
+}
+.lightable-material tfoot tr td {
+border: 0;
+}
+.lightable-material tfoot tr:first-child td {
+border-top: 1px solid #EEE;
+}
+.lightable-material th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+}
+.lightable-material td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+border-top: 1px solid #eeeeee;
+}
+.lightable-material.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #ddd;
+}
+.lightable-material-dark {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #FFFFFF12;
+border-collapse: collapse;
+margin-bottom: 10px;
+background-color: #363640;
+}
+.lightable-material-dark tfoot tr td {
+border: 0;
+}
+.lightable-material-dark tfoot tr:first-child td {
+border-top: 1px solid #FFFFFF12;
+}
+.lightable-material-dark th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF60;
+}
+.lightable-material-dark td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF;
+border-top: 1px solid #FFFFFF12;
+}
+.lightable-material-dark.lightable-hover tbody tr:hover {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody tr:nth-child(even) {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material-dark.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #FFFFFF12;
+}
+.lightable-paper {
+width: 100%;
+margin-bottom: 10px;
+color: #444;
+}
+.lightable-paper tfoot tr td {
+border: 0;
+}
+.lightable-paper tfoot tr:first-child td {
+border-top: 1px solid #00000020;
+}
+.lightable-paper thead tr:last-child th {
+color: #666;
+vertical-align: bottom;
+border-bottom: 1px solid #00000020;
+line-height: 1.15em;
+padding: 10px 5px;
+}
+.lightable-paper td {
+vertical-align: middle;
+border-bottom: 1px solid #00000010;
+line-height: 1.15em;
+padding: 7px 5px;
+}
+.lightable-paper.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-paper.lightable-striped tbody tr:nth-child(even) {
+background-color: #00000008;
+}
+.lightable-paper.lightable-striped tbody td {
+border: 0;
+}
+</style>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Stickiness</h1>
+
+
+
+<p>Stickiness is a more-inclusive alternative to graduation rate as a
+measure of a program’s success in attracting, keeping, and graduating
+their undergraduates. All students excluded by a conventional graduation
+rate metric–including migrators—are included in the stickiness metric
+<span class="citation">(<a href="#ref-Ohland+Orr+others:2012" role="doc-biblioref">Ohland et al. 2012</a>)</span>.</p>
+<p>This vignette in the MIDFIELD workflow.</p>
+<ol style="list-style-type: decimal">
+<li>Planning<br />
+</li>
+<li>Initial processing<br />
+</li>
+<li>Blocs<br />
+</li>
+<li>Groupings<br />
+</li>
+<li><span style=" font-weight: bold;    color: #b35806 !important;">Metrics</span>
+<ul>
+<li>Graduation rate<br />
+</li>
+<li><span style=" font-weight: bold;    color: #b35806 !important;">Stickiness</span><br />
+</li>
+</ul></li>
+<li>Displays</li>
+</ol>
+<div id="definitions" class="section level2">
+<h2>Definitions</h2>
+<dl>
+<dt>stickiness</dt>
+<dd>
+<p>Stickiness <span class="math inline">\((S)\)</span> is the ratio of
+the number of graduates of a program <span class="math inline">\((N_g)\)</span> to the number ever enrolled in the
+program <span class="math inline">\((N_e)\)</span>. <span class="math display">\[
+S = \frac{N_g}{N_e}
+\]</span></p>
+</dd>
+<dt>bloc</dt>
+<dd>
+<p>A grouping of student-level data dealt with as a unit, for example,
+starters, students ever-enrolled, graduates, transfer students,
+traditional and non-traditional students, migrators, etc.</p>
+</dd>
+<dt>ever-enrolled</dt>
+<dd>
+<p>Bloc of students whose term records include a specified program in at
+least one term.</p>
+</dd>
+<dt>graduates</dt>
+<dd>
+<p>Bloc of all graduates (timely completers) from a program, without
+regard to their starting programs.</p>
+</dd>
+<dt>timely completion criterion</dt>
+<dd>
+<p>Completing a program in no more than a specified span of years, in
+many cases, within 6 years after admission (150% of the “normal” 4-year
+span), or possibly less for some transfer students.</p>
+</dd>
+<dt>migrators</dt>
+<dd>
+<p>Bloc of students who leave one program to enroll in another. Also
+called <em>switchers.</em></p>
+</dd>
+</dl>
+</div>
+<div id="a-more-inclusive-metric" class="section level2">
+<h2>A more inclusive metric</h2>
+<p>Stickiness, in comparison to <a href="art-100-grad-rate.html">graduation rate</a>, has these
+characteristics:</p>
+<ul>
+<li><p>Includes migrators, where graduation rate does not.</p></li>
+<li><p>Is based on the bloc of ever enrolled rather than starters, so
+there is no need for <a href="art-060-fye-proxies.html">FYE
+proxies</a>.</p></li>
+<li><p>Counts all graduates (timely completers) in a program,
+eliminating the need to filter graduates based on their starting
+program.</p></li>
+<li><p>Like the MIDFIELD definition of graduation rate (in contrast to
+the IPEDS definition), includes students who attend college part-time,
+who transfer between institutions, and who start in any term.</p></li>
+</ul>
+<p>As they pertain to the stickiness metric, relationships among
+starters, migrators, and graduates (timely completers) of a given
+program <em>P</em> are illustrated in Figure 1.</p>
+<ul>
+<li><p>The interior rectangle represents the stickiness numerator <span class="math inline">\((N_g)\)</span>, the set of graduates (timely
+completers) of program <em>P</em>.</p></li>
+<li><p>The overall rectangle represents the stickiness denominator <span class="math inline">\((N_e)\)</span>, the set of students ever enrolled
+in program <em>P</em>.</p></li>
+</ul>
+<div class="figure">
+<img src="data:image/png;base64,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" alt="Figure 1. Stickiness metric. Starters, migrators, and timely completers." width="100%" />
+<p class="caption">
+Figure 1. Stickiness metric. Starters, migrators, and timely completers.
+</p>
+</div>
+</div>
+<div id="method" class="section level2">
+<h2>Method</h2>
+<p>Demonstrating the following elements of a MIDFIELD workflow.</p>
+<ol style="list-style-type: decimal">
+<li><p><em>Planning.</em>   The metric is stickiness. Required blocs are
+ever-enrolled and graduates. Grouping variables are program,
+race/ethnicity, and sex. Programs are the four Engineering programs used
+throughout.</p></li>
+<li><p><em>Initial processing.</em>   Filter the student-level records
+for data sufficiency and degree-seeking.</p></li>
+<li><p><em>Blocs.</em>   Gather ever enrolled, filter by program. Gather
+graduates, filter by program.</p></li>
+<li><p><em>Groupings.</em>   Add grouping variables.</p></li>
+<li><p><em>Metrics</em>   Summarize by grouping variables and compute
+stickiness.</p></li>
+<li><p><em>Displays</em>   Create multiway chart and results
+table.</p></li>
+</ol>
+<p><em>Reminder.</em>   midfielddata datasets are for practice, not
+research.</p>
+</div>
+<div id="load-data" class="section level2">
+<h2>Load data</h2>
+<p><em>Start.</em>   If you are writing your own script to follow along,
+we use these packages in this article:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(midfieldr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(midfielddata)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code></pre></div>
+<p><em>Load.</em>   Practice datasets. View data dictionaries via
+<code>?student</code>, <code>?term</code>, <code>?degree</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load practice data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(student, term, degree)</span></code></pre></div>
+<p><em>Loads with midfieldr.</em>   Prepared data. View data dictionary
+via <code>?study_programs</code>, <code>?baseline_mcid</code>.</p>
+<ul>
+<li><p><code>study_programs</code> (derived in <a href="art-040-programs.html#assigning-program-names">Programs</a>).</p></li>
+<li><p><code>baseline_mcid</code> (derived in <a href="art-050-blocs.html#initial-processing">Blocs</a>).</p></li>
+</ul>
+</div>
+<div id="initial-processing" class="section level2">
+<h2>Initial processing</h2>
+<p><em>Select (optional).</em>   Reduce the number of columns. Code
+reproduced from <a href="art-000-getting-started.html#reusable-code">Getting
+started</a>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Optional. Copy of source files with all variables</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>source_student <span class="ot">&lt;-</span> <span class="fu">copy</span>(student)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>source_term <span class="ot">&lt;-</span> <span class="fu">copy</span>(term)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>source_degree <span class="ot">&lt;-</span> <span class="fu">copy</span>(degree)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Optional. Select variables required by midfieldr functions</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>student <span class="ot">&lt;-</span> <span class="fu">select_required</span>(source_student)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>term <span class="ot">&lt;-</span> <span class="fu">select_required</span>(source_term)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>degree <span class="ot">&lt;-</span> <span class="fu">select_required</span>(source_degree)</span></code></pre></div>
+<p><em>Initialize.</em>   From <code>term</code> and
+<code>student</code>, construct a data frame of student IDs filtered for
+data sufficiency and degree seeking as described in <a href="art-050-blocs.html#initial-processing">Blocs</a>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Working data frame</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">copy</span>(baseline_mcid)</span></code></pre></div>
+</div>
+<div id="ever-enrolled" class="section level2">
+<h2>Ever enrolled</h2>
+<p><em>Ever enrolled.</em>   The summary code chunk from <a href="art-050-blocs.html#reusable-code-blocs">Blocs</a>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ever-enrolled bloc</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> term[DT, .(mcid, cip6), on <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;mcid&quot;</span>)]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">unique</span>(DT)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter by program</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> study_programs[DT, on <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;cip6&quot;</span>), nomatch <span class="ot">=</span> <span class="cn">NULL</span>]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>DT[, cip6 <span class="sc">:</span><span class="er">=</span> <span class="cn">NULL</span>]</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">unique</span>(DT)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>DT</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       program           mcid</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    1:      EE MCID3111142965</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    2:      EE MCID3111145102</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    3:      EE MCID3111146537</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ---                       </span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5651:      ME MCID3112641399</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5652:      ME MCID3112641535</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5653:      ME MCID3112698681</span></span></code></pre></div>
+<p><em>Copy.</em>   To prepare for joining with graduates.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare for joining</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setcolorder</span>(DT, <span class="fu">c</span>(<span class="st">&quot;mcid&quot;</span>))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>ever_enrolled <span class="ot">&lt;-</span> <span class="fu">copy</span>(DT)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>ever_enrolled</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 mcid program</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    1: MCID3111142965      EE</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    2: MCID3111145102      EE</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    3: MCID3111146537      EE</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ---                       </span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5651: MCID3112641399      ME</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5652: MCID3112641535      ME</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5653: MCID3112698681      ME</span></span></code></pre></div>
+</div>
+<div id="graduates" class="section level2">
+<h2>Graduates</h2>
+<p><em>Initialize.</em>   The data frame of baseline IDs is the intake
+for this section.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Working data frame</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">copy</span>(baseline_mcid)</span></code></pre></div>
+<p><em>Graduates</em>   The summary code chunk from <a href="art-080-graduates.html#reusable-code">Graduates</a></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gather graduates and their degree CIPs</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">add_timely_term</span>(DT, term)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">add_completion_status</span>(DT, degree)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> DT[completion_status <span class="sc">==</span> <span class="st">&quot;timely&quot;</span>]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> degree[DT, .(mcid, term_degree, cip6), on <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;mcid&quot;</span>)]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter by program and first-degree terms only</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> study_programs[DT, on <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;cip6&quot;</span>), nomatch <span class="ot">=</span> <span class="cn">NULL</span>]</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> DT[, .SD[<span class="fu">which.min</span>(term_degree)], by <span class="ot">=</span> <span class="st">&quot;mcid&quot;</span>]</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>DT[, <span class="fu">c</span>(<span class="st">&quot;cip6&quot;</span>, <span class="st">&quot;term_degree&quot;</span>) <span class="sc">:</span><span class="er">=</span> <span class="cn">NULL</span>]</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">unique</span>(DT)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>DT</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 mcid program</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    1: MCID3111142965      EE</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    2: MCID3111145102      EE</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    3: MCID3111146537      EE</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ---                       </span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3262: MCID3112618976      ME</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3263: MCID3112619484      EE</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3264: MCID3112641535      ME</span></span></code></pre></div>
+<p><em>Copy.</em>   To prepare for joining with ever enrolled</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare for joining</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setcolorder</span>(DT, <span class="fu">c</span>(<span class="st">&quot;mcid&quot;</span>))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>graduates <span class="ot">&lt;-</span> <span class="fu">copy</span>(DT)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>graduates</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 mcid program</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    1: MCID3111142965      EE</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    2: MCID3111145102      EE</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    3: MCID3111146537      EE</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ---                       </span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3262: MCID3112618976      ME</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3263: MCID3112619484      EE</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3264: MCID3112641535      ME</span></span></code></pre></div>
+</div>
+<div id="groupings" class="section level2">
+<h2>Groupings</h2>
+<p>One of our grouping variables (<code>program</code>) is already
+included in the data frames. The next grouping variable is
+<code>bloc</code> to distinguish starters from graduates when the two
+data frames are combined.</p>
+<p><em>Add a variable.</em>   Label ever enrolled and graduates.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># For grouping by bloc</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ever_enrolled[, bloc <span class="sc">:</span><span class="er">=</span> <span class="st">&quot;ever_enrolled&quot;</span>]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>graduates[, bloc <span class="sc">:</span><span class="er">=</span> <span class="st">&quot;graduates&quot;</span>]</span></code></pre></div>
+<p><em>Join.</em>   Combine the two blocs to prepare for summarizing. A
+graduate has two observations in these data: one as ever enrolled and
+one as a graduate.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare for summarizing</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">rbindlist</span>(<span class="fu">list</span>(ever_enrolled, graduates))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>DT</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 mcid program          bloc</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    1: MCID3111142965      EE ever_enrolled</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    2: MCID3111145102      EE ever_enrolled</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    3: MCID3111146537      EE ever_enrolled</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ---                                     </span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8915: MCID3112618976      ME     graduates</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8916: MCID3112619484      EE     graduates</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8917: MCID3112641535      ME     graduates</span></span></code></pre></div>
+<p><em>Add variables.</em>   Demographics from <a href="art-090-groupings.html#reusable-code">Groupings</a></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Join race/ethnicity and sex</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>cols_we_want <span class="ot">&lt;-</span> student[, .(mcid, race, sex)]</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> cols_we_want[DT, on <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;mcid&quot;</span>)]</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>DT</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 mcid          race    sex program          bloc</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    1: MCID3111142965 International   Male      EE ever_enrolled</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    2: MCID3111145102         White   Male      EE ever_enrolled</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    3: MCID3111146537         Asian Female      EE ever_enrolled</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ---                                                          </span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8915: MCID3112618976         White   Male      ME     graduates</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8916: MCID3112619484         White   Male      EE     graduates</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8917: MCID3112641535         White   Male      ME     graduates</span></span></code></pre></div>
+<p><em>Verify prepared data.</em>   <code>study_observations</code>,
+included with midfieldr, contains the case study information developed
+above. Here we verify that the two data frames have the same
+content.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Demonstrate equivalence</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">same_content</span>(DT, study_observations)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p><em>Note.</em>   MIDFIELD research findings are regularly grouped by
+program, race/ethnicity, and sex. However, applied to the practice data
+these groupings produce several groups with totals below the threshold
+we impose to preserve anonymity, introducing a number of NA values in
+the resulting charts and tables. These NAs are largely an artifact of
+applying these groupings to practice data.</p>
+</div>
+<div id="stickiness" class="section level2">
+<h2>Stickiness</h2>
+<p><em>Summarize.</em>   Count the numbers of observations for each
+combination of the grouping variables.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count observations by group</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>grouping_variables <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;bloc&quot;</span>, <span class="st">&quot;program&quot;</span>, <span class="st">&quot;sex&quot;</span>, <span class="st">&quot;race&quot;</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> DT[, .N, by <span class="ot">=</span> grouping_variables]</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">setorderv</span>(DT, grouping_variables)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>DT</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              bloc program    sex            race   N</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1: ever_enrolled      CE Female           Asian  15</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2: ever_enrolled      CE Female           Black   4</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3: ever_enrolled      CE Female   International  23</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---                                                 </span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 96:     graduates      ME   Male Native American   1</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 97:     graduates      ME   Male   Other/Unknown  41</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 98:     graduates      ME   Male           White 953</span></span></code></pre></div>
+<p><em>Reshape.</em>   Transform to row-record form to set up the
+stickiness metric calculation. Transform the <em>N</em> column into two
+columns, one for ever-enrolled and one for graduates.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare to compute metric</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">dcast</span>(DT, program <span class="sc">+</span> sex <span class="sc">+</span> race <span class="sc">~</span> bloc, <span class="at">value.var =</span> <span class="st">&quot;N&quot;</span>, <span class="at">fill =</span> <span class="dv">0</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>DT</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     program    sex            race ever_enrolled graduates</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:      CE Female           Asian            15        10</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:      CE Female           Black             4         1</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3:      CE Female   International            23        13</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---                                                       </span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 48:      ME   Male Native American             5         1</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 49:      ME   Male   Other/Unknown            80        41</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 50:      ME   Male           White          1596       953</span></span></code></pre></div>
+<p><em>Create a variable.</em>   Compute the metric.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute metric</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>DT[, stickiness <span class="sc">:</span><span class="er">=</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> graduates <span class="sc">/</span> ever_enrolled, <span class="dv">1</span>)]</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>DT</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     program    sex            race ever_enrolled graduates stickiness</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:      CE Female           Asian            15        10       66.7</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:      CE Female           Black             4         1       25.0</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3:      CE Female   International            23        13       56.5</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---                                                                  </span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 48:      ME   Male Native American             5         1       20.0</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 49:      ME   Male   Other/Unknown            80        41       51.2</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 50:      ME   Male           White          1596       953       59.7</span></span></code></pre></div>
+<p><em>Verify prepared data.</em>   <code>study_results</code>, included
+with midfieldr, contains the case study information developed above.
+Here we verify that the two data frames have the same content.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Demonstrate equivalence</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">same_content</span>(DT, study_results)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+</div>
+<div id="prepare-for-dissemination" class="section level2">
+<h2>Prepare for dissemination</h2>
+<p><em>Filter.</em>   To preserve the anonymity of the people involved,
+we remove observations with fewer than <code>N_threshold</code>
+graduates. With the research data, we typically set this threshold to
+10; with the practice data, we demonstrate the procedure using a
+threshold of 5.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Preserve anonymity</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>N_threshold <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="co"># 10 for research data</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> DT[graduates <span class="sc">&gt;=</span> N_threshold]</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>DT</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     program    sex          race ever_enrolled graduates stickiness</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:      CE Female         Asian            15        10       66.7</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:      CE Female International            23        13       56.5</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3:      CE Female        Latine            13         6       46.2</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---                                                                </span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 33:      ME   Male        Latine            79        42       53.2</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 34:      ME   Male Other/Unknown            80        41       51.2</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 35:      ME   Male         White          1596       953       59.7</span></span></code></pre></div>
+<p><em>Recode.</em>   Readers can more readily interpret our charts and
+tables if the programs are unabbreviated.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Recode values for chart and table readability</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>DT[, program <span class="sc">:</span><span class="er">=</span> <span class="fu">fcase</span>(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  program <span class="sc">%like%</span> <span class="st">&quot;CE&quot;</span>, <span class="st">&quot;Civil&quot;</span>,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  program <span class="sc">%like%</span> <span class="st">&quot;EE&quot;</span>, <span class="st">&quot;Electrical&quot;</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  program <span class="sc">%like%</span> <span class="st">&quot;ME&quot;</span>, <span class="st">&quot;Mechanical&quot;</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  program <span class="sc">%like%</span> <span class="st">&quot;ISE&quot;</span>, <span class="st">&quot;Industrial/Systems&quot;</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>)]</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>DT</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        program    sex          race ever_enrolled graduates stickiness</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:      Civil Female         Asian            15        10       66.7</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:      Civil Female International            23        13       56.5</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3:      Civil Female        Latine            13         6       46.2</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---                                                                   </span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 33: Mechanical   Male        Latine            79        42       53.2</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 34: Mechanical   Male Other/Unknown            80        41       51.2</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 35: Mechanical   Male         White          1596       953       59.7</span></span></code></pre></div>
+<p><em>Add a variable.</em>   We combine race/ethnicity and sex to
+create a combined grouping variable.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a combined category</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>DT[, people <span class="sc">:</span><span class="er">=</span> <span class="fu">paste</span>(race, sex)]</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>DT[, <span class="st">`</span><span class="at">:=</span><span class="st">`</span>(<span class="at">race =</span> <span class="cn">NULL</span>, <span class="at">sex =</span> <span class="cn">NULL</span>)]</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">setcolorder</span>(DT, <span class="fu">c</span>(<span class="st">&quot;program&quot;</span>, <span class="st">&quot;people&quot;</span>))</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>DT</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        program               people ever_enrolled graduates stickiness</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:      Civil         Asian Female            15        10       66.7</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:      Civil International Female            23        13       56.5</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3:      Civil        Latine Female            13         6       46.2</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---                                                                   </span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 33: Mechanical          Latine Male            79        42       53.2</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 34: Mechanical   Other/Unknown Male            80        41       51.2</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 35: Mechanical           White Male          1596       953       59.7</span></span></code></pre></div>
+</div>
+<div id="chart" class="section level2">
+<h2>Chart</h2>
+<p><em>Order factors.</em>   Order the levels of the categories. Code
+adapted from <a href="art-120-multiway.html#percentage-ordered-data">Multiway data and
+charts</a>.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Order the categories</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">order_multiway</span>(DT,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">quantity   =</span> <span class="st">&quot;stickiness&quot;</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">categories =</span> <span class="fu">c</span>(<span class="st">&quot;program&quot;</span>, <span class="st">&quot;people&quot;</span>),</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method     =</span> <span class="st">&quot;percent&quot;</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">ratio_of   =</span> <span class="fu">c</span>(<span class="st">&quot;graduates&quot;</span>, <span class="st">&quot;ever_enrolled&quot;</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>DT</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        program               people graduates ever_enrolled stickiness</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:      Civil         Asian Female        10            15       66.7</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:      Civil International Female        13            23       56.5</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3:      Civil        Latine Female         6            13       46.2</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---                                                                   </span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 33: Mechanical          Latine Male        42            79       53.2</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 34: Mechanical   Other/Unknown Male        41            80       51.2</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 35: Mechanical           White Male       953          1596       59.7</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     program_stickiness people_stickiness</span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:               62.4              62.7</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:               62.4              47.1</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3:               62.4              56.0</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---                                     </span></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 33:               59.0              47.4</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 34:               59.0              45.6</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 35:               59.0              59.3</span></span></code></pre></div>
+<p><em>Multiway chart.</em>   Code adapted from <a href="art-120-multiway.html#percentage-ordered-charts">Multiway data and
+charts</a>.</p>
+<p>The vertical reference line is the aggregate stickiness of the
+program, independent of race/ethnicity and sex. A missing data marker or
+missing group indicates the number of graduates was below the threshold
+set to preserve anonymity—largely an artifact of applying these
+groupings to practice data.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(DT, <span class="fu">aes</span>(<span class="at">x =</span> stickiness, <span class="at">y =</span> people)) <span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(program), <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">as.table =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> program_stickiness), <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">&quot;gray60&quot;</span>) <span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Stickiness (%)&quot;</span>, <span class="at">y =</span> <span class="st">&quot;&quot;</span>) <span class="sc">+</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">90</span>), <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">10</span>))</span></code></pre></div>
+<div class="figure">
+<img src="data:image/png;base64,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" alt="Figure 2: Stickiness of four Engineering majors." width="100%" />
+<p class="caption">
+Figure 2: Stickiness of four Engineering majors.
+</p>
+</div>
+</div>
+<div id="table" class="section level2">
+<h2>Table</h2>
+<p><em>Results table.</em>   Code adapted from <a href="art-120-multiway.html#tabulating-counts">Multiway data and
+charts</a>.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select variables and remove factors</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>display_table <span class="ot">&lt;-</span> <span class="fu">copy</span>(DT)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>display_table <span class="ot">&lt;-</span> display_table[, .(program, people, stickiness)]</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>display_table[, people <span class="sc">:</span><span class="er">=</span> <span class="fu">as.character</span>(people)]</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>display_table[, program <span class="sc">:</span><span class="er">=</span> <span class="fu">as.character</span>(program)]</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Construct table</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>display_table <span class="ot">&lt;-</span> <span class="fu">dcast</span>(display_table, people <span class="sc">~</span> program, <span class="at">value.var =</span> <span class="st">&quot;stickiness&quot;</span>)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="fu">setnames</span>(display_table,</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">old =</span> <span class="fu">c</span>(<span class="st">&quot;people&quot;</span>),</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">new =</span> <span class="fu">c</span>(<span class="st">&quot;People&quot;</span>),</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip_absent =</span> <span class="cn">TRUE</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>display_table</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 People Civil Electrical Industrial/Systems Mechanical</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1:       Asian Female  66.7       57.1               66.7         NA</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2:         Asian Male  83.3       57.7               58.3       64.5</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3:       Black Female    NA         NA               85.7         NA</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---                                                                  </span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9: Other/Unknown Male  40.7       38.1                 NA       51.2</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:       White Female  61.6       47.5               70.1       62.9</span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11:         White Male  64.5       50.8               69.5       59.7</span></span></code></pre></div>
+<p>(Optional) Format the table nearer to publication quality. Here I use
+kableExtra package.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>display_table <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">kbl</span>(<span class="at">align =</span> <span class="st">&quot;lrrrr&quot;</span>, <span class="at">caption =</span> <span class="st">&quot;Table 1: Stickiness (%) of four Engineering majors.&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">kable_paper</span>(<span class="at">lightable_options =</span> <span class="st">&quot;basic&quot;</span>, <span class="at">full_width =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">row_spec</span>(<span class="dv">0</span>, <span class="at">background =</span> <span class="st">&quot;#c7eae5&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">column_spec</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">background =</span> <span class="st">&quot;white&quot;</span>)</span></code></pre></div>
+<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
+<caption>
+Table 1: Stickiness (%) of four Engineering majors.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;background-color: #c7eae5 !important;">
+People
+</th>
+<th style="text-align:right;background-color: #c7eae5 !important;">
+Civil
+</th>
+<th style="text-align:right;background-color: #c7eae5 !important;">
+Electrical
+</th>
+<th style="text-align:right;background-color: #c7eae5 !important;">
+Industrial/Systems
+</th>
+<th style="text-align:right;background-color: #c7eae5 !important;">
+Mechanical
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Asian Female
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+66.7
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+57.1
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+66.7
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Asian Male
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+83.3
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+57.7
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+58.3
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+64.5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Black Female
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+NA
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+NA
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+85.7
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Black Male
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+62.5
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+58.6
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+66.7
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+63.3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+International Female
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+56.5
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+32.1
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+NA
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+57.9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+International Male
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+56.7
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+46.2
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+54.5
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+50.0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Latine Female
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+46.2
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+NA
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+NA
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+66.7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Latine Male
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+47.0
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+37.8
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+NA
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+53.2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+Other/Unknown Male
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+40.7
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+38.1
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+NA
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+51.2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+White Female
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+61.6
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+47.5
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+70.1
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+62.9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;color: black !important;background-color: white !important;">
+White Male
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+64.5
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+50.8
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+69.5
+</td>
+<td style="text-align:right;color: black !important;background-color: white !important;">
+59.7
+</td>
+</tr>
+</tbody>
+</table>
+<p>A value of NA indicates a group removed because the number of
+graduates was below the threshold set to preserve anonymity. As noted
+earlier, these are largely an artifact of applying these groupings to
+practice data.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Ohland+Orr+others:2012" class="csl-entry">
+Ohland, Matthew, Marisa Orr, Richard Layton, Susan Lord, and Russell
+Long. 2012. <span>“<span class="nocase">Introducing stickiness as a
+versatile metric of engineering persistence</span>.”</span> In <em><span class="nocase">Proceedings of the Frontiers in Education
+Conference</span></em>, 1–5. DOI 10.1109/FIE.2012.6462214.
+</div>
+</div>
+<style type="text/css">
+blockquote {
+padding: 10px 20px;
+margin: 0 0 20px;
+border-left: 0px
+}
+caption {
+color: #525252;
+text-align: left;
+font-weight: normal;
+font-size: medium;
+line-height: 1.5;
+}
+</style>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

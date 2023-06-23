@@ -54,9 +54,9 @@ welcome to translate our examples to their preferred syntax.
 
 ``` r
 format(Sys.Date(), "%Y-%m-%d") # Today's date
-#> [1] "2022-12-22"
+#> [1] "2023-06-23"
 packageVersion("midfieldr") # Tools and methods
-#> [1] '1.0.0.9030'
+#> [1] '1.0.1'
 packageVersion("midfielddata") # Practice data
 #> [1] '0.2.0'
 ```
@@ -426,7 +426,14 @@ not research data.
 
 ## Installation
 
-Install with:
+Install the current release with:
+
+``` r
+install.packages("midfieldr")
+```
+
+Alternatively, one can install the current release from our drat
+repository:
 
 ``` r
 install.packages("midfieldr",
@@ -435,8 +442,7 @@ install.packages("midfieldr",
 )
 ```
 
-Alternatively, you can install the development version from the MIDFIELD
-GitHub repository:
+One can install the development version from our GitHub repository:
 
 ``` r
 install.packages("pak")
@@ -460,14 +466,14 @@ MIDFIELD database, midfielddata provides practice data for the tools and
 methods in the midfieldr package.
 
 [MIDFIELD
-Institute](https://midfieldr.github.io/2022-midfield-institute/).  
-Materials from the 2022 workshop, including an introduction to R for
+Institute](https://midfieldr.github.io/2023-midfield-institute/).  
+Materials from the 2023 workshop, including an introduction to R for
 beginners, chart basics with ggplot2, and data basics with data.table.
 
 ## Acknowledgments
 
 This work is supported by the National Science Foundation through grant
-number 1545667.
+numbers 1545667 and 2142087.
 
 ## References
 
