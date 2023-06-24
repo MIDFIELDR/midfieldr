@@ -54,7 +54,7 @@ welcome to translate our examples to their preferred syntax.
 
 ``` r
 format(Sys.Date(), "%Y-%m-%d") # Today's date
-#> [1] "2023-06-23"
+#> [1] "2023-06-24"
 packageVersion("midfieldr") # Tools and methods
 #> [1] '1.0.1'
 packageVersion("midfielddata") # Practice data
