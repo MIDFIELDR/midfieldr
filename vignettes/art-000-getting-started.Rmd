@@ -81,10 +81,22 @@ In this article:
 *Start.* &nbsp; If you are writing your own script to follow along, we use these packages in this article:
 
 ```{r}
+#| echo: false
+# Enable external (non-CRAN) repository for midfielddata data package
+# Strictly for satisfying CRAN submission 
+if (!requireNamespace("midfielddata", quietly = TRUE)) {
+  install.packages("midfielddata",
+  repos = "https://MIDFIELDR.github.io/drat/",
+  type = "source")
+}
+```
+
+```{r}
 library(midfieldr)
 library(midfielddata)
 library(data.table)
 ```
+
 
 *Load data tables.*  &nbsp; Data tables can be loaded individually or collectively as needed.  View data dictionaries via `?student`, `?course`, `?term`, or `?degree`. 
 
@@ -203,7 +215,7 @@ Different institutions supply data over different time spans.
 term[, .(min_term = min(term), max_term = max(term)), by = "institution"]
 ```
 
-Programs are encoded in the `cip6` variable, a 6-digit character based on the 2010 Classification of Instructional Programs (CIP) [@NCES:2010]. CIP codes are explored in detail in [Programs](art-040-programs.html).
+Programs are encoded in the `cip6` variable, a 6-digit character based on the 2010 Classification of Instructional Programs (CIP) [@NCES:2010].
 
 ```{r}
 # A sample of cip6 values
