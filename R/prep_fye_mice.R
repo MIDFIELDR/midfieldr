@@ -128,7 +128,7 @@ prep_fye_mice <- function(midfield_student = student,
   # remove all keys
   on.exit(setkey(midfield_student, NULL))
   on.exit(setkey(midfield_term, NULL), add = TRUE)
-
+  
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),

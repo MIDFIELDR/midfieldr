@@ -52,15 +52,6 @@ prefer base R or dplyr for data ([Wickham et al.
 2008](#ref-Sarkar:2008)). Each system has its strengths—users are
 welcome to translate our examples to their preferred syntax.
 
-``` r
-format(Sys.Date(), "%Y-%m-%d") # Today's date
-#> [1] "2023-06-24"
-packageVersion("midfieldr") # Tools and methods
-#> [1] '1.0.1'
-packageVersion("midfielddata") # Practice data
-#> [1] '0.2.0'
-```
-
 ## Usage
 
 In this example, we gather all students ever enrolled in Engineering and

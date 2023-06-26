@@ -58,7 +58,7 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
     # remove keys if any 
     on.exit(setkey(dframe, NULL))
     on.exit(setkey(midfield_term, NULL), add = TRUE)
-
+    
   # required arguments
   qassert(dframe, "d+")
   qassert(midfield_term, "d+")
