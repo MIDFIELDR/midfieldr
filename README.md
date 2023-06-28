@@ -417,30 +417,31 @@ not research data.
 
 ## Installation
 
-Install the current release with:
+Install with:
 
 ``` r
 install.packages("midfieldr")
 ```
 
-Alternatively, one can install the current release from our drat
-repository:
-
-``` r
-install.packages("midfieldr",
-  repos = "https://MIDFIELDR.github.io/drat/",
-  type = "source"
-)
-```
-
-One can install the development version from our GitHub repository:
+Latest development version:
 
 ``` r
 install.packages("pak")
 pak::pkg_install("MIDFIELDR/midfieldr")
 ```
 
-Link to installation instructions for midfielddata below.
+midfieldr interacts with practice data provided in the midfielddata data
+package. Install midfielddata using:
+
+``` r
+install.packages("midfielddata",
+  repos = "https://MIDFIELDR.github.io/drat/",
+  type = "source"
+)
+```
+
+The installed size of midfielddata is about 24 Mb, so the installation
+takes some time.
 
 ## More information
 
@@ -463,8 +464,8 @@ beginners, chart basics with ggplot2, and data basics with data.table.
 
 ## Acknowledgments
 
-This work is supported by the National Science Foundation through grant
-numbers 1545667 and 2142087.
+This work is supported by the US National Science Foundation through
+grant numbers 1545667 and 2142087.
 
 ## References
 
