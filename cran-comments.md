@@ -1,10 +1,8 @@
 # Purpose
 
-Second re-submission to fix problems. Thank you for your time and patience. 
+Third re-submission to fix problems. Thank you again for your time and patience. 
 
-* I edited the URL for the Additional_repositories specification for the 'midfielddata' 'drat' repository.
-
-* I edited the vignettes to address the invalid file URIs. 
+* I checked the run-time of the examples and removed the \\dontrun{} case. 
 
 # R CMD check results
 
