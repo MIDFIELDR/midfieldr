@@ -1,6 +1,6 @@
-# midfieldr (development version)
+# midfieldr (development version) 1.0.1.9000 / 2023--07--08
 
-# midfieldr 1.0.1 / 2023--06--23
+# midfieldr 1.0.1 / 2023--07--08
 
 Initial CRAN submission
 
