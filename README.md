@@ -8,9 +8,10 @@ studying undergraduate student-level records from the MIDFIELD database.
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/MIDFIELDR/midfieldr/workflows/R-CMD-check/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions)  
 [![CRAN
 status](https://www.r-pkg.org/badges/version/midfieldr)](https://CRAN.R-project.org/package=midfieldr)  
+[![R-CMD-check](https://github.com/MIDFIELDR/midfieldr/workflows/R-CMD-check/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions)  
+[![status](https://tinyverse.netlify.com/badge/midfieldr)](https://CRAN.R-project.org/package=midfieldr)  
 [![codecov](https://codecov.io/gh/MIDFIELDR/midfieldr/branch/main/graph/badge.svg?token=KcuCzBkLBP)](https://app.codecov.io/gh/MIDFIELDR/midfieldr)
 
 <!-- [![CRAN check](https://badges.cranchecks.info/summary/midfieldr.svg)](https://cran.r-project.org/web/checks/check_results_midfieldr.html) -->
@@ -470,12 +471,9 @@ grant numbers 1545667 and 2142087.
 ## References
 
 <div id="refs">
-
-
-
-
-
-
+&#10;
+&#10;
+&#10;
 
 <style type="text/css">
 blockquote {
@@ -496,8 +494,8 @@ caption {
 
 <div id="ref-Dowle+Srinivasan:2022:data.table" class="csl-entry">
 
-Dowle, Matt, and Arun Srinivasan. 2022. *<span
-class="nocase">d</span>ata.table: Extension of ‘Data.frame‘*.
+Dowle, Matt, and Arun Srinivasan. 2022.
+*<span class="nocase">d</span>ata.table: Extension of ‘Data.frame‘*.
 R package version 1.14.6.
 <https://CRAN.R-project.org/package=data.table>.
 
