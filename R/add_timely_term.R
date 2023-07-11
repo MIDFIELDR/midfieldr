@@ -34,7 +34,7 @@
 #' @param ... Not used, forces later arguments to be used by name.
 #'
 #' @param span Optional integer scalar, number of years to define timely
-#'   completion. Commonly used values are are 100\%, 150\%, and 200\% of
+#'   completion. Commonly used values are are 100, 150, and 200 percent of
 #'   `sched_span.` Default 6 years.
 #'
 #' @param sched_span Optional integer scalar, the number of years an institution

@@ -23,7 +23,7 @@ student ID. Default is \code{term.} Required variables are \code{mcid}, \code{te
 \item{...}{Not used, forces later arguments to be used by name.}
 
 \item{span}{Optional integer scalar, number of years to define timely
-completion. Commonly used values are are 100\\%, 150\\%, and 200\\% of
+completion. Commonly used values are are 100, 150, and 200 percent of
 \code{sched_span.} Default 6 years.}
 
 \item{sched_span}{Optional integer scalar, the number of years an institution

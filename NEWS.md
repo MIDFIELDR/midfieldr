@@ -1,4 +1,11 @@
-# midfieldr (development version) 1.0.1.9000 / 2023--07--08
+# midfieldr (development version) 1.0.1.9000 / 2023--07--11
+
+- Update the description of the MIDFIELD research database
+- Edit badges on README 
+- Correct minor typos
+
+
+
 
 # midfieldr 1.0.1 / 2023--07--08
 

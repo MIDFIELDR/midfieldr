@@ -11,8 +11,9 @@ studying undergraduate student-level records from the MIDFIELD database.
 [![CRAN
 status](https://www.r-pkg.org/badges/version/midfieldr)](https://CRAN.R-project.org/package=midfieldr)  
 [![R-CMD-check](https://github.com/MIDFIELDR/midfieldr/workflows/R-CMD-check/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions)  
-[![status](https://tinyverse.netlify.com/badge/midfieldr)](https://CRAN.R-project.org/package=midfieldr)  
-[![codecov](https://codecov.io/gh/MIDFIELDR/midfieldr/branch/main/graph/badge.svg?token=KcuCzBkLBP)](https://app.codecov.io/gh/MIDFIELDR/midfieldr)
+[![codecov](https://codecov.io/gh/MIDFIELDR/midfieldr/branch/main/graph/badge.svg?token=KcuCzBkLBP)](https://app.codecov.io/gh/MIDFIELDR/midfieldr)  
+[![dependencies](https://tinyverse.netlify.com/badge/midfieldr)](https://CRAN.R-project.org/package=midfieldr)  
+[![downloads](http://cranlogs.r-pkg.org/badges/grand-total/midfieldr?color=blue)](https://cran.r-project.org/package=midfieldr)
 
 <!-- [![CRAN check](https://badges.cranchecks.info/summary/midfieldr.svg)](https://cran.r-project.org/web/checks/check_results_midfieldr.html) -->
 <!-- badges: end -->
@@ -447,14 +448,14 @@ takes some time.
 ## More information
 
 [MIDFIELD](https://midfield.online/).   A database of anonymized
-student-level records for approximately 1.7M undergraduates at nineteen
-US institutions from 1987–2018, of which midfielddata provides a sample.
+student-level records for approximately 2.4M undergraduates at 21 US
+institutions from 1987-2022, of which midfielddata provides a sample.
 This research database is currently accessible to MIDFIELD partner
 institutions only.
 
 [midfielddata](https://midfieldr.github.io/midfielddata/).   An R data
 package that supplies anonymized student-level records for 98,000
-undergraduates at three US institutions from 1988–2018. A sample of the
+undergraduates at three US institutions from 1988-2018. A sample of the
 MIDFIELD database, midfielddata provides practice data for the tools and
 methods in the midfieldr package.
 
