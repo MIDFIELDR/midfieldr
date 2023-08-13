@@ -449,9 +449,9 @@ takes some time.
 
 [MIDFIELD](https://midfield.online/).   A database of anonymized
 student-level records for approximately 2.4M undergraduates at 21 US
-institutions from 1987-2022, of which midfielddata provides a sample.
-This research database is currently accessible to MIDFIELD partner
-institutions only.
+institutions from 1987-2022. Access to this database requires a
+confidentiality agreement and Institutional Review Board (IRB) approval
+for human subjects research.
 
 [midfielddata](https://midfieldr.github.io/midfielddata/).   An R data
 package that supplies anonymized student-level records for 98,000

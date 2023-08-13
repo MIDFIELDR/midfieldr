@@ -11,7 +11,10 @@
 #'
 #' The midfielddata taxonomy includes one non-IPEDS code (999999) for Undecided
 #' or Unspecified, instances in which institutions reported no program
-#' information or that students were not enrolled in a program.
+#' information or that students were not enrolled in a program. 
+#' 
+#' The MIDFIELD research database include CIPs for undergraduate pre-majors 
+#' such as pre-med (511102), pre-law (220001), and pre-vet (511104).
 #'
 #' @format `data.table` with 1582 rows and 6 columns keyed by the 6-digit CIP
 #'   code:

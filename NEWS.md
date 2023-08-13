@@ -1,6 +1,6 @@
 # midfieldr (development version) 1.0.1.9000 / 2023--07--11
 
-- Update the description of the MIDFIELD research database
+- Update descriptions of several items: research database, grades in course, etc. 
 - Edit badges on README 
 - Correct minor typos
 
