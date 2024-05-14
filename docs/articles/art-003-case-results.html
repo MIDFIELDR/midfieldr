@@ -34,7 +34,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1.9002</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -150,7 +150,7 @@ via <code><a href="../reference/study_observations.html">?study_observations</a>
 <p><em>Initialize.</em>   Assign a working data frame.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Working data frame</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_observations</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_observations</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                 mcid          race  sex program          bloc</span></span>
 <span><span class="co">#&gt;    1: MCID3111142965 International Male      EE ever_enrolled</span></span>
@@ -200,8 +200,9 @@ Zumel 2019</a>)</span>. This step leaves the graphing variables
 (program, race/ethnicity, and sex) in place.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Prepare to compute metric</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">program</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">race</span> <span class="op">~</span> <span class="va">bloc</span>, value.var <span class="op">=</span> <span class="st">"N"</span>, fill <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">program</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">race</span> <span class="op">~</span> <span class="va">bloc</span>, value.var <span class="op">=</span> <span class="st">"N"</span>, fill <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
+<span><span class="co">#&gt; Key: &lt;program, sex, race&gt;</span></span>
 <span><span class="co">#&gt;     program    sex            race ever_enrolled graduates</span></span>
 <span><span class="co">#&gt;  1:      CE Female           Asian            15        10</span></span>
 <span><span class="co">#&gt;  2:      CE Female           Black             4         1</span></span>
@@ -236,7 +237,7 @@ S = \frac{N_g}{N_e}
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute the metric</span></span>
 <span><span class="va">DT</span><span class="op">[</span>, <span class="va">stickiness</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">graduates</span> <span class="op">/</span> <span class="va">ever_enrolled</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setkey.html" class="external-link">setkey</a></span><span class="op">(</span><span class="va">DT</span>, <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/setkey.html" class="external-link">setkey</a></span><span class="op">(</span><span class="va">DT</span>, <span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;     program    sex            race ever_enrolled graduates stickiness</span></span>
 <span><span class="co">#&gt;  1:      CE Female           Asian            15        10       66.7</span></span>
@@ -287,7 +288,7 @@ applying these groupings to practice data.</p>
 observations labeled “International” and Other/Unknown”.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Filter by study design</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="va">race</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"International"</span>, <span class="st">"Other/Unknown"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="va">race</span> <span class="op"><a href="https://rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"International"</span>, <span class="st">"Other/Unknown"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span></span>
@@ -305,7 +306,7 @@ data with a variable that combines race/ethnicity and sex.</p>
 <code class="sourceCode R"><span><span class="co"># Create a variable</span></span>
 <span><span class="va">DT</span><span class="op">[</span>, <span class="va">people</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"people"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"people"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Display the result</span></span>
 <span><span class="va">DT</span></span>
@@ -321,11 +322,11 @@ data with a variable that combines race/ethnicity and sex.</p>
 charts and tables if the programs are unabbreviated.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Recode values for charts and tables</span></span>
-<span><span class="va">DT</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
-<span>  <span class="va">program</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"CE"</span>, <span class="st">"Civil"</span>,</span>
-<span>  <span class="va">program</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"EE"</span>, <span class="st">"Electrical"</span>,</span>
-<span>  <span class="va">program</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"ME"</span>, <span class="st">"Mechanical"</span>,</span>
-<span>  <span class="va">program</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"ISE"</span>, <span class="st">"Industrial/Systems"</span></span>
+<span><span class="va">DT</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
+<span>  <span class="va">program</span> <span class="op"><a href="https://rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"CE"</span>, <span class="st">"Civil"</span>,</span>
+<span>  <span class="va">program</span> <span class="op"><a href="https://rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"EE"</span>, <span class="st">"Electrical"</span>,</span>
+<span>  <span class="va">program</span> <span class="op"><a href="https://rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"ME"</span>, <span class="st">"Mechanical"</span>,</span>
+<span>  <span class="va">program</span> <span class="op"><a href="https://rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"ISE"</span>, <span class="st">"Industrial/Systems"</span></span>
 <span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Display the result</span></span>
@@ -461,10 +462,10 @@ labeling the remaining columns.</p>
 <span><span class="va">tbl</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">program</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Transform from block records to row records</span></span>
-<span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">tbl</span>, <span class="va">people</span> <span class="op">~</span> <span class="va">program</span>, value.var <span class="op">=</span> <span class="st">"stickiness"</span><span class="op">)</span></span>
+<span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">tbl</span>, <span class="va">people</span> <span class="op">~</span> <span class="va">program</span>, value.var <span class="op">=</span> <span class="st">"stickiness"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Edit one column header</span></span>
-<span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">tbl</span>, old <span class="op">=</span> <span class="st">"people"</span>, new <span class="op">=</span> <span class="st">"People"</span>, skip_absent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">tbl</span>, old <span class="op">=</span> <span class="st">"people"</span>, new <span class="op">=</span> <span class="st">"People"</span>, skip_absent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Groups with numbers below our reporting threshold are denoted NA or
 omitted.</p>
 <table class="table  lightable-paper" style='font-family: "Arial Narrow", arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;'>
@@ -597,7 +598,7 @@ White Male
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-Cleveland:1993" class="csl-entry">
 Cleveland, William S. 1993. <em><span>Visualizing Data</span></em>.
 Summit, NJ: <span>Hobart Press</span>.

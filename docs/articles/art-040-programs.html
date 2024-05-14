@@ -36,7 +36,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1.9002</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -441,6 +441,7 @@ data dictionary via <code><a href="../reference/cip.html">?cip</a></code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Loads with midfieldr</span></span>
 <span><span class="va">cip</span></span>
+<span><span class="co">#&gt; Index: &lt;cip6&gt;</span></span>
 <span><span class="co">#&gt;       cip2                                                  cip2name cip4</span></span>
 <span><span class="co">#&gt;    1:   01 Agriculture, Agricultural Operations and Related Sciences 0100</span></span>
 <span><span class="co">#&gt;    2:   01 Agriculture, Agricultural Operations and Related Sciences 0101</span></span>
@@ -2063,7 +2064,7 @@ starting with a symbol):</p>
 using abbreviations for compact output.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Recode program using the 4-digit name</span></span>
-<span><span class="va">four_programs</span><span class="op">[</span><span class="va">cip4name</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%ilike%</a></span> <span class="st">"electrical"</span>, <span class="va">program</span> <span class="op">:=</span> <span class="st">"EE"</span><span class="op">]</span></span>
+<span><span class="va">four_programs</span><span class="op">[</span><span class="va">cip4name</span> <span class="op"><a href="https://rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%ilike%</a></span> <span class="st">"electrical"</span>, <span class="va">program</span> <span class="op">:=</span> <span class="st">"EE"</span><span class="op">]</span></span>
 <span><span class="va">four_programs</span></span>
 <span><span class="co">#&gt;       cip6                                               cip4name program</span></span>
 <span><span class="co">#&gt;  1: 140801                                      Civil Engineering    &lt;NA&gt;</span></span>
@@ -2090,7 +2091,7 @@ again, but apply it to a CIP code. Here we use the regular expression
 <code>^1408</code> meaning “starts with 1408.”</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Recode program using the 4-digit code</span></span>
-<span><span class="va">four_programs</span><span class="op">[</span><span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="va">program</span> <span class="op">:=</span> <span class="st">"CE"</span><span class="op">]</span></span>
+<span><span class="va">four_programs</span><span class="op">[</span><span class="va">cip6</span> <span class="op"><a href="https://rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="va">program</span> <span class="op">:=</span> <span class="st">"CE"</span><span class="op">]</span></span>
 <span><span class="va">four_programs</span></span>
 <span><span class="co">#&gt;       cip6                                               cip4name program</span></span>
 <span><span class="co">#&gt;  1: 140801                                      Civil Engineering      CE</span></span>
@@ -2113,16 +2114,16 @@ again, but apply it to a CIP code. Here we use the regular expression
 <h3 id="use-program-fcase-to-edit-all-values">3. Use <code>program := fcase()</code> to edit all values<a class="anchor" aria-label="anchor" href="#use-program-fcase-to-edit-all-values"></a>
 </h3>
 <p>In this approach, we use the data.table function
-<code><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase()</a></code>, an implementation of the SQL CASE WHEN statement.
+<code><a href="https://rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase()</a></code>, an implementation of the SQL CASE WHEN statement.
 The data.table function <code>%chin%</code> is like <code>%in%</code>,
 but for character vectors.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Recode all program values</span></span>
-<span><span class="va">four_programs</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="st">"CE"</span>,</span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1410"</span>, <span class="st">"EE"</span>,</span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1419"</span>, <span class="st">"ME"</span>,</span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"142701"</span>, <span class="st">"143501"</span>, <span class="st">"143601"</span>, <span class="st">"143701"</span><span class="op">)</span>, <span class="st">"ISE"</span></span>
+<span><span class="va">four_programs</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="st">"CE"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1410"</span>, <span class="st">"EE"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1419"</span>, <span class="st">"ME"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"142701"</span>, <span class="st">"143501"</span>, <span class="st">"143601"</span>, <span class="st">"143701"</span><span class="op">)</span>, <span class="st">"ISE"</span></span>
 <span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">four_programs</span> <span class="op">&lt;-</span> <span class="va">four_programs</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, <span class="va">program</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">four_programs</span></span>
@@ -2167,18 +2168,18 @@ used here. Requires editing before reuse with different programs.</p>
 Requires editing before reuse with different programs.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Recode program labels. Edit as required.</span></span>
-<span><span class="va">selected_programs</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="st">"CE"</span>,</span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1410"</span>, <span class="st">"EE"</span>,</span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1419"</span>, <span class="st">"ME"</span>,</span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"142701"</span>, <span class="st">"143501"</span>, <span class="st">"143601"</span>, <span class="st">"143701"</span><span class="op">)</span>, <span class="st">"ISE"</span></span>
+<span><span class="va">selected_programs</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="st">"CE"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1410"</span>, <span class="st">"EE"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"^1419"</span>, <span class="st">"ME"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdatatable.gitlab.io/data.table/reference/chmatch.html" class="external-link">%chin%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"142701"</span>, <span class="st">"143501"</span>, <span class="st">"143601"</span>, <span class="st">"143701"</span><span class="op">)</span>, <span class="st">"ISE"</span></span>
 <span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">selected_programs</span> <span class="op">&lt;-</span> <span class="va">selected_programs</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, <span class="va">program</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-NCES:2010" class="csl-entry">
 NCES. 2010. <span>“<span class="nocase">IPEDS Classification of
 Instructional Programs (CIP)</span>.”</span> <span>National Center for

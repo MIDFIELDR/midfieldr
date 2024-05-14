@@ -14,7 +14,7 @@ bounds of an institution's data range."><meta property="og:image" content="https
     
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1.9002</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,27 +91,25 @@ bounds of an institution's data range.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>dframe</dt>
-<dd><p>Data frame of student-level records keyed by student ID.
-Required variables are <code>mcid</code> and <code>timely_term</code>. See also
-<code><a href="add_timely_term.html">add_timely_term()</a></code>.</p></dd>
+<dd><p>Working data frame of student-level records
+to which data-sufficiency columns are to be added. Required variables
+are <code>mcid</code> and <code>timely_term.</code> See also <code><a href="add_timely_term.html">add_timely_term()</a></code>.</p></dd>
 
 
 <dt>midfield_term</dt>
-<dd><p>Data frame of student-level term observations keyed by
-student ID. Default is <code>term</code>. Required variables are <code>mcid</code>,
-<code>institution</code>, and <code>term</code>.</p></dd>
+<dd><p>MIDFIELD <code>term</code> data table or equivalent
+with required variables <code>mcid</code>, <code>institution</code>, and <code>term</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A <code>data.table</code>  with the following properties:</p><ul><li><p>Rows are not modified.</p></li>
-<li><p>Grouping structures are not preserved.</p></li>
-<li><p>Columns listed below are added. <strong>Caution!</strong> An existing column
-with the same name as one of the added columns is silently overwritten.
-Other columns are not modified.</p></li>
-</ul><p>Columns added:</p><dl><dt><code>term_i</code></dt>
+<p>A data frame in <code>data.table</code> format with the following
+properties: rows are preserved; columns are preserved with the exception
+that columns added by the function overwrite existing columns of the
+same name (if any); grouping structures are not preserved. The added
+columns are:</p><dl><dt><code>term_i</code></dt>
 <dd><p>Character. Initial term of a student's longitudinal
 record, encoded YYYYT. Not overwritten if present in <code>dframe.</code></p></dd>
 
@@ -160,6 +158,7 @@ summary counts.</p>
 <span class="r-in"><span><span class="co"># Add data sufficiency column</span></span></span>
 <span class="r-in"><span><span class="fu">add_data_sufficiency</span><span class="op">(</span><span class="va">dframe</span>, midfield_term <span class="op">=</span> <span class="va">toy_term</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            mcid      level_i adj_span timely_term term_i lower_limit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;char&gt;       &lt;char&gt;    &lt;num&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1: MID25784187  01 Freshman        6       19943  19885       19881</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2: MID25784974 02 Sophomore        5       19931  19883       19881</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3: MID25816209 02 Sophomore        5       19923  19881       19881</span>
@@ -171,6 +170,7 @@ summary counts.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  9: MID25846316  01 Freshman        6       19963  19911       19881</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10: MID25847220  01 Freshman        6       19943  19891       19881</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     upper_limit data_sufficiency</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;char&gt;           &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:       19995          include</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:       19995          include</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:       19995    exclude-lower</span>
@@ -185,6 +185,7 @@ summary counts.</p>
 <span class="r-in"><span><span class="co"># Existing data_sufficiency column, if any, is overwritten</span></span></span>
 <span class="r-in"><span><span class="va">dframe</span><span class="op">[</span>, <span class="va">data_sufficiency</span> <span class="op">:=</span> <span class="cn">NA_character_</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            mcid term_i      level_i adj_span timely_term data_sufficiency</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;char&gt; &lt;char&gt;       &lt;char&gt;    &lt;num&gt;      &lt;char&gt;           &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1: MID25784187  19885  01 Freshman        6       19943             &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2: MID25784974  19883 02 Sophomore        5       19931             &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3: MID25816209  19881 02 Sophomore        5       19923             &lt;NA&gt;</span>
@@ -197,6 +198,7 @@ summary counts.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10: MID25847220  19891  01 Freshman        6       19943             &lt;NA&gt;</span>
 <span class="r-in"><span><span class="fu">add_data_sufficiency</span><span class="op">(</span><span class="va">dframe</span>, midfield_term <span class="op">=</span> <span class="va">toy_term</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            mcid      level_i adj_span timely_term term_i lower_limit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;char&gt;       &lt;char&gt;    &lt;num&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1: MID25784187  01 Freshman        6       19943  19885       19881</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2: MID25784974 02 Sophomore        5       19931  19883       19881</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3: MID25816209 02 Sophomore        5       19923  19881       19881</span>
@@ -208,6 +210,7 @@ summary counts.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  9: MID25846316  01 Freshman        6       19963  19911       19881</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10: MID25847220  01 Freshman        6       19943  19891       19881</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     upper_limit data_sufficiency</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;char&gt;           &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:       19995          include</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:       19995          include</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:       19995    exclude-lower</span>

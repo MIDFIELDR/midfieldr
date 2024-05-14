@@ -18,7 +18,7 @@ crucial to the perception of effects (Cleveland, 1993)."><meta property="og:imag
     
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1.9002</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -104,9 +104,10 @@ crucial to the perception of effects (Cleveland, 1993).</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>dframe</dt>
-<dd><p>Data frame with one numeric variable and two
-categorical variables of class character or factor. Two additional
-numeric columns required when using the "percent" ordering method.</p></dd>
+<dd><p>Data frame containing a single quantitative value
+(or response) for every combination of levels of two categorical
+variables. Categories may be class character or factor. Two additional
+numeric columns are required when using the "percent" ordering method.</p></dd>
 
 
 <dt>quantity</dt>
@@ -120,7 +121,8 @@ categorical variables</p></dd>
 
 
 <dt>...</dt>
-<dd><p>Not used, forces later arguments to be used by name.</p></dd>
+<dd><p>Not used for passing values; forces subsequent arguments to be
+referable only by name.</p></dd>
 
 
 <dt>method</dt>
@@ -143,16 +145,13 @@ larger column sum is the denominator of the ratio.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A <code>data.table</code> with the following properties:</p><ul><li><p>Rows are not modified.</p></li>
-<li><p>Grouping structures are not preserved.</p></li>
-<li><p>The columns specified by <code>categories</code> are converted to factors
-and ordered.</p></li>
-<li><p>The column specified by <code>quantity</code> is converted to type double if it
-is an integer.</p></li>
-<li><p>Two columns are added. <strong>Caution!</strong> An existing column
-with the same name as one of the added columns is silently overwritten.</p></li>
-</ul><p>The names of the added columns incorporate the names of the multiway
-variables. Columns added:</p><dl><dt><code>CATEGORY_median</code> columns (when ordering method is "median")</dt>
+<p>A data frame in <code>data.table</code> format with
+the following properties: rows are preserved; columns specified by
+<code>categories</code> are converted to factors and ordered; the column specified
+by <code>quantity</code> is converted to type double; other columns are preserved
+with the exception that columns added by the function overwrite existing
+columns of the same name (if any); grouping structures are not preserved.
+The added columns are:</p><dl><dt><code>CATEGORY_median</code> columns (when ordering method is "median")</dt>
 <dd><p>Numeric. Two columns of medians of the quantitative variable grouped
 by the categorical variables. The <code>CATEGORY</code> placeholder in
 the column name is replaced by a category name from the
@@ -204,6 +203,7 @@ Hoboken, NJ.</p>
 <span class="r-in"><span><span class="va">dframe</span> <span class="op">&lt;-</span> <span class="va">study_results</span><span class="op">[</span><span class="va">program</span> <span class="op">==</span> <span class="st">"EE"</span> <span class="op">|</span> <span class="va">program</span> <span class="op">==</span> <span class="st">"ME"</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">dframe</span><span class="op">[</span>, <span class="va">people</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     program    sex            race ever_enrolled graduates stickiness</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;char&gt; &lt;char&gt;          &lt;char&gt;         &lt;int&gt;     &lt;int&gt;      &lt;num&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:      EE Female           Asian            21        12       57.1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:      EE Female           Black             6         3       50.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:      EE Female   International            28         9       32.1</span>
@@ -233,6 +233,7 @@ Hoboken, NJ.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27:      ME   Male           White          1596       953       59.7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     program    sex            race ever_enrolled graduates stickiness</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     people</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:           Asian Female</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:           Black Female</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:   International Female</span>
@@ -263,6 +264,7 @@ Hoboken, NJ.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     people</span>
 <span class="r-in"><span><span class="va">dframe</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"race"</span>, <span class="st">"sex"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     program ever_enrolled graduates stickiness                 people</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;char&gt;         &lt;int&gt;     &lt;int&gt;      &lt;num&gt;                 &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:      EE            21        12       57.1           Asian Female</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:      EE             6         3       50.0           Black Female</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:      EE            28         9       32.1   International Female</span>
@@ -291,7 +293,7 @@ Hoboken, NJ.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 26:      ME            80        41       51.2     Other/Unknown Male</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27:      ME          1596       953       59.7             White Male</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     program ever_enrolled graduates stickiness                 people</span>
-<span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">dframe</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"people"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">dframe</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"people"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Class before ordering</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">dframe</span><span class="op">$</span><span class="va">program</span><span class="op">)</span></span></span>
@@ -319,6 +321,7 @@ Hoboken, NJ.</p>
 <span class="r-in"><span><span class="co"># Display category medians </span></span></span>
 <span class="r-in"><span><span class="va">mw1</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     program                 people stickiness ever_enrolled graduates</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;fctr&gt;                 &lt;fctr&gt;      &lt;num&gt;         &lt;int&gt;     &lt;int&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:      EE           Asian Female       57.1            21        12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:      EE           Black Female       50.0             6         3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:      EE   International Female       32.1            28         9</span>
@@ -348,6 +351,7 @@ Hoboken, NJ.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27:      ME             White Male       59.7          1596       953</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     program                 people stickiness ever_enrolled graduates</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     program_median people_median</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              &lt;num&gt;         &lt;num&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:          44.55         35.70</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:          44.55         58.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:          44.55         45.00</span>
@@ -399,6 +403,7 @@ Hoboken, NJ.</p>
 <span class="r-in"><span>               method <span class="op">=</span> <span class="st">"percent"</span>, </span></span>
 <span class="r-in"><span>               ratio_of <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"graduates"</span>, <span class="st">"ever_enrolled"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     program                 people graduates ever_enrolled stickiness</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;fctr&gt;                 &lt;fctr&gt;     &lt;num&gt;         &lt;num&gt;      &lt;num&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:      EE           Asian Female        12            21       57.1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:      EE           Black Female         3             6       50.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:      EE   International Female         9            28       32.1</span>
@@ -428,6 +433,7 @@ Hoboken, NJ.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27:      ME             White Male       953          1596       59.7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     program                 people graduates ever_enrolled stickiness</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     program_stickiness people_stickiness</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  &lt;num&gt;             &lt;num&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:               49.4              46.4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:               49.4              55.6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:               49.4              42.6</span>

@@ -18,7 +18,7 @@ R package for multiple imputation. Sets up three variables as predictors
     
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1.9002</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -102,19 +102,18 @@ R package for multiple imputation. Sets up three variables as predictors
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>midfield_student</dt>
-<dd><p>Data frame of student-level demographic data, keyed
-by student ID. Default is <code>student.</code> Required variables are <code>mcid</code>, <code>race</code>,
-and <code>sex.</code></p></dd>
+<dd><p>MIDFIELD <code>student</code> data table or
+equivalent with required variables <code>mcid</code>, <code>race</code>, and <code>sex.</code></p></dd>
 
 
 <dt>midfield_term</dt>
-<dd><p>Data frame of student-level term observations keyed by
-student ID. Default is <code>term</code>. Required variables are <code>mcid</code>,
-<code>institution</code>, <code>term</code>, and <code>cip6.</code></p></dd>
+<dd><p>MIDFIELD <code>term</code> data table or equivalent
+with required variables <code>mcid</code>, <code>institution</code>, <code>term</code>, and <code>cip6.</code></p></dd>
 
 
 <dt>...</dt>
-<dd><p>Not used, forces later arguments to be used by name.</p></dd>
+<dd><p>Not used for passing values; forces subsequent arguments to be
+referable only by name.</p></dd>
 
 
 <dt>fye_codes</dt>
@@ -128,11 +127,11 @@ not start with 14---produce an error.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A <code>data.table</code> conditioned for later use as an input to the
-mice R package for multiple imputation. The data have the following
-properties:</p><ul><li><p>One row for every FYE student, first-term and migrator.</p></li>
-<li><p>Grouping structures are not preserved.</p></li>
-<li><p>Columns returned:</p><dl><dt><code>mcid</code></dt>
+<p>A data frame in <code>data.table</code> format conditioned for
+later use as an input to the mice R package for multiple imputation. The
+data frame comprises one row for every FYE student, first-term and
+migrator. Grouping structures are not preserved. The columns returned
+are:</p><dl><dt><code>mcid</code></dt>
 <dd><p>Character, anonymized student identifier. Returned
 as-is.</p></dd>
 
@@ -154,8 +153,7 @@ post-FYE engineering program or NA representing missing
 values to be imputed.</p></dd>
 
 
-</dl></li>
-</ul></div>
+</dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>At some US institutions, engineering students are required to complete a
@@ -183,7 +181,7 @@ FYE institution.</p>
 estimate an "FYE proxy", that is, the 6-digit CIP codes of the
 degree-granting engineering programs that FYE students would have declared
 had they not been required to enroll in FYE. The purpose of
-<code>prep_fye_mice()</code> is to prepare the data for making that estimation.</p>
+`prep_fye_mice()`` is to prepare the data for making that estimation.</p>
 <p>After running <code>prep_fye_mice()</code> but before running <code>mice()</code>, one can edit
 variables or add variables to create a custom set of predictors. The mice
 package expects all predictors and the proxy variables to be factors. Do not
@@ -225,6 +223,7 @@ with all variables except <code>mcid</code> returned as factors.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Using toy data</span></span></span>
 <span class="r-in"><span><span class="fu">prep_fye_mice</span><span class="op">(</span><span class="va">toy_student</span>, <span class="va">toy_term</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            mcid   race    sex   institution  proxy</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;char&gt; &lt;fctr&gt; &lt;fctr&gt;        &lt;fctr&gt; &lt;fctr&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1: MID26060301  Asian Female Institution C   &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2: MID25995980 Latine Female Institution C   &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3: MID25997636 Latine Female Institution C   &lt;NA&gt;</span>
@@ -248,6 +247,7 @@ with all variables except <code>mcid</code> returned as factors.</p>
 <span class="r-in"><span>              midfield_term <span class="op">=</span><span class="va">toy_term</span>, </span></span>
 <span class="r-in"><span>              fye_codes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"140101"</span>, <span class="st">"140102"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            mcid   race    sex   institution  proxy</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;char&gt; &lt;fctr&gt; &lt;fctr&gt;        &lt;fctr&gt; &lt;fctr&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1: MID25977316  White   Male Institution B   &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2: MID26060301  Asian Female Institution C   &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3: MID25995980 Latine Female Institution C   &lt;NA&gt;</span>
