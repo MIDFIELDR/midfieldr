@@ -1,3 +1,8 @@
+# Documentation described below using an inline R code chunk, e.g.,
+# "`r dframe_order_multiway`" or "`r return_order_multiway`", are 
+# documented in the R/roxygen.R file.
+
+
 
 #' Order categorical variables of multiway data
 #'
@@ -21,14 +26,12 @@
 #' category is encoded by the rows of each panel, and the quantitative variable
 #' is encoded along identical horizontal scales.
 #'
-#' @param dframe Data frame with one numeric variable and two 
-#'        categorical variables of class character or factor. Two additional 
-#'        numeric columns required when using the "percent" ordering method. 
+#' @param dframe  `r dframe_order_multiway` 
 #' @param quantity Character, name (in quotes) of the single multiway quantitative 
 #'        variable
 #' @param categories Character, vector of names (in quotes) of the two multiway 
 #'        categorical variables
-#' @param ... Not used, forces later arguments to be used by name.
+#' @param ... `r param_dots`
 #' @param method Character, “median” (default) or “percent”, method of 
 #'        ordering the levels of the categories. The median method computes the 
 #'        medians of the quantitative column grouped by category. The percent 
@@ -40,19 +43,7 @@
 #'        in any order; the algorithm assumes that the parameter with the 
 #'        larger column sum is the denominator of the ratio.
 #' 
-#' @return A `data.table` with the following properties:
-#' \itemize{
-#'  \item Rows are not modified.
-#'  \item Grouping structures are not preserved.
-#'  \item The columns specified by `categories` are converted to factors 
-#'      and ordered. 
-#'  \item The column specified by `quantity` is converted to type double if it 
-#'      is an integer.  
-#'  \item Two columns are added. __Caution!__ An existing column 
-#'  with the same name as one of the added columns is silently overwritten. 
-#' }
-#' The names of the added columns incorporate the names of the multiway 
-#' variables. Columns added:
+#' @return `r return_order_multiway`
 #' \describe{
 #'  \item{`CATEGORY_median` columns (when ordering method is "median")}{
 #'      Numeric. Two columns of medians of the quantitative variable grouped 
@@ -77,22 +68,14 @@
 #'      
 #' }
 #' 
-#' 
-#'
-#'
 #' @references
 #'   Cleveland WS (1993). \emph{Visualizing Data}. Hobart Press, Summit, NJ.
 #'   
 #'   Kroonenberg PM (2008). \emph{Applied Multiway Data Analysis}. Wiley, 
 #'   Hoboken, NJ.
 #'
-#'
 #' @example man/examples/order_multiway_exa.R
-#'
-#'
-#'
 #' @export
-#'
 #'
 order_multiway <- function(dframe,
                            quantity,

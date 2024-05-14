@@ -1,3 +1,8 @@
+# Documentation described below using an inline R code chunk, e.g.,
+# "`r param_dots`" or "`r return_filter_cip`", are 
+# documented in the R/roxygen.R file.
+
+
 
 #' Subset rows that include matches to search strings
 #'
@@ -15,29 +20,17 @@
 #'
 #' @param keep_text Character vector of search text for retaining rows, 
 #'        not case-sensitive. Can be empty if `drop_text` is used. 
-#' @param ... Not used, force later arguments to be used by name
+#' @param ... `r param_dots`
 #' @param drop_text Optional character vector of search text for dropping
 #'        rows, default NULL.
 #' @param cip Data frame to be searched. Default `cip`.
 #' @param select Optional character vector of column names to return,
 #'        default all columns.
-#' @return A `data.table` subset of `cip` with the following properties:
-#' \itemize{
-#'     \item Rows matching elements of `keep_text` but excluding rows
-#'           matching elements of `drop_text`.
-#'     \item All columns or those specified by `select`.
-#'     \item Grouping structures are not preserved.
-#' }
-#'
+#' @return `r return_filter_cip`
 #'
 #' @family filter_*
-#'
-#'
 #' @example man/examples/filter_cip_exa.R
-#'
-#'
 #' @export
-#'
 #'
 filter_cip <- function(keep_text = NULL,
                        ...,

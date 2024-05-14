@@ -10,7 +10,8 @@ filter_cip(keep_text = NULL, ..., drop_text = NULL, cip = NULL, select = NULL)
 \item{keep_text}{Character vector of search text for retaining rows,
 not case-sensitive. Can be empty if \code{drop_text} is used.}
 
-\item{...}{Not used, force later arguments to be used by name}
+\item{...}{Not used for passing values; forces subsequent arguments to be
+referable only by name.}
 
 \item{drop_text}{Optional character vector of search text for dropping
 rows, default NULL.}
@@ -21,13 +22,12 @@ rows, default NULL.}
 default all columns.}
 }
 \value{
-A \code{data.table} subset of \code{cip} with the following properties:
-\itemize{
-\item Rows matching elements of \code{keep_text} but excluding rows
-matching elements of \code{drop_text}.
-\item All columns or those specified by \code{select}.
-\item Grouping structures are not preserved.
-}
+A data frame in \code{data.table} format, a subset of \code{cip},
+with the following properties: exclude rows that match
+elements of \code{drop_text}; of the remaining rows, include those that
+match elements of \code{keep_text}; if \code{select} is empty, all columns are
+preserved, otherwise only columns included in \code{select} are retained;
+grouping structures are not preserved.
 }
 \description{
 Subset a CIP data frame, retaining rows that match or partially match a

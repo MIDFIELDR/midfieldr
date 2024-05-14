@@ -6,20 +6,15 @@
 \title{Degree data for examples}
 \format{
 \code{data.table} with 65 rows and 4 columns keyed by student ID.
-
+The variables are:
 \describe{
-
-\item{\code{mcid}}{Character, anonymized student ID.}
-
-\item{\code{institution}}{Character, anonymized institution name, e.g.,
-Institution A, Institution B, etc.}
-
-\item{\code{term_degree}}{Character, academic year and term in which
-a student completes their program, format YYYYT.}
-
-\item{\code{cip6}}{Character, 6-digit CIP code of program in which a student
-earns a degree.}
-
+\item{\code{mcid}}{Character, de-identified student ID.}
+\item{\code{institution}}{Character, de-identified institution
+name, e.g., Institution A, Institution B, etc.}
+\item{\code{term_degree}}{Character, academic year and term
+in which a student completes their program, format YYYYT.}
+\item{\code{cip6}}{Character, 6-digit CIP code of program in which
+a student is enrolled in a term.}
 }
 }
 \usage{

@@ -10,20 +10,18 @@ select_required(midfield_x, ..., select_add = NULL)
 \item{midfield_x}{Data frame from which columns are selected, typically
 \code{student}, \code{term}, \code{degree} or their subsets.}
 
-\item{...}{Not used, force later arguments to be used by name.}
+\item{...}{Not used for passing values; forces subsequent arguments to be
+referable only by name.}
 
-\item{select_add}{Optional character vector of search terms to add to the
-default vector given by \code{c("mcid", "institution", "race", "sex",
-  "^term", "cip6", "level")}.}
+\item{select_add}{Character vector of column names to be added (optionally)
+to the default
+\code{c("mcid", "institution", "race", "sex", "^term", "cip6", "level")}.}
 }
 \value{
-A \code{data.table} with the following properties:
-\itemize{
-\item Rows are not modified.
-\item Columns with names that match or partially match the values
-in \code{select.}
-\item Grouping structures are not preserved.
-}
+A data frame in \code{data.table} format with the
+following properties: rows are preserved; columns with names that
+match or partially match values in \code{select_add} are retained; grouping
+structures are not preserved.
 }
 \description{
 Subset a data frame, selecting columns by matching or partially matching a
@@ -36,9 +34,10 @@ analysis.
 \details{
 Several midfieldr functions are designed to operate on one or more of the
 MIDFIELD data tables, usually \code{student}, \code{term}, or \code{degree.} This family of
-functions requires only a small subset of available variables, e.g., \code{mcid},
-\code{cip6}, or \code{term.} The required columns are built in to the function. The
-\code{select} argument is used to add search strings to the default vector.
+functions requires only a small subset of available variables: the required
+columns built in to the function are \code{mcid}, \code{institution}, \code{race}, \code{sex},
+\verb{^term}, \code{cip6}, and \code{level}. Additional column names or partial names can be
+included by using the \code{select_add} argument.
 
 The column names of \code{midfield_x} are searched for matches or partial matches
 using \code{grep()}, thus search terms can include regular expressions. Variables

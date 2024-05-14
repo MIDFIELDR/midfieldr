@@ -5,21 +5,15 @@
 \alias{toy_student}
 \title{Student data for examples}
 \format{
-\code{data.table} with 99 rows and 4 columns keyed by student ID.
-
+\code{data.table} with 99 rows and 4 columns keyed by student ID:
 \describe{
-
 \item{\code{mcid}}{Character, de-identified student ID.}
-
-\item{\code{institution}}{Character, de-identified institution name, e.g.,
-Institution A, Institution B, etc.}
-
-\item{\code{race}}{Character, race/ethnicity as self-reported by the student,
-e.g., Asian, Black, Latine, etc.}
-
-\item{\code{sex}}{character, sex as self-reported by the student, possible
-values are Female, Male, and Unknown.}
-
+\item{\code{institution}}{Character, de-identified institution
+name, e.g., Institution A, Institution B, etc.}
+\item{\code{race}}{Character, race/ethnicity as self-reported
+by the student, e.g., Asian, Black, Latine, etc.}
+\item{\code{sex}}{Character, sex as self-reported by the student,
+possible values are Female, Male, and Unknown.}
 }
 }
 \usage{

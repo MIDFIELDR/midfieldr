@@ -1,3 +1,8 @@
+# Documentation described below using an inline R code chunk, e.g.,
+# "`r midfield_student_prep_fye_mice`" or "`r return_prep_fye_mice`", are 
+# documented in the R/roxygen.R file.
+
+
 
 #' Prepare FYE data for multiple imputation
 #'
@@ -34,7 +39,7 @@
 #' estimate an "FYE proxy", that is, the 6-digit CIP codes of the
 #' degree-granting engineering programs that FYE students would have declared
 #' had they not been required to enroll in FYE. The purpose of
-#' \code{prep_fye_mice()} is to prepare the data for making that estimation.
+#' `prep_fye_mice()`` is to prepare the data for making that estimation.
 #'
 #' After running `prep_fye_mice()` but before running `mice()`, one can edit
 #' variables or add variables to create a custom set of predictors. The mice
@@ -48,28 +53,15 @@
 #' acceptable value, not missing data. Observations with missing or unknown
 #' values in the ID or institution columns (if any) should be removed.
 #'
-#' @param midfield_student Data frame of student-level demographic data, keyed
-#'   by student ID. Default is `student.` Required variables are `mcid`, `race`,
-#'   and `sex.`
-#'
-#' @param midfield_term Data frame of student-level term observations keyed by
-#'   student ID. Default is \code{term}. Required variables are `mcid`,
-#'   `institution`, `term`, and `cip6.`
-#'
-#' @param ... Not used, forces later arguments to be used by name.
-#'
+#' @param midfield_student `r midfield_student_prep_fye_mice`
+#' @param midfield_term    `r midfield_term_prep_fye_mice`
+#' @param ...              `r param_dots`
 #' @param fye_codes Optional character vector of 6-digit CIP codes to identify
 #'   FYE programs, default "140102". Codes must be 6-digit strings of numbers;
 #'   regular expressions are prohibited. Non-engineering codes---those that do
 #'   not start with 14---produce an error.
 #'        
-#' @return A `data.table` conditioned for later use as an input to the 
-#' mice R package for multiple imputation. The data have the following 
-#' properties:
-#' \itemize{
-#'  \item One row for every FYE student, first-term and migrator. 
-#'  \item Grouping structures are not preserved.
-#'  \item  Columns returned: 
+#' @return `r return_prep_fye_mice`
 #'  \describe{
 #'    \item{`mcid`}{Character, anonymized student identifier. Returned 
 #'            as-is.}
@@ -82,7 +74,7 @@
 #'    \item{`proxy`}{Factor, 6-digit CIP code of a student's known, 
 #'            post-FYE engineering program or NA representing missing 
 #'            values to be imputed.}
-#'  }}
+#'  }
 #'
 #' @section Method: The function extracts all terms for all FYE students,
 #'   including those who migrate to enter Engineering after their first term,
@@ -110,15 +102,9 @@
 #' 
 #' The resulting data frame is ready for use as input for the mice package, 
 #' with all variables except `mcid` returned as factors.
-#'
-#'
-#'
+#' 
 #' @example man/examples/prep_fye_mice_exa.R
-#'
-#'
-#'
 #' @export
-#'
 #'
 prep_fye_mice <- function(midfield_student = student,
                            midfield_term = term,

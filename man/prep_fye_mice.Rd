@@ -12,15 +12,14 @@ prep_fye_mice(
 )
 }
 \arguments{
-\item{midfield_student}{Data frame of student-level demographic data, keyed
-by student ID. Default is \code{student.} Required variables are \code{mcid}, \code{race},
-and \code{sex.}}
+\item{midfield_student}{MIDFIELD \code{student} data table or
+equivalent with required variables \code{mcid}, \code{race}, and \code{sex.}}
 
-\item{midfield_term}{Data frame of student-level term observations keyed by
-student ID. Default is \code{term}. Required variables are \code{mcid},
-\code{institution}, \code{term}, and \code{cip6.}}
+\item{midfield_term}{MIDFIELD \code{term} data table or equivalent
+with required variables \code{mcid}, \code{institution}, \code{term}, and \code{cip6.}}
 
-\item{...}{Not used, forces later arguments to be used by name.}
+\item{...}{Not used for passing values; forces subsequent arguments to be
+referable only by name.}
 
 \item{fye_codes}{Optional character vector of 6-digit CIP codes to identify
 FYE programs, default "140102". Codes must be 6-digit strings of numbers;
@@ -28,13 +27,11 @@ regular expressions are prohibited. Non-engineering codes---those that do
 not start with 14---produce an error.}
 }
 \value{
-A \code{data.table} conditioned for later use as an input to the
-mice R package for multiple imputation. The data have the following
-properties:
-\itemize{
-\item One row for every FYE student, first-term and migrator.
-\item Grouping structures are not preserved.
-\item  Columns returned:
+A data frame in \code{data.table} format conditioned for
+later use as an input to the mice R package for multiple imputation. The
+data frame comprises one row for every FYE student, first-term and
+migrator. Grouping structures are not preserved. The columns returned
+are:
 \describe{
 \item{\code{mcid}}{Character, anonymized student identifier. Returned
 as-is.}
@@ -47,7 +44,7 @@ imputation predictor variable.}
 \item{\code{proxy}}{Factor, 6-digit CIP code of a student's known,
 post-FYE engineering program or NA representing missing
 values to be imputed.}
-}}
+}
 }
 \description{
 Constructs a data frame of student-level records of First-Year Engineering
@@ -84,7 +81,7 @@ Therefore, to avoid miscounting starters at FYE institutions, we have to
 estimate an "FYE proxy", that is, the 6-digit CIP codes of the
 degree-granting engineering programs that FYE students would have declared
 had they not been required to enroll in FYE. The purpose of
-\code{prep_fye_mice()} is to prepare the data for making that estimation.
+`prep_fye_mice()`` is to prepare the data for making that estimation.
 
 After running \code{prep_fye_mice()} but before running \code{mice()}, one can edit
 variables or add variables to create a custom set of predictors. The mice

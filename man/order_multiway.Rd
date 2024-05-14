@@ -14,9 +14,10 @@ order_multiway(
 )
 }
 \arguments{
-\item{dframe}{Data frame with one numeric variable and two
-categorical variables of class character or factor. Two additional
-numeric columns required when using the "percent" ordering method.}
+\item{dframe}{Data frame containing a single quantitative value
+(or response) for every combination of levels of two categorical
+variables. Categories may be class character or factor. Two additional
+numeric columns are required when using the "percent" ordering method.}
 
 \item{quantity}{Character, name (in quotes) of the single multiway quantitative
 variable}
@@ -24,7 +25,8 @@ variable}
 \item{categories}{Character, vector of names (in quotes) of the two multiway
 categorical variables}
 
-\item{...}{Not used, forces later arguments to be used by name.}
+\item{...}{Not used for passing values; forces subsequent arguments to be
+referable only by name.}
 
 \item{method}{Character, “median” (default) or “percent”, method of
 ordering the levels of the categories. The median method computes the
@@ -39,19 +41,13 @@ in any order; the algorithm assumes that the parameter with the
 larger column sum is the denominator of the ratio.}
 }
 \value{
-A \code{data.table} with the following properties:
-\itemize{
-\item Rows are not modified.
-\item Grouping structures are not preserved.
-\item The columns specified by \code{categories} are converted to factors
-and ordered.
-\item The column specified by \code{quantity} is converted to type double if it
-is an integer.
-\item Two columns are added. \strong{Caution!} An existing column
-with the same name as one of the added columns is silently overwritten.
-}
-The names of the added columns incorporate the names of the multiway
-variables. Columns added:
+A data frame in \code{data.table} format with
+the following properties: rows are preserved; columns specified by
+\code{categories} are converted to factors and ordered; the column specified
+by \code{quantity} is converted to type double; other columns are preserved
+with the exception that columns added by the function overwrite existing
+columns of the same name (if any); grouping structures are not preserved.
+The added columns are:
 \describe{
 \item{\code{CATEGORY_median} columns (when ordering method is "median")}{
 Numeric. Two columns of medians of the quantitative variable grouped

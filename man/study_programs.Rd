@@ -6,16 +6,14 @@
 \title{Case-study program labels and codes}
 \format{
 \code{data.table} with 15 rows and 2 columns.
-
+The variables are:
 \describe{
-
-\item{\code{cip6}}{Character, 6-digit CIP program codes.}
-
+\item{\code{cip6}}{Character, 6-digit CIP code of program in which
+a student is enrolled in a term.}
 \item{\code{program}}{Character, abbreviated labels for four engineering
 programs. Values are "CE" (Civil Engineering), "EE" (Electrical
 Engineering), "ISE" (Industrial/Systems Engineering), and  "ME" (Mechanical
 Engineering).}
-
 }
 }
 \usage{

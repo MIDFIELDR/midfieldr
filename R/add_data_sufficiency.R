@@ -1,3 +1,8 @@
+# Documentation described below using an inline R code chunk, e.g.,
+# "`r dframe_add_data_sufficiency`" or "`r return_data_frame`", are 
+# documented in the R/roxygen.R file.
+
+
 
 #' Determine data sufficiency for every student
 #'
@@ -11,23 +16,10 @@
 #' Such records must be identified and in most cases excluded to prevent false
 #' summary counts.
 #'
-#' @param dframe Data frame of student-level records keyed by student ID.
-#'   Required variables are `mcid` and `timely_term`. See also
-#'   `add_timely_term()`.
-#'
-#' @param midfield_term Data frame of student-level term observations keyed by
-#'   student ID. Default is `term`. Required variables are `mcid`,
-#'   `institution`, and `term`.
+#' @param dframe        `r dframe_add_data_sufficiency`
+#' @param midfield_term `r midfield_term_add_data_sufficiency`
 #'         
-#' @return A `data.table`  with the following properties:
-#' \itemize{
-#'  \item Rows are not modified.
-#'  \item Grouping structures are not preserved.
-#'  \item Columns listed below are added. __Caution!__ An existing column 
-#'  with the same name as one of the added columns is silently overwritten. 
-#'  Other columns are not modified. 
-#' }
-#' Columns added:
+#' @return `r return_data_frame`
 #' \describe{
 #'  \item{`term_i`}{Character. Initial term of a student's longitudinal 
 #'  record, encoded YYYYT. Not overwritten if present in `dframe.`}
@@ -44,15 +36,9 @@
 #'  lower limit.}
 #' }
 #'
-#'
 #' @family add_*
-#'
-#'
 #' @example man/examples/add_data_sufficiency_exa.R
-#'
-#'
 #' @export
-#'
 #'
 add_data_sufficiency <- function(dframe, midfield_term = term) {
     # remove keys if any 

@@ -1,3 +1,7 @@
+# Documentation described below using an inline R code chunk, e.g.,
+# "`r dframe_add_completion_status`" or "`r return_data_frame`", are documented 
+# in the R/roxygen.R file.
+ 
 
 
 #' Determine completion status for every student
@@ -18,22 +22,10 @@
 #' Completion status is "timely" for students completing a degree no later than
 #' their timely completion terms. See also `add_timely_term()`.
 #'
-#' @param dframe Data frame of student-level records keyed by student ID.
-#'   Required variables are `mcid` and `timely_term.`
-#'
-#' @param midfield_degree Data frame of student-level degree observations keyed
-#'   by student ID. Default is `degree.` Required variables are `mcid`
-#'   and `term_degree.`
-#'         
-#' @return A `data.table` with the following properties:
-#' \itemize{
-#'  \item Rows are not modified.
-#'  \item Grouping structures are not preserved.
-#'  \item Columns listed below are added. __Caution!__ An existing column 
-#'  with the same name as one of the added columns is silently overwritten. 
-#'  Other columns are not modified. 
-#' }
-#' Columns added:
+#' @param dframe          `r dframe_add_completion_status`
+#' @param midfield_degree `r midfield_degree_add_completion_status` 
+#' 
+#' @return `r return_data_frame` 
 #' \describe{
 #'  \item{`term_degree`}{Character. Term in which the first degree(s) are 
 #'  completed. Encoded YYYYT. Joined from `midfield_degree` data table.}
@@ -44,15 +36,9 @@
 #'  non-completion.}
 #' }
 #'
-#'
 #' @family add_*
-#'
-#'
 #' @example man/examples/add_completion_status_exa.R
-#'
-#'
 #' @export
-#'
 #'
 add_completion_status <- function(dframe, midfield_degree = degree) {
   on.exit(setkey(dframe, NULL), add = TRUE)

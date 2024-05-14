@@ -2,19 +2,32 @@
 % Please edit documentation in R/midfieldr-package.R
 \docType{package}
 \name{midfieldr-package}
+\alias{midfieldr}
 \alias{midfieldr-package}
-\title{Tools and Methods for Working with MIDFIELD Data in R}
-\source{
-Data provided by MIDFIELD: \url{https://midfield.online/}.
-}
+\title{midfieldr: Tools and Methods for Working with MIDFIELD Data in 'R'}
 \description{
-Provides tools and demonstrates methods for working with individual undergraduate student-level records (registrar's data) in R. Tools include filters for program codes, data sufficiency, and timely completion. Methods include gathering blocs of records, computing quantitative metrics such as graduation rate, and creating charts to visualize comparisons. midfieldr is designed to work with data from the MIDFIELD research database, a sample of which is available in the midfielddata data package.
-}
-\details{
-\href{https://midfield.online/}{MIDFIELD}.   A database of anonymized student-level records for approximately 2.4M undergraduates at 21 US institutions from 1987-2022. Access to this database requires a confidentiality agreement and Institutional Review Board (IRB) approval for human subjects research.
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-\href{https://midfieldr.github.io/midfielddata/}{midfielddata}.   An R data package that supplies anonymized student-level records for 98,000 undergraduates at three US institutions from 1988-2018. A sample of the MIDFIELD database, midfielddata provides practice data for the tools and methods in the midfieldr package.
-
-This work is supported by the US National Science Foundation through grant numbers 1545667 and 2142087.
+Provides tools and demonstrates methods for working with individual undergraduate student-level records (registrar's data) in 'R'. Tools include filters for program codes, data sufficiency, and timely completion. Methods include gathering blocs of records, computing quantitative metrics such as graduation rate, and creating charts to visualize comparisons. 'midfieldr' interacts with practice data provided in 'midfielddata', an R data package available via a 'drat' repository at \url{https://midfieldr.github.io/midfielddata/}. 'midfieldr' also interacts with the full MIDFIELD database for users who have access. This work is supported by the US National Science Foundation through grant numbers 1545667 and 2142087.
 }
-\concept{package}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://midfieldr.github.io/midfieldr/}
+  \item Report bugs at \url{https://github.com/MIDFIELDR/midfieldr/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Richard Layton \email{graphdoctor@gmail.com} [copyright holder]
+
+Authors:
+\itemize{
+  \item Russell Long \email{ralong@purdue.edu} [copyright holder, data manager]
+  \item Matthew Ohland \email{ohland@purdue.edu} [copyright holder]
+  \item Marisa Orr \email{marisak@clemson.edu} [copyright holder]
+  \item Susan Lord \email{slord@sandiego.edu} [copyright holder]
+}
+
+}
+\keyword{internal}

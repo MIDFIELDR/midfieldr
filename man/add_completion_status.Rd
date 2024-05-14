@@ -7,23 +7,19 @@
 add_completion_status(dframe, midfield_degree = degree)
 }
 \arguments{
-\item{dframe}{Data frame of student-level records keyed by student ID.
-Required variables are \code{mcid} and \code{timely_term.}}
+\item{dframe}{Working data frame of student-level records
+to which completion-status columns are to be added. Required variables
+are \code{mcid} and \code{timely_term.} See also \code{add_timely_term()}.}
 
-\item{midfield_degree}{Data frame of student-level degree observations keyed
-by student ID. Default is \code{degree.} Required variables are \code{mcid}
-and \code{term_degree.}}
+\item{midfield_degree}{MIDFIELD \code{degree} data table or
+equivalent with required variables \code{mcid} and \code{term_degree.}}
 }
 \value{
-A \code{data.table} with the following properties:
-\itemize{
-\item Rows are not modified.
-\item Grouping structures are not preserved.
-\item Columns listed below are added. \strong{Caution!} An existing column
-with the same name as one of the added columns is silently overwritten.
-Other columns are not modified.
-}
-Columns added:
+A data frame in \code{data.table} format with the following
+properties: rows are preserved; columns are preserved with the exception
+that columns added by the function overwrite existing columns of the
+same name (if any); grouping structures are not preserved. The added
+columns are:
 \describe{
 \item{\code{term_degree}}{Character. Term in which the first degree(s) are
 completed. Encoded YYYYT. Joined from \code{midfield_degree} data table.}

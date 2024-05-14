@@ -1,3 +1,8 @@
+# Documentation described below using an inline R code chunk, e.g.,
+# "`r dframe_add_timely_term`" or "`r return_data_frame`", are 
+# documented in the R/roxygen.R file.
+ 
+
 
 #' Calculate a timely completion term for every student
 #'
@@ -24,31 +29,16 @@
 #' The adjusted span is added to the initial term to create the timely
 #' completion term in the `timely_term` column.
 #'
-#' @param dframe Data frame of student-level records keyed by student ID.
-#'   Required variable is `mcid.`
-#'
-#' @param midfield_term Data frame of student-level term observations keyed by
-#'   student ID. Default is `term.` Required variables are `mcid`, `term`, and
-#'   `level.`
-#'
-#' @param ... Not used, forces later arguments to be used by name.
-#'
+#' @param dframe        `r dframe_add_timely_term`
+#' @param midfield_term `r midfield_term_add_timely_term`
+#' @param ...           `r param_dots`
 #' @param span Optional integer scalar, number of years to define timely
 #'   completion. Commonly used values are are 100, 150, and 200 percent of
 #'   `sched_span.` Default 6 years.
-#'
 #' @param sched_span Optional integer scalar, the number of years an institution
 #'   officially schedules for completing a program. Default 4 years.
 #'        
-#' @return A `data.table` with the following properties:
-#' \itemize{
-#'  \item Rows are not modified.
-#'  \item Grouping structures are not preserved.
-#'  \item Columns listed below are added. __Caution!__ An existing column 
-#'  with the same name as one of the added columns is silently overwritten. 
-#'  Other columns are not modified. 
-#' }
-#' Columns added:
+#' @return `r return_data_frame`
 #' \describe{
 #'  \item{`term_i`}{Character. Initial term of a student's longitudinal 
 #'  record, encoded YYYYT}
@@ -60,15 +50,9 @@
 #'  completion would be considered timely for every student. Encoded YYYYT.}
 #' }
 #'
-#'
 #' @family add_*
-#'
-#'
 #' @example man/examples/add_timely_term_exa.R
-#'
-#'
 #' @export
-#'
 #'
 add_timely_term <- function(dframe,
                             midfield_term = term,

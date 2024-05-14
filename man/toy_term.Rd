@@ -6,23 +6,17 @@
 \title{Term data for examples}
 \format{
 \code{data.table} with 150 rows and 5 columns keyed by student ID.
-
+The variables are:
 \describe{
-
 \item{\code{mcid}}{Character, de-identified student ID.}
-
-\item{\code{institution}}{Character, de-identified institution name, e.g.,
-Institution A, Institution B, etc.}
-
+\item{\code{institution}}{Character, de-identified institution
+name, e.g., Institution A, Institution B, etc.}
 \item{\code{term}}{Character, academic year and term, format YYYYT.}
-
-\item{\code{cip6}}{Character, 6-digit CIP code of program in which a student
-is enrolled in a term.}
-
-\item{\code{level}}{Character, 01 Freshman, 02 Sophomore, etc. The equivalent
-values in the current practice data are 01 First-Year, 02-Second Year,
-etc.}
-
+\item{\code{cip6}}{Character, 6-digit CIP code of program in which
+a student is enrolled in a term.}
+\item{\code{level}}{Character, 01 Freshman, 02 Sophomore, etc.
+The equivalent values in the current practice data are 01
+First-Year, 02-Second Year, etc.}
 }
 }
 \usage{

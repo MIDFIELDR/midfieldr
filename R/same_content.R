@@ -2,33 +2,22 @@
 #' Test for equal content between two data tables
 #'
 #' Test of data equality between data.table objects. Convenience function used
-#' in package articles.
+#' in 'midfieldr' articles.
 #'
 #' Wrapper around `all.equal()` for class data.table that ignores row order,
 #' column order, and data.table keys. Both inputs must be date frames.
 #' Equivalent to:
 #'
-#' \code{all.equal(target, current, ignore.row.order = TRUE, ignore.col.order =
-#' TRUE)}
+#' `all.equal(target, current, ignore.row.order = TRUE, ignore.col.order = TRUE)`
 #'
 #' @param x Data frame to be compared. Same as `target` argument in
 #'   `all.equal()`
 #' @param y Data frame to be compared. Same as `current` argument in
 #'   `all.equal()`
-
 #' 
-#' @return Either TRUE or a description of the differences between \code{x} 
-#'         and \code{y}. 
-#'
-#'
-#'
+#' @return Either TRUE or a description of the differences between `x` and `y`. 
 #' @example man/examples/same_content_exa.R
-#'
-#'
-#'
 #' @export
-#'
-#'
 #'
 same_content <- function(x, y) {
     

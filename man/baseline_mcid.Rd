@@ -5,12 +5,9 @@
 \alias{baseline_mcid}
 \title{Baseline ID bloc to start a typical analysis}
 \format{
-\code{data.table} with 76875 rows and 1 column.
-
+\code{data.table} with 76875 rows and 1 column:
 \describe{
-
-\item{\code{mcid}}{Character, anonymized student identifier}
-
+\item{\code{mcid}}{Character, de-identified student ID.}
 }
 }
 \usage{

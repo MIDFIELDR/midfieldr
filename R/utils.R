@@ -10,9 +10,7 @@
 #' `data.table::setkeyv()` to order the rows.
 #'
 #' @param dframe data frame
-#' 
 #' @param cols character vector of column names to use as keys
-#' 
 #' @noRd
 #' 
 set_colrow_order <- function(dframe, cols) {
@@ -36,9 +34,7 @@ set_colrow_order <- function(dframe, cols) {
 #' Used by several midfieldr "add_" functions.
 #' 
 #' @param dframe data frame
-#' 
 #' @param new_cols character vector of column names added by the function
-#' 
 #' @noRd
 #' 
 find_old_cols <- function(dframe, new_cols) {
@@ -63,10 +59,8 @@ find_old_cols <- function(dframe, new_cols) {
 #' same name as the added column is overwritten.
 #'
 #' @param dframe Data frame with required variable `mcid.`
-#'
-#' @param midfield_term MIDFIELD `term` data table or equivalent with required
-#'   variables `mcid`, `institution`, `term`.
-#'
+#' @param midfield_term MIDFIELD `term` data table or equivalent with required 
+#' variables `mcid`, `institution`, and `term`.
 #' @noRd
 #' 
 add_institution <- function(dframe,

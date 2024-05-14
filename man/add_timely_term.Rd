@@ -13,14 +13,15 @@ add_timely_term(
 )
 }
 \arguments{
-\item{dframe}{Data frame of student-level records keyed by student ID.
-Required variable is \code{mcid.}}
+\item{dframe}{Working data frame of student-level records
+to which timely-term columns are to be added. Required variable
+is \code{mcid}.}
 
-\item{midfield_term}{Data frame of student-level term observations keyed by
-student ID. Default is \code{term.} Required variables are \code{mcid}, \code{term}, and
-\code{level.}}
+\item{midfield_term}{MIDFIELD \code{term} data table or equivalent
+with required variables \code{mcid}, \code{term}, and \code{level.}}
 
-\item{...}{Not used, forces later arguments to be used by name.}
+\item{...}{Not used for passing values; forces subsequent arguments to be
+referable only by name.}
 
 \item{span}{Optional integer scalar, number of years to define timely
 completion. Commonly used values are are 100, 150, and 200 percent of
@@ -30,15 +31,11 @@ completion. Commonly used values are are 100, 150, and 200 percent of
 officially schedules for completing a program. Default 4 years.}
 }
 \value{
-A \code{data.table} with the following properties:
-\itemize{
-\item Rows are not modified.
-\item Grouping structures are not preserved.
-\item Columns listed below are added. \strong{Caution!} An existing column
-with the same name as one of the added columns is silently overwritten.
-Other columns are not modified.
-}
-Columns added:
+A data frame in \code{data.table} format with the following
+properties: rows are preserved; columns are preserved with the exception
+that columns added by the function overwrite existing columns of the
+same name (if any); grouping structures are not preserved. The added
+columns are:
 \describe{
 \item{\code{term_i}}{Character. Initial term of a student's longitudinal
 record, encoded YYYYT}

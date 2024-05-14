@@ -1,3 +1,8 @@
+# Documentation described below using an inline R code chunk, e.g.,
+# "`r param_dots`" or "`r return_select_required`", are documented in the
+# R/roxygen.R file.
+
+
 
 #' Select required midfieldr variables
 #'
@@ -10,9 +15,10 @@
 #'
 #' Several midfieldr functions are designed to operate on one or more of the
 #' MIDFIELD data tables, usually `student`, `term`, or `degree.` This family of
-#' functions requires only a small subset of available variables, e.g., `mcid`,
-#' `cip6`, or `term.` The required columns are built in to the function. The
-#' `select` argument is used to add search strings to the default vector.
+#' functions requires only a small subset of available variables: the required 
+#' columns built in to the function are `mcid`, `institution`, `race`, `sex`, 
+#' `^term`, `cip6`, and `level`. Additional column names or partial names can be 
+#' included by using the `select_add` argument. 
 #'
 #' The column names of `midfield_x` are searched for matches or partial matches
 #' using `grep()`, thus search terms can include regular expressions. Variables
@@ -27,28 +33,16 @@
 #'
 #' @param midfield_x Data frame from which columns are selected, typically
 #'   `student`, `term`, `degree` or their subsets.
-#' @param ... Not used, force later arguments to be used by name.
-#' @param select_add Optional character vector of search terms to add to the
-#'   default vector given by \code{c("mcid", "institution", "race", "sex",
-#'   "^term", "cip6", "level")}.
-#' @return A `data.table` with the following properties:
-#' \itemize{
-#'     \item Rows are not modified. 
-#'     \item Columns with names that match or partially match the values 
-#'           in `select.`
-#'     \item Grouping structures are not preserved.
-#' }
-#'
+#' @param ... `r param_dots`
+#' @param select_add Character vector of column names to be added (optionally) 
+#'     to the default 
+#'     `c("mcid", "institution", "race", "sex", "^term", "cip6", "level")`.
+#' @return `r return_select_required`
 #'
 #' @family select_*
-#'
-#'
 #' @example man/examples/select_required_exa.R
-#'
-#'
 #' @export
-#'
-#'
+#' 
 select_required <- function(midfield_x, ..., select_add = NULL) {
     
     # remove all keys

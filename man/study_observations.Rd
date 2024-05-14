@@ -6,20 +6,17 @@
 \title{Case-study observations}
 \format{
 \code{data.table} with 8917 rows and 5 columns.
-
+The variables are:
 \describe{
-
-\item{\code{mcid}}{Character, anonymized student identifier}
-
-\item{\code{race}}{Character, self-reported race/ethnicity.}
-
-\item{\code{sex}}{Character, self-reported sex.}
-
+\item{\code{mcid}}{Character, de-identified student ID.}
+\item{\code{race}}{Character, race/ethnicity as self-reported
+by the student, e.g., Asian, Black, Latine, etc.}
+\item{\code{sex}}{Character, sex as self-reported by the student,
+possible values are Female, Male, and Unknown.}
 \item{\code{program}}{Character, academic program label.}
-
-\item{\code{bloc}}{Character, indicating the grouping (\code{ever_enrolled} or
-\code{graduates}) to which an observation belongs.}
-
+\item{\code{bloc}}{Character, indicating the grouping
+(\code{ever_enrolled} or \code{graduates}) to which an observation
+belongs.}
 }
 }
 \usage{

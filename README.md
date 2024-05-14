@@ -12,7 +12,7 @@ studying undergraduate student-level records from the MIDFIELD database.
 status](https://www.r-pkg.org/badges/version/midfieldr)](https://CRAN.R-project.org/package=midfieldr)  
 [![R-CMD-check](https://github.com/MIDFIELDR/midfieldr/workflows/R-CMD-check/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions)  
 [![codecov](https://codecov.io/gh/MIDFIELDR/midfieldr/branch/main/graph/badge.svg?token=KcuCzBkLBP)](https://app.codecov.io/gh/MIDFIELDR/midfieldr)  
-[![dependencies](https://tinyverse.netlify.com/badge/midfieldr)](https://CRAN.R-project.org/package=midfieldr)  
+[![status](https://tinyverse.netlify.app/badge/midfieldr)](https://CRAN.R-project.org/package=midfieldr)  
 [![downloads](http://cranlogs.r-pkg.org/badges/grand-total/midfieldr?color=blue)](https://cran.r-project.org/package=midfieldr)
 
 <!-- [![CRAN check](https://badges.cranchecks.info/summary/midfieldr.svg)](https://cran.r-project.org/web/checks/check_results_midfieldr.html) -->
@@ -460,8 +460,8 @@ MIDFIELD database, midfielddata provides practice data for the tools and
 methods in the midfieldr package.
 
 [MIDFIELD
-Institute](https://midfieldr.github.io/2023-midfield-institute/).  
-Materials from the 2023 workshop, including an introduction to R for
+Institute](https://midfieldr.github.io/2024-midfield-institute/).  
+Materials from the 2024 workshop, including an introduction to R for
 beginners, chart basics with ggplot2, and data basics with data.table.
 
 ## Acknowledgments
@@ -491,7 +491,8 @@ caption {
 }
 </style>
 
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent"
+entry-spacing="0">
 
 <div id="ref-Dowle+Srinivasan:2022:data.table" class="csl-entry">
 
