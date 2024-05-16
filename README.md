@@ -13,9 +13,7 @@ status](https://www.r-pkg.org/badges/version/midfieldr)](https://CRAN.R-project.
 [![R-CMD-check](https://github.com/MIDFIELDR/midfieldr/workflows/R-CMD-check/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions)  
 [![codecov](https://codecov.io/gh/MIDFIELDR/midfieldr/branch/main/graph/badge.svg?token=KcuCzBkLBP)](https://app.codecov.io/gh/MIDFIELDR/midfieldr)  
 [![status](https://tinyverse.netlify.app/badge/midfieldr)](https://CRAN.R-project.org/package=midfieldr)  
-[![downloads](http://cranlogs.r-pkg.org/badges/grand-total/midfieldr?color=blue)](https://cran.r-project.org/package=midfieldr)
-
-<!-- [![CRAN check](https://badges.cranchecks.info/summary/midfieldr.svg)](https://cran.r-project.org/web/checks/check_results_midfieldr.html) -->
+[![downloads](http://cranlogs.r-pkg.org/badges/grand-total/midfieldr?color=blue)](https://cran.r-project.org/package=midfieldr)  
 <!-- badges: end -->
 
 ## Introduction
@@ -419,13 +417,13 @@ not research data.
 
 ## Installation
 
-Install with:
+Install from CRAN with:
 
 ``` r
 install.packages("midfieldr")
 ```
 
-Latest development version:
+Install latest development version from GitHub with:
 
 ``` r
 install.packages("pak")
@@ -433,7 +431,7 @@ pak::pkg_install("MIDFIELDR/midfieldr")
 ```
 
 midfieldr interacts with practice data provided in the midfielddata data
-package. Install midfielddata using:
+package. Install midfielddata from its repository with:
 
 ``` r
 install.packages("midfielddata",
@@ -459,14 +457,9 @@ undergraduates at three US institutions from 1988-2018. A sample of the
 MIDFIELD database, midfielddata provides practice data for the tools and
 methods in the midfieldr package.
 
-[MIDFIELD
-Institute](https://midfieldr.github.io/2024-midfield-institute/).  
-Materials from the 2024 workshop, including an introduction to R for
-beginners, chart basics with ggplot2, and data basics with data.table.
-
 ## Acknowledgments
 
-This work is supported by the US National Science Foundation through
+This work was supported by the US National Science Foundation through
 grant numbers 1545667 and 2142087.
 
 ## References

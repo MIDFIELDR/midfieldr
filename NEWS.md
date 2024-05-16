@@ -1,11 +1,9 @@
 
-## midfieldr (development version)
+## midfieldr 1.0.2 / 2024--05--16
 
-- Update descriptions of several items: research database, grades in course, etc. 
-- Add roxygen.R to generate repeated text for common arguments.
-- Update the `midfieldr-package.R` file
-- Edit badges on README 
-- Correct minor typos
+- Edit argument descriptions and correct typos.
+- Update the midfieldr-package.R file
+- No change in functionality.
 
 ## midfieldr 1.0.1 / 2023--07--08
 

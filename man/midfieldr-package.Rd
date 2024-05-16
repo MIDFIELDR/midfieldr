@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Provides tools and demonstrates methods for working with individual undergraduate student-level records (registrar's data) in 'R'. Tools include filters for program codes, data sufficiency, and timely completion. Methods include gathering blocs of records, computing quantitative metrics such as graduation rate, and creating charts to visualize comparisons. 'midfieldr' interacts with practice data provided in 'midfielddata', an R data package available via a 'drat' repository at \url{https://midfieldr.github.io/midfielddata/}. 'midfieldr' also interacts with the full MIDFIELD database for users who have access. This work is supported by the US National Science Foundation through grant numbers 1545667 and 2142087.
+Provides tools and demonstrates methods for working with individual undergraduate student-level records (registrar's data) in 'R'. Tools include filters for program codes, data sufficiency, and timely completion. Methods include gathering blocs of records, computing quantitative metrics such as graduation rate, and creating charts to visualize comparisons. 'midfieldr' interacts with practice data provided in 'midfielddata', an R data package available at \url{https://midfieldr.github.io/midfielddata/}. 'midfieldr' also interacts with the full MIDFIELD database for users who have access. This work is supported by the US National Science Foundation through grant numbers 1545667 and 2142087.
 }
 \seealso{
 Useful links:
