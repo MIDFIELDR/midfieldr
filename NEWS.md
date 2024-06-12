@@ -1,3 +1,7 @@
+## midfieldr 1.0.2.900x / development version
+
+- Add definition of degree-seeking to relevant vignettes
+- Edit case study introduction. Clarify some definitions. 
 
 ## midfieldr 1.0.2 / 2024--05--16
 
