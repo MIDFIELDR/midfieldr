@@ -48,8 +48,9 @@ filter_cip <- function(keep_text = NULL,
     )
     
     # optional arguments
-    cipx   <- cip %?% midfieldr::cip
-    dframe <- copy(cipx)
+    # cipx   <- cip %?% midfieldr::cip
+    if(is.null(cip)) cip <- midfieldr::cip
+    dframe <- copy(cip)
     select <- select %?% names(dframe)
     
     # remove all keys

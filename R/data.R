@@ -269,3 +269,21 @@
 #' @family case-study-data
 #' 
 "baseline_mcid"
+
+
+# -------------------------------------------------------------------
+
+#' Grade scale
+#'
+#' Data frame of letter grades and conventional point assignments used for 
+#' computing grade point averages. 
+#'
+#' @format `data.table` with 12 rows and 2 column:
+#' \describe{
+#'   \item{`letter_grade `}{Character, letter grades using the conventional US 
+#'       scale from A to F.}
+#'   \item{`points`}{Numerical, 4.0 scale of points assigned to letter grades.}
+#' }
+#'
+#' 
+"grade_scale"
