@@ -1,5 +1,8 @@
 ## midfieldr 1.0.2.900x / development version
 
+- Add CSS files to format new vignettes
+- Add `grade_scale` and `sat_act_scale` datasets
+- Add vignettes on data manipulation methods and packages to demonstrate commonly encountered methods using base R, data.table, and dplyr systems. 
 - Add definition of degree-seeking to relevant vignettes
 - Edit case study introduction. Clarify some definitions. 
 

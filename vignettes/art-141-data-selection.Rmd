@@ -7,7 +7,7 @@ vignette: >
 output: 
     rmarkdown::html_vignette:
         highlight: "tango"
-        css: "style.css"
+        css: ["rmarkdown-source.css", "midfieldr.css"]
 bibliography: ../inst/REFERENCES.bib
 link-citations: yes
 always_allow_html: true
@@ -18,30 +18,17 @@ always_allow_html: true
 
 ```{r}
 #| echo: false
-knitr::opts_chunk$set(fig.path = "../man/figures/art-141-", 
-                      message = FALSE)
+knitr::opts_chunk$set(
+  fig.path = "../man/figures/art-141-",
+  message = FALSE
+)
 ```
 
 ## Getting started
 
-As shown in the [How to](art-140-data-manipulation.html) article.
+As shown in the [Preparing data three ways](art-140-preparing-data-three-ways.html) article.
 
-```{r}
-# packages
-library(midfieldr)    # same_content()
-library(midfielddata) # datasets
-library(data.table)   # data manipulation system
-library(dplyr)        # data manipulation system
-library(tidyr)        # drop_na()
-
-# Initialize data frames 
-data(student, term)
-student_df  <- data.frame(student)
-student_dt  <- copy(student)
-student_tbl <- tibble(student)
-term_df  <- data.frame(term)
-term_dt  <- copy(term)
-term_tbl <- tibble(term)
+```{r child = "../man/rmd/preparing-data-setup.Rmd"}
 ```
 
 
@@ -56,14 +43,16 @@ A common task when working with data is selecting a subset of rows,  columns, or
 
 
 
-### Index using intermediate variables
+### Indirect indexing
 
-*Scenario.* &nbsp; Summarize domestic students by race, sex, and institution.
+Using intermediate variables that refer to the values used to subset rows and columns.  We often construct intermediate variables `columns_we_want` and `rows_we_want` as indices for column and row subsetting to be used in more than one system example. The extra clarity is often worth the extra lines of code.  
 
-Our first step might be to subset columns (institution, race, sex, and us_citizen) and subset rows such that US citizenship is true. We often construct intermediate variables `columns_we_want` and `rows_we_want` as indices for column and row subsetting. The extra clarity is often worth the extra lines of code.  
+*Task.* &nbsp; Prepare data to summarize domestic students by race, sex, and institution.
+
+Our first step might be to subset columns (institution, race, sex, and us_citizen) and subset rows such that US citizenship is true. 
 
 ```{r}
-# Column names in a character vector 
+# intermediate variable
 columns_we_want <- c("institution", "race", "sex", "us_citizen")
 ```
 
@@ -83,8 +72,8 @@ result_dt <- student_dt[rows_we_want, ..columns_we_want]
 # dplyr
 rows_we_want <- student_tbl$us_citizen == "Yes"
 result_tbl <- student_tbl %>%
-    select(all_of(columns_we_want)) %>%
-    filter(rows_we_want)
+  select(all_of(columns_we_want)) %>%
+  filter(rows_we_want)
 ```
 
 ```{r}
@@ -111,15 +100,16 @@ same_content(result_dt, data.table(result_tbl))
 
 ### Direct indexing
 
-*Scenario.* &nbsp; Summarize domestic students by race, sex, and institution.
+Column and row selection that is typed directly into the subsetting operators `[,]` or `filter()` and `select()` without using intermediate variables. 
 
-Column and row selection can be typed directly into the subsetting operators `[,]` or `filter()` and `select()`. 
+*Task.* &nbsp; Same as previous example. 
 
 ```{r class.source = "base"}
 # base R
-result_df <- student_df[student_df$us_citizen == "Yes", 
-                        c("institution", "race", "sex", "us_citizen"), 
-                        drop = FALSE]
+result_df <- student_df[student_df$us_citizen == "Yes",
+  c("institution", "race", "sex", "us_citizen"),
+  drop = FALSE
+]
 ```
 
 ```{r class.source = "dtbl"}
@@ -130,8 +120,8 @@ result_dt <- student_dt[us_citizen == "Yes", .(institution, race, sex, us_citize
 ```{r class.source = "dplyr"}
 # dplyr
 result_tbl <- student_tbl %>%
-    select(institution, race, sex, us_citizen) %>%
-    filter(us_citizen == "Yes")
+  select(institution, race, sex, us_citizen) %>%
+  filter(us_citizen == "Yes")
 ```
 
 ```{r}
@@ -172,33 +162,40 @@ same_content(result_dt, data.table(result_tbl))
 
 ### Subset rows with multiple conditions
 
-*Scenario.* &nbsp; Find IDs of transfer students with 15 or more hours transferred. 
+Multiple logical conditions are combined with operators such as & (and), | (or), ! (not), etc.  
+
+*Task.* &nbsp; Find IDs of transfer students with 15 or more credit hours transferred.   
+
+When a variable is overwritten multiple times to get to a result, we will sometimes employ the variable `interim_df` as an intermediate variable. 
+
+```{r}
+columns_we_want <- c("mcid", "transfer", "hours_transfer")
+```
 
 ```{r class.source="base"}
 # base R
-columns_we_want <- c("mcid", "transfer", "hours_transfer")
 rows_we_want <- student_df$transfer == "First-Time Transfer" & student_df$hours_transfer >= 15
-result_df <- student_df[rows_we_want, columns_we_want, drop = FALSE]
+interim_df <- student_df[rows_we_want, columns_we_want, drop = FALSE]
 
 # remove rows with NA in every column
-rows_we_want <- rowSums(is.na(result_df)) != ncol(result_df)
-result_df <- result_df[rows_we_want, , drop = FALSE]
+rows_we_want <- rowSums(is.na(interim_df)) < ncol(interim_df)
+result_df <- interim_df[rows_we_want, , drop = FALSE]
 ```
 
 ```{r class.source="dtbl"}
 # data.table
-rows_we_want <- student_dt$transfer == "First-Time Transfer" & student_dt$hours_transfer >= 15
-result_dt <- student_dt[rows_we_want, ]
+result_dt <- student_dt[transfer == "First-Time Transfer" & hours_transfer >= 15, ..columns_we_want]
 ```
 
 ```{r class.source = "dplyr"}
 # dplyr
 result_tbl <- student_tbl %>%
-    filter(transfer == "First-Time Transfer" & hours_transfer >= 15)
+  select(mcid, transfer, hours_transfer) %>%
+  filter(transfer == "First-Time Transfer" & hours_transfer >= 15)
 ```
 
 ```{r}
-str(result_dt)
+result_dt
 
 same_content(result_dt, data.table(result_df))
 same_content(result_dt, data.table(result_tbl))
@@ -206,9 +203,9 @@ same_content(result_dt, data.table(result_tbl))
 
 *Comments*
 
-- *base R.* Two steps required. Subset rows by the original logical conditions; then subset to remove rows with NA across all columns. 
+- *base R.* Two steps required. Subset rows by the original logical conditions; then subset to remove rows with NA across all columns. `rowSums()` assigns 1 to TRUE and 0 to FALSE. If the number of NAs in a row is less than the number of columns, then that row contains non-NA data and we keep it.
 
-- *data.table.* Multiple conditions separated by logical AND `&`. 
+- *data.table.* Multiple conditions separated by logical AND `&`. Does not generate all-NA rows as in base R.  
 
 - *dplyr.* Similar. 
 
@@ -218,7 +215,7 @@ same_content(result_dt, data.table(result_tbl))
 
 ### Subset one column as a vector
 
-*Scenario.* &nbsp; Suppose we want a vector of unique student IDs from the `term` dataset.
+*Task.* &nbsp; Obtain a vector of unique IDs in the `term` dataset.
 
 ```{r class.source="base"}
 # base R
@@ -235,8 +232,8 @@ result_dt <- unique(result_dt)
 ```{r class.source = "dplyr"}
 # dplyr
 result_tbl <- term_tbl %>%
-    pull(.data$mcid) %>%
-    unique()
+  pull(.data$mcid) %>%
+  unique()
 ```
 
 ```{r}
@@ -249,11 +246,11 @@ all.equal(result_dt, result_tbl)
 
 *Comments*
 
-- *base R.* 
+- *base R.* For clarity, we deliberately write these steps in two lines of code. One could just as easily write the single line `result_df <- unique(term_df[, "mcid"])`.
 
 - *data.table.* 
 
-- *dplyr.* The conventional syntax would be `pull(mcid)` except for a subtle flaw in the current version of `pull()`. For details, see [@Layton:2024]. 
+- *dplyr.* The conventional syntax would be `pull(mcid)` except for a subtle flaw in the current version of `pull()`. For details, see [@Layton:2024]. The dplyr function `distinct()` isn't used here because it applies to data frames, not vectors. 
 
 
 
@@ -267,7 +264,7 @@ all.equal(result_dt, result_tbl)
 
 An important variation of subsetting data is removing rows of data that have missing values. If appropriate, limit the dropped rows to those with missing values in specific columns. 
 
-*Scenario.* &nbsp; We are asked to compare SAT scores by institution. Before doing any analysis, we first remove rows with missing SAT scores. 
+*Task.* &nbsp; We are asked to compare SAT scores by institution. Before doing any analysis, we first remove rows with missing SAT scores. 
 
 
 
@@ -291,8 +288,8 @@ result_dt <- result_dt[complete.cases(result_dt), ]
 ```{r class.source = "dplyr"}
 # dplyr
 result_tbl <- student_tbl %>%
-    select(institution, sat_math, sat_verbal) %>%
-    filter(complete.cases(.))
+  select(institution, sat_math, sat_verbal) %>%
+  filter(complete.cases(.))
 ```
 
 ```{r}
@@ -308,7 +305,7 @@ same_content(result_dt, data.table(result_tbl))
 
 - *data.table.* 
 
-- *dplyr.* In magrittr pipe notation a dot `.` is taken to mean the item being piped. Here for example, the output of `select()` is piped to `filter()` and `complete.cases(.)`.  
+- *dplyr.* In magrittr pipe notation a dot `.` is taken to mean the item being piped. Here for example, the output of `select()` is piped to `filter()` then to `complete.cases(.)` --- the latter requiring the dot.  
 
 
 
@@ -337,8 +334,8 @@ result_dt <- na.omit(result_dt)
 ```{r class.source = "dplyr"}
 # dplyr
 result_tbl <- student_tbl %>%
-    select(institution, sat_math, sat_verbal) %>%
-    drop_na()
+  select(institution, sat_math, sat_verbal) %>%
+  drop_na()
 ```
 
 ```{r}
@@ -354,7 +351,7 @@ same_content(result_dt, data.table(result_tbl))
 
 - *data.table.*  
 
-- *dplyr.* 
+- *dplyr.* `drop_na()` is from the tidyr package. 
 
 
 
@@ -368,13 +365,15 @@ same_content(result_dt, data.table(result_tbl))
 
 
 
-### Missing values in specified columns
+### Incomplete rows in specified columns
 
-Retain all columns. Delete rows with missing values in specified columns. 
+Delete rows with missing values in specified columns but retain all columns. Note that the number of rows matches the number in the previous example.  
 
 ```{r class.source = "base"}
 # base R
-row_index <- with(student_df, !(is.na(institution) | is.na(sat_math) | is.na(sat_verbal)))
+row_index <- !(is.na(student_df$institution) |
+  is.na(student_df$sat_math) |
+  is.na(student_df$sat_verbal))
 result_df <- student_df[row_index, , drop = FALSE]
 ```
 
@@ -386,11 +385,12 @@ result_dt <- na.omit(student_dt, cols = c("institution", "sat_math", "sat_verbal
 ```{r class.source = "dplyr"}
 # dplyr
 result_tbl <- student_tbl %>%
-     drop_na(institution, sat_math, sat_verbal)
+  drop_na(institution, sat_math, sat_verbal)
 ```
 
 ```{r}
-dim(result_dt)
+result_dt
+
 same_content(result_dt, data.table(result_df))
 same_content(result_dt, data.table(result_tbl))
 ```
@@ -415,7 +415,7 @@ same_content(result_dt, data.table(result_tbl))
 
 In some instances, it is important for us to control the order of rows in our data. 
 
-*Scenario.* &nbsp; Suppose we want to know a student's level and declared major in their first term at their institution. We use the `term` dataset.  
+*Task.* &nbsp; Suppose we want to know a student's level and declared major in their first term at their institution. We use the `term` dataset.  
 
 We decide to order the rows first by institution, then by ID, then by term. In each case, we select columns in a separate operation so we can highlight the row-ordering operation.  
 
@@ -425,10 +425,10 @@ columns_we_want <- c("institution", "mcid", "term", "level", "cip6")
 
 ```{r class.source = "base"}
 # base R
-result_df <- term_df[, columns_we_want, drop = FALSE]
+interim_df <- term_df[, columns_we_want, drop = FALSE]
 
-order_index <- with(result_df, order(institution, mcid, term))
-result_df <- result_df[order_index, , drop = FALSE]
+order_index <- with(interim_df, order(institution, mcid, term))
+result_df <- interim_df[order_index, , drop = FALSE]
 ```
 
 ```{r class.source = "dtbl"}
@@ -442,8 +442,8 @@ setorderv(result_dt, order_cols)
 ```{r class.source = "dplyr"}
 # dplyr
 result_tbl <- term_tbl %>%
-    select(institution, mcid, term, level, cip6) %>%
-    arrange(institution, mcid, term)
+  select(institution, mcid, term, level, cip6) %>%
+  arrange(institution, mcid, term)
 ```
 
 ```{r}
@@ -472,20 +472,6 @@ same_content(result_dt, data.table(result_tbl))
 
 
 
-
-
-
-### Appendix
-
-For future reference, the R and package version numbers (as of this writing) are: 
-
-```{r}
-R.version$version.string
-packageVersion("midfielddata")
-packageVersion("data.table")
-packageVersion("dplyr")
-packageVersion("tidyr")
-```
 
 
 

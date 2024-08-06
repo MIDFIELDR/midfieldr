@@ -1,0 +1,186 @@
+---
+title: "Preparing data three ways"
+vignette: >
+  %\VignetteIndexEntry{Preparing data three ways}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+output: 
+    rmarkdown::html_vignette:
+        highlight: "tango"
+        css: ["rmarkdown-source.css", "midfieldr.css"]
+bibliography: ../inst/REFERENCES.bib
+link-citations: yes
+always_allow_html: true
+---
+
+```{r child = "../man/rmd/common-setup.Rmd"}
+```
+
+```{r}
+#| echo: false
+knitr::opts_chunk$set(
+  fig.path = "../man/figures/art-140-",
+  message = FALSE
+)
+```
+
+How to prepare MIDFIELD data for analysis using base R, data.table, and dplyr.   
+
+In this series of articles, we hope to meet the needs of users who would prefer to use base R or dplyr syntax in lieu of the data.table syntax that appears everywhere else in midfieldr. Many of these methods appear in other midfieldr vignettes, but only as needed to achieve the specific task at hand and only using the data.table system. Here we approach the tasks more systematically and include all three systems.  
+
+Sources for translating among the three systems include [@atrebas:2019; @Gimond:2019; @Hajnala:2018; @Mercer:2020; and @Vaughan:2023]. In particular, our outline is roughly based on Chapter 5 of [@Zumel+Mount:2020]. 
+
+
+
+## Outline & links to topics
+
+[Getting started] (below)
+
+[Data selection](art-141-data-selection.html)
+
+- [Subsetting rows and columns](art-141-data-selection.html#subsetting-rows-and-columns)  
+  - [Indirect indexing](art-141-data-selection.html#index-using-intermediate-variables)  
+  - [Direct indexing](art-141-data-selection.html#direct-indexing)  
+  - [Subset rows with multiple conditions](art-141-data-selection.html#subset-rows-with-multiple-conditions)  
+  - [Subset one column as a vector](art-141-data-selection.html#subset-one-column-as-a-vector)  
+- [Removing records with incomplete data](art-141-data-selection.html#removing-records-with-incomplete-data)  
+  - [Using complete.cases](art-141-data-selection.html#using-complete.cases)  
+  - [Using na.omit or equivalent](art-141-data-selection.html#using-na.omit-or-equivalent)  
+  - [Incomplete rows in specified columns](art-141-data-selection.html#incomplete-rows-in-specified-columns)  
+- [Ordering rows](art-141-data-selection.html#ordering-rows)  
+
+[Basic transforms](art-142-basic-transforms.html)
+
+- [Adding columns](art-142-basic-transforms.html#adding-columns)
+- [Removing columns](art-142-basic-transforms.html#removing-columns)
+- [Editing column names](art-142-basic-transforms.html#editing-column-names)
+- [Split a character column](art-142-basic-transforms.html#split-a-character-column)
+- [Convert column class](art-142-basic-transforms.html#convert-column-class)
+- [Recode column values](art-142-basic-transforms.html#recode-column-values)
+
+[Aggregating transforms]()
+
+- [Counting]()
+- [Summarizing]()
+
+[Multitable transforms]()
+
+- [Combining two datasets by row]()
+- [Combining two datasets by column]()
+- [Joining two datasets]()
+
+[Reshaping transforms]()
+
+- [Tall to wide: block records "pivot" to row records]()
+- [Wide to tall: row records "unpivot" to block records]()
+
+## Getting started
+
+*Start.* &nbsp;   If you are writing your own script to follow along, we use these packages in the how-to articles:
+
+```{r}
+library(midfieldr) # same_content()
+library(midfielddata) # datasets
+library(data.table) # data manipulation system
+library(dplyr) # data manipulation system
+library(tidyr) # drop_na()
+```
+
+*Load.* &nbsp;  Practice datasets. View data dictionaries via `?student` and `?term`.
+
+```{r}
+data(student, term)
+```
+
+We construct a different version of the datasets for each system (base R, data.table, and dplyr). 
+
+```{r}
+#| echo: false
+wrapr::build_frame(
+  "system", "name", "class" |
+    "base R", "`student_df`, `term_df`", "`data.frame`" |
+    "data.table", "`student_dt`, `term_dt`", "`data.frame, data.table`" |
+    "dplyr", "`student_tbl`, `term_tbl`", "`data.frame, tbl_df, tbl`"
+) %>%
+  knitr::kable(caption = "Table 1: 'How-to' datasets names and classes")
+```
+
+The code chunks are color coded by system.
+
+```{r class.source = "base"}
+# base R
+student_df <- data.frame(student)
+term_df <- data.frame(term)
+```
+
+```{r class.source = "dtbl"}
+# data.table
+student_dt <- copy(student)
+term_dt <- copy(term)
+```
+
+```{r class.source = "dplyr"}
+# dplyr
+student_tbl <- tibble(student)
+term_tbl <- tibble(term)
+```
+
+### Usage notes
+
+1. Piping or chaining operations are possible in all three systems, but we use it in dplyr examples only because of its familiarity to dplyr users. Assigning to temporary or intermediate variables would work just as well.   
+
+2. In each example, the results by system have the same content but differ in their class (Table 1). For comparing results, we convert base R results and dplyr results to data.table format and compare to the data.table result using `midfieldr::same_content()` which is equivalent to data.table's  `all.equal()` set to ignore row order and ignore column order. See the example below. 
+
+```{r}
+# Example comparisons
+same_content(student_dt, data.table(student_df))
+same_content(term_dt, data.table(term_tbl))
+```
+
+### Practice data
+
+While you may be familiar with the midfielddata datasets from other vignettes, it's always a good idea to review their structure before starting.  
+
+```{r}
+str(student)
+
+str(term)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+
+
+### Appendix
+
+The R and package version numbers (as of this writing) are: 
+
+```{r}
+R.version$version.string
+packageVersion("midfielddata")
+packageVersion("data.table")
+packageVersion("dplyr")
+packageVersion("tidyr")
+```
+
+
+```{r child = "../man/rmd/common-closing.Rmd"}
+```
+
+

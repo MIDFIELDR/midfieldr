@@ -278,12 +278,37 @@
 #' Data frame of letter grades and conventional point assignments used for 
 #' computing grade point averages. 
 #'
-#' @format `data.table` with 12 rows and 2 column:
+#' @format `data.table` with 12 rows and 2 columns:
 #' \describe{
-#'   \item{`letter_grade `}{Character, letter grades using the conventional US 
+#'   \item{`letter_grade`}{Character, letter grades using the conventional US 
 #'       scale from A to F.}
 #'   \item{`points`}{Numerical, 4.0 scale of points assigned to letter grades.}
 #' }
 #'
+#' @family scales
 #' 
 "grade_scale"
+
+# -------------------------------------------------------------------
+
+#' SAT-ACT conversion scale
+#'
+#' Data frame of SAT total scores and corresponding ACT composite scores. 
+#' Converting from SAT to ACT, a range of SAT scores convert to a single ACT 
+#' value. Converting from ACT to SAT, a single-value SAT equivalent is provided.
+#'
+#' @format `data.table` with 28 rows and 4 columns:
+#' \describe{
+#'   \item{`sat_upper`}{Numerical, total SAT, upper limit of range corresponding 
+#'       to the ACT composite score.}
+#'   \item{`sat_equiv`}{Numerical, total SAT, value to use when converting ACT 
+#'       score to a single SAT score.}      
+#'   \item{`sat_lower`}{Numerical, total SAT, lower limit of range corresponding 
+#'       to the ACT composite score.}
+#'   \item{`act_comp`}{Numerical, ACT composite score.}
+#' }
+#'
+#' @family scales
+#' @source ACT/SAT Concordance (2018) ACT Education Corp. \url{https://www.act.org/content/dam/act/unsecured/documents/ACT-SAT-Concordance-Tables.pdf}
+#' 
+"sat_act_scale"
