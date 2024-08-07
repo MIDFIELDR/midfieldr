@@ -27,7 +27,7 @@ visualize comparisons. midfieldr is designed to work with data from the
 MIDFIELD research database, a sample of which is available in the
 midfielddata data package.
 
-midfieldr provides these functions for processing student-level data:
+midfieldr provides these functions for manipulating student-level data:
 
 - `add_completion_status()` Determine completion status for every
   student
@@ -43,14 +43,20 @@ Additional functions for processing intermediate results:
 - `order_multiway()` Order categorical variables of multiway data
 - `same_content()` Test for equal content between two data tables
 
-*Notes on syntax.*   Throughout this work, we use the data.table package
-for data manipulation ([Dowle and Srinivasan
-2022](#ref-Dowle+Srinivasan:2022:data.table)) and the ggplot2 package
-for charts ([Wickham 2016](#ref-Wickham:2016:ggplot2)). Some users may
-prefer base R or dplyr for data ([Wickham et al.
-2022](#ref-Wickham:2022:dplyr)), or lattice for charts ([Sarkar
-2008](#ref-Sarkar:2008)). Each system has its strengths—users are
-welcome to translate our examples to their preferred syntax.
+R packages in examples and vignettes
+
+- *Data preparation.*   We use the data.table system and some base R for
+  data manipulation ([Dowle and Srinivasan
+  2022](#ref-Dowle+Srinivasan:2022:data.table)). To assist users who
+  might prefer other systems, the MIDFIELD Institute website ([Lord et
+  al. 2024](#ref-midfieldinstitute:2024)) includes tutorials providing
+  side-by-side base R, data.table, and dplyr solutions to common data
+  shaping tasks using MIDFIELD practice data.  
+- *Charts.*   Our preferred package for charts is ggplot2 ([Wickham
+  2016](#ref-Wickham:2016:ggplot2)). The lattice package ([Sarkar
+  2008](#ref-Sarkar:2008)) also offers users comprehensive control over
+  graphical elements (though our lattice experience is no longer
+  current).
 
 ## Usage
 
@@ -78,14 +84,15 @@ degree <- select_required(degree)
 
 # View example result
 term
-#>                   mcid   institution  term   cip6         level
-#>      1: MCID3111142225 Institution B 19881 140901 01 First-year
-#>      2: MCID3111142283 Institution J 19881 240102 01 First-year
-#>      3: MCID3111142283 Institution J 19883 240102 01 First-year
-#>     ---                                                        
-#> 639913: MCID3112898894 Institution B 20181 451001 01 First-year
-#> 639914: MCID3112898895 Institution B 20181 302001 01 First-year
-#> 639915: MCID3112898940 Institution B 20181 050103 01 First-year
+#>                   mcid   institution   term   cip6         level
+#>                 <char>        <char> <char> <char>        <char>
+#>      1: MCID3111142225 Institution B  19881 140901 01 First-year
+#>      2: MCID3111142283 Institution J  19881 240102 01 First-year
+#>      3: MCID3111142283 Institution J  19883 240102 01 First-year
+#>     ---                                                         
+#> 639913: MCID3112898894 Institution B  20181 451001 01 First-year
+#> 639914: MCID3112898895 Institution B  20181 302001 01 First-year
+#> 639915: MCID3112898940 Institution B  20181 050103 01 First-year
 ```
 
 Filter for data sufficiency.
@@ -100,6 +107,7 @@ DT <- add_data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include"]
 DT
 #>                   mcid   cip6       level_i adj_span timely_term term_i
+#>                 <char> <char>        <char>    <num>      <char> <char>
 #>      1: MCID3111142689 090401 01 First-year        6       19941  19883
 #>      2: MCID3111142782 260101 01 First-year        6       19941  19883
 #>      3: MCID3111142782 260101 01 First-year        6       19941  19883
@@ -108,6 +116,7 @@ DT
 #> 531418: MCID3112870009 240102 01 First-year        6       20003  19951
 #> 531419: MCID3112870009 240102 01 First-year        6       20003  19951
 #>         lower_limit upper_limit data_sufficiency
+#>              <char>      <char>           <char>
 #>      1:       19881       20181          include
 #>      2:       19881       20096          include
 #>      3:       19881       20096          include
@@ -131,6 +140,7 @@ DT <- DT[cip6 %like% "^14"]
 DT <- DT[, .SD[1], by = c("mcid")]
 DT
 #>                  mcid   cip6        level_i adj_span timely_term term_i
+#>                <char> <char>         <char>    <num>      <char> <char>
 #>     1: MCID3111142965 140102  01 First-year        6       19941  19883
 #>     2: MCID3111145102 140102  01 First-year        6       19941  19883
 #>     3: MCID3111146537 141001 02 Second-year        5       19931  19883
@@ -139,6 +149,7 @@ DT
 #> 10400: MCID3112641535 141901  01 First-year        6       20173  20121
 #> 10401: MCID3112698681 141901  01 First-year        6       20171  20113
 #>        lower_limit upper_limit data_sufficiency
+#>             <char>      <char>           <char>
 #>     1:       19881       20096          include
 #>     2:       19881       20096          include
 #>     3:       19881       20096          include
@@ -155,6 +166,7 @@ Determine completion status.
 DT <- add_completion_status(DT, degree)
 DT
 #>                  mcid   cip6        level_i adj_span timely_term term_i
+#>                <char> <char>         <char>    <num>      <char> <char>
 #>     1: MCID3111142965 140102  01 First-year        6       19941  19883
 #>     2: MCID3111145102 140102  01 First-year        6       19941  19883
 #>     3: MCID3111146537 141001 02 Second-year        5       19931  19883
@@ -163,6 +175,7 @@ DT
 #> 10400: MCID3112641535 141901  01 First-year        6       20173  20121
 #> 10401: MCID3112698681 141901  01 First-year        6       20171  20113
 #>        lower_limit upper_limit data_sufficiency term_degree completion_status
+#>             <char>      <char>           <char>      <char>            <char>
 #>     1:       19881       20096          include       19901            timely
 #>     2:       19881       20096          include       19893            timely
 #>     3:       19881       20096          include       19913            timely
@@ -187,14 +200,15 @@ DT[, people := paste(race, sex)]
 DT_display <- DT[, .N, by = c("completion_status", "people")]
 setorderv(DT_display, c("completion_status", "people"))
 DT_display
-#>     completion_status               people    N
-#>  1:              <NA>         Asian Female   43
-#>  2:              <NA>           Asian Male  163
-#>  3:              <NA>         Black Female   39
-#> ---                                            
-#> 33:            timely Native American Male   13
-#> 34:            timely         White Female  985
-#> 35:            timely           White Male 4100
+#>     completion_status               people     N
+#>                <char>               <char> <int>
+#>  1:              <NA>         Asian Female    43
+#>  2:              <NA>           Asian Male   163
+#>  3:              <NA>         Black Female    39
+#> ---                                             
+#> 33:            timely Native American Male    13
+#> 34:            timely         White Female   985
+#> 35:            timely           White Male  4100
 ```
 
 Reshape and display results.
@@ -212,23 +226,23 @@ setnames(DT_display,
 )
 ```
 
-<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
+<table class=" lightable-paper" style="color: black; font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
 <caption>
 Table 1: Completion status of engineering undergraduates in the practice
 data
 </caption>
 <thead>
 <tr>
-<th style="text-align:left;background-color: #c7eae5 !important;">
+<th style="text-align:left;background-color: rgba(199, 234, 229, 255) !important;">
 People
 </th>
-<th style="text-align:right;background-color: #c7eae5 !important;">
+<th style="text-align:right;background-color: rgba(199, 234, 229, 255) !important;">
 Timely completion
 </th>
-<th style="text-align:right;background-color: #c7eae5 !important;">
+<th style="text-align:right;background-color: rgba(199, 234, 229, 255) !important;">
 Late completion
 </th>
-<th style="text-align:right;background-color: #c7eae5 !important;">
+<th style="text-align:right;background-color: rgba(199, 234, 229, 255) !important;">
 Did not complete
 </th>
 </tr>
@@ -496,6 +510,14 @@ R package version 1.14.6.
 
 </div>
 
+<div id="ref-midfieldinstitute:2024" class="csl-entry">
+
+Lord, Susan, Richard Layton, Russell Long, Matthew Ohland, and Marisa
+Orr. 2024. *MIDFIELD Institute*.
+<https://midfieldr.github.io/2024-midfield-institute/>.
+
+</div>
+
 <div id="ref-Sarkar:2008" class="csl-entry">
 
 Sarkar, Deepayan. 2008. *<span class="nocase">lattice: Multivariate Data
@@ -509,14 +531,6 @@ Visualization with R</span>*. New York: Springer.
 Wickham, Hadley. 2016. *<span class="nocase">ggplot2: Elegant Graphics
 for Data Analysis</span>*. ISBN 978-3-319-24277-4; Springer-Verlag New
 York. <https://ggplot2.tidyverse.org>.
-
-</div>
-
-<div id="ref-Wickham:2022:dplyr" class="csl-entry">
-
-Wickham, Hadley, Romain François, Lionel Henry, and Kirill Müller. 2022.
-*<span class="nocase">dplyr: A Grammar of Data Manipulation</span>*.
-R package version 1.0.10. <https://CRAN.R-project.org/package=dplyr>.
 
 </div>
 
