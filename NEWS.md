@@ -6,6 +6,7 @@
 - Add definition of degree-seeking to relevant vignettes
 - Edit case study introduction. Clarify some definitions. 
 - Add 'Suggests' package 'gt' for vignette tables
+- Add extra.css for small format changes
 
 ## midfieldr 1.0.2 / 2024--05--16
 
