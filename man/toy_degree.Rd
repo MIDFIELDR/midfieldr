@@ -8,7 +8,7 @@
 \code{data.table} with 65 rows and 4 columns keyed by student ID.
 The variables are:
 \describe{
-\item{\code{mcid}}{Character, de-identified student ID.}
+\item{\code{mcid}}{Character, de-identified student ID. Key column.}
 \item{\code{institution}}{Character, de-identified institution
 name, e.g., Institution A, Institution B, etc.}
 \item{\code{term_degree}}{Character, academic year and term

@@ -9,16 +9,18 @@
 #' Subset a data frame, selecting columns by matching or partially matching a
 #' vector of character strings. A convenience function to reduce the dimensions
 #' of a MIDFIELD data table at the start of a session by selecting only those
-#' columns typically required by other midfieldr functions. Particularly useful
-#' in interactive sessions when viewing the data tables at various stages of an
-#' analysis.
+#' columns required by other midfieldr functions or that are required to form a 
+#' composite key. Particularly useful in interactive sessions when viewing the 
+#' data tables at various stages of an analysis.
 #'
-#' Several midfieldr functions are designed to operate on one or more of the
-#' MIDFIELD data tables, usually `student`, `term`, or `degree.` This family of
-#' functions requires only a small subset of available variables: the required 
-#' columns built in to the function are `mcid`, `institution`, `race`, `sex`, 
-#' `^term`, `cip6`, and `level`. Additional column names or partial names can be 
-#' included by using the `select_add` argument. 
+#' Several midfieldr functions require one or more of the variables `mcid`, 
+#' `institution`, `race`, `sex`, `^term`, `cip6`, and `level`. And if 
+#' one requires a composite key to uniquely identify rows, course variables 
+#' `abbrev`, `number` and degree variable `degree` are also required. A vector 
+#' of these names comprises the default subset.   
+#' 
+#' Additional column names or partial names can be included by using the 
+#' `select_add` argument. 
 #'
 #' The column names of `midfield_x` are searched for matches or partial matches
 #' using `grep()`, thus search terms can include regular expressions. Variables
@@ -31,12 +33,9 @@
 #' better suited to that task. Here, we specialize the column selection to serve
 #' midfieldr functions.
 #'
-#' @param midfield_x Data frame from which columns are selected, typically
-#'   `student`, `term`, `degree` or their subsets.
+#' @param midfield_x Data frame from which columns are selected.
 #' @param ... `r param_dots`
-#' @param select_add Character vector of column names to be added (optionally) 
-#'     to the default 
-#'     `c("mcid", "institution", "race", "sex", "^term", "cip6", "level")`.
+#' @param select_add Character vector of additional column names to return.
 #' @return `r return_select_required`
 #'
 #' @family select_*
@@ -62,7 +61,7 @@ select_required <- function(midfield_x, ..., select_add = NULL) {
     
     # optional arguments
     default_select <- c("mcid", "institution", "race", "sex", "^term", "cip6", 
-                        "level")
+                        "level", "abbrev", "number", "degree")
     select <- c(default_select, select_add)
     select <- unique(select)
     

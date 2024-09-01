@@ -24,18 +24,20 @@ The practice data are organized in four datasets keyed by student ID.
 
 ```{r}
 #| echo: false
+library(gt)
 wrapr::build_frame(
-  "Dataset", "Each row is", "Students", "Rows", "Columns", "Memory" |
-    "course", "one student per course", "97,555", "3,289,532", 12L, "324.3 MB" |
+  "Dataset", "Each row is", "N students", "N rows", "N columns", "Memory" |
+    "course", "one student per course & term", "97,555", "3,289,532", 12L, "324.3 MB" |
     "term", "one student per term", "97,555", "639,915", 13L, "72.8 MB" |
     "student", "one student", "97,555", "97,555", 13L, "17.3 MB" |
     "degree", "one student per degree", "49,543", "49,665", 5L, "5.2 MB"
 ) |>
-  kableExtra::kbl(align = "llrrrr", caption = "Table 1. Practice datasets in midfielddata.") |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = FALSE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1, monospace = TRUE) |>
-  kableExtra::column_spec(1:6, color = "black", background = "white")
+  gt() |>
+  tab_caption("Table 1. Practice datasets in midfielddata")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 
@@ -66,7 +68,7 @@ In this article:
 - Overview of each dataset 
 - Summary of variables typically encountered when using midfieldr functions
 - Closer look: For one student, all records in all datasets 
-- Introduce helper functions `select_required()` and `same_content()` 
+- Introduce helper function `select_required()`  and wrapr `check_equiv_frames()`
 
 ```{r child = "../man/rmd/note-for-practice-only-1.Rmd"}
 ```
@@ -312,7 +314,6 @@ A midfieldr convenience function to reduce the number of columns of a MIDFIELD d
 
 The primary benefit is reducing screen clutter when viewing data frames during an interactive session. The disadvantage is that the deleted columns are unavailable unless you first set aside a copy of the source file or reload it using `data()` when you need it. 
 
-
 *Arguments.*
 
 - **`midfield_x`** &nbsp; MIDFIELD data frame, typically `student`, `term`, or `degree`. 
@@ -337,15 +338,14 @@ select_required(term, select_add = c("gpa_term"))
 
 
 
-## `same_content()` 
 
-A midfieldr function that wraps `all.equal()` for data.table objects and ignores row order, column order, and keys (if any). Convenient for checking that two data.tables contain the same content. 
 
-*Arguments.*
 
-- **`x`, `y`** &nbsp; Two data frames or data.tables to compare. 
+## `check_equiv_frames()` 
 
-*Example.* &nbsp; Demonstrate that the following implementations of `select_required()` yield identical results 
+A function imported from the wrapr package that confirms two data frames are equivalent after reordering columns and rows. Accessible by loading midfieldr. 
+
+*Example.* &nbsp; Demonstrate that the following implementations of `select_required()` yield identical results. 
 
 ```{r}
 # Required argument explicitly named
@@ -358,8 +358,8 @@ y <- select_required(term)
 z <- select_required(term, select_add = NULL)
 
 # Demonstrate equivalence
-same_content(x, y)
-same_content(x, z)
+check_equiv_frames(x, y)
+check_equiv_frames(x, z)
 ```
 
 Demonstrate that row and column order are ignored. 
@@ -376,14 +376,21 @@ setkey(y, institution)
 y
 
 # Demonstrate equivalence
-same_content(x, y)
+check_equiv_frames(x, y)
 ```
 
-If the two data tables do not have the same content, the printout indicates the types of differences. 
+If the two data tables do not have the same content, the return is FALSE. 
 
 ```{r}
 # Demonstrate non-equivalence
-same_content(student, degree)
+check_equiv_frames(student, degree)
+```
+
+To explore the differences between non-equivalent data frames, `janitor::compare_df_cols()` returns a comparison of column names and class. 
+
+```{r}
+library(janitor)
+compare_df_cols(student, degree)
 ```
 
 

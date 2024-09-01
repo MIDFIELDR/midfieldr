@@ -8,7 +8,7 @@ test_select_required <- function() {
 
     
     # Default character vector for selecting columns
-    default_cols<- c("mcid", "institution", "race", "sex", "^term", "cip6", "level")
+    default_cols<- c("mcid", "institution", "race", "sex", "^term", "cip6", "level", "abbrev", "number", "degree")
     
     # Create one string separated by OR
     search_pattern <- paste(default_cols, collapse = "|")
@@ -34,7 +34,7 @@ test_select_required <- function() {
     expect_equal(ncol(x), sum(y))
     
     # Add columns
-    cols_to_add <- c("abbrev", "number", "grade")
+    cols_to_add <- c("grade")
     x <- select_required(toy_course, select_add = cols_to_add) 
     y <- grepl(search_pattern, names(x))
     expect_equal(ncol(x), sum(y) + length(cols_to_add))
@@ -45,7 +45,7 @@ test_select_required <- function() {
     expect_equal(ncol(x), sum(y))
 
     # Error if no columns found
-    cols_to_add <- c("abbrev", "number", "grade")
+    cols_to_add <- c("grade")
     x <- toy_course[, .SD, .SDcols = cols_to_add]
     expect_error(select_required(x))
 

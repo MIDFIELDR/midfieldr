@@ -176,8 +176,8 @@ y <- order_multiway(DT, "stickiness", c("program", "people"), method = "median")
 z <- order_multiway(DT, "stickiness", c("program", "people"))
 
 # Demonstrate equivalence
-same_content(x, y)
-same_content(x, z)
+check_equiv_frames(x, y)
+check_equiv_frames(x, z)
 ```
 
 
@@ -582,15 +582,14 @@ setnames(tbl, old = "people", new = "Group", skip_absent = TRUE)
 
 ```{r}
 #| echo: false
-
+library(gt)
 tbl |>
-  kableExtra::kbl(
-    align = "lrrrr",
-    caption = "Table 1: Number of engineering graduates"
-  ) |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1:5, color = "black", background = "white")
+  gt() |>
+  tab_caption("Table 1: Number of engineering graduates")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 Multiway data structure lends itself to tables of this type. The levels of one category are in the first column; the levels of the second category are in the table header; and the quantitative variable fills the cells---a response value for each combination of levels of the two categories. 
@@ -637,15 +636,13 @@ setnames(tbl, old = "people", new = "Group", skip_absent = TRUE)
 
 ```{r}
 #| echo: false
-
 tbl |>
-  kableExtra::kbl(
-    align = "lrrrr",
-    caption = "Table 2: Percent stickiness of four engineering programs (N ever enrolled)"
-  ) |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1:5, color = "black", background = "white")
+  gt() |>
+  tab_caption("Table 2: Four programs (N ever enrolled) percent stickiness")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 

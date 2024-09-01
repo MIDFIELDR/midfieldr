@@ -1,5 +1,10 @@
 
-# Internal utility functions
+# Internal utility functions and re-exports
+
+#' @export
+#' @importFrom wrapr check_equiv_frames
+wrapr::check_equiv_frames
+
 
 # ------------------------------------------------------------------------
 #

@@ -41,7 +41,6 @@ midfieldr provides these functions for manipulating student-level data:
 Additional functions for processing intermediate results:
 
 - `order_multiway()` Order categorical variables of multiway data
-- `same_content()` Test for equal content between two data tables
 
 R packages in examples and vignettes
 
@@ -226,198 +225,465 @@ setnames(DT_display,
 )
 ```
 
-<table class=" lightable-paper" style="color: black; font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
-<caption>
-Table 1: Completion status of engineering undergraduates in the practice
-data
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;background-color: rgba(199, 234, 229, 255) !important;">
-People
-</th>
-<th style="text-align:right;background-color: rgba(199, 234, 229, 255) !important;">
-Timely completion
-</th>
-<th style="text-align:right;background-color: rgba(199, 234, 229, 255) !important;">
-Late completion
-</th>
-<th style="text-align:right;background-color: rgba(199, 234, 229, 255) !important;">
-Did not complete
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-Asian Female
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-87
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-4
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-43
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-Asian Male
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-315
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-19
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-163
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-Black Female
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-26
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-3
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-39
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-Black Male
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-80
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-5
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-84
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-International Female
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-110
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-9
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-51
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-International Male
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-501
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-41
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-280
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-Latine Female
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-36
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-3
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-31
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-Latine Male
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-181
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-19
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-102
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-Native American Female
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-2
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-0
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-Native American Male
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-13
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-3
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-6
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-White Female
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-985
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-51
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-386
-</td>
-</tr>
-<tr>
-<td style="text-align:left;color: black !important;background-color: white !important;">
-White Male
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-4100
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-269
-</td>
-<td style="text-align:right;color: black !important;background-color: white !important;">
-2034
-</td>
-</tr>
-</tbody>
+<div id="rogvnmtblp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#rogvnmtblp table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+&#10;#rogvnmtblp thead, #rogvnmtblp tbody, #rogvnmtblp tfoot, #rogvnmtblp tr, #rogvnmtblp td, #rogvnmtblp th {
+  border-style: none;
+}
+&#10;#rogvnmtblp p {
+  margin: 0;
+  padding: 0;
+}
+&#10;#rogvnmtblp .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: small;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #000000;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #000000;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+&#10;#rogvnmtblp .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+&#10;#rogvnmtblp .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+&#10;#rogvnmtblp .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+&#10;#rogvnmtblp .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+&#10;#rogvnmtblp .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+}
+&#10;#rogvnmtblp .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+&#10;#rogvnmtblp .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+&#10;#rogvnmtblp .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+&#10;#rogvnmtblp .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+&#10;#rogvnmtblp .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+&#10;#rogvnmtblp .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+&#10;#rogvnmtblp .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+&#10;#rogvnmtblp .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+&#10;#rogvnmtblp .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  vertical-align: middle;
+}
+&#10;#rogvnmtblp .gt_from_md > :first-child {
+  margin-top: 0;
+}
+&#10;#rogvnmtblp .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+&#10;#rogvnmtblp .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: none;
+  border-top-width: 1px;
+  border-top-color: #D5D5D5;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D5D5D5;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D5D5D5;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+&#10;#rogvnmtblp .gt_stub {
+  color: #FFFFFF;
+  background-color: #5F5F5F;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #5F5F5F;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#rogvnmtblp .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+&#10;#rogvnmtblp .gt_row_group_first td {
+  border-top-width: 2px;
+}
+&#10;#rogvnmtblp .gt_row_group_first th {
+  border-top-width: 2px;
+}
+&#10;#rogvnmtblp .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#rogvnmtblp .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #5F5F5F;
+}
+&#10;#rogvnmtblp .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+&#10;#rogvnmtblp .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+}
+&#10;#rogvnmtblp .gt_grand_summary_row {
+  color: #333333;
+  background-color: #D5D5D5;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#rogvnmtblp .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #5F5F5F;
+}
+&#10;#rogvnmtblp .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #5F5F5F;
+}
+&#10;#rogvnmtblp .gt_striped {
+  background-color: #F4F4F4;
+}
+&#10;#rogvnmtblp .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+}
+&#10;#rogvnmtblp .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+&#10;#rogvnmtblp .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#rogvnmtblp .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+&#10;#rogvnmtblp .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#rogvnmtblp .gt_left {
+  text-align: left;
+}
+&#10;#rogvnmtblp .gt_center {
+  text-align: center;
+}
+&#10;#rogvnmtblp .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+&#10;#rogvnmtblp .gt_font_normal {
+  font-weight: normal;
+}
+&#10;#rogvnmtblp .gt_font_bold {
+  font-weight: bold;
+}
+&#10;#rogvnmtblp .gt_font_italic {
+  font-style: italic;
+}
+&#10;#rogvnmtblp .gt_super {
+  font-size: 65%;
+}
+&#10;#rogvnmtblp .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+&#10;#rogvnmtblp .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+&#10;#rogvnmtblp .gt_indent_1 {
+  text-indent: 5px;
+}
+&#10;#rogvnmtblp .gt_indent_2 {
+  text-indent: 10px;
+}
+&#10;#rogvnmtblp .gt_indent_3 {
+  text-indent: 15px;
+}
+&#10;#rogvnmtblp .gt_indent_4 {
+  text-indent: 20px;
+}
+&#10;#rogvnmtblp .gt_indent_5 {
+  text-indent: 25px;
+}
+&#10;#rogvnmtblp .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+&#10;#rogvnmtblp div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <caption>Table 1: Completion status of engineering undergraduates in the practice data</caption>
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="People">People</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="Timely completion">Timely completion</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="Late completion">Late completion</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="Did not complete">Did not complete</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="People" class="gt_row gt_left">Asian Female</td>
+<td headers="Timely completion" class="gt_row gt_right">87</td>
+<td headers="Late completion" class="gt_row gt_right">4</td>
+<td headers="Did not complete" class="gt_row gt_right">43</td></tr>
+    <tr><td headers="People" class="gt_row gt_left gt_striped">Asian Male</td>
+<td headers="Timely completion" class="gt_row gt_right gt_striped">315</td>
+<td headers="Late completion" class="gt_row gt_right gt_striped">19</td>
+<td headers="Did not complete" class="gt_row gt_right gt_striped">163</td></tr>
+    <tr><td headers="People" class="gt_row gt_left">Black Female</td>
+<td headers="Timely completion" class="gt_row gt_right">26</td>
+<td headers="Late completion" class="gt_row gt_right">3</td>
+<td headers="Did not complete" class="gt_row gt_right">39</td></tr>
+    <tr><td headers="People" class="gt_row gt_left gt_striped">Black Male</td>
+<td headers="Timely completion" class="gt_row gt_right gt_striped">80</td>
+<td headers="Late completion" class="gt_row gt_right gt_striped">5</td>
+<td headers="Did not complete" class="gt_row gt_right gt_striped">84</td></tr>
+    <tr><td headers="People" class="gt_row gt_left">International Female</td>
+<td headers="Timely completion" class="gt_row gt_right">110</td>
+<td headers="Late completion" class="gt_row gt_right">9</td>
+<td headers="Did not complete" class="gt_row gt_right">51</td></tr>
+    <tr><td headers="People" class="gt_row gt_left gt_striped">International Male</td>
+<td headers="Timely completion" class="gt_row gt_right gt_striped">501</td>
+<td headers="Late completion" class="gt_row gt_right gt_striped">41</td>
+<td headers="Did not complete" class="gt_row gt_right gt_striped">280</td></tr>
+    <tr><td headers="People" class="gt_row gt_left">Latine Female</td>
+<td headers="Timely completion" class="gt_row gt_right">36</td>
+<td headers="Late completion" class="gt_row gt_right">3</td>
+<td headers="Did not complete" class="gt_row gt_right">31</td></tr>
+    <tr><td headers="People" class="gt_row gt_left gt_striped">Latine Male</td>
+<td headers="Timely completion" class="gt_row gt_right gt_striped">181</td>
+<td headers="Late completion" class="gt_row gt_right gt_striped">19</td>
+<td headers="Did not complete" class="gt_row gt_right gt_striped">102</td></tr>
+    <tr><td headers="People" class="gt_row gt_left">Native American Female</td>
+<td headers="Timely completion" class="gt_row gt_right">2</td>
+<td headers="Late completion" class="gt_row gt_right">0</td>
+<td headers="Did not complete" class="gt_row gt_right">2</td></tr>
+    <tr><td headers="People" class="gt_row gt_left gt_striped">Native American Male</td>
+<td headers="Timely completion" class="gt_row gt_right gt_striped">13</td>
+<td headers="Late completion" class="gt_row gt_right gt_striped">3</td>
+<td headers="Did not complete" class="gt_row gt_right gt_striped">6</td></tr>
+    <tr><td headers="People" class="gt_row gt_left">White Female</td>
+<td headers="Timely completion" class="gt_row gt_right">985</td>
+<td headers="Late completion" class="gt_row gt_right">51</td>
+<td headers="Did not complete" class="gt_row gt_right">386</td></tr>
+    <tr><td headers="People" class="gt_row gt_left gt_striped">White Male</td>
+<td headers="Timely completion" class="gt_row gt_right gt_striped">4100</td>
+<td headers="Late completion" class="gt_row gt_right gt_striped">269</td>
+<td headers="Did not complete" class="gt_row gt_right gt_striped">2034</td></tr>
+  </tbody>
+  &#10;  
 </table>
+</div>
 
 “Timely completion” is the count of graduates completing their programs
 in no more than 6 years; “Late completion” is the count of those
@@ -479,7 +745,6 @@ grant numbers 1545667 and 2142087.
 ## References
 
 <div id="refs">
-&#10;
 &#10;
 &#10;
 

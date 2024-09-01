@@ -109,19 +109,18 @@ To illustrate the taxonomy in a little more detail, we show in the table the pro
 
 ```{r}
 #| echo: false
-
+library(gt)
 x <- filter_cip("^41")
 x[2:9, cip2name := "\U2003\U02193"]
 x[c(4, 5, 7, 8), cip4name := "\U2003\U02193"]
 
 x |>
-  kableExtra::kbl(
-    align = "rlrlrl",
-    caption = "Table 1: CIP taxonomy"
-  ) |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1:6, color = "black", background = "white")
+  gt() |>
+  tab_caption("Table 1. CIP taxonomy")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 A 2-digit program can include anywhere from four 4-digit programs (e.g., code 24 `r name24`) to `r n51` 4-digit programs (e.g., code 51 `r name51`). 
@@ -235,7 +234,7 @@ x <- filter_cip(keep_text = c("engineering"), cip = cip)
 y <- filter_cip("engineering")
 
 # Demonstrate equivalence
-same_content(x, y)
+check_equiv_frames(x, y)
 ```
 
 *Output.* &nbsp; Subset of `cip` with rows matching elements of `keep_text`. Additional subsetting if optional arguments specified. Examples follow. 
@@ -271,10 +270,12 @@ filter_cip("civil")
 ```{r}
 #| echo: false
 filter_cip("civil") |>
-  kableExtra::kbl(align = "rlrlrl", caption = "Table 2. Search results.") |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1:6, color = "black", background = "white")
+  gt() |>
+  tab_caption("Table 2. Search results")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 The search returns some programs with Civilization in their names as well as Engineering Technology. If we wanted Civil Engineering only, we can use a sequence of function calls, where the outcome of the one operation is assigned to the first argument of the next operation.  
@@ -296,10 +297,12 @@ third_pass <- filter_cip(drop_text = "technology", cip = second_pass)
 ```{r}
 #| echo: false
 third_pass |>
-  kableExtra::kbl(align = "rlrlrl", caption = "Table 3. Search results.") |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1:6, color = "black", background = "white")
+  gt() |>
+  tab_caption("Table 3. Search results")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 *Equivalent usage.* &nbsp; Seeing that all Civil Engineering programs have the same `cip4name`, we could have used  `keep_text = c("civil engineering")` to narrow the search to rows that match the full phrase. The following implementations yield identical results,
@@ -314,7 +317,7 @@ x <- filter_cip(drop_text = "technology", cip = x)
 y <- filter_cip("civil engineering", drop_text = "technology")
 
 # Demonstrate equivalence
-same_content(x, y)
+check_equiv_frames(x, y)
 ```
 
 
@@ -338,10 +341,12 @@ filter_cip("german")
 ```{r}
 #| echo: false
 filter_cip("german") |>
-  kableExtra::kbl(align = "rlrlrl", caption = "Table 4. Search results.") |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1:6, color = "black", background = "white")
+  gt() |>
+  tab_caption("Table 4. Search results")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 From the 6-digit program names we find only two that are of interest, German Studies (050125) and German Language and Literature (160501). We use a character vector to assign these two codes to the `keep_text` argument. 
@@ -355,10 +360,12 @@ filter_cip(c("050125", "160501"))
 ```{r }
 #| echo: false
 filter_cip(c("050125", "160501")) |>
-  kableExtra::kbl(align = "rlrlrl", caption = "Table 5. Search results.") |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1:6, color = "black", background = "white")
+  gt() |>
+  tab_caption("Table 5. Search results")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 If the 6-digit codes are entered as integers, they produce an error. 
@@ -389,10 +396,12 @@ filter_cip(c("^1410", "^1419"))
 ```{r}
 #| echo: false
 filter_cip(c("^1410", "^1419")) |>
-  kableExtra::kbl(align = "rlrlrl", caption = "Table 6. Search results.") |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1:6, color = "black", background = "white")
+  gt() |>
+  tab_caption("Table 6. Search results")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 The 2-digit series represent the most general groupings of related programs. Here, the result includes all History programs. 
@@ -406,10 +415,12 @@ filter_cip("^54")
 ```{r}
 #| echo: false
 filter_cip("^54") |>
-  kableExtra::kbl(align = "rlrlrl", caption = "Table 7. Search results.") |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1:6, color = "black", background = "white")
+  gt() |>
+  tab_caption("Table 7. Search results")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 The series argument can include any combination of 2, 4, and 6-digit codes. It can also be passed to the function as a character vector. 
@@ -425,10 +436,12 @@ filter_cip(codes_we_want)
 #| echo: false
 codes_we_want <- c("^24", "^4102", "^450202")
 filter_cip(codes_we_want) |>
-  kableExtra::kbl(align = "rlrlrl", caption = "Table 8. Search results.") |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1:6, color = "black", background = "white")
+  gt() |>
+  tab_caption("Table 8. Search results")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 
@@ -556,7 +569,7 @@ four_programs
 
 ```{r}
 # Demonstrate equivalence
-same_content(four_programs, study_programs)
+check_equiv_frames(four_programs, study_programs)
 ```
 
 

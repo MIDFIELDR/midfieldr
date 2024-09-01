@@ -7,7 +7,7 @@
 \format{
 \code{data.table} with 4623 rows and 2 columns keyed by student ID:
 \describe{
-\item{\code{mcid}}{Character, de-identified student ID.}
+\item{\code{mcid}}{Character, de-identified student ID. Key column.}
 \item{\code{proxy}}{Character, 6-digit CIP code of the estimated
 proxy program.}
 }

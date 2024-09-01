@@ -1,14 +1,35 @@
 #' @keywords internal
 "_PACKAGE"
 
-#' @importFrom checkmate assert_data_frame assert_int qassert
-#' @importFrom checkmate assert_subset assert_names
-#' @importFrom data.table setkey setkeyv setcolorder setnames setorderv setorder
-#' @importFrom data.table fcase fifelse copy as.data.table shift
-#' @importFrom data.table setDF setDT
-#' @importFrom data.table %chin% %like% .SD .N :=
-#' @importFrom stats na.omit reorder
-#' @importFrom wrapr let stop_if_dot_args %?%
+#' @importFrom checkmate assert_data_frame
+#' @importFrom checkmate assert_int
+#' @importFrom checkmate assert_names
+#' @importFrom checkmate qassert
+#' @importFrom checkmate assert_subset
+#' @importFrom data.table setkey
+#' @importFrom data.table setkeyv
+#' @importFrom data.table setcolorder
+#' @importFrom data.table setnames
+#' @importFrom data.table setorderv
+#' @importFrom data.table setorder
+#' @importFrom data.table fcase
+#' @importFrom data.table fifelse
+#' @importFrom data.table copy
+#' @importFrom data.table as.data.table
+#' @importFrom data.table shift
+#' @importFrom data.table setDF
+#' @importFrom data.table setDT
+#' @importFrom data.table %chin%
+#' @importFrom data.table %like%
+#' @importFrom data.table .SD
+#' @importFrom data.table .N
+#' @importFrom data.table :=
+#' @importFrom stats na.omit
+#' @importFrom stats reorder
+#' @importFrom wrapr let
+#' @importFrom wrapr stop_if_dot_args
+#' @importFrom wrapr %?%
+#' @importFrom wrapr check_equiv_frames
 NULL
 
 # bind names due to NSE notes in R CMD check

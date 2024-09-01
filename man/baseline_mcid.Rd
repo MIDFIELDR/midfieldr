@@ -7,7 +7,7 @@
 \format{
 \code{data.table} with 76875 rows and 1 column:
 \describe{
-\item{\code{mcid}}{Character, de-identified student ID.}
+\item{\code{mcid}}{Character, de-identified student ID. Key column.}
 }
 }
 \usage{

@@ -51,7 +51,6 @@ midfieldr provides these functions for manipulating student-level data:
 Additional functions for processing intermediate results: 
 
 - `order_multiway()` Order categorical variables of multiway data
-- `same_content()` Test for equal content between two data tables
 
 R packages in examples and vignettes
 
@@ -161,11 +160,14 @@ setnames(DT_display,
 
 ```{r}
 #| echo: false
+library(gt)
 DT_display |>
-  kableExtra::kbl(align = "lrrr", caption = "Table 1: Completion status of engineering undergraduates in the practice data") |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1:4, color = "black", background = "white")
+  gt() |>
+  tab_caption("Table 1: Completion status of engineering undergraduates in the practice data")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 "Timely completion" is the count of graduates completing their programs in no more than 6 years; "Late completion" is the count of those graduating in more than 6 years; "Did not complete" is the count of non-graduates. 

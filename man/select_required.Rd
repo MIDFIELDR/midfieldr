@@ -7,37 +7,36 @@
 select_required(midfield_x, ..., select_add = NULL)
 }
 \arguments{
-\item{midfield_x}{Data frame from which columns are selected, typically
-\code{student}, \code{term}, \code{degree} or their subsets.}
+\item{midfield_x}{Data frame from which columns are selected.}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
 referable only by name.}
 
-\item{select_add}{Character vector of column names to be added (optionally)
-to the default
-\code{c("mcid", "institution", "race", "sex", "^term", "cip6", "level")}.}
+\item{select_add}{Character vector of additional column names to return.}
 }
 \value{
 A data frame in \code{data.table} format with the
 following properties: rows are preserved; columns with names that
-match or partially match values in \code{select_add} are retained; grouping
-structures are not preserved.
+match or partially match values in the default set plus any in
+\code{select_add} are retained; grouping structures are not preserved.
 }
 \description{
 Subset a data frame, selecting columns by matching or partially matching a
 vector of character strings. A convenience function to reduce the dimensions
 of a MIDFIELD data table at the start of a session by selecting only those
-columns typically required by other midfieldr functions. Particularly useful
-in interactive sessions when viewing the data tables at various stages of an
-analysis.
+columns required by other midfieldr functions or that are required to form a
+composite key. Particularly useful in interactive sessions when viewing the
+data tables at various stages of an analysis.
 }
 \details{
-Several midfieldr functions are designed to operate on one or more of the
-MIDFIELD data tables, usually \code{student}, \code{term}, or \code{degree.} This family of
-functions requires only a small subset of available variables: the required
-columns built in to the function are \code{mcid}, \code{institution}, \code{race}, \code{sex},
-\verb{^term}, \code{cip6}, and \code{level}. Additional column names or partial names can be
-included by using the \code{select_add} argument.
+Several midfieldr functions require one or more of the variables \code{mcid},
+\code{institution}, \code{race}, \code{sex}, \verb{^term}, \code{cip6}, and \code{level}. And if
+one requires a composite key to uniquely identify rows, course variables
+\code{abbrev}, \code{number} and degree variable \code{degree} are also required. A vector
+of these names comprises the default subset.
+
+Additional column names or partial names can be included by using the
+\code{select_add} argument.
 
 The column names of \code{midfield_x} are searched for matches or partial matches
 using \code{grep()}, thus search terms can include regular expressions. Variables

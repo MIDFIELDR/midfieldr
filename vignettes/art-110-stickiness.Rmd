@@ -349,7 +349,7 @@ DT
 
 ```{r}
 # Demonstrate equivalence
-same_content(DT, study_observations)
+check_equiv_frames(DT, study_observations)
 ```
 
 ```{r}
@@ -402,7 +402,7 @@ DT
 
 ```{r}
 # Demonstrate equivalence
-same_content(DT, study_results)
+check_equiv_frames(DT, study_results)
 ```
 
 ```{r}
@@ -521,14 +521,17 @@ setnames(display_table,
 display_table
 ```
 
-(Optional) Format the table nearer to publication quality. Here I use kableExtra package. 
+(Optional) Format the table nearer to publication quality. Here I use the 'gt' package. 
 
 ```{r}
+library(gt)
 display_table |>
-  kableExtra::kbl(align = "lrrrr", caption = "Table 1: Stickiness (%) of four Engineering majors.") |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1:5, color = "black", background = "white")
+  gt() |>
+  tab_caption("Table 1: Stickiness (%) of four Engineering majors")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 A value of NA indicates a group removed because the number of graduates was below the threshold set to preserve anonymity. As noted earlier, these are largely an artifact of applying these groupings to practice data.

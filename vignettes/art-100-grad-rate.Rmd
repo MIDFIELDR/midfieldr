@@ -218,6 +218,7 @@ graduation rate (MIDFIELD)
 ```{r}
 #| echo: false
 library("data.table")
+library(gt)
 wrapr::build_frame(
   "Item", "IPEDS", "MIDFIELD", "MIDFIELD notes" |
     "completion span:", "4, 6, or 8 years", "4, 6, or 8 years", "Typical usage is 6 years" |
@@ -225,10 +226,12 @@ wrapr::build_frame(
     "part-time students are:", "excluded", "included", "Timely completion same as full-time students" |
     "transfer students are:", "excluded", "included", "Timely completion span adjusted for level at entry"
 ) |>
-  kableExtra::kbl(align = "llll", caption = "Table 1: Comparing graduation rate definitions") |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::column_spec(1:2, color = "black", background = "white") |>
-  kableExtra::row_spec(c(0), background = "#c7eae5")
+  gt() |>
+  tab_caption("Table 1. Comparing graduation rate definitions")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 <br>
@@ -643,14 +646,17 @@ setnames(display_table,
 display_table
 ```
 
-(Optional) Format the table nearer to publication quality. Here I use kableExtra package. 
+(Optional) Format the table nearer to publication quality. Here I use the 'gt'  package. 
 
 ```{r}
+library(gt)
 display_table |>
-  kableExtra::kbl(align = "lrrrr", caption = "Table 2: Graduation rates (%) of four Engineering majors.") |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1:5, color = "black", background = "white")
+  gt() |>
+  tab_caption("Table 2: Graduation rates (%) of four Engineering majors")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 A value of NA indicates a group removed because the number of graduates was below the threshold set to preserve anonymity. As noted earlier, these are largely an artifact of applying these groupings to practice data.

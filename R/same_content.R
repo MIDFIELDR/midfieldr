@@ -1,5 +1,8 @@
 
 #' Test for equal content between two data tables
+#' 
+#' This function is deprecated in favor of [wrapr::check_equiv_frames()] imported from 
+#' the wrapr package, accessible by loading 'midfieldr'. 
 #'
 #' Test of data equality between data.table objects. Convenience function used
 #' in 'midfieldr' articles.
@@ -16,10 +19,25 @@
 #'   `all.equal()`
 #' 
 #' @return Either TRUE or a description of the differences between `x` and `y`. 
-#' @example man/examples/same_content_exa.R
+#' @name same_content-deprecated
+#' @usage same_content(x, y)
+#' @seealso \code{\link{midfieldr-deprecated}}
+#' @keywords internal
+NULL
+
+#' @rdname midfieldr-deprecated
+#' @section `same_content`:
+#' For `same_content()`, use `check_equiv_frames()`
 #' @export
-#'
 same_content <- function(x, y) {
+    
+    # deprecated
+    .Deprecated(old = "same_content", 
+                new = "check_equiv_frames",
+                package = "wrapr",
+                msg = '`same_content()` is deprecated. Please use   
+                `check_equiv_frames()` imported from the wrapr 
+                package and accessible when you load midfieldr.')
     
     # Required argument
     qassert(x, "d+")

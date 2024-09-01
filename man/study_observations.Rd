@@ -8,7 +8,7 @@
 \code{data.table} with 8917 rows and 5 columns.
 The variables are:
 \describe{
-\item{\code{mcid}}{Character, de-identified student ID.}
+\item{\code{mcid}}{Character, de-identified student ID. Key column.}
 \item{\code{race}}{Character, race/ethnicity as self-reported
 by the student, e.g., Asian, Black, Latine, etc.}
 \item{\code{sex}}{Character, sex as self-reported by the student,

@@ -70,8 +70,8 @@ return_filter_cip <- 'A data frame in `data.table` format, a subset of `cip`,
 
 return_select_required <- 'A data frame in `data.table` format with the 
         following properties: rows are preserved; columns with names that
-        match or partially match values in `select_add` are retained; grouping 
-        structures are not preserved.'
+        match or partially match values in the default set plus any in 
+        `select_add` are retained; grouping structures are not preserved.'
 
 return_prep_fye_mice <- 'A data frame in `data.table` format conditioned for 
         later use as an input to the mice R package for multiple imputation. The
@@ -84,7 +84,7 @@ return_prep_fye_mice <- 'A data frame in `data.table` format conditioned for
 # Variable names in data sets
 
 var_abbrev  <- '\\item{`abbrev`}{Character, course alphabetical identifier, 
-                  e.g. ENGR, MATH, ENGL.}'
+                  e.g. ENGR, MATH, ENGL. Key column.}'
 var_bloc    <- '\\item{`bloc`}{Character, indicating the grouping 
                   (`ever_enrolled` or `graduates`) to which an observation 
                   belongs.}'
@@ -101,9 +101,9 @@ var_institution <- '\\item{`institution`}{Character, de-identified institution
 var_level   <- '\\item{`level`}{Character, 01 Freshman, 02 Sophomore, etc. 
                   The equivalent values in the current practice data are 01 
                   First-Year, 02-Second Year, etc.}'
-var_mcid    <- '\\item{`mcid`}{Character, de-identified student ID.}'
+var_mcid    <- '\\item{`mcid`}{Character, de-identified student ID. Key column.}'
 var_number  <- '\\item{`number`}{Character, course numeric identifier, e.g. 
-                  101, 3429.}'
+                  101, 3429. Key column.}'
 var_program <- '\\item{`program`}{Character, academic program label.}'
 var_proxy   <- '\\item{`proxy`}{Character, 6-digit CIP code of the estimated 
                   proxy program.}'
@@ -111,7 +111,8 @@ var_race    <- '\\item{`race`}{Character, race/ethnicity as self-reported
                   by the student, e.g., Asian, Black, Latine, etc.}'
 var_sex     <- '\\item{`sex`}{Character, sex as self-reported by the student, 
                   possible values are Female, Male, and Unknown.}'
-var_term    <- '\\item{`term`}{Character, academic year and term, format YYYYT.}'
+var_term    <- '\\item{`term`}{Character, academic year and term, format YYYYT. 
+                  Key column.}'
 var_term_degree <- '\\item{`term_degree`}{Character, academic year and term 
                   in which a student completes their program, format YYYYT.}'
 var_stickiness <- '\\item{`stickiness`}{Numerical, program stickiness, the 

@@ -183,8 +183,8 @@ y <- prep_fye_mice(student, term)
 z <- prep_fye_mice()
 
 # Demonstrate equivalence
-same_content(x, y)
-same_content(x, z)
+check_equiv_frames(x, y)
+check_equiv_frames(x, z)
 ```
 
 *Output.* &nbsp; The function returns one row per FYE student keyed by student ID. All variables except ID are returned as factors to meet the requirements of `mice()`.  
@@ -632,7 +632,7 @@ DT
 
 ```{r}
 # Demonstrate equivalence
-same_content(DT, fye_proxy)
+check_equiv_frames(DT, fye_proxy)
 ```
 
 ```{r}
@@ -714,6 +714,7 @@ In Table 1, we show the FYE proxy programs and indicate the equivalent NSF ranki
 
 ```{r}
 #| echo: false
+library(gt)
 x <- copy(proxy_programs)
 x$nsf <- c("1", "2", "3", "", "6", "5", "4", "", "", "7", "", "", "")
 setcolorder(x, c("program", "nsf", "N"))
@@ -722,11 +723,12 @@ setnames(x,
   new = c("Program", "NSF ranking")
 )
 x |>
-  kableExtra::kbl(align = "lrr", caption = "Table 1: Frequency of FYE proxies using the practice data") |>
-  kableExtra::kable_paper(lightable_options = "basic", full_width = TRUE) |>
-  kableExtra::row_spec(0, background = "#c7eae5") |>
-  kableExtra::column_spec(1:2, color = "black", background = "white") |>
-  kableExtra::row_spec(c(1, 2, 3, 5, 6, 7, 10))
+  gt() |>
+  tab_caption("Table 1: Frequency of FYE proxies using the practice data")|> 
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(style = list(cell_fill(color = "#c7eae5")),
+            locations = cells_column_labels(columns = everything()))
 ```
 
 
