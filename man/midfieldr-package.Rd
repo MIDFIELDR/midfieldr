@@ -25,7 +25,7 @@ Authors:
 \itemize{
   \item Russell Long \email{ralong@purdue.edu} [copyright holder, data manager]
   \item Matthew Ohland \email{ohland@purdue.edu} [copyright holder]
-  \item Marisa Orr \email{marisak@clemson.edu} [copyright holder]
+  \item Marisa Orr [copyright holder]
   \item Susan Lord \email{slord@sandiego.edu} [copyright holder]
 }
 
