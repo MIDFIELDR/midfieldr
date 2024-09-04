@@ -1,0 +1,642 @@
+---
+title: "Data selection"
+vignette: >
+  %\VignetteIndexEntry{Data selection}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+output: 
+    rmarkdown::html_vignette:
+        highlight: "tango"
+        css: "style.css"
+bibliography: ../inst/REFERENCES.bib
+link-citations: yes
+always_allow_html: true
+---
+
+```{r child = "../man/rmd/common-setup.Rmd"}
+```
+
+```{r}
+#| echo: false
+knitr::opts_chunk$set(fig.path = "../man/figures/art-141-", 
+                      message = TRUE)
+```
+
+*Strategies* for data frame row/column operations.
+
+- *base R.* Given a base R `data.frame`, we prefer the form `dframe[i, j, drop = FALSE]`, with row indices in `i`, column indices in `j`, and `drop = FALSE` to ensure a data frame is returned (when desired).
+
+- *data.table.* Given a `data.table`-type data frame, the native form is `DT[i, j, by]`, with row indices in `i`, column operations (or any R expression) in `j` , and `by` to compute `j` expression by group.
+
+- *dplyr.* Given a dplyr `tbl`-type data frame (tibble), we employ the pipe operator `%>%` preferred by many dplyr users. Thus, instead of `select(df, column)`, for example, we write `df %>% select(column)`. 
+
+*Code chunks* 
+
+- Are grouped by task and color-coded by dialect.
+
+- Sometimes use a construction that can be used in any of the dialects, e.g., a character vector `columns_we_want` for column subsetting or a logical vector `rows_we_want` for row subsetting. 
+
+*Results*
+
+- Code chunks are generally followed by a display of some aspect of the result, e.g., `class()`, `str()`, `dim()`, `nrow()`, etc.
+
+- If the three dialects return the same display, one representative result is shown; otherwise, a result is shown for each. 
+
+## Getting started
+
+Load packages. Because dplyr masks certain functions in data.table and base R, we have to be careful to select the right package if we use any of those functions. 
+
+```{r}
+library(midfielddata)
+library(data.table)
+library(dplyr)
+```
+
+For future reference, the package version numbers (as of this writing) are: 
+
+```{r}
+packageVersion("midfielddata")
+packageVersion("data.table")
+packageVersion("dplyr")
+```
+
+Load the `student` data set from the midfielddata package and  examine its contents.
+
+```{r}
+data(student)
+student
+```
+
+We format the dataset three ways:
+
+```{r class.source = "base"}
+# base R
+student_df <- data.frame(student)
+```
+
+```{r class.source = "dtbl"}
+# data.table
+student_dt <- copy(student)
+```
+
+```{r class.source = "dplyr"}
+# dplyr
+student_tbl <- tibble(student)
+```
+
+```{r}
+# Results
+class(student_df)
+class(student_dt)
+class(student_tbl)
+```
+
+## Subsetting columns
+
+***One column, return a vector***
+
+In all dialects, one may use the `$` or `[[` operators
+
+```{r}
+#| eval: false
+# Equivalent forms
+result <- dframe$column_name
+result <- dframe[["column_name"]]
+```
+
+Alternatively, 
+
+*base R.* If only one column is named, a vector is returned by default.
+
+```{r class.source="base"}
+# base R
+result <- student_df[, "mcid"]
+# or
+result <- student_df[, "mcid", drop = TRUE]
+```
+
+*data.table.* Placing an *unquoted* column name in `j` extracts one column as a vector. 
+
+```{r class.source="dtbl"}
+# data.table
+result <- student_dt[, mcid]
+```
+
+*dplyr.* To use `pull()` safely, use a *quoted* column name even though unquoted column names are conventional usage in dplyr. 
+
+```{r class.source = "dplyr"}
+# dplyr
+result <- student_tbl %>%
+    pull("mcid")
+```
+
+`dplyr::glimpse()` is similar to `str()` or a transposed version of `print()`
+
+```{r}
+# All dialects yield:
+glimpse(result)
+```
+
+*For more information.* For a given task, whether a name is in plain code or in quotes depends on how a system evaluates the name: in standard evaluation (SE) like most of base R, or in nonstandard evaluation (NSE) like data.table and dplyr. For a brief but complete discussion of the difference, see [@Mount:2019].
+
+
+<br>
+
+***One column, return a data frame***
+
+*base R.* Note the use of `drop = FALSE` to ensure a data frame is returned when a single column is selected. 
+
+```{r class.source="base"}
+# base R
+result <- student_df[, "mcid", drop = FALSE]
+```
+
+*data.table.* Placing an *unquoted* column name in `.()` retains that column and omits all others. 
+
+```{r class.source="dtbl"}
+# data.table
+result <- student_dt[, .(mcid)]
+```
+
+*dplyr.* Placing an *unquoted* column name in `select()` retains that column and omits all others.
+
+```{r class.source = "dplyr"}
+# dplyr
+result <- student_tbl %>%
+    select(mcid)
+```
+
+```{r}
+# All dialects yield:
+glimpse(result)
+```
+
+***Several columns***
+
+```{r class.source="base"}
+# base R
+result <- student_df[, c("mcid", "institution", "race", "sex"), drop = FALSE]
+```
+
+```{r class.source="dtbl"}
+# data.table
+result <- student_dt[, .(mcid, institution, race, sex)]
+```
+
+```{r class.source = "dplyr"}
+# dplyr
+result <- student_tbl %>%
+    select(mcid, institution, race, sex)
+```
+
+```{r}
+# All dialects yield:
+glimpse(result)
+```
+
+
+***Character vector of column names***
+
+```{r}
+# Character vector of column names, all dialects 
+columns_we_want <- c("mcid", "institution", "race", "sex")
+```
+
+```{r class.source="base"}
+# base R
+result <- student_df[, columns_we_want, drop = FALSE]
+```
+
+*data.table.* Refer to a vector of column names using `..` notation. 
+
+```{r class.source="dtbl"}
+# data.table
+result <- student_dt[, ..columns_we_want]
+```
+
+*dplyr.* Refer to a vector of column names using `all_of()` or `any_of()` inside `select()`. `all_of()` returns an error if a requested column name does not exist; `any_of()` does not. 
+
+```{r class.source = "dplyr"}
+# dplyr
+result <- student_tbl %>%
+    select(all_of(columns_we_want))
+```
+
+
+
+```{r}
+# All dialects yield:
+glimpse(result)
+```
+
+
+
+
+***By partial-pattern matching to column names***
+
+Example: Subset columns with "sat" in the column name. 
+
+```{r}
+# Character vector, subset of column names, all dialects 
+all_columns <- colnames(student_df)
+columns_we_want <- all_columns[grepl("sat", all_columns)]
+```
+
+Using a vector of column names, similar to the prvious example, 
+
+```{r class.source="base"}
+# base R
+result <- student_df[, columns_we_want, drop = FALSE]
+```
+
+```{r class.source="dtbl"}
+# data.table
+result <- student_dt[, ..columns_we_want]
+```
+
+```{r class.source = "dplyr"}
+# dplyr
+result <- student_tbl %>%
+    select(all_of(columns_we_want))
+```
+
+Alternatively, using pattern matching provided by data.table or dplyr,  
+
+```{r class.source="dtbl"}
+# data.table
+result <- student_dt[, .SD, .SDcols = patterns("sat")]
+```
+
+```{r class.source = "dplyr"}
+# dplyr
+result <- student_tbl %>%
+    select(matches("sat"))
+```
+
+*Comments*
+
+- *base R.* Use `grepl()` to pattern-match column names. Accepts regular expressions if needed.
+
+- *data.table.* Can use `patterns()` with `.SDcols`.
+
+- *dplyr.* Similarly, can use `matches()` with `select()`. 
+
+
+```{r}
+# All dialects yield:
+glimpse(result)
+```
+ 
+
+***By variable class***
+
+Example: Subset numeric columns only. 
+
+```{r class.source="base"}
+# base R
+result <- Filter(is.numeric, student_df)
+```
+
+```{r class.source="dtbl"}
+# data.table
+result <- student_dt[, .SD, .SDcols = is.numeric]
+```
+
+```{r class.source = "dplyr"}
+# dplyr
+result <- student_tbl %>%
+    select(where(is.numeric))
+```
+
+*Comments*
+
+- *base R.* `Filter(f, x)`---when 
+$\small x$ is a data frame---returns the columns for which function $\small f$ returns TRUE. 
+
+- *data.table.* `.SD` in `j` is a subset of the data with columns specified by `.SDcols`. 
+
+- *dplyr.* `where(f)` is a helper to choose the variables for which a function $\small f$---applied to columns---returns TRUE.
+
+
+```{r}
+# All dialects yield:
+glimpse(result)
+```
+
+
+***Excluding columns***
+
+In all dialects, one may use the `$` operator to exclude a single column, 
+
+    dframe$column_name <- NULL
+
+For excluding multiple columns, 
+
+```{r class.source="base"}
+# base R
+result <- student_df
+result[ , c("us_citizen", "high_school")] <- list(NULL)
+```
+
+```{r class.source="dtbl"}
+# data.table
+result <- copy(student_dt)
+result[, c("us_citizen", "high_school") := NULL]
+```
+
+```{r class.source = "dplyr"}
+# dplyr
+result <- student_tbl %>%
+    select(-us_citizen, -high_school)
+```
+
+*Comments*
+
+- *base R.* Assigned data frame to `result` before using `NULL` to preserve `student_df` unaltered.
+
+- *data.table.*  Similarly, made a `copy()` because `:=` makes changes in place. 
+
+- *dplyr.* Minus sign `-` to exclude a column. 
+
+Alternatively, using a vector column names, 
+
+```{r}
+# Character vector of column names, all dialects 
+columns_to_exclude <- c("us_citizen", "high_school")
+```
+
+```{r class.source="base"}
+# base R
+columns_we_want <- !names(student_df) %in% columns_to_exclude
+result <- student_df[, columns_we_want, drop = FALSE]
+```
+
+```{r class.source="dtbl"}
+# data.table
+result <- student_dt[, !..columns_to_exclude]
+```
+
+```{r class.source = "dplyr"}
+# dplyr
+result <- student_tbl %>%
+    select(-all_of(columns_to_exclude))
+```
+
+*Comments*
+
+- *base R.* Use `!` to preserve names not in the `columns_to_exclude` vector. 
+
+- *data.table.*  Similar.
+
+- *dplyr.* Again, `all_of()` for a vector of names, but with a minus sign. 
+
+```{r}
+# All versions yield:
+glimpse(result)
+```
+ 
+
+
+
+
+## Subsetting rows
+
+***By one Boolean condition***
+
+```{r class.source="base"}
+# base R
+rows_we_want <- student_df$institution == "Institution B"
+result <- student_df[rows_we_want, , drop = FALSE]
+```
+
+```{r}
+nrow(result)
+```
+
+```{r class.source="dtbl"}
+# data.table
+rows_we_want <- student_dt$institution == "Institution B"
+result <- student_dt[rows_we_want, ]
+```
+
+```{r}
+nrow(result)
+```
+
+```{r class.source = "dplyr"}
+# dplyr
+result <- student_tbl %>%
+    filter(institution == "Institution B")
+```
+
+```{r}
+nrow(result)
+```
+
+*Comments*
+
+- *base R.* 
+
+- *data.table.* 
+
+- *dplyr.* 
+
+<br>
+
+***By multiple Boolean conditions***
+
+```{r class.source="base"}
+# base R
+rows_we_want <- with(student_df, transfer == "First-Time Transfer"  & hours_transfer >= 15)
+result <- student_df[rows_we_want, , drop = FALSE]
+```
+
+```{r}
+nrow(result)
+```
+
+```{r class.source="dtbl"}
+# data.table
+rows_we_want <- with(student_dt, transfer == "First-Time Transfer"  & hours_transfer >= 3)
+result <- student_dt[rows_we_want, ]
+```
+
+```{r}
+nrow(result)
+```
+
+```{r class.source = "dplyr"}
+# dplyr
+result <- student_tbl %>%
+    filter(transfer == "First-Time Transfer", hours_transfer >= 3)
+```
+
+```{r}
+nrow(result)
+```
+
+*Comments*
+
+- *base R.* 
+
+- *data.table.* 
+
+- *dplyr.* 
+
+<br>
+
+## Subsetting columns and rows
+
+***Columns by name, rows by Boolean selection***
+
+```{r class.source="base"}
+# base R
+columns_we_want <- c("mcid", "institution", "transfer", "hours_transfer")
+rows_we_want <- student_df$transfer == "First-Time Transfer"
+result <- student_df[rows_we_want, columns_we_want, drop = FALSE]
+```
+
+```{r}
+dim(result)
+```
+
+```{r class.source="dtbl"}
+# data.table
+columns_we_want <- c("mcid", "institution", "transfer", "hours_transfer")
+rows_we_want <- student_dt$transfer == "First-Time Transfer"
+result <- student_dt[rows_we_want, ..columns_we_want]
+```
+
+```{r}
+dim(result)
+```
+
+```{r class.source = "dplyr"}
+# dplyr
+result <- student_tbl %>%
+    select(mcid, institution, transfer, hours_transfer) %>%
+    filter(transfer == "First-Time Transfer")
+```
+
+```{r}
+result
+```
+
+*Comments*
+
+- *base R.* 
+
+- *data.table.* 
+
+- *dplyr.* 
+
+<br>
+
+## References
+
+<div id="refs"></div>
+
+## Appendices
+
+### A subtle flaw
+
+The only safe way to use `pull(y)` appears to be:
+
+1) Ensure column `y` exists before using `pull(y)`, or
+2) Use one of the argument forms `pull("y")` or `pull(.data$y)`. 
+
+Why? Suppose we are trying to select the `student$mcid` column. 
+
+```{r}
+#| echo: true
+student_tbl %>% 
+    pull(mcid) %>%
+    str()
+```
+
+Suppose during some operations, the ID column had been deleted and at some later point we tried to pull it. We would expect an error. 
+
+```{r}
+#| echo: true
+#| error: true
+case <- student_tbl %>% 
+    select(-mcid)
+
+# An error if we select a column that doesn't exist
+case %>% 
+    pull(mcid)
+```
+
+So far, so good. Now suppose a variable happens to exist in the workspace that has the same name as the column name. If the data frame contains the desired  column, `pull()` operates as expected. 
+
+```{r}
+#| echo: true
+mcid <- "race"
+
+student_tbl %>% 
+    pull(mcid) %>%
+    str()
+```
+
+However, if the column had been deleted for some reason, `pull()` does not necessarily return an error. Instead, it treats the argument as if it were a variable whose *value* may be a column name. Thus, in this example, `pull()` returns the `student_tbl$race` column. 
+
+```{r}
+#| echo: true
+#| error: true
+mcid <- "race"
+case <- student_tbl %>% 
+    select(-mcid)
+
+# No error! Argument treated as if it refers to a column name
+case %>% 
+    pull(mcid) %>%
+    str()
+```
+
+In other words, `pull(mcid)` has incorrectly returned the same result as the forms below that are correct for using the value associated with the variable `mcid` in nonstandard evaluation by adding the extra de-quoting symbols `!!`
+
+In contrast, if we want to use the value associate with x in NSE we add the extra de-quoting symbols !!, as we show here.
+
+```{r}
+case %>% 
+    pull(!!mcid) %>%
+    str()
+
+case %>% 
+    pull(all_of(mcid)) %>%
+    str()
+```
+
+<br>
+
+***Safe usage***
+
+The forms `pull("y")` or `pull(.data$y)` both yield expected results under normal circumstances and the error conditions described above. 
+
+```{r}
+#| echo: true
+#| error: true
+# Yields expected results
+mcid <- "race"
+student_tbl %>% 
+    pull("mcid") %>%
+    str()
+student_tbl %>% 
+    pull(.data$mcid) %>%
+    str()
+# Correctly yields errors when the column name doesn't exist
+mcid <- "race"
+case <- student_tbl %>% 
+    select(-mcid)
+case %>% 
+    pull("mcid")
+case %>% 
+    pull(.data$mcid)
+```
+
+
+
+
+```{r child = "../man/rmd/common-closing.Rmd"}
+```
+

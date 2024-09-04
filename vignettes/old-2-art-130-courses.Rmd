@@ -1,0 +1,1163 @@
+---
+title: "Course-level study"
+vignette: >
+  %\VignetteIndexEntry{Course-level study}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+link-citations: yes
+always_allow_html: true
+---
+
+
+We start by counting the number of times these courses appear in our current data frame, using `get_dupes()` from the janitor package. 
+
+```{r}
+courses_to_check <- c("fund_integral_calculus", 
+                     "fundament_diff_calculus", 
+                     "hon_calculus_3_diff_equatns", 
+                     "intensive_calculus")
+
+subset_DT <- DT[course %chin% courses_to_check, .(course, hours_course)]
+unique(janitor::get_dupes(subset_DT, course))
+```
+
+
+```{r child = "../man/rmd/common-setup.Rmd"}
+```
+
+```{r}
+#| echo: false
+knitr::opts_chunk$set(fig.path = "../man/figures/art-130-")
+```
+
+The course data table is essentially a transcript of all courses and grades for every student in the database. The encoding of student ID, institution, and term variables are consistent with the other MIDFIELD data tables. However,  course-specific variables such as course name, abbreviation, number, and section have not been "cleaned" for uniformity. 
+
+Course names are not even uniformly encoded within an institution. For example, three calculus courses (listed below) from Institution B each have two encodings. Even the abbreviations used can be inconsistent ("Engrs" and "Engnrs"), illustrating that quite a bit of exploration and data carpentry are required to extract and recode the information one wants in a useful form.
+
+        "Calculus For Engrs 1"
+        "Calculus 1 For Engineers"
+        
+        "Analytic Geometry/Calc 2"
+        "Analytic/Geometry Calc 2"
+        
+        "Calculus 3 For Engnrs"
+        "Calculus 3 For Engineers"
+
+Our goal in this article is to illustrate approaches to dealing with such issues. We pose the task of visualizing the percentage of Engineering students attempting and passing Calculus 1, 2, 3, and Ordinary Differential Equations (ODEs)---the core math courses for many Engineering programs.  
+
+We do not, however, track student progress through this math sequence. While nearly all engineering majors require Calculus 1, other math requirements vary by program. The practice data have no definitive information on program-specific  requirements. 
+
+
+
+
+## Definitions
+
+```{r child = "../man/rmd/define-program.Rmd"}
+```
+
+```{r child = "../man/rmd/define-ever-enrolled.Rmd"}
+```
+
+math core
+
+: The four math courses required by many engineering programs---Calculus 1, 2, 3, and Ordinary Differential Equations (ODEs), or some variation thereof.
+
+satisfying a requirement
+
+: A passing grade ($\small C-$ or better). Alternatively, if a course prerequisite  is not in the record---for example, Calc 2 is in the record but its prereq Calc 1  is not---we assume the prerequisite requirement was satisfied in some other way, e.g., AP or IB credit, transfer credit, credit by exam, etc.  
+
+
+
+
+
+
+
+## Method
+
+Demonstrating the following elements of a MIDFIELD workflow.  
+
+1. *Planning.*  &nbsp; The metric is enrolling in and completing each of four math courses, Calc 1, 2, 3 and ODEs or their equivalent. The bloc of students are those ever enrolled in an engineering program. 
+
+1. *Initial processing.* &nbsp; Filter student IDs for for data sufficiency and degree-seeking. Correct errors in the course table.
+
+1. *Blocs.* &nbsp; Ever-enrolled in Engineering, math courses only.  
+
+1. *Additional processing.* &nbsp; Having reduced the size of the working data, we "clean" the course names, identify the core sequence, resolve course name ambiguities, and delete courses that have been grade-replaced.    
+
+1. *Groupings.* &nbsp; Math-core courses attempted, math-core courses passed or otherwise satisfied, and sex. 
+
+1. *Metric.* &nbsp; Starting with $\small N$ students in Engineering, summarize by grouping variables and determine the following percentages: 
+
+    - ? % attempt Calc 1
+    - ? % pass Calc 1  
+    - ? % attempt Calc 2
+    - ? % pass Calc 2  
+    - ? % attempt Calc 3 
+    - ? % pass Calc 3  
+    - ? % attempt ODEs
+    - ? % pass ODEs  
+
+1. *Displays* &nbsp; A pseudo-time series with the math sequence attempt/satisfy along the horizontal axis and percentage values disaggregated by sex on the vertical axis. 
+
+
+
+
+```{r child = "../man/rmd/note-for-practice-only-2.Rmd"}
+```
+
+## Local functions
+
+Some functions defined (in this vignette only) for simplifying repeated tasks. May be incorporated in midfieldr in the future. 
+
+`suv()`
+
+: Sort unique values. Applies `sort()` and `unique()` to values in a vector, including any NAs. 
+
+```{r}
+suv <- function (x) {
+    # na.last FALSE sorts NA (if any) to the top of the result
+    x <- sort(unique(x), na.last = FALSE)
+    return(x)
+}
+```
+
+`make_pattern()`
+
+: Make a pattern for matching or partial matching. Given a character vector with elements $\small \{a_1, a_2,..., a_m\}$ constructs a regular expression of the form `".?(a1)|(a2)|...|(am).?"` for use as a pattern to match in subsequent row operations.  
+
+```{r}
+# Build a regular expression
+make_pattern <- function(x){
+        pattern <- paste0("(", x, ")")
+        pattern <- paste0(pattern, collapse = "|")
+        pattern <- paste0(".?", pattern, ".?")
+}
+```
+
+`order_grades()`
+
+: Convert a grade column (type character or factor) of a data frame to a factor and order its levels in accordance with a desired scale.  
+
+```{r}
+# Function to create a scale of letter grades
+order_grades <- function(dframe, grade_scale = NULL) {
+    # dframe must have a "grade" column, character or factor
+    if (is.null(grade_scale)) {
+        grade_scale <- c("A+", "A", "A-", "B+", "B",  "B-", "C+", "C", "C-", "D+", "D", "D-", "F")
+    }
+  # Ensure input is character
+  grade_pool <- sort(unique(as.character(dframe$grade)))
+  # Isolate any grade values not in the grade scale
+  non_letter_grades <- grade_pool[!grade_pool %chin% grade_scale]
+  # Convert grade column to a factor
+  dframe <- dframe[, grade := factor(grade, levels = c(grade_scale, non_letter_grades))]
+  return(dframe)
+}
+```
+
+
+
+```{r}
+reduce_to_core <- function(x) {
+  setorderv(x, 
+            c("mcid", "math_core", "grade", "term_course", "hours_course"), 
+            order = c(1L, 1L, 1L, -1L, -1L))
+  x <- x[, .SD[1], by = c("mcid", "math_core")]
+  setorderv(x, c("mcid", "term_course"))
+  x[]
+}
+
+
+
+
+
+get_records <- function(id_vec, ...) {
+    
+    for (jj in id_vec) {
+        print(source_student[mcid == jj, 
+                             .(sex, race, transfer, hours_transfer)])
+        cat("\n")
+        print(source_term[mcid == jj, 
+                          .(term, cip6, level, standing, gpa_term, gpa_cumul)])
+        cat("\n")
+        print(source_course[mcid == jj, 
+                .(term_course, course, hours_course, grade)])
+        cat("\n")
+        print(source_degree[mcid == jj])
+        cat("\n")
+        print(DT[mcid == jj, 
+                .(term_course, course, hours_course, grade)])
+        cat("\n\n\n")
+    } 
+    
+}
+
+similar_grads <- function(dframe, institution, cip6) {
+    p <- dframe[institution == institution, .(mcid)]
+    q <- degree[p, on = c("mcid")]
+    q <- na.omit(q)
+    setorderv(q, c("term_degree"))
+    q <- q[cip6 == cip6]
+    q <- q[, .SD[1], by = c("mcid")]
+    common_mcid <- suv(q$mcid)
+    r <- dframe[mcid %chin% common_mcid]
+    setorderv(r, c("mcid", "term_course"))
+    r <- unique(r)
+    r[]
+}
+```
+
+## Load data
+
+*Start.* &nbsp; If you are writing your own script to follow along, we use these packages in this article:
+
+```{r}
+library(midfieldr)
+library(midfielddata)
+library(data.table)
+library(janitor)
+
+# set data.table print options
+options(
+  datatable.print.nrows = 10,
+  datatable.print.topn = 3,
+  datatable.print.class = TRUE
+)
+```
+
+*Load.* &nbsp; Practice datasets. View data dictionaries via `?student`, `?term`, `?course`, `?degree`.  
+
+```{r}
+#| cache: true
+# Load practice data
+data(student, term, course, degree)
+```
+
+*Loads with midfieldr.* &nbsp; Prepared data. View data dictionary via `?baseline_mcid`. 
+
+- `baseline_mcid`  (derived in [Blocs](art-050-blocs.html#initial-processing)).
+
+
+
+
+
+
+
+## Initial processing
+
+Preserve a copy of the original source data in case it may be needed later. 
+
+```{r}
+#| cache: true
+
+# Copy of source files with all variables
+source_student <- copy(student)
+source_term <- copy(term)
+source_course <- copy(course)
+source_degree <- copy(degree)
+```
+
+*Select.* &nbsp; Reduce the number of columns. Code reproduced from [Getting started](art-000-getting-started.html#reusable-code). 
+
+```{r}
+# Select variables required by midfieldr functions
+student <- select_required(student)
+term <- select_required(term)
+degree <- select_required(degree)
+```
+
+*Select.* &nbsp; The `course` table has columns we need in addition to those in `select_required()`. 
+
+```{r}
+# Select variables required for this study.
+course <- select_required(course, 
+                          select_add = c("course", "hours_course", "grade", "discipline_midfield"))
+```
+
+The `course` practice data has `r nrow(course)` observations.
+
+<br>
+
+*Filter.* &nbsp; Delete rows with an NA for the course name to create our initial working data frame. 
+
+```{r}
+# Deleting rows that cannot be used in this particular study
+DT <- copy(course)
+DT <- DT[!is.na(course)]
+DT
+```
+
+The result has `r nrow(DT)` observations.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Correct a data error
+
+```{r}
+#| echo: false
+
+# Save copy of DT before the data entry errors are corrected.
+# Apply ever-enrolled and math discipline filters
+
+ever <- term[cip6 %like% "^14"]
+ever <- ever[, .(mcid)]
+ever <- unique(ever)
+
+x <- copy(DT)
+x <- ever[x, on = c("mcid"), nomatch = NULL]
+x <- x[discipline_midfield == "Mathematics"]
+before_correction <- unique(x)
+```
+
+The `discipline_midfield` column in the `course` data table contains errors important to the goals of the study. In this section, we show the errors and how we corrected them. 
+
+For example, consider the first few observations of a student course record shown below.  The Calc 3 and ODE courses (rows 5 and 7) are labeled as "Business: Management" courses. This error is repeated in about 6100 Institution C observations.  
+
+```{r}
+this_id <- "MCID3112196665"
+DT[mcid == this_id][1:7]
+```
+
+Check which institutions are present using `suv()`. 
+ 
+```{r}
+# Unique institutions in the working data frame
+suv(DT$institution)
+```
+
+Review all Institution C course names assigned the "Business: Management" discipline. (A similar review was run for Institution B and no math courses were similarly mislabeled. )
+
+```{r}
+# Examine Inst C course names
+mgmt_label <- DT[institution == "Institution C" & 
+            discipline_midfield == "Business: Management"]
+```
+
+We reviewed the full list of course names, but to save space in this document we print out a sample of 10 course names each of mislabeled courses and correctly labeled courses. 
+
+```{r}
+# Sample of Mathematics courses mislabeled "Business: Management"
+unique(mgmt_label$course)[1:10]
+# Sample of courses correctly labeled "Business: Management"
+unique(mgmt_label$course)[c(53, 64, 137:141, 148:150)]
+```
+
+We search the `course` column and keep rows containing "calc" and drop rows containing "adv", "precalculus", etc.  
+
+```{r}
+keep <- make_pattern(c("calc"))
+drop <- make_pattern(c("adv", "manage", "precalc", "surv", "svy"))
+calc <- mgmt_label[course %ilike% keep][!course %ilike% drop]
+calc_courses <- suv(calc$course)
+calc_courses
+```
+
+We repeat a similar process for the mislabeled ODEs course names.
+
+```{r}
+# Filter to keep and drop rows
+keep <- make_pattern(c("diff"))
+drop <- make_pattern(c("part", "topics", "geometry"))
+ode <- mgmt_label[course %ilike% keep][!course %ilike% drop]
+ode
+ode_courses <- suv(ode$course)
+ode_courses
+```
+
+Concatenate the retained course names
+
+```{r}
+should_be_math <- sort(c(calc_courses, ode_courses))
+should_be_math
+```
+
+Recode the discipline label for these courses. 
+
+```{r}
+DT <- DT[course %chin% should_be_math, discipline_midfield := "Mathematics"]
+```
+
+Compare the original encoding to the recoded values. 
+
+```{r}
+#| echo: false
+options(datatable.print.nrows = 50)
+```
+
+```{r}
+# Going back to the original source data
+unique(source_course[course %chin% should_be_math & 
+                         discipline_midfield %ilike% "Business", .(course, discipline_midfield)])
+# Current working data frame
+unique(DT[course %chin% should_be_math, .(course, discipline_midfield)])
+```
+
+While we haven't recoded all the mislabeled math courses, we have recoded those relating to the study.  
+
+
+
+## Blocs
+
+We filter for the "Mathematics" discipline, 
+
+```{r}
+DT <- DT[discipline_midfield == "Mathematics"]
+# Delete the discipline column
+DT$discipline_midfield <- NULL
+DT
+```
+
+The result has `r nrow(DT)` observations.
+
+<br>
+
+From the `term` table we obtain the IDs of students ever enrolled in Engineering (2-digit CIP "14"). 
+
+```{r}
+ever_enrolled <- term[cip6 %ilike% "^14"]
+suv(ever_enrolled$cip6)
+```
+
+*Select.* &nbsp; Retain the ID column. 
+
+```{r}
+ever_enrolled <- ever_enrolled[, .(mcid)]
+ever_enrolled <- unique(ever_enrolled)
+ever_enrolled
+```
+
+*Join.*  &nbsp; Inner-join to filter courses by ever-enrolled IDs.
+
+```{r}
+# Filter for ever enrolled in Engr
+DT <- ever_enrolled[DT, on = c("mcid"), nomatch = NULL]
+DT <- unique(DT)
+DT
+```
+
+The result has `r nrow(DT)` observations.
+
+## Additional processing
+
+Additional processing of the course data includes "cleaning" the course names, identifying the core sequence, resolving course name ambiguities, and deleting courses that have been grade-replaced.   
+
+We start with cleaning the course names in the `DT$course` column with `janitor::make_clean_names()`. The function applies `snake_case` and replaces punctuation and spaces with underscores `_`.  
+
+We waited until now to take this "cleaning" step to save computing time. Applying `make_clean_names()` to 3.2M rows (the original course table) takes significantly more time than applying it to the 28k rows we have now.
+
+While users may decide for themselves whether to use the janitor package, the detailed examination of course names we undertake in later sections is made somewhat easier by re-coding the values using a consistent framework. 
+
+```{r}
+#| cache: true
+DT$course <- janitor::make_clean_names(DT$course, allow_dupes = TRUE)
+DT
+```
+
+Review all unique names in the `course` column (not displayed to save space in this document).
+
+```{r}
+# suv(DT$course)
+```
+
+After review, we'd like to make a few changes. Janitor converted the original "I", "II", and "III" to "i", "ii", and "iii", which we now convert to "1", "2", "3". 
+
+```{r}
+DT$course <- gsub("_iii$", "_3", DT$course)
+DT$course <- gsub("_ii$" , "_2", DT$course)
+DT$course <- gsub("_i$"  , "_1", DT$course)
+DT$course <- gsub("iii_" , "3_", DT$course)
+```
+
+Some spelling variations are made more uniform.   
+
+```{r}
+DT$course <- gsub("_physicl_"  , "_physical_"  , DT$course)
+DT$course <- gsub("_scientist_", "_scientists_", DT$course)
+DT$course <- gsub("_scientst_" , "_scientists_", DT$course)
+DT$course <- gsub("_engrs_"    , "_engineers_" , DT$course)
+DT$course <- gsub("_engnrs"    , "_engineers"  , DT$course)
+```
+
+We change all "calc" abbreviations to "calculus". 
+
+```{r}
+#| echo: false
+options(datatable.print.nrows = 10)
+```
+
+```{r}
+DT$course <- gsub("calc_", "calculus_", DT$course)
+DT <- unique(DT)
+```
+
+Shorten a long name.
+
+```{r}
+DT$course <- gsub(
+    "introduction_to_differential_equations_with_linear_algebra",
+    "intro_linear_alg_diff_eq", DT$course
+    )
+DT <- unique(DT)
+```
+
+
+
+## Identify the sequence
+
+```{r}
+#| echo: false
+options(datatable.print.nrows = 60)
+```
+
+Individual student math records are selected to illustrate the variety of math sequences. The insights gained here inform how the courses are recoded in the next section. 
+
+In any example, the student's full unit records can be displayed by running
+
+        # Original complete student unit records
+        source_student[mcid == this_id]
+        source_course[mcid == this_id]
+        source_term[mcid == this_id]
+        source_degree[mcid == this_id]
+
+```{r}
+# EE: 1410
+# ME: 141901
+# Obtain CIP for specific major
+# keep <- make_pattern(c("electrical"))
+# drop <- make_pattern(c(""))
+# #this_cip <- cip[cip4name %ilike% keep][!cip4name %ilike% drop][, (cip6)]
+# this_cip <- cip[cip4name %ilike% keep][, (cip4)]
+# this_cip
+
+
+
+sample_grads_in_major <- function(dframe, this_cip, n, degree) {
+ 
+  # Obtain grads in this major
+  grad <- copy(degree)
+  grad <- grad[cip6 %ilike% this_cip]
+  grad <- grad[, .SD[term_degree == min(term_degree)], by = c("mcid")]
+  grad <- unique(grad)
+  
+  # Filter IDs not in working data frame
+  keep_ids <- dframe[, .(mcid)]
+  grad <- keep_ids[grad, on = c("mcid"), nomatch = NULL]
+  
+  # Sample of IDs
+  sample_grad_id <- unique(grad[mcid %chin% sample(mcid, n), .(mcid)])
+  
+  # Filter courses by inner join
+  output <- sample_grad_id[dframe, on = c("mcid"), nomatch = NULL]
+  
+  # Retain one line per course, latest term
+  setorderv(output, c("mcid", "term_course"), order = c(1L, -1L))
+  output <- output[, .SD[1], by = c("mcid", "course")]
+  setorderv(output, c("mcid", "term_course"), order = c(1L, 1L))
+  
+  output_id <- suv(output$mcid)
+  for (jj in output_id) {
+      cat("\n\n")
+      print(output[mcid == jj])
+  }
+}
+
+
+this_cip <- "^1419"
+sample_grads_in_major(DT, this_cip, 3, degree)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+example_mcid <- c("MCID3111169974", "MCID3112243918", "MCID3112296932",
+                  "MCID3112307721", "MCID3112296667", "MCID3111142988",
+                  "MCID3111317486", "MCID3111601665")
+```
+
+*Example 1.* &nbsp; A transfer student with all 4 courses of the math core, graduating in Computer Engineering. 
+
+```{r}
+this_id <- example_mcid[1]
+DT[mcid == this_id]
+```
+
+*Example 2.* &nbsp; A first-time-in-college (FTIC) student with all 4 courses of the math core, graduating in Mechanical Engineering. In this case the student earned has credit for Calculus 1 but with 0 hours. We assume they  satisfied the requirement by passing Calc 1a and 1b. 
+
+```{r}
+this_id <- example_mcid[2]
+DT[mcid == this_id]
+```
+
+*Example 3.* &nbsp; An FTIC student with 4 core courses, graduating in Chemical Engineering.   Calculus BC appears to satisfy requirements for Calc 1.  
+
+```{r}
+this_id <- example_mcid[3]
+DT[mcid == this_id]
+```
+
+*Example 4.* &nbsp; An FTIC student with 3 core courses, graduating in Mechanical Engineering. Calculus BC probably satisfies Calc 1. Reviewing other FTIC students graduating from the same program, all take at least Calc 1, Calc 2 or 3, and ODEs.
+ 
+```{r}
+this_id <- example_mcid[4]
+DT[mcid == this_id]
+```
+
+```{r}
+get_records(this_id)
+cip6 <- last(term[mcid == this_id])$cip6
+inst <- last(term[mcid == this_id])$institution
+
+x <- similar_grads(DT, inst, cip6)
+y <- suv(x$mcid)
+get_records(sample(y, 2))
+```
+
+
+```{r}
+source_course[mcid == "MCID3111805619", .(term_course, course, hours_course, grade)]
+DT[mcid == "MCID3111805619"]
+```
+
+
+*Example 5.* &nbsp;  An FTIC student with 4 core courses, graduating in Civil Engineering. Here, Calculus AB appears to satisfy requirements for Calc 1. 
+
+```{r}
+this_id <- example_mcid[5]
+DT[mcid == this_id]
+```
+
+*Example 6.* &nbsp;  A transfer student with 1 core course (ODEs), graduating in Electrical Engineering. We assume that other calculus requirements were met by other means.   
+
+```{r}
+this_id <- example_mcid[6]
+DT[mcid == this_id]
+```
+
+*Example 7.* &nbsp;  An FTIC student with 3 core courses, graduating in Civil Engineering. Illustrates that some programs do not require Calc 2.  
+
+```{r}
+this_id <- example_mcid[7]
+DT[mcid == this_id]
+```
+
+*Example 8.* &nbsp; An FTIC student with 3 core courses, graduating in Mechanical Engineering. Illustrates that some programs do not require Calc 3.
+
+```{r}
+this_id <- example_mcid[8]
+DT[mcid == this_id]
+```
+
+
+
+<br>
+
+With no information about the requirements and policies of these anonymized Engineering programs, we assume---based on examples like these and our knowledge of Engineering programs generally---that: 
+
+- Calculus 1 or equivalent is a prerequisite for the other core courses.
+- Some programs require only two calculus courses: Calc 1 & 2; or Calc 1 & 3
+
+The requirement for Calculus 1 appears to be satisfied if the record shows passing grades in any of: 
+
+- Calculus 1a and 1b
+- Calculus AB or BC
+- Calculus 2, 3, or ODEs (if no record of Calculus 1 or equivalent) 
+
+
+
+
+
+
+
+
+
+## Resolve ambiguities
+
+```{r}
+#| echo: false
+options(datatable.print.nrows = 50)
+```
+
+*Filter.* &nbsp; Our four math courses of interest are Calculus 1, 2, 3 and ODEs. These courses are recorded in the data under a variety of names.  
+
+```{r}
+math_pool <- unique(DT[, .(course)])
+keep = make_pattern(c("calc", "diff"))
+drop = make_pattern(c("adv", "bound", "calculus/soc", "chaos", "game",
+                      "geometry", "lab", "manage", "part", "pre_calc",
+                      "precalc", "soc_sci", "social_science"))
+math_pool <- math_pool[course %ilike% keep][!course %ilike% drop]
+setorderv(math_pool, "course")
+math_pool
+```
+
+A few courses are ambiguously named---I'm not sure to which of the math core they belong, if any. 
+
+- `a_first_course_in_calculus`
+- `intensive_calculus`
+- `hon_calculus_3_diff_equatns`
+- `fund_integral_calculus`
+- `fundament_diff_calculus`
+
+To explore how these courses may or may not fit in a student's math sequence, we look at students' course histories that contain these ambiguous course names.
+
+```{r}
+keep <- make_pattern(c("a_first_course_in_calculus"))
+explore <- DT[course %ilike% keep]
+explore <- unique(explore$mcid)
+explore
+```
+
+This course is taken by a single student. Their sequence of math courses is printed below, showing that they enrolled in Calc 1 after "A First Course...". Thus we can drop "A First Course..." and keep Calc 1. 
+
+```{r}
+this_id <- explore[1]
+DT[mcid == this_id]
+```
+
+```{r}
+#| eval: false
+#| echo: false
+
+explore <- DT[course %ilike% make_pattern(c("intensive"))]
+explore <- unique(explore$mcid)
+DT[mcid ==  explore[4]]
+
+explore <- DT[course %ilike% make_pattern(c("fund_integral", "fundamental_diff"))]
+explore <- unique(explore$mcid)
+DT[mcid ==  explore[1]]
+
+explore <- DT[course %ilike% make_pattern(c("calculus_3_diff"))]
+explore <- unique(explore$mcid)
+DT[mcid ==  explore[3]]
+```
+
+Running a similar procedure for the other ambiguous course names, we find we can keep the following courses that appear to satisfy the requirement for one of the calculus courses:
+
+- `intensive_calculus`, Calc 1 requirement
+- `hon_calculus_3_diff_equatns`, Calc 3 requirement
+
+In contrast, the other courses in this list can be deleted. The first appears to be a pre-calculus course and the other two are 1-credit-hour, not part of the core math sequence.  
+
+- `a_first_course_in_calculus`, a pre-calculus course
+- `fund_integral_calculus`, 1 credit hour
+- `fundament_diff_calculus`, 1 credit hour 
+
+*Filter.* &nbsp; Deleting these courses yields the math core we have been looking for. 
+
+```{r}
+# Create final math core data frame
+drop <- make_pattern(c("first_course", "fund_integral", "fundament_diff"))
+math_core <- math_pool[!course %ilike% drop]
+math_core <- unique(math_core)
+math_core
+```
+
+*Filter.* &nbsp; We filter the working data frame to retain these courses only. 
+
+```{r}
+DT <- DT[course %chin% math_core$course]
+DT
+```
+
+The result has `r nrow(DT)` observations.
+
+
+## Recoding the core
+
+Create a vector for Calc 1 courses.
+
+```{r}
+keep <- make_pattern(c("_1", "intensive", "_ab", "_bc"))
+drop <- make_pattern(c("diff"))
+calc_1 <- math_core[course %ilike% keep][!course %ilike% drop]
+calc_1
+```
+
+Repeat for Calc 2.
+
+```{r}
+keep <- make_pattern(c("_2"))
+calc_2 <- math_core[course %ilike% keep]
+calc_2
+```
+
+Calc 3.
+
+```{r}
+keep <- make_pattern(c("_3"))
+drop <- make_pattern(c("_ab", "_bc"))
+calc_3 <- math_core[course %ilike% keep][!course %ilike% drop]
+calc_3
+```
+
+ODEs are the unassigned courses remaining in `math_core`. 
+
+```{r}
+odes <- math_core[!(math_core$course %chin% calc_1$course | 
+                              math_core$course %chin% calc_2$course | 
+                              math_core$course %chin% calc_3$course)]
+odes
+```
+
+To verify that we haven't misplaced a course, 
+
+```{r}
+recombined_core <- rbindlist(list(calc_1, calc_2, calc_3, odes))
+setorderv(recombined_core, c("course"))
+all.equal(math_core, recombined_core)
+```
+
+Creating uniform course names. 
+
+```{r}
+DT[, math_core := NA_character_]
+DT[course %chin% calc_1$course, math_core := "calc_1"]
+DT[course %chin% calc_2$course, math_core := "calc_2"]
+DT[course %chin% calc_3$course, math_core := "calc_3"]
+DT[course %chin% odes$course,   math_core := "odes"]
+
+setorderv(DT, c("mcid", "term_course"))
+DT
+```
+
+Ensure all rows have an assigned `math_core` value. If not, an NA would be detected and the row removed via `na.omit()`. 
+
+```{r}
+same_content(DT, na.omit(DT))
+```
+
+
+
+## Remove repeats
+
+Before our analysis can proceed, we want no more than 4 courses for each student. In the case of a repeated course, the higher grade may determine the selection. We use local function `order_grades()` to convert the grade column to a factor, ordered per the conventional scale. 
+
+```{r}
+# Convert grade column to factor in letter grade order
+DT <- order_grades(DT)
+
+# Examine result
+suv(DT$grade)
+```
+
+*Example 1 revisited.* &nbsp; This record illustrates the desired form, one observation for each of the 4 courses. 
+
+```{r}
+this_id <- example_mcid[1]
+DT[mcid == this_id]
+reduce_to_core(DT[mcid == this_id])
+```
+
+*Example 2 revisited.* &nbsp; Because the Calc 1 course has zero hours, we assume that the requirement is satisfied by Calc 1a and 1b. 
+
+```{r}
+this_id <- example_mcid[2]
+DT[mcid == this_id]
+reduce_to_core(DT[mcid == this_id])
+```
+
+*Example 3 revisited.*  &nbsp; Calculus BC equivalent to Calc 1. Two observations, one for 1 credit-hour; one for 4 credit-hours. Retain the latter. 
+
+```{r}
+this_id <- example_mcid[3]
+DT[mcid == this_id]
+reduce_to_core(DT[mcid == this_id])
+```
+
+*Example 4 revisited.*  &nbsp;  Calc 1 satisfied by Calculus BC (grade of "S/P"); Calc 2 not required by this program. 
+
+```{r}
+this_id <- example_mcid[4]
+DT[mcid == this_id]
+reduce_to_core(DT[mcid == this_id])
+```
+
+```{r}
+get_records(this_id)
+x <- similar_grads(DT, "Institution B", "141001")
+get_records(x$mcid[7])
+```
+
+
+
+
+
+*Example 5 revisited.*  &nbsp;  Calc 1 satisfied by Calculus AB (grade of "S/P"). 
+
+```{r}
+this_id <- example_mcid[5]
+DT[mcid == this_id]
+reduce_to_core(DT[mcid == this_id])
+```
+
+*Example 6.* &nbsp;  A transfer student with 1 core course (ODEs), graduating in Electrical Engineering. Graduates from the same program seem to have consistently satisfied Calc 1 and Calc 3 and occasionally Calc 2. It would appear that Calc 2 is not a required by this program. 
+
+```{r}
+this_id <- example_mcid[6]
+DT[mcid == this_id]
+reduce_to_core(DT[mcid == this_id])
+```
+
+
+  
+
+```{r}
+similar_grads <- function(dframe, institution, cip6) {
+    p <- dframe[institution == "Institution B", .(mcid)]
+    p
+    q <- degree[p, on = c("mcid")]
+    q <- na.omit(q)
+    q <- q[cip6 == "141001"]
+    q
+    common_mcid <- suv(q$mcid)
+    r <- DT[mcid %chin% common_mcid]
+    setorderv(r, c("mcid", "term_course"))
+    r <- unique(r)
+    r[]
+}
+
+x <- similar_grads(DT, "Institution B", "141001")
+get_records(x$mcid[7])
+# MCID3111171732 
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+this_id <- example_mcid[6]
+DT[mcid == this_id]
+reduce_to_core(DT[mcid == this_id])
+get_records(this_id)
+source_course[mcid == this_id]
+```
+
+*Example 7 revisited.*
+
+```{r}
+this_id <- example_mcid[7]
+DT[mcid == this_id]
+reduce_to_core(DT[mcid == this_id])
+get_records(this_id)
+```
+
+*Example 8 revisited.*
+
+```{r}
+this_id <- example_mcid[8]
+DT[mcid == this_id]
+reduce_to_core(DT[mcid == this_id])
+```
+
+
+
+
+
+
+```{r}
+x <- reduce_to_core(DT)
+
+
+y <- x[, .(N_courses = .N), by = c("mcid")]
+y[]
+
+z <- y[, .(N_students = .N), by = c("N_courses")]
+setorderv(z, c("N_courses"))
+z[]
+```
+
+
+```{r}
+mcid4 <- y[N_courses == 4, (mcid)]
+mcid3 <- y[N_courses == 3, (mcid)]
+mcid2 <- y[N_courses == 2, (mcid)]
+mcid1 <- y[N_courses == 1, (mcid)]
+```
+
+```{r}
+for(j in 301:310){
+    print(x[mcid == mcid3[j], .(mcid, math_core, term_course, hours_course, grade)])
+}
+```
+
+```{r}
+get_records("MCID3111366488") # 1,2,3 fail ODEs, not grad
+get_records("MCID3111317483") # 1,2,3 no ODES, grad Business
+get_records("MCID3111317486") # no Calc 2, grad CVE  Calc 2 not a prereq
+get_records("MCID3111476119") # 1, 2, 3 no odes, no grad
+get_records("MCID3111601665") # no calc3, grad ME
+get_records("MCID3112307721") # grad ME
+get_records("MCID3111142988")
+
+
+
+
+
+options(datatable.print.topn = 52)
+DT[mcid == "MCID3112307721", .(term_course, math_core, course, hours_course, grade)]
+unique(source_course[mcid == "MCID3112307721" & hours_course > 1, .(term_course, course, hours_course, grade)])
+```
+
+
+
+
+```{r}
+
+ids <- suv(x$mcid)
+
+
+for (j in 1:10){
+    print(x[mcid == ids[j]])
+}
+```
+
+
+
+
+
+
+          
+          
+          
+```{r}
+#| echo: false
+options(datatable.print.nrows = 10, datatable.print.topn = 10)
+```
+
+```{r}
+x <- copy(DT)
+setorderv(x, c("mcid", "math_core", "grade"))
+x <- x[, .SD[1], by = c("mcid", "math_core")]
+x <- x[, .(mcid, math_core, grade)]
+wide <- dcast(x, mcid ~ math_core, value.var = "grade")
+wide <- wide[, lapply(.SD, as.character)]
+wide
+```
+
+
+```{r}
+wide[!is.na(odes) & is.na(calc_2), calc_2 := "proxy"]
+wide[!is.na(calc_3) & is.na(calc_2), calc_2 := "proxy"]
+wide[!is.na(calc_2) & is.na(calc_1), calc_1 := "proxy"]
+wide
+```
+
+
+```{r}
+DT <- melt(wide, 
+           id.vars = "mcid", 
+           measure.vars = c("calc_1", "calc_2", "calc_3", "odes"),
+           variable.name = "math_core",
+           variable.factor = FALSE, 
+           value.name = "grade", 
+           na.rm = FALSE)
+setorderv(DT, c("mcid", "math_core"))
+DT
+
+
+
+
+# grade_scale  <- c("A+", "A", "A-", "B+", "B",  "B-", "C+", "C", "C-", "D+", "D", "D-", "F", "AUD", "CR", "I", "NG", "S/P", "U/F", "W")
+
+passing <- c("A+", "A", "A-", "B+", "B",  "B-", "C+", "C", "C-", "S/P", "CR")
+penalty <- c("D+", "D", "D-", "F")
+no_attempt <- c("AUD", "I", "NG", "U/F", "W")
+
+
+DT$reqt <- NA_character_
+DT[grade %chin% passing,    reqt := "passing"]
+DT[grade %chin% penalty,    reqt := "penalty"]
+DT[grade %chin% no_attempt, reqt := "no_attempt"]
+DT[is.na(grade),            reqt := "no_attempt"]
+
+suv(DT$grade)
+suv(DT$reqt)
+
+
+DT[is.na(reqt)]
+```
+
+
+## Metric
+
+
+
+```{r}
+DT <- DT[, .N, by = c("math_core", "reqt")]
+setorderv(DT, c("math_core", "reqt"))
+DT
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+## References
+
+<div id="refs"></div>
+
+```{r child = "../man/rmd/common-closing.Rmd"}
+```

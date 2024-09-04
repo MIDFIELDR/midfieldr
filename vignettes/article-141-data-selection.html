@@ -1,0 +1,152 @@
+---
+title: "Data selection"
+vignette: >
+  %\VignetteIndexEntry{Data selection}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+output: 
+    rmarkdown::html_vignette:
+        highlight: "arrow"
+bibliography: ../inst/REFERENCES.bib
+link-citations: yes
+always_allow_html: true
+---
+
+```{r child = "../man/rmd/common-setup.Rmd"}
+```
+
+```{r}
+#| echo: false
+knitr::opts_chunk$set(fig.path = "../man/figures/art-141-")
+```
+
+```{css, echo=FALSE}
+.base {
+   font-family: 'Source Code Pro', sans-serif !important;
+   font-size: 1.0em !important;
+   line-height: 1.5em !important;
+   color: #111111;
+   background-color: #ffffb3;
+   width:95% !important;
+   padding-left: 10px !important;
+   padding-top: 3px !important;
+   padding-bottom: 3px !important;
+   display: block;
+   border-radius: 5px;
+}
+.dtbl {
+   font-family: 'Source Code Pro', sans-serif !important;
+   font-size: 0.85em !important;
+   line-height: 1.5em !important;
+   color: #111111;
+   background-color: #8dd3c7;
+   width:100% !important;
+   padding-left: 10px !important;
+   padding-top: 3px !important;
+   padding-bottom: 3px !important;
+   display: block;
+   border-radius: 5px;
+}
+.dplyr {
+   font-family: 'Source Code Pro', sans-serif !important;
+   font-size: 0.85em !important;
+   line-height: 1.5em !important;
+   color: #111111;
+   background-color: #bebada;
+   width:100% !important;
+   padding-left: 10px !important;
+   padding-top: 3px !important;
+   padding-bottom: 3px !important;
+   display: block;
+   border-radius: 5px;
+}
+```
+
+
+Demonstrating how to use base R, data.table, and dplyr to wrangle MIDFIELD data into useful forms, adapted from [@Zumel+Mount:2020, Ch. 5.1]. Topics covered: 
+
+- Subsetting rows and columns
+- Removing rows with incomplete data
+- Ordering rows
+
+
+### Scenario
+
+Suppose we are interested in the `course` data table to investigate the question: If a student were ever enrolled in Engineering at Institution B, what was their level (first-year, second-year, etc.) when passing one of the core math courses (Calculus 1, 2, 3 and Ordinary Differential Equations)?
+
+Always a good idea to examine the basic data first. We see that the data frame is also a data.table object (midfieldr default) with 3.3M observations and 12 variables---all character class except `hours_course`. 
+
+## Getting started
+
+Load the `course` data set from the midfielddata package.
+
+```{r}
+#| cache: true
+library(midfielddata)
+data(course)
+str(course)
+```
+
+
+
+
+
+
+
+
+
+I use the data set in three formats: as a base R data.frame object `course`, as a data.table object `course_dtblbl` (as-is), and as a tibble object `course_dplyr`. 
+
+```{r class.source="base", class.output="base"}
+course_base <- data.frame(course)
+```
+
+
+
+
+```{r}
+#| collapse: true
+course_base <- data.frame(course)
+course_dtbl <- copy(course)
+course_dplyr <- dplyr::tibble(course)
+
+class(course_base)
+class(course_dtbl)
+class(course_dplyr)
+```
+
+
+
+## Subsetting rows and columns
+
+### Solution 1: base R
+
+To be able to use all base R semantics, we start by converting the `course` dataset from its default class "data.table" to the more basic class "data.frame". 
+
+The base R solution works by using the `[,]` operator. It is a good idea to always include the `drop = FALSE` argument to ensure the result is a data frame. (Otherwise, when selecting a single column,  the default behavior is to return a vector.) 
+
+When typing the `columns_we_want` values, we can also reorder the columns. Here, I relocated the discipline column.  
+
+<div>
+<pre class="base">
+<div class="chunk" id="unnamed-chunk-1"><div class="rcode"><div class="source"><pre class="knitr r">    <span class="hl def">course_base</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">as.data.frame</span><span class="hl def">(course)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in eval(expr, envir, enclos): object 'course' not found
+</pre></div>
+<div class="source"><pre class="knitr r">    <span class="hl def">columns_we_want</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">c</span><span class="hl def">(</span><span class="hl sng">&quot;mcid&quot;</span><span class="hl def">,</span> <span class="hl sng">&quot;institution&quot;</span><span class="hl def">,</span> <span class="hl sng">&quot;term_course&quot;</span><span class="hl def">,</span>
+    <span class="hl sng">&quot;discipline_midfield&quot;</span><span class="hl def">,</span> <span class="hl sng">&quot;course&quot;</span><span class="hl def">,</span> <span class="hl sng">&quot;hours_course&quot;</span><span class="hl def">,</span> <span class="hl sng">&quot;grade&quot;</span><span class="hl def">)</span>
+    <span class="hl def">rows_we_want</span> <span class="hl kwb">&lt;-</span> <span class="hl def">course_base</span><span class="hl opt">$</span><span class="hl def">institution</span> <span class="hl opt">==</span> <span class="hl sng">&quot;Institution B&quot;</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in eval(expr, envir, enclos): object 'course_base' not found
+</pre></div>
+<div class="source"><pre class="knitr r">    <span class="hl def">course_base</span> <span class="hl kwb">&lt;-</span> <span class="hl def">course_base[rows_we_want, columns_we_want,</span> <span class="hl kwc">drop</span> <span class="hl def">=</span> <span class="hl num">FALSE</span><span class="hl def">]</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in eval(expr, envir, enclos): object 'course_base' not found
+</pre></div>
+<div class="source"><pre class="knitr r">    <span class="hl kwd">str</span><span class="hl def">(course_base)</span>
+</pre></div>
+<div class="error"><pre class="knitr r">## Error in eval(expr, envir, enclos): object 'course_base' not found
+</pre></div>
+</div></div>
+</pre>
+</div>
