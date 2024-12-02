@@ -1,8 +1,8 @@
 # Purpose
 
-- Edit argument descriptions and correct typos.
-- Update the midfieldr-package.R file
-- No change in functionality.
+- Revised vignettes to reflect changes in companion midfielddata R data package
+- Added small data sets for user convenience 
+- Deprecate one function
 
 # R CMD check results
 

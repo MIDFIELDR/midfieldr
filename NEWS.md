@@ -1,10 +1,8 @@
-## midfieldr 1.0.3.900x / development version
-
 ## midfieldr 1.0.3 / 2024--12--02
 
 - Build package with midfielddata v0.2.2 
-- Replace `same_content()` with re-export of wrapr `check_equiv_frames()` 
-- Replace `same_content()` tests with `check_equiv_frames()` tests 
+- Deprecate `same_content()`. Add re-export of wrapr `check_equiv_frames()` 
+- Add unit tests for `check_equiv_frames()`  
 - Add column keys to `select_required()` for course table
 - Add `grade_scale` and `act_sat_scale` datasets
 - Add definition of degree-seeking to relevant vignettes
