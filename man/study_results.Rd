@@ -11,7 +11,7 @@
 \item{\code{sex}}{Character, sex as self-reported by the student,
 possible values are Female, Male, and Unknown.}
 \item{\code{race}}{Character, race/ethnicity as self-reported
-by the student, e.g., Asian, Black, Latine, etc.}
+by the student, e.g., Asian, Black, Hispanic, etc.}
 \item{\code{ever_enrolled}}{Numerical, number of students
 ever enrolled in a program.}
 \item{\code{graduates}}{Numerical, number of students completing

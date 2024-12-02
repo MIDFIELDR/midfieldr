@@ -291,24 +291,24 @@
 
 # -------------------------------------------------------------------
 
-#' SAT-ACT conversion scale
+#' ACT-SAT conversion scale
 #'
-#' Data frame of SAT total scores and corresponding ACT composite scores. 
-#' Converting from SAT to ACT, a range of SAT scores convert to a single ACT 
-#' value. Converting from ACT to SAT, a single-value SAT equivalent is provided.
+#' Data frame for converting between ACT and SAT scores. A range of SAT scores 
+#' converts to a single ACT score; an ACT score converts to a single 
+#' value equivalent SAT score. 
 #'
 #' @format `data.table` with 28 rows and 4 columns:
 #' \describe{
-#'   \item{`sat_upper`}{Numerical, total SAT, upper limit of range corresponding 
-#'       to the ACT composite score.}
-#'   \item{`sat_equiv`}{Numerical, total SAT, value to use when converting ACT 
-#'       score to a single SAT score.}      
-#'   \item{`sat_lower`}{Numerical, total SAT, lower limit of range corresponding 
-#'       to the ACT composite score.}
 #'   \item{`act_comp`}{Numerical, ACT composite score.}
+#'   \item{`sat_lower`}{Numerical, total SAT, lower limit of range 
+#'   corresponding to the ACT composite score.}
+#'   \item{`sat_equiv`}{Numerical, total SAT, value to use when 
+#'   converting ACT score to a single SAT score.} 
+#'   \item{`sat_upper`}{Numerical, total SAT, upper limit of range 
+#'   corresponding to the ACT composite score.}
 #' }
 #'
 #' @family scales
 #' @source ACT/SAT Concordance (2018) ACT Education Corp. \url{https://www.act.org/content/dam/act/unsecured/documents/ACT-SAT-Concordance-Tables.pdf}
 #' 
-"sat_act_scale"
+"act_sat_scale"

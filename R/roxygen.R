@@ -108,7 +108,7 @@ var_program <- '\\item{`program`}{Character, academic program label.}'
 var_proxy   <- '\\item{`proxy`}{Character, 6-digit CIP code of the estimated 
                   proxy program.}'
 var_race    <- '\\item{`race`}{Character, race/ethnicity as self-reported 
-                  by the student, e.g., Asian, Black, Latine, etc.}'
+                  by the student, e.g., Asian, Black, Hispanic, etc.}'
 var_sex     <- '\\item{`sex`}{Character, sex as self-reported by the student, 
                   possible values are Female, Male, and Unknown.}'
 var_term    <- '\\item{`term`}{Character, academic year and term, format YYYYT. 

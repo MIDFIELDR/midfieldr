@@ -15,9 +15,10 @@
 #'
 #' Several midfieldr functions require one or more of the variables `mcid`, 
 #' `institution`, `race`, `sex`, `^term`, `cip6`, and `level`. And if 
-#' one requires a composite key to uniquely identify rows, course variables 
-#' `abbrev`, `number` and degree variable `degree` are also required. A vector 
-#' of these names comprises the default subset.   
+#' one requires a composite key to uniquely identify rows in the course or 
+#' degree tables, the variables `abbrev`, `number` and degree variable 
+#' `degree` are also required. A vector of these names comprises the default 
+#' subset.   
 #' 
 #' Additional column names or partial names can be included by using the 
 #' `select_add` argument. 

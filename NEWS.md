@@ -1,8 +1,12 @@
-## midfieldr 1.0.2.900x / development version
+## midfieldr 1.0.3.900x / development version
 
+## midfieldr 1.0.3 / 2024--12--02
+
+- Build package with midfielddata v0.2.2 
 - Replace `same_content()` with re-export of wrapr `check_equiv_frames()` 
-- Add composite column keys to `select_required()` for course table
-- Add `grade_scale` and `sat_act_scale` datasets
+- Replace `same_content()` tests with `check_equiv_frames()` tests 
+- Add column keys to `select_required()` for course table
+- Add `grade_scale` and `act_sat_scale` datasets
 - Add definition of degree-seeking to relevant vignettes
 - Edit case study introduction. Clarify some definitions. 
 - Add 'Suggests' package 'gt' for vignette tables

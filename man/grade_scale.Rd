@@ -21,7 +21,7 @@ computing grade point averages.
 }
 \seealso{
 Other scales: 
-\code{\link{sat_act_scale}}
+\code{\link{act_sat_scale}}
 }
 \concept{scales}
 \keyword{datasets}

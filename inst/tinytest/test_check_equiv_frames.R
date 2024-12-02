@@ -1,7 +1,7 @@
-test_same_content <- function() {
+test_check_equiv_frames <- function() {
 
     # usage
-    # same_content(x, y)
+    # check_equiv_frames(x, y)
 
     # Needed for tinytest::build_install_test()
     library("data.table")
@@ -21,38 +21,31 @@ test_same_content <- function() {
     setkey(x, alpha)
     y <- dt1[, .(beta, alpha)]
     setkey(y, beta)
-    expect_true(same_content(x, y))
+    expect_true(check_equiv_frames(x, y))
     
-    # When not same content, output is character
-    expect_equal(class(same_content(dt1, dt2)), "character")
+    # When not same content, output is FALSE
+    expect_true(!check_equiv_frames(dt1, dt2))
     
     # Different number of rows only
-    expect_equal(class(same_content(dt1, dt1[1:4])), "character")
+    expect_true(!check_equiv_frames(dt1, dt1[1:4]))
     
     # Different column names only
-    expect_equal(class(
-        same_content(dt2[, .(gamma, delta)], dt2[, .(gamma, epsilon)])
-        ), "character")
-
+    expect_true(!check_equiv_frames(dt2[, .(gamma, delta)], dt2[, .(gamma, epsilon)]))
+    
     # Different number of columns
-    expect_equal(class(same_content(dt2, dt2[, 1:2])), "character")
+    expect_true(!check_equiv_frames(dt2, dt2[, 1:2]))
 
     # Same number of rows, different row content
-    expect_equal(class(same_content(dt1[1:4], dt1[2:5])), "character")
-    
+    expect_true(!check_equiv_frames(dt1[1:4], dt1[2:5]))
+
     # data frame arguments must be data frames
-    expect_error(
-        same_content(dt1$alpha, dt1)
-    )
-    expect_error(
-        same_content(dt2, dt2$gamma)
-    )
+    expect_true(!check_equiv_frames(dt1$alpha, dt1))
     
     # function output not printed
     invisible(NULL)
 }
 
-test_same_content()
+test_check_equiv_frames()
 
 
 
