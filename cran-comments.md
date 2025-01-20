@@ -2,7 +2,8 @@
 
 - Revised vignettes to reflect changes in companion midfielddata R data package
 - Added small data sets for user convenience 
-- Deprecate one function
+- Deprecate and replace one function 
+- Minor revisions to text of README and vignettes
 
 # R CMD check results
 
