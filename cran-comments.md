@@ -1,8 +1,4 @@
-# Purpose
-
-- Edit argument descriptions and correct typos.
-- Update the midfieldr-package.R file
-- No change in functionality.
+# revdepcheck
 
 # R CMD check results
 

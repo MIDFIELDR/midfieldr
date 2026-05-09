@@ -21,7 +21,7 @@ First-Year, 02-Second Year, etc.}
 }
 }
 \usage{
-toy_term
+data(toy_term)
 }
 \description{
 Selected variables modeled on those in the \code{term} practice data for use in
@@ -29,7 +29,7 @@ package examples and articles. Sampled from an early version of the practice
 data, the toy data are not a current practice data sample.
 }
 \seealso{
-Other toy-data: 
+Other toy-data:
 \code{\link{toy_course}},
 \code{\link{toy_degree}},
 \code{\link{toy_student}}

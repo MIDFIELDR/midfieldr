@@ -13,7 +13,7 @@ proxy program.}
 }
 }
 \usage{
-fye_proxy
+data(fye_proxy)
 }
 \description{
 Proxies are the degree-granting engineering programs we estimate that
@@ -39,7 +39,7 @@ institution.
 cannot be commingled with the MIDFIELD research database.
 }
 \seealso{
-Other cip-data: 
+Other cip-data:
 \code{\link{cip}}
 }
 \concept{cip-data}

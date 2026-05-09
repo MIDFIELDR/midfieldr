@@ -21,7 +21,7 @@ ratio of \code{graduates} to \code{ever_enrolled}, in percent.}
 }
 }
 \usage{
-study_results
+data(study_results)
 }
 \description{
 Data table of longitudinal stickiness for the four programs of the case study
@@ -36,7 +36,7 @@ the time span of available data. Results are based on data that have been
 filtered for data sufficiency, degree seeking, and timely completion.
 }
 \seealso{
-Other case-study-data: 
+Other case-study-data:
 \code{\link{baseline_mcid}},
 \code{\link{study_observations}},
 \code{\link{study_programs}}

@@ -11,7 +11,7 @@
 }
 }
 \usage{
-baseline_mcid
+data(baseline_mcid)
 }
 \description{
 Data frame of IDs after processing the practice data for data sufficiency and
@@ -19,7 +19,7 @@ degree seeking. Provides a convenient bloc to start many of the analysis
 illustrated in the package articles.
 }
 \seealso{
-Other case-study-data: 
+Other case-study-data:
 \code{\link{study_observations}},
 \code{\link{study_programs}},
 \code{\link{study_results}}

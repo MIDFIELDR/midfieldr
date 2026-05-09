@@ -20,7 +20,7 @@ to the ACT composite score.}
 ACT/SAT Concordance (2018) ACT Education Corp. \url{https://www.act.org/content/dam/act/unsecured/documents/ACT-SAT-Concordance-Tables.pdf}
 }
 \usage{
-sat_act_scale
+data(sat_act_scale)
 }
 \description{
 Data frame of SAT total scores and corresponding ACT composite scores.
@@ -28,7 +28,7 @@ Converting from SAT to ACT, a range of SAT scores convert to a single ACT
 value. Converting from ACT to SAT, a single-value SAT equivalent is provided.
 }
 \seealso{
-Other scales: 
+Other scales:
 \code{\link{grade_scale}}
 }
 \concept{scales}

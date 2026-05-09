@@ -20,7 +20,7 @@ belongs.}
 }
 }
 \usage{
-study_observations
+data(study_observations)
 }
 \description{
 Data table of post-processed observations of students ever enrolled in, and
@@ -39,7 +39,7 @@ This data structure facilitates grouping and summarizing by race, sex,
 program, and group.
 }
 \seealso{
-Other case-study-data: 
+Other case-study-data:
 \code{\link{baseline_mcid}},
 \code{\link{study_programs}},
 \code{\link{study_results}}

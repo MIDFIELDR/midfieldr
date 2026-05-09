@@ -63,8 +63,8 @@ dframe[, data_sufficiency := NA_character_]
 add_data_sufficiency(dframe, midfield_term = toy_term)
 }
 \seealso{
-Other add_*: 
-\code{\link{add_completion_status}()},
-\code{\link{add_timely_term}()}
+Other add_*:
+\code{\link[=add_completion_status]{add_completion_status()}},
+\code{\link[=add_timely_term]{add_timely_term()}}
 }
 \concept{add_*}

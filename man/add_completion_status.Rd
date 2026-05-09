@@ -63,8 +63,8 @@ dframe[, completion_status := NA_character_]
 add_completion_status(dframe, toy_degree)
 }
 \seealso{
-Other add_*: 
-\code{\link{add_data_sufficiency}()},
-\code{\link{add_timely_term}()}
+Other add_*:
+\code{\link[=add_data_sufficiency]{add_data_sufficiency()}},
+\code{\link[=add_timely_term]{add_timely_term()}}
 }
 \concept{add_*}

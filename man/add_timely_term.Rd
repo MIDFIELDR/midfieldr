@@ -89,8 +89,8 @@ add_timely_term(dframe, midfield_term = toy_term)
 
 }
 \seealso{
-Other add_*: 
-\code{\link{add_completion_status}()},
-\code{\link{add_data_sufficiency}()}
+Other add_*:
+\code{\link[=add_completion_status]{add_completion_status()}},
+\code{\link[=add_data_sufficiency]{add_data_sufficiency()}}
 }
 \concept{add_*}

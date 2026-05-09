@@ -13,14 +13,14 @@ scale from A to F.}
 }
 }
 \usage{
-grade_scale
+data(grade_scale)
 }
 \description{
 Data frame of letter grades and conventional point assignments used for
 computing grade point averages.
 }
 \seealso{
-Other scales: 
+Other scales:
 \code{\link{sat_act_scale}}
 }
 \concept{scales}

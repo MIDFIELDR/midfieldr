@@ -18,7 +18,7 @@ a student is enrolled in a term.}
 }
 }
 \usage{
-toy_degree
+data(toy_degree)
 }
 \description{
 Selected variables modeled on those in the \code{degree} practice data for use in
@@ -26,7 +26,7 @@ package examples and articles. Sampled from an early version of the practice
 data, the toy data are not a current practice data sample.
 }
 \seealso{
-Other toy-data: 
+Other toy-data:
 \code{\link{toy_course}},
 \code{\link{toy_student}},
 \code{\link{toy_term}}

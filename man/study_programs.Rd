@@ -17,7 +17,7 @@ Engineering).}
 }
 }
 \usage{
-study_programs
+data(study_programs)
 }
 \description{
 Data table of program CIP codes and labels of the four programs of the case
@@ -29,7 +29,7 @@ programs of the case study and assigned them a custom label to be used for
 grouping and summarizing.
 }
 \seealso{
-Other case-study-data: 
+Other case-study-data:
 \code{\link{baseline_mcid}},
 \code{\link{study_observations}},
 \code{\link{study_results}}

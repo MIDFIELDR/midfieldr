@@ -11,6 +11,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{wrapr}{\code{\link[wrapr]{check_equiv_frames}}}
+  \item{wrapr}{\code{\link[wrapr:check_equiv_frames]{check_equiv_frames()}}}
 }}
 

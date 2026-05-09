@@ -29,7 +29,7 @@ representing "the most general groupings of related programs."}
 }
 }
 \usage{
-cip
+data(cip)
 }
 \description{
 A data table based on the US National Center for Education Statistics (NCES),
@@ -47,7 +47,7 @@ The MIDFIELD research database include CIPs for undergraduate pre-majors
 such as pre-med (511102), pre-law (220001), and pre-vet (511104).
 }
 \seealso{
-Other cip-data: 
+Other cip-data:
 \code{\link{fye_proxy}}
 }
 \concept{cip-data}
