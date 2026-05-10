@@ -75,18 +75,6 @@ data(student, term, degree)
 student <- select_required(student)
 term <- select_required(term)
 degree <- select_required(degree)
-
-# View example result
-term
-#>                   mcid   institution   term   cip6         level
-#>                 <char>        <char> <char> <char>        <char>
-#>      1: MCID3111142225 Institution B  19881 140901 01 First-year
-#>      2: MCID3111142283 Institution J  19881 240102 01 First-year
-#>      3: MCID3111142283 Institution J  19883 240102 01 First-year
-#>     ---                                                         
-#> 639913: MCID3112898894 Institution B  20181 451001 01 First-year
-#> 639914: MCID3112898895 Institution B  20181 302001 01 First-year
-#> 639915: MCID3112898940 Institution B  20181 050103 01 First-year
 ```
 
 Filter for data sufficiency.
@@ -100,25 +88,6 @@ DT <- term[, .(mcid, cip6)]
 DT <- add_timely_term(DT, term)
 DT <- add_data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include"]
-DT
-#>                   mcid   cip6       level_i adj_span timely_term term_i
-#>                 <char> <char>        <char>    <num>      <char> <char>
-#>      1: MCID3111142689 090401 01 First-year        6       19941  19883
-#>      2: MCID3111142782 260101 01 First-year        6       19941  19883
-#>      3: MCID3111142782 260101 01 First-year        6       19941  19883
-#>     ---                                                                
-#> 531417: MCID3112870009 240102 01 First-year        6       20003  19951
-#> 531418: MCID3112870009 240102 01 First-year        6       20003  19951
-#> 531419: MCID3112870009 240102 01 First-year        6       20003  19951
-#>         lower_limit upper_limit data_sufficiency
-#>              <char>      <char>           <char>
-#>      1:       19881       20181          include
-#>      2:       19881       20096          include
-#>      3:       19881       20096          include
-#>     ---                                         
-#> 531417:       19881       20181          include
-#> 531418:       19881       20181          include
-#> 531419:       19881       20181          include
 ```
 
 Filter for degree-seeking students ever enrolled in Engineering.
@@ -134,25 +103,6 @@ DT <- DT[cip6 %like% "^14"]
 
 # Filter observations for unique students (first instance)
 DT <- DT[, .SD[1], by = c("mcid")]
-DT
-#>                  mcid   cip6        level_i adj_span timely_term term_i
-#>                <char> <char>         <char>    <num>      <char> <char>
-#>     1: MCID3111142965 140102  01 First-year        6       19941  19883
-#>     2: MCID3111145102 140102  01 First-year        6       19941  19883
-#>     3: MCID3111146537 141001 02 Second-year        5       19931  19883
-#>    ---                                                                 
-#> 10399: MCID3112641399 141901  01 First-year        6       20181  20123
-#> 10400: MCID3112641535 141901  01 First-year        6       20173  20121
-#> 10401: MCID3112698681 141901  01 First-year        6       20171  20113
-#>        lower_limit upper_limit data_sufficiency
-#>             <char>      <char>           <char>
-#>     1:       19881       20096          include
-#>     2:       19881       20096          include
-#>     3:       19881       20096          include
-#>    ---                                         
-#> 10399:       19881       20181          include
-#> 10400:       19881       20181          include
-#> 10401:       19881       20181          include
 ```
 
 Determine completion status.
@@ -161,25 +111,6 @@ Determine completion status.
 
 # Add completion status variable
 DT <- add_completion_status(DT, degree)
-DT
-#>                  mcid   cip6        level_i adj_span timely_term term_i
-#>                <char> <char>         <char>    <num>      <char> <char>
-#>     1: MCID3111142965 140102  01 First-year        6       19941  19883
-#>     2: MCID3111145102 140102  01 First-year        6       19941  19883
-#>     3: MCID3111146537 141001 02 Second-year        5       19931  19883
-#>    ---                                                                 
-#> 10399: MCID3112641399 141901  01 First-year        6       20181  20123
-#> 10400: MCID3112641535 141901  01 First-year        6       20173  20121
-#> 10401: MCID3112698681 141901  01 First-year        6       20171  20113
-#>        lower_limit upper_limit data_sufficiency term_degree completion_status
-#>             <char>      <char>           <char>      <char>            <char>
-#>     1:       19881       20096          include       19901            timely
-#>     2:       19881       20096          include       19893            timely
-#>     3:       19881       20096          include       19913            timely
-#>    ---                                                                       
-#> 10399:       19881       20181          include       20163            timely
-#> 10400:       19881       20181          include       20143            timely
-#> 10401:       19881       20181          include       20181              late
 ```
 
 Aggregate observations by groupings.
@@ -197,19 +128,9 @@ DT[, people := paste(race, sex)]
 # Aggregate observations by groupings
 DT_display <- DT[, .N, by = c("completion_status", "people")]
 setorderv(DT_display, c("completion_status", "people"))
-DT_display
-#>     completion_status               people     N
-#>                <char>               <char> <int>
-#>  1:              <NA>         Asian Female    43
-#>  2:              <NA>           Asian Male   163
-#>  3:              <NA>         Black Female    39
-#> ---                                             
-#> 33:            timely Native American Male    13
-#> 34:            timely         White Female   985
-#> 35:            timely           White Male  4100
 ```
 
-Reshape and display results.
+Reshape results for display.
 
 ``` r
 
@@ -224,6 +145,11 @@ setnames(DT_display,
   new = c("People", "Timely completion", "Late completion", "Did not complete")
 )
 ```
+
+Print the results table. “Timely completion” is the count of graduates
+completing their programs in no more than 6 years; “Late completion” is
+the count of those graduating in more than 6 years; “Did not complete”
+is the count of non-graduates.
 
 | People                 | Timely completion | Late completion | Did not complete |
 |------------------------|-------------------|-----------------|------------------|
@@ -244,11 +170,6 @@ Table 1: Completion status of engineering undergraduates in the practice
 data {.table .gt_table quarto-disable-processing="false"
 quarto-bootstrap="false"}
 
-“Timely completion” is the count of graduates completing their programs
-in no more than 6 years; “Late completion” is the count of those
-graduating in more than 6 years; “Did not complete” is the count of
-non-graduates.
-
 *Reminder.*   midfielddata is suitable for learning to work with
 student-level data but not for drawing inferences about program
 attributes or student experiences. midfielddata supplies practice data,
@@ -256,14 +177,19 @@ not research data.
 
 ## Installation
 
-Install from the MIDFIELDR drat repository with:
+Install from CRAN with:
 
 ``` r
 
-install.packages("midfieldr",
-  repos = "https://MIDFIELDR.github.io/drat/",
-  type = "source"
-)
+install.packages("midfieldr")
+```
+
+You can install the development version of midfieldr from GitHub with:
+
+``` r
+
+# install.packages("pak")
+pak::pak("MIDFIELDR/midfieldr")
 ```
 
 The installed size of midfielddata is about 24 Mb, so the installation

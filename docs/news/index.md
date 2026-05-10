@@ -4,7 +4,7 @@
 
 - Convert vignettes to non-vignette articles
 - Replace
-  [`same_content()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+  [`same_content()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.html)
   with re-export of wrapr
   [`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
 - Add composite column keys to
@@ -46,7 +46,7 @@ Initial CRAN submission
 - Edit all vignettes for consistent organization and prose.  
 - Finished first complete draft of “Graduation rate” vignette.
 - Add
-  [`same_content()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+  [`same_content()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.html)
   convenience function.
 - Add “Stickiness” vignette
 - Add “Groupings” vignette.

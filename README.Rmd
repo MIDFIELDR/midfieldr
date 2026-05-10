@@ -13,6 +13,8 @@ link-citations: true
 
 ```{r}
 #| include: false
+
+# code chunks
 knitr::opts_chunk$set(fig.path = "man/figures/README-")
 ```
 
@@ -21,6 +23,7 @@ knitr::opts_chunk$set(fig.path = "man/figures/README-")
 ```{r}
 #| echo: false
 #| out.width: "15%"
+
 knitr::include_graphics("man/figures/logo.png")
 ```
 
@@ -64,12 +67,31 @@ R packages in examples and vignettes
 In this example, we gather all students ever enrolled in Engineering and summarize their graduation status (in any major), grouping by race/ethnicity and sex. If you are writing your own script to follow along, we use these packages in this example:
 
 ```{r}
+#| echo: true
+#| eval: false
+
 library(midfieldr)
 library(midfielddata)
 library(data.table)
 ```
 
+```{r}
+#| echo: false
+#| eval: true
+
+# evaluate here to avoid running midfielddata thru CRAN
+library(midfieldr)
+library(data.table)
+```
+
 Load the practice data. Reduce initial dimensions of data tables. 
+
+```{r}
+#| echo: false
+
+# turn the chunks off
+knitr::opts_chunk$set(eval = FALSE)
+```
 
 ```{r}
 # Load the practice data
@@ -79,9 +101,6 @@ data(student, term, degree)
 student <- select_required(student)
 term <- select_required(term)
 degree <- select_required(degree)
-
-# View example result
-term
 ```
 
 Filter for data sufficiency. 
@@ -94,7 +113,6 @@ DT <- term[, .(mcid, cip6)]
 DT <- add_timely_term(DT, term)
 DT <- add_data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include"]
-DT
 ```
 
 Filter for degree-seeking students ever enrolled in Engineering. 
@@ -109,7 +127,6 @@ DT <- DT[cip6 %like% "^14"]
 
 # Filter observations for unique students (first instance)
 DT <- DT[, .SD[1], by = c("mcid")]
-DT
 ```
 
 Determine completion status. 
@@ -117,7 +134,6 @@ Determine completion status.
 ```{r}
 # Add completion status variable
 DT <- add_completion_status(DT, degree)
-DT
 ```
 
 Aggregate observations by groupings.
@@ -134,12 +150,63 @@ DT[, people := paste(race, sex)]
 # Aggregate observations by groupings
 DT_display <- DT[, .N, by = c("completion_status", "people")]
 setorderv(DT_display, c("completion_status", "people"))
-DT_display
 ```
 
-Reshape and display results. 
+```{r}
+#| echo: false
+#| eval: true
+
+# Hard-coded result from previous code chunks. 
+# allows me to omit installing midfielddata for the README
+# speeds up rendering and possibly helps avoid the "midfielddata NOTE" 
+# I get when submitting to CRAN
+
+# cat(wrapr::draw_frame(DT_display))
+DT_display <- wrapr::build_frame(
+   "completion_status"  , "people"                , "N"   |
+     NA_character_      , "Asian Female"          ,   43L |
+     NA_character_      , "Asian Male"            ,  163L |
+     NA_character_      , "Black Female"          ,   39L |
+     NA_character_      , "Black Male"            ,   84L |
+     NA_character_      , "Hispanic Female"       ,   31L |
+     NA_character_      , "Hispanic Male"         ,  102L |
+     NA_character_      , "International Female"  ,   51L |
+     NA_character_      , "International Male"    ,  280L |
+     NA_character_      , "Native American Female",    2L |
+     NA_character_      , "Native American Male"  ,    6L |
+     NA_character_      , "White Female"          ,  386L |
+     NA_character_      , "White Male"            , 2034L |
+     "late"             , "Asian Female"          ,    4L |
+     "late"             , "Asian Male"            ,   19L |
+     "late"             , "Black Female"          ,    3L |
+     "late"             , "Black Male"            ,    5L |
+     "late"             , "Hispanic Female"       ,    3L |
+     "late"             , "Hispanic Male"         ,   19L |
+     "late"             , "International Female"  ,    9L |
+     "late"             , "International Male"    ,   41L |
+     "late"             , "Native American Male"  ,    3L |
+     "late"             , "White Female"          ,   51L |
+     "late"             , "White Male"            ,  269L |
+     "timely"           , "Asian Female"          ,   87L |
+     "timely"           , "Asian Male"            ,  315L |
+     "timely"           , "Black Female"          ,   26L |
+     "timely"           , "Black Male"            ,   80L |
+     "timely"           , "Hispanic Female"       ,   36L |
+     "timely"           , "Hispanic Male"         ,  181L |
+     "timely"           , "International Female"  ,  110L |
+     "timely"           , "International Male"    ,  501L |
+     "timely"           , "Native American Female",    2L |
+     "timely"           , "Native American Male"  ,   13L |
+     "timely"           , "White Female"          ,  985L |
+     "timely"           , "White Male"            , 4100L )
+setDT(DT_display)
+```
+
+Reshape results for display. 
 
 ```{r}
+#| echo: true
+#| eval: true
 # Transform to row-record form
 DT_display <- dcast(DT_display, people ~ completion_status, value.var = "N", fill = 0)
 
@@ -152,8 +219,11 @@ setnames(DT_display,
 )
 ```
 
+Print the results table.  "Timely completion" is the count of graduates completing their programs in no more than 6 years; "Late completion" is the count of those graduating in more than 6 years; "Did not complete" is the count of non-graduates. 
+
 ```{r}
 #| echo: false
+#| eval: true
 library(gt)
 DT_display |>
   gt() |>
@@ -166,9 +236,7 @@ DT_display |>
   )
 ```
 
-"Timely completion" is the count of graduates completing their programs in no more than 6 years; "Late completion" is the count of those graduating in more than 6 years; "Did not complete" is the count of non-graduates. 
-
-```{r child = "man/rmd/note-for-practice-only-1.Rmd"}
+```{r child = "man/rmd/note-for-practice-only-1.Rmd", eval = TRUE}
 ```
 
 
@@ -180,14 +248,19 @@ DT_display |>
 
 ## Installation
 
-Install from the MIDFIELDR drat repository with: 
+Install from CRAN with:
 
 ```{r}
 #| eval: false
-install.packages("midfieldr",
-  repos = "https://MIDFIELDR.github.io/drat/",
-  type = "source"
-)
+install.packages("midfieldr")
+```
+
+You can install the development version of midfieldr from GitHub with:
+
+```{r}
+#| eval: false
+# install.packages("pak")
+pak::pak("MIDFIELDR/midfieldr")
 ```
 
 The installed size of midfielddata is about 24 Mb, so the installation takes some time. Install from the MIDFIELDR drat repository with: 
@@ -206,20 +279,20 @@ install.packages("midfielddata",
 
 ## More information
 
-```{r child = "man/rmd/note-midfielddata-and-midfield.Rmd"}
+```{r child = "man/rmd/note-midfielddata-and-midfield.Rmd", eval = TRUE}
 ```
 
  
 ## Acknowledgments
 
-```{r child = "man/rmd/note-nsf-grant.Rmd"}
+```{r child = "man/rmd/note-nsf-grant.Rmd", eval = TRUE}
 ```
 
 ## References
 
 <div id="refs">
 
-```{r child = "man/rmd/common-closing.Rmd"}
+```{r child = "man/rmd/common-closing.Rmd", eval = TRUE}
 ```
 
 

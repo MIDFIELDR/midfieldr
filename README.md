@@ -71,18 +71,6 @@ data(student, term, degree)
 student <- select_required(student)
 term <- select_required(term)
 degree <- select_required(degree)
-
-# View example result
-term
-#>                   mcid   institution   term   cip6         level
-#>                 <char>        <char> <char> <char>        <char>
-#>      1: MCID3111142225 Institution B  19881 140901 01 First-year
-#>      2: MCID3111142283 Institution J  19881 240102 01 First-year
-#>      3: MCID3111142283 Institution J  19883 240102 01 First-year
-#>     ---                                                         
-#> 639913: MCID3112898894 Institution B  20181 451001 01 First-year
-#> 639914: MCID3112898895 Institution B  20181 302001 01 First-year
-#> 639915: MCID3112898940 Institution B  20181 050103 01 First-year
 ```
 
 Filter for data sufficiency.
@@ -95,25 +83,6 @@ DT <- term[, .(mcid, cip6)]
 DT <- add_timely_term(DT, term)
 DT <- add_data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include"]
-DT
-#>                   mcid   cip6       level_i adj_span timely_term term_i
-#>                 <char> <char>        <char>    <num>      <char> <char>
-#>      1: MCID3111142689 090401 01 First-year        6       19941  19883
-#>      2: MCID3111142782 260101 01 First-year        6       19941  19883
-#>      3: MCID3111142782 260101 01 First-year        6       19941  19883
-#>     ---                                                                
-#> 531417: MCID3112870009 240102 01 First-year        6       20003  19951
-#> 531418: MCID3112870009 240102 01 First-year        6       20003  19951
-#> 531419: MCID3112870009 240102 01 First-year        6       20003  19951
-#>         lower_limit upper_limit data_sufficiency
-#>              <char>      <char>           <char>
-#>      1:       19881       20181          include
-#>      2:       19881       20096          include
-#>      3:       19881       20096          include
-#>     ---                                         
-#> 531417:       19881       20181          include
-#> 531418:       19881       20181          include
-#> 531419:       19881       20181          include
 ```
 
 Filter for degree-seeking students ever enrolled in Engineering.
@@ -128,25 +97,6 @@ DT <- DT[cip6 %like% "^14"]
 
 # Filter observations for unique students (first instance)
 DT <- DT[, .SD[1], by = c("mcid")]
-DT
-#>                  mcid   cip6        level_i adj_span timely_term term_i
-#>                <char> <char>         <char>    <num>      <char> <char>
-#>     1: MCID3111142965 140102  01 First-year        6       19941  19883
-#>     2: MCID3111145102 140102  01 First-year        6       19941  19883
-#>     3: MCID3111146537 141001 02 Second-year        5       19931  19883
-#>    ---                                                                 
-#> 10399: MCID3112641399 141901  01 First-year        6       20181  20123
-#> 10400: MCID3112641535 141901  01 First-year        6       20173  20121
-#> 10401: MCID3112698681 141901  01 First-year        6       20171  20113
-#>        lower_limit upper_limit data_sufficiency
-#>             <char>      <char>           <char>
-#>     1:       19881       20096          include
-#>     2:       19881       20096          include
-#>     3:       19881       20096          include
-#>    ---                                         
-#> 10399:       19881       20181          include
-#> 10400:       19881       20181          include
-#> 10401:       19881       20181          include
 ```
 
 Determine completion status.
@@ -154,25 +104,6 @@ Determine completion status.
 ``` r
 # Add completion status variable
 DT <- add_completion_status(DT, degree)
-DT
-#>                  mcid   cip6        level_i adj_span timely_term term_i
-#>                <char> <char>         <char>    <num>      <char> <char>
-#>     1: MCID3111142965 140102  01 First-year        6       19941  19883
-#>     2: MCID3111145102 140102  01 First-year        6       19941  19883
-#>     3: MCID3111146537 141001 02 Second-year        5       19931  19883
-#>    ---                                                                 
-#> 10399: MCID3112641399 141901  01 First-year        6       20181  20123
-#> 10400: MCID3112641535 141901  01 First-year        6       20173  20121
-#> 10401: MCID3112698681 141901  01 First-year        6       20171  20113
-#>        lower_limit upper_limit data_sufficiency term_degree completion_status
-#>             <char>      <char>           <char>      <char>            <char>
-#>     1:       19881       20096          include       19901            timely
-#>     2:       19881       20096          include       19893            timely
-#>     3:       19881       20096          include       19913            timely
-#>    ---                                                                       
-#> 10399:       19881       20181          include       20163            timely
-#> 10400:       19881       20181          include       20143            timely
-#> 10401:       19881       20181          include       20181              late
 ```
 
 Aggregate observations by groupings.
@@ -189,19 +120,9 @@ DT[, people := paste(race, sex)]
 # Aggregate observations by groupings
 DT_display <- DT[, .N, by = c("completion_status", "people")]
 setorderv(DT_display, c("completion_status", "people"))
-DT_display
-#>     completion_status               people     N
-#>                <char>               <char> <int>
-#>  1:              <NA>         Asian Female    43
-#>  2:              <NA>           Asian Male   163
-#>  3:              <NA>         Black Female    39
-#> ---                                             
-#> 33:            timely Native American Male    13
-#> 34:            timely         White Female   985
-#> 35:            timely           White Male  4100
 ```
 
-Reshape and display results.
+Reshape results for display.
 
 ``` r
 # Transform to row-record form
@@ -216,20 +137,25 @@ setnames(DT_display,
 )
 ```
 
-<div id="bhnaiqvuvb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#bhnaiqvuvb table {
+Print the results table. “Timely completion” is the count of graduates
+completing their programs in no more than 6 years; “Late completion” is
+the count of those graduating in more than 6 years; “Did not complete”
+is the count of non-graduates.
+
+<div id="oqnunstppn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#oqnunstppn table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-&#10;#bhnaiqvuvb thead, #bhnaiqvuvb tbody, #bhnaiqvuvb tfoot, #bhnaiqvuvb tr, #bhnaiqvuvb td, #bhnaiqvuvb th {
+&#10;#oqnunstppn thead, #oqnunstppn tbody, #oqnunstppn tfoot, #oqnunstppn tr, #oqnunstppn td, #oqnunstppn th {
   border-style: none;
 }
-&#10;#bhnaiqvuvb p {
+&#10;#oqnunstppn p {
   margin: 0;
   padding: 0;
 }
-&#10;#bhnaiqvuvb .gt_table {
+&#10;#oqnunstppn .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -254,11 +180,11 @@ setnames(DT_display,
   border-left-width: 2px;
   border-left-color: #D3D3D3;
 }
-&#10;#bhnaiqvuvb .gt_caption {
+&#10;#oqnunstppn .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
-&#10;#bhnaiqvuvb .gt_title {
+&#10;#oqnunstppn .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -269,7 +195,7 @@ setnames(DT_display,
   border-bottom-color: #FFFFFF;
   border-bottom-width: 0;
 }
-&#10;#bhnaiqvuvb .gt_subtitle {
+&#10;#oqnunstppn .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -280,7 +206,7 @@ setnames(DT_display,
   border-top-color: #FFFFFF;
   border-top-width: 0;
 }
-&#10;#bhnaiqvuvb .gt_heading {
+&#10;#oqnunstppn .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -291,12 +217,12 @@ setnames(DT_display,
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#bhnaiqvuvb .gt_bottom_border {
+&#10;#oqnunstppn .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#bhnaiqvuvb .gt_col_headings {
+&#10;#oqnunstppn .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -310,7 +236,7 @@ setnames(DT_display,
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#bhnaiqvuvb .gt_col_heading {
+&#10;#oqnunstppn .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -329,7 +255,7 @@ setnames(DT_display,
   padding-right: 5px;
   overflow-x: hidden;
 }
-&#10;#bhnaiqvuvb .gt_column_spanner_outer {
+&#10;#oqnunstppn .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -340,13 +266,13 @@ setnames(DT_display,
   padding-left: 4px;
   padding-right: 4px;
 }
-&#10;#bhnaiqvuvb .gt_column_spanner_outer:first-child {
+&#10;#oqnunstppn .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
-&#10;#bhnaiqvuvb .gt_column_spanner_outer:last-child {
+&#10;#oqnunstppn .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
-&#10;#bhnaiqvuvb .gt_column_spanner {
+&#10;#oqnunstppn .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
@@ -357,10 +283,10 @@ setnames(DT_display,
   display: inline-block;
   width: 100%;
 }
-&#10;#bhnaiqvuvb .gt_spanner_row {
+&#10;#oqnunstppn .gt_spanner_row {
   border-bottom-style: hidden;
 }
-&#10;#bhnaiqvuvb .gt_group_heading {
+&#10;#oqnunstppn .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -385,7 +311,7 @@ setnames(DT_display,
   vertical-align: middle;
   text-align: left;
 }
-&#10;#bhnaiqvuvb .gt_empty_group_heading {
+&#10;#oqnunstppn .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -399,13 +325,13 @@ setnames(DT_display,
   border-bottom-color: #5F5F5F;
   vertical-align: middle;
 }
-&#10;#bhnaiqvuvb .gt_from_md > :first-child {
+&#10;#oqnunstppn .gt_from_md > :first-child {
   margin-top: 0;
 }
-&#10;#bhnaiqvuvb .gt_from_md > :last-child {
+&#10;#oqnunstppn .gt_from_md > :last-child {
   margin-bottom: 0;
 }
-&#10;#bhnaiqvuvb .gt_row {
+&#10;#oqnunstppn .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -423,7 +349,7 @@ setnames(DT_display,
   vertical-align: middle;
   overflow-x: hidden;
 }
-&#10;#bhnaiqvuvb .gt_stub {
+&#10;#oqnunstppn .gt_stub {
   color: #FFFFFF;
   background-color: #5F5F5F;
   font-size: 100%;
@@ -435,7 +361,7 @@ setnames(DT_display,
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#bhnaiqvuvb .gt_stub_row_group {
+&#10;#oqnunstppn .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -448,13 +374,13 @@ setnames(DT_display,
   padding-right: 5px;
   vertical-align: top;
 }
-&#10;#bhnaiqvuvb .gt_row_group_first td {
+&#10;#oqnunstppn .gt_row_group_first td {
   border-top-width: 2px;
 }
-&#10;#bhnaiqvuvb .gt_row_group_first th {
+&#10;#oqnunstppn .gt_row_group_first th {
   border-top-width: 2px;
 }
-&#10;#bhnaiqvuvb .gt_summary_row {
+&#10;#oqnunstppn .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -463,14 +389,14 @@ setnames(DT_display,
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#bhnaiqvuvb .gt_first_summary_row {
+&#10;#oqnunstppn .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #5F5F5F;
 }
-&#10;#bhnaiqvuvb .gt_first_summary_row.thick {
+&#10;#oqnunstppn .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
-&#10;#bhnaiqvuvb .gt_last_summary_row {
+&#10;#oqnunstppn .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -479,7 +405,7 @@ setnames(DT_display,
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#bhnaiqvuvb .gt_grand_summary_row {
+&#10;#oqnunstppn .gt_grand_summary_row {
   color: #333333;
   background-color: #D5D5D5;
   text-transform: inherit;
@@ -488,7 +414,7 @@ setnames(DT_display,
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#bhnaiqvuvb .gt_first_grand_summary_row {
+&#10;#oqnunstppn .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -497,7 +423,7 @@ setnames(DT_display,
   border-top-width: 6px;
   border-top-color: #5F5F5F;
 }
-&#10;#bhnaiqvuvb .gt_last_grand_summary_row_top {
+&#10;#oqnunstppn .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -506,10 +432,10 @@ setnames(DT_display,
   border-bottom-width: 6px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#bhnaiqvuvb .gt_striped {
+&#10;#oqnunstppn .gt_striped {
   background-color: #F4F4F4;
 }
-&#10;#bhnaiqvuvb .gt_table_body {
+&#10;#oqnunstppn .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -517,7 +443,7 @@ setnames(DT_display,
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#bhnaiqvuvb .gt_footnotes {
+&#10;#oqnunstppn .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -530,7 +456,7 @@ setnames(DT_display,
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#bhnaiqvuvb .gt_footnote {
+&#10;#oqnunstppn .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -538,7 +464,7 @@ setnames(DT_display,
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#bhnaiqvuvb .gt_sourcenotes {
+&#10;#oqnunstppn .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -551,64 +477,64 @@ setnames(DT_display,
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#bhnaiqvuvb .gt_sourcenote {
+&#10;#oqnunstppn .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#bhnaiqvuvb .gt_left {
+&#10;#oqnunstppn .gt_left {
   text-align: left;
 }
-&#10;#bhnaiqvuvb .gt_center {
+&#10;#oqnunstppn .gt_center {
   text-align: center;
 }
-&#10;#bhnaiqvuvb .gt_right {
+&#10;#oqnunstppn .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-&#10;#bhnaiqvuvb .gt_font_normal {
+&#10;#oqnunstppn .gt_font_normal {
   font-weight: normal;
 }
-&#10;#bhnaiqvuvb .gt_font_bold {
+&#10;#oqnunstppn .gt_font_bold {
   font-weight: bold;
 }
-&#10;#bhnaiqvuvb .gt_font_italic {
+&#10;#oqnunstppn .gt_font_italic {
   font-style: italic;
 }
-&#10;#bhnaiqvuvb .gt_super {
+&#10;#oqnunstppn .gt_super {
   font-size: 65%;
 }
-&#10;#bhnaiqvuvb .gt_footnote_marks {
+&#10;#oqnunstppn .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
-&#10;#bhnaiqvuvb .gt_asterisk {
+&#10;#oqnunstppn .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
-&#10;#bhnaiqvuvb .gt_indent_1 {
+&#10;#oqnunstppn .gt_indent_1 {
   text-indent: 5px;
 }
-&#10;#bhnaiqvuvb .gt_indent_2 {
+&#10;#oqnunstppn .gt_indent_2 {
   text-indent: 10px;
 }
-&#10;#bhnaiqvuvb .gt_indent_3 {
+&#10;#oqnunstppn .gt_indent_3 {
   text-indent: 15px;
 }
-&#10;#bhnaiqvuvb .gt_indent_4 {
+&#10;#oqnunstppn .gt_indent_4 {
   text-indent: 20px;
 }
-&#10;#bhnaiqvuvb .gt_indent_5 {
+&#10;#oqnunstppn .gt_indent_5 {
   text-indent: 25px;
 }
-&#10;#bhnaiqvuvb .katex-display {
+&#10;#oqnunstppn .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
-&#10;#bhnaiqvuvb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+&#10;#oqnunstppn div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -675,11 +601,6 @@ setnames(DT_display,
   &#10;</table>
 </div>
 
-“Timely completion” is the count of graduates completing their programs
-in no more than 6 years; “Late completion” is the count of those
-graduating in more than 6 years; “Did not complete” is the count of
-non-graduates.
-
 *Reminder.*   midfielddata is suitable for learning to work with
 student-level data but not for drawing inferences about program
 attributes or student experiences. midfielddata supplies practice data,
@@ -687,13 +608,17 @@ not research data.
 
 ## Installation
 
-Install from the MIDFIELDR drat repository with:
+Install from CRAN with:
 
 ``` r
-install.packages("midfieldr",
-  repos = "https://MIDFIELDR.github.io/drat/",
-  type = "source"
-)
+install.packages("midfieldr")
+```
+
+You can install the development version of midfieldr from GitHub with:
+
+``` r
+# install.packages("pak")
+pak::pak("MIDFIELDR/midfieldr")
 ```
 
 The installed size of midfielddata is about 24 Mb, so the installation

@@ -1,6 +1,6 @@
-## midfieldr 1.0.3 / 2026--05--09
+## midfieldr 1.0.3 / 2026--05--10
 
-- Convert vignettes to non-vignette articles
+- Convert vignettes to non-vignette articles available on the website. This allowed us to omit dependency on the non-mainstream midfielddata repository. 
 - Replace `same_content()` with re-export of wrapr `check_equiv_frames()` 
 - Add composite column keys to `select_required()` for course table
 - Add `grade_scale` and `sat_act_scale` datasets
