@@ -1,11 +1,11 @@
 # Changelog
 
-## midfieldr 1.0.3 / 2026–05–09
+## midfieldr 1.0.3 / 2026–05–10
 
-- Convert vignettes to non-vignette articles
-- Replace
-  [`same_content()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.html)
-  with re-export of wrapr
+- Convert vignettes to non-vignette articles available on the website.
+  This allowed us to omit dependency on the non-mainstream midfielddata
+  repository.
+- Replace `same_content()` with re-export of wrapr
   [`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
 - Add composite column keys to
   [`select_required()`](https://midfieldr.github.io/midfieldr/reference/select_required.md)
@@ -45,9 +45,7 @@ Initial CRAN submission
   search.
 - Edit all vignettes for consistent organization and prose.  
 - Finished first complete draft of “Graduation rate” vignette.
-- Add
-  [`same_content()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.html)
-  convenience function.
+- Add `same_content()` convenience function.
 - Add “Stickiness” vignette
 - Add “Groupings” vignette.
 

@@ -8,4 +8,4 @@ The website also includes articles describing typical applications in
 detail:
 
 - [Index of
-  articles](https:///midfieldr.github.io/midfieldr/articles/index.html)
+  articles](https://midfieldr.github.io/midfieldr/articles/index.html)
