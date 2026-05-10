@@ -37,14 +37,14 @@ if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
     ".",
     # midfield data table names
-    "student", "term", "course", "degree", 
+    "student", "term", "course", "degree",
     # midfielddata column names
-    "abbrev", "act_comp", "age_desc", "cip6", "coop", "course", "degree", 
-    "discipline_midfield", "faculty_rank", "gpa_cumul", "gpa_term", "grade", 
-    "high_school", "home_zip", "hours_course", "hours_cumul", 
-    "hours_cumul_attempt", "hours_term", "hours_term_attempt", "hours_transfer", 
-    "institution", "level", "mcid", "number", "race", "sat_math", "sat_verbal", 
-    "section", "sex", "standing", "term", "term_course", "term_degree", 
+    "abbrev", "act_comp", "age_desc", "cip6", "coop", "course", "degree",
+    "discipline_midfield", "faculty_rank", "gpa_cumul", "gpa_term", "grade",
+    "high_school", "home_zip", "hours_course", "hours_cumul",
+    "hours_cumul_attempt", "hours_term", "hours_term_attempt", "hours_transfer",
+    "institution", "level", "mcid", "number", "race", "sat_math", "sat_verbal",
+    "section", "sex", "standing", "term", "term_course", "term_degree",
     "transfer", "type", "us_citizen"
   ))
 }

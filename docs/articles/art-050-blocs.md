@@ -27,7 +27,7 @@ This article in the MIDFIELD workflow.
 1.  Planning  
 2.  Initial processing  
 3.  Blocs
-    - Ever-enrolled $`\longleftarrow`$
+    - Ever-enrolled
     - FYE proxies  
     - Starters  
     - Graduates  
@@ -43,18 +43,18 @@ This article in the MIDFIELD workflow.
   starters, students ever-enrolled, graduates, transfer students,
   traditional and non-traditional students, migrators, etc.
 
-- **degree-seeking**:
+- degree-seeking:
 
   Describes students advancing toward a bachelor’s degree, accumulating
   credit hours in their program with the goal of graduating from their
   institution.
 
-- **ever-enrolled**:
+- ever-enrolled:
 
   Bloc of students whose term records include a specified program in at
   least one term.
 
-- **migrators**:
+- migrators:
 
   Bloc of students who leave one program to enroll in another. Also
   called *switchers.*

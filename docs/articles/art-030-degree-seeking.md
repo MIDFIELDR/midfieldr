@@ -10,7 +10,7 @@ This article in the MIDFIELD workflow.
 1.  Planning  
 2.  Initial processing
     - Data sufficiency  
-    - Degree seeking $`\longleftarrow`$
+    - Degree seeking
     - Identify programs  
 3.  Blocs  
 4.  Groupings  
@@ -19,7 +19,7 @@ This article in the MIDFIELD workflow.
 
 ## Definitions
 
-- **degree-seeking**:
+- degree-seeking:
 
   Describes students advancing toward a bachelor’s degree, accumulating
   credit hours in their program with the goal of graduating from their

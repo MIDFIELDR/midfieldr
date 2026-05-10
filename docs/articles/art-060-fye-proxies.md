@@ -15,7 +15,7 @@ This vignette in the MIDFIELD workflow.
 2.  Initial processing  
 3.  Blocs
     - Ever-enrolled  
-    - FYE proxies $`\longleftarrow`$
+    - FYE proxies
     - Starters  
     - Graduates  
 4.  Groupings  
@@ -61,14 +61,14 @@ required to enroll in FYE.
 
 ## Definitions
 
-- **FYE**:
+- FYE:
 
   First-Year Engineering program, a common-first-year curriculum that is
   a prerequisite for declaring an engineering major at some US
   institutions. Denoted by its own CIP code, FYE is not a
   degree-granting program.
 
-- **FYE proxy**:
+- FYE proxy:
 
   Our estimate of the degree-granting engineering program in which an
   FYE student would have enrolled had they not been required to enroll
@@ -81,17 +81,17 @@ required to enroll in FYE.
   starters, students ever-enrolled, graduates, transfer students,
   traditional and non-traditional students, migrators, etc.
 
-- **starters**:
+- starters:
 
   Bloc of degree-seeking students in their initial terms enrolled in
   degree-granting programs.
 
-- **migrators**:
+- migrators:
 
   Bloc of students who leave one program to enroll in another. Also
   called *switchers.*
 
-- **multiple imputation**:
+- multiple imputation:
 
   Method of imputing missing categorical data, in this case, imputing
   the FYE proxy 6-digit CIP codes.

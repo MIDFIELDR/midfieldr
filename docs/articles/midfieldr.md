@@ -1,6 +1,6 @@
 # midfieldr
 
-Please see the formatdown website for full documentation:
+Please see the midfieldr website for full documentation:
 
 - <https://midfieldr.github.io/midfieldr/>
 

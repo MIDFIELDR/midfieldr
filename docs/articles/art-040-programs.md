@@ -12,7 +12,7 @@ This article in the MIDFIELD workflow.
 2.  Initial processing
     - Data sufficiency  
     - Degree seeking  
-    - Identify programs $`\longleftarrow`$
+    - Identify programs
 3.  Blocs  
 4.  Groupings  
 5.  Metrics  
@@ -20,7 +20,7 @@ This article in the MIDFIELD workflow.
 
 ## Definitions
 
-- **program**:
+- program:
 
   US academic field of study. Can be used to indicate a specialty within
   a field or a collection of fields within a Department, College, or

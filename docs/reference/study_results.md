@@ -27,7 +27,7 @@ data(study_results)
 - `race`:
 
   Character, race/ethnicity as self-reported by the student, e.g.,
-  Asian, Black, Latine, etc.
+  Asian, Black, Hispanic, etc.
 
 - `ever_enrolled`:
 

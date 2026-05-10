@@ -11,7 +11,7 @@ This article in the MIDFIELD workflow.
 
 1.  Planning  
 2.  Initial processing
-    - Data sufficiency $`\longleftarrow`$
+    - Data sufficiency
     - Degree seeking  
     - Identify programs  
 3.  Blocs  
@@ -21,13 +21,13 @@ This article in the MIDFIELD workflow.
 
 ## Definitions
 
-- **data range**:
+- data range:
 
   The overall span of academic terms of student unit record data
   provided by an institution. We are particularly interested in the
   lower and upper limits of a continuous range.
 
-- **timely completion term**:
+- timely completion term:
 
   The last term in which a student’s degree completion would be
   considered timely. In many cases the timely completion (TC) term is 6
@@ -35,7 +35,7 @@ This article in the MIDFIELD workflow.
   transfer credits. (Currently, there is no mechanism for extending the
   TC term for co-ops or migrators.)
 
-- **data sufficiency criterion**:
+- data sufficiency criterion:
 
   Student records are limited to those for which available data are
   sufficient to assess timely completion without biased counts of

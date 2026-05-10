@@ -3,7 +3,6 @@
 # R/roxygen.R file.
 
 
-
 # -------------------------------------------------------------------
 
 #' Table of academic programs
@@ -16,14 +15,14 @@
 #'
 #' The midfielddata taxonomy includes one non-IPEDS code (999999) for Undecided
 #' or Unspecified, instances in which institutions reported no program
-#' information or that students were not enrolled in a program. 
-#' 
-#' The MIDFIELD research database include CIPs for undergraduate pre-majors 
+#' information or that students were not enrolled in a program.
+#'
+#' The MIDFIELD research database include CIPs for undergraduate pre-majors
 #' such as pre-med (511102), pre-law (220001), and pre-vet (511104).
 #'
 #' @format `data.table` with 1582 rows and 6 columns keyed by the 6-digit CIP
 #'   code:
-#' 
+#'
 #' \describe{
 #'
 #'   \item{`cip6`}{Character 6-digit code representing "specific
@@ -73,7 +72,7 @@
 #' `fye_proxy` holds only for the practice data in midfielddata---these values
 #' cannot be commingled with the MIDFIELD research database.
 #'
-#' @format `data.table` with 4623 rows and 2 columns keyed by student ID: 
+#' @format `data.table` with 4623 rows and 2 columns keyed by student ID:
 #' \describe{
 #'   `r var_mcid`
 #'   `r var_proxy`
@@ -91,7 +90,7 @@
 #' package examples and articles. Sampled from an early version of the practice
 #' data, the toy data are not a current practice data sample.
 #'
-#' @format `data.table` with 99 rows and 4 columns keyed by student ID: 
+#' @format `data.table` with 99 rows and 4 columns keyed by student ID:
 #' \describe{
 #'  `r var_mcid`
 #'  `r var_institution`
@@ -100,7 +99,7 @@
 #' }
 #'
 #' @family toy-data
-#' 
+#'
 "toy_student"
 
 # -------------------------------------------------------------------
@@ -111,7 +110,7 @@
 #' package examples and articles. Sampled from an early version of the practice
 #' data, the toy data are not a current practice data sample.
 #'
-#' @format `data.table` with 4616 rows and 6 columns keyed by student ID: 
+#' @format `data.table` with 4616 rows and 6 columns keyed by student ID:
 #' \describe{
 #'  `r var_mcid`
 #'  `r var_institution`
@@ -144,7 +143,7 @@
 #' }
 #'
 #' @family toy-data
-#' 
+#'
 "toy_term"
 
 # -------------------------------------------------------------------
@@ -183,9 +182,9 @@
 #' The variables are:
 #' \describe{
 #'  `r var_cip6`
-#'  \item{`program`}{Character, abbreviated labels for four engineering 
-#'  programs. Values are "CE" (Civil Engineering), "EE" (Electrical 
-#'  Engineering), "ISE" (Industrial/Systems Engineering), and  "ME" (Mechanical 
+#'  \item{`program`}{Character, abbreviated labels for four engineering
+#'  programs. Values are "CE" (Civil Engineering), "EE" (Electrical
+#'  Engineering), "ISE" (Industrial/Systems Engineering), and  "ME" (Mechanical
 #'  Engineering).}
 #' }
 #'
@@ -239,7 +238,7 @@
 #' the time span of available data. Results are based on data that have been
 #' filtered for data sufficiency, degree seeking, and timely completion.
 #'
-#' @format `data.table` with 50 rows and 6 columns: 
+#' @format `data.table` with 50 rows and 6 columns:
 #' \describe{
 #'  `r var_program`
 #'  `r var_sex`
@@ -250,7 +249,7 @@
 #' }
 #'
 #' @family case-study-data
-#' 
+#'
 "study_results"
 
 # -------------------------------------------------------------------
@@ -267,7 +266,7 @@
 #' }
 #'
 #' @family case-study-data
-#' 
+#'
 "baseline_mcid"
 
 
@@ -275,40 +274,40 @@
 
 #' Grade scale
 #'
-#' Data frame of letter grades and conventional point assignments used for 
-#' computing grade point averages. 
+#' Data frame of letter grades and conventional point assignments used for
+#' computing grade point averages.
 #'
 #' @format `data.table` with 12 rows and 2 columns:
 #' \describe{
-#'   \item{`letter_grade`}{Character, letter grades using the conventional US 
+#'   \item{`letter_grade`}{Character, letter grades using the conventional US
 #'       scale from A to F.}
 #'   \item{`points`}{Numerical, 4.0 scale of points assigned to letter grades.}
 #' }
 #'
 #' @family scales
-#' 
+#'
 "grade_scale"
 
 # -------------------------------------------------------------------
 
-#' SAT-ACT conversion scale
+#' ACT-SAT conversion scale
 #'
-#' Data frame of SAT total scores and corresponding ACT composite scores. 
-#' Converting from SAT to ACT, a range of SAT scores convert to a single ACT 
-#' value. Converting from ACT to SAT, a single-value SAT equivalent is provided.
+#' Data frame for converting between ACT and SAT scores. A range of SAT scores
+#' converts to a single ACT score; an ACT score converts to a single
+#' value equivalent SAT score.
 #'
 #' @format `data.table` with 28 rows and 4 columns:
 #' \describe{
-#'   \item{`sat_upper`}{Numerical, total SAT, upper limit of range corresponding 
-#'       to the ACT composite score.}
-#'   \item{`sat_equiv`}{Numerical, total SAT, value to use when converting ACT 
-#'       score to a single SAT score.}      
-#'   \item{`sat_lower`}{Numerical, total SAT, lower limit of range corresponding 
-#'       to the ACT composite score.}
 #'   \item{`act_comp`}{Numerical, ACT composite score.}
+#'   \item{`sat_lower`}{Numerical, total SAT, lower limit of range
+#'   corresponding to the ACT composite score.}
+#'   \item{`sat_equiv`}{Numerical, total SAT, value to use when
+#'   converting ACT score to a single SAT score.}
+#'   \item{`sat_upper`}{Numerical, total SAT, upper limit of range
+#'   corresponding to the ACT composite score.}
 #' }
 #'
 #' @family scales
 #' @source ACT/SAT Concordance (2018) ACT Education Corp. \url{https://www.act.org/content/dam/act/unsecured/documents/ACT-SAT-Concordance-Tables.pdf}
-#' 
-"sat_act_scale"
+#'
+"act_sat_scale"

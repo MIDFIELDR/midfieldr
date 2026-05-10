@@ -12,9 +12,9 @@ This vignette in the MIDFIELD workflow.
 2.  Initial processing
 3.  Blocs  
 4.  Groupings
-    - Program labels $`\longleftarrow`$
-    - Demographics $`\longleftarrow`$
-    - Other variables $`\longleftarrow`$  
+    - Program labels
+    - Demographics
+    - Other variables
 5.  Metrics  
 6.  Displays
 
@@ -26,7 +26,7 @@ This vignette in the MIDFIELD workflow.
   starters, students ever-enrolled, graduates, transfer students,
   traditional and non-traditional students, migrators, etc.
 
-- **grouping variables**:
+- grouping variables:
 
   Detailed information in the student-level data that further
   characterize a bloc of records, typically used to create bloc subsets

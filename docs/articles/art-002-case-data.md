@@ -89,7 +89,7 @@ available data must be excluded to prevent false summaries involving
 timely degree completion. To apply this filter, we first determine the
 timely completion term.
 
-- **timely completion term**:
+- timely completion term:
 
   The last term in which a student’s degree completion would be
   considered timely. In many cases the timely completion (TC) term is 6
@@ -154,7 +154,7 @@ DT
 #> 639915:        6       20233  20181       19881       20181    exclude-upper
 ```
 
-- **data sufficiency criterion**:
+- data sufficiency criterion:
 
   Student records are limited to those for which available data are
   sufficient to assess timely completion without biased counts of
@@ -185,7 +185,7 @@ The result has 76,875 observations.
 
 ## Filter for degree seeking
 
-- **inner join**:
+- inner join:
 
   A merge operation between two data frames `X` and `Y` that returns
   observations (rows) that match specified conditions in both. The
@@ -370,7 +370,7 @@ DT
 
 The result has 76,875 observations.
 
-- **left join**:
+- left join:
 
   A merge operation between two data frames `X` and `Y` which returns
   all observations (rows) of `X` and all matching rows in `Y`. The
@@ -535,7 +535,7 @@ DT
 #> 76875:              <NA>
 ```
 
-- **timely completion criterion**:
+- timely completion criterion:
 
   Completing a program in no more than a specified span of years, in
   many cases, within 6 years after admission (150% of the “normal”
@@ -705,7 +705,7 @@ DT
 
 The result has 8917 observations.
 
-- **grouping variables**:
+- grouping variables:
 
   Detailed information in the student-level data that further
   characterize a bloc of records, typically used to create bloc subsets

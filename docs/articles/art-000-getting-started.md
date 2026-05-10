@@ -23,7 +23,7 @@ quarto-disable-processing="false" quarto-bootstrap="false"}
 
 ## Definitions
 
-**student-level data**
+student-level data
 
 :   Data at the “student-level” refers to information about individual
     students including, for example, demographics, programs, academic
@@ -35,12 +35,12 @@ quarto-disable-processing="false" quarto-bootstrap="false"}
     institutions and anonymized and curated by the MIDFIELD data
     steward.
 
-**observation**
+observation
 
 :   Row of a data frame (`student`, `course`, `term`, `degree`) keyed by
     student ID.
 
-**variable**
+variable
 
 :   Column of a data frame
 

@@ -1,6 +1,6 @@
 # Changelog
 
-## midfieldr 1.0.2.900x / development version
+## midfieldr 1.0.3 / 2026–05–09
 
 - Convert vignettes to non-vignette articles
 - Replace

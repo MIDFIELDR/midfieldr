@@ -59,7 +59,7 @@ DT
 The study observations data frame is designed with one column for each
 grouping variable: `race`, `sex`, `program`, and `bloc`.
 
-- **grouping variables**:
+- grouping variables:
 
   Detailed information in the student-level data that further
   characterize a bloc of records, typically used to create bloc subsets
@@ -115,7 +115,7 @@ DT
 
 ## Compute the metric
 
-- **metric**:
+- metric:
 
   A quantitative measure derived from student-level data. Includes
   statistical measures such as counts of program starters or graduates
@@ -123,7 +123,7 @@ DT
   Typically involves comparisons of specific blocs of students and
   programs.
 
-- **stickiness**:
+- stickiness:
 
   Program “stickiness” \$\small\left(S\right)\$ is the ratio of the
   number of graduates of a program \$\small\left(N_g\right)\$ to the
@@ -327,7 +327,7 @@ people, facilitating comparisons of different program for a single
 group. Rows and panels are both ordered from bottom to top in order of
 increasing stickiness.
 
-- **multiway chart**:
+- multiway chart:
 
   A multi-panel dot plot: horizontal, quantitative scales; rows that
   encode one category; and panels that encode the second category. All

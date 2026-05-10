@@ -12,9 +12,9 @@ usually comprises the following steps in roughly the sequence given
 below. Accented entries indicate topics in the open article.
 
 1.  Planning
-    - Records $`\longleftarrow`$
-    - Programs $`\longleftarrow`$
-    - Metrics, blocs, and groupings $`\longleftarrow`$
+    - Records
+    - Programs
+    - Metrics, blocs, and groupings
 2.  Initial processing
     - Data sufficiency
     - Degree seeking  
@@ -37,7 +37,7 @@ below. Accented entries indicate topics in the open article.
 
 ## Definitions
 
-**student-level data**
+student-level data
 
 :   Data at the “student-level” refers to information about individual
     students including, for example, demographics, programs, academic
@@ -49,7 +49,7 @@ below. Accented entries indicate topics in the open article.
     institutions and anonymized and curated by the MIDFIELD data
     steward.
 
-**program**
+program
 
 :   US academic field of study. Can be used to indicate a specialty
     within a field or a collection of fields within a Department,
@@ -58,7 +58,7 @@ below. Accented entries indicate topics in the open article.
     curated by the US Department of Education ([NCES
     2010](#ref-NCES:2010)).
 
-**metric**
+metric
 
 :   A quantitative measure derived from student-level data. Includes
     statistical measures such as counts of program starters or graduates
@@ -72,7 +72,7 @@ bloc
     starters, students ever-enrolled, graduates, transfer students,
     traditional and non-traditional students, migrators, etc.
 
-**grouping variables**
+grouping variables
 
 :   Detailed information in the student-level data that further
     characterize a bloc of records, typically used to create bloc

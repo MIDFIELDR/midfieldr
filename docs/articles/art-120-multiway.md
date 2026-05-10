@@ -18,8 +18,8 @@ This vignette in the MIDFIELD workflow.
 4.  Groupings
 5.  Metrics  
 6.  Displays
-    - Multiway charts $`\longleftarrow`$
-    - Tables $`\longleftarrow`$
+    - Multiway charts
+    - Tables
 
 ## Definitions
 
@@ -30,14 +30,14 @@ This vignette in the MIDFIELD workflow.
   response) of length *mn* such that there is a value of the response
   for each combination of levels of the two categorical variables.
 
-- **multiway chart**:
+- multiway chart:
 
   A multi-panel dot plot: horizontal, quantitative scales; rows that
   encode one category; and panels that encode the second category. All
   panels have identical axes. The ordering of the rows and panels is
   crucial to the perception of effects.
 
-- **multiway superposition**:
+- multiway superposition:
 
   Multiway data can be extended to include a third category of *p*
   levels; the quantitative response has length *mnp*, one for each
@@ -46,7 +46,7 @@ This vignette in the MIDFIELD workflow.
   third category on each row. Clarity usually requires that *p = 2* but
   not more.
 
-- **stickiness**:
+- stickiness:
 
   Program “stickiness” \$\small\left(S\right)\$ is the ratio of the
   number of graduates of a program \$\small\left(N_g\right)\$ to the

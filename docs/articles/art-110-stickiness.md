@@ -14,12 +14,12 @@ This vignette in the MIDFIELD workflow.
 4.  Groupings  
 5.  Metrics
     - Graduation rate  
-    - Stickiness $`\longleftarrow`$
+    - Stickiness
 6.  Displays
 
 ## Definitions
 
-- **stickiness**:
+- stickiness:
 
   Program “stickiness” \$\small\left(S\right)\$ is the ratio of the
   number of graduates of a program \$\small\left(N_g\right)\$ to the
@@ -34,23 +34,23 @@ This vignette in the MIDFIELD workflow.
   starters, students ever-enrolled, graduates, transfer students,
   traditional and non-traditional students, migrators, etc.
 
-- **ever-enrolled**:
+- ever-enrolled:
 
   Bloc of students whose term records include a specified program in at
   least one term.
 
-- **graduates**:
+- graduates:
 
   Bloc of all graduates (timely completers) from a program, without
   regard to their starting programs.
 
-- **timely completion criterion**:
+- timely completion criterion:
 
   Completing a program in no more than a specified span of years, in
   many cases, within 6 years after admission (150% of the “normal”
   4-year span), or possibly less for some transfer students.
 
-- **migrators**:
+- migrators:
 
   Bloc of students who leave one program to enroll in another. Also
   called *switchers.*
@@ -600,11 +600,13 @@ the ‘gt’ package.
 library(gt)
 display_table |>
   gt() |>
-  tab_caption("Table 1: Stickiness (%) of four Engineering majors")|> 
+  tab_caption("Table 1: Stickiness (%) of four Engineering majors") |>
   tab_options(table.font.size = "small") |>
   opt_stylize(style = 1, color = "gray") |>
-  tab_style(style = list(cell_fill(color = "#c7eae5")),
-            locations = cells_column_labels(columns = everything()))
+  tab_style(
+    style = list(cell_fill(color = "#c7eae5")),
+    locations = cells_column_labels(columns = everything())
+  )
 ```
 
 | People               | Civil | Electrical | Industrial/Systems | Mechanical |

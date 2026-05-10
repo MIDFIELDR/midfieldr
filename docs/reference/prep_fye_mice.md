@@ -150,19 +150,19 @@ with all variables except `mcid` returned as factors.
 ``` r
 # Using toy data
 prep_fye_mice(toy_student, toy_term)
-#>            mcid   race    sex   institution  proxy
-#>          <char> <fctr> <fctr>        <fctr> <fctr>
-#>  1: MID26060301  Asian Female Institution C   <NA>
-#>  2: MID25995980 Latine Female Institution C   <NA>
-#>  3: MID25997636 Latine Female Institution C   <NA>
-#>  4: MID26086310 Latine Female Institution C   <NA>
-#>  5: MID26000057  White Female Institution C   <NA>
-#>  6: MID26614720  Asian   Male Institution J   <NA>
-#>  7: MID26593796  White   Male Institution J   <NA>
-#>  8: MID25848589  White   Male Institution M 143501
-#>  9: MID25846316  White   Male Institution M 143501
-#> 10: MID25847220  White   Male Institution M 143501
-#> 11: MID25828870  White   Male Institution M 149999
+#>            mcid     race    sex   institution  proxy
+#>          <char>   <fctr> <fctr>        <fctr> <fctr>
+#>  1: MID26060301    Asian Female Institution C   <NA>
+#>  2: MID25995980 Hispanic Female Institution C   <NA>
+#>  3: MID25997636 Hispanic Female Institution C   <NA>
+#>  4: MID26086310 Hispanic Female Institution C   <NA>
+#>  5: MID26000057    White Female Institution C   <NA>
+#>  6: MID26614720    Asian   Male Institution J   <NA>
+#>  7: MID26593796    White   Male Institution J   <NA>
+#>  8: MID25848589    White   Male Institution M 143501
+#>  9: MID25846316    White   Male Institution M 143501
+#> 10: MID25847220    White   Male Institution M 143501
+#> 11: MID25828870    White   Male Institution M 149999
 
 # Other columns, if any, are dropped
 colnames(toy_student)
@@ -174,18 +174,18 @@ colnames(prep_fye_mice(toy_student, toy_term))
 prep_fye_mice(midfield_student = toy_student, 
               midfield_term =toy_term, 
               fye_codes = c("140101", "140102"))
-#>            mcid   race    sex   institution  proxy
-#>          <char> <fctr> <fctr>        <fctr> <fctr>
-#>  1: MID25977316  White   Male Institution B   <NA>
-#>  2: MID26060301  Asian Female Institution C   <NA>
-#>  3: MID25995980 Latine Female Institution C   <NA>
-#>  4: MID25997636 Latine Female Institution C   <NA>
-#>  5: MID26086310 Latine Female Institution C   <NA>
-#>  6: MID26000057  White Female Institution C   <NA>
-#>  7: MID26614720  Asian   Male Institution J   <NA>
-#>  8: MID26593796  White   Male Institution J   <NA>
-#>  9: MID25848589  White   Male Institution M 143501
-#> 10: MID25846316  White   Male Institution M 143501
-#> 11: MID25847220  White   Male Institution M 143501
-#> 12: MID25828870  White   Male Institution M 149999
+#>            mcid     race    sex   institution  proxy
+#>          <char>   <fctr> <fctr>        <fctr> <fctr>
+#>  1: MID25977316    White   Male Institution B   <NA>
+#>  2: MID26060301    Asian Female Institution C   <NA>
+#>  3: MID25995980 Hispanic Female Institution C   <NA>
+#>  4: MID25997636 Hispanic Female Institution C   <NA>
+#>  5: MID26086310 Hispanic Female Institution C   <NA>
+#>  6: MID26000057    White Female Institution C   <NA>
+#>  7: MID26614720    Asian   Male Institution J   <NA>
+#>  8: MID26593796    White   Male Institution J   <NA>
+#>  9: MID25848589    White   Male Institution M 143501
+#> 10: MID25846316    White   Male Institution M 143501
+#> 11: MID25847220    White   Male Institution M 143501
+#> 12: MID25828870    White   Male Institution M 149999
 ```

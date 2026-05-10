@@ -1,7 +1,6 @@
 # Documentation described below using an inline R code chunk, e.g.,
-# "`r dframe_add_completion_status`" or "`r return_data_frame`", are documented 
+# "`r dframe_add_completion_status`" or "`r return_data_frame`", are documented
 # in the R/roxygen.R file.
- 
 
 
 #' Determine completion status for every student
@@ -23,16 +22,16 @@
 #' their timely completion terms. See also `add_timely_term()`.
 #'
 #' @param dframe          `r dframe_add_completion_status`
-#' @param midfield_degree `r midfield_degree_add_completion_status` 
-#' 
-#' @return `r return_data_frame` 
+#' @param midfield_degree `r midfield_degree_add_completion_status`
+#'
+#' @return `r return_data_frame`
 #' \describe{
-#'  \item{`term_degree`}{Character. Term in which the first degree(s) are 
+#'  \item{`term_degree`}{Character. Term in which the first degree(s) are
 #'  completed. Encoded YYYYT. Joined from `midfield_degree` data table.}
-#'  \item{`completion_status`}{Character. Label each observation to 
-#'  indicate completion status. Possible values are: "timely", indicating 
-#'  completion no later than the timely completion term; "late", indicating 
-#'  completion after the timely completion term; and "NA" indicating 
+#'  \item{`completion_status`}{Character. Label each observation to
+#'  indicate completion status. Possible values are: "timely", indicating
+#'  completion no later than the timely completion term; "late", indicating
+#'  completion after the timely completion term; and "NA" indicating
 #'  non-completion.}
 #' }
 #'
@@ -75,11 +74,11 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
 
   # variables added by this function and functions called (if any)
   new_cols <- c("term_degree", "completion_status")
-  
-  # retain original variables NOT in the vector of new columns 
-  old_cols <- find_old_cols(dframe, new_cols) 
+
+  # retain original variables NOT in the vector of new columns
+  old_cols <- find_old_cols(dframe, new_cols)
   dframe <- dframe[, .SD, .SDcols = old_cols]
- 
+
   # Inner join using three columns of term
   x <- midfield_degree[, .(mcid, term_degree)]
   y <- unique(dframe[, .(mcid)])
@@ -96,18 +95,18 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
 
   # completion is timely, late, or NA
   dframe[, completion_status := fifelse(term_degree <= timely_term,
-    "timely", 
+    "timely",
     "late",
     na = NA_character_
   )]
 
   # select columns to return
-  final_cols <- c(old_cols, new_cols) 
+  final_cols <- c(old_cols, new_cols)
   dframe <- dframe[, .SD, .SDcols = final_cols]
-  
+
   # old columns as keys, order columns and rows
   set_colrow_order(dframe, old_cols)
-  
+
   # enable printing (see data.table FAQ 2.23)
-  dframe[] 
+  dframe[]
 }

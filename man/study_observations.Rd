@@ -10,7 +10,7 @@ The variables are:
 \describe{
 \item{\code{mcid}}{Character, de-identified student ID. Key column.}
 \item{\code{race}}{Character, race/ethnicity as self-reported
-by the student, e.g., Asian, Black, Latine, etc.}
+by the student, e.g., Asian, Black, Hispanic, etc.}
 \item{\code{sex}}{Character, sex as self-reported by the student,
 possible values are Female, Male, and Unknown.}
 \item{\code{program}}{Character, academic program label.}

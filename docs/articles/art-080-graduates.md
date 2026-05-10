@@ -14,7 +14,7 @@ This vignette in the MIDFIELD workflow.
     - Ever-enrolled  
     - FYE proxies  
     - Starters  
-    - Graduates $`\longleftarrow`$
+    - Graduates
 4.  Groupings  
 5.  Metrics  
 6.  Displays
@@ -27,31 +27,31 @@ This vignette in the MIDFIELD workflow.
   starters, students ever-enrolled, graduates, transfer students,
   traditional and non-traditional students, migrators, etc.
 
-- **degree-seeking**:
+- degree-seeking:
 
   Describes students advancing toward a bachelor’s degree, accumulating
   credit hours in their program with the goal of graduating from their
   institution.
 
-- **completers**:
+- completers:
 
   Bloc of degree-seeking students who complete their baccalaureate
   programs, earning their first degrees.
 
-- **timely completion criterion**:
+- timely completion criterion:
 
   Completing a program in no more than a specified span of years, in
   many cases, within 6 years after admission (150% of the “normal”
   4-year span), or possibly less for some transfer students.
 
-- **completion status**:
+- completion status:
 
   A derived midfieldr variable indicating whether a student completes a
   degree, and if so, whether their completion was timely. Possible
   values are “timely”, “late”, and “NA”. Late completers are often
   excluded from a count of “graduates.”
 
-- **graduates**:
+- graduates:
 
   Bloc of all graduates (timely completers) from a program, without
   regard to their starting programs.

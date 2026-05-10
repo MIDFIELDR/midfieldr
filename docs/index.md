@@ -256,23 +256,18 @@ not research data.
 
 ## Installation
 
-Install from CRAN with:
+Install from the MIDFIELDR drat repository with:
 
 ``` r
 
-install.packages("midfieldr")
+install.packages("midfieldr",
+  repos = "https://MIDFIELDR.github.io/drat/",
+  type = "source"
+)
 ```
 
-Install latest development version from GitHub with:
-
-``` r
-
-install.packages("pak")
-pak::pkg_install("MIDFIELDR/midfieldr")
-```
-
-midfieldr interacts with practice data provided in the midfielddata data
-package. Install midfielddata from its repository with:
+The installed size of midfielddata is about 24 Mb, so the installation
+takes some time. Install from the MIDFIELDR drat repository with:
 
 ``` r
 
@@ -281,9 +276,6 @@ install.packages("midfielddata",
   type = "source"
 )
 ```
-
-The installed size of midfielddata is about 24 Mb, so the installation
-takes some time.
 
 ## More information
 

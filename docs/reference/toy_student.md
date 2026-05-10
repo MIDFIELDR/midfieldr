@@ -26,7 +26,7 @@ data(toy_student)
 - `race`:
 
   Character, race/ethnicity as self-reported by the student, e.g.,
-  Asian, Black, Latine, etc.
+  Asian, Black, Hispanic, etc.
 
 - `sex`:
 

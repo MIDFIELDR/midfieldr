@@ -12,7 +12,7 @@ This vignette in the MIDFIELD workflow.
 3.  Blocs
     - Ever-enrolled  
     - FYE proxies  
-    - Starters $`\longleftarrow`$
+    - Starters
     - Graduates  
 4.  Groupings  
 5.  Metrics  
@@ -50,41 +50,41 @@ to enroll in FYE.
   starters, students ever-enrolled, graduates, transfer students,
   traditional and non-traditional students, migrators, etc.
 
-- **degree-seeking**:
+- degree-seeking:
 
   Describes students advancing toward a bachelor’s degree, accumulating
   credit hours in their program with the goal of graduating from their
   institution.
 
-- **starters**:
+- starters:
 
   Bloc of degree-seeking students in their initial terms enrolled in
   degree-granting programs.
 
-- **entry term**:
+- entry term:
 
   A student’s first term in the database.
 
-- **start term**:
+- start term:
 
   The first term in which a student can be considered a starter.
   Identical to the entry term unless the student enters as
   undecided/unspecified.
 
-- **undecided/unspecified**:
+- undecided/unspecified:
 
   The MIDFIELD taxonomy includes the non-IPEDS code (CIP 999999) for
   Undecided or Unspecified indicating instances in which a student has
   not declared a major or an institution had not recorded a program.
 
-- **FYE**:
+- FYE:
 
   First-Year Engineering program, a common-first-year curriculum that is
   a prerequisite for declaring an engineering major at some US
   institutions. Denoted by its own CIP code, FYE is not a
   degree-granting program.
 
-- **FYE proxy**:
+- FYE proxy:
 
   Our estimate of the degree-granting engineering program in which an
   FYE student would have enrolled had they not been required to enroll

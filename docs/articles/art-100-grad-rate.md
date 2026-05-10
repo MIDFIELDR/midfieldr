@@ -23,13 +23,13 @@ This vignette in the MIDFIELD workflow.
 3.  Blocs  
 4.  Groupings  
 5.  Metrics
-    - Graduation rate $`\longleftarrow`$
+    - Graduation rate
     - Stickiness  
 6.  Displays
 
 ## Definitions
 
-- **graduation rate**:
+- graduation rate:
 
   Graduation rate $`(G)`$ is the ratio of the number of program
   “starter-graduates” $`(N_{sg})`$ (i.e., graduates from the program in
@@ -44,28 +44,28 @@ This vignette in the MIDFIELD workflow.
   starters, students ever-enrolled, graduates, transfer students,
   traditional and non-traditional students, migrators, etc.
 
-- **starters**:
+- starters:
 
   Bloc of degree-seeking students in their initial terms enrolled in
   degree-granting programs.
 
-- **starter-graduates**:
+- starter-graduates:
 
   Subset of the starters bloc who are graduates (timely completers) from
   their starting programs.
 
-- **timely completion criterion**:
+- timely completion criterion:
 
   Completing a program in no more than a specified span of years, in
   many cases, within 6 years after admission (150% of the “normal”
   4-year span), or possibly less for some transfer students.
 
-- **migrators**:
+- migrators:
 
   Bloc of students who leave one program to enroll in another. Also
   called *switchers.*
 
-- **undecided/unspecified**:
+- undecided/unspecified:
 
   The MIDFIELD taxonomy includes the non-IPEDS code (CIP 999999) for
   Undecided or Unspecified indicating instances in which a student has
@@ -784,11 +784,13 @@ the ‘gt’ package.
 library(gt)
 display_table |>
   gt() |>
-  tab_caption("Table 2: Graduation rates (%) of four Engineering majors")|> 
+  tab_caption("Table 2: Graduation rates (%) of four Engineering majors") |>
   tab_options(table.font.size = "small") |>
   opt_stylize(style = 1, color = "gray") |>
-  tab_style(style = list(cell_fill(color = "#c7eae5")),
-            locations = cells_column_labels(columns = everything()))
+  tab_style(
+    style = list(cell_fill(color = "#c7eae5")),
+    locations = cells_column_labels(columns = everything())
+  )
 ```
 
 | People               | Civil | Electrical | Industrial/Systems | Mechanical |

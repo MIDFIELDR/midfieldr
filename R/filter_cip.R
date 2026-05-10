@@ -1,7 +1,6 @@
 # Documentation described below using an inline R code chunk, e.g.,
-# "`r param_dots`" or "`r return_filter_cip`", are 
+# "`r param_dots`" or "`r return_filter_cip`", are
 # documented in the R/roxygen.R file.
-
 
 
 #' Subset rows that include matches to search strings
@@ -18,8 +17,8 @@
 #' If none of the optional arguments are specified, the function returns the
 #' original data frame.
 #'
-#' @param keep_text Character vector of search text for retaining rows, 
-#'        not case-sensitive. Can be empty if `drop_text` is used. 
+#' @param keep_text Character vector of search text for retaining rows,
+#'        not case-sensitive. Can be empty if `drop_text` is used.
 #' @param ... `r param_dots`
 #' @param drop_text Optional character vector of search text for dropping
 #'        rows, default NULL.
@@ -35,99 +34,98 @@
 filter_cip <- function(keep_text = NULL,
                        ...,
                        drop_text = NULL,
-                       cip = NULL, 
+                       cip = NULL,
                        select = NULL) {
-    
-    # assert arguments after dots used by name
-    wrapr::stop_if_dot_args(
-        substitute(list(...)),
-        paste(
-            "Arguments after ... must be named.\n",
-            "* Did you forget to write `drop_text = ` or `select = `?\n *"
-        )
+  # assert arguments after dots used by name
+  wrapr::stop_if_dot_args(
+    substitute(list(...)),
+    paste(
+      "Arguments after ... must be named.\n",
+      "* Did you forget to write `drop_text = ` or `select = `?\n *"
     )
-    
-    # optional arguments
-    # cipx   <- cip %?% midfieldr::cip
-    if(is.null(cip)) cip <- midfieldr::cip
-    dframe <- copy(cip)
-    select <- select %?% names(dframe)
-    
-    # remove all keys
-    on.exit(setkey(dframe, NULL))
-    
-    # required argument
-    qassert(dframe, "d+")
-    
-    # return if no work is being done
-    if (identical(select, names(dframe)) &
-        is.null(keep_text) &
-        is.null(drop_text)) {
-        setkey(dframe, NULL)
-        return(dframe)
-    }
-    
-    # assertions for optional arguments
-    qassert(select, "s+") # missing is OK
-    if (!is.null(keep_text)) qassert(keep_text, "s+")
-    if (!is.null(drop_text)) qassert(drop_text, "s+")
-    
-    # input modified (or not) by reference
-    setDT(dframe)
-    
-    # required columns
-    # NA
-    # class of required columns
-    # NA
-    # bind names due to NSE notes in R CMD check
-    cip <- NULL
-    
-    # do the work
-    dframe <- filter_char_frame(
-        dframe = dframe,
-        keep_text = keep_text,
-        drop_text = drop_text
+  )
+
+  # optional arguments
+  # cipx   <- cip %?% midfieldr::cip
+  if (is.null(cip)) cip <- midfieldr::cip
+  dframe <- copy(cip)
+  select <- select %?% names(dframe)
+
+  # remove all keys
+  on.exit(setkey(dframe, NULL))
+
+  # required argument
+  qassert(dframe, "d+")
+
+  # return if no work is being done
+  if (identical(select, names(dframe)) &
+    is.null(keep_text) &
+    is.null(drop_text)) {
+    setkey(dframe, NULL)
+    return(dframe)
+  }
+
+  # assertions for optional arguments
+  qassert(select, "s+") # missing is OK
+  if (!is.null(keep_text)) qassert(keep_text, "s+")
+  if (!is.null(drop_text)) qassert(drop_text, "s+")
+
+  # input modified (or not) by reference
+  setDT(dframe)
+
+  # required columns
+  # NA
+  # class of required columns
+  # NA
+  # bind names due to NSE notes in R CMD check
+  cip <- NULL
+
+  # do the work
+  dframe <- filter_char_frame(
+    dframe = dframe,
+    keep_text = keep_text,
+    drop_text = drop_text
+  )
+
+  # stop if all rows have been eliminated
+  if (abs(nrow(dframe) - 0) < .Machine$double.eps^0.5) {
+    stop(
+      paste(
+        "The search result is empty. Possible causes are:\n",
+        "* 'cip' contained no matches to terms in 'keep_text'.\n",
+        "* 'drop_text' eliminated all remaining rows."
+      ),
+      call. = FALSE
     )
-    
-    # stop if all rows have been eliminated
-    if (abs(nrow(dframe) - 0) < .Machine$double.eps^0.5) {
-        stop(
-            paste(
-                "The search result is empty. Possible causes are:\n",
-                "* 'cip' contained no matches to terms in 'keep_text'.\n",
-                "* 'drop_text' eliminated all remaining rows."
-            ),
-            call. = FALSE
-        )
-    }
-    
-    # message if a search term was not found
-    # data frame with as many columns as there are keep_text terms
-    # as many rows as there are being searched in data
-    df <- data.frame(matrix("", nrow = nrow(dframe), ncol = length(keep_text)))
-    names(df) <- keep_text
-    
-    for (j in seq_along(keep_text)) {
-        df[, j] <- apply(dframe, 1, function(i) {
-            any(grepl(keep_text[j], i, ignore.case = TRUE))
-        })
-    }
-    
-    # the sum is 0 for all FALSE in a column for that search term
-    sumTF <- colSums(df)
-    not_found <- sumTF[!sapply(sumTF, as.logical)]
-    if (length(not_found) > 0) {
-        message(paste(
-            "Can't find these terms:",
-            paste(names(not_found), collapse = ", ")
-        ))
-    }
-    
-    # subset columns
-    dframe <- dframe[, .SD, .SDcols = select]
-    
-    # enable printing (see data.table FAQ 2.23)
-    dframe[]
+  }
+
+  # message if a search term was not found
+  # data frame with as many columns as there are keep_text terms
+  # as many rows as there are being searched in data
+  df <- data.frame(matrix("", nrow = nrow(dframe), ncol = length(keep_text)))
+  names(df) <- keep_text
+
+  for (j in seq_along(keep_text)) {
+    df[, j] <- apply(dframe, 1, function(i) {
+      any(grepl(keep_text[j], i, ignore.case = TRUE))
+    })
+  }
+
+  # the sum is 0 for all FALSE in a column for that search term
+  sumTF <- colSums(df)
+  not_found <- sumTF[!sapply(sumTF, as.logical)]
+  if (length(not_found) > 0) {
+    message(paste(
+      "Can't find these terms:",
+      paste(names(not_found), collapse = ", ")
+    ))
+  }
+
+  # subset columns
+  dframe <- dframe[, .SD, .SDcols = select]
+
+  # enable printing (see data.table FAQ 2.23)
+  dframe[]
 }
 
 # ------------------------------------------------------------------------

@@ -12,7 +12,7 @@ longitudinal student-level records.
 
 ## Definitions
 
-**student-level data**
+student-level data
 
 :   Data at the “student-level” refers to information about individual
     students including, for example, demographics, programs, academic
@@ -24,7 +24,7 @@ longitudinal student-level records.
     institutions and anonymized and curated by the MIDFIELD data
     steward.
 
-**stickiness**
+stickiness
 
 :   Program “stickiness” \$\small\left(S\right)\$ is the ratio of the
     number of graduates of a program \$\small\left(N_g\right)\$ to the

@@ -24,9 +24,9 @@ test_prep_fye_mice <- function() {
     DT <- wrapr::build_frame(
         "mcid"         , "race"  , "sex"   , "institution"  , "proxy"       |
             "MID26060301", "Asian" , "Female", "Institution C", NA_character_ |
-            "MID25995980", "Latine", "Female", "Institution C", NA_character_ |
-            "MID25997636", "Latine", "Female", "Institution C", NA_character_ |
-            "MID26086310", "Latine", "Female", "Institution C", NA_character_ |
+            "MID25995980", "Hispanic", "Female", "Institution C", NA_character_ |
+            "MID25997636", "Hispanic", "Female", "Institution C", NA_character_ |
+            "MID26086310", "Hispanic", "Female", "Institution C", NA_character_ |
             "MID26000057", "White" , "Female", "Institution C", NA_character_ |
             "MID26614720", "Asian" , "Male"  , "Institution J", NA_character_ |
             "MID26593796", "White" , "Male"  , "Institution J", NA_character_ |
@@ -91,12 +91,12 @@ test_prep_fye_mice <- function() {
         "mcid"         , "race"  , "sex"   , "institution"  , "proxy"       |
             "MID25977316", "White" , "Male"  , "Institution B", NA_character_ |
             "MID26060301", "Asian" , "Female", "Institution C", NA_character_ |
-            "MID25995980", "Latine", "Female", "Institution C", NA_character_ |
-            "MID25997636", "Latine", "Female", "Institution C", NA_character_ |
-            "MID26086310", "Latine", "Female", "Institution C", NA_character_ |
+            "MID25995980", "Hispanic", "Female", "Institution C", NA_character_ |
+            "MID25997636", "Hispanic", "Female", "Institution C", NA_character_ |
+            "MID26086310", "Hispanic", "Female", "Institution C", NA_character_ |
             "MID26000057", "White" , "Female", "Institution C", NA_character_ |
             "MID26231601", "White" , "Female", "Institution E", NA_character_ |
-            "MID26171165", "Latine", "Male"  , "Institution E", NA_character_ |
+            "MID26171165", "Hispanic", "Male"  , "Institution E", NA_character_ |
             "MID26614720", "Asian" , "Male"  , "Institution J", NA_character_ |
             "MID26593796", "White" , "Male"  , "Institution J", NA_character_ |
             "MID25828870", "White" , "Male"  , "Institution M", "140801"      |

@@ -7,15 +7,6 @@ studying undergraduate student-level records from the MIDFIELD database.
 
 <img src="man/figures/logo.png" style="width:15.0%" />
 
-<!-- badges: start -->
-
-[![CRAN
-status](https://www.r-pkg.org/badges/version/midfieldr.png)](https://CRAN.R-project.org/package=midfieldr)  
-[![R-CMD-check](https://github.com/MIDFIELDR/midfieldr/workflows/R-CMD-check/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions)  
-[![status](https://tinyverse.netlify.app/badge/midfieldr.png)](https://CRAN.R-project.org/package=midfieldr)  
-[![downloads](http://cranlogs.r-pkg.org/badges/grand-total/midfieldr?color=blue.png)](https://cran.r-project.org/package=midfieldr)  
-<!-- badges: end -->
-
 ## Introduction
 
 Provides tools and demonstrates methods for working with individual
@@ -225,20 +216,20 @@ setnames(DT_display,
 )
 ```
 
-<div id="dcjwyquuvu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#dcjwyquuvu table {
+<div id="bhnaiqvuvb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#bhnaiqvuvb table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-&#10;#dcjwyquuvu thead, #dcjwyquuvu tbody, #dcjwyquuvu tfoot, #dcjwyquuvu tr, #dcjwyquuvu td, #dcjwyquuvu th {
+&#10;#bhnaiqvuvb thead, #bhnaiqvuvb tbody, #bhnaiqvuvb tfoot, #bhnaiqvuvb tr, #bhnaiqvuvb td, #bhnaiqvuvb th {
   border-style: none;
 }
-&#10;#dcjwyquuvu p {
+&#10;#bhnaiqvuvb p {
   margin: 0;
   padding: 0;
 }
-&#10;#dcjwyquuvu .gt_table {
+&#10;#bhnaiqvuvb .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -263,11 +254,11 @@ setnames(DT_display,
   border-left-width: 2px;
   border-left-color: #D3D3D3;
 }
-&#10;#dcjwyquuvu .gt_caption {
+&#10;#bhnaiqvuvb .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
-&#10;#dcjwyquuvu .gt_title {
+&#10;#bhnaiqvuvb .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -278,7 +269,7 @@ setnames(DT_display,
   border-bottom-color: #FFFFFF;
   border-bottom-width: 0;
 }
-&#10;#dcjwyquuvu .gt_subtitle {
+&#10;#bhnaiqvuvb .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -289,7 +280,7 @@ setnames(DT_display,
   border-top-color: #FFFFFF;
   border-top-width: 0;
 }
-&#10;#dcjwyquuvu .gt_heading {
+&#10;#bhnaiqvuvb .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -300,12 +291,12 @@ setnames(DT_display,
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#dcjwyquuvu .gt_bottom_border {
+&#10;#bhnaiqvuvb .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#dcjwyquuvu .gt_col_headings {
+&#10;#bhnaiqvuvb .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -319,7 +310,7 @@ setnames(DT_display,
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#dcjwyquuvu .gt_col_heading {
+&#10;#bhnaiqvuvb .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -338,7 +329,7 @@ setnames(DT_display,
   padding-right: 5px;
   overflow-x: hidden;
 }
-&#10;#dcjwyquuvu .gt_column_spanner_outer {
+&#10;#bhnaiqvuvb .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -349,13 +340,13 @@ setnames(DT_display,
   padding-left: 4px;
   padding-right: 4px;
 }
-&#10;#dcjwyquuvu .gt_column_spanner_outer:first-child {
+&#10;#bhnaiqvuvb .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
-&#10;#dcjwyquuvu .gt_column_spanner_outer:last-child {
+&#10;#bhnaiqvuvb .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
-&#10;#dcjwyquuvu .gt_column_spanner {
+&#10;#bhnaiqvuvb .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
@@ -366,10 +357,10 @@ setnames(DT_display,
   display: inline-block;
   width: 100%;
 }
-&#10;#dcjwyquuvu .gt_spanner_row {
+&#10;#bhnaiqvuvb .gt_spanner_row {
   border-bottom-style: hidden;
 }
-&#10;#dcjwyquuvu .gt_group_heading {
+&#10;#bhnaiqvuvb .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -394,7 +385,7 @@ setnames(DT_display,
   vertical-align: middle;
   text-align: left;
 }
-&#10;#dcjwyquuvu .gt_empty_group_heading {
+&#10;#bhnaiqvuvb .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -408,13 +399,13 @@ setnames(DT_display,
   border-bottom-color: #5F5F5F;
   vertical-align: middle;
 }
-&#10;#dcjwyquuvu .gt_from_md > :first-child {
+&#10;#bhnaiqvuvb .gt_from_md > :first-child {
   margin-top: 0;
 }
-&#10;#dcjwyquuvu .gt_from_md > :last-child {
+&#10;#bhnaiqvuvb .gt_from_md > :last-child {
   margin-bottom: 0;
 }
-&#10;#dcjwyquuvu .gt_row {
+&#10;#bhnaiqvuvb .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -432,7 +423,7 @@ setnames(DT_display,
   vertical-align: middle;
   overflow-x: hidden;
 }
-&#10;#dcjwyquuvu .gt_stub {
+&#10;#bhnaiqvuvb .gt_stub {
   color: #FFFFFF;
   background-color: #5F5F5F;
   font-size: 100%;
@@ -444,7 +435,7 @@ setnames(DT_display,
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#dcjwyquuvu .gt_stub_row_group {
+&#10;#bhnaiqvuvb .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -457,13 +448,13 @@ setnames(DT_display,
   padding-right: 5px;
   vertical-align: top;
 }
-&#10;#dcjwyquuvu .gt_row_group_first td {
+&#10;#bhnaiqvuvb .gt_row_group_first td {
   border-top-width: 2px;
 }
-&#10;#dcjwyquuvu .gt_row_group_first th {
+&#10;#bhnaiqvuvb .gt_row_group_first th {
   border-top-width: 2px;
 }
-&#10;#dcjwyquuvu .gt_summary_row {
+&#10;#bhnaiqvuvb .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -472,14 +463,14 @@ setnames(DT_display,
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#dcjwyquuvu .gt_first_summary_row {
+&#10;#bhnaiqvuvb .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #5F5F5F;
 }
-&#10;#dcjwyquuvu .gt_first_summary_row.thick {
+&#10;#bhnaiqvuvb .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
-&#10;#dcjwyquuvu .gt_last_summary_row {
+&#10;#bhnaiqvuvb .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -488,7 +479,7 @@ setnames(DT_display,
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#dcjwyquuvu .gt_grand_summary_row {
+&#10;#bhnaiqvuvb .gt_grand_summary_row {
   color: #333333;
   background-color: #D5D5D5;
   text-transform: inherit;
@@ -497,7 +488,7 @@ setnames(DT_display,
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#dcjwyquuvu .gt_first_grand_summary_row {
+&#10;#bhnaiqvuvb .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -506,7 +497,7 @@ setnames(DT_display,
   border-top-width: 6px;
   border-top-color: #5F5F5F;
 }
-&#10;#dcjwyquuvu .gt_last_grand_summary_row_top {
+&#10;#bhnaiqvuvb .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -515,10 +506,10 @@ setnames(DT_display,
   border-bottom-width: 6px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#dcjwyquuvu .gt_striped {
+&#10;#bhnaiqvuvb .gt_striped {
   background-color: #F4F4F4;
 }
-&#10;#dcjwyquuvu .gt_table_body {
+&#10;#bhnaiqvuvb .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -526,7 +517,7 @@ setnames(DT_display,
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#dcjwyquuvu .gt_footnotes {
+&#10;#bhnaiqvuvb .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -539,7 +530,7 @@ setnames(DT_display,
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#dcjwyquuvu .gt_footnote {
+&#10;#bhnaiqvuvb .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -547,7 +538,7 @@ setnames(DT_display,
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#dcjwyquuvu .gt_sourcenotes {
+&#10;#bhnaiqvuvb .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -560,64 +551,64 @@ setnames(DT_display,
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#dcjwyquuvu .gt_sourcenote {
+&#10;#bhnaiqvuvb .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#dcjwyquuvu .gt_left {
+&#10;#bhnaiqvuvb .gt_left {
   text-align: left;
 }
-&#10;#dcjwyquuvu .gt_center {
+&#10;#bhnaiqvuvb .gt_center {
   text-align: center;
 }
-&#10;#dcjwyquuvu .gt_right {
+&#10;#bhnaiqvuvb .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-&#10;#dcjwyquuvu .gt_font_normal {
+&#10;#bhnaiqvuvb .gt_font_normal {
   font-weight: normal;
 }
-&#10;#dcjwyquuvu .gt_font_bold {
+&#10;#bhnaiqvuvb .gt_font_bold {
   font-weight: bold;
 }
-&#10;#dcjwyquuvu .gt_font_italic {
+&#10;#bhnaiqvuvb .gt_font_italic {
   font-style: italic;
 }
-&#10;#dcjwyquuvu .gt_super {
+&#10;#bhnaiqvuvb .gt_super {
   font-size: 65%;
 }
-&#10;#dcjwyquuvu .gt_footnote_marks {
+&#10;#bhnaiqvuvb .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
-&#10;#dcjwyquuvu .gt_asterisk {
+&#10;#bhnaiqvuvb .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
-&#10;#dcjwyquuvu .gt_indent_1 {
+&#10;#bhnaiqvuvb .gt_indent_1 {
   text-indent: 5px;
 }
-&#10;#dcjwyquuvu .gt_indent_2 {
+&#10;#bhnaiqvuvb .gt_indent_2 {
   text-indent: 10px;
 }
-&#10;#dcjwyquuvu .gt_indent_3 {
+&#10;#bhnaiqvuvb .gt_indent_3 {
   text-indent: 15px;
 }
-&#10;#dcjwyquuvu .gt_indent_4 {
+&#10;#bhnaiqvuvb .gt_indent_4 {
   text-indent: 20px;
 }
-&#10;#dcjwyquuvu .gt_indent_5 {
+&#10;#bhnaiqvuvb .gt_indent_5 {
   text-indent: 25px;
 }
-&#10;#dcjwyquuvu .katex-display {
+&#10;#bhnaiqvuvb .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
-&#10;#dcjwyquuvu div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+&#10;#bhnaiqvuvb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -696,21 +687,17 @@ not research data.
 
 ## Installation
 
-Install from CRAN with:
+Install from the MIDFIELDR drat repository with:
 
 ``` r
-install.packages("midfieldr")
+install.packages("midfieldr",
+  repos = "https://MIDFIELDR.github.io/drat/",
+  type = "source"
+)
 ```
 
-Install latest development version from GitHub with:
-
-``` r
-install.packages("pak")
-pak::pkg_install("MIDFIELDR/midfieldr")
-```
-
-midfieldr interacts with practice data provided in the midfielddata data
-package. Install midfielddata from its repository with:
+The installed size of midfielddata is about 24 Mb, so the installation
+takes some time. Install from the MIDFIELDR drat repository with:
 
 ``` r
 install.packages("midfielddata",
@@ -718,9 +705,6 @@ install.packages("midfielddata",
   type = "source"
 )
 ```
-
-The installed size of midfielddata is about 24 Mb, so the installation
-takes some time.
 
 ## More information
 
