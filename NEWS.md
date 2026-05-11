@@ -1,3 +1,5 @@
+# midfieldr (development version)
+
 ## midfieldr 1.0.3 / 2026--05--10
 
 - Convert vignettes to non-vignette articles available on the website. This allowed us to omit dependency on the non-mainstream midfielddata repository. 
