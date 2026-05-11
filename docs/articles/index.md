@@ -2,8 +2,8 @@
 
 ### All vignettes
 
-- [Case study:
-  Goals](https://midfieldr.github.io/midfieldr/articles/art-000-getting-started.md):
+- [Getting
+  started](https://midfieldr.github.io/midfieldr/articles/art-000-getting-started.md):
 - [Case study:
   Goals](https://midfieldr.github.io/midfieldr/articles/art-001-case-goals.md):
 - [Case study:

@@ -1,4 +1,4 @@
-# Case study: Goals
+# Getting started
 
 Familiarity with the MIDFIELD data structure is a prerequisite for
 working with midfieldr functions so we start by inspecting the practice

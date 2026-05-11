@@ -2,8 +2,6 @@
 
 ## midfieldr 1.0.3 / 2026–05–10
 
-CRAN release: 2026-05-10
-
 - Convert vignettes to non-vignette articles available on the website.
   This allowed us to omit dependency on the non-mainstream midfielddata
   repository.
@@ -16,15 +14,11 @@ CRAN release: 2026-05-10
 
 ## midfieldr 1.0.2 / 2024–05–16
 
-CRAN release: 2024-05-16
-
 - Edit argument descriptions and correct typos.
 - Update the midfieldr-package.R file
 - No change in functionality.
 
 ## midfieldr 1.0.1 / 2023–07–08
-
-CRAN release: 2023-07-08
 
 Initial CRAN submission
 
