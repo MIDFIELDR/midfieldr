@@ -43,15 +43,17 @@ Additional functions for processing intermediate results:
 R packages in examples and vignettes
 
 - *Data preparation.*   We use the data.table system and some base R for
-  data manipulation \[@Dowle+Srinivasan:2022:data.table\]. To assist
-  users who might prefer other systems, the MIDFIELD Institute website
-  \[@midfieldinstitute:2024\] includes tutorials providing side-by-side
-  base R, data.table, and dplyr solutions to common data shaping tasks
-  using MIDFIELD practice data.  
-- *Charts.*   Our preferred package for charts is ggplot2
-  \[@Wickham:2016:ggplot2\]. The lattice package \[@Sarkar:2008\] also
-  offers users comprehensive control over graphical elements (though our
-  lattice experience is no longer current).
+  data manipulation ([Dowle and Srinivasan
+  2022](#ref-Dowle+Srinivasan:2022:data.table)). To assist users who
+  might prefer other systems, the MIDFIELD Institute website ([Lord et
+  al. 2024](#ref-midfieldinstitute:2024)) includes tutorials providing
+  side-by-side base R, data.table, and dplyr solutions to common data
+  shaping tasks using MIDFIELD practice data.  
+- *Charts.*   Our preferred package for charts is ggplot2 ([Wickham
+  2016](#ref-Wickham:2016:ggplot2)). The lattice package ([Sarkar
+  2008](#ref-Sarkar:2008)) also offers users comprehensive control over
+  graphical elements (though our lattice experience is no longer
+  current).
 
 ## Usage
 
@@ -147,20 +149,20 @@ completing their programs in no more than 6 years; “Late completion” is
 the count of those graduating in more than 6 years; “Did not complete”
 is the count of non-graduates.
 
-<div id="jylbrkypyg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#jylbrkypyg table {
+<div id="ptixzfwsed" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ptixzfwsed table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-&#10;#jylbrkypyg thead, #jylbrkypyg tbody, #jylbrkypyg tfoot, #jylbrkypyg tr, #jylbrkypyg td, #jylbrkypyg th {
+&#10;#ptixzfwsed thead, #ptixzfwsed tbody, #ptixzfwsed tfoot, #ptixzfwsed tr, #ptixzfwsed td, #ptixzfwsed th {
   border-style: none;
 }
-&#10;#jylbrkypyg p {
+&#10;#ptixzfwsed p {
   margin: 0;
   padding: 0;
 }
-&#10;#jylbrkypyg .gt_table {
+&#10;#ptixzfwsed .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -185,11 +187,11 @@ is the count of non-graduates.
   border-left-width: 2px;
   border-left-color: #D3D3D3;
 }
-&#10;#jylbrkypyg .gt_caption {
+&#10;#ptixzfwsed .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
-&#10;#jylbrkypyg .gt_title {
+&#10;#ptixzfwsed .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -200,7 +202,7 @@ is the count of non-graduates.
   border-bottom-color: #FFFFFF;
   border-bottom-width: 0;
 }
-&#10;#jylbrkypyg .gt_subtitle {
+&#10;#ptixzfwsed .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -211,7 +213,7 @@ is the count of non-graduates.
   border-top-color: #FFFFFF;
   border-top-width: 0;
 }
-&#10;#jylbrkypyg .gt_heading {
+&#10;#ptixzfwsed .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -222,12 +224,12 @@ is the count of non-graduates.
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#jylbrkypyg .gt_bottom_border {
+&#10;#ptixzfwsed .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#jylbrkypyg .gt_col_headings {
+&#10;#ptixzfwsed .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -241,7 +243,7 @@ is the count of non-graduates.
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#jylbrkypyg .gt_col_heading {
+&#10;#ptixzfwsed .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -260,7 +262,7 @@ is the count of non-graduates.
   padding-right: 5px;
   overflow-x: hidden;
 }
-&#10;#jylbrkypyg .gt_column_spanner_outer {
+&#10;#ptixzfwsed .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -271,13 +273,13 @@ is the count of non-graduates.
   padding-left: 4px;
   padding-right: 4px;
 }
-&#10;#jylbrkypyg .gt_column_spanner_outer:first-child {
+&#10;#ptixzfwsed .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
-&#10;#jylbrkypyg .gt_column_spanner_outer:last-child {
+&#10;#ptixzfwsed .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
-&#10;#jylbrkypyg .gt_column_spanner {
+&#10;#ptixzfwsed .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
@@ -288,10 +290,10 @@ is the count of non-graduates.
   display: inline-block;
   width: 100%;
 }
-&#10;#jylbrkypyg .gt_spanner_row {
+&#10;#ptixzfwsed .gt_spanner_row {
   border-bottom-style: hidden;
 }
-&#10;#jylbrkypyg .gt_group_heading {
+&#10;#ptixzfwsed .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -316,7 +318,7 @@ is the count of non-graduates.
   vertical-align: middle;
   text-align: left;
 }
-&#10;#jylbrkypyg .gt_empty_group_heading {
+&#10;#ptixzfwsed .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -330,13 +332,13 @@ is the count of non-graduates.
   border-bottom-color: #5F5F5F;
   vertical-align: middle;
 }
-&#10;#jylbrkypyg .gt_from_md > :first-child {
+&#10;#ptixzfwsed .gt_from_md > :first-child {
   margin-top: 0;
 }
-&#10;#jylbrkypyg .gt_from_md > :last-child {
+&#10;#ptixzfwsed .gt_from_md > :last-child {
   margin-bottom: 0;
 }
-&#10;#jylbrkypyg .gt_row {
+&#10;#ptixzfwsed .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -354,7 +356,7 @@ is the count of non-graduates.
   vertical-align: middle;
   overflow-x: hidden;
 }
-&#10;#jylbrkypyg .gt_stub {
+&#10;#ptixzfwsed .gt_stub {
   color: #FFFFFF;
   background-color: #5F5F5F;
   font-size: 100%;
@@ -366,7 +368,7 @@ is the count of non-graduates.
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#jylbrkypyg .gt_stub_row_group {
+&#10;#ptixzfwsed .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -379,13 +381,13 @@ is the count of non-graduates.
   padding-right: 5px;
   vertical-align: top;
 }
-&#10;#jylbrkypyg .gt_row_group_first td {
+&#10;#ptixzfwsed .gt_row_group_first td {
   border-top-width: 2px;
 }
-&#10;#jylbrkypyg .gt_row_group_first th {
+&#10;#ptixzfwsed .gt_row_group_first th {
   border-top-width: 2px;
 }
-&#10;#jylbrkypyg .gt_summary_row {
+&#10;#ptixzfwsed .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -394,14 +396,14 @@ is the count of non-graduates.
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#jylbrkypyg .gt_first_summary_row {
+&#10;#ptixzfwsed .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #5F5F5F;
 }
-&#10;#jylbrkypyg .gt_first_summary_row.thick {
+&#10;#ptixzfwsed .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
-&#10;#jylbrkypyg .gt_last_summary_row {
+&#10;#ptixzfwsed .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -410,7 +412,7 @@ is the count of non-graduates.
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#jylbrkypyg .gt_grand_summary_row {
+&#10;#ptixzfwsed .gt_grand_summary_row {
   color: #333333;
   background-color: #D5D5D5;
   text-transform: inherit;
@@ -419,7 +421,7 @@ is the count of non-graduates.
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#jylbrkypyg .gt_first_grand_summary_row {
+&#10;#ptixzfwsed .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -428,7 +430,7 @@ is the count of non-graduates.
   border-top-width: 6px;
   border-top-color: #5F5F5F;
 }
-&#10;#jylbrkypyg .gt_last_grand_summary_row_top {
+&#10;#ptixzfwsed .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -437,10 +439,10 @@ is the count of non-graduates.
   border-bottom-width: 6px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#jylbrkypyg .gt_striped {
+&#10;#ptixzfwsed .gt_striped {
   background-color: #F4F4F4;
 }
-&#10;#jylbrkypyg .gt_table_body {
+&#10;#ptixzfwsed .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -448,7 +450,7 @@ is the count of non-graduates.
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#jylbrkypyg .gt_footnotes {
+&#10;#ptixzfwsed .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -461,7 +463,7 @@ is the count of non-graduates.
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#jylbrkypyg .gt_footnote {
+&#10;#ptixzfwsed .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -469,7 +471,7 @@ is the count of non-graduates.
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#jylbrkypyg .gt_sourcenotes {
+&#10;#ptixzfwsed .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -482,64 +484,64 @@ is the count of non-graduates.
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#jylbrkypyg .gt_sourcenote {
+&#10;#ptixzfwsed .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#jylbrkypyg .gt_left {
+&#10;#ptixzfwsed .gt_left {
   text-align: left;
 }
-&#10;#jylbrkypyg .gt_center {
+&#10;#ptixzfwsed .gt_center {
   text-align: center;
 }
-&#10;#jylbrkypyg .gt_right {
+&#10;#ptixzfwsed .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-&#10;#jylbrkypyg .gt_font_normal {
+&#10;#ptixzfwsed .gt_font_normal {
   font-weight: normal;
 }
-&#10;#jylbrkypyg .gt_font_bold {
+&#10;#ptixzfwsed .gt_font_bold {
   font-weight: bold;
 }
-&#10;#jylbrkypyg .gt_font_italic {
+&#10;#ptixzfwsed .gt_font_italic {
   font-style: italic;
 }
-&#10;#jylbrkypyg .gt_super {
+&#10;#ptixzfwsed .gt_super {
   font-size: 65%;
 }
-&#10;#jylbrkypyg .gt_footnote_marks {
+&#10;#ptixzfwsed .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
-&#10;#jylbrkypyg .gt_asterisk {
+&#10;#ptixzfwsed .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
-&#10;#jylbrkypyg .gt_indent_1 {
+&#10;#ptixzfwsed .gt_indent_1 {
   text-indent: 5px;
 }
-&#10;#jylbrkypyg .gt_indent_2 {
+&#10;#ptixzfwsed .gt_indent_2 {
   text-indent: 10px;
 }
-&#10;#jylbrkypyg .gt_indent_3 {
+&#10;#ptixzfwsed .gt_indent_3 {
   text-indent: 15px;
 }
-&#10;#jylbrkypyg .gt_indent_4 {
+&#10;#ptixzfwsed .gt_indent_4 {
   text-indent: 20px;
 }
-&#10;#jylbrkypyg .gt_indent_5 {
+&#10;#ptixzfwsed .gt_indent_5 {
   text-indent: 25px;
 }
-&#10;#jylbrkypyg .katex-display {
+&#10;#ptixzfwsed .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
-&#10;#jylbrkypyg div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+&#10;#ptixzfwsed div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -661,7 +663,7 @@ and 2152441.
 
 ## References
 
-<div id="refs">
+<div id="refs" class="references csl-bib-body hanging-indent">
 
 <!-- blockquote { -->
 
@@ -686,5 +688,38 @@ and 2152441.
 <!--     line-height: 1.5; -->
 
 <!-- } -->
+
+<div id="ref-Dowle+Srinivasan:2022:data.table" class="csl-entry">
+
+Dowle, Matt, and Arun Srinivasan. 2022.
+*<span class="nocase">d</span>ata.table: Extension of ‘Data.frame‘*.
+R package version 1.14.6.
+<https://CRAN.R-project.org/package=data.table>.
+
+</div>
+
+<div id="ref-midfieldinstitute:2024" class="csl-entry">
+
+Lord, Susan, Richard Layton, Russell Long, Matthew Ohland, and Marisa
+Orr. 2024. *MIDFIELD Institute*.
+<https://midfieldr.github.io/2024-midfield-institute/>.
+
+</div>
+
+<div id="ref-Sarkar:2008" class="csl-entry">
+
+Sarkar, Deepayan. 2008. *<span class="nocase">lattice: Multivariate Data
+Visualization with R</span>*. Springer.
+<http://lmdvr.r-forge.r-project.org>.
+
+</div>
+
+<div id="ref-Wickham:2016:ggplot2" class="csl-entry">
+
+Wickham, Hadley. 2016. *<span class="nocase">ggplot2: Elegant Graphics
+for Data Analysis</span>*. ISBN 978-3-319-24277-4; Springer-Verlag New
+York. <https://ggplot2.tidyverse.org>.
+
+</div>
 
 </div>

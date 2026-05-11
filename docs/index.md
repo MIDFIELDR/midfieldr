@@ -38,15 +38,17 @@ Additional functions for processing intermediate results:
 R packages in examples and vignettes
 
 - *Data preparation.*   We use the data.table system and some base R for
-  data manipulation \[@Dowle+Srinivasan:2022:data.table\]. To assist
-  users who might prefer other systems, the MIDFIELD Institute website
-  \[@midfieldinstitute:2024\] includes tutorials providing side-by-side
-  base R, data.table, and dplyr solutions to common data shaping tasks
-  using MIDFIELD practice data.  
-- *Charts.*   Our preferred package for charts is ggplot2
-  \[@Wickham:2016:ggplot2\]. The lattice package \[@Sarkar:2008\] also
-  offers users comprehensive control over graphical elements (though our
-  lattice experience is no longer current).
+  data manipulation ([Dowle and Srinivasan
+  2022](#ref-Dowle+Srinivasan:2022:data.table)). To assist users who
+  might prefer other systems, the MIDFIELD Institute website ([Lord et
+  al. 2024](#ref-midfieldinstitute:2024)) includes tutorials providing
+  side-by-side base R, data.table, and dplyr solutions to common data
+  shaping tasks using MIDFIELD practice data.  
+- *Charts.*   Our preferred package for charts is ggplot2 ([Wickham
+  2016](#ref-Wickham:2016:ggplot2)). The lattice package ([Sarkar
+  2008](#ref-Sarkar:2008)) also offers users comprehensive control over
+  graphical elements (though our lattice experience is no longer
+  current).
 
 ## Usage
 
@@ -225,3 +227,18 @@ MIDFIELD has been supported by the National Science Foundation grants
 and 2152441.
 
 ## References
+
+Dowle, Matt, and Arun Srinivasan. 2022. *data.table: Extension of
+‘Data.frame‘*. R package version 1.14.6.
+<https://CRAN.R-project.org/package=data.table>.
+
+Lord, Susan, Richard Layton, Russell Long, Matthew Ohland, and Marisa
+Orr. 2024. *MIDFIELD Institute*.
+<https://midfieldr.github.io/2024-midfield-institute/>.
+
+Sarkar, Deepayan. 2008. *lattice: Multivariate Data Visualization with
+R*. Springer. <http://lmdvr.r-forge.r-project.org>.
+
+Wickham, Hadley. 2016. *ggplot2: Elegant Graphics for Data Analysis*.
+ISBN 978-3-319-24277-4; Springer-Verlag New York.
+<https://ggplot2.tidyverse.org>.

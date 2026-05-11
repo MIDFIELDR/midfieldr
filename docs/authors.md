@@ -5,7 +5,7 @@
 - **[Richard Layton](https://github.com/graphdr)**. Maintainer, author,
   copyright holder.
 
-- **Russell Long**. Author, copyright holder, data manager.
+- **Russell Long**. Author, copyright holder.
 
 - **Matthew Ohland**. Author, copyright holder.
 
@@ -19,13 +19,13 @@ Source:
 [`DESCRIPTION`](https://github.com/MIDFIELDR/midfieldr/blob/HEAD/DESCRIPTION)
 
 Layton R, Long R, Ohland M, Orr M, Lord S (2026). *midfieldr: Tools and
-Methods for Working with MIDFIELD Data in 'R'*. R package version 1.0.3,
-<https://midfieldr.github.io/midfieldr/>.
+Methods for Working with MIDFIELD Data in 'R'*. R package version
+1.0.3.9000, <https://midfieldr.github.io/midfieldr/>.
 
     @Manual{,
       title = {midfieldr: Tools and Methods for Working with MIDFIELD Data in 'R'},
       author = {Richard Layton and Russell Long and Matthew Ohland and Marisa Orr and Susan Lord},
       year = {2026},
-      note = {R package version 1.0.3},
+      note = {R package version 1.0.3.9000},
       url = {https://midfieldr.github.io/midfieldr/},
     }
