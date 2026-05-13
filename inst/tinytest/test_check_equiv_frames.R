@@ -4,7 +4,7 @@ test_check_equiv_frames <- function() {
     # check_equiv_frames(x, y)
 
     # Needed for tinytest::build_install_test()
-    library("data.table")
+    require("data.table")
 
     # test cases
     alpha <- letters[1:5]

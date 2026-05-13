@@ -8,5 +8,5 @@ dframe <- add_timely_term(dframe, midfield_term = toy_term)
 add_data_sufficiency(dframe, midfield_term = toy_term)
 
 # Existing data_sufficiency column, if any, is overwritten
-dframe[, data_sufficiency := NA_character_]
+dframe[, data_sufficiency := NA_character_][]
 add_data_sufficiency(dframe, midfield_term = toy_term)

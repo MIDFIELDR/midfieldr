@@ -83,7 +83,7 @@ add_timely_term(dframe, midfield_term = toy_term)
 add_timely_term(dframe, midfield_term = toy_term, span = 8)
 
 # Existing timely_term column, if any, is overwritten
-dframe[, timely_term := NA_character_]
+dframe[, timely_term := NA_character_][]
 add_timely_term(dframe, midfield_term = toy_term)
 
 

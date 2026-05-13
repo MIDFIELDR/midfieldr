@@ -14,7 +14,7 @@ name, e.g., Institution A, Institution B, etc.}
 \item{\code{term_degree}}{Character, academic year and term
 in which a student completes their program, format YYYYT.}
 \item{\code{cip6}}{Character, 6-digit CIP code of program in which
-a student is enrolled in a term.}
+a student is enrolled in a term. Key column.}
 }
 }
 \usage{

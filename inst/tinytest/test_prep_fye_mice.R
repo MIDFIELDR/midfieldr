@@ -6,36 +6,45 @@ test_prep_fye_mice <- function() {
     #               ...,
     #               fye_codes = NULL)   # default 140102
 
+    # CTRL-L to load midfieldr
+    
     # Needed for tinytest::build_install_test()
-    data("toy_student")
-    data("toy_term")
-    library("data.table")
-    options(
-        datatable.print.nrows = 8,
-        datatable.print.topn = 8,
-        datatable.print.class = TRUE
-    )
+    require("data.table")
 
     # create an answer
+    set.seed(20260513)
+
     # DT <- prep_fye_mice(toy_student, toy_term)
     # cat(wrapr::draw_frame(DT))
 
     # test case
     DT <- wrapr::build_frame(
-        "mcid"         , "race"  , "sex"   , "institution"  , "proxy"       |
-            "MID26060301", "Asian" , "Female", "Institution C", NA_character_ |
-            "MID25995980", "Hispanic", "Female", "Institution C", NA_character_ |
-            "MID25997636", "Hispanic", "Female", "Institution C", NA_character_ |
-            "MID26086310", "Hispanic", "Female", "Institution C", NA_character_ |
-            "MID26000057", "White" , "Female", "Institution C", NA_character_ |
-            "MID26614720", "Asian" , "Male"  , "Institution J", NA_character_ |
-            "MID26593796", "White" , "Male"  , "Institution J", NA_character_ |
-            "MID25848589", "White" , "Male"  , "Institution M", "143501"      |
-            "MID25846316", "White" , "Male"  , "Institution M", "143501"      |
-            "MID25847220", "White" , "Male"  , "Institution M", "143501"      |
-            "MID25828870", "White" , "Male"  , "Institution M", "149999"      )
+        "mcid"            , "race"         , "sex"   , "institution"  , "proxy"       |
+            "MCID3112320786", "Other/Unknown", "Female", "Institution J", NA_character_ |
+            "MCID3112172220", "White"        , "Female", "Institution J", NA_character_ |
+            "MCID3111443737", "White"        , "Female", "Institution J", NA_character_ |
+            "MCID3111412392", "White"        , "Female", "Institution J", NA_character_ |
+            "MCID3112215217", "White"        , "Female", "Institution J", NA_character_ |
+            "MCID3111722690", "White"        , "Female", "Institution J", NA_character_ |
+            "MCID3112379513", "Asian"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111705927", "Black"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111238499", "Black"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3112447536", "Hispanic"     , "Male"  , "Institution J", NA_character_ |
+            "MCID3111864010", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111357501", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111199777", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3112322564", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3112007534", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111721256", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111159982", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3112324262", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111248383", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111412721", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111165835", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111932471", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111206488", "White"        , "Male"  , "Institution J", NA_character_ )
     setDT(DT)
-    DT[, c("race", "sex", "institution", "proxy") :=
+    DT <- DT[, c("race", "sex", "institution", "proxy") :=
            list(as.factor(race),
                 as.factor(sex),
                 as.factor(institution),
@@ -88,21 +97,30 @@ test_prep_fye_mice <- function() {
     #                     fye_codes = c("140101", "140102", "149999"))
     # cat(wrapr::draw_frame(DT))
     DT <- wrapr::build_frame(
-        "mcid"         , "race"  , "sex"   , "institution"  , "proxy"       |
-            "MID25977316", "White" , "Male"  , "Institution B", NA_character_ |
-            "MID26060301", "Asian" , "Female", "Institution C", NA_character_ |
-            "MID25995980", "Hispanic", "Female", "Institution C", NA_character_ |
-            "MID25997636", "Hispanic", "Female", "Institution C", NA_character_ |
-            "MID26086310", "Hispanic", "Female", "Institution C", NA_character_ |
-            "MID26000057", "White" , "Female", "Institution C", NA_character_ |
-            "MID26231601", "White" , "Female", "Institution E", NA_character_ |
-            "MID26171165", "Hispanic", "Male"  , "Institution E", NA_character_ |
-            "MID26614720", "Asian" , "Male"  , "Institution J", NA_character_ |
-            "MID26593796", "White" , "Male"  , "Institution J", NA_character_ |
-            "MID25828870", "White" , "Male"  , "Institution M", "140801"      |
-            "MID25848589", "White" , "Male"  , "Institution M", "143501"      |
-            "MID25846316", "White" , "Male"  , "Institution M", "143501"      |
-            "MID25847220", "White" , "Male"  , "Institution M", "143501"      )
+        "mcid"            , "race"         , "sex"   , "institution"  , "proxy"       |
+            "MCID3112320786", "Other/Unknown", "Female", "Institution J", NA_character_ |
+            "MCID3112172220", "White"        , "Female", "Institution J", NA_character_ |
+            "MCID3111443737", "White"        , "Female", "Institution J", NA_character_ |
+            "MCID3111412392", "White"        , "Female", "Institution J", NA_character_ |
+            "MCID3112215217", "White"        , "Female", "Institution J", NA_character_ |
+            "MCID3111722690", "White"        , "Female", "Institution J", NA_character_ |
+            "MCID3112379513", "Asian"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111705927", "Black"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111238499", "Black"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3112447536", "Hispanic"     , "Male"  , "Institution J", NA_character_ |
+            "MCID3111864010", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111357501", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111199777", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3112322564", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3112007534", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111721256", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111159982", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3112324262", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111248383", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111412721", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111165835", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111932471", "White"        , "Male"  , "Institution J", NA_character_ |
+            "MCID3111206488", "White"        , "Male"  , "Institution J", NA_character_ )
     setDT(DT)
     DT[, c("race", "sex", "institution", "proxy") :=
            list(as.factor(race),
@@ -122,6 +140,7 @@ test_prep_fye_mice <- function() {
         prep_fye_mice(toy_student, toy_term, fye_codes = c("140101", "140102", "999999"))
     )
 
+    set.seed(NULL)
     invisible(NULL)
 }
 

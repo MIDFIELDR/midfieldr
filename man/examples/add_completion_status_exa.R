@@ -8,5 +8,5 @@ dframe <- add_timely_term(dframe, toy_term)
 add_completion_status(dframe, toy_degree)
 
 # Existing completion_status column, if any, is overwritten
-dframe[, completion_status := NA_character_]
+dframe[, completion_status := NA_character_][]
 add_completion_status(dframe, toy_degree)

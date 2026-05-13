@@ -7,11 +7,8 @@ test_filter_cip <- function() {
     #            cip = NULL, 
     #            select = NULL)
     
-    # uncomment for internal manual testing
-    # library(tinytest)
-    
     # Needed for tinytest::build_install_test()
-    library("data.table")
+    require("data.table")
 
     # test case
     music_cip <- wrapr::build_frame(

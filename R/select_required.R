@@ -13,11 +13,9 @@
 #' data tables at various stages of an analysis.
 #'
 #' Several midfieldr functions require one or more of the variables `mcid`,
-#' `institution`, `race`, `sex`, `^term`, `cip6`, and `level`. And if
-#' one requires a composite key to uniquely identify rows in the course or
-#' degree tables, the variables `abbrev`, `number` and degree variable
-#' `degree` are also required. A vector of these names comprises the default
-#' subset.
+#' `institution`, `race`, `sex`, `^term`, `cip6`, and `level`. In addition, 
+#' the composite key for the course table requires `abbrev` and  `number`. 
+#' A vector of these names comprises the default subset.
 #'
 #' Additional column names or partial names can be included by using the
 #' `select_add` argument.
@@ -61,7 +59,7 @@ select_required <- function(midfield_x, ..., select_add = NULL) {
   # optional arguments
   default_select <- c(
     "mcid", "institution", "race", "sex", "^term", "cip6",
-    "level", "abbrev", "number", "degree"
+    "level", "abbrev", "number"
   )
   select <- c(default_select, select_add)
   select <- unique(select)

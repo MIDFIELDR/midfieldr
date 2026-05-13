@@ -11,31 +11,103 @@ link-citations: true
 
 ```{r}
 #| include: false
-
 # code chunks
 knitr::opts_chunk$set(fig.path = "man/figures/README-")
 ```
 
-<br>midfieldr is an R package that provides tools and methods for studying undergraduate student-level records from the MIDFIELD database.  
-
-```{r}
-#| echo: false
-#| out.width: "15%"
-
-knitr::include_graphics("man/figures/logo.png")
-```
+# midfieldr <img src="man/figures/logo.png" align="right" height="125K">
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/midfieldr)](https://cran.r-project.org/package=midfieldr)    
 [![R CMD check](https://github.com/MIDFIELDR/midfieldr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
+## Overview
+
+midfieldr is an R package that provides tools and methods for studying undergraduate student-level records from the MIDFIELD database.
+
+- `select_required()` Subset a data frame, selecting columns that are composite keys or required by other midfieldr functions. Useful for interactive sessions. 
+
+- `add_timely_term()` Add a column indicating the latest term by which degree completion would be considered timely for every student.
+
+- `add_data_sufficiency()` Add a column labeling each row for inclusion or exclusion based on data sufficiency near the upper and lower bounds of an institution's data range.
+
+- `add_completion_status()` Add columns indicating whether a student completed a degree, and if so, whether their completion was timely.
+
+- `filter_cip()` Subset a Classification of Instructional Programs (CIP) data frame, retaining rows that match or partially match a vector of character strings. Used for identifying CIP codes relevant to the study. 
+
+- `prep_fye_mice()` Constructs a data frame of student-level records of First-Year Engineering (FYE) programs and conditions the data to meet the input requirements of the mice R package for multiple imputation.
+
+- `order_multiway()` Transform a data frame such that two independent categorical variables become factors with levels ordered by a third quantitative variable. Used to prepare the data for a Cleveland-style, faceted multiway chart. 
+
+**Support packages**
+
+- For data manipulation, data.table [@Dowle+Srinivasan:2022:data.table].
+
+- For charts, ggplot2 [@Wickham:2016:ggplot2]. 
+
+- For multiple imputation, mice [@vanBuuren+Oudshoorn:2011]. 
 
 
-## Introduction
 
-```{r child = "man/rmd/note-description-paragraph.Rmd"}
+## Installation
+
+Install from CRAN with:
+
+```{r}
+#| eval: false
+install.packages("midfieldr")
 ```
+
+You can install the development version of midfieldr from GitHub with:
+
+```{r}
+#| eval: false
+# install.packages("pak")
+pak::pak("MIDFIELDR/midfieldr")
+```
+
+midfieldr is designed to operate on the four data tables of the MIDFIELD research database. A sample of that database is available in the midfielddata package. Install from the MIDFIELDR drat repository with: 
+
+```{r}
+#| eval: false
+install.packages("midfielddata",
+  repos = "https://MIDFIELDR.github.io/drat/",
+  type = "source"
+)
+```
+
+The installed size of midfielddata is about 24 Mb, so the installation takes some time. 
+
+
+
+
+
+
+## Usage
+
+
+```{r}
+library(midfieldr)
+library(data.table)
+```
+
+midfieldr includes small, "toy" data sets for use in examples. 
+
+```{r}
+toy_student
+```
+
+
+
+
+
+
+
+
+
+## stuff
+
 
 midfieldr provides these functions for manipulating student-level data: 
 
@@ -67,23 +139,7 @@ R packages in examples and vignettes
 
 In this example, we gather all students ever enrolled in Engineering and summarize their graduation status (in any major), grouping by race/ethnicity and sex. If you are writing your own script to follow along, we use these packages in this example:
 
-```{r}
-#| echo: true
-#| eval: false
-
-library(midfieldr)
-library(midfielddata)
-library(data.table)
-```
-
-```{r}
-#| echo: false
-#| eval: true
-
-# evaluate here to avoid running midfielddata thru CRAN
-library(midfieldr)
-library(data.table)
-```
+`
 
 Load the practice data. Reduce initial dimensions of data tables. 
 
@@ -247,32 +303,6 @@ DT_display |>
 
 
 
-## Installation
-
-Install from CRAN with:
-
-```{r}
-#| eval: false
-install.packages("midfieldr")
-```
-
-You can install the development version of midfieldr from GitHub with:
-
-```{r}
-#| eval: false
-# install.packages("pak")
-pak::pak("MIDFIELDR/midfieldr")
-```
-
-The installed size of midfielddata is about 24 Mb, so the installation takes some time. Install from the MIDFIELDR drat repository with: 
-
-```{r}
-#| eval: false
-install.packages("midfielddata",
-  repos = "https://MIDFIELDR.github.io/drat/",
-  type = "source"
-)
-```
 
 
 

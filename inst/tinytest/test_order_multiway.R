@@ -8,16 +8,8 @@ test_order_multiway <- function() {
     #              method = NULL,
     #              ratio_of = NULL)
     
-    # when running internal checks 
-    # library("tinytest")
-    
     # Needed for tinytest::build_install_test()
-    library("data.table")
-    options(
-        datatable.print.nrows = 8,
-        datatable.print.topn = 8,
-        datatable.print.class = TRUE
-    )
+    require("data.table")
     
     # create a multiway
     dframe <- wrapr::build_frame(

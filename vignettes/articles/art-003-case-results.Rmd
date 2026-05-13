@@ -118,7 +118,7 @@ setkey(DT, NULL)
 DT
 ```
 
-*Verify built-in data.* To avoid deriving this data frame each time it is needed in other articles, the same information is provided in the `study_results` data frame included with midfieldr. Here we verify that the two data frames are identical. 
+*Verify prepared data.* &nbsp; `study_results`, included with midfieldr, contains the case study information developed above. Here we verify that the two data frames have the same content. 
 
 ```{r}
 # Demonstrate equivalence
@@ -138,11 +138,11 @@ check_equiv_frames(DT, study_results)
 
 We take several additional steps to prepare the data for dissemination in  tables or charts.  
 
-*Filtering.* To preserve the anonymity of the people involved, we remove observations with fewer than 10 graduates.   
+*Filtering.* To preserve the anonymity of the people involved, we remove observations with fewer than $N$ observations. When dealing with the full MIDFIELD research data, we typically use $N = 10$, but for these practice data, we use $N = 3$. 
 
 ```{r}
 # Preserve anonymity
-DT <- DT[graduates >= 10]
+DT <- DT[graduates >= 3]
 
 # Display the result
 DT
@@ -222,7 +222,7 @@ In the first multiway chart, the rows are programs and panels are people, facili
 
 ```{r}
 #| label: fig01
-#| fig-asp: 0.8
+#| fig-asp: 1.0
 #| fig-cap: "Figure 1: Stickiness with programs on rows."
 
 ggplot(DT, aes(x = stickiness, y = program)) +
@@ -238,7 +238,7 @@ Alternatively, we can consider the dual chart, swapping the roles of the panels 
 
 ```{r}
 #| label: fig02
-#| fig-asp: 0.8
+#| fig-asp: 0.9
 #| fig-cap: "Figure 1: Stickiness with programs in panels."
 
 ggplot(DT, aes(x = stickiness, y = people)) +
@@ -263,25 +263,24 @@ Data tables are often needed for publication. In this example, we format the dat
 
 ```{r}
 # Select the columns I want for the table
-tbl <- DT[, .(program, people, stickiness)]
+DT <- DT[, .(program, people, stickiness)]
 
 # Change factors to characters so rows/columns can be alphabetized
-tbl[, people := as.character(people)]
-tbl[, program := as.character(program)]
+DT[, people := as.character(people)]
+DT[, program := as.character(program)]
 
 # Transform from block records to row records
-tbl <- dcast(tbl, people ~ program, value.var = "stickiness")
+DT <- dcast(DT, people ~ program, value.var = "stickiness")
 
 # Edit one column header
-setnames(tbl, old = "people", new = "People", skip_absent = TRUE)
+setnames(DT, old = "people", new = "People", skip_absent = TRUE)
 ```
-
-Groups with numbers below our reporting threshold are denoted NA or omitted. 
 
 ```{r}
 #| echo: false
+
 library(gt)
-tbl |>
+DT |>
   gt() |>
   tab_caption("Table 1. Progrm stickiness (%)") |>
   tab_options(table.font.size = "small") |>
@@ -292,8 +291,7 @@ tbl |>
   )
 ```
 
-
-
+Groups with numbers below our reporting threshold are denoted NA or omitted. 
 
 
 

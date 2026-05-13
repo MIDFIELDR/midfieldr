@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
 
-Provides tools and demonstrates methods for working with individual undergraduate student-level records (registrar's data) in 'R'. Tools include filters for program codes, data sufficiency, and timely completion. Methods include gathering blocs of records, computing quantitative metrics such as graduation rate, and creating charts to visualize comparisons. 'midfieldr' interacts with practice data provided in 'midfielddata', an R data package available at \url{https://midfieldr.github.io/midfielddata/}. 'midfieldr' also interacts with the full MIDFIELD database for users who have access. As of the transfer of MIDFIELD to the American Society for Engineering Education in 2023, the development, expansion, and study of MIDFIELD has been supported by the National Science Foundation grants 0337629, 0646441, 0729596, 0734062, 0835914, 0935157, 0935058, 0969474, 1025171, 1129383, 1232740, 1329283, 1361058, 1545667, 2142087, 2141903, and 2152441.
+Provides tools and demonstrates methods for working with individual undergraduate student-level records (registrar's data) in 'R'. Tools include filters for program codes, data sufficiency, and timely completion. Methods include gathering blocs of records, computing quantitative metrics such as graduation rate, and creating charts to visualize comparisons. 'midfieldr' interacts with practice data provided in 'midfielddata', an R data package available at \url{https://midfieldr.github.io/midfielddata/}. The development of 'midfieldr' and 'midfielddata' was supported by the US National Science Foundation through grant numbers 1545667 and 2142087. 'midfieldr' is also designed to interact with the full MIDFIELD database, the management of which, in 2023, was transferred to the American Society for Engineering Education.
 }
 \seealso{
 Useful links:
@@ -24,10 +24,15 @@ Useful links:
 Authors:
 \itemize{
   \item Richard Layton \email{graphdoctor@gmail.com} [copyright holder]
-  \item Russell Long \email{ralong@purdue.edu} [copyright holder, data manager]
+  \item Russell Long \email{ralong@purdue.edu} [copyright holder]
   \item Matthew Ohland \email{ohland@purdue.edu} [copyright holder]
   \item Marisa Orr [copyright holder]
   \item Susan Lord \email{slord@sandiego.edu} [copyright holder]
+}
+
+Other contributors:
+\itemize{
+  \item US National Science Foundation [funder]
 }
 
 }

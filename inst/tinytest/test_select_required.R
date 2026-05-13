@@ -4,11 +4,10 @@ test_select_required <- function() {
     # select_required(midfield_x, select_add = NULL)
 
     # Needed for tinytest::build_install_test()
-    library("data.table")
+    require("data.table")
 
-    
     # Default character vector for selecting columns
-    default_cols<- c("mcid", "institution", "race", "sex", "^term", "cip6", "level", "abbrev", "number", "degree")
+    default_cols<- c("mcid", "institution", "race", "sex", "^term", "cip6", "level", "abbrev", "number")
     
     # Create one string separated by OR
     search_pattern <- paste(default_cols, collapse = "|")
@@ -33,14 +32,18 @@ test_select_required <- function() {
     y <- grepl(search_pattern, names(x))
     expect_equal(ncol(x), sum(y))
     
-    # Add columns
+    # add a dummy grade column to course for testing
+    toy_course$grade <- rep(c("A", "B", "C", "D", "F"), length.out = nrow(toy_course))
+    
+    # Add columns test
     cols_to_add <- c("grade")
-    x <- select_required(toy_course, select_add = cols_to_add) 
+    x <- select_required(toy_course, select_add = cols_to_add)
     y <- grepl(search_pattern, names(x))
     expect_equal(ncol(x), sum(y) + length(cols_to_add))
     
     # Silently ignore search terms not found
-    x <- select_required(toy_student, select_add = cols_to_add) 
+    cols_to_add <- c("grade")
+    x <- select_required(toy_student, select_add = cols_to_add)
     y <- grepl(search_pattern, names(x))
     expect_equal(ncol(x), sum(y))
 

@@ -4,7 +4,7 @@ test_add_completion_status <- function() {
     # add_completion_status(dframe, midfield_degree = degree)
 
     # Needed for tinytest::build_install_test()
-    library("data.table")
+    require("data.table")
 
     # create answers
     dframe <- toy_student[1:10, .(mcid)]
@@ -14,17 +14,17 @@ test_add_completion_status <- function() {
     # cat(wrapr::draw_frame(DT))
 
     DT <- wrapr::build_frame(
-        "mcid"         , "term_i", "level_i"     , "adj_span", "timely_term", "term_degree"  , "completion_status" |
-            "MID25784187", "19885" , "01 Freshman" , 6         , "19943"      , "19946"      , "late"              |
-            "MID25784974", "19883" , "02 Sophomore", 5         , "19931"      , NA_character_, NA_character_       |
-            "MID25816209", "19881" , "02 Sophomore", 5         , "19923"      , NA_character_, NA_character_       |
-            "MID25819358", "19946" , "02 Sophomore", 5         , "19993"      , "19963"      , "timely"            |
-            "MID25828870", "19881" , "01 Freshman" , 6         , "19933"      , "19923"      , "timely"            |
-            "MID25829749", "19995" , "03 Junior"   , 4         , "20033"      , NA_character_, NA_character_       |
-            "MID25841418", "19981" , "03 Junior"   , 4         , "20013"      , "19993"      , "timely"            |
-            "MID25845197", "19905" , "03 Junior"   , 4         , "19943"      , "19921"      , "timely"            |
-            "MID25846316", "19911" , "01 Freshman" , 6         , "19963"      , "19951"      , "timely"            |
-            "MID25847220", "19891" , "01 Freshman" , 6         , "19943"      , "19933"      , "timely"            )
+            "mcid"          , "term_i", "level_i"       , "adj_span", "timely_term", "term_degree", "completion_status" |
+            "MCID3111146562", "19881" , "01 First-year" , 6         , "19933"      , "19921"      , "timely"            |
+            "MCID3111156062", "19891" , "02 Second-year", 5         , "19933"      , "19913"      , "timely"            |
+            "MCID3111159982", "19881" , "01 First-year" , 6         , "19933"      , NA_character_, NA_character_       |
+            "MCID3111160541", "19881" , "01 First-year" , 6         , "19933"      , "19921"      , "timely"            |
+            "MCID3111165512", "19881" , "01 First-year" , 6         , "19933"      , "19921"      , "timely"            |
+            "MCID3111165835", "19883" , "02 Second-year", 5         , "19931"      , "19913"      , "timely"            |
+            "MCID3111170804", "19883" , "02 Second-year", 5         , "19931"      , "19913"      , "timely"            |
+            "MCID3111199777", "19916" , "03 Third-year" , 4         , "19953"      , "19946"      , "timely"            |
+            "MCID3111206488", "19893" , "01 First-year" , 6         , "19951"      , "19953"      , "late"              |
+            "MCID3111206737", "19923" , "04 Fourth-year", 3         , "19951"      , NA_character_, NA_character_       )
     setDT(DT)
 
     # correct answers

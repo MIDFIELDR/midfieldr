@@ -4,27 +4,26 @@ test_add_data_sufficiency <- function() {
     # add_data_sufficiency(dframe, midfield_term = term)
 
     # Needed for tinytest::build_install_test()
-    library("data.table")
+    require("data.table")
 
     # create answers
-    library(midfieldr)
     dframe <- toy_student[1:10, .(mcid)]
     dframe <- add_timely_term(dframe, midfield_term = toy_term)
     dframe <- add_data_sufficiency(dframe, midfield_term = toy_term)
     # cat(wrapr::draw_frame(dframe))
 
     DT <- wrapr::build_frame(
-        "mcid"         , "level_i"     , "adj_span", "timely_term", "term_i", "lower_limit", "upper_limit", "data_sufficiency" |
-            "MID25784187", "01 Freshman" , 6         , "19943"      , "19885" , "19881"      , "19995"      , "include"          |
-            "MID25784974", "02 Sophomore", 5         , "19931"      , "19883" , "19881"      , "19995"      , "include"          |
-            "MID25816209", "02 Sophomore", 5         , "19923"      , "19881" , "19881"      , "19995"      , "exclude-lower"    |
-            "MID25819358", "02 Sophomore", 5         , "19993"      , "19946" , "19881"      , "19995"      , "include"          |
-            "MID25828870", "01 Freshman" , 6         , "19933"      , "19881" , "19881"      , "19995"      , "exclude-lower"    |
-            "MID25829749", "03 Junior"   , 4         , "20033"      , "19995" , "19881"      , "19995"      , "exclude-upper"    |
-            "MID25841418", "03 Junior"   , 4         , "20013"      , "19981" , "19881"      , "19995"      , "exclude-upper"    |
-            "MID25845197", "03 Junior"   , 4         , "19943"      , "19905" , "19881"      , "19995"      , "include"          |
-            "MID25846316", "01 Freshman" , 6         , "19963"      , "19911" , "19881"      , "19995"      , "include"          |
-            "MID25847220", "01 Freshman" , 6         , "19943"      , "19891" , "19881"      , "19995"      , "include"          )
+        "mcid"            , "level_i"       , "adj_span", "timely_term", "term_i", "lower_limit", "upper_limit", "data_sufficiency" |
+            "MCID3111146562", "01 First-year" , 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
+            "MCID3111156062", "02 Second-year", 5         , "19933"      , "19891" , "19881"      , "20096"      , "include"          |
+            "MCID3111159982", "01 First-year" , 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
+            "MCID3111160541", "01 First-year" , 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
+            "MCID3111165512", "01 First-year" , 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
+            "MCID3111165835", "02 Second-year", 5         , "19931"      , "19883" , "19881"      , "20096"      , "include"          |
+            "MCID3111170804", "02 Second-year", 5         , "19931"      , "19883" , "19883"      , "20181"      , "exclude-lower"    |
+            "MCID3111199777", "03 Third-year" , 4         , "19953"      , "19916" , "19881"      , "20096"      , "include"          |
+            "MCID3111206488", "01 First-year" , 6         , "19951"      , "19893" , "19881"      , "20096"      , "include"          |
+            "MCID3111206737", "04 Fourth-year", 3         , "19951"      , "19923" , "19881"      , "20096"      , "include"          )
     setDT(DT)
 
     # correct answers

@@ -114,10 +114,9 @@
 #' \describe{
 #'  `r var_mcid`
 #'  `r var_institution`
-#'  `r var_term`
+#'  `r var_term_course`
 #'  `r var_abbrev`
 #'  `r var_number`
-#'  `r var_grade`
 #' }
 #'
 #' @family toy-data
@@ -160,7 +159,7 @@
 #'  `r var_mcid`
 #'  `r var_institution`
 #'  `r var_term_degree`
-#'  `r var_cip6`
+#'  `r var_cip6_degree`
 #' }
 #'
 #' @family toy-data
@@ -290,7 +289,7 @@
 
 # -------------------------------------------------------------------
 
-#' ACT-SAT conversion scale
+#' SAT-ACT conversion scale
 #'
 #' Data frame for converting between ACT and SAT scores. A range of SAT scores
 #' converts to a single ACT score; an ACT score converts to a single
@@ -310,4 +309,4 @@
 #' @family scales
 #' @source ACT/SAT Concordance (2018) ACT Education Corp. \url{https://www.act.org/content/dam/act/unsecured/documents/ACT-SAT-Concordance-Tables.pdf}
 #'
-"act_sat_scale"
+"sat_act_scale"

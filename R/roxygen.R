@@ -80,6 +80,8 @@ var_bloc <- "\\item{`bloc`}{Character, indicating the grouping
                   belongs.}"
 var_cip6 <- "\\item{`cip6`}{Character, 6-digit CIP code of program in which
                   a student is enrolled in a term.}"
+var_cip6_degree <- "\\item{`cip6`}{Character, 6-digit CIP code of program in which
+                  a student is enrolled in a term. Key column.}"
 var_ever_enrolled <- "\\item{`ever_enrolled`}{Numerical, number of students
                   ever enrolled in a program.}"
 var_grade <- "\\item{`grade`}{Character, course grade, e.g., A+, A, A-, B+,
@@ -103,6 +105,8 @@ var_sex <- "\\item{`sex`}{Character, sex as self-reported by the student,
                   possible values are Female, Male, and Unknown.}"
 var_term <- "\\item{`term`}{Character, academic year and term, format YYYYT.
                   Key column.}"
+var_term_course <- "\\item{`term_course`}{Character, academic year and term, 
+                  format YYYYT. Key column.}"
 var_term_degree <- "\\item{`term_degree`}{Character, academic year and term
                   in which a student completes their program, format YYYYT.}"
 var_stickiness <- "\\item{`stickiness`}{Numerical, program stickiness, the

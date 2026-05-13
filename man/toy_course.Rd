@@ -10,14 +10,12 @@
 \item{\code{mcid}}{Character, de-identified student ID. Key column.}
 \item{\code{institution}}{Character, de-identified institution
 name, e.g., Institution A, Institution B, etc.}
-\item{\code{term}}{Character, academic year and term, format YYYYT.
-Key column.}
+\item{\code{term_course}}{Character, academic year and term,
+format YYYYT. Key column.}
 \item{\code{abbrev}}{Character, course alphabetical identifier,
 e.g. ENGR, MATH, ENGL. Key column.}
 \item{\code{number}}{Character, course numeric identifier, e.g.
 101, 3429. Key column.}
-\item{\code{grade}}{Character, course grade, e.g., A+, A, A-, B+,
-I, NG, etc.}
 }
 }
 \usage{

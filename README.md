@@ -1,10 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-<br>midfieldr is an R package that provides tools and methods for
-studying undergraduate student-level records from the MIDFIELD database.
-
-<img src="man/figures/logo.png" alt="" width="15%" />
+# midfieldr <img src="man/figures/logo.png" align="right" height="125K">
 
 <!-- badges: start -->
 
@@ -14,16 +11,94 @@ status](https://www.r-pkg.org/badges/version/midfieldr)](https://cran.r-project.
 check](https://github.com/MIDFIELDR/midfieldr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-## Introduction
+## Overview
 
-Provides tools and demonstrates methods for working with individual
-undergraduate student-level records (registrar’s data) in R. Tools
-include filters for program codes, data sufficiency, and timely
-completion. Methods include gathering blocs of records, computing
-quantitative metrics such as graduation rate, and creating charts to
-visualize comparisons. midfieldr is designed to work with data from the
-MIDFIELD research database, a sample of which is available in the
-midfielddata data package.
+midfieldr is an R package that provides tools and methods for studying
+undergraduate student-level records from the MIDFIELD database.
+
+- `select_required()` Subset a data frame, selecting columns that are
+  composite keys or required by other midfieldr functions. Useful for
+  interactive sessions.
+
+- `add_timely_term()` Add a column indicating the latest term by which
+  degree completion would be considered timely for every student.
+
+- `add_data_sufficiency()` Add a column labeling each row for inclusion
+  or exclusion based on data sufficiency near the upper and lower bounds
+  of an institution’s data range.
+
+- `add_completion_status()` Add columns indicating whether a student
+  completed a degree, and if so, whether their completion was timely.
+
+- `filter_cip()` Subset a Classification of Instructional Programs (CIP)
+  data frame, retaining rows that match or partially match a vector of
+  character strings. Used for identifying CIP codes relevant to the
+  study.
+
+- `prep_fye_mice()` Constructs a data frame of student-level records of
+  First-Year Engineering (FYE) programs and conditions the data to meet
+  the input requirements of the mice R package for multiple imputation.
+
+- `order_multiway()` Transform a data frame such that two independent
+  categorical variables become factors with levels ordered by a third
+  quantitative variable. Used to prepare the data for a Cleveland-style,
+  faceted multiway chart.
+
+**Support packages**
+
+- For data manipulation, data.table ([Dowle and Srinivasan
+  2022](#ref-Dowle+Srinivasan:2022:data.table)).
+
+- For charts, ggplot2 ([Wickham 2016](#ref-Wickham:2016:ggplot2)).
+
+- For multiple imputation, mice ([<span class="nocase">van Buuren and
+  Groothuis-Oudshoorn</span> 2011](#ref-vanBuuren+Oudshoorn:2011)).
+
+## Installation
+
+Install from CRAN with:
+
+``` r
+install.packages("midfieldr")
+```
+
+You can install the development version of midfieldr from GitHub with:
+
+``` r
+# install.packages("pak")
+pak::pak("MIDFIELDR/midfieldr")
+```
+
+midfieldr is designed to operate on the four data tables of the MIDFIELD
+research database. A sample of that database is available in the
+midfielddata package. Install from the MIDFIELDR drat repository with:
+
+``` r
+install.packages("midfielddata",
+  repos = "https://MIDFIELDR.github.io/drat/",
+  type = "source"
+)
+```
+
+The installed size of midfielddata is about 24 Mb, so the installation
+takes some time.
+
+## Usage
+
+midfieldr includes small, “toy” data sets for use in examples.
+
+``` r
+library(midfieldr)
+library(data.table)
+```
+
+``` r
+student <- copy(toy_student)
+term <- copy(toy_term)
+degree <- copy(toy_degree)
+```
+
+## stuff
 
 midfieldr provides these functions for manipulating student-level data:
 
@@ -149,20 +224,20 @@ completing their programs in no more than 6 years; “Late completion” is
 the count of those graduating in more than 6 years; “Did not complete”
 is the count of non-graduates.
 
-<div id="ptixzfwsed" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ptixzfwsed table {
+<div id="oxospjvlpy" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#oxospjvlpy table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-&#10;#ptixzfwsed thead, #ptixzfwsed tbody, #ptixzfwsed tfoot, #ptixzfwsed tr, #ptixzfwsed td, #ptixzfwsed th {
+&#10;#oxospjvlpy thead, #oxospjvlpy tbody, #oxospjvlpy tfoot, #oxospjvlpy tr, #oxospjvlpy td, #oxospjvlpy th {
   border-style: none;
 }
-&#10;#ptixzfwsed p {
+&#10;#oxospjvlpy p {
   margin: 0;
   padding: 0;
 }
-&#10;#ptixzfwsed .gt_table {
+&#10;#oxospjvlpy .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -187,11 +262,11 @@ is the count of non-graduates.
   border-left-width: 2px;
   border-left-color: #D3D3D3;
 }
-&#10;#ptixzfwsed .gt_caption {
+&#10;#oxospjvlpy .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
-&#10;#ptixzfwsed .gt_title {
+&#10;#oxospjvlpy .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -202,7 +277,7 @@ is the count of non-graduates.
   border-bottom-color: #FFFFFF;
   border-bottom-width: 0;
 }
-&#10;#ptixzfwsed .gt_subtitle {
+&#10;#oxospjvlpy .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -213,7 +288,7 @@ is the count of non-graduates.
   border-top-color: #FFFFFF;
   border-top-width: 0;
 }
-&#10;#ptixzfwsed .gt_heading {
+&#10;#oxospjvlpy .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -224,12 +299,12 @@ is the count of non-graduates.
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#ptixzfwsed .gt_bottom_border {
+&#10;#oxospjvlpy .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#ptixzfwsed .gt_col_headings {
+&#10;#oxospjvlpy .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -243,7 +318,7 @@ is the count of non-graduates.
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#ptixzfwsed .gt_col_heading {
+&#10;#oxospjvlpy .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -262,7 +337,7 @@ is the count of non-graduates.
   padding-right: 5px;
   overflow-x: hidden;
 }
-&#10;#ptixzfwsed .gt_column_spanner_outer {
+&#10;#oxospjvlpy .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -273,13 +348,13 @@ is the count of non-graduates.
   padding-left: 4px;
   padding-right: 4px;
 }
-&#10;#ptixzfwsed .gt_column_spanner_outer:first-child {
+&#10;#oxospjvlpy .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
-&#10;#ptixzfwsed .gt_column_spanner_outer:last-child {
+&#10;#oxospjvlpy .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
-&#10;#ptixzfwsed .gt_column_spanner {
+&#10;#oxospjvlpy .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
@@ -290,10 +365,10 @@ is the count of non-graduates.
   display: inline-block;
   width: 100%;
 }
-&#10;#ptixzfwsed .gt_spanner_row {
+&#10;#oxospjvlpy .gt_spanner_row {
   border-bottom-style: hidden;
 }
-&#10;#ptixzfwsed .gt_group_heading {
+&#10;#oxospjvlpy .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -318,7 +393,7 @@ is the count of non-graduates.
   vertical-align: middle;
   text-align: left;
 }
-&#10;#ptixzfwsed .gt_empty_group_heading {
+&#10;#oxospjvlpy .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -332,13 +407,13 @@ is the count of non-graduates.
   border-bottom-color: #5F5F5F;
   vertical-align: middle;
 }
-&#10;#ptixzfwsed .gt_from_md > :first-child {
+&#10;#oxospjvlpy .gt_from_md > :first-child {
   margin-top: 0;
 }
-&#10;#ptixzfwsed .gt_from_md > :last-child {
+&#10;#oxospjvlpy .gt_from_md > :last-child {
   margin-bottom: 0;
 }
-&#10;#ptixzfwsed .gt_row {
+&#10;#oxospjvlpy .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -356,7 +431,7 @@ is the count of non-graduates.
   vertical-align: middle;
   overflow-x: hidden;
 }
-&#10;#ptixzfwsed .gt_stub {
+&#10;#oxospjvlpy .gt_stub {
   color: #FFFFFF;
   background-color: #5F5F5F;
   font-size: 100%;
@@ -368,7 +443,7 @@ is the count of non-graduates.
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#ptixzfwsed .gt_stub_row_group {
+&#10;#oxospjvlpy .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -381,13 +456,13 @@ is the count of non-graduates.
   padding-right: 5px;
   vertical-align: top;
 }
-&#10;#ptixzfwsed .gt_row_group_first td {
+&#10;#oxospjvlpy .gt_row_group_first td {
   border-top-width: 2px;
 }
-&#10;#ptixzfwsed .gt_row_group_first th {
+&#10;#oxospjvlpy .gt_row_group_first th {
   border-top-width: 2px;
 }
-&#10;#ptixzfwsed .gt_summary_row {
+&#10;#oxospjvlpy .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -396,14 +471,14 @@ is the count of non-graduates.
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#ptixzfwsed .gt_first_summary_row {
+&#10;#oxospjvlpy .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #5F5F5F;
 }
-&#10;#ptixzfwsed .gt_first_summary_row.thick {
+&#10;#oxospjvlpy .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
-&#10;#ptixzfwsed .gt_last_summary_row {
+&#10;#oxospjvlpy .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -412,7 +487,7 @@ is the count of non-graduates.
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#ptixzfwsed .gt_grand_summary_row {
+&#10;#oxospjvlpy .gt_grand_summary_row {
   color: #333333;
   background-color: #D5D5D5;
   text-transform: inherit;
@@ -421,7 +496,7 @@ is the count of non-graduates.
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#ptixzfwsed .gt_first_grand_summary_row {
+&#10;#oxospjvlpy .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -430,7 +505,7 @@ is the count of non-graduates.
   border-top-width: 6px;
   border-top-color: #5F5F5F;
 }
-&#10;#ptixzfwsed .gt_last_grand_summary_row_top {
+&#10;#oxospjvlpy .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -439,10 +514,10 @@ is the count of non-graduates.
   border-bottom-width: 6px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#ptixzfwsed .gt_striped {
+&#10;#oxospjvlpy .gt_striped {
   background-color: #F4F4F4;
 }
-&#10;#ptixzfwsed .gt_table_body {
+&#10;#oxospjvlpy .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -450,7 +525,7 @@ is the count of non-graduates.
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#ptixzfwsed .gt_footnotes {
+&#10;#oxospjvlpy .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -463,7 +538,7 @@ is the count of non-graduates.
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#ptixzfwsed .gt_footnote {
+&#10;#oxospjvlpy .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -471,7 +546,7 @@ is the count of non-graduates.
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#ptixzfwsed .gt_sourcenotes {
+&#10;#oxospjvlpy .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -484,64 +559,64 @@ is the count of non-graduates.
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#ptixzfwsed .gt_sourcenote {
+&#10;#oxospjvlpy .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#ptixzfwsed .gt_left {
+&#10;#oxospjvlpy .gt_left {
   text-align: left;
 }
-&#10;#ptixzfwsed .gt_center {
+&#10;#oxospjvlpy .gt_center {
   text-align: center;
 }
-&#10;#ptixzfwsed .gt_right {
+&#10;#oxospjvlpy .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-&#10;#ptixzfwsed .gt_font_normal {
+&#10;#oxospjvlpy .gt_font_normal {
   font-weight: normal;
 }
-&#10;#ptixzfwsed .gt_font_bold {
+&#10;#oxospjvlpy .gt_font_bold {
   font-weight: bold;
 }
-&#10;#ptixzfwsed .gt_font_italic {
+&#10;#oxospjvlpy .gt_font_italic {
   font-style: italic;
 }
-&#10;#ptixzfwsed .gt_super {
+&#10;#oxospjvlpy .gt_super {
   font-size: 65%;
 }
-&#10;#ptixzfwsed .gt_footnote_marks {
+&#10;#oxospjvlpy .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
-&#10;#ptixzfwsed .gt_asterisk {
+&#10;#oxospjvlpy .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
-&#10;#ptixzfwsed .gt_indent_1 {
+&#10;#oxospjvlpy .gt_indent_1 {
   text-indent: 5px;
 }
-&#10;#ptixzfwsed .gt_indent_2 {
+&#10;#oxospjvlpy .gt_indent_2 {
   text-indent: 10px;
 }
-&#10;#ptixzfwsed .gt_indent_3 {
+&#10;#oxospjvlpy .gt_indent_3 {
   text-indent: 15px;
 }
-&#10;#ptixzfwsed .gt_indent_4 {
+&#10;#oxospjvlpy .gt_indent_4 {
   text-indent: 20px;
 }
-&#10;#ptixzfwsed .gt_indent_5 {
+&#10;#oxospjvlpy .gt_indent_5 {
   text-indent: 25px;
 }
-&#10;#ptixzfwsed .katex-display {
+&#10;#oxospjvlpy .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
-&#10;#ptixzfwsed div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+&#10;#oxospjvlpy div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -612,31 +687,6 @@ is the count of non-graduates.
 student-level data but not for drawing inferences about program
 attributes or student experiences. midfielddata supplies practice data,
 not research data.
-
-## Installation
-
-Install from CRAN with:
-
-``` r
-install.packages("midfieldr")
-```
-
-You can install the development version of midfieldr from GitHub with:
-
-``` r
-# install.packages("pak")
-pak::pak("MIDFIELDR/midfieldr")
-```
-
-The installed size of midfielddata is about 24 Mb, so the installation
-takes some time. Install from the MIDFIELDR drat repository with:
-
-``` r
-install.packages("midfielddata",
-  repos = "https://MIDFIELDR.github.io/drat/",
-  type = "source"
-)
-```
 
 ## More information
 
@@ -711,6 +761,16 @@ Orr. 2024. *MIDFIELD Institute*.
 Sarkar, Deepayan. 2008. *<span class="nocase">lattice: Multivariate Data
 Visualization with R</span>*. Springer.
 <http://lmdvr.r-forge.r-project.org>.
+
+</div>
+
+<div id="ref-vanBuuren+Oudshoorn:2011" class="csl-entry">
+
+<span class="nocase">van Buuren, Stef, and Karin
+Groothuis-Oudshoorn</span>. 2011. “<span class="nocase">mice</span>:
+Multivariate Imputation by Chained Equations in R.” *Journal of
+Statistical Software* 45 (3): 1–67.
+<https://doi.org/10.18637/jss.v045.i03>.
 
 </div>
 

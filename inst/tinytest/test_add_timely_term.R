@@ -10,25 +10,25 @@ test_add_timely_term <- function() {
     # )
 
     # Needed for tinytest::build_install_test()
-    library("data.table")
+    require("data.table")
 
     # create case
     # library("midfieldr")
-    # x <- toy_student[1:10, .(mcid)]
-    # y <- add_timely_term(x, toy_term)
+    x <- toy_student[1:10, .(mcid)]
+    y <- add_timely_term(x, toy_term)
     # DT <- cat(wrapr::draw_frame(y))
     DT <- wrapr::build_frame(
-        "mcid"         , "term_i", "level_i"     , "adj_span", "timely_term" |
-            "MID25784187", "19885" , "01 Freshman" , 6         , "19943"       |
-            "MID25784974", "19883" , "02 Sophomore", 5         , "19931"       |
-            "MID25816209", "19881" , "02 Sophomore", 5         , "19923"       |
-            "MID25819358", "19946" , "02 Sophomore", 5         , "19993"       |
-            "MID25828870", "19881" , "01 Freshman" , 6         , "19933"       |
-            "MID25829749", "19995" , "03 Junior"   , 4         , "20033"       |
-            "MID25841418", "19981" , "03 Junior"   , 4         , "20013"       |
-            "MID25845197", "19905" , "03 Junior"   , 4         , "19943"       |
-            "MID25846316", "19911" , "01 Freshman" , 6         , "19963"       |
-            "MID25847220", "19891" , "01 Freshman" , 6         , "19943"       )
+        "mcid"            , "term_i", "level_i"       , "adj_span", "timely_term" |
+            "MCID3111146562", "19881" , "01 First-year" , 6         , "19933"       |
+            "MCID3111156062", "19891" , "02 Second-year", 5         , "19933"       |
+            "MCID3111159982", "19881" , "01 First-year" , 6         , "19933"       |
+            "MCID3111160541", "19881" , "01 First-year" , 6         , "19933"       |
+            "MCID3111165512", "19881" , "01 First-year" , 6         , "19933"       |
+            "MCID3111165835", "19883" , "02 Second-year", 5         , "19931"       |
+            "MCID3111170804", "19883" , "02 Second-year", 5         , "19931"       |
+            "MCID3111199777", "19916" , "03 Third-year" , 4         , "19953"       |
+            "MCID3111206488", "19893" , "01 First-year" , 6         , "19951"       |
+            "MCID3111206737", "19923" , "04 Fourth-year", 3         , "19951"       )
     setDT(DT)
    
     # correct answers, add optional arguments in combinations

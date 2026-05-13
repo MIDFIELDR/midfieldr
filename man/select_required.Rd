@@ -30,11 +30,9 @@ data tables at various stages of an analysis.
 }
 \details{
 Several midfieldr functions require one or more of the variables \code{mcid},
-\code{institution}, \code{race}, \code{sex}, \verb{^term}, \code{cip6}, and \code{level}. And if
-one requires a composite key to uniquely identify rows in the course or
-degree tables, the variables \code{abbrev}, \code{number} and degree variable
-\code{degree} are also required. A vector of these names comprises the default
-subset.
+\code{institution}, \code{race}, \code{sex}, \verb{^term}, \code{cip6}, and \code{level}. In addition,
+the composite key for the course table requires \code{abbrev} and  \code{number}.
+A vector of these names comprises the default subset.
 
 Additional column names or partial names can be included by using the
 \code{select_add} argument.
