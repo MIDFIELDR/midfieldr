@@ -21,12 +21,9 @@ This vignette in the MIDFIELD workflow.
 
 - stickiness:
 
-  Program “stickiness” \$\small\left(S\right)\$ is the ratio of the
-  number of graduates of a program \$\small\left(N_g\right)\$ to the
-  number ever enrolled in the program \$\small\left(N_e\right)\$.
-  ``` math
-  S = \frac{N_g}{N_e}
-  ```
+  Program “stickiness” \small(S) is the ratio of the number of graduates
+  of a program \small(N_g) to the number ever enrolled in the program
+  \small(N_e). S = \frac{N_g}{N_e}
 
 - bloc:
 
@@ -78,11 +75,11 @@ As they pertain to the stickiness metric, relationships among starters,
 migrators, and graduates (timely completers) of a given program *P* are
 illustrated in Figure 1.
 
-- The interior rectangle represents the stickiness numerator $`(N_g)`$,
-  the set of graduates (timely completers) of program *P*.
+- The interior rectangle represents the stickiness numerator (N_g), the
+  set of graduates (timely completers) of program *P*.
 
-- The overall rectangle represents the stickiness denominator $`(N_e)`$,
-  the set of students ever enrolled in program *P*.
+- The overall rectangle represents the stickiness denominator (N_e), the
+  set of students ever enrolled in program *P*.
 
 ![Figure 1. Stickiness metric. Starters, migrators, and timely
 completers.](figures/art-110-fig01-1.png)
@@ -345,7 +342,7 @@ the two data frames have the same content.
 
 # Demonstrate equivalence
 check_equiv_frames(DT, study_observations)
-#> [1] FALSE
+#> [1] TRUE
 ```
 
 *Note.*   MIDFIELD research findings are regularly grouped by program,
@@ -426,7 +423,7 @@ the two data frames have the same content.
 
 # Demonstrate equivalence
 check_equiv_frames(DT, study_results)
-#> [1] FALSE
+#> [1] TRUE
 ```
 
 ## Prepare for dissemination
@@ -630,6 +627,15 @@ A value of NA indicates a group removed because the number of graduates
 was below the threshold set to preserve anonymity. As noted earlier,
 these are largely an artifact of applying these groupings to practice
 data.
+
+------------------------------------------------------------------------
+
+[◁ Graduation
+rate](https://midfieldr.github.io/midfieldr/articles/art-100-grad-rate.md)
+   [▲ top of page](#top)    [Multiway data and charts
+▷](https://midfieldr.github.io/midfieldr/articles/art-120-multiway.md)
+
+------------------------------------------------------------------------
 
 ## References
 

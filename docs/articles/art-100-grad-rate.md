@@ -31,12 +31,10 @@ This vignette in the MIDFIELD workflow.
 
 - graduation rate:
 
-  Graduation rate $`(G)`$ is the ratio of the number of program
-  “starter-graduates” $`(N_{sg})`$ (i.e., graduates from the program in
-  which they started) to the number of program starters $`(N_s)`$.
-  ``` math
-  G=\frac{N_{sg}}{N_s}
-  ```
+  Graduation rate (G) is the ratio of the number of program
+  “starter-graduates” (N\_{sg}) (i.e., graduates from the program in
+  which they started) to the number of program starters (N_s).
+  G=\frac{N\_{sg}}{N_s}
 
 - bloc:
 
@@ -83,12 +81,11 @@ program *P* are illustrated in Figure 1.
 - The interior rectangle represents the set of graduates (timely
   completers) of program *P*.
 
-- Region 1 (shaded) represents the graduation rate denominator
-  $`(N_s)`$, the set of starters in program *P*.
+- Region 1 (shaded) represents the graduation rate denominator (N_s),
+  the set of starters in program *P*.
 
-- Region 2 (shaded) represents the graduation rate numerator
-  $`(N_{sg})`$, the subset of starters who are also graduates of program
-  *P*.
+- Region 2 (shaded) represents the graduation rate numerator (N\_{sg}),
+  the subset of starters who are also graduates of program *P*.
 
 - Region 3 (unshaded) represents the set of students excluded from the
   graduation rate metric, depending on how “program” is defined as
@@ -813,6 +810,15 @@ A value of NA indicates a group removed because the number of graduates
 was below the threshold set to preserve anonymity. As noted earlier,
 these are largely an artifact of applying these groupings to practice
 data.
+
+------------------------------------------------------------------------
+
+[◁
+Groupings](https://midfieldr.github.io/midfieldr/articles/art-090-groupings.md)
+   [▲ top of page](#top)    [Stickiness
+▷](https://midfieldr.github.io/midfieldr/articles/art-110-stickiness.md)
+
+------------------------------------------------------------------------
 
 ## References
 

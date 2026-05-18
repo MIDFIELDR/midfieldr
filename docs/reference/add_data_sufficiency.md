@@ -78,68 +78,68 @@ dframe <- add_timely_term(dframe, midfield_term = toy_term)
 
 # Add data sufficiency column
 add_data_sufficiency(dframe, midfield_term = toy_term)
-#>            mcid      level_i adj_span timely_term term_i lower_limit
-#>          <char>       <char>    <num>      <char> <char>      <char>
-#>  1: MID25784187  01 Freshman        6       19943  19885       19881
-#>  2: MID25784974 02 Sophomore        5       19931  19883       19881
-#>  3: MID25816209 02 Sophomore        5       19923  19881       19881
-#>  4: MID25819358 02 Sophomore        5       19993  19946       19881
-#>  5: MID25828870  01 Freshman        6       19933  19881       19881
-#>  6: MID25829749    03 Junior        4       20033  19995       19881
-#>  7: MID25841418    03 Junior        4       20013  19981       19881
-#>  8: MID25845197    03 Junior        4       19943  19905       19881
-#>  9: MID25846316  01 Freshman        6       19963  19911       19881
-#> 10: MID25847220  01 Freshman        6       19943  19891       19881
+#>               mcid       level_i adj_span timely_term term_i lower_limit
+#>             <char>        <char>    <num>      <char> <char>      <char>
+#>  1: MCID3111145992 01 First-year        6       19933  19881       19881
+#>  2: MCID3111159270 01 First-year        6       19933  19881       19881
+#>  3: MCID3111160219 01 First-year        6       19933  19881       19881
+#>  4: MCID3111160513 01 First-year        6       19933  19881       19881
+#>  5: MCID3111162677 01 First-year        6       19933  19881       19881
+#>  6: MCID3111164287 01 First-year        6       19933  19881       19881
+#>  7: MCID3111166148 01 First-year        6       19933  19881       19881
+#>  8: MCID3111170298 01 First-year        6       19933  19881       19881
+#>  9: MCID3111170338 01 First-year        6       19933  19881       19881
+#> 10: MCID3111213943 01 First-year        6       19943  19891       19881
 #>     upper_limit data_sufficiency
 #>          <char>           <char>
-#>  1:       19995          include
-#>  2:       19995          include
-#>  3:       19995    exclude-lower
-#>  4:       19995          include
-#>  5:       19995    exclude-lower
-#>  6:       19995    exclude-upper
-#>  7:       19995    exclude-upper
-#>  8:       19995          include
-#>  9:       19995          include
-#> 10:       19995          include
+#>  1:       20096    exclude-lower
+#>  2:       20096    exclude-lower
+#>  3:       20096    exclude-lower
+#>  4:       20096    exclude-lower
+#>  5:       20096    exclude-lower
+#>  6:       20096    exclude-lower
+#>  7:       20096    exclude-lower
+#>  8:       20181    exclude-lower
+#>  9:       20181    exclude-lower
+#> 10:       20181          include
 
 # Existing data_sufficiency column, if any, is overwritten
-dframe[, data_sufficiency := NA_character_]
-#>            mcid term_i      level_i adj_span timely_term data_sufficiency
-#>          <char> <char>       <char>    <num>      <char>           <char>
-#>  1: MID25784187  19885  01 Freshman        6       19943             <NA>
-#>  2: MID25784974  19883 02 Sophomore        5       19931             <NA>
-#>  3: MID25816209  19881 02 Sophomore        5       19923             <NA>
-#>  4: MID25819358  19946 02 Sophomore        5       19993             <NA>
-#>  5: MID25828870  19881  01 Freshman        6       19933             <NA>
-#>  6: MID25829749  19995    03 Junior        4       20033             <NA>
-#>  7: MID25841418  19981    03 Junior        4       20013             <NA>
-#>  8: MID25845197  19905    03 Junior        4       19943             <NA>
-#>  9: MID25846316  19911  01 Freshman        6       19963             <NA>
-#> 10: MID25847220  19891  01 Freshman        6       19943             <NA>
+dframe[, data_sufficiency := NA_character_][]
+#>               mcid term_i       level_i adj_span timely_term data_sufficiency
+#>             <char> <char>        <char>    <num>      <char>           <char>
+#>  1: MCID3111145992  19881 01 First-year        6       19933             <NA>
+#>  2: MCID3111159270  19881 01 First-year        6       19933             <NA>
+#>  3: MCID3111160219  19881 01 First-year        6       19933             <NA>
+#>  4: MCID3111160513  19881 01 First-year        6       19933             <NA>
+#>  5: MCID3111162677  19881 01 First-year        6       19933             <NA>
+#>  6: MCID3111164287  19881 01 First-year        6       19933             <NA>
+#>  7: MCID3111166148  19881 01 First-year        6       19933             <NA>
+#>  8: MCID3111170298  19881 01 First-year        6       19933             <NA>
+#>  9: MCID3111170338  19881 01 First-year        6       19933             <NA>
+#> 10: MCID3111213943  19891 01 First-year        6       19943             <NA>
 add_data_sufficiency(dframe, midfield_term = toy_term)
-#>            mcid      level_i adj_span timely_term term_i lower_limit
-#>          <char>       <char>    <num>      <char> <char>      <char>
-#>  1: MID25784187  01 Freshman        6       19943  19885       19881
-#>  2: MID25784974 02 Sophomore        5       19931  19883       19881
-#>  3: MID25816209 02 Sophomore        5       19923  19881       19881
-#>  4: MID25819358 02 Sophomore        5       19993  19946       19881
-#>  5: MID25828870  01 Freshman        6       19933  19881       19881
-#>  6: MID25829749    03 Junior        4       20033  19995       19881
-#>  7: MID25841418    03 Junior        4       20013  19981       19881
-#>  8: MID25845197    03 Junior        4       19943  19905       19881
-#>  9: MID25846316  01 Freshman        6       19963  19911       19881
-#> 10: MID25847220  01 Freshman        6       19943  19891       19881
+#>               mcid       level_i adj_span timely_term term_i lower_limit
+#>             <char>        <char>    <num>      <char> <char>      <char>
+#>  1: MCID3111145992 01 First-year        6       19933  19881       19881
+#>  2: MCID3111159270 01 First-year        6       19933  19881       19881
+#>  3: MCID3111160219 01 First-year        6       19933  19881       19881
+#>  4: MCID3111160513 01 First-year        6       19933  19881       19881
+#>  5: MCID3111162677 01 First-year        6       19933  19881       19881
+#>  6: MCID3111164287 01 First-year        6       19933  19881       19881
+#>  7: MCID3111166148 01 First-year        6       19933  19881       19881
+#>  8: MCID3111170298 01 First-year        6       19933  19881       19881
+#>  9: MCID3111170338 01 First-year        6       19933  19881       19881
+#> 10: MCID3111213943 01 First-year        6       19943  19891       19881
 #>     upper_limit data_sufficiency
 #>          <char>           <char>
-#>  1:       19995          include
-#>  2:       19995          include
-#>  3:       19995    exclude-lower
-#>  4:       19995          include
-#>  5:       19995    exclude-lower
-#>  6:       19995    exclude-upper
-#>  7:       19995    exclude-upper
-#>  8:       19995          include
-#>  9:       19995          include
-#> 10:       19995          include
+#>  1:       20096    exclude-lower
+#>  2:       20096    exclude-lower
+#>  3:       20096    exclude-lower
+#>  4:       20096    exclude-lower
+#>  5:       20096    exclude-lower
+#>  6:       20096    exclude-lower
+#>  7:       20096    exclude-lower
+#>  8:       20181    exclude-lower
+#>  9:       20181    exclude-lower
+#> 10:       20181          include
 ```

@@ -19,20 +19,15 @@ student-level data
     standing, courses, grades, and degrees. Also called Student Unit
     Records (SURs).
 
-:   MIDFIELD student-level data are provided in four data tables
-    (`student`, `course`, `term`, and `degree`) that were compiled by
-    institutions and anonymized and curated by the MIDFIELD data
-    steward.
-
 stickiness
 
-:   Program “stickiness” \$\small\left(S\right)\$ is the ratio of the
-    number of graduates of a program \$\small\left(N_g\right)\$ to the
-    number ever enrolled in the program \$\small\left(N_e\right)\$.
+:   Program “stickiness” \small(S) is the ratio of the number of
+    graduates of a program \small(N_g) to the number ever enrolled in
+    the program \small(N_e).
 
-:   \$\$ \small S = \frac{N_g}{N_e} = \frac{\mathrm{number\\ of\\
+:    \small S = \frac{N_g}{N_e} = \frac{\mathrm{number\\ of\\
     graduates\\ of\\ a\\ program}}{\mathrm{number\\ ever\\ enrolled\\
-    in\\ the\\ program}} \$\$
+    in\\ the\\ program}}
 
 :   Stickiness is a more-inclusive alternative to graduation rate as a
     measure of a program’s success in attracting, keeping, and
@@ -63,6 +58,15 @@ stickiness
   of providing a brief, yet complete, case study. Such discussions are
   left to later articles. One can always use the R help system to read
   more about a data set or function.
+
+------------------------------------------------------------------------
+
+[◁ Introduction to
+midfieldr](https://midfieldr.github.io/midfieldr/articles/art-000-getting-started.md)
+  [▲ top of page](#top)  [Case study data
+▷](https://midfieldr.github.io/midfieldr/articles/art-002-case-data.md)
+
+------------------------------------------------------------------------
 
 ## References
 

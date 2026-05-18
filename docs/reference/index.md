@@ -39,8 +39,8 @@
   : Case-study results
 - [`grade_scale`](https://midfieldr.github.io/midfieldr/reference/grade_scale.md)
   : Grade scale
-- [`act_sat_scale`](https://midfieldr.github.io/midfieldr/reference/act_sat_scale.md)
-  : ACT-SAT conversion scale
+- [`sat_act_scale`](https://midfieldr.github.io/midfieldr/reference/sat_act_scale.md)
+  : SAT-ACT conversion scale
 
 ## Toy data for examples
 

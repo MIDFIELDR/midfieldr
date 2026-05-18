@@ -24,4 +24,4 @@ data(grade_scale)
 ## See also
 
 Other scales:
-[`act_sat_scale`](https://midfieldr.github.io/midfieldr/reference/act_sat_scale.md)
+[`sat_act_scale`](https://midfieldr.github.io/midfieldr/reference/sat_act_scale.md)

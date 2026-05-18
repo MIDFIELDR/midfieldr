@@ -77,66 +77,66 @@ dframe <- add_timely_term(dframe, toy_term)
 
 # Add completion status column
 add_completion_status(dframe, toy_degree)
-#>            mcid term_i      level_i adj_span timely_term term_degree
-#>          <char> <char>       <char>    <num>      <char>      <char>
-#>  1: MID25784187  19885  01 Freshman        6       19943       19946
-#>  2: MID25784974  19883 02 Sophomore        5       19931        <NA>
-#>  3: MID25816209  19881 02 Sophomore        5       19923        <NA>
-#>  4: MID25819358  19946 02 Sophomore        5       19993       19963
-#>  5: MID25828870  19881  01 Freshman        6       19933       19923
-#>  6: MID25829749  19995    03 Junior        4       20033        <NA>
-#>  7: MID25841418  19981    03 Junior        4       20013       19993
-#>  8: MID25845197  19905    03 Junior        4       19943       19921
-#>  9: MID25846316  19911  01 Freshman        6       19963       19951
-#> 10: MID25847220  19891  01 Freshman        6       19943       19933
+#>               mcid term_i       level_i adj_span timely_term term_degree
+#>             <char> <char>        <char>    <num>      <char>      <char>
+#>  1: MCID3111145992  19881 01 First-year        6       19933        <NA>
+#>  2: MCID3111159270  19881 01 First-year        6       19933       19913
+#>  3: MCID3111160219  19881 01 First-year        6       19933       19913
+#>  4: MCID3111160513  19881 01 First-year        6       19933        <NA>
+#>  5: MCID3111162677  19881 01 First-year        6       19933       19913
+#>  6: MCID3111164287  19881 01 First-year        6       19933       19913
+#>  7: MCID3111166148  19881 01 First-year        6       19933       19913
+#>  8: MCID3111170298  19881 01 First-year        6       19933       19904
+#>  9: MCID3111170338  19881 01 First-year        6       19933       19903
+#> 10: MCID3111213943  19891 01 First-year        6       19943       19903
 #>     completion_status
 #>                <char>
-#>  1:              late
-#>  2:              <NA>
-#>  3:              <NA>
-#>  4:            timely
+#>  1:              <NA>
+#>  2:            timely
+#>  3:            timely
+#>  4:              <NA>
 #>  5:            timely
-#>  6:              <NA>
+#>  6:            timely
 #>  7:            timely
 #>  8:            timely
 #>  9:            timely
 #> 10:            timely
 
 # Existing completion_status column, if any, is overwritten
-dframe[, completion_status := NA_character_]
-#>            mcid term_i      level_i adj_span timely_term completion_status
-#>          <char> <char>       <char>    <num>      <char>            <char>
-#>  1: MID25784187  19885  01 Freshman        6       19943              <NA>
-#>  2: MID25784974  19883 02 Sophomore        5       19931              <NA>
-#>  3: MID25816209  19881 02 Sophomore        5       19923              <NA>
-#>  4: MID25819358  19946 02 Sophomore        5       19993              <NA>
-#>  5: MID25828870  19881  01 Freshman        6       19933              <NA>
-#>  6: MID25829749  19995    03 Junior        4       20033              <NA>
-#>  7: MID25841418  19981    03 Junior        4       20013              <NA>
-#>  8: MID25845197  19905    03 Junior        4       19943              <NA>
-#>  9: MID25846316  19911  01 Freshman        6       19963              <NA>
-#> 10: MID25847220  19891  01 Freshman        6       19943              <NA>
+dframe[, completion_status := NA_character_][]
+#>               mcid term_i       level_i adj_span timely_term completion_status
+#>             <char> <char>        <char>    <num>      <char>            <char>
+#>  1: MCID3111145992  19881 01 First-year        6       19933              <NA>
+#>  2: MCID3111159270  19881 01 First-year        6       19933              <NA>
+#>  3: MCID3111160219  19881 01 First-year        6       19933              <NA>
+#>  4: MCID3111160513  19881 01 First-year        6       19933              <NA>
+#>  5: MCID3111162677  19881 01 First-year        6       19933              <NA>
+#>  6: MCID3111164287  19881 01 First-year        6       19933              <NA>
+#>  7: MCID3111166148  19881 01 First-year        6       19933              <NA>
+#>  8: MCID3111170298  19881 01 First-year        6       19933              <NA>
+#>  9: MCID3111170338  19881 01 First-year        6       19933              <NA>
+#> 10: MCID3111213943  19891 01 First-year        6       19943              <NA>
 add_completion_status(dframe, toy_degree)
-#>            mcid term_i      level_i adj_span timely_term term_degree
-#>          <char> <char>       <char>    <num>      <char>      <char>
-#>  1: MID25784187  19885  01 Freshman        6       19943       19946
-#>  2: MID25784974  19883 02 Sophomore        5       19931        <NA>
-#>  3: MID25816209  19881 02 Sophomore        5       19923        <NA>
-#>  4: MID25819358  19946 02 Sophomore        5       19993       19963
-#>  5: MID25828870  19881  01 Freshman        6       19933       19923
-#>  6: MID25829749  19995    03 Junior        4       20033        <NA>
-#>  7: MID25841418  19981    03 Junior        4       20013       19993
-#>  8: MID25845197  19905    03 Junior        4       19943       19921
-#>  9: MID25846316  19911  01 Freshman        6       19963       19951
-#> 10: MID25847220  19891  01 Freshman        6       19943       19933
+#>               mcid term_i       level_i adj_span timely_term term_degree
+#>             <char> <char>        <char>    <num>      <char>      <char>
+#>  1: MCID3111145992  19881 01 First-year        6       19933        <NA>
+#>  2: MCID3111159270  19881 01 First-year        6       19933       19913
+#>  3: MCID3111160219  19881 01 First-year        6       19933       19913
+#>  4: MCID3111160513  19881 01 First-year        6       19933        <NA>
+#>  5: MCID3111162677  19881 01 First-year        6       19933       19913
+#>  6: MCID3111164287  19881 01 First-year        6       19933       19913
+#>  7: MCID3111166148  19881 01 First-year        6       19933       19913
+#>  8: MCID3111170298  19881 01 First-year        6       19933       19904
+#>  9: MCID3111170338  19881 01 First-year        6       19933       19903
+#> 10: MCID3111213943  19891 01 First-year        6       19943       19903
 #>     completion_status
 #>                <char>
-#>  1:              late
-#>  2:              <NA>
-#>  3:              <NA>
-#>  4:            timely
+#>  1:              <NA>
+#>  2:            timely
+#>  3:            timely
+#>  4:              <NA>
 #>  5:            timely
-#>  6:              <NA>
+#>  6:            timely
 #>  7:            timely
 #>  8:            timely
 #>  9:            timely

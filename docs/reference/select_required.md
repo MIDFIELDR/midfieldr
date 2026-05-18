@@ -39,11 +39,9 @@ structures are not preserved.
 ## Details
 
 Several midfieldr functions require one or more of the variables `mcid`,
-`institution`, `race`, `sex`, `^term`, `cip6`, and `level`. And if one
-requires a composite key to uniquely identify rows in the course or
-degree tables, the variables `abbrev`, `number` and degree variable
-`degree` are also required. A vector of these names comprises the
-default subset.
+`institution`, `race`, `sex`, `^term`, `cip6`, and `level`. In addition,
+the composite key for the course table requires `abbrev` and `number`. A
+vector of these names comprises the default subset.
 
 Additional column names or partial names can be included by using the
 `select_add` argument.
@@ -90,14 +88,14 @@ grepl(search_pattern, names(x))
 
 x <- select_required(toy_course) 
 names(x)
-#> [1] "mcid"        "institution" "term"        "abbrev"      "number"     
+#> [1] "mcid"        "institution" "term_course" "abbrev"      "number"     
 grepl(search_pattern, names(x))
 #> [1]  TRUE  TRUE  TRUE FALSE FALSE
 
 # Adding search terms
 x <- select_required(toy_course, select_add = c("abbrev", "number", "grade")) 
 names(x)
-#> [1] "mcid"        "institution" "term"        "abbrev"      "number"     
+#> [1] "mcid"        "institution" "term_course" "abbrev"      "number"     
 #> [6] "grade"      
 
 

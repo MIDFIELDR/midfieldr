@@ -413,4 +413,13 @@ DT[, c("cip6", "term_degree") := NULL]
 DT <- unique(DT)
 ```
 
+------------------------------------------------------------------------
+
+[◁
+Starters](https://midfieldr.github.io/midfieldr/articles/art-070-starters.md)
+   [▲ top of page](#top)    [Groupings
+▷](https://midfieldr.github.io/midfieldr/articles/art-090-groupings.md)
+
+------------------------------------------------------------------------
+
 ## References

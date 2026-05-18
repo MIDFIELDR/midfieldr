@@ -222,6 +222,17 @@ be used again.
 baseline <- copy(DT)
 ```
 
+*Verify prepared data.*   `baseline_mcid`, included with midfieldr,
+contains the case study information developed above. Here we verify that
+the two data frames have the same content.
+
+``` r
+
+# Demonstrate equivalence
+check_equiv_frames(DT, baseline_mcid)
+#> [1] TRUE
+```
+
 ## Identify programs
 
 In MIDFIELD datasets, the `cip6` variable identifies the 6-digit code
@@ -346,6 +357,17 @@ selected_programs
 
 # Restore original settings
 options(op)
+```
+
+*Verify prepared data.*   `study_programs`, included with midfieldr,
+contains the case study information developed above. Here we verify that
+the two data frames have the same content.
+
+``` r
+
+# Demonstrate equivalence
+check_equiv_frames(selected_programs, study_programs)
+#> [1] TRUE
 ```
 
 ## Gather ever-enrolled
@@ -740,7 +762,7 @@ the two data frames have the same content.
 
 # Demonstrate equivalence
 check_equiv_frames(DT, study_observations)
-#> [1] FALSE
+#> [1] TRUE
 ```
 
 In this form, the observations are the starting point for part 3 of the
@@ -791,9 +813,6 @@ degree[mcid == mcid_we_want]
 #>              mcid   institution term_degree   cip6
 #>            <char>        <char>      <char> <char>
 #> 1: MCID3111171519 Institution B       19924 110701
-#>                                     degree
-#>                                     <char>
-#> 1: Bachelor of Science in Computer Science
 ```
 
 *Example 2.*   This ID yields two observations indicating that the
@@ -833,9 +852,6 @@ degree[mcid == mcid_we_want]
 #>              mcid   institution term_degree   cip6
 #>            <char>        <char>      <char> <char>
 #> 1: MCID3111150194 Institution J       19923 143501
-#>                                           degree
-#>                                           <char>
-#> 1: Bachelor of Science in Industrial Engineering
 ```
 
 *Example 3.*   This ID yields two observations indicating that the
@@ -878,9 +894,6 @@ degree[mcid == mcid_we_want]
 #>              mcid   institution term_degree   cip6
 #>            <char>        <char>      <char> <char>
 #> 1: MCID3111264877 Institution B       19941 261399
-#>                                                     degree
-#>                                                     <char>
-#> 1: Bachelor of Science in Evolution and Population Biology
 ```
 
 *Example 4.*   This ID yields four observations indicating that the
@@ -925,10 +938,16 @@ degree[mcid == mcid_we_want]
 #>              mcid   institution term_degree   cip6
 #>            <char>        <char>      <char> <char>
 #> 1: MCID3112470255 Institution C       20143 141901
-#>                                           degree
-#>                                           <char>
-#> 1: Bachelor of Science in Mechanical Engineering
 ```
+
+------------------------------------------------------------------------
+
+[◁ Case study
+goals](https://midfieldr.github.io/midfieldr/articles/art-001-case-goals.md)
+  [▲ top of page](#top)  [Case study results
+▷](https://midfieldr.github.io/midfieldr/articles/art-003-case-results.md)
+
+------------------------------------------------------------------------
 
 ## References
 

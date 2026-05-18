@@ -1079,6 +1079,15 @@ start
 The results indicate (for the case study data) a potential under-count
 of 45% to 97% if FYE proxies are excluded when counting starters.
 
+------------------------------------------------------------------------
+
+[◁
+Blocs](https://midfieldr.github.io/midfieldr/articles/art-050-blocs.md)
+   [▲ top of page](#top)    [Starters
+▷](https://midfieldr.github.io/midfieldr/articles/art-070-starters.md)
+
+------------------------------------------------------------------------
+
 ## Reusable code
 
 Given the number of lines of code and the number of case-specific
@@ -1115,4 +1124,4 @@ Science Foundation; \[Online; accessed 2022–12–15\].
 van Buuren, Stef, and Karin Groothuis-Oudshoorn. 2011. “mice:
 Multivariate Imputation by Chained Equations in R.” *Journal of
 Statistical Software* 45 (3): 1–67.
-<https://www.jstatsoft.org/v45/i03/>.
+<https://doi.org/10.18637/jss.v045.i03>.

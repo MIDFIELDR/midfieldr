@@ -1,4 +1,4 @@
-# ACT-SAT conversion scale
+# SAT-ACT conversion scale
 
 Data frame for converting between ACT and SAT scores. A range of SAT
 scores converts to a single ACT score; an ACT score converts to a single
@@ -7,7 +7,7 @@ value equivalent SAT score.
 ## Usage
 
 ``` r
-data(act_sat_scale)
+data(sat_act_scale)
 ```
 
 ## Format

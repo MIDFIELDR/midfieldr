@@ -321,4 +321,13 @@ DT <- student[DT, .(mcid), on = c("mcid"), nomatch = NULL]
 DT <- unique(DT)
 ```
 
+------------------------------------------------------------------------
+
+[◁ Data
+sufficiency](https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.md)
+   [▲ top of page](#top)    [Programs
+▷](https://midfieldr.github.io/midfieldr/articles/art-040-programs.md)
+
+------------------------------------------------------------------------
+
 ## References

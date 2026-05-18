@@ -385,15 +385,15 @@ toy_DT <- add_timely_term(dframe = toy_mcid, midfield_term = toy_term)
 # Equivalently
 toy_DT <- add_timely_term(toy_mcid, toy_term)
 toy_DT
-#>            mcid term_i      level_i adj_span timely_term
-#>          <char> <char>       <char>    <num>      <char>
-#>  1: MID25784187  19885  01 Freshman        6       19943
-#>  2: MID25784974  19883 02 Sophomore        5       19931
-#>  3: MID25816209  19881 02 Sophomore        5       19923
-#> ---                                                     
-#> 97: MID26691066  20103  01 Freshman        6       20161
-#> 98: MID26692025  20131    04 Senior        3       20153
-#> 99: MID26692254  20143 02 Sophomore        5       20191
+#>                mcid term_i       level_i adj_span timely_term
+#>              <char> <char>        <char>    <num>      <char>
+#>   1: MCID3111145992  19881 01 First-year        6       19933
+#>   2: MCID3111159270  19881 01 First-year        6       19933
+#>   3: MCID3111160219  19881 01 First-year        6       19933
+#>  ---                                                         
+#> 148: MCID3112804735  20161 01 First-year        6       20213
+#> 149: MCID3112813578  20161 01 First-year        6       20213
+#> 150: MCID3112845932  20173 01 First-year        6       20231
 ```
 
 ### Silent overwriting
@@ -417,15 +417,15 @@ replaced.
 # Demonstrate overwriting
 toy_DT <- add_timely_term(toy_DT, toy_term)
 toy_DT
-#>            mcid term_i      level_i adj_span timely_term
-#>          <char> <char>       <char>    <num>      <char>
-#>  1: MID25784187  19885  01 Freshman        6       19943
-#>  2: MID25784974  19883 02 Sophomore        5       19931
-#>  3: MID25816209  19881 02 Sophomore        5       19923
-#> ---                                                     
-#> 97: MID26691066  20103  01 Freshman        6       20161
-#> 98: MID26692025  20131    04 Senior        3       20153
-#> 99: MID26692254  20143 02 Sophomore        5       20191
+#>                mcid term_i       level_i adj_span timely_term
+#>              <char> <char>        <char>    <num>      <char>
+#>   1: MCID3111145992  19881 01 First-year        6       19933
+#>   2: MCID3111159270  19881 01 First-year        6       19933
+#>   3: MCID3111160219  19881 01 First-year        6       19933
+#>  ---                                                         
+#> 148: MCID3112804735  20161 01 First-year        6       20213
+#> 149: MCID3112813578  20161 01 First-year        6       20213
+#> 150: MCID3112845932  20173 01 First-year        6       20231
 ```
 
 ## `add_data_sufficiency()`
@@ -602,5 +602,14 @@ DT <- add_data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include", .(mcid)]
 DT <- unique(DT)
 ```
+
+------------------------------------------------------------------------
+
+[◁ Planning a
+workflow](https://midfieldr.github.io/midfieldr/articles/art-010-planning.md)
+   [▲ top of page](#top)    [Degree seeking
+▷](https://midfieldr.github.io/midfieldr/articles/art-030-degree-seeking.md)
+
+------------------------------------------------------------------------
 
 ## References

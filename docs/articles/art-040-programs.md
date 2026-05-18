@@ -826,6 +826,15 @@ selected_programs[, program := fcase(
 selected_programs <- selected_programs[, .(cip6, program)]
 ```
 
+------------------------------------------------------------------------
+
+[◁ Degree
+seeking](https://midfieldr.github.io/midfieldr/articles/art-030-degree-seeking.md)
+   [▲ top of page](#top)    [Blocs
+▷](https://midfieldr.github.io/midfieldr/articles/art-050-blocs.md)
+
+------------------------------------------------------------------------
+
 ## References
 
 NCES. 2010. *IPEDS Classification of Instructional Programs (CIP)*.

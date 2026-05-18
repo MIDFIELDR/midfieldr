@@ -5,19 +5,33 @@
 \alias{toy_term}
 \title{Term data for examples}
 \format{
-\code{data.table} with 150 rows and 5 columns keyed by student ID.
-The variables are:
+\code{data.table} with 1114 rows and 13 columns keyed by student ID:
 \describe{
 \item{\code{mcid}}{Character, de-identified student ID. Key column.}
 \item{\code{institution}}{Character, de-identified institution
 name, e.g., Institution A, Institution B, etc.}
 \item{\code{term}}{Character, academic year and term, format YYYYT.
 Key column.}
-\item{\code{cip6}}{Character, 6-digit CIP code of program in which
-a student is enrolled in a term.}
+\item{\code{cip6}}{Character, 6-digit CIP code of program in
+which a student is enrolled in a term, e.g., \code{090101},
+\code{141201}, \code{260901}, \code{420101}, etc.}
 \item{\code{level}}{Character, 01 Freshman, 02 Sophomore, etc.
 The equivalent values in the current practice data are 01
 First-Year, 02-Second Year, etc.}
+\item{\code{standing}}{Character, academic standing, e.g.,
+\verb{Good Standing}, \verb{Academic Warning}, etc.}
+\item{\code{coop}}{Character, cooperative education term, possible
+values are \code{Yes}, \code{No}.}
+\item{\code{hours_term}}{Numeric, credit hours earned
+in the term.}
+\item{\code{hours_term_attempt}}{Numeric, credit
+hours attempted in the term.}
+\item{\code{hours_cumul}}{Numeric, cumulative credit hours
+earned.}
+\item{\code{hours_cumul_attempt}}{Numeric, cumulative
+credit hours attempted.}
+\item{\code{gpa_term}}{Numeric, term grade point average.}
+\item{\code{gpa_cumul}}{Numeric, cumulative grade point average.}
 }
 }
 \usage{

@@ -745,4 +745,13 @@ cols_we_want <- student[, .(mcid, race, sex)]
 DT <- cols_we_want[DT, on = c("mcid")]
 ```
 
+------------------------------------------------------------------------
+
+[◁
+Graduates](https://midfieldr.github.io/midfieldr/articles/art-080-graduates.md)
+   [▲ top of page](#top)    [Graduation rate
+▷](https://midfieldr.github.io/midfieldr/articles/art-100-grad-rate.md)
+
+------------------------------------------------------------------------
+
 ## References

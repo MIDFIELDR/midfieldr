@@ -1,28 +1,39 @@
 # Changelog
 
-## midfieldr (development version)
+## midfieldr 1.0.3.9xxx
 
-## midfieldr 1.0.3 / 2026–05–10
+Current development version
 
+- Revise “Get started” article for brief but comprehensive introduction
+  to all functions.
+- New versions of toy data and case study data for consistency with
+  midfielddata.
+- Revise README for brevity. Use toy data to illustrate usage.
+
+## version 1.0.3
+
+2026–05 CRAN release
+
+- Noted the transfer of the research database to ASEE
 - Convert vignettes to non-vignette articles available on the website.
-  This allowed us to omit dependency on the non-mainstream midfielddata
-  repository.
-- Replace `same_content()` with re-export of wrapr
+- Add re-export of wrapr
   [`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
-- Add composite column keys to
+  to replace `same_content()`
+- Add composite column keys of the `course` data table to
   [`select_required()`](https://midfieldr.github.io/midfieldr/reference/select_required.md)
-  for course table
-- Add `grade_scale` and `sat_act_scale` datasets
+- Add datasets `grade_scale` and `sat_act_scale`
 
-## midfieldr 1.0.2 / 2024–05–16
+## version 1.0.2
+
+2024–05
 
 - Edit argument descriptions and correct typos.
 - Update the midfieldr-package.R file
 - No change in functionality.
 
-## midfieldr 1.0.1 / 2023–07–08
+## version 1.0.1
 
-Initial CRAN submission
+2023–07, initial CRAN submission
 
 - Significant changes from earlier versions, no backwards compatibility,
   prompting version number change to 1.0.0.
@@ -35,6 +46,6 @@ Initial CRAN submission
 - Switch to package tinytest for unit testing
 - Completely overhaul midfieldr functions
 
-## midfieldr 0.1.0 / 2018–06
+## version 0.1.0
 
-- Initial development version public on GitHub
+2018–06, initial development version public on GitHub

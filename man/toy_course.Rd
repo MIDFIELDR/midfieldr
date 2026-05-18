@@ -5,17 +5,38 @@
 \alias{toy_course}
 \title{Course data for examples}
 \format{
-\code{data.table} with 4616 rows and 6 columns keyed by student ID:
+\code{data.table} with 5863 rows and 12 columns keyed by student ID:
 \describe{
 \item{\code{mcid}}{Character, de-identified student ID. Key column.}
 \item{\code{institution}}{Character, de-identified institution
 name, e.g., Institution A, Institution B, etc.}
-\item{\code{term_course}}{Character, academic year and term,
-format YYYYT. Key column.}
+\item{\code{term}}{Character, academic year and term, format YYYYT.
+Key column.}
+\item{\code{course}}{Character, course name, e.g., \verb{Astrophysics  III}, \verb{Calculus For Social Science And Business}, \verb{Corp  Financial Rprtng 1}, \verb{Environmental Sanitation II}, \verb{Fitness  and Wellness}, \verb{Introductory Astronomy 2}, \verb{Our Changing  Environment}, etc.}
 \item{\code{abbrev}}{Character, course alphabetical identifier,
 e.g. ENGR, MATH, ENGL. Key column.}
 \item{\code{number}}{Character, course numeric identifier, e.g.
 101, 3429. Key column.}
+\item{\code{section}}{Character, course section identifier, from
+one to four characters, e.g., \code{1}, \code{2}, \code{01}, \code{14}, \code{001},
+\code{040}, \code{785}, \code{H02}, \code{R01}, \verb{300E}, \verb{888R}, etc.}
+\item{\code{type}}{Character, predominant delivery method for this
+section, e.g., \code{Blended}, \verb{Distance Education}, \code{Face-to-Face},
+\code{Online}, etc.}
+\item{\code{faculty_rank}}{Character, academic rank of the
+person teaching the course, e.g., \verb{Assistant Professor},
+\verb{Associate Professor}, \verb{Graduate Assistant},
+\verb{Visiting Faculty}, etc.}
+\item{\code{hours_course}}{Numeric, number of credit-hours
+for successful course completion.}
+\item{\code{grade}}{Character, course grade, e.g., A+, A, A-, B+,
+I, NG, etc.}
+\item{\code{discipline_midfield}}{Character, a variable
+for grouping courses by academic discipline
+assigned by the pre-2023 MIDFIELD data curator, e.g.,
+\code{Anthropology}, \code{Business}, \verb{Computer Science},
+\code{Engineering}, \verb{Language and Literature},
+\code{Mathematics},\verb{Visual and Performing Arts}, etc.}
 }
 }
 \usage{

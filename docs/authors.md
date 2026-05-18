@@ -13,6 +13,8 @@
 
 - **Susan Lord**. Author, copyright holder.
 
+- **US National Science Foundation**. Funder.
+
 ## Citation
 
 Source:

@@ -150,23 +150,72 @@ with all variables except `mcid` returned as factors.
 ``` r
 # Using toy data
 prep_fye_mice(toy_student, toy_term)
-#>            mcid     race    sex   institution  proxy
-#>          <char>   <fctr> <fctr>        <fctr> <fctr>
-#>  1: MID26060301    Asian Female Institution C   <NA>
-#>  2: MID25995980 Hispanic Female Institution C   <NA>
-#>  3: MID25997636 Hispanic Female Institution C   <NA>
-#>  4: MID26086310 Hispanic Female Institution C   <NA>
-#>  5: MID26000057    White Female Institution C   <NA>
-#>  6: MID26614720    Asian   Male Institution J   <NA>
-#>  7: MID26593796    White   Male Institution J   <NA>
-#>  8: MID25848589    White   Male Institution M 143501
-#>  9: MID25846316    White   Male Institution M 143501
-#> 10: MID25847220    White   Male Institution M 143501
-#> 11: MID25828870    White   Male Institution M 149999
+#>               mcid          race    sex   institution  proxy
+#>             <char>        <fctr> <fctr>        <fctr> <fctr>
+#>  1: MCID3111775049         Black Female Institution J   <NA>
+#>  2: MCID3111587881         White Female Institution J   <NA>
+#>  3: MCID3112382701         White Female Institution J   <NA>
+#>  4: MCID3111914993         Asian   Male Institution J   <NA>
+#>  5: MCID3112061482         Asian   Male Institution J   <NA>
+#>  6: MCID3112265753         Asian   Male Institution J   <NA>
+#>  7: MCID3112273754 Other/Unknown   Male Institution J   <NA>
+#>  8: MCID3111160513         White   Male Institution J   <NA>
+#>  9: MCID3111250695         White   Male Institution J   <NA>
+#> 10: MCID3111304195         White   Male Institution J   <NA>
+#> 11: MCID3111413518         White   Male Institution J   <NA>
+#> 12: MCID3111580991         White   Male Institution J   <NA>
+#> 13: MCID3111648099         White   Male Institution J   <NA>
+#> 14: MCID3111652280         White   Male Institution J   <NA>
+#> 15: MCID3111782447         White   Male Institution J   <NA>
+#> 16: MCID3112008110         White   Male Institution J   <NA>
+#> 17: MCID3112172401         White   Male Institution J   <NA>
+#> 18: MCID3112269075         White   Male Institution J   <NA>
+#> 19: MCID3112382065         White   Male Institution J   <NA>
+#> 20: MCID3112382653         White   Male Institution J   <NA>
+#> 21: MCID3112384278         White   Male Institution J   <NA>
+#> 22: MCID3112388922         White   Male Institution J   <NA>
+#> 23: MCID3111166148         White   Male Institution J 140201
+#> 24: MCID3111931819         White   Male Institution J 140201
+#> 25: MCID3111933160         White   Male Institution J 140201
+#> 26: MCID3112172059         White   Male Institution J 140201
+#> 27: MCID3111162677         White Female Institution J 140701
+#> 28: MCID3112216887         White Female Institution J 140701
+#> 29: MCID3111357512         White   Male Institution J 140701
+#> 30: MCID3112169393         White Female Institution J 140801
+#> 31: MCID3111354376         White   Male Institution J 140801
+#> 32: MCID3111460368         White   Male Institution J 140801
+#> 33: MCID3111656207         White   Male Institution J 140801
+#> 34: MCID3112267967         White   Male Institution J 140801
+#> 35: MCID3112268235         White   Male Institution J 140801
+#> 36: MCID3111909377 Other/Unknown   Male Institution J 140901
+#> 37: MCID3111355374         White   Male Institution J 140901
+#> 38: MCID3111648837         White   Male Institution J 140901
+#> 39: MCID3111842661         White   Male Institution J 140901
+#> 40: MCID3111358440         White Female Institution J 141001
+#> 41: MCID3111159270         White   Male Institution J 141001
+#> 42: MCID3111164287         White   Male Institution J 141001
+#> 43: MCID3111406464         White   Male Institution J 141001
+#> 44: MCID3111584951         White   Male Institution J 141401
+#> 45: MCID3112169971         White Female Institution J 141801
+#> 46: MCID3111503953         Asian   Male Institution J 141901
+#> 47: MCID3112174233      Hispanic   Male Institution J 141901
+#> 48: MCID3111253227         White   Male Institution J 141901
+#> 49: MCID3111355464         White   Male Institution J 141901
+#> 50: MCID3111356562         White   Male Institution J 141901
+#> 51: MCID3111786826         White   Male Institution J 141901
+#> 52: MCID3112384374         White   Male Institution J 141901
+#> 53: MCID3112323623         White Female Institution J 143501
+#> 54: MCID3111573067         Black   Male Institution J 143501
+#> 55: MCID3111454125 International   Male Institution J 143501
+#>               mcid          race    sex   institution  proxy
+#>             <char>        <fctr> <fctr>        <fctr> <fctr>
 
 # Other columns, if any, are dropped
 colnames(toy_student)
-#> [1] "mcid"        "institution" "race"        "sex"        
+#>  [1] "mcid"           "institution"    "transfer"       "hours_transfer"
+#>  [5] "race"           "sex"            "age_desc"       "us_citizen"    
+#>  [9] "home_zip"       "high_school"    "sat_math"       "sat_verbal"    
+#> [13] "act_comp"      
 colnames(prep_fye_mice(toy_student, toy_term))
 #> [1] "mcid"        "race"        "sex"         "institution" "proxy"      
 
@@ -174,18 +223,64 @@ colnames(prep_fye_mice(toy_student, toy_term))
 prep_fye_mice(midfield_student = toy_student, 
               midfield_term =toy_term, 
               fye_codes = c("140101", "140102"))
-#>            mcid     race    sex   institution  proxy
-#>          <char>   <fctr> <fctr>        <fctr> <fctr>
-#>  1: MID25977316    White   Male Institution B   <NA>
-#>  2: MID26060301    Asian Female Institution C   <NA>
-#>  3: MID25995980 Hispanic Female Institution C   <NA>
-#>  4: MID25997636 Hispanic Female Institution C   <NA>
-#>  5: MID26086310 Hispanic Female Institution C   <NA>
-#>  6: MID26000057    White Female Institution C   <NA>
-#>  7: MID26614720    Asian   Male Institution J   <NA>
-#>  8: MID26593796    White   Male Institution J   <NA>
-#>  9: MID25848589    White   Male Institution M 143501
-#> 10: MID25846316    White   Male Institution M 143501
-#> 11: MID25847220    White   Male Institution M 143501
-#> 12: MID25828870    White   Male Institution M 149999
+#>               mcid          race    sex   institution  proxy
+#>             <char>        <fctr> <fctr>        <fctr> <fctr>
+#>  1: MCID3111802941         White Female Institution C   <NA>
+#>  2: MCID3111775049         Black Female Institution J   <NA>
+#>  3: MCID3111587881         White Female Institution J   <NA>
+#>  4: MCID3112382701         White Female Institution J   <NA>
+#>  5: MCID3111914993         Asian   Male Institution J   <NA>
+#>  6: MCID3112061482         Asian   Male Institution J   <NA>
+#>  7: MCID3112265753         Asian   Male Institution J   <NA>
+#>  8: MCID3112273754 Other/Unknown   Male Institution J   <NA>
+#>  9: MCID3111160513         White   Male Institution J   <NA>
+#> 10: MCID3111250695         White   Male Institution J   <NA>
+#> 11: MCID3111304195         White   Male Institution J   <NA>
+#> 12: MCID3111413518         White   Male Institution J   <NA>
+#> 13: MCID3111580991         White   Male Institution J   <NA>
+#> 14: MCID3111648099         White   Male Institution J   <NA>
+#> 15: MCID3111652280         White   Male Institution J   <NA>
+#> 16: MCID3111782447         White   Male Institution J   <NA>
+#> 17: MCID3112008110         White   Male Institution J   <NA>
+#> 18: MCID3112172401         White   Male Institution J   <NA>
+#> 19: MCID3112269075         White   Male Institution J   <NA>
+#> 20: MCID3112382065         White   Male Institution J   <NA>
+#> 21: MCID3112382653         White   Male Institution J   <NA>
+#> 22: MCID3112384278         White   Male Institution J   <NA>
+#> 23: MCID3112388922         White   Male Institution J   <NA>
+#> 24: MCID3111166148         White   Male Institution J 140201
+#> 25: MCID3111931819         White   Male Institution J 140201
+#> 26: MCID3111933160         White   Male Institution J 140201
+#> 27: MCID3112172059         White   Male Institution J 140201
+#> 28: MCID3111162677         White Female Institution J 140701
+#> 29: MCID3112216887         White Female Institution J 140701
+#> 30: MCID3111357512         White   Male Institution J 140701
+#> 31: MCID3112169393         White Female Institution J 140801
+#> 32: MCID3111354376         White   Male Institution J 140801
+#> 33: MCID3111460368         White   Male Institution J 140801
+#> 34: MCID3111656207         White   Male Institution J 140801
+#> 35: MCID3112267967         White   Male Institution J 140801
+#> 36: MCID3112268235         White   Male Institution J 140801
+#> 37: MCID3111909377 Other/Unknown   Male Institution J 140901
+#> 38: MCID3111355374         White   Male Institution J 140901
+#> 39: MCID3111648837         White   Male Institution J 140901
+#> 40: MCID3111842661         White   Male Institution J 140901
+#> 41: MCID3111358440         White Female Institution J 141001
+#> 42: MCID3111159270         White   Male Institution J 141001
+#> 43: MCID3111164287         White   Male Institution J 141001
+#> 44: MCID3111406464         White   Male Institution J 141001
+#> 45: MCID3111584951         White   Male Institution J 141401
+#> 46: MCID3112169971         White Female Institution J 141801
+#> 47: MCID3111503953         Asian   Male Institution J 141901
+#> 48: MCID3112174233      Hispanic   Male Institution J 141901
+#> 49: MCID3111253227         White   Male Institution J 141901
+#> 50: MCID3111355464         White   Male Institution J 141901
+#> 51: MCID3111356562         White   Male Institution J 141901
+#> 52: MCID3111786826         White   Male Institution J 141901
+#> 53: MCID3112384374         White   Male Institution J 141901
+#> 54: MCID3112323623         White Female Institution J 143501
+#> 55: MCID3111573067         Black   Male Institution J 143501
+#> 56: MCID3111454125 International   Male Institution J 143501
+#>               mcid          race    sex   institution  proxy
+#>             <char>        <fctr> <fctr>        <fctr> <fctr>
 ```

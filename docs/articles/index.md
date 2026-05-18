@@ -2,15 +2,16 @@
 
 ### All vignettes
 
-- [Getting
-  started](https://midfieldr.github.io/midfieldr/articles/art-000-getting-started.md):
+- [Introduction to
+  midfieldr](https://midfieldr.github.io/midfieldr/articles/art-000-getting-started.md):
 - [Case study:
   Goals](https://midfieldr.github.io/midfieldr/articles/art-001-case-goals.md):
 - [Case study:
   Data](https://midfieldr.github.io/midfieldr/articles/art-002-case-data.md):
 - [Case study:
   Results](https://midfieldr.github.io/midfieldr/articles/art-003-case-results.md):
-- [Planning](https://midfieldr.github.io/midfieldr/articles/art-010-planning.md):
+- [Planning a
+  workflow](https://midfieldr.github.io/midfieldr/articles/art-010-planning.md):
 - [Data
   sufficiency](https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.md):
 - [Degree

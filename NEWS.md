@@ -1,16 +1,26 @@
-# midfieldr 
+
+<!-- major.minor.patch.dev -->
+<!-- MAJOR version when you make incompatible API changes ->
+<!-- MINOR version add functionality in a backwards-compatible manner ->
+<!-- PATCH version backwards-compatible bug fixes ->
+
+<!-- ### New features -->
+<!-- ### Minor improvements -->
+<!-- ### Bug fixes -->
+<!-- ### Deprecated -->
+<!-- ### Defunct -->
 
 
-## 1.0.3.9xxx
+## midfieldr 1.0.3.9xxx
 
 Current development version
 
-- New versions of toy data (`toy_student`, `toy_term`, etc.) and case study data (`study_observations`, `study_results`) for consistency with latest version of midfielddata.
-- Use toy data to illustrate usage in README to avoid loading midfielddata except in articles. 
+- Revise "Get started" article for brief but comprehensive introduction to all functions. 
+- New versions of toy data and case study data for consistency with midfielddata.
+- Revise README for brevity. Use toy data to illustrate usage.
 
 
-
-## 1.0.3
+## version 1.0.3
 
 2026--05 CRAN release
 
@@ -20,7 +30,9 @@ Current development version
 - Add composite column keys of the `course` data table to `select_required()`
 - Add datasets `grade_scale` and `sat_act_scale`
 
-## 1.0.2
+
+
+## version 1.0.2
 
 2024--05
 
@@ -28,7 +40,9 @@ Current development version
 - Update the midfieldr-package.R file
 - No change in functionality.
 
-## 1.0.1
+
+
+## version 1.0.1
 
 2023--07, initial CRAN submission
 
@@ -45,21 +59,8 @@ prompting version number change to 1.0.0.
 
 
 
-## 0.1.0
+## version  0.1.0
 
 2018--06, initial development version public on GitHub
   
-<!-- major.minor.patch.dev -->
-<!-- MAJOR version when you make incompatible API changes ->
-<!-- MINOR version add functionality in a backwards-compatible manner ->
-<!-- PATCH version backwards-compatible bug fixes ->
 
-<!-- ### New features -->
-
-<!-- ### Minor improvements -->
-
-<!-- ### Bug fixes -->
-
-<!-- ### Deprecated -->
-
-<!-- ### Defunct -->

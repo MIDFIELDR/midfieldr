@@ -1,4 +1,4 @@
-# Planning
+# Planning a workflow
 
 Analysis of MIDFIELD data begins by identifying the groups of students,
 programs, and metrics with which we intend to work.
@@ -37,47 +37,41 @@ below. Accented entries indicate topics in the open article.
 
 ## Definitions
 
-student-level data
+- student-level data:
 
-:   Data at the “student-level” refers to information about individual
-    students including, for example, demographics, programs, academic
-    standing, courses, grades, and degrees. Also called Student Unit
-    Records (SURs).
+  Data at the “student-level” refers to information about individual
+  students including, for example, demographics, programs, academic
+  standing, courses, grades, and degrees. Also called Student Unit
+  Records (SURs).
 
-:   MIDFIELD student-level data are provided in four data tables
-    (`student`, `course`, `term`, and `degree`) that were compiled by
-    institutions and anonymized and curated by the MIDFIELD data
-    steward.
+- program:
 
-program
+  US academic field of study. Can be used to indicate a specialty within
+  a field or a collection of fields within a Department, College, or
+  University. Programs are denoted by the *Classification of
+  Instructional Programs* (CIP), a taxonomy of academic programs curated
+  by the US Department of Education ([NCES 2010](#ref-NCES:2010)).
 
-:   US academic field of study. Can be used to indicate a specialty
-    within a field or a collection of fields within a Department,
-    College, or University. Programs are denoted by the *Classification
-    of Instructional Programs* (CIP), a taxonomy of academic programs
-    curated by the US Department of Education ([NCES
-    2010](#ref-NCES:2010)).
+- metric:
 
-metric
+  A quantitative measure derived from student-level data. Includes
+  statistical measures such as counts of program starters or graduates
+  as well as comparative ratios such as graduation rate or stickiness.
+  Typically involves comparisons of specific blocs of students and
+  programs.
 
-:   A quantitative measure derived from student-level data. Includes
-    statistical measures such as counts of program starters or graduates
-    as well as comparative ratios such as graduation rate or stickiness.
-    Typically involves comparisons of specific blocs of students and
-    programs.
+- bloc:
 
-bloc
+  A grouping of student-level data dealt with as a unit, for example,
+  starters, students ever-enrolled, graduates, transfer students,
+  traditional and non-traditional students, migrators, etc.
 
-:   A grouping of student-level data dealt with as a unit, for example,
-    starters, students ever-enrolled, graduates, transfer students,
-    traditional and non-traditional students, migrators, etc.
+- grouping variables:
 
-grouping variables
-
-:   Detailed information in the student-level data that further
-    characterize a bloc of records, typically used to create bloc
-    subsets for comparison, for example, program, race/ethnicity, sex,
-    age, grade level, grades, etc.
+  Detailed information in the student-level data that further
+  characterize a bloc of records, typically used to create bloc subsets
+  for comparison, for example, program, race/ethnicity, sex, age, grade
+  level, grades, etc.
 
 ## Which records?
 
@@ -85,9 +79,8 @@ There are currently two points of access to MIDFIELD data:
 
 [MIDFIELD](https://midfield.online/).   A database of anonymized
 student-level records for approximately 2.4M undergraduates at 21 US
-institutions from 1987-2022. In 2023, control and management of the
-database was transferred to the American Society for Engineering
-Education (ASEE). For further information, contact ASEE.
+institutions from 1987-2022. In 2023, management of the database was
+transferred to the American Society for Engineering Education (ASEE).
 
 [midfielddata](https://midfieldr.github.io/midfielddata/).   An R data
 package that supplies anonymized student-level records for 98,000
@@ -166,6 +159,15 @@ example,
   many studies.
 - Other student-level variables such as institution, GPA, grade level,
   etc., can also be used for grouping and summarizing.
+
+------------------------------------------------------------------------
+
+[◁ Case study
+results](https://midfieldr.github.io/midfieldr/articles/art-003-case-results.md)
+   [▲ top of page](#top)    [Data sufficiency
+▷](https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.md)
+
+------------------------------------------------------------------------
 
 ## References
 

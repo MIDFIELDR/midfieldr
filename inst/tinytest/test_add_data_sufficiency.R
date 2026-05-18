@@ -13,17 +13,17 @@ test_add_data_sufficiency <- function() {
     # cat(wrapr::draw_frame(dframe))
 
     DT <- wrapr::build_frame(
-        "mcid"            , "level_i"       , "adj_span", "timely_term", "term_i", "lower_limit", "upper_limit", "data_sufficiency" |
-            "MCID3111146562", "01 First-year" , 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
-            "MCID3111156062", "02 Second-year", 5         , "19933"      , "19891" , "19881"      , "20096"      , "include"          |
-            "MCID3111159982", "01 First-year" , 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
-            "MCID3111160541", "01 First-year" , 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
-            "MCID3111165512", "01 First-year" , 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
-            "MCID3111165835", "02 Second-year", 5         , "19931"      , "19883" , "19881"      , "20096"      , "include"          |
-            "MCID3111170804", "02 Second-year", 5         , "19931"      , "19883" , "19883"      , "20181"      , "exclude-lower"    |
-            "MCID3111199777", "03 Third-year" , 4         , "19953"      , "19916" , "19881"      , "20096"      , "include"          |
-            "MCID3111206488", "01 First-year" , 6         , "19951"      , "19893" , "19881"      , "20096"      , "include"          |
-            "MCID3111206737", "04 Fourth-year", 3         , "19951"      , "19923" , "19881"      , "20096"      , "include"          )
+        "mcid"            , "level_i"      , "adj_span", "timely_term", "term_i", "lower_limit", "upper_limit", "data_sufficiency" |
+            "MCID3111145992", "01 First-year", 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
+            "MCID3111159270", "01 First-year", 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
+            "MCID3111160219", "01 First-year", 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
+            "MCID3111160513", "01 First-year", 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
+            "MCID3111162677", "01 First-year", 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
+            "MCID3111164287", "01 First-year", 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
+            "MCID3111166148", "01 First-year", 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
+            "MCID3111170298", "01 First-year", 6         , "19933"      , "19881" , "19881"      , "20181"      , "exclude-lower"    |
+            "MCID3111170338", "01 First-year", 6         , "19933"      , "19881" , "19881"      , "20181"      , "exclude-lower"    |
+            "MCID3111213943", "01 First-year", 6         , "19943"      , "19891" , "19881"      , "20181"      , "include"          )
     setDT(DT)
 
     # correct answers

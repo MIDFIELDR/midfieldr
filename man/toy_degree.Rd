@@ -5,16 +5,18 @@
 \alias{toy_degree}
 \title{Degree data for examples}
 \format{
-\code{data.table} with 65 rows and 4 columns keyed by student ID.
-The variables are:
+\code{data.table} with 93 rows and 4 columns keyed by student ID:
 \describe{
 \item{\code{mcid}}{Character, de-identified student ID. Key column.}
 \item{\code{institution}}{Character, de-identified institution
 name, e.g., Institution A, Institution B, etc.}
 \item{\code{term_degree}}{Character, academic year and term
 in which a student completes their program, format YYYYT.}
-\item{\code{cip6}}{Character, 6-digit CIP code of program in which
-a student is enrolled in a term. Key column.}
+\item{\code{cip6}}{Character, 6-digit CIP code of program in
+which a student is enrolled in a term. Key column.}
+\item{\code{degree}}{Character, type of degree awarded, e.g.,
+Bachelor of Arts in Geography, Bachelor of Science
+in Finance, etc.}
 }
 }
 \usage{

@@ -536,4 +536,13 @@ DT <- DT[, .(mcid, program)]
 DT <- unique(DT)
 ```
 
+------------------------------------------------------------------------
+
+[◁ FYE
+proxies](https://midfieldr.github.io/midfieldr/articles/art-060-fye-proxies.md)
+   [▲ top of page](#top)    [Graduates
+▷](https://midfieldr.github.io/midfieldr/articles/art-080-graduates.md)
+
+------------------------------------------------------------------------
+
 ## References

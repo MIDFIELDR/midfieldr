@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
 
-Provides tools and demonstrates methods for working with individual undergraduate student-level records (registrar's data) in 'R'. Tools include filters for program codes, data sufficiency, and timely completion. Methods include gathering blocs of records, computing quantitative metrics such as graduation rate, and creating charts to visualize comparisons. 'midfieldr' interacts with practice data provided in 'midfielddata', an R data package available at \url{https://midfieldr.github.io/midfielddata/}. The development of 'midfieldr' and 'midfielddata' was supported by the US National Science Foundation through grant numbers 1545667 and 2142087. 'midfieldr' is also designed to interact with the full MIDFIELD database, the management of which, in 2023, was transferred to the American Society for Engineering Education.
+Provides tools and demonstrates methods for working with individual undergraduate student-level records (registrar's data) in 'R'. Tools include filters for program codes, data sufficiency, and timely completion. Methods include gathering blocs of records, computing quantitative metrics such as graduation rate, and creating charts to visualize comparisons. 'midfieldr' interacts with practice data provided in 'midfielddata', an R data package available at \url{https://midfieldr.github.io/midfielddata/}. 'midfieldr' is also designed to interact with the full MIDFIELD database, the management of which was transferred to the American Society for Engineering Education in 2023. The development of 'midfieldr' and 'midfielddata' was supported by the US National Science Foundation through grant numbers 1545667 and 2142087.
 }
 \seealso{
 Useful links:
@@ -24,10 +24,10 @@ Useful links:
 Authors:
 \itemize{
   \item Richard Layton \email{graphdoctor@gmail.com} [copyright holder]
-  \item Russell Long \email{ralong@purdue.edu} [copyright holder]
+  \item Russell Long [copyright holder]
   \item Matthew Ohland \email{ohland@purdue.edu} [copyright holder]
   \item Marisa Orr [copyright holder]
-  \item Susan Lord \email{slord@sandiego.edu} [copyright holder]
+  \item Susan Lord [copyright holder]
 }
 
 Other contributors:

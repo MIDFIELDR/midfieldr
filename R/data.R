@@ -90,13 +90,22 @@
 #' package examples and articles. Sampled from an early version of the practice
 #' data, the toy data are not a current practice data sample.
 #'
-#' @format `data.table` with 99 rows and 4 columns keyed by student ID:
-#' \describe{
-#'  `r var_mcid`
-#'  `r var_institution`
-#'  `r var_race`
-#'  `r var_sex`
-#' }
+#' @format `data.table` with 15 rows and 13 columns keyed by student ID:
+#'   \describe{
+#'   `r var_mcid`
+#'   `r var_institution`
+#'   `r var_transfer`
+#'   `r var_hours_transfer`
+#'   `r var_race`
+#'   `r var_sex`
+#'   `r var_age_desc`
+#'   `r var_us_citizen`
+#'   `r var_home_zip`
+#'   `r var_high_school`
+#'   `r var_sat_math`
+#'   `r var_sat_verbal`
+#'   `r var_act_comp`
+#'   }
 #'
 #' @family toy-data
 #'
@@ -110,14 +119,21 @@
 #' package examples and articles. Sampled from an early version of the practice
 #' data, the toy data are not a current practice data sample.
 #'
-#' @format `data.table` with 4616 rows and 6 columns keyed by student ID:
-#' \describe{
-#'  `r var_mcid`
-#'  `r var_institution`
-#'  `r var_term_course`
-#'  `r var_abbrev`
-#'  `r var_number`
-#' }
+#' @format `data.table` with 5863 rows and 12 columns keyed by student ID:
+#'   \describe{
+#'   `r var_mcid`
+#'   `r var_institution`
+#'   `r var_term`
+#'   `r var_course`
+#'   `r var_abbrev`
+#'   `r var_number`
+#'   `r var_section`
+#'   `r var_type`
+#'   `r var_faculty_rank`
+#'   `r var_hours_course`
+#'   `r var_grade`
+#'   `r var_discipline_midfield`
+#'   }
 #'
 #' @family toy-data
 #'
@@ -131,15 +147,22 @@
 #' package examples and articles. Sampled from an early version of the practice
 #' data, the toy data are not a current practice data sample.
 #'
-#' @format `data.table` with 150 rows and 5 columns keyed by student ID.
-#' The variables are:
-#' \describe{
-#'  `r var_mcid`
-#'  `r var_institution`
-#'  `r var_term`
-#'  `r var_cip6`
-#'  `r var_level`
-#' }
+#' @format `data.table` with 1114 rows and 13 columns keyed by student ID:
+#'   \describe{
+#'   `r var_mcid`
+#'   `r var_institution`
+#'   `r var_term`
+#'   `r var_cip6_term`
+#'   `r var_level`
+#'   `r var_standing`
+#'   `r var_coop`
+#'   `r var_hours_term`
+#'   `r var_hours_term_attempt`
+#'   `r var_hours_cumul`
+#'   `r var_hours_cumul_attempt`
+#'   `r var_gpa_term`
+#'   `r var_gpa_cumul`
+#'   }
 #'
 #' @family toy-data
 #'
@@ -153,14 +176,14 @@
 #' package examples and articles. Sampled from an early version of the practice
 #' data, the toy data are not a current practice data sample.
 #'
-#' @format `data.table` with 65 rows and 4 columns keyed by student ID.
-#' The variables are:
-#' \describe{
-#'  `r var_mcid`
-#'  `r var_institution`
-#'  `r var_term_degree`
-#'  `r var_cip6_degree`
-#' }
+#' @format `data.table` with 93 rows and 4 columns keyed by student ID:
+#'   \describe{
+#'   `r var_mcid`
+#'   `r var_institution`
+#'   `r var_term_degree`
+#'   `r var_cip6_degree`
+#'   `r var_degree`
+#'   }
 #'
 #' @family toy-data
 #'

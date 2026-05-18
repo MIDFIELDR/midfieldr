@@ -7,13 +7,12 @@ completion. Methods include gathering blocs of records, computing
 quantitative metrics such as graduation rate, and creating charts to
 visualize comparisons. 'midfieldr' interacts with practice data provided
 in 'midfielddata', an R data package available at
-<https://midfieldr.github.io/midfielddata/>. 'midfieldr' also interacts
-with the full MIDFIELD database for users who have access. As of the
-transfer of MIDFIELD to the American Society for Engineering Education
-in 2023, the development, expansion, and study of MIDFIELD has been
-supported by the National Science Foundation grants 0337629, 0646441,
-0729596, 0734062, 0835914, 0935157, 0935058, 0969474, 1025171, 1129383,
-1232740, 1329283, 1361058, 1545667, 2142087, 2141903, and 2152441.
+<https://midfieldr.github.io/midfielddata/>. 'midfieldr' is also
+designed to interact with the full MIDFIELD database, the management of
+which was transferred to the American Society for Engineering Education
+in 2023. The development of 'midfieldr' and 'midfielddata' was supported
+by the US National Science Foundation through grant numbers 1545667 and
+2142087.
 
 ## See also
 
@@ -32,10 +31,14 @@ Authors:
 
 - Richard Layton <graphdoctor@gmail.com> \[copyright holder\]
 
-- Russell Long <ralong@purdue.edu> \[copyright holder, data manager\]
+- Russell Long \[copyright holder\]
 
 - Matthew Ohland <ohland@purdue.edu> \[copyright holder\]
 
 - Marisa Orr \[copyright holder\]
 
-- Susan Lord <slord@sandiego.edu> \[copyright holder\]
+- Susan Lord \[copyright holder\]
+
+Other contributors:
+
+- US National Science Foundation \[funder\]

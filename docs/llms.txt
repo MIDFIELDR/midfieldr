@@ -1,179 +1,35 @@
-  
+# midfieldr
+
+## Overview
+
 midfieldr is an R package that provides tools and methods for studying
 undergraduate student-level records from the MIDFIELD database.
 
-![](reference/figures/logo.png)
-
-## Introduction
-
-Provides tools and demonstrates methods for working with individual
-undergraduate student-level records (registrar’s data) in R. Tools
-include filters for program codes, data sufficiency, and timely
-completion. Methods include gathering blocs of records, computing
-quantitative metrics such as graduation rate, and creating charts to
-visualize comparisons. midfieldr is designed to work with data from the
-MIDFIELD research database, a sample of which is available in the
-midfielddata data package.
-
-midfieldr provides these functions for manipulating student-level data:
-
-- [`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
-  Determine completion status for every student
-- [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
-  Determine data sufficiency for every student
-- [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
-  Calculate a timely completion term for every student
 - [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/filter_cip.md)
-  Filter CIP data to match search strings
-- [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
-  Prepare FYE data for multiple imputation
+  selects rows of program codes that match search terms
 - [`select_required()`](https://midfieldr.github.io/midfieldr/reference/select_required.md)
-  Select required midfieldr variables
-
-Additional functions for processing intermediate results:
-
+  selects columns required by midfieldr functions
+- [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
+  adds a new variable for a timely completion term
+- [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
+  adds a new variable for data sufficiency status
+- [`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
+  adds a new variable for program completion status
+- [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
+  conditions data for imputing starting majors of FYE students
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
-  Order categorical variables of multiway data
+  conditions data for plotting a Cleveland-style multiway chart
 
-R packages in examples and vignettes
+Suggested packages.
 
-- *Data preparation.*   We use the data.table system and some base R for
-  data manipulation ([Dowle and Srinivasan
-  2022](#ref-Dowle+Srinivasan:2022:data.table)). To assist users who
-  might prefer other systems, the MIDFIELD Institute website ([Lord et
-  al. 2024](#ref-midfieldinstitute:2024)) includes tutorials providing
-  side-by-side base R, data.table, and dplyr solutions to common data
-  shaping tasks using MIDFIELD practice data.  
-- *Charts.*   Our preferred package for charts is ggplot2 ([Wickham
-  2016](#ref-Wickham:2016:ggplot2)). The lattice package ([Sarkar
-  2008](#ref-Sarkar:2008)) also offers users comprehensive control over
-  graphical elements (though our lattice experience is no longer
-  current).
-
-## Usage
-
-In this example, we gather all students ever enrolled in Engineering and
-summarize their graduation status (in any major), grouping by
-race/ethnicity and sex. If you are writing your own script to follow
-along, we use these packages in this example:
-
-``` r
-
-library(midfieldr)
-library(midfielddata)
-library(data.table)
-```
-
-Load the practice data. Reduce initial dimensions of data tables.
-
-``` r
-
-# Load the practice data
-data(student, term, degree)
-
-# Reduce dimensions of source data tables
-student <- select_required(student)
-term <- select_required(term)
-degree <- select_required(degree)
-```
-
-Filter for data sufficiency.
-
-``` r
-
-# Initialize the working data frame
-DT <- term[, .(mcid, cip6)]
-
-# Filter observations for data sufficiency
-DT <- add_timely_term(DT, term)
-DT <- add_data_sufficiency(DT, term)
-DT <- DT[data_sufficiency == "include"]
-```
-
-Filter for degree-seeking students ever enrolled in Engineering.
-
-``` r
-
-# Inner join to filter observations for degree-seeking
-cols_we_want <- student[, .(mcid)]
-DT <- cols_we_want[DT, on = c("mcid"), nomatch = NULL]
-
-# Filter observations for engineering programs
-DT <- DT[cip6 %like% "^14"]
-
-# Filter observations for unique students (first instance)
-DT <- DT[, .SD[1], by = c("mcid")]
-```
-
-Determine completion status.
-
-``` r
-
-# Add completion status variable
-DT <- add_completion_status(DT, degree)
-```
-
-Aggregate observations by groupings.
-
-``` r
-
-# Left join to add race/ethnicity and sex variables (omit unknowns)
-cols_we_want <- student[, .(mcid, race, sex)]
-DT <- student[DT, on = c("mcid")]
-DT <- DT[!(race %ilike% "unknown" | sex %ilike% "unknown")]
-
-# Create a variable combining race/ethnicity and sex
-DT[, people := paste(race, sex)]
-
-# Aggregate observations by groupings
-DT_display <- DT[, .N, by = c("completion_status", "people")]
-setorderv(DT_display, c("completion_status", "people"))
-```
-
-Reshape results for display.
-
-``` r
-
-# Transform to row-record form
-DT_display <- dcast(DT_display, people ~ completion_status, value.var = "N", fill = 0)
-
-# Prepare the table for display
-setcolorder(DT_display, c("people", "timely", "late"))
-setkeyv(DT_display, c("people"))
-setnames(DT_display,
-  old = c("people", "timely", "late", "NA"),
-  new = c("People", "Timely completion", "Late completion", "Did not complete")
-)
-```
-
-Print the results table. “Timely completion” is the count of graduates
-completing their programs in no more than 6 years; “Late completion” is
-the count of those graduating in more than 6 years; “Did not complete”
-is the count of non-graduates.
-
-| People                 | Timely completion | Late completion | Did not complete |
-|------------------------|-------------------|-----------------|------------------|
-| Asian Female           | 87                | 4               | 43               |
-| Asian Male             | 315               | 19              | 163              |
-| Black Female           | 26                | 3               | 39               |
-| Black Male             | 80                | 5               | 84               |
-| Hispanic Female        | 36                | 3               | 31               |
-| Hispanic Male          | 181               | 19              | 102              |
-| International Female   | 110               | 9               | 51               |
-| International Male     | 501               | 41              | 280              |
-| Native American Female | 2                 | 0               | 2                |
-| Native American Male   | 13                | 3               | 6                |
-| White Female           | 985               | 51              | 386              |
-| White Male             | 4100              | 269             | 2034             |
-
-Table 1: Completion status of engineering undergraduates in the practice
-data {.table .gt_table quarto-disable-processing="false"
-quarto-bootstrap="false"}
-
-*Reminder.*   midfielddata is suitable for learning to work with
-student-level data but not for drawing inferences about program
-attributes or student experiences. midfielddata supplies practice data,
-not research data.
+- [data.table](https://CRAN.R-project.org/package=data.table) for
+  manipulating data ([Barrett et al.
+  2026](#ref-Dowle+Srinivasan:2026:data.table))
+- [ggplot2](https://CRAN.R-project.org/package=ggplot2) for charts
+  ([Wickham 2016](#ref-Wickham:2016:ggplot2))
+- [mice](https://CRAN.R-project.org/package=mice) for imputing starting
+  majors of First-Year Engineering students ([van Buuren and
+  Groothuis-Oudshoorn 2011](#ref-vanBuuren+Oudshoorn:2011)).
 
 ## Installation
 
@@ -184,7 +40,8 @@ Install from CRAN with:
 install.packages("midfieldr")
 ```
 
-You can install the development version of midfieldr from GitHub with:
+To get a bug fix or use a new feature, you can install the development
+version from GitHub.
 
 ``` r
 
@@ -192,8 +49,11 @@ You can install the development version of midfieldr from GitHub with:
 pak::pak("MIDFIELDR/midfieldr")
 ```
 
-The installed size of midfielddata is about 24 Mb, so the installation
-takes some time. Install from the MIDFIELDR drat repository with:
+midfieldr is designed to operate on the four data tables of the MIDFIELD
+research database. A sample of that database is available in the
+midfielddata package ([Layton et al.
+2026](#ref-Layton+Long+Ohland:2026:midfielddata)). Install from the
+MIDFIELDR drat repository with:
 
 ``` r
 
@@ -203,41 +63,150 @@ install.packages("midfielddata",
 )
 ```
 
-## More information
+The installed size of midfielddata is about 24 Mb, so installation will
+take longer than that of a conventional CRAN package.
 
-[MIDFIELD](https://midfield.online/).   A database of anonymized
-student-level records for approximately 2.4M undergraduates at 21 US
-institutions from 1987-2022. In 2023, control and management of the
-database was transferred to the American Society for Engineering
-Education (ASEE). For further information, contact ASEE.
+## Usage
 
-[midfielddata](https://midfieldr.github.io/midfielddata/).   An R data
-package that supplies anonymized student-level records for 98,000
-undergraduates at three US institutions from 1988-2018. A sample of the
-MIDFIELD database, midfielddata provides practice data for the tools and
-methods in the midfieldr package.
+``` r
+
+library(midfieldr)
+library(data.table)
+```
+
+We would usually load midfielddata as well, but here we can illustrate
+usage with the “toy” data sets included in midfieldr.
+
+``` r
+
+# Initialize the working data frame using toy_term
+DT <- toy_term[, .(mcid)]
+DT <- unique(DT)
+
+# Add variables relating to the timely term
+DT <- add_timely_term(DT, toy_term)
+DT
+#>                mcid term_i       level_i adj_span timely_term
+#>              <char> <char>        <char>    <num>      <char>
+#>   1: MCID3111145992  19881 01 First-year        6       19933
+#>   2: MCID3111159270  19881 01 First-year        6       19933
+#>   3: MCID3111160219  19881 01 First-year        6       19933
+#>  ---                                                         
+#> 148: MCID3112804735  20161 01 First-year        6       20213
+#> 149: MCID3112813578  20161 01 First-year        6       20213
+#> 150: MCID3112845932  20173 01 First-year        6       20231
+
+# Add variables relating to data sufficiency
+DT <- add_data_sufficiency(DT, toy_term)
+DT[order(data_sufficiency)]
+#>                mcid       level_i adj_span timely_term term_i lower_limit
+#>              <char>        <char>    <num>      <char> <char>      <char>
+#>   1: MCID3111145992 01 First-year        6       19933  19881       19881
+#>   2: MCID3111159270 01 First-year        6       19933  19881       19881
+#>   3: MCID3111160219 01 First-year        6       19933  19881       19881
+#>  ---                                                                     
+#> 148: MCID3112470565 01 First-year        6       20153  20101       19881
+#> 149: MCID3112472090 01 First-year        6       20153  20101       19881
+#> 150: MCID3112498796 01 First-year        6       20153  20101       19881
+#>      upper_limit data_sufficiency
+#>           <char>           <char>
+#>   1:       20096    exclude-lower
+#>   2:       20096    exclude-lower
+#>   3:       20096    exclude-lower
+#>  ---                             
+#> 148:       20181          include
+#> 149:       20181          include
+#> 150:       20181          include
+
+# Add variables relating to completion status
+DT <- add_completion_status(DT, toy_degree)
+DT[order(completion_status)]
+#>                mcid       level_i adj_span timely_term term_i lower_limit
+#>              <char>        <char>    <num>      <char> <char>      <char>
+#>   1: MCID3111258790 01 First-year        6       19953  19901       19881
+#>   2: MCID3111316257 01 First-year        6       19953  19901       19901
+#>   3: MCID3111316435 01 First-year        6       19963  19911       19901
+#>  ---                                                                     
+#> 148: MCID3112804735 01 First-year        6       20213  20161       19881
+#> 149: MCID3112813578 01 First-year        6       20213  20161       19881
+#> 150: MCID3112845932 01 First-year        6       20231  20173       19881
+#>      upper_limit data_sufficiency term_degree completion_status
+#>           <char>           <char>      <char>            <char>
+#>   1:       20181          include       19954              late
+#>   2:       20153    exclude-lower       19961              late
+#>   3:       20153          include       19964              late
+#>  ---                                                           
+#> 148:       20181    exclude-upper        <NA>              <NA>
+#> 149:       20181    exclude-upper        <NA>              <NA>
+#> 150:       20181    exclude-upper        <NA>              <NA>
+
+# Filter for data sufficiency and timely completion
+rows_we_want <- DT$data_sufficiency == "include" & DT$completion_status == "timely"
+DT <- DT[rows_we_want]
+DT
+#>               mcid       level_i adj_span timely_term term_i lower_limit
+#>             <char>        <char>    <num>      <char> <char>      <char>
+#>  1: MCID3111213943 01 First-year        6       19943  19891       19881
+#>  2: MCID3111224601 01 First-year        6       19953  19901       19881
+#>  3: MCID3111253227 01 First-year        6       19953  19901       19881
+#> ---                                                                     
+#> 48: MCID3112470565 01 First-year        6       20153  20101       19881
+#> 49: MCID3112472090 01 First-year        6       20153  20101       19881
+#> 50: MCID3112498796 01 First-year        6       20153  20101       19881
+#>     upper_limit data_sufficiency term_degree completion_status
+#>          <char>           <char>      <char>            <char>
+#>  1:       20181          include       19903            timely
+#>  2:       20181          include       19921            timely
+#>  3:       20096          include       19951            timely
+#> ---                                                           
+#> 48:       20181          include       20133            timely
+#> 49:       20181          include       20134            timely
+#> 50:       20181          include       20143            timely
+
+# Join demographic data
+DT <- toy_student[DT, .(mcid, race, sex), on = "mcid"]
+
+# Label the student bloc
+DT[, bloc := "graduate"]
+DT
+#>               mcid     race    sex     bloc
+#>             <char>   <char> <char>   <char>
+#>  1: MCID3111213943    White   Male graduate
+#>  2: MCID3111224601 Hispanic Female graduate
+#>  3: MCID3111253227    White   Male graduate
+#> ---                                        
+#> 48: MCID3112470565    White Female graduate
+#> 49: MCID3112472090    White Female graduate
+#> 50: MCID3112498796    White Female graduate
+```
+
+*Reminder.*   midfielddata is suitable for learning to work with
+student-level data but not for drawing inferences about program
+attributes or student experiences. midfielddata supplies practice data,
+not research data.
 
 ## Acknowledgments
 
-As of the transfer of MIDFIELD to the American Society for Engineering
-Education (ASEE) in 2023, the development, expansion, and study of
-MIDFIELD has been supported by the National Science Foundation grants
-0337629, 0646441, 0729596, 0734062, 0835914, 0935157, 0935058, 0969474,
-1025171, 1129383, 1232740, 1329283, 1361058, 1545667, 2142087, 2141903,
-and 2152441.
+The development of midfieldr and midfielddata was supported by the US
+National Science Foundation through grant numbers 1545667 and 2142087.
+midfieldr is also designed to interact with the full MIDFIELD database,
+the management of which was transferred to the American Society for
+Engineering Education in 2023.
 
 ## References
 
-Dowle, Matt, and Arun Srinivasan. 2022. *data.table: Extension of
-‘Data.frame‘*. R package version 1.14.6.
+Barrett, Tyson, Matt Dowle, Arun Srinivasan, et al. 2026. *data.table:
+Extension of data.frame*. R package version 1.18.4.
 <https://CRAN.R-project.org/package=data.table>.
 
-Lord, Susan, Richard Layton, Russell Long, Matthew Ohland, and Marisa
-Orr. 2024. *MIDFIELD Institute*.
-<https://midfieldr.github.io/2024-midfield-institute/>.
+Layton, Richard, Russell Long, Susan Lord, Matthew Ohland, and Marisa
+Orr. 2026. *midfielddata: MIDFIELD Data Sample*. R package
+version 0.2.3. <https://midfieldr.github.io/midfielddata/>.
 
-Sarkar, Deepayan. 2008. *lattice: Multivariate Data Visualization with
-R*. Springer. <http://lmdvr.r-forge.r-project.org>.
+van Buuren, Stef, and Karin Groothuis-Oudshoorn. 2011. “mice:
+Multivariate Imputation by Chained Equations in R.” *Journal of
+Statistical Software* 45 (3): 1–67.
+<https://doi.org/10.18637/jss.v045.i03>.
 
 Wickham, Hadley. 2016. *ggplot2: Elegant Graphics for Data Analysis*.
 ISBN 978-3-319-24277-4; Springer-Verlag New York.
@@ -284,8 +253,8 @@ ISBN 978-3-319-24277-4; Springer-Verlag New York.
   : Case-study results
 - [`grade_scale`](https://midfieldr.github.io/midfieldr/reference/grade_scale.md)
   : Grade scale
-- [`act_sat_scale`](https://midfieldr.github.io/midfieldr/reference/act_sat_scale.md)
-  : ACT-SAT conversion scale
+- [`sat_act_scale`](https://midfieldr.github.io/midfieldr/reference/sat_act_scale.md)
+  : SAT-ACT conversion scale
 
 ## Toy data for examples
 
@@ -302,15 +271,16 @@ ISBN 978-3-319-24277-4; Springer-Verlag New York.
 
 ### All vignettes
 
-- [Getting
-  started](https://midfieldr.github.io/midfieldr/articles/art-000-getting-started.md):
+- [Introduction to
+  midfieldr](https://midfieldr.github.io/midfieldr/articles/art-000-getting-started.md):
 - [Case study:
   Goals](https://midfieldr.github.io/midfieldr/articles/art-001-case-goals.md):
 - [Case study:
   Data](https://midfieldr.github.io/midfieldr/articles/art-002-case-data.md):
 - [Case study:
   Results](https://midfieldr.github.io/midfieldr/articles/art-003-case-results.md):
-- [Planning](https://midfieldr.github.io/midfieldr/articles/art-010-planning.md):
+- [Planning a
+  workflow](https://midfieldr.github.io/midfieldr/articles/art-010-planning.md):
 - [Data
   sufficiency](https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.md):
 - [Degree

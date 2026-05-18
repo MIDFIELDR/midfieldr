@@ -12,8 +12,7 @@ data(toy_degree)
 
 ## Format
 
-`data.table` with 65 rows and 4 columns keyed by student ID. The
-variables are:
+`data.table` with 93 rows and 4 columns keyed by student ID:
 
 - `mcid`:
 
@@ -32,7 +31,12 @@ variables are:
 - `cip6`:
 
   Character, 6-digit CIP code of program in which a student is enrolled
-  in a term.
+  in a term. Key column.
+
+- `degree`:
+
+  Character, type of degree awarded, e.g., Bachelor of Arts in
+  Geography, Bachelor of Science in Finance, etc.
 
 ## See also
 

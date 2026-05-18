@@ -48,9 +48,9 @@ This vignette in the MIDFIELD workflow.
 
 - stickiness:
 
-  Program “stickiness” \$\small\left(S\right)\$ is the ratio of the
-  number of graduates of a program \$\small\left(N_g\right)\$ to the
-  number ever enrolled in the program \$\small\left(N_e\right)\$.
+  Program “stickiness” \small(S) is the ratio of the number of graduates
+  of a program \small(N_g) to the number ever enrolled in the program
+  \small(N_e).
 
 ## Method
 
@@ -154,7 +154,7 @@ DT
 #>  2:      Civil International Female International Female            23
 #>  3:      Civil         White Female         White Female           263
 #> ---                                                                   
-#> 27: Mechanical          Latine Male        Latine   Male            79
+#> 27: Mechanical   International Male International   Male           178
 #> 28: Mechanical   Other/Unknown Male Other/Unknown   Male            80
 #> 29: Mechanical           White Male         White   Male          1596
 #>     graduates stickiness
@@ -163,7 +163,7 @@ DT
 #>  2:        13       56.5
 #>  3:       162       61.6
 #> ---                     
-#> 27:        42       53.2
+#> 27:        89       50.0
 #> 28:        41       51.2
 #> 29:       953       59.7
 ```
@@ -255,7 +255,7 @@ DT_count
 #>  2:      Civil International Female        13
 #>  3:      Civil         White Female       162
 #> ---                                          
-#> 27: Mechanical          Latine Male        42
+#> 27: Mechanical   International Male        89
 #> 28: Mechanical   Other/Unknown Male        41
 #> 29: Mechanical           White Male       953
 ```
@@ -281,7 +281,7 @@ DT_count
 #>  2:      Civil International Female        13           28.0          12.0
 #>  3:      Civil         White Female       162           28.0          95.0
 #> ---                                                                       
-#> 27: Mechanical          Latine Male        42           45.5          31.0
+#> 27: Mechanical   International Male        89           45.5          72.0
 #> 28: Mechanical   Other/Unknown Male        41           45.5          16.0
 #> 29: Mechanical           White Male       953           45.5         525.5
 ```
@@ -325,8 +325,8 @@ temp
 #> 2: International Female      12.0
 #> 3:         White Female      95.0
 #> 4:           Asian Male      37.0
-#> 5:   International Male      72.0
-#> 6:          Latine Male      31.0
+#> 5:        Hispanic Male      31.0
+#> 6:   International Male      72.0
 #> 7:   Other/Unknown Male      16.0
 #> 8:           White Male     525.5
 #> 9:           Black Male      18.0
@@ -351,7 +351,7 @@ class(DT_count$people)
 #> [1] "factor"
 levels(DT_count$people)
 #> [1] "Asian Female"         "International Female" "Other/Unknown Male"  
-#> [4] "Black Male"           "Latine Male"          "Asian Male"          
+#> [4] "Black Male"           "Hispanic Male"        "Asian Male"          
 #> [7] "International Male"   "White Female"         "White Male"
 ```
 
@@ -516,7 +516,7 @@ DT_count
 #>  2:      Civil International Female        13
 #>  3:      Civil         White Female       162
 #> ---                                          
-#> 27: Mechanical        Latine   Male        42
+#> 27: Mechanical International   Male        89
 #> 28: Mechanical Other/Unknown   Male        41
 #> 29: Mechanical         White   Male       953
 ```
@@ -539,7 +539,7 @@ DT_count
 #>  2:      Civil International        13 Female           28.0          34
 #>  3:      Civil         White       162 Female           28.0         148
 #> ---                                                                     
-#> 27: Mechanical        Latine        42   Male           45.5          31
+#> 27: Mechanical International        89   Male           45.5          34
 #> 28: Mechanical Other/Unknown        41   Male           45.5          16
 #> 29: Mechanical         White       953   Male           45.5         148
 ```
@@ -616,7 +616,7 @@ DT_ratio
 #>  2:      Civil International Female            23        13       56.5
 #>  3:      Civil         White Female           263       162       61.6
 #> ---                                                                   
-#> 27: Mechanical          Latine Male            79        42       53.2
+#> 27: Mechanical   International Male           178        89       50.0
 #> 28: Mechanical   Other/Unknown Male            80        41       51.2
 #> 29: Mechanical           White Male          1596       953       59.7
 ```
@@ -643,7 +643,7 @@ DT_ratio
 #>  2:      Civil International Female        13            23       56.5
 #>  3:      Civil         White Female       162           263       61.6
 #> ---                                                                   
-#> 27: Mechanical          Latine Male        42            79       53.2
+#> 27: Mechanical   International Male        89           178       50.0
 #> 28: Mechanical   Other/Unknown Male        41            80       51.2
 #> 29: Mechanical           White Male       953          1596       59.7
 #>     program_stickiness people_stickiness
@@ -652,7 +652,7 @@ DT_ratio
 #>  2:               62.5              57.1
 #>  3:               62.5              60.5
 #> ---                                     
-#> 27:               58.9              47.4
+#> 27:               58.9              50.0
 #> 28:               58.9              45.6
 #> 29:               58.9              59.3
 ```
@@ -699,8 +699,8 @@ temp
 #> 2: International Female            42        24       57.1
 #> 3:         White Female           671       406       60.5
 #> 4:           Asian Male           253       159       62.8
-#> 5:   International Male           492       246       50.0
-#> 6:          Latine Male           190        90       47.4
+#> 5:        Hispanic Male           190        90       47.4
+#> 6:   International Male           492       246       50.0
 #> 7:   Other/Unknown Male           149        68       45.6
 #> 8:           White Male          3596      2134       59.3
 #> 9:           Black Male            59        36       61.0
@@ -787,7 +787,7 @@ tbl
 #>  2:      Civil International Female        13
 #>  3:      Civil         White Female       162
 #> ---                                          
-#> 27: Mechanical          Latine Male        42
+#> 27: Mechanical   International Male        89
 #> 28: Mechanical   Other/Unknown Male        41
 #> 29: Mechanical           White Male       953
 ```
@@ -807,9 +807,9 @@ tbl
 #> 1:         Asian Female    10         12                 10         NA
 #> 2:           Asian Male    25         71                 14         49
 #> 3:           Black Male    NA         17                 NA         19
-#> 4: International Female    13         NA                 NA         11
-#> 5:   International Male    55         90                 12         89
-#> 6:          Latine Male    31         17                 NA         42
+#> 4:        Hispanic Male    31         17                 NA         42
+#> 5: International Female    13         NA                 NA         11
+#> 6:   International Male    55         90                 12         89
 #> 7:   Other/Unknown Male    11         16                 NA         41
 #> 8:         White Female   162         56                 54        134
 #> 9:           White Male   612        439                130        953
@@ -828,9 +828,9 @@ setnames(tbl, old = "people", new = "Group", skip_absent = TRUE)
 | Asian Female         | 10    | 12         | 10                 | NA         |
 | Asian Male           | 25    | 71         | 14                 | 49         |
 | Black Male           | NA    | 17         | NA                 | 19         |
+| Hispanic Male        | 31    | 17         | NA                 | 42         |
 | International Female | 13    | NA         | NA                 | 11         |
 | International Male   | 55    | 90         | 12                 | 89         |
-| Latine Male          | 31    | 17         | NA                 | 42         |
 | Other/Unknown Male   | 11    | 16         | NA                 | 41         |
 | White Female         | 162   | 56         | 54                 | 134        |
 | White Male           | 612   | 439        | 130                | 953        |
@@ -863,7 +863,7 @@ tbl
 #>  2:      Civil International Female        13            23       56.5
 #>  3:      Civil         White Female       162           263       61.6
 #> ---                                                                   
-#> 27: Mechanical          Latine Male        42            79       53.2
+#> 27: Mechanical   International Male        89           178       50.0
 #> 28: Mechanical   Other/Unknown Male        41            80       51.2
 #> 29: Mechanical           White Male       953          1596       59.7
 ```
@@ -883,7 +883,7 @@ tbl
 #>  2:      Civil International Female        13            23       56.5
 #>  3:      Civil         White Female       162           263       61.6
 #> ---                                                                   
-#> 27: Mechanical          Latine Male        42            79       53.2
+#> 27: Mechanical   International Male        89           178       50.0
 #> 28: Mechanical   Other/Unknown Male        41            80       51.2
 #> 29: Mechanical           White Male       953          1596       59.7
 #>          results
@@ -892,7 +892,7 @@ tbl
 #>  2:   (23) 56.5%
 #>  3:  (263) 61.6%
 #> ---             
-#> 27:   (79) 53.2%
+#> 27:    (178) 50%
 #> 28:   (80) 51.2%
 #> 29: (1596) 59.7%
 ```
@@ -911,9 +911,9 @@ tbl
 #> 1:         Asian Female  (15) 66.7%  (21) 57.1%         (15) 66.7%         <NA>
 #> 2:           Asian Male  (30) 83.3% (123) 57.7%         (24) 58.3%   (76) 64.5%
 #> 3:           Black Male        <NA>  (29) 58.6%               <NA>   (30) 63.3%
-#> 4: International Female  (23) 56.5%        <NA>               <NA>   (19) 57.9%
-#> 5:   International Male  (97) 56.7% (195) 46.2%         (22) 54.5%    (178) 50%
-#> 6:          Latine Male    (66) 47%  (45) 37.8%               <NA>   (79) 53.2%
+#> 4:        Hispanic Male    (66) 47%  (45) 37.8%               <NA>   (79) 53.2%
+#> 5: International Female  (23) 56.5%        <NA>               <NA>   (19) 57.9%
+#> 6:   International Male  (97) 56.7% (195) 46.2%         (22) 54.5%    (178) 50%
 #> 7:   Other/Unknown Male  (27) 40.7%  (42) 38.1%               <NA>   (80) 51.2%
 #> 8:         White Female (263) 61.6% (118) 47.5%         (77) 70.1%  (213) 62.9%
 #> 9:           White Male (949) 64.5% (864) 50.8%        (187) 69.5% (1596) 59.7%
@@ -932,15 +932,24 @@ setnames(tbl, old = "people", new = "Group", skip_absent = TRUE)
 | Asian Female         | (15) 66.7%  | (21) 57.1%  | (15) 66.7%         | NA           |
 | Asian Male           | (30) 83.3%  | (123) 57.7% | (24) 58.3%         | (76) 64.5%   |
 | Black Male           | NA          | (29) 58.6%  | NA                 | (30) 63.3%   |
+| Hispanic Male        | (66) 47%    | (45) 37.8%  | NA                 | (79) 53.2%   |
 | International Female | (23) 56.5%  | NA          | NA                 | (19) 57.9%   |
 | International Male   | (97) 56.7%  | (195) 46.2% | (22) 54.5%         | (178) 50%    |
-| Latine Male          | (66) 47%    | (45) 37.8%  | NA                 | (79) 53.2%   |
 | Other/Unknown Male   | (27) 40.7%  | (42) 38.1%  | NA                 | (80) 51.2%   |
 | White Female         | (263) 61.6% | (118) 47.5% | (77) 70.1%         | (213) 62.9%  |
 | White Male           | (949) 64.5% | (864) 50.8% | (187) 69.5%        | (1596) 59.7% |
 
 Table 2: Four programs (N ever enrolled) percent stickiness {.table
 .gt_table quarto-disable-processing="false" quarto-bootstrap="false"}
+
+------------------------------------------------------------------------
+
+[◁
+Stickiness](https://midfieldr.github.io/midfieldr/articles/art-110-stickiness.md)
+   [▲ top of page](#top)    [Index
+▷](https://midfieldr.github.io/midfieldr/articles/index.md)
+
+------------------------------------------------------------------------
 
 ## References
 

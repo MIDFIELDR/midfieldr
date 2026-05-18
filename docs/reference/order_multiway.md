@@ -124,28 +124,28 @@ dframe[, people := paste(race, sex)]
 #>      <char> <char>          <char>         <int>     <int>      <num>
 #>  1:      EE Female           Asian            21        12       57.1
 #>  2:      EE Female           Black             6         3       50.0
-#>  3:      EE Female   International            28         9       32.1
-#>  4:      EE Female          Latine             8         3       37.5
+#>  3:      EE Female        Hispanic             8         3       37.5
+#>  4:      EE Female   International            28         9       32.1
 #>  5:      EE Female Native American             1         0        0.0
 #>  6:      EE Female   Other/Unknown             7         3       42.9
 #>  7:      EE Female           White           118        56       47.5
 #>  8:      EE   Male           Asian           123        71       57.7
 #>  9:      EE   Male           Black            29        17       58.6
-#> 10:      EE   Male   International           195        90       46.2
-#> 11:      EE   Male          Latine            45        17       37.8
+#> 10:      EE   Male        Hispanic            45        17       37.8
+#> 11:      EE   Male   International           195        90       46.2
 #> 12:      EE   Male Native American             3         0        0.0
 #> 13:      EE   Male   Other/Unknown            42        16       38.1
 #> 14:      EE   Male           White           864       439       50.8
 #> 15:      ME Female           Asian             7         1       14.3
 #> 16:      ME Female           Black             3         2       66.7
-#> 17:      ME Female   International            19        11       57.9
-#> 18:      ME Female          Latine            12         8       66.7
+#> 17:      ME Female        Hispanic            12         8       66.7
+#> 18:      ME Female   International            19        11       57.9
 #> 19:      ME Female   Other/Unknown             8         4       50.0
 #> 20:      ME Female           White           213       134       62.9
 #> 21:      ME   Male           Asian            76        49       64.5
 #> 22:      ME   Male           Black            30        19       63.3
-#> 23:      ME   Male   International           178        89       50.0
-#> 24:      ME   Male          Latine            79        42       53.2
+#> 23:      ME   Male        Hispanic            79        42       53.2
+#> 24:      ME   Male   International           178        89       50.0
 #> 25:      ME   Male Native American             5         1       20.0
 #> 26:      ME   Male   Other/Unknown            80        41       51.2
 #> 27:      ME   Male           White          1596       953       59.7
@@ -155,28 +155,28 @@ dframe[, people := paste(race, sex)]
 #>                     <char>
 #>  1:           Asian Female
 #>  2:           Black Female
-#>  3:   International Female
-#>  4:          Latine Female
+#>  3:        Hispanic Female
+#>  4:   International Female
 #>  5: Native American Female
 #>  6:   Other/Unknown Female
 #>  7:           White Female
 #>  8:             Asian Male
 #>  9:             Black Male
-#> 10:     International Male
-#> 11:            Latine Male
+#> 10:          Hispanic Male
+#> 11:     International Male
 #> 12:   Native American Male
 #> 13:     Other/Unknown Male
 #> 14:             White Male
 #> 15:           Asian Female
 #> 16:           Black Female
-#> 17:   International Female
-#> 18:          Latine Female
+#> 17:        Hispanic Female
+#> 18:   International Female
 #> 19:   Other/Unknown Female
 #> 20:           White Female
 #> 21:             Asian Male
 #> 22:             Black Male
-#> 23:     International Male
-#> 24:            Latine Male
+#> 23:          Hispanic Male
+#> 24:     International Male
 #> 25:   Native American Male
 #> 26:     Other/Unknown Male
 #> 27:             White Male
@@ -187,28 +187,28 @@ dframe[, c("race", "sex") := NULL]
 #>      <char>         <int>     <int>      <num>                 <char>
 #>  1:      EE            21        12       57.1           Asian Female
 #>  2:      EE             6         3       50.0           Black Female
-#>  3:      EE            28         9       32.1   International Female
-#>  4:      EE             8         3       37.5          Latine Female
+#>  3:      EE             8         3       37.5        Hispanic Female
+#>  4:      EE            28         9       32.1   International Female
 #>  5:      EE             1         0        0.0 Native American Female
 #>  6:      EE             7         3       42.9   Other/Unknown Female
 #>  7:      EE           118        56       47.5           White Female
 #>  8:      EE           123        71       57.7             Asian Male
 #>  9:      EE            29        17       58.6             Black Male
-#> 10:      EE           195        90       46.2     International Male
-#> 11:      EE            45        17       37.8            Latine Male
+#> 10:      EE            45        17       37.8          Hispanic Male
+#> 11:      EE           195        90       46.2     International Male
 #> 12:      EE             3         0        0.0   Native American Male
 #> 13:      EE            42        16       38.1     Other/Unknown Male
 #> 14:      EE           864       439       50.8             White Male
 #> 15:      ME             7         1       14.3           Asian Female
 #> 16:      ME             3         2       66.7           Black Female
-#> 17:      ME            19        11       57.9   International Female
-#> 18:      ME            12         8       66.7          Latine Female
+#> 17:      ME            12         8       66.7        Hispanic Female
+#> 18:      ME            19        11       57.9   International Female
 #> 19:      ME             8         4       50.0   Other/Unknown Female
 #> 20:      ME           213       134       62.9           White Female
 #> 21:      ME            76        49       64.5             Asian Male
 #> 22:      ME            30        19       63.3             Black Male
-#> 23:      ME           178        89       50.0     International Male
-#> 24:      ME            79        42       53.2            Latine Male
+#> 23:      ME            79        42       53.2          Hispanic Male
+#> 24:      ME           178        89       50.0     International Male
 #> 25:      ME             5         1       20.0   Native American Male
 #> 26:      ME            80        41       51.2     Other/Unknown Male
 #> 27:      ME          1596       953       59.7             White Male
@@ -234,8 +234,8 @@ class(mw1$people)
 #> [1] "factor"
 levels(mw1$people)
 #>  [1] "Native American Female" "Native American Male"   "Asian Female"          
-#>  [4] "Other/Unknown Male"     "International Female"   "Latine Male"           
-#>  [7] "Other/Unknown Female"   "International Male"     "Latine Female"         
+#>  [4] "Other/Unknown Male"     "International Female"   "Hispanic Male"         
+#>  [7] "Other/Unknown Female"   "International Male"     "Hispanic Female"       
 #> [10] "White Female"           "White Male"             "Black Female"          
 #> [13] "Black Male"             "Asian Male"            
 
@@ -245,28 +245,28 @@ mw1
 #>      <fctr>                 <fctr>      <num>         <int>     <int>
 #>  1:      EE           Asian Female       57.1            21        12
 #>  2:      EE           Black Female       50.0             6         3
-#>  3:      EE   International Female       32.1            28         9
-#>  4:      EE          Latine Female       37.5             8         3
+#>  3:      EE        Hispanic Female       37.5             8         3
+#>  4:      EE   International Female       32.1            28         9
 #>  5:      EE Native American Female        0.0             1         0
 #>  6:      EE   Other/Unknown Female       42.9             7         3
 #>  7:      EE           White Female       47.5           118        56
 #>  8:      EE             Asian Male       57.7           123        71
 #>  9:      EE             Black Male       58.6            29        17
-#> 10:      EE     International Male       46.2           195        90
-#> 11:      EE            Latine Male       37.8            45        17
+#> 10:      EE          Hispanic Male       37.8            45        17
+#> 11:      EE     International Male       46.2           195        90
 #> 12:      EE   Native American Male        0.0             3         0
 #> 13:      EE     Other/Unknown Male       38.1            42        16
 #> 14:      EE             White Male       50.8           864       439
 #> 15:      ME           Asian Female       14.3             7         1
 #> 16:      ME           Black Female       66.7             3         2
-#> 17:      ME   International Female       57.9            19        11
-#> 18:      ME          Latine Female       66.7            12         8
+#> 17:      ME        Hispanic Female       66.7            12         8
+#> 18:      ME   International Female       57.9            19        11
 #> 19:      ME   Other/Unknown Female       50.0             8         4
 #> 20:      ME           White Female       62.9           213       134
 #> 21:      ME             Asian Male       64.5            76        49
 #> 22:      ME             Black Male       63.3            30        19
-#> 23:      ME     International Male       50.0           178        89
-#> 24:      ME            Latine Male       53.2            79        42
+#> 23:      ME          Hispanic Male       53.2            79        42
+#> 24:      ME     International Male       50.0           178        89
 #> 25:      ME   Native American Male       20.0             5         1
 #> 26:      ME     Other/Unknown Male       51.2            80        41
 #> 27:      ME             White Male       59.7          1596       953
@@ -276,28 +276,28 @@ mw1
 #>              <num>         <num>
 #>  1:          44.55         35.70
 #>  2:          44.55         58.35
-#>  3:          44.55         45.00
-#>  4:          44.55         52.10
+#>  3:          44.55         52.10
+#>  4:          44.55         45.00
 #>  5:          44.55          0.00
 #>  6:          44.55         46.45
 #>  7:          44.55         55.20
 #>  8:          44.55         61.10
 #>  9:          44.55         60.95
-#> 10:          44.55         48.10
-#> 11:          44.55         45.50
+#> 10:          44.55         45.50
+#> 11:          44.55         48.10
 #> 12:          44.55         10.00
 #> 13:          44.55         44.65
 #> 14:          44.55         55.25
 #> 15:          57.90         35.70
 #> 16:          57.90         58.35
-#> 17:          57.90         45.00
-#> 18:          57.90         52.10
+#> 17:          57.90         52.10
+#> 18:          57.90         45.00
 #> 19:          57.90         46.45
 #> 20:          57.90         55.20
 #> 21:          57.90         61.10
 #> 22:          57.90         60.95
-#> 23:          57.90         48.10
-#> 24:          57.90         45.50
+#> 23:          57.90         45.50
+#> 24:          57.90         48.10
 #> 25:          57.90         10.00
 #> 26:          57.90         44.65
 #> 27:          57.90         55.25
@@ -329,28 +329,28 @@ order_multiway(dframe,
 #>      <fctr>                 <fctr>     <num>         <num>      <num>
 #>  1:      EE           Asian Female        12            21       57.1
 #>  2:      EE           Black Female         3             6       50.0
-#>  3:      EE   International Female         9            28       32.1
-#>  4:      EE          Latine Female         3             8       37.5
+#>  3:      EE        Hispanic Female         3             8       37.5
+#>  4:      EE   International Female         9            28       32.1
 #>  5:      EE Native American Female         0             1        0.0
 #>  6:      EE   Other/Unknown Female         3             7       42.9
 #>  7:      EE           White Female        56           118       47.5
 #>  8:      EE             Asian Male        71           123       57.7
 #>  9:      EE             Black Male        17            29       58.6
-#> 10:      EE     International Male        90           195       46.2
-#> 11:      EE            Latine Male        17            45       37.8
+#> 10:      EE          Hispanic Male        17            45       37.8
+#> 11:      EE     International Male        90           195       46.2
 #> 12:      EE   Native American Male         0             3        0.0
 #> 13:      EE     Other/Unknown Male        16            42       38.1
 #> 14:      EE             White Male       439           864       50.8
 #> 15:      ME           Asian Female         1             7       14.3
 #> 16:      ME           Black Female         2             3       66.7
-#> 17:      ME   International Female        11            19       57.9
-#> 18:      ME          Latine Female         8            12       66.7
+#> 17:      ME        Hispanic Female         8            12       66.7
+#> 18:      ME   International Female        11            19       57.9
 #> 19:      ME   Other/Unknown Female         4             8       50.0
 #> 20:      ME           White Female       134           213       62.9
 #> 21:      ME             Asian Male        49            76       64.5
 #> 22:      ME             Black Male        19            30       63.3
-#> 23:      ME     International Male        89           178       50.0
-#> 24:      ME            Latine Male        42            79       53.2
+#> 23:      ME          Hispanic Male        42            79       53.2
+#> 24:      ME     International Male        89           178       50.0
 #> 25:      ME   Native American Male         1             5       20.0
 #> 26:      ME     Other/Unknown Male        41            80       51.2
 #> 27:      ME             White Male       953          1596       59.7
@@ -360,28 +360,28 @@ order_multiway(dframe,
 #>                  <num>             <num>
 #>  1:               49.4              46.4
 #>  2:               49.4              55.6
-#>  3:               49.4              42.6
-#>  4:               49.4              55.0
+#>  3:               49.4              55.0
+#>  4:               49.4              42.6
 #>  5:               49.4               0.0
 #>  6:               49.4              46.7
 #>  7:               49.4              57.4
 #>  8:               49.4              60.3
 #>  9:               49.4              61.0
-#> 10:               49.4              48.0
-#> 11:               49.4              47.6
+#> 10:               49.4              47.6
+#> 11:               49.4              48.0
 #> 12:               49.4              12.5
 #> 13:               49.4              46.7
 #> 14:               49.4              56.6
 #> 15:               58.7              46.4
 #> 16:               58.7              55.6
-#> 17:               58.7              42.6
-#> 18:               58.7              55.0
+#> 17:               58.7              55.0
+#> 18:               58.7              42.6
 #> 19:               58.7              46.7
 #> 20:               58.7              57.4
 #> 21:               58.7              60.3
 #> 22:               58.7              61.0
-#> 23:               58.7              48.0
-#> 24:               58.7              47.6
+#> 23:               58.7              47.6
+#> 24:               58.7              48.0
 #> 25:               58.7              12.5
 #> 26:               58.7              46.7
 #> 27:               58.7              56.6

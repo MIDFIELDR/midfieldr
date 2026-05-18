@@ -26,27 +26,19 @@ knitr::opts_chunk$set(fig.path = "man/figures/README-")
 
 midfieldr is an R package that provides tools and methods for studying undergraduate student-level records from the MIDFIELD database.
 
-- `select_required()` Subset a data frame, selecting columns that are composite keys or required by other midfieldr functions. Useful for interactive sessions. 
+- `filter_cip()` selects rows of program codes that match search terms
+- `select_required()` selects columns required by midfieldr functions
+- `add_timely_term()` adds a new variable for a timely completion term 
+- `add_data_sufficiency()` adds a new variable for data sufficiency status
+- `add_completion_status()` adds a new variable for program completion status
+- `prep_fye_mice()` conditions data for imputing starting majors of FYE students
+- `order_multiway()` conditions data for plotting a Cleveland-style multiway chart
 
-- `add_timely_term()` Add a column indicating the latest term by which degree completion would be considered timely for every student.
+Suggested packages. 
 
-- `add_data_sufficiency()` Add a column labeling each row for inclusion or exclusion based on data sufficiency near the upper and lower bounds of an institution's data range.
-
-- `add_completion_status()` Add columns indicating whether a student completed a degree, and if so, whether their completion was timely.
-
-- `filter_cip()` Subset a Classification of Instructional Programs (CIP) data frame, retaining rows that match or partially match a vector of character strings. Used for identifying CIP codes relevant to the study. 
-
-- `prep_fye_mice()` Constructs a data frame of student-level records of First-Year Engineering (FYE) programs and conditions the data to meet the input requirements of the mice R package for multiple imputation.
-
-- `order_multiway()` Transform a data frame such that two independent categorical variables become factors with levels ordered by a third quantitative variable. Used to prepare the data for a Cleveland-style, faceted multiway chart. 
-
-**Support packages**
-
-- For data manipulation, data.table [@Dowle+Srinivasan:2022:data.table].
-
-- For charts, ggplot2 [@Wickham:2016:ggplot2]. 
-
-- For multiple imputation, mice [@vanBuuren+Oudshoorn:2011]. 
+- [data.table](https://CRAN.R-project.org/package=data.table) for manipulating data [@Dowle+Srinivasan:2026:data.table]
+- [ggplot2](https://CRAN.R-project.org/package=ggplot2) for charts  [@Wickham:2016:ggplot2]
+- [mice](https://CRAN.R-project.org/package=mice) for imputing starting majors of First-Year Engineering students [@vanBuuren+Oudshoorn:2011]. 
 
 
 
@@ -59,7 +51,7 @@ Install from CRAN with:
 install.packages("midfieldr")
 ```
 
-You can install the development version of midfieldr from GitHub with:
+To get a bug fix or use a new feature, you can install the development version from GitHub.
 
 ```{r}
 #| eval: false
@@ -67,7 +59,7 @@ You can install the development version of midfieldr from GitHub with:
 pak::pak("MIDFIELDR/midfieldr")
 ```
 
-midfieldr is designed to operate on the four data tables of the MIDFIELD research database. A sample of that database is available in the midfielddata package. Install from the MIDFIELDR drat repository with: 
+midfieldr is designed to operate on the four data tables of the MIDFIELD research database. A sample of that database is available in the midfielddata package [@Layton+Long+Ohland:2026:midfielddata]. Install from the MIDFIELDR drat repository with: 
 
 ```{r}
 #| eval: false
@@ -77,7 +69,7 @@ install.packages("midfielddata",
 )
 ```
 
-The installed size of midfielddata is about 24 Mb, so the installation takes some time. 
+The installed size of midfielddata is about 24 Mb, so installation will take longer than that of a conventional CRAN package. 
 
 
 
@@ -85,243 +77,51 @@ The installed size of midfielddata is about 24 Mb, so the installation takes som
 
 
 ## Usage
-
 
 ```{r}
 library(midfieldr)
 library(data.table)
 ```
 
-midfieldr includes small, "toy" data sets for use in examples. 
+We would usually load midfielddata as well, but here we can illustrate usage with the "toy" data sets included in midfieldr. 
 
 ```{r}
-toy_student
-```
+# Initialize the working data frame using toy_term
+DT <- toy_term[, .(mcid)]
+DT <- unique(DT)
 
+# Add variables relating to the timely term
+DT <- add_timely_term(DT, toy_term)
+DT
 
+# Add variables relating to data sufficiency
+DT <- add_data_sufficiency(DT, toy_term)
+DT[order(data_sufficiency)]
 
+# Add variables relating to completion status
+DT <- add_completion_status(DT, toy_degree)
+DT[order(completion_status)]
 
+# Filter for data sufficiency and timely completion
+rows_we_want <- DT$data_sufficiency == "include" & DT$completion_status == "timely"
+DT <- DT[rows_we_want]
+DT
 
+# Join demographic data
+DT <- toy_student[DT, .(mcid, race, sex), on = "mcid"]
 
-
-
-
-## stuff
-
-
-midfieldr provides these functions for manipulating student-level data: 
-
-- `add_completion_status()` Determine completion status for every student
-- `add_data_sufficiency()` Determine data sufficiency for every student
-- `add_timely_term()` Calculate a timely completion term for every student
-- `filter_cip()` Filter CIP data to match search strings
-- `prep_fye_mice()` Prepare FYE data for multiple imputation
-- `select_required()` Select required midfieldr variables
-
-Additional functions for processing intermediate results: 
-
-- `order_multiway()` Order categorical variables of multiway data
-
-R packages in examples and vignettes
-
-- *Data preparation.* &nbsp; We use the data.table system and some base R for data manipulation [@Dowle+Srinivasan:2022:data.table]. To assist users who might prefer other systems, the MIDFIELD Institute website [@midfieldinstitute:2024] includes tutorials providing side-by-side base R, data.table, and dplyr solutions to common data shaping tasks using MIDFIELD practice data.  
-- *Charts.* &nbsp; Our preferred package for charts is ggplot2 [@Wickham:2016:ggplot2]. The lattice package [@Sarkar:2008] also offers users comprehensive control over graphical elements (though our lattice experience is no longer current).  
-
-
-
-
-
-
-
-
-
-## Usage
-
-In this example, we gather all students ever enrolled in Engineering and summarize their graduation status (in any major), grouping by race/ethnicity and sex. If you are writing your own script to follow along, we use these packages in this example:
-
-`
-
-Load the practice data. Reduce initial dimensions of data tables. 
-
-```{r}
-#| echo: false
-
-# turn the chunks off
-knitr::opts_chunk$set(eval = FALSE)
-```
-
-```{r}
-# Load the practice data
-data(student, term, degree)
-
-# Reduce dimensions of source data tables
-student <- select_required(student)
-term <- select_required(term)
-degree <- select_required(degree)
-```
-
-Filter for data sufficiency. 
-
-```{r}
-# Initialize the working data frame
-DT <- term[, .(mcid, cip6)]
-
-# Filter observations for data sufficiency
-DT <- add_timely_term(DT, term)
-DT <- add_data_sufficiency(DT, term)
-DT <- DT[data_sufficiency == "include"]
-```
-
-Filter for degree-seeking students ever enrolled in Engineering. 
-
-```{r}
-# Inner join to filter observations for degree-seeking
-cols_we_want <- student[, .(mcid)]
-DT <- cols_we_want[DT, on = c("mcid"), nomatch = NULL]
-
-# Filter observations for engineering programs
-DT <- DT[cip6 %like% "^14"]
-
-# Filter observations for unique students (first instance)
-DT <- DT[, .SD[1], by = c("mcid")]
-```
-
-Determine completion status. 
-
-```{r}
-# Add completion status variable
-DT <- add_completion_status(DT, degree)
-```
-
-Aggregate observations by groupings.
-
-```{r}
-# Left join to add race/ethnicity and sex variables (omit unknowns)
-cols_we_want <- student[, .(mcid, race, sex)]
-DT <- student[DT, on = c("mcid")]
-DT <- DT[!(race %ilike% "unknown" | sex %ilike% "unknown")]
-
-# Create a variable combining race/ethnicity and sex
-DT[, people := paste(race, sex)]
-
-# Aggregate observations by groupings
-DT_display <- DT[, .N, by = c("completion_status", "people")]
-setorderv(DT_display, c("completion_status", "people"))
-```
-
-```{r}
-#| echo: false
-#| eval: true
-
-# Hard-coded result from previous code chunks. 
-# allows me to omit installing midfielddata for the README
-# speeds up rendering and possibly helps avoid the "midfielddata NOTE" 
-# I get when submitting to CRAN
-
-# cat(wrapr::draw_frame(DT_display))
-DT_display <- wrapr::build_frame(
-   "completion_status"  , "people"                , "N"   |
-     NA_character_      , "Asian Female"          ,   43L |
-     NA_character_      , "Asian Male"            ,  163L |
-     NA_character_      , "Black Female"          ,   39L |
-     NA_character_      , "Black Male"            ,   84L |
-     NA_character_      , "Hispanic Female"       ,   31L |
-     NA_character_      , "Hispanic Male"         ,  102L |
-     NA_character_      , "International Female"  ,   51L |
-     NA_character_      , "International Male"    ,  280L |
-     NA_character_      , "Native American Female",    2L |
-     NA_character_      , "Native American Male"  ,    6L |
-     NA_character_      , "White Female"          ,  386L |
-     NA_character_      , "White Male"            , 2034L |
-     "late"             , "Asian Female"          ,    4L |
-     "late"             , "Asian Male"            ,   19L |
-     "late"             , "Black Female"          ,    3L |
-     "late"             , "Black Male"            ,    5L |
-     "late"             , "Hispanic Female"       ,    3L |
-     "late"             , "Hispanic Male"         ,   19L |
-     "late"             , "International Female"  ,    9L |
-     "late"             , "International Male"    ,   41L |
-     "late"             , "Native American Male"  ,    3L |
-     "late"             , "White Female"          ,   51L |
-     "late"             , "White Male"            ,  269L |
-     "timely"           , "Asian Female"          ,   87L |
-     "timely"           , "Asian Male"            ,  315L |
-     "timely"           , "Black Female"          ,   26L |
-     "timely"           , "Black Male"            ,   80L |
-     "timely"           , "Hispanic Female"       ,   36L |
-     "timely"           , "Hispanic Male"         ,  181L |
-     "timely"           , "International Female"  ,  110L |
-     "timely"           , "International Male"    ,  501L |
-     "timely"           , "Native American Female",    2L |
-     "timely"           , "Native American Male"  ,   13L |
-     "timely"           , "White Female"          ,  985L |
-     "timely"           , "White Male"            , 4100L )
-setDT(DT_display)
-```
-
-Reshape results for display. 
-
-```{r}
-#| echo: true
-#| eval: true
-# Transform to row-record form
-DT_display <- dcast(DT_display, people ~ completion_status, value.var = "N", fill = 0)
-
-# Prepare the table for display
-setcolorder(DT_display, c("people", "timely", "late"))
-setkeyv(DT_display, c("people"))
-setnames(DT_display,
-  old = c("people", "timely", "late", "NA"),
-  new = c("People", "Timely completion", "Late completion", "Did not complete")
-)
-```
-
-Print the results table.  "Timely completion" is the count of graduates completing their programs in no more than 6 years; "Late completion" is the count of those graduating in more than 6 years; "Did not complete" is the count of non-graduates. 
-
-```{r}
-#| echo: false
-#| eval: true
-library(gt)
-DT_display |>
-  gt() |>
-  tab_caption("Table 1: Completion status of engineering undergraduates in the practice data") |>
-  tab_options(table.font.size = "small") |>
-  opt_stylize(style = 1, color = "gray") |>
-  tab_style(
-    style = list(cell_fill(color = "#c7eae5")),
-    locations = cells_column_labels(columns = everything())
-  )
+# Label the student bloc
+DT[, bloc := "graduate"]
+DT
 ```
 
 ```{r child = "man/rmd/note-for-practice-only-1.Rmd", eval = TRUE}
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-## More information
-
-```{r child = "man/rmd/note-midfielddata-and-midfield.Rmd", eval = TRUE}
-```
-
- 
 ## Acknowledgments
 
 ```{r child = "man/rmd/note-nsf-grant.Rmd", eval = TRUE}
 ```
-
-## References
-
-<div id="refs">
 
 ```{r child = "man/rmd/common-closing.Rmd", eval = TRUE}
 ```

@@ -12,8 +12,7 @@ data(toy_term)
 
 ## Format
 
-`data.table` with 150 rows and 5 columns keyed by student ID. The
-variables are:
+`data.table` with 1114 rows and 13 columns keyed by student ID:
 
 - `mcid`:
 
@@ -31,12 +30,46 @@ variables are:
 - `cip6`:
 
   Character, 6-digit CIP code of program in which a student is enrolled
-  in a term.
+  in a term, e.g., `090101`, `141201`, `260901`, `420101`, etc.
 
 - `level`:
 
   Character, 01 Freshman, 02 Sophomore, etc. The equivalent values in
   the current practice data are 01 First-Year, 02-Second Year, etc.
+
+- `standing`:
+
+  Character, academic standing, e.g., `Good Standing`,
+  `Academic Warning`, etc.
+
+- `coop`:
+
+  Character, cooperative education term, possible values are `Yes`,
+  `No`.
+
+- `hours_term`:
+
+  Numeric, credit hours earned in the term.
+
+- `hours_term_attempt`:
+
+  Numeric, credit hours attempted in the term.
+
+- `hours_cumul`:
+
+  Numeric, cumulative credit hours earned.
+
+- `hours_cumul_attempt`:
+
+  Numeric, cumulative credit hours attempted.
+
+- `gpa_term`:
+
+  Numeric, term grade point average.
+
+- `gpa_cumul`:
+
+  Numeric, cumulative grade point average.
 
 ## See also
 
