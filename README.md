@@ -17,12 +17,12 @@ midfieldr is an R package that provides tools and methods for studying
 undergraduate student-level records from the MIDFIELD database.
 
 - `filter_cip()` selects rows of program codes that match search terms
-- `select_required()` selects columns required by midfieldr functions
-- `add_timely_term()` adds a new variable for a timely completion term
-- `add_data_sufficiency()` adds a new variable for data sufficiency
-  status
-- `add_completion_status()` adds a new variable for program completion
-  status
+- `select_required()` selects a minimum set of columns required by
+  midfieldr functions
+- `add_timely_term()` adds a new timely completion term variable
+- `add_data_sufficiency()` adds a new data sufficiency status variable
+- `add_completion_status()` adds a new program completion status
+  variable
 - `prep_fye_mice()` conditions data for imputing starting majors of FYE
   students
 - `order_multiway()` conditions data for plotting a Cleveland-style
@@ -79,15 +79,17 @@ library(midfieldr)
 library(data.table)
 ```
 
-We would usually load midfielddata as well, but here we can illustrate
-usage with the “toy” data sets included in midfieldr.
+We illustrate usage with the “toy” data sets included in midfieldr.
+These are small data sets of 150 unique students used in examples.
 
 ``` r
 # Initialize the working data frame using toy_term
+
 DT <- toy_term[, .(mcid)]
 DT <- unique(DT)
 
 # Add variables relating to the timely term
+
 DT <- add_timely_term(DT, toy_term)
 DT
 #>                mcid term_i       level_i adj_span timely_term
@@ -101,6 +103,7 @@ DT
 #> 150: MCID3112845932  20173 01 First-year        6       20231
 
 # Add variables relating to data sufficiency
+
 DT <- add_data_sufficiency(DT, toy_term)
 DT[order(data_sufficiency)]
 #>                mcid       level_i adj_span timely_term term_i lower_limit
@@ -123,6 +126,7 @@ DT[order(data_sufficiency)]
 #> 150:       20181          include
 
 # Add variables relating to completion status
+
 DT <- add_completion_status(DT, toy_degree)
 DT[order(completion_status)]
 #>                mcid       level_i adj_span timely_term term_i lower_limit
@@ -145,6 +149,7 @@ DT[order(completion_status)]
 #> 150:       20181    exclude-upper        <NA>              <NA>
 
 # Filter for data sufficiency and timely completion
+
 rows_we_want <- DT$data_sufficiency == "include" & DT$completion_status == "timely"
 DT <- DT[rows_we_want]
 DT
@@ -168,9 +173,11 @@ DT
 #> 50:       20181          include       20143            timely
 
 # Join demographic data
+
 DT <- toy_student[DT, .(mcid, race, sex), on = "mcid"]
 
 # Label the student bloc
+
 DT[, bloc := "graduate"]
 DT
 #>               mcid     race    sex     bloc
@@ -183,11 +190,6 @@ DT
 #> 49: MCID3112472090    White Female graduate
 #> 50: MCID3112498796    White Female graduate
 ```
-
-*Reminder.*   midfielddata is suitable for learning to work with
-student-level data but not for drawing inferences about program
-attributes or student experiences. midfielddata supplies practice data,
-not research data.
 
 ## Acknowledgments
 

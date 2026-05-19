@@ -1,7 +1,11 @@
 # Planning a workflow
 
-Analysis of MIDFIELD data begins by identifying the groups of students,
-programs, and metrics with which we intend to work.
+When working with student-level records, you should:
+
+- Know the structure of your data
+- Identify the programs to include
+- Define your metrics and the relevant student blocs
+- Develop the data processing steps that transform data to metrics
 
 ## Workflow
 

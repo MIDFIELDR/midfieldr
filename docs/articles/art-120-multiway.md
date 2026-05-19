@@ -25,10 +25,11 @@ This vignette in the MIDFIELD workflow.
 
 - multiway data:
 
-  A data set of three variables: a category with *m* levels; a second
-  independent category with *n* levels; and a quantitative variable (the
-  response) of length *mn* such that there is a value of the response
-  for each combination of levels of the two categorical variables.
+  A data set of three variables: a category with \small m levels; a
+  second independent category with \small n levels; and a quantitative
+  variable (the response) of length \small m \times n such that there is
+  a value of the response for each combination of levels of the two
+  categorical variables.
 
 - multiway chart:
 

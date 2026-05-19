@@ -96,13 +96,13 @@
 <li>
 <code><a href="reference/filter_cip.html">filter_cip()</a></code> selects rows of program codes that match search terms</li>
 <li>
-<code><a href="reference/select_required.html">select_required()</a></code> selects columns required by midfieldr functions</li>
+<code><a href="reference/select_required.html">select_required()</a></code> selects a minimum set of columns required by midfieldr functions</li>
 <li>
-<code><a href="reference/add_timely_term.html">add_timely_term()</a></code> adds a new variable for a timely completion term</li>
+<code><a href="reference/add_timely_term.html">add_timely_term()</a></code> adds a new timely completion term variable</li>
 <li>
-<code><a href="reference/add_data_sufficiency.html">add_data_sufficiency()</a></code> adds a new variable for data sufficiency status</li>
+<code><a href="reference/add_data_sufficiency.html">add_data_sufficiency()</a></code> adds a new data sufficiency status variable</li>
 <li>
-<code><a href="reference/add_completion_status.html">add_completion_status()</a></code> adds a new variable for program completion status</li>
+<code><a href="reference/add_completion_status.html">add_completion_status()</a></code> adds a new program completion status variable</li>
 <li>
 <code><a href="reference/prep_fye_mice.html">prep_fye_mice()</a></code> conditions data for imputing starting majors of FYE students</li>
 <li>
@@ -142,13 +142,15 @@
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://midfieldr.github.io/midfieldr/">midfieldr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span></code></pre></div>
-<p>We would usually load midfielddata as well, but here we can illustrate usage with the “toy” data sets included in midfieldr.</p>
+<p>We illustrate usage with the “toy” data sets included in midfieldr. These are small data sets of 150 unique students used in examples.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Initialize the working data frame using toy_term</span></span>
+<span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">toy_term</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Add variables relating to the timely term</span></span>
+<span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">toy_term</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                mcid term_i       level_i adj_span timely_term</span></span>
@@ -162,6 +164,7 @@
 <span><span class="co">#&gt; 150: MCID3112845932  20173 01 First-year        6       20231</span></span>
 <span></span>
 <span><span class="co"># Add variables relating to data sufficiency</span></span>
+<span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">toy_term</span><span class="op">)</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">data_sufficiency</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                mcid       level_i adj_span timely_term term_i lower_limit</span></span>
@@ -184,6 +187,7 @@
 <span><span class="co">#&gt; 150:       20181          include</span></span>
 <span></span>
 <span><span class="co"># Add variables relating to completion status</span></span>
+<span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">toy_degree</span><span class="op">)</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">completion_status</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                mcid       level_i adj_span timely_term term_i lower_limit</span></span>
@@ -206,6 +210,7 @@
 <span><span class="co">#&gt; 150:       20181    exclude-upper        &lt;NA&gt;              &lt;NA&gt;</span></span>
 <span></span>
 <span><span class="co"># Filter for data sufficiency and timely completion</span></span>
+<span></span>
 <span><span class="va">rows_we_want</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">$</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span> <span class="op">&amp;</span> <span class="va">DT</span><span class="op">$</span><span class="va">completion_status</span> <span class="op">==</span> <span class="st">"timely"</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">rows_we_want</span><span class="op">]</span></span>
 <span><span class="va">DT</span></span>
@@ -229,9 +234,11 @@
 <span><span class="co">#&gt; 50:       20181          include       20143            timely</span></span>
 <span></span>
 <span><span class="co"># Join demographic data</span></span>
+<span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">toy_student</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span>, on <span class="op">=</span> <span class="st">"mcid"</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Label the student bloc</span></span>
+<span></span>
 <span><span class="va">DT</span><span class="op">[</span>, <span class="va">bloc</span> <span class="op">:=</span> <span class="st">"graduate"</span><span class="op">]</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;               mcid     race    sex     bloc</span></span>
@@ -243,7 +250,6 @@
 <span><span class="co">#&gt; 48: MCID3112470565    White Female graduate</span></span>
 <span><span class="co">#&gt; 49: MCID3112472090    White Female graduate</span></span>
 <span><span class="co">#&gt; 50: MCID3112498796    White Female graduate</span></span></code></pre></div>
-<p><em>Reminder.</em>   midfielddata is suitable for learning to work with student-level data but not for drawing inferences about program attributes or student experiences. midfielddata supplies practice data, not research data.</p>
 </div>
 <div class="section level2">
 <h2 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>

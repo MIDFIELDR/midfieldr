@@ -1,4 +1,4 @@
-# Case study: Goals
+# Case study part 1: Goals
 
 Part 1 of a case study in three parts, illustrating how we work with
 longitudinal student-level records.

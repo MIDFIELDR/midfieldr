@@ -3,7 +3,8 @@
 When working with student-level records, you should:
 
 - Know the structure of your data
-- Define the metrics you plan to use
+- Identify the programs to include
+- Define your metrics and the relevant student blocs
 - Develop the data processing steps that transform data to metrics
 
 *midfieldr* ([Layton et al.
@@ -25,9 +26,12 @@ contribute to this workflow in three ways:
 *midfielddata* ([Layton et al.
 2026a](#ref-Layton+Long+Ohland:2026:midfielddata)) contributes to this
 workflow by providing student-level records suitable for learning how to
-work with such data. However, the practice data are not suitable for
-drawing inferences about program attributes or student experiences.
-midfielddata supplies data for *practice*, not *research*.
+work with such data. midfielddata is also a model for setting up a
+credible structure for student records at one’s own institution for
+internal research completely separate from MIDFIELD. The practice data,
+however, are not suitable for drawing inferences about program
+attributes or student experiences. midfielddata supplies data for
+*practice*, not *research*.
 
 If you are writing your own script to follow along, we use these
 packages in this article:
@@ -175,7 +179,7 @@ the following articles at the midfielddata website:
 
   
 
-## `filter_cip()` to subset CIP data
+## Subset CIP data with `filter_cip()`
 
 [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/filter_cip.md)
 acts on the `cip` data frame to select rows that match case-independent
@@ -276,7 +280,7 @@ We develop these concepts further in
 
   
 
-## `select_required()` to subset student-level data
+## Subset student-level data with `select_required()`
 
 [`select_required()`](https://midfieldr.github.io/midfieldr/reference/select_required.md)
 selects key columns as well as all columns required by other midfieldr
@@ -301,7 +305,7 @@ select_required(term)
 #> 639915: MCID3112898940 Institution B  20181 050103 01 First-year
 ```
 
-We can add columns if we need them.
+We can include additional columns if we need them.
 
 ``` r
 
@@ -344,7 +348,7 @@ select_required(term, select_add = c("^gpa"))
 #> 639915:      2.18
 ```
 
-## `add_timely_term()` to add decision variables
+## Add decision variables with `add_timely_term()`
 
 [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
 adds a new variable (plus supporting variables) for the term in which a
@@ -380,7 +384,11 @@ DT
 #> 97555: MCID3112898940  20181 01 First-year        6       20233
 ```
 
-## `add_data_sufficiency()` to add decision variables
+We develop this concept further in the Data sufficiency article, [Timely
+term
+section](https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.html#add_timely_term).
+
+## Add decision variables with `add_data_sufficiency()`
 
 [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
 adds a new variable (plus supporting variables) for data sufficiency
@@ -421,7 +429,7 @@ article](https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency
 
   
 
-## `add_completion_status()` to add decision variables
+## Add decision variables with `add_completion_status()`
 
 [`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
 adds a new variable (plus supporting variables) for program completion
@@ -491,7 +499,7 @@ DT
 ```
 
 The number of students has dropped to 76,875. When the timely completion
-criterion is imposed, We retain the records labeled “timely”.
+criterion is imposed, we retain the records labeled “timely”.
 
 ``` r
 
@@ -542,7 +550,7 @@ DT
 #> 40440: MCID3112730841
 ```
 
-## `prep_fye_mice()` to condition data for imputation
+## Condition data for imputation with `prep_fye_mice()`
 
 One of the most common (though flawed) program metrics is “graduation
 rate”, roughly defined as the ratio of the number of timely completers
@@ -583,7 +591,7 @@ codes to be imputed.
 We develop these concepts further in [FYE
 proxies](https://midfieldr.github.io/midfieldr/articles/articles/art-060-fye-proxies.md).
 
-## `order_multiway()` to condition data for multiway charts
+## Condition data for multiway charts with `order_multiway()`
 
 In working with longitudinal student-level records, we regularly
 encounter data structured as *multiway data*. The basic structure of
@@ -607,28 +615,28 @@ resulting data structure is:
 ``` r
 
 # Extract two columns from student
-DT <- student[, .(institution, race_ethn = race)]
+DT <- student[, .(inst = institution, race_ethn = race)]
 
 # Count by race/ethnicity and institution
-DT <- DT[, .(N_matric = .N), by = c("institution", "race_ethn")]
+DT <- DT[, .N, by = c("inst", "race_ethn")]
 
 # Convert integer N to numeric N
-DT[, N_matric := as.double(N_matric)]
+DT[, N := as.double(N)]
 
 # Order the rows for viewing
-setorderv(DT, c("institution", "race_ethn"))
+setorderv(DT, c("inst", "race_ethn"))
 
 # View the result
 DT
-#>       institution       race_ethn N_matric
-#>            <char>          <char>    <num>
-#>  1: Institution B           Asian     2007
-#>  2: Institution B           Black      615
-#>  3: Institution B        Hispanic     2968
-#> ---                                       
-#> 19: Institution J Native American       48
-#> 20: Institution J   Other/Unknown      894
-#> 21: Institution J           White    20441
+#>              inst       race_ethn     N
+#>            <char>          <char> <num>
+#>  1: Institution B           Asian  2007
+#>  2: Institution B           Black   615
+#>  3: Institution B        Hispanic  2968
+#> ---                                    
+#> 19: Institution J Native American    48
+#> 20: Institution J   Other/Unknown   894
+#> 21: Institution J           White 20441
 ```
 
 [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
@@ -642,20 +650,20 @@ effects in a multiway chart.
 
 # Order the categorical variables by the median of the response
 DT_multiway <- order_multiway(DT, 
-                              quantity = "N_matric", 
-                              categories = c("institution", "race_ethn"), 
+                              quantity = "N", 
+                              categories = c("inst", "race_ethn"), 
                               method = "median") 
 # View result
 DT_multiway
-#>       institution       race_ethn N_matric institution_median race_ethn_median
-#>            <fctr>          <fctr>    <num>              <num>            <num>
-#>  1: Institution B           Asian     2007               2097             1690
-#>  2: Institution B           Black      615               2097              615
-#>  3: Institution B        Hispanic     2968               2097             1658
-#> ---                                                                           
-#> 19: Institution J Native American       48                873              130
-#> 20: Institution J   Other/Unknown      894                873             1518
-#> 21: Institution J           White    20441                873            22169
+#>              inst       race_ethn     N inst_median race_ethn_median
+#>            <fctr>          <fctr> <num>       <num>            <num>
+#>  1: Institution B           Asian  2007        2097             1690
+#>  2: Institution B           Black   615        2097              615
+#>  3: Institution B        Hispanic  2968        2097             1658
+#> ---                                                                 
+#> 19: Institution J Native American    48         873              130
+#> 20: Institution J   Other/Unknown   894         873             1518
+#> 21: Institution J           White 20441         873            22169
 ```
 
 [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
@@ -666,9 +674,9 @@ faceted chart we plot below.
 ``` r
 
 library(ggplot2)
-ggplot(DT_multiway, aes(x = N_matric, y = race_ethn)) +
-  facet_wrap(vars(institution), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = institution_median), 
+ggplot(DT_multiway, aes(x = N, y = race_ethn)) +
+  facet_wrap(vars(inst), ncol = 1, as.table = FALSE) +
+  geom_vline(aes(xintercept = inst_median), 
              linetype = 2, 
              color = "darkgray") +
   scale_x_log10() +

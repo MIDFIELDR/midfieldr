@@ -1,16 +1,4 @@
-# Case study: Data
-
-Part 2 of a case study in three parts, illustrating how we work with
-longitudinal student-level records.
-
-1.  *Goals.*   Introducing the study.
-
-2.  *Data.*   Transforming the data to yield the observations of
-    interest.
-
-3.  *Results.*   Summary statistics, metric, chart, and table.
-
-## Method
+# Case study part 2: Data
 
 Our data processing goal is to reduce the source data tables to the
 specific observations needed to compute our metrics. The data processing

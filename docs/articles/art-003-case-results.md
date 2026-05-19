@@ -1,16 +1,4 @@
-# Case study: Results
-
-Part 3 of a case study in three parts, illustrating how we work with
-longitudinal student-level records.
-
-1.  *Goals.*   Introducing the study.
-
-2.  *Data.*   Transforming the data to yield the observations of
-    interest.
-
-3.  *Results.*   Summary statistics, metric, chart, and table.
-
-## Method
+# Case study part 3: Results
 
 Our goal in this segment is to group and summarize the observations we
 saved previously, calculate the stickiness metric, and display the
@@ -165,9 +153,9 @@ We take several additional steps to prepare the data for dissemination
 in tables or charts.
 
 *Filtering.* To preserve the anonymity of the people involved, we remove
-observations with fewer than N observations. When dealing with the full
-MIDFIELD research data, we typically use N = 10, but for these practice
-data, we use N = 3.
+observations with fewer than \small N observations. When dealing with
+the full MIDFIELD research data, we typically use \small N = 10, but for
+these practice data, we use \small N = 3.
 
 ``` r
 
@@ -273,10 +261,11 @@ effects.
 
 - multiway data:
 
-  A data set of three variables: a category with *m* levels; a second
-  independent category with *n* levels; and a quantitative variable (the
-  response) of length *mn* such that there is a value of the response
-  for each combination of levels of the two categorical variables.
+  A data set of three variables: a category with \small m levels; a
+  second independent category with \small n levels; and a quantitative
+  variable (the response) of length \small m \times n such that there is
+  a value of the response for each combination of levels of the two
+  categorical variables.
 
 *Conditioning.* Convert the two categorical variables to ordered factors
 to support the ordering of rows and panels in the chart.
@@ -365,10 +354,10 @@ ggplot(DT, aes(x = stickiness, y = people)) +
   labs(x = "Stickiness (%)", y = "")
 ```
 
-![Figure 1: Stickiness with programs in
+![Figure 2: Stickiness with programs in
 panels.](figures/art-003-fig02-1.png)
 
-Figure 1: Stickiness with programs in panels.
+Figure 2: Stickiness with programs in panels.
 
 The vertical reference line is the overall stickiness of the program in
 a panel.

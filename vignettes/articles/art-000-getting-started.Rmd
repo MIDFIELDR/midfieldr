@@ -23,8 +23,9 @@ path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
 
 When working with student-level records, you should:
 
-- Know the structure of your data 
-- Define the metrics you plan to use
+- Know the structure of your data
+- Identify the programs to include
+- Define your metrics and the relevant student blocs
 - Develop the data processing steps that transform data to metrics
 
 _midfieldr_ [@Layton+Long+Ohland:2026:midfieldr] provides functions that contribute to this workflow in three ways:
@@ -40,7 +41,7 @@ _midfieldr_ [@Layton+Long+Ohland:2026:midfieldr] provides functions that contrib
     - `prep_fye_mice()`
     - `order_multiway()`
     
-_midfielddata_ [@Layton+Long+Ohland:2026:midfielddata] contributes to this workflow by providing student-level records   suitable for learning how to work with such data. However, the practice data are not suitable for drawing inferences about program attributes or student experiences. midfielddata supplies data for *practice*, not *research*.
+_midfielddata_ [@Layton+Long+Ohland:2026:midfielddata] contributes to this workflow by providing student-level records suitable for learning how to work with such data. midfielddata is also a model for setting up a credible structure for student records at one's own institution for internal research completely separate from MIDFIELD. The practice data, however, are not suitable for drawing inferences about program attributes or student experiences. midfielddata supplies data for *practice*, not *research*.
 
 If you are writing your own script to follow along, we use these packages in this article:
 
@@ -167,7 +168,7 @@ data(course, term, degree)
 
 
 
-## `filter_cip()` to subset CIP data
+## Subset CIP data with `filter_cip()`
 
 `filter_cip()` acts on the `cip` data frame to select rows that match case-independent search terms, including regular expressions.
 
@@ -202,7 +203,7 @@ We develop these concepts further in [Programs](articles/art-040-programs.html).
 <br>
 
 
-## `select_required()` to subset student-level data
+## Subset student-level data with `select_required()`
 
 `select_required()` selects key columns as well as all columns required by other midfieldr functions. Operates on a data frame to retain columns having names that match or partially match default search terms. Rows are unaffected.
 
@@ -213,7 +214,7 @@ Term records are significantly more compact if we select this minimum set of col
 select_required(term)
 ```
 
-We can add columns if we need them.
+We can include additional columns if we need them.
 
 ```{r}
 # Select additional columns
@@ -236,7 +237,7 @@ select_required(term, select_add = c("^gpa"))
 
 
 
-## `add_timely_term()` to add decision variables
+## Add decision variables with `add_timely_term()`
 
 `add_timely_term()` adds a new variable (plus supporting variables) for the term in which a student is expected to complete their program in a timely manner. This variable is used to make decisions about including or excluding records due to data sufficiency and whether or not a graduate is counted as a timely or late completer. Timely term is required for both `add_data_sufficiency()` and `add_completion_status()`. 
 
@@ -254,15 +255,12 @@ DT <- add_timely_term(DT, term)
 DT
 ```
 
+We develop this concept further in the Data sufficiency article, [Timely term section](art-020-data-sufficiency.html#add_timely_term). 
 
 
 
 
-
-
-
-
-## `add_data_sufficiency()`  to add decision variables
+## Add decision variables with `add_data_sufficiency()`
 
 `add_data_sufficiency()` adds a new variable (plus supporting variables) for data sufficiency status.
 
@@ -284,7 +282,7 @@ We develop these concepts further in [Data sufficiency article](art-020-data-suf
 
 
 
-## `add_completion_status()`  to add  decision variables
+## Add decision variables with `add_completion_status()`
 
 `add_completion_status()` adds a new variable (plus supporting variables) for program completion status.
 
@@ -325,7 +323,7 @@ DT <- DT[data_sufficiency == "include"]
 DT
 ```
 
-The number of students has dropped to `r nrow(DT)`.  When the timely completion criterion is imposed, We retain the records labeled "timely". 
+The number of students has dropped to `r nrow(DT)`.  When the timely completion criterion is imposed, we retain the records labeled "timely". 
 
 ```{r}
 # Filter for timely completion
@@ -359,7 +357,7 @@ DT
 ```
 
 
-## `prep_fye_mice()` to condition data for imputation
+## Condition data for imputation with `prep_fye_mice()`
 
 One of the most common (though flawed) program metrics is "graduation rate", roughly defined as the ratio of the number of timely completers to the number of  starters in a major. However, some engineering programs require that students enroll in a First-Year Engineering (FYE) program (CIP "140102") before they can enroll in their preferred, degree-granting, engineering major. 
 
@@ -379,7 +377,7 @@ We develop these concepts further in [FYE proxies](articles/art-060-fye-proxies.
 
 
 
-## `order_multiway()` to condition data for multiway charts
+## Condition data for multiway charts with `order_multiway()`
 
 In working with longitudinal student-level records, we regularly encounter data structured as *multiway data*. The basic structure of multiway data is:
 
@@ -405,16 +403,16 @@ For example, from the `student` data table, if we count the number of students a
 
 ```{r}
 # Extract two columns from student
-DT <- student[, .(institution, race_ethn = race)]
+DT <- student[, .(inst = institution, race_ethn = race)]
 
 # Count by race/ethnicity and institution
-DT <- DT[, .(N_matric = .N), by = c("institution", "race_ethn")]
+DT <- DT[, .N, by = c("inst", "race_ethn")]
 
 # Convert integer N to numeric N
-DT[, N_matric := as.double(N_matric)]
+DT[, N := as.double(N)]
 
 # Order the rows for viewing
-setorderv(DT, c("institution", "race_ethn"))
+setorderv(DT, c("inst", "race_ethn"))
 
 # View the result
 DT
@@ -425,8 +423,8 @@ DT
 ```{r}
 # Order the categorical variables by the median of the response
 DT_multiway <- order_multiway(DT, 
-                              quantity = "N_matric", 
-                              categories = c("institution", "race_ethn"), 
+                              quantity = "N", 
+                              categories = c("inst", "race_ethn"), 
                               method = "median") 
 # View result
 DT_multiway
@@ -440,9 +438,9 @@ DT_multiway
 #| fig-width: 8.4
 
 library(ggplot2)
-ggplot(DT_multiway, aes(x = N_matric, y = race_ethn)) +
-  facet_wrap(vars(institution), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = institution_median), 
+ggplot(DT_multiway, aes(x = N, y = race_ethn)) +
+  facet_wrap(vars(inst), ncol = 1, as.table = FALSE) +
+  geom_vline(aes(xintercept = inst_median), 
              linetype = 2, 
              color = "darkgray") +
   scale_x_log10() +
