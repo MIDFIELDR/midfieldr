@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -253,7 +253,7 @@ started</a>.</p>
 <span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_required.html">select_required</a></span><span class="op">(</span><span class="va">source_term</span><span class="op">)</span></span></code></pre></div>
 <p><em>Initialize.</em>   Use the <code>term</code> and
 <code>student</code> data tables to obtain a data frame of student IDs
-meeting the data sufficiency and degree-seeking criteria. Appled to the
+meeting the data sufficiency and degree-seeking criteria. Applied to the
 practice data, this procedure yields the <code>baseline_mcid</code> data
 frame derived in <a href="art-050-blocs.html#initial-processing">Blocs</a> and included with
 midfieldr.</p>
@@ -301,13 +301,12 @@ when using the practice data.)</p>
 <span><span class="co">#&gt; 531418: MCID3112870009  19954 240102</span></span>
 <span><span class="co">#&gt; 531419: MCID3112870009  19983 240102</span></span></code></pre></div>
 <p><em>Filter.</em>   Order rows by ID and term, then filter to retain
-the start term observation. If your data contain students enrolled in
-more than one major in their first term, replace <code>.SD[1]</code>
-with the (slower) <code>.SD[which.min(term)]</code>.</p>
+the start term observation(s). The <code>.SD[term == min(term)]</code>
+retains multiple rows for the same ID just in case a student is enrolled
+in more than one program in their first term.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retain observations of the earliest remaining terms by ID</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">DT</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"term"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, by <span class="op">=</span> <span class="st">"mcid"</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="va">term</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span> <span class="st">"mcid"</span><span class="op">]</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                  mcid   term   cip6</span></span>
 <span><span class="co">#&gt;                &lt;char&gt; &lt;char&gt; &lt;char&gt;</span></span>
@@ -532,9 +531,7 @@ for this section.</p>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"999999"</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">DT</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"term"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, by <span class="op">=</span> <span class="st">"mcid"</span><span class="op">]</span></span>
-<span><span class="co"># Alternatively</span></span>
-<span><span class="co"># DT &lt;- DT[, .SD[which.min(term)], by = "mcid"]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="va">term</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span> <span class="st">"mcid"</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span></code></pre></div>
 <p>For starters without FYE, finish by renaming <code>cip6</code></p>

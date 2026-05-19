@@ -307,7 +307,7 @@ DT <- degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
 
 # Filter by program and first-degree terms only
 DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
-DT <- DT[, .SD[which.min(term_degree)], by = "mcid"]
+DT <- DT[, .SD[term_degree == min(term_degree)], by = "mcid"]
 DT[, c("cip6", "term_degree") := NULL]
 DT <- unique(DT)
 DT

@@ -148,7 +148,7 @@ dframe[, people := paste(race, sex)]
 #> 24:      ME   Male   International           178        89       50.0
 #> 25:      ME   Male Native American             5         1       20.0
 #> 26:      ME   Male   Other/Unknown            80        41       51.2
-#> 27:      ME   Male           White          1596       953       59.7
+#> 27:      ME   Male           White          1596       955       59.8
 #>     program    sex            race ever_enrolled graduates stickiness
 #>      <char> <char>          <char>         <int>     <int>      <num>
 #>                     people
@@ -211,7 +211,7 @@ dframe[, c("race", "sex") := NULL]
 #> 24:      ME           178        89       50.0     International Male
 #> 25:      ME             5         1       20.0   Native American Male
 #> 26:      ME            80        41       51.2     Other/Unknown Male
-#> 27:      ME          1596       953       59.7             White Male
+#> 27:      ME          1596       955       59.8             White Male
 #>     program ever_enrolled graduates stickiness                 people
 #>      <char>         <int>     <int>      <num>                 <char>
 data.table::setcolorder(dframe, c("program", "people"))
@@ -269,7 +269,7 @@ mw1
 #> 24:      ME     International Male       50.0           178        89
 #> 25:      ME   Native American Male       20.0             5         1
 #> 26:      ME     Other/Unknown Male       51.2            80        41
-#> 27:      ME             White Male       59.7          1596       953
+#> 27:      ME             White Male       59.8          1596       955
 #>     program                 people stickiness ever_enrolled graduates
 #>      <fctr>                 <fctr>      <num>         <int>     <int>
 #>     program_median people_median
@@ -287,7 +287,7 @@ mw1
 #> 11:          44.55         48.10
 #> 12:          44.55         10.00
 #> 13:          44.55         44.65
-#> 14:          44.55         55.25
+#> 14:          44.55         55.30
 #> 15:          57.90         35.70
 #> 16:          57.90         58.35
 #> 17:          57.90         52.10
@@ -300,7 +300,7 @@ mw1
 #> 24:          57.90         48.10
 #> 25:          57.90         10.00
 #> 26:          57.90         44.65
-#> 27:          57.90         55.25
+#> 27:          57.90         55.30
 #>     program_median people_median
 #>              <num>         <num>
 
@@ -353,7 +353,7 @@ order_multiway(dframe,
 #> 24:      ME     International Male        89           178       50.0
 #> 25:      ME   Native American Male         1             5       20.0
 #> 26:      ME     Other/Unknown Male        41            80       51.2
-#> 27:      ME             White Male       953          1596       59.7
+#> 27:      ME             White Male       955          1596       59.8
 #>     program                 people graduates ever_enrolled stickiness
 #>      <fctr>                 <fctr>     <num>         <num>      <num>
 #>     program_stickiness people_stickiness
@@ -371,20 +371,20 @@ order_multiway(dframe,
 #> 11:               49.4              48.0
 #> 12:               49.4              12.5
 #> 13:               49.4              46.7
-#> 14:               49.4              56.6
-#> 15:               58.7              46.4
-#> 16:               58.7              55.6
-#> 17:               58.7              55.0
-#> 18:               58.7              42.6
-#> 19:               58.7              46.7
-#> 20:               58.7              57.4
-#> 21:               58.7              60.3
-#> 22:               58.7              61.0
-#> 23:               58.7              47.6
-#> 24:               58.7              48.0
-#> 25:               58.7              12.5
-#> 26:               58.7              46.7
-#> 27:               58.7              56.6
+#> 14:               49.4              56.7
+#> 15:               58.8              46.4
+#> 16:               58.8              55.6
+#> 17:               58.8              55.0
+#> 18:               58.8              42.6
+#> 19:               58.8              46.7
+#> 20:               58.8              57.4
+#> 21:               58.8              60.3
+#> 22:               58.8              61.0
+#> 23:               58.8              47.6
+#> 24:               58.8              48.0
+#> 25:               58.8              12.5
+#> 26:               58.8              46.7
+#> 27:               58.8              56.7
 #>     program_stickiness people_stickiness
 #>                  <num>             <num>
 ```

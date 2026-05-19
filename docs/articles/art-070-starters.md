@@ -163,7 +163,7 @@ term <- select_required(source_term)
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a
 data frame of student IDs meeting the data sufficiency and
-degree-seeking criteria. Appled to the practice data, this procedure
+degree-seeking criteria. Applied to the practice data, this procedure
 yields the `baseline_mcid` data frame derived in
 [Blocs](https://midfieldr.github.io/midfieldr/articles/art-050-blocs.html#initial-processing)
 and included with midfieldr.
@@ -221,15 +221,14 @@ DT
 ```
 
 *Filter.*   Order rows by ID and term, then filter to retain the start
-term observation. If your data contain students enrolled in more than
-one major in their first term, replace `.SD[1]` with the (slower)
-`.SD[which.min(term)]`.
+term observation(s). The `.SD[term == min(term)]` retains multiple rows
+for the same ID just in case a student is enrolled in more than one
+program in their first term.
 
 ``` r
 
 # Retain observations of the earliest remaining terms by ID
-setorderv(DT, cols = c("mcid", "term"))
-DT <- DT[, .SD[1], by = "mcid"]
+DT <- DT[, .SD[term == min(term)], by = "mcid"]
 DT
 #>                  mcid   term   cip6
 #>                <char> <char> <char>
@@ -502,9 +501,7 @@ DT <- copy(baseline_mcid)
 DT <- term[DT, .(mcid, term, cip6), on = c("mcid")]
 DT <- DT[!cip6 %like% "999999"]
 setorderv(DT, cols = c("mcid", "term"))
-DT <- DT[, .SD[1], by = "mcid"]
-# Alternatively
-# DT <- DT[, .SD[which.min(term)], by = "mcid"]
+DT <- DT[, .SD[term == min(term)], by = "mcid"]
 DT <- DT[, .(mcid, cip6)]
 DT <- unique(DT)
 ```

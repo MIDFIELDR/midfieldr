@@ -39,9 +39,9 @@ DT
 #>    2: MCID3111145102         White   Male      EE ever_enrolled
 #>    3: MCID3111146537         Asian Female      EE ever_enrolled
 #>   ---                                                          
-#> 8915: MCID3112618976         White   Male      ME     graduates
-#> 8916: MCID3112619484         White   Male      EE     graduates
-#> 8917: MCID3112641535         White   Male      ME     graduates
+#> 8917: MCID3112618976         White   Male      ME     graduates
+#> 8918: MCID3112619484         White   Male      EE     graduates
+#> 8919: MCID3112641535         White   Male      ME     graduates
 ```
 
 The study observations data frame is designed with one column for each
@@ -98,7 +98,7 @@ DT
 #> ---                                                       
 #> 48:      ME   Male Native American             5         1
 #> 49:      ME   Male   Other/Unknown            80        41
-#> 50:      ME   Male           White          1596       953
+#> 50:      ME   Male           White          1596       955
 ```
 
 ## Compute the metric
@@ -133,7 +133,7 @@ DT
 #> ---                                                                  
 #> 48:      ME   Male Native American             5         1       20.0
 #> 49:      ME   Male   Other/Unknown            80        41       51.2
-#> 50:      ME   Male           White          1596       953       59.7
+#> 50:      ME   Male           White          1596       955       59.8
 ```
 
 *Verify prepared data.*   `study_results`, included with midfieldr,
@@ -172,7 +172,7 @@ DT
 #> ---                                                                
 #> 39:      ME   Male International           178        89       50.0
 #> 40:      ME   Male Other/Unknown            80        41       51.2
-#> 41:      ME   Male         White          1596       953       59.7
+#> 41:      ME   Male         White          1596       955       59.8
 ```
 
 *Note.*   MIDFIELD research findings are regularly grouped by program,
@@ -201,7 +201,7 @@ DT
 #> ---                                                           
 #> 26:      ME   Male    Black            30        19       63.3
 #> 27:      ME   Male Hispanic            79        42       53.2
-#> 28:      ME   Male    White          1596       953       59.7
+#> 28:      ME   Male    White          1596       955       59.8
 ```
 
 *Creating variables.* We have found it useful to report such data with a
@@ -224,7 +224,7 @@ DT
 #> ---                                                           
 #> 26:      ME      Black Male            30        19       63.3
 #> 27:      ME   Hispanic Male            79        42       53.2
-#> 28:      ME      White Male          1596       953       59.7
+#> 28:      ME      White Male          1596       955       59.8
 ```
 
 *Recoding values.* Readers can more readily interpret our charts and
@@ -250,7 +250,7 @@ DT
 #> ---                                                              
 #> 26: Mechanical      Black Male            30        19       63.3
 #> 27: Mechanical   Hispanic Male            79        42       53.2
-#> 28: Mechanical      White Male          1596       953       59.7
+#> 28: Mechanical      White Male          1596       955       59.8
 ```
 
 With one quantitative variable (stickiness) for every combination of the
@@ -290,16 +290,16 @@ DT
 #> ---                                                              
 #> 26: Mechanical      Black Male        19            30       63.3
 #> 27: Mechanical   Hispanic Male        42            79       53.2
-#> 28: Mechanical      White Male       953          1596       59.7
+#> 28: Mechanical      White Male       955          1596       59.8
 #>     program_stickiness people_stickiness
 #>                  <num>             <num>
 #>  1:               63.3              62.7
 #>  2:               63.3              51.5
 #>  3:               63.3              60.5
 #> ---                                     
-#> 26:               60.1              61.8
-#> 27:               60.1              48.0
-#> 28:               60.1              59.3
+#> 26:               60.2              61.8
+#> 27:               60.2              48.0
+#> 28:               60.2              59.4
 ```
 
 The column `program_stickiness` determines the order of the programs in
@@ -404,7 +404,7 @@ setnames(DT, old = "people", new = "People", skip_absent = TRUE)
 | Hispanic Female | 46.2  | 37.5       | NA                 | 66.7       |
 | Hispanic Male   | 47.0  | 37.8       | 66.7               | 53.2       |
 | White Female    | 61.6  | 47.5       | 70.1               | 62.9       |
-| White Male      | 64.5  | 50.8       | 69.5               | 59.7       |
+| White Male      | 64.5  | 50.8       | 69.5               | 59.8       |
 
 Table 1. Progrm stickiness (%) {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}

@@ -62,7 +62,7 @@ selection to serve midfieldr functions.
 
 ``` r
 # Default character vector for selecting columns
-default_cols<- c("mcid", "institution", "race", "sex", "^term", "cip6", "level")
+default_cols<- c("mcid", "institution", "race", "sex", "^term", "cip6", "level", "abbrev", "number")
 
 # Create one string separated by OR
 search_pattern <- paste(default_cols, collapse = "|")
@@ -90,13 +90,14 @@ x <- select_required(toy_course)
 names(x)
 #> [1] "mcid"        "institution" "term_course" "abbrev"      "number"     
 grepl(search_pattern, names(x))
-#> [1]  TRUE  TRUE  TRUE FALSE FALSE
+#> [1] TRUE TRUE TRUE TRUE TRUE
 
 # Adding search terms
-x <- select_required(toy_course, select_add = c("abbrev", "number", "grade")) 
+x <- select_required(toy_course, select_add = c("grade")) 
 names(x)
 #> [1] "mcid"        "institution" "term_course" "abbrev"      "number"     
 #> [6] "grade"      
-
+grepl(search_pattern, names(x))
+#> [1]  TRUE  TRUE  TRUE  TRUE  TRUE FALSE
 
 ```

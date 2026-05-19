@@ -619,7 +619,7 @@ terms. We retain degrees earned in their first degree term only.
 
 ``` r
 
-DT <- DT[, .SD[which.min(term_degree)], by = "mcid"]
+DT <- DT[, .SD[term_degree == min(term_degree)], by = "mcid"]
 DT
 #>                 mcid   cip6 program term_degree
 #>               <char> <char>  <char>      <char>
@@ -627,12 +627,12 @@ DT
 #>    2: MCID3111145102 141001      EE       19893
 #>    3: MCID3111146537 141001      EE       19913
 #>   ---                                          
-#> 3262: MCID3112618976 141901      ME       20153
-#> 3263: MCID3112619484 141001      EE       20133
-#> 3264: MCID3112641535 141901      ME       20143
+#> 3264: MCID3112618976 141901      ME       20153
+#> 3265: MCID3112619484 141001      EE       20133
+#> 3266: MCID3112641535 141901      ME       20143
 ```
 
-The result has 3264 observations.
+The result has 3266 observations.
 
 *Filter.*   Drop unnecessary variables and filter for unique
 observations of ID and program label.
@@ -649,9 +649,9 @@ DT
 #>    2: MCID3111145102      EE
 #>    3: MCID3111146537      EE
 #>   ---                       
-#> 3262: MCID3112618976      ME
-#> 3263: MCID3112619484      EE
-#> 3264: MCID3112641535      ME
+#> 3264: MCID3112618976      ME
+#> 3265: MCID3112619484      EE
+#> 3266: MCID3112641535      ME
 ```
 
 *Copy.*   Set aside the graduates information under a new name to use
@@ -669,9 +669,9 @@ graduates
 #>    2: MCID3111145102      EE
 #>    3: MCID3111146537      EE
 #>   ---                       
-#> 3262: MCID3112618976      ME
-#> 3263: MCID3112619484      EE
-#> 3264: MCID3112641535      ME
+#> 3264: MCID3112618976      ME
+#> 3265: MCID3112619484      EE
+#> 3266: MCID3112641535      ME
 ```
 
 ## Add groupings
@@ -708,12 +708,12 @@ DT
 #>    2: MCID3111145102      EE ever_enrolled
 #>    3: MCID3111146537      EE ever_enrolled
 #>   ---                                     
-#> 8915: MCID3112618976      ME     graduates
-#> 8916: MCID3112619484      EE     graduates
-#> 8917: MCID3112641535      ME     graduates
+#> 8917: MCID3112618976      ME     graduates
+#> 8918: MCID3112619484      EE     graduates
+#> 8919: MCID3112641535      ME     graduates
 ```
 
-The result has 8917 observations.
+The result has 8919 observations.
 
 - grouping variables:
 
@@ -737,9 +737,9 @@ DT
 #>    2: MCID3111145102         White   Male      EE ever_enrolled
 #>    3: MCID3111146537         Asian Female      EE ever_enrolled
 #>   ---                                                          
-#> 8915: MCID3112618976         White   Male      ME     graduates
-#> 8916: MCID3112619484         White   Male      EE     graduates
-#> 8917: MCID3112641535         White   Male      ME     graduates
+#> 8917: MCID3112618976         White   Male      ME     graduates
+#> 8918: MCID3112619484         White   Male      EE     graduates
+#> 8919: MCID3112641535         White   Male      ME     graduates
 ```
 
 *Verify prepared data.*   `study_observations`, included with midfieldr,

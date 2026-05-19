@@ -232,7 +232,7 @@
 #' This data structure facilitates grouping and summarizing by race, sex,
 #' program, and group.
 #'
-#' @format `data.table` with 8917 rows and 5 columns.
+#' @format `data.table` with 8919 rows and 5 columns.
 #' The variables are:
 #' \describe{
 #'  `r var_mcid`

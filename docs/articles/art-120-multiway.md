@@ -40,12 +40,12 @@ This vignette in the MIDFIELD workflow.
 
 - multiway superposition:
 
-  Multiway data can be extended to include a third category of *p*
-  levels; the quantitative response has length *mnp*, one for each
-  combination of levels of *three* categories; the rows and panels
-  encode the first two categories as usual; *p* data markers encode the
-  third category on each row. Clarity usually requires that *p = 2* but
-  not more.
+  Multiway data can be extended to include a third category of \small p
+  levels; the quantitative response has length \small m \times n \times
+  p, one for each combination of levels of *three* categories; the rows
+  and panels encode the first two categories as usual; \small p data
+  markers encode the third category on each row. Clarity usually
+  requires that \small p=2 but not more.
 
 - stickiness:
 
@@ -166,7 +166,7 @@ DT
 #> ---                     
 #> 27:        89       50.0
 #> 28:        41       51.2
-#> 29:       953       59.7
+#> 29:       955       59.8
 ```
 
 At this point, the multiway categories (`programs` and `people`) are
@@ -258,7 +258,7 @@ DT_count
 #> ---                                          
 #> 27: Mechanical   International Male        89
 #> 28: Mechanical   Other/Unknown Male        41
-#> 29: Mechanical           White Male       953
+#> 29: Mechanical           White Male       955
 ```
 
 Applying
@@ -284,7 +284,7 @@ DT_count
 #> ---                                                                       
 #> 27: Mechanical   International Male        89           45.5          72.0
 #> 28: Mechanical   Other/Unknown Male        41           45.5          16.0
-#> 29: Mechanical           White Male       953           45.5         525.5
+#> 29: Mechanical           White Male       955           45.5         525.5
 ```
 
 The function adds two columns (`program_median` and `people_median`) to
@@ -519,7 +519,7 @@ DT_count
 #> ---                                          
 #> 27: Mechanical International   Male        89
 #> 28: Mechanical Other/Unknown   Male        41
-#> 29: Mechanical         White   Male       953
+#> 29: Mechanical         White   Male       955
 ```
 
 The superposed category is `sex`. The multiway data to be conditioned
@@ -542,7 +542,7 @@ DT_count
 #> ---                                                                     
 #> 27: Mechanical International        89   Male           45.5          34
 #> 28: Mechanical Other/Unknown        41   Male           45.5          16
-#> 29: Mechanical         White       953   Male           45.5         148
+#> 29: Mechanical         White       955   Male           45.5         148
 ```
 
 In this example, `program` and `race` are factors, ordered by median
@@ -619,7 +619,7 @@ DT_ratio
 #> ---                                                                   
 #> 27: Mechanical   International Male           178        89       50.0
 #> 28: Mechanical   Other/Unknown Male            80        41       51.2
-#> 29: Mechanical           White Male          1596       953       59.7
+#> 29: Mechanical           White Male          1596       955       59.8
 ```
 
 Because stickiness is a ratio, we set `method` to “percent” and assign
@@ -646,16 +646,16 @@ DT_ratio
 #> ---                                                                   
 #> 27: Mechanical   International Male        89           178       50.0
 #> 28: Mechanical   Other/Unknown Male        41            80       51.2
-#> 29: Mechanical           White Male       953          1596       59.7
+#> 29: Mechanical           White Male       955          1596       59.8
 #>     program_stickiness people_stickiness
 #>                  <num>             <num>
 #>  1:               62.5              62.7
 #>  2:               62.5              57.1
 #>  3:               62.5              60.5
 #> ---                                     
-#> 27:               58.9              50.0
-#> 28:               58.9              45.6
-#> 29:               58.9              59.3
+#> 27:               59.0              50.0
+#> 28:               59.0              45.6
+#> 29:               59.0              59.4
 ```
 
 The function again converts the categories to factors and adds two
@@ -683,7 +683,7 @@ temp
 #> 1:              Civil          1470       919       62.5
 #> 2:         Electrical          1437       718       50.0
 #> 3: Industrial/Systems           325       220       67.7
-#> 4:         Mechanical          2271      1338       58.9
+#> 4:         Mechanical          2271      1340       59.0
 ```
 
 And the next result agrees with the values in `people_stickiness`.
@@ -703,7 +703,7 @@ temp
 #> 5:        Hispanic Male           190        90       47.4
 #> 6:   International Male           492       246       50.0
 #> 7:   Other/Unknown Male           149        68       45.6
-#> 8:           White Male          3596      2134       59.3
+#> 8:           White Male          3596      2136       59.4
 #> 9:           Black Male            59        36       61.0
 ```
 
@@ -790,7 +790,7 @@ tbl
 #> ---                                          
 #> 27: Mechanical   International Male        89
 #> 28: Mechanical   Other/Unknown Male        41
-#> 29: Mechanical           White Male       953
+#> 29: Mechanical           White Male       955
 ```
 
 Use
@@ -813,7 +813,7 @@ tbl
 #> 6:   International Male    55         90                 12         89
 #> 7:   Other/Unknown Male    11         16                 NA         41
 #> 8:         White Female   162         56                 54        134
-#> 9:           White Male   612        439                130        953
+#> 9:           White Male   612        439                130        955
 ```
 
 Edit one column name and print the table.
@@ -834,7 +834,7 @@ setnames(tbl, old = "people", new = "Group", skip_absent = TRUE)
 | International Male   | 55    | 90         | 12                 | 89         |
 | Other/Unknown Male   | 11    | 16         | NA                 | 41         |
 | White Female         | 162   | 56         | 54                 | 134        |
-| White Male           | 612   | 439        | 130                | 953        |
+| White Male           | 612   | 439        | 130                | 955        |
 
 Table 1: Number of engineering graduates {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
@@ -866,7 +866,7 @@ tbl
 #> ---                                                                   
 #> 27: Mechanical   International Male        89           178       50.0
 #> 28: Mechanical   Other/Unknown Male        41            80       51.2
-#> 29: Mechanical           White Male       953          1596       59.7
+#> 29: Mechanical           White Male       955          1596       59.8
 ```
 
 In this step, we concatenate a character string with the number of
@@ -886,7 +886,7 @@ tbl
 #> ---                                                                   
 #> 27: Mechanical   International Male        89           178       50.0
 #> 28: Mechanical   Other/Unknown Male        41            80       51.2
-#> 29: Mechanical           White Male       953          1596       59.7
+#> 29: Mechanical           White Male       955          1596       59.8
 #>          results
 #>           <char>
 #>  1:   (15) 66.7%
@@ -895,7 +895,7 @@ tbl
 #> ---             
 #> 27:    (178) 50%
 #> 28:   (80) 51.2%
-#> 29: (1596) 59.7%
+#> 29: (1596) 59.8%
 ```
 
 Now we can perform the transformation from block records to row records
@@ -917,7 +917,7 @@ tbl
 #> 6:   International Male  (97) 56.7% (195) 46.2%         (22) 54.5%    (178) 50%
 #> 7:   Other/Unknown Male  (27) 40.7%  (42) 38.1%               <NA>   (80) 51.2%
 #> 8:         White Female (263) 61.6% (118) 47.5%         (77) 70.1%  (213) 62.9%
-#> 9:           White Male (949) 64.5% (864) 50.8%        (187) 69.5% (1596) 59.7%
+#> 9:           White Male (949) 64.5% (864) 50.8%        (187) 69.5% (1596) 59.8%
 ```
 
 Edit one column name and print the table.
@@ -938,7 +938,7 @@ setnames(tbl, old = "people", new = "Group", skip_absent = TRUE)
 | International Male   | (97) 56.7%  | (195) 46.2% | (22) 54.5%         | (178) 50%    |
 | Other/Unknown Male   | (27) 40.7%  | (42) 38.1%  | NA                 | (80) 51.2%   |
 | White Female         | (263) 61.6% | (118) 47.5% | (77) 70.1%         | (213) 62.9%  |
-| White Male           | (949) 64.5% | (864) 50.8% | (187) 69.5%        | (1596) 59.7% |
+| White Male           | (949) 64.5% | (864) 50.8% | (187) 69.5%        | (1596) 59.8% |
 
 Table 2: Four programs (N ever enrolled) percent stickiness {.table
 .gt_table quarto-disable-processing="false" quarto-bootstrap="false"}

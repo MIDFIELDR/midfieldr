@@ -131,7 +131,7 @@ degree <- select_required(source_degree)
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a
 data frame of student IDs meeting the data sufficiency and
-degree-seeking criteria. Appled to the practice data, this procedure
+degree-seeking criteria. Applied to the practice data, this procedure
 yields the `baseline_mcid` data frame derived in
 [Blocs](https://midfieldr.github.io/midfieldr/articles/art-050-blocs.html#initial-processing)
 and included with midfieldr.
@@ -347,14 +347,14 @@ DT
 #> 3266: 141901      ME MCID3112641535       20143
 ```
 
-*Filter.*   Filter to retain observations in the first degree term only.
-Multiple degrees are allowed but only if they occur in the first degree
-term.
+*Filter.*   Filter to retain observations in the term of the first
+degree term only. Multiple degrees in this first degree term are
+allowed.
 
 ``` r
 
-# Filter by first degree term
-DT <- DT[, .SD[which.min(term_degree)], by = "mcid"]
+# Filter by term in which first degree(s) earned
+DT <- DT[, .SD[term_degree == min(term_degree)], by = "mcid"]
 DT
 #>                 mcid   cip6 program term_degree
 #>               <char> <char>  <char>      <char>
@@ -362,9 +362,9 @@ DT
 #>    2: MCID3111145102 141001      EE       19893
 #>    3: MCID3111146537 141001      EE       19913
 #>   ---                                          
-#> 3262: MCID3112618976 141901      ME       20153
-#> 3263: MCID3112619484 141001      EE       20133
-#> 3264: MCID3112641535 141901      ME       20143
+#> 3264: MCID3112618976 141901      ME       20153
+#> 3265: MCID3112619484 141001      EE       20133
+#> 3266: MCID3112641535 141901      ME       20143
 ```
 
 *Filter.*   Drop unnecessary variables and filter for unique
@@ -381,9 +381,9 @@ DT
 #>    2: MCID3111145102      EE
 #>    3: MCID3111146537      EE
 #>   ---                       
-#> 3262: MCID3112618976      ME
-#> 3263: MCID3112619484      EE
-#> 3264: MCID3112641535      ME
+#> 3264: MCID3112618976      ME
+#> 3265: MCID3112619484      EE
+#> 3266: MCID3112641535      ME
 ```
 
 ## Reusable code
@@ -408,7 +408,7 @@ DT <- degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
 
 # Filter by programs and first degree terms
 DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
-DT <- DT[, .SD[which.min(term_degree)], by = "mcid"]
+DT <- DT[, .SD[term_degree == min(term_degree)], by = "mcid"]
 DT[, c("cip6", "term_degree") := NULL]
 DT <- unique(DT)
 ```

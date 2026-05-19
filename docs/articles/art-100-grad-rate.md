@@ -266,7 +266,7 @@ degree <- select_required(source_degree)
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a
 data frame of student IDs meeting the data sufficiency and
-degree-seeking criteria. Appled to the practice data, this procedure
+degree-seeking criteria. Applied to the practice data, this procedure
 yields the `baseline_mcid` data frame derived in
 [Blocs](https://midfieldr.github.io/midfieldr/articles/art-050-blocs.html#initial-processing)
 and included with midfieldr.

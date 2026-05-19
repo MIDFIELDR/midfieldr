@@ -13,11 +13,18 @@
 
 ## midfieldr 1.0.3.9xxx
 
-Current development version
+**Current development version**
+
+Minor improvements
 
 - Revise "Get started" article for brief but comprehensive introduction to all functions. 
 - New versions of toy data and case study data for consistency with midfielddata.
 - Revise README for brevity. Use toy data to illustrate usage.
+
+Bug fix
+
+- In vignettes, fixed `.SD[]` where finding the first instance of a term should return more than one row, e.g., graduating with a double degree. 
+- This same fix added two rows to the `study_observations` built-in data set. 
 
 
 ## version 1.0.3

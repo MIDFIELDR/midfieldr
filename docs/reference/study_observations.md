@@ -12,7 +12,7 @@ data(study_observations)
 
 ## Format
 
-`data.table` with 8917 rows and 5 columns. The variables are:
+`data.table` with 8919 rows and 5 columns. The variables are:
 
 - `mcid`:
 

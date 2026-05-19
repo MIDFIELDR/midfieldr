@@ -5,7 +5,7 @@
 \alias{study_observations}
 \title{Case-study observations}
 \format{
-\code{data.table} with 8917 rows and 5 columns.
+\code{data.table} with 8919 rows and 5 columns.
 The variables are:
 \describe{
 \item{\code{mcid}}{Character, de-identified student ID. Key column.}

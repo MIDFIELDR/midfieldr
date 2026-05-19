@@ -275,11 +275,11 @@ DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
 DT
 ```
 
-*Filter.*  &nbsp; Filter to retain observations in the first degree term only. Multiple degrees are allowed but only if they occur in the first degree term.  
+*Filter.*  &nbsp; Filter to retain observations in the term of the first degree term only. Multiple degrees in this first degree term are allowed.  
 
 ```{r}
-# Filter by first degree term
-DT <- DT[, .SD[which.min(term_degree)], by = "mcid"]
+# Filter by term in which first degree(s) earned
+DT <- DT[, .SD[term_degree == min(term_degree)], by = "mcid"]
 DT
 ```
 
@@ -315,7 +315,7 @@ DT <- degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
 
 # Filter by programs and first degree terms
 DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
-DT <- DT[, .SD[which.min(term_degree)], by = "mcid"]
+DT <- DT[, .SD[term_degree == min(term_degree)], by = "mcid"]
 DT[, c("cip6", "term_degree") := NULL]
 DT <- unique(DT)
 ```

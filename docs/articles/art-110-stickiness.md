@@ -164,7 +164,7 @@ degree <- select_required(source_degree)
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a
 data frame of student IDs meeting the data sufficiency and
-degree-seeking criteria. Appled to the practice data, this procedure
+degree-seeking criteria. Applied to the practice data, this procedure
 yields the `baseline_mcid` data frame derived in
 [Blocs](https://midfieldr.github.io/midfieldr/articles/art-050-blocs.html#initial-processing)
 and included with midfieldr.
@@ -245,7 +245,7 @@ DT <- degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
 
 # Filter by program and first-degree terms only
 DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
-DT <- DT[, .SD[which.min(term_degree)], by = "mcid"]
+DT <- DT[, .SD[term_degree == min(term_degree)], by = "mcid"]
 DT[, c("cip6", "term_degree") := NULL]
 DT <- unique(DT)
 DT
@@ -255,9 +255,9 @@ DT
 #>    2: MCID3111145102      EE
 #>    3: MCID3111146537      EE
 #>   ---                       
-#> 3262: MCID3112618976      ME
-#> 3263: MCID3112619484      EE
-#> 3264: MCID3112641535      ME
+#> 3264: MCID3112618976      ME
+#> 3265: MCID3112619484      EE
+#> 3266: MCID3112641535      ME
 ```
 
 *Copy.*   To prepare for joining with ever enrolled
@@ -274,9 +274,9 @@ graduates
 #>    2: MCID3111145102      EE
 #>    3: MCID3111146537      EE
 #>   ---                       
-#> 3262: MCID3112618976      ME
-#> 3263: MCID3112619484      EE
-#> 3264: MCID3112641535      ME
+#> 3264: MCID3112618976      ME
+#> 3265: MCID3112619484      EE
+#> 3266: MCID3112641535      ME
 ```
 
 ## Groupings
@@ -309,9 +309,9 @@ DT
 #>    2: MCID3111145102      EE ever_enrolled
 #>    3: MCID3111146537      EE ever_enrolled
 #>   ---                                     
-#> 8915: MCID3112618976      ME     graduates
-#> 8916: MCID3112619484      EE     graduates
-#> 8917: MCID3112641535      ME     graduates
+#> 8917: MCID3112618976      ME     graduates
+#> 8918: MCID3112619484      EE     graduates
+#> 8919: MCID3112641535      ME     graduates
 ```
 
 *Add variables.*   Demographics from
@@ -329,9 +329,9 @@ DT
 #>    2: MCID3111145102         White   Male      EE ever_enrolled
 #>    3: MCID3111146537         Asian Female      EE ever_enrolled
 #>   ---                                                          
-#> 8915: MCID3112618976         White   Male      ME     graduates
-#> 8916: MCID3112619484         White   Male      EE     graduates
-#> 8917: MCID3112641535         White   Male      ME     graduates
+#> 8917: MCID3112618976         White   Male      ME     graduates
+#> 8918: MCID3112619484         White   Male      EE     graduates
+#> 8919: MCID3112641535         White   Male      ME     graduates
 ```
 
 *Verify prepared data.*   `study_observations`, included with midfieldr,
@@ -372,7 +372,7 @@ DT
 #> ---                                                   
 #> 96:     graduates      ME   Male Native American     1
 #> 97:     graduates      ME   Male   Other/Unknown    41
-#> 98:     graduates      ME   Male           White   953
+#> 98:     graduates      ME   Male           White   955
 ```
 
 *Reshape.*   Transform to row-record form to set up the stickiness
@@ -393,7 +393,7 @@ DT
 #> ---                                                       
 #> 48:      ME   Male Native American             5         1
 #> 49:      ME   Male   Other/Unknown            80        41
-#> 50:      ME   Male           White          1596       953
+#> 50:      ME   Male           White          1596       955
 ```
 
 *Create a variable.*   Compute the metric.
@@ -412,7 +412,7 @@ DT
 #> ---                                                                  
 #> 48:      ME   Male Native American             5         1       20.0
 #> 49:      ME   Male   Other/Unknown            80        41       51.2
-#> 50:      ME   Male           White          1596       953       59.7
+#> 50:      ME   Male           White          1596       955       59.8
 ```
 
 *Verify prepared data.*   `study_results`, included with midfieldr,
@@ -448,7 +448,7 @@ DT
 #> ---                                                                
 #> 33:      ME   Male International           178        89       50.0
 #> 34:      ME   Male Other/Unknown            80        41       51.2
-#> 35:      ME   Male         White          1596       953       59.7
+#> 35:      ME   Male         White          1596       955       59.8
 ```
 
 *Recode.*   Readers can more readily interpret our charts and tables if
@@ -472,7 +472,7 @@ DT
 #> ---                                                                   
 #> 33: Mechanical   Male International           178        89       50.0
 #> 34: Mechanical   Male Other/Unknown            80        41       51.2
-#> 35: Mechanical   Male         White          1596       953       59.7
+#> 35: Mechanical   Male         White          1596       955       59.8
 ```
 
 *Add a variable.*   We combine race/ethnicity and sex to create a
@@ -493,7 +493,7 @@ DT
 #> ---                                                                   
 #> 33: Mechanical   International Male           178        89       50.0
 #> 34: Mechanical   Other/Unknown Male            80        41       51.2
-#> 35: Mechanical           White Male          1596       953       59.7
+#> 35: Mechanical           White Male          1596       955       59.8
 ```
 
 ## Chart
@@ -520,7 +520,7 @@ DT
 #> ---                                                                   
 #> 33: Mechanical   International Male        89           178       50.0
 #> 34: Mechanical   Other/Unknown Male        41            80       51.2
-#> 35: Mechanical           White Male       953          1596       59.7
+#> 35: Mechanical           White Male       955          1596       59.8
 #>     program_stickiness people_stickiness
 #>                  <num>             <num>
 #>  1:               62.4              62.7
@@ -529,7 +529,7 @@ DT
 #> ---                                     
 #> 33:               59.0              50.0
 #> 34:               59.0              45.6
-#> 35:               59.0              59.3
+#> 35:               59.0              59.4
 ```
 
 *Multiway chart.*   Code adapted from [Multiway data and
@@ -586,7 +586,7 @@ display_table
 #> ---                                                                  
 #>  9: Other/Unknown Male  40.7       38.1                 NA       51.2
 #> 10:       White Female  61.6       47.5               70.1       62.9
-#> 11:         White Male  64.5       50.8               69.5       59.7
+#> 11:         White Male  64.5       50.8               69.5       59.8
 ```
 
 (Optional) Format the table nearer to publication quality. Here I use
@@ -618,7 +618,7 @@ display_table |>
 | International Male   | 56.7  | 46.2       | 54.5               | 50.0       |
 | Other/Unknown Male   | 40.7  | 38.1       | NA                 | 51.2       |
 | White Female         | 61.6  | 47.5       | 70.1               | 62.9       |
-| White Male           | 64.5  | 50.8       | 69.5               | 59.7       |
+| White Male           | 64.5  | 50.8       | 69.5               | 59.8       |
 
 Table 1: Stickiness (%) of four Engineering majors {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}

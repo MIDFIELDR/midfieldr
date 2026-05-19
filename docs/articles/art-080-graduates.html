@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -222,7 +222,7 @@ started</a>.</p>
 <span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_required.html">select_required</a></span><span class="op">(</span><span class="va">source_degree</span><span class="op">)</span></span></code></pre></div>
 <p><em>Initialize.</em>   Use the <code>term</code> and
 <code>student</code> data tables to obtain a data frame of student IDs
-meeting the data sufficiency and degree-seeking criteria. Appled to the
+meeting the data sufficiency and degree-seeking criteria. Applied to the
 practice data, this procedure yields the <code>baseline_mcid</code> data
 frame derived in <a href="art-050-blocs.html#initial-processing">Blocs</a> and included with
 midfieldr.</p>
@@ -401,12 +401,12 @@ desired programs.</p>
 <span><span class="co">#&gt; 3264: 141901      ME MCID3112618976       20153</span></span>
 <span><span class="co">#&gt; 3265: 141001      EE MCID3112619484       20133</span></span>
 <span><span class="co">#&gt; 3266: 141901      ME MCID3112641535       20143</span></span></code></pre></div>
-<p><em>Filter.</em>   Filter to retain observations in the first degree
-term only. Multiple degrees are allowed but only if they occur in the
-first degree term.</p>
+<p><em>Filter.</em>   Filter to retain observations in the term of the
+first degree term only. Multiple degrees in this first degree term are
+allowed.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Filter by first degree term</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.min</a></span><span class="op">(</span><span class="va">term_degree</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span> <span class="st">"mcid"</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="co"># Filter by term in which first degree(s) earned</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="va">term_degree</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">term_degree</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span> <span class="st">"mcid"</span><span class="op">]</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                 mcid   cip6 program term_degree</span></span>
 <span><span class="co">#&gt;               &lt;char&gt; &lt;char&gt;  &lt;char&gt;      &lt;char&gt;</span></span>
@@ -414,9 +414,9 @@ first degree term.</p>
 <span><span class="co">#&gt;    2: MCID3111145102 141001      EE       19893</span></span>
 <span><span class="co">#&gt;    3: MCID3111146537 141001      EE       19913</span></span>
 <span><span class="co">#&gt;   ---                                          </span></span>
-<span><span class="co">#&gt; 3262: MCID3112618976 141901      ME       20153</span></span>
-<span><span class="co">#&gt; 3263: MCID3112619484 141001      EE       20133</span></span>
-<span><span class="co">#&gt; 3264: MCID3112641535 141901      ME       20143</span></span></code></pre></div>
+<span><span class="co">#&gt; 3264: MCID3112618976 141901      ME       20153</span></span>
+<span><span class="co">#&gt; 3265: MCID3112619484 141001      EE       20133</span></span>
+<span><span class="co">#&gt; 3266: MCID3112641535 141901      ME       20143</span></span></code></pre></div>
 <p><em>Filter.</em>   Drop unnecessary variables and filter for unique
 observations of ID and degree program label.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -429,9 +429,9 @@ observations of ID and degree program label.</p>
 <span><span class="co">#&gt;    2: MCID3111145102      EE</span></span>
 <span><span class="co">#&gt;    3: MCID3111146537      EE</span></span>
 <span><span class="co">#&gt;   ---                       </span></span>
-<span><span class="co">#&gt; 3262: MCID3112618976      ME</span></span>
-<span><span class="co">#&gt; 3263: MCID3112619484      EE</span></span>
-<span><span class="co">#&gt; 3264: MCID3112641535      ME</span></span></code></pre></div>
+<span><span class="co">#&gt; 3264: MCID3112618976      ME</span></span>
+<span><span class="co">#&gt; 3265: MCID3112619484      EE</span></span>
+<span><span class="co">#&gt; 3266: MCID3112641535      ME</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reusable-code">Reusable code<a class="anchor" aria-label="anchor" href="#reusable-code"></a>
@@ -450,7 +450,7 @@ for this section.</p>
 <span></span>
 <span><span class="co"># Filter by programs and first degree terms</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_programs</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.min</a></span><span class="op">(</span><span class="va">term_degree</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span> <span class="st">"mcid"</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="va">term_degree</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">term_degree</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span> <span class="st">"mcid"</span><span class="op">]</span></span>
 <span><span class="va">DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span>, <span class="st">"term_degree"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span></code></pre></div>
 <hr>
