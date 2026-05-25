@@ -5,7 +5,7 @@ is a *starter* in that program. Identifying starters is typically
 performed as part of a graduation rate calculation, though it can also
 be a useful measure in its own right.
 
-This vignette in the MIDFIELD workflow.
+This article in the MIDFIELD workflow:
 
 1.  Planning  
 2.  Initial processing  

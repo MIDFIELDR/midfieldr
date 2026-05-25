@@ -6,7 +6,7 @@ their undergraduates. All students excluded by a conventional graduation
 rate metric–including migrators—are included in the stickiness metric
 ([Ohland et al. 2012](#ref-Ohland+Orr+others:2012)).
 
-This vignette in the MIDFIELD workflow.
+This article in the MIDFIELD workflow:
 
 1.  Planning  
 2.  Initial processing  

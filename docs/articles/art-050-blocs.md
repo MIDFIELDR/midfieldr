@@ -22,7 +22,7 @@ filter applied in gathering a bloc is often an *inner join* to filter by
 program labels, as derived in
 [Programs](https://midfieldr.github.io/midfieldr/articles/art-040-programs.html#reusable-code).
 
-This article in the MIDFIELD workflow.
+This article in the MIDFIELD workflow:
 
 1.  Planning  
 2.  Initial processing  

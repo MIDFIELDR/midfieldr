@@ -7,7 +7,7 @@ timely degree completion. For such metrics, student records that produce
 problematic results due to insufficient data are nearly always excluded
 from study.
 
-This article in the MIDFIELD workflow.
+This article in the MIDFIELD workflow:
 
 1.  Planning  
 2.  Initial processing

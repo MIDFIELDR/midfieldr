@@ -5,7 +5,7 @@ seeking degrees. We use an *inner join* merging operation as a
 degree-seeking filter. This article treats degree seeking and inner
 joins generally.
 
-This article in the MIDFIELD workflow.
+This article in the MIDFIELD workflow:
 
 1.  Planning  
 2.  Initial processing

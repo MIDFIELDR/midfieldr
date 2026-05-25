@@ -16,7 +16,7 @@ definition of graduation rate that includes all conventionally excluded
 students except migrators. You can skip the FYE content in this vignette
 if your study includes no FYE-style Engineering programs.
 
-This vignette in the MIDFIELD workflow.
+This article in the MIDFIELD workflow:
 
 1.  Planning  
 2.  Initial processing  

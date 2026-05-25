@@ -6,7 +6,7 @@ two-digit number followed by a period, followed by a four-digit number,
 for example, 14.0102. MIDFIELD uses the same numerals, but omits the
 period, i.e., 140102, and stores the variable as a character string.
 
-This article in the MIDFIELD workflow.
+This article in the MIDFIELD workflow:
 
 1.  Planning  
 2.  Initial processing
@@ -831,7 +831,7 @@ selected_programs <- selected_programs[, .(cip6, program)]
 [◁ Degree
 seeking](https://midfieldr.github.io/midfieldr/articles/art-030-degree-seeking.md)
    [▲ top of page](#top)    [Alternative CIPs
-▷](https://midfieldr.github.io/midfieldr/articles/art-141-alternative-cip.md)
+▷](https://midfieldr.github.io/midfieldr/articles/art-041-alternative-cip.md)
 
 ------------------------------------------------------------------------
 

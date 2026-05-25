@@ -1,35 +1,53 @@
 # Alternative CIPs
 
-Transforming primary-source program data from the US Integrated
-Postsecondary Education Data System (IPEDS) to the CIP data structure
-used by midfieldr.
+In this article, we demonstrate constructing a Classification of
+Instructional Programs (CIP) dataset using primary source data from the
+US Integrated Postsecondary Education Data System (IPEDS). The result is
+a dataset (`cip2010`) that can be used as an alternative to midfieldr’s
+original CIP data (`cip`). The latest version of midfieldr includes both
+datasets.
 
-As of this writing (2026–05), the 2020 and 2010 (and earlier) versions
-of the US Classification of Instructional Programs (CIP) codes are
-downloadable from the IPEDS website ([NCES 2026](#ref-cipcode:2026))
-under file names:
+This article in the MIDFIELD workflow:
 
-- `CIPCode2020.csv`
+1.  Planning  
+2.  Initial processing
+    - Data sufficiency  
+    - Degree seeking  
+    - Identify programs
+3.  Blocs  
+4.  Groupings  
+5.  Metrics  
+6.  Displays
+
+## Overview
+
+The original midfieldr dataset `cip` and the new dataset `cip2010`
+derived here are both based on the IPEDS 2010 CIP data. However, the
+content of the two datasets is not identical. Aside from some
+typographical differences, the main difference is that `cip2010` has 267
+more rows than `cip`, about a 15% increase in program codes (225 of
+these 267 rows are medical or dental *residency programs*). Essentially,
+`cip` is a subset of `cip2010`.
+
+This is not to say that `cip` is deficient—it was designed for
+compatibility with the MIDFIELD database and thus the midfielddata
+practice data as well. However, `cip2010` now makes the full set of 2010
+CIP codes available should they be needed.
+
+As of this writing (2026–05–25), the IPEDS website ([NCES
+2026](#ref-cipcode:2026)) provides downloadable CSV files for the 2010
+and 2020 CIP data via their “Resources” tab under the file names:
+
 - `CIPCode2010.csv`
+- `CIPCode2020.csv`
 
-In this article, we demonstrate transforming the data in the 2010 source
-file into the form required by midfieldr, resulting in the new data set
-`cip2010` included with the latest version of midfieldr. The procedure
-could be used to perform a similar transformation of `CIPCode2020.csv`
-as well.
+In this article, we document a procedure for converting
+`CIPCode2010.csv` data into the midfieldr-friendly `cip2010` dataset. In
+future, should a researcher require the 2020 CIP codes in a
+midfieldr-friendly format, they can start by applying the procedure
+documented here to `CIPCode2020.csv`.
 
-## Goals
-
-The data set `cip` included with the earliest version of midfieldr is
-based on the IPEDS 2010 CIP data. However, `cip` content is not
-identical to the `cip2010` content. There are some typographical
-differences and the original `cip` data has fewer rows, thus fewer
-6-digit codes.
-
-If for any reason the legacy `cip` data set fails to meet a user’s
-needs, an alternative is to use the 2010 or 2020 primary-source data
-files from IPEDS. In this article, we demonstrate how to transform such
-data to the CIP format usable by the midfieldr tools.
+## Get started
 
 If you are writing your own script to follow along, we use these
 packages in this article:
@@ -39,94 +57,33 @@ packages in this article:
 # Load packages
 library(midfieldr)
 library(data.table)
-```
 
-*Usage.*   To use the alternative CIP data set included with midfieldr,
-use `cip2010` as the value of the `cip` argument. For example,
-
-``` r
-
-# Using the default cip
-filter_cip("^1408", cip = cip)
-#>      cip2    cip2name   cip4          cip4name   cip6
-#>    <char>      <char> <char>            <char> <char>
-#> 1:     14 Engineering   1408 Civil Engineering 140801
-#> 2:     14 Engineering   1408 Civil Engineering 140802
-#> 3:     14 Engineering   1408 Civil Engineering 140803
-#> 4:     14 Engineering   1408 Civil Engineering 140804
-#> 5:     14 Engineering   1408 Civil Engineering 140805
-#> 6:     14 Engineering   1408 Civil Engineering 140899
-#>                                  cip6name
-#>                                    <char>
-#> 1:             Civil Engineering, General
-#> 2:               Geotechnical Engineering
-#> 3:                 Structural Engineering
-#> 4: Transportation and Highway Engineering
-#> 5:            Water Resources Engineering
-#> 6:               Civil Engineering, Other
-
-
-# Using the alternate cip
-filter_cip("^1408", cip = cip2010)
-#>      cip2    cip2name   cip4          cip4name   cip6
-#>    <char>      <char> <char>            <char> <char>
-#> 1:     14 Engineering   1408 Civil Engineering 140801
-#> 2:     14 Engineering   1408 Civil Engineering 140802
-#> 3:     14 Engineering   1408 Civil Engineering 140803
-#> 4:     14 Engineering   1408 Civil Engineering 140804
-#> 5:     14 Engineering   1408 Civil Engineering 140805
-#> 6:     14 Engineering   1408 Civil Engineering 140899
-#>                                         cip6name
-#>                                           <char>
-#> 1:                    Civil Engineering, General
-#> 2: Geotechnical and Geoenvironmental Engineering
-#> 3:                        Structural Engineering
-#> 4:        Transportation and Highway Engineering
-#> 5:                   Water Resources Engineering
-#> 6:                      Civil Engineering, Other
-```
-
-## Get started
-
-Assign a new name to the legacy `cip` data set included with midfieldr,
-allowing us retain the original data set while using the name `cip` for
-the new work.
-
-``` r
-
-# Allows us to use "cip" as an object name  
-legacy_cip <- copy(midfieldr::cip)
+# From stringr package we use
+# str_to_title(), str_replace(), and str_length()
+library(stringr)
 ```
 
 The first step is to download the CSV file from the IPEDs website. After
-saving it to a convenient directory, construct a path to that file
-(`path_to_csv_file`) and import the data with:
+saving it to a convenient directory, label a path to that file
+(`path_to_csv_file`) and import the data, using `DT` as our working data
+table.
 
 ``` r
 
 # Import the 2010 CIP file in data.table format
-cip <- fread(path_to_csv_file, colClasses = "character")
-```
-
-The
-[`dplyr::glimpse()`](https://pillar.r-lib.org/reference/glimpse.html)
-function is quite useful for a first impression of the data. (One could
-also use base R [`str()`](https://rdrr.io/r/utils/str.html).)
-
-``` r
+DT <- fread(path_to_csv_file, colClasses = "character")
 
 # View the result
-dplyr::glimpse(cip)
-#> Rows: 2,318
-#> Columns: 8
-#> $ CIPFamily       <chr> "01", "01", "01", "01", "01", "01", "01", "01", "01", …
-#> $ CIPCode         <chr> "01", "01.00", "01.0000", "01.01", "01.0101", "01.0102…
-#> $ Action          <chr> "No substantive changes", "No substantive changes", "N…
-#> $ TextChange      <chr> "no", "no", "no", "no", "no", "no", "no", "no", "no", …
-#> $ CIPTitle        <chr> "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIE…
-#> $ CIPDefinition   <chr> "Instructional programs that focus on agriculture and …
-#> $ CrossReferences <chr> "", "", "14.0301 - Agricultural Engineering.", "", "",…
-#> $ Examples        <chr> "", "", "", "", "", "Examples: - Agricultural Systems …
+str(DT, strict.width = "cut", give.attr = FALSE, vec.len = 12)
+#> Classes 'data.table' and 'data.frame':   2318 obs. of  8 variables:
+#>  $ CIPFamily      : chr  "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "0"..
+#>  $ CIPCode        : chr  "01" "01.00" "01.0000" "01.01" "01.0101" "01.0102" ""..
+#>  $ Action         : chr  "No substantive changes" "No substantive changes" "N"..
+#>  $ TextChange     : chr  "no" "no" "no" "no" "no" "no" "no" "no" "no" "no" "n"..
+#>  $ CIPTitle       : chr  "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SC"..
+#>  $ CIPDefinition  : chr  "Instructional programs that focus on agriculture an"..
+#>  $ CrossReferences: chr  "" "" "14.0301 - Agricultural Engineering." "" "" """..
+#>  $ Examples       : chr  "" "" "" "" "" "Examples: - Agricultural Systems Man"..
 ```
 
 To construct our own CIP data set, we need three columns:
@@ -135,15 +92,14 @@ To construct our own CIP data set, we need three columns:
 
 # Select columns
 cols_we_want <- c("CIPFamily", "CIPCode", "CIPTitle")
-cip <- cip[, ..cols_we_want]
+DT <- DT[, ..cols_we_want]
 
 # View the result
-dplyr::glimpse(cip)
-#> Rows: 2,318
-#> Columns: 3
-#> $ CIPFamily <chr> "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", …
-#> $ CIPCode   <chr> "01", "01.00", "01.0000", "01.01", "01.0101", "01.0102", "01…
-#> $ CIPTitle  <chr> "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES."…
+str(DT, strict.width = "cut", give.attr = FALSE, vec.len = 12)
+#> Classes 'data.table' and 'data.frame':   2318 obs. of  3 variables:
+#>  $ CIPFamily: chr  "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01"..
+#>  $ CIPCode  : chr  "01" "01.00" "01.0000" "01.01" "01.0101" "01.0102" "01.010"..
+#>  $ CIPTitle : chr  "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES"..
 ```
 
 Closer look at a sample of our primary-source data.
@@ -154,7 +110,7 @@ Closer look at a sample of our primary-source data.
 set.seed(202612)
 
 # Extract a sample of 15 rows and reset the seed
-x <- cip[sample(100:400, 15)]
+x <- DT[sample(100:400, 15)]
 set.seed(NULL)
 
 # Order the rows by the CIP code
@@ -191,22 +147,22 @@ Viewing the result, we observe:
   midfieldr, the the 2-, 4-, and 6-digit names are separated into
   columns `cip2name`, `cip4name`, and `cip6name`.
 
-When constructing the midfieldr legacy CIP data set, some values were
+When constructing the midfieldr `cip` data set, some characters were
 changed from those in the source file, such as removing the decimal
 point separator in the 4- and 6-digit codes or replacing slashes (“/”)
 with commas (“,”). For example, compare the `13.1209` entry above to its
-equivalent in the midfieldr legacy CIP data:
+equivalent in the midfieldr `cip` data:
 
 ``` r
 
 # CIPCode2010
-filter_cip("13.1209", cip = cip)
+filter_cip("13.1209", cip = DT)
 #>    CIPFamily CIPCode                                       CIPTitle
 #>       <char>  <char>                                         <char>
 #> 1:        13 13.1209 Kindergarten/Preschool Education and Teaching.
 
-# midfieldr
-filter_cip("131209", cip = legacy_cip)[, .(cip2, cip6, cip6name)]
+# midfieldr default
+filter_cip("131209", cip = cip)[, .(cip2, cip6, cip6name)]
 #>      cip2   cip6                                       cip6name
 #>    <char> <char>                                         <char>
 #> 1:     13 131209 Kindergarten, Preschool Education and Teaching
@@ -218,13 +174,13 @@ midfieldr all program names are in title-case.
 ``` r
 
 # CIPCode2010
-unique(cip[CIPCode == "04"])[, .(CIPCode, CIPTitle)]
+DT[CIPCode == "04", .(CIPCode, CIPTitle)]
 #>    CIPCode                           CIPTitle
 #>     <char>                             <char>
 #> 1:      04 ARCHITECTURE AND RELATED SERVICES.
 
-# midfieldr
-unique(filter_cip("^04", cip = legacy_cip)[, .(cip2, cip2name)])
+# midfieldr default
+cip[cip2 == "04", .(cip2, cip2name)][1]
 #>      cip2                          cip2name
 #>    <char>                            <char>
 #> 1:     04 Architecture and Related Services
@@ -232,102 +188,99 @@ unique(filter_cip("^04", cip = legacy_cip)[, .(cip2, cip2name)])
 
 ## Transforming the source data
 
-*Editing.*   Omit the periods in the codes and titles.
+*Editing values.*   Omit the periods in the codes and titles.
 
 ``` r
 
 # Omit the period separator on the CIP code
-cip <- cip[, CIPCode := gsub("[.]", "", CIPCode)]
+DT <- DT[, CIPCode := gsub("[.]", "", CIPCode)]
 
 # Omit the period at the end of each title
-cip <- cip[, CIPTitle := gsub("[.]", "", CIPTitle)]
+DT <- DT[, CIPTitle := gsub("[.]", "", CIPTitle)]
 
 # Verify the result
-filter_cip("131209", cip = cip)
+filter_cip("131209", cip = DT)
 #>    CIPFamily CIPCode                                      CIPTitle
 #>       <char>  <char>                                        <char>
 #> 1:        13  131209 Kindergarten/Preschool Education and Teaching
 ```
 
-Count the number of digits in `CIPCode`, expected to be 2, 4, or 6.
+*Split the data frame.*   Count the number of digits in `CIPCode`,
+expected to be 2, 4, or 6.
 
 ``` r
 
 # Add a column
-cip[, N_digits := nchar(CIPCode)]
+DT[, N_digits := str_length(CIPCode)]
 
 # View result
-dplyr::glimpse(cip)
-#> Rows: 2,318
-#> Columns: 4
-#> $ CIPFamily <chr> "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", …
-#> $ CIPCode   <chr> "01", "0100", "010000", "0101", "010101", "010102", "010103"…
-#> $ CIPTitle  <chr> "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES",…
-#> $ N_digits  <int> 2, 4, 6, 4, 6, 6, 6, 6, 6, 6, 6, 4, 6, 6, 6, 6, 4, 6, 6, 6, …
+str(DT, strict.width = "cut", give.attr = FALSE, vec.len = 12)
+#> Classes 'data.table' and 'data.frame':   2318 obs. of  4 variables:
+#>  $ CIPFamily: chr  "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01"..
+#>  $ CIPCode  : chr  "01" "0100" "010000" "0101" "010101" "010102" "010103" "01"..
+#>  $ CIPTitle : chr  "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES"..
+#>  $ N_digits : int  2 4 6 4 6 6 6 6 6 6 6 4 6 6 6 6 4 6 6 6 6 6 6 6 6 6 4 6 4 6..
 
 # Confirm 2, 4, or 6 digits
-unique(cip$N_digits)
+unique(DT$N_digits)
 #> [1] 2 4 6
 ```
 
-*Split*   Create a separate data frame for 2-digit codes and names,
-keyed by `CIPFamily`.
+Create a separate data frame for 2-digit codes and names, keyed by
+`CIPFamily`.
 
 ``` r
 
 # Unique 2-digit codes and names
-cip2 <- cip[N_digits == 2, .(CIPFamily, 
+DT2 <- DT[N_digits == 2, .(CIPFamily, 
                              cip2 = CIPCode, 
                              cip2name = CIPTitle)]
 # View the result
-dplyr::glimpse(cip2)
-#> Rows: 48
-#> Columns: 3
-#> $ CIPFamily <chr> "01", "03", "04", "05", "09", "10", "11", "12", "13", "14", …
-#> $ cip2      <chr> "01", "03", "04", "05", "09", "10", "11", "12", "13", "14", …
-#> $ cip2name  <chr> "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES",…
+str(DT2, strict.width = "cut", give.attr = FALSE, vec.len = 12)
+#> Classes 'data.table' and 'data.frame':   48 obs. of  3 variables:
+#>  $ CIPFamily: chr  "01" "03" "04" "05" "09" "10" "11" "12" "13" "14" "15" "16"..
+#>  $ cip2     : chr  "01" "03" "04" "05" "09" "10" "11" "12" "13" "14" "15" "16"..
+#>  $ cip2name : chr  "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES"..
 ```
 
-Repeat for the 4-digit codes and names and add a 2-digit code extracted
-from the `CIPCode` column we can compare to `CIPFamily` to ensure they
-agree.
+Repeat for the 4-digit codes and names. Extract the first two digits of
+the 4-digit code to compare to `CIPFamily` (also 2-digits)
 
 ``` r
 
 # Unique 4-digit codes and names, with cip2 codes derived from cip4
-cip4 <- cip[N_digits == 4, .(CIPFamily, 
+DT4 <- DT[N_digits == 4, .(CIPFamily, 
                              cip2 = substr(CIPCode, 1, 2), 
                              cip4 = CIPCode, 
                              cip4name = CIPTitle)]
 # View the result
-dplyr::glimpse(cip4)
-#> Rows: 422
-#> Columns: 4
-#> $ CIPFamily <chr> "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", …
-#> $ cip2      <chr> "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", …
-#> $ cip4      <chr> "0100", "0101", "0102", "0103", "0104", "0105", "0106", "010…
-#> $ cip4name  <chr> "Agriculture, General", "Agricultural Business and Managemen…
+str(DT4, strict.width = "cut", give.attr = FALSE)
+#> Classes 'data.table' and 'data.frame':   422 obs. of  4 variables:
+#>  $ CIPFamily: chr  "01" "01" "01" "01" ...
+#>  $ cip2     : chr  "01" "01" "01" "01" ...
+#>  $ cip4     : chr  "0100" "0101" "0102" "0103" ...
+#>  $ cip4name : chr  "Agriculture, General" "Agricultural Business and Manageme"..
 ```
 
-Repeat for the 6-digit codes and names.
+Repeat for the 6-digit codes and names, extracting both 2- and 4-digit
+codes for comparison and joining later.
 
 ``` r
 
 # Unique 6-digit codes and names, with cip2 and cip4 codes derived from cip6
-cip6 <- cip[N_digits == 6, .(CIPFamily, 
+DT6 <- DT[N_digits == 6, .(CIPFamily, 
                              cip2 = substr(CIPCode, 1, 2), 
                              cip4 = substr(CIPCode, 1, 4), 
                              cip6 = CIPCode, 
                              cip6name = CIPTitle)]
 # View the result
-dplyr::glimpse(cip6)
-#> Rows: 1,848
-#> Columns: 5
-#> $ CIPFamily <chr> "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", …
-#> $ cip2      <chr> "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", …
-#> $ cip4      <chr> "0100", "0101", "0101", "0101", "0101", "0101", "0101", "010…
-#> $ cip6      <chr> "010000", "010101", "010102", "010103", "010104", "010105", …
-#> $ cip6name  <chr> "Agriculture, General", "Agricultural Business and Managemen…
+str(DT6, strict.width = "cut", give.attr = FALSE, vec.len = 12)
+#> Classes 'data.table' and 'data.frame':   1848 obs. of  5 variables:
+#>  $ CIPFamily: chr  "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01"..
+#>  $ cip2     : chr  "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01"..
+#>  $ cip4     : chr  "0100" "0101" "0101" "0101" "0101" "0101" "0101" "0101" "0"..
+#>  $ cip6     : chr  "010000" "010101" "010102" "010103" "010104" "010105" "010"..
+#>  $ cip6name : chr  "Agriculture, General" "Agricultural Business and Manageme"..
 ```
 
 Compare the 2-digit codes in each data frame. If the data were correctly
@@ -336,11 +289,11 @@ entered, this check for equality should all be TRUE.
 ``` r
 
 # This check for 2-digit equality should all be TRUE
-all.equal(cip2$CIPFamily, cip2$cip2)
+all.equal(DT2$CIPFamily, DT2$cip2)
 #> [1] TRUE
-all.equal(cip4$CIPFamily, cip4$cip2)
+all.equal(DT4$CIPFamily, DT4$cip2)
 #> [1] TRUE
-all.equal(cip6$CIPFamily, cip6$cip2)
+all.equal(DT6$CIPFamily, DT6$cip2)
 #> [1] TRUE
 ```
 
@@ -349,16 +302,14 @@ we use two functions from the stringr package.
 
 ``` r
 
-library(stringr)
-
 # Convert to title case
-cip2[, cip2name := str_to_title(cip2name)]
+DT2[, cip2name := str_to_title(cip2name)]
 
 # Use lowercase "and"
-cip2[, cip2name := str_replace_all(cip2name, "And", "and")]
+DT2[, cip2name := str_replace_all(cip2name, "And", "and")]
 
 # View result
-cip2[, .(cip2, cip2name)]
+DT2[, .(cip2, cip2name)]
 #>       cip2                                                      cip2name
 #>     <char>                                                        <char>
 #>  1:     01     Agriculture, Agriculture Operations, and Related Sciences
@@ -381,24 +332,24 @@ operations.
 
 # Select 6-digit columns
 cols_we_want <- c("cip2", "cip4", "cip6", "cip6name")
-cip6 <- cip6[, ..cols_we_want]
+DT6 <- DT6[, ..cols_we_want]
 
 # Select 4-digit columns
 cols_we_want <- c("cip2", "cip4", "cip4name")
-cip4 <- cip4[, ..cols_we_want]
+DT4 <- DT4[, ..cols_we_want]
 
 # Select 2-digit columns
 cols_we_want <- c("cip2", "cip2name")
-cip2 <- cip2[, ..cols_we_want]
+DT2 <- DT2[, ..cols_we_want]
 ```
 
 Now, left-join `cip4` to `cip6`, matching on the 2- and 4-digit code
-columns.
+columns. Reuse the object name `DT` for our new working data frame.
 
 ``` r
 
-# Join `cip4` to `cip6` 
-cip <- cip4[cip6, on = c("cip2", "cip4")]
+# Join `cip4` to `cip6` , overwrite earlier DT
+DT <- DT4[DT6, on = c("cip2", "cip4")]
 ```
 
 Now, left-join `cip2` to the result, matching on the 2-digit code
@@ -406,12 +357,14 @@ columns.
 
 ``` r
 
-# Left join `cip2` to `cip` from above
-cip <- cip2[cip, on = c("cip2")]
+# Left join `cip2` to `DT` from above
+DT <- DT2[DT, on = c("cip2")]
 
-# Ensure row order and examine the result
-setorderv(cip, c("cip6"))
-cip
+# Ensure row order
+setorderv(DT, c("cip6"))
+
+# View the result
+DT
 #>         cip2                                                  cip2name   cip4
 #>       <char>                                                    <char> <char>
 #>    1:     01 Agriculture, Agriculture Operations, and Related Sciences   0100
@@ -453,7 +406,25 @@ cip
 #> 1848:         Podiatric Medicine and Surgery - 36 Residency Program
 ```
 
-## Program undecided or unspecified
+*Reality check.*   If we’ve joined correctly, the following logical
+checks should yield all TRUE (no FALSE) results.
+
+``` r
+
+# The first 4 digits of every cip6 should match cip4
+unique(substr(DT$cip6, 1, 4) == DT$cip4)
+#> [1] TRUE
+
+# The first 2 digits of every cip6 should match cip2
+unique(substr(DT$cip6, 1, 2) == DT$cip2)
+#> [1] TRUE
+
+# The first 2 digits of every cip4 should match cip2
+unique(substr(DT$cip4, 1, 2) == DT$cip2)
+#> [1] TRUE
+```
+
+## Undecided or unspecified programs
 
 Lastly, we add a row to the CIP data to includes one non-IPEDS code
 (999999) for Undecided or Unspecified, instances in which institutions
@@ -462,17 +433,20 @@ program.
 
 ``` r
 
-name_99 <- "Undecided/Unspecified (non-IPEDS)"
-row_99  <- data.table(cip2 = "99", 
-                            cip4 = "9999", 
-                            cip6 = "999999", 
-                            cip2name = name_99, 
-                            cip4name = name_99, 
-                            cip6name = name_99)
+# Create a data table with one row
+txt_99 <- "Undecided/Unspecified (non-IPEDS)"
+row_99 <- data.table(cip2 = "99", 
+                     cip4 = "9999", 
+                     cip6 = "999999", 
+                     cip2name = txt_99, 
+                     cip4name = txt_99, 
+                     cip6name = txt_99)
 
+# Bind the new row to the working data table
+DT <- rbindlist(list(DT, row_99), use.names = TRUE)
 
-cip <- rbindlist(list(cip, row_99), use.names = TRUE)
-cip
+# View the result
+DT
 #>         cip2                                                  cip2name   cip4
 #>       <char>                                                    <char> <char>
 #>    1:     01 Agriculture, Agriculture Operations, and Related Sciences   0100
@@ -521,9 +495,62 @@ frames have the same content.
 ``` r
 
 # Demonstrate equivalence
-check_equiv_frames(cip, cip2010)
+check_equiv_frames(DT, cip2010)
 #> [1] TRUE
 ```
+
+## Usage
+
+To use the alternative CIP data set included with midfieldr, use
+`cip2010` as the value of the `cip` argument. For example,
+
+``` r
+
+# Using the midfieldr default
+filter_cip("^1408", cip = cip)
+#>      cip2    cip2name   cip4          cip4name   cip6
+#>    <char>      <char> <char>            <char> <char>
+#> 1:     14 Engineering   1408 Civil Engineering 140801
+#> 2:     14 Engineering   1408 Civil Engineering 140802
+#> 3:     14 Engineering   1408 Civil Engineering 140803
+#> 4:     14 Engineering   1408 Civil Engineering 140804
+#> 5:     14 Engineering   1408 Civil Engineering 140805
+#> 6:     14 Engineering   1408 Civil Engineering 140899
+#>                                  cip6name
+#>                                    <char>
+#> 1:             Civil Engineering, General
+#> 2:               Geotechnical Engineering
+#> 3:                 Structural Engineering
+#> 4: Transportation and Highway Engineering
+#> 5:            Water Resources Engineering
+#> 6:               Civil Engineering, Other
+
+
+# Using the alternate cip
+filter_cip("^1408", cip = cip2010)
+#>      cip2    cip2name   cip4          cip4name   cip6
+#>    <char>      <char> <char>            <char> <char>
+#> 1:     14 Engineering   1408 Civil Engineering 140801
+#> 2:     14 Engineering   1408 Civil Engineering 140802
+#> 3:     14 Engineering   1408 Civil Engineering 140803
+#> 4:     14 Engineering   1408 Civil Engineering 140804
+#> 5:     14 Engineering   1408 Civil Engineering 140805
+#> 6:     14 Engineering   1408 Civil Engineering 140899
+#>                                         cip6name
+#>                                           <char>
+#> 1:                    Civil Engineering, General
+#> 2: Geotechnical and Geoenvironmental Engineering
+#> 3:                        Structural Engineering
+#> 4:        Transportation and Highway Engineering
+#> 5:                   Water Resources Engineering
+#> 6:                      Civil Engineering, Other
+```
+
+Here we see an instance of a minor program title difference between the
+two datasets. The other program names in this major are identical.
+
+- 140802 Geotechnical Engineering (`cip`)
+- 140802 Geotechnical and Geoenvironmental Engineering (`cip2010`)
 
 ------------------------------------------------------------------------
 

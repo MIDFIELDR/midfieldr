@@ -10,7 +10,7 @@ Note that “multiway” in our context refers to the data structure and
 chart design defined by Cleveland, not to the methods of analysis
 described by Kroonenberg ([2008](#ref-Kroonenberg:2008)).
 
-This vignette in the MIDFIELD workflow.
+This article in the MIDFIELD workflow:
 
 1.  Planning  
 2.  Initial processing  

@@ -6,7 +6,7 @@ first degree is a *completer*. To be counted among their program’s
 criterion for *timely completion*. We derive a *completion status*
 variable to filter student-level records to obtain a bloc of graduates.
 
-This vignette in the MIDFIELD workflow.
+This article in the MIDFIELD workflow:
 
 1.  Planning  
 2.  Initial processing  

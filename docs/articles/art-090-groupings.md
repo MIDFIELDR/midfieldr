@@ -6,7 +6,7 @@ categories we want for a particular metric. Program labels and student
 demographics are two of the most common sets of grouping variables we
 use.
 
-This vignette in the MIDFIELD workflow.
+This article in the MIDFIELD workflow:
 
 1.  Planning  
 2.  Initial processing

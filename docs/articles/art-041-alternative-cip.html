@@ -93,133 +93,113 @@
 
     
     
-<p>Transforming primary-source program data from the US Integrated
-Postsecondary Education Data System (IPEDS) to the CIP data structure
-used by midfieldr.</p>
-<p>As of this writing (2026–05), the 2020 and 2010 (and earlier)
-versions of the US Classification of Instructional Programs (CIP) codes
-are downloadable from the IPEDS website <span class="citation">(<a href="#ref-cipcode:2026">NCES 2026</a>)</span> under file names:</p>
+<p>In this article, we demonstrate constructing a Classification of
+Instructional Programs (CIP) dataset using primary source data from the
+US Integrated Postsecondary Education Data System (IPEDS). The result is
+a dataset (<code>cip2010</code>) that can be used as an alternative to
+midfieldr’s original CIP data (<code>cip</code>). The latest version of
+midfieldr includes both datasets.</p>
+<p>This article in the MIDFIELD workflow:</p>
+<ol style="list-style-type: decimal">
+<li>Planning<br>
+</li>
+<li>Initial processing
 <ul>
-<li><code>CIPCode2020.csv</code></li>
-<li><code>CIPCode2010.csv</code></li>
+<li>Data sufficiency<br>
+</li>
+<li>Degree seeking<br>
+</li>
+<li><span class="accent">Identify programs</span></li>
 </ul>
-<p>In this article, we demonstrate transforming the data in the 2010
-source file into the form required by midfieldr, resulting in the new
-data set <code>cip2010</code> included with the latest version of
-midfieldr. The procedure could be used to perform a similar
-transformation of <code>CIPCode2020.csv</code> as well.</p>
+</li>
+<li>Blocs<br>
+</li>
+<li>Groupings<br>
+</li>
+<li>Metrics<br>
+</li>
+<li>Displays</li>
+</ol>
 <div class="section level2">
-<h2 id="goals">Goals<a class="anchor" aria-label="anchor" href="#goals"></a>
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>The data set <code>cip</code> included with the earliest version of
-midfieldr is based on the IPEDS 2010 CIP data. However, <code>cip</code>
-content is not identical to the <code>cip2010</code> content. There are
-some typographical differences and the original <code>cip</code> data
-has fewer rows, thus fewer 6-digit codes.</p>
-<p>If for any reason the legacy <code>cip</code> data set fails to meet
-a user’s needs, an alternative is to use the 2010 or 2020 primary-source
-data files from IPEDS. In this article, we demonstrate how to transform
-such data to the CIP format usable by the midfieldr tools.</p>
+<p>The original midfieldr dataset <code>cip</code> and the new dataset
+<code>cip2010</code> derived here are both based on the IPEDS 2010 CIP
+data. However, the content of the two datasets is not identical. Aside
+from some typographical differences, the main difference is that
+<code>cip2010</code> has 267 more rows than <code>cip</code>, about a
+15% increase in program codes (225 of these 267 rows are medical or
+dental <em>residency programs</em>). Essentially, <code>cip</code> is a
+subset of <code>cip2010</code>.</p>
+<p>This is not to say that <code>cip</code> is deficient—it was designed
+for compatibility with the MIDFIELD database and thus the midfielddata
+practice data as well. However, <code>cip2010</code> now makes the full
+set of 2010 CIP codes available should they be needed.</p>
+<p>As of this writing (2026–05–25), the IPEDS website <span class="citation">(<a href="#ref-cipcode:2026">NCES 2026</a>)</span>
+provides downloadable CSV files for the 2010 and 2020 CIP data via their
+“Resources” tab under the file names:</p>
+<ul>
+<li><code>CIPCode2010.csv</code></li>
+<li><code>CIPCode2020.csv</code></li>
+</ul>
+<p>In this article, we document a procedure for converting
+<code>CIPCode2010.csv</code> data into the midfieldr-friendly
+<code>cip2010</code> dataset. In future, should a researcher require the
+2020 CIP codes in a midfieldr-friendly format, they can start by
+applying the procedure documented here to
+<code>CIPCode2020.csv</code>.</p>
+</div>
+<div class="section level2">
+<h2 id="get-started">Get started<a class="anchor" aria-label="anchor" href="#get-started"></a>
+</h2>
 <p>If you are writing your own script to follow along, we use these
 packages in this article:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://midfieldr.github.io/midfieldr/">midfieldr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span></code></pre></div>
-<p><em>Usage.</em>   To use the alternative CIP data set included with
-midfieldr, use <code>cip2010</code> as the value of the <code>cip</code>
-argument. For example,</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Using the default cip</span></span>
-<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"^1408"</span>, cip <span class="op">=</span> <span class="va">cip</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      cip2    cip2name   cip4          cip4name   cip6</span></span>
-<span><span class="co">#&gt;    &lt;char&gt;      &lt;char&gt; &lt;char&gt;            &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:     14 Engineering   1408 Civil Engineering 140801</span></span>
-<span><span class="co">#&gt; 2:     14 Engineering   1408 Civil Engineering 140802</span></span>
-<span><span class="co">#&gt; 3:     14 Engineering   1408 Civil Engineering 140803</span></span>
-<span><span class="co">#&gt; 4:     14 Engineering   1408 Civil Engineering 140804</span></span>
-<span><span class="co">#&gt; 5:     14 Engineering   1408 Civil Engineering 140805</span></span>
-<span><span class="co">#&gt; 6:     14 Engineering   1408 Civil Engineering 140899</span></span>
-<span><span class="co">#&gt;                                  cip6name</span></span>
-<span><span class="co">#&gt;                                    &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:             Civil Engineering, General</span></span>
-<span><span class="co">#&gt; 2:               Geotechnical Engineering</span></span>
-<span><span class="co">#&gt; 3:                 Structural Engineering</span></span>
-<span><span class="co">#&gt; 4: Transportation and Highway Engineering</span></span>
-<span><span class="co">#&gt; 5:            Water Resources Engineering</span></span>
-<span><span class="co">#&gt; 6:               Civil Engineering, Other</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
 <span></span>
-<span></span>
-<span><span class="co"># Using the alternate cip</span></span>
-<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"^1408"</span>, cip <span class="op">=</span> <span class="va">cip2010</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      cip2    cip2name   cip4          cip4name   cip6</span></span>
-<span><span class="co">#&gt;    &lt;char&gt;      &lt;char&gt; &lt;char&gt;            &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:     14 Engineering   1408 Civil Engineering 140801</span></span>
-<span><span class="co">#&gt; 2:     14 Engineering   1408 Civil Engineering 140802</span></span>
-<span><span class="co">#&gt; 3:     14 Engineering   1408 Civil Engineering 140803</span></span>
-<span><span class="co">#&gt; 4:     14 Engineering   1408 Civil Engineering 140804</span></span>
-<span><span class="co">#&gt; 5:     14 Engineering   1408 Civil Engineering 140805</span></span>
-<span><span class="co">#&gt; 6:     14 Engineering   1408 Civil Engineering 140899</span></span>
-<span><span class="co">#&gt;                                         cip6name</span></span>
-<span><span class="co">#&gt;                                           &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:                    Civil Engineering, General</span></span>
-<span><span class="co">#&gt; 2: Geotechnical and Geoenvironmental Engineering</span></span>
-<span><span class="co">#&gt; 3:                        Structural Engineering</span></span>
-<span><span class="co">#&gt; 4:        Transportation and Highway Engineering</span></span>
-<span><span class="co">#&gt; 5:                   Water Resources Engineering</span></span>
-<span><span class="co">#&gt; 6:                      Civil Engineering, Other</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="get-started">Get started<a class="anchor" aria-label="anchor" href="#get-started"></a>
-</h2>
-<p>Assign a new name to the legacy <code>cip</code> data set included
-with midfieldr, allowing us retain the original data set while using the
-name <code>cip</code> for the new work.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Allows us to use "cip" as an object name  </span></span>
-<span><span class="va">legacy_cip</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="fu">midfieldr</span><span class="fu">::</span><span class="va"><a href="../reference/cip.html">cip</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># From stringr package we use</span></span>
+<span><span class="co"># str_to_title(), str_replace(), and str_length()</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span></code></pre></div>
 <p>The first step is to download the CSV file from the IPEDs website.
-After saving it to a convenient directory, construct a path to that file
-(<code>path_to_csv_file</code>) and import the data with:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+After saving it to a convenient directory, label a path to that file
+(<code>path_to_csv_file</code>) and import the data, using
+<code>DT</code> as our working data table.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Import the 2010 CIP file in data.table format</span></span>
-<span><span class="va">cip</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">path_to_csv_file</span>, colClasses <span class="op">=</span> <span class="st">"character"</span><span class="op">)</span></span></code></pre></div>
-<p>The <code><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">dplyr::glimpse()</a></code> function is quite useful for a
-first impression of the data. (One could also use base R
-<code><a href="https://rdrr.io/r/utils/str.html" class="external-link">str()</a></code>.)</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># View the result</span></span>
-<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">cip</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Rows: 2,318</span></span>
-<span><span class="co">#&gt; Columns: 8</span></span>
-<span><span class="co">#&gt; $ CIPFamily       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>…</span></span>
-<span><span class="co">#&gt; $ CIPCode         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "01"<span style="color: #949494;">, </span>"01.00"<span style="color: #949494;">, </span>"01.0000"<span style="color: #949494;">, </span>"01.01"<span style="color: #949494;">, </span>"01.0101"<span style="color: #949494;">, </span>"01.0102…</span></span>
-<span><span class="co">#&gt; $ Action          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "No substantive changes"<span style="color: #949494;">, </span>"No substantive changes"<span style="color: #949494;">, </span>"N…</span></span>
-<span><span class="co">#&gt; $ TextChange      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "no"<span style="color: #949494;">, </span>"no"<span style="color: #949494;">, </span>"no"<span style="color: #949494;">, </span>"no"<span style="color: #949494;">, </span>"no"<span style="color: #949494;">, </span>"no"<span style="color: #949494;">, </span>"no"<span style="color: #949494;">, </span>"no"<span style="color: #949494;">, </span>"no"<span style="color: #949494;">, </span>…</span></span>
-<span><span class="co">#&gt; $ CIPTitle        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIE…</span></span>
-<span><span class="co">#&gt; $ CIPDefinition   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Instructional programs that focus on agriculture and …</span></span>
-<span><span class="co">#&gt; $ CrossReferences <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> ""<span style="color: #949494;">, </span>""<span style="color: #949494;">, </span>"14.0301 - Agricultural Engineering."<span style="color: #949494;">, </span>""<span style="color: #949494;">, </span>""<span style="color: #949494;">,</span>…</span></span>
-<span><span class="co">#&gt; $ Examples        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> ""<span style="color: #949494;">, </span>""<span style="color: #949494;">, </span>""<span style="color: #949494;">, </span>""<span style="color: #949494;">, </span>""<span style="color: #949494;">, </span>"Examples: - Agricultural Systems …</span></span></code></pre></div>
-<p>To construct our own CIP data set, we need three columns:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Select columns</span></span>
-<span><span class="va">cols_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CIPFamily"</span>, <span class="st">"CIPCode"</span>, <span class="st">"CIPTitle"</span><span class="op">)</span></span>
-<span><span class="va">cip</span> <span class="op">&lt;-</span> <span class="va">cip</span><span class="op">[</span>, <span class="va">..cols_we_want</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">path_to_csv_file</span>, colClasses <span class="op">=</span> <span class="st">"character"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># View the result</span></span>
-<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">cip</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Rows: 2,318</span></span>
-<span><span class="co">#&gt; Columns: 3</span></span>
-<span><span class="co">#&gt; $ CIPFamily <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>…</span></span>
-<span><span class="co">#&gt; $ CIPCode   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "01"<span style="color: #949494;">, </span>"01.00"<span style="color: #949494;">, </span>"01.0000"<span style="color: #949494;">, </span>"01.01"<span style="color: #949494;">, </span>"01.0101"<span style="color: #949494;">, </span>"01.0102"<span style="color: #949494;">, </span>"01…</span></span>
-<span><span class="co">#&gt; $ CIPTitle  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES."…</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">DT</span>, strict.width <span class="op">=</span> <span class="st">"cut"</span>, give.attr <span class="op">=</span> <span class="cn">FALSE</span>, vec.len <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   2318 obs. of  8 variables:</span></span>
+<span><span class="co">#&gt;  $ CIPFamily      : chr  "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "0"..</span></span>
+<span><span class="co">#&gt;  $ CIPCode        : chr  "01" "01.00" "01.0000" "01.01" "01.0101" "01.0102" ""..</span></span>
+<span><span class="co">#&gt;  $ Action         : chr  "No substantive changes" "No substantive changes" "N"..</span></span>
+<span><span class="co">#&gt;  $ TextChange     : chr  "no" "no" "no" "no" "no" "no" "no" "no" "no" "no" "n"..</span></span>
+<span><span class="co">#&gt;  $ CIPTitle       : chr  "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SC"..</span></span>
+<span><span class="co">#&gt;  $ CIPDefinition  : chr  "Instructional programs that focus on agriculture an"..</span></span>
+<span><span class="co">#&gt;  $ CrossReferences: chr  "" "" "14.0301 - Agricultural Engineering." "" "" """..</span></span>
+<span><span class="co">#&gt;  $ Examples       : chr  "" "" "" "" "" "Examples: - Agricultural Systems Man"..</span></span></code></pre></div>
+<p>To construct our own CIP data set, we need three columns:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Select columns</span></span>
+<span><span class="va">cols_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CIPFamily"</span>, <span class="st">"CIPCode"</span>, <span class="st">"CIPTitle"</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">..cols_we_want</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># View the result</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">DT</span>, strict.width <span class="op">=</span> <span class="st">"cut"</span>, give.attr <span class="op">=</span> <span class="cn">FALSE</span>, vec.len <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   2318 obs. of  3 variables:</span></span>
+<span><span class="co">#&gt;  $ CIPFamily: chr  "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01"..</span></span>
+<span><span class="co">#&gt;  $ CIPCode  : chr  "01" "01.00" "01.0000" "01.01" "01.0101" "01.0102" "01.010"..</span></span>
+<span><span class="co">#&gt;  $ CIPTitle : chr  "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES"..</span></span></code></pre></div>
 <p>Closer look at a sample of our primary-source data.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set the seed for reproducibility </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">202612</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Extract a sample of 15 rows and reset the seed</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">cip</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">100</span><span class="op">:</span><span class="fl">400</span>, <span class="fl">15</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">100</span><span class="op">:</span><span class="fl">400</span>, <span class="fl">15</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Order the rows by the CIP code</span></span>
@@ -260,34 +240,35 @@ single column. In midfieldr, the the 2-, 4-, and 6-digit names are
 separated into columns <code>cip2name</code>, <code>cip4name</code>, and
 <code>cip6name</code>.</li>
 </ul>
-<p>When constructing the midfieldr legacy CIP data set, some values were
-changed from those in the source file, such as removing the decimal
-point separator in the 4- and 6-digit codes or replacing slashes (“/”)
-with commas (“,”). For example, compare the <code>13.1209</code> entry
-above to its equivalent in the midfieldr legacy CIP data:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p>When constructing the midfieldr <code>cip</code> data set, some
+characters were changed from those in the source file, such as removing
+the decimal point separator in the 4- and 6-digit codes or replacing
+slashes (“/”) with commas (“,”). For example, compare the
+<code>13.1209</code> entry above to its equivalent in the midfieldr
+<code>cip</code> data:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># CIPCode2010</span></span>
-<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"13.1209"</span>, cip <span class="op">=</span> <span class="va">cip</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"13.1209"</span>, cip <span class="op">=</span> <span class="va">DT</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    CIPFamily CIPCode                                       CIPTitle</span></span>
 <span><span class="co">#&gt;       &lt;char&gt;  &lt;char&gt;                                         &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1:        13 13.1209 Kindergarten/Preschool Education and Teaching.</span></span>
 <span></span>
-<span><span class="co"># midfieldr</span></span>
-<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"131209"</span>, cip <span class="op">=</span> <span class="va">legacy_cip</span><span class="op">)</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip2</span>, <span class="va">cip6</span>, <span class="va">cip6name</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co"># midfieldr default</span></span>
+<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"131209"</span>, cip <span class="op">=</span> <span class="va">cip</span><span class="op">)</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip2</span>, <span class="va">cip6</span>, <span class="va">cip6name</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;      cip2   cip6                                       cip6name</span></span>
 <span><span class="co">#&gt;    &lt;char&gt; &lt;char&gt;                                         &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1:     13 131209 Kindergarten, Preschool Education and Teaching</span></span></code></pre></div>
 <p>Additionally, source-file 2-digit program names are in all-caps; in
 midfieldr all program names are in title-case.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># CIPCode2010</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">[</span><span class="va">CIPCode</span> <span class="op">==</span> <span class="st">"04"</span><span class="op">]</span><span class="op">)</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">CIPCode</span>, <span class="va">CIPTitle</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="va">CIPCode</span> <span class="op">==</span> <span class="st">"04"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">CIPCode</span>, <span class="va">CIPTitle</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;    CIPCode                           CIPTitle</span></span>
 <span><span class="co">#&gt;     &lt;char&gt;                             &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1:      04 ARCHITECTURE AND RELATED SERVICES.</span></span>
 <span></span>
-<span><span class="co"># midfieldr</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"^04"</span>, cip <span class="op">=</span> <span class="va">legacy_cip</span><span class="op">)</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip2</span>, <span class="va">cip2name</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co"># midfieldr default</span></span>
+<span><span class="va">cip</span><span class="op">[</span><span class="va">cip2</span> <span class="op">==</span> <span class="st">"04"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip2</span>, <span class="va">cip2name</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
 <span><span class="co">#&gt;      cip2                          cip2name</span></span>
 <span><span class="co">#&gt;    &lt;char&gt;                            &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1:     04 Architecture and Related Services</span></span></code></pre></div>
@@ -295,108 +276,104 @@ midfieldr all program names are in title-case.</p>
 <div class="section level2">
 <h2 id="transforming-the-source-data">Transforming the source data<a class="anchor" aria-label="anchor" href="#transforming-the-source-data"></a>
 </h2>
-<p><em>Editing.</em>   Omit the periods in the codes and titles.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<p><em>Editing values.</em>   Omit the periods in the codes and
+titles.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Omit the period separator on the CIP code</span></span>
-<span><span class="va">cip</span> <span class="op">&lt;-</span> <span class="va">cip</span><span class="op">[</span>, <span class="va">CIPCode</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[.]"</span>, <span class="st">""</span>, <span class="va">CIPCode</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">CIPCode</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[.]"</span>, <span class="st">""</span>, <span class="va">CIPCode</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Omit the period at the end of each title</span></span>
-<span><span class="va">cip</span> <span class="op">&lt;-</span> <span class="va">cip</span><span class="op">[</span>, <span class="va">CIPTitle</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[.]"</span>, <span class="st">""</span>, <span class="va">CIPTitle</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">CIPTitle</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[.]"</span>, <span class="st">""</span>, <span class="va">CIPTitle</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Verify the result</span></span>
-<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"131209"</span>, cip <span class="op">=</span> <span class="va">cip</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"131209"</span>, cip <span class="op">=</span> <span class="va">DT</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    CIPFamily CIPCode                                      CIPTitle</span></span>
 <span><span class="co">#&gt;       &lt;char&gt;  &lt;char&gt;                                        &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1:        13  131209 Kindergarten/Preschool Education and Teaching</span></span></code></pre></div>
-<p>Count the number of digits in <code>CIPCode</code>, expected to be 2,
-4, or 6.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<p><em>Split the data frame.</em>   Count the number of digits in
+<code>CIPCode</code>, expected to be 2, 4, or 6.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add a column</span></span>
-<span><span class="va">cip</span><span class="op">[</span>, <span class="va">N_digits</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">CIPCode</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span><span class="op">[</span>, <span class="va">N_digits</span> <span class="op">:=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_length.html" class="external-link">str_length</a></span><span class="op">(</span><span class="va">CIPCode</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># View result</span></span>
-<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">cip</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Rows: 2,318</span></span>
-<span><span class="co">#&gt; Columns: 4</span></span>
-<span><span class="co">#&gt; $ CIPFamily <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>…</span></span>
-<span><span class="co">#&gt; $ CIPCode   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "01"<span style="color: #949494;">, </span>"0100"<span style="color: #949494;">, </span>"010000"<span style="color: #949494;">, </span>"0101"<span style="color: #949494;">, </span>"010101"<span style="color: #949494;">, </span>"010102"<span style="color: #949494;">, </span>"010103"…</span></span>
-<span><span class="co">#&gt; $ CIPTitle  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES"<span style="color: #949494;">,</span>…</span></span>
-<span><span class="co">#&gt; $ N_digits  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2<span style="color: #949494;">, </span>4<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>4<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>4<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>4<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>…</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">DT</span>, strict.width <span class="op">=</span> <span class="st">"cut"</span>, give.attr <span class="op">=</span> <span class="cn">FALSE</span>, vec.len <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   2318 obs. of  4 variables:</span></span>
+<span><span class="co">#&gt;  $ CIPFamily: chr  "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01"..</span></span>
+<span><span class="co">#&gt;  $ CIPCode  : chr  "01" "0100" "010000" "0101" "010101" "010102" "010103" "01"..</span></span>
+<span><span class="co">#&gt;  $ CIPTitle : chr  "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES"..</span></span>
+<span><span class="co">#&gt;  $ N_digits : int  2 4 6 4 6 6 6 6 6 6 6 4 6 6 6 6 4 6 6 6 6 6 6 6 6 6 4 6 4 6..</span></span>
 <span></span>
 <span><span class="co"># Confirm 2, 4, or 6 digits</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cip</span><span class="op">$</span><span class="va">N_digits</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">N_digits</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 2 4 6</span></span></code></pre></div>
-<p><em>Split</em>   Create a separate data frame for 2-digit codes and
-names, keyed by <code>CIPFamily</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p>Create a separate data frame for 2-digit codes and names, keyed by
+<code>CIPFamily</code>.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Unique 2-digit codes and names</span></span>
-<span><span class="va">cip2</span> <span class="op">&lt;-</span> <span class="va">cip</span><span class="op">[</span><span class="va">N_digits</span> <span class="op">==</span> <span class="fl">2</span>, <span class="fu">.</span><span class="op">(</span><span class="va">CIPFamily</span>, </span>
+<span><span class="va">DT2</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">N_digits</span> <span class="op">==</span> <span class="fl">2</span>, <span class="fu">.</span><span class="op">(</span><span class="va">CIPFamily</span>, </span>
 <span>                             cip2 <span class="op">=</span> <span class="va">CIPCode</span>, </span>
 <span>                             cip2name <span class="op">=</span> <span class="va">CIPTitle</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co"># View the result</span></span>
-<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">cip2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Rows: 48</span></span>
-<span><span class="co">#&gt; Columns: 3</span></span>
-<span><span class="co">#&gt; $ CIPFamily <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "01"<span style="color: #949494;">, </span>"03"<span style="color: #949494;">, </span>"04"<span style="color: #949494;">, </span>"05"<span style="color: #949494;">, </span>"09"<span style="color: #949494;">, </span>"10"<span style="color: #949494;">, </span>"11"<span style="color: #949494;">, </span>"12"<span style="color: #949494;">, </span>"13"<span style="color: #949494;">, </span>"14"<span style="color: #949494;">, </span>…</span></span>
-<span><span class="co">#&gt; $ cip2      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "01"<span style="color: #949494;">, </span>"03"<span style="color: #949494;">, </span>"04"<span style="color: #949494;">, </span>"05"<span style="color: #949494;">, </span>"09"<span style="color: #949494;">, </span>"10"<span style="color: #949494;">, </span>"11"<span style="color: #949494;">, </span>"12"<span style="color: #949494;">, </span>"13"<span style="color: #949494;">, </span>"14"<span style="color: #949494;">, </span>…</span></span>
-<span><span class="co">#&gt; $ cip2name  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES"<span style="color: #949494;">,</span>…</span></span></code></pre></div>
-<p>Repeat for the 4-digit codes and names and add a 2-digit code
-extracted from the <code>CIPCode</code> column we can compare to
-<code>CIPFamily</code> to ensure they agree.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">DT2</span>, strict.width <span class="op">=</span> <span class="st">"cut"</span>, give.attr <span class="op">=</span> <span class="cn">FALSE</span>, vec.len <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   48 obs. of  3 variables:</span></span>
+<span><span class="co">#&gt;  $ CIPFamily: chr  "01" "03" "04" "05" "09" "10" "11" "12" "13" "14" "15" "16"..</span></span>
+<span><span class="co">#&gt;  $ cip2     : chr  "01" "03" "04" "05" "09" "10" "11" "12" "13" "14" "15" "16"..</span></span>
+<span><span class="co">#&gt;  $ cip2name : chr  "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES"..</span></span></code></pre></div>
+<p>Repeat for the 4-digit codes and names. Extract the first two digits
+of the 4-digit code to compare to <code>CIPFamily</code> (also
+2-digits)</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Unique 4-digit codes and names, with cip2 codes derived from cip4</span></span>
-<span><span class="va">cip4</span> <span class="op">&lt;-</span> <span class="va">cip</span><span class="op">[</span><span class="va">N_digits</span> <span class="op">==</span> <span class="fl">4</span>, <span class="fu">.</span><span class="op">(</span><span class="va">CIPFamily</span>, </span>
+<span><span class="va">DT4</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">N_digits</span> <span class="op">==</span> <span class="fl">4</span>, <span class="fu">.</span><span class="op">(</span><span class="va">CIPFamily</span>, </span>
 <span>                             cip2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">CIPCode</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, </span>
 <span>                             cip4 <span class="op">=</span> <span class="va">CIPCode</span>, </span>
 <span>                             cip4name <span class="op">=</span> <span class="va">CIPTitle</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co"># View the result</span></span>
-<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">cip4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Rows: 422</span></span>
-<span><span class="co">#&gt; Columns: 4</span></span>
-<span><span class="co">#&gt; $ CIPFamily <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>…</span></span>
-<span><span class="co">#&gt; $ cip2      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>…</span></span>
-<span><span class="co">#&gt; $ cip4      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "0100"<span style="color: #949494;">, </span>"0101"<span style="color: #949494;">, </span>"0102"<span style="color: #949494;">, </span>"0103"<span style="color: #949494;">, </span>"0104"<span style="color: #949494;">, </span>"0105"<span style="color: #949494;">, </span>"0106"<span style="color: #949494;">, </span>"010…</span></span>
-<span><span class="co">#&gt; $ cip4name  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Agriculture, General"<span style="color: #949494;">, </span>"Agricultural Business and Managemen…</span></span></code></pre></div>
-<p>Repeat for the 6-digit codes and names.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">DT4</span>, strict.width <span class="op">=</span> <span class="st">"cut"</span>, give.attr <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   422 obs. of  4 variables:</span></span>
+<span><span class="co">#&gt;  $ CIPFamily: chr  "01" "01" "01" "01" ...</span></span>
+<span><span class="co">#&gt;  $ cip2     : chr  "01" "01" "01" "01" ...</span></span>
+<span><span class="co">#&gt;  $ cip4     : chr  "0100" "0101" "0102" "0103" ...</span></span>
+<span><span class="co">#&gt;  $ cip4name : chr  "Agriculture, General" "Agricultural Business and Manageme"..</span></span></code></pre></div>
+<p>Repeat for the 6-digit codes and names, extracting both 2- and
+4-digit codes for comparison and joining later.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Unique 6-digit codes and names, with cip2 and cip4 codes derived from cip6</span></span>
-<span><span class="va">cip6</span> <span class="op">&lt;-</span> <span class="va">cip</span><span class="op">[</span><span class="va">N_digits</span> <span class="op">==</span> <span class="fl">6</span>, <span class="fu">.</span><span class="op">(</span><span class="va">CIPFamily</span>, </span>
+<span><span class="va">DT6</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">N_digits</span> <span class="op">==</span> <span class="fl">6</span>, <span class="fu">.</span><span class="op">(</span><span class="va">CIPFamily</span>, </span>
 <span>                             cip2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">CIPCode</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, </span>
 <span>                             cip4 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">CIPCode</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>, </span>
 <span>                             cip6 <span class="op">=</span> <span class="va">CIPCode</span>, </span>
 <span>                             cip6name <span class="op">=</span> <span class="va">CIPTitle</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co"># View the result</span></span>
-<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">cip6</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Rows: 1,848</span></span>
-<span><span class="co">#&gt; Columns: 5</span></span>
-<span><span class="co">#&gt; $ CIPFamily <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>…</span></span>
-<span><span class="co">#&gt; $ cip2      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>"01"<span style="color: #949494;">, </span>…</span></span>
-<span><span class="co">#&gt; $ cip4      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "0100"<span style="color: #949494;">, </span>"0101"<span style="color: #949494;">, </span>"0101"<span style="color: #949494;">, </span>"0101"<span style="color: #949494;">, </span>"0101"<span style="color: #949494;">, </span>"0101"<span style="color: #949494;">, </span>"0101"<span style="color: #949494;">, </span>"010…</span></span>
-<span><span class="co">#&gt; $ cip6      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "010000"<span style="color: #949494;">, </span>"010101"<span style="color: #949494;">, </span>"010102"<span style="color: #949494;">, </span>"010103"<span style="color: #949494;">, </span>"010104"<span style="color: #949494;">, </span>"010105"<span style="color: #949494;">, </span>…</span></span>
-<span><span class="co">#&gt; $ cip6name  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Agriculture, General"<span style="color: #949494;">, </span>"Agricultural Business and Managemen…</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">DT6</span>, strict.width <span class="op">=</span> <span class="st">"cut"</span>, give.attr <span class="op">=</span> <span class="cn">FALSE</span>, vec.len <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   1848 obs. of  5 variables:</span></span>
+<span><span class="co">#&gt;  $ CIPFamily: chr  "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01"..</span></span>
+<span><span class="co">#&gt;  $ cip2     : chr  "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01"..</span></span>
+<span><span class="co">#&gt;  $ cip4     : chr  "0100" "0101" "0101" "0101" "0101" "0101" "0101" "0101" "0"..</span></span>
+<span><span class="co">#&gt;  $ cip6     : chr  "010000" "010101" "010102" "010103" "010104" "010105" "010"..</span></span>
+<span><span class="co">#&gt;  $ cip6name : chr  "Agriculture, General" "Agricultural Business and Manageme"..</span></span></code></pre></div>
 <p>Compare the 2-digit codes in each data frame. If the data were
 correctly entered, this check for equality should all be TRUE.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># This check for 2-digit equality should all be TRUE</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">cip2</span><span class="op">$</span><span class="va">CIPFamily</span>, <span class="va">cip2</span><span class="op">$</span><span class="va">cip2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">DT2</span><span class="op">$</span><span class="va">CIPFamily</span>, <span class="va">DT2</span><span class="op">$</span><span class="va">cip2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">cip4</span><span class="op">$</span><span class="va">CIPFamily</span>, <span class="va">cip4</span><span class="op">$</span><span class="va">cip2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">DT4</span><span class="op">$</span><span class="va">CIPFamily</span>, <span class="va">DT4</span><span class="op">$</span><span class="va">cip2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">cip6</span><span class="op">$</span><span class="va">CIPFamily</span>, <span class="va">cip6</span><span class="op">$</span><span class="va">cip2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">DT6</span><span class="op">$</span><span class="va">CIPFamily</span>, <span class="va">DT6</span><span class="op">$</span><span class="va">cip2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p><em>Editing.</em>   Convert the 2-digit names from all-caps to
 title-case. Here we use two functions from the stringr package.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Convert to title case</span></span>
-<span><span class="va">cip2</span><span class="op">[</span>, <span class="va">cip2name</span> <span class="op">:=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/case.html" class="external-link">str_to_title</a></span><span class="op">(</span><span class="va">cip2name</span><span class="op">)</span><span class="op">]</span></span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Convert to title case</span></span>
+<span><span class="va">DT2</span><span class="op">[</span>, <span class="va">cip2name</span> <span class="op">:=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/case.html" class="external-link">str_to_title</a></span><span class="op">(</span><span class="va">cip2name</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Use lowercase "and"</span></span>
-<span><span class="va">cip2</span><span class="op">[</span>, <span class="va">cip2name</span> <span class="op">:=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html" class="external-link">str_replace_all</a></span><span class="op">(</span><span class="va">cip2name</span>, <span class="st">"And"</span>, <span class="st">"and"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT2</span><span class="op">[</span>, <span class="va">cip2name</span> <span class="op">:=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html" class="external-link">str_replace_all</a></span><span class="op">(</span><span class="va">cip2name</span>, <span class="st">"And"</span>, <span class="st">"and"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># View result</span></span>
-<span><span class="va">cip2</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip2</span>, <span class="va">cip2name</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT2</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip2</span>, <span class="va">cip2name</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;       cip2                                                      cip2name</span></span>
 <span><span class="co">#&gt;     &lt;char&gt;                                                        &lt;char&gt;</span></span>
 <span><span class="co">#&gt;  1:     01     Agriculture, Agriculture Operations, and Related Sciences</span></span>
@@ -412,32 +389,35 @@ title-case. Here we use two functions from the stringr package.</p>
 <span><span class="co">#&gt; 48:     60                                            Residency Programs</span></span></code></pre></div>
 <p><em>Combine.</em>   Next, select the columns we want for the joining
 operations.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Select 6-digit columns</span></span>
 <span><span class="va">cols_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip2"</span>, <span class="st">"cip4"</span>, <span class="st">"cip6"</span>, <span class="st">"cip6name"</span><span class="op">)</span></span>
-<span><span class="va">cip6</span> <span class="op">&lt;-</span> <span class="va">cip6</span><span class="op">[</span>, <span class="va">..cols_we_want</span><span class="op">]</span></span>
+<span><span class="va">DT6</span> <span class="op">&lt;-</span> <span class="va">DT6</span><span class="op">[</span>, <span class="va">..cols_we_want</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Select 4-digit columns</span></span>
 <span><span class="va">cols_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip2"</span>, <span class="st">"cip4"</span>, <span class="st">"cip4name"</span><span class="op">)</span></span>
-<span><span class="va">cip4</span> <span class="op">&lt;-</span> <span class="va">cip4</span><span class="op">[</span>, <span class="va">..cols_we_want</span><span class="op">]</span></span>
+<span><span class="va">DT4</span> <span class="op">&lt;-</span> <span class="va">DT4</span><span class="op">[</span>, <span class="va">..cols_we_want</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Select 2-digit columns</span></span>
 <span><span class="va">cols_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip2"</span>, <span class="st">"cip2name"</span><span class="op">)</span></span>
-<span><span class="va">cip2</span> <span class="op">&lt;-</span> <span class="va">cip2</span><span class="op">[</span>, <span class="va">..cols_we_want</span><span class="op">]</span></span></code></pre></div>
+<span><span class="va">DT2</span> <span class="op">&lt;-</span> <span class="va">DT2</span><span class="op">[</span>, <span class="va">..cols_we_want</span><span class="op">]</span></span></code></pre></div>
 <p>Now, left-join <code>cip4</code> to <code>cip6</code>, matching on
-the 2- and 4-digit code columns.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Join `cip4` to `cip6` </span></span>
-<span><span class="va">cip</span> <span class="op">&lt;-</span> <span class="va">cip4</span><span class="op">[</span><span class="va">cip6</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip2"</span>, <span class="st">"cip4"</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+the 2- and 4-digit code columns. Reuse the object name <code>DT</code>
+for our new working data frame.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Join `cip4` to `cip6` , overwrite earlier DT</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT4</span><span class="op">[</span><span class="va">DT6</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip2"</span>, <span class="st">"cip4"</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 <p>Now, left-join <code>cip2</code> to the result, matching on the
 2-digit code columns.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Left join `cip2` to `cip` from above</span></span>
-<span><span class="va">cip</span> <span class="op">&lt;-</span> <span class="va">cip2</span><span class="op">[</span><span class="va">cip</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip2"</span><span class="op">)</span><span class="op">]</span></span>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Left join `cip2` to `DT` from above</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT2</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip2"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
-<span><span class="co"># Ensure row order and examine the result</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">cip</span></span>
+<span><span class="co"># Ensure row order</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># View the result</span></span>
+<span><span class="va">DT</span></span>
 <span><span class="co">#&gt;         cip2                                                  cip2name   cip4</span></span>
 <span><span class="co">#&gt;       &lt;char&gt;                                                    &lt;char&gt; &lt;char&gt;</span></span>
 <span><span class="co">#&gt;    1:     01 Agriculture, Agriculture Operations, and Related Sciences   0100</span></span>
@@ -477,26 +457,43 @@ the 2- and 4-digit code columns.</p>
 <span><span class="co">#&gt; 1846: Medical Residency Programs - Subspecialty Certificates, Other</span></span>
 <span><span class="co">#&gt; 1847:         Podiatric Medicine and Surgery - 24 Residency Program</span></span>
 <span><span class="co">#&gt; 1848:         Podiatric Medicine and Surgery - 36 Residency Program</span></span></code></pre></div>
+<p><em>Reality check.</em>   If we’ve joined correctly, the following
+logical checks should yield all TRUE (no FALSE) results.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># The first 4 digits of every cip6 should match cip4</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">cip6</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span> <span class="op">==</span> <span class="va">DT</span><span class="op">$</span><span class="va">cip4</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span></span>
+<span><span class="co"># The first 2 digits of every cip6 should match cip2</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">cip6</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span> <span class="op">==</span> <span class="va">DT</span><span class="op">$</span><span class="va">cip2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span></span>
+<span><span class="co"># The first 2 digits of every cip4 should match cip2</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">cip4</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span> <span class="op">==</span> <span class="va">DT</span><span class="op">$</span><span class="va">cip2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="program-undecided-or-unspecified">Program undecided or unspecified<a class="anchor" aria-label="anchor" href="#program-undecided-or-unspecified"></a>
+<h2 id="undecided-or-unspecified-programs">Undecided or unspecified programs<a class="anchor" aria-label="anchor" href="#undecided-or-unspecified-programs"></a>
 </h2>
 <p>Lastly, we add a row to the CIP data to includes one non-IPEDS code
 (999999) for Undecided or Unspecified, instances in which institutions
 reported no program information or that students were not enrolled in a
 program.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">name_99</span> <span class="op">&lt;-</span> <span class="st">"Undecided/Unspecified (non-IPEDS)"</span></span>
-<span><span class="va">row_99</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>cip2 <span class="op">=</span> <span class="st">"99"</span>, </span>
-<span>                            cip4 <span class="op">=</span> <span class="st">"9999"</span>, </span>
-<span>                            cip6 <span class="op">=</span> <span class="st">"999999"</span>, </span>
-<span>                            cip2name <span class="op">=</span> <span class="va">name_99</span>, </span>
-<span>                            cip4name <span class="op">=</span> <span class="va">name_99</span>, </span>
-<span>                            cip6name <span class="op">=</span> <span class="va">name_99</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create a data table with one row</span></span>
+<span><span class="va">txt_99</span> <span class="op">&lt;-</span> <span class="st">"Undecided/Unspecified (non-IPEDS)"</span></span>
+<span><span class="va">row_99</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>cip2 <span class="op">=</span> <span class="st">"99"</span>, </span>
+<span>                     cip4 <span class="op">=</span> <span class="st">"9999"</span>, </span>
+<span>                     cip6 <span class="op">=</span> <span class="st">"999999"</span>, </span>
+<span>                     cip2name <span class="op">=</span> <span class="va">txt_99</span>, </span>
+<span>                     cip4name <span class="op">=</span> <span class="va">txt_99</span>, </span>
+<span>                     cip6name <span class="op">=</span> <span class="va">txt_99</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Bind the new row to the working data table</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">row_99</span><span class="op">)</span>, use.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">cip</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cip</span>, <span class="va">row_99</span><span class="op">)</span>, use.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">cip</span></span>
+<span><span class="co"># View the result</span></span>
+<span><span class="va">DT</span></span>
 <span><span class="co">#&gt;         cip2                                                  cip2name   cip4</span></span>
 <span><span class="co">#&gt;       &lt;char&gt;                                                    &lt;char&gt; &lt;char&gt;</span></span>
 <span><span class="co">#&gt;    1:     01 Agriculture, Agriculture Operations, and Related Sciences   0100</span></span>
@@ -539,10 +536,64 @@ program.</p>
 <p><em>Verify prepared data.</em>   <code>cip2010</code>, included with
 midfieldr, contains the CIP data frame developed above. Here we verify
 that the two data frames have the same content.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Demonstrate equivalence</span></span>
-<span><span class="fu"><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames</a></span><span class="op">(</span><span class="va">cip</span>, <span class="va">cip2010</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">cip2010</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
+</h2>
+<p>To use the alternative CIP data set included with midfieldr, use
+<code>cip2010</code> as the value of the <code>cip</code> argument. For
+example,</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Using the midfieldr default</span></span>
+<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"^1408"</span>, cip <span class="op">=</span> <span class="va">cip</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      cip2    cip2name   cip4          cip4name   cip6</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;      &lt;char&gt; &lt;char&gt;            &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1:     14 Engineering   1408 Civil Engineering 140801</span></span>
+<span><span class="co">#&gt; 2:     14 Engineering   1408 Civil Engineering 140802</span></span>
+<span><span class="co">#&gt; 3:     14 Engineering   1408 Civil Engineering 140803</span></span>
+<span><span class="co">#&gt; 4:     14 Engineering   1408 Civil Engineering 140804</span></span>
+<span><span class="co">#&gt; 5:     14 Engineering   1408 Civil Engineering 140805</span></span>
+<span><span class="co">#&gt; 6:     14 Engineering   1408 Civil Engineering 140899</span></span>
+<span><span class="co">#&gt;                                  cip6name</span></span>
+<span><span class="co">#&gt;                                    &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1:             Civil Engineering, General</span></span>
+<span><span class="co">#&gt; 2:               Geotechnical Engineering</span></span>
+<span><span class="co">#&gt; 3:                 Structural Engineering</span></span>
+<span><span class="co">#&gt; 4: Transportation and Highway Engineering</span></span>
+<span><span class="co">#&gt; 5:            Water Resources Engineering</span></span>
+<span><span class="co">#&gt; 6:               Civil Engineering, Other</span></span>
+<span></span>
+<span></span>
+<span><span class="co"># Using the alternate cip</span></span>
+<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"^1408"</span>, cip <span class="op">=</span> <span class="va">cip2010</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      cip2    cip2name   cip4          cip4name   cip6</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;      &lt;char&gt; &lt;char&gt;            &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1:     14 Engineering   1408 Civil Engineering 140801</span></span>
+<span><span class="co">#&gt; 2:     14 Engineering   1408 Civil Engineering 140802</span></span>
+<span><span class="co">#&gt; 3:     14 Engineering   1408 Civil Engineering 140803</span></span>
+<span><span class="co">#&gt; 4:     14 Engineering   1408 Civil Engineering 140804</span></span>
+<span><span class="co">#&gt; 5:     14 Engineering   1408 Civil Engineering 140805</span></span>
+<span><span class="co">#&gt; 6:     14 Engineering   1408 Civil Engineering 140899</span></span>
+<span><span class="co">#&gt;                                         cip6name</span></span>
+<span><span class="co">#&gt;                                           &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1:                    Civil Engineering, General</span></span>
+<span><span class="co">#&gt; 2: Geotechnical and Geoenvironmental Engineering</span></span>
+<span><span class="co">#&gt; 3:                        Structural Engineering</span></span>
+<span><span class="co">#&gt; 4:        Transportation and Highway Engineering</span></span>
+<span><span class="co">#&gt; 5:                   Water Resources Engineering</span></span>
+<span><span class="co">#&gt; 6:                      Civil Engineering, Other</span></span></code></pre></div>
+<p>Here we see an instance of a minor program title difference between
+the two datasets. The other program names in this major are
+identical.</p>
+<ul>
+<li>140802 Geotechnical Engineering (<code>cip</code>)</li>
+<li>140802 Geotechnical and Geoenvironmental Engineering
+(<code>cip2010</code>)</li>
+</ul>
 <hr>
 <p><a href="art-040-programs.html">◁ Programs</a>    <a href="#top">▲
 top of page</a>    <a href="art-050-blocs.html">Blocs ▷</a></p>

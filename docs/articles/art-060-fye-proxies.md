@@ -9,7 +9,7 @@ Users of midfielddata practice data are not required to reproduce this
 vignette—the results are included with midfieldr in the `fye_proxy` data
 set.
 
-This vignette in the MIDFIELD workflow.
+This article in the MIDFIELD workflow:
 
 1.  Planning  
 2.  Initial processing  
