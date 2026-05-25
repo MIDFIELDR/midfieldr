@@ -40,7 +40,8 @@ cannot be commingled with the MIDFIELD research database.
 }
 \seealso{
 Other cip-data:
-\code{\link{cip}}
+\code{\link{cip}},
+\code{\link{cip2010}}
 }
 \concept{cip-data}
 \keyword{datasets}

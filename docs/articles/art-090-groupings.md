@@ -51,7 +51,7 @@ variables are:
 Other variables too can be usefully joined for grouping operations. We
 include examples from `student`, `term`, and `degree`.
 
-*Reminder.*   midfielddata datasets are for practice, not research.
+*Reminder.*   midfielddata is for practice, not research.
 
 ## Load data
 

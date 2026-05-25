@@ -35,7 +35,7 @@ data frame for degree-seeking students.
 
 2.  Filter for degree seeking.
 
-*Reminder.*   midfielddata datasets are for practice, not research.
+*Reminder.*   midfielddata is for practice, not research.
 
 ## Load data
 

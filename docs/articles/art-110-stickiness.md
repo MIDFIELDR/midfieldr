@@ -107,7 +107,7 @@ Demonstrating the following elements of a MIDFIELD workflow.
 
 6.  *Displays*   Create multiway chart and results table.
 
-*Reminder.*   midfielddata datasets are for practice, not research.
+*Reminder.*   midfielddata is for practice, not research.
 
 ## Load data
 

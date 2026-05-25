@@ -75,7 +75,7 @@ needs of the metric. For example, the graduation rate metric requires
 graduates to be a subset of starters in the same program. We postpone
 this step until treating the metrics.
 
-*Reminder.*   midfielddata datasets are for practice, not research.
+*Reminder.*   midfielddata is for practice, not research.
 
 ## Load data
 

@@ -10,7 +10,7 @@ enrolled in the programs and students graduating from the programs—that
 are joined and written to file as a starting point for developing the
 results.
 
-*Reminder.*   midfielddata datasets are for practice, not research.
+*Reminder.*   midfielddata is for practice, not research.
 
 ## Load data
 

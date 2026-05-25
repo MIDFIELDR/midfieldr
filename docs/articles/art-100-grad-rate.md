@@ -205,7 +205,7 @@ Demonstrating the following elements of a MIDFIELD workflow.
 
 6.  *Displays*   Create multiway chart and results table.
 
-*Reminder.*   midfielddata datasets are for practice, not research.
+*Reminder.*   midfielddata is for practice, not research.
 
 ## Load data
 
@@ -298,7 +298,7 @@ DT
 DT <- term[DT, .(mcid, term, cip6), on = c("mcid")]
 DT <- DT[!cip6 %like% "999999"]
 setorderv(DT, cols = c("mcid", "term"))
-DT <- DT[, .SD[which.min(term)], by = "mcid"]
+DT <- DT[, .SD[term == min(term)], by = "mcid"]
 DT <- DT[, .(mcid, cip6)]
 DT <- unique(DT)
 
@@ -332,9 +332,9 @@ starters
 #>    2: MCID3111145102      EE
 #>    3: MCID3111150194     ISE
 #>   ---                       
-#> 4051: MCID3112619118      EE
-#> 4052: MCID3112619484      EE
-#> 4053: MCID3112619666      ME
+#> 4046: MCID3112619118      EE
+#> 4047: MCID3112619484      EE
+#> 4048: MCID3112619666      ME
 ```
 
 ## Graduates
@@ -361,7 +361,7 @@ DT <- degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
 
 # Filter by programs and first degree terms
 DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
-DT <- DT[, .SD[which.min(term_degree)], by = "mcid"]
+DT <- DT[, .SD[term_degree == min(term_degree)], by = "mcid"]
 DT[, c("cip6", "term_degree") := NULL]
 DT <- unique(DT)
 DT
@@ -371,9 +371,9 @@ DT
 #>    2: MCID3111145102      EE
 #>    3: MCID3111146537      EE
 #>   ---                       
-#> 3262: MCID3112618976      ME
-#> 3263: MCID3112619484      EE
-#> 3264: MCID3112641535      ME
+#> 3264: MCID3112618976      ME
+#> 3265: MCID3112619484      EE
+#> 3266: MCID3112641535      ME
 ```
 
 ## Starter-graduates
@@ -407,9 +407,9 @@ graduates
 #>    2: MCID3111145102      EE
 #>    3: MCID3111150194     ISE
 #>   ---                       
-#> 1787: MCID3112617717      ME
-#> 1788: MCID3112618976      ME
-#> 1789: MCID3112619484      EE
+#> 1789: MCID3112617717      ME
+#> 1790: MCID3112618976      ME
+#> 1791: MCID3112619484      EE
 ```
 
 ### Closer look
@@ -512,9 +512,9 @@ DT
 #>    2: MCID3111145102      EE  starters
 #>    3: MCID3111150194     ISE  starters
 #>   ---                                 
-#> 5840: MCID3112617717      ME graduates
-#> 5841: MCID3112618976      ME graduates
-#> 5842: MCID3112619484      EE graduates
+#> 5837: MCID3112617717      ME graduates
+#> 5838: MCID3112618976      ME graduates
+#> 5839: MCID3112619484      EE graduates
 ```
 
 *Add variables.*   Demographics from
@@ -532,9 +532,9 @@ DT
 #>    2: MCID3111145102         White   Male      EE  starters
 #>    3: MCID3111150194         Black   Male     ISE  starters
 #>   ---                                                      
-#> 5840: MCID3112617717 International   Male      ME graduates
-#> 5841: MCID3112618976         White   Male      ME graduates
-#> 5842: MCID3112619484         White   Male      EE graduates
+#> 5837: MCID3112617717 International   Male      ME graduates
+#> 5838: MCID3112618976         White   Male      ME graduates
+#> 5839: MCID3112619484         White   Male      EE graduates
 ```
 
 *Note.*   MIDFIELD research findings are regularly grouped by program,
@@ -562,9 +562,9 @@ DT
 #>  2: graduates      CE         Asian   Male     9
 #>  3: graduates      CE         Black Female     1
 #> ---                                             
-#> 94:  starters      ME Other/Unknown   Male    53
-#> 95:  starters      ME         White Female   146
-#> 96:  starters      ME         White   Male  1225
+#> 95:  starters      ME Other/Unknown   Male    53
+#> 96:  starters      ME         White Female   146
+#> 97:  starters      ME         White   Male  1225
 ```
 
 *Reshape.*   Transform to row-record form to set up the graduation rate
@@ -583,9 +583,9 @@ DT
 #>  2:      CE         Asian   Male         9       17
 #>  3:      CE         Black Female         1        2
 #> ---                                                
-#> 49:      ME Other/Unknown   Male        24       53
-#> 50:      ME         White Female        71      146
-#> 51:      ME         White   Male       566     1225
+#> 50:      ME Other/Unknown   Male        24       53
+#> 51:      ME         White Female        71      146
+#> 52:      ME         White   Male       568     1225
 ```
 
 *Create a variable.*   Compute the metric.
@@ -602,9 +602,9 @@ DT
 #>  2:      CE         Asian   Male         9       17  52.9
 #>  3:      CE         Black Female         1        2  50.0
 #> ---                                                      
-#> 49:      ME Other/Unknown   Male        24       53  45.3
-#> 50:      ME         White Female        71      146  48.6
-#> 51:      ME         White   Male       566     1225  46.2
+#> 50:      ME Other/Unknown   Male        24       53  45.3
+#> 51:      ME         White Female        71      146  48.6
+#> 52:      ME         White   Male       568     1225  46.4
 ```
 
 ## Prepare for dissemination
@@ -624,12 +624,12 @@ DT
 #>     program          race    sex graduates starters  rate
 #>      <char>        <char> <char>     <int>    <int> <num>
 #>  1:      CE         Asian   Male         9       17  52.9
-#>  2:      CE      Hispanic   Male        10       36  27.8
-#>  3:      CE International Female         6       12  50.0
+#>  2:      CE      Hispanic   Male        10       33  30.3
+#>  3:      CE International Female         6       14  42.9
 #> ---                                                      
 #> 25:      ME Other/Unknown   Male        24       53  45.3
 #> 26:      ME         White Female        71      146  48.6
-#> 27:      ME         White   Male       566     1225  46.2
+#> 27:      ME         White   Male       568     1225  46.4
 ```
 
 *Recode.*   Readers can more readily interpret our charts and tables if
@@ -648,12 +648,12 @@ DT
 #>        program          race    sex graduates starters  rate
 #>         <char>        <char> <char>     <int>    <int> <num>
 #>  1:      Civil         Asian   Male         9       17  52.9
-#>  2:      Civil      Hispanic   Male        10       36  27.8
-#>  3:      Civil International Female         6       12  50.0
+#>  2:      Civil      Hispanic   Male        10       33  30.3
+#>  3:      Civil International Female         6       14  42.9
 #> ---                                                         
 #> 25: Mechanical Other/Unknown   Male        24       53  45.3
 #> 26: Mechanical         White Female        71      146  48.6
-#> 27: Mechanical         White   Male       566     1225  46.2
+#> 27: Mechanical         White   Male       568     1225  46.4
 ```
 
 *Add a variable.*   We combine race/ethnicity and sex to create a
@@ -669,12 +669,12 @@ DT
 #>        program               people graduates starters  rate
 #>         <char>               <char>     <int>    <int> <num>
 #>  1:      Civil           Asian Male         9       17  52.9
-#>  2:      Civil        Hispanic Male        10       36  27.8
-#>  3:      Civil International Female         6       12  50.0
+#>  2:      Civil        Hispanic Male        10       33  30.3
+#>  3:      Civil International Female         6       14  42.9
 #> ---                                                         
 #> 25: Mechanical   Other/Unknown Male        24       53  45.3
 #> 26: Mechanical         White Female        71      146  48.6
-#> 27: Mechanical           White Male       566     1225  46.2
+#> 27: Mechanical           White Male       568     1225  46.4
 ```
 
 ## Chart
@@ -695,22 +695,22 @@ DT <- order_multiway(DT,
 DT
 #>        program               people graduates starters  rate program_rate
 #>         <fctr>               <fctr>     <num>    <num> <num>        <num>
-#>  1:      Civil           Asian Male         9       17  52.9         46.9
-#>  2:      Civil        Hispanic Male        10       36  27.8         46.9
-#>  3:      Civil International Female         6       12  50.0         46.9
+#>  1:      Civil           Asian Male         9       17  52.9         47.0
+#>  2:      Civil        Hispanic Male        10       33  30.3         47.0
+#>  3:      Civil International Female         6       14  42.9         47.0
 #> ---                                                                      
-#> 25: Mechanical   Other/Unknown Male        24       53  45.3         46.2
-#> 26: Mechanical         White Female        71      146  48.6         46.2
-#> 27: Mechanical           White Male       566     1225  46.2         46.2
+#> 25: Mechanical   Other/Unknown Male        24       53  45.3         46.4
+#> 26: Mechanical         White Female        71      146  48.6         46.4
+#> 27: Mechanical           White Male       568     1225  46.4         46.4
 #>     people_rate
 #>           <num>
 #>  1:        48.8
-#>  2:        32.8
-#>  3:        50.0
+#>  2:        34.2
+#>  3:        42.9
 #> ---            
 #> 25:        37.5
 #> 26:        46.6
-#> 27:        45.6
+#> 27:        45.7
 ```
 
 *Multiway chart.*   Code adapted from [Multiway data and
@@ -764,13 +764,13 @@ display_table
 #>  1:         Asian Female    NA       33.3                 NA         NA
 #>  2:           Asian Male  52.9       41.2               42.9       59.3
 #>  3:           Black Male    NA       20.7                 NA       33.3
-#>  4:      Hispanic Female    NA         NA                 NA       71.4
-#>  5:        Hispanic Male  27.8       34.3                 NA       35.4
-#>  6: International Female  50.0         NA                 NA         NA
-#>  7:   International Male  50.0       39.7               47.1       42.3
+#>  4:      Hispanic Female    NA         NA                 NA       62.5
+#>  5:        Hispanic Male  30.3       34.3                 NA       37.0
+#>  6: International Female  42.9         NA                 NA         NA
+#>  7:   International Male  50.9       39.7               44.4       43.1
 #>  8:   Other/Unknown Male  27.3       31.0                 NA       45.3
 #>  9:         White Female  46.5       41.9               47.7       48.6
-#> 10:           White Male  48.3       41.1               49.3       46.2
+#> 10:           White Male  48.3       41.1               49.3       46.4
 ```
 
 (Optional) Format the table nearer to publication quality. Here I use
@@ -795,13 +795,13 @@ display_table |>
 | Asian Female         | NA    | 33.3       | NA                 | NA         |
 | Asian Male           | 52.9  | 41.2       | 42.9               | 59.3       |
 | Black Male           | NA    | 20.7       | NA                 | 33.3       |
-| Hispanic Female      | NA    | NA         | NA                 | 71.4       |
-| Hispanic Male        | 27.8  | 34.3       | NA                 | 35.4       |
-| International Female | 50.0  | NA         | NA                 | NA         |
-| International Male   | 50.0  | 39.7       | 47.1               | 42.3       |
+| Hispanic Female      | NA    | NA         | NA                 | 62.5       |
+| Hispanic Male        | 30.3  | 34.3       | NA                 | 37.0       |
+| International Female | 42.9  | NA         | NA                 | NA         |
+| International Male   | 50.9  | 39.7       | 44.4               | 43.1       |
 | Other/Unknown Male   | 27.3  | 31.0       | NA                 | 45.3       |
 | White Female         | 46.5  | 41.9       | 47.7               | 48.6       |
-| White Male           | 48.3  | 41.1       | 49.3               | 46.2       |
+| White Male           | 48.3  | 41.1       | 49.3               | 46.4       |
 
 Table 2: Graduation rates (%) of four Engineering majors {.table
 .gt_table quarto-disable-processing="false" quarto-bootstrap="false"}

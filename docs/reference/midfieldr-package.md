@@ -6,19 +6,18 @@ include filters for program codes, data sufficiency, and timely
 completion. Methods include gathering blocs of records, computing
 quantitative metrics such as graduation rate, and creating charts to
 visualize comparisons. 'midfieldr' interacts with practice data provided
-in 'midfielddata', an R data package available at
-<https://midfieldr.github.io/midfielddata/>. 'midfieldr' is also
-designed to interact with the full MIDFIELD database, the management of
-which was transferred to the American Society for Engineering Education
-in 2023. The development of 'midfieldr' and 'midfielddata' was supported
-by the US National Science Foundation through grant numbers 1545667 and
-2142087.
+in the 'midfielddata' package or with any data structure modeled on the
+MIDFIELD database. The development of 'midfieldr' and 'midfielddata' was
+supported by the US National Science Foundation through grant numbers
+1545667 and 2142087.
 
 ## See also
 
 Useful links:
 
 - <https://midfieldr.github.io/midfieldr/>
+
+- <https://midfieldr.github.io/midfielddata/>
 
 - Report bugs at <https://github.com/MIDFIELDR/midfieldr/issues>
 

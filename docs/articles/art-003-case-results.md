@@ -4,7 +4,7 @@ Our goal in this segment is to group and summarize the observations we
 saved previously, calculate the stickiness metric, and display the
 results.
 
-*Reminder.*   midfielddata datasets are for practice, not research.
+*Reminder.*   midfielddata is for practice, not research.
 
 ## Load data
 

@@ -136,7 +136,7 @@ For a given set of source files, FYE proxies need be created only once
 and written to file. The result can be used as needed unless the source
 files change.
 
-*Reminder.*   midfielddata datasets are for practice, not research.
+*Reminder.*   midfielddata is for practice, not research.
 
 ## Load data
 
@@ -863,7 +863,7 @@ two data frames have the same content.
 
 # Demonstrate equivalence
 check_equiv_frames(DT, fye_proxy)
-#> [1] TRUE
+#> [1] FALSE
 ```
 
 ## Assessing FYE proxies
@@ -924,18 +924,18 @@ setorderv(proxy_programs, order = -1, cols = c("N"))
 proxy_programs
 #>                                                     program     N
 #>                                                      <char> <int>
-#>  1:                                  Mechanical Engineering  1053
-#>  2:  Electrical, Electronics and Communications Engineering   668
-#>  3:                                       Civil Engineering   598
-#>  4:                           Computer Engineering, General   566
-#>  5:   Aerospace, Aeronautical and Astronautical Engineering   516
-#>  6:                                  Industrial Engineering   393
-#>  7:                                    Chemical Engineering   358
-#>  8:                          Mining and Mineral Engineering   134
-#>  9:                                   Engineering Mechanics   133
-#> 10:                                   Materials Engineering   104
+#>  1:                                  Mechanical Engineering  1048
+#>  2:  Electrical, Electronics and Communications Engineering   673
+#>  3:                                       Civil Engineering   592
+#>  4:                           Computer Engineering, General   565
+#>  5:   Aerospace, Aeronautical and Astronautical Engineering   511
+#>  6:                                  Industrial Engineering   395
+#>  7:                                    Chemical Engineering   365
+#>  8:                                   Engineering Mechanics   136
+#>  9:                          Mining and Mineral Engineering   134
+#> 10:                                   Materials Engineering   103
 #> 11: Agricultural, Biological Engineering and Bioengineering    82
-#> 12:                                Construction Engineering    17
+#> 12:                                Construction Engineering    18
 #> 13:         Environmental, Environmental Health Engineering     1
 ```
 
@@ -961,18 +961,18 @@ nearly 3000 US undergraduate institutions ([SEI report
 
 | Program                                                 | NSF ranking | N    |
 |---------------------------------------------------------|-------------|------|
-| Mechanical Engineering                                  | 1           | 1053 |
-| Electrical, Electronics and Communications Engineering  | 2           | 668  |
-| Civil Engineering                                       | 3           | 598  |
-| Computer Engineering, General                           |             | 566  |
-| Aerospace, Aeronautical and Astronautical Engineering   | 6           | 516  |
-| Industrial Engineering                                  | 5           | 393  |
-| Chemical Engineering                                    | 4           | 358  |
+| Mechanical Engineering                                  | 1           | 1048 |
+| Electrical, Electronics and Communications Engineering  | 2           | 673  |
+| Civil Engineering                                       | 3           | 592  |
+| Computer Engineering, General                           |             | 565  |
+| Aerospace, Aeronautical and Astronautical Engineering   | 6           | 511  |
+| Industrial Engineering                                  | 5           | 395  |
+| Chemical Engineering                                    | 4           | 365  |
+| Engineering Mechanics                                   |             | 136  |
 | Mining and Mineral Engineering                          |             | 134  |
-| Engineering Mechanics                                   |             | 133  |
-| Materials Engineering                                   | 7           | 104  |
+| Materials Engineering                                   | 7           | 103  |
 | Agricultural, Biological Engineering and Bioengineering |             | 82   |
-| Construction Engineering                                |             | 17   |
+| Construction Engineering                                |             | 18   |
 | Environmental, Environmental Health Engineering         |             | 1    |
 
 Table 1: Frequency of FYE proxies using the practice data {.table
@@ -1043,9 +1043,9 @@ start[order(matric, start)]
 #>    2: 140801      CE MCID3111170949 140801   <NA> direct
 #>    3: 140801      CE MCID3111174233 140801   <NA> direct
 #>   ---                                                   
-#> 5386: 143501     ISE MCID3112441692 140102 143501    fye
-#> 5387: 143501     ISE MCID3112447596 140102 143501    fye
-#> 5388: 143501     ISE MCID3112447600 140102 143501    fye
+#> 5382: 143501     ISE MCID3112447549 140102 143501    fye
+#> 5383: 143501     ISE MCID3112447596 140102 143501    fye
+#> 5384: 143501     ISE MCID3112447600 140102 143501    fye
 ```
 
 This data frame contains all direct-matriculation starters in the case
@@ -1070,10 +1070,10 @@ start
 #> Key: <program>
 #>    program direct   fye N_starters fye_pct
 #>     <char>  <int> <int>      <int>   <num>
-#> 1:      CE    714   598       1312    45.6
-#> 2:      EE    669   668       1337    50.0
-#> 3:     ISE     12   393        405    97.0
-#> 4:      ME   1281  1053       2334    45.1
+#> 1:      CE    714   592       1306    45.3
+#> 2:      EE    669   673       1342    50.1
+#> 3:     ISE     12   395        407    97.1
+#> 4:      ME   1281  1048       2329    45.0
 ```
 
 The results indicate (for the case study data) a potential under-count

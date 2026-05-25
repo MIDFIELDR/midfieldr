@@ -175,7 +175,7 @@ are implemented:
   the upper limit of the institution’s data range are labeled for
   possible exclusion.
 
-*Reminder.*   midfielddata datasets are for practice, not research.
+*Reminder.*   midfielddata is for practice, not research.
 
 ## Load data
 

@@ -106,7 +106,7 @@ We use `student` and `term` to identify starters.
 
 4.  Filter by program.
 
-*Reminder.*   midfielddata datasets are for practice, not research.
+*Reminder.*   midfielddata is for practice, not research.
 
 ## Load data
 
@@ -460,9 +460,9 @@ DT
 #>    2:      EE 141001 MCID3111145102
 #>    3:     ISE 143501 MCID3111150194
 #>   ---                              
-#> 4051:      EE 141001 MCID3112619118
-#> 4052:      EE 141001 MCID3112619484
-#> 4053:      ME 141901 MCID3112619666
+#> 4046:      EE 141001 MCID3112619118
+#> 4047:      EE 141001 MCID3112619484
+#> 4048:      ME 141901 MCID3112619666
 ```
 
 *Select.*   Omit unnecessary variables.
@@ -478,9 +478,9 @@ DT
 #>    2: MCID3111145102      EE
 #>    3: MCID3111150194     ISE
 #>   ---                       
-#> 4051: MCID3112619118      EE
-#> 4052: MCID3112619484      EE
-#> 4053: MCID3112619666      ME
+#> 4046: MCID3112619118      EE
+#> 4047: MCID3112619484      EE
+#> 4048: MCID3112619666      ME
 ```
 
 ## Reusable code

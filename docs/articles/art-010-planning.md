@@ -118,7 +118,7 @@ data. A researcher transitioning from working with the practice data to
 the research data should find that their scripts need little (if any)
 modification.
 
-*Reminder.*   midfielddata datasets are for practice, not research.
+*Reminder.*   midfielddata is for practice, not research.
 
 ## Which programs?
 

@@ -27,6 +27,8 @@
 
 - [`cip`](https://midfieldr.github.io/midfieldr/reference/cip.md) :
   Table of academic programs
+- [`cip2010`](https://midfieldr.github.io/midfieldr/reference/cip2010.md)
+  : Alternate table of academic programs
 - [`fye_proxy`](https://midfieldr.github.io/midfieldr/reference/fye_proxy.md)
   : Starting program proxies for FYE students
 - [`baseline_mcid`](https://midfieldr.github.io/midfieldr/reference/baseline_mcid.md)

@@ -4,21 +4,32 @@
 
 **Current development version**
 
+New features
+
+- Add data set `cip2010`, constructed from a recent download of the
+  source file (`CIPCode2010.csv`) from NCES. Has the same data structure
+  as the existing `cip` dataset, but with more rows.
+
 Minor improvements
 
-- Revise “Get started” article for brief but comprehensive introduction
-  to all functions.
 - New versions of toy data and case study data for consistency with
   midfielddata.
 - Revise README for brevity. Use toy data to illustrate usage.
 
-Bug fix
+Bug fixes
 
 - In vignettes, fixed `.SD[]` where finding the first instance of a term
   should return more than one row, e.g., graduating with a double
   degree.
 - This same fix added two rows to the `study_observations` built-in data
   set.
+
+On the website
+
+- Revise “Get started” article for brief but comprehensive introduction
+  to all functions.
+- New article to demonstrate transforming NCES CIP code files into a
+  midfieldr-compatible data structure.
 
 ## version 1.0.3
 

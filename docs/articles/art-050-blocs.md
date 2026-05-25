@@ -72,7 +72,7 @@ any) yield more than one observation (program) for the same ID.
 
 3.  Filter by program.
 
-*Reminder.*   midfielddata datasets are for practice, not research.
+*Reminder.*   midfielddata is for practice, not research.
 
 ## Load data
 

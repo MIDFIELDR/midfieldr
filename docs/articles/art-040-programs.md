@@ -113,7 +113,7 @@ library(data.table)
 ```
 
 *Loads with midfieldr.*   Prepared data, adapted from ([NCES
-2010](#ref-NCES:2010)). View data dictionary via
+2010](#ref-NCES:2010)). The data dictionary is documented in
 [`?cip`](https://midfieldr.github.io/midfieldr/reference/cip.md).
 
 - `cip`
@@ -830,8 +830,8 @@ selected_programs <- selected_programs[, .(cip6, program)]
 
 [◁ Degree
 seeking](https://midfieldr.github.io/midfieldr/articles/art-030-degree-seeking.md)
-   [▲ top of page](#top)    [Blocs
-▷](https://midfieldr.github.io/midfieldr/articles/art-050-blocs.md)
+   [▲ top of page](#top)    [Alternative CIPs
+▷](https://midfieldr.github.io/midfieldr/articles/art-141-alternative-cip.md)
 
 ------------------------------------------------------------------------
 

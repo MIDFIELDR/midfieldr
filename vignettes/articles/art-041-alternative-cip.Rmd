@@ -1,0 +1,365 @@
+---
+title: "Alternative CIPs"
+format:
+  gfm:
+    html-table-processing: none
+bibliography: ../../inst/REFERENCES.bib
+link-citations: true
+---
+
+```{r setup}
+#| include: false
+
+# for any figures generated in the article
+knitr::opts_chunk$set(fig.path = "figures/art-041-")
+
+# for any "child" arguments in r-code-chunks
+library("rprojroot")
+path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
+```
+
+```{r child = paste0(path_to_rmd, "/common-setup.Rmd")}
+```
+
+```{r}
+#| echo: false
+options(datatable.print.topn = 10)
+```
+
+
+Transforming primary-source program data from the US Integrated Postsecondary Education Data System (IPEDS) to the CIP data structure used by midfieldr. 
+
+As of this writing (2026--05), the 2020 and 2010 (and earlier) versions of the US Classification of Instructional Programs (CIP) codes are downloadable from the IPEDS website [@cipcode:2026] under file names: 
+
+- `CIPCode2020.csv`
+- `CIPCode2010.csv`
+
+In this article, we demonstrate transforming the data in the 2010 source file into the form required by midfieldr, resulting in the new data set `cip2010` included with the latest version of midfieldr. The procedure could be used to perform a similar transformation of `CIPCode2020.csv` as well. 
+
+
+
+## Goals
+
+The data set `cip` included with the earliest version of midfieldr is based on the IPEDS 2010 CIP data. However, `cip` content is not identical to the `cip2010` content. There are some typographical differences and the original `cip` data has fewer rows, thus fewer 6-digit codes. 
+
+If for any reason the legacy `cip` data set fails to meet a user's needs, an alternative is to use the 2010 or 2020 primary-source data files from IPEDS. In this article, we demonstrate how to transform such data to the CIP format usable by the midfieldr tools. 
+
+
+If you are writing your own script to follow along, we use these packages in this article:
+
+```{r}
+# Load packages
+library(midfieldr)
+library(data.table)
+```
+
+
+*Usage.* &nbsp; To use the alternative CIP data set included with midfieldr, use `cip2010` as the value of the `cip` argument. For example, 
+
+```{r}
+# Using the default cip
+filter_cip("^1408", cip = cip)
+
+
+# Using the alternate cip
+filter_cip("^1408", cip = cip2010)
+```
+
+
+
+
+## Get started
+
+Assign a new name to the legacy `cip` data set included with midfieldr, allowing us retain the original data set while using the name `cip` for the new work. 
+
+```{r}
+# Allows us to use "cip" as an object name  
+legacy_cip <- copy(midfieldr::cip)
+```
+
+```{r}
+#| echo: false
+# Use package rprojrot to help with relative file paths
+path_to_raw_data <- find_root_file("data-raw", 
+                                   criterion = has_file("DESCRIPTION"))
+path_to_csv_file <- paste0(path_to_raw_data, "/CIPCode2010.csv")
+```
+
+The first step is to download the CSV file from the IPEDs website. After saving it to a convenient directory, construct a path to that file (`path_to_csv_file`) and import the data with: 
+
+```{r}
+# Import the 2010 CIP file in data.table format
+cip <- fread(path_to_csv_file, colClasses = "character")
+```
+
+The `dplyr::glimpse()` function is quite useful for a first impression of the data. (One could also use base R `str()`.)
+
+```{r}
+# View the result
+dplyr::glimpse(cip)
+```
+
+To construct our own CIP data set, we need three columns: 
+
+```{r}
+# Select columns
+cols_we_want <- c("CIPFamily", "CIPCode", "CIPTitle")
+cip <- cip[, ..cols_we_want]
+
+# View the result
+dplyr::glimpse(cip)
+```
+
+Closer look at a sample of our primary-source data. 
+
+```{r}
+# Set the seed for reproducibility 
+set.seed(202612)
+
+# Extract a sample of 15 rows and reset the seed
+x <- cip[sample(100:400, 15)]
+set.seed(NULL)
+
+# Order the rows by the CIP code
+setorderv(x, "CIPCode")
+
+# View the result
+x
+```
+
+Viewing the result, we observe:
+
+- `CIPFamily` corresponds to `cip2` in midfieldr.
+- `CIPCode` contains *all program codes* in a single column. In midfieldr, the 2-, 4-, and 6-digit codes are separated into columns `cip2`, `cip4`, and `cip6`. 
+- `CIPTitle` contains *all program names* in a single column. In midfieldr, the the 2-, 4-, and 6-digit names are separated into columns `cip2name`, `cip4name`, and `cip6name`.
+
+When constructing the midfieldr legacy CIP data set, some values were changed from those in the source file, such as removing the decimal point separator in the 4- and 6-digit codes or replacing slashes ("/") with commas (","). For example, compare the `13.1209` entry above to its equivalent in the midfieldr legacy CIP data:
+
+```{r}
+# CIPCode2010
+filter_cip("13.1209", cip = cip)
+
+# midfieldr
+filter_cip("131209", cip = legacy_cip)[, .(cip2, cip6, cip6name)]
+```
+
+Additionally, source-file 2-digit program names are in all-caps; in midfieldr all program names are in title-case.
+
+```{r}
+# CIPCode2010
+unique(cip[CIPCode == "04"])[, .(CIPCode, CIPTitle)]
+
+# midfieldr
+unique(filter_cip("^04", cip = legacy_cip)[, .(cip2, cip2name)])
+```
+
+
+
+
+
+
+## Transforming the source data
+
+```{r}
+#| echo: false
+options(datatable.print.topn = 5)
+```
+
+*Editing.* &nbsp; Omit the periods in the codes and titles. 
+
+```{r}
+# Omit the period separator on the CIP code
+cip <- cip[, CIPCode := gsub("[.]", "", CIPCode)]
+
+# Omit the period at the end of each title
+cip <- cip[, CIPTitle := gsub("[.]", "", CIPTitle)]
+
+# Verify the result
+filter_cip("131209", cip = cip)
+```
+
+Count the number of digits in `CIPCode`, expected to be 2, 4, or 6. 
+
+```{r}
+# Add a column
+cip[, N_digits := nchar(CIPCode)]
+
+# View result
+dplyr::glimpse(cip)
+
+# Confirm 2, 4, or 6 digits
+unique(cip$N_digits)
+```
+
+*Split* &nbsp; Create a separate data frame for 2-digit codes and names, keyed by `CIPFamily`.
+
+```{r}
+# Unique 2-digit codes and names
+cip2 <- cip[N_digits == 2, .(CIPFamily, 
+                             cip2 = CIPCode, 
+                             cip2name = CIPTitle)]
+# View the result
+dplyr::glimpse(cip2)
+```
+
+Repeat for the 4-digit codes and names and add a 2-digit code extracted from the `CIPCode` column we can compare to `CIPFamily` to ensure they agree. 
+
+```{r}
+# Unique 4-digit codes and names, with cip2 codes derived from cip4
+cip4 <- cip[N_digits == 4, .(CIPFamily, 
+                             cip2 = substr(CIPCode, 1, 2), 
+                             cip4 = CIPCode, 
+                             cip4name = CIPTitle)]
+# View the result
+dplyr::glimpse(cip4)
+```
+
+Repeat for the 6-digit codes and names.
+
+```{r}
+# Unique 6-digit codes and names, with cip2 and cip4 codes derived from cip6
+cip6 <- cip[N_digits == 6, .(CIPFamily, 
+                             cip2 = substr(CIPCode, 1, 2), 
+                             cip4 = substr(CIPCode, 1, 4), 
+                             cip6 = CIPCode, 
+                             cip6name = CIPTitle)]
+# View the result
+dplyr::glimpse(cip6)
+```
+
+Compare the 2-digit codes in each data frame. If the data were correctly entered, this check for equality should all be TRUE. 
+
+```{r}
+# This check for 2-digit equality should all be TRUE
+all.equal(cip2$CIPFamily, cip2$cip2)
+all.equal(cip4$CIPFamily, cip4$cip2)
+all.equal(cip6$CIPFamily, cip6$cip2)
+```
+
+*Editing.* &nbsp;  Convert the 2-digit names from all-caps to title-case. Here we use two functions from the stringr package. 
+
+```{r}
+library(stringr)
+
+# Convert to title case
+cip2[, cip2name := str_to_title(cip2name)]
+
+# Use lowercase "and"
+cip2[, cip2name := str_replace_all(cip2name, "And", "and")]
+
+# View result
+cip2[, .(cip2, cip2name)]
+```
+
+*Combine.* &nbsp; Next, select the columns we want for the joining operations.  
+
+```{r}
+# Select 6-digit columns
+cols_we_want <- c("cip2", "cip4", "cip6", "cip6name")
+cip6 <- cip6[, ..cols_we_want]
+
+# Select 4-digit columns
+cols_we_want <- c("cip2", "cip4", "cip4name")
+cip4 <- cip4[, ..cols_we_want]
+
+# Select 2-digit columns
+cols_we_want <- c("cip2", "cip2name")
+cip2 <- cip2[, ..cols_we_want]
+```
+
+Now, left-join `cip4` to `cip6`, matching on the 2- and 4-digit code columns. 
+
+```{r}
+# Join `cip4` to `cip6` 
+cip <- cip4[cip6, on = c("cip2", "cip4")]
+```
+
+Now, left-join `cip2` to the result, matching on the 2-digit code columns. 
+
+```{r}
+# Left join `cip2` to `cip` from above
+cip <- cip2[cip, on = c("cip2")]
+
+# Ensure row order and examine the result
+setorderv(cip, c("cip6"))
+cip
+```
+
+
+## Program undecided or unspecified
+
+Lastly, we add a row to the CIP data to includes one non-IPEDS code (999999) for Undecided or Unspecified, instances in which institutions reported no program information or that students were not enrolled in a program.
+
+
+```{r}
+name_99 <- "Undecided/Unspecified (non-IPEDS)"
+row_99  <- data.table(cip2 = "99", 
+                            cip4 = "9999", 
+                            cip6 = "999999", 
+                            cip2name = name_99, 
+                            cip4name = name_99, 
+                            cip6name = name_99)
+
+
+cip <- rbindlist(list(cip, row_99), use.names = TRUE)
+cip
+```
+
+
+*Verify prepared data.* &nbsp; `cip2010`, included with midfieldr, contains the CIP data frame developed above. Here we verify that the two data frames have the same content.
+
+```{r}
+# Demonstrate equivalence
+check_equiv_frames(cip, cip2010)
+```
+
+
+
+
+
+```{r}
+#| echo: false
+#| eval: false
+
+# Execute manually to store data to package
+
+# cip2010 <- copy(cip)
+# 
+# usethis::use_data(
+#   cip2010,
+#   internal  = FALSE,
+#   overwrite = TRUE
+# )
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+***
+
+[&#9665; Programs](art-040-programs.html) &nbsp;&nbsp; <a href="#top">&#9650; top of page</a> &nbsp;&nbsp; [Blocs &#9655;](art-050-blocs.html)
+
+***
+
+
+
+
+
+
+```{r child = paste0(path_to_rmd, "/common-closing.Rmd")}
+```

@@ -68,7 +68,7 @@ We prepare the data for use as input to
 and use the results to construct multiway charts ordered by category
 median values and by category percentage values.
 
-*Reminder.*   midfielddata datasets are for practice, not research.
+*Reminder.*   midfielddata is for practice, not research.
 
 ## Load data
 

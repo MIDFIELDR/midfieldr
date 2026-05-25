@@ -13,8 +13,8 @@ check](https://github.com/MIDFIELDR/midfieldr/actions/workflows/R-CMD-check.yaml
 
 ## Overview
 
-midfieldr is an R package that provides tools and methods for studying
-undergraduate student-level records from the MIDFIELD database.
+Provides tools and demonstrates methods for working with individual
+undergraduate student-level records (registrar’s data) in R.
 
 - `filter_cip()` selects rows of program codes that match search terms
 - `select_required()` selects a minimum set of columns required by
@@ -56,11 +56,13 @@ version from GitHub.
 pak::pak("MIDFIELDR/midfieldr")
 ```
 
-midfieldr is designed to operate on the four data tables of the MIDFIELD
-research database. A sample of that database is available in the
-midfielddata package ([Layton et al.
-2026](#ref-Layton+Long+Ohland:2026:midfielddata)). Install from the
-MIDFIELDR drat repository with:
+midfieldr interacts with practice data provided in the midfielddata
+package ([Layton et al.
+2026](#ref-Layton+Long+Ohland:2026:midfielddata)) or with any data
+structure modeled on MIDFIELD ([Ohland
+2023](#ref-ohland:midfield:2023)), a database managed since 2023 by the
+American Society for Engineering Education. midfielddata is installed
+from the MIDFIELDR drat repository with:
 
 ``` r
 install.packages("midfielddata",
@@ -84,12 +86,10 @@ These are small data sets of 150 unique students used in examples.
 
 ``` r
 # Initialize the working data frame using toy_term
-
 DT <- toy_term[, .(mcid)]
 DT <- unique(DT)
 
 # Add variables relating to the timely term
-
 DT <- add_timely_term(DT, toy_term)
 DT
 #>                mcid term_i       level_i adj_span timely_term
@@ -103,7 +103,6 @@ DT
 #> 150: MCID3112845932  20173 01 First-year        6       20231
 
 # Add variables relating to data sufficiency
-
 DT <- add_data_sufficiency(DT, toy_term)
 DT[order(data_sufficiency)]
 #>                mcid       level_i adj_span timely_term term_i lower_limit
@@ -126,7 +125,6 @@ DT[order(data_sufficiency)]
 #> 150:       20181          include
 
 # Add variables relating to completion status
-
 DT <- add_completion_status(DT, toy_degree)
 DT[order(completion_status)]
 #>                mcid       level_i adj_span timely_term term_i lower_limit
@@ -149,7 +147,6 @@ DT[order(completion_status)]
 #> 150:       20181    exclude-upper        <NA>              <NA>
 
 # Filter for data sufficiency and timely completion
-
 rows_we_want <- DT$data_sufficiency == "include" & DT$completion_status == "timely"
 DT <- DT[rows_we_want]
 DT
@@ -173,11 +170,9 @@ DT
 #> 50:       20181          include       20143            timely
 
 # Join demographic data
-
 DT <- toy_student[DT, .(mcid, race, sex), on = "mcid"]
 
 # Label the student bloc
-
 DT[, bloc := "graduate"]
 DT
 #>               mcid     race    sex     bloc
@@ -195,9 +190,6 @@ DT
 
 The development of midfieldr and midfielddata was supported by the US
 National Science Foundation through grant numbers 1545667 and 2142087.
-midfieldr is also designed to interact with the full MIDFIELD database,
-the management of which was transferred to the American Society for
-Engineering Education in 2023.
 
 ## References
 
@@ -217,6 +209,13 @@ Layton, Richard, Russell Long, Susan Lord, Matthew Ohland, and Marisa
 Orr. 2026. *<span class="nocase">midfielddata: MIDFIELD Data
 Sample</span>*. R package version 0.2.3.
 <https://midfieldr.github.io/midfielddata/>.
+
+</div>
+
+<div id="ref-ohland:midfield:2023" class="csl-entry">
+
+Ohland, Matthew. 2023. *MIDFIELD, 2004–2023*.
+<https://midfield.online/>.
 
 </div>
 

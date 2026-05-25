@@ -8,12 +8,13 @@
 \description{
 \if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
 
-Provides tools and demonstrates methods for working with individual undergraduate student-level records (registrar's data) in 'R'. Tools include filters for program codes, data sufficiency, and timely completion. Methods include gathering blocs of records, computing quantitative metrics such as graduation rate, and creating charts to visualize comparisons. 'midfieldr' interacts with practice data provided in 'midfielddata', an R data package available at \url{https://midfieldr.github.io/midfielddata/}. 'midfieldr' is also designed to interact with the full MIDFIELD database, the management of which was transferred to the American Society for Engineering Education in 2023. The development of 'midfieldr' and 'midfielddata' was supported by the US National Science Foundation through grant numbers 1545667 and 2142087.
+Provides tools and demonstrates methods for working with individual undergraduate student-level records (registrar's data) in 'R'. Tools include filters for program codes, data sufficiency, and timely completion. Methods include gathering blocs of records, computing quantitative metrics such as graduation rate, and creating charts to visualize comparisons. 'midfieldr' interacts with practice data provided in the 'midfielddata' package or with any data structure modeled on the MIDFIELD database. The development of 'midfieldr' and 'midfielddata' was supported by the US National Science Foundation through grant numbers 1545667 and 2142087.
 }
 \seealso{
 Useful links:
 \itemize{
   \item \url{https://midfieldr.github.io/midfieldr/}
+  \item \url{https://midfieldr.github.io/midfielddata/}
   \item Report bugs at \url{https://github.com/MIDFIELDR/midfieldr/issues}
 }
 

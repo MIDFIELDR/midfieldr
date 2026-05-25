@@ -7,9 +7,8 @@ When working with student-level records, you should:
 - Define your metrics and the relevant student blocs
 - Develop the data processing steps that transform data to metrics
 
-*midfieldr* ([Layton et al.
-2026b](#ref-Layton+Long+Ohland:2026:midfieldr)) provides functions that
-contribute to this workflow in three ways:
+*midfieldr* provides functions that contribute to this workflow in three
+ways:
 
 1.  Subsetting data frames in a MIDFIELD-tailored fashion.
     - [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/filter_cip.md)
@@ -23,15 +22,12 @@ contribute to this workflow in three ways:
     - [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
     - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
 
-*midfielddata* ([Layton et al.
-2026a](#ref-Layton+Long+Ohland:2026:midfielddata)) contributes to this
-workflow by providing student-level records suitable for learning how to
-work with such data. midfielddata is also a model for setting up a
-credible structure for student records at one’s own institution for
-internal research completely separate from MIDFIELD. The practice data,
-however, are not suitable for drawing inferences about program
-attributes or student experiences. midfielddata supplies data for
-*practice*, not *research*.
+*midfielddata* contributes to this workflow by providing data sets
+suitable for learning and practicing basic data skills in manipulating
+student-level records. midfielddata also serves as a model database for
+registrar’s data in general. midfielddata are not, however, suitable for
+drawing inferences about program attributes or student
+experiences—midfielddata is for *practice*, not *research*.
 
 If you are writing your own script to follow along, we use these
 packages in this article:

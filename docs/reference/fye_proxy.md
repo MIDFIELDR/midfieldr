@@ -44,4 +44,5 @@ values cannot be commingled with the MIDFIELD research database.
 ## See also
 
 Other cip-data:
-[`cip`](https://midfieldr.github.io/midfieldr/reference/cip.md)
+[`cip`](https://midfieldr.github.io/midfieldr/reference/cip.md),
+[`cip2010`](https://midfieldr.github.io/midfieldr/reference/cip2010.md)

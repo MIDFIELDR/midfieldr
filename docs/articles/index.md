@@ -17,6 +17,8 @@
 - [Degree
   seeking](https://midfieldr.github.io/midfieldr/articles/art-030-degree-seeking.md):
 - [Programs](https://midfieldr.github.io/midfieldr/articles/art-040-programs.md):
+- [Alternative
+  CIPs](https://midfieldr.github.io/midfieldr/articles/art-041-alternative-cip.md):
 - [Blocs](https://midfieldr.github.io/midfieldr/articles/art-050-blocs.md):
 - [FYE
   proxies](https://midfieldr.github.io/midfieldr/articles/art-060-fye-proxies.md):

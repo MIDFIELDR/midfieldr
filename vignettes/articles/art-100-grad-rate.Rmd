@@ -356,7 +356,7 @@ DT
 DT <- term[DT, .(mcid, term, cip6), on = c("mcid")]
 DT <- DT[!cip6 %like% "999999"]
 setorderv(DT, cols = c("mcid", "term"))
-DT <- DT[, .SD[which.min(term)], by = "mcid"]
+DT <- DT[, .SD[term == min(term)], by = "mcid"]
 DT <- DT[, .(mcid, cip6)]
 DT <- unique(DT)
 
@@ -410,7 +410,7 @@ DT <- degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
 
 # Filter by programs and first degree terms
 DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
-DT <- DT[, .SD[which.min(term_degree)], by = "mcid"]
+DT <- DT[, .SD[term_degree == min(term_degree)], by = "mcid"]
 DT[, c("cip6", "term_degree") := NULL]
 DT <- unique(DT)
 DT

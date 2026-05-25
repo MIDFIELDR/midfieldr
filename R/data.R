@@ -3,6 +3,13 @@
 # R/roxygen.R file.
 
 
+
+
+
+
+
+
+
 # -------------------------------------------------------------------
 
 #' Table of academic programs
@@ -17,35 +24,74 @@
 #' or Unspecified, instances in which institutions reported no program
 #' information or that students were not enrolled in a program.
 #'
-#' The MIDFIELD research database include CIPs for undergraduate pre-majors
-#' such as pre-med (511102), pre-law (220001), and pre-vet (511104).
-#'
 #' @format `data.table` with 1582 rows and 6 columns keyed by the 6-digit CIP
 #'   code:
 #'
 #' \describe{
 #'
-#'   \item{`cip6`}{Character 6-digit code representing "specific
+#'   \item{`cip6`}{Character, 6-digit code representing "specific
 #'   instructional programs" (US National Center for Education Statistics).}
 #'
-#'   \item{`cip6name`}{Character program name at the 6-digit level}
+#'   \item{`cip6name`}{Character, program name at the 6-digit level}
 #'
-#'   \item{`cip4`}{Character 4-digit code (the first 4 digits of `cip6`)
+#'   \item{`cip4`}{Character, 4-digit code (the first 4 digits of `cip6`)
 #'   representing "intermediate groupings of programs that have
 #'   comparable content and objectives."}
 #'
-#'   \item{`cip4name`}{Character program name at the 4-digit level.}
+#'   \item{`cip4name`}{Character, program name at the 4-digit level.}
 #'
-#'   \item{`cip2`}{Character 2-digit code (the first 2 digits of `cip6`)
+#'   \item{`cip2`}{Character, 2-digit code (the first 2 digits of `cip6`)
 #'   representing "the most general groupings of related programs."}
 #'
-#'   \item{`cip2name`}{Character program name at the 2-digit level.}
+#'   \item{`cip2name`}{Character, program name at the 2-digit level.}
 #'
 #' }
 #'
 #' @family cip-data
 #'
 "cip"
+
+
+#' Alternate table of academic programs
+#'
+#' A data table of the 2010 Classification of Instructional Programs (CIP) 
+#' accessed in 2026 from the US National Center for Education Statistics 
+#' (NCES). Like the `cip` data set originally included with midfieldr, 
+#' `cip2010` provides codes and names for instructional programs organized 
+#' on three levels: a 2-digit series, a 4-digit series, and a 6-digit series. 
+#' 
+#' Both data sets include one non-IPEDS code (999999) for Undecided
+#' or Unspecified, instances in which institutions reported no program
+#' information or that students were not enrolled in a program.
+#'
+#' @format `data.table` with 1849 rows and 6 columns keyed by the 6-digit CIP
+#'   code:
+#'
+#' \describe{
+#'
+#'   \item{`cip6`}{Character, 6-digit code representing "specific
+#'   instructional programs" (US National Center for Education Statistics).}
+#'
+#'   \item{`cip6name`}{Character, program name at the 6-digit level}
+#'
+#'   \item{`cip4`}{Character, 4-digit code (the first 4 digits of `cip6`)
+#'   representing "intermediate groupings of programs that have
+#'   comparable content and objectives."}
+#'
+#'   \item{`cip4name`}{Character, program name at the 4-digit level.}
+#'
+#'   \item{`cip2`}{Character, 2-digit code (the first 2 digits of `cip6`)
+#'   representing "the most general groupings of related programs."}
+#'
+#'   \item{`cip2name`}{Character, program name at the 2-digit level.}
+#'
+#' }
+#'
+#' @family cip-data
+#'
+"cip2010"
+
+
 
 # -------------------------------------------------------------------
 
