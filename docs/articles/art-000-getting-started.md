@@ -239,9 +239,10 @@ options(datatable.print.topn = 20)
 first_pass <- filter_cip("music")
 
 # Use the first pass as input to the second pass, select columns
-filter_cip("^50", 
-           cip = first_pass, 
-           select = c("cip6", "cip6name"))
+filter_cip("^50",
+  cip = first_pass,
+  select = c("cip6", "cip6name")
+)
 #>       cip6                                             cip6name
 #>     <char>                                               <char>
 #>  1: 500102                                         Digital Arts
@@ -645,10 +646,11 @@ effects in a multiway chart.
 ``` r
 
 # Order the categorical variables by the median of the response
-DT_multiway <- order_multiway(DT, 
-                              quantity = "N", 
-                              categories = c("inst", "race_ethn"), 
-                              method = "median") 
+DT_multiway <- order_multiway(DT,
+  quantity = "N",
+  categories = c("inst", "race_ethn"),
+  method = "median"
+)
 # View result
 DT_multiway
 #>              inst       race_ethn     N inst_median race_ethn_median
@@ -672,15 +674,18 @@ faceted chart we plot below.
 library(ggplot2)
 ggplot(DT_multiway, aes(x = N, y = race_ethn)) +
   facet_wrap(vars(inst), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = inst_median), 
-             linetype = 2, 
-             color = "darkgray") +
+  geom_vline(aes(xintercept = inst_median),
+    linetype = 2,
+    color = "darkgray"
+  ) +
   scale_x_log10() +
-  labs(x = "Number of students (log base 10)", 
-       y = "", 
-       title = "Population distribution at matriculation", 
-       subtitle = "1998-2018", 
-       caption = "Source: midfielddata") +
+  labs(
+    x = "Number of students (log base 10)",
+    y = "",
+    title = "Population distribution at matriculation",
+    subtitle = "1998-2018",
+    caption = "Source: midfielddata"
+  ) +
   geom_point()
 ```
 
@@ -717,15 +722,15 @@ data(student, course, term, degree)
 
 # Optional. Copy of source files with all variables
 source_student <- copy(student)
-source_course  <- copy(course)
-source_term    <- copy(term)
-source_degree  <- copy(degree)
+source_course <- copy(course)
+source_term <- copy(term)
+source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
 student <- select_required(source_student)
-course  <- select_required(source_course)
-term    <- select_required(source_term)
-degree  <- select_required(source_degree)
+course <- select_required(source_course)
+term <- select_required(source_term)
+degree <- select_required(source_degree)
 ```
 
 The [`copy()`](https://rdrr.io/pkg/data.table/man/copy.html) function

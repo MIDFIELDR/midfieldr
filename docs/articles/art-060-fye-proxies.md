@@ -717,9 +717,11 @@ The three essential arguments for
 [`mice()`](https://amices.org/mice/reference/mice.html) are the `DT`
 data frame, the `method_vector`, and the `predictor_matrix`. The number
 of multiple imputations `m` is set to 37 as discussed in [Missing
-data](#missing-data). The default `seed` argument is NULL, but by
-setting the seed as shown the vignette results are reproducible. Setting
-`printFlag = TRUE` displays progress in the console.
+data](#missing-data). Setting `printFlag = TRUE` displays progress in
+the console.
+
+The default `seed` argument is NULL, but by setting the seed as shown
+the vignette results are reproducible.
 
 For the practice data, 5 iterations of 37 imputations takes about 3
 minutes (depending on your machine). For MIDFIELD research data,
@@ -863,7 +865,7 @@ two data frames have the same content.
 
 # Demonstrate equivalence
 check_equiv_frames(DT, fye_proxy)
-#> [1] FALSE
+#> [1] TRUE
 ```
 
 ## Assessing FYE proxies

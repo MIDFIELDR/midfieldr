@@ -7,7 +7,7 @@ of the analysis illustrated in the package articles.
 ## Usage
 
 ``` r
-data(baseline_mcid)
+baseline_mcid
 ```
 
 ## Format

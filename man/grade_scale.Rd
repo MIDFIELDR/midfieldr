@@ -13,7 +13,7 @@ scale from A to F.}
 }
 }
 \usage{
-data(grade_scale)
+grade_scale
 }
 \description{
 Data frame of letter grades and conventional point assignments used for

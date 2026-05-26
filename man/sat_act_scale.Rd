@@ -20,7 +20,7 @@ corresponding to the ACT composite score.}
 ACT/SAT Concordance (2018) ACT Education Corp. \url{https://www.act.org/content/dam/act/unsecured/documents/ACT-SAT-Concordance-Tables.pdf}
 }
 \usage{
-data(sat_act_scale)
+sat_act_scale
 }
 \description{
 Data frame for converting between ACT and SAT scores. A range of SAT scores

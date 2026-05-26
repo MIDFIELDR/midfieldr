@@ -195,7 +195,7 @@ After saving it to a convenient directory, label a path to that file
 <span><span class="co">#&gt;  $ CIPTitle : chr  "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES"..</span></span></code></pre></div>
 <p>Closer look at a sample of our primary-source data.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Set the seed for reproducibility </span></span>
+<code class="sourceCode R"><span><span class="co"># Set the seed for reproducibility</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">202612</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Extract a sample of 15 rows and reset the seed</span></span>
@@ -311,9 +311,10 @@ titles.</p>
 <code>CIPFamily</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Unique 2-digit codes and names</span></span>
-<span><span class="va">DT2</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">N_digits</span> <span class="op">==</span> <span class="fl">2</span>, <span class="fu">.</span><span class="op">(</span><span class="va">CIPFamily</span>, </span>
-<span>                             cip2 <span class="op">=</span> <span class="va">CIPCode</span>, </span>
-<span>                             cip2name <span class="op">=</span> <span class="va">CIPTitle</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT2</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">N_digits</span> <span class="op">==</span> <span class="fl">2</span>, <span class="fu">.</span><span class="op">(</span><span class="va">CIPFamily</span>,</span>
+<span>  cip2 <span class="op">=</span> <span class="va">CIPCode</span>,</span>
+<span>  cip2name <span class="op">=</span> <span class="va">CIPTitle</span></span>
+<span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co"># View the result</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">DT2</span>, strict.width <span class="op">=</span> <span class="st">"cut"</span>, give.attr <span class="op">=</span> <span class="cn">FALSE</span>, vec.len <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   48 obs. of  3 variables:</span></span>
@@ -325,10 +326,11 @@ of the 4-digit code to compare to <code>CIPFamily</code> (also
 2-digits)</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Unique 4-digit codes and names, with cip2 codes derived from cip4</span></span>
-<span><span class="va">DT4</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">N_digits</span> <span class="op">==</span> <span class="fl">4</span>, <span class="fu">.</span><span class="op">(</span><span class="va">CIPFamily</span>, </span>
-<span>                             cip2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">CIPCode</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, </span>
-<span>                             cip4 <span class="op">=</span> <span class="va">CIPCode</span>, </span>
-<span>                             cip4name <span class="op">=</span> <span class="va">CIPTitle</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT4</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">N_digits</span> <span class="op">==</span> <span class="fl">4</span>, <span class="fu">.</span><span class="op">(</span><span class="va">CIPFamily</span>,</span>
+<span>  cip2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">CIPCode</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  cip4 <span class="op">=</span> <span class="va">CIPCode</span>,</span>
+<span>  cip4name <span class="op">=</span> <span class="va">CIPTitle</span></span>
+<span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co"># View the result</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">DT4</span>, strict.width <span class="op">=</span> <span class="st">"cut"</span>, give.attr <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   422 obs. of  4 variables:</span></span>
@@ -340,11 +342,12 @@ of the 4-digit code to compare to <code>CIPFamily</code> (also
 4-digit codes for comparison and joining later.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Unique 6-digit codes and names, with cip2 and cip4 codes derived from cip6</span></span>
-<span><span class="va">DT6</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">N_digits</span> <span class="op">==</span> <span class="fl">6</span>, <span class="fu">.</span><span class="op">(</span><span class="va">CIPFamily</span>, </span>
-<span>                             cip2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">CIPCode</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, </span>
-<span>                             cip4 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">CIPCode</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>, </span>
-<span>                             cip6 <span class="op">=</span> <span class="va">CIPCode</span>, </span>
-<span>                             cip6name <span class="op">=</span> <span class="va">CIPTitle</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT6</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">N_digits</span> <span class="op">==</span> <span class="fl">6</span>, <span class="fu">.</span><span class="op">(</span><span class="va">CIPFamily</span>,</span>
+<span>  cip2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">CIPCode</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  cip4 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">CIPCode</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>,</span>
+<span>  cip6 <span class="op">=</span> <span class="va">CIPCode</span>,</span>
+<span>  cip6name <span class="op">=</span> <span class="va">CIPTitle</span></span>
+<span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co"># View the result</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">DT6</span>, strict.width <span class="op">=</span> <span class="st">"cut"</span>, give.attr <span class="op">=</span> <span class="cn">FALSE</span>, vec.len <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   1848 obs. of  5 variables:</span></span>
@@ -482,12 +485,14 @@ program.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a data table with one row</span></span>
 <span><span class="va">txt_99</span> <span class="op">&lt;-</span> <span class="st">"Undecided/Unspecified (non-IPEDS)"</span></span>
-<span><span class="va">row_99</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>cip2 <span class="op">=</span> <span class="st">"99"</span>, </span>
-<span>                     cip4 <span class="op">=</span> <span class="st">"9999"</span>, </span>
-<span>                     cip6 <span class="op">=</span> <span class="st">"999999"</span>, </span>
-<span>                     cip2name <span class="op">=</span> <span class="va">txt_99</span>, </span>
-<span>                     cip4name <span class="op">=</span> <span class="va">txt_99</span>, </span>
-<span>                     cip6name <span class="op">=</span> <span class="va">txt_99</span><span class="op">)</span></span>
+<span><span class="va">row_99</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span></span>
+<span>  cip2 <span class="op">=</span> <span class="st">"99"</span>,</span>
+<span>  cip4 <span class="op">=</span> <span class="st">"9999"</span>,</span>
+<span>  cip6 <span class="op">=</span> <span class="st">"999999"</span>,</span>
+<span>  cip2name <span class="op">=</span> <span class="va">txt_99</span>,</span>
+<span>  cip4name <span class="op">=</span> <span class="va">txt_99</span>,</span>
+<span>  cip6name <span class="op">=</span> <span class="va">txt_99</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Bind the new row to the working data table</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">row_99</span><span class="op">)</span>, use.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>

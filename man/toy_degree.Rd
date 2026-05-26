@@ -20,7 +20,7 @@ in Finance, etc.}
 }
 }
 \usage{
-data(toy_degree)
+toy_degree
 }
 \description{
 Selected variables modeled on those in the \code{degree} practice data for use in

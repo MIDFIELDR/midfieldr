@@ -21,7 +21,7 @@ ratio of \code{graduates} to \code{ever_enrolled}, in percent.}
 }
 }
 \usage{
-data(study_results)
+study_results
 }
 \description{
 Data table of longitudinal stickiness for the four programs of the case study

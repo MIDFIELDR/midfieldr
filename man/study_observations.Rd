@@ -20,7 +20,7 @@ belongs.}
 }
 }
 \usage{
-data(study_observations)
+study_observations
 }
 \description{
 Data table of post-processed observations of students ever enrolled in, and

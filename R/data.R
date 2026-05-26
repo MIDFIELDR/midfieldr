@@ -3,30 +3,25 @@
 # R/roxygen.R file.
 
 
-
-
-
-
-
-
-
 # -------------------------------------------------------------------
 
 #' Table of academic programs
 #'
 #' A data table based on the US National Center for Education Statistics (NCES),
-#' Integrated Postsecondary Education Data System (IPEDS), 2010 CIP,
-#' \url{http://nces.ed.gov/ipeds/cipcode/}. The data are codes and names for
-#' 1582 instructional programs organized on three levels: a 2-digit series, a
-#' 4-digit series, and a 6-digit series.
+#' Integrated Postsecondary Education Data System (IPEDS), 2010 CIP. The data 
+#' are codes and names for 1582 instructional programs organized on three 
+#' levels: a 2-digit series, a 4-digit series, and a 6-digit series.
 #'
 #' The midfielddata taxonomy includes one non-IPEDS code (999999) for Undecided
 #' or Unspecified, instances in which institutions reported no program
 #' information or that students were not enrolled in a program.
-#'
-#' @format `data.table` with 1582 rows and 6 columns keyed by the 6-digit CIP
-#'   code:
-#'
+#' 
+#' @usage  cip
+#' @family cip-data
+#' @source <https://nces.ed.gov/ipeds/cipcode/>
+#' 
+#' @format A `data.table` with 1582 rows and 6 columns keyed by the 
+#'         6-digit CIP code:
 #' \describe{
 #'
 #'   \item{`cip6`}{Character, 6-digit code representing "specific
@@ -44,26 +39,26 @@
 #'   representing "the most general groupings of related programs."}
 #'
 #'   \item{`cip2name`}{Character, program name at the 2-digit level.}
-#'
 #' }
-#'
-#' @family cip-data
-#'
 "cip"
 
 
 #' Alternate table of academic programs
 #'
-#' A data table of the 2010 Classification of Instructional Programs (CIP) 
-#' accessed in 2026 from the US National Center for Education Statistics 
-#' (NCES). Like the `cip` data set originally included with midfieldr, 
-#' `cip2010` provides codes and names for instructional programs organized 
-#' on three levels: a 2-digit series, a 4-digit series, and a 6-digit series. 
-#' 
-#' Both data sets include one non-IPEDS code (999999) for Undecided
+#' A data table of the 2010 Classification of Instructional Programs (CIP)
+#' accessed in 2026 from the US National Center for Education Statistics
+#' (NCES). Like the `cip` data set originally included with midfieldr,
+#' `cip2010` provides codes and names for instructional programs organized
+#' on three levels: a 2-digit series, a 4-digit series, and a 6-digit series.
+#'
+#' The midfielddata taxonomy includes one non-IPEDS code (999999) for Undecided
 #' or Unspecified, instances in which institutions reported no program
 #' information or that students were not enrolled in a program.
 #'
+#' @usage cip2010
+#' @family cip-data
+#' @source <https://nces.ed.gov/ipeds/cipcode/>
+#' 
 #' @format `data.table` with 1849 rows and 6 columns keyed by the 6-digit CIP
 #'   code:
 #'
@@ -84,13 +79,8 @@
 #'   representing "the most general groupings of related programs."}
 #'
 #'   \item{`cip2name`}{Character, program name at the 2-digit level.}
-#'
 #' }
-#'
-#' @family cip-data
-#'
 "cip2010"
-
 
 
 # -------------------------------------------------------------------
@@ -118,14 +108,14 @@
 #' `fye_proxy` holds only for the practice data in midfielddata---these values
 #' cannot be commingled with the MIDFIELD research database.
 #'
+#' @usage fye_proxy
+#' @family cip-data
+#'
 #' @format `data.table` with 4623 rows and 2 columns keyed by student ID:
 #' \describe{
 #'   `r var_mcid`
 #'   `r var_proxy`
 #'  }
-#'
-#' @family cip-data
-#'
 "fye_proxy"
 
 # -------------------------------------------------------------------
@@ -136,6 +126,9 @@
 #' package examples and articles. Sampled from an early version of the practice
 #' data, the toy data are not a current practice data sample.
 #'
+#' @usage toy_student
+#' @family toy-data
+#'  
 #' @format `data.table` with 15 rows and 13 columns keyed by student ID:
 #'   \describe{
 #'   `r var_mcid`
@@ -152,9 +145,6 @@
 #'   `r var_sat_verbal`
 #'   `r var_act_comp`
 #'   }
-#'
-#' @family toy-data
-#'
 "toy_student"
 
 # -------------------------------------------------------------------
@@ -164,6 +154,9 @@
 #' Selected variables modeled on those in the `course` practice data for use in
 #' package examples and articles. Sampled from an early version of the practice
 #' data, the toy data are not a current practice data sample.
+#'
+#' @usage toy_course
+#' @family toy-data
 #'
 #' @format `data.table` with 5863 rows and 12 columns keyed by student ID:
 #'   \describe{
@@ -180,9 +173,6 @@
 #'   `r var_grade`
 #'   `r var_discipline_midfield`
 #'   }
-#'
-#' @family toy-data
-#'
 "toy_course"
 
 # -------------------------------------------------------------------
@@ -192,6 +182,9 @@
 #' Selected variables modeled on those in the `term` practice data for use in
 #' package examples and articles. Sampled from an early version of the practice
 #' data, the toy data are not a current practice data sample.
+#'
+#' @usage toy_term
+#' @family toy-data
 #'
 #' @format `data.table` with 1114 rows and 13 columns keyed by student ID:
 #'   \describe{
@@ -209,9 +202,6 @@
 #'   `r var_gpa_term`
 #'   `r var_gpa_cumul`
 #'   }
-#'
-#' @family toy-data
-#'
 "toy_term"
 
 # -------------------------------------------------------------------
@@ -222,6 +212,9 @@
 #' package examples and articles. Sampled from an early version of the practice
 #' data, the toy data are not a current practice data sample.
 #'
+#' @usage toy_degree
+#' @family toy-data
+#'
 #' @format `data.table` with 93 rows and 4 columns keyed by student ID:
 #'   \describe{
 #'   `r var_mcid`
@@ -230,9 +223,6 @@
 #'   `r var_cip6_degree`
 #'   `r var_degree`
 #'   }
-#'
-#' @family toy-data
-#'
 "toy_degree"
 
 # -------------------------------------------------------------------
@@ -246,8 +236,10 @@
 #' programs of the case study and assigned them a custom label to be used for
 #' grouping and summarizing.
 #'
-#' @format `data.table` with 15 rows and 2 columns.
-#' The variables are:
+#' @usage study_programs
+#' @family case-study-data
+#'
+#' @format `data.table` with 15 rows and 2 columns. The variables are:
 #' \describe{
 #'  `r var_cip6`
 #'  \item{`program`}{Character, abbreviated labels for four engineering
@@ -255,9 +247,6 @@
 #'  Engineering), "ISE" (Industrial/Systems Engineering), and  "ME" (Mechanical
 #'  Engineering).}
 #' }
-#'
-#' @family case-study-data
-#'
 "study_programs"
 
 # -------------------------------------------------------------------
@@ -278,6 +267,9 @@
 #' This data structure facilitates grouping and summarizing by race, sex,
 #' program, and group.
 #'
+#' @usage study_observations
+#' @family case-study-data
+#'
 #' @format `data.table` with 8919 rows and 5 columns.
 #' The variables are:
 #' \describe{
@@ -287,9 +279,6 @@
 #'  `r var_program`
 #'  `r var_bloc`
 #' }
-#'
-#' @family case-study-data
-#'
 "study_observations"
 
 # -------------------------------------------------------------------
@@ -306,6 +295,9 @@
 #' the time span of available data. Results are based on data that have been
 #' filtered for data sufficiency, degree seeking, and timely completion.
 #'
+#' @usage study_results
+#' @family case-study-data
+#' 
 #' @format `data.table` with 50 rows and 6 columns:
 #' \describe{
 #'  `r var_program`
@@ -315,9 +307,6 @@
 #'  `r var_graduates`
 #'  `r var_stickiness`
 #' }
-#'
-#' @family case-study-data
-#'
 "study_results"
 
 # -------------------------------------------------------------------
@@ -328,13 +317,13 @@
 #' degree seeking. Provides a convenient bloc to start many of the analysis
 #' illustrated in the package articles.
 #'
+#' @usage baseline_mcid
+#' @family case-study-data
+#'
 #' @format `data.table` with 76875 rows and 1 column:
 #' \describe{
 #'   `r var_mcid`
 #' }
-#'
-#' @family case-study-data
-#'
 "baseline_mcid"
 
 
@@ -345,15 +334,15 @@
 #' Data frame of letter grades and conventional point assignments used for
 #' computing grade point averages.
 #'
+#' @usage grade_scale
+#' @family scales
+#'
 #' @format `data.table` with 12 rows and 2 columns:
 #' \describe{
 #'   \item{`letter_grade`}{Character, letter grades using the conventional US
 #'       scale from A to F.}
 #'   \item{`points`}{Numerical, 4.0 scale of points assigned to letter grades.}
 #' }
-#'
-#' @family scales
-#'
 "grade_scale"
 
 # -------------------------------------------------------------------
@@ -363,6 +352,11 @@
 #' Data frame for converting between ACT and SAT scores. A range of SAT scores
 #' converts to a single ACT score; an ACT score converts to a single
 #' value equivalent SAT score.
+#'
+#' @usage sat_act_scale
+#' @family scales
+#' @source ACT/SAT Concordance (2018) ACT Education Corp. <https://www.act.org/content/dam/act/unsecured/documents/ACT-SAT-Concordance-Tables.pdf>
+#' 
 #'
 #' @format `data.table` with 28 rows and 4 columns:
 #' \describe{
@@ -374,8 +368,4 @@
 #'   \item{`sat_upper`}{Numerical, total SAT, upper limit of range
 #'   corresponding to the ACT composite score.}
 #' }
-#'
-#' @family scales
-#' @source ACT/SAT Concordance (2018) ACT Education Corp. \url{https://www.act.org/content/dam/act/unsecured/documents/ACT-SAT-Concordance-Tables.pdf}
-#'
 "sat_act_scale"

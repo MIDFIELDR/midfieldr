@@ -114,10 +114,10 @@ class(cip_tbl)
 library(gt)
 wrapr::build_frame(
   "Table", "Each row is", "N students", "N rows", "N columns", "Mb memory" |
-    "course" , "one student per course per term", 97555, 3289532, 12L, 324.3 |
-    "term"   , "one student per term"           , 97555,  639915, 13L,  72.8 |
-    "student", "one student"                    , 97555,   97555, 13L,  17.3 |
-    "degree" , "one student per degree"         , 49543,   49665,  5L,   5.2
+    "course", "one student per course per term", 97555, 3289532, 12L, 324.3 |
+    "term", "one student per term", 97555, 639915, 13L, 72.8 |
+    "student", "one student", 97555, 97555, 13L, 17.3 |
+    "degree", "one student per degree", 49543, 49665, 5L, 5.2
 ) |>
   gt() |>
   tab_caption("Table 1. Student-level records in midfielddata") |>
@@ -198,9 +198,10 @@ options(datatable.print.topn = 20)
 first_pass <- filter_cip("music")
 
 # Use the first pass as input to the second pass, select columns
-filter_cip("^50", 
-           cip = first_pass, 
-           select = c("cip6", "cip6name"))
+filter_cip("^50",
+  cip = first_pass,
+  select = c("cip6", "cip6name")
+)
 
 # restore original data.table printout option
 options(datatable.print.topn = 3)
@@ -430,10 +431,11 @@ DT
 
 ```{r}
 # Order the categorical variables by the median of the response
-DT_multiway <- order_multiway(DT, 
-                              quantity = "N", 
-                              categories = c("inst", "race_ethn"), 
-                              method = "median") 
+DT_multiway <- order_multiway(DT,
+  quantity = "N",
+  categories = c("inst", "race_ethn"),
+  method = "median"
+)
 # View result
 DT_multiway
 ```
@@ -448,15 +450,18 @@ DT_multiway
 library(ggplot2)
 ggplot(DT_multiway, aes(x = N, y = race_ethn)) +
   facet_wrap(vars(inst), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = inst_median), 
-             linetype = 2, 
-             color = "darkgray") +
+  geom_vline(aes(xintercept = inst_median),
+    linetype = 2,
+    color = "darkgray"
+  ) +
   scale_x_log10() +
-  labs(x = "Number of students (log base 10)", 
-       y = "", 
-       title = "Population distribution at matriculation", 
-       subtitle = "1998-2018", 
-       caption = "Source: midfielddata") +
+  labs(
+    x = "Number of students (log base 10)",
+    y = "",
+    title = "Population distribution at matriculation",
+    subtitle = "1998-2018",
+    caption = "Source: midfielddata"
+  ) +
   geom_point()
 ```
 
@@ -491,15 +496,15 @@ data(student, course, term, degree)
 #| eval: false
 # Optional. Copy of source files with all variables
 source_student <- copy(student)
-source_course  <- copy(course)
-source_term    <- copy(term)
-source_degree  <- copy(degree)
+source_course <- copy(course)
+source_term <- copy(term)
+source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
 student <- select_required(source_student)
-course  <- select_required(source_course)
-term    <- select_required(source_term)
-degree  <- select_required(source_degree)
+course <- select_required(source_course)
+term <- select_required(source_term)
+degree <- select_required(source_degree)
 ```
 
 The `copy()` function ensures that "by-reference" changes to the working copies have no effect on the source copies we set aside. For example, editing `student` will have no effect on `source_student`. Thus the variables in the source material are always available if we need them. Concepts of data.table "reference semantics" are discussed further in [@data.table-reference-semantics]. 

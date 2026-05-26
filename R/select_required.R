@@ -13,8 +13,8 @@
 #' data tables at various stages of an analysis.
 #'
 #' Several midfieldr functions require one or more of the variables `mcid`,
-#' `institution`, `race`, `sex`, `^term`, `cip6`, and `level`. In addition, 
-#' the composite key for the course table requires `abbrev` and  `number`. 
+#' `institution`, `race`, `sex`, `^term`, `cip6`, and `level`. In addition,
+#' the composite key for the course table requires `abbrev` and  `number`.
 #' A vector of these names comprises the default subset.
 #'
 #' Additional column names or partial names can be included by using the

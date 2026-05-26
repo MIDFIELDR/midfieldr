@@ -7,7 +7,7 @@ practice data, the toy data are not a current practice data sample.
 ## Usage
 
 ``` r
-data(toy_term)
+toy_term
 ```
 
 ## Format

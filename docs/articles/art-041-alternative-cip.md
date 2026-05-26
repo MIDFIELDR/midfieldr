@@ -106,7 +106,7 @@ Closer look at a sample of our primary-source data.
 
 ``` r
 
-# Set the seed for reproducibility 
+# Set the seed for reproducibility
 set.seed(202612)
 
 # Extract a sample of 15 rows and reset the seed
@@ -232,9 +232,10 @@ Create a separate data frame for 2-digit codes and names, keyed by
 ``` r
 
 # Unique 2-digit codes and names
-DT2 <- DT[N_digits == 2, .(CIPFamily, 
-                             cip2 = CIPCode, 
-                             cip2name = CIPTitle)]
+DT2 <- DT[N_digits == 2, .(CIPFamily,
+  cip2 = CIPCode,
+  cip2name = CIPTitle
+)]
 # View the result
 str(DT2, strict.width = "cut", give.attr = FALSE, vec.len = 12)
 #> Classes 'data.table' and 'data.frame':   48 obs. of  3 variables:
@@ -249,10 +250,11 @@ the 4-digit code to compare to `CIPFamily` (also 2-digits)
 ``` r
 
 # Unique 4-digit codes and names, with cip2 codes derived from cip4
-DT4 <- DT[N_digits == 4, .(CIPFamily, 
-                             cip2 = substr(CIPCode, 1, 2), 
-                             cip4 = CIPCode, 
-                             cip4name = CIPTitle)]
+DT4 <- DT[N_digits == 4, .(CIPFamily,
+  cip2 = substr(CIPCode, 1, 2),
+  cip4 = CIPCode,
+  cip4name = CIPTitle
+)]
 # View the result
 str(DT4, strict.width = "cut", give.attr = FALSE)
 #> Classes 'data.table' and 'data.frame':   422 obs. of  4 variables:
@@ -268,11 +270,12 @@ codes for comparison and joining later.
 ``` r
 
 # Unique 6-digit codes and names, with cip2 and cip4 codes derived from cip6
-DT6 <- DT[N_digits == 6, .(CIPFamily, 
-                             cip2 = substr(CIPCode, 1, 2), 
-                             cip4 = substr(CIPCode, 1, 4), 
-                             cip6 = CIPCode, 
-                             cip6name = CIPTitle)]
+DT6 <- DT[N_digits == 6, .(CIPFamily,
+  cip2 = substr(CIPCode, 1, 2),
+  cip4 = substr(CIPCode, 1, 4),
+  cip6 = CIPCode,
+  cip6name = CIPTitle
+)]
 # View the result
 str(DT6, strict.width = "cut", give.attr = FALSE, vec.len = 12)
 #> Classes 'data.table' and 'data.frame':   1848 obs. of  5 variables:
@@ -435,12 +438,14 @@ program.
 
 # Create a data table with one row
 txt_99 <- "Undecided/Unspecified (non-IPEDS)"
-row_99 <- data.table(cip2 = "99", 
-                     cip4 = "9999", 
-                     cip6 = "999999", 
-                     cip2name = txt_99, 
-                     cip4name = txt_99, 
-                     cip6name = txt_99)
+row_99 <- data.table(
+  cip2 = "99",
+  cip4 = "9999",
+  cip6 = "999999",
+  cip2name = txt_99,
+  cip4name = txt_99,
+  cip6name = txt_99
+)
 
 # Bind the new row to the working data table
 DT <- rbindlist(list(DT, row_99), use.names = TRUE)

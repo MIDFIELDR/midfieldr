@@ -12,7 +12,7 @@
 name, e.g., Institution A, Institution B, etc.}
 \item{\code{term}}{Character, academic year and term, format YYYYT.
 Key column.}
-\item{\code{course}}{Character, course name, e.g., \verb{Astrophysics  III}, \verb{Calculus For Social Science And Business}, \verb{Corp  Financial Rprtng 1}, \verb{Environmental Sanitation II}, \verb{Fitness  and Wellness}, \verb{Introductory Astronomy 2}, \verb{Our Changing  Environment}, etc.}
+\item{\code{course}}{Character, course name, e.g., \verb{Astrophysics III}, \verb{Calculus For Social Science And Business}, \verb{Corp Financial Rprtng 1}, \verb{Environmental Sanitation II}, \verb{Fitness and Wellness}, \verb{Introductory Astronomy 2}, \verb{Our Changing Environment}, etc.}
 \item{\code{abbrev}}{Character, course alphabetical identifier,
 e.g. ENGR, MATH, ENGL. Key column.}
 \item{\code{number}}{Character, course numeric identifier, e.g.
@@ -40,7 +40,7 @@ assigned by the pre-2023 MIDFIELD data curator, e.g.,
 }
 }
 \usage{
-data(toy_course)
+toy_course
 }
 \description{
 Selected variables modeled on those in the \code{course} practice data for use in

@@ -16,6 +16,7 @@ knitr::opts_chunk$set(fig.path = "figures/art-060-")
 # for any "child" arguments in r-code-chunks
 library("rprojroot")
 path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
+path_to_R <- find_root_file("R", criterion = has_file("DESCRIPTION"))
 ```
 
 ```{r child = paste0(path_to_rmd, "/common-setup.Rmd")}
@@ -541,15 +542,17 @@ round(100 * N_impute / N_fye, 0)
 
 ## Imputing missing values
 
-The three essential arguments for `mice()` are the `DT` data frame, the `method_vector`, and the `predictor_matrix`. The number of multiple imputations `m` is set to `r m_imputations` as discussed in [Missing data]. The default `seed` argument is NULL, but by setting the seed as shown the vignette results are reproducible. Setting `printFlag = TRUE` displays progress in the console. 
+The three essential arguments for `mice()` are the `DT` data frame, the `method_vector`, and the `predictor_matrix`. The number of multiple imputations `m` is set to `r m_imputations` as discussed in [Missing data]. Setting `printFlag = TRUE` displays progress in the console. 
+
+The default `seed` argument is NULL, but by setting the seed as shown the vignette results are reproducible. 
 
 For the practice data, 5 iterations of `r m_imputations`  imputations takes about 3 minutes (depending on your machine). For MIDFIELD research data, however, imputation runs significantly longer.  
 
 ```{r}
 #| echo: false
 
-# load DT_mids, don't have to repeatedly run mice()
-load(here::here("R", "sysdata.rda"))
+# load internal data DT_mids, don't have to repeatedly run mice()
+load(paste0(path_to_R, "/sysdata.rda"))
 ```
 
 ```{r}
@@ -621,6 +624,7 @@ DT
 ```
 
 *Filtering.* &nbsp;  Proxies are substitutes for students *starting* in FYE. Thus we filter to remove migrators, retaining the proxies of first-term FYE students only. 
+
 ```{r}
 # Order term data by ID and term
 ordered_term <- term[, .(mcid, term, cip6)]
@@ -645,29 +649,8 @@ DT
 check_equiv_frames(DT, fye_proxy)
 ```
 
-```{r}
-#| eval: false
-#| echo: false
 
-# Run manually if necessary for reproducibility
-# Writing internal file sysdata.rda to save DT_mids
-# Writing external file fye_proxy
 
-# Internal files
-usethis::use_data(
-  DT_mids,
-  subset_student,
-  subset_course,
-  subset_term,
-  subset_degree,
-  internal  = TRUE,
-  overwrite = TRUE
-)
-
-# External file
-fye_proxy <- copy(DT)
-usethis::use_data(fye_proxy, overwrite = TRUE)
-```
 
 
 

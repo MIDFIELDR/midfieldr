@@ -13,7 +13,7 @@ proxy program.}
 }
 }
 \usage{
-data(fye_proxy)
+fye_proxy
 }
 \description{
 Proxies are the degree-granting engineering programs we estimate that

@@ -35,7 +35,7 @@ credit hours attempted.}
 }
 }
 \usage{
-data(toy_term)
+toy_term
 }
 \description{
 Selected variables modeled on those in the \code{term} practice data for use in

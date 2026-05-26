@@ -11,7 +11,7 @@
 }
 }
 \usage{
-data(baseline_mcid)
+baseline_mcid
 }
 \description{
 Data frame of IDs after processing the practice data for data sufficiency and

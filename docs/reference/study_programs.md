@@ -7,7 +7,7 @@ vignette users.
 ## Usage
 
 ``` r
-data(study_programs)
+study_programs
 ```
 
 ## Format

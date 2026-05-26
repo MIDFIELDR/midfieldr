@@ -7,7 +7,7 @@ by student ID. Provided for the convenience of vignette users.
 ## Usage
 
 ``` r
-data(study_observations)
+study_observations
 ```
 
 ## Format

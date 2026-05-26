@@ -6,7 +6,7 @@ computing grade point averages.
 ## Usage
 
 ``` r
-data(grade_scale)
+grade_scale
 ```
 
 ## Format

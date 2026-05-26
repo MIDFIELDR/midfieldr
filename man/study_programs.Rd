@@ -5,8 +5,7 @@
 \alias{study_programs}
 \title{Case-study program labels and codes}
 \format{
-\code{data.table} with 15 rows and 2 columns.
-The variables are:
+\code{data.table} with 15 rows and 2 columns. The variables are:
 \describe{
 \item{\code{cip6}}{Character, 6-digit CIP code of program in which
 a student is enrolled in a term.}
@@ -17,7 +16,7 @@ Engineering).}
 }
 }
 \usage{
-data(study_programs)
+study_programs
 }
 \description{
 Data table of program CIP codes and labels of the four programs of the case

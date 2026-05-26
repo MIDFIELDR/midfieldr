@@ -25,11 +25,13 @@ comparable content and objectives."}
 representing "the most general groupings of related programs."}
 
 \item{\code{cip2name}}{Character, program name at the 2-digit level.}
-
 }
+}
+\source{
+\url{https://nces.ed.gov/ipeds/cipcode/}
 }
 \usage{
-data(cip2010)
+cip2010
 }
 \description{
 A data table of the 2010 Classification of Instructional Programs (CIP)
@@ -39,7 +41,7 @@ accessed in 2026 from the US National Center for Education Statistics
 on three levels: a 2-digit series, a 4-digit series, and a 6-digit series.
 }
 \details{
-Both data sets include one non-IPEDS code (999999) for Undecided
+The midfielddata taxonomy includes one non-IPEDS code (999999) for Undecided
 or Unspecified, instances in which institutions reported no program
 information or that students were not enrolled in a program.
 }

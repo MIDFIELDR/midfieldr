@@ -9,7 +9,7 @@ in FYE in their first term.
 ## Usage
 
 ``` r
-data(fye_proxy)
+fye_proxy
 ```
 
 ## Format

@@ -7,7 +7,7 @@ value equivalent SAT score.
 ## Usage
 
 ``` r
-data(sat_act_scale)
+sat_act_scale
 ```
 
 ## Format

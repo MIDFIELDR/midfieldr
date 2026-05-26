@@ -32,9 +32,9 @@ This article in the MIDFIELD workflow:
 
 1. Planning  
 1. Initial processing
-- Data sufficiency  
-- Degree seeking  
-- [Identify programs]{.accent}
+    - Data sufficiency  
+    - Degree seeking  
+    - [Identify programs]{.accent}
 1. Blocs  
 1. Groupings  
 1. Metrics  
@@ -74,8 +74,9 @@ library(stringr)
 ```{r}
 #| echo: false
 # Use package rprojrot to help with relative file paths
-path_to_raw_data <- find_root_file("data-raw", 
-                                   criterion = has_file("DESCRIPTION"))
+path_to_raw_data <- find_root_file("data-raw",
+  criterion = has_file("DESCRIPTION")
+)
 path_to_csv_file <- paste0(path_to_raw_data, "/CIPCode2010.csv")
 ```
 
@@ -103,7 +104,7 @@ str(DT, strict.width = "cut", give.attr = FALSE, vec.len = 12)
 Closer look at a sample of our primary-source data. 
 
 ```{r}
-# Set the seed for reproducibility 
+# Set the seed for reproducibility
 set.seed(202612)
 
 # Extract a sample of 15 rows and reset the seed
@@ -185,9 +186,10 @@ Create a separate data frame for 2-digit codes and names, keyed by `CIPFamily`.
 
 ```{r}
 # Unique 2-digit codes and names
-DT2 <- DT[N_digits == 2, .(CIPFamily, 
-                           cip2 = CIPCode, 
-                           cip2name = CIPTitle)]
+DT2 <- DT[N_digits == 2, .(CIPFamily,
+  cip2 = CIPCode,
+  cip2name = CIPTitle
+)]
 # View the result
 str(DT2, strict.width = "cut", give.attr = FALSE, vec.len = 12)
 ```
@@ -196,10 +198,11 @@ Repeat for the 4-digit codes and names. Extract the first two digits of the 4-di
 
 ```{r}
 # Unique 4-digit codes and names, with cip2 codes derived from cip4
-DT4 <- DT[N_digits == 4, .(CIPFamily, 
-                           cip2 = substr(CIPCode, 1, 2), 
-                           cip4 = CIPCode, 
-                           cip4name = CIPTitle)]
+DT4 <- DT[N_digits == 4, .(CIPFamily,
+  cip2 = substr(CIPCode, 1, 2),
+  cip4 = CIPCode,
+  cip4name = CIPTitle
+)]
 # View the result
 str(DT4, strict.width = "cut", give.attr = FALSE)
 ```
@@ -208,11 +211,12 @@ Repeat for the 6-digit codes and names, extracting both 2- and 4-digit codes for
 
 ```{r}
 # Unique 6-digit codes and names, with cip2 and cip4 codes derived from cip6
-DT6 <- DT[N_digits == 6, .(CIPFamily, 
-                           cip2 = substr(CIPCode, 1, 2), 
-                           cip4 = substr(CIPCode, 1, 4), 
-                           cip6 = CIPCode, 
-                           cip6name = CIPTitle)]
+DT6 <- DT[N_digits == 6, .(CIPFamily,
+  cip2 = substr(CIPCode, 1, 2),
+  cip4 = substr(CIPCode, 1, 4),
+  cip6 = CIPCode,
+  cip6name = CIPTitle
+)]
 # View the result
 str(DT6, strict.width = "cut", give.attr = FALSE, vec.len = 12)
 ```
@@ -298,12 +302,14 @@ Lastly, we add a row to the CIP data to includes one non-IPEDS code (999999) for
 ```{r}
 # Create a data table with one row
 txt_99 <- "Undecided/Unspecified (non-IPEDS)"
-row_99 <- data.table(cip2 = "99", 
-                     cip4 = "9999", 
-                     cip6 = "999999", 
-                     cip2name = txt_99, 
-                     cip4name = txt_99, 
-                     cip6name = txt_99)
+row_99 <- data.table(
+  cip2 = "99",
+  cip4 = "9999",
+  cip6 = "999999",
+  cip2name = txt_99,
+  cip4name = txt_99,
+  cip6name = txt_99
+)
 
 # Bind the new row to the working data table
 DT <- rbindlist(list(DT, row_99), use.names = TRUE)
@@ -348,7 +354,7 @@ Here we see an instance of a minor program title difference between the two data
 # Execute manually to store data to package
 
 # cip2010 <- copy(DT)
-# 
+#
 # usethis::use_data(
 #   cip2010,
 #   internal  = FALSE,

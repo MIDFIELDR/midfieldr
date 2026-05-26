@@ -2,19 +2,20 @@
 
 A data table based on the US National Center for Education Statistics
 (NCES), Integrated Postsecondary Education Data System (IPEDS), 2010
-CIP, <http://nces.ed.gov/ipeds/cipcode/>. The data are codes and names
-for 1582 instructional programs organized on three levels: a 2-digit
-series, a 4-digit series, and a 6-digit series.
+CIP. The data are codes and names for 1582 instructional programs
+organized on three levels: a 2-digit series, a 4-digit series, and a
+6-digit series.
 
 ## Usage
 
 ``` r
-data(cip)
+cip
 ```
 
 ## Format
 
-`data.table` with 1582 rows and 6 columns keyed by the 6-digit CIP code:
+A `data.table` with 1582 rows and 6 columns keyed by the 6-digit CIP
+code:
 
 - `cip6`:
 
@@ -43,6 +44,10 @@ data(cip)
 - `cip2name`:
 
   Character, program name at the 2-digit level.
+
+## Source
+
+<https://nces.ed.gov/ipeds/cipcode/>
 
 ## Details
 

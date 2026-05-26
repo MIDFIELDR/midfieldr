@@ -36,7 +36,7 @@ school attended before admission (or \code{NA}), e.g., \code{060075},
 }
 }
 \usage{
-data(toy_student)
+toy_student
 }
 \description{
 Selected variables modeled on those in the \code{student} practice data for use in

@@ -8,7 +8,7 @@ the convenience of vignette users.
 ## Usage
 
 ``` r
-data(study_results)
+study_results
 ```
 
 ## Format
