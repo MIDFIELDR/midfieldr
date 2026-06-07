@@ -52,6 +52,22 @@ test_select_required <- function() {
     x <- toy_course[, .SD, .SDcols = cols_to_add]
     expect_error(select_required(x))
 
+    # is incoming data frame class preserved
+    class_df  <- c("data.frame")
+    class_dt  <- c("data.table", "data.frame")
+    class_tbl <- c("tbl_df", "tbl", "data.frame")
+    
+    x_dt <- copy(toy_degree)
+    x_df <- as.data.frame(copy(x_dt))
+    x_tbl <- x_df
+    class(x_tbl) <- class_tbl
+    
+    expect_equal(class_df, class(select_required(x_df)))
+    expect_equal(class_dt, class(select_required(x_dt)))
+    expect_equal(class_tbl, class(select_required(x_tbl)))
+    
+    
+    
     # function output not printed
     invisible(NULL)
 }

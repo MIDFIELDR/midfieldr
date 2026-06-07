@@ -13,32 +13,39 @@ check](https://github.com/MIDFIELDR/midfieldr/actions/workflows/R-CMD-check.yaml
 
 ## Overview
 
-Provides tools and demonstrates methods for working with individual
-undergraduate student-level records (registrar’s data) in R.
+Provides tools for working with undergraduate student-level records
+(registrar’s data) in R, supporting longitudinal studies in particular.
 
-- `filter_cip()` selects rows of program codes that match search terms
-- `select_required()` selects a minimum set of columns required by
-  midfieldr functions
-- `add_timely_term()` adds a new timely completion term variable
-- `add_data_sufficiency()` adds a new data sufficiency status variable
-- `add_completion_status()` adds a new program completion status
-  variable
+- `select_basic_cols()` chooses columns required by midfieldr
+  functions.  
+- `add_post_bacc()` identifies rows of post-baccalaureate terms to
+  exclude.
+- `filter_cip()` chooses rows of CIP data based on search terms.  
+- `add_timely_term()` estimates a student’s timely graduation term.
+- `add_data_sufficiency()` identifies rows to exclude due to
+  insufficient data.
+- `add_completion_status()` determines if a graduation is timely or
+  late.
 - `prep_fye_mice()` conditions data for imputing starting majors of FYE
-  students
-- `order_multiway()` conditions data for plotting a Cleveland-style
-  multiway chart
+  students.  
+- `order_multiway()` conditions data for Cleveland multiway charts.
 
-Suggested packages.
+Frequently used packages.
 
 - [data.table](https://CRAN.R-project.org/package=data.table) for
   manipulating data ([Barrett et al.
   2026](#ref-Dowle+Srinivasan:2026:data.table))
 - [ggplot2](https://CRAN.R-project.org/package=ggplot2) for charts
   ([Wickham 2016](#ref-Wickham:2016:ggplot2))
+
+Other packages, used infrequently.
+
 - [mice](https://CRAN.R-project.org/package=mice) for imputing starting
   majors of First-Year Engineering students ([<span class="nocase">van
   Buuren and Groothuis-Oudshoorn</span>
   2011](#ref-vanBuuren+Oudshoorn:2011)).
+- [stringr](https://CRAN.R-project.org/package=stringr) for manipulation
+  of character strings ([Wickham 2025](#ref-stringr)).
 
 ## Installation
 
@@ -88,102 +95,204 @@ These are small data sets of 150 unique students used in examples.
 # Initialize the working data frame using toy_term
 DT <- toy_term[, .(mcid)]
 DT <- unique(DT)
+DT
+#>                mcid
+#>              <char>
+#>   1: MCID3111158953
+#>   2: MCID3111159270
+#>   3: MCID3111160513
+#>   4: MCID3111162677
+#>   5: MCID3111164287
+#>   6: MCID3111171205
+#>   7: MCID3111172083
+#>   8: MCID3111213943
+#>   9: MCID3111248941
+#>  10: MCID3111250695
+#>  ---               
+#> 141: MCID3112802165
+#> 142: MCID3112803670
+#> 143: MCID3112804805
+#> 144: MCID3112839822
+#> 145: MCID3112845932
+#> 146: MCID3112846308
+#> 147: MCID3112877403
+#> 148: MCID3112881399
+#> 149: MCID3112882995
+#> 150: MCID3112884375
 
 # Add variables relating to the timely term
 DT <- add_timely_term(DT, toy_term)
+
+# Order the rows for viewing 
+DT <- DT[order(timely_term)]
 DT
 #>                mcid term_i       level_i adj_span timely_term
 #>              <char> <char>        <char>    <num>      <char>
-#>   1: MCID3111145992  19881 01 First-year        6       19933
+#>   1: MCID3111158953  19881 01 First-year        6       19933
 #>   2: MCID3111159270  19881 01 First-year        6       19933
-#>   3: MCID3111160219  19881 01 First-year        6       19933
+#>   3: MCID3111160513  19881 01 First-year        6       19933
+#>   4: MCID3111162677  19881 01 First-year        6       19933
+#>   5: MCID3111164287  19881 01 First-year        6       19933
+#>   6: MCID3111171205  19881 01 First-year        6       19933
+#>   7: MCID3111172083  19881 01 First-year        6       19933
+#>   8: MCID3111213943  19891 01 First-year        6       19943
+#>   9: MCID3111248941  19901 01 First-year        6       19953
+#>  10: MCID3111250695  19901 01 First-year        6       19953
 #>  ---                                                         
-#> 148: MCID3112804735  20161 01 First-year        6       20213
-#> 149: MCID3112813578  20161 01 First-year        6       20213
-#> 150: MCID3112845932  20173 01 First-year        6       20231
+#> 141: MCID3112802165  20161 01 First-year        6       20213
+#> 142: MCID3112803670  20161 01 First-year        6       20213
+#> 143: MCID3112804805  20161 01 First-year        6       20213
+#> 144: MCID3112839822  20171 01 First-year        6       20223
+#> 145: MCID3112846308  20171 01 First-year        6       20223
+#> 146: MCID3112845932  20173 01 First-year        6       20231
+#> 147: MCID3112877403  20181 01 First-year        6       20233
+#> 148: MCID3112881399  20181 01 First-year        6       20233
+#> 149: MCID3112882995  20181 01 First-year        6       20233
+#> 150: MCID3112884375  20181 01 First-year        6       20233
+
+# Optional: reduce number of columns
+DT <- DT[, .(mcid, timely_term)]
 
 # Add variables relating to data sufficiency
 DT <- add_data_sufficiency(DT, toy_term)
-DT[order(data_sufficiency)]
-#>                mcid       level_i adj_span timely_term term_i lower_limit
-#>              <char>        <char>    <num>      <char> <char>      <char>
-#>   1: MCID3111145992 01 First-year        6       19933  19881       19881
-#>   2: MCID3111159270 01 First-year        6       19933  19881       19881
-#>   3: MCID3111160219 01 First-year        6       19933  19881       19881
-#>  ---                                                                     
-#> 148: MCID3112470565 01 First-year        6       20153  20101       19881
-#> 149: MCID3112472090 01 First-year        6       20153  20101       19881
-#> 150: MCID3112498796 01 First-year        6       20153  20101       19881
-#>      upper_limit data_sufficiency
-#>           <char>           <char>
-#>   1:       20096    exclude-lower
-#>   2:       20096    exclude-lower
-#>   3:       20096    exclude-lower
-#>  ---                             
-#> 148:       20181          include
-#> 149:       20181          include
-#> 150:       20181          include
+DT
+#>                mcid timely_term term_i lower_limit upper_limit data_sufficiency
+#>              <char>      <char> <char>      <char>      <char>           <char>
+#>   1: MCID3111158953       19933  19881       19881       20096    exclude-lower
+#>   2: MCID3111159270       19933  19881       19881       20096    exclude-lower
+#>   3: MCID3111160513       19933  19881       19881       20096    exclude-lower
+#>   4: MCID3111162677       19933  19881       19881       20096    exclude-lower
+#>   5: MCID3111164287       19933  19881       19881       20096    exclude-lower
+#>   6: MCID3111171205       19933  19881       19881       20181    exclude-lower
+#>   7: MCID3111172083       19933  19881       19881       20181    exclude-lower
+#>   8: MCID3111213943       19943  19891       19881       20181          include
+#>   9: MCID3111248941       19953  19901       19881       20096          include
+#>  10: MCID3111250695       19953  19901       19881       20096          include
+#>  ---                                                                           
+#> 141: MCID3112802165       20213  20161       19881       20181    exclude-upper
+#> 142: MCID3112803670       20213  20161       19881       20181    exclude-upper
+#> 143: MCID3112804805       20213  20161       19881       20181    exclude-upper
+#> 144: MCID3112839822       20223  20171       19881       20181    exclude-upper
+#> 145: MCID3112845932       20231  20173       19881       20181    exclude-upper
+#> 146: MCID3112846308       20223  20171       19881       20181    exclude-upper
+#> 147: MCID3112877403       20233  20181       19881       20181    exclude-upper
+#> 148: MCID3112881399       20233  20181       19881       20181    exclude-upper
+#> 149: MCID3112882995       20233  20181       19881       20181    exclude-upper
+#> 150: MCID3112884375       20233  20181       19881       20181    exclude-upper
+
+# Filter for data sufficiency
+DT <- DT[data_sufficiency %chin% "include"]
+DT
+#>                mcid timely_term term_i lower_limit upper_limit data_sufficiency
+#>              <char>      <char> <char>      <char>      <char>           <char>
+#>   1: MCID3111213943       19943  19891       19881       20181          include
+#>   2: MCID3111248941       19953  19901       19881       20096          include
+#>   3: MCID3111250695       19953  19901       19881       20096          include
+#>   4: MCID3111253227       19953  19901       19881       20096          include
+#>   5: MCID3111258790       19953  19901       19881       20181          include
+#>   6: MCID3111263510       19953  19901       19881       20181          include
+#>   7: MCID3111282492       19963  19904       19901       20153          include
+#>   8: MCID3111304195       19963  19911       19881       20096          include
+#>   9: MCID3111315508       19963  19911       19901       20153          include
+#>  10: MCID3111316435       19963  19911       19901       20153          include
+#>  ---                                                                           
+#>  96: MCID3112317359       20123  20071       19881       20181          include
+#>  97: MCID3112352869       20133  20081       19881       20181          include
+#>  98: MCID3112354970       20133  20081       19881       20181          include
+#>  99: MCID3112406332       20143  20091       19881       20181          include
+#> 100: MCID3112409179       20143  20091       19881       20181          include
+#> 101: MCID3112411629       20143  20091       19881       20181          include
+#> 102: MCID3112412904       20143  20091       19901       20153          include
+#> 103: MCID3112413521       20143  20091       19901       20153          include
+#> 104: MCID3112471930       20153  20101       19901       20153          include
+#> 105: MCID3112498796       20153  20101       19881       20181          include
+
+# Optional: reduce number of columns
+DT <- DT[, .(mcid, timely_term)]
 
 # Add variables relating to completion status
 DT <- add_completion_status(DT, toy_degree)
-DT[order(completion_status)]
-#>                mcid       level_i adj_span timely_term term_i lower_limit
-#>              <char>        <char>    <num>      <char> <char>      <char>
-#>   1: MCID3111258790 01 First-year        6       19953  19901       19881
-#>   2: MCID3111316257 01 First-year        6       19953  19901       19901
-#>   3: MCID3111316435 01 First-year        6       19963  19911       19901
-#>  ---                                                                     
-#> 148: MCID3112804735 01 First-year        6       20213  20161       19881
-#> 149: MCID3112813578 01 First-year        6       20213  20161       19881
-#> 150: MCID3112845932 01 First-year        6       20231  20173       19881
-#>      upper_limit data_sufficiency term_degree completion_status
-#>           <char>           <char>      <char>            <char>
-#>   1:       20181          include       19954              late
-#>   2:       20153    exclude-lower       19961              late
-#>   3:       20153          include       19964              late
-#>  ---                                                           
-#> 148:       20181    exclude-upper        <NA>              <NA>
-#> 149:       20181    exclude-upper        <NA>              <NA>
-#> 150:       20181    exclude-upper        <NA>              <NA>
-
-# Filter for data sufficiency and timely completion
-rows_we_want <- DT$data_sufficiency == "include" & DT$completion_status == "timely"
-DT <- DT[rows_we_want]
 DT
-#>               mcid       level_i adj_span timely_term term_i lower_limit
-#>             <char>        <char>    <num>      <char> <char>      <char>
-#>  1: MCID3111213943 01 First-year        6       19943  19891       19881
-#>  2: MCID3111224601 01 First-year        6       19953  19901       19881
-#>  3: MCID3111253227 01 First-year        6       19953  19901       19881
-#> ---                                                                     
-#> 48: MCID3112470565 01 First-year        6       20153  20101       19881
-#> 49: MCID3112472090 01 First-year        6       20153  20101       19881
-#> 50: MCID3112498796 01 First-year        6       20153  20101       19881
-#>     upper_limit data_sufficiency term_degree completion_status
-#>          <char>           <char>      <char>            <char>
-#>  1:       20181          include       19903            timely
-#>  2:       20181          include       19921            timely
-#>  3:       20096          include       19951            timely
-#> ---                                                           
-#> 48:       20181          include       20133            timely
-#> 49:       20181          include       20134            timely
-#> 50:       20181          include       20143            timely
+#>                mcid timely_term term_degree completion_status
+#>              <char>      <char>      <char>            <char>
+#>   1: MCID3111213943       19943       19903            timely
+#>   2: MCID3111248941       19953       19943            timely
+#>   3: MCID3111250695       19953        <NA>              <NA>
+#>   4: MCID3111253227       19953       19951            timely
+#>   5: MCID3111258790       19953       19954              late
+#>   6: MCID3111263510       19953       19933            timely
+#>   7: MCID3111282492       19963       19991              late
+#>   8: MCID3111304195       19963        <NA>              <NA>
+#>   9: MCID3111315508       19963       19961            timely
+#>  10: MCID3111316435       19963       19964              late
+#>  ---                                                         
+#>  96: MCID3112317359       20123       20111            timely
+#>  97: MCID3112352869       20133       20121            timely
+#>  98: MCID3112354970       20133       20163              late
+#>  99: MCID3112406332       20143       20131            timely
+#> 100: MCID3112409179       20143       20123            timely
+#> 101: MCID3112411629       20143       20124            timely
+#> 102: MCID3112412904       20143       20123            timely
+#> 103: MCID3112413521       20143       20173              late
+#> 104: MCID3112471930       20153        <NA>              <NA>
+#> 105: MCID3112498796       20153       20143            timely
 
-# Join demographic data
+# Filter for timely completion
+DT <- DT[completion_status %chin% "timely"]
+DT
+#>               mcid timely_term term_degree completion_status
+#>             <char>      <char>      <char>            <char>
+#>  1: MCID3111213943       19943       19903            timely
+#>  2: MCID3111248941       19953       19943            timely
+#>  3: MCID3111253227       19953       19951            timely
+#>  4: MCID3111263510       19953       19933            timely
+#>  5: MCID3111315508       19963       19961            timely
+#>  6: MCID3111316936       19963       19953            timely
+#>  7: MCID3111354376       19973       19953            timely
+#>  8: MCID3111355374       19973       19961            timely
+#>  9: MCID3111356562       19973       19963            timely
+#> 10: MCID3111357512       19973       19953            timely
+#> ---                                                         
+#> 46: MCID3112196380       20103       20083            timely
+#> 47: MCID3112196966       20103       20093            timely
+#> 48: MCID3112296580       20123       20103            timely
+#> 49: MCID3112317359       20123       20111            timely
+#> 50: MCID3112352869       20133       20121            timely
+#> 51: MCID3112406332       20143       20131            timely
+#> 52: MCID3112409179       20143       20123            timely
+#> 53: MCID3112411629       20143       20124            timely
+#> 54: MCID3112412904       20143       20123            timely
+#> 55: MCID3112498796       20153       20143            timely
+
+# Join demographic data, reduce number of columns
 DT <- toy_student[DT, .(mcid, race, sex), on = "mcid"]
 
 # Label the student bloc
 DT[, bloc := "graduate"]
 DT
-#>               mcid     race    sex     bloc
-#>             <char>   <char> <char>   <char>
-#>  1: MCID3111213943    White   Male graduate
-#>  2: MCID3111224601 Hispanic Female graduate
-#>  3: MCID3111253227    White   Male graduate
-#> ---                                        
-#> 48: MCID3112470565    White Female graduate
-#> 49: MCID3112472090    White Female graduate
-#> 50: MCID3112498796    White Female graduate
+#>               mcid          race    sex     bloc
+#>             <char>        <char> <char>   <char>
+#>  1: MCID3111213943         White   Male graduate
+#>  2: MCID3111248941         White   Male graduate
+#>  3: MCID3111253227         White   Male graduate
+#>  4: MCID3111263510         White   Male graduate
+#>  5: MCID3111315508 Other/Unknown   Male graduate
+#>  6: MCID3111316936         White Female graduate
+#>  7: MCID3111354376         White   Male graduate
+#>  8: MCID3111355374         White   Male graduate
+#>  9: MCID3111356562         White   Male graduate
+#> 10: MCID3111357512         White   Male graduate
+#> ---                                             
+#> 46: MCID3112196380         White   Male graduate
+#> 47: MCID3112196966         White Female graduate
+#> 48: MCID3112296580         White   Male graduate
+#> 49: MCID3112317359         White   Male graduate
+#> 50: MCID3112352869         White   Male graduate
+#> 51: MCID3112406332         White   Male graduate
+#> 52: MCID3112409179         Asian   Male graduate
+#> 53: MCID3112411629         White   Male graduate
+#> 54: MCID3112412904         White   Male graduate
+#> 55: MCID3112498796         White Female graduate
 ```
 
 ## Acknowledgments
@@ -234,6 +343,14 @@ Statistical Software* 45 (3): 1–67.
 Wickham, Hadley. 2016. *<span class="nocase">ggplot2: Elegant Graphics
 for Data Analysis</span>*. ISBN 978-3-319-24277-4; Springer-Verlag New
 York. <https://ggplot2.tidyverse.org>.
+
+</div>
+
+<div id="ref-stringr" class="csl-entry">
+
+Wickham, Hadley. 2025. *<span class="nocase">stringr: Simple, consistent
+wrappers for common string operations</span>*.
+<https://doi.org/10.32614/CRAN.package.stringr>.
 
 </div>
 

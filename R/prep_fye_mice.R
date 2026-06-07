@@ -110,7 +110,7 @@ prep_fye_mice <- function(midfield_student = student,
                           ...,
                           fye_codes = NULL) {
   # remove all keys
-  on.exit(setkey(midfield_student, NULL))
+  on.exit(setkey(midfield_student, NULL), add = TRUE)
   on.exit(setkey(midfield_term, NULL), add = TRUE)
 
   # assert arguments after dots used by name
@@ -223,13 +223,11 @@ prep_fye_mice <- function(midfield_student = student,
   fye <- unique(fye)
 
   # Convert to factors to prepare for mice()
-  fye[, `:=`(
-    race = as.factor(race),
-    sex = as.factor(sex),
-    institution = as.factor(institution),
-    proxy = as.factor(proxy)
-  )]
-
+  fye[, race        := as.factor(race)]
+  fye[, sex         := as.factor(sex)]
+  fye[, institution := as.factor(institution)]
+  fye[, proxy       := as.factor(proxy)]
+  
   # reorder rows
   setkeyv(fye, c("institution", "proxy", "sex", "race"))
 

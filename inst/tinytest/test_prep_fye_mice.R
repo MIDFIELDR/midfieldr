@@ -13,7 +13,6 @@ test_prep_fye_mice <- function() {
 
     # create an answer
     # set.seed(20260513)
-    
     # DT <- prep_fye_mice(toy_student, toy_term)
     # cat(wrapr::draw_frame(DT))
 
@@ -37,12 +36,10 @@ test_prep_fye_mice <- function() {
             "MCID3111782447", "White"        , "Male"  , "Institution J", NA_character_ |
             "MCID3112008110", "White"        , "Male"  , "Institution J", NA_character_ |
             "MCID3112172401", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112269075", "White"        , "Male"  , "Institution J", NA_character_ |
             "MCID3112382065", "White"        , "Male"  , "Institution J", NA_character_ |
             "MCID3112382653", "White"        , "Male"  , "Institution J", NA_character_ |
             "MCID3112384278", "White"        , "Male"  , "Institution J", NA_character_ |
             "MCID3112388922", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111166148", "White"        , "Male"  , "Institution J", "140201"      |
             "MCID3111931819", "White"        , "Male"  , "Institution J", "140201"      |
             "MCID3111933160", "White"        , "Male"  , "Institution J", "140201"      |
             "MCID3112172059", "White"        , "Male"  , "Institution J", "140201"      |
@@ -53,9 +50,11 @@ test_prep_fye_mice <- function() {
             "MCID3111354376", "White"        , "Male"  , "Institution J", "140801"      |
             "MCID3111460368", "White"        , "Male"  , "Institution J", "140801"      |
             "MCID3111656207", "White"        , "Male"  , "Institution J", "140801"      |
+            "MCID3111860947", "White"        , "Male"  , "Institution J", "140801"      |
             "MCID3112267967", "White"        , "Male"  , "Institution J", "140801"      |
             "MCID3112268235", "White"        , "Male"  , "Institution J", "140801"      |
             "MCID3111909377", "Other/Unknown", "Male"  , "Institution J", "140901"      |
+            "MCID3111248941", "White"        , "Male"  , "Institution J", "140901"      |
             "MCID3111355374", "White"        , "Male"  , "Institution J", "140901"      |
             "MCID3111648837", "White"        , "Male"  , "Institution J", "140901"      |
             "MCID3111842661", "White"        , "Male"  , "Institution J", "140901"      |
@@ -71,7 +70,6 @@ test_prep_fye_mice <- function() {
             "MCID3111355464", "White"        , "Male"  , "Institution J", "141901"      |
             "MCID3111356562", "White"        , "Male"  , "Institution J", "141901"      |
             "MCID3111786826", "White"        , "Male"  , "Institution J", "141901"      |
-            "MCID3112384374", "White"        , "Male"  , "Institution J", "141901"      |
             "MCID3112323623", "White"        , "Female", "Institution J", "143501"      |
             "MCID3111573067", "Black"        , "Male"  , "Institution J", "143501"      |
             "MCID3111454125", "International", "Male"  , "Institution J", "143501"      )
@@ -126,13 +124,14 @@ test_prep_fye_mice <- function() {
     # multiple CIP codes starting with 14 can be assigned to FYE
     # create an answer
     # DT <- prep_fye_mice(toy_student, toy_term,
-    #                      fye_codes = c("140101", "140102", "149999"))
+    #                       fye_codes = c("140101", "140102", "149999"))
     # cat(wrapr::draw_frame(DT))
     
     DT <- wrapr::build_frame(
         "mcid"            , "race"         , "sex"   , "institution"  , "proxy"       |
             "MCID3111871132", "Black"        , "Female", "Institution B", "140901"      |
             "MCID3111802941", "White"        , "Female", "Institution C", NA_character_ |
+            "MCID3111282492", "Hispanic"     , "Male"  , "Institution C", "140801"      |
             "MCID3111775049", "Black"        , "Female", "Institution J", NA_character_ |
             "MCID3111587881", "White"        , "Female", "Institution J", NA_character_ |
             "MCID3112382701", "White"        , "Female", "Institution J", NA_character_ |
@@ -150,12 +149,10 @@ test_prep_fye_mice <- function() {
             "MCID3111782447", "White"        , "Male"  , "Institution J", NA_character_ |
             "MCID3112008110", "White"        , "Male"  , "Institution J", NA_character_ |
             "MCID3112172401", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112269075", "White"        , "Male"  , "Institution J", NA_character_ |
             "MCID3112382065", "White"        , "Male"  , "Institution J", NA_character_ |
             "MCID3112382653", "White"        , "Male"  , "Institution J", NA_character_ |
             "MCID3112384278", "White"        , "Male"  , "Institution J", NA_character_ |
             "MCID3112388922", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111166148", "White"        , "Male"  , "Institution J", "140201"      |
             "MCID3111931819", "White"        , "Male"  , "Institution J", "140201"      |
             "MCID3111933160", "White"        , "Male"  , "Institution J", "140201"      |
             "MCID3112172059", "White"        , "Male"  , "Institution J", "140201"      |
@@ -166,9 +163,11 @@ test_prep_fye_mice <- function() {
             "MCID3111354376", "White"        , "Male"  , "Institution J", "140801"      |
             "MCID3111460368", "White"        , "Male"  , "Institution J", "140801"      |
             "MCID3111656207", "White"        , "Male"  , "Institution J", "140801"      |
+            "MCID3111860947", "White"        , "Male"  , "Institution J", "140801"      |
             "MCID3112267967", "White"        , "Male"  , "Institution J", "140801"      |
             "MCID3112268235", "White"        , "Male"  , "Institution J", "140801"      |
             "MCID3111909377", "Other/Unknown", "Male"  , "Institution J", "140901"      |
+            "MCID3111248941", "White"        , "Male"  , "Institution J", "140901"      |
             "MCID3111355374", "White"        , "Male"  , "Institution J", "140901"      |
             "MCID3111648837", "White"        , "Male"  , "Institution J", "140901"      |
             "MCID3111842661", "White"        , "Male"  , "Institution J", "140901"      |
@@ -184,7 +183,6 @@ test_prep_fye_mice <- function() {
             "MCID3111355464", "White"        , "Male"  , "Institution J", "141901"      |
             "MCID3111356562", "White"        , "Male"  , "Institution J", "141901"      |
             "MCID3111786826", "White"        , "Male"  , "Institution J", "141901"      |
-            "MCID3112384374", "White"        , "Male"  , "Institution J", "141901"      |
             "MCID3112323623", "White"        , "Female", "Institution J", "143501"      |
             "MCID3111573067", "Black"        , "Male"  , "Institution J", "143501"      |
             "MCID3111454125", "International", "Male"  , "Institution J", "143501"      )

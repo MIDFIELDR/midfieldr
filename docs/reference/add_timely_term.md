@@ -109,58 +109,58 @@ dframe <- toy_student[1:10, .(mcid)]
 add_timely_term(dframe, midfield_term = toy_term)
 #>               mcid term_i       level_i adj_span timely_term
 #>             <char> <char>        <char>    <num>      <char>
-#>  1: MCID3111145992  19881 01 First-year        6       19933
+#>  1: MCID3111158953  19881 01 First-year        6       19933
 #>  2: MCID3111159270  19881 01 First-year        6       19933
-#>  3: MCID3111160219  19881 01 First-year        6       19933
-#>  4: MCID3111160513  19881 01 First-year        6       19933
-#>  5: MCID3111162677  19881 01 First-year        6       19933
-#>  6: MCID3111164287  19881 01 First-year        6       19933
-#>  7: MCID3111166148  19881 01 First-year        6       19933
-#>  8: MCID3111170298  19881 01 First-year        6       19933
-#>  9: MCID3111170338  19881 01 First-year        6       19933
-#> 10: MCID3111213943  19891 01 First-year        6       19943
+#>  3: MCID3111160513  19881 01 First-year        6       19933
+#>  4: MCID3111162677  19881 01 First-year        6       19933
+#>  5: MCID3111164287  19881 01 First-year        6       19933
+#>  6: MCID3111171205  19881 01 First-year        6       19933
+#>  7: MCID3111172083  19881 01 First-year        6       19933
+#>  8: MCID3111213943  19891 01 First-year        6       19943
+#>  9: MCID3111248941  19901 01 First-year        6       19953
+#> 10: MCID3111250695  19901 01 First-year        6       19953
 
 # Define timely completion as 200% of scheduled span (8 years)
 add_timely_term(dframe, midfield_term = toy_term, span = 8)
 #>               mcid term_i       level_i adj_span timely_term
 #>             <char> <char>        <char>    <num>      <char>
-#>  1: MCID3111145992  19881 01 First-year        8       19953
+#>  1: MCID3111158953  19881 01 First-year        8       19953
 #>  2: MCID3111159270  19881 01 First-year        8       19953
-#>  3: MCID3111160219  19881 01 First-year        8       19953
-#>  4: MCID3111160513  19881 01 First-year        8       19953
-#>  5: MCID3111162677  19881 01 First-year        8       19953
-#>  6: MCID3111164287  19881 01 First-year        8       19953
-#>  7: MCID3111166148  19881 01 First-year        8       19953
-#>  8: MCID3111170298  19881 01 First-year        8       19953
-#>  9: MCID3111170338  19881 01 First-year        8       19953
-#> 10: MCID3111213943  19891 01 First-year        8       19963
+#>  3: MCID3111160513  19881 01 First-year        8       19953
+#>  4: MCID3111162677  19881 01 First-year        8       19953
+#>  5: MCID3111164287  19881 01 First-year        8       19953
+#>  6: MCID3111171205  19881 01 First-year        8       19953
+#>  7: MCID3111172083  19881 01 First-year        8       19953
+#>  8: MCID3111213943  19891 01 First-year        8       19963
+#>  9: MCID3111248941  19901 01 First-year        8       19973
+#> 10: MCID3111250695  19901 01 First-year        8       19973
 
 # Existing timely_term column, if any, is overwritten
 dframe[, timely_term := NA_character_][]
 #>               mcid timely_term
 #>             <char>      <char>
-#>  1: MCID3111145992        <NA>
+#>  1: MCID3111158953        <NA>
 #>  2: MCID3111159270        <NA>
-#>  3: MCID3111160219        <NA>
-#>  4: MCID3111160513        <NA>
-#>  5: MCID3111162677        <NA>
-#>  6: MCID3111164287        <NA>
-#>  7: MCID3111166148        <NA>
-#>  8: MCID3111170298        <NA>
-#>  9: MCID3111170338        <NA>
-#> 10: MCID3111213943        <NA>
+#>  3: MCID3111160513        <NA>
+#>  4: MCID3111162677        <NA>
+#>  5: MCID3111164287        <NA>
+#>  6: MCID3111171205        <NA>
+#>  7: MCID3111172083        <NA>
+#>  8: MCID3111213943        <NA>
+#>  9: MCID3111248941        <NA>
+#> 10: MCID3111250695        <NA>
 add_timely_term(dframe, midfield_term = toy_term)
 #>               mcid term_i       level_i adj_span timely_term
 #>             <char> <char>        <char>    <num>      <char>
-#>  1: MCID3111145992  19881 01 First-year        6       19933
+#>  1: MCID3111158953  19881 01 First-year        6       19933
 #>  2: MCID3111159270  19881 01 First-year        6       19933
-#>  3: MCID3111160219  19881 01 First-year        6       19933
-#>  4: MCID3111160513  19881 01 First-year        6       19933
-#>  5: MCID3111162677  19881 01 First-year        6       19933
-#>  6: MCID3111164287  19881 01 First-year        6       19933
-#>  7: MCID3111166148  19881 01 First-year        6       19933
-#>  8: MCID3111170298  19881 01 First-year        6       19933
-#>  9: MCID3111170338  19881 01 First-year        6       19933
-#> 10: MCID3111213943  19891 01 First-year        6       19943
+#>  3: MCID3111160513  19881 01 First-year        6       19933
+#>  4: MCID3111162677  19881 01 First-year        6       19933
+#>  5: MCID3111164287  19881 01 First-year        6       19933
+#>  6: MCID3111171205  19881 01 First-year        6       19933
+#>  7: MCID3111172083  19881 01 First-year        6       19933
+#>  8: MCID3111213943  19891 01 First-year        6       19943
+#>  9: MCID3111248941  19901 01 First-year        6       19953
+#> 10: MCID3111250695  19901 01 First-year        6       19953
 
 ```

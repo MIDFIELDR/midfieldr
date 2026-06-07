@@ -5,7 +5,8 @@
 \alias{toy_degree}
 \title{Degree data for examples}
 \format{
-\code{data.table} with 93 rows and 4 columns keyed by student ID:
+\code{data.table} with 96 rows and 4 columns keyed by student ID,
+term, and program (CIP code or degree label).
 \describe{
 \item{\code{mcid}}{Character, de-identified student ID. Key column.}
 \item{\code{institution}}{Character, de-identified institution

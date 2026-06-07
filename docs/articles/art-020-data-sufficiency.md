@@ -387,13 +387,13 @@ toy_DT <- add_timely_term(toy_mcid, toy_term)
 toy_DT
 #>                mcid term_i       level_i adj_span timely_term
 #>              <char> <char>        <char>    <num>      <char>
-#>   1: MCID3111145992  19881 01 First-year        6       19933
+#>   1: MCID3111158953  19881 01 First-year        6       19933
 #>   2: MCID3111159270  19881 01 First-year        6       19933
-#>   3: MCID3111160219  19881 01 First-year        6       19933
+#>   3: MCID3111160513  19881 01 First-year        6       19933
 #>  ---                                                         
-#> 148: MCID3112804735  20161 01 First-year        6       20213
-#> 149: MCID3112813578  20161 01 First-year        6       20213
-#> 150: MCID3112845932  20173 01 First-year        6       20231
+#> 148: MCID3112881399  20181 01 First-year        6       20233
+#> 149: MCID3112882995  20181 01 First-year        6       20233
+#> 150: MCID3112884375  20181 01 First-year        6       20233
 ```
 
 ### Silent overwriting
@@ -419,13 +419,13 @@ toy_DT <- add_timely_term(toy_DT, toy_term)
 toy_DT
 #>                mcid term_i       level_i adj_span timely_term
 #>              <char> <char>        <char>    <num>      <char>
-#>   1: MCID3111145992  19881 01 First-year        6       19933
+#>   1: MCID3111158953  19881 01 First-year        6       19933
 #>   2: MCID3111159270  19881 01 First-year        6       19933
-#>   3: MCID3111160219  19881 01 First-year        6       19933
+#>   3: MCID3111160513  19881 01 First-year        6       19933
 #>  ---                                                         
-#> 148: MCID3112804735  20161 01 First-year        6       20213
-#> 149: MCID3112813578  20161 01 First-year        6       20213
-#> 150: MCID3112845932  20173 01 First-year        6       20231
+#> 148: MCID3112881399  20181 01 First-year        6       20233
+#> 149: MCID3112882995  20181 01 First-year        6       20233
+#> 150: MCID3112884375  20181 01 First-year        6       20233
 ```
 
 ## `add_data_sufficiency()`

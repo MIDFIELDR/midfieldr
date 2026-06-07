@@ -59,7 +59,7 @@ add_timely_term <- function(dframe,
                             span = NULL,
                             sched_span = NULL) {
   # remove keys if any
-  on.exit(setkey(dframe, NULL))
+  on.exit(setkey(dframe, NULL), add = TRUE)
   on.exit(setkey(midfield_term, NULL), add = TRUE)
 
   # required arguments

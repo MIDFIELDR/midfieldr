@@ -24,21 +24,28 @@ knitr::opts_chunk$set(fig.path = "man/figures/README-")
 
 ## Overview
 
-Provides tools and demonstrates methods for working with individual undergraduate student-level records (registrar's data) in R.
+Provides tools for working with undergraduate student-level records (registrar's data) in R,  supporting longitudinal studies in particular. 
 
-- `filter_cip()` selects rows of program codes that match search terms
-- `select_required()` selects a minimum set of columns required by midfieldr functions
-- `add_timely_term()` adds a new timely completion term variable
-- `add_data_sufficiency()` adds a new data sufficiency status variable 
-- `add_completion_status()` adds a new program completion status variable
-- `prep_fye_mice()` conditions data for imputing starting majors of FYE students
-- `order_multiway()` conditions data for plotting a Cleveland-style multiway chart
+- `select_basic_cols()` chooses columns required by midfieldr functions.  
+- `add_post_bacc()` identifies rows of post-baccalaureate terms to exclude. 
+- `filter_cip()` chooses rows of CIP data based on search terms.  
+- `add_timely_term()` estimates a student's timely graduation term. 
+- `add_data_sufficiency()` identifies rows to exclude due to insufficient data. 
+- `add_completion_status()` determines if a graduation is timely or late.
+- `prep_fye_mice()` conditions data for imputing starting majors of FYE students.   
+- `order_multiway()` conditions data for Cleveland multiway charts.  
 
-Suggested packages. 
+
+
+Frequently used packages. 
 
 - [data.table](https://CRAN.R-project.org/package=data.table) for manipulating data [@Dowle+Srinivasan:2026:data.table]
 - [ggplot2](https://CRAN.R-project.org/package=ggplot2) for charts  [@Wickham:2016:ggplot2]
+
+Other packages, used infrequently. 
+
 - [mice](https://CRAN.R-project.org/package=mice) for imputing starting majors of First-Year Engineering students [@vanBuuren+Oudshoorn:2011]. 
+- [stringr](https://CRAN.R-project.org/package=stringr) for manipulation of character strings [@stringr].
 
 
 
@@ -79,6 +86,13 @@ The installed size of midfielddata is about 24 Mb, so installation will take lon
 ## Usage
 
 ```{r}
+#| echo: false
+options(datatable.print.topn = 10, 
+        datatable.print.nrows = 10)
+```
+
+
+```{r}
 library(midfieldr)
 library(data.table)
 ```
@@ -89,25 +103,38 @@ We illustrate usage with the "toy" data sets included in midfieldr. These are sm
 # Initialize the working data frame using toy_term
 DT <- toy_term[, .(mcid)]
 DT <- unique(DT)
+DT
 
 # Add variables relating to the timely term
 DT <- add_timely_term(DT, toy_term)
+
+# Order the rows for viewing 
+DT <- DT[order(timely_term)]
 DT
+
+# Optional: reduce number of columns
+DT <- DT[, .(mcid, timely_term)]
 
 # Add variables relating to data sufficiency
 DT <- add_data_sufficiency(DT, toy_term)
-DT[order(data_sufficiency)]
+DT
+
+# Filter for data sufficiency
+DT <- DT[data_sufficiency %chin% "include"]
+DT
+
+# Optional: reduce number of columns
+DT <- DT[, .(mcid, timely_term)]
 
 # Add variables relating to completion status
 DT <- add_completion_status(DT, toy_degree)
-DT[order(completion_status)]
-
-# Filter for data sufficiency and timely completion
-rows_we_want <- DT$data_sufficiency == "include" & DT$completion_status == "timely"
-DT <- DT[rows_we_want]
 DT
 
-# Join demographic data
+# Filter for timely completion
+DT <- DT[completion_status %chin% "timely"]
+DT
+
+# Join demographic data, reduce number of columns
 DT <- toy_student[DT, .(mcid, race, sex), on = "mcid"]
 
 # Label the student bloc

@@ -41,8 +41,10 @@
 #'
 add_completion_status <- function(dframe, midfield_degree = degree) {
   on.exit(setkey(dframe, NULL), add = TRUE)
-  on.exit(setkey(midfield_degree, NULL), add = TRUE)
 
+  # to set attributes at the end
+  preserve_class <- class(dframe)
+  
   # required arguments
   qassert(dframe, "d+")
   qassert(midfield_degree, "d+")
@@ -107,6 +109,9 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
   # old columns as keys, order columns and rows
   set_colrow_order(dframe, old_cols)
 
+  # return same class as incoming
+  setattr(dframe, "class", preserve_class)
+  
   # enable printing (see data.table FAQ 2.23)
   dframe[]
 }

@@ -9,49 +9,35 @@ nocite: |
   @Layton+Long+Ohland:2026:midfielddata, 
   @Layton+Long+Ohland:2026:midfieldr
 ---
-
+  
 ```{r setup}
 #| include: false
-
+  
 # for any figures generated in the article
 knitr::opts_chunk$set(fig.path = "figures/art-000-")
-
+  
 # for any "child" arguments in r-code-chunks
 library("rprojroot")
 path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
 ```
-
+  
 ```{r child = paste0(path_to_rmd, "/common-setup.Rmd")}
 ```
-
-When working with student-level records, you should:
-
+  
+When working with student-level records to develop quantitative metrics, you should:
+  
 - Know the structure of your data
-- Identify the programs to include
-- Define your metrics and the relevant student blocs
-- Develop the data processing steps that transform data to metrics
+- Define your metrics and the relevant blocs of students
+- Develop data manipulation procedures to shape your information into useful form
 
-_midfieldr_ provides functions that contribute to this workflow in three ways:
+The midfieldr package contributes to your data manipulation procedures, helping you to:
 
-1. Subsetting data frames in a MIDFIELD-tailored fashion. 
-    - `filter_cip()`
-    - `select_required()`
-2. Adding decision variables to data frames for retaining records that satisfy  constraints.  
-    - `add_timely_term()`
-    - `add_data_sufficiency()`
-    - `add_completion_status()`
-3. Conditioning data frames for specific tasks.
-    - `prep_fye_mice()`
-    - `order_multiway()`
-    
-_midfielddata_ contributes to this workflow by providing data sets suitable for learning and practicing basic data skills in manipulating student-level records. midfielddata also serves as a model database for registrar's data in general. midfielddata are not, however, suitable for drawing inferences about program attributes or student experiences---midfielddata is for *practice*, not *research*.
-
-
-
-
-
-
-If you are writing your own script to follow along, we use these packages in this article:
+- Normalize student-level records
+- Identify program codes
+- Assemble blocs of people (starters, graduates, ever-enrolled, etc.) for your metrics
+- Prepare results for tables and charts
+  
+This document introduces you to midfieldr's tools. If you are writing your own script to follow along, we use the following packages. 
 
 ```{r}
 library(midfieldr)
@@ -59,54 +45,18 @@ library(midfielddata)
 library(data.table)
 ```
 
-We use a couple of other packages as well for incidental tasks. We will load them at the point of use. 
 
 
 
-
-## Data structure
-
-*CIP data.* &nbsp; Classification of Instructional Programs (CIP) is a taxonomy of academic programs, encoded by 6-digit numeric codes curated by the US Department of Education [@NCES:2010]. 
-
-The 2010 codes are loaded with midfieldr. `cip` contains codes and names for `r nrow(cip)` instructional programs organized on three levels: a 2-digit series, a 4-digit series, and a 6-digit series. 
-
-CIP data are documented in `?cip`.
-
-```{r}
-# View data set
-cip
-```
-
-`cip` is a "data.table" class of data frame (a format we use throughout midfieldr and midfielddata). The data.table "enhanced data.frame" is designed for fast manipulation of large data sets.   
-
-```{r}
-# Reveal the data.table class
-class(cip)
-```
-
-Users can transform a data.table to a base R data.frame or a tidyverse tibble easily enough if they prefer. 
-
-```{r}
-# Base R
-cip_DF <- as.data.frame(cip)
-
-class(cip_DF)
-
-# Tidyverse tibble
-library(tibble)
-cip_tbl <- as_tibble(cip)
-
-class(cip_tbl)
-```
+## Data: Student-level records
 
 
+*Research data.*  &nbsp; MIDFIELD [@ohland:midfield:2023] is a database of 2.4M students that has been managed since 2023 by the American Society for Engineering Education (ASEE). Contact ASEE for further information.
 
 
+*Practice data.* &nbsp; The midfielddata package provides a sample of the MIDFIELD database organized in four tables (student, course, term, degree) as shown in Table 1. midfielddata is used throughout these articles to demonstrate how midfieldr is used. However, midfielddata must not be used to draw inferences about program attributes or student experiences. midfielddata is for *practice*, not *research*.
 
-<br>
-
-*Student-records data.*  &nbsp; midfielddata is an R data package containing a sample of the larger MIDFIELD database [@ohland:midfield:2023]. midfieldr is designed to work with either database, as both are organized in four data tables (student, course, term, and degree) and have variable names in common. 
-
+Data dictionaries are documented in `?student`, `?course`, `?term`, and `?degree`.  
 
 ```{r}
 #| echo: false
@@ -114,9 +64,9 @@ class(cip_tbl)
 library(gt)
 wrapr::build_frame(
   "Table", "Each row is", "N students", "N rows", "N columns", "Mb memory" |
+    "student", "one student", 97555, 97555, 13L, 17.3 |
     "course", "one student per course per term", 97555, 3289532, 12L, 324.3 |
     "term", "one student per term", 97555, 639915, 13L, 72.8 |
-    "student", "one student", 97555, 97555, 13L, 17.3 |
     "degree", "one student per degree", 49543, 49665, 5L, 5.2
 ) |>
   gt() |>
@@ -131,9 +81,20 @@ wrapr::build_frame(
   fmt_number(columns = 6, decimals = 1, sep_mark = ",", dec_mark = ".")
 ```
 
-<br>
 
-Data tables from midfielddata can be loaded individually or collectively as needed.
+
+
+
+*Resources.*  &nbsp; If you are new to these data, the best place to start is the midfielddata website:
+
+- [MIDFIELD data structure.](https://midfieldr.github.io/midfielddata/articles/data-structure.html) We examine the structure of the four data tables in midfielddata: number of observations, number and class of variables, representative values, and database keys.  
+
+- [Data linked by student ID.](https://midfieldr.github.io/midfielddata/articles/individual-students.html)  To examine the variables and some representative values in midfielddata, we take a closer look at the records of individual students across the four data tables. 
+
+
+
+
+*Load data.*  &nbsp; Data tables from midfielddata can be loaded individually or collectively as needed.
 
 ```{r}
 #| echo: false
@@ -141,29 +102,82 @@ Data tables from midfielddata can be loaded individually or collectively as need
 
 # Speed up the process by NOT loading course
 data(student, term, degree)
+source_student <- copy(student)
+source_term    <- copy(term)
+source_degree  <- copy(degree)
 ```
-
 
 ```{r}
 #| echo: true
 #| eval: false
-# Load one table as needed
 data(student)
-
-# Or load multiple tables
 data(course, term, degree)
 ```
 
+Example of one of the data tables.
 
-*Resources.*  &nbsp; If you are new to these data, the best place to start is the following articles at the midfielddata website:
+```{r}
+student
+```
 
-- Data dictionaries are documented in `?student`, `?course`, `?term`, and `?degree`.
 
- - [MIDFIELD data structure.](https://midfieldr.github.io/midfielddata/articles/data-structure.html) We examine the structure of the four data tables in midfielddata: number of observations, number and class of variables, representative values, and database keys.  
- 
- - [Data linked by student ID.](https://midfieldr.github.io/midfielddata/articles/individual-students.html)  To examine the variables and some representative values in midfielddata, we take a closer look at the records of individual students across the four data tables. 
 
- 
+
+*midfieldr uses data.table.* &nbsp; Data frames in midfieldr and midfielddata have the attributes of the "data.table" class, designed for fast manipulation of large data sets.  
+
+```{r}
+class(student)
+```
+
+Users can transform midfieldr data frames to tidyverse-style tibbles if they prefer. One of the distinguishing attributes of tibbles (and data.tables as well) is their particular format for displaying data frames.
+
+```{r}
+library(tibble)
+student_tbl <- as_tibble(student)
+class(student_tbl)
+
+student_tbl
+```
+
+
+
+
+
+## Data: CIP codes
+
+*Classification of Instructional Programs (CIP)* is a taxonomy of academic programs, encoded by 6-digit numeric codes curated by the US Department of Education [@NCES:2010]. 
+
+The `cip` data set, loaded with midfieldr, is a subset of the NCES CIP2010 data that contains codes and names for `r nrow(cip)` instructional programs organized on three levels---a 2-digit series, a 4-digit series, and a 6-digit series---keyed by the `cip6` variable and documented in `?cip`. 
+
+```{r}
+cip
+```
+
+
+
+
+## midfieldr functions
+
+midfieldr helps you extract the information you need from student-level records and refine it such that you can compute a metric, e.g., graduation rate or stickiness. midfieldr does not provide functions for specific metrics---its tools are designed to help you prepare the data in such a way that you can compute your metric credibly.  
+
+We can organize midfieldr functions into four areas of a typical workflow that we designate broadly as records, programs, people, and displays. Function documentation is provided, as usual, by `?<function_name>`, for example, `?select_required`.
+
+Records  
+- `select_required()`  
+- `term_wrt_degree()`  
+
+Programs  
+- `filter_cip()`  
+
+People  
+- `add_timely_term()`  
+- `add_data_sufficiency()`  
+- `prep_fye_mice()`  
+- `add_completion_status()`  
+
+Displays  
+- `order_multiway()`  
+
 <br>
 
 
@@ -171,69 +185,21 @@ data(course, term, degree)
 
 
 
+## `select_required()` 
 
+*Subset columns of source data, retain a minimum required set.*
 
+`select_required()` is typically applied to source data tables (`student`, `course`, `term` `degree`) with the original columns, such as that loaded from midfielddata. It reduces the number of columns to the minimum required by other midfieldr functions and retains the key or composite key columns. Rows are unaffected. Records are significantly more compact as a result. 
 
-
-
-## Subset CIP data with `filter_cip()`
-
-`filter_cip()` acts on the `cip` data frame to select rows that match case-independent search terms, including regular expressions.
-
-```{r}
-# Sociology program codes
-filter_cip("sociology")
-
-# All music-related programs
-filter_cip("music")
-```
-
-Having started a search, multiple passes are often need to narrow the search results. 
+For example, while the `term` data table has `r ncol(toy_term)` columns, the data frame returned by `select_required()` has `r ncol(select_required(toy_term))`. In this example, the composite key is `mcid` and `term`. The other columns are required by at least one other midfieldr function. 
 
 ```{r}
-# data.table printout option
-options(datatable.print.topn = 20)
-
-# First pass
-first_pass <- filter_cip("music")
-
-# Use the first pass as input to the second pass, select columns
-filter_cip("^50",
-  cip = first_pass,
-  select = c("cip6", "cip6name")
-)
-
-# restore original data.table printout option
-options(datatable.print.topn = 3)
-```
-
-We develop these concepts further in [Programs](articles/art-040-programs.html).
-
-<br>
-
-
-## Subset student-level data with `select_required()`
-
-`select_required()` selects key columns as well as all columns required by other midfieldr functions. Operates on a data frame to retain columns having names that match or partially match default search terms. Rows are unaffected.
-
-Term records are significantly more compact if we select this minimum set of columns.
-
-```{r}
-# Select variables required by midfieldr functions
 select_required(term)
 ```
 
-We can include additional columns if we need them.
+You can specify any additional columns and use regular expressions if desired, 
 
 ```{r}
-# Select additional columns
-select_required(term, select_add = c("gpa_term"))
-```
-
-Regular expressions can be used. 
-
-```{r}
-# Add columns using a regular expression
 select_required(term, select_add = c("^gpa"))
 ```
 
@@ -246,268 +212,294 @@ select_required(term, select_add = c("^gpa"))
 
 
 
-## Add decision variables with `add_timely_term()`
 
-`add_timely_term()` adds a new variable (plus supporting variables) for the term in which a student is expected to complete their program in a timely manner. This variable is used to make decisions about including or excluding records due to data sufficiency and whether or not a graduate is counted as a timely or late completer. Timely term is required for both `add_data_sufficiency()` and `add_completion_status()`. 
 
-```{r timely_term}
-# Initialize the working data frame using term
-DT <- term[, .(mcid)]
 
-# Retain a unique set of IDs
-DT <- unique(DT)
+## `term_wrt_degree()`
 
-# Add variables relating to the timely term
-DT <- add_timely_term(DT, term)
+*Subset rows, retain academic terms through the first baccalaureate.*
 
-# View the result
+We are often interested in students' records only as they work towards their first degree and can safely filter out any subsequent academic terms. `term_wrt_degree()` labels those terms for us. 
+
+`term_wrt_degree()` obtains the term of a student's first degree (if any), adds it as a new column to the working data frame, then adds a second column to label every term *with respect to (wrt)* that first degree term. The set of possible labels is `pre-first-degree`, `first-degree`, and `post-first-degree`. 
+
+```{r}
+#| echo: false
+options(datatable.print.topn = 5, 
+        datatable.print.nrows = 5)
+```
+
+```{r}
+DT <- term[, .(mcid, term)]
+DT <- term_wrt_degree(DT, degree)
 DT
 ```
 
-We develop this concept further in the Data sufficiency article, [Timely term section](art-020-data-sufficiency.html#add_timely_term). 
+```{r}
+#| echo: false
+N1 <- nrow(DT)
+```
+
+We can then drop rows with terms later than the first degree term.  Once that's done, we often drop the columns added by the function. 
+
+```{r}
+DT <- DT[!term_wrt_degree %chin% "post-first-degree"]
+DT
+
+first_bacc_terms <- DT[, .(mcid, term)]
+first_bacc_terms
+```
+
+```{r}
+#| echo: false
+N2 <- nrow(DT)
+delta <- 100 * round((N1 - N2)/100, 0)
+```
+
+The number of rows has dropped from `r N1` to `r N2` (a drop of about `r delta` rows). This procedure would be repeated for the other data tables having term variables: `course` (if used) and `degree`. 
 
 
 
 
-## Add decision variables with `add_data_sufficiency()`
 
-`add_data_sufficiency()` adds a new variable (plus supporting variables) for data sufficiency status.
+## Refining the records
 
-```{r data_sufficiency}
-# Retain a minimum number of variables
-DT <- DT[, .(mcid, timely_term)]
+To conclude the initial "records" stage of our workflow, we subset our source data tables such that they contain only the terms obtained above, grouped by ID. First we copy the source data frame to a new object name in case we need the full, original source data for any reason. 
 
-# Add variables relating to data sufficiency
-DT <- add_data_sufficiency(DT, term)
+```{r}
+source_term <- copy(term)
+dim(source_term)
+```
 
-# View the result
-DT[order(data_sufficiency)]
+Use an inner join to retain all rows of the records with IDs and terms that match those in our `first_bacc_terms` data frame. 
+
+```{r}
+term <- select_required(term)
+term <- first_bacc_terms[term, on = c("mcid", "term"), nomatch = NULL]
+dim(term)
+```
+
+Repeat for the `degree` data, but first edit the name of the term variable in `first_bacc_terms` to let the ineer join work. 
+
+
+```{r}
+source_degree <- copy(degree)
+
+degree <- copy(source_degree)
+degree <- select_required(degree)
+degree
+
+first_bacc_terms <- first_bacc_terms[, .(mcid, term_degree = term)]
+first_bacc_terms
+
+degree <- first_bacc_terms[degree, on = c("mcid", "term_degree"), nomatch = NULL]
+dim(degree)
+# [1] 34484     4
+
 ```
 
 
-We develop these concepts further in [Data sufficiency article](art-020-data-sufficiency.html). 
+
+
+
+
+
+```{r}
+# source_degree <- copy(degree)
+degree <- copy(source_degree)
+degree <- select_required(degree)
+degree
+
+DT <- degree[, .(mcid, term_degree)]
+DT <- term_wrt_degree(DT, degree)
+DT
+
+DT <- DT[!term_wrt_degree %chin% "post-first-degree"]
+DT
+
+first_bacc_terms <- DT[, .(mcid, term_degree)]
+first_bacc_terms
+
+degree <- first_bacc_terms[degree, on = c("mcid", "term_degree"), nomatch = NULL]
+dim(degree)
+# [1] 50668     4
+```
+
+
+
+
+## `filter_cip()`
+
+*To identify program codes.* 
+
+`filter_cip()` acts on the `cip` data frame or equivalent to select rows that match or partially match search strings. Search strings are case-independent and can include regular expressions. 
+
+```{r}
+filter_cip("sociology")
+
+filter_cip("music")
+```
+
+```{r}
+#| echo: false
+
+# if Nrows equal to or less than this N, print all rows
+opt_print_rows <- options("datatable.print.nrows")
+options(datatable.print.nrows = 20) 
+```
+
+To refine the results of a first pass, assign those results to the `cip` argument in a second pass. The `select` argument allows to to select specific columns, dropping all others. 
+
+```{r}
+first_pass <- filter_cip("music")
+second_pass <- filter_cip("^50", cip = first_pass, select = c("cip6", "cip6name"))
+second_pass
+```
+
+```{r}
+#| echo: false
+options(datatable.print.nrows = opt_print_rows) 
+```
+
+
+
+
+
+
+## `add_timely_term()`  
+
+*Helps refine the population.* 
+
+`add_timely_term()` estimates for every student the latest term by which their program  completion would be considered timely. It helps you refine your population by identifying:
+
+- students for whom data sufficiency is not satisfied. See `add_data_sufficiency()`.
+- graduates whose completion is not timely. See `add_timely_completion()`.
+
+`add_timely_term()` adds four columns: `term_i` and `level_i` are a student's initial term and level (first-year, second-year, etc.); `adj_span` denotes the time span for timely completion (default 6 years) adjusted to account for their level when admitted; and their `timely_term`. 
+
+```{r timely_term}
+DT <- term[, .(mcid)]
+DT <- unique(DT)
+DT <- add_timely_term(DT, term)
+DT 
+```
+
+We can drop all but the ID and timely term for the next step. 
+
+```{r}
+DT <- DT[, .(mcid, timely_term)]
+DT
+```
+
+
+
+## `add_data_sufficiency()`  
+
+*Helps refine your population.*
+
+Some student records at the upper and lower limits of an institution’s data range must be excluded to prevent false counts due to insufficient data. 
+
+`add_data_sufficiency()` adds four columns: initial term`term_i` again; `lower_limit` and `upper_limit` defining the range of the institution's data; and `data_sufficiency`, identifying those IDs that can be included and those that can be excluded and why. 
+
+We run the example starting with the data frame from the previous example. 
+
+```{r data_sufficiency}
+DT <- add_data_sufficiency(DT, term)
+DT
+```
+
+Subset rows to retain records with sufficient data, and drop columns no longer required. 
+
+```{r}
+DT[data_sufficiency %chin% "include", .(mcid)]
+```
+
+When working on refining the population, it is useful to reduce the ongoing results to a single column of student IDs as a reminder that this particular data frame is addressing the "people" stage of our workflow. 
+
+
+
+## `prep_fye_mice()`
+
+*Helps construct starter blocs.*
+
+
+
+
+
+
+
+
+
+<br>
+
+
+<br>
+
+
+## `add_completion_status()`
+
+*Helps construct graduate blocs.*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
 
 <br>
 
 
 
-## Add decision variables with `add_completion_status()`
 
-`add_completion_status()` adds a new variable (plus supporting variables) for program completion status.
+## `order_multiway()`
 
-```{r completion_status}
-# Retain a minimum number of variables
-DT <- DT[, .(mcid, timely_term, data_sufficiency)]
+*Helps prepare tables and charts.* 
 
-# Add variables relating to completion status
-DT <- add_completion_status(DT, degree)
 
-# View the result
-DT[order(completion_status)]
-```
 
-Note we have not yet excluded any student records. We still have the `r nrow(DT)` unique students from midfielddata. 
 
-We develop these concepts further in [Graduates](articles/art-080-graduates.html). 
 
 
 
 
 
 
+<br>
 
-## Decisions
 
-The data sufficiency criterion is nearly always imposed. We retain the records labeled "include". 
+<br>
 
-```{r}
-# Retain a minimum number of variables
-DT <- DT[, .(mcid, data_sufficiency, completion_status)]
-DT <- unique(DT)
 
-# Filter for data sufficiency
-DT <- DT[data_sufficiency == "include"]
+<br>
 
-# View the result
-DT
-```
 
-The number of students has dropped to `r nrow(DT)`.  When the timely completion criterion is imposed, we retain the records labeled "timely". 
+<br>
 
-```{r}
-# Filter for timely completion
-DT <- DT[completion_status == "timely"]
-DT <- unique(DT)
 
-# View the result
-DT
-```
+<br>
 
-The number of students has dropped to `r nrow(DT)`. 
+<br>
 
 
+<br>
 
 
+<br>
 
 
-## Next steps
 
-Having filtered our set of student records to satisfy the constraints of data sufficiency and timely completion, we typically omit all variables except ID and use this data frame of IDs as the baseline for the next step of the analysis. 
-
-```{r}
-# Retain ID only
-DT <- DT[, .(mcid)]
-
-# Ensure unique IDs
-DT <- unique(DT)
-
-# View the result
-DT
-```
-
-
-## Condition data for imputation with `prep_fye_mice()`
-
-One of the most common (though flawed) program metrics is "graduation rate", roughly defined as the ratio of the number of timely completers to the number of  starters in a major. However, some engineering programs require that students enroll in a First-Year Engineering (FYE) program (CIP "140102") before they can enroll in their preferred, degree-granting, engineering major. 
-
-To credibly assign FYE students to a "starting" major, we introduce the idea of “FYE proxies”---estimates of the 6-digit CIP codes of the degree-granting engineering programs that FYE students would have declared had they not been required to enroll in FYE. `prep_fye_mice()` estimates some of the FYE proxies, treats the remainder as missing values, and conditions the data frame for imputation using the mice R package. 
-
-```{r}
-# Condition data for imputation by mice
-prep_fye_mice(student, term)
-```
-
-The function returns one row per FYE student keyed by student ID. All variables except ID are returned as factors to meet the requirements of `mice()`. The NA values in the proxy column are the unknowns CIP 6-digit codes to be imputed. 
-
-We develop these concepts further in [FYE proxies](articles/art-060-fye-proxies.html).
-
-
-
-
-
-
-## Condition data for multiway charts with `order_multiway()`
-
-In working with longitudinal student-level records, we regularly encounter data structured as *multiway data*. The basic structure of multiway data is:
-
-- a categorical variable with $\small m$ levels
-- a categorical variable (independent of the first variable) with $\small n$ levels 
-- a quantitative variable (the response) of length $\small m \times n$ with a value of the response for each combination of categorical levels
-
-```{r}
-#| echo: false
-# count values for the inline chunks below
-x <- student[, .(institution, race_ethn = race)]
-x <- x[, .(N_matric = .N), by = c("institution", "race_ethn")]
-cat1 <- length(unique(x$institution))
-cat2 <- length(unique(x$race_ethn))
-resp <- nrow(x)
-```
-
-For example, from the `student` data table, if we count the number of students at matriculation by race/ethnicity and institution, the resulting data structure is: 
-
-- category 1: institution with `r cat1` levels
-- category 2: race/ethnicity with `r cat2` levels
-- quantitative response: N students with `r resp` observations
-
-```{r}
-# Extract two columns from student
-DT <- student[, .(inst = institution, race_ethn = race)]
-
-# Count by race/ethnicity and institution
-DT <- DT[, .N, by = c("inst", "race_ethn")]
-
-# Convert integer N to numeric N
-DT[, N := as.double(N)]
-
-# Order the rows for viewing
-setorderv(DT, c("inst", "race_ethn"))
-
-# View the result
-DT
-```
-
-`order_multiway()` conditions such data for plotting in a *multiway chart*, a set of faceted dot charts. The categorical variables are converted to factors with levels ordered by the response variable. This ordering creates the row and panel ordering that is so crucial to the visual perception of effects in a multiway chart. 
-
-```{r}
-# Order the categorical variables by the median of the response
-DT_multiway <- order_multiway(DT,
-  quantity = "N",
-  categories = c("inst", "race_ethn"),
-  method = "median"
-)
-# View result
-DT_multiway
-```
-
-`order_multiway()` adds variables documenting the median values used to order each of the categories. This ordering contributes to the row and panel order in the faceted chart we plot below.
-
-```{r}
-#| echo: true
-#| label: fig01
-#| fig-width: 8.4
-
-library(ggplot2)
-ggplot(DT_multiway, aes(x = N, y = race_ethn)) +
-  facet_wrap(vars(inst), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = inst_median),
-    linetype = 2,
-    color = "darkgray"
-  ) +
-  scale_x_log10() +
-  labs(
-    x = "Number of students (log base 10)",
-    y = "",
-    title = "Population distribution at matriculation",
-    subtitle = "1998-2018",
-    caption = "Source: midfielddata"
-  ) +
-  geom_point()
-```
-
-The vertical references lines are the median value by race/ethnicity at the institution. We use a log-base-10 scale because of the orders of magnitude difference in values. Observations:
-
-- Inst. B: International students in greater numbers than expected 
-- Inst. J: Hispanic students in fewer numbers than expected
-- Inst. B and C: Asian students in fewer numbers than expected
-
-By greater or fewer "than expected", we mean in comparison to their overall numbers across all institutions. 
-
-We develop these concepts further in [Multiway data and charts](articles/art-120-multiway.html).
-
-
-
-
-
-
-## Reusable code
-
-*Preparation.* &nbsp; The immediate prerequisites or "intake" required by the reusable code chunk are the source data tables.  
-
-```{r}
-#| eval: false
-# Load source data (as needed)
-data(student, course, term, degree)
-```
-
-*Initial data processing.* &nbsp; A summary code chunk for ready reference. 
-
-```{r}
-#| eval: false
-# Optional. Copy of source files with all variables
-source_student <- copy(student)
-source_course <- copy(course)
-source_term <- copy(term)
-source_degree <- copy(degree)
-
-# Optional. Select variables required by midfieldr functions
-student <- select_required(source_student)
-course <- select_required(source_course)
-term <- select_required(source_term)
-degree <- select_required(source_degree)
-```
-
-The `copy()` function ensures that "by-reference" changes to the working copies have no effect on the source copies we set aside. For example, editing `student` will have no effect on `source_student`. Thus the variables in the source material are always available if we need them. Concepts of data.table "reference semantics" are discussed further in [@data.table-reference-semantics]. 
 
 
 ***
@@ -521,4 +513,4 @@ The `copy()` function ensures that "by-reference" changes to the working copies 
 ```
 
 
- 
+

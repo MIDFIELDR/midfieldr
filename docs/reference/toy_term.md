@@ -12,7 +12,7 @@ toy_term
 
 ## Format
 
-`data.table` with 1114 rows and 13 columns keyed by student ID:
+`data.table` with 1095 rows and 13 columns keyed by student ID and term.
 
 - `mcid`:
 

@@ -12,7 +12,8 @@ toy_course
 
 ## Format
 
-`data.table` with 5863 rows and 12 columns keyed by student ID:
+`data.table` with 5812 rows and 12 columns keyed by student ID, term,
+course abbreviation, and course number.
 
 - `mcid`:
 

@@ -80,16 +80,16 @@ dframe <- add_timely_term(dframe, midfield_term = toy_term)
 add_data_sufficiency(dframe, midfield_term = toy_term)
 #>               mcid       level_i adj_span timely_term term_i lower_limit
 #>             <char>        <char>    <num>      <char> <char>      <char>
-#>  1: MCID3111145992 01 First-year        6       19933  19881       19881
+#>  1: MCID3111158953 01 First-year        6       19933  19881       19881
 #>  2: MCID3111159270 01 First-year        6       19933  19881       19881
-#>  3: MCID3111160219 01 First-year        6       19933  19881       19881
-#>  4: MCID3111160513 01 First-year        6       19933  19881       19881
-#>  5: MCID3111162677 01 First-year        6       19933  19881       19881
-#>  6: MCID3111164287 01 First-year        6       19933  19881       19881
-#>  7: MCID3111166148 01 First-year        6       19933  19881       19881
-#>  8: MCID3111170298 01 First-year        6       19933  19881       19881
-#>  9: MCID3111170338 01 First-year        6       19933  19881       19881
-#> 10: MCID3111213943 01 First-year        6       19943  19891       19881
+#>  3: MCID3111160513 01 First-year        6       19933  19881       19881
+#>  4: MCID3111162677 01 First-year        6       19933  19881       19881
+#>  5: MCID3111164287 01 First-year        6       19933  19881       19881
+#>  6: MCID3111171205 01 First-year        6       19933  19881       19881
+#>  7: MCID3111172083 01 First-year        6       19933  19881       19881
+#>  8: MCID3111213943 01 First-year        6       19943  19891       19881
+#>  9: MCID3111248941 01 First-year        6       19953  19901       19881
+#> 10: MCID3111250695 01 First-year        6       19953  19901       19881
 #>     upper_limit data_sufficiency
 #>          <char>           <char>
 #>  1:       20096    exclude-lower
@@ -97,39 +97,39 @@ add_data_sufficiency(dframe, midfield_term = toy_term)
 #>  3:       20096    exclude-lower
 #>  4:       20096    exclude-lower
 #>  5:       20096    exclude-lower
-#>  6:       20096    exclude-lower
-#>  7:       20096    exclude-lower
-#>  8:       20181    exclude-lower
-#>  9:       20181    exclude-lower
-#> 10:       20181          include
+#>  6:       20181    exclude-lower
+#>  7:       20181    exclude-lower
+#>  8:       20181          include
+#>  9:       20096          include
+#> 10:       20096          include
 
 # Existing data_sufficiency column, if any, is overwritten
 dframe[, data_sufficiency := NA_character_][]
 #>               mcid term_i       level_i adj_span timely_term data_sufficiency
 #>             <char> <char>        <char>    <num>      <char>           <char>
-#>  1: MCID3111145992  19881 01 First-year        6       19933             <NA>
+#>  1: MCID3111158953  19881 01 First-year        6       19933             <NA>
 #>  2: MCID3111159270  19881 01 First-year        6       19933             <NA>
-#>  3: MCID3111160219  19881 01 First-year        6       19933             <NA>
-#>  4: MCID3111160513  19881 01 First-year        6       19933             <NA>
-#>  5: MCID3111162677  19881 01 First-year        6       19933             <NA>
-#>  6: MCID3111164287  19881 01 First-year        6       19933             <NA>
-#>  7: MCID3111166148  19881 01 First-year        6       19933             <NA>
-#>  8: MCID3111170298  19881 01 First-year        6       19933             <NA>
-#>  9: MCID3111170338  19881 01 First-year        6       19933             <NA>
-#> 10: MCID3111213943  19891 01 First-year        6       19943             <NA>
+#>  3: MCID3111160513  19881 01 First-year        6       19933             <NA>
+#>  4: MCID3111162677  19881 01 First-year        6       19933             <NA>
+#>  5: MCID3111164287  19881 01 First-year        6       19933             <NA>
+#>  6: MCID3111171205  19881 01 First-year        6       19933             <NA>
+#>  7: MCID3111172083  19881 01 First-year        6       19933             <NA>
+#>  8: MCID3111213943  19891 01 First-year        6       19943             <NA>
+#>  9: MCID3111248941  19901 01 First-year        6       19953             <NA>
+#> 10: MCID3111250695  19901 01 First-year        6       19953             <NA>
 add_data_sufficiency(dframe, midfield_term = toy_term)
 #>               mcid       level_i adj_span timely_term term_i lower_limit
 #>             <char>        <char>    <num>      <char> <char>      <char>
-#>  1: MCID3111145992 01 First-year        6       19933  19881       19881
+#>  1: MCID3111158953 01 First-year        6       19933  19881       19881
 #>  2: MCID3111159270 01 First-year        6       19933  19881       19881
-#>  3: MCID3111160219 01 First-year        6       19933  19881       19881
-#>  4: MCID3111160513 01 First-year        6       19933  19881       19881
-#>  5: MCID3111162677 01 First-year        6       19933  19881       19881
-#>  6: MCID3111164287 01 First-year        6       19933  19881       19881
-#>  7: MCID3111166148 01 First-year        6       19933  19881       19881
-#>  8: MCID3111170298 01 First-year        6       19933  19881       19881
-#>  9: MCID3111170338 01 First-year        6       19933  19881       19881
-#> 10: MCID3111213943 01 First-year        6       19943  19891       19881
+#>  3: MCID3111160513 01 First-year        6       19933  19881       19881
+#>  4: MCID3111162677 01 First-year        6       19933  19881       19881
+#>  5: MCID3111164287 01 First-year        6       19933  19881       19881
+#>  6: MCID3111171205 01 First-year        6       19933  19881       19881
+#>  7: MCID3111172083 01 First-year        6       19933  19881       19881
+#>  8: MCID3111213943 01 First-year        6       19943  19891       19881
+#>  9: MCID3111248941 01 First-year        6       19953  19901       19881
+#> 10: MCID3111250695 01 First-year        6       19953  19901       19881
 #>     upper_limit data_sufficiency
 #>          <char>           <char>
 #>  1:       20096    exclude-lower
@@ -137,9 +137,9 @@ add_data_sufficiency(dframe, midfield_term = toy_term)
 #>  3:       20096    exclude-lower
 #>  4:       20096    exclude-lower
 #>  5:       20096    exclude-lower
-#>  6:       20096    exclude-lower
-#>  7:       20096    exclude-lower
-#>  8:       20181    exclude-lower
-#>  9:       20181    exclude-lower
-#> 10:       20181          include
+#>  6:       20181    exclude-lower
+#>  7:       20181    exclude-lower
+#>  8:       20181          include
+#>  9:       20096          include
+#> 10:       20096          include
 ```

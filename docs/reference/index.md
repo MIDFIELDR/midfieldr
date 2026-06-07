@@ -12,6 +12,8 @@
   : Determine completion status for every student
 - [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
   : Determine data sufficiency for every student
+- [`add_term_tier()`](https://midfieldr.github.io/midfieldr/reference/add_term_tier.md)
+  : Label terms as pre- or post-baccalaureate
 - [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
   : Calculate a timely completion term for every student
 - [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/filter_cip.md)

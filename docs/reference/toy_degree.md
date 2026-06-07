@@ -12,7 +12,8 @@ toy_degree
 
 ## Format
 
-`data.table` with 93 rows and 4 columns keyed by student ID:
+`data.table` with 96 rows and 4 columns keyed by student ID, term, and
+program (CIP code or degree label).
 
 - `mcid`:
 

@@ -38,12 +38,10 @@ filter_cip <- function(keep_text = NULL,
                        select = NULL) {
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
-    substitute(list(...)),
-    paste(
-      "Arguments after ... must be named.\n",
-      "* Did you forget to write `drop_text = ` or `select = `?\n *"
+    substitute(list(...)), 
+    "Arguments after ... must be named, e.g., arg = val."
     )
-  )
+  
 
   # optional arguments
   # cipx   <- cip %?% midfieldr::cip

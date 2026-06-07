@@ -5,7 +5,7 @@
 \alias{toy_student}
 \title{Student data for examples}
 \format{
-\code{data.table} with 15 rows and 13 columns keyed by student ID:
+\code{data.table} with 150 rows and 13 columns keyed by student ID.
 \describe{
 \item{\code{mcid}}{Character, de-identified student ID. Key column.}
 \item{\code{institution}}{Character, de-identified institution

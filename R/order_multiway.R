@@ -82,7 +82,7 @@ order_multiway <- function(dframe,
                            ...,
                            method = NULL,
                            ratio_of = NULL) {
-  on.exit(setkey(DT, NULL), add = TRUE)
+  on.exit(setkey(dframe, NULL), add = TRUE)
 
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(

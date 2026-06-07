@@ -41,7 +41,7 @@
 #'
 add_data_sufficiency <- function(dframe, midfield_term = term) {
   # remove keys if any
-  on.exit(setkey(dframe, NULL))
+  on.exit(setkey(dframe, NULL), add = TRUE)
   on.exit(setkey(midfield_term, NULL), add = TRUE)
 
   # required arguments

@@ -129,7 +129,7 @@
 #' @usage toy_student
 #' @family toy-data
 #'  
-#' @format `data.table` with 15 rows and 13 columns keyed by student ID:
+#' @format `data.table` with 150 rows and 13 columns keyed by student ID.
 #'   \describe{
 #'   `r var_mcid`
 #'   `r var_institution`
@@ -158,7 +158,8 @@
 #' @usage toy_course
 #' @family toy-data
 #'
-#' @format `data.table` with 5863 rows and 12 columns keyed by student ID:
+#' @format `data.table` with 5812 rows and 12 columns keyed by student ID, 
+#'                      term, course abbreviation, and course number. 
 #'   \describe{
 #'   `r var_mcid`
 #'   `r var_institution`
@@ -186,7 +187,8 @@
 #' @usage toy_term
 #' @family toy-data
 #'
-#' @format `data.table` with 1114 rows and 13 columns keyed by student ID:
+#' @format `data.table` with 1095 rows and 13 columns keyed by student ID 
+#'                      and term. 
 #'   \describe{
 #'   `r var_mcid`
 #'   `r var_institution`
@@ -215,7 +217,8 @@
 #' @usage toy_degree
 #' @family toy-data
 #'
-#' @format `data.table` with 93 rows and 4 columns keyed by student ID:
+#' @format `data.table` with 96 rows and 4 columns keyed by student ID,  
+#'                      term, and program (CIP code or degree label).
 #'   \describe{
 #'   `r var_mcid`
 #'   `r var_institution`

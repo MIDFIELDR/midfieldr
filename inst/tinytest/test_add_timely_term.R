@@ -15,7 +15,7 @@ test_add_timely_term <- function() {
     # create case
     # library("midfieldr")
     # 
-    x <- toy_student[1:10, .(mcid)]
+    x <- toy_student[11:20, .(mcid)]
     y <- add_timely_term(x, toy_term)
     
     # DT <- cat(wrapr::draw_frame(y))
@@ -23,20 +23,20 @@ test_add_timely_term <- function() {
     
     DT <- wrapr::build_frame(
         "mcid"            , "term_i", "level_i"      , "adj_span", "timely_term" |
-            "MCID3111145992", "19881" , "01 First-year", 6         , "19933"       |
-            "MCID3111159270", "19881" , "01 First-year", 6         , "19933"       |
-            "MCID3111160219", "19881" , "01 First-year", 6         , "19933"       |
-            "MCID3111160513", "19881" , "01 First-year", 6         , "19933"       |
-            "MCID3111162677", "19881" , "01 First-year", 6         , "19933"       |
-            "MCID3111164287", "19881" , "01 First-year", 6         , "19933"       |
-            "MCID3111166148", "19881" , "01 First-year", 6         , "19933"       |
-            "MCID3111170298", "19881" , "01 First-year", 6         , "19933"       |
-            "MCID3111170338", "19881" , "01 First-year", 6         , "19933"       |
-            "MCID3111213943", "19891" , "01 First-year", 6         , "19943"       )
+            "MCID3111253227", "19901" , "01 First-year", 6         , "19953"       |
+            "MCID3111258790", "19901" , "01 First-year", 6         , "19953"       |
+            "MCID3111263510", "19901" , "01 First-year", 6         , "19953"       |
+            "MCID3111272687", "19901" , "01 First-year", 6         , "19953"       |
+            "MCID3111282492", "19904" , "01 First-year", 6         , "19963"       |
+            "MCID3111304195", "19911" , "01 First-year", 6         , "19963"       |
+            "MCID3111315508", "19911" , "01 First-year", 6         , "19963"       |
+            "MCID3111316435", "19911" , "01 First-year", 6         , "19963"       |
+            "MCID3111316936", "19911" , "01 First-year", 6         , "19963"       |
+            "MCID3111354376", "19921" , "01 First-year", 6         , "19973"       )
     setDT(DT)
    
     # correct answers, add optional arguments in combinations
-    x <- toy_student[1:10, .(mcid)]
+    x <- toy_student[11:20, .(mcid)]
     # without detail
     expect_equal(
         DT,
