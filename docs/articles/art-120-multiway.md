@@ -320,17 +320,15 @@ And the next result agrees with the values in `people_median`.
 # Verify order_multiway() output
 temp <- DT_count[, lapply(.SD, median), .SDcols = c("graduates"), by = c("people")]
 temp
-#>                  people graduates
-#>                  <fctr>     <num>
-#> 1:         Asian Female      10.0
-#> 2: International Female      12.0
-#> 3:         White Female      95.0
-#> 4:           Asian Male      37.0
-#> 5:        Hispanic Male      31.0
-#> 6:   International Male      72.0
-#> 7:   Other/Unknown Male      16.0
-#> 8:           White Male     525.5
-#> 9:           Black Male      18.0
+#>                   people graduates
+#>                   <fctr>     <num>
+#>  1:         Asian Female      10.0
+#>  2: International Female      12.0
+#>  3:         White Female      95.0
+#> ---                               
+#>  7:   Other/Unknown Male      16.0
+#>  8:           White Male     525.5
+#>  9:           Black Male      18.0
 ```
 
 Below we demonstrate that both categories are “factor” class: `program`
@@ -694,17 +692,15 @@ And the next result agrees with the values in `people_stickiness`.
 temp <- DT[, lapply(.SD, sum), .SDcols = c("ever_enrolled", "graduates"), by = c("people")]
 temp[, stickiness := round(100 * graduates / ever_enrolled, 1)]
 temp
-#>                  people ever_enrolled graduates stickiness
-#>                  <char>         <int>     <int>      <num>
-#> 1:         Asian Female            51        32       62.7
-#> 2: International Female            42        24       57.1
-#> 3:         White Female           671       406       60.5
-#> 4:           Asian Male           253       159       62.8
-#> 5:        Hispanic Male           190        90       47.4
-#> 6:   International Male           492       246       50.0
-#> 7:   Other/Unknown Male           149        68       45.6
-#> 8:           White Male          3596      2136       59.4
-#> 9:           Black Male            59        36       61.0
+#>                   people ever_enrolled graduates stickiness
+#>                   <char>         <int>     <int>      <num>
+#>  1:         Asian Female            51        32       62.7
+#>  2: International Female            42        24       57.1
+#>  3:         White Female           671       406       60.5
+#> ---                                                        
+#>  7:   Other/Unknown Male           149        68       45.6
+#>  8:           White Male          3596      2136       59.4
+#>  9:           Black Male            59        36       61.0
 ```
 
 ## Percentage-ordered charts
@@ -803,17 +799,15 @@ transform the block records to row records.
 tbl <- dcast(tbl, people ~ program, value.var = "graduates")
 tbl
 #> Key: <people>
-#>                  people Civil Electrical Industrial/Systems Mechanical
-#>                  <char> <int>      <int>              <int>      <int>
-#> 1:         Asian Female    10         12                 10         NA
-#> 2:           Asian Male    25         71                 14         49
-#> 3:           Black Male    NA         17                 NA         19
-#> 4:        Hispanic Male    31         17                 NA         42
-#> 5: International Female    13         NA                 NA         11
-#> 6:   International Male    55         90                 12         89
-#> 7:   Other/Unknown Male    11         16                 NA         41
-#> 8:         White Female   162         56                 54        134
-#> 9:           White Male   612        439                130        955
+#>                 people Civil Electrical Industrial/Systems Mechanical
+#>                 <char> <int>      <int>              <int>      <int>
+#>  1:       Asian Female    10         12                 10         NA
+#>  2:         Asian Male    25         71                 14         49
+#>  3:         Black Male    NA         17                 NA         19
+#> ---                                                                  
+#>  7: Other/Unknown Male    11         16                 NA         41
+#>  8:       White Female   162         56                 54        134
+#>  9:         White Male   612        439                130        955
 ```
 
 Edit one column name and print the table.
@@ -907,17 +901,15 @@ as we did above.
 tbl <- dcast(tbl, people ~ program, value.var = "results", fill = NA_character_)
 tbl
 #> Key: <people>
-#>                  people       Civil  Electrical Industrial/Systems   Mechanical
-#>                  <char>      <char>      <char>             <char>       <char>
-#> 1:         Asian Female  (15) 66.7%  (21) 57.1%         (15) 66.7%         <NA>
-#> 2:           Asian Male  (30) 83.3% (123) 57.7%         (24) 58.3%   (76) 64.5%
-#> 3:           Black Male        <NA>  (29) 58.6%               <NA>   (30) 63.3%
-#> 4:        Hispanic Male    (66) 47%  (45) 37.8%               <NA>   (79) 53.2%
-#> 5: International Female  (23) 56.5%        <NA>               <NA>   (19) 57.9%
-#> 6:   International Male  (97) 56.7% (195) 46.2%         (22) 54.5%    (178) 50%
-#> 7:   Other/Unknown Male  (27) 40.7%  (42) 38.1%               <NA>   (80) 51.2%
-#> 8:         White Female (263) 61.6% (118) 47.5%         (77) 70.1%  (213) 62.9%
-#> 9:           White Male (949) 64.5% (864) 50.8%        (187) 69.5% (1596) 59.8%
+#>                 people       Civil  Electrical Industrial/Systems   Mechanical
+#>                 <char>      <char>      <char>             <char>       <char>
+#>  1:       Asian Female  (15) 66.7%  (21) 57.1%         (15) 66.7%         <NA>
+#>  2:         Asian Male  (30) 83.3% (123) 57.7%         (24) 58.3%   (76) 64.5%
+#>  3:         Black Male        <NA>  (29) 58.6%               <NA>   (30) 63.3%
+#> ---                                                                           
+#>  7: Other/Unknown Male  (27) 40.7%  (42) 38.1%               <NA>   (80) 51.2%
+#>  8:       White Female (263) 61.6% (118) 47.5%         (77) 70.1%  (213) 62.9%
+#>  9:         White Male (949) 64.5% (864) 50.8%        (187) 69.5% (1596) 59.8%
 ```
 
 Edit one column name and print the table.

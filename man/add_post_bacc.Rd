@@ -49,9 +49,8 @@ names: \code{term} (from the term data table), \code{term_course} (from the cour
 data table), or \code{term_degree} (from the degree data table).
 
 \code{add_post_bacc()} determines a student's first degree term (if any)
-from \code{midfield_degree}, adds that column to \code{dframe}, and
-adds a second column of term-status labels identifying pre- and
-post-baccalaureate terms.
+from \code{midfield_degree}, adds that column to \code{dframe}, and adds a second
+column of term-status labels identifying pre- and post-baccalaureate terms.
 }
 \examples{
 

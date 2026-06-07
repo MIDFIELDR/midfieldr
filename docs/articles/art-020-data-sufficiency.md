@@ -210,7 +210,7 @@ started](https://midfieldr.github.io/midfieldr/articles/art-000-getting-started.
 source_term <- copy(term)
 
 # Select variables required by midfieldr functions
-term <- select_required(source_term)
+term <- select_basic_cols(source_term)
 ```
 
 *Initialize.*   Assign a working data frame.

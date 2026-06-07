@@ -44,7 +44,7 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
 
   # to set attributes at the end
   preserve_class <- class(dframe)
-  
+
   # required arguments
   qassert(dframe, "d+")
   qassert(midfield_degree, "d+")
@@ -111,7 +111,7 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
 
   # return same class as incoming
   setattr(dframe, "class", preserve_class)
-  
+
   # enable printing (see data.table FAQ 2.23)
   dframe[]
 }

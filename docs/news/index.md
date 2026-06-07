@@ -6,9 +6,25 @@
 
 New features
 
+- New function
+  [`add_post_bacc()`](https://midfieldr.github.io/midfieldr/reference/add_post_bacc.md)
+  to identify rows of post-baccalaureate terms to exclude
+- New function
+  [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
+  to replace deprecated
+  [`select_required()`](https://midfieldr.github.io/midfieldr/reference/select_required.md)
+- New utilities
+  [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md),
+  [`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md),
+  and
+  [`sort_uniq()`](https://midfieldr.github.io/midfieldr/reference/sort_uniq.md)
+  that wrap base R functions with our preferred arguments.
 - Add data set `cip2010`, constructed from a recent download of the
   source file (`CIPCode2010.csv`) from NCES. Has the same data structure
   as the existing `cip` dataset, but with more rows.
+- Add feature in functions that operate on data frames to attempt to
+  return data frames of the same class as the input, e.g., data.frame,
+  data.table, or tibble.
 
 Minor improvements
 

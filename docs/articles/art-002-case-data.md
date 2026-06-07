@@ -43,9 +43,9 @@ needed by the midfieldr functions.
 ``` r
 
 # Work with required midfieldr variables only
-student <- select_required(student)
-term <- select_required(term)
-degree <- select_required(degree)
+student <- select_basic_cols(student)
+term <- select_basic_cols(term)
+degree <- select_basic_cols(degree)
 ```
 
 *Initialize.*   Assign a working data frame. We often start with the

@@ -18,7 +18,11 @@
 
 New features
 
+- New function `add_post_bacc()` to identify rows of post-baccalaureate terms to exclude
+- New function `select_basic_cols()` to replace deprecated `select_required()` 
+- New utilities  `look_at()`, `catch_error()`, and `sort_uniq()` that wrap base R functions with our preferred arguments. 
 - Add data set `cip2010`, constructed from a recent download of the source file (`CIPCode2010.csv`) from NCES. Has the same data structure as the existing `cip` dataset, but with more rows. 
+- Add feature in functions that operate on data frames to attempt to return data frames of the same class as the input, e.g., data.frame, data.table, or tibble. 
 
 Minor improvements
 

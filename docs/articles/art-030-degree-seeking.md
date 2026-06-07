@@ -72,8 +72,8 @@ source_student <- copy(student)
 source_term <- copy(term)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_required(source_student)
-term <- select_required(source_term)
+student <- select_basic_cols(source_student)
+term <- select_basic_cols(source_term)
 ```
 
 *Initialize.*   Assign a working data frame.

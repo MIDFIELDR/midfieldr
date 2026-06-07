@@ -157,8 +157,8 @@ source_student <- copy(student)
 source_term <- copy(term)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_required(source_student)
-term <- select_required(source_term)
+student <- select_basic_cols(source_student)
+term <- select_basic_cols(source_term)
 ```
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a
@@ -367,16 +367,15 @@ program.
 
 # Sequence of term records
 term[mcid == "MCID3111150194"]
-#>              mcid   institution   term   cip6              level
-#>            <char>        <char> <char> <char>             <char>
-#> 1: MCID3111150194 Institution J  19883 140102      01 First-year
-#> 2: MCID3111150194 Institution J  19891 140102     02 Second-year
-#> 3: MCID3111150194 Institution J  19893 140102     02 Second-year
-#> 4: MCID3111150194 Institution J  19903 143501      03 Third-year
-#> 5: MCID3111150194 Institution J  19911 143501     04 Fourth-year
-#> 6: MCID3111150194 Institution J  19913 143501     04 Fourth-year
-#> 7: MCID3111150194 Institution J  19921 143501 05 Fifth-year Plus
-#> 8: MCID3111150194 Institution J  19923 143501 05 Fifth-year Plus
+#>               mcid   institution   term   cip6              level
+#>             <char>        <char> <char> <char>             <char>
+#>  1: MCID3111150194 Institution J  19883 140102      01 First-year
+#>  2: MCID3111150194 Institution J  19891 140102     02 Second-year
+#>  3: MCID3111150194 Institution J  19893 140102     02 Second-year
+#> ---                                                              
+#>  6: MCID3111150194 Institution J  19913 143501     04 Fourth-year
+#>  7: MCID3111150194 Institution J  19921 143501 05 Fifth-year Plus
+#>  8: MCID3111150194 Institution J  19923 143501 05 Fifth-year Plus
 ```
 
 *Example 2.*   In our results, this student is a starter in CIP 141801

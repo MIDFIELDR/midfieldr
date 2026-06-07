@@ -8,8 +8,8 @@
 #' @importFrom checkmate assert_names
 #' @importFrom checkmate qassert
 #' @importFrom checkmate assert_subset
-#' 
-#' @importFrom data.table := 
+#'
+#' @importFrom data.table :=
 #' @importFrom data.table .N
 #' @importFrom data.table .SD
 #' @importFrom data.table %chin%
@@ -22,19 +22,19 @@
 #' @importFrom data.table setattr
 #' @importFrom data.table setcolorder
 #' @importFrom data.table setDF
-#' @importFrom data.table setDT 
+#' @importFrom data.table setDT
 #' @importFrom data.table setkey
 #' @importFrom data.table setkeyv
 #' @importFrom data.table setnames
 #' @importFrom data.table setorder
 #' @importFrom data.table setorderv
 #' @importFrom data.table shift
-#' 
+#'
 #' @importFrom stats na.omit
 #' @importFrom stats reorder
-#' 
+#'
 #' @importFrom utils str
-#' 
+#'
 #' @importFrom wrapr let
 #' @importFrom wrapr stop_if_dot_args
 #' @importFrom wrapr %?%

@@ -1,12 +1,100 @@
-# Internal utility functions and re-exports
+# Re-export functions, external utilities, and internal utilities
+
+
+# ------------------------------------------ RE-EXPORTS
 
 #' @export
 #' @importFrom wrapr check_equiv_frames
 wrapr::check_equiv_frames
 
 
-# ------------------------------------------------------------------------
-#
+# ------------------------------------------ EXTERNAL UTILITIES
+
+#' Error handling
+#'
+#' A wrapper on `base::tryCatch()` for previewing an error message, if any.
+#'
+#' @param f Function with arguments expecting an error
+#' @returns Does not return anything. The side effect is to output to the terminal.
+#' @example man/examples/catch_error_exa.R
+#' @export
+catch_error <- function(f) {
+  tryCatch(
+    {
+      f
+    },
+    error = function(e) {
+      cat("Error:", e$message, "\n")
+    }
+  )
+}
+
+#' Display structure
+#'
+#' A wrapper on `base::str()` with arguments set to not show attributes,
+#' to not show length, and to cut the width.
+#'
+#' @param x Any R object.
+#'
+#' @returns Does not return anything. The side effect is to output to the terminal.
+#'
+#' @example man/examples/look_at_exa.R
+#'
+#' @export
+look_at <- function(x) {
+  str(x,
+    give.attr = FALSE,
+    give.length = FALSE,
+    width = 80,
+    strict.width = "cut"
+  )
+}
+
+#' Extract unique elements and sort
+#'
+#' A strict version of `sort()` and `unique()` (without ...).
+#'
+#' @param x             Vector of values to be sorted with any duplicate
+#'                      values removed.
+#' @param ...          `r param_dots`
+#' @param incomparables A vector of values. See `unique()`.
+#' @param MARGIN 	    An integer. The array margin to be held fixed. Passed
+#'                      to `unique()`.
+#' @param fromLast      Logical. Indicates if duplication should be considered
+#'                      from the last. Passed to `unique()`.
+#' @param decreasing    Logical. Should the sort be increasing or decreasing?
+#'                      Passed to `sort()`.
+#' @param na.last       Logical. Position of NA values. Passed to `sort()`.
+#'
+#' @returns A vector of unique values, sorted.
+#'
+#' @example man/examples/sort_uniq_exa.R
+#'
+#' @export
+sort_uniq <- function(x,
+                      ...,
+                      incomparables = FALSE, # passed to unique()
+                      MARGIN = 1, # to unique()
+                      fromLast = FALSE, # to unique()
+                      decreasing = FALSE, # passed to sort()
+                      na.last = FALSE) { # to sort()
+
+  wrapr::stop_if_dot_args(substitute(list(...)), "midfieldr::sort_uniq")
+
+  x <- base::unique(x,
+    incomparables = incomparables,
+    MARGIN = MARGIN,
+    fromLast = fromLast
+  )
+  base::sort(x,
+    decreasing = decreasing,
+    na.last = na.last
+  )
+}
+
+
+# ------------------------------------------ INTERNAL UTILITIES
+
 #' Set column order and row order
 #'
 #' Use the vector of column names in `cols` as the ordering argument in

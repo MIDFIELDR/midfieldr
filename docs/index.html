@@ -92,31 +92,41 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>Provides tools and demonstrates methods for working with individual undergraduate student-level records (registrar’s data) in R.</p>
+<p>Provides tools for working with undergraduate student-level records (registrar’s data) in R, supporting longitudinal studies in particular.</p>
 <ul>
 <li>
-<code><a href="reference/filter_cip.html">filter_cip()</a></code> selects rows of program codes that match search terms</li>
+<code><a href="reference/select_basic_cols.html">select_basic_cols()</a></code> chooses columns required by midfieldr functions.<br>
+</li>
 <li>
-<code><a href="reference/select_required.html">select_required()</a></code> selects a minimum set of columns required by midfieldr functions</li>
+<code><a href="reference/add_post_bacc.html">add_post_bacc()</a></code> identifies rows of post-baccalaureate terms to exclude.</li>
 <li>
-<code><a href="reference/add_timely_term.html">add_timely_term()</a></code> adds a new timely completion term variable</li>
+<code><a href="reference/filter_cip.html">filter_cip()</a></code> chooses rows of CIP data based on search terms.<br>
+</li>
 <li>
-<code><a href="reference/add_data_sufficiency.html">add_data_sufficiency()</a></code> adds a new data sufficiency status variable</li>
+<code><a href="reference/add_timely_term.html">add_timely_term()</a></code> estimates a student’s timely graduation term.</li>
 <li>
-<code><a href="reference/add_completion_status.html">add_completion_status()</a></code> adds a new program completion status variable</li>
+<code><a href="reference/add_data_sufficiency.html">add_data_sufficiency()</a></code> identifies rows to exclude due to insufficient data.</li>
 <li>
-<code><a href="reference/prep_fye_mice.html">prep_fye_mice()</a></code> conditions data for imputing starting majors of FYE students</li>
+<code><a href="reference/add_completion_status.html">add_completion_status()</a></code> determines if a graduation is timely or late.</li>
 <li>
-<code><a href="reference/order_multiway.html">order_multiway()</a></code> conditions data for plotting a Cleveland-style multiway chart</li>
+<code><a href="reference/prep_fye_mice.html">prep_fye_mice()</a></code> conditions data for imputing starting majors of FYE students.<br>
+</li>
+<li>
+<code><a href="reference/order_multiway.html">order_multiway()</a></code> conditions data for Cleveland multiway charts.</li>
 </ul>
-<p>Suggested packages.</p>
+<p>Frequently used packages.</p>
 <ul>
 <li>
 <a href="https://CRAN.R-project.org/package=data.table" class="external-link">data.table</a> for manipulating data (<a href="#ref-Dowle+Srinivasan:2026:data.table">Barrett et al. 2026</a>)</li>
 <li>
 <a href="https://CRAN.R-project.org/package=ggplot2" class="external-link">ggplot2</a> for charts (<a href="#ref-Wickham:2016:ggplot2">Wickham 2016</a>)</li>
+</ul>
+<p>Other packages, used infrequently.</p>
+<ul>
 <li>
 <a href="https://CRAN.R-project.org/package=mice" class="external-link">mice</a> for imputing starting majors of First-Year Engineering students (<a href="#ref-vanBuuren+Oudshoorn:2011"><span class="nocase">van Buuren and Groothuis-Oudshoorn</span> 2011</a>).</li>
+<li>
+<a href="https://CRAN.R-project.org/package=stringr" class="external-link">stringr</a> for manipulation of character strings (<a href="#ref-stringr">Wickham 2025</a>).</li>
 </ul>
 </div>
 <div class="section level2">
@@ -148,102 +158,204 @@
 <code class="sourceCode R"><span><span class="co"># Initialize the working data frame using toy_term</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">toy_term</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<span><span class="va">DT</span></span>
+<span><span class="co">#&gt;                mcid</span></span>
+<span><span class="co">#&gt;              &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1: MCID3111158953</span></span>
+<span><span class="co">#&gt;   2: MCID3111159270</span></span>
+<span><span class="co">#&gt;   3: MCID3111160513</span></span>
+<span><span class="co">#&gt;   4: MCID3111162677</span></span>
+<span><span class="co">#&gt;   5: MCID3111164287</span></span>
+<span><span class="co">#&gt;   6: MCID3111171205</span></span>
+<span><span class="co">#&gt;   7: MCID3111172083</span></span>
+<span><span class="co">#&gt;   8: MCID3111213943</span></span>
+<span><span class="co">#&gt;   9: MCID3111248941</span></span>
+<span><span class="co">#&gt;  10: MCID3111250695</span></span>
+<span><span class="co">#&gt;  ---               </span></span>
+<span><span class="co">#&gt; 141: MCID3112802165</span></span>
+<span><span class="co">#&gt; 142: MCID3112803670</span></span>
+<span><span class="co">#&gt; 143: MCID3112804805</span></span>
+<span><span class="co">#&gt; 144: MCID3112839822</span></span>
+<span><span class="co">#&gt; 145: MCID3112845932</span></span>
+<span><span class="co">#&gt; 146: MCID3112846308</span></span>
+<span><span class="co">#&gt; 147: MCID3112877403</span></span>
+<span><span class="co">#&gt; 148: MCID3112881399</span></span>
+<span><span class="co">#&gt; 149: MCID3112882995</span></span>
+<span><span class="co">#&gt; 150: MCID3112884375</span></span>
 <span></span>
 <span><span class="co"># Add variables relating to the timely term</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">toy_term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Order the rows for viewing </span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">timely_term</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                mcid term_i       level_i adj_span timely_term</span></span>
 <span><span class="co">#&gt;              &lt;char&gt; &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
 <span><span class="co">#&gt;   1: MCID3111158953  19881 01 First-year        6       19933</span></span>
 <span><span class="co">#&gt;   2: MCID3111159270  19881 01 First-year        6       19933</span></span>
 <span><span class="co">#&gt;   3: MCID3111160513  19881 01 First-year        6       19933</span></span>
+<span><span class="co">#&gt;   4: MCID3111162677  19881 01 First-year        6       19933</span></span>
+<span><span class="co">#&gt;   5: MCID3111164287  19881 01 First-year        6       19933</span></span>
+<span><span class="co">#&gt;   6: MCID3111171205  19881 01 First-year        6       19933</span></span>
+<span><span class="co">#&gt;   7: MCID3111172083  19881 01 First-year        6       19933</span></span>
+<span><span class="co">#&gt;   8: MCID3111213943  19891 01 First-year        6       19943</span></span>
+<span><span class="co">#&gt;   9: MCID3111248941  19901 01 First-year        6       19953</span></span>
+<span><span class="co">#&gt;  10: MCID3111250695  19901 01 First-year        6       19953</span></span>
 <span><span class="co">#&gt;  ---                                                         </span></span>
+<span><span class="co">#&gt; 141: MCID3112802165  20161 01 First-year        6       20213</span></span>
+<span><span class="co">#&gt; 142: MCID3112803670  20161 01 First-year        6       20213</span></span>
+<span><span class="co">#&gt; 143: MCID3112804805  20161 01 First-year        6       20213</span></span>
+<span><span class="co">#&gt; 144: MCID3112839822  20171 01 First-year        6       20223</span></span>
+<span><span class="co">#&gt; 145: MCID3112846308  20171 01 First-year        6       20223</span></span>
+<span><span class="co">#&gt; 146: MCID3112845932  20173 01 First-year        6       20231</span></span>
+<span><span class="co">#&gt; 147: MCID3112877403  20181 01 First-year        6       20233</span></span>
 <span><span class="co">#&gt; 148: MCID3112881399  20181 01 First-year        6       20233</span></span>
 <span><span class="co">#&gt; 149: MCID3112882995  20181 01 First-year        6       20233</span></span>
 <span><span class="co">#&gt; 150: MCID3112884375  20181 01 First-year        6       20233</span></span>
 <span></span>
+<span><span class="co"># Optional: reduce number of columns</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">timely_term</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
 <span><span class="co"># Add variables relating to data sufficiency</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">toy_term</span><span class="op">)</span></span>
-<span><span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">data_sufficiency</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt;                mcid       level_i adj_span timely_term term_i lower_limit</span></span>
-<span><span class="co">#&gt;              &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt;   1: MCID3111158953 01 First-year        6       19933  19881       19881</span></span>
-<span><span class="co">#&gt;   2: MCID3111159270 01 First-year        6       19933  19881       19881</span></span>
-<span><span class="co">#&gt;   3: MCID3111160513 01 First-year        6       19933  19881       19881</span></span>
-<span><span class="co">#&gt;  ---                                                                     </span></span>
-<span><span class="co">#&gt; 148: MCID3112413521 01 First-year        6       20143  20091       19901</span></span>
-<span><span class="co">#&gt; 149: MCID3112471930 01 First-year        6       20153  20101       19901</span></span>
-<span><span class="co">#&gt; 150: MCID3112498796 01 First-year        6       20153  20101       19881</span></span>
-<span><span class="co">#&gt;      upper_limit data_sufficiency</span></span>
-<span><span class="co">#&gt;           &lt;char&gt;           &lt;char&gt;</span></span>
-<span><span class="co">#&gt;   1:       20096    exclude-lower</span></span>
-<span><span class="co">#&gt;   2:       20096    exclude-lower</span></span>
-<span><span class="co">#&gt;   3:       20096    exclude-lower</span></span>
-<span><span class="co">#&gt;  ---                             </span></span>
-<span><span class="co">#&gt; 148:       20153          include</span></span>
-<span><span class="co">#&gt; 149:       20153          include</span></span>
-<span><span class="co">#&gt; 150:       20181          include</span></span>
+<span><span class="va">DT</span></span>
+<span><span class="co">#&gt;                mcid timely_term term_i lower_limit upper_limit data_sufficiency</span></span>
+<span><span class="co">#&gt;              &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1: MCID3111158953       19933  19881       19881       20096    exclude-lower</span></span>
+<span><span class="co">#&gt;   2: MCID3111159270       19933  19881       19881       20096    exclude-lower</span></span>
+<span><span class="co">#&gt;   3: MCID3111160513       19933  19881       19881       20096    exclude-lower</span></span>
+<span><span class="co">#&gt;   4: MCID3111162677       19933  19881       19881       20096    exclude-lower</span></span>
+<span><span class="co">#&gt;   5: MCID3111164287       19933  19881       19881       20096    exclude-lower</span></span>
+<span><span class="co">#&gt;   6: MCID3111171205       19933  19881       19881       20181    exclude-lower</span></span>
+<span><span class="co">#&gt;   7: MCID3111172083       19933  19881       19881       20181    exclude-lower</span></span>
+<span><span class="co">#&gt;   8: MCID3111213943       19943  19891       19881       20181          include</span></span>
+<span><span class="co">#&gt;   9: MCID3111248941       19953  19901       19881       20096          include</span></span>
+<span><span class="co">#&gt;  10: MCID3111250695       19953  19901       19881       20096          include</span></span>
+<span><span class="co">#&gt;  ---                                                                           </span></span>
+<span><span class="co">#&gt; 141: MCID3112802165       20213  20161       19881       20181    exclude-upper</span></span>
+<span><span class="co">#&gt; 142: MCID3112803670       20213  20161       19881       20181    exclude-upper</span></span>
+<span><span class="co">#&gt; 143: MCID3112804805       20213  20161       19881       20181    exclude-upper</span></span>
+<span><span class="co">#&gt; 144: MCID3112839822       20223  20171       19881       20181    exclude-upper</span></span>
+<span><span class="co">#&gt; 145: MCID3112845932       20231  20173       19881       20181    exclude-upper</span></span>
+<span><span class="co">#&gt; 146: MCID3112846308       20223  20171       19881       20181    exclude-upper</span></span>
+<span><span class="co">#&gt; 147: MCID3112877403       20233  20181       19881       20181    exclude-upper</span></span>
+<span><span class="co">#&gt; 148: MCID3112881399       20233  20181       19881       20181    exclude-upper</span></span>
+<span><span class="co">#&gt; 149: MCID3112882995       20233  20181       19881       20181    exclude-upper</span></span>
+<span><span class="co">#&gt; 150: MCID3112884375       20233  20181       19881       20181    exclude-upper</span></span>
+<span></span>
+<span><span class="co"># Filter for data sufficiency</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/chmatch.html" class="external-link">%chin%</a></span> <span class="st">"include"</span><span class="op">]</span></span>
+<span><span class="va">DT</span></span>
+<span><span class="co">#&gt;                mcid timely_term term_i lower_limit upper_limit data_sufficiency</span></span>
+<span><span class="co">#&gt;              &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1: MCID3111213943       19943  19891       19881       20181          include</span></span>
+<span><span class="co">#&gt;   2: MCID3111248941       19953  19901       19881       20096          include</span></span>
+<span><span class="co">#&gt;   3: MCID3111250695       19953  19901       19881       20096          include</span></span>
+<span><span class="co">#&gt;   4: MCID3111253227       19953  19901       19881       20096          include</span></span>
+<span><span class="co">#&gt;   5: MCID3111258790       19953  19901       19881       20181          include</span></span>
+<span><span class="co">#&gt;   6: MCID3111263510       19953  19901       19881       20181          include</span></span>
+<span><span class="co">#&gt;   7: MCID3111282492       19963  19904       19901       20153          include</span></span>
+<span><span class="co">#&gt;   8: MCID3111304195       19963  19911       19881       20096          include</span></span>
+<span><span class="co">#&gt;   9: MCID3111315508       19963  19911       19901       20153          include</span></span>
+<span><span class="co">#&gt;  10: MCID3111316435       19963  19911       19901       20153          include</span></span>
+<span><span class="co">#&gt;  ---                                                                           </span></span>
+<span><span class="co">#&gt;  96: MCID3112317359       20123  20071       19881       20181          include</span></span>
+<span><span class="co">#&gt;  97: MCID3112352869       20133  20081       19881       20181          include</span></span>
+<span><span class="co">#&gt;  98: MCID3112354970       20133  20081       19881       20181          include</span></span>
+<span><span class="co">#&gt;  99: MCID3112406332       20143  20091       19881       20181          include</span></span>
+<span><span class="co">#&gt; 100: MCID3112409179       20143  20091       19881       20181          include</span></span>
+<span><span class="co">#&gt; 101: MCID3112411629       20143  20091       19881       20181          include</span></span>
+<span><span class="co">#&gt; 102: MCID3112412904       20143  20091       19901       20153          include</span></span>
+<span><span class="co">#&gt; 103: MCID3112413521       20143  20091       19901       20153          include</span></span>
+<span><span class="co">#&gt; 104: MCID3112471930       20153  20101       19901       20153          include</span></span>
+<span><span class="co">#&gt; 105: MCID3112498796       20153  20101       19881       20181          include</span></span>
+<span></span>
+<span><span class="co"># Optional: reduce number of columns</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">timely_term</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Add variables relating to completion status</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">toy_degree</span><span class="op">)</span></span>
-<span><span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">completion_status</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt;                mcid       level_i adj_span timely_term term_i lower_limit</span></span>
-<span><span class="co">#&gt;              &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt;   1: MCID3111258790 01 First-year        6       19953  19901       19881</span></span>
-<span><span class="co">#&gt;   2: MCID3111282492 01 First-year        6       19963  19904       19901</span></span>
-<span><span class="co">#&gt;   3: MCID3111316435 01 First-year        6       19963  19911       19901</span></span>
-<span><span class="co">#&gt;  ---                                                                     </span></span>
-<span><span class="co">#&gt; 148: MCID3112881399 01 First-year        6       20233  20181       19881</span></span>
-<span><span class="co">#&gt; 149: MCID3112882995 01 First-year        6       20233  20181       19881</span></span>
-<span><span class="co">#&gt; 150: MCID3112884375 01 First-year        6       20233  20181       19881</span></span>
-<span><span class="co">#&gt;      upper_limit data_sufficiency term_degree completion_status</span></span>
-<span><span class="co">#&gt;           &lt;char&gt;           &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span></span>
-<span><span class="co">#&gt;   1:       20181          include       19954              late</span></span>
-<span><span class="co">#&gt;   2:       20153          include       19991              late</span></span>
-<span><span class="co">#&gt;   3:       20153          include       19964              late</span></span>
-<span><span class="co">#&gt;  ---                                                           </span></span>
-<span><span class="co">#&gt; 148:       20181    exclude-upper        &lt;NA&gt;              &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 149:       20181    exclude-upper        &lt;NA&gt;              &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 150:       20181    exclude-upper        &lt;NA&gt;              &lt;NA&gt;</span></span>
-<span></span>
-<span><span class="co"># Filter for data sufficiency and timely completion</span></span>
-<span><span class="va">rows_we_want</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">$</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span> <span class="op">&amp;</span> <span class="va">DT</span><span class="op">$</span><span class="va">completion_status</span> <span class="op">==</span> <span class="st">"timely"</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">rows_we_want</span><span class="op">]</span></span>
 <span><span class="va">DT</span></span>
-<span><span class="co">#&gt;               mcid       level_i adj_span timely_term term_i lower_limit</span></span>
-<span><span class="co">#&gt;             &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt;  1: MCID3111213943 01 First-year        6       19943  19891       19881</span></span>
-<span><span class="co">#&gt;  2: MCID3111248941 01 First-year        6       19953  19901       19881</span></span>
-<span><span class="co">#&gt;  3: MCID3111253227 01 First-year        6       19953  19901       19881</span></span>
-<span><span class="co">#&gt; ---                                                                     </span></span>
-<span><span class="co">#&gt; 53: MCID3112411629 01 First-year        6       20143  20091       19881</span></span>
-<span><span class="co">#&gt; 54: MCID3112412904 01 First-year        6       20143  20091       19901</span></span>
-<span><span class="co">#&gt; 55: MCID3112498796 01 First-year        6       20153  20101       19881</span></span>
-<span><span class="co">#&gt;     upper_limit data_sufficiency term_degree completion_status</span></span>
-<span><span class="co">#&gt;          &lt;char&gt;           &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span></span>
-<span><span class="co">#&gt;  1:       20181          include       19903            timely</span></span>
-<span><span class="co">#&gt;  2:       20096          include       19943            timely</span></span>
-<span><span class="co">#&gt;  3:       20096          include       19951            timely</span></span>
-<span><span class="co">#&gt; ---                                                           </span></span>
-<span><span class="co">#&gt; 53:       20181          include       20124            timely</span></span>
-<span><span class="co">#&gt; 54:       20153          include       20123            timely</span></span>
-<span><span class="co">#&gt; 55:       20181          include       20143            timely</span></span>
+<span><span class="co">#&gt;                mcid timely_term term_degree completion_status</span></span>
+<span><span class="co">#&gt;              &lt;char&gt;      &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1: MCID3111213943       19943       19903            timely</span></span>
+<span><span class="co">#&gt;   2: MCID3111248941       19953       19943            timely</span></span>
+<span><span class="co">#&gt;   3: MCID3111250695       19953        &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   4: MCID3111253227       19953       19951            timely</span></span>
+<span><span class="co">#&gt;   5: MCID3111258790       19953       19954              late</span></span>
+<span><span class="co">#&gt;   6: MCID3111263510       19953       19933            timely</span></span>
+<span><span class="co">#&gt;   7: MCID3111282492       19963       19991              late</span></span>
+<span><span class="co">#&gt;   8: MCID3111304195       19963        &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;   9: MCID3111315508       19963       19961            timely</span></span>
+<span><span class="co">#&gt;  10: MCID3111316435       19963       19964              late</span></span>
+<span><span class="co">#&gt;  ---                                                         </span></span>
+<span><span class="co">#&gt;  96: MCID3112317359       20123       20111            timely</span></span>
+<span><span class="co">#&gt;  97: MCID3112352869       20133       20121            timely</span></span>
+<span><span class="co">#&gt;  98: MCID3112354970       20133       20163              late</span></span>
+<span><span class="co">#&gt;  99: MCID3112406332       20143       20131            timely</span></span>
+<span><span class="co">#&gt; 100: MCID3112409179       20143       20123            timely</span></span>
+<span><span class="co">#&gt; 101: MCID3112411629       20143       20124            timely</span></span>
+<span><span class="co">#&gt; 102: MCID3112412904       20143       20123            timely</span></span>
+<span><span class="co">#&gt; 103: MCID3112413521       20143       20173              late</span></span>
+<span><span class="co">#&gt; 104: MCID3112471930       20153        &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 105: MCID3112498796       20153       20143            timely</span></span>
 <span></span>
-<span><span class="co"># Join demographic data</span></span>
+<span><span class="co"># Filter for timely completion</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">completion_status</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/chmatch.html" class="external-link">%chin%</a></span> <span class="st">"timely"</span><span class="op">]</span></span>
+<span><span class="va">DT</span></span>
+<span><span class="co">#&gt;               mcid timely_term term_degree completion_status</span></span>
+<span><span class="co">#&gt;             &lt;char&gt;      &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1: MCID3111213943       19943       19903            timely</span></span>
+<span><span class="co">#&gt;  2: MCID3111248941       19953       19943            timely</span></span>
+<span><span class="co">#&gt;  3: MCID3111253227       19953       19951            timely</span></span>
+<span><span class="co">#&gt;  4: MCID3111263510       19953       19933            timely</span></span>
+<span><span class="co">#&gt;  5: MCID3111315508       19963       19961            timely</span></span>
+<span><span class="co">#&gt;  6: MCID3111316936       19963       19953            timely</span></span>
+<span><span class="co">#&gt;  7: MCID3111354376       19973       19953            timely</span></span>
+<span><span class="co">#&gt;  8: MCID3111355374       19973       19961            timely</span></span>
+<span><span class="co">#&gt;  9: MCID3111356562       19973       19963            timely</span></span>
+<span><span class="co">#&gt; 10: MCID3111357512       19973       19953            timely</span></span>
+<span><span class="co">#&gt; ---                                                         </span></span>
+<span><span class="co">#&gt; 46: MCID3112196380       20103       20083            timely</span></span>
+<span><span class="co">#&gt; 47: MCID3112196966       20103       20093            timely</span></span>
+<span><span class="co">#&gt; 48: MCID3112296580       20123       20103            timely</span></span>
+<span><span class="co">#&gt; 49: MCID3112317359       20123       20111            timely</span></span>
+<span><span class="co">#&gt; 50: MCID3112352869       20133       20121            timely</span></span>
+<span><span class="co">#&gt; 51: MCID3112406332       20143       20131            timely</span></span>
+<span><span class="co">#&gt; 52: MCID3112409179       20143       20123            timely</span></span>
+<span><span class="co">#&gt; 53: MCID3112411629       20143       20124            timely</span></span>
+<span><span class="co">#&gt; 54: MCID3112412904       20143       20123            timely</span></span>
+<span><span class="co">#&gt; 55: MCID3112498796       20153       20143            timely</span></span>
+<span></span>
+<span><span class="co"># Join demographic data, reduce number of columns</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">toy_student</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span>, on <span class="op">=</span> <span class="st">"mcid"</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Label the student bloc</span></span>
 <span><span class="va">DT</span><span class="op">[</span>, <span class="va">bloc</span> <span class="op">:=</span> <span class="st">"graduate"</span><span class="op">]</span></span>
 <span><span class="va">DT</span></span>
-<span><span class="co">#&gt;               mcid   race    sex     bloc</span></span>
-<span><span class="co">#&gt;             &lt;char&gt; &lt;char&gt; &lt;char&gt;   &lt;char&gt;</span></span>
-<span><span class="co">#&gt;  1: MCID3111213943  White   Male graduate</span></span>
-<span><span class="co">#&gt;  2: MCID3111248941  White   Male graduate</span></span>
-<span><span class="co">#&gt;  3: MCID3111253227  White   Male graduate</span></span>
-<span><span class="co">#&gt; ---                                      </span></span>
-<span><span class="co">#&gt; 53: MCID3112411629  White   Male graduate</span></span>
-<span><span class="co">#&gt; 54: MCID3112412904  White   Male graduate</span></span>
-<span><span class="co">#&gt; 55: MCID3112498796  White Female graduate</span></span></code></pre></div>
+<span><span class="co">#&gt;               mcid          race    sex     bloc</span></span>
+<span><span class="co">#&gt;             &lt;char&gt;        &lt;char&gt; &lt;char&gt;   &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1: MCID3111213943         White   Male graduate</span></span>
+<span><span class="co">#&gt;  2: MCID3111248941         White   Male graduate</span></span>
+<span><span class="co">#&gt;  3: MCID3111253227         White   Male graduate</span></span>
+<span><span class="co">#&gt;  4: MCID3111263510         White   Male graduate</span></span>
+<span><span class="co">#&gt;  5: MCID3111315508 Other/Unknown   Male graduate</span></span>
+<span><span class="co">#&gt;  6: MCID3111316936         White Female graduate</span></span>
+<span><span class="co">#&gt;  7: MCID3111354376         White   Male graduate</span></span>
+<span><span class="co">#&gt;  8: MCID3111355374         White   Male graduate</span></span>
+<span><span class="co">#&gt;  9: MCID3111356562         White   Male graduate</span></span>
+<span><span class="co">#&gt; 10: MCID3111357512         White   Male graduate</span></span>
+<span><span class="co">#&gt; ---                                             </span></span>
+<span><span class="co">#&gt; 46: MCID3112196380         White   Male graduate</span></span>
+<span><span class="co">#&gt; 47: MCID3112196966         White Female graduate</span></span>
+<span><span class="co">#&gt; 48: MCID3112296580         White   Male graduate</span></span>
+<span><span class="co">#&gt; 49: MCID3112317359         White   Male graduate</span></span>
+<span><span class="co">#&gt; 50: MCID3112352869         White   Male graduate</span></span>
+<span><span class="co">#&gt; 51: MCID3112406332         White   Male graduate</span></span>
+<span><span class="co">#&gt; 52: MCID3112409179         Asian   Male graduate</span></span>
+<span><span class="co">#&gt; 53: MCID3112411629         White   Male graduate</span></span>
+<span><span class="co">#&gt; 54: MCID3112412904         White   Male graduate</span></span>
+<span><span class="co">#&gt; 55: MCID3112498796         White Female graduate</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>
@@ -268,6 +380,9 @@ Ohland, Matthew. 2023. <em>MIDFIELD, 2004–2023</em>. <a href="https://midfield
 </div>
 <div id="ref-Wickham:2016:ggplot2" class="csl-entry">
 Wickham, Hadley. 2016. <em><span class="nocase">ggplot2: Elegant Graphics for Data Analysis</span></em>. ISBN 978-3-319-24277-4; Springer-Verlag New York. <a href="https://ggplot2.tidyverse.org" class="external-link uri">https://ggplot2.tidyverse.org</a>.
+</div>
+<div id="ref-stringr" class="csl-entry">
+Wickham, Hadley. 2025. <em><span class="nocase">stringr: Simple, consistent wrappers for common string operations</span></em>. <a href="https://doi.org/10.32614/CRAN.package.stringr" class="external-link uri">https://doi.org/10.32614/CRAN.package.stringr</a>.
 </div>
 </div>
 </div>

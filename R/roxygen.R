@@ -22,8 +22,6 @@ dframe_order_multiway <- 'Data frame containing a single quantitative value
         numeric columns are required when using the "percent" ordering method.'
 
 
-
-
 midfield_student_prep_fye_mice <- "MIDFIELD `student` data table or
         equivalent with required variables `mcid`, `race`, and `sex.`"
 
@@ -43,34 +41,30 @@ midfield_degree_add_term_wrt_degree <- "MIDFIELD `degree` data table or
         equivalent with required variables `mcid` and `term_degree.`"
 
 
-
-
 param_dots <- "Not used for passing values; forces subsequent arguments to be
         referable only by name."
 
 
 # new RETURN dframe descriptions ---------------------------------
 
-return_select_basic_cols <- "A subset of `dframe` with the following 
-        properties: rows are preserved; columns are selected that exactly 
-        match the built-in set of column names or that partially match any 
-        search strings in `patternv`. Grouping structures are not necessarily 
+return_select_basic_cols <- "A subset of `dframe` with the following
+        properties: rows are preserved; columns are selected that exactly
+        match the built-in set of column names or that partially match any
+        search strings in `patternv`. Grouping structures are not necessarily
         preserved."
 
-return_add_post_bacc <- "A data frame with the following properties: rows 
-       are preserved; columns `first_degree_term` and `term_status` are added 
-       or overwritten; all other columns are preserved. 
+return_add_post_bacc <- "A data frame with the following properties: rows
+       are preserved; columns `first_degree_term` and `term_status` are added
+       or overwritten; all other columns are preserved.
        Grouping structures are not necessarily preserved."
 
-preserve_class <- "\n\nAn attempt is made to return data frames of the same 
-        class as the input, so a data.table input should produce a data.table 
-        output, a tibble input should produce a tibble output, etc. Grouped 
-        tibbles, however, are returned as data.frames. To help ensure a tibble 
+preserve_class <- "\n\nAn attempt is made to return data frames of the same
+        class as the input, so a data.table input should produce a data.table
+        output, a tibble input should produce a tibble output, etc. Grouped
+        tibbles, however, are returned as data.frames. To help ensure a tibble
         output, try ungrouping a tibble before using it as an input argument."
 
 # ---------------------------------
-
-
 
 
 return_data_frame <- "A data frame in `data.table` format with the following
@@ -94,21 +88,14 @@ return_filter_cip <- "A data frame in `data.table` format, a subset of `cip`,
         preserved, otherwise only columns included in `select` are retained;
         grouping structures are not preserved."
 
-return_select_required <- "A data frame that is a subset of the input with 
-        the following properties: rows are preserved; columns are preserved 
-        if their names match or partially match search terms; grouping 
-        structures are not preserved. An attempt is made to return a data 
-        frame of the same class as that of the input, e.g., a base R 
-        data.frame, a tibble-style enhanced data frame, or the midfieldr 
+return_select_required <- "A data frame that is a subset of the input with
+        the following properties: rows are preserved; columns are preserved
+        if their names match or partially match search terms; grouping
+        structures are not preserved. An attempt is made to return a data
+        frame of the same class as that of the input, e.g., a base R
+        data.frame, a tibble-style enhanced data frame, or the midfieldr
         default data.table enhanced data frame."
 
-
-        
-        
-        
-        
-        
-       
 
 return_prep_fye_mice <- "A data frame in `data.table` format conditioned for
         later use as an input to the mice R package for multiple imputation. The
@@ -116,18 +103,15 @@ return_prep_fye_mice <- "A data frame in `data.table` format conditioned for
         migrator. Grouping structures are not preserved. The columns returned
         are:"
 
-return_term_wrt_degree <- "A data frame with the following properties: 
-        rows are preserved; two new columns are added or overwrite existing 
-        columns of the same name; all other columns are preserved; grouping 
+return_term_wrt_degree <- "A data frame with the following properties:
+        rows are preserved; two new columns are added or overwrite existing
+        columns of the same name; all other columns are preserved; grouping
         structures are not preserved."
 
-return_same_class <- 'The function attempts to return a data frame of the same 
-        class as that of the input, such as the `data.table/data.frame` class 
-        of data.table, the `tbl_df/tbl/data.frame` class of tibble, or the 
-        `data.frame` class of base R.'
-        
-        
-
+return_same_class <- "The function attempts to return a data frame of the same
+        class as that of the input, such as the `data.table/data.frame` class
+        of data.table, the `tbl_df/tbl/data.frame` class of tibble, or the
+        `data.frame` class of base R."
 
 
 # Variable names in data sets

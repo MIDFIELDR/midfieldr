@@ -223,11 +223,11 @@ prep_fye_mice <- function(midfield_student = student,
   fye <- unique(fye)
 
   # Convert to factors to prepare for mice()
-  fye[, race        := as.factor(race)]
-  fye[, sex         := as.factor(sex)]
+  fye[, race := as.factor(race)]
+  fye[, sex := as.factor(sex)]
   fye[, institution := as.factor(institution)]
-  fye[, proxy       := as.factor(proxy)]
-  
+  fye[, proxy := as.factor(proxy)]
+
   # reorder rows
   setkeyv(fye, c("institution", "proxy", "sex", "race"))
 

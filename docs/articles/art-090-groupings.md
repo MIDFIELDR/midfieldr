@@ -100,9 +100,9 @@ source_term <- copy(term)
 source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_required(source_student)
-term <- select_required(source_term)
-degree <- select_required(source_degree)
+student <- select_basic_cols(source_student)
+term <- select_basic_cols(source_term)
+degree <- select_basic_cols(source_degree)
 ```
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a
@@ -535,7 +535,7 @@ working data frame.
 
 We use the original source files copied earlier because some variables
 we want to use were removed when we applied
-[`select_required()`](https://midfieldr.github.io/midfieldr/reference/select_required.md).
+[`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md).
 
 ### From `student`
 

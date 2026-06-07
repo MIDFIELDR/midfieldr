@@ -126,7 +126,6 @@ First glance.
 
 # Loads with midfieldr
 cip
-#> Index: <cip6>
 #>         cip2                                                  cip2name   cip4
 #>       <char>                                                    <char> <char>
 #>    1:     01 Agriculture, Agricultural Operations and Related Sciences   0100

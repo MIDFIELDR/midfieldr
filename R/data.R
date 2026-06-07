@@ -8,19 +8,19 @@
 #' Table of academic programs
 #'
 #' A data table based on the US National Center for Education Statistics (NCES),
-#' Integrated Postsecondary Education Data System (IPEDS), 2010 CIP. The data 
-#' are codes and names for 1582 instructional programs organized on three 
+#' Integrated Postsecondary Education Data System (IPEDS), 2010 CIP. The data
+#' are codes and names for 1582 instructional programs organized on three
 #' levels: a 2-digit series, a 4-digit series, and a 6-digit series.
 #'
 #' The midfielddata taxonomy includes one non-IPEDS code (999999) for Undecided
 #' or Unspecified, instances in which institutions reported no program
 #' information or that students were not enrolled in a program.
-#' 
+#'
 #' @usage  cip
 #' @family cip-data
 #' @source <https://nces.ed.gov/ipeds/cipcode/>
-#' 
-#' @format A `data.table` with 1582 rows and 6 columns keyed by the 
+#'
+#' @format A `data.table` with 1582 rows and 6 columns keyed by the
 #'         6-digit CIP code:
 #' \describe{
 #'
@@ -58,7 +58,7 @@
 #' @usage cip2010
 #' @family cip-data
 #' @source <https://nces.ed.gov/ipeds/cipcode/>
-#' 
+#'
 #' @format `data.table` with 1849 rows and 6 columns keyed by the 6-digit CIP
 #'   code:
 #'
@@ -128,7 +128,7 @@
 #'
 #' @usage toy_student
 #' @family toy-data
-#'  
+#'
 #' @format `data.table` with 150 rows and 13 columns keyed by student ID.
 #'   \describe{
 #'   `r var_mcid`
@@ -158,8 +158,8 @@
 #' @usage toy_course
 #' @family toy-data
 #'
-#' @format `data.table` with 5812 rows and 12 columns keyed by student ID, 
-#'                      term, course abbreviation, and course number. 
+#' @format `data.table` with 5812 rows and 12 columns keyed by student ID,
+#'                      term, course abbreviation, and course number.
 #'   \describe{
 #'   `r var_mcid`
 #'   `r var_institution`
@@ -187,8 +187,8 @@
 #' @usage toy_term
 #' @family toy-data
 #'
-#' @format `data.table` with 1095 rows and 13 columns keyed by student ID 
-#'                      and term. 
+#' @format `data.table` with 1095 rows and 13 columns keyed by student ID
+#'                      and term.
 #'   \describe{
 #'   `r var_mcid`
 #'   `r var_institution`
@@ -217,7 +217,7 @@
 #' @usage toy_degree
 #' @family toy-data
 #'
-#' @format `data.table` with 96 rows and 4 columns keyed by student ID,  
+#' @format `data.table` with 96 rows and 4 columns keyed by student ID,
 #'                      term, and program (CIP code or degree label).
 #'   \describe{
 #'   `r var_mcid`
@@ -300,7 +300,7 @@
 #'
 #' @usage study_results
 #' @family case-study-data
-#' 
+#'
 #' @format `data.table` with 50 rows and 6 columns:
 #' \describe{
 #'  `r var_program`
@@ -359,7 +359,7 @@
 #' @usage sat_act_scale
 #' @family scales
 #' @source ACT/SAT Concordance (2018) ACT Education Corp. <https://www.act.org/content/dam/act/unsecured/documents/ACT-SAT-Concordance-Tables.pdf>
-#' 
+#'
 #'
 #' @format `data.table` with 28 rows and 4 columns:
 #' \describe{

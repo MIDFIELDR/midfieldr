@@ -259,9 +259,9 @@ source_term <- copy(term)
 source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_required(source_student)
-term <- select_required(source_term)
-degree <- select_required(source_degree)
+student <- select_basic_cols(source_student)
+term <- select_basic_cols(source_term)
+degree <- select_basic_cols(source_degree)
 ```
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a
@@ -759,18 +759,15 @@ setnames(display_table,
 )
 display_table
 #> Key: <People>
-#>                   People Civil Electrical Industrial/Systems Mechanical
-#>                   <char> <num>      <num>              <num>      <num>
-#>  1:         Asian Female    NA       33.3                 NA         NA
-#>  2:           Asian Male  52.9       41.2               42.9       59.3
-#>  3:           Black Male    NA       20.7                 NA       33.3
-#>  4:      Hispanic Female    NA         NA                 NA       62.5
-#>  5:        Hispanic Male  30.3       34.3                 NA       37.0
-#>  6: International Female  42.9         NA                 NA         NA
-#>  7:   International Male  50.9       39.7               44.4       43.1
-#>  8:   Other/Unknown Male  27.3       31.0                 NA       45.3
-#>  9:         White Female  46.5       41.9               47.7       48.6
-#> 10:           White Male  48.3       41.1               49.3       46.4
+#>                 People Civil Electrical Industrial/Systems Mechanical
+#>                 <char> <num>      <num>              <num>      <num>
+#>  1:       Asian Female    NA       33.3                 NA         NA
+#>  2:         Asian Male  52.9       41.2               42.9       59.3
+#>  3:         Black Male    NA       20.7                 NA       33.3
+#> ---                                                                  
+#>  8: Other/Unknown Male  27.3       31.0                 NA       45.3
+#>  9:       White Female  46.5       41.9               47.7       48.6
+#> 10:         White Male  48.3       41.1               49.3       46.4
 ```
 
 (Optional) Format the table nearer to publication quality. Here I use
