@@ -107,11 +107,10 @@ look_at(degree)
 
 ## midfieldr functions
 
-We organize midfieldr functions based on their position in a typical
-workflow. The first few steps are common to most studies; the remainder
-depend largely on the goals and metrics of a particular study.
+For this article, we organize midfieldr functions into three main
+categories.
 
-Baseline records and population (common to most studies)
+Working with student records
 
 - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
   chooses columns required by midfieldr functions.
@@ -120,19 +119,19 @@ Baseline records and population (common to most studies)
 - [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
   estimates a student’s timely graduation term.
 - [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
-  identifies rows to exclude due to insufficient data.
+  identifies rows to exclude due to insufficient data.  
+- [`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
+  determines if program completion is timely or late.
 
-Programs and blocs (goals- and metric-specific)
+Working with programs
 
 - [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/filter_cip.md)
   chooses rows of CIP data based on search terms.
-- [`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
-  determines if program completion is timely or late.  
+
+Special conditioning
+
 - [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
   conditions data for imputing starting majors of FYE students.
-
-Charts (depends on the variables and the message)
-
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
   conditions data for Cleveland multiway charts.
 
@@ -345,11 +344,30 @@ sort_uniq(term$term_status)
 
 We filter to exclude all terms labeled “post-first-degree”.
 
-``` f
+``` r
+
 term <- term[term_status != "post-first-degree"]
 degree <- degree[term_status != "post-first-degree"]
 
 term
+#>                   mcid   institution   cip6         level   term
+#>                 <char>        <char> <char>        <char> <char>
+#>      1: MCID3111142225 Institution B 140901 01 First-year  19881
+#>      2: MCID3111142283 Institution J 240102 01 First-year  19881
+#>      3: MCID3111142283 Institution J 240102 01 First-year  19883
+#>     ---                                                         
+#> 632915: MCID3112898894 Institution B 451001 01 First-year  20181
+#> 632916: MCID3112898895 Institution B 302001 01 First-year  20181
+#> 632917: MCID3112898940 Institution B 050103 01 First-year  20181
+#>         first_degree_term  term_status
+#>                    <char>       <char>
+#>      1:             19881 first-degree
+#>      2:              <NA>     pre-bacc
+#>      3:              <NA>     pre-bacc
+#>     ---                               
+#> 632915:              <NA>     pre-bacc
+#> 632916:              <NA>     pre-bacc
+#> 632917:              <NA>     pre-bacc
 ```
 
 ## `add_timely_term()`
@@ -375,9 +393,9 @@ DT
 #>     2: MCID3111142283
 #>     3: MCID3111142290
 #>    ---               
-#> 97553: MCID3112898894
-#> 97554: MCID3112898895
-#> 97555: MCID3112898940
+#> 97534: MCID3112898894
+#> 97535: MCID3112898895
+#> 97536: MCID3112898940
 ```
 
 [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
@@ -397,9 +415,9 @@ DT
 #>     2: MCID3111142283  19881 01 First-year        6       19933
 #>     3: MCID3111142290  19881 01 First-year        6       19933
 #>    ---                                                         
-#> 97553: MCID3112898894  20181 01 First-year        6       20233
-#> 97554: MCID3112898895  20181 01 First-year        6       20233
-#> 97555: MCID3112898940  20181 01 First-year        6       20233
+#> 97534: MCID3112898894  20181 01 First-year        6       20233
+#> 97535: MCID3112898895  20181 01 First-year        6       20233
+#> 97536: MCID3112898940  20181 01 First-year        6       20233
 ```
 
 ## `add_data_sufficiency()`
@@ -427,18 +445,18 @@ DT
 #>     2: MCID3111142283 01 First-year        6       19933  19881       19881
 #>     3: MCID3111142290 01 First-year        6       19933  19881       19881
 #>    ---                                                                     
-#> 97553: MCID3112898894 01 First-year        6       20233  20181       19881
-#> 97554: MCID3112898895 01 First-year        6       20233  20181       19881
-#> 97555: MCID3112898940 01 First-year        6       20233  20181       19881
+#> 97534: MCID3112898894 01 First-year        6       20233  20181       19881
+#> 97535: MCID3112898895 01 First-year        6       20233  20181       19881
+#> 97536: MCID3112898940 01 First-year        6       20233  20181       19881
 #>        upper_limit data_sufficiency
 #>             <char>           <char>
 #>     1:       20181    exclude-lower
 #>     2:       20096    exclude-lower
 #>     3:       20096    exclude-lower
 #>    ---                             
-#> 97553:       20181    exclude-upper
-#> 97554:       20181    exclude-upper
-#> 97555:       20181    exclude-upper
+#> 97534:       20181    exclude-upper
+#> 97535:       20181    exclude-upper
+#> 97536:       20181    exclude-upper
 ```
 
 The possible values for data sufficiency are:
@@ -462,18 +480,86 @@ DT
 #>     2: MCID3111142782 01 First-year        6       19941  19883       19881
 #>     3: MCID3111142881 01 First-year        6       19951  19893       19881
 #>    ---                                                                     
-#> 76873: MCID3112785480 01 First-year        6       20123  20071       19901
-#> 76874: MCID3112800920 01 First-year        6       20153  20101       19881
-#> 76875: MCID3112870009 01 First-year        6       20003  19951       19881
+#> 76863: MCID3112785480 01 First-year        6       20123  20071       19901
+#> 76864: MCID3112800920 01 First-year        6       20153  20101       19881
+#> 76865: MCID3112870009 01 First-year        6       20003  19951       19881
 #>        upper_limit data_sufficiency
 #>             <char>           <char>
 #>     1:       20181          include
 #>     2:       20096          include
 #>     3:       20181          include
 #>    ---                             
-#> 76873:       20154          include
-#> 76874:       20181          include
-#> 76875:       20181          include
+#> 76863:       20154          include
+#> 76864:       20181          include
+#> 76865:       20181          include
+```
+
+## `add_completion_status()`
+
+*Determines if program completion is timely or late.*
+
+[`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
+adds a column of labels indicating whether or not a student completes a
+degree, and if they do, labeling it timely or late compared to their
+timely completion term.
+
+``` r
+
+DT <- add_completion_status(DT, midfield_degree = degree)
+
+DT
+#>                  mcid       level_i adj_span timely_term term_i lower_limit
+#>                <char>        <char>    <num>      <char> <char>      <char>
+#>     1: MCID3111142689 01 First-year        6       19941  19883       19881
+#>     2: MCID3111142782 01 First-year        6       19941  19883       19881
+#>     3: MCID3111142881 01 First-year        6       19951  19893       19881
+#>    ---                                                                     
+#> 76863: MCID3112785480 01 First-year        6       20123  20071       19901
+#> 76864: MCID3112800920 01 First-year        6       20153  20101       19881
+#> 76865: MCID3112870009 01 First-year        6       20003  19951       19881
+#>        upper_limit data_sufficiency term_degree completion_status
+#>             <char>           <char>      <char>            <char>
+#>     1:       20181          include       19913            timely
+#>     2:       20096          include       19903            timely
+#>     3:       20181          include       19894            timely
+#>    ---                                                           
+#> 76863:       20154          include        <NA>              <NA>
+#> 76864:       20181          include        <NA>              <NA>
+#> 76865:       20181          include        <NA>              <NA>
+```
+
+The possible values for completion status are:
+
+``` r
+
+sort_uniq(DT$completion_status)
+#> [1] NA       "late"   "timely"
+```
+
+If we were constructing a bloc of timely graduates, we would filter to
+retain rows labeled “timely”.
+
+``` r
+
+DT[completion_status == "timely"]
+#>                  mcid       level_i adj_span timely_term term_i lower_limit
+#>                <char>        <char>    <num>      <char> <char>      <char>
+#>     1: MCID3111142689 01 First-year        6       19941  19883       19881
+#>     2: MCID3111142782 01 First-year        6       19941  19883       19881
+#>     3: MCID3111142881 01 First-year        6       19951  19893       19881
+#>    ---                                                                     
+#> 40428: MCID3112692944 01 First-year        6       20163  20111       19881
+#> 40429: MCID3112694738 01 First-year        6       20161  20103       19881
+#> 40430: MCID3112730841 01 First-year        6       20173  20121       19881
+#>        upper_limit data_sufficiency term_degree completion_status
+#>             <char>           <char>      <char>            <char>
+#>     1:       20181          include       19913            timely
+#>     2:       20096          include       19903            timely
+#>     3:       20181          include       19894            timely
+#>    ---                                                           
+#> 40428:       20181          include       20153            timely
+#> 40429:       20181          include       20143            timely
+#> 40430:       20181          include       20164            timely
 ```
 
 ## Data: cip
@@ -720,106 +806,33 @@ third_pass[, .(cip6, cip6name)]
 #> 17: 500999                                         Music, Other
 ```
 
-## `add_completion_status()`
-
-*Determines if a graduation is timely or late.*
-
-[`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
-adds a column of labels indicating whether or not a student completes a
-degree, and if they do, labeling it timely or late compared to their
-timely completion term.
-
-``` r
-
-DT <- add_completion_status(DT, midfield_degree = degree)
-
-DT
-#>                  mcid       level_i adj_span timely_term term_i lower_limit
-#>                <char>        <char>    <num>      <char> <char>      <char>
-#>     1: MCID3111142689 01 First-year        6       19941  19883       19881
-#>     2: MCID3111142782 01 First-year        6       19941  19883       19881
-#>     3: MCID3111142881 01 First-year        6       19951  19893       19881
-#>    ---                                                                     
-#> 76873: MCID3112785480 01 First-year        6       20123  20071       19901
-#> 76874: MCID3112800920 01 First-year        6       20153  20101       19881
-#> 76875: MCID3112870009 01 First-year        6       20003  19951       19881
-#>        upper_limit data_sufficiency term_degree completion_status
-#>             <char>           <char>      <char>            <char>
-#>     1:       20181          include       19913            timely
-#>     2:       20096          include       19903            timely
-#>     3:       20181          include       19894            timely
-#>    ---                                                           
-#> 76873:       20154          include        <NA>              <NA>
-#> 76874:       20181          include        <NA>              <NA>
-#> 76875:       20181          include        <NA>              <NA>
-```
-
-The possible values for completion status are:
-
-``` r
-
-sort_uniq(DT$completion_status)
-#> [1] NA       "late"   "timely"
-```
-
-If we were constructing a bloc of timely graduates, we would filter to
-retain rows labeled “timely”.
-
-``` r
-
-DT[completion_status == "timely"]
-#>                  mcid       level_i adj_span timely_term term_i lower_limit
-#>                <char>        <char>    <num>      <char> <char>      <char>
-#>     1: MCID3111142689 01 First-year        6       19941  19883       19881
-#>     2: MCID3111142782 01 First-year        6       19941  19883       19881
-#>     3: MCID3111142881 01 First-year        6       19951  19893       19881
-#>    ---                                                                     
-#> 40438: MCID3112692944 01 First-year        6       20163  20111       19881
-#> 40439: MCID3112694738 01 First-year        6       20161  20103       19881
-#> 40440: MCID3112730841 01 First-year        6       20173  20121       19881
-#>        upper_limit data_sufficiency term_degree completion_status
-#>             <char>           <char>      <char>            <char>
-#>     1:       20181          include       19913            timely
-#>     2:       20096          include       19903            timely
-#>     3:       20181          include       19894            timely
-#>    ---                                                           
-#> 40438:       20181          include       20153            timely
-#> 40439:       20181          include       20143            timely
-#> 40440:       20181          include       20164            timely
-```
-
 ## Other functions
 
 [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
-
-:   Conditions data for imputing the starting majors of First-Year
-    Engineering (FYE) students. Used when blocs of starters in
-    Engineering are needed and an institution has a required FYE
-    program. For details see [FYE
-    proxies](https://midfieldr.github.io/midfieldr/articles/art-060-fye-proxies.md).
+  Conditions data for imputing the starting majors of First-Year
+Engineering (FYE) students. Used when blocs of starters in Engineering
+are needed and an institution has a required FYE program. For details
+see [FYE
+proxies](https://midfieldr.github.io/midfieldr/articles/art-060-fye-proxies.md).
 
 [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
-
-:   Conditions data for Cleveland multiway charts. The ordering of its
-    rows and panels is crucial to the perception of effects. Used when
-    data have a multiway structure. For details see [Multiway data and
-    charts](https://midfieldr.github.io/midfieldr/articles/art-120-multiway.md).
+  Conditions data for Cleveland multiway charts. The ordering of its
+rows and panels is crucial to the perception of effects. Used when data
+have a multiway structure. For details see [Multiway data and
+charts](https://midfieldr.github.io/midfieldr/articles/art-120-multiway.md).
 
 Utilities
 
-:   - [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
-      wraps base [`str()`](https://rdrr.io/r/utils/str.html).  
-
-:   - [`sort_uniq()`](https://midfieldr.github.io/midfieldr/reference/sort_uniq.md)
-      wraps base [`sort()`](https://rdrr.io/r/base/sort.html) and
-      [`unique()`](https://rdrr.io/r/base/unique.html).  
-
-:   - [`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md)
-      wraps base [`tryCatch()`](https://rdrr.io/r/base/conditions.html)
-      for errors.  
-
-:   - [`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
-      re-exported from the wrapr package
+- [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
+  wraps base [`str()`](https://rdrr.io/r/utils/str.html).  
+- [`sort_uniq()`](https://midfieldr.github.io/midfieldr/reference/sort_uniq.md)
+  wraps base [`sort()`](https://rdrr.io/r/base/sort.html) and
+  [`unique()`](https://rdrr.io/r/base/unique.html).  
+- [`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md)
+  wraps base [`tryCatch()`](https://rdrr.io/r/base/conditions.html) for
+  errors.  
+- [`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
+  re-exported from the wrapr package
 
 ## References
 

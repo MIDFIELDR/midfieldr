@@ -50,8 +50,10 @@ library(data.table)
 ```{r}
 #| echo: false
 opt_print_rows <- 3
-options(datatable.print.topn = opt_print_rows, 
-        datatable.print.nrows = opt_print_rows)
+options(
+  datatable.print.topn = opt_print_rows,
+  datatable.print.nrows = opt_print_rows
+)
 ```
 
 
@@ -93,23 +95,23 @@ look_at(degree)
 
 ## midfieldr functions
 
-We organize midfieldr functions based on their position in a typical workflow. The first few steps are common to most studies; the remainder depend largely on the goals and metrics of a particular study.
+For this article, we organize midfieldr functions into three main categories. 
 
-Baseline records and population (common to most studies)
+Working with student records
 
 - `select_basic_cols()` chooses columns required by midfieldr functions.
 - `add_post_bacc()` identifies rows of post-baccalaureate terms to exclude. 
 - `add_timely_term()` estimates a student's timely graduation term. 
 - `add_data_sufficiency()` identifies rows to exclude due to insufficient data.  
+- `add_completion_status()` determines if program completion is timely or late.
 
-Programs and blocs (goals- and metric-specific)
+Working with programs
 
 - `filter_cip()` chooses rows of CIP data based on search terms. 
-- `add_completion_status()` determines if program completion is timely or late.  
-- `prep_fye_mice()` conditions data for imputing starting majors of FYE students.  
 
-Charts (depends on the variables and the message)
+Special conditioning
 
+- `prep_fye_mice()` conditions data for imputing starting majors of FYE students. 
 - `order_multiway()` conditions data for Cleveland multiway charts. 
 
 
@@ -224,7 +226,7 @@ sort_uniq(term$term_status)
 
 We filter to exclude all terms labeled "post-first-degree".
 
-```{f}
+```{r}
 term <- term[term_status != "post-first-degree"]
 degree <- degree[term_status != "post-first-degree"]
 
@@ -294,6 +296,30 @@ DT
 ```
 
 
+## `add_completion_status()`
+
+*Determines if program completion is timely or late.*
+
+`add_completion_status()` adds a column of labels indicating whether or not a student completes a degree, and if they do, labeling it timely or late compared to their timely completion term. 
+
+```{r} 
+DT <- add_completion_status(DT, midfield_degree = degree)
+
+DT
+```
+
+The possible values for completion status are:
+
+```{r}
+sort_uniq(DT$completion_status)
+```
+
+If we were constructing a bloc of timely graduates, we would filter to retain rows labeled "timely".
+
+```{r}
+DT[completion_status == "timely"]
+```
+
 
 
 
@@ -308,8 +334,10 @@ The `cip` data set, loaded with midfieldr, is a subset of the NCES CIP2010 data 
 
 ```{r}
 #| echo: false
-options(datatable.print.topn = 5, 
-        datatable.print.nrows = 5)
+options(
+  datatable.print.topn = 5,
+  datatable.print.nrows = 5
+)
 ```
 
 ```{r}
@@ -359,8 +387,10 @@ third_pass
 
 ```{r}
 #| echo: false
-options(datatable.print.topn = 20, 
-        datatable.print.nrows = 20)
+options(
+  datatable.print.topn = 20,
+  datatable.print.nrows = 20
+)
 ```
 
 If these programs were needed for our study, we would save the 6-digit codes and probably edit the program names for later use.  
@@ -371,59 +401,30 @@ third_pass[, .(cip6, cip6name)]
 
 ```{r}
 #| echo: false
-options(datatable.print.topn = opt_print_rows, 
-        datatable.print.nrows = opt_print_rows)
+options(
+  datatable.print.topn = opt_print_rows,
+  datatable.print.nrows = opt_print_rows
+)
 ```
 
 
 
-
-## `add_completion_status()`
-
-*Determines if a graduation is timely or late.*
-
-`add_completion_status()` adds a column of labels indicating whether or not a student completes a degree, and if they do, labeling it timely or late compared to their timely completion term. 
-
-```{r} 
-DT <- add_completion_status(DT, midfield_degree = degree)
-
-DT
-```
-
-The possible values for completion status are:
-
-```{r}
-sort_uniq(DT$completion_status)
-```
-
-If we were constructing a bloc of timely graduates, we would filter to retain rows labeled "timely".
-
-```{r}
-DT[completion_status == "timely"]
-```
 
 
 
 
 ## Other functions
 
-`prep_fye_mice()` 
+`prep_fye_mice()` &nbsp; Conditions data for imputing the starting majors of First-Year Engineering (FYE) students. Used when blocs of starters in Engineering are needed and an  institution has a required FYE program. For details see [FYE proxies](art-060-fye-proxies.html).   
 
-: Conditions data for imputing the starting majors of First-Year Engineering (FYE) students. Used when blocs of starters in Engineering are needed and an  institution has a required FYE program. For details see [FYE proxies](art-060-fye-proxies.html). 
+`order_multiway()` &nbsp; Conditions data for Cleveland multiway charts. The ordering of its rows and panels is crucial to the perception of effects. Used when data have a multiway structure. For details see [Multiway data and charts](art-120-multiway.html). 
 
+Utilities 
 
-
-`order_multiway()` 
-
-: Conditions data for Cleveland multiway charts. The ordering of its rows and panels is crucial to the perception of effects. Used when data have a multiway structure. For details see [Multiway data and charts](art-120-multiway.html). 
-
-
-Utilities
-
-: - `look_at()` wraps base `str()`.  
-: - `sort_uniq()` wraps base `sort()` and `unique()`.  
-: - `catch_error()` wraps base `tryCatch()` for errors.  
-: - `check_equiv_frames()` re-exported from the wrapr package  
+- `look_at()` wraps base `str()`.  
+- `sort_uniq()` wraps base `sort()` and `unique()`.  
+- `catch_error()` wraps base `tryCatch()` for errors.  
+- `check_equiv_frames()` re-exported from the wrapr package  
 
 
 

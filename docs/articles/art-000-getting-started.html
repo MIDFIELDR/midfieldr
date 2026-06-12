@@ -197,10 +197,9 @@ that wraps <code>base::str()</code>.</p>
 <div class="section level2">
 <h2 id="midfieldr-functions">midfieldr functions<a class="anchor" aria-label="anchor" href="#midfieldr-functions"></a>
 </h2>
-<p>We organize midfieldr functions based on their position in a typical
-workflow. The first few steps are common to most studies; the remainder
-depend largely on the goals and metrics of a particular study.</p>
-<p>Baseline records and population (common to most studies)</p>
+<p>For this article, we organize midfieldr functions into three main
+categories.</p>
+<p>Working with student records</p>
 <ul>
 <li>
 <code><a href="../reference/select_basic_cols.html">select_basic_cols()</a></code> chooses columns required by
@@ -213,23 +212,23 @@ terms to exclude.</li>
 graduation term.</li>
 <li>
 <code><a href="../reference/add_data_sufficiency.html">add_data_sufficiency()</a></code> identifies rows to exclude due
-to insufficient data.</li>
+to insufficient data.<br>
+</li>
+<li>
+<code><a href="../reference/add_completion_status.html">add_completion_status()</a></code> determines if program
+completion is timely or late.</li>
 </ul>
-<p>Programs and blocs (goals- and metric-specific)</p>
+<p>Working with programs</p>
 <ul>
 <li>
 <code><a href="../reference/filter_cip.html">filter_cip()</a></code> chooses rows of CIP data based on search
 terms.</li>
-<li>
-<code><a href="../reference/add_completion_status.html">add_completion_status()</a></code> determines if program
-completion is timely or late.<br>
-</li>
+</ul>
+<p>Special conditioning</p>
+<ul>
 <li>
 <code><a href="../reference/prep_fye_mice.html">prep_fye_mice()</a></code> conditions data for imputing starting
 majors of FYE students.</li>
-</ul>
-<p>Charts (depends on the variables and the message)</p>
-<ul>
 <li>
 <code><a href="../reference/order_multiway.html">order_multiway()</a></code> conditions data for Cleveland multiway
 charts.</li>
@@ -403,10 +402,29 @@ status to be:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/sort_uniq.html">sort_uniq</a></span><span class="op">(</span><span class="va">term</span><span class="op">$</span><span class="va">term_status</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "first-degree"      "post-first-degree" "pre-bacc"</span></span></code></pre></div>
 <p>We filter to exclude all terms labeled “post-first-degree”.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode f"><code class="sourceCode fortranfixed"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>term <span class="op">&lt;</span><span class="kw">-</span> term<span class="kw">[</span>term_status <span class="co">!= "post-first-degree"]</span></span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>degree <span class="op">&lt;</span><span class="kw">-</span> degree<span class="kw">[</span>term_status <span class="co">!= "post-first-degree"]</span></span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>term</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">term_status</span> <span class="op">!=</span> <span class="st">"post-first-degree"</span><span class="op">]</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">term_status</span> <span class="op">!=</span> <span class="st">"post-first-degree"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">term</span></span>
+<span><span class="co">#&gt;                   mcid   institution   cip6         level   term</span></span>
+<span><span class="co">#&gt;                 &lt;char&gt;        &lt;char&gt; &lt;char&gt;        &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;      1: MCID3111142225 Institution B 140901 01 First-year  19881</span></span>
+<span><span class="co">#&gt;      2: MCID3111142283 Institution J 240102 01 First-year  19881</span></span>
+<span><span class="co">#&gt;      3: MCID3111142283 Institution J 240102 01 First-year  19883</span></span>
+<span><span class="co">#&gt;     ---                                                         </span></span>
+<span><span class="co">#&gt; 632915: MCID3112898894 Institution B 451001 01 First-year  20181</span></span>
+<span><span class="co">#&gt; 632916: MCID3112898895 Institution B 302001 01 First-year  20181</span></span>
+<span><span class="co">#&gt; 632917: MCID3112898940 Institution B 050103 01 First-year  20181</span></span>
+<span><span class="co">#&gt;         first_degree_term  term_status</span></span>
+<span><span class="co">#&gt;                    &lt;char&gt;       &lt;char&gt;</span></span>
+<span><span class="co">#&gt;      1:             19881 first-degree</span></span>
+<span><span class="co">#&gt;      2:              &lt;NA&gt;     pre-bacc</span></span>
+<span><span class="co">#&gt;      3:              &lt;NA&gt;     pre-bacc</span></span>
+<span><span class="co">#&gt;     ---                               </span></span>
+<span><span class="co">#&gt; 632915:              &lt;NA&gt;     pre-bacc</span></span>
+<span><span class="co">#&gt; 632916:              &lt;NA&gt;     pre-bacc</span></span>
+<span><span class="co">#&gt; 632917:              &lt;NA&gt;     pre-bacc</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="add_timely_term">
@@ -430,9 +448,9 @@ above.</p>
 <span><span class="co">#&gt;     2: MCID3111142283</span></span>
 <span><span class="co">#&gt;     3: MCID3111142290</span></span>
 <span><span class="co">#&gt;    ---               </span></span>
-<span><span class="co">#&gt; 97553: MCID3112898894</span></span>
-<span><span class="co">#&gt; 97554: MCID3112898895</span></span>
-<span><span class="co">#&gt; 97555: MCID3112898940</span></span></code></pre></div>
+<span><span class="co">#&gt; 97534: MCID3112898894</span></span>
+<span><span class="co">#&gt; 97535: MCID3112898895</span></span>
+<span><span class="co">#&gt; 97536: MCID3112898940</span></span></code></pre></div>
 <p><code><a href="../reference/add_timely_term.html">add_timely_term()</a></code> adds a column indicating the TC term
 for every student in the record. New columns of supporting information
 are also added: the student’s initial term; their academic level upon
@@ -448,9 +466,9 @@ timely completion.</p>
 <span><span class="co">#&gt;     2: MCID3111142283  19881 01 First-year        6       19933</span></span>
 <span><span class="co">#&gt;     3: MCID3111142290  19881 01 First-year        6       19933</span></span>
 <span><span class="co">#&gt;    ---                                                         </span></span>
-<span><span class="co">#&gt; 97553: MCID3112898894  20181 01 First-year        6       20233</span></span>
-<span><span class="co">#&gt; 97554: MCID3112898895  20181 01 First-year        6       20233</span></span>
-<span><span class="co">#&gt; 97555: MCID3112898940  20181 01 First-year        6       20233</span></span></code></pre></div>
+<span><span class="co">#&gt; 97534: MCID3112898894  20181 01 First-year        6       20233</span></span>
+<span><span class="co">#&gt; 97535: MCID3112898895  20181 01 First-year        6       20233</span></span>
+<span><span class="co">#&gt; 97536: MCID3112898940  20181 01 First-year        6       20233</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="add_data_sufficiency">
@@ -475,18 +493,18 @@ data range.</p>
 <span><span class="co">#&gt;     2: MCID3111142283 01 First-year        6       19933  19881       19881</span></span>
 <span><span class="co">#&gt;     3: MCID3111142290 01 First-year        6       19933  19881       19881</span></span>
 <span><span class="co">#&gt;    ---                                                                     </span></span>
-<span><span class="co">#&gt; 97553: MCID3112898894 01 First-year        6       20233  20181       19881</span></span>
-<span><span class="co">#&gt; 97554: MCID3112898895 01 First-year        6       20233  20181       19881</span></span>
-<span><span class="co">#&gt; 97555: MCID3112898940 01 First-year        6       20233  20181       19881</span></span>
+<span><span class="co">#&gt; 97534: MCID3112898894 01 First-year        6       20233  20181       19881</span></span>
+<span><span class="co">#&gt; 97535: MCID3112898895 01 First-year        6       20233  20181       19881</span></span>
+<span><span class="co">#&gt; 97536: MCID3112898940 01 First-year        6       20233  20181       19881</span></span>
 <span><span class="co">#&gt;        upper_limit data_sufficiency</span></span>
 <span><span class="co">#&gt;             &lt;char&gt;           &lt;char&gt;</span></span>
 <span><span class="co">#&gt;     1:       20181    exclude-lower</span></span>
 <span><span class="co">#&gt;     2:       20096    exclude-lower</span></span>
 <span><span class="co">#&gt;     3:       20096    exclude-lower</span></span>
 <span><span class="co">#&gt;    ---                             </span></span>
-<span><span class="co">#&gt; 97553:       20181    exclude-upper</span></span>
-<span><span class="co">#&gt; 97554:       20181    exclude-upper</span></span>
-<span><span class="co">#&gt; 97555:       20181    exclude-upper</span></span></code></pre></div>
+<span><span class="co">#&gt; 97534:       20181    exclude-upper</span></span>
+<span><span class="co">#&gt; 97535:       20181    exclude-upper</span></span>
+<span><span class="co">#&gt; 97536:       20181    exclude-upper</span></span></code></pre></div>
 <p>The possible values for data sufficiency are:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/sort_uniq.html">sort_uniq</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">data_sufficiency</span><span class="op">)</span></span>
@@ -502,18 +520,75 @@ data range.</p>
 <span><span class="co">#&gt;     2: MCID3111142782 01 First-year        6       19941  19883       19881</span></span>
 <span><span class="co">#&gt;     3: MCID3111142881 01 First-year        6       19951  19893       19881</span></span>
 <span><span class="co">#&gt;    ---                                                                     </span></span>
-<span><span class="co">#&gt; 76873: MCID3112785480 01 First-year        6       20123  20071       19901</span></span>
-<span><span class="co">#&gt; 76874: MCID3112800920 01 First-year        6       20153  20101       19881</span></span>
-<span><span class="co">#&gt; 76875: MCID3112870009 01 First-year        6       20003  19951       19881</span></span>
+<span><span class="co">#&gt; 76863: MCID3112785480 01 First-year        6       20123  20071       19901</span></span>
+<span><span class="co">#&gt; 76864: MCID3112800920 01 First-year        6       20153  20101       19881</span></span>
+<span><span class="co">#&gt; 76865: MCID3112870009 01 First-year        6       20003  19951       19881</span></span>
 <span><span class="co">#&gt;        upper_limit data_sufficiency</span></span>
 <span><span class="co">#&gt;             &lt;char&gt;           &lt;char&gt;</span></span>
 <span><span class="co">#&gt;     1:       20181          include</span></span>
 <span><span class="co">#&gt;     2:       20096          include</span></span>
 <span><span class="co">#&gt;     3:       20181          include</span></span>
 <span><span class="co">#&gt;    ---                             </span></span>
-<span><span class="co">#&gt; 76873:       20154          include</span></span>
-<span><span class="co">#&gt; 76874:       20181          include</span></span>
-<span><span class="co">#&gt; 76875:       20181          include</span></span></code></pre></div>
+<span><span class="co">#&gt; 76863:       20154          include</span></span>
+<span><span class="co">#&gt; 76864:       20181          include</span></span>
+<span><span class="co">#&gt; 76865:       20181          include</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="add_completion_status">
+<code>add_completion_status()</code><a class="anchor" aria-label="anchor" href="#add_completion_status"></a>
+</h2>
+<p><em>Determines if program completion is timely or late.</em></p>
+<p><code><a href="../reference/add_completion_status.html">add_completion_status()</a></code> adds a column of labels
+indicating whether or not a student completes a degree, and if they do,
+labeling it timely or late compared to their timely completion term.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">DT</span></span>
+<span><span class="co">#&gt;                  mcid       level_i adj_span timely_term term_i lower_limit</span></span>
+<span><span class="co">#&gt;                &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MCID3111142689 01 First-year        6       19941  19883       19881</span></span>
+<span><span class="co">#&gt;     2: MCID3111142782 01 First-year        6       19941  19883       19881</span></span>
+<span><span class="co">#&gt;     3: MCID3111142881 01 First-year        6       19951  19893       19881</span></span>
+<span><span class="co">#&gt;    ---                                                                     </span></span>
+<span><span class="co">#&gt; 76863: MCID3112785480 01 First-year        6       20123  20071       19901</span></span>
+<span><span class="co">#&gt; 76864: MCID3112800920 01 First-year        6       20153  20101       19881</span></span>
+<span><span class="co">#&gt; 76865: MCID3112870009 01 First-year        6       20003  19951       19881</span></span>
+<span><span class="co">#&gt;        upper_limit data_sufficiency term_degree completion_status</span></span>
+<span><span class="co">#&gt;             &lt;char&gt;           &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1:       20181          include       19913            timely</span></span>
+<span><span class="co">#&gt;     2:       20096          include       19903            timely</span></span>
+<span><span class="co">#&gt;     3:       20181          include       19894            timely</span></span>
+<span><span class="co">#&gt;    ---                                                           </span></span>
+<span><span class="co">#&gt; 76863:       20154          include        &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 76864:       20181          include        &lt;NA&gt;              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 76865:       20181          include        &lt;NA&gt;              &lt;NA&gt;</span></span></code></pre></div>
+<p>The possible values for completion status are:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/sort_uniq.html">sort_uniq</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">completion_status</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] NA       "late"   "timely"</span></span></code></pre></div>
+<p>If we were constructing a bloc of timely graduates, we would filter
+to retain rows labeled “timely”.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">completion_status</span> <span class="op">==</span> <span class="st">"timely"</span><span class="op">]</span></span>
+<span><span class="co">#&gt;                  mcid       level_i adj_span timely_term term_i lower_limit</span></span>
+<span><span class="co">#&gt;                &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MCID3111142689 01 First-year        6       19941  19883       19881</span></span>
+<span><span class="co">#&gt;     2: MCID3111142782 01 First-year        6       19941  19883       19881</span></span>
+<span><span class="co">#&gt;     3: MCID3111142881 01 First-year        6       19951  19893       19881</span></span>
+<span><span class="co">#&gt;    ---                                                                     </span></span>
+<span><span class="co">#&gt; 40428: MCID3112692944 01 First-year        6       20163  20111       19881</span></span>
+<span><span class="co">#&gt; 40429: MCID3112694738 01 First-year        6       20161  20103       19881</span></span>
+<span><span class="co">#&gt; 40430: MCID3112730841 01 First-year        6       20173  20121       19881</span></span>
+<span><span class="co">#&gt;        upper_limit data_sufficiency term_degree completion_status</span></span>
+<span><span class="co">#&gt;             &lt;char&gt;           &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1:       20181          include       19913            timely</span></span>
+<span><span class="co">#&gt;     2:       20096          include       19903            timely</span></span>
+<span><span class="co">#&gt;     3:       20181          include       19894            timely</span></span>
+<span><span class="co">#&gt;    ---                                                           </span></span>
+<span><span class="co">#&gt; 40428:       20181          include       20153            timely</span></span>
+<span><span class="co">#&gt; 40429:       20181          include       20143            timely</span></span>
+<span><span class="co">#&gt; 40430:       20181          include       20164            timely</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="data-cip">Data: cip<a class="anchor" aria-label="anchor" href="#data-cip"></a>
@@ -527,7 +602,7 @@ the NCES CIP2010 data that contains codes and names for 1582
 instructional programs organized on three levels—a 2-digit series, a
 4-digit series, and a 6-digit series—keyed by the <code>cip6</code>
 variable.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">cip</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   1582 obs. of  6 variables:</span></span>
 <span><span class="co">#&gt;  $ cip2    : chr  "01" "01" "01" "01" ...</span></span>
@@ -593,7 +668,7 @@ variable.</p>
 <p><code><a href="../reference/filter_cip.html">filter_cip()</a></code> acts on the <code>cip</code> data frame to
 select rows that match or partially match search strings. Search strings
 are case-independent and can include regular expressions.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"music"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       cip2                                         cip2name   cip4</span></span>
 <span><span class="co">#&gt;     &lt;char&gt;                                           &lt;char&gt; &lt;char&gt;</span></span>
@@ -638,7 +713,7 @@ are case-independent and can include regular expressions.</p>
 <code>cip</code> argument in a subsequent pass. To illustrate the
 process, we collect programs related to “music” within the Visual and
 Performing Arts (CIP code 50).</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">first_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"music"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">second_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"^50"</span>, cip <span class="op">=</span> <span class="va">first_pass</span><span class="op">)</span></span>
@@ -687,7 +762,7 @@ Performing Arts (CIP code 50).</p>
 distinguishing them from other programs in the Visual and Performing
 Arts. We assign the second pass to the <code>cip</code> argument and
 restrict the search to codes starting with “5009”.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">third_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"^5009"</span>, cip <span class="op">=</span> <span class="va">second_pass</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">third_pass</span></span>
@@ -719,7 +794,7 @@ restrict the search to codes starting with “5009”.</p>
 <span><span class="co">#&gt; 17:                         Music, Other</span></span></code></pre></div>
 <p>If these programs were needed for our study, we would save the
 6-digit codes and probably edit the program names for later use.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">third_pass</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, <span class="va">cip6name</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;       cip6                                             cip6name</span></span>
 <span><span class="co">#&gt;     &lt;char&gt;                                               &lt;char&gt;</span></span>
@@ -742,111 +817,34 @@ restrict the search to codes starting with “5009”.</p>
 <span><span class="co">#&gt; 17: 500999                                         Music, Other</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="add_completion_status">
-<code>add_completion_status()</code><a class="anchor" aria-label="anchor" href="#add_completion_status"></a>
-</h2>
-<p><em>Determines if a graduation is timely or late.</em></p>
-<p><code><a href="../reference/add_completion_status.html">add_completion_status()</a></code> adds a column of labels
-indicating whether or not a student completes a degree, and if they do,
-labeling it timely or late compared to their timely completion term.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">DT</span></span>
-<span><span class="co">#&gt;                  mcid       level_i adj_span timely_term term_i lower_limit</span></span>
-<span><span class="co">#&gt;                &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt;     1: MCID3111142689 01 First-year        6       19941  19883       19881</span></span>
-<span><span class="co">#&gt;     2: MCID3111142782 01 First-year        6       19941  19883       19881</span></span>
-<span><span class="co">#&gt;     3: MCID3111142881 01 First-year        6       19951  19893       19881</span></span>
-<span><span class="co">#&gt;    ---                                                                     </span></span>
-<span><span class="co">#&gt; 76873: MCID3112785480 01 First-year        6       20123  20071       19901</span></span>
-<span><span class="co">#&gt; 76874: MCID3112800920 01 First-year        6       20153  20101       19881</span></span>
-<span><span class="co">#&gt; 76875: MCID3112870009 01 First-year        6       20003  19951       19881</span></span>
-<span><span class="co">#&gt;        upper_limit data_sufficiency term_degree completion_status</span></span>
-<span><span class="co">#&gt;             &lt;char&gt;           &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span></span>
-<span><span class="co">#&gt;     1:       20181          include       19913            timely</span></span>
-<span><span class="co">#&gt;     2:       20096          include       19903            timely</span></span>
-<span><span class="co">#&gt;     3:       20181          include       19894            timely</span></span>
-<span><span class="co">#&gt;    ---                                                           </span></span>
-<span><span class="co">#&gt; 76873:       20154          include        &lt;NA&gt;              &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 76874:       20181          include        &lt;NA&gt;              &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 76875:       20181          include        &lt;NA&gt;              &lt;NA&gt;</span></span></code></pre></div>
-<p>The possible values for completion status are:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/sort_uniq.html">sort_uniq</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">completion_status</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] NA       "late"   "timely"</span></span></code></pre></div>
-<p>If we were constructing a bloc of timely graduates, we would filter
-to retain rows labeled “timely”.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">completion_status</span> <span class="op">==</span> <span class="st">"timely"</span><span class="op">]</span></span>
-<span><span class="co">#&gt;                  mcid       level_i adj_span timely_term term_i lower_limit</span></span>
-<span><span class="co">#&gt;                &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt;     1: MCID3111142689 01 First-year        6       19941  19883       19881</span></span>
-<span><span class="co">#&gt;     2: MCID3111142782 01 First-year        6       19941  19883       19881</span></span>
-<span><span class="co">#&gt;     3: MCID3111142881 01 First-year        6       19951  19893       19881</span></span>
-<span><span class="co">#&gt;    ---                                                                     </span></span>
-<span><span class="co">#&gt; 40438: MCID3112692944 01 First-year        6       20163  20111       19881</span></span>
-<span><span class="co">#&gt; 40439: MCID3112694738 01 First-year        6       20161  20103       19881</span></span>
-<span><span class="co">#&gt; 40440: MCID3112730841 01 First-year        6       20173  20121       19881</span></span>
-<span><span class="co">#&gt;        upper_limit data_sufficiency term_degree completion_status</span></span>
-<span><span class="co">#&gt;             &lt;char&gt;           &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span></span>
-<span><span class="co">#&gt;     1:       20181          include       19913            timely</span></span>
-<span><span class="co">#&gt;     2:       20096          include       19903            timely</span></span>
-<span><span class="co">#&gt;     3:       20181          include       19894            timely</span></span>
-<span><span class="co">#&gt;    ---                                                           </span></span>
-<span><span class="co">#&gt; 40438:       20181          include       20153            timely</span></span>
-<span><span class="co">#&gt; 40439:       20181          include       20143            timely</span></span>
-<span><span class="co">#&gt; 40440:       20181          include       20164            timely</span></span></code></pre></div>
-</div>
-<div class="section level2">
 <h2 id="other-functions">Other functions<a class="anchor" aria-label="anchor" href="#other-functions"></a>
 </h2>
-<dl>
-<dt><code><a href="../reference/prep_fye_mice.html">prep_fye_mice()</a></code></dt>
-<dd>
-<p>Conditions data for imputing the starting majors of First-Year
-Engineering (FYE) students. Used when blocs of starters in Engineering
-are needed and an institution has a required FYE program. For details
-see <a href="art-060-fye-proxies.html">FYE proxies</a>.</p>
-</dd>
-<dt><code><a href="../reference/order_multiway.html">order_multiway()</a></code></dt>
-<dd>
-<p>Conditions data for Cleveland multiway charts. The ordering of its
-rows and panels is crucial to the perception of effects. Used when data
-have a multiway structure. For details see <a href="art-120-multiway.html">Multiway data and charts</a>.</p>
-</dd>
-<dt>Utilities</dt>
-<dd>
+<p><code><a href="../reference/prep_fye_mice.html">prep_fye_mice()</a></code>   Conditions data for imputing the
+starting majors of First-Year Engineering (FYE) students. Used when
+blocs of starters in Engineering are needed and an institution has a
+required FYE program. For details see <a href="art-060-fye-proxies.html">FYE proxies</a>.</p>
+<p><code><a href="../reference/order_multiway.html">order_multiway()</a></code>   Conditions data for Cleveland
+multiway charts. The ordering of its rows and panels is crucial to the
+perception of effects. Used when data have a multiway structure. For
+details see <a href="art-120-multiway.html">Multiway data and
+charts</a>.</p>
+<p>Utilities</p>
 <ul>
 <li>
 <code><a href="../reference/look_at.html">look_at()</a></code> wraps base <code><a href="https://rdrr.io/r/utils/str.html" class="external-link">str()</a></code>.<br>
 </li>
-</ul>
-</dd>
-<dd>
-<ul>
 <li>
 <code><a href="../reference/sort_uniq.html">sort_uniq()</a></code> wraps base <code><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort()</a></code> and
 <code><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique()</a></code>.<br>
 </li>
-</ul>
-</dd>
-<dd>
-<ul>
 <li>
 <code><a href="../reference/catch_error.html">catch_error()</a></code> wraps base <code><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch()</a></code> for
 errors.<br>
 </li>
-</ul>
-</dd>
-<dd>
-<ul>
 <li>
 <code><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames()</a></code> re-exported from the wrapr
 package</li>
 </ul>
-</dd>
-</dl>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

@@ -70,7 +70,7 @@ filter_cip <- function(keep_text = NULL,
 
   # attempt to preserve dframe class
   prior_class <- class(dframe)
-  
+
   # input modified (or not) by reference
   setDT(dframe)
 
@@ -129,7 +129,7 @@ filter_cip <- function(keep_text = NULL,
   if (!"grouped_df" %chin% prior_class) {
     setattr(dframe, "class", prior_class)
   }
-  
+
   return(dframe)
 }
 

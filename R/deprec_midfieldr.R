@@ -10,5 +10,3 @@
 #'
 #' @name deprec_midfieldr
 NULL
-
-

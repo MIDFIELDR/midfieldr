@@ -765,10 +765,10 @@ the 17 6-digit codes of music programs into 5 categories.
 
 study_programs <- third_pass[, .(cip6, cip6name)]
 study_programs[, program := fcase(
-  cip6name %ilike% "instrument|piano", "Instrument", 
-  cip6name %ilike% "perform|conduct|voice|tech|jazz", "Performance", 
-  cip6name %ilike% "theory|musicology", "Theory", 
-  cip6name %ilike% "pedagogy", "Teaching", 
+  cip6name %ilike% "instrument|piano", "Instrument",
+  cip6name %ilike% "perform|conduct|voice|tech|jazz", "Performance",
+  cip6name %ilike% "theory|musicology", "Theory",
+  cip6name %ilike% "pedagogy", "Teaching",
   default = "General"
 )]
 study_programs[order(program)]

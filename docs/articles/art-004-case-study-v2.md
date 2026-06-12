@@ -555,8 +555,9 @@ Inner join with `degree` excludes rows of non-completers.
 
 ``` r
 
-graduates <- degree[graduates, .(mcid, bloc, cip6, term_degree), 
-                    on = "mcid", nomatch = NULL]
+graduates <- degree[graduates, .(mcid, bloc, cip6, term_degree),
+  on = "mcid", nomatch = NULL
+]
 
 graduates
 #>                  mcid   bloc   cip6 term_degree
