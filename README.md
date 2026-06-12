@@ -23,9 +23,9 @@ student-level records (registrar’s data) in R.
 - `add_timely_term()` estimates a student’s timely graduation term.
 - `add_data_sufficiency()` identifies rows to exclude due to
   insufficient data.
-- `filter_cip()` chooses rows of program data based on search terms.
 - `add_completion_status()` determines if a graduation is timely or
   late.
+- `filter_cip()` chooses rows of program data based on search terms.
 - `prep_fye_mice()` conditions data for imputing starting majors of FYE
   students.  
 - `order_multiway()` conditions data for Cleveland multiway charts.

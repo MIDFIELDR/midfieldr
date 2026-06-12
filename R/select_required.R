@@ -5,7 +5,7 @@
 #' @param midfield_x Data frame
 #' @param select_add Chr vector
 #'
-#' @rdname midfieldr_deprecated
+#' @rdname deprec_midfieldr
 #' @export
 select_required <- function(midfield_x, select_add = NULL) {
   .Deprecated(

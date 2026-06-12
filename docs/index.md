@@ -13,10 +13,10 @@ student-level records (registrar’s data) in R.
   estimates a student’s timely graduation term.
 - [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
   identifies rows to exclude due to insufficient data.
-- [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/filter_cip.md)
-  chooses rows of program data based on search terms.
 - [`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
   determines if a graduation is timely or late.
+- [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/filter_cip.md)
+  chooses rows of program data based on search terms.
 - [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
   conditions data for imputing starting majors of FYE students.  
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)

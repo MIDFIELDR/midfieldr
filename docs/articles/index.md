@@ -10,10 +10,6 @@
   Data](https://midfieldr.github.io/midfieldr/articles/art-002-case-data.md):
 - [Case study part 3:
   Results](https://midfieldr.github.io/midfieldr/articles/art-003-case-results.md):
-- [Case
-  study](https://midfieldr.github.io/midfieldr/articles/art-004-case-study-v2.md):
-- [Introduction to
-  midfieldr](https://midfieldr.github.io/midfieldr/articles/art-005-case-study-extras.md):
 - [Planning a
   workflow](https://midfieldr.github.io/midfieldr/articles/art-010-planning.md):
 - [Data
@@ -34,5 +30,4 @@
 - [Stickiness](https://midfieldr.github.io/midfieldr/articles/art-110-stickiness.md):
 - [Multiway data and
   charts](https://midfieldr.github.io/midfieldr/articles/art-120-multiway.md):
-- [Untitled](https://midfieldr.github.io/midfieldr/articles/holding-the-data-setion.md):
 - [midfieldr](https://midfieldr.github.io/midfieldr/articles/midfieldr.md):

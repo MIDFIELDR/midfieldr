@@ -5,7 +5,7 @@
 - [`midfieldr`](https://midfieldr.github.io/midfieldr/reference/midfieldr-package.md)
   [`midfieldr-package`](https://midfieldr.github.io/midfieldr/reference/midfieldr-package.md)
   : midfieldr: Tools and Methods for Working with MIDFIELD Data in 'R'
-- [`deprec_midfieldr`](https://midfieldr.github.io/midfieldr/reference/deprec_midfieldr.md)
+- [`select_required()`](https://midfieldr.github.io/midfieldr/reference/deprec_midfieldr.md)
   : Deprecated functions in midfieldr
 
 ## Functions
