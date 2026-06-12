@@ -1,20 +1,13 @@
 # Extract unique elements and sort
 
 A strict version of [`sort()`](https://rdrr.io/r/base/sort.html) and
-[`unique()`](https://rdrr.io/r/base/unique.html) (without ...).
+[`unique()`](https://rdrr.io/r/base/unique.html) (without ...) applied
+to vectors only.
 
 ## Usage
 
 ``` r
-sort_uniq(
-  x,
-  ...,
-  incomparables = FALSE,
-  MARGIN = 1,
-  fromLast = FALSE,
-  decreasing = FALSE,
-  na.last = FALSE
-)
+sort_uniq(x, ..., na.rm = FALSE, decreasing = FALSE, na.last = FALSE)
 ```
 
 ## Arguments
@@ -28,20 +21,10 @@ sort_uniq(
   Not used for passing values; forces subsequent arguments to be
   referable only by name.
 
-- incomparables:
+- na.rm:
 
-  A vector of values. See
-  [`unique()`](https://rdrr.io/r/base/unique.html).
-
-- MARGIN:
-
-  An integer. The array margin to be held fixed. Passed to
-  [`unique()`](https://rdrr.io/r/base/unique.html).
-
-- fromLast:
-
-  Logical. Indicates if duplication should be considered from the last.
-  Passed to [`unique()`](https://rdrr.io/r/base/unique.html).
+  Logical. Indicates if missing values (including NaN) should be
+  removed. Passed to [`unique()`](https://rdrr.io/r/base/unique.html).
 
 - decreasing:
 

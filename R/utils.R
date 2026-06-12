@@ -52,16 +52,14 @@ look_at <- function(x) {
 
 #' Extract unique elements and sort
 #'
-#' A strict version of `sort()` and `unique()` (without ...).
-#'
+#' A strict version of `sort()` and `unique()` (without ...) 
+#'                      applied to vectors only. 
+#'                      
 #' @param x             Vector of values to be sorted with any duplicate
 #'                      values removed.
 #' @param ...          `r param_dots`
-#' @param incomparables A vector of values. See `unique()`.
-#' @param MARGIN 	    An integer. The array margin to be held fixed. Passed
-#'                      to `unique()`.
-#' @param fromLast      Logical. Indicates if duplication should be considered
-#'                      from the last. Passed to `unique()`.
+#' @param na.rm         Logical. Indicates if missing values (including NaN) 
+#'                      should be removed. Passed to `unique()`.                     
 #' @param decreasing    Logical. Should the sort be increasing or decreasing?
 #'                      Passed to `sort()`.
 #' @param na.last       Logical. Position of NA values. Passed to `sort()`.
@@ -73,19 +71,16 @@ look_at <- function(x) {
 #' @export
 sort_uniq <- function(x,
                       ...,
-                      incomparables = FALSE, # passed to unique()
-                      MARGIN = 1, # to unique()
-                      fromLast = FALSE, # to unique()
+                      na.rm = FALSE,      # passed to unique()
                       decreasing = FALSE, # passed to sort()
-                      na.last = FALSE) { # to sort()
+                      na.last = FALSE) {  # to sort()
 
   wrapr::stop_if_dot_args(substitute(list(...)), "midfieldr::sort_uniq")
+  
+  checkmate::check_atomic_vector(x)
 
-  x <- base::unique(x,
-    incomparables = incomparables,
-    MARGIN = MARGIN,
-    fromLast = fromLast
-  )
+  x <- unique(x, na.rm = na.rm)
+  
   base::sort(x,
     decreasing = decreasing,
     na.last = na.last

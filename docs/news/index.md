@@ -11,8 +11,7 @@ New features
   to identify rows of post-baccalaureate terms to exclude
 - New function
   [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
-  to replace deprecated
-  [`select_required()`](https://midfieldr.github.io/midfieldr/reference/select_required.md)
+  to replace deprecated `select_required()`
 - New utilities
   [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md),
   [`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md),
@@ -57,7 +56,7 @@ On the website
   [`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
   to replace `same_content()`
 - Add composite column keys of the `course` data table to
-  [`select_required()`](https://midfieldr.github.io/midfieldr/reference/select_required.md)
+  `select_required()`
 - Add datasets `grade_scale` and `sat_act_scale`
 
 ## version 1.0.2

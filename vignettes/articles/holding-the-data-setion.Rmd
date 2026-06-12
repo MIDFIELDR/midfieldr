@@ -1,0 +1,45 @@
+---
+title: "Untitled"
+output: html_document
+date: "2026-06-11"
+---
+
+
+
+## Data: student-level records
+
+***Research data.***  &nbsp; MIDFIELD [@ohland:midfield:2023] is a database of 2.4M students in four tables (student, course, term, degree) that has been managed since 2023 by the American Society for Engineering Education (ASEE). Contact ASEE for further information.
+
+***Practice data.*** &nbsp; The midfielddata package provides an anonymized sample of the MIDFIELD database organized in four tables (student, course, term, degree) as shown in Table 1. midfielddata is used throughout these articles to demonstrate how midfieldr is used. However, midfielddata must not be used to draw inferences about program attributes or student experiences. midfielddata is for *practice*, not *research*.
+
+```{r}
+#| echo: false
+
+library(gt)
+wrapr::build_frame(
+  "Table", "Each row is", "N students", "N rows", "N columns", "Mb memory" |
+    "student", "one student", 97555, 97555, 13L, 17.3 |
+    "course", "one student per course per term", 97555, 3289532, 12L, 324.3 |
+    "term", "one student per term", 97555, 639915, 13L, 72.8 |
+    "degree", "one student per degree", 49543, 49665, 5L, 5.2
+) |>
+  gt() |>
+  tab_caption("Table 1. Student-level records in midfielddata") |>
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(
+    style = list(cell_fill(color = "#c7eae5")),
+    locations = cells_column_labels(columns = everything())
+  ) |>
+  fmt_number(columns = 3:4, decimals = 0, sep_mark = ",", dec_mark = ".") |>
+  fmt_number(columns = 6, decimals = 1, sep_mark = ",", dec_mark = ".")
+```
+
+Data dictionaries are documented in `?student`, `?course`, `?term`, and `?degree`. If you are new to these data, the best place to start is the midfielddata website:
+
+- [MIDFIELD data structure.](https://midfieldr.github.io/midfielddata/articles/data-structure.html) An article that describes the structure of the four data tables in midfielddata: number of observations, number and class of variables, representative values, and database keys.  
+
+- [Data linked by student ID.](https://midfieldr.github.io/midfielddata/articles/individual-students.html)  An article that examines the variables and some representative values in midfielddata---we take a closer look at the records of individual students across the four data tables. 
+
+
+

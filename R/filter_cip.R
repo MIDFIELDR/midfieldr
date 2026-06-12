@@ -68,6 +68,9 @@ filter_cip <- function(keep_text = NULL,
   if (!is.null(keep_text)) qassert(keep_text, "s+")
   if (!is.null(drop_text)) qassert(drop_text, "s+")
 
+  # attempt to preserve dframe class
+  prior_class <- class(dframe)
+  
   # input modified (or not) by reference
   setDT(dframe)
 
@@ -122,8 +125,12 @@ filter_cip <- function(keep_text = NULL,
   # subset columns
   dframe <- dframe[, .SD, .SDcols = select]
 
-  # enable printing (see data.table FAQ 2.23)
-  dframe[]
+  # restore prior class except grouped tibbles
+  if (!"grouped_df" %chin% prior_class) {
+    setattr(dframe, "class", prior_class)
+  }
+  
+  return(dframe)
 }
 
 # ------------------------------------------------------------------------

@@ -22,30 +22,24 @@ knitr::opts_chunk$set(fig.path = "man/figures/README-")
 [![R CMD check](https://github.com/MIDFIELDR/midfieldr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
+
+
+
+
 ## Overview
 
-Provides tools for working with undergraduate student-level records (registrar's data) in R,  supporting longitudinal studies in particular. 
+Provides tools in for working with undergraduate, longitudinal, student-level records (registrar's data) in R. 
 
 - `select_basic_cols()` chooses columns required by midfieldr functions.  
 - `add_post_bacc()` identifies rows of post-baccalaureate terms to exclude. 
-- `filter_cip()` chooses rows of CIP data based on search terms.  
 - `add_timely_term()` estimates a student's timely graduation term. 
 - `add_data_sufficiency()` identifies rows to exclude due to insufficient data. 
+- `filter_cip()` chooses rows of program data based on search terms. 
 - `add_completion_status()` determines if a graduation is timely or late.
 - `prep_fye_mice()` conditions data for imputing starting majors of FYE students.   
 - `order_multiway()` conditions data for Cleveland multiway charts.  
 
 
-
-Frequently used packages. 
-
-- [data.table](https://CRAN.R-project.org/package=data.table) for manipulating data [@Dowle+Srinivasan:2026:data.table]
-- [ggplot2](https://CRAN.R-project.org/package=ggplot2) for charts  [@Wickham:2016:ggplot2]
-
-Other packages, used infrequently. 
-
-- [mice](https://CRAN.R-project.org/package=mice) for imputing starting majors of First-Year Engineering students [@vanBuuren+Oudshoorn:2011]. 
-- [stringr](https://CRAN.R-project.org/package=stringr) for manipulation of character strings [@stringr].
 
 
 
@@ -76,10 +70,6 @@ install.packages("midfielddata",
 )
 ```
 
-The installed size of midfielddata is about 24 Mb, so installation will take longer than that of a conventional CRAN package. 
-
-
-
 
 
 
@@ -88,59 +78,75 @@ The installed size of midfielddata is about 24 Mb, so installation will take lon
 ```{r}
 #| echo: false
 options(
-  datatable.print.topn = 10,
-  datatable.print.nrows = 10
+  datatable.print.topn = 5,
+  datatable.print.nrows = 5
 )
-```
-
-
-```{r}
-library(midfieldr)
-library(data.table)
 ```
 
 We illustrate usage with the "toy" data sets included in midfieldr. These are small data sets of 150 unique students used in examples.
 
 ```{r}
-# Initialize the working data frame using toy_term
-DT <- toy_term[, .(mcid)]
+# Packages
+library(midfieldr)
+library(data.table)
+
+# Initialize records
+student <- select_basic_cols(toy_student)
+term <- select_basic_cols(toy_term)
+degree <- select_basic_cols(toy_degree)
+
+# View a representative result
+term
+
+# Label pre- and post-baccalaureate terms
+term <- add_post_bacc(term, midfield_degree = degree)
+degree <- add_post_bacc(degree, midfield_degree = degree)
+
+# View selected columns of a result
+term[order(term_status), .(mcid, term_status)]
+
+# Exclude post-baccalaureate terms
+term <- term[term_status != "post-first-degree"]
+degree <- degree[term_status != "post-first-degree"]
+
+# View selected columns of a result
+term[order(term_status), .(mcid, term_status)]
+
+# Extract the student IDs
+DT <- term[, .(mcid)]
 DT <- unique(DT)
+setorderv(DT, "mcid")
 DT
 
-# Add variables relating to the timely term
-DT <- add_timely_term(DT, toy_term)
-
-# Order the rows for viewing
-DT <- DT[order(timely_term)]
+# Determine timely completion terms
+DT <- add_timely_term(DT, midfield_term = term)
 DT
 
-# Optional: reduce number of columns
+# With timely term, determine data sufficiency
 DT <- DT[, .(mcid, timely_term)]
+DT <- add_data_sufficiency(DT, midfield_term = term)
+DT[order(data_sufficiency)]
 
-# Add variables relating to data sufficiency
-DT <- add_data_sufficiency(DT, toy_term)
+# Filter for data sufficiency, select columns
+DT <- DT[data_sufficiency == "include", .(mcid, timely_term, data_sufficiency)]
 DT
 
-# Filter for data sufficiency
-DT <- DT[data_sufficiency %chin% "include"]
+# With timely term, determine completion status
+DT <- add_completion_status(DT, midfield_degree = degree)
 DT
 
-# Optional: reduce number of columns
-DT <- DT[, .(mcid, timely_term)]
-
-# Add variables relating to completion status
-DT <- add_completion_status(DT, toy_degree)
+# Filter for timely completion, select columns, add bloc label
+DT <- DT[completion_status %chin% "timely", .(mcid, data_sufficiency, completion_status)]
+DT[, bloc := "grad"]
 DT
 
-# Filter for timely completion
-DT <- DT[completion_status %chin% "timely"]
+# Join the degree program code, select columns
+DT <- degree[DT, .(mcid, bloc, program_code = cip6), on = "mcid"]
 DT
 
-# Join demographic data, reduce number of columns
-DT <- toy_student[DT, .(mcid, race, sex), on = "mcid"]
-
-# Label the student bloc
-DT[, bloc := "graduate"]
+# Join demographic data, select columns
+DT <- student[DT, .(mcid, bloc, program_code, race, sex), on = "mcid"]
+setorderv(DT, c("sex", "race"))
 DT
 ```
 

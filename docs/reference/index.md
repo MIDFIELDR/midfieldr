@@ -5,7 +5,7 @@
 - [`midfieldr`](https://midfieldr.github.io/midfieldr/reference/midfieldr-package.md)
   [`midfieldr-package`](https://midfieldr.github.io/midfieldr/reference/midfieldr-package.md)
   : midfieldr: Tools and Methods for Working with MIDFIELD Data in 'R'
-- [`midfieldr-deprecated`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+- [`deprec_midfieldr`](https://midfieldr.github.io/midfieldr/reference/deprec_midfieldr.md)
   : Deprecated functions in midfieldr
 
 ## Functions
@@ -26,8 +26,6 @@
   : Prepare FYE data for multiple imputation
 - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
   : Select basic columns of student-level records
-- [`select_required()`](https://midfieldr.github.io/midfieldr/reference/select_required.md)
-  : Select required midfieldr variables
 
 ## Utility
 

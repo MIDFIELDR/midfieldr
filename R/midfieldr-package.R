@@ -38,7 +38,7 @@
 #' @importFrom wrapr let
 #' @importFrom wrapr stop_if_dot_args
 #' @importFrom wrapr %?%
-#' @importFrom wrapr check_equiv_frames
+#  see utils.R for re-export of wrapr::check_equiv_frames
 NULL
 
 # bind names due to NSE notes in R CMD check
