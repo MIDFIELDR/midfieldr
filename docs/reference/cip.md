@@ -17,14 +17,18 @@ cip
 A `data.table` with 1582 rows and 6 columns keyed by the 6-digit CIP
 code:
 
+- `cip6name`:
+
+  Character, program name at the 6-digit level
+
 - `cip6`:
 
   Character, 6-digit code representing "specific instructional programs"
   (US National Center for Education Statistics).
 
-- `cip6name`:
+- `cip4name`:
 
-  Character, program name at the 6-digit level
+  Character, program name at the 4-digit level.
 
 - `cip4`:
 
@@ -32,18 +36,14 @@ code:
   "intermediate groupings of programs that have comparable content and
   objectives."
 
-- `cip4name`:
+- `cip2name`:
 
-  Character, program name at the 4-digit level.
+  Character, program name at the 2-digit level.
 
 - `cip2`:
 
   Character, 2-digit code (the first 2 digits of `cip6`) representing
   "the most general groupings of related programs."
-
-- `cip2name`:
-
-  Character, program name at the 2-digit level.
 
 ## Source
 

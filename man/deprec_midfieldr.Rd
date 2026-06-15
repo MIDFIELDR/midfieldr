@@ -10,7 +10,7 @@ select_required(midfield_x, select_add = NULL)
 \arguments{
 \item{midfield_x}{Data frame}
 
-\item{select_add}{Chr vector}
+\item{select_add}{Character vector}
 }
 \description{
 These functions were deprecated in midfieldr 1.0.4.

@@ -25,4 +25,4 @@ select_required(midfield_x, select_add = NULL)
 
 - select_add:
 
-  Chr vector
+  Character vector

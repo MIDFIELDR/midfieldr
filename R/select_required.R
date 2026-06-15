@@ -3,7 +3,7 @@
 #' Deprecated in favor of `select_basic_cols(dframe, patternv)`.
 #'
 #' @param midfield_x Data frame
-#' @param select_add Chr vector
+#' @param select_add Character vector
 #'
 #' @rdname deprec_midfieldr
 #' @export

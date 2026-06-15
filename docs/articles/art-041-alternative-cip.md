@@ -513,22 +513,22 @@ To use the alternative CIP data set included with midfieldr, use
 
 # Using the midfieldr default
 filter_cip("^1408", cip = cip)
-#>      cip2    cip2name   cip4          cip4name   cip6
-#>    <char>      <char> <char>            <char> <char>
-#> 1:     14 Engineering   1408 Civil Engineering 140801
-#> 2:     14 Engineering   1408 Civil Engineering 140802
-#> 3:     14 Engineering   1408 Civil Engineering 140803
-#> 4:     14 Engineering   1408 Civil Engineering 140804
-#> 5:     14 Engineering   1408 Civil Engineering 140805
-#> 6:     14 Engineering   1408 Civil Engineering 140899
-#>                                  cip6name
-#>                                    <char>
-#> 1:             Civil Engineering, General
-#> 2:               Geotechnical Engineering
-#> 3:                 Structural Engineering
-#> 4: Transportation and Highway Engineering
-#> 5:            Water Resources Engineering
-#> 6:               Civil Engineering, Other
+#>                                  cip6name   cip6          cip4name   cip4
+#>                                    <char> <char>            <char> <char>
+#> 1:             Civil Engineering, General 140801 Civil Engineering   1408
+#> 2:               Geotechnical Engineering 140802 Civil Engineering   1408
+#> 3:                 Structural Engineering 140803 Civil Engineering   1408
+#> 4: Transportation and Highway Engineering 140804 Civil Engineering   1408
+#> 5:            Water Resources Engineering 140805 Civil Engineering   1408
+#> 6:               Civil Engineering, Other 140899 Civil Engineering   1408
+#>       cip2name   cip2
+#>         <char> <char>
+#> 1: Engineering     14
+#> 2: Engineering     14
+#> 3: Engineering     14
+#> 4: Engineering     14
+#> 5: Engineering     14
+#> 6: Engineering     14
 
 
 # Using the alternate cip

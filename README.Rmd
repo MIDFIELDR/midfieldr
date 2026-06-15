@@ -28,7 +28,7 @@ knitr::opts_chunk$set(fig.path = "man/figures/README-")
 
 ## Overview
 
-Provides tools in for working with undergraduate, longitudinal, student-level records (registrar's data) in R. 
+Provides tools in 'R' for working with undergraduate, longitudinal, student-level records modeled on the MIDFIELD database. 
 
 - `select_basic_cols()` chooses columns required by midfieldr functions.  
 - `add_post_bacc()` identifies rows of post-baccalaureate terms to exclude. 
@@ -83,14 +83,14 @@ options(
 )
 ```
 
-We illustrate usage with the "toy" data sets included in midfieldr. These are small data sets of 150 unique students used in examples.
+We illustrate usage with the "toy" data sets included in midfieldr. These are small (150 students) data tables structured, like the MIDFIELD database, in four tables: `student`, `course`, `term`, and `degree`. 
 
 ```{r}
 # Packages
 library(midfieldr)
 library(data.table)
 
-# Initialize records
+# Start with student records, select basic columns
 student <- select_basic_cols(toy_student)
 term <- select_basic_cols(toy_term)
 degree <- select_basic_cols(toy_degree)
@@ -98,21 +98,21 @@ degree <- select_basic_cols(toy_degree)
 # View a representative result
 term
 
-# Label pre- and post-baccalaureate terms
+# Determine pre- and post-baccalaureate terms
 term <- add_post_bacc(term, midfield_degree = degree)
 degree <- add_post_bacc(degree, midfield_degree = degree)
 
-# View selected columns of a result
-term[order(term_status), .(mcid, term_status)]
+# View selected variables
+term[order(term_status), .(mcid, term, first_degree_term, term_status)]
 
-# Exclude post-baccalaureate terms
+# Filter to exclude post-baccalaureate terms
 term <- term[term_status != "post-first-degree"]
 degree <- degree[term_status != "post-first-degree"]
 
-# View selected columns of a result
-term[order(term_status), .(mcid, term_status)]
+# View selected variables
+term[order(term_status), .(mcid, term, first_degree_term, term_status)]
 
-# Extract the student IDs
+# Start working on the population
 DT <- term[, .(mcid)]
 DT <- unique(DT)
 setorderv(DT, "mcid")
@@ -122,32 +122,42 @@ DT
 DT <- add_timely_term(DT, midfield_term = term)
 DT
 
-# With timely term, determine data sufficiency
-DT <- DT[, .(mcid, timely_term)]
+# Determine data sufficiency
 DT <- add_data_sufficiency(DT, midfield_term = term)
-DT[order(data_sufficiency)]
 
-# Filter for data sufficiency, select columns
-DT <- DT[data_sufficiency == "include", .(mcid, timely_term, data_sufficiency)]
-DT
+# View selected variables
+DT[order(data_sufficiency), .(mcid, timely_term, data_sufficiency)]
 
-# With timely term, determine completion status
+# Filter for data sufficiency
+DT <- DT[data_sufficiency == "include"]
+
+# View selected variables
+DT[order(mcid), .(mcid, timely_term, data_sufficiency)]
+
+# Determine completion status
 DT <- add_completion_status(DT, midfield_degree = degree)
-DT
 
-# Filter for timely completion, select columns, add bloc label
-DT <- DT[completion_status %chin% "timely", .(mcid, data_sufficiency, completion_status)]
+# View selected variables
+DT[, .(mcid, term_degree, timely_term, completion_status)]
+
+# Filter for timely completion
+DT <- DT[completion_status %chin% "timely"]
+
+# View selected variables
+DT[, .(mcid, data_sufficiency, completion_status)]
+
+# Define this bloc
 DT[, bloc := "grad"]
-DT
 
-# Join the degree program code, select columns
-DT <- degree[DT, .(mcid, bloc, program_code = cip6), on = "mcid"]
-DT
+# Join the degree program code
+DT <- degree[DT, on = "mcid"]
 
-# Join demographic data, select columns
-DT <- student[DT, .(mcid, bloc, program_code, race, sex), on = "mcid"]
+# Join demographic data
+DT <- student[DT, on = "mcid"]
+
+# Typical data set prior to grouping and summarizing
 setorderv(DT, c("sex", "race"))
-DT
+DT[, .(mcid, bloc, cip6, race, sex)]
 ```
 
 ## Acknowledgments

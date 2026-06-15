@@ -249,24 +249,24 @@ From `cip`, we obtain all codes that start with any of the selected
 # Four engineering programs using 4-digit CIP codes
 selected_programs <- filter_cip(c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
 selected_programs
-#>       cip2    cip2name   cip4                  cip4name   cip6
-#>     <char>      <char> <char>                    <char> <char>
-#>  1:     14 Engineering   1408         Civil Engineering 140801
-#>  2:     14 Engineering   1408         Civil Engineering 140802
-#>  3:     14 Engineering   1408         Civil Engineering 140803
-#> ---                                                           
-#> 13:     14 Engineering   1435    Industrial Engineering 143501
-#> 14:     14 Engineering   1436 Manufacturing Engineering 143601
-#> 15:     14 Engineering   1437       Operations Research 143701
-#>                       cip6name
-#>                         <char>
-#>  1: Civil Engineering, General
-#>  2:   Geotechnical Engineering
-#>  3:     Structural Engineering
-#> ---                           
-#> 13:     Industrial Engineering
-#> 14:  Manufacturing Engineering
-#> 15:        Operations Research
+#>                       cip6name   cip6                  cip4name   cip4
+#>                         <char> <char>                    <char> <char>
+#>  1: Civil Engineering, General 140801         Civil Engineering   1408
+#>  2:   Geotechnical Engineering 140802         Civil Engineering   1408
+#>  3:     Structural Engineering 140803         Civil Engineering   1408
+#> ---                                                                   
+#> 13:     Industrial Engineering 143501    Industrial Engineering   1435
+#> 14:  Manufacturing Engineering 143601 Manufacturing Engineering   1436
+#> 15:        Operations Research 143701       Operations Research   1437
+#>        cip2name   cip2
+#>          <char> <char>
+#>  1: Engineering     14
+#>  2: Engineering     14
+#>  3: Engineering     14
+#> ---                   
+#> 13: Engineering     14
+#> 14: Engineering     14
+#> 15: Engineering     14
 ```
 
 *Add a variable.*   User-defined program names are nearly always

@@ -10,8 +10,11 @@
   Data](https://midfieldr.github.io/midfieldr/articles/art-002-case-data.md):
 - [Case study part 3:
   Results](https://midfieldr.github.io/midfieldr/articles/art-003-case-results.md):
+- [Case
+  study](https://midfieldr.github.io/midfieldr/articles/art-004-case-study-v2.md):
 - [Planning a
   workflow](https://midfieldr.github.io/midfieldr/articles/art-010-planning.md):
+- [Planning](https://midfieldr.github.io/midfieldr/articles/art-011-planning-v2.md):
 - [Data
   sufficiency](https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.md):
 - [Degree

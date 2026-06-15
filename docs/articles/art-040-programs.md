@@ -70,17 +70,17 @@ Technicians”. This 2-digit grouping is subdivided into 5 groups at the
 4-digit level (codes 4100–4199) which are further subdivided into 9
 programs at the 6-digit level (codes 410000–419999).
 
-| cip2 | cip2name | cip4 | cip4name | cip6 | cip6name |
+| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
 |----|----|----|----|----|----|
-| 41 | Science Technologies, Technicians | 4100 | Science Technologies, Technicians, General | 410000 | Science Technologies, Technicians, General |
-| 41 |  ↓ | 4101 | Biology Technician, Biotechnology Laboratory Technician | 410101 | Biology Technician, Biotechnology Laboratory Technician |
-| 41 |  ↓ | 4102 | Nuclear and Industrial Radiologic Technologies, Technicians | 410204 | Industrial Radiologic Technology, Technician |
-| 41 |  ↓ | 4102 |  ↓ | 410205 | Nuclear, Nuclear Power Technology, Technician |
-| 41 |  ↓ | 4102 |  ↓ | 410299 | Nuclear and Industrial Radiologic Technologies, Technicians, Other |
-| 41 |  ↓ | 4103 | Physical Science Technologies, Technicians | 410301 | Chemical Technology, Technician |
-| 41 |  ↓ | 4103 |  ↓ | 410303 | Chemical Process Technology |
-| 41 |  ↓ | 4103 |  ↓ | 410399 | Physical Science Technologies, Technicians, Other |
-| 41 |  ↓ | 4199 | Science Technologies, Technicians, Other | 419999 | Science Technologies, Technicians, Other |
+| Science Technologies, Technicians, General | 410000 | Science Technologies, Technicians, General | 4100 | Science Technologies, Technicians | 41 |
+| Biology Technician, Biotechnology Laboratory Technician | 410101 | Biology Technician, Biotechnology Laboratory Technician | 4101 |  ↓ | 41 |
+| Industrial Radiologic Technology, Technician | 410204 | Nuclear and Industrial Radiologic Technologies, Technicians | 4102 |  ↓ | 41 |
+| Nuclear, Nuclear Power Technology, Technician | 410205 |  ↓ | 4102 |  ↓ | 41 |
+| Nuclear and Industrial Radiologic Technologies, Technicians, Other | 410299 |  ↓ | 4102 |  ↓ | 41 |
+| Chemical Technology, Technician | 410301 | Physical Science Technologies, Technicians | 4103 |  ↓ | 41 |
+| Chemical Process Technology | 410303 |  ↓ | 4103 |  ↓ | 41 |
+| Physical Science Technologies, Technicians, Other | 410399 |  ↓ | 4103 |  ↓ | 41 |
+| Science Technologies, Technicians, Other | 419999 | Science Technologies, Technicians, Other | 4199 |  ↓ | 41 |
 
 Table 1. CIP taxonomy {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
@@ -126,33 +126,33 @@ First glance.
 
 # Loads with midfieldr
 cip
-#>         cip2                                                  cip2name   cip4
-#>       <char>                                                    <char> <char>
-#>    1:     01 Agriculture, Agricultural Operations and Related Sciences   0100
-#>    2:     01 Agriculture, Agricultural Operations and Related Sciences   0101
-#>    3:     01 Agriculture, Agricultural Operations and Related Sciences   0101
-#>   ---                                                                        
-#> 1580:     54                                                   History   5401
-#> 1581:     54                                                   History   5401
-#> 1582:     99                         NonIPEDS - Undecided, Unspecified   9999
-#>                                   cip4name   cip6
+#>                                             cip6name   cip6
+#>                                               <char> <char>
+#>    1:                           Agriculture, General 010000
+#>    2:  Agricultural Business and Management, General 010101
+#>    3: Agribusiness, Agricultural Business Operations 010102
+#>   ---                                                      
+#> 1580:                               Military History 540108
+#> 1581:                                 History, Other 540199
+#> 1582:              NonIPEDS - Undecided, Unspecified 999999
+#>                                   cip4name   cip4
 #>                                     <char> <char>
-#>    1:                 Agriculture, General 010000
-#>    2: Agricultural Business and Management 010101
-#>    3: Agricultural Business and Management 010102
+#>    1:                 Agriculture, General   0100
+#>    2: Agricultural Business and Management   0101
+#>    3: Agricultural Business and Management   0101
 #>   ---                                            
-#> 1580:                              History 540108
-#> 1581:                              History 540199
-#> 1582:    NonIPEDS - Undecided, Unspecified 999999
-#>                                             cip6name
-#>                                               <char>
-#>    1:                           Agriculture, General
-#>    2:  Agricultural Business and Management, General
-#>    3: Agribusiness, Agricultural Business Operations
-#>   ---                                               
-#> 1580:                               Military History
-#> 1581:                                 History, Other
-#> 1582:              NonIPEDS - Undecided, Unspecified
+#> 1580:                              History   5401
+#> 1581:                              History   5401
+#> 1582:    NonIPEDS - Undecided, Unspecified   9999
+#>                                                        cip2name   cip2
+#>                                                          <char> <char>
+#>    1: Agriculture, Agricultural Operations and Related Sciences     01
+#>    2: Agriculture, Agricultural Operations and Related Sciences     01
+#>    3: Agriculture, Agricultural Operations and Related Sciences     01
+#>   ---                                                                 
+#> 1580:                                                   History     54
+#> 1581:                                                   History     54
+#> 1582:                         NonIPEDS - Undecided, Unspecified     99
 ```
 
 All variables in `cip` are character strings, which protects the leading
@@ -162,7 +162,7 @@ zeros of some CIP codes.
 
 # Names and class of the CIP variables
 cip[, lapply(.SD, class)]
-#>         cip2  cip2name      cip4  cip4name      cip6  cip6name
+#>     cip6name      cip6  cip4name      cip4  cip2name      cip2
 #>       <char>    <char>    <char>    <char>    <char>    <char>
 #> 1: character character character character character character
 ```
@@ -279,33 +279,33 @@ Filtering the CIP data for all programs containing the word
 
 # Filter basics
 filter_cip("engineering")
-#>        cip2                                         cip2name   cip4
-#>      <char>                                           <char> <char>
-#>   1:     14                                      Engineering   1401
-#>   2:     14                                      Engineering   1401
-#>   3:     14                                      Engineering   1402
-#>  ---                                                               
-#> 117:     29                            Military Technologies   2903
-#> 118:     29                            Military Technologies   2903
-#> 119:     51 Health Professions and Related Clinical Sciences   5123
-#>                                                   cip4name   cip6
+#>                                                              cip6name   cip6
+#>                                                                <char> <char>
+#>   1:                                             Engineering, General 140101
+#>   2:                                                  Pre-Engineering 140102
+#>   3:     Aerospace, Aeronautical and Astronautical, Space Engineering 140201
+#>  ---                                                                        
+#> 117:                                       Combat Systems Engineering 290301
+#> 118:                                            Engineering Acoustics 290303
+#> 119: Assistive, Augmentative Technology and Rehabiliation Engineering 512312
+#>                                                   cip4name   cip4
 #>                                                     <char> <char>
-#>   1:                                  Engineering, General 140101
-#>   2:                                  Engineering, General 140102
-#>   3: Aerospace, Aeronautical and Astronautical Engineering 140201
+#>   1:                                  Engineering, General   1401
+#>   2:                                  Engineering, General   1401
+#>   3: Aerospace, Aeronautical and Astronautical Engineering   1402
 #>  ---                                                             
-#> 117:                             Military Applied Sciences 290301
-#> 118:                             Military Applied Sciences 290303
-#> 119:            Rehabilitation and Therapeutic Professions 512312
-#>                                                              cip6name
-#>                                                                <char>
-#>   1:                                             Engineering, General
-#>   2:                                                  Pre-Engineering
-#>   3:     Aerospace, Aeronautical and Astronautical, Space Engineering
-#>  ---                                                                 
-#> 117:                                       Combat Systems Engineering
-#> 118:                                            Engineering Acoustics
-#> 119: Assistive, Augmentative Technology and Rehabiliation Engineering
+#> 117:                             Military Applied Sciences   2903
+#> 118:                             Military Applied Sciences   2903
+#> 119:            Rehabilitation and Therapeutic Professions   5123
+#>                                              cip2name   cip2
+#>                                                <char> <char>
+#>   1:                                      Engineering     14
+#>   2:                                      Engineering     14
+#>   3:                                      Engineering     14
+#>  ---                                                        
+#> 117:                            Military Technologies     29
+#> 118:                            Military Technologies     29
+#> 119: Health Professions and Related Clinical Sciences     51
 ```
 
 The `drop_text` and `select` arguments have to be named explicitly.
@@ -340,20 +340,20 @@ the following code chunk.
 filter_cip("civil")
 ```
 
-| cip2 | cip2name | cip4 | cip4name | cip6 | cip6name |
+| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
 |----|----|----|----|----|----|
-| 05 | Area, Ethnic, Cultural and Gender and Group Studies | 0501 | Area Studies | 050102 | American, United States Studies, Civilization |
-| 05 | Area, Ethnic, Cultural and Gender and Group Studies | 0501 | Area Studies | 050103 | Asian Studies, Civilization |
-| 05 | Area, Ethnic, Cultural and Gender and Group Studies | 0501 | Area Studies | 050106 | European Studies, Civilization |
-| 14 | Engineering | 1408 | Civil Engineering | 140801 | Civil Engineering, General |
-| 14 | Engineering | 1408 | Civil Engineering | 140802 | Geotechnical Engineering |
-| 14 | Engineering | 1408 | Civil Engineering | 140803 | Structural Engineering |
-| 14 | Engineering | 1408 | Civil Engineering | 140804 | Transportation and Highway Engineering |
-| 14 | Engineering | 1408 | Civil Engineering | 140805 | Water Resources Engineering |
-| 14 | Engineering | 1408 | Civil Engineering | 140899 | Civil Engineering, Other |
-| 15 | Engineering Technology | 1502 | Civil Engineering Technologies, Technicians | 150201 | Civil Engineering Technology, Technician |
-| 15 | Engineering Technology | 1513 | Drafting, Design Engineering Technologies, Technicians | 151304 | Civil Drafting and Civil Engineering CAD, CADD |
-| 30 | Muti, Interdisciplinary Studies | 3022 | Classical and Ancient, Oriental Studies - Multi, Interdisciplinary Studies | 302201 | Multi, Interdisciplinary Studies - Ancient Studies, Civilization |
+| American, United States Studies, Civilization | 050102 | Area Studies | 0501 | Area, Ethnic, Cultural and Gender and Group Studies | 05 |
+| Asian Studies, Civilization | 050103 | Area Studies | 0501 | Area, Ethnic, Cultural and Gender and Group Studies | 05 |
+| European Studies, Civilization | 050106 | Area Studies | 0501 | Area, Ethnic, Cultural and Gender and Group Studies | 05 |
+| Civil Engineering, General | 140801 | Civil Engineering | 1408 | Engineering | 14 |
+| Geotechnical Engineering | 140802 | Civil Engineering | 1408 | Engineering | 14 |
+| Structural Engineering | 140803 | Civil Engineering | 1408 | Engineering | 14 |
+| Transportation and Highway Engineering | 140804 | Civil Engineering | 1408 | Engineering | 14 |
+| Water Resources Engineering | 140805 | Civil Engineering | 1408 | Engineering | 14 |
+| Civil Engineering, Other | 140899 | Civil Engineering | 1408 | Engineering | 14 |
+| Civil Engineering Technology, Technician | 150201 | Civil Engineering Technologies, Technicians | 1502 | Engineering Technology | 15 |
+| Civil Drafting and Civil Engineering CAD, CADD | 151304 | Drafting, Design Engineering Technologies, Technicians | 1513 | Engineering Technology | 15 |
+| Multi, Interdisciplinary Studies - Ancient Studies, Civilization | 302201 | Classical and Ancient, Oriental Studies - Multi, Interdisciplinary Studies | 3022 | Muti, Interdisciplinary Studies | 30 |
 
 Table 2. Search results {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
@@ -381,14 +381,14 @@ second_pass <- filter_cip("engineering", cip = first_pass)
 third_pass <- filter_cip(drop_text = "technology", cip = second_pass)
 ```
 
-| cip2 | cip2name | cip4 | cip4name | cip6 | cip6name |
+| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
 |----|----|----|----|----|----|
-| 14 | Engineering | 1408 | Civil Engineering | 140801 | Civil Engineering, General |
-| 14 | Engineering | 1408 | Civil Engineering | 140802 | Geotechnical Engineering |
-| 14 | Engineering | 1408 | Civil Engineering | 140803 | Structural Engineering |
-| 14 | Engineering | 1408 | Civil Engineering | 140804 | Transportation and Highway Engineering |
-| 14 | Engineering | 1408 | Civil Engineering | 140805 | Water Resources Engineering |
-| 14 | Engineering | 1408 | Civil Engineering | 140899 | Civil Engineering, Other |
+| Civil Engineering, General | 140801 | Civil Engineering | 1408 | Engineering | 14 |
+| Geotechnical Engineering | 140802 | Civil Engineering | 1408 | Engineering | 14 |
+| Structural Engineering | 140803 | Civil Engineering | 1408 | Engineering | 14 |
+| Transportation and Highway Engineering | 140804 | Civil Engineering | 1408 | Engineering | 14 |
+| Water Resources Engineering | 140805 | Civil Engineering | 1408 | Engineering | 14 |
+| Civil Engineering, Other | 140899 | Civil Engineering | 1408 | Engineering | 14 |
 
 Table 3. Search results {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
@@ -425,18 +425,18 @@ and literature. Using “german” for the `keep_text` value yields
 filter_cip("german")
 ```
 
-| cip2 | cip2name | cip4 | cip4name | cip6 | cip6name |
+| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
 |----|----|----|----|----|----|
-| 05 | Area, Ethnic, Cultural and Gender and Group Studies | 0501 | Area Studies | 050125 | German Studies |
-| 13 | Education | 1313 | Teacher Education and Professional Development, Specific Subject Areas | 131326 | German Language Teacher Education |
-| 16 | Foreign Languages, Literatures and Linguistics | 1605 | Germanic Languages, Literatures Linguistics | 160500 | Germanic Languages, Literatures and Linguistics, General |
-| 16 | Foreign Languages, Literatures and Linguistics | 1605 | Germanic Languages, Literatures Linguistics | 160501 | German Language and Literature |
-| 16 | Foreign Languages, Literatures and Linguistics | 1605 | Germanic Languages, Literatures Linguistics | 160502 | Scandinavian Languages, Literatures and Linguistics |
-| 16 | Foreign Languages, Literatures and Linguistics | 1605 | Germanic Languages, Literatures Linguistics | 160503 | Danish Language and Literature |
-| 16 | Foreign Languages, Literatures and Linguistics | 1605 | Germanic Languages, Literatures Linguistics | 160504 | Dutch, Flemish Language and Literature |
-| 16 | Foreign Languages, Literatures and Linguistics | 1605 | Germanic Languages, Literatures Linguistics | 160505 | Norwegian Language and Literature |
-| 16 | Foreign Languages, Literatures and Linguistics | 1605 | Germanic Languages, Literatures Linguistics | 160506 | Swedish Language and Literature |
-| 16 | Foreign Languages, Literatures and Linguistics | 1605 | Germanic Languages, Literatures Linguistics | 160599 | Germanic Languages, Literatures and Linguistics, Other |
+| German Studies | 050125 | Area Studies | 0501 | Area, Ethnic, Cultural and Gender and Group Studies | 05 |
+| German Language Teacher Education | 131326 | Teacher Education and Professional Development, Specific Subject Areas | 1313 | Education | 13 |
+| Germanic Languages, Literatures and Linguistics, General | 160500 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
+| German Language and Literature | 160501 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
+| Scandinavian Languages, Literatures and Linguistics | 160502 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
+| Danish Language and Literature | 160503 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
+| Dutch, Flemish Language and Literature | 160504 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
+| Norwegian Language and Literature | 160505 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
+| Swedish Language and Literature | 160506 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
+| Germanic Languages, Literatures and Linguistics, Other | 160599 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
 
 Table 4. Search results {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
@@ -452,10 +452,10 @@ argument.
 filter_cip(c("050125", "160501"))
 ```
 
-| cip2 | cip2name | cip4 | cip4name | cip6 | cip6name |
+| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
 |----|----|----|----|----|----|
-| 05 | Area, Ethnic, Cultural and Gender and Group Studies | 0501 | Area Studies | 050125 | German Studies |
-| 16 | Foreign Languages, Literatures and Linguistics | 1605 | Germanic Languages, Literatures Linguistics | 160501 | German Language and Literature |
+| German Studies | 050125 | Area Studies | 0501 | Area, Ethnic, Cultural and Gender and Group Studies | 05 |
+| German Language and Literature | 160501 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
 
 Table 5. Search results {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
@@ -482,13 +482,13 @@ containing the 4-digit string. We use the regular expression notation
 filter_cip(c("^1410", "^1419"))
 ```
 
-| cip2 | cip2name | cip4 | cip4name | cip6 | cip6name |
+| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
 |----|----|----|----|----|----|
-| 14 | Engineering | 1410 | Electrical, Electronics and Communications Engineering | 141001 | Electrical, Electronics and Communications Engineering |
-| 14 | Engineering | 1410 | Electrical, Electronics and Communications Engineering | 141003 | Laser and Optical Engineering |
-| 14 | Engineering | 1410 | Electrical, Electronics and Communications Engineering | 141004 | Telecommunications Engineering |
-| 14 | Engineering | 1410 | Electrical, Electronics and Communications Engineering | 141099 | Electrical, Electronics and Communications Engineering, Other |
-| 14 | Engineering | 1419 | Mechanical Engineering | 141901 | Mechanical Engineering |
+| Electrical, Electronics and Communications Engineering | 141001 | Electrical, Electronics and Communications Engineering | 1410 | Engineering | 14 |
+| Laser and Optical Engineering | 141003 | Electrical, Electronics and Communications Engineering | 1410 | Engineering | 14 |
+| Telecommunications Engineering | 141004 | Electrical, Electronics and Communications Engineering | 1410 | Engineering | 14 |
+| Electrical, Electronics and Communications Engineering, Other | 141099 | Electrical, Electronics and Communications Engineering | 1410 | Engineering | 14 |
+| Mechanical Engineering | 141901 | Mechanical Engineering | 1419 | Engineering | 14 |
 
 Table 6. Search results {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
@@ -502,17 +502,17 @@ programs. Here, the result includes all History programs.
 filter_cip("^54")
 ```
 
-| cip2 | cip2name | cip4 | cip4name | cip6 | cip6name |
+| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
 |----|----|----|----|----|----|
-| 54 | History | 5401 | History | 540101 | History, General |
-| 54 | History | 5401 | History | 540102 | American History (United States) |
-| 54 | History | 5401 | History | 540103 | European History |
-| 54 | History | 5401 | History | 540104 | History and Philosophy of Science and Technology |
-| 54 | History | 5401 | History | 540105 | Public, Applied History and Archival Administration |
-| 54 | History | 5401 | History | 540106 | Asian History |
-| 54 | History | 5401 | History | 540107 | Canadian History |
-| 54 | History | 5401 | History | 540108 | Military History |
-| 54 | History | 5401 | History | 540199 | History, Other |
+| History, General | 540101 | History | 5401 | History | 54 |
+| American History (United States) | 540102 | History | 5401 | History | 54 |
+| European History | 540103 | History | 5401 | History | 54 |
+| History and Philosophy of Science and Technology | 540104 | History | 5401 | History | 54 |
+| Public, Applied History and Archival Administration | 540105 | History | 5401 | History | 54 |
+| Asian History | 540106 | History | 5401 | History | 54 |
+| Canadian History | 540107 | History | 5401 | History | 54 |
+| Military History | 540108 | History | 5401 | History | 54 |
+| History, Other | 540199 | History | 5401 | History | 54 |
 
 Table 7. Search results {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
@@ -527,16 +527,16 @@ codes_we_want <- c("^24", "^4102", "^450202")
 filter_cip(codes_we_want)
 ```
 
-| cip2 | cip2name | cip4 | cip4name | cip6 | cip6name |
+| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
 |----|----|----|----|----|----|
-| 24 | Liberal Arts and Sciences, General Studies and Humanities | 2401 | Liberal Arts and Sciences, General Studies Humanities | 240101 | Liberal Arts and Sciences, Liberal Studies |
-| 24 | Liberal Arts and Sciences, General Studies and Humanities | 2401 | Liberal Arts and Sciences, General Studies Humanities | 240102 | General Studies |
-| 24 | Liberal Arts and Sciences, General Studies and Humanities | 2401 | Liberal Arts and Sciences, General Studies Humanities | 240103 | Humanities, Humanistic Studies |
-| 24 | Liberal Arts and Sciences, General Studies and Humanities | 2401 | Liberal Arts and Sciences, General Studies Humanities | 240199 | Liberal Arts and Sciences, General Studies and Humanities, Other |
-| 41 | Science Technologies, Technicians | 4102 | Nuclear and Industrial Radiologic Technologies, Technicians | 410204 | Industrial Radiologic Technology, Technician |
-| 41 | Science Technologies, Technicians | 4102 | Nuclear and Industrial Radiologic Technologies, Technicians | 410205 | Nuclear, Nuclear Power Technology, Technician |
-| 41 | Science Technologies, Technicians | 4102 | Nuclear and Industrial Radiologic Technologies, Technicians | 410299 | Nuclear and Industrial Radiologic Technologies, Technicians, Other |
-| 45 | Social Sciences | 4502 | Anthropology | 450202 | Physical Anthropology |
+| Liberal Arts and Sciences, Liberal Studies | 240101 | Liberal Arts and Sciences, General Studies Humanities | 2401 | Liberal Arts and Sciences, General Studies and Humanities | 24 |
+| General Studies | 240102 | Liberal Arts and Sciences, General Studies Humanities | 2401 | Liberal Arts and Sciences, General Studies and Humanities | 24 |
+| Humanities, Humanistic Studies | 240103 | Liberal Arts and Sciences, General Studies Humanities | 2401 | Liberal Arts and Sciences, General Studies and Humanities | 24 |
+| Liberal Arts and Sciences, General Studies and Humanities, Other | 240199 | Liberal Arts and Sciences, General Studies Humanities | 2401 | Liberal Arts and Sciences, General Studies and Humanities | 24 |
+| Industrial Radiologic Technology, Technician | 410204 | Nuclear and Industrial Radiologic Technologies, Technicians | 4102 | Science Technologies, Technicians | 41 |
+| Nuclear, Nuclear Power Technology, Technician | 410205 | Nuclear and Industrial Radiologic Technologies, Technicians | 4102 | Science Technologies, Technicians | 41 |
+| Nuclear and Industrial Radiologic Technologies, Technicians, Other | 410299 | Nuclear and Industrial Radiologic Technologies, Technicians | 4102 | Science Technologies, Technicians | 41 |
+| Physical Anthropology | 450202 | Anthropology | 4502 | Social Sciences | 45 |
 
 Table 8. Search results {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
@@ -559,18 +559,18 @@ sub_cip <- filter_cip(c("050125", "111111", "160501", "Bogus", "^55"))
 
 # But the successful terms are returned
 sub_cip
-#>      cip2                                            cip2name   cip4
-#>    <char>                                              <char> <char>
-#> 1:     05 Area, Ethnic, Cultural and Gender and Group Studies   0501
-#> 2:     16      Foreign Languages, Literatures and Linguistics   1605
-#>                                       cip4name   cip6
+#>                          cip6name   cip6
+#>                            <char> <char>
+#> 1:                 German Studies 050125
+#> 2: German Language and Literature 160501
+#>                                       cip4name   cip4
 #>                                         <char> <char>
-#> 1:                                Area Studies 050125
-#> 2: Germanic Languages, Literatures Linguistics 160501
-#>                          cip6name
-#>                            <char>
-#> 1:                 German Studies
-#> 2: German Language and Literature
+#> 1:                                Area Studies   0501
+#> 2: Germanic Languages, Literatures Linguistics   1605
+#>                                               cip2name   cip2
+#>                                                 <char> <char>
+#> 1: Area, Ethnic, Cultural and Gender and Group Studies     05
+#> 2:      Foreign Languages, Literatures and Linguistics     16
 ```
 
 However, as seen earlier, if none of the search terms are found, an
@@ -595,7 +595,7 @@ structure as `cip`: six character columns named as follows,
 
 # Name and class of variables (columns) in cip
 unlist(lapply(cip, FUN = class))
-#>        cip2    cip2name        cip4    cip4name        cip6    cip6name 
+#>    cip6name        cip6    cip4name        cip4    cip2name        cip2 
 #> "character" "character" "character" "character" "character" "character"
 ```
 
