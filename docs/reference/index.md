@@ -14,7 +14,7 @@
   : Determine completion status for every student
 - [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
   : Determine data sufficiency for every student
-- [`add_post_bacc()`](https://midfieldr.github.io/midfieldr/reference/add_post_bacc.md)
+- [`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md)
   : Identify rows of post-baccalaureate terms
 - [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
   : Calculate a timely completion term for every student

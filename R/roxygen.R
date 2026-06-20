@@ -1,6 +1,6 @@
 # R code used for documentation
 
-dframe_add_post_bacc <- "Working data frame of student-level records
+dframe_add_term_cluster <- "Working data frame of student-level records
         to which a term-status column is to be added. Required
         variables are `mcid` and a single term variable."
 
@@ -53,7 +53,7 @@ return_select_basic_cols <- "A subset of `dframe` with the following
         search strings in `patternv`. Grouping structures are not necessarily
         preserved."
 
-return_add_post_bacc <- "A data frame with the following properties: rows
+return_add_term_cluster <- "A data frame with the following properties: rows
        are preserved; columns `first_degree_term` and `term_status` are added
        or overwritten; all other columns are preserved.
        Grouping structures are not necessarily preserved."

@@ -7,7 +7,7 @@
 New features
 
 - New function
-  [`add_post_bacc()`](https://midfieldr.github.io/midfieldr/reference/add_post_bacc.md)
+  [`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md)
   to identify rows of post-baccalaureate terms to exclude
 - New function
   [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
@@ -44,6 +44,7 @@ On the website
 
 - Revise “Get started” article for brief but comprehensive introduction
   to all functions.
+- Revise “Case study” article to focus on process.
 - New article to demonstrate transforming NCES CIP code files into a
   midfieldr-compatible data structure.
 

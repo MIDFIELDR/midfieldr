@@ -9,8 +9,8 @@ student-level records modeled on the MIDFIELD database.
   chooses rows of program data based on search terms.
 - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
   chooses columns required by midfieldr functions.  
-- [`add_post_bacc()`](https://midfieldr.github.io/midfieldr/reference/add_post_bacc.md)
-  identifies rows of post-baccalaureate terms to exclude.
+- `add_post_bacc()` identifies rows of post-baccalaureate terms to
+  exclude.
 - [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
   estimates a student’s timely graduation term.
 - [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)

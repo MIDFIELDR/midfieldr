@@ -1,26 +1,26 @@
-test_add_post_bacc <- function() {
+test_add_term_cluster <- function() {
     
     # usage
-    # add_post_bacc(dframe, midfield_degree = degree)
+    # add_term_cluster(dframe, midfield_degree = degree)
     
     # Needed for tinytest::build_install_test()
     require("data.table")
     
     # check for incorrect input class / required variables
-    expect_error(add_post_bacc(1))
-    expect_error(add_post_bacc(toy_term, "sat"))
-    expect_error(add_post_bacc(toy_student, toy_degree))
-    expect_error(add_post_bacc(toy_degree, toy_student))
+    expect_error(add_term_cluster(1))
+    expect_error(add_term_cluster(toy_term, "sat"))
+    expect_error(add_term_cluster(toy_student, toy_degree))
+    expect_error(add_term_cluster(toy_degree, toy_student))
     
     # class preserved?
     x <- copy(toy_term)
     y <- copy(toy_degree)
-    z <- add_post_bacc(x, y)
+    z <- add_term_cluster(x, y)
     expect_equal(class(x), class(z))
     
     setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
     setattr(y, "class", c("tbl_df", "tbl", "data.frame"))
-    z <- add_post_bacc(x, y)
+    z <- add_term_cluster(x, y)
     expect_equal(class(x), class(z))
     
     # keys preserved?
@@ -28,12 +28,12 @@ test_add_post_bacc <- function() {
     y <- copy(toy_degree)
     setkeyv(x, "mcid")
     setkeyv(y, "mcid")
-    z <- add_post_bacc(x, y)
+    z <- add_term_cluster(x, y)
     expect_equal(key(x), key(z))
     
     setkeyv(x, NULL)
     setkeyv(y, NULL)
-    z <- add_post_bacc(x, y)
+    z <- add_term_cluster(x, y)
     expect_equal(key(x), key(z))
     
 
@@ -94,7 +94,7 @@ test_add_post_bacc <- function() {
     invisible(NULL)
 }
 
-test_add_post_bacc()
+test_add_term_cluster()
 
 
 

@@ -7,7 +7,7 @@ terms.
 ## Usage
 
 ``` r
-add_post_bacc(dframe, midfield_degree = degree)
+add_term_cluster(dframe, midfield_degree = degree)
 ```
 
 ## Arguments
@@ -35,9 +35,9 @@ preserved. The added columns are:
   Character. Term of a student's first baccalaureate, encoded `YYYYT` —
   or NA if no degree recorded.
 
-- `term_status`:
+- `term_cluster`:
 
-  Character. Possible values are "pre-bacc", "first-degree", and
+  Character. Possible values are "pre-degree", "first-degree", and
   "post-first-degree".
 
 An attempt is made to return data frames of the same class as the input,
@@ -57,8 +57,8 @@ The input `dframe` must have a term variable with one of three possible
 names: `term` (from the term data table), `term_course` (from the course
 data table), or `term_degree` (from the degree data table).
 
-`add_post_bacc()` determines a student's first degree term (if any) from
-`midfield_degree`, adds that column to `dframe`, and adds a second
+`add_term_cluster()` determines a student's first degree term (if any)
+from `midfield_degree`, adds that column to `dframe`, and adds a second
 column of term-status labels identifying pre- and post-baccalaureate
 terms.
 

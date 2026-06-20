@@ -13,26 +13,26 @@
 #' names: `term` (from the term data table), `term_course` (from the course
 #' data table), or `term_degree` (from the degree data table).
 #'
-#' `add_post_bacc()` determines a student's first degree term (if any)
+#' `add_term_cluster()` determines a student's first degree term (if any)
 #' from `midfield_degree`, adds that column to `dframe`, and adds a second
 #' column of term-status labels identifying pre- and post-baccalaureate terms.
 #'
-#' @param dframe `r dframe_add_post_bacc`
+#' @param dframe `r dframe_add_term_cluster`
 #' @param midfield_degree `r midfield_degree_add_term_wrt_degree`
 #'
-#' @returns `r return_add_post_bacc`
+#' @returns `r return_add_term_cluster`
 #' The added columns are:
 #' \describe{
 #'  \item{`first_degree_term`}{Character. Term of a student's first
 #'         baccalaureate, encoded `YYYYT` --- or NA if no degree recorded.}
-#'  \item{`term_status`}{Character. Possible values are "pre-bacc",
+#'  \item{`term_cluster`}{Character. Possible values are "pre-degree",
 #'        "first-degree", and "post-first-degree".}
 #' }
 #' `r preserve_class`
 #'
-#' @example man/examples/add_post_bacc_exa.R
+#' @example man/examples/add_term_cluster_exa.R
 #' @export
-add_post_bacc <- function(dframe, midfield_degree = degree) {
+add_term_cluster <- function(dframe, midfield_degree = degree) {
   # ---------- checks
 
   # assert data frames
@@ -74,14 +74,14 @@ add_post_bacc <- function(dframe, midfield_degree = degree) {
 
   # bind names due to NSE notes in R CMD check
   term_col <- NULL
-  term_status <- NULL
+  term_cluster <- NULL
   first_degree_term <- NULL
 
   # ---------- do the work
 
   # variable names to add/overwrite
   term_var <- intersect(colnames(DT), term_var_choices)
-  active_cols <- c(term_var, "first_degree_term", "term_status")
+  active_cols <- c(term_var, "first_degree_term", "term_cluster")
   inactive_cols <- setdiff(colnames(DT), active_cols)
 
   # add baccalaureate term
@@ -91,9 +91,9 @@ add_post_bacc <- function(dframe, midfield_degree = degree) {
   DT[, term_col := DT[[term_var]]]
 
   # assign term status labels
-  DT[, term_status := "pre-bacc"]
-  DT[term_col == first_degree_term, term_status := "first-degree"]
-  DT[term_col > first_degree_term, term_status := "post-first-degree"]
+  DT[, term_cluster := "pre-degree"]
+  DT[term_col == first_degree_term, term_cluster := "first-degree"]
+  DT[term_col > first_degree_term, term_cluster := "post-first-degree"]
 
   # delete the temporary col
   DT[["term_col"]] <- NULL
