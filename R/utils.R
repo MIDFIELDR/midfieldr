@@ -209,3 +209,68 @@ add_institution <- function(dframe,
   dframe <- DT[dframe]
   return(dframe)
 }
+
+
+
+
+# ------------------------------------------------------------------------
+#
+#' Prepare non-data.table data frames
+#'
+#' Converts data.frames or tibbles to data.tables to enable data.table syntax
+#' in midfieldr functions. No effect on data.table inputs. Employs `copy()`
+#' on non-data.tables only.
+#'
+#' @param df Data frame of any class input to a midfieldr function
+#' @noRd
+prep_non_dt_input <- function(df) {
+  # convert data.frames or tibbles to data.table
+  # data.tables: no effect, by-ref changes still possible in global env
+  # tibbles or base R data.frames: prevents by-ref changes in global env
+
+  if ("data.table" %chin% class(df)) {
+    # No change to input. Avoids copy(), but enables by-ref changes to df
+    # in global env, OK if we're editing and returning the original df,
+    # and moot if df is subset before any by-ref operations
+    return(df)
+  } else {
+    # Convert input to enable data.table syntax throughout. copy()
+    # required, otherwise setDT() converts input tibbles or base R
+    # data.frames to data.tables by-ref in the global env.
+    DT <- copy(df)
+    setDT(DT)
+    return(DT)
+  }
+}
+
+
+# ------------------------------------------------------------------------
+#
+#' Restore class of non-data.table data frames
+#'
+#' Attempt to assign class to output data frame to match class of input data
+#' frame. No effect on data.tables. Used to attempt to preserve tibbles for
+#' users of dplyr and friends.
+#'
+#' @param DT Data frame in data.table format just prior to exiting a midfieldr
+#'        function.
+#' @param prior_class Character, result of applying `class()` to input argument
+#'        of midfieldr function. Passed to `setattr()`.
+#' @noRd
+restore_non_dt_class <- function(DT, prior_class) {
+  # restore input class if tibble or base R data.frames
+  # except grouped tibble returned as data.frame
+
+  if ("data.table" %chin% prior_class) {
+    # case: data.table
+    return(DT)
+  } else if (!"grouped_df" %chin% prior_class) {
+    # case: not data.table, not grouped tibble
+    setattr(DT, "class", prior_class)
+    return(DT)
+  } else {
+    # case: not data.table, is grouped tibble
+    setDF(DT)
+    return(DT)
+  }
+}

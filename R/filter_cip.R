@@ -1,7 +1,4 @@
-# Documentation described below using an inline R code chunk, e.g.,
-# "`r param_dots`" or "`r return_filter_cip`", are
-# documented in the R/roxygen.R file.
-
+# See R/roxygen.R for documentation below that uses inline R code
 
 #' Subset rows that include matches to search strings
 #'

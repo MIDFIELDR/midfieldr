@@ -1,7 +1,4 @@
-# Documentation described below using an inline R code chunk, e.g.,
-# "`r dframe_add_completion_status`" or "`r return_data_frame`", are documented
-# in the R/roxygen.R file.
-
+# See R/roxygen.R for documentation below that uses inline R code
 
 #' Determine completion status for every student
 #'
@@ -40,10 +37,10 @@
 #' @export
 #'
 add_completion_status <- function(dframe, midfield_degree = degree) {
+  # If misc keys are set within this function
   on.exit(setkey(dframe, NULL), add = TRUE)
 
-  # to set attributes at the end
-  preserve_class <- class(dframe)
+  # ---------- checks
 
   # required arguments
   qassert(dframe, "d+")
@@ -67,12 +64,17 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
   qassert(midfield_degree[, mcid], "s+")
   qassert(midfield_degree[, term_degree], "s+")
 
+  # ---------- preparation
+
+  # attempt to preserve dframe class
+  prior_class <- class(dframe)
+
   # bind names due to NSE notes in R CMD check
   completion_status <- NULL
   timely_term <- NULL
   term_degree <- NULL
 
-  # do the work
+  # ---------- do the work
 
   # variables added by this function and functions called (if any)
   new_cols <- c("term_degree", "completion_status")
@@ -109,9 +111,12 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
   # old columns as keys, order columns and rows
   set_colrow_order(dframe, old_cols)
 
-  # return same class as incoming
-  setattr(dframe, "class", preserve_class)
+  # ---------- restore state
 
-  # enable printing (see data.table FAQ 2.23)
-  dframe[]
+  # restore prior class except grouped tibbles
+  if (!"grouped_df" %chin% prior_class) {
+    setattr(dframe, "class", prior_class)
+  }
+
+  return(dframe)
 }

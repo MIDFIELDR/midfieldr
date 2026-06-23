@@ -1,7 +1,4 @@
-# Documentation described below using an inline R code chunk, e.g.,
-# "`r dframe_order_multiway`" or "`r return_order_multiway`", are
-# documented in the R/roxygen.R file.
-
+# See R/roxygen.R for documentation below that uses inline R code
 
 #' Order categorical variables of multiway data
 #'

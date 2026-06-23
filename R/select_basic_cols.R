@@ -1,5 +1,4 @@
-# Documentation described below using an inline R code chunk, e.g.,
-# "`r param_dots`" are documented in the R/roxygen.R file.
+# See R/roxygen.R for documentation below that uses inline R code
 
 #' Select basic columns of student-level records
 #'
@@ -35,38 +34,38 @@
 #' @example man/examples/select_basic_cols_exa.R
 #' @export
 select_basic_cols <- function(dframe, ..., patternv = NULL) {
+  # If misc keys are set within this function
+  on.exit(setkey(dframe, NULL), add = TRUE)
+
   # ---------- checks
 
   # arguments after ... must be named
   wrapr::stop_if_dot_args(
     substitute(list(...)),
-    "Arguments after ... must be named, e.g., arg = val."
+    "Arguments after ... must be named, as in arg = val."
   )
 
-  # assert data frames
+  # required arguments
   checkmate::qassert(dframe, "d+")
 
-  # assert class of optional variables
+  # optional arguments
   if (!is.null(patternv)) {
     checkmate::qassert(patternv, "s+")
   }
 
   # ---------- preparation
 
-  # attempt to preserve dframe class
+  # to restore class (tibble, data.frame, etc.) before return
   prior_class <- class(dframe)
 
-  # copy to avoid changes by reference to input
-  DT <- copy(dframe)
-  setDT(DT)
-
-  # preserve data.table keys if any
-  prior_keys <- key(DT)
+  # convert non-data.table input to data.table class. By-ref changes to
+  # dframe in global environment remain active for data.tables.
+  DT <- prep_non_dt_input(dframe)
 
   # bind names due to NSE notes in R CMD check
   # x <- NULL
 
-  # ---- do the work
+  # ---------- do the work
 
   # column names, minimum required plus keys
   active_cols <- c(
@@ -78,7 +77,7 @@ select_basic_cols <- function(dframe, ..., patternv = NULL) {
   cols_to_search <- setdiff(colnames(DT), active_cols)
   cols_to_keep <- intersect(colnames(DT), active_cols)
 
-  # update columns to keep with search results
+  # use search to update columns to keep
   search_pattern <- paste(patternv, collapse = "|")
   if (nchar(search_pattern) > 0) {
     cols_to_add <- grep(search_pattern,
@@ -94,13 +93,9 @@ select_basic_cols <- function(dframe, ..., patternv = NULL) {
 
   # ---------- restore state
 
-  # restore prior keys
-  setkeyv(DT, prior_keys)
+  # Except for grouped tibbles, restores non-data.table data frames
+  # to same class as input.
+  dframe <- restore_non_dt_class(DT, prior_class)
 
-  # restore prior class except grouped tibbles
-  if (!"grouped_df" %chin% prior_class) {
-    setattr(DT, "class", prior_class)
-  }
-
-  return(DT)
+  dframe[]
 }

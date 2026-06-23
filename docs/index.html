@@ -93,7 +93,7 @@
 <code><a href="reference/select_basic_cols.html">select_basic_cols()</a></code> chooses columns required by midfieldr functions.<br>
 </li>
 <li>
-<code>add_post_bacc()</code> identifies rows of post-baccalaureate terms to exclude.</li>
+<code><a href="reference/add_term_cluster.html">add_term_cluster()</a></code> identifies rows of post-baccalaureate terms to exclude.</li>
 <li>
 <code><a href="reference/add_timely_term.html">add_timely_term()</a></code> estimates a student’s timely graduation term.</li>
 <li>
@@ -117,25 +117,52 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"MIDFIELDR/midfieldr"</span><span class="op">)</span></span></code></pre></div>
-<p>midfieldr interacts with practice data provided in the midfielddata package (<a href="#ref-Layton+Long+Ohland:2026:midfielddata">Layton et al. 2026</a>) or with any data structure modeled on MIDFIELD (<a href="#ref-ohland:midfield:2023">Ohland 2023</a>), a database managed since 2023 by the American Society for Engineering Education. midfielddata is installed from the MIDFIELDR drat repository with:</p>
+<p>midfieldr is designed to work with data from MIDFIELD (<a href="#ref-ohland:midfield:2023">Ohland 2023</a>) or any other database with a similar structure. A sample of these data (with 98,000 students) is provided in midfielddata, an R data package you can install from GitHub.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"midfielddata"</span>,</span>
 <span>  repos <span class="op">=</span> <span class="st">"https://MIDFIELDR.github.io/drat/"</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"source"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>For information on accessing the MIDFIELD database for research, contact the American Society for Engineering Education (ASEE).</p>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<p>We illustrate usage with the “toy” data sets included in midfieldr. These are small (150 students) data tables structured, like the MIDFIELD database, in four tables: <code>student</code>, <code>course</code>, <code>term</code>, and <code>degree</code>.</p>
+<p>We illustrate usage with a 150-student sample that loads with midfieldr. These “toy” data frames—<code>toy_student, toy_term,</code> and <code>toy_degree</code>—have the same structure as the data frames <code>student, term,</code> and <code>degree</code> in midfielddata that we use in package articles.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://midfieldr.github.io/midfieldr/">midfieldr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Initialize student records</span></span>
+<span><span class="co"># Choose a minimum set of columns</span></span>
 <span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">toy_student</span><span class="op">)</span></span>
 <span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">toy_term</span><span class="op">)</span></span>
 <span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">toy_degree</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   150 obs. of  4 variables:</span></span>
+<span><span class="co">#&gt;  $ mcid       : chr  "MCID3111158953" "MCID3111159270" "MCID3111160513" "MCID"..</span></span>
+<span><span class="co">#&gt;  $ institution: chr  "Institution J" "Institution J" "Institution J" "Institu"..</span></span>
+<span><span class="co">#&gt;  $ race       : chr  "White" "White" "White" "White" ...</span></span>
+<span><span class="co">#&gt;  $ sex        : chr  "Female" "Male" "Male" "Female" ...</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   1095 obs. of  5 variables:</span></span>
+<span><span class="co">#&gt;  $ mcid       : chr  "MCID3111158953" "MCID3111158953" "MCID3111158953" "MCID"..</span></span>
+<span><span class="co">#&gt;  $ institution: chr  "Institution J" "Institution J" "Institution J" "Institu"..</span></span>
+<span><span class="co">#&gt;  $ term       : chr  "19881" "19883" "19891" "19893" ...</span></span>
+<span><span class="co">#&gt;  $ cip6       : chr  "240102" "240102" "240102" "240102" ...</span></span>
+<span><span class="co">#&gt;  $ level      : chr  "01 First-year" "01 First-year" "02 Second-year" "02 Sec"..</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   96 obs. of  4 variables:</span></span>
+<span><span class="co">#&gt;  $ mcid       : chr  "MCID3111159270" "MCID3111162677" "MCID3111164287" "MCID"..</span></span>
+<span><span class="co">#&gt;  $ institution: chr  "Institution J" "Institution J" "Institution J" "Institu"..</span></span>
+<span><span class="co">#&gt;  $ term_degree: chr  "19913" "19913" "19913" "19913" ...</span></span>
+<span><span class="co">#&gt;  $ cip6       : chr  "141001" "140701" "141001" "270101" ...</span></span>
+<span></span>
+<span><span class="co"># Add a column to label term clusters</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_term_cluster.html">add_term_cluster</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_term_cluster.html">add_term_cluster</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">term</span></span>
 <span><span class="co">#&gt;                 mcid   institution   term   cip6          level</span></span>
@@ -147,55 +174,50 @@
 <span><span class="co">#&gt; 1093: MCID3112881399 Institution B  20181 260901  01 First-year</span></span>
 <span><span class="co">#&gt; 1094: MCID3112882995 Institution B  20181 141901  01 First-year</span></span>
 <span><span class="co">#&gt; 1095: MCID3112884375 Institution B  20181 520201  01 First-year</span></span>
+<span><span class="co">#&gt;       first_degree_term term_cluster</span></span>
+<span><span class="co">#&gt;                  &lt;char&gt;       &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1:              &lt;NA&gt;   pre-degree</span></span>
+<span><span class="co">#&gt;    2:              &lt;NA&gt;   pre-degree</span></span>
+<span><span class="co">#&gt;    3:              &lt;NA&gt;   pre-degree</span></span>
+<span><span class="co">#&gt;   ---                               </span></span>
+<span><span class="co">#&gt; 1093:              &lt;NA&gt;   pre-degree</span></span>
+<span><span class="co">#&gt; 1094:              &lt;NA&gt;   pre-degree</span></span>
+<span><span class="co">#&gt; 1095:              &lt;NA&gt;   pre-degree</span></span>
 <span></span>
-<span><span class="co"># Label pre/post-baccalaureate term status</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu">add_post_bacc</span><span class="op">(</span><span class="va">term</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu">add_post_bacc</span><span class="op">(</span><span class="va">degree</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="co"># FYI, summary of term cluster values</span></span>
+<span><span class="va">term</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"term_cluster"</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;         term_cluster     N</span></span>
+<span><span class="co">#&gt;               &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:        pre-degree  1012</span></span>
+<span><span class="co">#&gt; 2:      first-degree    58</span></span>
+<span><span class="co">#&gt; 3: post-first-degree    25</span></span>
 <span></span>
-<span><span class="va">term</span></span>
-<span><span class="co">#&gt;                 mcid   institution   cip6          level   term</span></span>
-<span><span class="co">#&gt;               &lt;char&gt;        &lt;char&gt; &lt;char&gt;         &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;    1: MCID3111158953 Institution J 240102  01 First-year  19881</span></span>
-<span><span class="co">#&gt;    2: MCID3111158953 Institution J 240102  01 First-year  19883</span></span>
-<span><span class="co">#&gt;    3: MCID3111158953 Institution J 240102 02 Second-year  19891</span></span>
-<span><span class="co">#&gt;   ---                                                          </span></span>
-<span><span class="co">#&gt; 1093: MCID3112881399 Institution B 260901  01 First-year  20181</span></span>
-<span><span class="co">#&gt; 1094: MCID3112882995 Institution B 141901  01 First-year  20181</span></span>
-<span><span class="co">#&gt; 1095: MCID3112884375 Institution B 520201  01 First-year  20181</span></span>
-<span><span class="co">#&gt;       first_degree_term term_status</span></span>
-<span><span class="co">#&gt;                  &lt;char&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt;    1:              &lt;NA&gt;    pre-bacc</span></span>
-<span><span class="co">#&gt;    2:              &lt;NA&gt;    pre-bacc</span></span>
-<span><span class="co">#&gt;    3:              &lt;NA&gt;    pre-bacc</span></span>
-<span><span class="co">#&gt;   ---                              </span></span>
-<span><span class="co">#&gt; 1093:              &lt;NA&gt;    pre-bacc</span></span>
-<span><span class="co">#&gt; 1094:              &lt;NA&gt;    pre-bacc</span></span>
-<span><span class="co">#&gt; 1095:              &lt;NA&gt;    pre-bacc</span></span>
+<span><span class="va">degree</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"term_cluster"</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;         term_cluster     N</span></span>
+<span><span class="co">#&gt;               &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:      first-degree    92</span></span>
+<span><span class="co">#&gt; 2: post-first-degree     4</span></span>
 <span></span>
-<span><span class="co"># Term status values</span></span>
-<span><span class="fu"><a href="reference/sort_uniq.html">sort_uniq</a></span><span class="op">(</span><span class="va">term</span><span class="op">$</span><span class="va">term_status</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "first-degree"      "post-first-degree" "pre-bacc"</span></span>
+<span><span class="co"># Exclude rows after the first degree term</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">term_cluster</span> <span class="op">!=</span> <span class="st">"post-first-degree"</span><span class="op">]</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">term_cluster</span> <span class="op">!=</span> <span class="st">"post-first-degree"</span><span class="op">]</span></span>
 <span></span>
-<span><span class="co"># Exclude post-baccalaureate terms</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">term_status</span> <span class="op">!=</span> <span class="st">"post-first-degree"</span><span class="op">]</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">term_status</span> <span class="op">!=</span> <span class="st">"post-first-degree"</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co"># Drop temporary columns to finalize records</span></span>
+<span><span class="co"># Drop the temporary columns</span></span>
 <span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
 <span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">term</span></span>
-<span><span class="co">#&gt;                 mcid   institution   cip6          level   term</span></span>
-<span><span class="co">#&gt;               &lt;char&gt;        &lt;char&gt; &lt;char&gt;         &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;    1: MCID3111158953 Institution J 240102  01 First-year  19881</span></span>
-<span><span class="co">#&gt;    2: MCID3111158953 Institution J 240102  01 First-year  19883</span></span>
-<span><span class="co">#&gt;    3: MCID3111158953 Institution J 240102 02 Second-year  19891</span></span>
+<span><span class="co">#&gt;                 mcid   institution   term   cip6          level</span></span>
+<span><span class="co">#&gt;               &lt;char&gt;        &lt;char&gt; &lt;char&gt; &lt;char&gt;         &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MCID3111158953 Institution J  19881 240102  01 First-year</span></span>
+<span><span class="co">#&gt;    2: MCID3111158953 Institution J  19883 240102  01 First-year</span></span>
+<span><span class="co">#&gt;    3: MCID3111158953 Institution J  19891 240102 02 Second-year</span></span>
 <span><span class="co">#&gt;   ---                                                          </span></span>
-<span><span class="co">#&gt; 1068: MCID3112881399 Institution B 260901  01 First-year  20181</span></span>
-<span><span class="co">#&gt; 1069: MCID3112882995 Institution B 141901  01 First-year  20181</span></span>
-<span><span class="co">#&gt; 1070: MCID3112884375 Institution B 520201  01 First-year  20181</span></span>
+<span><span class="co">#&gt; 1068: MCID3112881399 Institution B  20181 260901  01 First-year</span></span>
+<span><span class="co">#&gt; 1069: MCID3112882995 Institution B  20181 141901  01 First-year</span></span>
+<span><span class="co">#&gt; 1070: MCID3112884375 Institution B  20181 520201  01 First-year</span></span>
 <span></span>
-<span><span class="co"># Initialize population</span></span>
+<span><span class="co"># Population at this point, for next filter</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
@@ -210,8 +232,8 @@
 <span><span class="co">#&gt; 150: MCID3112884375</span></span>
 <span></span>
 <span><span class="co"># Determine data sufficiency</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                mcid       level_i adj_span timely_term term_i lower_limit</span></span>
 <span><span class="co">#&gt;              &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
@@ -232,14 +254,17 @@
 <span><span class="co">#&gt; 149:       20181    exclude-upper</span></span>
 <span><span class="co">#&gt; 150:       20181    exclude-upper</span></span>
 <span></span>
-<span><span class="co"># Data sufficiency values</span></span>
-<span><span class="fu"><a href="reference/sort_uniq.html">sort_uniq</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">data_sufficiency</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "exclude-lower" "exclude-upper" "include"</span></span>
+<span><span class="co"># FYI, summary of data sufficiency values</span></span>
+<span><span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"data_sufficiency"</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;    data_sufficiency     N</span></span>
+<span><span class="co">#&gt;              &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:          include   102</span></span>
+<span><span class="co">#&gt; 2:    exclude-upper    40</span></span>
+<span><span class="co">#&gt; 3:    exclude-lower     8</span></span>
 <span></span>
-<span><span class="co"># Exclude insufficient data to finalize population</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span><span class="op">]</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">DT</span></span>
+<span><span class="co"># Retain rows with sufficient institutional data</span></span>
+<span><span class="va">population</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">population</span></span>
 <span><span class="co">#&gt;                mcid</span></span>
 <span><span class="co">#&gt;              &lt;char&gt;</span></span>
 <span><span class="co">#&gt;   1: MCID3111213943</span></span>
@@ -250,60 +275,33 @@
 <span><span class="co">#&gt; 101: MCID3112411629</span></span>
 <span><span class="co">#&gt; 102: MCID3112498796</span></span>
 <span></span>
-<span><span class="co"># Determine completion status to initialize grad bloc</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="va">DT</span></span>
-<span><span class="co">#&gt;                mcid term_i       level_i adj_span timely_term term_degree</span></span>
-<span><span class="co">#&gt;              &lt;char&gt; &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt;   1: MCID3111213943  19891 01 First-year        6       19943       19903</span></span>
-<span><span class="co">#&gt;   2: MCID3111248941  19901 01 First-year        6       19953       19943</span></span>
-<span><span class="co">#&gt;   3: MCID3111250695  19901 01 First-year        6       19953        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;  ---                                                                     </span></span>
-<span><span class="co">#&gt; 100: MCID3112409179  20091 01 First-year        6       20143       20123</span></span>
-<span><span class="co">#&gt; 101: MCID3112411629  20091 01 First-year        6       20143       20124</span></span>
-<span><span class="co">#&gt; 102: MCID3112498796  20101 01 First-year        6       20153       20143</span></span>
-<span><span class="co">#&gt;      completion_status</span></span>
-<span><span class="co">#&gt;                 &lt;char&gt;</span></span>
-<span><span class="co">#&gt;   1:            timely</span></span>
-<span><span class="co">#&gt;   2:            timely</span></span>
-<span><span class="co">#&gt;   3:              &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;  ---                  </span></span>
-<span><span class="co">#&gt; 100:            timely</span></span>
-<span><span class="co">#&gt; 101:            timely</span></span>
-<span><span class="co">#&gt; 102:            timely</span></span>
+<span><span class="co"># Inner join population to records, retaining IDs that match both</span></span>
+<span><span class="va">student</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">student</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">term</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">degree</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span></span>
-<span><span class="co"># Completion status values</span></span>
-<span><span class="fu"><a href="reference/sort_uniq.html">sort_uniq</a></span><span class="op">(</span><span class="va">DT</span><span class="op">$</span><span class="va">completion_status</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] NA       "late"   "timely"</span></span>
+<span><span class="co"># Records ready for grouping, summarizing, calculating metrics, etc. </span></span>
+<span><span class="fu"><a href="reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   102 obs. of  4 variables:</span></span>
+<span><span class="co">#&gt;  $ mcid       : chr  "MCID3111213943" "MCID3111248941" "MCID3111250695" "MCID"..</span></span>
+<span><span class="co">#&gt;  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..</span></span>
+<span><span class="co">#&gt;  $ race       : chr  "White" "White" "White" "White" ...</span></span>
+<span><span class="co">#&gt;  $ sex        : chr  "Male" "Male" "Male" "Male" ...</span></span>
 <span></span>
-<span><span class="co"># Exclude all but timely graduates, label the bloc</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">completion_status</span> <span class="op">==</span> <span class="st">"timely"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">DT</span><span class="op">[</span>, <span class="va">bloc</span> <span class="op">:=</span> <span class="st">"grad"</span><span class="op">]</span></span>
-<span><span class="va">DT</span></span>
-<span><span class="co">#&gt;               mcid   bloc</span></span>
-<span><span class="co">#&gt;             &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;  1: MCID3111213943   grad</span></span>
-<span><span class="co">#&gt;  2: MCID3111248941   grad</span></span>
-<span><span class="co">#&gt;  3: MCID3111253227   grad</span></span>
-<span><span class="co">#&gt; ---                      </span></span>
-<span><span class="co">#&gt; 52: MCID3112409179   grad</span></span>
-<span><span class="co">#&gt; 53: MCID3112411629   grad</span></span>
-<span><span class="co">#&gt; 54: MCID3112498796   grad</span></span>
+<span><span class="fu"><a href="reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   808 obs. of  5 variables:</span></span>
+<span><span class="co">#&gt;  $ mcid       : chr  "MCID3111213943" "MCID3111213943" "MCID3111213943" "MCID"..</span></span>
+<span><span class="co">#&gt;  $ institution: chr  "Institution B" "Institution B" "Institution B" "Institu"..</span></span>
+<span><span class="co">#&gt;  $ term       : chr  "19891" "19893" "19901" "19903" ...</span></span>
+<span><span class="co">#&gt;  $ cip6       : chr  "420101" "420101" "420101" "420101" ...</span></span>
+<span><span class="co">#&gt;  $ level      : chr  "01 First-year" "01 First-year" "02 Second-year" "02 Sec"..</span></span>
 <span></span>
-<span><span class="co"># Join program codes and demographics to finalize graduates bloc</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">bloc</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">bloc</span>, <span class="va">cip6</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">DT</span></span>
-<span><span class="co">#&gt;               mcid   bloc   cip6   race    sex</span></span>
-<span><span class="co">#&gt;             &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;  1: MCID3111213943   grad 420101  White   Male</span></span>
-<span><span class="co">#&gt;  2: MCID3111248941   grad 140901  White   Male</span></span>
-<span><span class="co">#&gt;  3: MCID3111253227   grad 141901  White   Male</span></span>
-<span><span class="co">#&gt; ---                                           </span></span>
-<span><span class="co">#&gt; 52: MCID3112409179   grad 090401  Asian   Male</span></span>
-<span><span class="co">#&gt; 53: MCID3112411629   grad 500601  White   Male</span></span>
-<span><span class="co">#&gt; 54: MCID3112498796   grad 090101  White Female</span></span></code></pre></div>
+<span><span class="fu"><a href="reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   78 obs. of  4 variables:</span></span>
+<span><span class="co">#&gt;  $ mcid       : chr  "MCID3111213943" "MCID3111248941" "MCID3111253227" "MCID"..</span></span>
+<span><span class="co">#&gt;  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..</span></span>
+<span><span class="co">#&gt;  $ term_degree: chr  "19903" "19943" "19951" "19954" ...</span></span>
+<span><span class="co">#&gt;  $ cip6       : chr  "420101" "140901" "141901" "161200" ...</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>
@@ -314,9 +312,6 @@
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-Layton+Long+Ohland:2026:midfielddata" class="csl-entry">
-Layton, Richard, Russell Long, Susan Lord, Matthew Ohland, and Marisa Orr. 2026. <em><span class="nocase">midfielddata: MIDFIELD Data Sample</span></em>. R package version 0.2.3. <a href="https://midfieldr.github.io/midfielddata/" class="external-link uri">https://midfieldr.github.io/midfielddata/</a>.
-</div>
 <div id="ref-ohland:midfield:2023" class="csl-entry">
 Ohland, Matthew. 2023. <em>MIDFIELD, 2004–2023</em>. <a href="https://midfield.online/" class="external-link uri">https://midfield.online/</a>.
 </div>

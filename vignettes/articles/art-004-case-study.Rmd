@@ -31,7 +31,7 @@ In this study we present a complete case, from initial description to graphing t
 
 We define the parameters of our case study as follows:
 
-*Data.* &nbsp; Program CIP codes in `midfieldr::cip`. Student-level records in `midfielddata::student, term,` and `degree`.
+*Data.* &nbsp; Program CIP codes from midfieldr `cip`. Student records from  midfielddata `student, term,` and `degree`. 
 
 *Metric.* &nbsp;  Program *stickiness:* the ratio $\small (S)$ of the number of graduates of a program $\small (N_\textrm{grad})$ to the number ever enrolled in the program $\small (N_\textrm{ever})$, including part-time students, migrators, transfers, and students admitted in any term  [@Ohland+Orr+others:2012]. 
 
@@ -49,7 +49,7 @@ $$
 
 *Groupings.* &nbsp; We select program, race/ethnicity, and sex for grouping and summarizing. Groups too small to preserve anonymity will be excluded. 
 
-*Outcomes.* &nbsp; To group and summarize, we require a data frame with columns for student ID, bloc, and each grouping variable (program, race/ethnicity, sex). After summarizing and computing the metric we should have columns for the metric (stickiness) and for each grouping variable. 
+*Outcomes.* &nbsp; We calculate the stickiness metric for each unique combination of the grouping variables (program, race/ethnicity, sex). The resulting data frame should have columns for program, race/ethnicity, sex, $\small N_\textrm{grad}$, $\small N_\textrm{ever}$, and stickiness.
 
 If you are writing your own script to follow along, we use these packages in this article:
 
@@ -169,7 +169,7 @@ For this study we load three of the midfielddata data tables.
 data(student, term, degree)
 ```
 
-We usually copy the source data, giving them new names (and new locations in memory), to keep them intact while we use the original names  --- `student`, `term`, and `degree` --- to do our work, preventing the source data from being updated "by reference" as we work. [@reference-semantics:2026] explains data.table *reference semantics.*
+We usually copy the source data, giving them new names (and new locations in memory), to keep them intact while we use the original names  --- `student`, `term`, and `degree` --- to do our work, preventing the source data from being updated "by reference" as we work. *Reference semantics* in data.table is discussed in [@reference-semantics:2026].
 
 ```{r}
 student_source <- copy(student)
@@ -177,19 +177,17 @@ term_source <- copy(term)
 degree_source <- copy(degree)
 ```
 
-The working data frames `student, term,` and `degree` should always be present in our computing environment so we can take advantage of midfieldr default argument values. For example, `add_term_cluster()` accesses the `degree` table to do its work. If `degree` is in the environment, the following two lines of code are equivalent:
+The working data frames `student, term,` and `degree` should always be present in our computing environment so we can take advantage of midfieldr default argument values. For example, `add_term_cluster()` accesses the `degree` table to do its work. If `degree` is in the environment, the following lines yield the same results:
 
 ```{r}
 #| eval: false
 # Not run
-add_term_cluster(term)
 add_term_cluster(term, midfield_degree = degree)
+add_term_cluster(term, degree)
+add_term_cluster(term)
 ```
 
-For brevity in this article, therefore, we do not show secondary arguments of this type. 
-
-In a similar vein, several midfieldr functions that add a column of useful information to a data frame also add one or more columns of supporting information. In this article, we discuss the main result column but we postpone explaining the supporting columns to later articles. You can always go to the function's help page for documentation, e.g., `?add_term_cluster`.
-
+In this article, we use the latter form. 
 
 ### *Select basic columns*
 
@@ -244,8 +242,8 @@ degree[, .N, by = c("term_cluster")][order(-N)]
 We exclude the rows labeled "post-first-degree." This step does not apply to the `student` table because it contains no term information.
 
 ```{r}
-term <- term[term_cluster != "post-first-degree"]
-degree <- degree[term_cluster != "post-first-degree"]
+term <- term[!"post-first-degree", on = "term_cluster"]
+degree <- degree[!"post-first-degree", on = "term_cluster"]
 ```
 
 We can drop the added columns by applying `select_basic_cols()` again. 
@@ -301,7 +299,7 @@ DT[, .N, by = c("data_sufficiency")][order(-N)]
 We retain the rows labeled "include" for which we have sufficient data from the institution and retain the ID column only. 
 
 ```{r}
-DT <- DT[data_sufficiency == "include", .(mcid)]
+DT <- DT["include", on = "data_sufficiency", .(mcid)]
 DT
 ```
 
@@ -431,7 +429,7 @@ DT[, .N, by = c("completion_status")][order(-N)]
 We retain the rows labeled "timely" and the drop all the columns except the ID column. 
 
 ```{r}
-DT <- DT[completion_status == "timely", .(mcid)]
+DT <- DT["timely", on = "completion_status", .(mcid)]
 DT
 ```
 

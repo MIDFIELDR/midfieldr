@@ -60,7 +60,7 @@ To get a bug fix or use a new feature, you can install the development version f
 pak::pak("MIDFIELDR/midfieldr")
 ```
 
-midfieldr interacts with practice data provided in the midfielddata package [@Layton+Long+Ohland:2026:midfielddata] or with any data structure modeled on MIDFIELD [@ohland:midfield:2023], a database managed since 2023 by the American Society for Engineering Education. midfielddata is installed from the MIDFIELDR drat repository with: 
+midfieldr is designed to work with data from MIDFIELD [@ohland:midfield:2023] or any other database with a similar structure. A sample of these data (with 98,000 students) is provided in midfielddata, an R data package you can install from GitHub. 
 
 ```{r}
 #| eval: false
@@ -69,6 +69,8 @@ install.packages("midfielddata",
   type = "source"
 )
 ```
+
+For information on accessing the MIDFIELD database for research, contact the American Society for Engineering Education (ASEE). 
 
 
 
@@ -83,73 +85,72 @@ options(
 )
 ```
 
-We illustrate usage with the "toy" data sets included in midfieldr. These are small (150 students) data tables structured, like the MIDFIELD database, in four tables: `student`, `course`, `term`, and `degree`. 
+We illustrate usage with a 150-student sample that loads with midfieldr. These "toy" data frames---`toy_student, toy_term,` and `toy_degree`---have the same structure as the data frames `student, term,` and `degree` in midfielddata that we use in package articles. 
 
 ```{r}
 library(midfieldr)
 library(data.table)
 
-# Initialize student records
+# Choose a minimum set of columns
 student <- select_basic_cols(toy_student)
 term <- select_basic_cols(toy_term)
 degree <- select_basic_cols(toy_degree)
 
+look_at(student)
+
+look_at(term)
+
+look_at(degree)
+
+# Add a column to label term clusters
+term <- add_term_cluster(term)
+degree <- add_term_cluster(degree)
+
 term
 
-# Label pre/post-baccalaureate term status
-term <- add_term_cluster(term, midfield_degree = degree)
-degree <- add_term_cluster(degree, midfield_degree = degree)
+# FYI, summary of term cluster values
+term[, .N, by = "term_cluster"][order(-N)]
 
-term
+degree[, .N, by = "term_cluster"][order(-N)]
 
-# Term status values
-sort_uniq(term$term_status)
+# Exclude rows after the first degree term
+term <- term[term_cluster != "post-first-degree"]
+degree <- degree[term_cluster != "post-first-degree"]
 
-# Exclude post-baccalaureate terms
-term <- term[term_status != "post-first-degree"]
-degree <- degree[term_status != "post-first-degree"]
-
-# Drop temporary columns to finalize records
+# Drop the temporary columns
 term <- select_basic_cols(term)
 degree <- select_basic_cols(degree)
 
 term
 
-# Initialize population
+# Population at this point, for next filter
 DT <- term[, .(mcid)]
 DT <- unique(DT)
 DT
 
 # Determine data sufficiency
-DT <- add_timely_term(DT, midfield_term = term)
-DT <- add_data_sufficiency(DT, midfield_term = term)
+DT <- add_timely_term(DT)
+DT <- add_data_sufficiency(DT)
 DT
 
-# Data sufficiency values
-sort_uniq(DT$data_sufficiency)
+# FYI, summary of data sufficiency values
+DT[, .N, by = "data_sufficiency"][order(-N)]
 
-# Exclude insufficient data to finalize population
-DT <- DT[data_sufficiency == "include"]
-DT <- DT[, .(mcid)]
-DT
+# Retain rows with sufficient institutional data
+population <- DT[data_sufficiency == "include", .(mcid)]
+population
 
-# Determine completion status to initialize grad bloc
-DT <- add_timely_term(DT, midfield_term = term)
-DT <- add_completion_status(DT, midfield_degree = degree)
-DT
+# Inner join population to records, retaining IDs that match both
+student <- population[student, on = "mcid", nomatch = NULL]
+term <- population[term, on = "mcid", nomatch = NULL]
+degree <- population[degree, on = "mcid", nomatch = NULL]
 
-# Completion status values
-sort_uniq(DT$completion_status)
+# Records ready for grouping, summarizing, calculating metrics, etc.
+look_at(student)
 
-# Exclude all but timely graduates, label the bloc
-DT <- DT[completion_status == "timely", .(mcid)]
-DT[, bloc := "grad"]
-DT
+look_at(term)
 
-# Join program codes and demographics to finalize graduates bloc
-DT <- degree[DT, on = "mcid", .(mcid, bloc, cip6)]
-DT <- student[DT, on = "mcid", .(mcid, bloc, cip6, race, sex)]
-DT
+look_at(degree)
 ```
 
 ## Acknowledgments

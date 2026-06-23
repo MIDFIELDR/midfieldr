@@ -1,3 +1,5 @@
+# See R/roxygen.R for documentation below that uses inline R code
+
 #' Identify rows of post-baccalaureate terms
 #'
 #' Provides a means of excluding post-baccalaureate terms by adding a
@@ -18,7 +20,7 @@
 #' column of term-status labels identifying pre- and post-baccalaureate terms.
 #'
 #' @param dframe `r dframe_add_term_cluster`
-#' @param midfield_degree `r midfield_degree_add_term_wrt_degree`
+#' @param midfield_degree `r midfield_degree_add_term_cluster`
 #'
 #' @returns `r return_add_term_cluster`
 #' The added columns are:
@@ -33,6 +35,9 @@
 #' @example man/examples/add_term_cluster_exa.R
 #' @export
 add_term_cluster <- function(dframe, midfield_degree = degree) {
+  # If misc keys are set within this function
+  # on.exit(setkey(dframe, NULL), add = TRUE)
+
   # ---------- checks
 
   # assert data frames
@@ -54,23 +59,24 @@ add_term_cluster <- function(dframe, midfield_degree = degree) {
   checkmate::assert_choice(term_variable, choices = term_var_choices)
   checkmate::qassert(term_variable, "s1")
 
-
   # ---------- preparation
 
-  # attempt to preserve dframe class
+  # to restore class (tibble, data.frame, etc.) before return
   prior_class <- class(dframe)
 
-  # copy to avoid changes by reference to input
-  DT <- copy(dframe)
-  setDT(DT)
+  # Convert non-data.table input to data.table class. By-ref changes to
+  # dframe in global environment remain active for data.tables.
+  DT <- prep_non_dt_input(dframe)
 
-  # subset avoids change by reference
-  m_degree <- midfield_degree[, c("mcid", "term_degree")]
-  setDT(m_degree)
-  m_degree <- unique(m_degree, na.rm = TRUE)
+  # subset (use base R) avoids change by reference
+  degree_subset <- midfield_degree[, c("mcid", "term_degree")]
+
+  # Ensure data.table class
+  degree_subset <- prep_non_dt_input(degree_subset)
+  degree_subset <- unique(degree_subset, na.rm = TRUE)
 
   # preserve data.table keys if any
-  prior_keys <- key(DT)
+  # prior_keys <- key(DT)
 
   # bind names due to NSE notes in R CMD check
   term_col <- NULL
@@ -81,11 +87,11 @@ add_term_cluster <- function(dframe, midfield_degree = degree) {
 
   # variable names to add/overwrite
   term_var <- intersect(colnames(DT), term_var_choices)
-  active_cols <- c(term_var, "first_degree_term", "term_cluster")
+  active_cols <- c("first_degree_term", "term_cluster")
   inactive_cols <- setdiff(colnames(DT), active_cols)
 
   # add baccalaureate term
-  DT <- add_bacc_term(DT, m_degree)
+  DT <- add_bacc_term(DT, degree_subset)
 
   # add temporary term col for comparison to degree term
   DT[, term_col := DT[[term_var]]]
@@ -96,7 +102,7 @@ add_term_cluster <- function(dframe, midfield_degree = degree) {
   DT[term_col > first_degree_term, term_cluster := "post-first-degree"]
 
   # delete the temporary col
-  DT[["term_col"]] <- NULL
+  DT[, term_col := NULL]
 
   # reset column order
   DT <- DT[, .SD, .SDcols = c(inactive_cols, active_cols)]
@@ -104,21 +110,20 @@ add_term_cluster <- function(dframe, midfield_degree = degree) {
   # ---------- restore state
 
   # restore prior keys
-  setkeyv(DT, prior_keys)
+  # setkeyv(DT, prior_keys)
 
-  # restore prior class except grouped tibbles
-  if (!"grouped_df" %chin% prior_class) {
-    setattr(DT, "class", prior_class)
-  }
+  # Except for grouped tibbles, restores non-data.table data frames
+  # to same class as input.
+  DT <- restore_non_dt_class(DT, prior_class)
 
-  return(DT)
+  DT[]
 }
 
 # ------------------------------------------------------------------
 # Internal functions
 # ---------------------------------------------------
 
-add_bacc_term <- function(DT, m_degree) {
+add_bacc_term <- function(DT, degree_subset) {
   # ---------- do the work
 
   # prepare to inner join IDs and term degree, na.rm in case
@@ -126,7 +131,7 @@ add_bacc_term <- function(DT, m_degree) {
   DT_id <- unique(DT_id, na.rm = TRUE)
 
   # inner-join input-ID and midfield-degree data
-  first_degree <- m_degree[DT_id, on = .(mcid), nomatch = NULL]
+  first_degree <- degree_subset[DT_id, on = .(mcid), nomatch = NULL]
 
   # keep the first degree term
   setorderv(first_degree, c("mcid", "term_degree"), order = 1)

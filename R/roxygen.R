@@ -37,7 +37,7 @@ midfield_term_prep_fye_mice <- "MIDFIELD `term` data table or equivalent
 midfield_degree_add_completion_status <- "MIDFIELD `degree` data table or
         equivalent with required variables `mcid` and `term_degree.`"
 
-midfield_degree_add_term_wrt_degree <- "MIDFIELD `degree` data table or
+midfield_degree_add_term_cluster <- "MIDFIELD `degree` data table or
         equivalent with required variables `mcid` and `term_degree.`"
 
 

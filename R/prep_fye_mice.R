@@ -1,7 +1,4 @@
-# Documentation described below using an inline R code chunk, e.g.,
-# "`r midfield_student_prep_fye_mice`" or "`r return_prep_fye_mice`", are
-# documented in the R/roxygen.R file.
-
+# See R/roxygen.R for documentation below that uses inline R code
 
 #' Prepare FYE data for multiple imputation
 #'

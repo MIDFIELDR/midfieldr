@@ -1,97 +1,107 @@
 test_add_term_cluster <- function() {
-    
-    # usage
-    # add_term_cluster(dframe, midfield_degree = degree)
-    
-    # Needed for tinytest::build_install_test()
-    require("data.table")
-    
-    # check for incorrect input class / required variables
-    expect_error(add_term_cluster(1))
-    expect_error(add_term_cluster(toy_term, "sat"))
-    expect_error(add_term_cluster(toy_student, toy_degree))
-    expect_error(add_term_cluster(toy_degree, toy_student))
-    
-    # class preserved?
-    x <- copy(toy_term)
-    y <- copy(toy_degree)
-    z <- add_term_cluster(x, y)
-    expect_equal(class(x), class(z))
-    
-    setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
-    setattr(y, "class", c("tbl_df", "tbl", "data.frame"))
-    z <- add_term_cluster(x, y)
-    expect_equal(class(x), class(z))
-    
-    # keys preserved?
-    x <- copy(toy_term)
-    y <- copy(toy_degree)
-    setkeyv(x, "mcid")
-    setkeyv(y, "mcid")
-    z <- add_term_cluster(x, y)
-    expect_equal(key(x), key(z))
-    
-    setkeyv(x, NULL)
-    setkeyv(y, NULL)
-    z <- add_term_cluster(x, y)
-    expect_equal(key(x), key(z))
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
   
-    # # basic columns correct
-    # default_cols <- c(
-    #     "mcid", "institution", "race", "sex", "cip6", "level", 
-    #     "abbrev", "number", "term", "term_course", "term_degree"
-    # )
-    # 
-    # expect_equal_colnames <- function (x, these_cols, patternv = NULL) {
-    #   expect_cols <- intersect(colnames(x), these_cols)
-    #   result_cols <- colnames(select_basic_cols(x, patternv = patternv))
-    #   expect_equal(expect_cols, result_cols)
-    # }
-    # 
-    # expect_equal_colnames(toy_student, default_cols)
-    # expect_equal_colnames(toy_course , default_cols)
-    # expect_equal_colnames(toy_term   , default_cols)
-    # expect_equal_colnames(toy_degree , default_cols)
-    # 
-    # # patternv correct answer
-    # x <- copy(toy_term)
-    # this_pattern <- "^gpa"
-    # add_names <- colnames(x)[grepl(this_pattern, colnames(x))]
-    # set_cols <- c(default_cols, add_names)
-    # expect_equal_colnames(toy_term, set_cols, patternv = this_pattern)
-    # 
-    # # silently ignore search terms not found
-    # x <- copy(toy_degree)
-    # this_pattern <- "random_name"
-    # add_names <- colnames(x)[grepl(this_pattern, colnames(x))]
-    # set_cols <- c(default_cols, add_names)
-    # expect_equal_colnames(toy_term, set_cols, patternv = this_pattern)
-    # 
-    # # dframe 0 rows 0 cols when no default colnames present
-    # x <- toy_degree[, .(degree)]
-    # expect_length(select_basic_cols(x), 0)
-
-    
-    
-    
-    
-    # function output not printed
-    invisible(NULL)
+  # usage
+  # add_term_cluster(dframe, midfield_degree = degree)
+  
+  # Needed for tinytest::build_install_test()
+  require("data.table")
+  new_cols <- c("first_degree_term", "term_cluster")
+  
+  # check for incorrect input class / required variables
+  expect_error(add_term_cluster(1))
+  expect_error(add_term_cluster(toy_term, "sat"))
+  expect_error(add_term_cluster(toy_student, toy_degree))
+  expect_error(add_term_cluster(toy_degree, toy_student))
+  
+  # class preserved?
+  x <- copy(toy_term)
+  y <- copy(toy_degree)
+  z <- add_term_cluster(x, y)
+  expect_equal(class(x), class(z))
+  
+  x <- as.data.frame(toy_term)
+  y <- as.data.frame(toy_degree)
+  z <- add_term_cluster(x, y)
+  expect_equal(class(x), class(z))
+  
+  setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
+  setattr(y, "class", c("tbl_df", "tbl", "data.frame"))
+  z <- add_term_cluster(x, y)
+  expect_equal(class(x), class(z))
+  
+  # term added columns correct
+  x <- copy(toy_term)
+  y <- copy(toy_degree)
+  z <- add_term_cluster(x, y)
+  expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
+  
+  # course added columns correct
+  x <- copy(toy_course)
+  z <- add_term_cluster(x, y)
+  expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
+  
+  # degree added columns correct
+  x <- copy(toy_degree)
+  z <- add_term_cluster(x, y)
+  expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
+  
+  # confirm NO changes by reference
+  term <- copy(toy_term)
+  degr <- copy(toy_degree)
+  z <- add_term_cluster(term, degr)
+  expect_true(check_equiv_frames(term, toy_term))
+  expect_true(check_equiv_frames(degr, toy_degree))
+  
+ 
+  # check term-cluster labels are correct
+  # dframe required variables: mcid, term (or term_course or term_degree)
+  # degree required variables: mcid, term_degree
+  
+  x_term <- wrapr::build_frame(
+    "mcid", "term" |
+      "1", "20011" | # pre-degree
+      "1", "20013" | # first-degree
+      "1", "20021" | # post-first-degree
+      
+      "2", "20023" | # pre-degree
+      "2", "20031" | # first-degree
+      
+      "3", "20033" | # pre-degree
+      "3", "20041" | # first-degree
+      "3", "20041" | # first-degree
+      
+      "4", "20043" | # pre-degree
+      "4", "20051" | # first-degree
+      "4", "20053" | # post-first-degree
+      
+      "5", "20061" | # pre-degree
+      "5", "20063"   # pre-degree
+  )
+  setDT(x_term)
+  x_degr <- wrapr::build_frame(
+    "mcid", "term_degree" |
+      "1", "20013"  |
+      "2", "20031"  |
+      "3", "20041"  |
+      "4", "20051"  |
+      "4", "20053"
+  )
+  setDT(x_degr)
+  ans <- add_term_cluster(x_term, x_degr)[["term_cluster"]]
+  expected_ans <- c("pre-degree", "first-degree", "post-first-degree", 
+           "pre-degree", "first-degree", 
+           "pre-degree", "first-degree", "first-degree", 
+           "pre-degree", "first-degree", "post-first-degree", 
+           "pre-degree", "pre-degree")
+  expect_equal(ans, expected_ans)
+  
+  
+  
+  
+  
+  
+  # function output not printed
+  invisible(NULL)
 }
 
 test_add_term_cluster()

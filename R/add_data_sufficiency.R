@@ -1,7 +1,4 @@
-# Documentation described below using an inline R code chunk, e.g.,
-# "`r dframe_add_data_sufficiency`" or "`r return_data_frame`", are
-# documented in the R/roxygen.R file.
-
+# See R/roxygen.R for documentation below that uses inline R code
 
 #' Determine data sufficiency for every student
 #'
@@ -40,17 +37,14 @@
 #' @export
 #'
 add_data_sufficiency <- function(dframe, midfield_term = term) {
-  # remove keys if any
+  # If misc keys are set within this function
   on.exit(setkey(dframe, NULL), add = TRUE)
-  on.exit(setkey(midfield_term, NULL), add = TRUE)
+
+  # ---------- checks
 
   # required arguments
   qassert(dframe, "d+")
   qassert(midfield_term, "d+")
-
-  # ensure data.table format, changes by reference
-  setDT(dframe)
-  setDT(midfield_term)
 
   # required columns
   assert_names(colnames(dframe),
@@ -61,11 +55,20 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
   )
 
   # class of required columns
-  qassert(dframe[, mcid], "s+")
-  qassert(dframe[, timely_term], "s+")
-  qassert(midfield_term[, mcid], "s+")
-  qassert(midfield_term[, institution], "s+")
-  qassert(midfield_term[, term], "s+")
+  qassert(dframe[["mcid"]], "s+")
+  qassert(dframe[["timely_term"]], "s+")
+  qassert(midfield_term[["mcid"]], "s+")
+  qassert(midfield_term[["institution"]], "s+")
+  qassert(midfield_term[["term"]], "s+")
+
+  # ---------- preparation
+
+  # attempt to preserve dframe class
+  prior_class <- class(dframe)
+
+  # ensure data.table format, changes by reference
+  setDT(dframe)
+  setDT(midfield_term)
 
   # bind names due to NSE notes in R CMD check
   data_sufficiency <- NULL
@@ -74,7 +77,7 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
   lower_limit <- NULL
   term_i <- NULL
 
-  # do the work
+  # ---------- do the work
 
   # variables added by this function and functions called (if any)
   inst_limits_cols <- c("lower_limit", "upper_limit")
@@ -88,7 +91,7 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
   DT <- copy(dframe)
 
   # add initial term term_i
-  DT <- add_initial_term(DT, midfield_term)
+  DT <- add_initial_term(DT, midfield_term) ####################################
 
   # obtain lower and upper institution data limits
   DT <- add_inst_limits(DT, midfield_term)
@@ -120,8 +123,14 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
   # old columns as keys, order columns and rows
   set_colrow_order(dframe, old_cols)
 
-  # enable printing (see data.table FAQ 2.23)
-  dframe[]
+  # ---------- restore state
+
+  # restore prior class except grouped tibbles
+  if (!"grouped_df" %chin% prior_class) {
+    setattr(dframe, "class", prior_class)
+  }
+
+  return(dframe)
 }
 
 # ------------------------------------------------------------------------

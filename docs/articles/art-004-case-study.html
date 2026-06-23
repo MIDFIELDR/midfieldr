@@ -95,8 +95,8 @@ longitudinal data and how midfieldr supports that process.</p>
 <h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
 </h2>
 <p>We define the parameters of our case study as follows:</p>
-<p><em>Data.</em>   Program CIP codes in <code><a href="../reference/cip.html">midfieldr::cip</a></code>.
-Student-level records in <code>midfielddata::student, term,</code> and
+<p><em>Data.</em>   Program CIP codes from midfieldr <code>cip</code>.
+Student records from midfielddata <code>student, term,</code> and
 <code>degree</code>.</p>
 <p><em>Metric.</em>   Program <em>stickiness:</em> the ratio <span class="math inline">\small (S)</span> of the number of graduates of a
 program <span class="math inline">\small (N_\textrm{grad})</span> to the
@@ -121,11 +121,12 @@ graduates of the programs are required by the metric.</p>
 <p><em>Groupings.</em>   We select program, race/ethnicity, and sex for
 grouping and summarizing. Groups too small to preserve anonymity will be
 excluded.</p>
-<p><em>Outcomes.</em>   To group and summarize, we require a data frame
-with columns for student ID, bloc, and each grouping variable (program,
-race/ethnicity, sex). After summarizing and computing the metric we
-should have columns for the metric (stickiness) and for each grouping
-variable.</p>
+<p><em>Outcomes.</em>   We calculate the stickiness metric for each
+unique combination of the grouping variables (program, race/ethnicity,
+sex). The resulting data frame should have columns for program,
+race/ethnicity, sex, <span class="math inline">\small
+N_\textrm{grad}</span>, <span class="math inline">\small
+N_\textrm{ever}</span>, and stickiness.</p>
 <p>If you are writing your own script to follow along, we use these
 packages in this article:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -366,8 +367,9 @@ frames by matching on the <code>cip6</code> variable.</p>
 locations in memory), to keep them intact while we use the original
 names — <code>student</code>, <code>term</code>, and <code>degree</code>
 — to do our work, preventing the source data from being updated “by
-reference” as we work. <span class="citation">(<a href="#ref-reference-semantics:2026">Vignettes: data.table
-2026</a>)</span> explains data.table <em>reference semantics.</em></p>
+reference” as we work. <em>Reference semantics</em> in data.table is
+discussed in <span class="citation">(<a href="#ref-reference-semantics:2026">Vignettes: data.table
+2026</a>)</span>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">student_source</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></span>
 <span><span class="va">term_source</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
@@ -377,19 +379,13 @@ reference” as we work. <span class="citation">(<a href="#ref-reference-semanti
 environment so we can take advantage of midfieldr default argument
 values. For example, <code><a href="../reference/add_term_cluster.html">add_term_cluster()</a></code> accesses the
 <code>degree</code> table to do its work. If <code>degree</code> is in
-the environment, the following two lines of code are equivalent:</p>
+the environment, the following lines yield the same results:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Not run</span></span>
-<span><span class="fu"><a href="../reference/add_term_cluster.html">add_term_cluster</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/add_term_cluster.html">add_term_cluster</a></span><span class="op">(</span><span class="va">term</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span></code></pre></div>
-<p>For brevity in this article, therefore, we do not show secondary
-arguments of this type.</p>
-<p>In a similar vein, several midfieldr functions that add a column of
-useful information to a data frame also add one or more columns of
-supporting information. In this article, we discuss the main result
-column but we postpone explaining the supporting columns to later
-articles. You can always go to the function’s help page for
-documentation, e.g., <code><a href="../reference/add_term_cluster.html">?add_term_cluster</a></code>.</p>
+<span><span class="fu"><a href="../reference/add_term_cluster.html">add_term_cluster</a></span><span class="op">(</span><span class="va">term</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/add_term_cluster.html">add_term_cluster</a></span><span class="op">(</span><span class="va">term</span>, <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/add_term_cluster.html">add_term_cluster</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span></code></pre></div>
+<p>In this article, we use the latter form.</p>
 <div class="section level3">
 <h3 id="select-basic-columns">
 <em>Select basic columns</em><a class="anchor" aria-label="anchor" href="#select-basic-columns"></a>
@@ -447,9 +443,9 @@ equal to, or subsequent to the student’s first degree term.</p>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   639915 obs. of  7 variables:</span></span>
 <span><span class="co">#&gt;  $ mcid             : chr  "MCID3111142225" "MCID3111142283" "MCID3111142283""..</span></span>
 <span><span class="co">#&gt;  $ institution      : chr  "Institution B" "Institution J" "Institution J" "I"..</span></span>
+<span><span class="co">#&gt;  $ term             : chr  "19881" "19881" "19883" "19885" ...</span></span>
 <span><span class="co">#&gt;  $ cip6             : chr  "140901" "240102" "240102" "190601" ...</span></span>
 <span><span class="co">#&gt;  $ level            : chr  "01 First-year" "01 First-year" "01 First-year" "0"..</span></span>
-<span><span class="co">#&gt;  $ term             : chr  "19881" "19881" "19883" "19885" ...</span></span>
 <span><span class="co">#&gt;  $ first_degree_term: chr  "19881" NA NA NA ...</span></span>
 <span><span class="co">#&gt;  $ term_cluster     : chr  "first-degree" "pre-degree" "pre-degree" "pre-degr"..</span></span>
 <span></span>
@@ -457,8 +453,8 @@ equal to, or subsequent to the student’s first degree term.</p>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   49665 obs. of  6 variables:</span></span>
 <span><span class="co">#&gt;  $ mcid             : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294""..</span></span>
 <span><span class="co">#&gt;  $ institution      : chr  "Institution B" "Institution J" "Institution J" "I"..</span></span>
-<span><span class="co">#&gt;  $ cip6             : chr  "141001" "141001" "141001" "141001" ...</span></span>
 <span><span class="co">#&gt;  $ term_degree      : chr  "19881" "19921" "19903" "19921" ...</span></span>
+<span><span class="co">#&gt;  $ cip6             : chr  "141001" "141001" "141001" "141001" ...</span></span>
 <span><span class="co">#&gt;  $ first_degree_term: chr  "19881" "19921" "19903" "19921" ...</span></span>
 <span><span class="co">#&gt;  $ term_cluster     : chr  "first-degree" "first-degree" "first-degree" "firs"..</span></span></code></pre></div>
 <p>To quickly assess the relative size of the three clusters, we count
@@ -480,8 +476,8 @@ observations by the <code>term_cluster</code> variable.</p>
 apply to the <code>student</code> table because it contains no term
 information.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">term_cluster</span> <span class="op">!=</span> <span class="st">"post-first-degree"</span><span class="op">]</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">term_cluster</span> <span class="op">!=</span> <span class="st">"post-first-degree"</span><span class="op">]</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="op">!</span><span class="st">"post-first-degree"</span>, on <span class="op">=</span> <span class="st">"term_cluster"</span><span class="op">]</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="op">!</span><span class="st">"post-first-degree"</span>, on <span class="op">=</span> <span class="st">"term_cluster"</span><span class="op">]</span></span></code></pre></div>
 <p>We can drop the added columns by applying
 <code><a href="../reference/select_basic_cols.html">select_basic_cols()</a></code> again.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -492,16 +488,16 @@ information.</p>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   632917 obs. of  5 variables:</span></span>
 <span><span class="co">#&gt;  $ mcid       : chr  "MCID3111142225" "MCID3111142283" "MCID3111142283" "MCID"..</span></span>
 <span><span class="co">#&gt;  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..</span></span>
+<span><span class="co">#&gt;  $ term       : chr  "19881" "19881" "19883" "19885" ...</span></span>
 <span><span class="co">#&gt;  $ cip6       : chr  "140901" "240102" "240102" "190601" ...</span></span>
 <span><span class="co">#&gt;  $ level      : chr  "01 First-year" "01 First-year" "01 First-year" "01 Firs"..</span></span>
-<span><span class="co">#&gt;  $ term       : chr  "19881" "19881" "19883" "19885" ...</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   49618 obs. of  4 variables:</span></span>
 <span><span class="co">#&gt;  $ mcid       : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294" "MCID"..</span></span>
 <span><span class="co">#&gt;  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..</span></span>
-<span><span class="co">#&gt;  $ cip6       : chr  "141001" "141001" "141001" "141001" ...</span></span>
-<span><span class="co">#&gt;  $ term_degree: chr  "19881" "19921" "19903" "19921" ...</span></span></code></pre></div>
+<span><span class="co">#&gt;  $ term_degree: chr  "19881" "19921" "19903" "19921" ...</span></span>
+<span><span class="co">#&gt;  $ cip6       : chr  "141001" "141001" "141001" "141001" ...</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="filter-for-data-sufficiency">
@@ -597,7 +593,7 @@ labels.</p>
 <p>We retain the rows labeled “include” for which we have sufficient
 data from the institution and retain the ID column only.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="st">"include"</span>, on <span class="op">=</span> <span class="st">"data_sufficiency"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                  mcid</span></span>
 <span><span class="co">#&gt;                &lt;char&gt;</span></span>
@@ -695,16 +691,16 @@ several constraints.</p>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   525446 obs. of  5 variables:</span></span>
 <span><span class="co">#&gt;  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142782" "MCID"..</span></span>
 <span><span class="co">#&gt;  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..</span></span>
+<span><span class="co">#&gt;  $ term       : chr  "19883" "19883" "19885" "19893" ...</span></span>
 <span><span class="co">#&gt;  $ cip6       : chr  "090401" "260101" "260101" "260101" ...</span></span>
 <span><span class="co">#&gt;  $ level      : chr  "01 First-year" "01 First-year" "02 Second-year" "02 Sec"..</span></span>
-<span><span class="co">#&gt;  $ term       : chr  "19883" "19883" "19885" "19893" ...</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   43847 obs. of  4 variables:</span></span>
 <span><span class="co">#&gt;  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID"..</span></span>
 <span><span class="co">#&gt;  $ institution: chr  "Institution B" "Institution J" "Institution B" "Institu"..</span></span>
-<span><span class="co">#&gt;  $ cip6       : chr  "090401" "260101" "450601" "141001" ...</span></span>
-<span><span class="co">#&gt;  $ term_degree: chr  "19913" "19903" "19894" "19901" ...</span></span></code></pre></div>
+<span><span class="co">#&gt;  $ term_degree: chr  "19913" "19903" "19894" "19901" ...</span></span>
+<span><span class="co">#&gt;  $ cip6       : chr  "090401" "260101" "450601" "141001" ...</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -814,7 +810,7 @@ three possible status labels.</p>
 <p>We retain the rows labeled “timely” and the drop all the columns
 except the ID column.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">completion_status</span> <span class="op">==</span> <span class="st">"timely"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="st">"timely"</span>, on <span class="op">=</span> <span class="st">"completion_status"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                  mcid</span></span>
 <span><span class="co">#&gt;                &lt;char&gt;</span></span>

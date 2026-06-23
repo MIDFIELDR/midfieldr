@@ -10,9 +10,8 @@ longitudinal data and how midfieldr supports that process.
 
 We define the parameters of our case study as follows:
 
-*Data.*   Program CIP codes in
-[`midfieldr::cip`](https://midfieldr.github.io/midfieldr/reference/cip.md).
-Student-level records in `midfielddata::student, term,` and `degree`.
+*Data.*   Program CIP codes from midfieldr `cip`. Student records from
+midfielddata `student, term,` and `degree`.
 
 *Metric.*   Program *stickiness:* the ratio \small (S) of the number of
 graduates of a program \small (N\_\textrm{grad}) to the number ever
@@ -40,11 +39,11 @@ of the programs are required by the metric.
 and summarizing. Groups too small to preserve anonymity will be
 excluded.
 
-*Outcomes.*   To group and summarize, we require a data frame with
-columns for student ID, bloc, and each grouping variable (program,
-race/ethnicity, sex). After summarizing and computing the metric we
-should have columns for the metric (stickiness) and for each grouping
-variable.
+*Outcomes.*   We calculate the stickiness metric for each unique
+combination of the grouping variables (program, race/ethnicity, sex).
+The resulting data frame should have columns for program,
+race/ethnicity, sex, \small N\_\textrm{grad}, \small N\_\textrm{ever},
+and stickiness.
 
 If you are writing your own script to follow along, we use these
 packages in this article:
@@ -307,9 +306,9 @@ data(student, term, degree)
 We usually copy the source data, giving them new names (and new
 locations in memory), to keep them intact while we use the original
 names — `student`, `term`, and `degree` — to do our work, preventing the
-source data from being updated “by reference” as we work. ([Vignettes:
-data.table 2026](#ref-reference-semantics:2026)) explains data.table
-*reference semantics.*
+source data from being updated “by reference” as we work. *Reference
+semantics* in data.table is discussed in ([Vignettes: data.table
+2026](#ref-reference-semantics:2026)).
 
 ``` r
 
@@ -323,25 +322,17 @@ present in our computing environment so we can take advantage of
 midfieldr default argument values. For example,
 [`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md)
 accesses the `degree` table to do its work. If `degree` is in the
-environment, the following two lines of code are equivalent:
+environment, the following lines yield the same results:
 
 ``` r
 
 # Not run
-add_term_cluster(term)
 add_term_cluster(term, midfield_degree = degree)
+add_term_cluster(term, degree)
+add_term_cluster(term)
 ```
 
-For brevity in this article, therefore, we do not show secondary
-arguments of this type.
-
-In a similar vein, several midfieldr functions that add a column of
-useful information to a data frame also add one or more columns of
-supporting information. In this article, we discuss the main result
-column but we postpone explaining the supporting columns to later
-articles. You can always go to the function’s help page for
-documentation, e.g.,
-[`?add_term_cluster`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md).
+In this article, we use the latter form.
 
 ### *Select basic columns*
 
@@ -405,9 +396,9 @@ look_at(term)
 #> Classes 'data.table' and 'data.frame':   639915 obs. of  7 variables:
 #>  $ mcid             : chr  "MCID3111142225" "MCID3111142283" "MCID3111142283""..
 #>  $ institution      : chr  "Institution B" "Institution J" "Institution J" "I"..
+#>  $ term             : chr  "19881" "19881" "19883" "19885" ...
 #>  $ cip6             : chr  "140901" "240102" "240102" "190601" ...
 #>  $ level            : chr  "01 First-year" "01 First-year" "01 First-year" "0"..
-#>  $ term             : chr  "19881" "19881" "19883" "19885" ...
 #>  $ first_degree_term: chr  "19881" NA NA NA ...
 #>  $ term_cluster     : chr  "first-degree" "pre-degree" "pre-degree" "pre-degr"..
 
@@ -415,8 +406,8 @@ look_at(degree)
 #> Classes 'data.table' and 'data.frame':   49665 obs. of  6 variables:
 #>  $ mcid             : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294""..
 #>  $ institution      : chr  "Institution B" "Institution J" "Institution J" "I"..
-#>  $ cip6             : chr  "141001" "141001" "141001" "141001" ...
 #>  $ term_degree      : chr  "19881" "19921" "19903" "19921" ...
+#>  $ cip6             : chr  "141001" "141001" "141001" "141001" ...
 #>  $ first_degree_term: chr  "19881" "19921" "19903" "19921" ...
 #>  $ term_cluster     : chr  "first-degree" "first-degree" "first-degree" "firs"..
 ```
@@ -445,8 +436,8 @@ apply to the `student` table because it contains no term information.
 
 ``` r
 
-term <- term[term_cluster != "post-first-degree"]
-degree <- degree[term_cluster != "post-first-degree"]
+term <- term[!"post-first-degree", on = "term_cluster"]
+degree <- degree[!"post-first-degree", on = "term_cluster"]
 ```
 
 We can drop the added columns by applying
@@ -462,16 +453,16 @@ look_at(term)
 #> Classes 'data.table' and 'data.frame':   632917 obs. of  5 variables:
 #>  $ mcid       : chr  "MCID3111142225" "MCID3111142283" "MCID3111142283" "MCID"..
 #>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
+#>  $ term       : chr  "19881" "19881" "19883" "19885" ...
 #>  $ cip6       : chr  "140901" "240102" "240102" "190601" ...
 #>  $ level      : chr  "01 First-year" "01 First-year" "01 First-year" "01 Firs"..
-#>  $ term       : chr  "19881" "19881" "19883" "19885" ...
 
 look_at(degree)
 #> Classes 'data.table' and 'data.frame':   49618 obs. of  4 variables:
 #>  $ mcid       : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294" "MCID"..
 #>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
-#>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
 #>  $ term_degree: chr  "19881" "19921" "19903" "19921" ...
+#>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
 ```
 
 ### *Filter for data sufficiency*
@@ -585,7 +576,7 @@ from the institution and retain the ID column only.
 
 ``` r
 
-DT <- DT[data_sufficiency == "include", .(mcid)]
+DT <- DT["include", on = "data_sufficiency", .(mcid)]
 DT
 #>                  mcid
 #>                <char>
@@ -697,16 +688,16 @@ look_at(term)
 #> Classes 'data.table' and 'data.frame':   525446 obs. of  5 variables:
 #>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142782" "MCID"..
 #>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
+#>  $ term       : chr  "19883" "19883" "19885" "19893" ...
 #>  $ cip6       : chr  "090401" "260101" "260101" "260101" ...
 #>  $ level      : chr  "01 First-year" "01 First-year" "02 Second-year" "02 Sec"..
-#>  $ term       : chr  "19883" "19883" "19885" "19893" ...
 
 look_at(degree)
 #> Classes 'data.table' and 'data.frame':   43847 obs. of  4 variables:
 #>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID"..
 #>  $ institution: chr  "Institution B" "Institution J" "Institution B" "Institu"..
-#>  $ cip6       : chr  "090401" "260101" "450601" "141001" ...
 #>  $ term_degree: chr  "19913" "19903" "19894" "19901" ...
+#>  $ cip6       : chr  "090401" "260101" "450601" "141001" ...
 ```
 
 ## Blocs and groupings
@@ -822,7 +813,7 @@ the ID column.
 
 ``` r
 
-DT <- DT[completion_status == "timely", .(mcid)]
+DT <- DT["timely", on = "completion_status", .(mcid)]
 DT
 #>                  mcid
 #>                <char>

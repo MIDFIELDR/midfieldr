@@ -1,7 +1,4 @@
-# Documentation described below using an inline R code chunk, e.g.,
-# "`r dframe_add_timely_term`" or "`r return_data_frame`", are
-# documented in the R/roxygen.R file.
-
+# See R/roxygen.R for documentation below that uses inline R code
 
 #' Calculate a timely completion term for every student
 #'

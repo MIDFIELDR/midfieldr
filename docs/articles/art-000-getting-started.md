@@ -23,10 +23,27 @@ library(midfielddata)
 library(data.table)
 ```
 
+Please note:
+
+1.  *On syntax:*   All data manipulation in our sample scripts is coded
+    using data.table syntax, e.g., choosing rows and columns, merging,
+    grouping, summarizing, and reshaping data frames. Users preferring a
+    different syntax would have to translate from data.table to their
+    preferred system. However, midfieldr does provide modest support for
+    tibbles in that functions attempt to return a data frame of the same
+    class as the input data frame.
+
+2.  *On functions:*   Here, we provide a brief introduction only.
+    Details are discussed at length in subsequent articles. You can
+    always access function documentation, e.g.,
+    [`?select_basic_cols`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md),
+    [`?add_term_cluster`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md),
+    etc. for more information.
+
 ## midfieldr functions
 
 The major midfieldr functions can be organized into three categories
-based on which stage of a typical workflow they work with:
+based on their contribution to a typical workflow:
 
 Programs
 
@@ -39,10 +56,10 @@ Records
   chooses columns required by midfieldr functions.
 - [`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md)
   identifies rows of post-baccalaureate terms to exclude.
-- [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
-  identifies rows to exclude due to insufficient data.
 - [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
   estimates a student’s timely completion term.
+- [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
+  identifies rows to exclude due to insufficient data.
 - [`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
   determines if program completion is timely or late.
 
@@ -52,57 +69,6 @@ Special conditioning
   conditions data for imputing starting majors of FYE students.
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
   conditions data for Cleveland multiway charts.
-
-***data.table syntax***
-
-We employ the data.table system throughout midfieldr—internally in
-functions, in the syntax of example scripts, and in formatting our
-datasets. For example, the `toy_student` data frame that loads with
-midfieldr is of the `data.table` class.
-
-``` r
-
-class(toy_student)
-#> [1] "data.table" "data.frame"
-```
-
-Operating on `toy_student` with a midfieldr function returns a data
-frame of the same class.
-
-``` r
-
-y <- select_basic_cols(toy_student)
-class(y)
-#> [1] "data.table" "data.frame"
-```
-
-All data manipulation in our sample scripts is coded in data.table
-syntax, e.g., choosing rows and columns, merging, grouping, summarizing,
-and reshaping data frames. Users preferring a different syntax would
-have to translate from data.table to their preferred system. Good
-resources for such translations are available, e.g., the MIDFIELD
-Institute tutorials
-([2024](#ref-midfieldinstitute:processing-data:2024)) or Atrebas
-([2019](#ref-atrebas:2019)).
-
-***tibble input/output***
-
-midfieldr provides modest support for tibbles: functions attempt to
-return a data frame of the same class as the input. For example, if we
-convert `toy_student` to a tibble and operate on it as we did above, we
-get a data frame of the `tbl_df/tbl/data.frame` class in return.
-
-``` r
-
-library(tibble)
-x <- as_tibble(toy_student)
-class(x)
-#> [1] "tbl_df"     "tbl"        "data.frame"
-
-y <- select_basic_cols(x)
-class(y)
-#> [1] "tbl_df"     "tbl"        "data.frame"
-```
 
 ## Program data
 
@@ -342,15 +308,7 @@ own program labels.
 *Credibly subset source data and refine the population to suit your
 study.*
 
-We use the datasets in *midfielddata*: an R data package containing four
-tables — `student`, `course`, `term`, and `degree` — providing
-anonymized student-level records for 98,000 undergraduates at three US
-institutions from 1988 through 2018. The data tables are documented at
-the
-[midfielddata](https://midfieldr.github.io/midfielddata/reference/index.html)
-website.
-
-For this article we load the student, term, and degree tables from
+For this article we load the `student, term,` and `degree` tables from
 midfielddata.
 
 ``` r
@@ -370,8 +328,6 @@ degree_source <- copy(degree)
 ```
 
 The data tables are linked by `mcid`, the anonymized student ID.
-[`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
-is a midfieldr convenience function that wraps `base::str()`.
 
 ``` r
 
@@ -415,6 +371,9 @@ look_at(degree)
 #>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
 #>  $ degree     : chr  "Bachelor of Science in Electrical Engineering" "Bachelo"..
 ```
+
+[`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
+is a midfieldr convenience function that wraps `base::str()`.
 
 ## `select_basic_cols()`
 
@@ -493,25 +452,24 @@ degree <- add_term_cluster(degree)
 
 [`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md)
 adds a column indicating the cluster a term belongs to with respect to
-the first degree term. All new columns are documented in
-[`?add_term_cluster`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md).
+the first degree term.
 
 ``` r
 
 term
-#>                   mcid   institution   cip6          level   term
-#>                 <char>        <char> <char>         <char> <char>
-#>      1: MCID3111142225 Institution B 140901  01 First-year  19881
-#>      2: MCID3111142283 Institution J 240102  01 First-year  19881
-#>      3: MCID3111142283 Institution J 240102  01 First-year  19883
-#>      4: MCID3111142283 Institution J 190601  01 First-year  19885
-#>      5: MCID3111142283 Institution J 190601 02 Second-year  19891
+#>                   mcid   institution   term   cip6          level
+#>                 <char>        <char> <char> <char>         <char>
+#>      1: MCID3111142225 Institution B  19881 140901  01 First-year
+#>      2: MCID3111142283 Institution J  19881 240102  01 First-year
+#>      3: MCID3111142283 Institution J  19883 240102  01 First-year
+#>      4: MCID3111142283 Institution J  19885 190601  01 First-year
+#>      5: MCID3111142283 Institution J  19891 190601 02 Second-year
 #>     ---                                                          
-#> 639911: MCID3112898886 Institution B 500501  01 First-year  20181
-#> 639912: MCID3112898890 Institution B 451101  01 First-year  20181
-#> 639913: MCID3112898894 Institution B 451001  01 First-year  20181
-#> 639914: MCID3112898895 Institution B 302001  01 First-year  20181
-#> 639915: MCID3112898940 Institution B 050103  01 First-year  20181
+#> 639911: MCID3112898886 Institution B  20181 500501  01 First-year
+#> 639912: MCID3112898890 Institution B  20181 451101  01 First-year
+#> 639913: MCID3112898894 Institution B  20181 451001  01 First-year
+#> 639914: MCID3112898895 Institution B  20181 302001  01 First-year
+#> 639915: MCID3112898940 Institution B  20181 050103  01 First-year
 #>         first_degree_term term_cluster
 #>                    <char>       <char>
 #>      1:             19881 first-degree
@@ -530,7 +488,7 @@ term
 Using
 [`sort_uniq()`](https://midfieldr.github.io/midfieldr/reference/sort_uniq.md),
 a midfieldr convenience function to sort unique values of a vector, we
-find the possible values for term status to be:
+find the possible term cluster values to be:
 
 ``` r
 
@@ -538,40 +496,40 @@ sort_uniq(term$term_cluster)
 #> [1] "first-degree"      "post-first-degree" "pre-degree"
 ```
 
-We filter to exclude all terms labeled “post-first-degree”. And we can
-optionally remove the extra columns.
+We filter to exclude all terms labeled “post-first-degree” and remove
+the extra columns.
 
 ``` r
 
-term <- term[term_cluster != "post-first-degree"]
-degree <- degree[term_cluster != "post-first-degree"]
+term <- term[!"post-first-degree", on = "term_cluster"]
+degree <- degree[!"post-first-degree", on = "term_cluster"]
 
 term <- select_basic_cols(term)
 degree <- select_basic_cols(degree)
 
 term
-#>                   mcid   institution   cip6          level   term
-#>                 <char>        <char> <char>         <char> <char>
-#>      1: MCID3111142225 Institution B 140901  01 First-year  19881
-#>      2: MCID3111142283 Institution J 240102  01 First-year  19881
-#>      3: MCID3111142283 Institution J 240102  01 First-year  19883
-#>      4: MCID3111142283 Institution J 190601  01 First-year  19885
-#>      5: MCID3111142283 Institution J 190601 02 Second-year  19891
+#>                   mcid   institution   term   cip6          level
+#>                 <char>        <char> <char> <char>         <char>
+#>      1: MCID3111142225 Institution B  19881 140901  01 First-year
+#>      2: MCID3111142283 Institution J  19881 240102  01 First-year
+#>      3: MCID3111142283 Institution J  19883 240102  01 First-year
+#>      4: MCID3111142283 Institution J  19885 190601  01 First-year
+#>      5: MCID3111142283 Institution J  19891 190601 02 Second-year
 #>     ---                                                          
-#> 632913: MCID3112898886 Institution B 500501  01 First-year  20181
-#> 632914: MCID3112898890 Institution B 451101  01 First-year  20181
-#> 632915: MCID3112898894 Institution B 451001  01 First-year  20181
-#> 632916: MCID3112898895 Institution B 302001  01 First-year  20181
-#> 632917: MCID3112898940 Institution B 050103  01 First-year  20181
+#> 632913: MCID3112898886 Institution B  20181 500501  01 First-year
+#> 632914: MCID3112898890 Institution B  20181 451101  01 First-year
+#> 632915: MCID3112898894 Institution B  20181 451001  01 First-year
+#> 632916: MCID3112898895 Institution B  20181 302001  01 First-year
+#> 632917: MCID3112898940 Institution B  20181 050103  01 First-year
 ```
 
-## `add_data_sufficiency()`
+## `add_timely_term()`
 
-*Identify members of the population to exclude due to insufficient
-data.*
+*Determine the term by which degree completion would be considered
+timely.*
 
-This section starts to define our population, so we start with a unique
-set of IDs from the `term` record obtained above.
+In this section, we begin refining the population, so we start with a
+unique set of IDs from the `term` record obtained above.
 
 ``` r
 
@@ -594,19 +552,11 @@ DT
 #> 97536: MCID3112898940
 ```
 
-The data sufficiency criterion limits student records to those for which
-available data are sufficient to assess timely completion. We first
-apply
 [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
-to determine a student’s timely completion term: the last term in which
-a student’s degree completion would be considered timely, generally 6
-years after admission.
-
-[`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
-adds a column indicating the timely-completion term for every student in
-the record. New columns of supporting information are also added,
-documented in
-[`?add_timely_term`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md).
+adds a column indicating the last term by which a student’s degree
+completion would be considered timely, generally 6 years after
+admission. The timely completion term is required to determine data
+sufficiency as well as assessing timely completion.
 
 ``` r
 
@@ -628,11 +578,18 @@ DT
 #> 97536: MCID3112898940  20181 01 First-year        6       20233
 ```
 
+## `add_data_sufficiency()`
+
+*Identify members of the population to exclude due to insufficient
+data.*
+
+The data sufficiency criterion limits student records to those for which
+available data are sufficient to assess timely completion.
+
 [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
 adds a column that labels each row for inclusion or exclusion based on
 data sufficiency near the upper and lower bounds of an institution’s
-data range. All new columns are documented in
-[`?add_data_sufficiency`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md).
+data range.
 
 ``` r
 
@@ -680,8 +637,7 @@ baseline population.
 
 ``` r
 
-DT <- DT[data_sufficiency == "include"]
-population <- DT[, .(mcid)]
+population <- DT["include", on = "data_sufficiency", .(mcid)]
 
 population
 #>                  mcid
@@ -729,9 +685,7 @@ DT <- add_timely_term(DT)
 ```
 
 [`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
-adds a column indicating completion status for every student. New
-columns of supporting information are also added, documented in
-[`?add_completion_status`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md).
+adds a column indicating completion status for every student.
 
 ``` r
 
@@ -780,9 +734,7 @@ graduates bloc.
 
 ``` r
 
-DT <- DT[completion_status == "timely"]
-graduates <- DT[, .(mcid)]
-
+graduates <- DT["timely", on = "completion_status", .(mcid)]
 graduates[, bloc := "grad"]
 graduates
 #>                  mcid   bloc
@@ -829,13 +781,6 @@ Utilities
   re-exported from the wrapr package
 
 ## References
-
-atrebas. 2019. *A data.table and dplyr tour*.
-<https://atrebas.github.io/post/2019-03-03-datatable-dplyr/>.
-
-Lord, Susan, Richard Layton, Russell Long, Matthew Ohland, and Marisa
-Orr. 2024. *MIDFIELD Institute*.
-<https://midfieldr.github.io/2024-midfield-institute/data-shaping-00-introduction.html>.
 
 NCES. 2010. *IPEDS Classification of Instructional Programs (CIP)*.
 National Center for Education Statistics.

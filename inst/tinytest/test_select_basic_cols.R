@@ -12,31 +12,52 @@ test_select_basic_cols <- function() {
         "abbrev", "number", "term", "term_course", "term_degree"
     )
     
-    # input checks
+    # ---------- input checks
+    
     expect_error(select_basic_cols(toy_student, "^sat"))
     expect_error(select_basic_cols(1))
     expect_error(select_basic_cols(toy_student, patternv = 1))
+
+    # ---------- class preserved
     
-    # class preserved?
+    # data.table preserved
     x <- copy(toy_student)
     y <- select_basic_cols(x)
     expect_equal(class(x), class(y))
     
+    # tibble preserved
+    x <- copy(toy_student)
     setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
     y <- select_basic_cols(x)
     expect_equal(class(x), class(y))
     
-    # keys preserved?
+    # base R data.frame preserved
     x <- copy(toy_student)
-    setkeyv(x, "mcid")
+    setattr(x, "class", c("data.frame"))
     y <- select_basic_cols(x)
-    expect_equal(key(x), key(y))
+    expect_equal(class(x), class(y))
     
-    setkeyv(x, NULL)
+    # grouped tibble yields data.frame
+    x <- copy(toy_student)
+    setattr(x, "class", c("grouped_df", "tbl_df", "tbl", "data.frame"))
     y <- select_basic_cols(x)
-    expect_equal(key(x), key(y))
+    expect_true(class(y) == "data.frame")
     
-    # basic columns correct
+    
+    
+    
+    # keys preserved?
+    # x <- copy(toy_student)
+    # setkeyv(x, "mcid")
+    # y <- select_basic_cols(x)
+    # expect_equal(key(x), key(y))
+    
+    # setkeyv(x, NULL)
+    # y <- select_basic_cols(x)
+    # expect_equal(key(x), key(y))
+    
+    # ---------- basic columns correct
+    
     default_cols <- c(
         "mcid", "institution", "race", "sex", "cip6", "level", 
         "abbrev", "number", "term", "term_course", "term_degree"
@@ -71,6 +92,24 @@ test_select_basic_cols <- function() {
     x <- toy_degree[, .(degree)]
     expect_length(select_basic_cols(x), 0)
 
+    # confirm NO changes by reference
+    student <- copy(toy_student)
+    y <- select_basic_cols(student)
+    expect_true(check_equiv_frames(student, toy_student))
+    
+    term <- copy(toy_term)
+    y <- select_basic_cols(term)
+    expect_true(check_equiv_frames(term, toy_term))
+    
+    degree <- copy(toy_degree)
+    y <- select_basic_cols(degree)
+    expect_true(check_equiv_frames(degree, toy_degree))
+    
+    
+    
+    
+    
+    
     # function output not printed
     invisible(NULL)
 }
