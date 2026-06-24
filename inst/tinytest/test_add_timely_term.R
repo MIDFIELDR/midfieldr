@@ -1,3 +1,34 @@
+
+# functions used in the test
+
+run_check <- function(x, y, fnc) {
+    
+    z <- fnc(x, y)
+    expect_equal(class(x), class(z))
+    
+    rm(z)
+}
+
+expect_class_preserved <- function(df1, df2, fnc) {
+    
+    x <- copy(df1)
+    y <- copy(df2)
+    
+    x <- as.data.frame(x)
+    y <- as.data.frame(y)
+    run_check(x, y, fnc)
+    
+    setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
+    setattr(y, "class", c("tbl_df", "tbl", "data.frame"))
+    run_check(x, y, fnc)
+    
+    x <- as.data.table(x)
+    y <- as.data.table(y)
+    run_check(x, y, fnc)
+    
+    rm(x, y)
+}
+
 test_add_timely_term <- function() {
 
     # usage
@@ -10,7 +41,8 @@ test_add_timely_term <- function() {
     # )
 
     # Needed for tinytest::build_install_test()
-    require("data.table")
+    suppressPackageStartupMessages(require("data.table"))
+    
 
     # create case
     # library("midfieldr")
@@ -35,6 +67,15 @@ test_add_timely_term <- function() {
             "MCID3111354376", "19921" , "01 First-year", 6         , "19973"       )
     setDT(DT)
    
+    
+    
+    # ---------- start tests
+    
+    # check that class is preserved function
+    expect_class_preserved(x, toy_term, add_timely_term)
+    
+    
+    
     # correct answers, add optional arguments in combinations
     x <- toy_student[11:20, .(mcid)]
     # without detail

@@ -79,31 +79,27 @@ order_multiway <- function(dframe,
                            ...,
                            method = NULL,
                            ratio_of = NULL) {
-  on.exit(setkey(dframe, NULL), add = TRUE)
+  # ---------- checks, use base R syntax
 
-  # assert arguments after dots used by name
+  # arguments after ... must be named
   wrapr::stop_if_dot_args(
     substitute(list(...)),
-    paste(
-      "Arguments after ... must be named.\n",
-      "* Did you forget to write `method = `\n",
-      "* or `ratio_of = ` ?\n"
-    )
+    "Arguments after ... must be named, as in arg = val."
   )
 
-  # required data frame(s)
+  # required data frame(s) and required columns
   qassert(dframe, "d+") # data frame, missing values OK, length 1 or more
-  DT <- copy(dframe)
-  setDT(DT)
+  assert_names(colnames(dframe), must.include = c(quantity, categories))
 
-  # required columns
-  assert_names(colnames(DT), must.include = c(quantity, categories))
+  # required arguments
+  qassert(quantity, "S1") # string, missing values prohibited, length 1
+  qassert(categories, "S2") # string, missing values prohibited, length 2
 
   # class of required columns
-  qassert(DT[[quantity]], "n+") # numeric, length 1 or more
-
-  col_class <- DT[, categories, with = FALSE]
-  col_class <- unlist(lapply(col_class, class))
+  qassert(dframe[[quantity]], "n+") # numeric, length 1 or more
+  # categories class factor or character
+  one_row_df <- as.data.frame(dframe)[1, categories, drop = FALSE]
+  col_class <- unlist(lapply(one_row_df, class))
   assert_subset(
     col_class,
     choices = c("character", "factor"),
@@ -111,16 +107,11 @@ order_multiway <- function(dframe,
     .var.name = "categories"
   )
 
-  # other required arguments
-  qassert(quantity, "S1") # string, missing values prohibited, length 1
-  qassert(categories, "S2") # string, missing values prohibited, length 2
-
   # optional arguments
   method <- method %?% "median"
   qassert(method, "S1")
   assert_subset(
     method,
-    # choices = c("median", "mean", "sum", "percent", "alphabet"),
     choices = c("median", "percent"),
     empty.ok = FALSE,
     .var.name = "method"
@@ -130,13 +121,13 @@ order_multiway <- function(dframe,
     qassert(ratio_of, "S2")
     assert_subset(
       ratio_of,
-      choices = names(DT),
+      choices = colnames(dframe),
       empty.ok = FALSE,
       .var.name = "ratio_of"
     )
     # columns must be numeric
-    col_class <- DT[, ratio_of, with = FALSE]
-    col_class <- unlist(lapply(col_class, class))
+    one_row_df <- as.data.frame(dframe)[1, ratio_of, drop = FALSE]
+    col_class <- unlist(lapply(one_row_df, class))
     checkmate::assert_subset(
       col_class,
       choices = c("numeric", "double", "integer"),
@@ -149,13 +140,23 @@ order_multiway <- function(dframe,
     }
   }
 
+  # ---------- preparation
+
+  # to restore class (tibble, data.frame, etc.) before return
+  prior_class <- class(dframe)
+
+  # Convert non-data.table input to data.table class. By-ref changes to
+  # dframe in global environment remain active for data.tables.
+  dframe <- prep_non_dt_input(dframe)
+
   # do the work
+
+  DT <- copy(dframe)
 
   # all methods treat categories as factors
   DT[, (categories) := lapply(.SD, as.factor), .SDcols = categories]
   # and quantity double, not integer
   DT[, (quantity) := lapply(.SD, as.double), .SDcols = quantity]
-
 
   # multiway must have two and only two categories
   categ_1 <- categories[[1]]
@@ -203,6 +204,17 @@ order_multiway <- function(dframe,
     # organize the return column order
     setcolorder(DT, c(categories, quantity))
   }
+
+
+  # ---------- restore state
+
+  # restore prior keys
+  # setkeyv(DT, prior_keys)
+
+  # Except for grouped tibbles, restores non-data.table data frames
+  # to same class as input.
+  DT <- restore_non_dt_class(DT, prior_class)
+
   DT[]
 }
 # --------------------------------------------------------------------------

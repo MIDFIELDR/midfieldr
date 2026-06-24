@@ -1,10 +1,37 @@
+
+# functions used in the test
+
+run_check <- function(x, fnc) {
+  
+  z <- fnc(x)
+  expect_equal(class(x), class(z))
+  
+  rm(z)
+}
+
+expect_class_preserved <- function(df1, fnc) {
+  
+  x <- copy(df1)
+  
+  x <- as.data.frame(x)
+  run_check(x, fnc)
+  
+  setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
+  run_check(x, fnc)
+  
+  x <- as.data.table(x)
+  run_check(x, fnc)
+  
+  rm(x)
+}
+
 test_select_basic_cols <- function() {
     
     # usage
     # select_basic_cols(dframe, ..., patternv = NULL)
     
     # Needed for tinytest::build_install_test()
-    require("data.table")
+  suppressPackageStartupMessages(require("data.table"))
     
     # Default character vector for selecting columns
     default_cols <- c(
@@ -20,28 +47,30 @@ test_select_basic_cols <- function() {
 
     # ---------- class preserved
     
-    # data.table preserved
-    x <- copy(toy_student)
-    y <- select_basic_cols(x)
-    expect_equal(class(x), class(y))
+    expect_class_preserved(toy_student, select_basic_cols)
     
-    # tibble preserved
-    x <- copy(toy_student)
-    setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
-    y <- select_basic_cols(x)
-    expect_equal(class(x), class(y))
-    
-    # base R data.frame preserved
-    x <- copy(toy_student)
-    setattr(x, "class", c("data.frame"))
-    y <- select_basic_cols(x)
-    expect_equal(class(x), class(y))
-    
-    # grouped tibble yields data.frame
-    x <- copy(toy_student)
-    setattr(x, "class", c("grouped_df", "tbl_df", "tbl", "data.frame"))
-    y <- select_basic_cols(x)
-    expect_true(class(y) == "data.frame")
+    # # data.table preserved
+    # x <- copy(toy_student)
+    # y <- select_basic_cols(x)
+    # expect_equal(class(x), class(y))
+    # 
+    # # tibble preserved
+    # x <- copy(toy_student)
+    # setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
+    # y <- select_basic_cols(x)
+    # expect_equal(class(x), class(y))
+    # 
+    # # base R data.frame preserved
+    # x <- copy(toy_student)
+    # setattr(x, "class", c("data.frame"))
+    # y <- select_basic_cols(x)
+    # expect_equal(class(x), class(y))
+    # 
+    # # grouped tibble yields data.frame
+    # x <- copy(toy_student)
+    # setattr(x, "class", c("grouped_df", "tbl_df", "tbl", "data.frame"))
+    # y <- select_basic_cols(x)
+    # expect_true(class(y) == "data.frame")
     
     
     

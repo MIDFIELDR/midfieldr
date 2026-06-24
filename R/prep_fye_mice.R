@@ -106,17 +106,12 @@ prep_fye_mice <- function(midfield_student = student,
                           midfield_term = term,
                           ...,
                           fye_codes = NULL) {
-  # remove all keys
-  on.exit(setkey(midfield_student, NULL), add = TRUE)
-  on.exit(setkey(midfield_term, NULL), add = TRUE)
+  # ---------- checks, use base R syntax
 
-  # assert arguments after dots used by name
+  # arguments after ... must be named
   wrapr::stop_if_dot_args(
     substitute(list(...)),
-    paste(
-      "Arguments after ... must be named.\n",
-      "* Did you forget to write `fye_codes = `?\n *"
-    )
+    "Arguments after ... must be named, as in arg = val."
   )
 
   # optional arguments: fye_codes default value(s)

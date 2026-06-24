@@ -33,15 +33,15 @@ filter_cip <- function(keep_text = NULL,
                        drop_text = NULL,
                        cip = NULL,
                        select = NULL) {
+  # ---------- checks, use base R syntax
+
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     "Arguments after ... must be named, e.g., arg = val."
   )
 
-
   # optional arguments
-  # cipx   <- cip %?% midfieldr::cip
   if (is.null(cip)) cip <- midfieldr::cip
   dframe <- copy(cip)
   select <- select %?% names(dframe)
@@ -65,11 +65,14 @@ filter_cip <- function(keep_text = NULL,
   if (!is.null(keep_text)) qassert(keep_text, "s+")
   if (!is.null(drop_text)) qassert(drop_text, "s+")
 
-  # attempt to preserve dframe class
+  # ---------- preparation
+
+  # to restore class (tibble, data.frame, etc.) before return
   prior_class <- class(dframe)
 
-  # input modified (or not) by reference
-  setDT(dframe)
+  # Convert non-data.table input to data.table class. By-ref changes to
+  # dframe in global environment remain active for data.tables.
+  dframe <- prep_non_dt_input(dframe)
 
   # required columns
   # NA
@@ -122,12 +125,16 @@ filter_cip <- function(keep_text = NULL,
   # subset columns
   dframe <- dframe[, .SD, .SDcols = select]
 
-  # restore prior class except grouped tibbles
-  if (!"grouped_df" %chin% prior_class) {
-    setattr(dframe, "class", prior_class)
-  }
+  # ---------- restore state
 
-  return(dframe)
+  # restore prior keys
+  # setkeyv(DT, prior_keys)
+
+  # Except for grouped tibbles, restores non-data.table data frames
+  # to same class as input.
+  dframe <- restore_non_dt_class(dframe, prior_class)
+
+  dframe[]
 }
 
 # ------------------------------------------------------------------------

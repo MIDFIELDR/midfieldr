@@ -1,15 +1,46 @@
+
+# functions used in the test
+
+run_check <- function(x, y, fnc) {
+    
+    z <- fnc(x, y)
+    expect_equal(class(x), class(z))
+    
+    rm(z)
+}
+
+expect_class_preserved <- function(df1, df2, fnc) {
+    
+    x <- copy(df1)
+    y <- copy(df2)
+    
+    x <- as.data.frame(x)
+    y <- as.data.frame(y)
+    run_check(x, y, fnc)
+    
+    setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
+    setattr(y, "class", c("tbl_df", "tbl", "data.frame"))
+    run_check(x, y, fnc)
+    
+    x <- as.data.table(x)
+    y <- as.data.table(y)
+    run_check(x, y, fnc)
+    
+    rm(x, y)
+}
+
 test_add_completion_status <- function() {
 
     # usage
     # add_completion_status(dframe, midfield_degree = degree)
 
     # Needed for tinytest::build_install_test()
-    require("data.table")
+    suppressPackageStartupMessages(require("data.table"))
     
     # manually uncomment    or Ctrl-Shift-L
     # require("midfieldr")
     
-    # create answers
+    # create answers, dframe must have timely term column
     dframe <- toy_student[11:20, .(mcid)]
     dframe <- add_timely_term(dframe, midfield_term = toy_term)
     
@@ -30,6 +61,15 @@ test_add_completion_status <- function() {
             "MCID3111354376", "19921" , "01 First-year", 6         , "19973"      , "19953"      , "timely"            )
     setDT(DT)
 
+    
+    # ---------- start tests
+    
+    # check that class is preserved function
+    expect_class_preserved(dframe, toy_degree, add_completion_status)
+    
+    
+    
+    
     # correct answers
     expect_equal(
         DT,

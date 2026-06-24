@@ -55,22 +55,17 @@ add_timely_term <- function(dframe,
                             ...,
                             span = NULL,
                             sched_span = NULL) {
-  # remove keys if any
-  on.exit(setkey(dframe, NULL), add = TRUE)
-  on.exit(setkey(midfield_term, NULL), add = TRUE)
+  # ---------- checks, use base R syntax
+
+  # arguments after ... must be named
+  wrapr::stop_if_dot_args(
+    substitute(list(...)),
+    "Arguments after ... must be named, as in arg = val."
+  )
 
   # required arguments
   qassert(dframe, "d+")
   qassert(midfield_term, "d+")
-
-  # assert arguments after dots used by name
-  wrapr::stop_if_dot_args(
-    substitute(list(...)),
-    paste(
-      "Arguments after ... must be named.\n",
-      "* Did you forget to write `details = ` or `span = `?\n *"
-    )
-  )
 
   # optional arguments
   span <- span %?% 6
@@ -79,10 +74,6 @@ add_timely_term <- function(dframe,
   # optional arguments assertions
   assert_int(sched_span, lower = 0)
   assert_int(span, lower = sched_span)
-
-  # ensure data.table format
-  setDT(dframe)
-  setDT(midfield_term) # immediately subset, so no changes by reference
 
   # required columns
   assert_names(colnames(dframe),
@@ -93,10 +84,21 @@ add_timely_term <- function(dframe,
   )
 
   # class of required columns
-  qassert(dframe[, mcid], "s+")
-  qassert(midfield_term[, mcid], "s+")
-  qassert(midfield_term[, term], "s+")
-  qassert(midfield_term[, level], "s+")
+  qassert(dframe[["mcid"]], "s+")
+  qassert(midfield_term[["mcid"]], "s+")
+  qassert(midfield_term[["term"]], "s+")
+  qassert(midfield_term[["level"]], "s+")
+
+
+  # ---------- preparation
+
+  # to restore class (tibble, data.frame, etc.) before return
+  prior_class <- class(dframe)
+
+  # non-DT input copied and converted to DT
+  # DT input unchanged, no copy, global by-ref still active
+  dframe <- prep_non_dt_input(dframe)
+  midfield_term <- prep_non_dt_input(midfield_term)
 
   # bind names due to NSE notes in R CMD check
   timely_term <- NULL
@@ -173,7 +175,15 @@ add_timely_term <- function(dframe,
   # old columns as keys, order columns and rows
   set_colrow_order(dframe, old_cols)
 
-  # enable printing (see data.table FAQ 2.23)
+  # ---------- restore state
+
+  # restore prior keys
+  # setkeyv(DT, prior_keys)
+
+  # Except for grouped tibbles, restores non-data.table data frames
+  # to same class as input.
+  dframe <- restore_non_dt_class(dframe, prior_class)
+
   dframe[]
 }
 
@@ -182,14 +192,6 @@ add_timely_term <- function(dframe,
 # Add students' initial terms
 
 add_initial_term <- function(dframe, midfield_term) {
-  # remove keys if any
-  on.exit(setkey(dframe, NULL))
-  on.exit(setkey(midfield_term, NULL), add = TRUE)
-
-  # ensure data.table format, changes by reference
-  setDT(dframe)
-  setDT(midfield_term)
-
   # variables added by this function
   new_cols <- c("term_i")
 
@@ -197,24 +199,15 @@ add_initial_term <- function(dframe, midfield_term) {
   old_cols <- find_old_cols(dframe, new_cols)
   dframe <- dframe[, .SD, .SDcols = old_cols]
 
-  # obtain new_cols keyed by ID
-  # DT <- filter_match(
-  #     dframe = midfield_term,
-  #     match_to = dframe,
-  #     by_col = "mcid",
-  #     select = c("mcid", "term")
-  # )
-
-
   # Inner join using two columns of term
   x <- midfield_term[, .(mcid, term)]
   y <- unique(dframe[, .(mcid)])
   DT <- y[x, on = .(mcid), nomatch = NULL]
 
-
   # retain first term by ID
   setkeyv(DT, c("mcid", "term"))
   DT <- DT[, .SD[1], by = c("mcid")]
+  setkey(DT, NULL)
 
   # rename new columns
   setnames(DT,
@@ -222,10 +215,8 @@ add_initial_term <- function(dframe, midfield_term) {
     new = c("term_i")
   )
 
-  # left join new columns to dframe by key(s)
-  setkeyv(DT, "mcid")
-  setkeyv(dframe, "mcid")
-  dframe <- DT[dframe]
+  # left join new columns to dframe
+  dframe <- DT[dframe, on = "mcid"]
 
   # enable printing (see data.table FAQ 2.23)
   dframe[]
@@ -236,14 +227,6 @@ add_initial_term <- function(dframe, midfield_term) {
 # Add students' initial levels
 
 add_initial_level <- function(dframe, midfield_term) {
-  # remove keys if any
-  on.exit(setkey(dframe, NULL))
-  on.exit(setkey(midfield_term, NULL), add = TRUE)
-
-  # ensure data.table format, changes by reference
-  setDT(dframe)
-  setDT(midfield_term)
-
   # variables added by this function and functions called (if any)
   new_cols <- c("level_i")
 
@@ -251,22 +234,15 @@ add_initial_level <- function(dframe, midfield_term) {
   old_cols <- find_old_cols(dframe, new_cols)
   dframe <- dframe[, .SD, .SDcols = old_cols]
 
-  # # obtain new_cols keyed by ID
-  # DT <- filter_match(
-  #     dframe = midfield_term,
-  #     match_to = dframe,
-  #     by_col = "mcid",
-  #     select = c("mcid", "term", "level")
-  # )
-
-  # Inner join using three columns of term
-  x <- midfield_term[, .(mcid, term, level)]
+  # Inner join
+  x <- unique(midfield_term[, .(mcid, term, level)])
   y <- unique(dframe[, .(mcid)])
   DT <- y[x, on = .(mcid), nomatch = NULL]
 
   # retain first term by ID
   setkeyv(DT, c("mcid", "term"))
   DT <- DT[, .SD[1], by = c("mcid")]
+  setkey(DT, NULL)
 
   # rename new columns
   setnames(DT,
@@ -274,10 +250,8 @@ add_initial_level <- function(dframe, midfield_term) {
     new = c("level_i")
   )
 
-  # left join new columns to dframe by key(s)
-  setkeyv(DT, "mcid")
-  setkeyv(dframe, "mcid")
-  dframe <- DT[dframe]
+  # left join new columns to dframe
+  dframe <- DT[dframe, on = "mcid"]
 
   # enable printing (see data.table FAQ 2.23)
   dframe[]

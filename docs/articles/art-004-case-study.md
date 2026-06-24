@@ -6,6 +6,10 @@ graphing the results, in as concise a fashion as we can, emphasizing
 detail in subsequent articles.) Here we emphasize how we work with
 longitudinal data and how midfieldr supports that process.
 
+Like most midfieldr articles, this case is worked using data.table
+syntax. An alternate version using dplyr syntax is available
+[here](https://midfieldr.github.io/midfieldr/articles/articles/art-005-case-dplyr.md).
+
 ## Description
 
 We define the parameters of our case study as follows:
@@ -39,11 +43,10 @@ of the programs are required by the metric.
 and summarizing. Groups too small to preserve anonymity will be
 excluded.
 
-*Outcomes.*   We calculate the stickiness metric for each unique
-combination of the grouping variables (program, race/ethnicity, sex).
-The resulting data frame should have columns for program,
-race/ethnicity, sex, \small N\_\textrm{grad}, \small N\_\textrm{ever},
-and stickiness.
+*Outcome.*   To calculate the metric, we construct a data frame with
+columns for each grouping variable (program, race/ethnicity, and sex)
+and the counts by group \small N\_\textrm{grad} and \small
+N\_\textrm{ever}.
 
 If you are writing your own script to follow along, we use these
 packages in this article:
@@ -326,10 +329,14 @@ environment, the following lines yield the same results:
 
 ``` r
 
-# Not run
-add_term_cluster(term, midfield_degree = degree)
-add_term_cluster(term, degree)
-add_term_cluster(term)
+x <- add_term_cluster(term, midfield_degree = degree)
+y <- add_term_cluster(term, degree)
+z <- add_term_cluster(term)
+
+check_equiv_frames(x, y)
+#> [1] TRUE
+check_equiv_frames(y, z)
+#> [1] TRUE
 ```
 
 In this article, we use the latter form.
@@ -1097,8 +1104,7 @@ ever_enrolled
 ## Outcomes
 
 Combining the two data frames (blocs) by rows, we obtain the data
-structure we called out in our project description, to be used for
-grouping and summarizing.
+structure we need for grouping and summarizing.
 
 ``` r
 
@@ -1145,6 +1151,8 @@ DT
 
 ### *Reshape*
 
+*Reshaping the data frame to calculate the metric.*
+
 Transform from block-record form to row-record form. The `N` column
 values are moved to two new columns, `ever` and `grad`, one for each
 bloc, leaving the grouping variables (program, race/ethnicity, and sex)
@@ -1175,6 +1183,8 @@ DT
 ```
 
 ### *Calculate the metric*
+
+*Completes the initial analysis.*
 
 Stickiness is the ratio of the number of graduates to the number ever
 enrolled, expressed as a percentage. Stickiness is calculated for each

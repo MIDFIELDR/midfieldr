@@ -37,10 +37,7 @@
 #' @export
 #'
 add_data_sufficiency <- function(dframe, midfield_term = term) {
-  # If misc keys are set within this function
-  on.exit(setkey(dframe, NULL), add = TRUE)
-
-  # ---------- checks
+  # ---------- checks, use base R syntax
 
   # required arguments
   qassert(dframe, "d+")
@@ -63,11 +60,15 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
 
   # ---------- preparation
 
-  # attempt to preserve dframe class
+  # to restore class (tibble, data.frame, etc.) before return
   prior_class <- class(dframe)
 
+  # Convert non-data.table input to data.table class. By-ref changes to
+  # dframe in global environment remain active for data.tables.
+  dframe <- prep_non_dt_input(dframe)
+
   # ensure data.table format, changes by reference
-  setDT(dframe)
+  # setDT(dframe)
   setDT(midfield_term)
 
   # bind names due to NSE notes in R CMD check
@@ -91,7 +92,7 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
   DT <- copy(dframe)
 
   # add initial term term_i
-  DT <- add_initial_term(DT, midfield_term) ####################################
+  DT <- add_initial_term(DT, midfield_term)
 
   # obtain lower and upper institution data limits
   DT <- add_inst_limits(DT, midfield_term)
@@ -125,12 +126,14 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
 
   # ---------- restore state
 
-  # restore prior class except grouped tibbles
-  if (!"grouped_df" %chin% prior_class) {
-    setattr(dframe, "class", prior_class)
-  }
+  # restore prior keys
+  # setkeyv(DT, prior_keys)
 
-  return(dframe)
+  # Except for grouped tibbles, restores non-data.table data frames
+  # to same class as input.
+  dframe <- restore_non_dt_class(dframe, prior_class)
+
+  dframe[]
 }
 
 # ------------------------------------------------------------------------

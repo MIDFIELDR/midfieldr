@@ -1,14 +1,46 @@
+
+# functions used in the test
+
+run_check <- function(x, y, fnc) {
+    
+    z <- fnc(x, y)
+    expect_equal(class(x), class(z))
+    
+    rm(z)
+}
+
+expect_class_preserved <- function(df1, df2, fnc) {
+    
+    x <- copy(df1)
+    y <- copy(df2)
+    
+    x <- as.data.frame(x)
+    y <- as.data.frame(y)
+    run_check(x, y, fnc)
+    
+    setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
+    setattr(y, "class", c("tbl_df", "tbl", "data.frame"))
+    run_check(x, y, fnc)
+    
+    x <- as.data.table(x)
+    y <- as.data.table(y)
+    run_check(x, y, fnc)
+    
+    rm(x, y)
+}
+
 test_add_data_sufficiency <- function() {
 
     # usage
     # add_data_sufficiency(dframe, midfield_term = term)
 
     # Needed for tinytest::build_install_test()
-    require("data.table")
+    suppressPackageStartupMessages(require("data.table"))
 
     # create answers
     dframe <- toy_student[c(1:3, 91:97), .(mcid)]
     dframe <- add_timely_term(dframe, midfield_term = toy_term)
+    check_df <- copy(dframe)
     dframe <- add_data_sufficiency(dframe, midfield_term = toy_term)
     # cat(wrapr::draw_frame(dframe))
 
@@ -26,6 +58,11 @@ test_add_data_sufficiency <- function() {
             "MCID3112172059", "01 First-year", 6         , "20103"      , "20051" , "19881"      , "20096"      , "exclude-upper"    )
     setDT(DT)
 
+    # ---------- start tests
+    
+    # check that class is preserved function
+    expect_class_preserved(check_df, toy_term, add_data_sufficiency)
+    
     # correct answers
     expect_equal(
         DT,

@@ -35,10 +35,7 @@
 #' @example man/examples/add_term_cluster_exa.R
 #' @export
 add_term_cluster <- function(dframe, midfield_degree = degree) {
-  # If misc keys are set within this function
-  # on.exit(setkey(dframe, NULL), add = TRUE)
-
-  # ---------- checks
+  # ---------- checks, use base R syntax
 
   # assert data frames
   checkmate::qassert(dframe, "d+")

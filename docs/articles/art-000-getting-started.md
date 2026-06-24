@@ -25,13 +25,16 @@ library(data.table)
 
 Please note:
 
-1.  *On syntax:*   All data manipulation in our sample scripts is coded
+1.  *On syntax:*   Data manipulation in our sample scripts is coded
     using data.table syntax, e.g., choosing rows and columns, merging,
-    grouping, summarizing, and reshaping data frames. Users preferring a
-    different syntax would have to translate from data.table to their
-    preferred system. However, midfieldr does provide modest support for
-    tibbles in that functions attempt to return a data frame of the same
-    class as the input data frame.
+    grouping, summarizing, and reshaping data frames. However, the case
+    study is also presented using the syntax of dplyr and friends for
+    those who prefer that system.
+
+Users preferring a different syntax would have to translate from
+data.table to their preferred system. However, midfieldr does provide
+modest support for tibbles in that functions attempt to return a data
+frame of the same class as the input data frame.
 
 2.  *On functions:*   Here, we provide a brief introduction only.
     Details are discussed at length in subsequent articles. You can

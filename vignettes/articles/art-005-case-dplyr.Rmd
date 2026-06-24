@@ -1,5 +1,5 @@
 ---
-title: "Case study"
+title: "Case study using dplyr"
 format:
   gfm:
     html-table-processing: none
@@ -11,7 +11,7 @@ link-citations: true
 #| include: false
 
 # for any figures generated in the article
-knitr::opts_chunk$set(fig.path = "figures/art-004-")
+knitr::opts_chunk$set(fig.path = "figures/art-005-")
 
 # for any "child" arguments in r-code-chunks
 library("rprojroot")
@@ -22,9 +22,10 @@ op <- options
 ```{r child = paste0(path_to_rmd, "/common-setup.Rmd")}
 ```
 
-In this study we present a complete case, from initial description to graphing the results, in as concise a fashion as we can, emphasizing *process* over details. (Terminology and functions are described in detail in subsequent articles.) Here we emphasize how we work with longitudinal data and how midfieldr supports that process.
+In this study we present the same case as in the [Case study](articles/art-004-case-study.html) article, but translated to use the syntax of the dplyr package and friends. 
 
-Like most midfieldr articles, this case is worked using data.table syntax. An alternate version using dplyr syntax is available [here](articles/art-005-case-dplyr.html). 
+The study is concise, emphasizing *process* over details. (Terminology and functions are described in detail in subsequent articles.) Here we emphasize how we work with longitudinal data and how midfieldr supports that process.
+
 
 
 
@@ -57,11 +58,10 @@ If you are writing your own script to follow along, we use these packages in thi
 ```{r}
 library(midfieldr)
 library(midfielddata)
-library(data.table)
+library(dplyr)
+library(tidyr)
+library(stringr)
 ```
-
-
-
 
 
 
@@ -80,18 +80,24 @@ One can start an analysis with program data or with student record data---the ch
 
 ### *Search for program codes*
 
+The `cip` dataset loads with midfieldr. For compatibility with the dplyr syntax, we covert it to a tibble. 
+
+```{r}
+cip <- as_tibble(cip)
+```
+
 Unless you already know your program CIP codes, finding them entails some trial and error.
 
 `filter_cip()` takes a string as it's first argument. Our search on "civil engineering"  yields programs in Engineering that we want and some in Engineering Technology that we do not. 
 
 ```{r}
-filter_cip("civil engineering")
+filter_cip("civil engineering", cip = cip)
 ```
 
 These results suggest that Engineering has the 2-digit code "14" and that Civil Engineering has the 4-digit code "1408". We can extract Civil Engineering alone by searching `cip` for lines that start with "1408", yielding six 6-digit codes. Regular expressions such as "^1408" are accepted. 
 
 ```{r}
-filter_cip("^1408")
+filter_cip("^1408", cip = cip)
 ```
 
 ```{r}
@@ -99,7 +105,7 @@ filter_cip("^1408")
 N_engr_programs <- nrow(filter_cip("^14"))
 ```
 
-Knowing the 2-digit code for Engineering programs, our next search is for lines that start with "14". Note that the `cip` *argument* takes the `cip` dataset as its default *value.* The result is an Engineering subset of `cip` with `r N_engr_programs` rows.
+Knowing the 2-digit code for Engineering programs, our next search is for lines that start with "14". The result is an Engineering subset of `cip` with `r N_engr_programs` rows.
 
 ```{r}
 engr_cip <- filter_cip("^14", cip = cip)
@@ -132,24 +138,25 @@ To collect all our 6-digit codes, we create a search string of the desired 4-dig
 
 ```{r}
 codes_we_want <- c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437")
-programs <- filter_cip(codes_we_want)
-programs <- programs[, .(cip6name, cip6)]
+programs <- filter_cip(codes_we_want, cip = cip)
+programs <- programs |>
+  select(cip6name, cip6)
 
 programs
 ```
 
-The program names in `cip` are usually too long for effective use---user-defined names are nearly always required. So we add a `program`  variable with values "CE" (Civil Engineering), "EE" (electrical), "ME" (Mechanical), and "ISE" (Industrial/Systems Engineering). We also abbreviate a couple of terms for a slightly more compact display. 
+The program names in `cip` are usually too long for effective use---user-defined names are nearly always required. So we add a `program`  variable with values "CE" (Civil Engineering), "EE" (electrical), "ME" (Mechanical), and "ISE" (Industrial-Systems Engineering). We also abbreviate a couple of terms for a slightly more compact display. 
 
 ```{r}
-programs[, program := fcase(
-  cip6 %like% "^1408", "CE",
-  cip6 %like% "^1410", "EE",
-  cip6 %like% "^1419", "ME",
-  cip6 %like% c("^1427|^1435|^1436|^1437"), "ISE",
-  default = NA_character_
-)]
-programs[, cip6name := gsub("Engineering", "Engng", cip6name)]
-programs[, cip6name := gsub("Communications", "Commn", cip6name)]
+programs <- programs |>
+  mutate(program = case_when(
+    grepl("^1408", cip6) ~ "CE",
+    grepl("^1410", cip6) ~ "EE",
+    grepl("^1419", cip6) ~ "ME",
+    grepl("^1427|^1435|^1436|^1437", cip6) ~ "ISE"
+  )) |>
+  mutate(across(cip6name, \(x) str_replace(x, "Engineering", "Engng"))) |>
+  mutate(across(cip6name, \(x) str_replace(x, "Communication", "Commn")))
 
 programs
 ```
@@ -164,29 +171,35 @@ options(datatable.print.nrows = 10)
 
 ## Records
 
-For this study we load three of the midfielddata data tables. 
+For this study we load three of the midfielddata data tables. We convert these data frames to tibbles as well. 
 
 ```{r}
 data(student, term, degree)
+student <- as_tibble(student)
+term <- as_tibble(term)
+degree <- as_tibble(degree)
 ```
 
-We usually copy the source data, giving them new names (and new locations in memory), to keep them intact while we use the original names  --- `student`, `term`, and `degree` --- to do our work, preventing the source data from being updated "by reference" as we work. *Reference semantics* in data.table is discussed in [@reference-semantics:2026].
+We usually copy the source data, giving them new names (and new locations in memory), to keep them intact while we use the original names  --- `student`, `term`, and `degree` --- to do our work. Unlike when using data.table, tibbles do not update by reference. 
 
 ```{r}
-student_source <- copy(student)
-term_source <- copy(term)
-degree_source <- copy(degree)
+student_source <- student
+term_source <- term
+degree_source <- degree
 ```
 
 The working data frames `student, term,` and `degree` should always be present in our computing environment so we can take advantage of midfieldr default argument values. For example, `add_term_cluster()` accesses the `degree` table to do its work. If `degree` is in the environment, the following lines yield the same results:
 
 ```{r}
+#| eval: false
 x <- add_term_cluster(term, midfield_degree = degree)
 y <- add_term_cluster(term, degree)
 z <- add_term_cluster(term)
 
 check_equiv_frames(x, y)
+#> [1] TRUE
 check_equiv_frames(y, z)
+#> [1] TRUE
 ```
 
 In this article, we use the latter form. 
@@ -226,26 +239,28 @@ look_at(term)
 look_at(degree)
 ```
 
-```{r}
-#| echo: false
-N_post_term <- nrow(term[term_cluster == "post-first-degree"])
-N_post_degree <- nrow(degree[term_cluster == "post-first-degree"])
-```
-
 To quickly assess the relative size of the three clusters, we count observations by the `term_cluster` variable. 
 
 ```{r}
-term[, .N, by = c("term_cluster")][order(-N)]
+term |>
+  group_by(term_cluster) |>
+  tally() |>
+  arrange(desc(n))
 
-degree[, .N, by = c("term_cluster")][order(-N)]
+degree |>
+  group_by(term_cluster) |>
+  tally() |>
+  arrange(desc(n))
 ```
-
 
 We exclude the rows labeled "post-first-degree." This step does not apply to the `student` table because it contains no term information.
 
 ```{r}
-term <- term[!"post-first-degree", on = "term_cluster"]
-degree <- degree[!"post-first-degree", on = "term_cluster"]
+term <- term |>
+  filter(term_cluster != "post-first-degree")
+
+degree <- degree |>
+  filter(term_cluster != "post-first-degree")
 ```
 
 We can drop the added columns by applying `select_basic_cols()` again. 
@@ -265,8 +280,9 @@ look_at(degree)
 The next few steps are easier to follow if we start with the unique IDs from our current term table as our draft population. We filter these IDs for data sufficiency and degree-seeking, then filter the records to retain those IDs only. 
 
 ```{r}
-DT <- term[, .(mcid)]
-DT <- unique(DT)
+DT <- term |>
+  select(mcid) |>
+  unique()
 DT
 ```
 
@@ -286,22 +302,21 @@ DT <- add_data_sufficiency(DT)
 DT
 ```
 
-```{r}
-#| echo: false
-N_exclude <- nrow(DT[data_sufficiency != "include"])
-N_include <- nrow(DT[data_sufficiency == "include"])
-```
-
 Again, a quick assessment of the relative size of the three possible labels. 
 
 ```{r}
-DT[, .N, by = c("data_sufficiency")][order(-N)]
+DT |>
+  group_by(data_sufficiency) |>
+  tally() |>
+  arrange(desc(n))
 ```
 
 We retain the rows labeled "include" for which we have sufficient data from the institution and retain the ID column only. 
 
 ```{r}
-DT <- DT["include", on = "data_sufficiency", .(mcid)]
+DT <- DT |>
+  filter(data_sufficiency == "include") |>
+  select(mcid)
 DT
 ```
 
@@ -310,8 +325,8 @@ DT
 We require all students in our study to be degree-seeking. By design, the `student` table contains only degree-seeking students. We inner-join the ID column  from the `student` table, matching on `mcid`. In effect, the inner join filters our population to remove any non-degree-seeking students. 
 
 ```{r}
-student_cols <- student[, .(mcid)]
-DT <- student_cols[DT, on = "mcid", nomatch = NULL]
+DT <- inner_join(DT, student, by = join_by(mcid)) |>
+  select(mcid)
 DT
 ```
 
@@ -322,25 +337,19 @@ It happens that all students in this case are degree-seeking, so this step did n
 The previous column of IDs is our baseline population.
 
 ```{r}
-population <- copy(DT)
-population <- unique(population)
+population <- unique(DT)
 population
 ```
 
-We now filter the records to retain only those observations associated with the IDs in our population data frame. We use inner joins between  `population` and `student, term,` and `degree` to do so.
+We now filter the records to retain only those observations associated with the IDs in our population data frame. We use inner joins between  `population` and `student, term,` and `degree` to do so. Ensuring rows are unique yields the baseline records in their final configuration.
 
 ```{r}
-student <- population[student, on = "mcid", nomatch = NULL]
-term <- population[term, on = "mcid", nomatch = NULL]
-degree <- population[degree, on = "mcid", nomatch = NULL]
-```
-
-Ensuring rows are unique yields the baseline records in their final configuration.
-
-```{r}
-student <- unique(student)
-term <- unique(term)
-degree <- unique(degree)
+student <- inner_join(student, population, by = join_by(mcid)) |>
+  unique()
+term <- inner_join(term, population, by = join_by(mcid)) |>
+  unique()
+degree <- inner_join(degree, population, by = join_by(mcid)) |>
+  unique()
 ```
 
 These three data frames are our final set of records on which all further analysis is based. We've reduced the number of unique students from `r nrow(student_source)` in the original source data to `r nrow(student)` that have met our several constraints. 
@@ -396,7 +405,7 @@ We have a lot of flexibility in the order in which we construct our blocs and gr
 We start with the baseline population. Like we did with the original source data files, we copy it to protect `population` from "by reference" changes.
 
 ```{r}
-DT <- copy(population)
+DT <- population
 DT
 ```
 
@@ -411,27 +420,27 @@ We want to retain timely graduates, so first we add the timely completion term (
 `add_completion_status()` adds a column of labels indicating that program completion was timely, late, or NA (for non-completers).
 
 ```{r}
-DT <- add_timely_term(DT)
-DT <- add_completion_status(DT)
+DT <- DT |>
+  add_timely_term() |>
+  add_completion_status()
 DT
-```
-
-```{r}
-#| echo: false
-N_exclude <- nrow(DT[completion_status != "timely" | is.na(completion_status)])
-N_include <- nrow(DT[completion_status == "timely"])
 ```
 
 Another brief assessment. Here we compare the relative size of the three possible status labels. 
 
 ```{r}
-DT[, .N, by = c("completion_status")][order(-N)]
+DT |>
+  group_by(completion_status) |>
+  tally() |>
+  arrange(desc(n))
 ```
 
 We retain the rows labeled "timely" and the drop all the columns except the ID column. 
 
 ```{r}
-DT <- DT["timely", on = "completion_status", .(mcid)]
+DT <- DT |>
+  filter(completion_status == "timely") |>
+  select(mcid)
 DT
 ```
 
@@ -441,24 +450,29 @@ DT
 We left-join the CIP column from the `degree` table, matching on `mcid`. That we increase the number of rows indicates that some students have more than one degree in their first degree term. 
 
 ```{r}
-degree_cols <- degree[, .(mcid, cip6)]
-DT <- degree_cols[DT, on = "mcid"]
+degree_cols <- degree |>
+  select(mcid, cip6)
+DT <- left_join(DT, degree_cols, by = join_by(mcid))
 DT
 ```
 
 Now we use an inner-join with our `programs` data frame, matching on `cip6`, to retain only those students who complete one of our study programs. We retain the `program`  column and drop the `cip6` column. 
 
 ```{r}
-programs_cols <- programs[, .(cip6, program)]
-DT <- programs_cols[DT, on = "cip6", nomatch = NULL]
-DT[, cip6 := NULL]
+programs_cols <- programs |>
+  select(cip6, program)
+DT <- inner_join(DT, programs_cols, by = join_by(cip6)) |>
+  select(-cip6)
 DT
 ```
 
 Another brief assessment. Here we compare the relative numbers of program graduates. 
 
 ```{r}
-DT[, .N, by = c("program")][order(-N)]
+DT |>
+  group_by(program) |>
+  tally() |>
+  arrange(desc(n))
 ```
 
 
@@ -470,8 +484,9 @@ DT[, .N, by = c("program")][order(-N)]
 To add columns for student demographics, we left-join selected columns from the `student` table, matching on `mcid`. 
 
 ```{r}
-student_cols <- student[, .(mcid, race, sex)]
-DT <- student_cols[DT, on = "mcid"]
+student_cols <- student |>
+  select(mcid, race, sex)
+DT <- left_join(DT, student_cols, by = join_by(mcid))
 DT
 ```
 
@@ -486,9 +501,10 @@ DT
 This is the bloc of timely graduates required by our metric. We add a `bloc` variable with the value "grad" and ensure we have unique rows.
 
 ```{r}
-graduates <- copy(DT)
-graduates[, bloc := "grad"]
-graduates <- unique(graduates)
+graduates <- DT |>
+  mutate(bloc = "grad") |>
+  unique()
+
 graduates
 ```
 
@@ -503,7 +519,7 @@ graduates
 Again we start with the baseline population. 
 
 ```{r}
-DT <- copy(population)
+DT <- population
 DT
 ```
 
@@ -513,18 +529,21 @@ DT
 We left-join the CIP column from the `term` table, matching on `mcid`. 
 
 ```{r}
-term_cols <- term[, .(mcid, cip6)]
-term_cols <- unique(term_cols)
-DT <- term_cols[DT, on = "mcid"]
+term_cols <- term |>
+  select(mcid, cip6) |>
+  unique()
+DT <- left_join(DT, term_cols, by = join_by(mcid))
 DT
 ```
 
 We repeat the process we used earlier to inner-join our `programs` data frame, matching on `cip6`. 
 
 ```{r}
-programs_cols <- programs[, .(cip6, program)]
-DT <- programs_cols[DT, on = "cip6", nomatch = NULL]
-DT[, cip6 := NULL]
+programs_cols <- programs |>
+  select(cip6, program)
+DT <- inner_join(DT, programs_cols, by = join_by(cip6)) |>
+  select(-cip6)
+DT
 ```
 
 With the CIP code removed, we filter for unique rows. This is an important step because a student may switch CIP codes yet stay within a program as defined by our custom labels. We want to avoid counting that student as ever-enrolled more than once. 
@@ -537,7 +556,10 @@ DT
 Another brief assessment. Here we compare the relative numbers of students ever enrolled in our programs. 
 
 ```{r}
-DT[, .N, by = c("program")][order(-N)]
+DT |>
+  group_by(program) |>
+  tally() |>
+  arrange(desc(n))
 ```
 
 
@@ -547,8 +569,9 @@ DT[, .N, by = c("program")][order(-N)]
 Again, we left-join selected columns from the `student` table, matching on `mcid`.
 
 ```{r}
-student_cols <- student[, .(mcid, race, sex)]
-DT <- student_cols[DT, on = "mcid"]
+student_cols <- student |>
+  select(mcid, race, sex)
+DT <- left_join(DT, student_cols, by = join_by(mcid))
 DT
 ```
 
@@ -557,9 +580,10 @@ DT
 This is the bloc of students ever enrolled in our programs required by our metric. We add a `bloc` variable with the value "ever" and ensure we have unique rows.
 
 ```{r}
-ever_enrolled <- copy(DT)
-ever_enrolled[, bloc := "ever"]
-ever_enrolled <- unique(ever_enrolled)
+ever_enrolled <- DT |>
+  mutate(bloc = "ever") |>
+  unique()
+
 ever_enrolled
 ```
 
@@ -569,7 +593,7 @@ ever_enrolled
 Combining the two data frames (blocs) by rows, we obtain the data structure we need for grouping and summarizing. 
 
 ```{r}
-DT <- rbindlist(list(graduates, ever_enrolled), use.names = TRUE)
+DT <- bind_rows(graduates, ever_enrolled)
 DT
 ```
 
@@ -578,7 +602,8 @@ DT
 Count the numbers of observations for each combination of the grouping variables. 
 
 ```{r}
-DT <- DT[, .N, by = c("bloc", "program", "race", "sex")]
+DT <- DT %>%
+  count(bloc, program, race, sex, name = "N")
 DT
 ```
 
@@ -589,12 +614,14 @@ DT
 Transform from block-record form to row-record form.   The `N` column values are moved to two new columns, `ever` and `grad`, one for each bloc, leaving the grouping variables (program, race/ethnicity, and sex) in place.  This operation is  known by a number of different names, e.g., pivot, crosstab, unstack, spread, or widen [@Mount+Zumel:2019:fluid-data]. The result has the data structure we called out in our project description for calculating the metric.  
 
 ```{r}
-DT <- dcast(DT, program + sex + race ~ bloc, value.var = "N", fill = 0)
-setkey(DT, NULL)
+DT <- DT |>
+  pivot_wider(
+    names_from = bloc,
+    values_from = N,
+    values_fill = 0
+  )
 DT
 ```
-
- 
 
 ### *Calculate the metric* 
 
@@ -608,9 +635,9 @@ options(datatable.print.nrows = 50)
 ```
 
 ```{r}
-DT[, stickiness := round(100 * grad / ever, 1)]
-setkey(DT, NULL)
-DT[order(-grad, -ever)]
+DT <- DT |>
+  mutate(stickiness = round(100 * grad / ever, 1))
+DT
 ```
 
 ```{r}
@@ -626,27 +653,30 @@ We take several additional steps before disseminating these results.
 To preserve the anonymity of the people involved, we remove observations with   $\small N$ or fewer observations. When dealing with the full MIDFIELD research data, we typically use $\small N = 10$, but for these practice data we illustrate the procedure using  $\small N = 3$. 
 
 ```{r}
-DT <- DT[grad > 3]
+DT <- DT |>
+  filter(grad > 3)
 DT
 ```
 
 We have found it useful to report such data with a variable that combines race/ethnicity and sex. 
 
 ```{r}
-DT[, people := paste(race, sex)]
-setcolorder(DT, c("program", "race", "sex", "people"))
+DT <- DT |>
+  mutate(people = paste(race, sex)) |>
+  select(program, race, sex, people, everything())
 DT
 ```
 
 Readers can more readily interpret our charts and tables if the programs are unabbreviated. 
 
 ```{r}
-DT[, program := fcase(
-  program %like% "CE", "Civil",
-  program %like% "EE", "Electrical",
-  program %like% "ME", "Mechanical",
-  program %like% "ISE", "Industrial/Systems"
-)]
+DT <- DT |>
+  mutate(program = case_when(
+    program == "CE" ~ "Civil",
+    program == "EE" ~ "Electrical",
+    program == "ME" ~ "Mechanical",
+    program == "ISE" ~ "Industrial"
+  ))
 DT
 ```
 
@@ -660,17 +690,22 @@ options(datatable.print.nrows = 12)
 Omit columns that won't appear in the table. 
 
 ```{r}
-DT_table <- copy(DT)
-DT_table[, c("race", "sex", "ever", "grad") := NULL]
+DT_table <- DT |>
+  select(program, people, stickiness)
 DT_table
 ```
 
 Transform the data from block-records to row-records with one row per "people" category (race/ethnicity/sex grouping).  
 
 ```{r}
-DT_table <- dcast(DT_table, people ~ program, value.var = "stickiness")
-setnames(DT_table, old = "people", new = "People", skip_absent = TRUE)
-setkey(DT_table, NULL)
+DT_table <- DT_table |>
+  pivot_wider(
+    names_from = program,
+    values_from = stickiness,
+    values_fill = NA
+  ) |>
+  arrange(people) |>
+  rename(People = people)
 DT_table
 ```
 
@@ -700,7 +735,7 @@ options(datatable.print.nrows = 5)
 To use `ggplot()`, we want the data in its block-record form. 
 
 ```{r}
-DT_chart <- copy(DT)
+DT_chart <- DT
 DT_chart
 ```
 
@@ -717,6 +752,7 @@ DT_chart <- order_multiway(DT_chart,
 )
 DT_chart
 ```
+
 
 Format the chart for publication. 
 

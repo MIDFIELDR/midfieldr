@@ -37,18 +37,11 @@
 #' @export
 #'
 add_completion_status <- function(dframe, midfield_degree = degree) {
-  # If misc keys are set within this function
-  on.exit(setkey(dframe, NULL), add = TRUE)
-
-  # ---------- checks
+  # ---------- checks, use base R syntax
 
   # required arguments
   qassert(dframe, "d+")
   qassert(midfield_degree, "d+")
-
-  # inputs modified (or not) by reference
-  setDT(dframe)
-  setDT(midfield_degree) # immediately subset, so side-effect OK
 
   # required columns
   assert_names(colnames(dframe),
@@ -59,15 +52,20 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
   )
 
   # class of required columns
-  qassert(dframe[, mcid], "s+")
-  qassert(dframe[, timely_term], "s+")
-  qassert(midfield_degree[, mcid], "s+")
-  qassert(midfield_degree[, term_degree], "s+")
+  qassert(dframe[["mcid"]], "s+")
+  qassert(dframe[["timely_term"]], "s+")
+  qassert(midfield_degree[["mcid"]], "s+")
+  qassert(midfield_degree[["term_degree"]], "s+")
 
   # ---------- preparation
 
-  # attempt to preserve dframe class
+  # to restore class (tibble, data.frame, etc.) before return
   prior_class <- class(dframe)
+
+  # Convert non-data.table input to data.table class. By-ref changes to
+  # dframe in global environment remain active for data.tables.
+  DT <- prep_non_dt_input(dframe)
+  setDT(midfield_degree) # immediately subset, so side-effect OK
 
   # bind names due to NSE notes in R CMD check
   completion_status <- NULL
@@ -80,8 +78,8 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
   new_cols <- c("term_degree", "completion_status")
 
   # retain original variables NOT in the vector of new columns
-  old_cols <- find_old_cols(dframe, new_cols)
-  dframe <- dframe[, .SD, .SDcols = old_cols]
+  old_cols <- find_old_cols(DT, new_cols)
+  dframe <- DT[, .SD, .SDcols = old_cols]
 
   # Inner join using three columns of term
   x <- midfield_degree[, .(mcid, term_degree)]
@@ -113,10 +111,12 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
 
   # ---------- restore state
 
-  # restore prior class except grouped tibbles
-  if (!"grouped_df" %chin% prior_class) {
-    setattr(dframe, "class", prior_class)
-  }
+  # restore prior keys
+  # setkeyv(DT, prior_keys)
 
-  return(dframe)
+  # Except for grouped tibbles, restores non-data.table data frames
+  # to same class as input.
+  dframe <- restore_non_dt_class(dframe, prior_class)
+
+  dframe[]
 }

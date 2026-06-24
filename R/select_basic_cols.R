@@ -37,7 +37,7 @@ select_basic_cols <- function(dframe, ..., patternv = NULL) {
   # If misc keys are set within this function
   on.exit(setkey(dframe, NULL), add = TRUE)
 
-  # ---------- checks
+  # ---------- checks, use base R syntax
 
   # arguments after ... must be named
   wrapr::stop_if_dot_args(

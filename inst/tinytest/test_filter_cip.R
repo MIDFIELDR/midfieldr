@@ -1,3 +1,35 @@
+
+# functions used in the test
+
+run_check <- function(text, x, fnc) {
+    
+    z <- fnc(text, cip = x)
+    expect_equal(class(x), class(z))
+    
+    rm(z)
+}
+
+expect_class_preserved <- function(text, cip, fnc) {
+    
+    x <- copy(cip)
+    
+    x <- as.data.frame(x)
+    run_check(text, x, fnc)
+    
+    setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
+    run_check(text, x, fnc)
+    
+    x <- as.data.table(x)
+    run_check(text, x, fnc)
+    
+    rm(x)
+}
+
+
+
+
+
+
 test_filter_cip <- function() {
 
     # usage
@@ -8,7 +40,7 @@ test_filter_cip <- function() {
     #            select = NULL)
     
     # Needed for tinytest::build_install_test()
-    require("data.table")
+    suppressPackageStartupMessages(require("data.table"))
 
     # test case
     music_cip <- wrapr::build_frame(
@@ -35,6 +67,14 @@ test_filter_cip <- function() {
     )
     setDT(ans)
 
+    
+    # ---------- start tests
+    
+    # check that class is preserved function
+    expect_class_preserved("^14", cip, filter_cip)
+    
+    
+    
     # Result is correct
     expect_equal(unique(filter_cip(cip = music_cip, select = select_these)), ans)
 

@@ -6,8 +6,9 @@
 #' @importFrom checkmate assert_function
 #' @importFrom checkmate assert_int
 #' @importFrom checkmate assert_names
-#' @importFrom checkmate qassert
 #' @importFrom checkmate assert_subset
+#' @importFrom checkmate check_set_equal
+#' @importFrom checkmate qassert
 #'
 #' @importFrom data.table :=
 #' @importFrom data.table .N

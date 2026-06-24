@@ -1,33 +1,57 @@
+
+# functions used in the test
+
+run_check <- function(x, y, fnc) {
+  
+  z <- fnc(x, y)
+  expect_equal(class(x), class(z))
+  
+  rm(z)
+}
+
+expect_class_preserved <- function(df1, df2, fnc) {
+
+  x <- copy(df1)
+  y <- copy(df2)
+
+  x <- as.data.frame(x)
+  y <- as.data.frame(y)
+  run_check(x, y, fnc)
+
+  setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
+  setattr(y, "class", c("tbl_df", "tbl", "data.frame"))
+  run_check(x, y, fnc)
+
+  x <- as.data.table(x)
+  y <- as.data.table(y)
+  run_check(x, y, fnc)
+  
+  rm(x, y)
+}
+
 test_add_term_cluster <- function() {
   
   # usage
   # add_term_cluster(dframe, midfield_degree = degree)
   
+  # ---------- setup
+  
   # Needed for tinytest::build_install_test()
-  require("data.table")
+  suppressPackageStartupMessages(require("data.table"))
+  
+  # column names to be added
   new_cols <- c("first_degree_term", "term_cluster")
+  
+  # ---------- start tests
+  
+  # check that class is preserved function
+  expect_class_preserved(toy_term, toy_degree, add_term_cluster)
   
   # check for incorrect input class / required variables
   expect_error(add_term_cluster(1))
   expect_error(add_term_cluster(toy_term, "sat"))
   expect_error(add_term_cluster(toy_student, toy_degree))
   expect_error(add_term_cluster(toy_degree, toy_student))
-  
-  # class preserved?
-  x <- copy(toy_term)
-  y <- copy(toy_degree)
-  z <- add_term_cluster(x, y)
-  expect_equal(class(x), class(z))
-  
-  x <- as.data.frame(toy_term)
-  y <- as.data.frame(toy_degree)
-  z <- add_term_cluster(x, y)
-  expect_equal(class(x), class(z))
-  
-  setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
-  setattr(y, "class", c("tbl_df", "tbl", "data.frame"))
-  z <- add_term_cluster(x, y)
-  expect_equal(class(x), class(z))
   
   # term added columns correct
   x <- copy(toy_term)
@@ -52,7 +76,7 @@ test_add_term_cluster <- function() {
   expect_true(check_equiv_frames(term, toy_term))
   expect_true(check_equiv_frames(degr, toy_degree))
   
- 
+  
   # check term-cluster labels are correct
   # dframe required variables: mcid, term (or term_course or term_degree)
   # degree required variables: mcid, term_degree
@@ -89,10 +113,10 @@ test_add_term_cluster <- function() {
   setDT(x_degr)
   ans <- add_term_cluster(x_term, x_degr)[["term_cluster"]]
   expected_ans <- c("pre-degree", "first-degree", "post-first-degree", 
-           "pre-degree", "first-degree", 
-           "pre-degree", "first-degree", "first-degree", 
-           "pre-degree", "first-degree", "post-first-degree", 
-           "pre-degree", "pre-degree")
+                    "pre-degree", "first-degree", 
+                    "pre-degree", "first-degree", "first-degree", 
+                    "pre-degree", "first-degree", "post-first-degree", 
+                    "pre-degree", "pre-degree")
   expect_equal(ans, expected_ans)
   
   

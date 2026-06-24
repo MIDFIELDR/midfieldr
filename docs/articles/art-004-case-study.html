@@ -38,7 +38,13 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/art-000-getting-started.html">Get started</a></li>
-<li class="active nav-item"><a class="nav-link" href="../articles/art-004-case-study.html">Case study</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-case-study" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Case study</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-case-study">
+<li><a class="dropdown-item" href="../articles/art-004-case-study.html">Case study using data.table</a></li>
+    <li><a class="dropdown-item" href="../articles/art-005-case-dplyr.html">Case study using dplyr</a></li>
+  </ul>
+</li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
@@ -91,6 +97,8 @@ graphing the results, in as concise a fashion as we can, emphasizing
 <em>process</em> over details. (Terminology and functions are described
 in detail in subsequent articles.) Here we emphasize how we work with
 longitudinal data and how midfieldr supports that process.</p>
+<p>Like most midfieldr articles, this case is worked using data.table
+syntax. An alternate version using dplyr syntax is available <a href="articles/art-005-case-dplyr.html">here</a>.</p>
 <div class="section level2">
 <h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
 </h2>
@@ -121,12 +129,11 @@ graduates of the programs are required by the metric.</p>
 <p><em>Groupings.</em>   We select program, race/ethnicity, and sex for
 grouping and summarizing. Groups too small to preserve anonymity will be
 excluded.</p>
-<p><em>Outcomes.</em>   We calculate the stickiness metric for each
-unique combination of the grouping variables (program, race/ethnicity,
-sex). The resulting data frame should have columns for program,
-race/ethnicity, sex, <span class="math inline">\small
-N_\textrm{grad}</span>, <span class="math inline">\small
-N_\textrm{ever}</span>, and stickiness.</p>
+<p><em>Outcome.</em>   To calculate the metric, we construct a data
+frame with columns for each grouping variable (program, race/ethnicity,
+and sex) and the counts by group <span class="math inline">\small
+N_\textrm{grad}</span> and <span class="math inline">\small
+N_\textrm{ever}</span>.</p>
 <p>If you are writing your own script to follow along, we use these
 packages in this article:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -381,10 +388,14 @@ values. For example, <code><a href="../reference/add_term_cluster.html">add_term
 <code>degree</code> table to do its work. If <code>degree</code> is in
 the environment, the following lines yield the same results:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Not run</span></span>
-<span><span class="fu"><a href="../reference/add_term_cluster.html">add_term_cluster</a></span><span class="op">(</span><span class="va">term</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/add_term_cluster.html">add_term_cluster</a></span><span class="op">(</span><span class="va">term</span>, <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/add_term_cluster.html">add_term_cluster</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_term_cluster.html">add_term_cluster</a></span><span class="op">(</span><span class="va">term</span>, midfield_degree <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_term_cluster.html">add_term_cluster</a></span><span class="op">(</span><span class="va">term</span>, <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_term_cluster.html">add_term_cluster</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="fu"><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">z</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p>In this article, we use the latter form.</p>
 <div class="section level3">
 <h3 id="select-basic-columns">
@@ -1072,8 +1083,7 @@ and ensure we have unique rows.</p>
 <h2 id="outcomes">Outcomes<a class="anchor" aria-label="anchor" href="#outcomes"></a>
 </h2>
 <p>Combining the two data frames (blocs) by rows, we obtain the data
-structure we called out in our project description, to be used for
-grouping and summarizing.</p>
+structure we need for grouping and summarizing.</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">graduates</span>, <span class="va">ever_enrolled</span><span class="op">)</span>, use.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
@@ -1117,6 +1127,7 @@ grouping variables.</p>
 <h3 id="reshape">
 <em>Reshape</em><a class="anchor" aria-label="anchor" href="#reshape"></a>
 </h3>
+<p><em>Reshaping the data frame to calculate the metric.</em></p>
 <p>Transform from block-record form to row-record form. The
 <code>N</code> column values are moved to two new columns,
 <code>ever</code> and <code>grad</code>, one for each bloc, leaving the
@@ -1147,6 +1158,7 @@ project description for calculating the metric.</p>
 <h3 id="calculate-the-metric">
 <em>Calculate the metric</em><a class="anchor" aria-label="anchor" href="#calculate-the-metric"></a>
 </h3>
+<p><em>Completes the initial analysis.</em></p>
 <p>Stickiness is the ratio of the number of graduates to the number ever
 enrolled, expressed as a percentage. Stickiness is calculated for each
 combination of program, race/ethnicity, and sex.</p>
