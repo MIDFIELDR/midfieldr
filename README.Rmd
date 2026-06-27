@@ -30,8 +30,8 @@ knitr::opts_chunk$set(fig.path = "man/figures/README-")
 
 Provides tools in R for working with undergraduate, longitudinal, student-level records modeled on the MIDFIELD database. 
 
-- `filter_cip()` chooses rows of program data based on search terms.
-- `select_basic_cols()` chooses columns required by midfieldr functions.  
+- `filter_cip_rows()` chooses rows of program data based on search terms.
+- `select_record_cols()` chooses columns required by midfieldr functions.  
 - `add_term_cluster()` identifies rows of post-baccalaureate terms to exclude. 
 - `add_timely_term()` estimates a student's timely graduation term. 
 - `add_data_sufficiency()` identifies rows to exclude due to insufficient data. 
@@ -92,15 +92,12 @@ library(midfieldr)
 library(data.table)
 
 # Choose a minimum set of columns
-student <- select_basic_cols(toy_student)
-term <- select_basic_cols(toy_term)
-degree <- select_basic_cols(toy_degree)
+student <- select_record_cols(toy_student, type = "s")
+term <- select_record_cols(toy_term, "t")
+degree <- select_record_cols(toy_degree, "d")
 
-look_at(student)
-
-look_at(term)
-
-look_at(degree)
+# Display one representative data frame
+term
 
 # Add a column to label term clusters
 term <- add_term_cluster(term)
@@ -108,49 +105,46 @@ degree <- add_term_cluster(degree)
 
 term
 
-# FYI, summary of term cluster values
-term[, .N, by = "term_cluster"][order(-N)]
-
-degree[, .N, by = "term_cluster"][order(-N)]
-
 # Exclude rows after the first degree term
 term <- term[term_cluster != "post-first-degree"]
 degree <- degree[term_cluster != "post-first-degree"]
 
+term
+
 # Drop the temporary columns
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
+term <- select_record_cols(term, type = "t")
+degree <- select_record_cols(degree, type = "d")
 
 term
 
 # Population at this point, for next filter
 DT <- term[, .(mcid)]
 DT <- unique(DT)
+
 DT
 
 # Determine data sufficiency
 DT <- add_timely_term(DT)
 DT <- add_data_sufficiency(DT)
-DT
 
-# FYI, summary of data sufficiency values
-DT[, .N, by = "data_sufficiency"][order(-N)]
+DT
 
 # Retain rows with sufficient institutional data
 population <- DT[data_sufficiency == "include", .(mcid)]
+
 population
 
-# Inner join population to records, retaining IDs that match both
+# Filter records using inner join with population
 student <- population[student, on = "mcid", nomatch = NULL]
 term <- population[term, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
 # Records ready for grouping, summarizing, calculating metrics, etc.
-look_at(student)
+student
 
-look_at(term)
+term
 
-look_at(degree)
+degree
 ```
 
 ## Acknowledgments

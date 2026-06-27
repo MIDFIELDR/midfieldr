@@ -210,7 +210,7 @@ started](https://midfieldr.github.io/midfieldr/articles/art-000-getting-started.
 source_term <- copy(term)
 
 # Select variables required by midfieldr functions
-term <- select_basic_cols(source_term)
+term <- select_record_cols(source_term)
 ```
 
 *Initialize.*   Assign a working data frame.
@@ -220,15 +220,15 @@ term <- select_basic_cols(source_term)
 # Working data frame
 DT <- copy(term)
 DT
-#>                   mcid   institution   term   cip6         level
-#>                 <char>        <char> <char> <char>        <char>
-#>      1: MCID3111142225 Institution B  19881 140901 01 First-year
-#>      2: MCID3111142283 Institution J  19881 240102 01 First-year
-#>      3: MCID3111142283 Institution J  19883 240102 01 First-year
+#>                   mcid   term   cip6   institution         level
+#>                 <char> <char> <char>        <char>        <char>
+#>      1: MCID3111142225  19881 140901 Institution B 01 First-year
+#>      2: MCID3111142283  19881 240102 Institution J 01 First-year
+#>      3: MCID3111142283  19883 240102 Institution J 01 First-year
 #>     ---                                                         
-#> 639913: MCID3112898894 Institution B  20181 451001 01 First-year
-#> 639914: MCID3112898895 Institution B  20181 302001 01 First-year
-#> 639915: MCID3112898940 Institution B  20181 050103 01 First-year
+#> 639913: MCID3112898894  20181 451001 Institution B 01 First-year
+#> 639914: MCID3112898895  20181 302001 Institution B 01 First-year
+#> 639915: MCID3112898940  20181 050103 Institution B 01 First-year
 ```
 
 *Select.*   The ID column is required. The institution column is not,

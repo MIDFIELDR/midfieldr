@@ -1,8 +1,13 @@
 # Determine data sufficiency for every student
 
-Add a column to a data frame of student-level records that labels each
-row for inclusion or exclusion based on data sufficiency near the upper
-and lower bounds of an institution's data range.
+Add columns to a data frame of student-level records that indicate
+whether an observation should be included or excluded based on
+sufficient information from the institution. Because the time span of
+MIDFIELD term data varies by institution, each has their own lower and
+upper bounds. For some student records, being at or near these bounds
+creates unavoidable ambiguity when trying to assess degree completion.
+Such records must be identified and in most cases excluded to prevent
+false summary counts.
 
 ## Usage
 
@@ -16,8 +21,7 @@ add_data_sufficiency(dframe, midfield_term = term)
 
   Working data frame of student-level records to which data-sufficiency
   columns are to be added. Required variables are `mcid` and
-  `timely_term.` See also
-  [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md).
+  `timely_term`.
 
 - midfield_term:
 
@@ -26,40 +30,46 @@ add_data_sufficiency(dframe, midfield_term = term)
 
 ## Value
 
-A data frame in `data.table` format with the following properties: rows
-are preserved; columns are preserved with the exception that columns
-added by the function overwrite existing columns of the same name (if
-any); grouping structures are not preserved. The added columns are:
+A data frame of the same type as `dframe`. The output has the following
+properties:
 
-- `term_i`:
+- Rows are not modified.
 
-  Character. Initial term of a student's longitudinal record, encoded
-  YYYYT. Not overwritten if present in `dframe.`
+- Columns are added, overwriting existing columns (if any) of the same
+  name. Other columns are not modified.
 
-- `lower_limit`:
+- Groups are not preserved.
 
-  Character. Initial term of an institution's data range, encoded YYYYT
-
-- `upper_limit`:
-
-  Character. Final term of an institution's data range, encoded YYYYT
-
-- `data_sufficiency`:
-
-  Character. Label each observation for inclusion or exclusion based on
-  data sufficiency. Possible values are: `include`, indicating that
-  available data are sufficient for estimating timely completion;
-  `exclude-upper`, indicating that data are insufficient at the upper
-  limit of a data range; and `exclude`-lower, indicating that data are
-  insufficient at the lower limit.
+- Data frame attributes are preserved for classes `data.frame`,
+  `data.table`, or `tbl_df`.
 
 ## Details
 
-The time span of MIDFIELD term data varies by institution, each having
-their own lower and upper bounds. For some student records, being at or
-near these bounds creates unavoidable ambiguity when trying to assess
-degree completion. Such records must be identified and in most cases
-excluded to prevent false summary counts.
+The data sufficiency criterion states that student records are limited
+to those for which available data are sufficient to assess timely
+completion without biased counts of completers or non-completers. In
+practice, the criteria is implemented via two filters. Rows are labeled
+for exclusion when: 1) a student ID is extant in the non-summer lower
+limit of an institution's data range; or 2) a student ID has a timely
+completion term that exceeds the upper limit of the institution's data
+range.
+
+The new columns are:
+
+- `term_i` Initial term of a student's longitudinal record, encoded
+  `YYYYT`. Extracted from `term`.
+
+- `lower_limit` Character. Initial term of an institution's data range,
+  encoded `YYYYT`. Extracted from `term`.
+
+- `upper_limit` Character. Final term of an institution's data range,
+  encoded `YYYYT`. Extracted from `term`.
+
+- `data_sufficiency` Character. Possible values are "include",
+  "exclude_lower", and "exclude-upper". A row is labeled "include" if
+  the data are sufficient; and "exclude-lower" or "exclude-upper" if
+  not, indicating at which boundary of the data range the ambiguity
+  occurs.
 
 ## See also
 

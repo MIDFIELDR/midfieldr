@@ -40,13 +40,16 @@ part-time status, transfer status, admission term, or starting program.
 of the programs are required by the metric.
 
 *Groupings.*   We select program, race/ethnicity, and sex for grouping
-and summarizing. Groups too small to preserve anonymity will be
-excluded.
+and summarizing.
 
 *Outcome.*   To calculate the metric, we construct a data frame with
 columns for each grouping variable (program, race/ethnicity, and sex)
 and the counts by group \small N\_\textrm{grad} and \small
 N\_\textrm{ever}.
+
+*Dissemination.*   Exclude groupings too small to preserve anonymity.
+Edit column names to suit the audience. Condition/transform data as
+needed for tables or charts.
 
 If you are writing your own script to follow along, we use these
 packages in this article:
@@ -71,14 +74,14 @@ The `cip` dataset loads with midfieldr.
 Unless you already know your program CIP codes, finding them entails
 some trial and error.
 
-[`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/filter_cip.md)
-takes a string as it’s first argument. Our search on “civil engineering”
+[`filter_cip_rows()`](https://midfieldr.github.io/midfieldr/reference/filter_cip_rows.md)
+searches `dframe` for string patterns. Searching for “civil engineering”
 yields programs in Engineering that we want and some in Engineering
 Technology that we do not.
 
 ``` r
 
-filter_cip("civil engineering")
+filter_cip_rows(cip, "civil engineering")
 #>                                          cip6name   cip6
 #>                                            <char> <char>
 #> 1:                     Civil Engineering, General 140801
@@ -119,7 +122,7 @@ accepted.
 
 ``` r
 
-filter_cip("^1408")
+filter_cip_rows(cip, "^1408")
 #>                                  cip6name   cip6          cip4name   cip4
 #>                                    <char> <char>            <char> <char>
 #> 1:             Civil Engineering, General 140801 Civil Engineering   1408
@@ -145,7 +148,7 @@ subset of `cip` with 54 rows.
 
 ``` r
 
-engr_cip <- filter_cip("^14", cip = cip)
+engr_cip <- filter_cip_rows(cip, "^14")
 engr_cip
 #>                                                         cip6name   cip6
 #>                                                           <char> <char>
@@ -193,7 +196,7 @@ Next, to search this result for Electrical Engineering, we assign
 
 ``` r
 
-filter_cip("electrical", cip = engr_cip)
+filter_cip_rows(engr_cip, "electrical")
 #>                                                         cip6name   cip6
 #>                                                           <char> <char>
 #> 1:        Electrical, Electronics and Communications Engineering 141001
@@ -231,7 +234,7 @@ desired 4-digit codes. We drop all columns except the 6-digit names and
 ``` r
 
 codes_we_want <- c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437")
-programs <- filter_cip(codes_we_want)
+programs <- filter_cip_rows(cip, codes_we_want)
 programs <- programs[, .(cip6name, cip6)]
 
 programs
@@ -329,29 +332,25 @@ environment, the following lines yield the same results:
 
 ``` r
 
-x <- add_term_cluster(term, midfield_degree = degree)
-y <- add_term_cluster(term, degree)
-z <- add_term_cluster(term)
-
-check_equiv_frames(x, y)
-#> [1] TRUE
-check_equiv_frames(y, z)
-#> [1] TRUE
+# not run
+add_term_cluster(term, midfield_degree = degree)
+add_term_cluster(term, degree)
+add_term_cluster(term)
 ```
 
 In this article, we use the latter form.
 
 ### *Select basic columns*
 
-Optional, but convenient for viewing data frames at intermediate stages.
-We reduce the number of columns to those required by other midfieldr
-functions plus the key or composite key variables of the data tables.
+Convenient for viewing data frames at intermediate stages. We reduce the
+number of columns to those required by other midfieldr functions plus
+the key or composite key variables of the data tables.
 
 ``` r
 
-student <- select_basic_cols(student)
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
+student <- select_record_cols(student, type = "s")
+term <- select_record_cols(term, "t")
+degree <- select_record_cols(degree, "d")
 ```
 
 [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
@@ -360,24 +359,22 @@ is a midfieldr convenience function that wraps `base::str()`.
 ``` r
 
 look_at(student)
-#> Classes 'data.table' and 'data.frame':   97555 obs. of  4 variables:
-#>  $ mcid       : chr  "MCID3111142225" "MCID3111142283" "MCID3111142290" "MCID"..
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
-#>  $ race       : chr  "Asian" "Asian" "Asian" "Asian" ...
-#>  $ sex        : chr  "Male" "Female" "Male" "Male" ...
+#> Classes 'data.table' and 'data.frame':   97555 obs. of  3 variables:
+#>  $ mcid: chr  "MCID3111142225" "MCID3111142283" "MCID3111142290" "MCID3111142"..
+#>  $ race: chr  "Asian" "Asian" "Asian" "Asian" ...
+#>  $ sex : chr  "Male" "Female" "Male" "Male" ...
 
 look_at(term)
 #> Classes 'data.table' and 'data.frame':   639915 obs. of  5 variables:
 #>  $ mcid       : chr  "MCID3111142225" "MCID3111142283" "MCID3111142283" "MCID"..
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 #>  $ term       : chr  "19881" "19881" "19883" "19885" ...
 #>  $ cip6       : chr  "140901" "240102" "240102" "190601" ...
+#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 #>  $ level      : chr  "01 First-year" "01 First-year" "01 First-year" "01 Firs"..
 
 look_at(degree)
-#> Classes 'data.table' and 'data.frame':   49665 obs. of  4 variables:
+#> Classes 'data.table' and 'data.frame':   49665 obs. of  3 variables:
 #>  $ mcid       : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294" "MCID"..
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 #>  $ term_degree: chr  "19881" "19921" "19903" "19921" ...
 #>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
 ```
@@ -402,17 +399,16 @@ degree <- add_term_cluster(degree)
 look_at(term)
 #> Classes 'data.table' and 'data.frame':   639915 obs. of  7 variables:
 #>  $ mcid             : chr  "MCID3111142225" "MCID3111142283" "MCID3111142283""..
-#>  $ institution      : chr  "Institution B" "Institution J" "Institution J" "I"..
 #>  $ term             : chr  "19881" "19881" "19883" "19885" ...
 #>  $ cip6             : chr  "140901" "240102" "240102" "190601" ...
+#>  $ institution      : chr  "Institution B" "Institution J" "Institution J" "I"..
 #>  $ level            : chr  "01 First-year" "01 First-year" "01 First-year" "0"..
 #>  $ first_degree_term: chr  "19881" NA NA NA ...
 #>  $ term_cluster     : chr  "first-degree" "pre-degree" "pre-degree" "pre-degr"..
 
 look_at(degree)
-#> Classes 'data.table' and 'data.frame':   49665 obs. of  6 variables:
+#> Classes 'data.table' and 'data.frame':   49665 obs. of  5 variables:
 #>  $ mcid             : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294""..
-#>  $ institution      : chr  "Institution B" "Institution J" "Institution J" "I"..
 #>  $ term_degree      : chr  "19881" "19921" "19903" "19921" ...
 #>  $ cip6             : chr  "141001" "141001" "141001" "141001" ...
 #>  $ first_degree_term: chr  "19881" "19921" "19903" "19921" ...
@@ -448,26 +444,25 @@ degree <- degree[!"post-first-degree", on = "term_cluster"]
 ```
 
 We can drop the added columns by applying
-[`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
+[`select_record_cols()`](https://midfieldr.github.io/midfieldr/reference/select_record_cols.md)
 again.
 
 ``` r
 
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
+term <- select_record_cols(term, "t")
+degree <- select_record_cols(degree, "d")
 
 look_at(term)
 #> Classes 'data.table' and 'data.frame':   632917 obs. of  5 variables:
 #>  $ mcid       : chr  "MCID3111142225" "MCID3111142283" "MCID3111142283" "MCID"..
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 #>  $ term       : chr  "19881" "19881" "19883" "19885" ...
 #>  $ cip6       : chr  "140901" "240102" "240102" "190601" ...
+#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 #>  $ level      : chr  "01 First-year" "01 First-year" "01 First-year" "01 Firs"..
 
 look_at(degree)
-#> Classes 'data.table' and 'data.frame':   49618 obs. of  4 variables:
+#> Classes 'data.table' and 'data.frame':   49618 obs. of  3 variables:
 #>  $ mcid       : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294" "MCID"..
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 #>  $ term_degree: chr  "19881" "19921" "19903" "19921" ...
 #>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
 ```
@@ -685,24 +680,22 @@ several constraints.
 ``` r
 
 look_at(student)
-#> Classes 'data.table' and 'data.frame':   76865 obs. of  4 variables:
-#>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID"..
-#>  $ institution: chr  "Institution B" "Institution J" "Institution B" "Institu"..
-#>  $ race       : chr  "Hispanic" "Hispanic" "International" "International" ...
-#>  $ sex        : chr  "Female" "Female" "Male" "Male" ...
+#> Classes 'data.table' and 'data.frame':   76865 obs. of  3 variables:
+#>  $ mcid: chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID3111142"..
+#>  $ race: chr  "Hispanic" "Hispanic" "International" "International" ...
+#>  $ sex : chr  "Female" "Female" "Male" "Male" ...
 
 look_at(term)
 #> Classes 'data.table' and 'data.frame':   525446 obs. of  5 variables:
 #>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142782" "MCID"..
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 #>  $ term       : chr  "19883" "19883" "19885" "19893" ...
 #>  $ cip6       : chr  "090401" "260101" "260101" "260101" ...
+#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 #>  $ level      : chr  "01 First-year" "01 First-year" "02 Second-year" "02 Sec"..
 
 look_at(degree)
-#> Classes 'data.table' and 'data.frame':   43847 obs. of  4 variables:
+#> Classes 'data.table' and 'data.frame':   43847 obs. of  3 variables:
 #>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID"..
-#>  $ institution: chr  "Institution B" "Institution J" "Institution B" "Institu"..
 #>  $ term_degree: chr  "19913" "19903" "19894" "19901" ...
 #>  $ cip6       : chr  "090401" "260101" "450601" "141001" ...
 ```
@@ -909,8 +902,7 @@ from the `student` table, matching on `mcid`.
 
 ``` r
 
-student_cols <- student[, .(mcid, race, sex)]
-DT <- student_cols[DT, on = "mcid"]
+DT <- student[DT, on = "mcid"]
 DT
 #>                 mcid          race    sex program
 #>               <char>        <char> <char>  <char>
@@ -1056,8 +1048,7 @@ on `mcid`.
 
 ``` r
 
-student_cols <- student[, .(mcid, race, sex)]
-DT <- student_cols[DT, on = "mcid"]
+DT <- student[DT, on = "mcid"]
 DT
 #>                 mcid          race    sex program
 #>               <char>        <char> <char>  <char>

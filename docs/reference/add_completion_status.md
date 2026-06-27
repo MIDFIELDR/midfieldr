@@ -2,7 +2,12 @@
 
 Add columns to a data frame of student-level records that indicate
 whether a student completed a degree, and if so, whether their
-completion was timely.
+completion was timely. By "completion" we mean an undergraduate earning
+their first baccalaureate degree (or degrees, for students earning more
+than one degree in the same term). The term by which a student's
+completion would be considered timely (the "timely completion term") is
+usually defined as 4-, 6-, or 8-years after admission. Our default is 6
+years.
 
 ## Usage
 
@@ -16,8 +21,7 @@ add_completion_status(dframe, midfield_degree = degree)
 
   Working data frame of student-level records to which completion-status
   columns are to be added. Required variables are `mcid` and
-  `timely_term.` See also
-  [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md).
+  `timely_term`.
 
 - midfield_degree:
 
@@ -26,39 +30,31 @@ add_completion_status(dframe, midfield_degree = degree)
 
 ## Value
 
-A data frame in `data.table` format with the following properties: rows
-are preserved; columns are preserved with the exception that columns
-added by the function overwrite existing columns of the same name (if
-any); grouping structures are not preserved. The added columns are:
+A data frame of the same type as `dframe`. The output has the following
+properties:
 
-- `term_degree`:
+- Rows are not modified.
 
-  Character. Term in which the first degree(s) are completed. Encoded
-  YYYYT. Joined from `midfield_degree` data table.
+- Columns are added, overwriting existing columns (if any) of the same
+  name. Other columns are not modified.
 
-- `completion_status`:
+- Groups are not preserved.
 
-  Character. Label each observation to indicate completion status.
-  Possible values are: "timely", indicating completion no later than the
-  timely completion term; "late", indicating completion after the timely
-  completion term; and "NA" indicating non-completion.
+- Data frame attributes are preserved for classes `data.frame`,
+  `data.table`, or `tbl_df`.
 
 ## Details
 
-By "completion" we mean an undergraduate earning their first
-baccalaureate degree (or degrees, for students earning more than one
-degree in the same term). Additional degrees, if any, earned later than
-the term of the first degree are ignored.
+The new columns are:
 
-In many studies, students must complete a degree in a specified time
-span, for example 4-, 6-, or 8-years after admission. If they do, their
-completion is timely; if not, their completion is late and they are
-grouped with the non-completers when computing a metric such as
-graduation rate.
+- `term_degree` Character. Term in which the first degree(s) are
+  completed, encoded `YYYYT`. Joined from `midfield_degree`.
 
-Completion status is "timely" for students completing a degree no later
-than their timely completion terms. See also
-[`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md).
+- `completion_status` Character. Possible values are "timely","late",
+  and "NA". Completion status is "timely" for students completing a
+  degree no later than their timely completion terms; "late" for
+  students completing their program after their timely completion term;
+  and "NA" for non-completers.
 
 ## See also
 

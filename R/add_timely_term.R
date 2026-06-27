@@ -2,17 +2,17 @@
 
 #' Calculate a timely completion term for every student
 #'
-#' Add a column to a data frame of student-level records that indicates the
-#' latest term by which degree completion  would be considered timely for every
-#' student.
-#'
-#' By "completion" we mean an undergraduate earning their first baccalaureate
-#' degree (or degrees, for students earning more than one degree in the same
-#' term).
+#' Add columns to a data frame of student-level records that indicate each
+#' student's timely completion term, that is, the term by which program
+#' completion would be considered timely. By "completion" we mean an
+#' undergraduate earning their first baccalaureate degree (or degrees, for
+#' students earning more than one degree in the same term). The timely
+#' completion term is usually defined as 4-, 6-, or 8-years after admission.
+#' Our default is 6 years.
 #'
 #' In many studies, students must complete their programs in a specified time
-#' span, for example 4-, 6-, or 8-years after admission. If they do, their
-#' completion is timely; if not, their completion is late and they are grouped
+#' span to be considered "timely", for example 4-, 6-, or 8-years after
+#' admission. If they do not, their completion is "late" and they are grouped
 #' with the non-completers when computing a metric such as graduation rate.
 #'
 #' Our heuristic assigns `span` number of years (default is 6 years) to every
@@ -20,34 +20,50 @@
 #' reduced by one year for each full year the student is assumed to have
 #' completed. For example, a student admitted at the second-year level is
 #' assumed to have completed one year of a program, so their span is reduced by
-#' one year.
-#'
-#' The adjusted span is added to the initial term to create the timely
+#' one year. The adjusted span is added to the initial term to create the timely
 #' completion term in the `timely_term` column.
 #'
-#' @param dframe        `r dframe_add_timely_term`
-#' @param midfield_term `r midfield_term_add_timely_term`
-#' @param ...           `r param_dots`
-#' @param span Optional integer scalar, number of years to define timely
-#'   completion. Commonly used values are are 100, 150, and 200 percent of
-#'   `sched_span.` Default 6 years.
-#' @param sched_span Optional integer scalar, the number of years an institution
-#'   officially schedules for completing a program. Default 4 years.
+#' The new columns are:
 #'
-#' @return `r return_data_frame`
-#' \describe{
-#'  \item{`term_i`}{Character. Initial term of a student's longitudinal
-#'  record, encoded YYYYT}
-#'  \item{`level_i`}{Character. Student level (01 Freshman, 02 Sophomore,
-#'  etc.) in their initial term}
-#'  \item{`adj_span`}{Numeric. Integer span of years for timely completion
-#'  adjusted for a student's initial level.}
-#'  \item{`timely_term`}{Character. Latest term by which program
-#'  completion would be considered timely for every student. Encoded YYYYT.}
-#' }
+#' * `term_i` Initial term of a student's longitudinal record, encoded `YYYYT`.
+#'    Extracted from `term`.
+#'
+#' * `level_i`. Character. Student level (01 Freshman, 02 Sophomore, etc.)
+#'    in their initial term. Extracted from `term`.
+#'
+#' * `adj_span`. Numeric. Integer span of years for timely completion
+#'    adjusted for a student's initial level.
+#'
+#' * `timely_term`. Character. Latest term by which program completion would
+#'    be considered timely for every student. Encoded `YYYYT`.
+#'
+#' @param dframe  Working data frame of student-level records to which
+#'        timely-term columns are to be added. Required variable is `mcid`.
+#'
+#' @param midfield_term MIDFIELD `term` data table or equivalent with
+#'        required variables `mcid`, `term`, and `level`.
+#'
+#' @param ... `r param_dots`
+#'
+#' @param span Optional integer scalar, number of years to define timely
+#'        completion. Commonly used values are are 100%, 150%, and 200% of
+#'        `sched_span.` Default 6 years.
+#'
+#' @param sched_span Optional integer scalar, the number of years an institution
+#'        officially schedules for completing a program. Default 4 years.
+#'
+#' @returns A data frame of the same type as `dframe`. The output has the
+#' following properties:
+#'
+#' * Rows are not modified.
+#' * Columns are added, overwriting existing columns (if any) of the same name.
+#'   Other columns are not modified.
+#' * Groups are not preserved.
+#' * Data frame attributes are preserved for classes `data.frame`, `data.table`,
+#'   or `tbl_df`.
 #'
 #' @family add_*
-#' @example man/examples/add_timely_term_exa.R
+#' @example man/examples/exa_add_timely_term.R
 #' @export
 #'
 add_timely_term <- function(dframe,
@@ -95,10 +111,10 @@ add_timely_term <- function(dframe,
   # to restore class (tibble, data.frame, etc.) before return
   prior_class <- class(dframe)
 
-  # non-DT input copied and converted to DT
-  # DT input unchanged, no copy, global by-ref still active
-  dframe <- prep_non_dt_input(dframe)
-  midfield_term <- prep_non_dt_input(midfield_term)
+  # Copy and setDT() non-DT input. Prevents by-ref changes.
+  # No change to DT class input. By-ref changes remain active.
+  dframe <- copy_setDT_non_DT(dframe)
+  midfield_term <- copy_setDT_non_DT(midfield_term)
 
   # bind names due to NSE notes in R CMD check
   timely_term <- NULL

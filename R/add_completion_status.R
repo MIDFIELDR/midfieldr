@@ -4,36 +4,42 @@
 #'
 #' Add columns to a data frame of student-level records that indicate whether a
 #' student completed a degree, and if so, whether their completion was timely.
-#'
 #' By "completion" we mean an undergraduate earning their first baccalaureate
 #' degree (or degrees, for students earning more than one degree in the same
-#' term). Additional degrees, if any, earned later than the term of the first
-#' degree are ignored.
+#' term). The term by which a student's completion would be considered timely
+#' (the "timely completion term") is usually defined as 4-, 6-, or 8-years
+#' after admission. Our default is 6 years.
 #'
-#' In many studies, students must complete a degree in a specified time span,
-#' for example 4-, 6-, or 8-years after admission. If they do, their completion
-#' is timely; if not, their completion is late and they are grouped with the
-#' non-completers when computing a metric such as graduation rate.
+#' The new columns are:
 #'
-#' Completion status is "timely" for students completing a degree no later than
-#' their timely completion terms. See also `add_timely_term()`.
+#' * `term_degree` Character. Term in which the first degree(s) are
+#'    completed, encoded `YYYYT`. Joined from `midfield_degree`.
 #'
-#' @param dframe          `r dframe_add_completion_status`
-#' @param midfield_degree `r midfield_degree_add_completion_status`
+#' * `completion_status` Character. Possible values are "timely","late",
+#'    and "NA". Completion status is "timely" for students completing a
+#'    degree no later than their timely completion terms; "late" for students
+#'    completing their program after their timely completion term; and "NA"
+#'    for non-completers.
 #'
-#' @return `r return_data_frame`
-#' \describe{
-#'  \item{`term_degree`}{Character. Term in which the first degree(s) are
-#'  completed. Encoded YYYYT. Joined from `midfield_degree` data table.}
-#'  \item{`completion_status`}{Character. Label each observation to
-#'  indicate completion status. Possible values are: "timely", indicating
-#'  completion no later than the timely completion term; "late", indicating
-#'  completion after the timely completion term; and "NA" indicating
-#'  non-completion.}
-#' }
+#' @param dframe Working data frame of student-level records to which
+#'        completion-status columns are to be added. Required variables are
+#'        `mcid` and `timely_term`.
+#'
+#' @param midfield_degree MIDFIELD `degree` data table or equivalent with
+#'        required variables `mcid` and `term_degree.`
+#'
+#' @returns A data frame of the same type as `dframe`. The output has the
+#' following properties:
+#'
+#' * Rows are not modified.
+#' * Columns are added, overwriting existing columns (if any) of the same name.
+#'   Other columns are not modified.
+#' * Groups are not preserved.
+#' * Data frame attributes are preserved for classes `data.frame`, `data.table`,
+#'   or `tbl_df`.
 #'
 #' @family add_*
-#' @example man/examples/add_completion_status_exa.R
+#' @example man/examples/exa_add_completion_status.R
 #' @export
 #'
 add_completion_status <- function(dframe, midfield_degree = degree) {
@@ -62,10 +68,10 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
   # to restore class (tibble, data.frame, etc.) before return
   prior_class <- class(dframe)
 
-  # Convert non-data.table input to data.table class. By-ref changes to
-  # dframe in global environment remain active for data.tables.
-  DT <- prep_non_dt_input(dframe)
-  setDT(midfield_degree) # immediately subset, so side-effect OK
+  # Copy and setDT() non-DT input. Prevents by-ref changes.
+  # No change to DT class input. By-ref changes remain active.
+  DT <- copy_setDT_non_DT(dframe)
+  midfield_degree <- copy_setDT_non_DT(midfield_degree)
 
   # bind names due to NSE notes in R CMD check
   completion_status <- NULL

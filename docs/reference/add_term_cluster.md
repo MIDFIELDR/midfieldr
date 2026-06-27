@@ -1,8 +1,11 @@
 # Identify rows of post-baccalaureate terms
 
 Provides a means of excluding post-baccalaureate terms by adding a
-column of term-status labels identifying pre- and post-baccalaureate
-terms.
+column of term-cluster labels identifying pre- and post-baccalaureate
+terms. In a typical analysis, one is interested in a student's progress
+up to and including the term in which they earn their first degree or
+degrees. Any terms later than the first baccalaureate can usually be
+excluded from study.
 
 ## Usage
 
@@ -14,53 +17,43 @@ add_term_cluster(dframe, midfield_degree = degree)
 
 - dframe:
 
-  Working data frame of student-level records to which a term-status
+  Working data frame of student-level records to which a term-cluster
   column is to be added. Required variables are `mcid` and a single term
-  variable.
+  variable: `term` (when working with the term table), `term_course`
+  (course table), or `term_degree` (degree table).
 
 - midfield_degree:
 
   MIDFIELD `degree` data table or equivalent with required variables
-  `mcid` and `term_degree.`
+  `mcid` and `term_degree`.
 
 ## Value
 
-A data frame with the following properties: rows are preserved; columns
-`first_degree_term` and `term_status` are added or overwritten; all
-other columns are preserved. Grouping structures are not necessarily
-preserved. The added columns are:
+A data frame of the same type as `dframe`. The output has the following
+properties:
 
-- `first_degree_term`:
+- Rows are not modified.
 
-  Character. Term of a student's first baccalaureate, encoded `YYYYT` —
-  or NA if no degree recorded.
+- Columns are added, overwriting existing columns (if any) of the same
+  name. Other columns are not modified.
 
-- `term_cluster`:
+- Groups are not preserved.
 
-  Character. Possible values are "pre-degree", "first-degree", and
-  "post-first-degree".
-
-An attempt is made to return data frames of the same class as the input,
-so a data.table input should produce a data.table output, a tibble input
-should produce a tibble output, etc. Grouped tibbles, however, are
-returned as data.frames. To help ensure a tibble output, try ungrouping
-a tibble before using it as an input argument.
+- Data frame attributes are preserved for classes `data.frame`,
+  `data.table`, or `tbl_df`.
 
 ## Details
 
-In a typical analysis, one is interested in a student's progress up to
-and including the term in which they earn their first degree or degrees.
-Any terms later than the first baccalaureate can usually be excluded
-from study.
+The new columns are :
 
-The input `dframe` must have a term variable with one of three possible
-names: `term` (from the term data table), `term_course` (from the course
-data table), or `term_degree` (from the degree data table).
+- `first_degree_term` Character. Term of a student's first
+  baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA`. Joined
+  from `midfield_degree$term_degree`.
 
-`add_term_cluster()` determines a student's first degree term (if any)
-from `midfield_degree`, adds that column to `dframe`, and adds a second
-column of term-status labels identifying pre- and post-baccalaureate
-terms.
+- `term_cluster` Character, indicating that a term belongs to one of
+  three clusters: terms that are prior to ("pre-degree"), equal to
+  ("first-degree"), or subsequent to ("post-first-degree") the student’s
+  first degree term.
 
 ## Examples
 

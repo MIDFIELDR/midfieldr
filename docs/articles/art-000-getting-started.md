@@ -23,25 +23,17 @@ library(midfielddata)
 library(data.table)
 ```
 
-Please note:
+Before you start:
 
-1.  *On syntax:*   Data manipulation in our sample scripts is coded
-    using data.table syntax, e.g., choosing rows and columns, merging,
-    grouping, summarizing, and reshaping data frames. However, the case
-    study is also presented using the syntax of dplyr and friends for
-    those who prefer that system.
+1.  *On syntax:*   Data manipulation in our sample scripts and
+    internally in functions is coded using data.table syntax. However,
+    midfieldr functions do attempt to preserve data frame attributes
+    such as base R `data.frame` or tibble `tbl_df`.
 
-Users preferring a different syntax would have to translate from
-data.table to their preferred system. However, midfieldr does provide
-modest support for tibbles in that functions attempt to return a data
-frame of the same class as the input data frame.
-
-2.  *On functions:*   Here, we provide a brief introduction only.
-    Details are discussed at length in subsequent articles. You can
-    always access function documentation, e.g.,
-    [`?select_basic_cols`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md),
-    [`?add_term_cluster`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md),
-    etc. for more information.
+2.  *On functions:*   In getting started, we provide a brief
+    introduction only. Details are discussed at length in subsequent
+    articles. You can always access the documentation, e.g.,
+    `?function_name`, for more information.
 
 ## midfieldr functions
 
@@ -50,13 +42,13 @@ based on their contribution to a typical workflow:
 
 Programs
 
-- [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/filter_cip.md)
+- [`filter_cip_rows()`](https://midfieldr.github.io/midfieldr/reference/filter_cip_rows.md)
   chooses rows of CIP data based on search terms.
 
 Records
 
-- [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
-  chooses columns required by midfieldr functions.
+- [`select_record_cols()`](https://midfieldr.github.io/midfieldr/reference/select_record_cols.md)
+  chooses columns of student records required by midfieldr functions.
 - [`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md)
   identifies rows of post-baccalaureate terms to exclude.
 - [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
@@ -130,19 +122,18 @@ cip
 #> 1582:                         NonIPEDS - Undecided, Unspecified     99
 ```
 
-## `filter_cip()`
+## `filter_cip_rows()`
 
 *Chooses rows of CIP data based on search terms.*
 
-[`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/filter_cip.md)
-acts on the data frame assigned to its `cip` argument (default is
-`cip = cip`) to select rows that match or partially match search
-strings. Search strings are case-independent and can include regular
-expressions.
+[`filter_cip_rows()`](https://midfieldr.github.io/midfieldr/reference/filter_cip_rows.md)
+acts on the data frame assigned to its `dframe` argument to select rows
+that match or partially match search strings. Search strings are
+case-independent and can include regular expressions.
 
 ``` r
 
-filter_cip("music", cip = cip)
+filter_cip_rows(cip, "music")
 #>                                      cip6name   cip6
 #>                                        <char> <char>
 #>  1:                   Music Teacher Education 131312
@@ -185,14 +176,14 @@ filter_cip("music", cip = cip)
 ```
 
 To refine our results, we can assign the results of a first pass to the
-`cip` argument of a second pass. For example, our first pass below
+`dframe` argument of a second pass. For example, our first pass below
 searches the default `cip` dataset for “music”. Our second pass searches
 the results of the first pass for any line that starts with “50”.
 
 ``` r
 
-first_pass <- filter_cip("music")
-second_pass <- filter_cip("^50", cip = first_pass)
+first_pass <- filter_cip_rows(cip, "music")
+second_pass <- filter_cip_rows(first_pass, "^50")
 second_pass
 #>                                 cip6name   cip6
 #>                                   <char> <char>
@@ -241,7 +232,7 @@ the results of the second pass for any line that starts with “5009”.
 
 ``` r
 
-third_pass <- filter_cip("^5009", cip = second_pass)
+third_pass <- filter_cip_rows(second_pass, "^5009")
 third_pass
 #>                                 cip6name   cip6 cip4name   cip4
 #>                                   <char> <char>   <char> <char>
@@ -319,29 +310,20 @@ midfielddata.
 data(student, term, degree)
 ```
 
-We usually copy the source data, giving them new names (and new
-locations in memory), to keep them intact while we use the original
-names — `student`, `term`, and `degree` — to do our work.
-
-``` r
-
-student_source <- copy(student)
-term_source <- copy(term)
-degree_source <- copy(degree)
-```
-
-The data tables are linked by `mcid`, the anonymized student ID.
+[`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
+is a midfieldr convenience function that wraps `base::str()`. The data
+tables are linked by `mcid`, the anonymized student ID.
 
 ``` r
 
 look_at(student)
 #> Classes 'data.table' and 'data.frame':   97555 obs. of  13 variables:
 #>  $ mcid          : chr  "MCID3111142225" "MCID3111142283" "MCID3111142290" "M"..
+#>  $ race          : chr  "Asian" "Asian" "Asian" "Asian" ...
+#>  $ sex           : chr  "Male" "Female" "Male" "Male" ...
 #>  $ institution   : chr  "Institution B" "Institution J" "Institution J" "Inst"..
 #>  $ transfer      : chr  "First-Time Transfer" "First-Time Transfer" "First-Ti"..
 #>  $ hours_transfer: num  NA NA NA NA NA NA NA NA NA NA ...
-#>  $ race          : chr  "Asian" "Asian" "Asian" "Asian" ...
-#>  $ sex           : chr  "Male" "Female" "Male" "Male" ...
 #>  $ age_desc      : chr  "Under 25" "Under 25" "Under 25" "Under 25" ...
 #>  $ us_citizen    : chr  "Yes" "Yes" "Yes" "Yes" ...
 #>  $ home_zip      : chr  NA "22020" "23233" "20853" ...
@@ -353,9 +335,9 @@ look_at(student)
 look_at(term)
 #> Classes 'data.table' and 'data.frame':   639915 obs. of  13 variables:
 #>  $ mcid               : chr  "MCID3111142225" "MCID3111142283" "MCID311114228"..
-#>  $ institution        : chr  "Institution B" "Institution J" "Institution J" "..
 #>  $ term               : chr  "19881" "19881" "19883" "19885" ...
 #>  $ cip6               : chr  "140901" "240102" "240102" "190601" ...
+#>  $ institution        : chr  "Institution B" "Institution J" "Institution J" "..
 #>  $ level              : chr  "01 First-year" "01 First-year" "01 First-year" "..
 #>  $ standing           : chr  "Good Standing" "Academic Probation" "Academic P"..
 #>  $ coop               : chr  "No" "No" "No" "No" ...
@@ -369,20 +351,28 @@ look_at(term)
 look_at(degree)
 #> Classes 'data.table' and 'data.frame':   49665 obs. of  5 variables:
 #>  $ mcid       : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294" "MCID"..
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 #>  $ term_degree: chr  "19881" "19921" "19903" "19921" ...
 #>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
+#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 #>  $ degree     : chr  "Bachelor of Science in Electrical Engineering" "Bachelo"..
 ```
 
-[`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
-is a midfieldr convenience function that wraps `base::str()`.
+We usually copy the source data, giving them new names (and new
+locations in memory), to keep them intact while we use the original
+names — `student`, `term`, and `degree` — to do our work.
 
-## `select_basic_cols()`
+``` r
+
+student_source <- copy(student)
+term_source <- copy(term)
+degree_source <- copy(degree)
+```
+
+## `select_record_cols()`
 
 *Choose columns required by midfieldr functions.*
 
-[`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
+[`select_record_cols()`](https://midfieldr.github.io/midfieldr/reference/select_record_cols.md)
 operates on student records to reduce the number of columns to those
 required by other midfieldr functions plus the key or composite key
 variables of the four data tables. Shown below, the records have been
@@ -390,29 +380,27 @@ reduced to no more than 5 columns required by other midfieldr functions.
 
 ``` r
 
-student <- select_basic_cols(student)
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
+student <- select_record_cols(student, type = "s")
+term <- select_record_cols(term, "t")
+degree <- select_record_cols(degree, "d")
 
 look_at(student)
-#> Classes 'data.table' and 'data.frame':   97555 obs. of  4 variables:
-#>  $ mcid       : chr  "MCID3111142225" "MCID3111142283" "MCID3111142290" "MCID"..
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
-#>  $ race       : chr  "Asian" "Asian" "Asian" "Asian" ...
-#>  $ sex        : chr  "Male" "Female" "Male" "Male" ...
+#> Classes 'data.table' and 'data.frame':   97555 obs. of  3 variables:
+#>  $ mcid: chr  "MCID3111142225" "MCID3111142283" "MCID3111142290" "MCID3111142"..
+#>  $ race: chr  "Asian" "Asian" "Asian" "Asian" ...
+#>  $ sex : chr  "Male" "Female" "Male" "Male" ...
 
 look_at(term)
 #> Classes 'data.table' and 'data.frame':   639915 obs. of  5 variables:
 #>  $ mcid       : chr  "MCID3111142225" "MCID3111142283" "MCID3111142283" "MCID"..
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 #>  $ term       : chr  "19881" "19881" "19883" "19885" ...
 #>  $ cip6       : chr  "140901" "240102" "240102" "190601" ...
+#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 #>  $ level      : chr  "01 First-year" "01 First-year" "01 First-year" "01 Firs"..
 
 look_at(degree)
-#> Classes 'data.table' and 'data.frame':   49665 obs. of  4 variables:
+#> Classes 'data.table' and 'data.frame':   49665 obs. of  3 variables:
 #>  $ mcid       : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294" "MCID"..
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 #>  $ term_degree: chr  "19881" "19921" "19903" "19921" ...
 #>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
 ```
@@ -423,19 +411,19 @@ readable, a benefit when working with the data interactively.
 ``` r
 
 term
-#>                   mcid   institution   term   cip6          level
-#>                 <char>        <char> <char> <char>         <char>
-#>      1: MCID3111142225 Institution B  19881 140901  01 First-year
-#>      2: MCID3111142283 Institution J  19881 240102  01 First-year
-#>      3: MCID3111142283 Institution J  19883 240102  01 First-year
-#>      4: MCID3111142283 Institution J  19885 190601  01 First-year
-#>      5: MCID3111142283 Institution J  19891 190601 02 Second-year
+#>                   mcid   term   cip6   institution          level
+#>                 <char> <char> <char>        <char>         <char>
+#>      1: MCID3111142225  19881 140901 Institution B  01 First-year
+#>      2: MCID3111142283  19881 240102 Institution J  01 First-year
+#>      3: MCID3111142283  19883 240102 Institution J  01 First-year
+#>      4: MCID3111142283  19885 190601 Institution J  01 First-year
+#>      5: MCID3111142283  19891 190601 Institution J 02 Second-year
 #>     ---                                                          
-#> 639911: MCID3112898886 Institution B  20181 500501  01 First-year
-#> 639912: MCID3112898890 Institution B  20181 451101  01 First-year
-#> 639913: MCID3112898894 Institution B  20181 451001  01 First-year
-#> 639914: MCID3112898895 Institution B  20181 302001  01 First-year
-#> 639915: MCID3112898940 Institution B  20181 050103  01 First-year
+#> 639911: MCID3112898886  20181 500501 Institution B  01 First-year
+#> 639912: MCID3112898890  20181 451101 Institution B  01 First-year
+#> 639913: MCID3112898894  20181 451001 Institution B  01 First-year
+#> 639914: MCID3112898895  20181 302001 Institution B  01 First-year
+#> 639915: MCID3112898940  20181 050103 Institution B  01 First-year
 ```
 
 ## `add_term_cluster()`
@@ -460,19 +448,19 @@ the first degree term.
 ``` r
 
 term
-#>                   mcid   institution   term   cip6          level
-#>                 <char>        <char> <char> <char>         <char>
-#>      1: MCID3111142225 Institution B  19881 140901  01 First-year
-#>      2: MCID3111142283 Institution J  19881 240102  01 First-year
-#>      3: MCID3111142283 Institution J  19883 240102  01 First-year
-#>      4: MCID3111142283 Institution J  19885 190601  01 First-year
-#>      5: MCID3111142283 Institution J  19891 190601 02 Second-year
+#>                   mcid   term   cip6   institution          level
+#>                 <char> <char> <char>        <char>         <char>
+#>      1: MCID3111142225  19881 140901 Institution B  01 First-year
+#>      2: MCID3111142283  19881 240102 Institution J  01 First-year
+#>      3: MCID3111142283  19883 240102 Institution J  01 First-year
+#>      4: MCID3111142283  19885 190601 Institution J  01 First-year
+#>      5: MCID3111142283  19891 190601 Institution J 02 Second-year
 #>     ---                                                          
-#> 639911: MCID3112898886 Institution B  20181 500501  01 First-year
-#> 639912: MCID3112898890 Institution B  20181 451101  01 First-year
-#> 639913: MCID3112898894 Institution B  20181 451001  01 First-year
-#> 639914: MCID3112898895 Institution B  20181 302001  01 First-year
-#> 639915: MCID3112898940 Institution B  20181 050103  01 First-year
+#> 639911: MCID3112898886  20181 500501 Institution B  01 First-year
+#> 639912: MCID3112898890  20181 451101 Institution B  01 First-year
+#> 639913: MCID3112898894  20181 451001 Institution B  01 First-year
+#> 639914: MCID3112898895  20181 302001 Institution B  01 First-year
+#> 639915: MCID3112898940  20181 050103 Institution B  01 First-year
 #>         first_degree_term term_cluster
 #>                    <char>       <char>
 #>      1:             19881 first-degree
@@ -507,23 +495,23 @@ the extra columns.
 term <- term[!"post-first-degree", on = "term_cluster"]
 degree <- degree[!"post-first-degree", on = "term_cluster"]
 
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
+term <- select_record_cols(term, "t")
+degree <- select_record_cols(degree, "d")
 
 term
-#>                   mcid   institution   term   cip6          level
-#>                 <char>        <char> <char> <char>         <char>
-#>      1: MCID3111142225 Institution B  19881 140901  01 First-year
-#>      2: MCID3111142283 Institution J  19881 240102  01 First-year
-#>      3: MCID3111142283 Institution J  19883 240102  01 First-year
-#>      4: MCID3111142283 Institution J  19885 190601  01 First-year
-#>      5: MCID3111142283 Institution J  19891 190601 02 Second-year
+#>                   mcid   term   cip6   institution          level
+#>                 <char> <char> <char>        <char>         <char>
+#>      1: MCID3111142225  19881 140901 Institution B  01 First-year
+#>      2: MCID3111142283  19881 240102 Institution J  01 First-year
+#>      3: MCID3111142283  19883 240102 Institution J  01 First-year
+#>      4: MCID3111142283  19885 190601 Institution J  01 First-year
+#>      5: MCID3111142283  19891 190601 Institution J 02 Second-year
 #>     ---                                                          
-#> 632913: MCID3112898886 Institution B  20181 500501  01 First-year
-#> 632914: MCID3112898890 Institution B  20181 451101  01 First-year
-#> 632915: MCID3112898894 Institution B  20181 451001  01 First-year
-#> 632916: MCID3112898895 Institution B  20181 302001  01 First-year
-#> 632917: MCID3112898940 Institution B  20181 050103  01 First-year
+#> 632913: MCID3112898886  20181 500501 Institution B  01 First-year
+#> 632914: MCID3112898890  20181 451101 Institution B  01 First-year
+#> 632915: MCID3112898894  20181 451001 Institution B  01 First-year
+#> 632916: MCID3112898895  20181 302001 Institution B  01 First-year
+#> 632917: MCID3112898940  20181 050103 Institution B  01 First-year
 ```
 
 ## `add_timely_term()`

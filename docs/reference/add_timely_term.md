@@ -1,8 +1,12 @@
 # Calculate a timely completion term for every student
 
-Add a column to a data frame of student-level records that indicates the
-latest term by which degree completion would be considered timely for
-every student.
+Add columns to a data frame of student-level records that indicate each
+student's timely completion term, that is, the term by which program
+completion would be considered timely. By "completion" we mean an
+undergraduate earning their first baccalaureate degree (or degrees, for
+students earning more than one degree in the same term). The timely
+completion term is usually defined as 4-, 6-, or 8-years after
+admission. Our default is 6 years.
 
 ## Usage
 
@@ -26,7 +30,7 @@ add_timely_term(
 - midfield_term:
 
   MIDFIELD `term` data table or equivalent with required variables
-  `mcid`, `term`, and `level.`
+  `mcid`, `term`, and `level`.
 
 - ...:
 
@@ -36,8 +40,8 @@ add_timely_term(
 - span:
 
   Optional integer scalar, number of years to define timely completion.
-  Commonly used values are are 100, 150, and 200 percent of
-  `sched_span.` Default 6 years.
+  Commonly used values are are 100%, 150%, and 200% of `sched_span.`
+  Default 6 years.
 
 - sched_span:
 
@@ -46,41 +50,25 @@ add_timely_term(
 
 ## Value
 
-A data frame in `data.table` format with the following properties: rows
-are preserved; columns are preserved with the exception that columns
-added by the function overwrite existing columns of the same name (if
-any); grouping structures are not preserved. The added columns are:
+A data frame of the same type as `dframe`. The output has the following
+properties:
 
-- `term_i`:
+- Rows are not modified.
 
-  Character. Initial term of a student's longitudinal record, encoded
-  YYYYT
+- Columns are added, overwriting existing columns (if any) of the same
+  name. Other columns are not modified.
 
-- `level_i`:
+- Groups are not preserved.
 
-  Character. Student level (01 Freshman, 02 Sophomore, etc.) in their
-  initial term
-
-- `adj_span`:
-
-  Numeric. Integer span of years for timely completion adjusted for a
-  student's initial level.
-
-- `timely_term`:
-
-  Character. Latest term by which program completion would be considered
-  timely for every student. Encoded YYYYT.
+- Data frame attributes are preserved for classes `data.frame`,
+  `data.table`, or `tbl_df`.
 
 ## Details
 
-By "completion" we mean an undergraduate earning their first
-baccalaureate degree (or degrees, for students earning more than one
-degree in the same term).
-
 In many studies, students must complete their programs in a specified
-time span, for example 4-, 6-, or 8-years after admission. If they do,
-their completion is timely; if not, their completion is late and they
-are grouped with the non-completers when computing a metric such as
+time span to be considered "timely", for example 4-, 6-, or 8-years
+after admission. If they do not, their completion is "late" and they are
+grouped with the non-completers when computing a metric such as
 graduation rate.
 
 Our heuristic assigns `span` number of years (default is 6 years) to
@@ -88,10 +76,22 @@ every student. For students admitted at second-year level or higher, the
 span is reduced by one year for each full year the student is assumed to
 have completed. For example, a student admitted at the second-year level
 is assumed to have completed one year of a program, so their span is
-reduced by one year.
+reduced by one year. The adjusted span is added to the initial term to
+create the timely completion term in the `timely_term` column.
 
-The adjusted span is added to the initial term to create the timely
-completion term in the `timely_term` column.
+The new columns are:
+
+- `term_i` Initial term of a student's longitudinal record, encoded
+  `YYYYT`. Extracted from `term`.
+
+- `level_i`. Character. Student level (01 Freshman, 02 Sophomore, etc.)
+  in their initial term. Extracted from `term`.
+
+- `adj_span`. Numeric. Integer span of years for timely completion
+  adjusted for a student's initial level.
+
+- `timely_term`. Character. Latest term by which program completion
+  would be considered timely for every student. Encoded `YYYYT`.
 
 ## See also
 

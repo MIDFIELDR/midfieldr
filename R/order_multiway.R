@@ -70,7 +70,7 @@
 #'   Kroonenberg PM (2008). \emph{Applied Multiway Data Analysis}. Wiley,
 #'   Hoboken, NJ.
 #'
-#' @example man/examples/order_multiway_exa.R
+#' @example man/examples/exa_order_multiway.R
 #' @export
 #'
 order_multiway <- function(dframe,
@@ -147,7 +147,7 @@ order_multiway <- function(dframe,
 
   # Convert non-data.table input to data.table class. By-ref changes to
   # dframe in global environment remain active for data.tables.
-  dframe <- prep_non_dt_input(dframe)
+  dframe <- copy_setDT_non_DT(dframe)
 
   # do the work
 

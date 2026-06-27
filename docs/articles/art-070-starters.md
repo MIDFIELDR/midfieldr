@@ -157,8 +157,8 @@ source_student <- copy(student)
 source_term <- copy(term)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_basic_cols(source_student)
-term <- select_basic_cols(source_term)
+student <- select_record_cols(source_student)
+term <- select_record_cols(source_term)
 ```
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a
@@ -367,15 +367,15 @@ program.
 
 # Sequence of term records
 term[mcid == "MCID3111150194"]
-#>               mcid   institution   term   cip6              level
-#>             <char>        <char> <char> <char>             <char>
-#>  1: MCID3111150194 Institution J  19883 140102      01 First-year
-#>  2: MCID3111150194 Institution J  19891 140102     02 Second-year
-#>  3: MCID3111150194 Institution J  19893 140102     02 Second-year
+#>               mcid   term   cip6   institution              level
+#>             <char> <char> <char>        <char>             <char>
+#>  1: MCID3111150194  19883 140102 Institution J      01 First-year
+#>  2: MCID3111150194  19891 140102 Institution J     02 Second-year
+#>  3: MCID3111150194  19893 140102 Institution J     02 Second-year
 #> ---                                                              
-#>  6: MCID3111150194 Institution J  19913 143501     04 Fourth-year
-#>  7: MCID3111150194 Institution J  19921 143501 05 Fifth-year Plus
-#>  8: MCID3111150194 Institution J  19923 143501 05 Fifth-year Plus
+#>  6: MCID3111150194  19913 143501 Institution J     04 Fourth-year
+#>  7: MCID3111150194  19921 143501 Institution J 05 Fifth-year Plus
+#>  8: MCID3111150194  19923 143501 Institution J 05 Fifth-year Plus
 ```
 
 *Example 2.*   In our results, this student is a starter in CIP 141801
@@ -399,19 +399,19 @@ a starter in their proxy program, Materials Engineering.
 
 # Sequence of term records
 term[mcid == "MCID3111161837"]
-#>               mcid   institution   term   cip6              level
-#>             <char>        <char> <char> <char>             <char>
-#>  1: MCID3111161837 Institution J  19883 140102      01 First-year
-#>  2: MCID3111161837 Institution J  19891 140102     02 Second-year
-#>  3: MCID3111161837 Institution J  19893 140102     02 Second-year
-#>  4: MCID3111161837 Institution J  19905 270101     02 Second-year
-#>  5: MCID3111161837 Institution J  19906 270101     02 Second-year
-#>  6: MCID3111161837 Institution J  19913 270101      03 Third-year
-#>  7: MCID3111161837 Institution J  19921 270101      03 Third-year
-#>  8: MCID3111161837 Institution J  19923 270101     04 Fourth-year
-#>  9: MCID3111161837 Institution J  19931 270101     04 Fourth-year
-#> 10: MCID3111161837 Institution J  19933 270101     04 Fourth-year
-#> 11: MCID3111161837 Institution J  19935 270101 05 Fifth-year Plus
+#>               mcid   term   cip6   institution              level
+#>             <char> <char> <char>        <char>             <char>
+#>  1: MCID3111161837  19883 140102 Institution J      01 First-year
+#>  2: MCID3111161837  19891 140102 Institution J     02 Second-year
+#>  3: MCID3111161837  19893 140102 Institution J     02 Second-year
+#>  4: MCID3111161837  19905 270101 Institution J     02 Second-year
+#>  5: MCID3111161837  19906 270101 Institution J     02 Second-year
+#>  6: MCID3111161837  19913 270101 Institution J      03 Third-year
+#>  7: MCID3111161837  19921 270101 Institution J      03 Third-year
+#>  8: MCID3111161837  19923 270101 Institution J     04 Fourth-year
+#>  9: MCID3111161837  19931 270101 Institution J     04 Fourth-year
+#> 10: MCID3111161837  19933 270101 Institution J     04 Fourth-year
+#> 11: MCID3111161837  19935 270101 Institution J 05 Fifth-year Plus
 ```
 
 *Example 3.*   In our results, this student is a starter in CIP 140701
@@ -433,10 +433,10 @@ them a starter in their proxy program, Chemical Engineering.
 ``` r
 
 term[mcid == "MCID3111303095"]
-#>              mcid   institution   term   cip6         level
-#>            <char>        <char> <char> <char>        <char>
-#> 1: MCID3111303095 Institution J  19911 140102 01 First-year
-#> 2: MCID3111303095 Institution J  19913 140102 01 First-year
+#>              mcid   term   cip6   institution         level
+#>            <char> <char> <char>        <char>        <char>
+#> 1: MCID3111303095  19911 140102 Institution J 01 First-year
+#> 2: MCID3111303095  19913 140102 Institution J 01 First-year
 ```
 
 ## Filter by program

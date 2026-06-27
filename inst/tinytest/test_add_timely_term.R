@@ -5,6 +5,7 @@ run_check <- function(x, y, fnc) {
     
     z <- fnc(x, y)
     expect_equal(class(x), class(z))
+    expect_equal(class(y), class(z))
     
     rm(z)
 }

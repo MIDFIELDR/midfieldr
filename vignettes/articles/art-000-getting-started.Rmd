@@ -57,7 +57,7 @@ options(
 
 Before you start:
 
-1. *On syntax:* &nbsp; Data manipulation in our sample scripts is coded using  data.table syntax. However, functions in midfieldr attempt to return a tibble output when operating on a tibble input. The case study is presented a second time using tidyverse syntax for users who prefer that system. 
+1. *On syntax:* &nbsp; Data manipulation in our sample scripts and internally in functions is coded using data.table syntax. However, midfieldr functions do attempt to preserve data frame attributes such as base R `data.frame` or tibble `tbl_df`. 
 
 2. *On functions:* &nbsp; In getting started, we provide a brief introduction only. Details are discussed at length in subsequent articles. You can always access the  documentation, e.g., `?function_name`, for more information.  
 
@@ -73,11 +73,11 @@ The major midfieldr functions can be organized into three categories based on th
 
 Programs
 
-- `filter_cip()` chooses rows of CIP data based on search terms. 
+- `filter_cip_rows()` chooses rows of CIP data based on search terms. 
 
 Records
 
-- `select_basic_cols()` chooses columns required by midfieldr functions.
+- `select_record_cols()` chooses columns of student records required by midfieldr functions.
 - `add_term_cluster()` identifies rows of post-baccalaureate terms to exclude. 
 - `add_timely_term()` estimates a student's timely completion term. 
 - `add_data_sufficiency()` identifies rows to exclude due to insufficient data.
@@ -109,7 +109,7 @@ The `cip` data set, loaded with midfieldr, is a subset of the NCES CIP2010 data 
 #| echo: false
 options(
   datatable.print.topn = 5,
-  datatable.print.nrows = 5
+  datatable.print.nrows = 10
 )
 ```
 
@@ -121,28 +121,28 @@ cip
 
 
 
-## `filter_cip()`
+## `filter_cip_rows()`
 
 *Chooses rows of CIP data based on search terms.*
 
-`filter_cip()` acts on the data frame assigned to its `cip` argument (default is `cip = cip`) to select rows that match or partially match search strings. Search strings are case-independent and can include regular expressions. 
+`filter_cip_rows()` acts on the data frame assigned to its `dframe` argument to select rows that match or partially match search strings. Search strings are case-independent and can include regular expressions. 
 
 ```{r}
-filter_cip("music", cip = cip)
+filter_cip_rows(cip, "music")
 ```
 
-To refine our results, we can assign the results of a first pass to the `cip` argument of a second pass. For example, our first pass below searches the default `cip` dataset for "music". Our second pass searches the results of the  first pass for any line that starts with "50". 
+To refine our results, we can assign the results of a first pass to the `dframe` argument of a second pass. For example, our first pass below searches the default `cip` dataset for "music". Our second pass searches the results of the  first pass for any line that starts with "50". 
 
 ```{r}
-first_pass <- filter_cip("music")
-second_pass <- filter_cip("^50", cip = first_pass)
+first_pass <- filter_cip_rows(cip, "music")
+second_pass <- filter_cip_rows(first_pass, "^50")
 second_pass
 ```
 
 Assuming we are looking for programs in a School of Music, the 4-digit code "5009" appears to be the correct finding. Our third pass searches the results of the second pass for any line that starts with "5009". 
 
 ```{r} 
-third_pass <- filter_cip("^5009", cip = second_pass)
+third_pass <- filter_cip_rows(second_pass, "^5009")
 third_pass
 ```
 
@@ -187,15 +187,7 @@ For this article we load the `student, term,` and `degree` tables from midfieldd
 data(student, term, degree)
 ```
 
-We usually copy the source data, giving them new names (and new locations in memory), to keep them intact while we use the original names  --- `student`, `term`, and `degree` --- to do our work. 
-
-```{r}
-student_source <- copy(student)
-term_source <- copy(term)
-degree_source <- copy(degree)
-```
-
-The data tables are linked by `mcid`, the anonymized student ID. 
+`look_at()` is a midfieldr convenience function that wraps `base::str()`. The data tables are linked by `mcid`, the anonymized student ID. 
 
 ```{r}
 look_at(student)
@@ -205,7 +197,13 @@ look_at(term)
 look_at(degree)
 ```
 
-`look_at()` is a midfieldr convenience function that wraps `base::str()`. 
+We usually copy the source data, giving them new names (and new locations in memory), to keep them intact while we use the original names  --- `student`, `term`, and `degree` --- to do our work. 
+
+```{r}
+student_source <- copy(student)
+term_source <- copy(term)
+degree_source <- copy(degree)
+```
 
 
 
@@ -213,20 +211,16 @@ look_at(degree)
 
 
 
-
-
-
-
-## `select_basic_cols()` 
+## `select_record_cols()` 
 
 *Choose columns required by midfieldr functions.* 
 
-`select_basic_cols()` operates on student records to reduce the number of columns to those required by other midfieldr functions plus the key or composite key variables of the four data tables. Shown below, the records have been reduced to no more than 5 columns required by other midfieldr functions. 
+`select_record_cols()` operates on student records to reduce the number of columns to those required by other midfieldr functions plus the key or composite key variables of the four data tables. Shown below, the records have been reduced to no more than 5 columns required by other midfieldr functions. 
 
 ```{r}
-student <- select_basic_cols(student)
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
+student <- select_record_cols(student, type = "s")
+term <- select_record_cols(term, "t")
+degree <- select_record_cols(degree, "d")
 
 look_at(student)
 
@@ -276,8 +270,8 @@ We filter to exclude all terms labeled "post-first-degree" and remove the extra 
 term <- term[!"post-first-degree", on = "term_cluster"]
 degree <- degree[!"post-first-degree", on = "term_cluster"]
 
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
+term <- select_record_cols(term, "t")
+degree <- select_record_cols(degree, "d")
 
 term
 ```

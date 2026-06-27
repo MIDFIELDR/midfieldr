@@ -8,11 +8,15 @@ New features
 
 - New function
   [`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md)
-  to identify rows of post-baccalaureate terms to exclude
+  to identify rows of post-baccalaureate terms to exclude.
 - New function
-  [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
+  [`select_record_cols()`](https://midfieldr.github.io/midfieldr/reference/select_record_cols.md)
   to replace deprecated
-  [`select_required()`](https://midfieldr.github.io/midfieldr/reference/deprec_midfieldr.md)
+  [`select_required()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md).
+- New function
+  [`filter_cip_rows()`](https://midfieldr.github.io/midfieldr/reference/filter_cip_rows.md)
+  to replace deprecated
+  [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md).
 - New utilities
   [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md),
   [`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md),
@@ -22,9 +26,8 @@ New features
 - Add data set `cip2010`, constructed from a recent download of the
   source file (`CIPCode2010.csv`) from NCES. Has the same data structure
   as the existing `cip` dataset, but with more rows.
-- Add feature in functions that operate on data frames to attempt to
-  return data frames of the same class as the input, e.g., data.frame,
-  data.table, or tibble.
+- Add attempt in functions to preserve data frame attributes for classes
+  `data.frame`, `data.table`, and `tbl_df`.
 
 Minor improvements
 
@@ -40,14 +43,6 @@ Bug fixes
 - This same fix added two rows to the `study_observations` built-in data
   set.
 
-On the website
-
-- Revise “Get started” article for brief but comprehensive introduction
-  to all functions.
-- Revise “Case study” article to focus on process.
-- New article to demonstrate transforming NCES CIP code files into a
-  midfieldr-compatible data structure.
-
 ## version 1.0.3
 
 2026–05 CRAN release
@@ -58,7 +53,7 @@ On the website
   [`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
   to replace `same_content()`
 - Add composite column keys of the `course` data table to
-  [`select_required()`](https://midfieldr.github.io/midfieldr/reference/deprec_midfieldr.md)
+  [`select_required()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
 - Add datasets `grade_scale` and `sat_act_scale`
 
 ## version 1.0.2

@@ -232,42 +232,44 @@ sample(cip[, cip6name], 10)
 #> [10] "Sports and Exercise"
 ```
 
-## `filter_cip()`
+## `filter_cip_rows()`
 
 Subset the `cip` data frame, retaining rows that match or partially
 match a vector of character strings.
 
 *Arguments.*
 
-- **`keep_text`**   Character vector of search text for retaining rows,
-  not case-sensitive. Can be empty if `drop_text` is used.
+- **`dframe`**   Data frame of CIP program names and codes to be subset.
 
-- **`drop_text`**   Character vector of search text for dropping rows,
-  not case-sensitive, default NULL. Argument to be used by name.
+- **`pattern`**   Character vector of search text for retaining rows,
+  not case-sensitive.
 
-- **`cip`**   Data frame to be subset, default `cip`. Argument to be
-  used by name.
-
-- **`select`**   Character vector of column names to search and return,
-  default all columns. Argument to be used by name.
+- **`negate`**   Logical (default FALSE). If TRUE, returns rows that do
+  not match the search pattern.
 
 *Equivalent usage.*   The following implementations yield identical
 results,
 
 ``` r
 
-# First argument named, CIP argument if used must be named
-x <- filter_cip(keep_text = c("engineering"), cip = cip)
+# Arguments named
+x <- filter_cip_rows(dframe = cip, pattern = c("engineering"))
 
-# First argument unnamed, use default CIP argument
-y <- filter_cip("engineering")
+# Arguments unnamed
+y <- filter_cip_rows(cip, "engineering")
+
+# Using a chain
+z <- cip |> filter_cip_rows("engineering")
 
 # Demonstrate equivalence
 check_equiv_frames(x, y)
 #> [1] TRUE
+# Demonstrate equivalence
+check_equiv_frames(x, z)
+#> [1] TRUE
 ```
 
-*Output.*   Subset of `cip` with rows matching elements of `keep_text`.
+*Output.*   Subset of `cip` with rows matching elements of `pattern`.
 Additional subsetting if optional arguments specified. Examples follow.
 
 ## Using a keyword search
@@ -278,7 +280,7 @@ Filtering the CIP data for all programs containing the word
 ``` r
 
 # Filter basics
-filter_cip("engineering")
+filter_cip_rows(cip, "engineering")
 #>                                                              cip6name   cip6
 #>                                                                <char> <char>
 #>   1:                                             Engineering, General 140101
@@ -308,28 +310,6 @@ filter_cip("engineering")
 #> 119: Health Professions and Related Clinical Sciences     51
 ```
 
-The `drop_text` and `select` arguments have to be named explicitly.
-Columns in `select` are subset after filtering for `keep_text` and
-`drop_text`.
-
-``` r
-
-# Optional arguments drop_text and select
-filter_cip("engineering",
-  drop_text = c("related", "technology", "technologies"),
-  select = c("cip6", "cip6name")
-)
-#>       cip6                                                     cip6name
-#>     <char>                                                       <char>
-#>  1: 140101                                         Engineering, General
-#>  2: 140102                                              Pre-Engineering
-#>  3: 140201 Aerospace, Aeronautical and Astronautical, Space Engineering
-#> ---                                                                    
-#> 52: 144401                                        Engineering Chemistry
-#> 53: 144501                           Biological, Biosystems Engineering
-#> 54: 149999                                           Engineering, Other
-```
-
 Suppose we want to find the CIP codes and names for all programs in
 Civil Engineering. The search is insensitive to case, so we start with
 the following code chunk.
@@ -337,7 +317,7 @@ the following code chunk.
 ``` r
 
 # Example 1 filter using keywords
-filter_cip("civil")
+filter_cip_rows(cip, "civil")
 ```
 
 | cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
@@ -372,13 +352,13 @@ successive passes do not. If used, the `cip` argument must be named.
 ``` r
 
 # First search
-first_pass <- filter_cip("civil")
+first_pass <- filter_cip_rows(cip, "civil")
 
 # Refine the search
-second_pass <- filter_cip("engineering", cip = first_pass)
+second_pass <- filter_cip_rows(first_pass, "engineering")
 
 # Refine further
-third_pass <- filter_cip(drop_text = "technology", cip = second_pass)
+third_pass <- filter_cip_rows(second_pass, "technology", negate = TRUE)
 ```
 
 | cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
@@ -393,27 +373,6 @@ third_pass <- filter_cip(drop_text = "technology", cip = second_pass)
 Table 3. Search results {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
 
-*Equivalent usage.*   Seeing that all Civil Engineering programs have
-the same `cip4name`, we could have used
-`keep_text = c("civil engineering")` to narrow the search to rows that
-match the full phrase. The following implementations yield identical
-results,
-
-``` r
-
-# Three passes
-x <- filter_cip("civil")
-x <- filter_cip("engineering", cip = x)
-x <- filter_cip(drop_text = "technology", cip = x)
-
-# Combined search
-y <- filter_cip("civil engineering", drop_text = "technology")
-
-# Demonstrate equivalence
-check_equiv_frames(x, y)
-#> [1] TRUE
-```
-
 ## Using a numerical code search
 
 Suppose we want to study programs relating to German culture, language,
@@ -422,7 +381,7 @@ and literature. Using “german” for the `keep_text` value yields
 ``` r
 
 # Search on text
-filter_cip("german")
+filter_cip_rows(cip, "german")
 ```
 
 | cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
@@ -449,7 +408,7 @@ argument.
 ``` r
 
 # Search on codes
-filter_cip(c("050125", "160501"))
+filter_cip_rows(cip, c("050125", "160501"))
 ```
 
 | cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
@@ -460,26 +419,37 @@ filter_cip(c("050125", "160501"))
 Table 5. Search results {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
 
-If the 6-digit codes are entered as integers, they produce an error.
+If the 6-digit codes are entered as integers, they are coerced to
+strings for the search.
 
 ``` r
 
 # Search that produces an error
-filter_cip(c(050125, 160501))
-#> Error in `filter_cip()`:
-#> ! Assertion on 'keep_text' failed. Must be of class 'string', not 'double'.
+filter_cip_rows(cip, c(050125, 160501))
+#>                          cip6name   cip6
+#>                            <char> <char>
+#> 1:                 German Studies 050125
+#> 2: German Language and Literature 160501
+#>                                       cip4name   cip4
+#>                                         <char> <char>
+#> 1:                                Area Studies   0501
+#> 2: Germanic Languages, Literatures Linguistics   1605
+#>                                               cip2name   cip2
+#>                                                 <char> <char>
+#> 1: Area, Ethnic, Cultural and Gender and Group Studies     05
+#> 2:      Foreign Languages, Literatures and Linguistics     16
 ```
 
 ## Using a regular expression search
 
 Specifying 4-digit codes yields a data frame all 6-digit programs
 containing the 4-digit string. We use the regular expression notation
-`^` to match the start of the strings.
+`^` to match the start of the line.
 
 ``` r
 
 # example 3 filter using regular expressions
-filter_cip(c("^1410", "^1419"))
+filter_cip_rows(cip, c("^1410", "^1419"))
 ```
 
 | cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
@@ -499,7 +469,7 @@ programs. Here, the result includes all History programs.
 ``` r
 
 # Search on 2-digit code
-filter_cip("^54")
+filter_cip_rows(cip, "^54")
 ```
 
 | cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
@@ -524,7 +494,7 @@ codes. It can also be passed to the function as a character vector.
 
 # Search on vector of codes
 codes_we_want <- c("^24", "^4102", "^450202")
-filter_cip(codes_we_want)
+filter_cip_rows(cip, codes_we_want)
 ```
 
 | cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
@@ -540,51 +510,6 @@ filter_cip(codes_we_want)
 
 Table 8. Search results {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
-
-## When search terms cannot be found
-
-If the `keep_text` argument includes terms that cannot be found in the
-CIP data frame, the unsuccessful terms are identified in a message and
-the successful terms produce the usual output.
-
-For example, the following `keep_text` argument includes three search
-terms that are not present in the CIP data (“111111”, “^55”, and
-“Bogus”) and two that are (“050125” and “160501”).
-
-``` r
-
-# Unsuccessful terms produce a message
-sub_cip <- filter_cip(c("050125", "111111", "160501", "Bogus", "^55"))
-#> Can't find these terms: 111111, Bogus, ^55
-
-# But the successful terms are returned
-sub_cip
-#>                          cip6name   cip6
-#>                            <char> <char>
-#> 1:                 German Studies 050125
-#> 2: German Language and Literature 160501
-#>                                       cip4name   cip4
-#>                                         <char> <char>
-#> 1:                                Area Studies   0501
-#> 2: Germanic Languages, Literatures Linguistics   1605
-#>                                               cip2name   cip2
-#>                                                 <char> <char>
-#> 1: Area, Ethnic, Cultural and Gender and Group Studies     05
-#> 2:      Foreign Languages, Literatures and Linguistics     16
-```
-
-However, as seen earlier, if none of the search terms are found, an
-error occurs.
-
-``` r
-
-# When none of the search terms are found
-filter_cip(c("111111", "Bogus", "^55"))
-#> Error:
-#> ! The search result is empty. Possible causes are:
-#>  * 'cip' contained no matches to terms in 'keep_text'.
-#>  * 'drop_text' eliminated all remaining rows.
-```
 
 ## CIP data from another source
 
@@ -627,7 +552,7 @@ here. Our task is to create a variable with custom program names.
 options(datatable.print.nrows = 15)
 
 # Four engineering programs
-four_programs <- filter_cip(c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+four_programs <- filter_cip_rows(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
 
 # Retain the needed columns
 four_programs <- four_programs[, .(cip6, cip4name)]
@@ -807,7 +732,7 @@ Requires editing before reuse with different programs.
 ``` r
 
 # Edit as required for different programs
-selected_programs <- filter_cip(c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+selected_programs <- filter_cip_rows(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
 ```
 
 *Programs.*   A summary code chunk for ready reference. Requires editing

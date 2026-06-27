@@ -5,8 +5,9 @@
 - [`midfieldr`](https://midfieldr.github.io/midfieldr/reference/midfieldr-package.md)
   [`midfieldr-package`](https://midfieldr.github.io/midfieldr/reference/midfieldr-package.md)
   : midfieldr: Tools and Methods for Working with MIDFIELD Data in 'R'
-- [`select_required()`](https://midfieldr.github.io/midfieldr/reference/deprec_midfieldr.md)
-  : Deprecated functions in midfieldr
+- [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+  [`select_required()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+  : midfieldr deprecated functions
 
 ## Functions
 
@@ -18,13 +19,13 @@
   : Identify rows of post-baccalaureate terms
 - [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
   : Calculate a timely completion term for every student
-- [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/filter_cip.md)
+- [`filter_cip_rows()`](https://midfieldr.github.io/midfieldr/reference/filter_cip_rows.md)
   : Subset rows that include matches to search strings
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
   : Order categorical variables of multiway data
 - [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
   : Prepare FYE data for multiple imputation
-- [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
+- [`select_record_cols()`](https://midfieldr.github.io/midfieldr/reference/select_record_cols.md)
   : Select basic columns of student-level records
 
 ## Utility

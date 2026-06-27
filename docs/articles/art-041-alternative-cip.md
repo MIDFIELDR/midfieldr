@@ -156,13 +156,13 @@ equivalent in the midfieldr `cip` data:
 ``` r
 
 # CIPCode2010
-filter_cip("13.1209", cip = DT)
+filter_cip_rows(DT, "13.1209")
 #>    CIPFamily CIPCode                                       CIPTitle
 #>       <char>  <char>                                         <char>
 #> 1:        13 13.1209 Kindergarten/Preschool Education and Teaching.
 
 # midfieldr default
-filter_cip("131209", cip = cip)[, .(cip2, cip6, cip6name)]
+filter_cip_rows(cip, "131209")[, .(cip2, cip6, cip6name)]
 #>      cip2   cip6                                       cip6name
 #>    <char> <char>                                         <char>
 #> 1:     13 131209 Kindergarten, Preschool Education and Teaching
@@ -199,7 +199,7 @@ DT <- DT[, CIPCode := gsub("[.]", "", CIPCode)]
 DT <- DT[, CIPTitle := gsub("[.]", "", CIPTitle)]
 
 # Verify the result
-filter_cip("131209", cip = DT)
+filter_cip_rows(DT, "131209")
 #>    CIPFamily CIPCode                                      CIPTitle
 #>       <char>  <char>                                        <char>
 #> 1:        13  131209 Kindergarten/Preschool Education and Teaching
@@ -512,7 +512,7 @@ To use the alternative CIP data set included with midfieldr, use
 ``` r
 
 # Using the midfieldr default
-filter_cip("^1408", cip = cip)
+filter_cip_rows(cip, "^1408")
 #>                                  cip6name   cip6          cip4name   cip4
 #>                                    <char> <char>            <char> <char>
 #> 1:             Civil Engineering, General 140801 Civil Engineering   1408
@@ -532,7 +532,7 @@ filter_cip("^1408", cip = cip)
 
 
 # Using the alternate cip
-filter_cip("^1408", cip = cip2010)
+filter_cip_rows(cip2010, "^1408")
 #>      cip2    cip2name   cip4          cip4name   cip6
 #>    <char>      <char> <char>            <char> <char>
 #> 1:     14 Engineering   1408 Civil Engineering 140801

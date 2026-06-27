@@ -25,10 +25,10 @@ expect_class_preserved <- function(df1, fnc) {
   rm(x)
 }
 
-test_select_basic_cols <- function() {
+test_select_record_cols <- function() {
     
     # usage
-    # select_basic_cols(dframe, ..., patternv = NULL)
+    # select_record_cols(dframe, type, ..., col_patterncol_pattern = NULL)
     
     # Needed for tinytest::build_install_test()
   suppressPackageStartupMessages(require("data.table"))
@@ -41,35 +41,35 @@ test_select_basic_cols <- function() {
     
     # ---------- input checks
     
-    expect_error(select_basic_cols(toy_student, "^sat"))
-    expect_error(select_basic_cols(1))
-    expect_error(select_basic_cols(toy_student, patternv = 1))
+
+    expect_error(select_record_cols(1))
+    expect_error(select_record_cols(toy_student, col_pattern = 1))
 
     # ---------- class preserved
     
-    expect_class_preserved(toy_student, select_basic_cols)
+    expect_class_preserved(toy_student, select_record_cols)
     
     # # data.table preserved
     # x <- copy(toy_student)
-    # y <- select_basic_cols(x)
+    # y <- select_record_cols(x)
     # expect_equal(class(x), class(y))
     # 
     # # tibble preserved
     # x <- copy(toy_student)
     # setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
-    # y <- select_basic_cols(x)
+    # y <- select_record_cols(x)
     # expect_equal(class(x), class(y))
     # 
     # # base R data.frame preserved
     # x <- copy(toy_student)
     # setattr(x, "class", c("data.frame"))
-    # y <- select_basic_cols(x)
+    # y <- select_record_cols(x)
     # expect_equal(class(x), class(y))
     # 
     # # grouped tibble yields data.frame
     # x <- copy(toy_student)
     # setattr(x, "class", c("grouped_df", "tbl_df", "tbl", "data.frame"))
-    # y <- select_basic_cols(x)
+    # y <- select_record_cols(x)
     # expect_true(class(y) == "data.frame")
     
     
@@ -78,11 +78,11 @@ test_select_basic_cols <- function() {
     # keys preserved?
     # x <- copy(toy_student)
     # setkeyv(x, "mcid")
-    # y <- select_basic_cols(x)
+    # y <- select_record_cols(x)
     # expect_equal(key(x), key(y))
     
     # setkeyv(x, NULL)
-    # y <- select_basic_cols(x)
+    # y <- select_record_cols(x)
     # expect_equal(key(x), key(y))
     
     # ---------- basic columns correct
@@ -92,9 +92,9 @@ test_select_basic_cols <- function() {
         "abbrev", "number", "term", "term_course", "term_degree"
     )
    
-    expect_equal_colnames <- function (x, these_cols, patternv = NULL) {
+    expect_equal_colnames <- function (x, these_cols, col_pattern = NULL) {
       expect_cols <- intersect(colnames(x), these_cols)
-      result_cols <- colnames(select_basic_cols(x, patternv = patternv))
+      result_cols <- colnames(select_record_cols(x, col_pattern = col_pattern))
       expect_equal(expect_cols, result_cols)
     }
     
@@ -103,35 +103,35 @@ test_select_basic_cols <- function() {
     expect_equal_colnames(toy_term   , default_cols)
     expect_equal_colnames(toy_degree , default_cols)
     
-    # patternv correct answer
+    # col_pattern correct answer
     x <- copy(toy_term)
-    this_pattern <- "^gpa"
-    add_names <- colnames(x)[grepl(this_pattern, colnames(x))]
+    this_col_pattern <- "^gpa"
+    add_names <- colnames(x)[grepl(this_col_pattern, colnames(x))]
     set_cols <- c(default_cols, add_names)
-    expect_equal_colnames(toy_term, set_cols, patternv = this_pattern)
+    expect_equal_colnames(toy_term, set_cols, col_pattern = this_col_pattern)
     
     # silently ignore search terms not found
     x <- copy(toy_degree)
-    this_pattern <- "random_name"
-    add_names <- colnames(x)[grepl(this_pattern, colnames(x))]
+    this_col_pattern <- "random_name"
+    add_names <- colnames(x)[grepl(this_col_pattern, colnames(x))]
     set_cols <- c(default_cols, add_names)
-    expect_equal_colnames(toy_term, set_cols, patternv = this_pattern)
+    expect_equal_colnames(toy_term, set_cols, col_pattern = this_col_pattern)
     
-    # dframe 0 rows 0 cols when no odefault colnames present
+    # dframe 0 rows 0 cols when no default colnames present
     x <- toy_degree[, .(degree)]
-    expect_length(select_basic_cols(x), 0)
+    expect_length(select_record_cols(x), 0)
 
     # confirm NO changes by reference
     student <- copy(toy_student)
-    y <- select_basic_cols(student)
+    y <- select_record_cols(student)
     expect_true(check_equiv_frames(student, toy_student))
     
     term <- copy(toy_term)
-    y <- select_basic_cols(term)
+    y <- select_record_cols(term)
     expect_true(check_equiv_frames(term, toy_term))
     
     degree <- copy(toy_degree)
-    y <- select_basic_cols(degree)
+    y <- select_record_cols(degree)
     expect_true(check_equiv_frames(degree, toy_degree))
     
     
@@ -143,7 +143,7 @@ test_select_basic_cols <- function() {
     invisible(NULL)
 }
 
-test_select_basic_cols()
+test_select_record_cols()
 
 
 

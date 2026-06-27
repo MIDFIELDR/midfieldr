@@ -7,46 +7,45 @@
 add_completion_status(dframe, midfield_degree = degree)
 }
 \arguments{
-\item{dframe}{Working data frame of student-level records
-to which completion-status columns are to be added. Required variables
-are \code{mcid} and \code{timely_term.} See also \code{add_timely_term()}.}
+\item{dframe}{Working data frame of student-level records to which
+completion-status columns are to be added. Required variables are
+\code{mcid} and \code{timely_term}.}
 
-\item{midfield_degree}{MIDFIELD \code{degree} data table or
-equivalent with required variables \code{mcid} and \code{term_degree.}}
+\item{midfield_degree}{MIDFIELD \code{degree} data table or equivalent with
+required variables \code{mcid} and \code{term_degree.}}
 }
 \value{
-A data frame in \code{data.table} format with the following
-properties: rows are preserved; columns are preserved with the exception
-that columns added by the function overwrite existing columns of the
-same name (if any); grouping structures are not preserved. The added
-columns are:
-\describe{
-\item{\code{term_degree}}{Character. Term in which the first degree(s) are
-completed. Encoded YYYYT. Joined from \code{midfield_degree} data table.}
-\item{\code{completion_status}}{Character. Label each observation to
-indicate completion status. Possible values are: "timely", indicating
-completion no later than the timely completion term; "late", indicating
-completion after the timely completion term; and "NA" indicating
-non-completion.}
+A data frame of the same type as \code{dframe}. The output has the
+following properties:
+\itemize{
+\item Rows are not modified.
+\item Columns are added, overwriting existing columns (if any) of the same name.
+Other columns are not modified.
+\item Groups are not preserved.
+\item Data frame attributes are preserved for classes \code{data.frame}, \code{data.table},
+or \code{tbl_df}.
 }
 }
 \description{
 Add columns to a data frame of student-level records that indicate whether a
 student completed a degree, and if so, whether their completion was timely.
-}
-\details{
 By "completion" we mean an undergraduate earning their first baccalaureate
 degree (or degrees, for students earning more than one degree in the same
-term). Additional degrees, if any, earned later than the term of the first
-degree are ignored.
-
-In many studies, students must complete a degree in a specified time span,
-for example 4-, 6-, or 8-years after admission. If they do, their completion
-is timely; if not, their completion is late and they are grouped with the
-non-completers when computing a metric such as graduation rate.
-
-Completion status is "timely" for students completing a degree no later than
-their timely completion terms. See also \code{add_timely_term()}.
+term). The term by which a student's completion would be considered timely
+(the "timely completion term") is usually defined as 4-, 6-, or 8-years
+after admission. Our default is 6 years.
+}
+\details{
+The new columns are:
+\itemize{
+\item \code{term_degree} Character. Term in which the first degree(s) are
+completed, encoded \code{YYYYT}. Joined from \code{midfield_degree}.
+\item \code{completion_status} Character. Possible values are "timely","late",
+and "NA". Completion status is "timely" for students completing a
+degree no later than their timely completion terms; "late" for students
+completing their program after their timely completion term; and "NA"
+for non-completers.
+}
 }
 \examples{
 # Start with an excerpt from the student data set 

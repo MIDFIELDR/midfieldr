@@ -124,9 +124,9 @@ source_term <- copy(term)
 source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_basic_cols(source_student)
-term <- select_basic_cols(source_term)
-degree <- select_basic_cols(source_degree)
+student <- select_record_cols(source_student)
+term <- select_record_cols(source_term)
+degree <- select_record_cols(source_degree)
 ```
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a

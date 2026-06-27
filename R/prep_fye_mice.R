@@ -99,7 +99,7 @@
 #' The resulting data frame is ready for use as input for the mice package,
 #' with all variables except `mcid` returned as factors.
 #'
-#' @example man/examples/prep_fye_mice_exa.R
+#' @example man/examples/exa_prep_fye_mice.R
 #' @export
 #'
 prep_fye_mice <- function(midfield_student = student,

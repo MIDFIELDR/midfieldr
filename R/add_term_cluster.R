@@ -3,36 +3,42 @@
 #' Identify rows of post-baccalaureate terms
 #'
 #' Provides a means of excluding post-baccalaureate terms by adding a
-#' column of term-status labels identifying pre- and post-baccalaureate
-#' terms.
-#'
-#' In a typical analysis, one is interested in a student's progress up to
+#' column of term-cluster labels identifying pre- and post-baccalaureate
+#' terms. In a typical analysis, one is interested in a student's progress up to
 #' and including the term in which they earn their first degree or degrees.
 #' Any terms later than the first baccalaureate can usually be excluded from
 #' study.
 #'
-#' The input `dframe` must have a term variable with one of three possible
-#' names: `term` (from the term data table), `term_course` (from the course
-#' data table), or `term_degree` (from the degree data table).
+#' The new columns are :
 #'
-#' `add_term_cluster()` determines a student's first degree term (if any)
-#' from `midfield_degree`, adds that column to `dframe`, and adds a second
-#' column of term-status labels identifying pre- and post-baccalaureate terms.
+#' * `first_degree_term` Character. Term of a student's first baccalaureate,
+#'    encoded `YYYYT` or, if no degree recorded, `NA`. Joined from
+#'    `midfield_degree$term_degree`.
 #'
-#' @param dframe `r dframe_add_term_cluster`
-#' @param midfield_degree `r midfield_degree_add_term_cluster`
+#' * `term_cluster` Character, indicating that a term belongs
+#'    to one of three clusters: terms that are prior to ("pre-degree"), equal
+#'    to ("first-degree"), or subsequent to ("post-first-degree") the student’s
+#'    first degree term.
 #'
-#' @returns `r return_add_term_cluster`
-#' The added columns are:
-#' \describe{
-#'  \item{`first_degree_term`}{Character. Term of a student's first
-#'         baccalaureate, encoded `YYYYT` --- or NA if no degree recorded.}
-#'  \item{`term_cluster`}{Character. Possible values are "pre-degree",
-#'        "first-degree", and "post-first-degree".}
-#' }
-#' `r preserve_class`
+#' @param dframe Working data frame of student-level records to which a
+#'        term-cluster column is to be added. Required variables are `mcid` and
+#'        a single term variable: `term` (when working with the term table),
+#'        `term_course` (course table), or `term_degree` (degree table).
 #'
-#' @example man/examples/add_term_cluster_exa.R
+#' @param midfield_degree MIDFIELD `degree` data table or equivalent with
+#'        required variables `mcid` and `term_degree`.
+#'
+#' @returns A data frame of the same type as `dframe`. The output has the
+#' following properties:
+#'
+#' * Rows are not modified.
+#' * Columns are added, overwriting existing columns (if any) of the same name.
+#'   Other columns are not modified.
+#' * Groups are not preserved.
+#' * Data frame attributes are preserved for classes `data.frame`, `data.table`,
+#'   or `tbl_df`.
+#'
+#' @example man/examples/exa_add_term_cluster.R
 #' @export
 add_term_cluster <- function(dframe, midfield_degree = degree) {
   # ---------- checks, use base R syntax
@@ -61,19 +67,14 @@ add_term_cluster <- function(dframe, midfield_degree = degree) {
   # to restore class (tibble, data.frame, etc.) before return
   prior_class <- class(dframe)
 
-  # Convert non-data.table input to data.table class. By-ref changes to
-  # dframe in global environment remain active for data.tables.
-  DT <- prep_non_dt_input(dframe)
+  # Copy and setDT() non-DT input. Prevents by-ref changes.
+  # No change to DT class input. By-ref changes remain active.
+  DT <- copy_setDT_non_DT(dframe)
+  midfield_degree <- copy_setDT_non_DT(midfield_degree)
 
-  # subset (use base R) avoids change by reference
-  degree_subset <- midfield_degree[, c("mcid", "term_degree")]
-
-  # Ensure data.table class
-  degree_subset <- prep_non_dt_input(degree_subset)
+  # subset avoids change by reference
+  degree_subset <- midfield_degree[, .(mcid, term_degree)]
   degree_subset <- unique(degree_subset, na.rm = TRUE)
-
-  # preserve data.table keys if any
-  # prior_keys <- key(DT)
 
   # bind names due to NSE notes in R CMD check
   term_col <- NULL
@@ -142,31 +143,3 @@ add_bacc_term <- function(DT, degree_subset) {
 
   return(DT)
 }
-
-# ---------------------------------------------------
-
-# label_term_status <- function(DT, term_var){
-#
-#     # bind names due to NSE notes in R CMD check
-#
-#     term_col <- NULL
-#     term_status <- NULL
-#     first_degree_term <- NULL
-#
-#     # ---------- do the work
-#
-#     x <- copy(DT)
-#
-#     # temporary column to compare to first degree term
-#     # term_var: quoted name of term column in term, course, or degree
-#     x[, term_col := x[[term_var]]]
-#
-#     x[, term_status := "pre-bacc"]
-#     x[term_col == first_degree_term, term_status := "first-degree"]
-#     x[term_col  > first_degree_term, term_status := "post-first-degree"]
-#
-#     # delete the temporary col
-#     x[["term_col"]] <- NULL
-#
-#     return(x)
-# }

@@ -16,7 +16,7 @@ wrapr::check_equiv_frames
 #'
 #' @param f Function with arguments expecting an error
 #' @returns Does not return anything. The side effect is to output to the terminal.
-#' @example man/examples/catch_error_exa.R
+#' @example man/examples/exa_catch_error.R
 #' @export
 catch_error <- function(f) {
   tryCatch(
@@ -38,7 +38,7 @@ catch_error <- function(f) {
 #'
 #' @returns Does not return anything. The side effect is to output to the terminal.
 #'
-#' @example man/examples/look_at_exa.R
+#' @example man/examples/exa_look_at.R
 #'
 #' @export
 look_at <- function(x) {
@@ -66,7 +66,7 @@ look_at <- function(x) {
 #'
 #' @returns A vector of unique values, sorted.
 #'
-#' @example man/examples/sort_uniq_exa.R
+#' @example man/examples/exa_sort_uniq.R
 #'
 #' @export
 sort_uniq <- function(x,
@@ -223,7 +223,7 @@ add_institution <- function(dframe,
 #'
 #' @param df Data frame of any class input to a midfieldr function
 #' @noRd
-prep_non_dt_input <- function(df) {
+copy_setDT_non_DT <- function(df) {
   # convert data.frames or tibbles to data.table
   # data.tables: no effect, by-ref changes still possible in global env
   # tibbles or base R data.frames: prevents by-ref changes in global env
@@ -249,28 +249,27 @@ prep_non_dt_input <- function(df) {
 #' Restore class of non-data.table data frames
 #'
 #' Attempt to assign class to output data frame to match class of input data
-#' frame. No effect on data.tables. Used to attempt to preserve tibbles for
-#' users of dplyr and friends.
+#' frame. No effect on data.tables except keys are nulled. Used to attempt to
+#' preserve tibbles for users of dplyr and friends.
 #'
 #' @param DT Data frame in data.table format just prior to exiting a midfieldr
 #'        function.
 #' @param prior_class Character, result of applying `class()` to input argument
-#'        of midfieldr function. Passed to `setattr()`.
+#'        of midfieldr function. Passed to `data.table::setattr()`.
 #' @noRd
 restore_non_dt_class <- function(DT, prior_class) {
   # restore input class if tibble or base R data.frames
-  # except grouped tibble returned as data.frame
 
   if ("data.table" %chin% prior_class) {
     # case: data.table
-    return(DT)
+    setkey(DT, NULL)
   } else if (!"grouped_df" %chin% prior_class) {
     # case: not data.table, not grouped tibble
     setattr(DT, "class", prior_class)
-    return(DT)
   } else {
-    # case: not data.table, is grouped tibble
+    # case: is grouped tibble
     setDF(DT)
-    return(DT)
+    setattr(DT, "class", c("tbl_df", "tbl", "data.frame"))
   }
+  DT[]
 }

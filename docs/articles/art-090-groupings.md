@@ -100,9 +100,9 @@ source_term <- copy(term)
 source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_basic_cols(source_student)
-term <- select_basic_cols(source_term)
-degree <- select_basic_cols(source_degree)
+student <- select_record_cols(source_student)
+term <- select_record_cols(source_term)
+degree <- select_record_cols(source_degree)
 ```
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a
@@ -535,7 +535,7 @@ working data frame.
 
 We use the original source files copied earlier because some variables
 we want to use were removed when we applied
-[`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md).
+[`select_record_cols()`](https://midfieldr.github.io/midfieldr/reference/select_record_cols.md).
 
 ### From `student`
 
@@ -563,8 +563,8 @@ The available variables in the source `student` data are:
 
 # Variables in the practice data set
 names(source_student)
-#>  [1] "mcid"           "institution"    "transfer"       "hours_transfer"
-#>  [5] "race"           "sex"            "age_desc"       "us_citizen"    
+#>  [1] "mcid"           "race"           "sex"            "institution"   
+#>  [5] "transfer"       "hours_transfer" "age_desc"       "us_citizen"    
 #>  [9] "home_zip"       "high_school"    "sat_math"       "sat_verbal"    
 #> [13] "act_comp"
 ```
@@ -610,8 +610,8 @@ The available variables in the source `term` data are:
 
 # Variables in the practice data set
 names(source_term)
-#>  [1] "mcid"                "institution"         "term"               
-#>  [4] "cip6"                "level"               "standing"           
+#>  [1] "mcid"                "term"                "cip6"               
+#>  [4] "institution"         "level"               "standing"           
 #>  [7] "coop"                "hours_term"          "hours_term_attempt" 
 #> [10] "hours_cumul"         "hours_cumul_attempt" "gpa_term"           
 #> [13] "gpa_cumul"
@@ -673,7 +673,7 @@ The available variables in the source `degree` data are:
 
 # Variables in the practice data set
 names(source_degree)
-#> [1] "mcid"        "institution" "term_degree" "cip6"        "degree"
+#> [1] "mcid"        "term_degree" "cip6"        "institution" "degree"
 ```
 
 *Select.*   Select two variables and the key (ID).

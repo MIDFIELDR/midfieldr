@@ -1,71 +1,26 @@
 # R code used for documentation
 
-dframe_add_term_cluster <- "Working data frame of student-level records
-        to which a term-status column is to be added. Required
-        variables are `mcid` and a single term variable."
+param_dots <- "Not used for passing values; forces subsequent arguments to be
+        referable only by name."
 
-dframe_add_completion_status <- "Working data frame of student-level records
-        to which completion-status columns are to be added. Required variables
-        are `mcid` and `timely_term.` See also `add_timely_term()`."
-
-dframe_add_data_sufficiency <- "Working data frame of student-level records
-        to which data-sufficiency columns are to be added. Required variables
-        are `mcid` and `timely_term.` See also `add_timely_term()`."
-
-dframe_add_timely_term <- "Working data frame of student-level records
-        to which timely-term columns are to be added. Required variable
-        is `mcid`."
+# ---------------------------------
 
 dframe_order_multiway <- 'Data frame containing a single quantitative value
         (or response) for every combination of levels of two categorical
         variables. Categories may be class character or factor. Two additional
         numeric columns are required when using the "percent" ordering method.'
 
-
 midfield_student_prep_fye_mice <- "MIDFIELD `student` data table or
         equivalent with required variables `mcid`, `race`, and `sex.`"
 
-midfield_term_add_data_sufficiency <- "MIDFIELD `term` data table or equivalent
-        with required variables `mcid`, `institution`, and `term`."
-
-midfield_term_add_timely_term <- "MIDFIELD `term` data table or equivalent
-        with required variables `mcid`, `term`, and `level.`"
-
 midfield_term_prep_fye_mice <- "MIDFIELD `term` data table or equivalent
         with required variables `mcid`, `institution`, `term`, and `cip6.`"
-
-midfield_degree_add_completion_status <- "MIDFIELD `degree` data table or
-        equivalent with required variables `mcid` and `term_degree.`"
-
-midfield_degree_add_term_cluster <- "MIDFIELD `degree` data table or
-        equivalent with required variables `mcid` and `term_degree.`"
-
-
-param_dots <- "Not used for passing values; forces subsequent arguments to be
-        referable only by name."
-
-
-# new RETURN dframe descriptions ---------------------------------
-
-return_select_basic_cols <- "A subset of `dframe` with the following
-        properties: rows are preserved; columns are selected that exactly
-        match the built-in set of column names or that partially match any
-        search strings in `patternv`. Grouping structures are not necessarily
-        preserved."
-
-return_add_term_cluster <- "A data frame with the following properties: rows
-       are preserved; columns `first_degree_term` and `term_status` are added
-       or overwritten; all other columns are preserved.
-       Grouping structures are not necessarily preserved."
 
 preserve_class <- "\n\nAn attempt is made to return data frames of the same
         class as the input, so a data.table input should produce a data.table
         output, a tibble input should produce a tibble output, etc. Grouped
         tibbles, however, are returned as data.frames. To help ensure a tibble
         output, try ungrouping a tibble before using it as an input argument."
-
-# ---------------------------------
-
 
 return_data_frame <- "A data frame in `data.table` format with the following
         properties: rows are preserved; columns are preserved with the exception
@@ -80,22 +35,6 @@ return_order_multiway <- "A data frame in `data.table` format with
         with the exception that columns added by the function overwrite existing
         columns of the same name (if any); grouping structures are not preserved.
         The added columns are:"
-
-return_filter_cip <- "A data frame in `data.table` format, a subset of `cip`,
-        with the following properties: exclude rows that match
-        elements of `drop_text`; of the remaining rows, include those that
-        match elements of `keep_text`; if `select` is empty, all columns are
-        preserved, otherwise only columns included in `select` are retained;
-        grouping structures are not preserved."
-
-return_select_required <- "A data frame that is a subset of the input with
-        the following properties: rows are preserved; columns are preserved
-        if their names match or partially match search terms; grouping
-        structures are not preserved. An attempt is made to return a data
-        frame of the same class as that of the input, e.g., a base R
-        data.frame, a tibble-style enhanced data frame, or the midfieldr
-        default data.table enhanced data frame."
-
 
 return_prep_fye_mice <- "A data frame in `data.table` format conditioned for
         later use as an input to the mice R package for multiple imputation. The

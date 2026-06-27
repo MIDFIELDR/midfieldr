@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9005</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -840,39 +840,40 @@ result will differ from that shown.</p>
 <span><span class="co">#&gt; [10] "Sports and Exercise"</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="filter_cip">
-<code>filter_cip()</code><a class="anchor" aria-label="anchor" href="#filter_cip"></a>
+<h2 id="filter_cip_rows">
+<code>filter_cip_rows()</code><a class="anchor" aria-label="anchor" href="#filter_cip_rows"></a>
 </h2>
 <p>Subset the <code>cip</code> data frame, retaining rows that match or
 partially match a vector of character strings.</p>
 <p><em>Arguments.</em></p>
 <ul>
-<li><p><strong><code>keep_text</code></strong>   Character vector of
-search text for retaining rows, not case-sensitive. Can be empty if
-<code>drop_text</code> is used.</p></li>
-<li><p><strong><code>drop_text</code></strong>   Character vector of
-search text for dropping rows, not case-sensitive, default NULL.
-Argument to be used by name.</p></li>
-<li><p><strong><code>cip</code></strong>   Data frame to be subset,
-default <code>cip</code>. Argument to be used by name.</p></li>
-<li><p><strong><code>select</code></strong>   Character vector of column
-names to search and return, default all columns. Argument to be used by
-name.</p></li>
+<li><p><strong><code>dframe</code></strong>   Data frame of CIP program
+names and codes to be subset.</p></li>
+<li><p><strong><code>pattern</code></strong>   Character vector of
+search text for retaining rows, not case-sensitive.</p></li>
+<li><p><strong><code>negate</code></strong>   Logical (default FALSE).
+If TRUE, returns rows that do not match the search pattern.</p></li>
 </ul>
 <p><em>Equivalent usage.</em>   The following implementations yield
 identical results,</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># First argument named, CIP argument if used must be named</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span>keep_text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"engineering"</span><span class="op">)</span>, cip <span class="op">=</span> <span class="va">cip</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Arguments named</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">cip</span>, pattern <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"engineering"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># First argument unnamed, use default CIP argument</span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"engineering"</span><span class="op">)</span></span>
+<span><span class="co"># Arguments unnamed</span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"engineering"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Using a chain</span></span>
+<span><span class="va">z</span> <span class="op">&lt;-</span> <span class="va">cip</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="st">"engineering"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Demonstrate equivalence</span></span>
 <span><span class="fu"><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co"># Demonstrate equivalence</span></span>
+<span><span class="fu"><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">z</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p><em>Output.</em>   Subset of <code>cip</code> with rows matching
-elements of <code>keep_text</code>. Additional subsetting if optional
+elements of <code>pattern</code>. Additional subsetting if optional
 arguments specified. Examples follow.</p>
 </div>
 <div class="section level2">
@@ -882,7 +883,7 @@ arguments specified. Examples follow.</p>
 “engineering” yields 119 observations.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Filter basics</span></span>
-<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"engineering"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"engineering"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                                              cip6name   cip6</span></span>
 <span><span class="co">#&gt;                                                                &lt;char&gt; &lt;char&gt;</span></span>
 <span><span class="co">#&gt;   1:                                             Engineering, General 140101</span></span>
@@ -910,47 +911,29 @@ arguments specified. Examples follow.</p>
 <span><span class="co">#&gt; 117:                            Military Technologies     29</span></span>
 <span><span class="co">#&gt; 118:                            Military Technologies     29</span></span>
 <span><span class="co">#&gt; 119: Health Professions and Related Clinical Sciences     51</span></span></code></pre></div>
-<p>The <code>drop_text</code> and <code>select</code> arguments have to
-be named explicitly. Columns in <code>select</code> are subset after
-filtering for <code>keep_text</code> and <code>drop_text</code>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Optional arguments drop_text and select</span></span>
-<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"engineering"</span>,</span>
-<span>  drop_text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"related"</span>, <span class="st">"technology"</span>, <span class="st">"technologies"</span><span class="op">)</span>,</span>
-<span>  select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span>, <span class="st">"cip6name"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt;       cip6                                                     cip6name</span></span>
-<span><span class="co">#&gt;     &lt;char&gt;                                                       &lt;char&gt;</span></span>
-<span><span class="co">#&gt;  1: 140101                                         Engineering, General</span></span>
-<span><span class="co">#&gt;  2: 140102                                              Pre-Engineering</span></span>
-<span><span class="co">#&gt;  3: 140201 Aerospace, Aeronautical and Astronautical, Space Engineering</span></span>
-<span><span class="co">#&gt; ---                                                                    </span></span>
-<span><span class="co">#&gt; 52: 144401                                        Engineering Chemistry</span></span>
-<span><span class="co">#&gt; 53: 144501                           Biological, Biosystems Engineering</span></span>
-<span><span class="co">#&gt; 54: 149999                                           Engineering, Other</span></span></code></pre></div>
 <p>Suppose we want to find the CIP codes and names for all programs in
 Civil Engineering. The search is insensitive to case, so we start with
 the following code chunk.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example 1 filter using keywords</span></span>
-<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"civil"</span><span class="op">)</span></span></code></pre></div>
-<div id="zgaqkbgori" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#zgaqkbgori table {
+<span><span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"civil"</span><span class="op">)</span></span></code></pre></div>
+<div id="paonmeblsy" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#paonmeblsy table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#zgaqkbgori thead, #zgaqkbgori tbody, #zgaqkbgori tfoot, #zgaqkbgori tr, #zgaqkbgori td, #zgaqkbgori th {
+#paonmeblsy thead, #paonmeblsy tbody, #paonmeblsy tfoot, #paonmeblsy tr, #paonmeblsy td, #paonmeblsy th {
   border-style: none;
 }
 
-#zgaqkbgori p {
+#paonmeblsy p {
   margin: 0;
   padding: 0;
 }
 
-#zgaqkbgori .gt_table {
+#paonmeblsy .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -976,12 +959,12 @@ the following code chunk.</p>
   border-left-color: #D3D3D3;
 }
 
-#zgaqkbgori .gt_caption {
+#paonmeblsy .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#zgaqkbgori .gt_title {
+#paonmeblsy .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -993,7 +976,7 @@ the following code chunk.</p>
   border-bottom-width: 0;
 }
 
-#zgaqkbgori .gt_subtitle {
+#paonmeblsy .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1005,7 +988,7 @@ the following code chunk.</p>
   border-top-width: 0;
 }
 
-#zgaqkbgori .gt_heading {
+#paonmeblsy .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1017,13 +1000,13 @@ the following code chunk.</p>
   border-right-color: #D3D3D3;
 }
 
-#zgaqkbgori .gt_bottom_border {
+#paonmeblsy .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
 
-#zgaqkbgori .gt_col_headings {
+#paonmeblsy .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -1038,7 +1021,7 @@ the following code chunk.</p>
   border-right-color: #D3D3D3;
 }
 
-#zgaqkbgori .gt_col_heading {
+#paonmeblsy .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1058,7 +1041,7 @@ the following code chunk.</p>
   overflow-x: hidden;
 }
 
-#zgaqkbgori .gt_column_spanner_outer {
+#paonmeblsy .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1070,15 +1053,15 @@ the following code chunk.</p>
   padding-right: 4px;
 }
 
-#zgaqkbgori .gt_column_spanner_outer:first-child {
+#paonmeblsy .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#zgaqkbgori .gt_column_spanner_outer:last-child {
+#paonmeblsy .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#zgaqkbgori .gt_column_spanner {
+#paonmeblsy .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
@@ -1090,11 +1073,11 @@ the following code chunk.</p>
   width: 100%;
 }
 
-#zgaqkbgori .gt_spanner_row {
+#paonmeblsy .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#zgaqkbgori .gt_group_heading {
+#paonmeblsy .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1120,7 +1103,7 @@ the following code chunk.</p>
   text-align: left;
 }
 
-#zgaqkbgori .gt_empty_group_heading {
+#paonmeblsy .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1135,15 +1118,15 @@ the following code chunk.</p>
   vertical-align: middle;
 }
 
-#zgaqkbgori .gt_from_md > :first-child {
+#paonmeblsy .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#zgaqkbgori .gt_from_md > :last-child {
+#paonmeblsy .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#zgaqkbgori .gt_row {
+#paonmeblsy .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1162,7 +1145,7 @@ the following code chunk.</p>
   overflow-x: hidden;
 }
 
-#zgaqkbgori .gt_stub {
+#paonmeblsy .gt_stub {
   color: #FFFFFF;
   background-color: #5F5F5F;
   font-size: 100%;
@@ -1175,7 +1158,7 @@ the following code chunk.</p>
   padding-right: 5px;
 }
 
-#zgaqkbgori .gt_stub_row_group {
+#paonmeblsy .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1189,15 +1172,15 @@ the following code chunk.</p>
   vertical-align: top;
 }
 
-#zgaqkbgori .gt_row_group_first td {
+#paonmeblsy .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#zgaqkbgori .gt_row_group_first th {
+#paonmeblsy .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#zgaqkbgori .gt_summary_row {
+#paonmeblsy .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1207,16 +1190,16 @@ the following code chunk.</p>
   padding-right: 5px;
 }
 
-#zgaqkbgori .gt_first_summary_row {
+#paonmeblsy .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #5F5F5F;
 }
 
-#zgaqkbgori .gt_first_summary_row.thick {
+#paonmeblsy .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#zgaqkbgori .gt_last_summary_row {
+#paonmeblsy .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1226,7 +1209,7 @@ the following code chunk.</p>
   border-bottom-color: #5F5F5F;
 }
 
-#zgaqkbgori .gt_grand_summary_row {
+#paonmeblsy .gt_grand_summary_row {
   color: #333333;
   background-color: #D5D5D5;
   text-transform: inherit;
@@ -1236,7 +1219,7 @@ the following code chunk.</p>
   padding-right: 5px;
 }
 
-#zgaqkbgori .gt_first_grand_summary_row {
+#paonmeblsy .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1246,7 +1229,7 @@ the following code chunk.</p>
   border-top-color: #5F5F5F;
 }
 
-#zgaqkbgori .gt_last_grand_summary_row_top {
+#paonmeblsy .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1256,11 +1239,11 @@ the following code chunk.</p>
   border-bottom-color: #5F5F5F;
 }
 
-#zgaqkbgori .gt_striped {
+#paonmeblsy .gt_striped {
   background-color: #F4F4F4;
 }
 
-#zgaqkbgori .gt_table_body {
+#paonmeblsy .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -1269,7 +1252,7 @@ the following code chunk.</p>
   border-bottom-color: #5F5F5F;
 }
 
-#zgaqkbgori .gt_footnotes {
+#paonmeblsy .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1283,7 +1266,7 @@ the following code chunk.</p>
   border-right-color: #D3D3D3;
 }
 
-#zgaqkbgori .gt_footnote {
+#paonmeblsy .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1292,7 +1275,7 @@ the following code chunk.</p>
   padding-right: 5px;
 }
 
-#zgaqkbgori .gt_sourcenotes {
+#paonmeblsy .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1306,7 +1289,7 @@ the following code chunk.</p>
   border-right-color: #D3D3D3;
 }
 
-#zgaqkbgori .gt_sourcenote {
+#paonmeblsy .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1314,72 +1297,72 @@ the following code chunk.</p>
   padding-right: 5px;
 }
 
-#zgaqkbgori .gt_left {
+#paonmeblsy .gt_left {
   text-align: left;
 }
 
-#zgaqkbgori .gt_center {
+#paonmeblsy .gt_center {
   text-align: center;
 }
 
-#zgaqkbgori .gt_right {
+#paonmeblsy .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#zgaqkbgori .gt_font_normal {
+#paonmeblsy .gt_font_normal {
   font-weight: normal;
 }
 
-#zgaqkbgori .gt_font_bold {
+#paonmeblsy .gt_font_bold {
   font-weight: bold;
 }
 
-#zgaqkbgori .gt_font_italic {
+#paonmeblsy .gt_font_italic {
   font-style: italic;
 }
 
-#zgaqkbgori .gt_super {
+#paonmeblsy .gt_super {
   font-size: 65%;
 }
 
-#zgaqkbgori .gt_footnote_marks {
+#paonmeblsy .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#zgaqkbgori .gt_asterisk {
+#paonmeblsy .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#zgaqkbgori .gt_indent_1 {
+#paonmeblsy .gt_indent_1 {
   text-indent: 5px;
 }
 
-#zgaqkbgori .gt_indent_2 {
+#paonmeblsy .gt_indent_2 {
   text-indent: 10px;
 }
 
-#zgaqkbgori .gt_indent_3 {
+#paonmeblsy .gt_indent_3 {
   text-indent: 15px;
 }
 
-#zgaqkbgori .gt_indent_4 {
+#paonmeblsy .gt_indent_4 {
   text-indent: 20px;
 }
 
-#zgaqkbgori .gt_indent_5 {
+#paonmeblsy .gt_indent_5 {
   text-indent: 25px;
 }
 
-#zgaqkbgori .katex-display {
+#paonmeblsy .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#zgaqkbgori div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#paonmeblsy div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1503,32 +1486,32 @@ detected, then keep any rows in which ‘engineering’ is detected, then
 drop any rows in which ‘technology’ is detected.” The first pass
 operates on <code>cip</code>, but successive passes do not. If used, the
 <code>cip</code> argument must be named.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># First search</span></span>
-<span><span class="va">first_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"civil"</span><span class="op">)</span></span>
+<span><span class="va">first_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"civil"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Refine the search</span></span>
-<span><span class="va">second_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"engineering"</span>, cip <span class="op">=</span> <span class="va">first_pass</span><span class="op">)</span></span>
+<span><span class="va">second_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">first_pass</span>, <span class="st">"engineering"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Refine further</span></span>
-<span><span class="va">third_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span>drop_text <span class="op">=</span> <span class="st">"technology"</span>, cip <span class="op">=</span> <span class="va">second_pass</span><span class="op">)</span></span></code></pre></div>
-<div id="tpkmgwrokz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#tpkmgwrokz table {
+<span><span class="va">third_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">second_pass</span>, <span class="st">"technology"</span>, negate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div id="cwnhxnmrte" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#cwnhxnmrte table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#tpkmgwrokz thead, #tpkmgwrokz tbody, #tpkmgwrokz tfoot, #tpkmgwrokz tr, #tpkmgwrokz td, #tpkmgwrokz th {
+#cwnhxnmrte thead, #cwnhxnmrte tbody, #cwnhxnmrte tfoot, #cwnhxnmrte tr, #cwnhxnmrte td, #cwnhxnmrte th {
   border-style: none;
 }
 
-#tpkmgwrokz p {
+#cwnhxnmrte p {
   margin: 0;
   padding: 0;
 }
 
-#tpkmgwrokz .gt_table {
+#cwnhxnmrte .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1554,12 +1537,12 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   border-left-color: #D3D3D3;
 }
 
-#tpkmgwrokz .gt_caption {
+#cwnhxnmrte .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#tpkmgwrokz .gt_title {
+#cwnhxnmrte .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1571,7 +1554,7 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   border-bottom-width: 0;
 }
 
-#tpkmgwrokz .gt_subtitle {
+#cwnhxnmrte .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1583,7 +1566,7 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   border-top-width: 0;
 }
 
-#tpkmgwrokz .gt_heading {
+#cwnhxnmrte .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1595,13 +1578,13 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   border-right-color: #D3D3D3;
 }
 
-#tpkmgwrokz .gt_bottom_border {
+#cwnhxnmrte .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
 
-#tpkmgwrokz .gt_col_headings {
+#cwnhxnmrte .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -1616,7 +1599,7 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   border-right-color: #D3D3D3;
 }
 
-#tpkmgwrokz .gt_col_heading {
+#cwnhxnmrte .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1636,7 +1619,7 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   overflow-x: hidden;
 }
 
-#tpkmgwrokz .gt_column_spanner_outer {
+#cwnhxnmrte .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1648,15 +1631,15 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   padding-right: 4px;
 }
 
-#tpkmgwrokz .gt_column_spanner_outer:first-child {
+#cwnhxnmrte .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#tpkmgwrokz .gt_column_spanner_outer:last-child {
+#cwnhxnmrte .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#tpkmgwrokz .gt_column_spanner {
+#cwnhxnmrte .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
@@ -1668,11 +1651,11 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   width: 100%;
 }
 
-#tpkmgwrokz .gt_spanner_row {
+#cwnhxnmrte .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#tpkmgwrokz .gt_group_heading {
+#cwnhxnmrte .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1698,7 +1681,7 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   text-align: left;
 }
 
-#tpkmgwrokz .gt_empty_group_heading {
+#cwnhxnmrte .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1713,15 +1696,15 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   vertical-align: middle;
 }
 
-#tpkmgwrokz .gt_from_md > :first-child {
+#cwnhxnmrte .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#tpkmgwrokz .gt_from_md > :last-child {
+#cwnhxnmrte .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#tpkmgwrokz .gt_row {
+#cwnhxnmrte .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1740,7 +1723,7 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   overflow-x: hidden;
 }
 
-#tpkmgwrokz .gt_stub {
+#cwnhxnmrte .gt_stub {
   color: #FFFFFF;
   background-color: #5F5F5F;
   font-size: 100%;
@@ -1753,7 +1736,7 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   padding-right: 5px;
 }
 
-#tpkmgwrokz .gt_stub_row_group {
+#cwnhxnmrte .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1767,15 +1750,15 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   vertical-align: top;
 }
 
-#tpkmgwrokz .gt_row_group_first td {
+#cwnhxnmrte .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#tpkmgwrokz .gt_row_group_first th {
+#cwnhxnmrte .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#tpkmgwrokz .gt_summary_row {
+#cwnhxnmrte .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1785,16 +1768,16 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   padding-right: 5px;
 }
 
-#tpkmgwrokz .gt_first_summary_row {
+#cwnhxnmrte .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #5F5F5F;
 }
 
-#tpkmgwrokz .gt_first_summary_row.thick {
+#cwnhxnmrte .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#tpkmgwrokz .gt_last_summary_row {
+#cwnhxnmrte .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1804,7 +1787,7 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   border-bottom-color: #5F5F5F;
 }
 
-#tpkmgwrokz .gt_grand_summary_row {
+#cwnhxnmrte .gt_grand_summary_row {
   color: #333333;
   background-color: #D5D5D5;
   text-transform: inherit;
@@ -1814,7 +1797,7 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   padding-right: 5px;
 }
 
-#tpkmgwrokz .gt_first_grand_summary_row {
+#cwnhxnmrte .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1824,7 +1807,7 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   border-top-color: #5F5F5F;
 }
 
-#tpkmgwrokz .gt_last_grand_summary_row_top {
+#cwnhxnmrte .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1834,11 +1817,11 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   border-bottom-color: #5F5F5F;
 }
 
-#tpkmgwrokz .gt_striped {
+#cwnhxnmrte .gt_striped {
   background-color: #F4F4F4;
 }
 
-#tpkmgwrokz .gt_table_body {
+#cwnhxnmrte .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -1847,7 +1830,7 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   border-bottom-color: #5F5F5F;
 }
 
-#tpkmgwrokz .gt_footnotes {
+#cwnhxnmrte .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1861,7 +1844,7 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   border-right-color: #D3D3D3;
 }
 
-#tpkmgwrokz .gt_footnote {
+#cwnhxnmrte .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1870,7 +1853,7 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   padding-right: 5px;
 }
 
-#tpkmgwrokz .gt_sourcenotes {
+#cwnhxnmrte .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1884,7 +1867,7 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   border-right-color: #D3D3D3;
 }
 
-#tpkmgwrokz .gt_sourcenote {
+#cwnhxnmrte .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1892,72 +1875,72 @@ operates on <code>cip</code>, but successive passes do not. If used, the
   padding-right: 5px;
 }
 
-#tpkmgwrokz .gt_left {
+#cwnhxnmrte .gt_left {
   text-align: left;
 }
 
-#tpkmgwrokz .gt_center {
+#cwnhxnmrte .gt_center {
   text-align: center;
 }
 
-#tpkmgwrokz .gt_right {
+#cwnhxnmrte .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#tpkmgwrokz .gt_font_normal {
+#cwnhxnmrte .gt_font_normal {
   font-weight: normal;
 }
 
-#tpkmgwrokz .gt_font_bold {
+#cwnhxnmrte .gt_font_bold {
   font-weight: bold;
 }
 
-#tpkmgwrokz .gt_font_italic {
+#cwnhxnmrte .gt_font_italic {
   font-style: italic;
 }
 
-#tpkmgwrokz .gt_super {
+#cwnhxnmrte .gt_super {
   font-size: 65%;
 }
 
-#tpkmgwrokz .gt_footnote_marks {
+#cwnhxnmrte .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#tpkmgwrokz .gt_asterisk {
+#cwnhxnmrte .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#tpkmgwrokz .gt_indent_1 {
+#cwnhxnmrte .gt_indent_1 {
   text-indent: 5px;
 }
 
-#tpkmgwrokz .gt_indent_2 {
+#cwnhxnmrte .gt_indent_2 {
   text-indent: 10px;
 }
 
-#tpkmgwrokz .gt_indent_3 {
+#cwnhxnmrte .gt_indent_3 {
   text-indent: 15px;
 }
 
-#tpkmgwrokz .gt_indent_4 {
+#cwnhxnmrte .gt_indent_4 {
   text-indent: 20px;
 }
 
-#tpkmgwrokz .gt_indent_5 {
+#cwnhxnmrte .gt_indent_5 {
   text-indent: 25px;
 }
 
-#tpkmgwrokz .katex-display {
+#cwnhxnmrte .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#tpkmgwrokz div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#cwnhxnmrte div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2023,23 +2006,6 @@ operates on <code>cip</code>, but successive passes do not. If used, the
 </tbody>
 </table>
 </div>
-<p><em>Equivalent usage.</em>   Seeing that all Civil Engineering
-programs have the same <code>cip4name</code>, we could have used
-<code>keep_text = c("civil engineering")</code> to narrow the search to
-rows that match the full phrase. The following implementations yield
-identical results,</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Three passes</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"civil"</span><span class="op">)</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"engineering"</span>, cip <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span>drop_text <span class="op">=</span> <span class="st">"technology"</span>, cip <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Combined search</span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"civil engineering"</span>, drop_text <span class="op">=</span> <span class="st">"technology"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Demonstrate equivalence</span></span>
-<span><span class="fu"><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="using-a-numerical-code-search">Using a numerical code search<a class="anchor" aria-label="anchor" href="#using-a-numerical-code-search"></a>
@@ -2047,26 +2013,26 @@ identical results,</p>
 <p>Suppose we want to study programs relating to German culture,
 language, and literature. Using “german” for the <code>keep_text</code>
 value yields</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Search on text</span></span>
-<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"german"</span><span class="op">)</span></span></code></pre></div>
-<div id="zvqylnrrns" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#zvqylnrrns table {
+<span><span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"german"</span><span class="op">)</span></span></code></pre></div>
+<div id="slnhxehopo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#slnhxehopo table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#zvqylnrrns thead, #zvqylnrrns tbody, #zvqylnrrns tfoot, #zvqylnrrns tr, #zvqylnrrns td, #zvqylnrrns th {
+#slnhxehopo thead, #slnhxehopo tbody, #slnhxehopo tfoot, #slnhxehopo tr, #slnhxehopo td, #slnhxehopo th {
   border-style: none;
 }
 
-#zvqylnrrns p {
+#slnhxehopo p {
   margin: 0;
   padding: 0;
 }
 
-#zvqylnrrns .gt_table {
+#slnhxehopo .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2092,12 +2058,12 @@ value yields</p>
   border-left-color: #D3D3D3;
 }
 
-#zvqylnrrns .gt_caption {
+#slnhxehopo .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#zvqylnrrns .gt_title {
+#slnhxehopo .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2109,7 +2075,7 @@ value yields</p>
   border-bottom-width: 0;
 }
 
-#zvqylnrrns .gt_subtitle {
+#slnhxehopo .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2121,7 +2087,7 @@ value yields</p>
   border-top-width: 0;
 }
 
-#zvqylnrrns .gt_heading {
+#slnhxehopo .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2133,13 +2099,13 @@ value yields</p>
   border-right-color: #D3D3D3;
 }
 
-#zvqylnrrns .gt_bottom_border {
+#slnhxehopo .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
 
-#zvqylnrrns .gt_col_headings {
+#slnhxehopo .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -2154,7 +2120,7 @@ value yields</p>
   border-right-color: #D3D3D3;
 }
 
-#zvqylnrrns .gt_col_heading {
+#slnhxehopo .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2174,7 +2140,7 @@ value yields</p>
   overflow-x: hidden;
 }
 
-#zvqylnrrns .gt_column_spanner_outer {
+#slnhxehopo .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2186,15 +2152,15 @@ value yields</p>
   padding-right: 4px;
 }
 
-#zvqylnrrns .gt_column_spanner_outer:first-child {
+#slnhxehopo .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#zvqylnrrns .gt_column_spanner_outer:last-child {
+#slnhxehopo .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#zvqylnrrns .gt_column_spanner {
+#slnhxehopo .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
@@ -2206,11 +2172,11 @@ value yields</p>
   width: 100%;
 }
 
-#zvqylnrrns .gt_spanner_row {
+#slnhxehopo .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#zvqylnrrns .gt_group_heading {
+#slnhxehopo .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2236,7 +2202,7 @@ value yields</p>
   text-align: left;
 }
 
-#zvqylnrrns .gt_empty_group_heading {
+#slnhxehopo .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2251,15 +2217,15 @@ value yields</p>
   vertical-align: middle;
 }
 
-#zvqylnrrns .gt_from_md > :first-child {
+#slnhxehopo .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#zvqylnrrns .gt_from_md > :last-child {
+#slnhxehopo .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#zvqylnrrns .gt_row {
+#slnhxehopo .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2278,7 +2244,7 @@ value yields</p>
   overflow-x: hidden;
 }
 
-#zvqylnrrns .gt_stub {
+#slnhxehopo .gt_stub {
   color: #FFFFFF;
   background-color: #5F5F5F;
   font-size: 100%;
@@ -2291,7 +2257,7 @@ value yields</p>
   padding-right: 5px;
 }
 
-#zvqylnrrns .gt_stub_row_group {
+#slnhxehopo .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2305,15 +2271,15 @@ value yields</p>
   vertical-align: top;
 }
 
-#zvqylnrrns .gt_row_group_first td {
+#slnhxehopo .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#zvqylnrrns .gt_row_group_first th {
+#slnhxehopo .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#zvqylnrrns .gt_summary_row {
+#slnhxehopo .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2323,16 +2289,16 @@ value yields</p>
   padding-right: 5px;
 }
 
-#zvqylnrrns .gt_first_summary_row {
+#slnhxehopo .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #5F5F5F;
 }
 
-#zvqylnrrns .gt_first_summary_row.thick {
+#slnhxehopo .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#zvqylnrrns .gt_last_summary_row {
+#slnhxehopo .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2342,7 +2308,7 @@ value yields</p>
   border-bottom-color: #5F5F5F;
 }
 
-#zvqylnrrns .gt_grand_summary_row {
+#slnhxehopo .gt_grand_summary_row {
   color: #333333;
   background-color: #D5D5D5;
   text-transform: inherit;
@@ -2352,7 +2318,7 @@ value yields</p>
   padding-right: 5px;
 }
 
-#zvqylnrrns .gt_first_grand_summary_row {
+#slnhxehopo .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2362,7 +2328,7 @@ value yields</p>
   border-top-color: #5F5F5F;
 }
 
-#zvqylnrrns .gt_last_grand_summary_row_top {
+#slnhxehopo .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2372,11 +2338,11 @@ value yields</p>
   border-bottom-color: #5F5F5F;
 }
 
-#zvqylnrrns .gt_striped {
+#slnhxehopo .gt_striped {
   background-color: #F4F4F4;
 }
 
-#zvqylnrrns .gt_table_body {
+#slnhxehopo .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -2385,7 +2351,7 @@ value yields</p>
   border-bottom-color: #5F5F5F;
 }
 
-#zvqylnrrns .gt_footnotes {
+#slnhxehopo .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2399,7 +2365,7 @@ value yields</p>
   border-right-color: #D3D3D3;
 }
 
-#zvqylnrrns .gt_footnote {
+#slnhxehopo .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2408,7 +2374,7 @@ value yields</p>
   padding-right: 5px;
 }
 
-#zvqylnrrns .gt_sourcenotes {
+#slnhxehopo .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2422,7 +2388,7 @@ value yields</p>
   border-right-color: #D3D3D3;
 }
 
-#zvqylnrrns .gt_sourcenote {
+#slnhxehopo .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2430,72 +2396,72 @@ value yields</p>
   padding-right: 5px;
 }
 
-#zvqylnrrns .gt_left {
+#slnhxehopo .gt_left {
   text-align: left;
 }
 
-#zvqylnrrns .gt_center {
+#slnhxehopo .gt_center {
   text-align: center;
 }
 
-#zvqylnrrns .gt_right {
+#slnhxehopo .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#zvqylnrrns .gt_font_normal {
+#slnhxehopo .gt_font_normal {
   font-weight: normal;
 }
 
-#zvqylnrrns .gt_font_bold {
+#slnhxehopo .gt_font_bold {
   font-weight: bold;
 }
 
-#zvqylnrrns .gt_font_italic {
+#slnhxehopo .gt_font_italic {
   font-style: italic;
 }
 
-#zvqylnrrns .gt_super {
+#slnhxehopo .gt_super {
   font-size: 65%;
 }
 
-#zvqylnrrns .gt_footnote_marks {
+#slnhxehopo .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#zvqylnrrns .gt_asterisk {
+#slnhxehopo .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#zvqylnrrns .gt_indent_1 {
+#slnhxehopo .gt_indent_1 {
   text-indent: 5px;
 }
 
-#zvqylnrrns .gt_indent_2 {
+#slnhxehopo .gt_indent_2 {
   text-indent: 10px;
 }
 
-#zvqylnrrns .gt_indent_3 {
+#slnhxehopo .gt_indent_3 {
   text-indent: 15px;
 }
 
-#zvqylnrrns .gt_indent_4 {
+#slnhxehopo .gt_indent_4 {
   text-indent: 20px;
 }
 
-#zvqylnrrns .gt_indent_5 {
+#slnhxehopo .gt_indent_5 {
   text-indent: 25px;
 }
 
-#zvqylnrrns .katex-display {
+#slnhxehopo .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#zvqylnrrns div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#slnhxehopo div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2597,26 +2563,26 @@ value yields</p>
 German Studies (050125) and German Language and Literature (160501). We
 use a character vector to assign these two codes to the
 <code>keep_text</code> argument.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Search on codes</span></span>
-<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"050125"</span>, <span class="st">"160501"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div id="wrmvxeyvho" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#wrmvxeyvho table {
+<span><span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"050125"</span>, <span class="st">"160501"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div id="rxdypymfqz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#rxdypymfqz table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#wrmvxeyvho thead, #wrmvxeyvho tbody, #wrmvxeyvho tfoot, #wrmvxeyvho tr, #wrmvxeyvho td, #wrmvxeyvho th {
+#rxdypymfqz thead, #rxdypymfqz tbody, #rxdypymfqz tfoot, #rxdypymfqz tr, #rxdypymfqz td, #rxdypymfqz th {
   border-style: none;
 }
 
-#wrmvxeyvho p {
+#rxdypymfqz p {
   margin: 0;
   padding: 0;
 }
 
-#wrmvxeyvho .gt_table {
+#rxdypymfqz .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2642,12 +2608,12 @@ use a character vector to assign these two codes to the
   border-left-color: #D3D3D3;
 }
 
-#wrmvxeyvho .gt_caption {
+#rxdypymfqz .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#wrmvxeyvho .gt_title {
+#rxdypymfqz .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2659,7 +2625,7 @@ use a character vector to assign these two codes to the
   border-bottom-width: 0;
 }
 
-#wrmvxeyvho .gt_subtitle {
+#rxdypymfqz .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2671,7 +2637,7 @@ use a character vector to assign these two codes to the
   border-top-width: 0;
 }
 
-#wrmvxeyvho .gt_heading {
+#rxdypymfqz .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2683,13 +2649,13 @@ use a character vector to assign these two codes to the
   border-right-color: #D3D3D3;
 }
 
-#wrmvxeyvho .gt_bottom_border {
+#rxdypymfqz .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
 
-#wrmvxeyvho .gt_col_headings {
+#rxdypymfqz .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -2704,7 +2670,7 @@ use a character vector to assign these two codes to the
   border-right-color: #D3D3D3;
 }
 
-#wrmvxeyvho .gt_col_heading {
+#rxdypymfqz .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2724,7 +2690,7 @@ use a character vector to assign these two codes to the
   overflow-x: hidden;
 }
 
-#wrmvxeyvho .gt_column_spanner_outer {
+#rxdypymfqz .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2736,15 +2702,15 @@ use a character vector to assign these two codes to the
   padding-right: 4px;
 }
 
-#wrmvxeyvho .gt_column_spanner_outer:first-child {
+#rxdypymfqz .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#wrmvxeyvho .gt_column_spanner_outer:last-child {
+#rxdypymfqz .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#wrmvxeyvho .gt_column_spanner {
+#rxdypymfqz .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
@@ -2756,11 +2722,11 @@ use a character vector to assign these two codes to the
   width: 100%;
 }
 
-#wrmvxeyvho .gt_spanner_row {
+#rxdypymfqz .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#wrmvxeyvho .gt_group_heading {
+#rxdypymfqz .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2786,7 +2752,7 @@ use a character vector to assign these two codes to the
   text-align: left;
 }
 
-#wrmvxeyvho .gt_empty_group_heading {
+#rxdypymfqz .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2801,15 +2767,15 @@ use a character vector to assign these two codes to the
   vertical-align: middle;
 }
 
-#wrmvxeyvho .gt_from_md > :first-child {
+#rxdypymfqz .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#wrmvxeyvho .gt_from_md > :last-child {
+#rxdypymfqz .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#wrmvxeyvho .gt_row {
+#rxdypymfqz .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2828,7 +2794,7 @@ use a character vector to assign these two codes to the
   overflow-x: hidden;
 }
 
-#wrmvxeyvho .gt_stub {
+#rxdypymfqz .gt_stub {
   color: #FFFFFF;
   background-color: #5F5F5F;
   font-size: 100%;
@@ -2841,7 +2807,7 @@ use a character vector to assign these two codes to the
   padding-right: 5px;
 }
 
-#wrmvxeyvho .gt_stub_row_group {
+#rxdypymfqz .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2855,15 +2821,15 @@ use a character vector to assign these two codes to the
   vertical-align: top;
 }
 
-#wrmvxeyvho .gt_row_group_first td {
+#rxdypymfqz .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#wrmvxeyvho .gt_row_group_first th {
+#rxdypymfqz .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#wrmvxeyvho .gt_summary_row {
+#rxdypymfqz .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2873,16 +2839,16 @@ use a character vector to assign these two codes to the
   padding-right: 5px;
 }
 
-#wrmvxeyvho .gt_first_summary_row {
+#rxdypymfqz .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #5F5F5F;
 }
 
-#wrmvxeyvho .gt_first_summary_row.thick {
+#rxdypymfqz .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#wrmvxeyvho .gt_last_summary_row {
+#rxdypymfqz .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2892,7 +2858,7 @@ use a character vector to assign these two codes to the
   border-bottom-color: #5F5F5F;
 }
 
-#wrmvxeyvho .gt_grand_summary_row {
+#rxdypymfqz .gt_grand_summary_row {
   color: #333333;
   background-color: #D5D5D5;
   text-transform: inherit;
@@ -2902,7 +2868,7 @@ use a character vector to assign these two codes to the
   padding-right: 5px;
 }
 
-#wrmvxeyvho .gt_first_grand_summary_row {
+#rxdypymfqz .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2912,7 +2878,7 @@ use a character vector to assign these two codes to the
   border-top-color: #5F5F5F;
 }
 
-#wrmvxeyvho .gt_last_grand_summary_row_top {
+#rxdypymfqz .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2922,11 +2888,11 @@ use a character vector to assign these two codes to the
   border-bottom-color: #5F5F5F;
 }
 
-#wrmvxeyvho .gt_striped {
+#rxdypymfqz .gt_striped {
   background-color: #F4F4F4;
 }
 
-#wrmvxeyvho .gt_table_body {
+#rxdypymfqz .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -2935,7 +2901,7 @@ use a character vector to assign these two codes to the
   border-bottom-color: #5F5F5F;
 }
 
-#wrmvxeyvho .gt_footnotes {
+#rxdypymfqz .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2949,7 +2915,7 @@ use a character vector to assign these two codes to the
   border-right-color: #D3D3D3;
 }
 
-#wrmvxeyvho .gt_footnote {
+#rxdypymfqz .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2958,7 +2924,7 @@ use a character vector to assign these two codes to the
   padding-right: 5px;
 }
 
-#wrmvxeyvho .gt_sourcenotes {
+#rxdypymfqz .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2972,7 +2938,7 @@ use a character vector to assign these two codes to the
   border-right-color: #D3D3D3;
 }
 
-#wrmvxeyvho .gt_sourcenote {
+#rxdypymfqz .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2980,72 +2946,72 @@ use a character vector to assign these two codes to the
   padding-right: 5px;
 }
 
-#wrmvxeyvho .gt_left {
+#rxdypymfqz .gt_left {
   text-align: left;
 }
 
-#wrmvxeyvho .gt_center {
+#rxdypymfqz .gt_center {
   text-align: center;
 }
 
-#wrmvxeyvho .gt_right {
+#rxdypymfqz .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#wrmvxeyvho .gt_font_normal {
+#rxdypymfqz .gt_font_normal {
   font-weight: normal;
 }
 
-#wrmvxeyvho .gt_font_bold {
+#rxdypymfqz .gt_font_bold {
   font-weight: bold;
 }
 
-#wrmvxeyvho .gt_font_italic {
+#rxdypymfqz .gt_font_italic {
   font-style: italic;
 }
 
-#wrmvxeyvho .gt_super {
+#rxdypymfqz .gt_super {
   font-size: 65%;
 }
 
-#wrmvxeyvho .gt_footnote_marks {
+#rxdypymfqz .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#wrmvxeyvho .gt_asterisk {
+#rxdypymfqz .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#wrmvxeyvho .gt_indent_1 {
+#rxdypymfqz .gt_indent_1 {
   text-indent: 5px;
 }
 
-#wrmvxeyvho .gt_indent_2 {
+#rxdypymfqz .gt_indent_2 {
   text-indent: 10px;
 }
 
-#wrmvxeyvho .gt_indent_3 {
+#rxdypymfqz .gt_indent_3 {
   text-indent: 15px;
 }
 
-#wrmvxeyvho .gt_indent_4 {
+#rxdypymfqz .gt_indent_4 {
   text-indent: 20px;
 }
 
-#wrmvxeyvho .gt_indent_5 {
+#rxdypymfqz .gt_indent_5 {
   text-indent: 25px;
 }
 
-#wrmvxeyvho .katex-display {
+#rxdypymfqz .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#wrmvxeyvho div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#rxdypymfqz div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -3079,40 +3045,50 @@ use a character vector to assign these two codes to the
 </tbody>
 </table>
 </div>
-<p>If the 6-digit codes are entered as integers, they produce an
-error.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<p>If the 6-digit codes are entered as integers, they are coerced to
+strings for the search.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Search that produces an error</span></span>
-<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">050125</span>, <span class="fl">160501</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `filter_cip()`:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Assertion on 'keep_text' failed. Must be of class 'string', not 'double'.</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">050125</span>, <span class="fl">160501</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                          cip6name   cip6</span></span>
+<span><span class="co">#&gt;                            &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1:                 German Studies 050125</span></span>
+<span><span class="co">#&gt; 2: German Language and Literature 160501</span></span>
+<span><span class="co">#&gt;                                       cip4name   cip4</span></span>
+<span><span class="co">#&gt;                                         &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1:                                Area Studies   0501</span></span>
+<span><span class="co">#&gt; 2: Germanic Languages, Literatures Linguistics   1605</span></span>
+<span><span class="co">#&gt;                                               cip2name   cip2</span></span>
+<span><span class="co">#&gt;                                                 &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1: Area, Ethnic, Cultural and Gender and Group Studies     05</span></span>
+<span><span class="co">#&gt; 2:      Foreign Languages, Literatures and Linguistics     16</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="using-a-regular-expression-search">Using a regular expression search<a class="anchor" aria-label="anchor" href="#using-a-regular-expression-search"></a>
 </h2>
 <p>Specifying 4-digit codes yields a data frame all 6-digit programs
 containing the 4-digit string. We use the regular expression notation
-<code>^</code> to match the start of the strings.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code>^</code> to match the start of the line.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># example 3 filter using regular expressions</span></span>
-<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1410"</span>, <span class="st">"^1419"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div id="jvirylakan" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#jvirylakan table {
+<span><span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1410"</span>, <span class="st">"^1419"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div id="vbuyvzijoe" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#vbuyvzijoe table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#jvirylakan thead, #jvirylakan tbody, #jvirylakan tfoot, #jvirylakan tr, #jvirylakan td, #jvirylakan th {
+#vbuyvzijoe thead, #vbuyvzijoe tbody, #vbuyvzijoe tfoot, #vbuyvzijoe tr, #vbuyvzijoe td, #vbuyvzijoe th {
   border-style: none;
 }
 
-#jvirylakan p {
+#vbuyvzijoe p {
   margin: 0;
   padding: 0;
 }
 
-#jvirylakan .gt_table {
+#vbuyvzijoe .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -3138,12 +3114,12 @@ containing the 4-digit string. We use the regular expression notation
   border-left-color: #D3D3D3;
 }
 
-#jvirylakan .gt_caption {
+#vbuyvzijoe .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#jvirylakan .gt_title {
+#vbuyvzijoe .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -3155,7 +3131,7 @@ containing the 4-digit string. We use the regular expression notation
   border-bottom-width: 0;
 }
 
-#jvirylakan .gt_subtitle {
+#vbuyvzijoe .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -3167,7 +3143,7 @@ containing the 4-digit string. We use the regular expression notation
   border-top-width: 0;
 }
 
-#jvirylakan .gt_heading {
+#vbuyvzijoe .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -3179,13 +3155,13 @@ containing the 4-digit string. We use the regular expression notation
   border-right-color: #D3D3D3;
 }
 
-#jvirylakan .gt_bottom_border {
+#vbuyvzijoe .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
 
-#jvirylakan .gt_col_headings {
+#vbuyvzijoe .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -3200,7 +3176,7 @@ containing the 4-digit string. We use the regular expression notation
   border-right-color: #D3D3D3;
 }
 
-#jvirylakan .gt_col_heading {
+#vbuyvzijoe .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3220,7 +3196,7 @@ containing the 4-digit string. We use the regular expression notation
   overflow-x: hidden;
 }
 
-#jvirylakan .gt_column_spanner_outer {
+#vbuyvzijoe .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3232,15 +3208,15 @@ containing the 4-digit string. We use the regular expression notation
   padding-right: 4px;
 }
 
-#jvirylakan .gt_column_spanner_outer:first-child {
+#vbuyvzijoe .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#jvirylakan .gt_column_spanner_outer:last-child {
+#vbuyvzijoe .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#jvirylakan .gt_column_spanner {
+#vbuyvzijoe .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
@@ -3252,11 +3228,11 @@ containing the 4-digit string. We use the regular expression notation
   width: 100%;
 }
 
-#jvirylakan .gt_spanner_row {
+#vbuyvzijoe .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#jvirylakan .gt_group_heading {
+#vbuyvzijoe .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3282,7 +3258,7 @@ containing the 4-digit string. We use the regular expression notation
   text-align: left;
 }
 
-#jvirylakan .gt_empty_group_heading {
+#vbuyvzijoe .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -3297,15 +3273,15 @@ containing the 4-digit string. We use the regular expression notation
   vertical-align: middle;
 }
 
-#jvirylakan .gt_from_md > :first-child {
+#vbuyvzijoe .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#jvirylakan .gt_from_md > :last-child {
+#vbuyvzijoe .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#jvirylakan .gt_row {
+#vbuyvzijoe .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3324,7 +3300,7 @@ containing the 4-digit string. We use the regular expression notation
   overflow-x: hidden;
 }
 
-#jvirylakan .gt_stub {
+#vbuyvzijoe .gt_stub {
   color: #FFFFFF;
   background-color: #5F5F5F;
   font-size: 100%;
@@ -3337,7 +3313,7 @@ containing the 4-digit string. We use the regular expression notation
   padding-right: 5px;
 }
 
-#jvirylakan .gt_stub_row_group {
+#vbuyvzijoe .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3351,15 +3327,15 @@ containing the 4-digit string. We use the regular expression notation
   vertical-align: top;
 }
 
-#jvirylakan .gt_row_group_first td {
+#vbuyvzijoe .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#jvirylakan .gt_row_group_first th {
+#vbuyvzijoe .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#jvirylakan .gt_summary_row {
+#vbuyvzijoe .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3369,16 +3345,16 @@ containing the 4-digit string. We use the regular expression notation
   padding-right: 5px;
 }
 
-#jvirylakan .gt_first_summary_row {
+#vbuyvzijoe .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #5F5F5F;
 }
 
-#jvirylakan .gt_first_summary_row.thick {
+#vbuyvzijoe .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#jvirylakan .gt_last_summary_row {
+#vbuyvzijoe .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3388,7 +3364,7 @@ containing the 4-digit string. We use the regular expression notation
   border-bottom-color: #5F5F5F;
 }
 
-#jvirylakan .gt_grand_summary_row {
+#vbuyvzijoe .gt_grand_summary_row {
   color: #333333;
   background-color: #D5D5D5;
   text-transform: inherit;
@@ -3398,7 +3374,7 @@ containing the 4-digit string. We use the regular expression notation
   padding-right: 5px;
 }
 
-#jvirylakan .gt_first_grand_summary_row {
+#vbuyvzijoe .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3408,7 +3384,7 @@ containing the 4-digit string. We use the regular expression notation
   border-top-color: #5F5F5F;
 }
 
-#jvirylakan .gt_last_grand_summary_row_top {
+#vbuyvzijoe .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3418,11 +3394,11 @@ containing the 4-digit string. We use the regular expression notation
   border-bottom-color: #5F5F5F;
 }
 
-#jvirylakan .gt_striped {
+#vbuyvzijoe .gt_striped {
   background-color: #F4F4F4;
 }
 
-#jvirylakan .gt_table_body {
+#vbuyvzijoe .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -3431,7 +3407,7 @@ containing the 4-digit string. We use the regular expression notation
   border-bottom-color: #5F5F5F;
 }
 
-#jvirylakan .gt_footnotes {
+#vbuyvzijoe .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3445,7 +3421,7 @@ containing the 4-digit string. We use the regular expression notation
   border-right-color: #D3D3D3;
 }
 
-#jvirylakan .gt_footnote {
+#vbuyvzijoe .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -3454,7 +3430,7 @@ containing the 4-digit string. We use the regular expression notation
   padding-right: 5px;
 }
 
-#jvirylakan .gt_sourcenotes {
+#vbuyvzijoe .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3468,7 +3444,7 @@ containing the 4-digit string. We use the regular expression notation
   border-right-color: #D3D3D3;
 }
 
-#jvirylakan .gt_sourcenote {
+#vbuyvzijoe .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -3476,72 +3452,72 @@ containing the 4-digit string. We use the regular expression notation
   padding-right: 5px;
 }
 
-#jvirylakan .gt_left {
+#vbuyvzijoe .gt_left {
   text-align: left;
 }
 
-#jvirylakan .gt_center {
+#vbuyvzijoe .gt_center {
   text-align: center;
 }
 
-#jvirylakan .gt_right {
+#vbuyvzijoe .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#jvirylakan .gt_font_normal {
+#vbuyvzijoe .gt_font_normal {
   font-weight: normal;
 }
 
-#jvirylakan .gt_font_bold {
+#vbuyvzijoe .gt_font_bold {
   font-weight: bold;
 }
 
-#jvirylakan .gt_font_italic {
+#vbuyvzijoe .gt_font_italic {
   font-style: italic;
 }
 
-#jvirylakan .gt_super {
+#vbuyvzijoe .gt_super {
   font-size: 65%;
 }
 
-#jvirylakan .gt_footnote_marks {
+#vbuyvzijoe .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#jvirylakan .gt_asterisk {
+#vbuyvzijoe .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#jvirylakan .gt_indent_1 {
+#vbuyvzijoe .gt_indent_1 {
   text-indent: 5px;
 }
 
-#jvirylakan .gt_indent_2 {
+#vbuyvzijoe .gt_indent_2 {
   text-indent: 10px;
 }
 
-#jvirylakan .gt_indent_3 {
+#vbuyvzijoe .gt_indent_3 {
   text-indent: 15px;
 }
 
-#jvirylakan .gt_indent_4 {
+#vbuyvzijoe .gt_indent_4 {
   text-indent: 20px;
 }
 
-#jvirylakan .gt_indent_5 {
+#vbuyvzijoe .gt_indent_5 {
   text-indent: 25px;
 }
 
-#jvirylakan .katex-display {
+#vbuyvzijoe .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#jvirylakan div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#vbuyvzijoe div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -3601,26 +3577,26 @@ containing the 4-digit string. We use the regular expression notation
 </div>
 <p>The 2-digit series represent the most general groupings of related
 programs. Here, the result includes all History programs.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Search on 2-digit code</span></span>
-<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="st">"^54"</span><span class="op">)</span></span></code></pre></div>
-<div id="dtehthrbgu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#dtehthrbgu table {
+<span><span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"^54"</span><span class="op">)</span></span></code></pre></div>
+<div id="ugaandumco" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ugaandumco table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#dtehthrbgu thead, #dtehthrbgu tbody, #dtehthrbgu tfoot, #dtehthrbgu tr, #dtehthrbgu td, #dtehthrbgu th {
+#ugaandumco thead, #ugaandumco tbody, #ugaandumco tfoot, #ugaandumco tr, #ugaandumco td, #ugaandumco th {
   border-style: none;
 }
 
-#dtehthrbgu p {
+#ugaandumco p {
   margin: 0;
   padding: 0;
 }
 
-#dtehthrbgu .gt_table {
+#ugaandumco .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -3646,12 +3622,12 @@ programs. Here, the result includes all History programs.</p>
   border-left-color: #D3D3D3;
 }
 
-#dtehthrbgu .gt_caption {
+#ugaandumco .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#dtehthrbgu .gt_title {
+#ugaandumco .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -3663,7 +3639,7 @@ programs. Here, the result includes all History programs.</p>
   border-bottom-width: 0;
 }
 
-#dtehthrbgu .gt_subtitle {
+#ugaandumco .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -3675,7 +3651,7 @@ programs. Here, the result includes all History programs.</p>
   border-top-width: 0;
 }
 
-#dtehthrbgu .gt_heading {
+#ugaandumco .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -3687,13 +3663,13 @@ programs. Here, the result includes all History programs.</p>
   border-right-color: #D3D3D3;
 }
 
-#dtehthrbgu .gt_bottom_border {
+#ugaandumco .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
 
-#dtehthrbgu .gt_col_headings {
+#ugaandumco .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -3708,7 +3684,7 @@ programs. Here, the result includes all History programs.</p>
   border-right-color: #D3D3D3;
 }
 
-#dtehthrbgu .gt_col_heading {
+#ugaandumco .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3728,7 +3704,7 @@ programs. Here, the result includes all History programs.</p>
   overflow-x: hidden;
 }
 
-#dtehthrbgu .gt_column_spanner_outer {
+#ugaandumco .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3740,15 +3716,15 @@ programs. Here, the result includes all History programs.</p>
   padding-right: 4px;
 }
 
-#dtehthrbgu .gt_column_spanner_outer:first-child {
+#ugaandumco .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#dtehthrbgu .gt_column_spanner_outer:last-child {
+#ugaandumco .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#dtehthrbgu .gt_column_spanner {
+#ugaandumco .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
@@ -3760,11 +3736,11 @@ programs. Here, the result includes all History programs.</p>
   width: 100%;
 }
 
-#dtehthrbgu .gt_spanner_row {
+#ugaandumco .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#dtehthrbgu .gt_group_heading {
+#ugaandumco .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3790,7 +3766,7 @@ programs. Here, the result includes all History programs.</p>
   text-align: left;
 }
 
-#dtehthrbgu .gt_empty_group_heading {
+#ugaandumco .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -3805,15 +3781,15 @@ programs. Here, the result includes all History programs.</p>
   vertical-align: middle;
 }
 
-#dtehthrbgu .gt_from_md > :first-child {
+#ugaandumco .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#dtehthrbgu .gt_from_md > :last-child {
+#ugaandumco .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#dtehthrbgu .gt_row {
+#ugaandumco .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3832,7 +3808,7 @@ programs. Here, the result includes all History programs.</p>
   overflow-x: hidden;
 }
 
-#dtehthrbgu .gt_stub {
+#ugaandumco .gt_stub {
   color: #FFFFFF;
   background-color: #5F5F5F;
   font-size: 100%;
@@ -3845,7 +3821,7 @@ programs. Here, the result includes all History programs.</p>
   padding-right: 5px;
 }
 
-#dtehthrbgu .gt_stub_row_group {
+#ugaandumco .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3859,15 +3835,15 @@ programs. Here, the result includes all History programs.</p>
   vertical-align: top;
 }
 
-#dtehthrbgu .gt_row_group_first td {
+#ugaandumco .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#dtehthrbgu .gt_row_group_first th {
+#ugaandumco .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#dtehthrbgu .gt_summary_row {
+#ugaandumco .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3877,16 +3853,16 @@ programs. Here, the result includes all History programs.</p>
   padding-right: 5px;
 }
 
-#dtehthrbgu .gt_first_summary_row {
+#ugaandumco .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #5F5F5F;
 }
 
-#dtehthrbgu .gt_first_summary_row.thick {
+#ugaandumco .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#dtehthrbgu .gt_last_summary_row {
+#ugaandumco .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3896,7 +3872,7 @@ programs. Here, the result includes all History programs.</p>
   border-bottom-color: #5F5F5F;
 }
 
-#dtehthrbgu .gt_grand_summary_row {
+#ugaandumco .gt_grand_summary_row {
   color: #333333;
   background-color: #D5D5D5;
   text-transform: inherit;
@@ -3906,7 +3882,7 @@ programs. Here, the result includes all History programs.</p>
   padding-right: 5px;
 }
 
-#dtehthrbgu .gt_first_grand_summary_row {
+#ugaandumco .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3916,7 +3892,7 @@ programs. Here, the result includes all History programs.</p>
   border-top-color: #5F5F5F;
 }
 
-#dtehthrbgu .gt_last_grand_summary_row_top {
+#ugaandumco .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3926,11 +3902,11 @@ programs. Here, the result includes all History programs.</p>
   border-bottom-color: #5F5F5F;
 }
 
-#dtehthrbgu .gt_striped {
+#ugaandumco .gt_striped {
   background-color: #F4F4F4;
 }
 
-#dtehthrbgu .gt_table_body {
+#ugaandumco .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -3939,7 +3915,7 @@ programs. Here, the result includes all History programs.</p>
   border-bottom-color: #5F5F5F;
 }
 
-#dtehthrbgu .gt_footnotes {
+#ugaandumco .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3953,7 +3929,7 @@ programs. Here, the result includes all History programs.</p>
   border-right-color: #D3D3D3;
 }
 
-#dtehthrbgu .gt_footnote {
+#ugaandumco .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -3962,7 +3938,7 @@ programs. Here, the result includes all History programs.</p>
   padding-right: 5px;
 }
 
-#dtehthrbgu .gt_sourcenotes {
+#ugaandumco .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3976,7 +3952,7 @@ programs. Here, the result includes all History programs.</p>
   border-right-color: #D3D3D3;
 }
 
-#dtehthrbgu .gt_sourcenote {
+#ugaandumco .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -3984,72 +3960,72 @@ programs. Here, the result includes all History programs.</p>
   padding-right: 5px;
 }
 
-#dtehthrbgu .gt_left {
+#ugaandumco .gt_left {
   text-align: left;
 }
 
-#dtehthrbgu .gt_center {
+#ugaandumco .gt_center {
   text-align: center;
 }
 
-#dtehthrbgu .gt_right {
+#ugaandumco .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#dtehthrbgu .gt_font_normal {
+#ugaandumco .gt_font_normal {
   font-weight: normal;
 }
 
-#dtehthrbgu .gt_font_bold {
+#ugaandumco .gt_font_bold {
   font-weight: bold;
 }
 
-#dtehthrbgu .gt_font_italic {
+#ugaandumco .gt_font_italic {
   font-style: italic;
 }
 
-#dtehthrbgu .gt_super {
+#ugaandumco .gt_super {
   font-size: 65%;
 }
 
-#dtehthrbgu .gt_footnote_marks {
+#ugaandumco .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#dtehthrbgu .gt_asterisk {
+#ugaandumco .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#dtehthrbgu .gt_indent_1 {
+#ugaandumco .gt_indent_1 {
   text-indent: 5px;
 }
 
-#dtehthrbgu .gt_indent_2 {
+#ugaandumco .gt_indent_2 {
   text-indent: 10px;
 }
 
-#dtehthrbgu .gt_indent_3 {
+#ugaandumco .gt_indent_3 {
   text-indent: 15px;
 }
 
-#dtehthrbgu .gt_indent_4 {
+#ugaandumco .gt_indent_4 {
   text-indent: 20px;
 }
 
-#dtehthrbgu .gt_indent_5 {
+#ugaandumco .gt_indent_5 {
   text-indent: 25px;
 }
 
-#dtehthrbgu .katex-display {
+#ugaandumco .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#dtehthrbgu div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#ugaandumco div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -4141,27 +4117,27 @@ programs. Here, the result includes all History programs.</p>
 </div>
 <p>The series argument can include any combination of 2, 4, and 6-digit
 codes. It can also be passed to the function as a character vector.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Search on vector of codes</span></span>
 <span><span class="va">codes_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^24"</span>, <span class="st">"^4102"</span>, <span class="st">"^450202"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="va">codes_we_want</span><span class="op">)</span></span></code></pre></div>
-<div id="kkvjclmouv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#kkvjclmouv table {
+<span><span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">cip</span>, <span class="va">codes_we_want</span><span class="op">)</span></span></code></pre></div>
+<div id="glxaqrumuz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#glxaqrumuz table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#kkvjclmouv thead, #kkvjclmouv tbody, #kkvjclmouv tfoot, #kkvjclmouv tr, #kkvjclmouv td, #kkvjclmouv th {
+#glxaqrumuz thead, #glxaqrumuz tbody, #glxaqrumuz tfoot, #glxaqrumuz tr, #glxaqrumuz td, #glxaqrumuz th {
   border-style: none;
 }
 
-#kkvjclmouv p {
+#glxaqrumuz p {
   margin: 0;
   padding: 0;
 }
 
-#kkvjclmouv .gt_table {
+#glxaqrumuz .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -4187,12 +4163,12 @@ codes. It can also be passed to the function as a character vector.</p>
   border-left-color: #D3D3D3;
 }
 
-#kkvjclmouv .gt_caption {
+#glxaqrumuz .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#kkvjclmouv .gt_title {
+#glxaqrumuz .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -4204,7 +4180,7 @@ codes. It can also be passed to the function as a character vector.</p>
   border-bottom-width: 0;
 }
 
-#kkvjclmouv .gt_subtitle {
+#glxaqrumuz .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -4216,7 +4192,7 @@ codes. It can also be passed to the function as a character vector.</p>
   border-top-width: 0;
 }
 
-#kkvjclmouv .gt_heading {
+#glxaqrumuz .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -4228,13 +4204,13 @@ codes. It can also be passed to the function as a character vector.</p>
   border-right-color: #D3D3D3;
 }
 
-#kkvjclmouv .gt_bottom_border {
+#glxaqrumuz .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
 
-#kkvjclmouv .gt_col_headings {
+#glxaqrumuz .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -4249,7 +4225,7 @@ codes. It can also be passed to the function as a character vector.</p>
   border-right-color: #D3D3D3;
 }
 
-#kkvjclmouv .gt_col_heading {
+#glxaqrumuz .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -4269,7 +4245,7 @@ codes. It can also be passed to the function as a character vector.</p>
   overflow-x: hidden;
 }
 
-#kkvjclmouv .gt_column_spanner_outer {
+#glxaqrumuz .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -4281,15 +4257,15 @@ codes. It can also be passed to the function as a character vector.</p>
   padding-right: 4px;
 }
 
-#kkvjclmouv .gt_column_spanner_outer:first-child {
+#glxaqrumuz .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#kkvjclmouv .gt_column_spanner_outer:last-child {
+#glxaqrumuz .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#kkvjclmouv .gt_column_spanner {
+#glxaqrumuz .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
@@ -4301,11 +4277,11 @@ codes. It can also be passed to the function as a character vector.</p>
   width: 100%;
 }
 
-#kkvjclmouv .gt_spanner_row {
+#glxaqrumuz .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#kkvjclmouv .gt_group_heading {
+#glxaqrumuz .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -4331,7 +4307,7 @@ codes. It can also be passed to the function as a character vector.</p>
   text-align: left;
 }
 
-#kkvjclmouv .gt_empty_group_heading {
+#glxaqrumuz .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -4346,15 +4322,15 @@ codes. It can also be passed to the function as a character vector.</p>
   vertical-align: middle;
 }
 
-#kkvjclmouv .gt_from_md > :first-child {
+#glxaqrumuz .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#kkvjclmouv .gt_from_md > :last-child {
+#glxaqrumuz .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#kkvjclmouv .gt_row {
+#glxaqrumuz .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -4373,7 +4349,7 @@ codes. It can also be passed to the function as a character vector.</p>
   overflow-x: hidden;
 }
 
-#kkvjclmouv .gt_stub {
+#glxaqrumuz .gt_stub {
   color: #FFFFFF;
   background-color: #5F5F5F;
   font-size: 100%;
@@ -4386,7 +4362,7 @@ codes. It can also be passed to the function as a character vector.</p>
   padding-right: 5px;
 }
 
-#kkvjclmouv .gt_stub_row_group {
+#glxaqrumuz .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -4400,15 +4376,15 @@ codes. It can also be passed to the function as a character vector.</p>
   vertical-align: top;
 }
 
-#kkvjclmouv .gt_row_group_first td {
+#glxaqrumuz .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#kkvjclmouv .gt_row_group_first th {
+#glxaqrumuz .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#kkvjclmouv .gt_summary_row {
+#glxaqrumuz .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -4418,16 +4394,16 @@ codes. It can also be passed to the function as a character vector.</p>
   padding-right: 5px;
 }
 
-#kkvjclmouv .gt_first_summary_row {
+#glxaqrumuz .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #5F5F5F;
 }
 
-#kkvjclmouv .gt_first_summary_row.thick {
+#glxaqrumuz .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#kkvjclmouv .gt_last_summary_row {
+#glxaqrumuz .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -4437,7 +4413,7 @@ codes. It can also be passed to the function as a character vector.</p>
   border-bottom-color: #5F5F5F;
 }
 
-#kkvjclmouv .gt_grand_summary_row {
+#glxaqrumuz .gt_grand_summary_row {
   color: #333333;
   background-color: #D5D5D5;
   text-transform: inherit;
@@ -4447,7 +4423,7 @@ codes. It can also be passed to the function as a character vector.</p>
   padding-right: 5px;
 }
 
-#kkvjclmouv .gt_first_grand_summary_row {
+#glxaqrumuz .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -4457,7 +4433,7 @@ codes. It can also be passed to the function as a character vector.</p>
   border-top-color: #5F5F5F;
 }
 
-#kkvjclmouv .gt_last_grand_summary_row_top {
+#glxaqrumuz .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -4467,11 +4443,11 @@ codes. It can also be passed to the function as a character vector.</p>
   border-bottom-color: #5F5F5F;
 }
 
-#kkvjclmouv .gt_striped {
+#glxaqrumuz .gt_striped {
   background-color: #F4F4F4;
 }
 
-#kkvjclmouv .gt_table_body {
+#glxaqrumuz .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -4480,7 +4456,7 @@ codes. It can also be passed to the function as a character vector.</p>
   border-bottom-color: #5F5F5F;
 }
 
-#kkvjclmouv .gt_footnotes {
+#glxaqrumuz .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -4494,7 +4470,7 @@ codes. It can also be passed to the function as a character vector.</p>
   border-right-color: #D3D3D3;
 }
 
-#kkvjclmouv .gt_footnote {
+#glxaqrumuz .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -4503,7 +4479,7 @@ codes. It can also be passed to the function as a character vector.</p>
   padding-right: 5px;
 }
 
-#kkvjclmouv .gt_sourcenotes {
+#glxaqrumuz .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -4517,7 +4493,7 @@ codes. It can also be passed to the function as a character vector.</p>
   border-right-color: #D3D3D3;
 }
 
-#kkvjclmouv .gt_sourcenote {
+#glxaqrumuz .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -4525,72 +4501,72 @@ codes. It can also be passed to the function as a character vector.</p>
   padding-right: 5px;
 }
 
-#kkvjclmouv .gt_left {
+#glxaqrumuz .gt_left {
   text-align: left;
 }
 
-#kkvjclmouv .gt_center {
+#glxaqrumuz .gt_center {
   text-align: center;
 }
 
-#kkvjclmouv .gt_right {
+#glxaqrumuz .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#kkvjclmouv .gt_font_normal {
+#glxaqrumuz .gt_font_normal {
   font-weight: normal;
 }
 
-#kkvjclmouv .gt_font_bold {
+#glxaqrumuz .gt_font_bold {
   font-weight: bold;
 }
 
-#kkvjclmouv .gt_font_italic {
+#glxaqrumuz .gt_font_italic {
   font-style: italic;
 }
 
-#kkvjclmouv .gt_super {
+#glxaqrumuz .gt_super {
   font-size: 65%;
 }
 
-#kkvjclmouv .gt_footnote_marks {
+#glxaqrumuz .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#kkvjclmouv .gt_asterisk {
+#glxaqrumuz .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#kkvjclmouv .gt_indent_1 {
+#glxaqrumuz .gt_indent_1 {
   text-indent: 5px;
 }
 
-#kkvjclmouv .gt_indent_2 {
+#glxaqrumuz .gt_indent_2 {
   text-indent: 10px;
 }
 
-#kkvjclmouv .gt_indent_3 {
+#glxaqrumuz .gt_indent_3 {
   text-indent: 15px;
 }
 
-#kkvjclmouv .gt_indent_4 {
+#glxaqrumuz .gt_indent_4 {
   text-indent: 20px;
 }
 
-#kkvjclmouv .gt_indent_5 {
+#glxaqrumuz .gt_indent_5 {
   text-indent: 25px;
 }
 
-#kkvjclmouv .katex-display {
+#glxaqrumuz .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#kkvjclmouv div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#glxaqrumuz div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -4674,50 +4650,12 @@ codes. It can also be passed to the function as a character vector.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="when-search-terms-cannot-be-found">When search terms cannot be found<a class="anchor" aria-label="anchor" href="#when-search-terms-cannot-be-found"></a>
-</h2>
-<p>If the <code>keep_text</code> argument includes terms that cannot be
-found in the CIP data frame, the unsuccessful terms are identified in a
-message and the successful terms produce the usual output.</p>
-<p>For example, the following <code>keep_text</code> argument includes
-three search terms that are not present in the CIP data (“111111”,
-“^55”, and “Bogus”) and two that are (“050125” and “160501”).</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Unsuccessful terms produce a message</span></span>
-<span><span class="va">sub_cip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"050125"</span>, <span class="st">"111111"</span>, <span class="st">"160501"</span>, <span class="st">"Bogus"</span>, <span class="st">"^55"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Can't find these terms: 111111, Bogus, ^55</span></span>
-<span></span>
-<span><span class="co"># But the successful terms are returned</span></span>
-<span><span class="va">sub_cip</span></span>
-<span><span class="co">#&gt;                          cip6name   cip6</span></span>
-<span><span class="co">#&gt;                            &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:                 German Studies 050125</span></span>
-<span><span class="co">#&gt; 2: German Language and Literature 160501</span></span>
-<span><span class="co">#&gt;                                       cip4name   cip4</span></span>
-<span><span class="co">#&gt;                                         &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:                                Area Studies   0501</span></span>
-<span><span class="co">#&gt; 2: Germanic Languages, Literatures Linguistics   1605</span></span>
-<span><span class="co">#&gt;                                               cip2name   cip2</span></span>
-<span><span class="co">#&gt;                                                 &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1: Area, Ethnic, Cultural and Gender and Group Studies     05</span></span>
-<span><span class="co">#&gt; 2:      Foreign Languages, Literatures and Linguistics     16</span></span></code></pre></div>
-<p>However, as seen earlier, if none of the search terms are found, an
-error occurs.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># When none of the search terms are found</span></span>
-<span><span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"111111"</span>, <span class="st">"Bogus"</span>, <span class="st">"^55"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> The search result is empty. Possible causes are:</span></span>
-<span><span class="co">#&gt;  * 'cip' contained no matches to terms in 'keep_text'.</span></span>
-<span><span class="co">#&gt;  * 'drop_text' eliminated all remaining rows.</span></span></code></pre></div>
-</div>
-<div class="section level2">
 <h2 id="cip-data-from-another-source">CIP data from another source<a class="anchor" aria-label="anchor" href="#cip-data-from-another-source"></a>
 </h2>
 <p>If you use a CIP data set from another source, it must have the same
 structure as <code>cip</code>: six character columns named as
 follows,</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Name and class of variables (columns) in cip</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">cip</span>, FUN <span class="op">=</span> <span class="va">class</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    cip6name        cip6    cip4name        cip4    cip2name        cip2 </span></span>
@@ -4744,12 +4682,12 @@ Mechanical (1419), and Industrial/Systems (1427, 1435, 1436, and
 1437).</p>
 <p>We obtain their 6-digit CIP codes. The 4-digit names are appropriate
 here. Our task is to create a variable with custom program names.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Changing the number of rows to print</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>datatable.print.nrows <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Four engineering programs</span></span>
-<span><span class="va">four_programs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1427"</span>, <span class="st">"^1435"</span>, <span class="st">"^1436"</span>, <span class="st">"^1437"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">four_programs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1427"</span>, <span class="st">"^1435"</span>, <span class="st">"^1436"</span>, <span class="st">"^1437"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Retain the needed columns</span></span>
 <span><span class="va">four_programs</span> <span class="op">&lt;-</span> <span class="va">four_programs</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, <span class="va">cip4name</span><span class="op">)</span><span class="op">]</span></span>
@@ -4774,7 +4712,7 @@ here. Our task is to create a variable with custom program names.</p>
 <p>To make the assignments clear, our approach here will be to assign a
 new <code>program</code> column with NA values, then edit the new column
 values.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Assign a new column</span></span>
 <span><span class="va">four_programs</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="cn">NA_character_</span><span class="op">]</span></span>
 <span><span class="va">four_programs</span></span>
@@ -4803,12 +4741,12 @@ around the base R <code><a href="https://rdrr.io/r/base/grep.html" class="extern
 <code>%ilike%</code> version is case-insensitive. You can view the help
 page by running (the back-ticks facilitate a help search for terms
 starting with a symbol):</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Run in Console</span></span>
 <span><span class="op">?</span> <span class="va">`%like%`</span></span></code></pre></div>
 <p>In this approach, we search for one distinctive term only. We’re
 using abbreviations for compact output.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Recode program using the 4-digit name</span></span>
 <span><span class="va">four_programs</span><span class="op">[</span><span class="va">cip4name</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%ilike%</a></span> <span class="st">"electrical"</span>, <span class="va">program</span> <span class="op">:=</span> <span class="st">"EE"</span><span class="op">]</span></span>
 <span><span class="va">four_programs</span></span>
@@ -4836,7 +4774,7 @@ using abbreviations for compact output.</p>
 <p>In our second approach, we use the <code>%like%</code> function
 again, but apply it to a CIP code. Here we use the regular expression
 <code>^1408</code> meaning “starts with 1408.”</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Recode program using the 4-digit code</span></span>
 <span><span class="va">four_programs</span><span class="op">[</span><span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="va">program</span> <span class="op">:=</span> <span class="st">"CE"</span><span class="op">]</span></span>
 <span><span class="va">four_programs</span></span>
@@ -4865,7 +4803,7 @@ again, but apply it to a CIP code. Here we use the regular expression
 <code><a href="https://rdrr.io/pkg/data.table/man/fcase.html" class="external-link">fcase()</a></code>, an implementation of the SQL CASE WHEN statement.
 The data.table function <code>%chin%</code> is like <code>%in%</code>,
 but for character vectors.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Recode all program values</span></span>
 <span><span class="va">four_programs</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
 <span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="st">"CE"</span>,</span>
@@ -4896,7 +4834,7 @@ but for character vectors.</p>
 included with midfieldr, contains the case study information developed
 above. Here we verify that the two data frames have the same
 content.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Demonstrate equivalence</span></span>
 <span><span class="fu"><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames</a></span><span class="op">(</span><span class="va">four_programs</span>, <span class="va">study_programs</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
@@ -4910,12 +4848,12 @@ four engineering programs of the case study used throughout the articles
 (Civil, Electrical, Industrial/Systems, and Mechanical Engineering). We
 assume a prior search of <code>cip</code> yielded the relevant codes
 used here. Requires editing before reuse with different programs.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Edit as required for different programs</span></span>
-<span><span class="va">selected_programs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip.html">filter_cip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1427"</span>, <span class="st">"^1435"</span>, <span class="st">"^1436"</span>, <span class="st">"^1437"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">selected_programs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1427"</span>, <span class="st">"^1435"</span>, <span class="st">"^1436"</span>, <span class="st">"^1437"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><em>Programs.</em>   A summary code chunk for ready reference.
 Requires editing before reuse with different programs.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Recode program labels. Edit as required.</span></span>
 <span><span class="va">selected_programs</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
 <span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="st">"CE"</span>,</span>

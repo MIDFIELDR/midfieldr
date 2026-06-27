@@ -48,9 +48,11 @@ $$
 
 *Blocs.* &nbsp; Students ever enrolled in the programs and timely graduates of the programs are required by the metric. 
 
-*Groupings.* &nbsp; We select program, race/ethnicity, and sex for grouping and summarizing. Groups too small to preserve anonymity will be excluded. 
+*Groupings.* &nbsp; We select program, race/ethnicity, and sex for grouping and summarizing.
 
 *Outcome.* &nbsp; To calculate the metric, we construct a data frame with columns for each grouping variable (program, race/ethnicity, and sex) and the counts by group $\small N_\textrm{grad}$ and $\small N_\textrm{ever}$. 
+
+*Dissemination.* &nbsp; Exclude groupings too small to preserve anonymity. Edit column names to suit the audience. Condition/transform data as needed for tables or charts. 
 
 If you are writing your own script to follow along, we use these packages in this article:
 
@@ -82,34 +84,34 @@ One can start an analysis with program data or with student record data---the ch
 
 Unless you already know your program CIP codes, finding them entails some trial and error.
 
-`filter_cip()` takes a string as it's first argument. Our search on "civil engineering"  yields programs in Engineering that we want and some in Engineering Technology that we do not. 
+`filter_cip_rows()` searches `dframe` for string patterns. Searching for "civil engineering"  yields programs in Engineering that we want and some in Engineering Technology that we do not. 
 
 ```{r}
-filter_cip("civil engineering")
+filter_cip_rows(cip, "civil engineering")
 ```
 
 These results suggest that Engineering has the 2-digit code "14" and that Civil Engineering has the 4-digit code "1408". We can extract Civil Engineering alone by searching `cip` for lines that start with "1408", yielding six 6-digit codes. Regular expressions such as "^1408" are accepted. 
 
 ```{r}
-filter_cip("^1408")
+filter_cip_rows(cip, "^1408")
 ```
 
 ```{r}
 #| echo: false
-N_engr_programs <- nrow(filter_cip("^14"))
+N_engr_programs <- nrow(filter_cip_rows(cip, "^14"))
 ```
 
 Knowing the 2-digit code for Engineering programs, our next search is for lines that start with "14". Note that the `cip` *argument* takes the `cip` dataset as its default *value.* The result is an Engineering subset of `cip` with `r N_engr_programs` rows.
 
 ```{r}
-engr_cip <- filter_cip("^14", cip = cip)
+engr_cip <- filter_cip_rows(cip, "^14")
 engr_cip
 ```
 
 Next, to search this result for Electrical Engineering, we assign `engr_cip` to the `cip` argument, yielding four 6-digit codes. 
 
 ```{r}
-filter_cip("electrical", cip = engr_cip)
+filter_cip_rows(engr_cip, "electrical")
 ```
 
 
@@ -132,7 +134,7 @@ To collect all our 6-digit codes, we create a search string of the desired 4-dig
 
 ```{r}
 codes_we_want <- c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437")
-programs <- filter_cip(codes_we_want)
+programs <- filter_cip_rows(cip, codes_we_want)
 programs <- programs[, .(cip6name, cip6)]
 
 programs
@@ -181,24 +183,23 @@ degree_source <- copy(degree)
 The working data frames `student, term,` and `degree` should always be present in our computing environment so we can take advantage of midfieldr default argument values. For example, `add_term_cluster()` accesses the `degree` table to do its work. If `degree` is in the environment, the following lines yield the same results:
 
 ```{r}
-x <- add_term_cluster(term, midfield_degree = degree)
-y <- add_term_cluster(term, degree)
-z <- add_term_cluster(term)
-
-check_equiv_frames(x, y)
-check_equiv_frames(y, z)
+#| eval: false
+# not run
+add_term_cluster(term, midfield_degree = degree)
+add_term_cluster(term, degree)
+add_term_cluster(term)
 ```
 
 In this article, we use the latter form. 
 
 ### *Select basic columns*
 
-Optional, but convenient for viewing data frames at intermediate stages. We reduce the number of columns to those required by other midfieldr functions plus the key or composite key variables of the data tables. 
+Convenient for viewing data frames at intermediate stages. We reduce the number of columns to those required by other midfieldr functions plus the key or composite key variables of the data tables. 
 
 ```{r}
-student <- select_basic_cols(student)
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
+student <- select_record_cols(student, type = "s")
+term <- select_record_cols(term, "t")
+degree <- select_record_cols(degree, "d")
 ```
 
 `look_at()` is a midfieldr convenience function that wraps `base::str()`. 
@@ -248,11 +249,11 @@ term <- term[!"post-first-degree", on = "term_cluster"]
 degree <- degree[!"post-first-degree", on = "term_cluster"]
 ```
 
-We can drop the added columns by applying `select_basic_cols()` again. 
+We can drop the added columns by applying `select_record_cols()` again. 
 
 ```{r}
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
+term <- select_record_cols(term, "t")
+degree <- select_record_cols(degree, "d")
 
 look_at(term)
 
@@ -470,8 +471,7 @@ DT[, .N, by = c("program")][order(-N)]
 To add columns for student demographics, we left-join selected columns from the `student` table, matching on `mcid`. 
 
 ```{r}
-student_cols <- student[, .(mcid, race, sex)]
-DT <- student_cols[DT, on = "mcid"]
+DT <- student[DT, on = "mcid"]
 DT
 ```
 
@@ -547,8 +547,7 @@ DT[, .N, by = c("program")][order(-N)]
 Again, we left-join selected columns from the `student` table, matching on `mcid`.
 
 ```{r}
-student_cols <- student[, .(mcid, race, sex)]
-DT <- student_cols[DT, on = "mcid"]
+DT <- student[DT, on = "mcid"]
 DT
 ```
 

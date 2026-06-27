@@ -13,53 +13,47 @@ add_timely_term(
 )
 }
 \arguments{
-\item{dframe}{Working data frame of student-level records
-to which timely-term columns are to be added. Required variable
-is \code{mcid}.}
+\item{dframe}{Working data frame of student-level records to which
+timely-term columns are to be added. Required variable is \code{mcid}.}
 
-\item{midfield_term}{MIDFIELD \code{term} data table or equivalent
-with required variables \code{mcid}, \code{term}, and \code{level.}}
+\item{midfield_term}{MIDFIELD \code{term} data table or equivalent with
+required variables \code{mcid}, \code{term}, and \code{level}.}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
 referable only by name.}
 
 \item{span}{Optional integer scalar, number of years to define timely
-completion. Commonly used values are are 100, 150, and 200 percent of
+completion. Commonly used values are are 100\%, 150\%, and 200\% of
 \code{sched_span.} Default 6 years.}
 
 \item{sched_span}{Optional integer scalar, the number of years an institution
 officially schedules for completing a program. Default 4 years.}
 }
 \value{
-A data frame in \code{data.table} format with the following
-properties: rows are preserved; columns are preserved with the exception
-that columns added by the function overwrite existing columns of the
-same name (if any); grouping structures are not preserved. The added
-columns are:
-\describe{
-\item{\code{term_i}}{Character. Initial term of a student's longitudinal
-record, encoded YYYYT}
-\item{\code{level_i}}{Character. Student level (01 Freshman, 02 Sophomore,
-etc.) in their initial term}
-\item{\code{adj_span}}{Numeric. Integer span of years for timely completion
-adjusted for a student's initial level.}
-\item{\code{timely_term}}{Character. Latest term by which program
-completion would be considered timely for every student. Encoded YYYYT.}
+A data frame of the same type as \code{dframe}. The output has the
+following properties:
+\itemize{
+\item Rows are not modified.
+\item Columns are added, overwriting existing columns (if any) of the same name.
+Other columns are not modified.
+\item Groups are not preserved.
+\item Data frame attributes are preserved for classes \code{data.frame}, \code{data.table},
+or \code{tbl_df}.
 }
 }
 \description{
-Add a column to a data frame of student-level records that indicates the
-latest term by which degree completion  would be considered timely for every
-student.
+Add columns to a data frame of student-level records that indicate each
+student's timely completion term, that is, the term by which program
+completion would be considered timely. By "completion" we mean an
+undergraduate earning their first baccalaureate degree (or degrees, for
+students earning more than one degree in the same term). The timely
+completion term is usually defined as 4-, 6-, or 8-years after admission.
+Our default is 6 years.
 }
 \details{
-By "completion" we mean an undergraduate earning their first baccalaureate
-degree (or degrees, for students earning more than one degree in the same
-term).
-
 In many studies, students must complete their programs in a specified time
-span, for example 4-, 6-, or 8-years after admission. If they do, their
-completion is timely; if not, their completion is late and they are grouped
+span to be considered "timely", for example 4-, 6-, or 8-years after
+admission. If they do not, their completion is "late" and they are grouped
 with the non-completers when computing a metric such as graduation rate.
 
 Our heuristic assigns \code{span} number of years (default is 6 years) to every
@@ -67,10 +61,20 @@ student. For students admitted at second-year level or higher, the span is
 reduced by one year for each full year the student is assumed to have
 completed. For example, a student admitted at the second-year level is
 assumed to have completed one year of a program, so their span is reduced by
-one year.
-
-The adjusted span is added to the initial term to create the timely
+one year. The adjusted span is added to the initial term to create the timely
 completion term in the \code{timely_term} column.
+
+The new columns are:
+\itemize{
+\item \code{term_i} Initial term of a student's longitudinal record, encoded \code{YYYYT}.
+Extracted from \code{term}.
+\item \code{level_i}. Character. Student level (01 Freshman, 02 Sophomore, etc.)
+in their initial term. Extracted from \code{term}.
+\item \code{adj_span}. Numeric. Integer span of years for timely completion
+adjusted for a student's initial level.
+\item \code{timely_term}. Character. Latest term by which program completion would
+be considered timely for every student. Encoded \code{YYYYT}.
+}
 }
 \examples{
 # Start with an excerpt from the student data set 

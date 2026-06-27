@@ -43,9 +43,9 @@ needed by the midfieldr functions.
 ``` r
 
 # Work with required midfieldr variables only
-student <- select_basic_cols(student)
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
+student <- select_record_cols(student)
+term <- select_record_cols(term)
+degree <- select_record_cols(degree)
 ```
 
 *Initialize.*   Assign a working data frame. We often start with the
@@ -56,15 +56,15 @@ degree <- select_basic_cols(degree)
 # Working data frame
 DT <- copy(term)
 DT
-#>                   mcid   institution   term   cip6         level
-#>                 <char>        <char> <char> <char>        <char>
-#>      1: MCID3111142225 Institution B  19881 140901 01 First-year
-#>      2: MCID3111142283 Institution J  19881 240102 01 First-year
-#>      3: MCID3111142283 Institution J  19883 240102 01 First-year
+#>                   mcid   term   cip6   institution         level
+#>                 <char> <char> <char>        <char>        <char>
+#>      1: MCID3111142225  19881 140901 Institution B 01 First-year
+#>      2: MCID3111142283  19881 240102 Institution J 01 First-year
+#>      3: MCID3111142283  19883 240102 Institution J 01 First-year
 #>     ---                                                         
-#> 639913: MCID3112898894 Institution B  20181 451001 01 First-year
-#> 639914: MCID3112898895 Institution B  20181 302001 01 First-year
-#> 639915: MCID3112898940 Institution B  20181 050103 01 First-year
+#> 639913: MCID3112898894  20181 451001 Institution B 01 First-year
+#> 639914: MCID3112898895  20181 302001 Institution B 01 First-year
+#> 639915: MCID3112898940  20181 050103 Institution B 01 First-year
 ```
 
 The result has 639,915 observations. In the case study, we will
@@ -93,15 +93,15 @@ variable as well as supporting variables used in its construction.
 # Determine a timely completion term for every student
 DT <- add_timely_term(DT, term)
 DT
-#>                   mcid   institution   term   cip6         level term_i
-#>                 <char>        <char> <char> <char>        <char> <char>
-#>      1: MCID3111142225 Institution B  19881 140901 01 First-year  19881
-#>      2: MCID3111142283 Institution J  19881 240102 01 First-year  19881
-#>      3: MCID3111142283 Institution J  19883 240102 01 First-year  19881
+#>                   mcid   term   cip6   institution         level term_i
+#>                 <char> <char> <char>        <char>        <char> <char>
+#>      1: MCID3111142225  19881 140901 Institution B 01 First-year  19881
+#>      2: MCID3111142283  19881 240102 Institution J 01 First-year  19881
+#>      3: MCID3111142283  19883 240102 Institution J 01 First-year  19881
 #>     ---                                                                
-#> 639913: MCID3112898894 Institution B  20181 451001 01 First-year  20181
-#> 639914: MCID3112898895 Institution B  20181 302001 01 First-year  20181
-#> 639915: MCID3112898940 Institution B  20181 050103 01 First-year  20181
+#> 639913: MCID3112898894  20181 451001 Institution B 01 First-year  20181
+#> 639914: MCID3112898895  20181 302001 Institution B 01 First-year  20181
+#> 639915: MCID3112898940  20181 050103 Institution B 01 First-year  20181
 #>               level_i adj_span timely_term
 #>                <char>    <num>      <char>
 #>      1: 01 First-year        6       19933
@@ -122,15 +122,15 @@ construction.
 # Determine data sufficiency for every student
 DT <- add_data_sufficiency(DT, term)
 DT
-#>                   mcid   institution   term   cip6         level       level_i
-#>                 <char>        <char> <char> <char>        <char>        <char>
-#>      1: MCID3111142225 Institution B  19881 140901 01 First-year 01 First-year
-#>      2: MCID3111142283 Institution J  19881 240102 01 First-year 01 First-year
-#>      3: MCID3111142283 Institution J  19883 240102 01 First-year 01 First-year
+#>                   mcid   term   cip6   institution         level       level_i
+#>                 <char> <char> <char>        <char>        <char>        <char>
+#>      1: MCID3111142225  19881 140901 Institution B 01 First-year 01 First-year
+#>      2: MCID3111142283  19881 240102 Institution J 01 First-year 01 First-year
+#>      3: MCID3111142283  19883 240102 Institution J 01 First-year 01 First-year
 #>     ---                                                                       
-#> 639913: MCID3112898894 Institution B  20181 451001 01 First-year 01 First-year
-#> 639914: MCID3112898895 Institution B  20181 302001 01 First-year 01 First-year
-#> 639915: MCID3112898940 Institution B  20181 050103 01 First-year 01 First-year
+#> 639913: MCID3112898894  20181 451001 Institution B 01 First-year 01 First-year
+#> 639914: MCID3112898895  20181 302001 Institution B 01 First-year 01 First-year
+#> 639915: MCID3112898940  20181 050103 Institution B 01 First-year 01 First-year
 #>         adj_span timely_term term_i lower_limit upper_limit data_sufficiency
 #>            <num>      <char> <char>      <char>      <char>           <char>
 #>      1:        6       19933  19881       19881       20181    exclude-lower
@@ -247,7 +247,7 @@ From `cip`, we obtain all codes that start with any of the selected
 ``` r
 
 # Four engineering programs using 4-digit CIP codes
-selected_programs <- filter_cip(c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+selected_programs <- filter_cip_rows(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
 selected_programs
 #>                       cip6name   cip6                  cip4name   cip4
 #>                         <char> <char>                    <char> <char>
@@ -784,23 +784,23 @@ student graduated in Computer Science.
 
 # Closer look at term
 term[mcid == mcid_we_want]
-#>              mcid   institution   term   cip6              level
-#>            <char>        <char> <char> <char>             <char>
-#> 1: MCID3111171519 Institution B  19883 149999     02 Second-year
-#> 2: MCID3111171519 Institution B  19891 141001     02 Second-year
-#> 3: MCID3111171519 Institution B  19893 141001      03 Third-year
-#> 4: MCID3111171519 Institution B  19901 141001      03 Third-year
-#> 5: MCID3111171519 Institution B  19903 110701     04 Fourth-year
-#> 6: MCID3111171519 Institution B  19913 110701     04 Fourth-year
-#> 7: MCID3111171519 Institution B  19921 110701 05 Fifth-year Plus
-#> 8: MCID3111171519 Institution B  19923 110701 05 Fifth-year Plus
-#> 9: MCID3111171519 Institution B  19924 110701 05 Fifth-year Plus
+#>              mcid   term   cip6   institution              level
+#>            <char> <char> <char>        <char>             <char>
+#> 1: MCID3111171519  19883 149999 Institution B     02 Second-year
+#> 2: MCID3111171519  19891 141001 Institution B     02 Second-year
+#> 3: MCID3111171519  19893 141001 Institution B      03 Third-year
+#> 4: MCID3111171519  19901 141001 Institution B      03 Third-year
+#> 5: MCID3111171519  19903 110701 Institution B     04 Fourth-year
+#> 6: MCID3111171519  19913 110701 Institution B     04 Fourth-year
+#> 7: MCID3111171519  19921 110701 Institution B 05 Fifth-year Plus
+#> 8: MCID3111171519  19923 110701 Institution B 05 Fifth-year Plus
+#> 9: MCID3111171519  19924 110701 Institution B 05 Fifth-year Plus
 
 # Closer look at degree
 degree[mcid == mcid_we_want]
-#>              mcid   institution term_degree   cip6
-#>            <char>        <char>      <char> <char>
-#> 1: MCID3111171519 Institution B       19924 110701
+#>              mcid term_degree   cip6   institution
+#>            <char>      <char> <char>        <char>
+#> 1: MCID3111171519       19924 110701 Institution B
 ```
 
 *Example 2.*   This ID yields two observations indicating that the
@@ -824,22 +824,22 @@ The `term` and `degree` excerpts confirm those observations.
 
 # Closer look at terms
 term[mcid == mcid_we_want]
-#>              mcid   institution   term   cip6              level
-#>            <char>        <char> <char> <char>             <char>
-#> 1: MCID3111150194 Institution J  19883 140102      01 First-year
-#> 2: MCID3111150194 Institution J  19891 140102     02 Second-year
-#> 3: MCID3111150194 Institution J  19893 140102     02 Second-year
-#> 4: MCID3111150194 Institution J  19903 143501      03 Third-year
-#> 5: MCID3111150194 Institution J  19911 143501     04 Fourth-year
-#> 6: MCID3111150194 Institution J  19913 143501     04 Fourth-year
-#> 7: MCID3111150194 Institution J  19921 143501 05 Fifth-year Plus
-#> 8: MCID3111150194 Institution J  19923 143501 05 Fifth-year Plus
+#>              mcid   term   cip6   institution              level
+#>            <char> <char> <char>        <char>             <char>
+#> 1: MCID3111150194  19883 140102 Institution J      01 First-year
+#> 2: MCID3111150194  19891 140102 Institution J     02 Second-year
+#> 3: MCID3111150194  19893 140102 Institution J     02 Second-year
+#> 4: MCID3111150194  19903 143501 Institution J      03 Third-year
+#> 5: MCID3111150194  19911 143501 Institution J     04 Fourth-year
+#> 6: MCID3111150194  19913 143501 Institution J     04 Fourth-year
+#> 7: MCID3111150194  19921 143501 Institution J 05 Fifth-year Plus
+#> 8: MCID3111150194  19923 143501 Institution J 05 Fifth-year Plus
 
 # Closer look at degree
 degree[mcid == mcid_we_want]
-#>              mcid   institution term_degree   cip6
-#>            <char>        <char>      <char> <char>
-#> 1: MCID3111150194 Institution J       19923 143501
+#>              mcid term_degree   cip6   institution
+#>            <char>      <char> <char>        <char>
+#> 1: MCID3111150194       19923 143501 Institution J
 ```
 
 *Example 3.*   This ID yields two observations indicating that the
@@ -864,24 +864,24 @@ CIP 261399 (Biological and Biomedical Sciences).
 
 # Closer look at term
 term[mcid == mcid_we_want]
-#>               mcid   institution   term   cip6              level
-#>             <char>        <char> <char> <char>             <char>
-#>  1: MCID3111264877 Institution B  19901 141001      01 First-year
-#>  2: MCID3111264877 Institution B  19903 140201     02 Second-year
-#>  3: MCID3111264877 Institution B  19911 140201     02 Second-year
-#>  4: MCID3111264877 Institution B  19913 140801      03 Third-year
-#>  5: MCID3111264877 Institution B  19914 140801      03 Third-year
-#>  6: MCID3111264877 Institution B  19921 240199      03 Third-year
-#>  7: MCID3111264877 Institution B  19923 261399     04 Fourth-year
-#>  8: MCID3111264877 Institution B  19931 261399     04 Fourth-year
-#>  9: MCID3111264877 Institution B  19933 261399 05 Fifth-year Plus
-#> 10: MCID3111264877 Institution B  19941 261399 05 Fifth-year Plus
+#>               mcid   term   cip6   institution              level
+#>             <char> <char> <char>        <char>             <char>
+#>  1: MCID3111264877  19901 141001 Institution B      01 First-year
+#>  2: MCID3111264877  19903 140201 Institution B     02 Second-year
+#>  3: MCID3111264877  19911 140201 Institution B     02 Second-year
+#>  4: MCID3111264877  19913 140801 Institution B      03 Third-year
+#>  5: MCID3111264877  19914 140801 Institution B      03 Third-year
+#>  6: MCID3111264877  19921 240199 Institution B      03 Third-year
+#>  7: MCID3111264877  19923 261399 Institution B     04 Fourth-year
+#>  8: MCID3111264877  19931 261399 Institution B     04 Fourth-year
+#>  9: MCID3111264877  19933 261399 Institution B 05 Fifth-year Plus
+#> 10: MCID3111264877  19941 261399 Institution B 05 Fifth-year Plus
 
 # Closer look at degree
 degree[mcid == mcid_we_want]
-#>              mcid   institution term_degree   cip6
-#>            <char>        <char>      <char> <char>
-#> 1: MCID3111264877 Institution B       19941 261399
+#>              mcid term_degree   cip6   institution
+#>            <char>      <char> <char>        <char>
+#> 1: MCID3111264877       19941 261399 Institution B
 ```
 
 *Example 4.*   This ID yields four observations indicating that the
@@ -907,25 +907,25 @@ The `term` and `degree` excerpts confirm those observations.
 
 # Closer look at term
 term[mcid == mcid_we_want]
-#>               mcid   institution   term   cip6              level
-#>             <char>        <char> <char> <char>             <char>
-#>  1: MCID3112470255 Institution C  20101 140801      01 First-year
-#>  2: MCID3112470255 Institution C  20103 141001      01 First-year
-#>  3: MCID3112470255 Institution C  20111 141901     02 Second-year
-#>  4: MCID3112470255 Institution C  20113 141901     02 Second-year
-#>  5: MCID3112470255 Institution C  20121 141901      03 Third-year
-#>  6: MCID3112470255 Institution C  20123 141901      03 Third-year
-#>  7: MCID3112470255 Institution C  20124 141901      03 Third-year
-#>  8: MCID3112470255 Institution C  20131 141901     04 Fourth-year
-#>  9: MCID3112470255 Institution C  20133 141901     04 Fourth-year
-#> 10: MCID3112470255 Institution C  20141 141901 05 Fifth-year Plus
-#> 11: MCID3112470255 Institution C  20143 141901 05 Fifth-year Plus
+#>               mcid   term   cip6   institution              level
+#>             <char> <char> <char>        <char>             <char>
+#>  1: MCID3112470255  20101 140801 Institution C      01 First-year
+#>  2: MCID3112470255  20103 141001 Institution C      01 First-year
+#>  3: MCID3112470255  20111 141901 Institution C     02 Second-year
+#>  4: MCID3112470255  20113 141901 Institution C     02 Second-year
+#>  5: MCID3112470255  20121 141901 Institution C      03 Third-year
+#>  6: MCID3112470255  20123 141901 Institution C      03 Third-year
+#>  7: MCID3112470255  20124 141901 Institution C      03 Third-year
+#>  8: MCID3112470255  20131 141901 Institution C     04 Fourth-year
+#>  9: MCID3112470255  20133 141901 Institution C     04 Fourth-year
+#> 10: MCID3112470255  20141 141901 Institution C 05 Fifth-year Plus
+#> 11: MCID3112470255  20143 141901 Institution C 05 Fifth-year Plus
 
 # Closer look at degree
 degree[mcid == mcid_we_want]
-#>              mcid   institution term_degree   cip6
-#>            <char>        <char>      <char> <char>
-#> 1: MCID3112470255 Institution C       20143 141901
+#>              mcid term_degree   cip6   institution
+#>            <char>      <char> <char>        <char>
+#> 1: MCID3112470255       20143 141901 Institution C
 ```
 
 ------------------------------------------------------------------------

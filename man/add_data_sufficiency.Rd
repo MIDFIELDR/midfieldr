@@ -7,46 +7,56 @@
 add_data_sufficiency(dframe, midfield_term = term)
 }
 \arguments{
-\item{dframe}{Working data frame of student-level records
-to which data-sufficiency columns are to be added. Required variables
-are \code{mcid} and \code{timely_term.} See also \code{add_timely_term()}.}
+\item{dframe}{Working data frame of student-level records to which
+data-sufficiency columns are to be added. Required variables are
+\code{mcid} and \code{timely_term}.}
 
-\item{midfield_term}{MIDFIELD \code{term} data table or equivalent
-with required variables \code{mcid}, \code{institution}, and \code{term}.}
+\item{midfield_term}{MIDFIELD \code{term} data table or equivalent with
+required variables \code{mcid}, \code{institution}, and \code{term}.}
 }
 \value{
-A data frame in \code{data.table} format with the following
-properties: rows are preserved; columns are preserved with the exception
-that columns added by the function overwrite existing columns of the
-same name (if any); grouping structures are not preserved. The added
-columns are:
-\describe{
-\item{\code{term_i}}{Character. Initial term of a student's longitudinal
-record, encoded YYYYT. Not overwritten if present in \code{dframe.}}
-\item{\code{lower_limit}}{Character. Initial term of an institution's data
-range, encoded YYYYT}
-\item{\code{upper_limit}}{Character. Final term of an institution's data
-range, encoded YYYYT}
-\item{\code{data_sufficiency}}{Character. Label each observation for
-inclusion or exclusion based on data sufficiency. Possible values are:
-\code{include}, indicating that available data are sufficient for
-estimating timely completion; \code{exclude-upper}, indicating
-that data are insufficient at the upper limit of a data range; and
-\code{exclude}-lower, indicating that data are insufficient at the
-lower limit.}
+A data frame of the same type as \code{dframe}. The output has the
+following properties:
+\itemize{
+\item Rows are not modified.
+\item Columns are added, overwriting existing columns (if any) of the same name.
+Other columns are not modified.
+\item Groups are not preserved.
+\item Data frame attributes are preserved for classes \code{data.frame}, \code{data.table},
+or \code{tbl_df}.
 }
 }
 \description{
-Add a column to a data frame of student-level records that labels each row
-for inclusion or exclusion based on data sufficiency near the upper and lower
-bounds of an institution's data range.
+Add columns to a data frame of student-level records that indicate whether
+an observation should be included or excluded based on sufficient
+information from the institution. Because the time span of MIDFIELD term
+data varies by institution, each has their own lower and upper bounds. For
+some student records, being at or near these bounds creates unavoidable
+ambiguity when trying to assess degree completion. Such records must be
+identified and in most cases excluded to prevent false summary counts.
 }
 \details{
-The time span of MIDFIELD term data varies by institution, each having their
-own lower and upper bounds. For some student records, being at or near these
-bounds creates unavoidable ambiguity when trying to assess degree completion.
-Such records must be identified and in most cases excluded to prevent false
-summary counts.
+The data sufficiency criterion states that student records are limited to
+those for which available data are sufficient to assess timely completion
+without biased counts of completers or non-completers. In practice, the
+criteria is implemented via two filters. Rows are labeled for exclusion
+when: 1) a student ID is extant in the non-summer lower limit of an
+institution's data range; or 2) a student ID has a timely completion term
+that exceeds the upper limit of the institution's data range.
+
+The new columns are:
+\itemize{
+\item \code{term_i} Initial term of a student's longitudinal record, encoded \code{YYYYT}.
+Extracted from \code{term}.
+\item \code{lower_limit} Character. Initial term of an institution's data range,
+encoded \code{YYYYT}. Extracted from \code{term}.
+\item \code{upper_limit} Character. Final term of an institution's data range,
+encoded \code{YYYYT}. Extracted from \code{term}.
+\item \code{data_sufficiency} Character. Possible values are "include",
+"exclude_lower", and "exclude-upper". A row is labeled "include" if the
+data are sufficient; and "exclude-lower" or "exclude-upper" if not,
+indicating at which boundary of the data range the ambiguity occurs.
+}
 }
 \examples{
 # Start with an excerpt from the student data set 

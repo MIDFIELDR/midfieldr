@@ -2,38 +2,57 @@
 
 #' Determine data sufficiency for every student
 #'
-#' Add a column to a data frame of student-level records that labels each row
-#' for inclusion or exclusion based on data sufficiency near the upper and lower
-#' bounds of an institution's data range.
+#' Add columns to a data frame of student-level records that indicate whether
+#' an observation should be included or excluded based on sufficient
+#' information from the institution. Because the time span of MIDFIELD term
+#' data varies by institution, each has their own lower and upper bounds. For
+#' some student records, being at or near these bounds creates unavoidable
+#' ambiguity when trying to assess degree completion. Such records must be
+#' identified and in most cases excluded to prevent false summary counts.
 #'
-#' The time span of MIDFIELD term data varies by institution, each having their
-#' own lower and upper bounds. For some student records, being at or near these
-#' bounds creates unavoidable ambiguity when trying to assess degree completion.
-#' Such records must be identified and in most cases excluded to prevent false
-#' summary counts.
+#' The data sufficiency criterion states that student records are limited to
+#' those for which available data are sufficient to assess timely completion
+#' without biased counts of completers or non-completers. In practice, the
+#' criteria is implemented via two filters. Rows are labeled for exclusion
+#' when: 1) a student ID is extant in the non-summer lower limit of an
+#' institution's data range; or 2) a student ID has a timely completion term
+#' that exceeds the upper limit of the institution's data range.
 #'
-#' @param dframe        `r dframe_add_data_sufficiency`
-#' @param midfield_term `r midfield_term_add_data_sufficiency`
+#' The new columns are:
 #'
-#' @return `r return_data_frame`
-#' \describe{
-#'  \item{`term_i`}{Character. Initial term of a student's longitudinal
-#'  record, encoded YYYYT. Not overwritten if present in `dframe.`}
-#'  \item{`lower_limit`}{Character. Initial term of an institution's data
-#'  range, encoded YYYYT}
-#'  \item{`upper_limit`}{Character. Final term of an institution's data
-#'  range, encoded YYYYT}
-#'  \item{`data_sufficiency`}{Character. Label each observation for
-#'  inclusion or exclusion based on data sufficiency. Possible values are:
-#'  `include`, indicating that available data are sufficient for
-#'  estimating timely completion; `exclude-upper`, indicating
-#'  that data are insufficient at the upper limit of a data range; and
-#'  `exclude`-lower, indicating that data are insufficient at the
-#'  lower limit.}
-#' }
+#' * `term_i` Initial term of a student's longitudinal record, encoded `YYYYT`.
+#'    Extracted from `term`.
+#'
+#' * `lower_limit` Character. Initial term of an institution's data range,
+#'    encoded `YYYYT`. Extracted from `term`.
+#'
+#' * `upper_limit` Character. Final term of an institution's data range,
+#'    encoded `YYYYT`. Extracted from `term`.
+#'
+#' * `data_sufficiency` Character. Possible values are "include",
+#'    "exclude_lower", and "exclude-upper". A row is labeled "include" if the
+#'    data are sufficient; and "exclude-lower" or "exclude-upper" if not,
+#'    indicating at which boundary of the data range the ambiguity occurs.
+#'
+#' @param dframe Working data frame of student-level records to which
+#'        data-sufficiency columns are to be added. Required variables are
+#'        `mcid` and `timely_term`.
+#'
+#' @param midfield_term MIDFIELD `term` data table or equivalent with
+#'        required variables `mcid`, `institution`, and `term`.
+#'
+#' @returns A data frame of the same type as `dframe`. The output has the
+#' following properties:
+#'
+#' * Rows are not modified.
+#' * Columns are added, overwriting existing columns (if any) of the same name.
+#'   Other columns are not modified.
+#' * Groups are not preserved.
+#' * Data frame attributes are preserved for classes `data.frame`, `data.table`,
+#'   or `tbl_df`.
 #'
 #' @family add_*
-#' @example man/examples/add_data_sufficiency_exa.R
+#' @example man/examples/exa_add_data_sufficiency.R
 #' @export
 #'
 add_data_sufficiency <- function(dframe, midfield_term = term) {
@@ -63,13 +82,10 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
   # to restore class (tibble, data.frame, etc.) before return
   prior_class <- class(dframe)
 
-  # Convert non-data.table input to data.table class. By-ref changes to
-  # dframe in global environment remain active for data.tables.
-  dframe <- prep_non_dt_input(dframe)
-
-  # ensure data.table format, changes by reference
-  # setDT(dframe)
-  setDT(midfield_term)
+  # Copy and setDT() non-DT input. Prevents by-ref changes.
+  # No change to DT class input. By-ref changes remain active.
+  dframe <- copy_setDT_non_DT(dframe)
+  midfield_term <- copy_setDT_non_DT(midfield_term)
 
   # bind names due to NSE notes in R CMD check
   data_sufficiency <- NULL
