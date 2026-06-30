@@ -145,47 +145,47 @@ find_old_cols <- function(dframe, new_cols) {
 #' same name as the added column is overwritten.
 #'
 #' @param dframe Data frame with required variable `mcid.`
-#' @param midfield_term MIDFIELD `term` data table or equivalent with required
+#' @param midfield_rec MIDFIELD `term` data table or equivalent with required
 #' variables `mcid`, `institution`, and `term`.
 #' @noRd
 #'
 add_institution <- function(dframe,
-                            midfield_term = term) {
+                            midfield_rec = term) {
   # remove all keys
   on.exit(setkey(dframe, NULL))
-  on.exit(setkey(midfield_term, NULL), add = TRUE)
+  on.exit(setkey(midfield_rec, NULL), add = TRUE)
 
   # required arguments
   qassert(dframe, "d+")
-  qassert(midfield_term, "d+")
+  qassert(midfield_rec, "d+")
 
   # optional arguments
   # NA
 
   # inputs modified (or not) by reference
   dframe <- copy(as.data.table(dframe)) #  must copy
-  setDT(midfield_term) # immediately subset, so side-effect OK
+  setDT(midfield_rec) # immediately subset, so side-effect OK
 
   # required columns
   assert_names(colnames(dframe),
     must.include = c("mcid")
   )
-  assert_names(colnames(midfield_term),
+  assert_names(colnames(midfield_rec),
     must.include = c("mcid", "institution", "term")
   )
 
   # class of required columns
   qassert(dframe[, mcid], "s+")
-  qassert(midfield_term[, mcid], "s+")
-  qassert(midfield_term[, institution], "s+")
-  qassert(midfield_term[, term], "s+")
+  qassert(midfield_rec[, mcid], "s+")
+  qassert(midfield_rec[, institution], "s+")
+  qassert(midfield_rec[, term], "s+")
 
   # bind names due to NSE notes in R CMD check
   N <- NULL
 
   # do the work
   # Inner join using three columns of term
-  x <- midfield_term[, .(mcid, institution, term)]
+  x <- midfield_rec[, .(mcid, institution, term)]
   y <- unique(dframe[, .(mcid)])
   DT <- y[x, on = .(mcid), nomatch = NULL]
 
@@ -213,63 +213,36 @@ add_institution <- function(dframe,
 
 
 
-# ------------------------------------------------------------------------
-#
-#' Prepare non-data.table data frames
-#'
-#' Converts data.frames or tibbles to data.tables to enable data.table syntax
-#' in midfieldr functions. No effect on data.table inputs. Employs `copy()`
-#' on non-data.tables only.
-#'
-#' @param df Data frame of any class input to a midfieldr function
-#' @noRd
-copy_setDT_non_DT <- function(df) {
-  # convert data.frames or tibbles to data.table
-  # data.tables: no effect, by-ref changes still possible in global env
-  # tibbles or base R data.frames: prevents by-ref changes in global env
-
-  if ("data.table" %chin% class(df)) {
-    # No change to input. Avoids copy(), but enables by-ref changes to df
-    # in global env, OK if we're editing and returning the original df,
-    # and moot if df is subset before any by-ref operations
-    return(df)
-  } else {
-    # Convert input to enable data.table syntax throughout. copy()
-    # required, otherwise setDT() converts input tibbles or base R
-    # data.frames to data.tables by-ref in the global env.
-    DT <- copy(df)
-    setDT(DT)
-    return(DT)
-  }
-}
-
 
 # ------------------------------------------------------------------------
 #
-#' Restore class of non-data.table data frames
+#' Setup vector of column names for data frame return
 #'
-#' Attempt to assign class to output data frame to match class of input data
-#' frame. No effect on data.tables except keys are nulled. Used to attempt to
-#' preserve tibbles for users of dplyr and friends.
+#' Several midfieldr functions add new columns to an existing data frame.
+#' Sometimes one or more of the new columns are already extant in the data
+#' frame. This function sorts the column names such that new-but-extant
+#' columns are overwritten but do not change position and all other new
+#' columns are added to the right of the data frame.
 #'
-#' @param DT Data frame in data.table format just prior to exiting a midfieldr
-#'        function.
-#' @param prior_class Character, result of applying `class()` to input argument
-#'        of midfieldr function. Passed to `data.table::setattr()`.
+#' @param dframe Data frame to which columns are being added.
+#' @param active_cols vector of column names being added/overwritten
+#'        by the function.
 #' @noRd
-restore_non_dt_class <- function(DT, prior_class) {
-  # restore input class if tibble or base R data.frames
+setup_return_cols <- function(dframe, active_cols) {
+  # columns of incoming dframe
+  orig_cols <- colnames(dframe)
 
-  if ("data.table" %chin% prior_class) {
-    # case: data.table
-    setkey(DT, NULL)
-  } else if (!"grouped_df" %chin% prior_class) {
-    # case: not data.table, not grouped tibble
-    setattr(DT, "class", prior_class)
-  } else {
-    # case: is grouped tibble
-    setDF(DT)
-    setattr(DT, "class", c("tbl_df", "tbl", "data.frame"))
-  }
-  DT[]
+  # new columns present in the original dframe
+  active_orig <- intersect(active_cols, orig_cols)
+
+  # new columns not present in the original dframe
+  new_cols_non_orig <- setdiff(active_cols, active_orig)
+
+  # columns to return in order
+  return_cols <- c(orig_cols, new_cols_non_orig)
+
+  # rearrange so that active cols always added to the right
+  inactive_cols <- setdiff(return_cols, active_cols)
+
+  return_cols <- c(inactive_cols, active_cols)
 }

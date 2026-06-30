@@ -4,51 +4,56 @@
 \alias{add_term_cluster}
 \title{Identify rows of post-baccalaureate terms}
 \usage{
-add_term_cluster(dframe, midfield_degree = degree)
+add_term_cluster(dframe, midfield_rec = degree)
 }
 \arguments{
-\item{dframe}{Working data frame of student-level records to which a
-term-cluster column is to be added. Required variables are \code{mcid} and
-a single term variable: \code{term} (when working with the term table),
+\item{dframe}{Student-records data frame to which term-cluster columns
+are to be added. Required variables are \code{mcid} and a single term
+variable: \code{term} (when working with the term table),
 \code{term_course} (course table), or \code{term_degree} (degree table).}
 
-\item{midfield_degree}{MIDFIELD \code{degree} data table or equivalent with
+\item{midfield_rec}{MIDFIELD \code{degree} data table or equivalent with
 required variables \code{mcid} and \code{term_degree}.}
 }
 \value{
-A data frame of the same type as \code{dframe}. The output has the
+Data frame \code{dframe} with added columns. Output has the
 following properties:
 \itemize{
 \item Rows are not modified.
-\item Columns are added, overwriting existing columns (if any) of the same name.
-Other columns are not modified.
-\item Groups are not preserved.
-\item Data frame attributes are preserved for classes \code{data.frame}, \code{data.table},
-or \code{tbl_df}.
+\item Columns added or updated/overwritten:
+\itemize{
+\item \code{first_degree_term.}    Character. Term of a student's first
+baccalaureate, encoded \code{YYYYT} or, if no degree recorded, \code{NA}.
+Joined from \code{midfield_rec$term_degree}.
+\item \code{term_cluster.}    Character, indicating that a term belongs
+to one of three clusters: terms that are prior to ("pre-degree"),
+equal to ("first-degree"), or subsequent to ("post-first-degree")
+the student’s first degree term.
+}
+\item Columns not listed above are not modified.
+\item Data frame attributes (except groups) are preserved.
 }
 }
 \description{
-Provides a means of excluding post-baccalaureate terms by adding a
-column of term-cluster labels identifying pre- and post-baccalaureate
-terms. In a typical analysis, one is interested in a student's progress up to
+Add columns to a student-records data frame indicating an observation
+should be included (or excluded) because the term is clustered with
+pre-degree (or post-first-degree) terms.
+}
+\details{
+In a typical analysis, one is interested in a student's progress up to
 and including the term in which they earn their first degree or degrees.
 Any terms later than the first baccalaureate can usually be excluded from
 study.
-}
-\details{
-The new columns are :
-\itemize{
-\item \code{first_degree_term} Character. Term of a student's first baccalaureate,
-encoded \code{YYYYT} or, if no degree recorded, \code{NA}. Joined from
-\code{midfield_degree$term_degree}.
-\item \code{term_cluster} Character, indicating that a term belongs
-to one of three clusters: terms that are prior to ("pre-degree"), equal
-to ("first-degree"), or subsequent to ("post-first-degree") the student’s
-first degree term.
-}
 }
 \examples{
 
 # Examples TBD
 x <- 1
 }
+\seealso{
+Other add_*:
+\code{\link[=add_completion_status]{add_completion_status()}},
+\code{\link[=add_data_sufficiency]{add_data_sufficiency()}},
+\code{\link[=add_timely_term]{add_timely_term()}}
+}
+\concept{add_*}

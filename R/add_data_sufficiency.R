@@ -1,16 +1,19 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
-#' Determine data sufficiency for every student
+#' Determine data sufficiency
 #'
-#' Add columns to a data frame of student-level records that indicate whether
-#' an observation should be included or excluded based on sufficient
-#' information from the institution. Because the time span of MIDFIELD term
-#' data varies by institution, each has their own lower and upper bounds. For
-#' some student records, being at or near these bounds creates unavoidable
-#' ambiguity when trying to assess degree completion. Such records must be
-#' identified and in most cases excluded to prevent false summary counts.
+#' To a data frame keyed by student ID, add a column indicating that
+#' an institution's data range is sufficient to reliably assess a
+#' student's program completion. Columns of supporting
+#' information are also added.
 #'
-#' The data sufficiency criterion states that student records are limited to
+#' Because the time span of MIDFIELD term data varies by institution, each
+#' has their own lower and upper bounds. When assessing a student's program
+#' completion, an unavoidable ambiguity arises for student records at or near
+#' these bounds. Such records must be identified and in most cases excluded
+#' to prevent false summary counts.
+#'
+#' The *data sufficiency* criterion states that student records are limited to
 #' those for which available data are sufficient to assess timely completion
 #' without biased counts of completers or non-completers. In practice, the
 #' criteria is implemented via two filters. Rows are labeled for exclusion
@@ -18,181 +21,127 @@
 #' institution's data range; or 2) a student ID has a timely completion term
 #' that exceeds the upper limit of the institution's data range.
 #'
-#' The new columns are:
+#' The goal of determining data sufficiency is to refine a population, that
+#' is, obtain a data frame of IDs that satisfy our constraints. Thus
+#' `add_data_sufficiency()` yields a column of data sufficiency values and
+#' columns of supporting information keyed by ID. All other columns in
+#' `dframe` (if any) are dropped.
 #'
-#' * `term_i` Initial term of a student's longitudinal record, encoded `YYYYT`.
-#'    Extracted from `term`.
+#' The supporting information in the output is provided so that the user
+#' can review the findings. After review, we usually delete all columns
+#' except the IDs, yielding the refined population that was our goal.
 #'
-#' * `lower_limit` Character. Initial term of an institution's data range,
-#'    encoded `YYYYT`. Extracted from `term`.
+#' @param dframe `r dframe` Required variables: `{mcid, term_i, timely_term}`.
 #'
-#' * `upper_limit` Character. Final term of an institution's data range,
-#'    encoded `YYYYT`. Extracted from `term`.
+#' @param midfield_rec `r midfield_x("*term*")` Required variables:
+#'        `{mcid, term, institution}`.
 #'
-#' * `data_sufficiency` Character. Possible values are "include",
-#'    "exclude_lower", and "exclude-upper". A row is labeled "include" if the
-#'    data are sufficient; and "exclude-lower" or "exclude-upper" if not,
-#'    indicating at which boundary of the data range the ambiguity occurs.
+#' @returns Data frame with the following properties:
+#' * Data frame class is preserved. Groups and keys are not preserved.
+#' * Rows are filtered for unique `mcid` values.
+#' * Columns `{mcid, term_i, timely_term}` are retained (all other columns
+#'   are dropped). New columns added:
+#'   - `institution.` &nbsp; Character. Institution in which the student is
+#'      enrolled in the given term. Extracted from `midfield_rec.` The
+#'      limits given in the next two columns are specific to the institution.
+#'   - `lower_limit.` &nbsp; Character. Initial term of an institution's
+#'      data range, encoded `YYYYT`. Extracted from `midfield_rec.`
+#'      Compared to `term_i` to determine the lower-limit exclusion.
+#'   - `upper_limit.` &nbsp; Character. Final term of an institution's
+#'      data range, encoded `YYYYT`. Extracted from `midfield_rec.`
+#'      Compared to `timely_term` to determine upper-limit exclusion.
+#'   - `data_sufficiency.` &nbsp; Character. Possible values are "include",
+#'      if the data are sufficient; and "exclude-lower" or "exclude-upper"
+#'      if not, indicating at which boundary of the data range the ambiguity
+#'      occurs.
 #'
-#' @param dframe Working data frame of student-level records to which
-#'        data-sufficiency columns are to be added. Required variables are
-#'        `mcid` and `timely_term`.
-#'
-#' @param midfield_term MIDFIELD `term` data table or equivalent with
-#'        required variables `mcid`, `institution`, and `term`.
-#'
-#' @returns A data frame of the same type as `dframe`. The output has the
-#' following properties:
-#'
-#' * Rows are not modified.
-#' * Columns are added, overwriting existing columns (if any) of the same name.
-#'   Other columns are not modified.
-#' * Groups are not preserved.
-#' * Data frame attributes are preserved for classes `data.frame`, `data.table`,
-#'   or `tbl_df`.
-#'
-#' @family add_*
 #' @example man/examples/exa_add_data_sufficiency.R
+#' @family add_*
 #' @export
 #'
-add_data_sufficiency <- function(dframe, midfield_term = term) {
-  # ---------- checks, use base R syntax
+add_data_sufficiency <- function(dframe, midfield_rec = term) {
+  # define required columns and variables to be added
+  dframe_vars <- c("mcid", "term_i", "timely_term")
+  record_vars <- c("mcid", "term", "institution")
+  added_vars <- c("institution", "lower_limit", "upper_limit", "data_sufficiency")
+  return_vars <- c(dframe_vars, added_vars)
 
-  # required arguments
+  # ---------- base R checks (all data frame classes)
+
+  # data frame assessment
   qassert(dframe, "d+")
-  qassert(midfield_term, "d+")
+  qassert(midfield_rec, "d+")
 
   # required columns
-  assert_names(colnames(dframe),
-    must.include = c("mcid", "timely_term")
-  )
-  assert_names(colnames(midfield_term),
-    must.include = c("mcid", "institution", "term")
-  )
+  assert_names(colnames(dframe), must.include = dframe_vars)
+  assert_names(colnames(midfield_rec), must.include = record_vars)
 
   # class of required columns
-  qassert(dframe[["mcid"]], "s+")
-  qassert(dframe[["timely_term"]], "s+")
-  qassert(midfield_term[["mcid"]], "s+")
-  qassert(midfield_term[["institution"]], "s+")
-  qassert(midfield_term[["term"]], "s+")
+  for (i in seq_along(dframe_vars)) {
+    qassert(dframe[[dframe_vars[i]]], "s+")
+  }
+  for (i in seq_along(record_vars)) {
+    qassert(midfield_rec[[record_vars[i]]], "s+")
+  }
 
   # ---------- preparation
 
-  # to restore class (tibble, data.frame, etc.) before return
-  prior_class <- class(dframe)
+  # to restore class except for groups in tibbles
+  prior_class <- setdiff(class(dframe), "grouped_df")
 
-  # Copy and setDT() non-DT input. Prevents by-ref changes.
-  # No change to DT class input. By-ref changes remain active.
-  dframe <- copy_setDT_non_DT(dframe)
-  midfield_term <- copy_setDT_non_DT(midfield_term)
+  # prevent by-ref changes propagating to global env
+  dframe <- copy(dframe)
+  setDT(dframe)
+  reqd_record <- copy(midfield_rec)
+  setDT(reqd_record)
+
+  # subset required variables
+  dframe <- dframe[, .SD, .SDcols = dframe_vars]
+  dframe <- unique(dframe, na.rm = TRUE)
+  reqd_record <- reqd_record[, .SD, .SDcols = record_vars]
+  reqd_record <- unique(reqd_record, na.rm = TRUE)
 
   # bind names due to NSE notes in R CMD check
   data_sufficiency <- NULL
-  timely_term <- NULL
-  upper_limit <- NULL
   lower_limit <- NULL
   term_i <- NULL
+  timely_term <- NULL
+  upper_limit <- NULL
 
   # ---------- do the work
 
-  # variables added by this function and functions called (if any)
-  inst_limits_cols <- c("lower_limit", "upper_limit")
-  new_cols <- c("term_i", inst_limits_cols, "data_sufficiency")
+  # subset required variables
+  dframe <- dframe[, .SD, .SDcols = dframe_vars]
+  dframe <- unique(dframe, na.rm = TRUE)
+  reqd_record <- reqd_record[, .SD, .SDcols = record_vars]
+  reqd_record <- unique(reqd_record, na.rm = TRUE)
 
-  # retain original variables NOT in the vector of new columns
-  old_cols <- find_old_cols(dframe, new_cols)
-  dframe <- dframe[, .SD, .SDcols = old_cols]
+  # join institutions
+  dframe <- reqd_record[dframe, on = "mcid"]
 
-  # begin
-  DT <- copy(dframe)
+  # find lower and upper limits by institution
+  inst <- reqd_record[, .(term, institution)]
+  inst <- unique(inst)
+  inst <- inst[, .(lower_limit = min(term), upper_limit = max(term)),
+    by = "institution"
+  ]
+  # join institution limits
+  dframe <- inst[dframe, on = "institution"]
+  dframe <- unique(dframe)
 
-  # add initial term term_i
-  DT <- add_initial_term(DT, midfield_term)
+  # ---------- data sufficiency labels
 
-  # obtain lower and upper institution data limits
-  DT <- add_inst_limits(DT, midfield_term)
+  # one row per ID
+  dframe[, data_sufficiency := fcase(
+    timely_term > upper_limit, "exclude-upper",
+    term_i == lower_limit, "exclude-lower",
+    default = "include"
+  )]
 
-  # default is include
-  DT[, data_sufficiency := "include"]
+  # ---------- prepare to return
 
-  # exclude if TC term exceeds upper limit
-  DT <- DT[timely_term > upper_limit, data_sufficiency := "exclude-upper"]
-
-  # exclude if term_i == lower_limit
-  DT <- DT[term_i == lower_limit, data_sufficiency := "exclude-lower"]
-
-  # remove all but essential variables
-  DT <- DT[, .SD, .SDcols = c("mcid", new_cols)]
-
-  # ensure no duplicate rows
-  setkeyv(DT, "mcid")
-  DT <- DT[, .SD[1], by = "mcid"]
-
-  # left join new columns to dframe by key(s)
-  setkeyv(dframe, "mcid")
-  dframe <- DT[dframe]
-
-  # select columns to return
-  final_cols <- c(old_cols, new_cols)
-  dframe <- dframe[, .SD, .SDcols = final_cols]
-
-  # old columns as keys, order columns and rows
-  set_colrow_order(dframe, old_cols)
-
-  # ---------- restore state
-
-  # restore prior keys
-  # setkeyv(DT, prior_keys)
-
-  # Except for grouped tibbles, restores non-data.table data frames
-  # to same class as input.
-  dframe <- restore_non_dt_class(dframe, prior_class)
-
-  dframe[]
-}
-
-# ------------------------------------------------------------------------
-
-# Add upper and lower limits of institution data range
-
-add_inst_limits <- function(dframe, midfield_term) {
-  # remove keys if any
-  on.exit(setkey(dframe, NULL))
-  on.exit(setkey(midfield_term, NULL), add = TRUE)
-
-  # ensure data.table format, changes by reference
-  setDT(dframe)
-  setDT(midfield_term)
-
-  # add_institution() in utils.R
-  if (!"institution" %chin% names(dframe)) {
-    dframe <- add_institution(dframe, midfield_term = midfield_term)
-  }
-
-  # variables added by this function
-  new_cols <- c("lower_limit", "upper_limit")
-
-  # retain original variables NOT in the vector of new columns
-  old_cols <- find_old_cols(dframe, new_cols)
-  dframe <- dframe[, .SD, .SDcols = old_cols]
-
-  # obtain new_cols keyed by institution,
-  cols_we_want <- c("institution", "term")
-  DT <- midfield_term[, .SD, .SDcols = cols_we_want]
-  DT <- DT[, list(
-    lower_limit = min(term),
-    upper_limit = max(term)
-  ), by = "institution"]
-
-  # ensure no duplicate rows
-  DT <- unique(DT)
-
-  # left join new columns to dframe by key(s)
-  setkeyv(DT, "institution")
-  setkeyv(dframe, "institution")
-  dframe <- DT[dframe]
-
-  # enable printing (see data.table FAQ 2.23)
+  dframe <- dframe[, .SD, .SDcols = return_vars]
+  setkey(dframe, NULL)
+  setattr(dframe, "class", prior_class)
   dframe[]
 }

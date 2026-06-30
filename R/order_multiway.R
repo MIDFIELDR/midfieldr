@@ -3,7 +3,9 @@
 #' Order categorical variables of multiway data
 #'
 #' Transform a data frame such that two independent categorical variables are
-#' factors with levels ordered for display in a multiway dot plot. Multiway data
+#' factors with levels ordered for display in a multiway dot plot.
+#'
+#' Multiway data
 #' comprise a single quantitative value (or response) for every combination of
 #' levels of two categorical variables. The ordering of the rows and panels is
 #' crucial to the perception of effects (Cleveland, 1993).
@@ -142,16 +144,15 @@ order_multiway <- function(dframe,
 
   # ---------- preparation
 
-  # to restore class (tibble, data.frame, etc.) before return
-  prior_class <- class(dframe)
+  # to restore class except for groups in tibbles
+  prior_class <- setdiff(class(dframe), "grouped_df")
 
-  # Convert non-data.table input to data.table class. By-ref changes to
-  # dframe in global environment remain active for data.tables.
-  dframe <- copy_setDT_non_DT(dframe)
+  # prevent by-ref changes propagating to global env
+  DT <- copy(dframe)
+  setDT(DT)
 
   # do the work
 
-  DT <- copy(dframe)
 
   # all methods treat categories as factors
   DT[, (categories) := lapply(.SD, as.factor), .SDcols = categories]
@@ -208,13 +209,8 @@ order_multiway <- function(dframe,
 
   # ---------- restore state
 
-  # restore prior keys
-  # setkeyv(DT, prior_keys)
-
-  # Except for grouped tibbles, restores non-data.table data frames
-  # to same class as input.
-  DT <- restore_non_dt_class(DT, prior_class)
-
+  # restore class
+  setattr(DT, "class", prior_class)
   DT[]
 }
 # --------------------------------------------------------------------------

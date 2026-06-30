@@ -19,19 +19,20 @@ referable only by name.}
 \item{negate}{Logical. If true, searches for not-pattern. Default FALSE.}
 }
 \value{
-A data frame of the same type as \code{dframe}. The output has the
+A data frame subset of \code{dframe}. Output has the
 following properties:
 \itemize{
 \item Rows are a subset of the input, but appear in the same order.
 \item Columns are not modified.
-\item Groups are not preserved.
-\item Data frame attributes are preserved for classes \code{data.frame}, \code{data.table},
-or \code{tbl_df}.
+\item Data frame attributes (except groups) are preserved.
 }
 }
 \description{
 Subset a CIP data frame, retaining rows that match or partially match a
-vector of character strings. Search terms can include regular expressions.
+vector of character strings.
+}
+\details{
+Search terms can include regular expressions.
 Uses \code{grepl()}, therefore non-character columns (if any) that can be
 coerced to character are also searched for matches.
 }

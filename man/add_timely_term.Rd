@@ -2,99 +2,103 @@
 % Please edit documentation in R/add_timely_term.R
 \name{add_timely_term}
 \alias{add_timely_term}
-\title{Calculate a timely completion term for every student}
+\title{Calculate timely completion terms}
 \usage{
 add_timely_term(
   dframe,
-  midfield_term = term,
+  midfield_rec = term,
   ...,
-  span = NULL,
-  sched_span = NULL
+  sched_span = NULL,
+  span = NULL
 )
 }
 \arguments{
-\item{dframe}{Working data frame of student-level records to which
-timely-term columns are to be added. Required variable is \code{mcid}.}
+\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variable: \code{{mcid}}.}
 
-\item{midfield_term}{MIDFIELD \code{term} data table or equivalent with
-required variables \code{mcid}, \code{term}, and \code{level}.}
+\item{midfield_rec}{MIDFIELD records \emph{term} data frame or data frame extension. Required variables:
+\verb{\{mcid, term, level\}}.}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
 referable only by name.}
 
-\item{span}{Optional integer scalar, number of years to define timely
-completion. Commonly used values are are 100\%, 150\%, and 200\% of
-\code{sched_span.} Default 6 years.}
+\item{sched_span}{Integer scalar (default 4), the number of years an institution
+officially schedules for completing a program.}
 
-\item{sched_span}{Optional integer scalar, the number of years an institution
-officially schedules for completing a program. Default 4 years.}
+\item{span}{Integer scalar (default 6), number of years to define timely
+completion, typically 4, 6, or 8 years (100\%, 150\%, 200\% respectively
+of \code{sched_span}).}
 }
 \value{
-A data frame of the same type as \code{dframe}. The output has the
-following properties:
+Data frame with the following properties:
 \itemize{
-\item Rows are not modified.
-\item Columns are added, overwriting existing columns (if any) of the same name.
-Other columns are not modified.
-\item Groups are not preserved.
-\item Data frame attributes are preserved for classes \code{data.frame}, \code{data.table},
-or \code{tbl_df}.
+\item Data frame class is preserved. Groups and keys are not preserved.
+\item Rows are filtered for unique \code{mcid} values.
+\item Column \code{{mcid}} is retained (all other columns are dropped). New columns added:
+\itemize{
+\item \code{term_i.}   Initial term of a student's longitudinal record,
+encoded \code{YYYYT}. Extracted from \code{midfield_rec.}
+\item \code{level_i.}   Character. Student level (01 Freshman, 02 Sophomore,
+etc.) in their initial term. Extracted from \code{midfield_rec.}
+\item \code{adj_span.}   Numeric. Integer span of years for timely completion
+adjusted for a student's initial level.
+\item \code{timely_term.}   Character. Latest term by which program completion
+would be considered timely for every student. Encoded \code{YYYYT.}
+}
 }
 }
 \description{
-Add columns to a data frame of student-level records that indicate each
-student's timely completion term, that is, the term by which program
-completion would be considered timely. By "completion" we mean an
-undergraduate earning their first baccalaureate degree (or degrees, for
-students earning more than one degree in the same term). The timely
-completion term is usually defined as 4-, 6-, or 8-years after admission.
-Our default is 6 years.
+To a data frame keyed by student ID, add a column indicating the
+student's timely completion term. Columns of supporting
+information are also added.
 }
 \details{
 In many studies, students must complete their programs in a specified time
-span to be considered "timely", for example 4-, 6-, or 8-years after
-admission. If they do not, their completion is "late" and they are grouped
-with the non-completers when computing a metric such as graduation rate.
+span to be considered "timely", for example 4, 6, or 8 years after
+admission. The latest term by which program completion would be considered
+timely is the \emph{timely completion term.} By "completion" we mean an
+undergraduate earning their first baccalaureate degree (or degrees, for
+students earning more than one degree in the same term).
 
-Our heuristic assigns \code{span} number of years (default is 6 years) to every
+The timely completion term is required for determining data sufficiency
+as well as timely completion status. The goal in either case is to refine
+a population, that is, obtain a data frame of IDs that satisfy our
+constraints. Thus \code{add_timely_term()} yields a column of  timely term
+values and columns of supporting information keyed by ID. All other columns
+in \code{dframe} (if any) are dropped.
+
+Our heuristic assigns \code{span} number of years (default 6) to every
 student. For students admitted at second-year level or higher, the span is
 reduced by one year for each full year the student is assumed to have
 completed. For example, a student admitted at the second-year level is
 assumed to have completed one year of a program, so their span is reduced by
-one year. The adjusted span is added to the initial term to create the timely
-completion term in the \code{timely_term} column.
+one year. The adjusted span is added to their initial term to create the
+\code{timely_term} values.
 
-The new columns are:
-\itemize{
-\item \code{term_i} Initial term of a student's longitudinal record, encoded \code{YYYYT}.
-Extracted from \code{term}.
-\item \code{level_i}. Character. Student level (01 Freshman, 02 Sophomore, etc.)
-in their initial term. Extracted from \code{term}.
-\item \code{adj_span}. Numeric. Integer span of years for timely completion
-adjusted for a student's initial level.
-\item \code{timely_term}. Character. Latest term by which program completion would
-be considered timely for every student. Encoded \code{YYYYT}.
-}
+The supporting information in the output is provided so that the user
+can review the findings. Moreover, \code{add_data_sufficiency()} and
+\code{add_completion_status()} require one or both of the added columns
+\verb{\{term_i, timely_term\}.}
 }
 \examples{
 # Start with an excerpt from the student data set 
 dframe <- toy_student[1:10, .(mcid)]
 
 # Add timely completion term column
-add_timely_term(dframe, midfield_term = toy_term)
+add_timely_term(dframe, toy_term)
 
 # Define timely completion as 200\% of scheduled span (8 years)
-add_timely_term(dframe, midfield_term = toy_term, span = 8)
+add_timely_term(dframe, toy_term, span = 8)
 
 # Existing timely_term column, if any, is overwritten
 dframe[, timely_term := NA_character_][]
-add_timely_term(dframe, midfield_term = toy_term)
+add_timely_term(dframe, toy_term)
 
 
 }
 \seealso{
 Other add_*:
 \code{\link[=add_completion_status]{add_completion_status()}},
-\code{\link[=add_data_sufficiency]{add_data_sufficiency()}}
+\code{\link[=add_data_sufficiency]{add_data_sufficiency()}},
+\code{\link[=add_term_cluster]{add_term_cluster()}}
 }
 \concept{add_*}

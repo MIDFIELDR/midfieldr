@@ -27,9 +27,8 @@ following properties:
 \itemize{
 \item Rows are not modified.
 \item Columns are a subset of the input, but appear in the same order.
-\item Groups are not preserved.
-\item Data frame attributes are preserved for classes \code{data.frame}, \code{data.table},
-or \code{tbl_df}.
+\item Groups are not necessarily preserved.
+\item Data frame attributes are preserved with the exception of grouped tibbles.
 }
 }
 \description{
@@ -45,18 +44,17 @@ Several midfieldr functions require input data frames containing
 specific variables (column names) such as \code{mcid} or \code{cip6}. In addition,
 the MIDFIELD data tables have specific variables that act as keys
 or composite keys to the information in that table. The \code{type} argument
-determines the set of columns searched for in \code{dframe}. Unmatched search
-strings are silently ignored.
+determines which columns are returned, if those columns exist in \code{dframe}:
 \itemize{
-\item \code{type = "s"} (student table) searches for columns \verb{mcid, race, sex}
-\item \code{type = "t"} (term table) searches for columns \verb{mcid, term, cip6, institution, level}
-\item \code{type = "c"} (course table) searches for columns \verb{mcid, term_course, abbrev, number}
-\item \code{type = "d"} (degree table) searches for columns \verb{mcid, term_degree, cip6}
-\item \code{type = "a"} (default) searches for all of the columns listed above
+\item \code{type = "s"} (student table) returns columns \verb{mcid, race, sex}
+\item \code{type = "t"} (term table) returns columns \verb{mcid, term, cip6, institution, level}
+\item \code{type = "c"} (course table) returns columns \verb{mcid, term_course, abbrev, number}
+\item \code{type = "d"} (degree table) returns columns \verb{mcid, term_degree, cip6}
+\item \code{type = "a"} (default) returns all the above
 }
 
-Additional column names can be included in the search by using the
-\code{col_pattern} argument.
+Additional column names can be included by using the \code{col_pattern}
+argument. In all cases, unmatched search strings are silently ignored.
 }
 \examples{
 # Basic usage

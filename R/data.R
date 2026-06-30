@@ -134,11 +134,11 @@
 #' @format `data.table` with 150 rows and 13 columns keyed by student ID.
 #'   \describe{
 #'   `r var_mcid`
+#'   `r var_race`
+#'   `r var_sex`
 #'   `r var_institution`
 #'   `r var_transfer`
 #'   `r var_hours_transfer`
-#'   `r var_race`
-#'   `r var_sex`
 #'   `r var_age_desc`
 #'   `r var_us_citizen`
 #'   `r var_home_zip`
@@ -164,11 +164,11 @@
 #'                      term, course abbreviation, and course number.
 #'   \describe{
 #'   `r var_mcid`
-#'   `r var_institution`
 #'   `r var_term`
-#'   `r var_course`
 #'   `r var_abbrev`
 #'   `r var_number`
+#'   `r var_institution`
+#'   `r var_course`
 #'   `r var_section`
 #'   `r var_type`
 #'   `r var_faculty_rank`
@@ -193,9 +193,9 @@
 #'                      and term.
 #'   \describe{
 #'   `r var_mcid`
-#'   `r var_institution`
 #'   `r var_term`
 #'   `r var_cip6_term`
+#'   `r var_institution`
 #'   `r var_level`
 #'   `r var_standing`
 #'   `r var_coop`
@@ -223,9 +223,9 @@
 #'                      term, and program (CIP code or degree label).
 #'   \describe{
 #'   `r var_mcid`
-#'   `r var_institution`
 #'   `r var_term_degree`
 #'   `r var_cip6_degree`
+#'   `r var_institution`
 #'   `r var_degree`
 #'   }
 "toy_degree"

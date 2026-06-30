@@ -2,41 +2,54 @@
 % Please edit documentation in R/add_data_sufficiency.R
 \name{add_data_sufficiency}
 \alias{add_data_sufficiency}
-\title{Determine data sufficiency for every student}
+\title{Determine data sufficiency}
 \usage{
-add_data_sufficiency(dframe, midfield_term = term)
+add_data_sufficiency(dframe, midfield_rec = term)
 }
 \arguments{
-\item{dframe}{Working data frame of student-level records to which
-data-sufficiency columns are to be added. Required variables are
-\code{mcid} and \code{timely_term}.}
+\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variables: \verb{\{mcid, term_i, timely_term\}}.}
 
-\item{midfield_term}{MIDFIELD \code{term} data table or equivalent with
-required variables \code{mcid}, \code{institution}, and \code{term}.}
+\item{midfield_rec}{MIDFIELD records \emph{term} data frame or data frame extension. Required variables:
+\verb{\{mcid, term, institution\}}.}
 }
 \value{
-A data frame of the same type as \code{dframe}. The output has the
-following properties:
+Data frame with the following properties:
 \itemize{
-\item Rows are not modified.
-\item Columns are added, overwriting existing columns (if any) of the same name.
-Other columns are not modified.
-\item Groups are not preserved.
-\item Data frame attributes are preserved for classes \code{data.frame}, \code{data.table},
-or \code{tbl_df}.
+\item Data frame class is preserved. Groups and keys are not preserved.
+\item Rows are filtered for unique \code{mcid} values.
+\item Columns \verb{\{mcid, term_i, timely_term\}} are retained (all other columns
+are dropped). New columns added:
+\itemize{
+\item \code{institution.}   Character. Institution in which the student is
+enrolled in the given term. Extracted from \code{midfield_rec.} The
+limits given in the next two columns are specific to the institution.
+\item \code{lower_limit.}   Character. Initial term of an institution's
+data range, encoded \code{YYYYT}. Extracted from \code{midfield_rec.}
+Compared to \code{term_i} to determine the lower-limit exclusion.
+\item \code{upper_limit.}   Character. Final term of an institution's
+data range, encoded \code{YYYYT}. Extracted from \code{midfield_rec.}
+Compared to \code{timely_term} to determine upper-limit exclusion.
+\item \code{data_sufficiency.}   Character. Possible values are "include",
+if the data are sufficient; and "exclude-lower" or "exclude-upper"
+if not, indicating at which boundary of the data range the ambiguity
+occurs.
+}
 }
 }
 \description{
-Add columns to a data frame of student-level records that indicate whether
-an observation should be included or excluded based on sufficient
-information from the institution. Because the time span of MIDFIELD term
-data varies by institution, each has their own lower and upper bounds. For
-some student records, being at or near these bounds creates unavoidable
-ambiguity when trying to assess degree completion. Such records must be
-identified and in most cases excluded to prevent false summary counts.
+To a data frame keyed by student ID, add a column indicating that
+an institution's data range is sufficient to reliably assess a
+student's program completion. Columns of supporting
+information are also added.
 }
 \details{
-The data sufficiency criterion states that student records are limited to
+Because the time span of MIDFIELD term data varies by institution, each
+has their own lower and upper bounds. When assessing a student's program
+completion, an unavoidable ambiguity arises for student records at or near
+these bounds. Such records must be identified and in most cases excluded
+to prevent false summary counts.
+
+The \emph{data sufficiency} criterion states that student records are limited to
 those for which available data are sufficient to assess timely completion
 without biased counts of completers or non-completers. In practice, the
 criteria is implemented via two filters. Rows are labeled for exclusion
@@ -44,37 +57,34 @@ when: 1) a student ID is extant in the non-summer lower limit of an
 institution's data range; or 2) a student ID has a timely completion term
 that exceeds the upper limit of the institution's data range.
 
-The new columns are:
-\itemize{
-\item \code{term_i} Initial term of a student's longitudinal record, encoded \code{YYYYT}.
-Extracted from \code{term}.
-\item \code{lower_limit} Character. Initial term of an institution's data range,
-encoded \code{YYYYT}. Extracted from \code{term}.
-\item \code{upper_limit} Character. Final term of an institution's data range,
-encoded \code{YYYYT}. Extracted from \code{term}.
-\item \code{data_sufficiency} Character. Possible values are "include",
-"exclude_lower", and "exclude-upper". A row is labeled "include" if the
-data are sufficient; and "exclude-lower" or "exclude-upper" if not,
-indicating at which boundary of the data range the ambiguity occurs.
-}
+The goal of determining data sufficiency is to refine a population, that
+is, obtain a data frame of IDs that satisfy our constraints. Thus
+\code{add_data_sufficiency()} yields a column of data sufficiency values and
+columns of supporting information keyed by ID. All other columns in
+\code{dframe} (if any) are dropped.
+
+The supporting information in the output is provided so that the user
+can review the findings. After review, we usually delete all columns
+except the IDs, yielding the refined population that was our goal.
 }
 \examples{
 # Start with an excerpt from the student data set 
 dframe <- toy_student[1:10, .(mcid)]
 
 # Timely term column is required to add data sufficiency column
-dframe <- add_timely_term(dframe, midfield_term = toy_term)
+dframe <- add_timely_term(dframe, toy_term)
 
 # Add data sufficiency column
-add_data_sufficiency(dframe, midfield_term = toy_term)
+add_data_sufficiency(dframe, toy_term)
 
-# Existing data_sufficiency column, if any, is overwritten
+# Existing data_sufficiency column, if any, is replaced
 dframe[, data_sufficiency := NA_character_][]
-add_data_sufficiency(dframe, midfield_term = toy_term)
+add_data_sufficiency(dframe, toy_term)
 }
 \seealso{
 Other add_*:
 \code{\link[=add_completion_status]{add_completion_status()}},
+\code{\link[=add_term_cluster]{add_term_cluster()}},
 \code{\link[=add_timely_term]{add_timely_term()}}
 }
 \concept{add_*}

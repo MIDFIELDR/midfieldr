@@ -9,12 +9,12 @@
 term, and program (CIP code or degree label).
 \describe{
 \item{\code{mcid}}{Character, de-identified student ID. Key column.}
-\item{\code{institution}}{Character, de-identified institution
-name, e.g., Institution A, Institution B, etc.}
 \item{\code{term_degree}}{Character, academic year and term
 in which a student completes their program, format YYYYT.}
 \item{\code{cip6}}{Character, 6-digit CIP code of program in
 which a student is enrolled in a term. Key column.}
+\item{\code{institution}}{Character, de-identified institution
+name, e.g., Institution A, Institution B, etc.}
 \item{\code{degree}}{Character, type of degree awarded, e.g.,
 Bachelor of Arts in Geography, Bachelor of Science
 in Finance, etc.}

@@ -92,9 +92,9 @@ library(midfieldr)
 library(data.table)
 
 # Choose a minimum set of columns
-student <- select_record_cols(toy_student, type = "s")
-term <- select_record_cols(toy_term, "t")
-degree <- select_record_cols(toy_degree, "d")
+student <- select_record_cols(toy_student)
+term <- select_record_cols(toy_term)
+degree <- select_record_cols(toy_degree)
 
 # Display one representative data frame
 term
@@ -108,12 +108,6 @@ term
 # Exclude rows after the first degree term
 term <- term[term_cluster != "post-first-degree"]
 degree <- degree[term_cluster != "post-first-degree"]
-
-term
-
-# Drop the temporary columns
-term <- select_record_cols(term, type = "t")
-degree <- select_record_cols(degree, type = "d")
 
 term
 
@@ -131,7 +125,7 @@ DT
 
 # Retain rows with sufficient institutional data
 population <- DT[data_sufficiency == "include", .(mcid)]
-
+population <- unique(population)
 population
 
 # Filter records using inner join with population
@@ -139,12 +133,12 @@ student <- population[student, on = "mcid", nomatch = NULL]
 term <- population[term, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-# Records ready for grouping, summarizing, calculating metrics, etc.
-student
+# Drop temporary columns, records ready for further analysis
+select_record_cols(student)
 
-term
+select_record_cols(term)
 
-degree
+select_record_cols(degree)
 ```
 
 ## Acknowledgments

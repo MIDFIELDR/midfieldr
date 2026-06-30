@@ -1,274 +1,190 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
-#' Calculate a timely completion term for every student
+#' Calculate timely completion terms
 #'
-#' Add columns to a data frame of student-level records that indicate each
-#' student's timely completion term, that is, the term by which program
-#' completion would be considered timely. By "completion" we mean an
-#' undergraduate earning their first baccalaureate degree (or degrees, for
-#' students earning more than one degree in the same term). The timely
-#' completion term is usually defined as 4-, 6-, or 8-years after admission.
-#' Our default is 6 years.
+#' To a data frame keyed by student ID, add a column indicating the
+#' student's timely completion term. Columns of supporting
+#' information are also added.
 #'
 #' In many studies, students must complete their programs in a specified time
-#' span to be considered "timely", for example 4-, 6-, or 8-years after
-#' admission. If they do not, their completion is "late" and they are grouped
-#' with the non-completers when computing a metric such as graduation rate.
+#' span to be considered "timely", for example 4, 6, or 8 years after
+#' admission. The latest term by which program completion would be considered
+#' timely is the *timely completion term.* By "completion" we mean an
+#' undergraduate earning their first baccalaureate degree (or degrees, for
+#' students earning more than one degree in the same term).
 #'
-#' Our heuristic assigns `span` number of years (default is 6 years) to every
+#' The timely completion term is required for determining data sufficiency
+#' as well as timely completion status. The goal in either case is to refine
+#' a population, that is, obtain a data frame of IDs that satisfy our
+#' constraints. Thus `add_timely_term()` yields a column of  timely term
+#' values and columns of supporting information keyed by ID. All other columns
+#' in `dframe` (if any) are dropped.
+#'
+#' Our heuristic assigns `span` number of years (default 6) to every
 #' student. For students admitted at second-year level or higher, the span is
 #' reduced by one year for each full year the student is assumed to have
 #' completed. For example, a student admitted at the second-year level is
 #' assumed to have completed one year of a program, so their span is reduced by
-#' one year. The adjusted span is added to the initial term to create the timely
-#' completion term in the `timely_term` column.
+#' one year. The adjusted span is added to their initial term to create the
+#' `timely_term` values.
 #'
-#' The new columns are:
+#' The supporting information in the output is provided so that the user
+#' can review the findings. Moreover, `add_data_sufficiency()` and
+#' `add_completion_status()` require one or both of the added columns
+#' `{term_i, timely_term}.`
 #'
-#' * `term_i` Initial term of a student's longitudinal record, encoded `YYYYT`.
-#'    Extracted from `term`.
 #'
-#' * `level_i`. Character. Student level (01 Freshman, 02 Sophomore, etc.)
-#'    in their initial term. Extracted from `term`.
+#' @param dframe `r dframe` Required variable: `{mcid}`.
 #'
-#' * `adj_span`. Numeric. Integer span of years for timely completion
-#'    adjusted for a student's initial level.
-#'
-#' * `timely_term`. Character. Latest term by which program completion would
-#'    be considered timely for every student. Encoded `YYYYT`.
-#'
-#' @param dframe  Working data frame of student-level records to which
-#'        timely-term columns are to be added. Required variable is `mcid`.
-#'
-#' @param midfield_term MIDFIELD `term` data table or equivalent with
-#'        required variables `mcid`, `term`, and `level`.
+#' @param midfield_rec `r midfield_x("*term*")` Required variables:
+#'        `{mcid, term, level}`.
 #'
 #' @param ... `r param_dots`
 #'
-#' @param span Optional integer scalar, number of years to define timely
-#'        completion. Commonly used values are are 100%, 150%, and 200% of
-#'        `sched_span.` Default 6 years.
+#' @param sched_span Integer scalar (default 4), the number of years an institution
+#'        officially schedules for completing a program.
 #'
-#' @param sched_span Optional integer scalar, the number of years an institution
-#'        officially schedules for completing a program. Default 4 years.
+#' @param span Integer scalar (default 6), number of years to define timely
+#'        completion, typically 4, 6, or 8 years (100%, 150%, 200% respectively
+#'        of `sched_span`).
 #'
-#' @returns A data frame of the same type as `dframe`. The output has the
-#' following properties:
-#'
-#' * Rows are not modified.
-#' * Columns are added, overwriting existing columns (if any) of the same name.
-#'   Other columns are not modified.
-#' * Groups are not preserved.
-#' * Data frame attributes are preserved for classes `data.frame`, `data.table`,
-#'   or `tbl_df`.
+#' @returns Data frame with the following properties:
+#' * Data frame class is preserved. Groups and keys are not preserved.
+#' * Rows are filtered for unique `mcid` values.
+#' * Column `{mcid}` is retained (all other columns are dropped). New columns added:
+#'   - `term_i.` &nbsp; Initial term of a student's longitudinal record,
+#'      encoded `YYYYT`. Extracted from `midfield_rec.`
+#'   - `level_i.` &nbsp; Character. Student level (01 Freshman, 02 Sophomore,
+#'      etc.) in their initial term. Extracted from `midfield_rec.`
+#'   - `adj_span.` &nbsp; Numeric. Integer span of years for timely completion
+#'      adjusted for a student's initial level.
+#'   - `timely_term.` &nbsp; Character. Latest term by which program completion
+#'      would be considered timely for every student. Encoded `YYYYT.`
+
 #'
 #' @family add_*
 #' @example man/examples/exa_add_timely_term.R
 #' @export
 #'
 add_timely_term <- function(dframe,
-                            midfield_term = term,
+                            midfield_rec = term,
                             ...,
-                            span = NULL,
-                            sched_span = NULL) {
-  # ---------- checks, use base R syntax
+                            sched_span = NULL,
+                            span = NULL) {
+  # define required columns and variables to be added
+  dframe_vars <- c("mcid")
+  record_vars <- c("mcid", "term", "level")
+  added_vars <- c("term_i", "level_i", "adj_span", "timely_term")
+  return_vars <- c(dframe_vars, added_vars)
 
+  # ---------- base R checks (all data frame classes)
+  #
   # arguments after ... must be named
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     "Arguments after ... must be named, as in arg = val."
   )
 
-  # required arguments
+  # data frame assessment
   qassert(dframe, "d+")
-  qassert(midfield_term, "d+")
+  qassert(midfield_rec, "d+")
 
-  # optional arguments
+  # required columns
+  assert_names(colnames(dframe), must.include = dframe_vars)
+  assert_names(colnames(midfield_rec), must.include = record_vars)
+
+  # class of required columns
+  for (i in seq_along(dframe_vars)) {
+    qassert(dframe[[dframe_vars[i]]], "s+")
+  }
+  for (i in seq_along(record_vars)) {
+    qassert(midfield_rec[[record_vars[i]]], "s+")
+  }
+
+  # other arguments
   span <- span %?% 6
   sched_span <- sched_span %?% 4
 
-  # optional arguments assertions
   assert_int(sched_span, lower = 0)
   assert_int(span, lower = sched_span)
 
-  # required columns
-  assert_names(colnames(dframe),
-    must.include = c("mcid")
-  )
-  assert_names(colnames(midfield_term),
-    must.include = c("mcid", "term", "level")
-  )
-
-  # class of required columns
-  qassert(dframe[["mcid"]], "s+")
-  qassert(midfield_term[["mcid"]], "s+")
-  qassert(midfield_term[["term"]], "s+")
-  qassert(midfield_term[["level"]], "s+")
-
-
   # ---------- preparation
 
-  # to restore class (tibble, data.frame, etc.) before return
-  prior_class <- class(dframe)
+  # to restore class except for groups in tibbles
+  prior_class <- setdiff(class(dframe), "grouped_df")
 
-  # Copy and setDT() non-DT input. Prevents by-ref changes.
-  # No change to DT class input. By-ref changes remain active.
-  dframe <- copy_setDT_non_DT(dframe)
-  midfield_term <- copy_setDT_non_DT(midfield_term)
+  # prevent by-ref changes propagating to global env
+  dframe <- copy(dframe)
+  setDT(dframe)
+  reqd_record <- copy(midfield_rec)
+  setDT(reqd_record)
 
   # bind names due to NSE notes in R CMD check
-  timely_term <- NULL
   adj_span <- NULL
+  delta <- NULL
   level_i <- NULL
   term_i <- NULL
-  delta <- NULL
+  timely_term <- NULL
   yyyy <- NULL
 
-  # do the work
+  # ---------- do the work
 
-  # variables added by this function and functions called (if any)
-  initial_traits_cols <- c("term_i", "level_i")
-  new_cols <- c(initial_traits_cols, "adj_span", "timely_term")
+  # subset required variables
+  dframe <- dframe[, .SD, .SDcols = dframe_vars]
+  dframe <- unique(dframe, na.rm = TRUE)
+  reqd_record <- reqd_record[, .SD, .SDcols = record_vars]
+  reqd_record <- unique(reqd_record, na.rm = TRUE)
 
-  # retain original variables NOT in the vector of new columns
-  old_cols <- find_old_cols(dframe, new_cols)
-  dframe <- dframe[, .SD, .SDcols = old_cols]
+  # inner-join IDs and term vars
+  x <- reqd_record[dframe, on = "mcid", nomatch = NULL]
+  x <- unique(x)
 
-  # begin
-  DT <- copy(dframe)
+  # keep the row of the first term, lowest level
+  setorderv(x, c("mcid", "term"), order = 1)
+  x <- x[, .SD[1], by = "mcid"]
 
-  # add first recorded term_i and level_i
-  DT <- add_initial_term(DT, midfield_term)
-  DT <- add_initial_level(DT, midfield_term)
-  DT <- DT[, .SD, .SDcols = c("mcid", initial_traits_cols)]
+  # rename term and level
+  x <- x[, .(mcid, term_i = term, level_i = level)]
 
-  # begin constructing the timely term
-  DT[, `:=`(
+  # left-join term_i and level_i to dframe
+  dframe <- x[dframe, on = "mcid"]
+
+  # ---------- construct timely term
+
+  dframe[, `:=`(
     yyyy = substr(term_i, 1, 4),
     t    = substr(term_i, 5, 5)
   )]
 
   # for month terms, (letters A, B, C, ...), set first term to zero
-  DT <- DT[t %chin% LETTERS | t %chin% letters, t := "0"]
+  dframe <- dframe[t %chin% LETTERS | t %chin% letters, t := "0"]
 
   # make year and term numeric
-  DT[, `:=`(
+  dframe[, `:=`(
     yyyy = as.numeric(yyyy),
     t    = as.numeric(t)
   )]
 
   # if first term is in summer, delay to the subsequent Fall
-  DT[t > 3, `:=`(yyyy = yyyy + 1, t = 1)]
+  dframe[t > 3, `:=`(yyyy = yyyy + 1, t = 1)]
 
   # reduce span by assumed number of completed years by level
-  DT[, delta := fcase(
+  dframe[, delta := fcase(
     level_i %like% "04", 3,
     level_i %like% "03", 2,
     level_i %like% "02", 1,
     default = 0
   )]
-  DT[, adj_span := span - delta]
+  dframe[, adj_span := span - delta]
 
   # use adj_span to construct estimated timely-completion term
-  DT[t == 0 | t == 1, timely_term := paste0(yyyy + adj_span - 1, 3)]
-  DT[t > 1, timely_term := paste0(yyyy + adj_span, 1)]
+  dframe[t == 0 | t == 1, timely_term := paste0(yyyy + adj_span - 1, 3)]
+  dframe[t > 1, timely_term := paste0(yyyy + adj_span, 1)]
 
-  # remove all but essential variables
-  DT <- DT[, .SD, .SDcols = c("mcid", new_cols)]
+  # ---------- prepare to return
 
-  # ensure no duplicate rows
-  setkeyv(DT, "mcid")
-  DT <- DT[, .SD[1], by = "mcid"]
-
-  # left join new columns to dframe by key(s)
-  setkeyv(dframe, "mcid")
-  dframe <- DT[dframe]
-
-  # select columns to return
-  final_cols <- c(old_cols, new_cols)
-  dframe <- dframe[, .SD, .SDcols = final_cols]
-
-  # old columns as keys, order columns and rows
-  set_colrow_order(dframe, old_cols)
-
-  # ---------- restore state
-
-  # restore prior keys
-  # setkeyv(DT, prior_keys)
-
-  # Except for grouped tibbles, restores non-data.table data frames
-  # to same class as input.
-  dframe <- restore_non_dt_class(dframe, prior_class)
-
-  dframe[]
-}
-
-# ------------------------------------------------------------------------
-
-# Add students' initial terms
-
-add_initial_term <- function(dframe, midfield_term) {
-  # variables added by this function
-  new_cols <- c("term_i")
-
-  # retain original variables NOT in the vector of new columns
-  old_cols <- find_old_cols(dframe, new_cols)
-  dframe <- dframe[, .SD, .SDcols = old_cols]
-
-  # Inner join using two columns of term
-  x <- midfield_term[, .(mcid, term)]
-  y <- unique(dframe[, .(mcid)])
-  DT <- y[x, on = .(mcid), nomatch = NULL]
-
-  # retain first term by ID
-  setkeyv(DT, c("mcid", "term"))
-  DT <- DT[, .SD[1], by = c("mcid")]
-  setkey(DT, NULL)
-
-  # rename new columns
-  setnames(DT,
-    old = c("term"),
-    new = c("term_i")
-  )
-
-  # left join new columns to dframe
-  dframe <- DT[dframe, on = "mcid"]
-
-  # enable printing (see data.table FAQ 2.23)
-  dframe[]
-}
-
-# ------------------------------------------------------------------------
-
-# Add students' initial levels
-
-add_initial_level <- function(dframe, midfield_term) {
-  # variables added by this function and functions called (if any)
-  new_cols <- c("level_i")
-
-  # retain original variables NOT in the vector of new columns
-  old_cols <- find_old_cols(dframe, new_cols)
-  dframe <- dframe[, .SD, .SDcols = old_cols]
-
-  # Inner join
-  x <- unique(midfield_term[, .(mcid, term, level)])
-  y <- unique(dframe[, .(mcid)])
-  DT <- y[x, on = .(mcid), nomatch = NULL]
-
-  # retain first term by ID
-  setkeyv(DT, c("mcid", "term"))
-  DT <- DT[, .SD[1], by = c("mcid")]
-  setkey(DT, NULL)
-
-  # rename new columns
-  setnames(DT,
-    old = c("level"),
-    new = c("level_i")
-  )
-
-  # left join new columns to dframe
-  dframe <- DT[dframe, on = "mcid"]
-
-  # enable printing (see data.table FAQ 2.23)
+  dframe <- dframe[, .SD, .SDcols = return_vars]
+  setkey(dframe, NULL)
+  setattr(dframe, "class", prior_class)
   dframe[]
 }

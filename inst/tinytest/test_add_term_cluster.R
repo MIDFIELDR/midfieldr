@@ -1,28 +1,25 @@
 
-# functions used in the test
-
-run_check <- function(x, y, fnc) {
-  
-  z <- fnc(x, y)
-  expect_equal(class(x), class(z))
-  expect_equal(class(y), class(z))
-  
-  rm(z)
-}
-
+# function used in the test
 expect_class_preserved <- function(df1, df2, fnc) {
-
+  
+  run_check <- function(x, y, fnc) {
+    z <- fnc(x, y)
+    expect_equal(class(x), class(z))
+    expect_equal(class(y), class(z))
+  }
+  
+  # runs 3 checks: data.frame, tibble, data.table
   x <- copy(df1)
   y <- copy(df2)
-
+  
   x <- as.data.frame(x)
   y <- as.data.frame(y)
   run_check(x, y, fnc)
-
+  
   setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
   setattr(y, "class", c("tbl_df", "tbl", "data.frame"))
   run_check(x, y, fnc)
-
+  
   x <- as.data.table(x)
   y <- as.data.table(y)
   run_check(x, y, fnc)
@@ -33,7 +30,7 @@ expect_class_preserved <- function(df1, df2, fnc) {
 test_add_term_cluster <- function() {
   
   # usage
-  # add_term_cluster(dframe, midfield_degree = degree)
+  # add_term_cluster(dframe, midfield_rec = degree)
   
   # ---------- setup
   

@@ -2,11 +2,11 @@
 dframe <- toy_student[1:10, .(mcid)]
 
 # Timely term column is required to add data sufficiency column
-dframe <- add_timely_term(dframe, midfield_term = toy_term)
+dframe <- add_timely_term(dframe, toy_term)
 
 # Add data sufficiency column
-add_data_sufficiency(dframe, midfield_term = toy_term)
+add_data_sufficiency(dframe, toy_term)
 
-# Existing data_sufficiency column, if any, is overwritten
+# Existing data_sufficiency column, if any, is replaced
 dframe[, data_sufficiency := NA_character_][]
-add_data_sufficiency(dframe, midfield_term = toy_term)
+add_data_sufficiency(dframe, toy_term)

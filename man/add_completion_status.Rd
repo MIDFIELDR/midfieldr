@@ -2,50 +2,55 @@
 % Please edit documentation in R/add_completion_status.R
 \name{add_completion_status}
 \alias{add_completion_status}
-\title{Determine completion status for every student}
+\title{Determine completion status}
 \usage{
-add_completion_status(dframe, midfield_degree = degree)
+add_completion_status(dframe, midfield_rec = degree)
 }
 \arguments{
-\item{dframe}{Working data frame of student-level records to which
-completion-status columns are to be added. Required variables are
-\code{mcid} and \code{timely_term}.}
+\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variables: \verb{\{mcid, timely_term\}}.}
 
-\item{midfield_degree}{MIDFIELD \code{degree} data table or equivalent with
-required variables \code{mcid} and \code{term_degree.}}
+\item{midfield_rec}{MIDFIELD records \emph{degree} data frame or data frame extension. Required variables:
+\verb{\{mcid, term_degree\}}.}
 }
 \value{
-A data frame of the same type as \code{dframe}. The output has the
-following properties:
+Data frame with the following properties:
 \itemize{
-\item Rows are not modified.
-\item Columns are added, overwriting existing columns (if any) of the same name.
-Other columns are not modified.
-\item Groups are not preserved.
-\item Data frame attributes are preserved for classes \code{data.frame}, \code{data.table},
-or \code{tbl_df}.
+\item Data frame class is preserved. Groups and keys are not preserved.
+\item Rows are filtered for unique \code{mcid} values.
+\item Columns \verb{\{mcid, timely_term\}} are retained (all other columns
+are dropped). New columns added:
+\itemize{
+\item \code{term_degree.}   Character. Term in which the first degree(s) are
+completed, encoded \code{YYYYT}. Joined from \code{midfield_rec.}
+\item \code{completion_status.}   Character. Possible values are "timely"
+for students completing a degree no later than their timely
+completion terms; "late" for students completing their program
+after their timely completion term; and "NA" for non-completers.
+}
 }
 }
 \description{
-Add columns to a data frame of student-level records that indicate whether a
-student completed a degree, and if so, whether their completion was timely.
-By "completion" we mean an undergraduate earning their first baccalaureate
-degree (or degrees, for students earning more than one degree in the same
-term). The term by which a student's completion would be considered timely
-(the "timely completion term") is usually defined as 4-, 6-, or 8-years
-after admission. Our default is 6 years.
+To a data frame keyed by student ID, add a column indicating if a
+student completed their program, and if so, whether their completion
+was timely or late. Columns of supporting information are
+also added.
 }
 \details{
-The new columns are:
-\itemize{
-\item \code{term_degree} Character. Term in which the first degree(s) are
-completed, encoded \code{YYYYT}. Joined from \code{midfield_degree}.
-\item \code{completion_status} Character. Possible values are "timely","late",
-and "NA". Completion status is "timely" for students completing a
-degree no later than their timely completion terms; "late" for students
-completing their program after their timely completion term; and "NA"
-for non-completers.
-}
+In many studies, students must complete their programs in a specified time
+span to be considered "timely", for example 4, 6, or 8 years after
+admission. By "completion" we mean an
+undergraduate earning their first baccalaureate degree (or degrees, for
+students earning more than one degree in the same term).
+
+The goal of determining timely completion is to refine a population, that
+is, obtain a data frame of IDs that satisfy our constraints. Thus
+\code{add_completion_status()} yields a column of completion status values and
+columns of supporting information keyed by ID. All other columns in
+\code{dframe} (if any) are dropped.
+
+The supporting information in the output is provided so that the user
+can review the findings. After review, we usually delete all columns
+except the IDs, yielding the refined population that was our goal.
 }
 \examples{
 # Start with an excerpt from the student data set 
@@ -64,6 +69,7 @@ add_completion_status(dframe, toy_degree)
 \seealso{
 Other add_*:
 \code{\link[=add_data_sufficiency]{add_data_sufficiency()}},
+\code{\link[=add_term_cluster]{add_term_cluster()}},
 \code{\link[=add_timely_term]{add_timely_term()}}
 }
 \concept{add_*}

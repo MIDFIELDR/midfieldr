@@ -34,10 +34,15 @@ filter_cip <- function(keep_text = NULL,
 }
 NULL
 
+
+
+
 #' Subset rows that include matches to search strings
 #'
 #' Subset a CIP data frame, retaining rows that match or partially match a
-#' vector of character strings. Search terms can include regular expressions.
+#' vector of character strings.
+#'
+#' Search terms can include regular expressions.
 #' Uses `grepl()`, therefore non-character columns (if any) that can be
 #' coerced to character are also searched for matches.
 #'
@@ -48,18 +53,11 @@ NULL
 #' @param ... `r param_dots`
 #' @param negate Logical. If true, searches for not-pattern. Default FALSE.
 #'
-#' @returns A data frame of the same type as `dframe`. The output has the
+#' @returns A data frame subset of `dframe`. Output has the
 #' following properties:
-#'
 #' * Rows are a subset of the input, but appear in the same order.
 #' * Columns are not modified.
-#' * Groups are not preserved.
-#' * Data frame attributes are preserved for classes `data.frame`, `data.table`,
-#'   or `tbl_df`.
-#'
-#'
-#'
-#'
+#' * Data frame attributes (except groups) are preserved.
 #'
 #' @family filter_*
 #' @example man/examples/exa_filter_cip_rows.R
@@ -84,12 +82,12 @@ filter_cip_rows <- function(dframe, pattern, ..., negate = FALSE) {
 
   # ---------- preparation
 
-  # to restore class (tibble, data.frame, etc.) before return
-  prior_class <- class(dframe)
+  # to restore class except for groups in tibbles
+  prior_class <- setdiff(class(dframe), "grouped_df")
 
-  # Convert non-data.table input to data.table class. By-ref changes to
-  # dframe in global environment remain active for data.tables.
-  dframe <- copy_setDT_non_DT(dframe)
+  # prevent by-ref changes propagating to global env
+  dframe <- copy(dframe)
+  setDT(dframe)
 
   # required columns
   # NA
@@ -114,9 +112,7 @@ filter_cip_rows <- function(dframe, pattern, ..., negate = FALSE) {
 
   # ---------- restore state
 
-  # Except for grouped tibbles, restores non-data.table data frames
-  # to same class as input.
-  DT <- restore_non_dt_class(DT, prior_class)
-
+  # restore class
+  setattr(DT, "class", prior_class)
   DT[]
 }

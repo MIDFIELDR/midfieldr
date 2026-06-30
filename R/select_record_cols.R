@@ -2,7 +2,7 @@
 
 # ---------- deprecated version
 
-#' midfieldr deprecated functions
+#' Select basic columns of student-level records
 #' @param midfield_x Deprecated `select_required()`. Data frame from which
 #'        columns are selected.
 #' @param select_add Deprecated `select_required()`. Character vector of
@@ -37,17 +37,16 @@ NULL
 #' specific variables (column names) such as `mcid` or `cip6`. In addition,
 #' the MIDFIELD data tables have specific variables that act as keys
 #' or composite keys to the information in that table. The `type` argument
-#' determines the set of columns searched for in `dframe`. Unmatched search
-#' strings are silently ignored.
+#' determines which columns are returned, if those columns exist in `dframe`:
 #'
-#' * `type = "s"` (student table) searches for columns `mcid, race, sex`
-#' * `type = "t"` (term table) searches for columns `mcid, term, cip6, institution, level`
-#' * `type = "c"` (course table) searches for columns `mcid, term_course, abbrev, number`
-#' * `type = "d"` (degree table) searches for columns `mcid, term_degree, cip6`
-#' * `type = "a"` (default) searches for all of the columns listed above
+#' * `type = "s"` (student table) returns columns `mcid, race, sex`
+#' * `type = "t"` (term table) returns columns `mcid, term, cip6, institution, level`
+#' * `type = "c"` (course table) returns columns `mcid, term_course, abbrev, number`
+#' * `type = "d"` (degree table) returns columns `mcid, term_degree, cip6`
+#' * `type = "a"` (default) returns all the above
 #'
-#' Additional column names can be included in the search by using the
-#' `col_pattern` argument.
+#' Additional column names can be included by using the `col_pattern`
+#' argument. In all cases, unmatched search strings are silently ignored.
 #'
 #' @param dframe Data frame of student records from which columns are selected.
 #'        Expected choices are `student`, `term`, `course`, `degree` or their
@@ -64,22 +63,21 @@ NULL
 #'
 #' * Rows are not modified.
 #' * Columns are a subset of the input, but appear in the same order.
-#' * Groups are not preserved.
-#' * Data frame attributes are preserved for classes `data.frame`, `data.table`,
-#'   or `tbl_df`.
+#' * Groups are not necessarily preserved.
+#' * Data frame attributes are preserved with the exception of grouped tibbles.
 #'
 #' @example man/examples/exa_select_record_cols.R
 #' @export
 select_record_cols <- function(dframe, type = NULL, ..., col_pattern = NULL) {
-  # ---------- checks, use base R syntax
-
+  # ---------- base R checks (all data frame classes)
+  #
   # arguments after ... must be named
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     "Arguments after ... must be named, as in arg = val."
   )
 
-  # required arguments
+  # data frame assessment
   checkmate::qassert(dframe, "d+")
 
   # optional arguments
@@ -97,20 +95,20 @@ select_record_cols <- function(dframe, type = NULL, ..., col_pattern = NULL) {
 
   # ---------- preparation
 
-  # to restore class (tibble, data.frame, etc.) before return
-  prior_class <- class(dframe)
+  # to restore class except for groups in tibbles
+  prior_class <- setdiff(class(dframe), "grouped_df")
 
-  # convert non-data.table input to data.table class. By-ref changes to
-  # dframe in global environment remain active for data.tables.
-  DT <- copy_setDT_non_DT(dframe)
+  # prevent by-ref changes propagating to global env
+  dframe <- copy(dframe)
+  setDT(dframe)
 
   # bind names due to NSE notes in R CMD check
-  # x <- NULL
+  # NA
 
   # ---------- do the work
 
   # column names, minimum required plus keys
-  active_cols <- if (type == "s") {
+  record_vars <- if (type == "s") {
     c("mcid", "race", "sex")
   } else if (type == "t") {
     c("mcid", "term", "cip6", "institution", "level")
@@ -126,8 +124,8 @@ select_record_cols <- function(dframe, type = NULL, ..., col_pattern = NULL) {
   }
 
   # separate canonical from non-canonical names
-  cols_to_search <- setdiff(colnames(DT), active_cols)
-  cols_to_keep <- intersect(colnames(DT), active_cols)
+  cols_to_search <- setdiff(colnames(dframe), record_vars)
+  cols_to_keep <- intersect(colnames(dframe), record_vars)
 
   # use search to update columns to keep
   search_col_pattern <- paste(col_pattern, collapse = "|")
@@ -137,17 +135,15 @@ select_record_cols <- function(dframe, type = NULL, ..., col_pattern = NULL) {
       ignore.case = TRUE,
       value = TRUE
     )
-    cols_to_keep <- c(cols_to_keep, cols_to_add)
+    return_vars <- c(cols_to_keep, cols_to_add)
+  } else {
+    return_vars <- cols_to_keep
   }
 
-  # select columns
-  DT <- DT[, .SD, .SDcols = cols_to_keep]
+  # ---------- prepare to return
 
-  # ---------- restore state
-
-  # Except for grouped tibbles, restores non-data.table data frames
-  # to same class as input.
-  dframe <- restore_non_dt_class(DT, prior_class)
-
+  dframe <- dframe[, .SD, .SDcols = return_vars]
+  setkey(dframe, NULL)
+  setattr(dframe, "class", prior_class)
   dframe[]
 }

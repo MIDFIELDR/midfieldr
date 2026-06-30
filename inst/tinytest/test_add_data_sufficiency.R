@@ -1,17 +1,14 @@
 
-# functions used in the test
-
-run_check <- function(x, y, fnc) {
-    
-    z <- fnc(x, y)
-    expect_equal(class(x), class(z))
-    expect_equal(class(y), class(z))
-    
-    rm(z)
-}
-
+# function used in the test
 expect_class_preserved <- function(df1, df2, fnc) {
     
+    run_check <- function(x, y, fnc) {
+        z <- fnc(x, y)
+        expect_equal(class(x), class(z))
+        expect_equal(class(y), class(z))
+    }
+    
+    # runs 3 checks: data.frame, tibble, data.table
     x <- copy(df1)
     y <- copy(df2)
     
@@ -31,88 +28,96 @@ expect_class_preserved <- function(df1, df2, fnc) {
 }
 
 test_add_data_sufficiency <- function() {
-
-    # usage
-    # add_data_sufficiency(dframe, midfield_term = term)
-
-    # Needed for tinytest::build_install_test()
+    
+    # ---------- usage
+    # 
+    # add_data_sufficiency(dframe, midfield_rec = term)
+    
+    # Needed for build_install_test()
     suppressPackageStartupMessages(require("data.table"))
-
-    # create answers
-    dframe <- toy_student[c(1:3, 91:97), .(mcid)]
-    dframe <- add_timely_term(dframe, midfield_term = toy_term)
-    check_df <- copy(dframe)
-    dframe <- add_data_sufficiency(dframe, midfield_term = toy_term)
-    # cat(wrapr::draw_frame(dframe))
-
-    DT <- wrapr::build_frame(
-        "mcid"            , "level_i"      , "adj_span", "timely_term", "term_i", "lower_limit", "upper_limit", "data_sufficiency" |
-            "MCID3111158953", "01 First-year", 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
-            "MCID3111159270", "01 First-year", 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
-            "MCID3111160513", "01 First-year", 6         , "19933"      , "19881" , "19881"      , "20096"      , "exclude-lower"    |
-            "MCID3112142848", "01 First-year", 6         , "20093"      , "20041" , "19881"      , "20181"      , "include"          |
-            "MCID3112150160", "01 First-year", 6         , "20093"      , "20041" , "19901"      , "20153"      , "include"          |
-            "MCID3112150739", "01 First-year", 6         , "20093"      , "20041" , "19901"      , "20153"      , "include"          |
-            "MCID3112166810", "01 First-year", 6         , "20101"      , "20043" , "19881"      , "20181"      , "include"          |
-            "MCID3112169393", "01 First-year", 6         , "20103"      , "20051" , "19881"      , "20096"      , "exclude-upper"    |
-            "MCID3112169971", "01 First-year", 6         , "20103"      , "20051" , "19881"      , "20096"      , "exclude-upper"    |
-            "MCID3112172059", "01 First-year", 6         , "20103"      , "20051" , "19881"      , "20096"      , "exclude-upper"    )
-    setDT(DT)
-
-    # ---------- start tests
+    
+    # testing dataset
+    test_DT <- wrapr::build_frame(
+        "mcid"        , "term_i", "timely_term", "term" , "institution" |
+            "A1_OK"     , "19881" , "19933"      , "19881", "Inst X"      |
+            "A1_OK"     , "19881" , "19933"      , "19891", "Inst X"      |
+            "A1_OK"     , "19881" , "19933"      , "19901", "Inst X"      |
+            "A1_OK"     , "19881" , "19933"      , "19913", "Inst X"      |
+            "A2_OK_tfr" , "19881" , "19923"      , "19881", "Inst X"      |
+            "A2_OK_tfr" , "19881" , "19923"      , "19891", "Inst X"      |
+            "A2_OK_tfr" , "19881" , "19923"      , "19903", "Inst X"      |
+            "A3_OK_tfr" , "19891" , "19923"      , "19891", "Inst X"      |
+            "A3_OK_tfr" , "19891" , "19923"      , "19903", "Inst X"      |
+            "A4_OK_late", "19891" , "19943"      , "19891", "Inst X"      |
+            "A4_OK_late", "19891" , "19943"      , "19901", "Inst X"      |
+            "A4_OK_late", "19891" , "19943"      , "19911", "Inst X"      |
+            "A4_OK_late", "19891" , "19943"      , "19923", "Inst X"      |
+            "A4_OK_late", "19891" , "19943"      , "19933", "Inst X"      |
+            "A4_OK_late", "19891" , "19943"      , "19943", "Inst X"      |
+            "A4_OK_late", "19891" , "19943"      , "19953", "Inst X"      |
+            "B1_exclude", "19931" , "19983"      , "19931", "Inst X"      |
+            "B1_exclude", "19931" , "19983"      , "19941", "Inst X"      |
+            "B1_exclude", "19931" , "19983"      , "19951", "Inst X"      |
+            "B1_exclude", "19931" , "19983"      , "19963", "Inst X"      |
+            "B2_exclude", "19931" , "19983"      , "19931", "Inst X"      |
+            "B2_exclude", "19931" , "19983"      , "19941", "Inst X"      |
+            "B3_exclude", "19941" , "19993"      , "19941", "Inst X"      |
+            "B3_exclude", "19941" , "19993"      , "19951", "Inst X"      |
+            "B3_exclude", "19941" , "19993"      , "19961", "Inst X"      |
+            "C1_exclude", "19861" , "19883"      , "19861", "Inst X"      |
+            "C1_exclude", "19861" , "19883"      , "19873", "Inst X"      |
+            "C2_exclude", "19861" , "19913"      , "19861", "Inst X"      |
+            "C2_exclude", "19861" , "19913"      , "19871", "Inst X"      |
+            "C2_exclude", "19861" , "19913"      , "19881", "Inst X"      |
+            "C2_exclude", "19861" , "19913"      , "19893", "Inst X"      )
+    setDT(test_DT)
+    dframe <- test_DT[, .(mcid, term_i, timely_term)]
+    dframe <- unique(dframe)
+    term <- test_DT[, .(mcid, term, institution)]
+    term <- unique(term)
+    
+    # ---------- correct answers
     
     # check that class is preserved function
-    expect_class_preserved(check_df, toy_term, add_data_sufficiency)
+    expect_class_preserved(dframe, term, add_data_sufficiency)
     
-    # correct answers
-    expect_equal(
-        DT,
-        add_data_sufficiency(dframe, midfield_term = toy_term)
-    )
-
-    # overwrites existing columns
-    expect_equal(
-        DT,
-        add_data_sufficiency(DT, midfield_term = toy_term)
-    )
-
-    # midfield_term argument must be term or equivalent
-    expect_error(
-        add_data_sufficiency(DT, midfield_term = toy_student)
-        )
-
-    # dframe argument requires institution and timely_term columns
-    col_missing <- copy(DT)[, timely_term := NULL]
-    expect_error(
-        add_data_sufficiency(col_missing, midfield_term = toy_term)
-        )
-
-    # midfield_term argument requires institution and term columns
-    col_missing <- copy(toy_term)[, institution := NULL]
-    expect_error(
-        add_data_sufficiency(DT, midfield_term = col_missing)
-        )
-    col_missing <- copy(toy_term)[, term := NULL]
-    expect_error(
-        add_data_sufficiency(DT, midfield_term = col_missing)
-        )
-
-    # data frame arguments must be data frames
-    expect_error(
-        add_data_sufficiency(DT$mcid, toy_term)
-        )
-    expect_error(
-        add_data_sufficiency(DT, toy_term$term)
-        )
-
-    # required arguments must be explicit
-    expect_error(
-        add_data_sufficiency(NULL, toy_term)
-        )
-    expect_error(
-        add_data_sufficiency(DT, NULL)
-        )
-
+    # correct answers manually set up
+    DT <- add_data_sufficiency(dframe, term)
+    DT <- unique(DT)
+    
+    expect_equal("include", DT[mcid == "A1_OK", (data_sufficiency)])
+    expect_equal("include", DT[mcid == "A2_OK_tfr", (data_sufficiency)])
+    expect_equal("include", DT[mcid == "A3_OK_tfr", (data_sufficiency)])
+    expect_equal("include", DT[mcid == "A4_OK_late", (data_sufficiency)])
+    expect_equal("exclude-upper", DT[mcid == "B1_exclude", (data_sufficiency)])
+    expect_equal("exclude-upper", DT[mcid == "B2_exclude", (data_sufficiency)])
+    expect_equal("exclude-upper", DT[mcid == "B3_exclude", (data_sufficiency)])
+    expect_equal("exclude-lower", DT[mcid == "C1_exclude", (data_sufficiency)])
+    expect_equal("exclude-lower", DT[mcid == "C2_exclude", (data_sufficiency)])
+    
+    # correct columns in place
+    dframe_vars <- c("mcid", "term_i", "timely_term")
+    added_vars  <- c("institution", "lower_limit", 
+                     "upper_limit", "data_sufficiency")
+    return_vars <- c(dframe_vars, added_vars)
+    expect_equal(return_vars, colnames(DT))
+    
+    # correct answers naming and not naming arguments
+    x <- add_data_sufficiency(dframe = dframe, midfield_rec = term)
+    y <- add_data_sufficiency(dframe, term)
+    expect_equal(x, y)
+    rm(x, y)
+    
+    # ---------- errors
+    
+    # required column missing
+    expect_error(add_data_sufficiency(dframe[-mcid], term))
+    expect_error(add_data_sufficiency(dframe, term[-mcid]))
+    
+    # argument types incorrect
+    expect_error(add_data_sufficiency(dframe[["mcid"]], term))
+    expect_error(add_data_sufficiency(dframe, term[["mcid"]])) 
+    
     invisible(NULL)
 }
 

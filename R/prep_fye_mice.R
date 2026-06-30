@@ -150,13 +150,25 @@ prep_fye_mice <- function(midfield_student = student,
   )
 
   # class of required columns
-  qassert(midfield_student[, mcid], "s+")
-  qassert(midfield_student[, race], "s+")
-  qassert(midfield_student[, sex], "s+")
-  qassert(midfield_term[, mcid], "s+")
-  qassert(midfield_term[, institution], "s+")
-  qassert(midfield_term[, term], "s+")
-  qassert(midfield_term[, cip6], "s+")
+  qassert(midfield_student[["mcid"]], "s+")
+  qassert(midfield_student[["race"]], "s+")
+  qassert(midfield_student[["sex"]], "s+")
+  qassert(midfield_term[["mcid"]], "s+")
+  qassert(midfield_term[["institution"]], "s+")
+  qassert(midfield_term[["term"]], "s+")
+  qassert(midfield_term[["cip6"]], "s+")
+
+
+  # ---------- preparation
+
+  # to restore class except for groups in tibbles
+  prior_class <- setdiff(class(midfield_student), "grouped_df")
+
+  # prevent by-ref changes propagating to global env
+  midfield_student <- copy(midfield_student)
+  setDT(midfield_student)
+  midfield_term <- copy(midfield_term)
+  setDT(midfield_term)
 
   # bind names due to NSE notes in R CMD check
   proxy <- NULL
@@ -223,6 +235,9 @@ prep_fye_mice <- function(midfield_student = student,
   # reorder rows
   setkeyv(fye, c("institution", "proxy", "sex", "race"))
 
-  # enable printing (see data.table FAQ 2.23)
+  # ---------- restore state
+
+  # restore class
+  setattr(fye, "class", prior_class)
   fye[]
 }
