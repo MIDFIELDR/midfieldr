@@ -1,11 +1,7 @@
-# Order categorical variables of multiway data
+# Order multiway categories
 
 Transform a data frame such that two independent categorical variables
 are factors with levels ordered for display in a multiway dot plot.
-Multiway data comprise a single quantitative value (or response) for
-every combination of levels of two categorical variables. The ordering
-of the rows and panels is crucial to the perception of effects
-(Cleveland, 1993).
 
 ## Usage
 
@@ -91,6 +87,11 @@ any); grouping structures are not preserved. The added columns are:
   `program_grad_rate` and `people_grad_rate.`
 
 ## Details
+
+Multiway data comprise a single quantitative value (or response) for
+every combination of levels of two categorical variables. The ordering
+of the rows and panels is crucial to the perception of effects
+(Cleveland, 1993).
 
 In our context, "multiway" refers to the data structure and graph design
 defined by Cleveland (1993), not to the methods of analysis described by

@@ -2,7 +2,7 @@
 % Please edit documentation in R/prep_fye_mice.R
 \name{prep_fye_mice}
 \alias{prep_fye_mice}
-\title{Prepare FYE data for multiple imputation}
+\title{Prepare FYE data for imputation}
 \usage{
 prep_fye_mice(
   midfield_student = student,

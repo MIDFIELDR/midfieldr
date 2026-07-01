@@ -34,9 +34,9 @@ look_at(cip)
 look_at(toy_degree)
 #> Classes 'data.table' and 'data.frame':   96 obs. of  5 variables:
 #>  $ mcid       : chr  "MCID3111159270" "MCID3111162677" "MCID3111164287" "MCID"..
-#>  $ institution: chr  "Institution J" "Institution J" "Institution J" "Institu"..
 #>  $ term_degree: chr  "19913" "19913" "19913" "19913" ...
 #>  $ cip6       : chr  "141001" "140701" "141001" "270101" ...
+#>  $ institution: chr  "Institution J" "Institution J" "Institution J" "Institu"..
 #>  $ degree     : chr  "Bachelor of Science in Electrical Engineering" "Bachelo"..
 
 # character vectors

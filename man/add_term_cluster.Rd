@@ -2,7 +2,7 @@
 % Please edit documentation in R/add_term_cluster.R
 \name{add_term_cluster}
 \alias{add_term_cluster}
-\title{Identify rows of post-baccalaureate terms}
+\title{Identify term clusters}
 \usage{
 add_term_cluster(dframe, midfield_rec = degree)
 }

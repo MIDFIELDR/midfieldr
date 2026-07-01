@@ -269,7 +269,7 @@ every student.
 - **`dframe`**   Data frame of student-level records keyed by student
   ID. Required variable (column) is `mcid`.
 
-- **`midfield_term`**   Data frame of student-level term observations
+- **`midfield_rec`**   Data frame of student-level term observations
   keyed by student ID. Default is `term`. Required variables (columns)
   are `mcid`, `term`, and `level`.
 
@@ -287,12 +287,12 @@ results,
 ``` r
 
 # Required arguments in order and explicitly named
-x <- add_timely_term(dframe = DT, midfield_term = term)
+x <- add_timely_term(dframe = DT, midfield_rec = term)
 
 # Required arguments in order, but not named
 y <- add_timely_term(DT, term)
 
-# Using the implicit default for the midfield_term argument
+# Using the implicit default for the midfield_rec argument
 z <- add_timely_term(DT)
 
 # Demonstrate equivalence
@@ -320,15 +320,15 @@ check_equiv_frames(x, z)
 # Add timely term column and supporting variables
 DT <- add_timely_term(DT, term)
 DT
-#>                  mcid   institution term_i       level_i adj_span timely_term
-#>                <char>        <char> <char>        <char>    <num>      <char>
-#>     1: MCID3111142225 Institution B  19881 01 First-year        6       19933
-#>     2: MCID3111142283 Institution J  19881 01 First-year        6       19933
-#>     3: MCID3111142290 Institution J  19881 01 First-year        6       19933
-#>    ---                                                                       
-#> 97553: MCID3112898894 Institution B  20181 01 First-year        6       20233
-#> 97554: MCID3112898895 Institution B  20181 01 First-year        6       20233
-#> 97555: MCID3112898940 Institution B  20181 01 First-year        6       20233
+#>                  mcid term_i       level_i adj_span timely_term
+#>                <char> <char>        <char>    <num>      <char>
+#>     1: MCID3111142225  19881 01 First-year        6       19933
+#>     2: MCID3111142283  19881 01 First-year        6       19933
+#>     3: MCID3111142290  19881 01 First-year        6       19933
+#>    ---                                                         
+#> 97553: MCID3112898894  20181 01 First-year        6       20233
+#> 97554: MCID3112898895  20181 01 First-year        6       20233
+#> 97555: MCID3112898940  20181 01 First-year        6       20233
 ```
 
 ### Closer look
@@ -345,9 +345,9 @@ timely completion is 6 years, that is, academic years 2007–08, 08–09,
 
 # Display one student by ID
 DT[mcid == "MCID3112785480"]
-#>              mcid   institution term_i       level_i adj_span timely_term
-#>            <char>        <char> <char>        <char>    <num>      <char>
-#> 1: MCID3112785480 Institution C  20071 01 First-year        6       20123
+#>              mcid term_i       level_i adj_span timely_term
+#>            <char> <char>        <char>    <num>      <char>
+#> 1: MCID3112785480  20071 01 First-year        6       20123
 ```
 
 *Example 2.*   The student’s initial term is Spring 2002 (encoded
@@ -361,9 +361,9 @@ completion term of Fall 2005.
 
 # Display one student by ID
 DT[mcid == "MCID3111860641"]
-#>              mcid   institution term_i       level_i adj_span timely_term
-#>            <char>        <char> <char>        <char>    <num>      <char>
-#> 1: MCID3111860641 Institution J  20013 03 Third-year        4       20051
+#>              mcid term_i       level_i adj_span timely_term
+#>            <char> <char>        <char>    <num>      <char>
+#> 1: MCID3111860641  20013 03 Third-year        4       20051
 ```
 
 ### Alternate source names
@@ -380,7 +380,7 @@ like this,
 toy_mcid <- toy_student[, .(mcid)]
 
 # Source data table names that differ from the defaults
-toy_DT <- add_timely_term(dframe = toy_mcid, midfield_term = toy_term)
+toy_DT <- add_timely_term(dframe = toy_mcid, midfield_rec = toy_term)
 
 # Equivalently
 toy_DT <- add_timely_term(toy_mcid, toy_term)
@@ -440,7 +440,7 @@ range.
 - **`dframe`**   Data frame of student-level records keyed by student
   ID. Required variables are `mcid` and `timely_term`.
 
-- **`midfield_term`**   Data frame of student-level term observations
+- **`midfield_rec`**   Data frame of student-level term observations
   keyed by student ID. Default is `term`. Required variables are `mcid`,
   `institution`, and `term`.
 
@@ -450,12 +450,12 @@ results,
 ``` r
 
 # Required arguments in order and explicitly named
-x <- add_data_sufficiency(dframe = DT, midfield_term = term)
+x <- add_data_sufficiency(dframe = DT, midfield_rec = term)
 
 # Required arguments in order, but not named
 y <- add_data_sufficiency(DT, term)
 
-# Using the implicit default for the midfield_term argument
+# Using the implicit default for the midfield_rec argument
 z <- add_data_sufficiency(DT)
 
 # Demonstrate equivalence
@@ -485,29 +485,29 @@ check_equiv_frames(x, z)
 ``` r
 
 # Un-clutter the printout
-DT <- DT[, .(mcid, institution, timely_term)]
+DT <- DT[, .(mcid, term_i, timely_term)]
 
 # Add data sufficiency column and supporting variables
 DT <- add_data_sufficiency(DT, term)
 DT
-#>                  mcid   institution timely_term term_i lower_limit upper_limit
-#>                <char>        <char>      <char> <char>      <char>      <char>
-#>     1: MCID3111142225 Institution B       19933  19881       19881       20181
-#>     2: MCID3111142283 Institution J       19933  19881       19881       20096
-#>     3: MCID3111142290 Institution J       19933  19881       19881       20096
-#>    ---                                                                        
-#> 97553: MCID3112898894 Institution B       20233  20181       19881       20181
-#> 97554: MCID3112898895 Institution B       20233  20181       19881       20181
-#> 97555: MCID3112898940 Institution B       20233  20181       19881       20181
-#>        data_sufficiency
-#>                  <char>
-#>     1:    exclude-lower
-#>     2:    exclude-lower
-#>     3:    exclude-lower
-#>    ---                 
-#> 97553:    exclude-upper
-#> 97554:    exclude-upper
-#> 97555:    exclude-upper
+#>                   mcid term_i timely_term   institution lower_limit upper_limit
+#>                 <char> <char>      <char>        <char>      <char>      <char>
+#>      1: MCID3111142225  19881       19933 Institution B       19881       20181
+#>      2: MCID3111142283  19881       19933 Institution J       19881       20096
+#>      3: MCID3111142283  19881       19933 Institution J       19881       20096
+#>     ---                                                                        
+#> 639913: MCID3112898894  20181       20233 Institution B       19881       20181
+#> 639914: MCID3112898895  20181       20233 Institution B       19881       20181
+#> 639915: MCID3112898940  20181       20233 Institution B       19881       20181
+#>         data_sufficiency
+#>                   <char>
+#>      1:    exclude-lower
+#>      2:    exclude-lower
+#>      3:    exclude-lower
+#>     ---                 
+#> 639913:    exclude-upper
+#> 639914:    exclude-upper
+#> 639915:    exclude-upper
 ```
 
 Similar to the details described in the previous section,
@@ -541,12 +541,22 @@ the 2015 upper-limit exclusion does not apply.
 
 # Display one student by ID
 DT[mcid == "MCID3112785480"]
-#>              mcid   institution timely_term term_i lower_limit upper_limit
-#>            <char>        <char>      <char> <char>      <char>      <char>
-#> 1: MCID3112785480 Institution C       20123  20071       19901       20154
+#>              mcid term_i timely_term   institution lower_limit upper_limit
+#>            <char> <char>      <char>        <char>      <char>      <char>
+#> 1: MCID3112785480  20071       20123 Institution C       19901       20154
+#> 2: MCID3112785480  20071       20123 Institution C       19901       20154
+#> 3: MCID3112785480  20071       20123 Institution C       19901       20154
+#> 4: MCID3112785480  20071       20123 Institution C       19901       20154
+#> 5: MCID3112785480  20071       20123 Institution C       19901       20154
+#> 6: MCID3112785480  20071       20123 Institution C       19901       20154
 #>    data_sufficiency
 #>              <char>
 #> 1:          include
+#> 2:          include
+#> 3:          include
+#> 4:          include
+#> 5:          include
+#> 6:          include
 ```
 
 *Example 4.*   Exemplifies “Student B” in Figure 1. The student attends
@@ -559,12 +569,16 @@ upper-limit exclusion does apply.
 
 # Display one student by ID
 DT[mcid == "MCID3111170322"]
-#>              mcid   institution timely_term term_i lower_limit upper_limit
-#>            <char>        <char>      <char> <char>      <char>      <char>
-#> 1: MCID3111170322 Institution B       20191  20133       19881       20181
+#>              mcid term_i timely_term   institution lower_limit upper_limit
+#>            <char> <char>      <char>        <char>      <char>      <char>
+#> 1: MCID3111170322  20133       20191 Institution B       19881       20181
+#> 2: MCID3111170322  20133       20191 Institution B       19881       20181
+#> 3: MCID3111170322  20133       20191 Institution B       19881       20181
 #>    data_sufficiency
 #>              <char>
 #> 1:    exclude-upper
+#> 2:    exclude-upper
+#> 3:    exclude-upper
 ```
 
 *Example 5.*   Exemplifies “Student C” in Figure 2. The student attends
@@ -575,12 +589,24 @@ term is Fall 1988 so the 1988 lower-limit exclusion applies.
 
 # Display one student by ID
 DT[mcid == "MCID3112056754"]
-#>              mcid   institution timely_term term_i lower_limit upper_limit
-#>            <char>        <char>      <char> <char>      <char>      <char>
-#> 1: MCID3112056754 Institution J       19933  19881       19881       20096
-#>    data_sufficiency
-#>              <char>
-#> 1:    exclude-lower
+#>               mcid term_i timely_term   institution lower_limit upper_limit
+#>             <char> <char>      <char>        <char>      <char>      <char>
+#>  1: MCID3112056754  19881       19933 Institution J       19881       20096
+#>  2: MCID3112056754  19881       19933 Institution J       19881       20096
+#>  3: MCID3112056754  19881       19933 Institution J       19881       20096
+#> ---                                                                        
+#> 18: MCID3112056754  19881       19933 Institution J       19881       20096
+#> 19: MCID3112056754  19881       19933 Institution J       19881       20096
+#> 20: MCID3112056754  19881       19933 Institution J       19881       20096
+#>     data_sufficiency
+#>               <char>
+#>  1:    exclude-lower
+#>  2:    exclude-lower
+#>  3:    exclude-lower
+#> ---                 
+#> 18:    exclude-lower
+#> 19:    exclude-lower
+#> 20:    exclude-lower
 ```
 
 ## Reusable code

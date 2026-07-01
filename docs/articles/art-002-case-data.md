@@ -93,24 +93,15 @@ variable as well as supporting variables used in its construction.
 # Determine a timely completion term for every student
 DT <- add_timely_term(DT, term)
 DT
-#>                   mcid   term   cip6   institution         level term_i
-#>                 <char> <char> <char>        <char>        <char> <char>
-#>      1: MCID3111142225  19881 140901 Institution B 01 First-year  19881
-#>      2: MCID3111142283  19881 240102 Institution J 01 First-year  19881
-#>      3: MCID3111142283  19883 240102 Institution J 01 First-year  19881
-#>     ---                                                                
-#> 639913: MCID3112898894  20181 451001 Institution B 01 First-year  20181
-#> 639914: MCID3112898895  20181 302001 Institution B 01 First-year  20181
-#> 639915: MCID3112898940  20181 050103 Institution B 01 First-year  20181
-#>               level_i adj_span timely_term
-#>                <char>    <num>      <char>
-#>      1: 01 First-year        6       19933
-#>      2: 01 First-year        6       19933
-#>      3: 01 First-year        6       19933
-#>     ---                                   
-#> 639913: 01 First-year        6       20233
-#> 639914: 01 First-year        6       20233
-#> 639915: 01 First-year        6       20233
+#>                  mcid term_i       level_i adj_span timely_term
+#>                <char> <char>        <char>    <num>      <char>
+#>     1: MCID3111142225  19881 01 First-year        6       19933
+#>     2: MCID3111142283  19881 01 First-year        6       19933
+#>     3: MCID3111142290  19881 01 First-year        6       19933
+#>    ---                                                         
+#> 97553: MCID3112898894  20181 01 First-year        6       20233
+#> 97554: MCID3112898895  20181 01 First-year        6       20233
+#> 97555: MCID3112898940  20181 01 First-year        6       20233
 ```
 
 *Add variables.*   Using information in `term`, we add the
@@ -122,24 +113,24 @@ construction.
 # Determine data sufficiency for every student
 DT <- add_data_sufficiency(DT, term)
 DT
-#>                   mcid   term   cip6   institution         level       level_i
-#>                 <char> <char> <char>        <char>        <char>        <char>
-#>      1: MCID3111142225  19881 140901 Institution B 01 First-year 01 First-year
-#>      2: MCID3111142283  19881 240102 Institution J 01 First-year 01 First-year
-#>      3: MCID3111142283  19883 240102 Institution J 01 First-year 01 First-year
-#>     ---                                                                       
-#> 639913: MCID3112898894  20181 451001 Institution B 01 First-year 01 First-year
-#> 639914: MCID3112898895  20181 302001 Institution B 01 First-year 01 First-year
-#> 639915: MCID3112898940  20181 050103 Institution B 01 First-year 01 First-year
-#>         adj_span timely_term term_i lower_limit upper_limit data_sufficiency
-#>            <num>      <char> <char>      <char>      <char>           <char>
-#>      1:        6       19933  19881       19881       20181    exclude-lower
-#>      2:        6       19933  19881       19881       20096    exclude-lower
-#>      3:        6       19933  19881       19881       20096    exclude-lower
-#>     ---                                                                     
-#> 639913:        6       20233  20181       19881       20181    exclude-upper
-#> 639914:        6       20233  20181       19881       20181    exclude-upper
-#> 639915:        6       20233  20181       19881       20181    exclude-upper
+#>                   mcid term_i timely_term   institution lower_limit upper_limit
+#>                 <char> <char>      <char>        <char>      <char>      <char>
+#>      1: MCID3111142225  19881       19933 Institution B       19881       20181
+#>      2: MCID3111142283  19881       19933 Institution J       19881       20096
+#>      3: MCID3111142283  19881       19933 Institution J       19881       20096
+#>     ---                                                                        
+#> 639913: MCID3112898894  20181       20233 Institution B       19881       20181
+#> 639914: MCID3112898895  20181       20233 Institution B       19881       20181
+#> 639915: MCID3112898940  20181       20233 Institution B       19881       20181
+#>         data_sufficiency
+#>                   <char>
+#>      1:    exclude-lower
+#>      2:    exclude-lower
+#>      3:    exclude-lower
+#>     ---                 
+#> 639913:    exclude-upper
+#> 639914:    exclude-upper
+#> 639915:    exclude-upper
 ```
 
 - data sufficiency criterion:
@@ -525,24 +516,15 @@ variable and its supporting variables.
 # Add completion status
 DT <- add_completion_status(DT, degree)
 DT
-#>                  mcid term_i       level_i adj_span timely_term term_degree
-#>                <char> <char>        <char>    <num>      <char>      <char>
-#>     1: MCID3111142689  19883 01 First-year        6       19941       19913
-#>     2: MCID3111142782  19883 01 First-year        6       19941       19903
-#>     3: MCID3111142881  19893 01 First-year        6       19951       19894
-#>    ---                                                                     
-#> 76873: MCID3112785480  20071 01 First-year        6       20123        <NA>
-#> 76874: MCID3112800920  20101 01 First-year        6       20153        <NA>
-#> 76875: MCID3112870009  19951 01 First-year        6       20003        <NA>
-#>        completion_status
-#>                   <char>
-#>     1:            timely
-#>     2:            timely
-#>     3:            timely
-#>    ---                  
-#> 76873:              <NA>
-#> 76874:              <NA>
-#> 76875:              <NA>
+#>                  mcid timely_term term_degree completion_status
+#>                <char>      <char>      <char>            <char>
+#>     1: MCID3111142689       19941       19913            timely
+#>     2: MCID3111142782       19941       19903            timely
+#>     3: MCID3111142881       19951       19894            timely
+#>    ---                                                         
+#> 76919: MCID3112785480       20123        <NA>              <NA>
+#> 76920: MCID3112800920       20153        <NA>              <NA>
+#> 76921: MCID3112870009       20003        <NA>              <NA>
 ```
 
 - timely completion criterion:
@@ -566,12 +548,12 @@ DT
 #>     2: MCID3111142782
 #>     3: MCID3111142881
 #>    ---               
-#> 40438: MCID3112692944
-#> 40439: MCID3112694738
-#> 40440: MCID3112730841
+#> 40452: MCID3112692944
+#> 40453: MCID3112694738
+#> 40454: MCID3112730841
 ```
 
-The result has 40,440 observations.
+The result has 40,454 observations.
 
 *Left join (add variables).*   We use a left-join with `degree` to add
 the CIP codes and terms of the degrees earned.
@@ -586,12 +568,12 @@ DT
 #>     2: MCID3111142782       19903 260101
 #>     3: MCID3111142881       19894 450601
 #>    ---                                  
-#> 40538: MCID3112692944       20153 090101
-#> 40539: MCID3112694738       20143 230101
-#> 40540: MCID3112730841       20164 040401
+#> 40566: MCID3112692944       20153 090101
+#> 40567: MCID3112694738       20143 230101
+#> 40568: MCID3112730841       20164 040401
 ```
 
-The result has 40,540 observations.
+The result has 40,568 observations.
 
 *Inner join (add a variable, filter observations)*   Again, add a column
 of program labels and filter by program.
@@ -607,12 +589,12 @@ DT
 #>    2: 141001      EE MCID3111145102       19893
 #>    3: 141001      EE MCID3111146537       19913
 #>   ---                                          
-#> 3264: 141901      ME MCID3112618976       20153
-#> 3265: 141001      EE MCID3112619484       20133
-#> 3266: 141901      ME MCID3112641535       20143
+#> 3267: 141901      ME MCID3112618976       20153
+#> 3268: 141001      EE MCID3112619484       20133
+#> 3269: 141901      ME MCID3112641535       20143
 ```
 
-The result has 3266 observations.
+The result has 3269 observations.
 
 *Filter.*   Students may have earned multiple degrees in different
 terms. We retain degrees earned in their first degree term only.
@@ -627,12 +609,12 @@ DT
 #>    2: MCID3111145102 141001      EE       19893
 #>    3: MCID3111146537 141001      EE       19913
 #>   ---                                          
-#> 3264: MCID3112618976 141901      ME       20153
-#> 3265: MCID3112619484 141001      EE       20133
-#> 3266: MCID3112641535 141901      ME       20143
+#> 3267: MCID3112618976 141901      ME       20153
+#> 3268: MCID3112619484 141001      EE       20133
+#> 3269: MCID3112641535 141901      ME       20143
 ```
 
-The result has 3266 observations.
+The result has 3269 observations.
 
 *Filter.*   Drop unnecessary variables and filter for unique
 observations of ID and program label.

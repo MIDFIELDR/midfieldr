@@ -69,36 +69,36 @@ library(midfieldr)
 library(data.table)
 
 # Choose a minimum set of columns
-student <- select_record_cols(toy_student, type = "s")
-term <- select_record_cols(toy_term, "t")
-degree <- select_record_cols(toy_degree, "d")
+student <- select_record_cols(toy_student)
+term <- select_record_cols(toy_term)
+degree <- select_record_cols(toy_degree)
 
 # Display one representative data frame
 term
-#>                 mcid   institution   term   cip6          level
-#>               <char>        <char> <char> <char>         <char>
-#>    1: MCID3111158953 Institution J  19881 240102  01 First-year
-#>    2: MCID3111158953 Institution J  19883 240102  01 First-year
-#>    3: MCID3111158953 Institution J  19891 240102 02 Second-year
+#>                 mcid   term   cip6   institution          level
+#>               <char> <char> <char>        <char>         <char>
+#>    1: MCID3111158953  19881 240102 Institution J  01 First-year
+#>    2: MCID3111158953  19883 240102 Institution J  01 First-year
+#>    3: MCID3111158953  19891 240102 Institution J 02 Second-year
 #>   ---                                                          
-#> 1093: MCID3112881399 Institution B  20181 260901  01 First-year
-#> 1094: MCID3112882995 Institution B  20181 141901  01 First-year
-#> 1095: MCID3112884375 Institution B  20181 520201  01 First-year
+#> 1093: MCID3112881399  20181 260901 Institution B  01 First-year
+#> 1094: MCID3112882995  20181 141901 Institution B  01 First-year
+#> 1095: MCID3112884375  20181 520201 Institution B  01 First-year
 
 # Add a column to label term clusters
 term <- add_term_cluster(term)
 degree <- add_term_cluster(degree)
 
 term
-#>                 mcid   institution   term   cip6          level
-#>               <char>        <char> <char> <char>         <char>
-#>    1: MCID3111158953 Institution J  19881 240102  01 First-year
-#>    2: MCID3111158953 Institution J  19883 240102  01 First-year
-#>    3: MCID3111158953 Institution J  19891 240102 02 Second-year
+#>                 mcid   term   cip6   institution          level
+#>               <char> <char> <char>        <char>         <char>
+#>    1: MCID3111158953  19881 240102 Institution J  01 First-year
+#>    2: MCID3111158953  19883 240102 Institution J  01 First-year
+#>    3: MCID3111158953  19891 240102 Institution J 02 Second-year
 #>   ---                                                          
-#> 1093: MCID3112881399 Institution B  20181 260901  01 First-year
-#> 1094: MCID3112882995 Institution B  20181 141901  01 First-year
-#> 1095: MCID3112884375 Institution B  20181 520201  01 First-year
+#> 1093: MCID3112881399  20181 260901 Institution B  01 First-year
+#> 1094: MCID3112882995  20181 141901 Institution B  01 First-year
+#> 1095: MCID3112884375  20181 520201 Institution B  01 First-year
 #>       first_degree_term term_cluster
 #>                  <char>       <char>
 #>    1:              <NA>   pre-degree
@@ -114,15 +114,15 @@ term <- term[term_cluster != "post-first-degree"]
 degree <- degree[term_cluster != "post-first-degree"]
 
 term
-#>                 mcid   institution   term   cip6          level
-#>               <char>        <char> <char> <char>         <char>
-#>    1: MCID3111158953 Institution J  19881 240102  01 First-year
-#>    2: MCID3111158953 Institution J  19883 240102  01 First-year
-#>    3: MCID3111158953 Institution J  19891 240102 02 Second-year
+#>                 mcid   term   cip6   institution          level
+#>               <char> <char> <char>        <char>         <char>
+#>    1: MCID3111158953  19881 240102 Institution J  01 First-year
+#>    2: MCID3111158953  19883 240102 Institution J  01 First-year
+#>    3: MCID3111158953  19891 240102 Institution J 02 Second-year
 #>   ---                                                          
-#> 1068: MCID3112881399 Institution B  20181 260901  01 First-year
-#> 1069: MCID3112882995 Institution B  20181 141901  01 First-year
-#> 1070: MCID3112884375 Institution B  20181 520201  01 First-year
+#> 1068: MCID3112881399  20181 260901 Institution B  01 First-year
+#> 1069: MCID3112882995  20181 141901 Institution B  01 First-year
+#> 1070: MCID3112884375  20181 520201 Institution B  01 First-year
 #>       first_degree_term term_cluster
 #>                  <char>       <char>
 #>    1:              <NA>   pre-degree
@@ -132,21 +132,6 @@ term
 #> 1068:              <NA>   pre-degree
 #> 1069:              <NA>   pre-degree
 #> 1070:              <NA>   pre-degree
-
-# Drop the temporary columns
-term <- select_record_cols(term, type = "t")
-degree <- select_record_cols(degree, type = "d")
-
-term
-#>                 mcid   institution   term   cip6          level
-#>               <char>        <char> <char> <char>         <char>
-#>    1: MCID3111158953 Institution J  19881 240102  01 First-year
-#>    2: MCID3111158953 Institution J  19883 240102  01 First-year
-#>    3: MCID3111158953 Institution J  19891 240102 02 Second-year
-#>   ---                                                          
-#> 1068: MCID3112881399 Institution B  20181 260901  01 First-year
-#> 1069: MCID3112882995 Institution B  20181 141901  01 First-year
-#> 1070: MCID3112884375 Institution B  20181 520201  01 First-year
 
 # Population at this point, for next filter
 DT <- term[, .(mcid)]
@@ -168,28 +153,28 @@ DT <- add_timely_term(DT)
 DT <- add_data_sufficiency(DT)
 
 DT
-#>                mcid       level_i adj_span timely_term term_i lower_limit
-#>              <char>        <char>    <num>      <char> <char>      <char>
-#>   1: MCID3111158953 01 First-year        6       19933  19881       19881
-#>   2: MCID3111159270 01 First-year        6       19933  19881       19881
-#>   3: MCID3111160513 01 First-year        6       19933  19881       19881
-#>  ---                                                                     
-#> 148: MCID3112881399 01 First-year        6       20233  20181       19881
-#> 149: MCID3112882995 01 First-year        6       20233  20181       19881
-#> 150: MCID3112884375 01 First-year        6       20233  20181       19881
-#>      upper_limit data_sufficiency
-#>           <char>           <char>
-#>   1:       20096    exclude-lower
-#>   2:       20096    exclude-lower
-#>   3:       20096    exclude-lower
-#>  ---                             
-#> 148:       20181    exclude-upper
-#> 149:       20181    exclude-upper
-#> 150:       20181    exclude-upper
+#>                 mcid term_i timely_term   institution lower_limit upper_limit
+#>               <char> <char>      <char>        <char>      <char>      <char>
+#>    1: MCID3111158953  19881       19933 Institution J       19881       20096
+#>    2: MCID3111158953  19881       19933 Institution J       19881       20096
+#>    3: MCID3111158953  19881       19933 Institution J       19881       20096
+#>   ---                                                                        
+#> 1068: MCID3112881399  20181       20233 Institution B       19881       20181
+#> 1069: MCID3112882995  20181       20233 Institution B       19881       20181
+#> 1070: MCID3112884375  20181       20233 Institution B       19881       20181
+#>       data_sufficiency
+#>                 <char>
+#>    1:    exclude-lower
+#>    2:    exclude-lower
+#>    3:    exclude-lower
+#>   ---                 
+#> 1068:    exclude-upper
+#> 1069:    exclude-upper
+#> 1070:    exclude-upper
 
 # Retain rows with sufficient institutional data
 population <- DT[data_sufficiency == "include", .(mcid)]
-
+population <- unique(population)
 population
 #>                mcid
 #>              <char>
@@ -206,39 +191,39 @@ student <- population[student, on = "mcid", nomatch = NULL]
 term <- population[term, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-# Records ready for grouping, summarizing, calculating metrics, etc.
-student
-#>                mcid   race    sex
-#>              <char> <char> <char>
-#>   1: MCID3111213943  White   Male
-#>   2: MCID3111248941  White   Male
-#>   3: MCID3111250695  White   Male
-#>  ---                             
-#> 100: MCID3112409179  Asian   Male
-#> 101: MCID3112411629  White   Male
-#> 102: MCID3112498796  White Female
+# Drop temporary columns, records ready for further analysis
+select_record_cols(student)
+#>                mcid   race    sex   institution
+#>              <char> <char> <char>        <char>
+#>   1: MCID3111213943  White   Male Institution B
+#>   2: MCID3111248941  White   Male Institution J
+#>   3: MCID3111250695  White   Male Institution J
+#>  ---                                           
+#> 100: MCID3112409179  Asian   Male Institution B
+#> 101: MCID3112411629  White   Male Institution B
+#> 102: MCID3112498796  White Female Institution B
 
-term
-#>                mcid   institution   term   cip6          level
-#>              <char>        <char> <char> <char>         <char>
-#>   1: MCID3111213943 Institution B  19891 420101  01 First-year
-#>   2: MCID3111213943 Institution B  19893 420101  01 First-year
-#>   3: MCID3111213943 Institution B  19901 420101 02 Second-year
+select_record_cols(term)
+#>                mcid   term   cip6   institution          level
+#>              <char> <char> <char>        <char>         <char>
+#>   1: MCID3111213943  19891 420101 Institution B  01 First-year
+#>   2: MCID3111213943  19893 420101 Institution B  01 First-year
+#>   3: MCID3111213943  19901 420101 Institution B 02 Second-year
 #>  ---                                                          
-#> 806: MCID3112498796 Institution B  20131 090101  03 Third-year
-#> 807: MCID3112498796 Institution B  20133 090101 04 Fourth-year
-#> 808: MCID3112498796 Institution B  20134 090101 04 Fourth-year
+#> 806: MCID3112498796  20131 090101 Institution B  03 Third-year
+#> 807: MCID3112498796  20133 090101 Institution B 04 Fourth-year
+#> 808: MCID3112498796  20134 090101 Institution B 04 Fourth-year
 
-degree
-#>               mcid term_degree   cip6
-#>             <char>      <char> <char>
-#>  1: MCID3111213943       19903 420101
-#>  2: MCID3111248941       19943 140901
-#>  3: MCID3111253227       19951 141901
-#> ---                                  
-#> 76: MCID3112409179       20123 090401
-#> 77: MCID3112411629       20124 500601
-#> 78: MCID3112498796       20143 090101
+select_record_cols(degree)
+#>               mcid term_degree   cip6   institution
+#>             <char>      <char> <char>        <char>
+#>  1: MCID3111213943       19903 420101 Institution B
+#>  2: MCID3111248941       19943 140901 Institution J
+#>  3: MCID3111253227       19951 141901 Institution J
+#> ---                                                
+#> 76: MCID3112409179       20123 090401 Institution B
+#> 77: MCID3112411629       20124 500601 Institution B
+#> 78: MCID3112498796       20143 090101 Institution B
 ```
 
 ## Acknowledgments
@@ -265,21 +250,21 @@ Ohland, Matthew. 2023. *MIDFIELD, 2004–2023*.
 ## Functions
 
 - [`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
-  : Determine completion status for every student
+  : Determine completion status
 - [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
-  : Determine data sufficiency for every student
+  : Determine data sufficiency
 - [`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md)
-  : Identify rows of post-baccalaureate terms
+  : Identify term clusters
 - [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
-  : Calculate a timely completion term for every student
+  : Calculate timely completion terms
 - [`filter_cip_rows()`](https://midfieldr.github.io/midfieldr/reference/filter_cip_rows.md)
-  : Subset rows that include matches to search strings
+  : Subset rows with search strings
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
-  : Order categorical variables of multiway data
+  : Order multiway categories
 - [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
-  : Prepare FYE data for multiple imputation
+  : Prepare FYE data for imputation
 - [`select_record_cols()`](https://midfieldr.github.io/midfieldr/reference/select_record_cols.md)
-  : Select basic columns of student-level records
+  : Select record columns
 
 ## Utility
 

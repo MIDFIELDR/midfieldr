@@ -351,7 +351,7 @@ every student.</p>
 <li><p><strong><code>dframe</code></strong>   Data frame of
 student-level records keyed by student ID. Required variable (column) is
 <code>mcid</code>.</p></li>
-<li><p><strong><code>midfield_term</code></strong>   Data frame of
+<li><p><strong><code>midfield_rec</code></strong>   Data frame of
 student-level term observations keyed by student ID. Default is
 <code>term</code>. Required variables (columns) are <code>mcid</code>,
 <code>term</code>, and <code>level</code>.</p></li>
@@ -368,12 +368,12 @@ name.</p></li>
 identical results,</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Required arguments in order and explicitly named</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">DT</span>, midfield_rec <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Required arguments in order, but not named</span></span>
 <span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Using the implicit default for the midfield_term argument</span></span>
+<span><span class="co"># Using the implicit default for the midfield_rec argument</span></span>
 <span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Demonstrate equivalence</span></span>
@@ -396,15 +396,15 @@ degree completion would be considered timely. Encoded YYYYT.</p></li>
 <code class="sourceCode R"><span><span class="co"># Add timely term column and supporting variables</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
-<span><span class="co">#&gt;                  mcid   institution term_i       level_i adj_span timely_term</span></span>
-<span><span class="co">#&gt;                &lt;char&gt;        &lt;char&gt; &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt;     1: MCID3111142225 Institution B  19881 01 First-year        6       19933</span></span>
-<span><span class="co">#&gt;     2: MCID3111142283 Institution J  19881 01 First-year        6       19933</span></span>
-<span><span class="co">#&gt;     3: MCID3111142290 Institution J  19881 01 First-year        6       19933</span></span>
-<span><span class="co">#&gt;    ---                                                                       </span></span>
-<span><span class="co">#&gt; 97553: MCID3112898894 Institution B  20181 01 First-year        6       20233</span></span>
-<span><span class="co">#&gt; 97554: MCID3112898895 Institution B  20181 01 First-year        6       20233</span></span>
-<span><span class="co">#&gt; 97555: MCID3112898940 Institution B  20181 01 First-year        6       20233</span></span></code></pre></div>
+<span><span class="co">#&gt;                  mcid term_i       level_i adj_span timely_term</span></span>
+<span><span class="co">#&gt;                &lt;char&gt; &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MCID3111142225  19881 01 First-year        6       19933</span></span>
+<span><span class="co">#&gt;     2: MCID3111142283  19881 01 First-year        6       19933</span></span>
+<span><span class="co">#&gt;     3: MCID3111142290  19881 01 First-year        6       19933</span></span>
+<span><span class="co">#&gt;    ---                                                         </span></span>
+<span><span class="co">#&gt; 97553: MCID3112898894  20181 01 First-year        6       20233</span></span>
+<span><span class="co">#&gt; 97554: MCID3112898895  20181 01 First-year        6       20233</span></span>
+<span><span class="co">#&gt; 97555: MCID3112898940  20181 01 First-year        6       20233</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="closer-look">Closer look<a class="anchor" aria-label="anchor" href="#closer-look"></a>
 </h3>
@@ -418,9 +418,9 @@ degree completion would be considered timely. Encoded YYYYT.</p></li>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Display one student by ID</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MCID3112785480"</span><span class="op">]</span></span>
-<span><span class="co">#&gt;              mcid   institution term_i       level_i adj_span timely_term</span></span>
-<span><span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1: MCID3112785480 Institution C  20071 01 First-year        6       20123</span></span></code></pre></div>
+<span><span class="co">#&gt;              mcid term_i       level_i adj_span timely_term</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1: MCID3112785480  20071 01 First-year        6       20123</span></span></code></pre></div>
 <p><em>Example 2.</em>   The student’s initial term is Spring 2002
 (encoded <code>20013</code>) and their initial level is
 <code>03 Third-year</code> from which we infer they have completed two
@@ -433,9 +433,9 @@ of Fall 2005.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Display one student by ID</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MCID3111860641"</span><span class="op">]</span></span>
-<span><span class="co">#&gt;              mcid   institution term_i       level_i adj_span timely_term</span></span>
-<span><span class="co">#&gt;            &lt;char&gt;        &lt;char&gt; &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1: MCID3111860641 Institution J  20013 03 Third-year        4       20051</span></span></code></pre></div>
+<span><span class="co">#&gt;              mcid term_i       level_i adj_span timely_term</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1: MCID3111860641  20013 03 Third-year        4       20051</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="alternate-source-names">Alternate source names<a class="anchor" aria-label="anchor" href="#alternate-source-names"></a>
@@ -450,7 +450,7 @@ might write something like this,</p>
 <span><span class="va">toy_mcid</span> <span class="op">&lt;-</span> <span class="va">toy_student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Source data table names that differ from the defaults</span></span>
-<span><span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">toy_mcid</span>, midfield_term <span class="op">=</span> <span class="va">toy_term</span><span class="op">)</span></span>
+<span><span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">toy_mcid</span>, midfield_rec <span class="op">=</span> <span class="va">toy_term</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Equivalently</span></span>
 <span><span class="va">toy_DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">toy_mcid</span>, <span class="va">toy_term</span><span class="op">)</span></span>
@@ -505,7 +505,7 @@ data range.</p>
 <li><p><strong><code>dframe</code></strong>   Data frame of
 student-level records keyed by student ID. Required variables are
 <code>mcid</code> and <code>timely_term</code>.</p></li>
-<li><p><strong><code>midfield_term</code></strong>   Data frame of
+<li><p><strong><code>midfield_rec</code></strong>   Data frame of
 student-level term observations keyed by student ID. Default is
 <code>term</code>. Required variables are <code>mcid</code>,
 <code>institution</code>, and <code>term</code>.</p></li>
@@ -514,12 +514,12 @@ student-level term observations keyed by student ID. Default is
 identical results,</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Required arguments in order and explicitly named</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">DT</span>, midfield_term <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">DT</span>, midfield_rec <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Required arguments in order, but not named</span></span>
 <span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Using the implicit default for the midfield_term argument</span></span>
+<span><span class="co"># Using the implicit default for the midfield_rec argument</span></span>
 <span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Demonstrate equivalence</span></span>
@@ -544,29 +544,29 @@ indicating that data are insufficient at the lower limit.</p></li>
 </ul>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Un-clutter the printout</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">institution</span>, <span class="va">timely_term</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term_i</span>, <span class="va">timely_term</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Add data sufficiency column and supporting variables</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
-<span><span class="co">#&gt;                  mcid   institution timely_term term_i lower_limit upper_limit</span></span>
-<span><span class="co">#&gt;                &lt;char&gt;        &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt;     1: MCID3111142225 Institution B       19933  19881       19881       20181</span></span>
-<span><span class="co">#&gt;     2: MCID3111142283 Institution J       19933  19881       19881       20096</span></span>
-<span><span class="co">#&gt;     3: MCID3111142290 Institution J       19933  19881       19881       20096</span></span>
-<span><span class="co">#&gt;    ---                                                                        </span></span>
-<span><span class="co">#&gt; 97553: MCID3112898894 Institution B       20233  20181       19881       20181</span></span>
-<span><span class="co">#&gt; 97554: MCID3112898895 Institution B       20233  20181       19881       20181</span></span>
-<span><span class="co">#&gt; 97555: MCID3112898940 Institution B       20233  20181       19881       20181</span></span>
-<span><span class="co">#&gt;        data_sufficiency</span></span>
-<span><span class="co">#&gt;                  &lt;char&gt;</span></span>
-<span><span class="co">#&gt;     1:    exclude-lower</span></span>
-<span><span class="co">#&gt;     2:    exclude-lower</span></span>
-<span><span class="co">#&gt;     3:    exclude-lower</span></span>
-<span><span class="co">#&gt;    ---                 </span></span>
-<span><span class="co">#&gt; 97553:    exclude-upper</span></span>
-<span><span class="co">#&gt; 97554:    exclude-upper</span></span>
-<span><span class="co">#&gt; 97555:    exclude-upper</span></span></code></pre></div>
+<span><span class="co">#&gt;                   mcid term_i timely_term   institution lower_limit upper_limit</span></span>
+<span><span class="co">#&gt;                 &lt;char&gt; &lt;char&gt;      &lt;char&gt;        &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt;      1: MCID3111142225  19881       19933 Institution B       19881       20181</span></span>
+<span><span class="co">#&gt;      2: MCID3111142283  19881       19933 Institution J       19881       20096</span></span>
+<span><span class="co">#&gt;      3: MCID3111142283  19881       19933 Institution J       19881       20096</span></span>
+<span><span class="co">#&gt;     ---                                                                        </span></span>
+<span><span class="co">#&gt; 639913: MCID3112898894  20181       20233 Institution B       19881       20181</span></span>
+<span><span class="co">#&gt; 639914: MCID3112898895  20181       20233 Institution B       19881       20181</span></span>
+<span><span class="co">#&gt; 639915: MCID3112898940  20181       20233 Institution B       19881       20181</span></span>
+<span><span class="co">#&gt;         data_sufficiency</span></span>
+<span><span class="co">#&gt;                   &lt;char&gt;</span></span>
+<span><span class="co">#&gt;      1:    exclude-lower</span></span>
+<span><span class="co">#&gt;      2:    exclude-lower</span></span>
+<span><span class="co">#&gt;      3:    exclude-lower</span></span>
+<span><span class="co">#&gt;     ---                 </span></span>
+<span><span class="co">#&gt; 639913:    exclude-upper</span></span>
+<span><span class="co">#&gt; 639914:    exclude-upper</span></span>
+<span><span class="co">#&gt; 639915:    exclude-upper</span></span></code></pre></div>
 <p>Similar to the details described in the previous section,
 <code><a href="../reference/add_data_sufficiency.html">add_data_sufficiency()</a></code> accepts <a href="#alternate-source-names">Alternate source names</a> and uses <a href="#silent-overwriting">Silent overwriting</a> when existing columns
 have the same name as one of the added columns.</p>
@@ -591,12 +591,22 @@ apply.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Display one student by ID</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MCID3112785480"</span><span class="op">]</span></span>
-<span><span class="co">#&gt;              mcid   institution timely_term term_i lower_limit upper_limit</span></span>
-<span><span class="co">#&gt;            &lt;char&gt;        &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1: MCID3112785480 Institution C       20123  20071       19901       20154</span></span>
+<span><span class="co">#&gt;              mcid term_i timely_term   institution lower_limit upper_limit</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt;      &lt;char&gt;        &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1: MCID3112785480  20071       20123 Institution C       19901       20154</span></span>
+<span><span class="co">#&gt; 2: MCID3112785480  20071       20123 Institution C       19901       20154</span></span>
+<span><span class="co">#&gt; 3: MCID3112785480  20071       20123 Institution C       19901       20154</span></span>
+<span><span class="co">#&gt; 4: MCID3112785480  20071       20123 Institution C       19901       20154</span></span>
+<span><span class="co">#&gt; 5: MCID3112785480  20071       20123 Institution C       19901       20154</span></span>
+<span><span class="co">#&gt; 6: MCID3112785480  20071       20123 Institution C       19901       20154</span></span>
 <span><span class="co">#&gt;    data_sufficiency</span></span>
 <span><span class="co">#&gt;              &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:          include</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:          include</span></span>
+<span><span class="co">#&gt; 2:          include</span></span>
+<span><span class="co">#&gt; 3:          include</span></span>
+<span><span class="co">#&gt; 4:          include</span></span>
+<span><span class="co">#&gt; 5:          include</span></span>
+<span><span class="co">#&gt; 6:          include</span></span></code></pre></div>
 <p><em>Example 4.</em>   Exemplifies “Student B” in Figure 1. The
 student attends Institution B which has a data range of 1988–2018. The
 student’s initial term is Spring 2013 so the 1988 lower-limit exclusion
@@ -605,12 +615,16 @@ the 2018 upper-limit exclusion does apply.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Display one student by ID</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MCID3111170322"</span><span class="op">]</span></span>
-<span><span class="co">#&gt;              mcid   institution timely_term term_i lower_limit upper_limit</span></span>
-<span><span class="co">#&gt;            &lt;char&gt;        &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1: MCID3111170322 Institution B       20191  20133       19881       20181</span></span>
+<span><span class="co">#&gt;              mcid term_i timely_term   institution lower_limit upper_limit</span></span>
+<span><span class="co">#&gt;            &lt;char&gt; &lt;char&gt;      &lt;char&gt;        &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1: MCID3111170322  20133       20191 Institution B       19881       20181</span></span>
+<span><span class="co">#&gt; 2: MCID3111170322  20133       20191 Institution B       19881       20181</span></span>
+<span><span class="co">#&gt; 3: MCID3111170322  20133       20191 Institution B       19881       20181</span></span>
 <span><span class="co">#&gt;    data_sufficiency</span></span>
 <span><span class="co">#&gt;              &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:    exclude-upper</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:    exclude-upper</span></span>
+<span><span class="co">#&gt; 2:    exclude-upper</span></span>
+<span><span class="co">#&gt; 3:    exclude-upper</span></span></code></pre></div>
 <p><em>Example 5.</em>   Exemplifies “Student C” in Figure 2. The
 student attends Institution B which has a data range of 1988–2009. The
 student’s initial term is Fall 1988 so the 1988 lower-limit exclusion
@@ -618,12 +632,24 @@ applies.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Display one student by ID</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MCID3112056754"</span><span class="op">]</span></span>
-<span><span class="co">#&gt;              mcid   institution timely_term term_i lower_limit upper_limit</span></span>
-<span><span class="co">#&gt;            &lt;char&gt;        &lt;char&gt;      &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1: MCID3112056754 Institution J       19933  19881       19881       20096</span></span>
-<span><span class="co">#&gt;    data_sufficiency</span></span>
-<span><span class="co">#&gt;              &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:    exclude-lower</span></span></code></pre></div>
+<span><span class="co">#&gt;               mcid term_i timely_term   institution lower_limit upper_limit</span></span>
+<span><span class="co">#&gt;             &lt;char&gt; &lt;char&gt;      &lt;char&gt;        &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1: MCID3112056754  19881       19933 Institution J       19881       20096</span></span>
+<span><span class="co">#&gt;  2: MCID3112056754  19881       19933 Institution J       19881       20096</span></span>
+<span><span class="co">#&gt;  3: MCID3112056754  19881       19933 Institution J       19881       20096</span></span>
+<span><span class="co">#&gt; ---                                                                        </span></span>
+<span><span class="co">#&gt; 18: MCID3112056754  19881       19933 Institution J       19881       20096</span></span>
+<span><span class="co">#&gt; 19: MCID3112056754  19881       19933 Institution J       19881       20096</span></span>
+<span><span class="co">#&gt; 20: MCID3112056754  19881       19933 Institution J       19881       20096</span></span>
+<span><span class="co">#&gt;     data_sufficiency</span></span>
+<span><span class="co">#&gt;               &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:    exclude-lower</span></span>
+<span><span class="co">#&gt;  2:    exclude-lower</span></span>
+<span><span class="co">#&gt;  3:    exclude-lower</span></span>
+<span><span class="co">#&gt; ---                 </span></span>
+<span><span class="co">#&gt; 18:    exclude-lower</span></span>
+<span><span class="co">#&gt; 19:    exclude-lower</span></span>
+<span><span class="co">#&gt; 20:    exclude-lower</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">

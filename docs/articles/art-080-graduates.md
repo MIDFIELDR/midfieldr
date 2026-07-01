@@ -168,9 +168,9 @@ DT[, c("term_i", "level_i", "adj_span") := NULL]
 - **`dframe`**   Data frame of student-level records keyed by student
   ID. Required variables are `mcid` and `timely_term`.
 
-- **`midfield_degree`**   Data frame of student-level degree
-  observations keyed by student ID. Default is `degree`. Required
-  variables are `mcid` and `term_degree`.
+- **`midfield_rec`**   Data frame of student-level degree observations
+  keyed by student ID. Default is `degree`. Required variables are
+  `mcid` and `term_degree`.
 
 *Equivalent usage.*   The following implementations yield identical
 results,
@@ -178,12 +178,12 @@ results,
 ``` r
 
 # Required arguments in order and explicitly named
-x <- add_completion_status(dframe = DT, midfield_degree = degree)
+x <- add_completion_status(dframe = DT, midfield_rec = degree)
 
 # Required arguments in order, but not named
 y <- add_completion_status(DT, degree)
 
-# Using the implicit default for the midfield_degree argument
+# Using the implicit default for the midfield_rec argument
 z <- add_completion_status(DT)
 
 # Demonstrate equivalence
@@ -214,9 +214,9 @@ DT
 #>     2: MCID3111142782       19941       19903            timely
 #>     3: MCID3111142881       19951       19894            timely
 #>    ---                                                         
-#> 76873: MCID3112785480       20123        <NA>              <NA>
-#> 76874: MCID3112800920       20153        <NA>              <NA>
-#> 76875: MCID3112870009       20003        <NA>              <NA>
+#> 76919: MCID3112785480       20123        <NA>              <NA>
+#> 76920: MCID3112800920       20153        <NA>              <NA>
+#> 76921: MCID3112870009       20003        <NA>              <NA>
 ```
 
 Similar to the details described in the data sufficiency vignette,

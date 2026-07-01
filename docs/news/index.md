@@ -13,6 +13,7 @@ New features
   [`select_record_cols()`](https://midfieldr.github.io/midfieldr/reference/select_record_cols.md)
   to replace deprecated
   [`select_required()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md).
+  Refines the column selection even further.
 - New function
   [`filter_cip_rows()`](https://midfieldr.github.io/midfieldr/reference/filter_cip_rows.md)
   to replace deprecated

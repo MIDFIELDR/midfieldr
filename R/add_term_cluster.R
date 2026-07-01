@@ -1,6 +1,6 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
-#' Identify rows of post-baccalaureate terms
+#' Identify term clusters
 #'
 #' Add columns to a student-records data frame indicating an observation
 #' should be included (or excluded) because the term is clustered with

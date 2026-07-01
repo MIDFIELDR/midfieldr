@@ -380,15 +380,16 @@ reduced to no more than 5 columns required by other midfieldr functions.
 
 ``` r
 
-student <- select_record_cols(student, type = "s")
-term <- select_record_cols(term, "t")
-degree <- select_record_cols(degree, "d")
+student <- select_record_cols(student)
+term <- select_record_cols(term)
+degree <- select_record_cols(degree)
 
 look_at(student)
-#> Classes 'data.table' and 'data.frame':   97555 obs. of  3 variables:
-#>  $ mcid: chr  "MCID3111142225" "MCID3111142283" "MCID3111142290" "MCID3111142"..
-#>  $ race: chr  "Asian" "Asian" "Asian" "Asian" ...
-#>  $ sex : chr  "Male" "Female" "Male" "Male" ...
+#> Classes 'data.table' and 'data.frame':   97555 obs. of  4 variables:
+#>  $ mcid       : chr  "MCID3111142225" "MCID3111142283" "MCID3111142290" "MCID"..
+#>  $ race       : chr  "Asian" "Asian" "Asian" "Asian" ...
+#>  $ sex        : chr  "Male" "Female" "Male" "Male" ...
+#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 
 look_at(term)
 #> Classes 'data.table' and 'data.frame':   639915 obs. of  5 variables:
@@ -399,10 +400,11 @@ look_at(term)
 #>  $ level      : chr  "01 First-year" "01 First-year" "01 First-year" "01 Firs"..
 
 look_at(degree)
-#> Classes 'data.table' and 'data.frame':   49665 obs. of  3 variables:
+#> Classes 'data.table' and 'data.frame':   49665 obs. of  4 variables:
 #>  $ mcid       : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294" "MCID"..
 #>  $ term_degree: chr  "19881" "19921" "19903" "19921" ...
 #>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
+#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 ```
 
 With a smaller number of columns, the printout of the data frame is more
@@ -495,8 +497,8 @@ the extra columns.
 term <- term[!"post-first-degree", on = "term_cluster"]
 degree <- degree[!"post-first-degree", on = "term_cluster"]
 
-term <- select_record_cols(term, "t")
-degree <- select_record_cols(degree, "d")
+term <- select_record_cols(term)
+degree <- select_record_cols(degree)
 
 term
 #>                   mcid   term   cip6   institution          level
@@ -587,32 +589,32 @@ data range.
 DT <- add_data_sufficiency(DT)
 
 DT
-#>                  mcid       level_i adj_span timely_term term_i lower_limit
-#>                <char>        <char>    <num>      <char> <char>      <char>
-#>     1: MCID3111142225 01 First-year        6       19933  19881       19881
-#>     2: MCID3111142283 01 First-year        6       19933  19881       19881
-#>     3: MCID3111142290 01 First-year        6       19933  19881       19881
-#>     4: MCID3111142294 01 First-year        6       19933  19881       19881
-#>     5: MCID3111142299 01 First-year        6       19933  19881       19881
-#>    ---                                                                     
-#> 97532: MCID3112898886 01 First-year        6       20233  20181       19881
-#> 97533: MCID3112898890 01 First-year        6       20233  20181       19881
-#> 97534: MCID3112898894 01 First-year        6       20233  20181       19881
-#> 97535: MCID3112898895 01 First-year        6       20233  20181       19881
-#> 97536: MCID3112898940 01 First-year        6       20233  20181       19881
-#>        upper_limit data_sufficiency
-#>             <char>           <char>
-#>     1:       20181    exclude-lower
-#>     2:       20096    exclude-lower
-#>     3:       20096    exclude-lower
-#>     4:       20096    exclude-lower
-#>     5:       20096    exclude-lower
-#>    ---                             
-#> 97532:       20181    exclude-upper
-#> 97533:       20181    exclude-upper
-#> 97534:       20181    exclude-upper
-#> 97535:       20181    exclude-upper
-#> 97536:       20181    exclude-upper
+#>                   mcid term_i timely_term   institution lower_limit upper_limit
+#>                 <char> <char>      <char>        <char>      <char>      <char>
+#>      1: MCID3111142225  19881       19933 Institution B       19881       20181
+#>      2: MCID3111142283  19881       19933 Institution J       19881       20096
+#>      3: MCID3111142283  19881       19933 Institution J       19881       20096
+#>      4: MCID3111142283  19881       19933 Institution J       19881       20096
+#>      5: MCID3111142283  19881       19933 Institution J       19881       20096
+#>     ---                                                                        
+#> 632913: MCID3112898886  20181       20233 Institution B       19881       20181
+#> 632914: MCID3112898890  20181       20233 Institution B       19881       20181
+#> 632915: MCID3112898894  20181       20233 Institution B       19881       20181
+#> 632916: MCID3112898895  20181       20233 Institution B       19881       20181
+#> 632917: MCID3112898940  20181       20233 Institution B       19881       20181
+#>         data_sufficiency
+#>                   <char>
+#>      1:    exclude-lower
+#>      2:    exclude-lower
+#>      3:    exclude-lower
+#>      4:    exclude-lower
+#>      5:    exclude-lower
+#>     ---                 
+#> 632913:    exclude-upper
+#> 632914:    exclude-upper
+#> 632915:    exclude-upper
+#> 632916:    exclude-upper
+#> 632917:    exclude-upper
 ```
 
 The possible values for data sufficiency are:
@@ -629,6 +631,7 @@ baseline population.
 ``` r
 
 population <- DT["include", on = "data_sufficiency", .(mcid)]
+population <- unique(population)
 
 population
 #>                  mcid
@@ -683,32 +686,19 @@ adds a column indicating completion status for every student.
 DT <- add_completion_status(DT)
 
 DT
-#>                  mcid term_i       level_i adj_span timely_term term_degree
-#>                <char> <char>        <char>    <num>      <char>      <char>
-#>     1: MCID3111142689  19883 01 First-year        6       19941       19913
-#>     2: MCID3111142782  19883 01 First-year        6       19941       19903
-#>     3: MCID3111142881  19893 01 First-year        6       19951       19894
-#>     4: MCID3111142884  19883 01 First-year        6       19941        <NA>
-#>     5: MCID3111142893  19883 01 First-year        6       19941        <NA>
-#>    ---                                                                     
-#> 76861: MCID3112727985  20114 01 First-year        6       20173        <NA>
-#> 76862: MCID3112730841  20121 01 First-year        6       20173       20164
-#> 76863: MCID3112785480  20071 01 First-year        6       20123        <NA>
-#> 76864: MCID3112800920  20101 01 First-year        6       20153        <NA>
-#> 76865: MCID3112870009  19951 01 First-year        6       20003        <NA>
-#>        completion_status
-#>                   <char>
-#>     1:            timely
-#>     2:            timely
-#>     3:            timely
-#>     4:              <NA>
-#>     5:              <NA>
-#>    ---                  
-#> 76861:              <NA>
-#> 76862:            timely
-#> 76863:              <NA>
-#> 76864:              <NA>
-#> 76865:              <NA>
+#>                  mcid timely_term term_degree completion_status
+#>                <char>      <char>      <char>            <char>
+#>     1: MCID3111142689       19941       19913            timely
+#>     2: MCID3111142782       19941       19903            timely
+#>     3: MCID3111142881       19951       19894            timely
+#>     4: MCID3111142884       19941        <NA>              <NA>
+#>     5: MCID3111142893       19941        <NA>              <NA>
+#>    ---                                                         
+#> 76861: MCID3112727985       20173        <NA>              <NA>
+#> 76862: MCID3112730841       20173       20164            timely
+#> 76863: MCID3112785480       20123        <NA>              <NA>
+#> 76864: MCID3112800920       20153        <NA>              <NA>
+#> 76865: MCID3112870009       20003        <NA>              <NA>
 ```
 
 The possible values for completion status are:

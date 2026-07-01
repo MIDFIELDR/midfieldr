@@ -18,6 +18,16 @@ toy_student
 
   Character, de-identified student ID. Key column.
 
+- `race`:
+
+  Character, race/ethnicity as self-reported by the student, e.g.,
+  Asian, Black, Hispanic, etc.
+
+- `sex`:
+
+  Character, sex as self-reported by the student, possible values are
+  Female, Male, and Unknown.
+
 - `institution`:
 
   Character, de-identified institution name, e.g., Institution A,
@@ -31,16 +41,6 @@ toy_student
 - `hours_transfer`:
 
   Numeric, number of credit hours transferred (or NA).
-
-- `race`:
-
-  Character, race/ethnicity as self-reported by the student, e.g.,
-  Asian, Black, Hispanic, etc.
-
-- `sex`:
-
-  Character, sex as self-reported by the student, possible values are
-  Female, Male, and Unknown.
 
 - `age_desc`:
 

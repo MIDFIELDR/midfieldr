@@ -1,6 +1,6 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
-#' Order categorical variables of multiway data
+#' Order multiway categories
 #'
 #' Transform a data frame such that two independent categorical variables are
 #' factors with levels ordered for display in a multiway dot plot.

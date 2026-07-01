@@ -211,9 +211,6 @@ add_institution <- function(dframe,
 }
 
 
-
-
-
 # ------------------------------------------------------------------------
 #
 #' Setup vector of column names for data frame return

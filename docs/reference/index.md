@@ -12,21 +12,21 @@
 ## Functions
 
 - [`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
-  : Determine completion status for every student
+  : Determine completion status
 - [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
-  : Determine data sufficiency for every student
+  : Determine data sufficiency
 - [`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md)
-  : Identify rows of post-baccalaureate terms
+  : Identify term clusters
 - [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
-  : Calculate a timely completion term for every student
+  : Calculate timely completion terms
 - [`filter_cip_rows()`](https://midfieldr.github.io/midfieldr/reference/filter_cip_rows.md)
-  : Subset rows that include matches to search strings
+  : Subset rows with search strings
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
-  : Order categorical variables of multiway data
+  : Order multiway categories
 - [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
-  : Prepare FYE data for multiple imputation
+  : Prepare FYE data for imputation
 - [`select_record_cols()`](https://midfieldr.github.io/midfieldr/reference/select_record_cols.md)
-  : Select basic columns of student-level records
+  : Select record columns
 
 ## Utility
 

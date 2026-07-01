@@ -1,6 +1,6 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
-#' Prepare FYE data for multiple imputation
+#' Prepare FYE data for imputation
 #'
 #' Constructs a data frame of student-level records of First-Year Engineering
 #' (FYE) programs and conditions the data for later use as an input to the mice

@@ -314,7 +314,7 @@ environment, the following lines yield the same results:
 ``` r
 
 # not run
-add_term_cluster(term, midfield_degree = degree)
+add_term_cluster(term, midfield_rec = degree)
 add_term_cluster(term, degree)
 add_term_cluster(term)
 ```
@@ -358,6 +358,43 @@ look_at(degree)
 #>  $ mcid       : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294" "MCID"..
 #>  $ term_degree: chr  "19881" "19921" "19903" "19921" ...
 #>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
+```
+
+``` r
+
+class(student)
+#> [1] "tbl_df"     "tbl"        "data.frame"
+
+x <- student
+
+class(x)
+#> [1] "tbl_df"     "tbl"        "data.frame"
+
+y <- as.data.frame(x)
+class(y)
+#> [1] "data.frame"
+data.table::setattr(y, "class", c("tbl_df", "tbl", "data.frame"))
+class(y)
+#> [1] "tbl_df"     "tbl"        "data.frame"
+
+y
+#> # A tibble: 97,555 × 3
+#>   mcid           race  sex   
+#>   <chr>          <chr> <chr> 
+#> 1 MCID3111142225 Asian Male  
+#> 2 MCID3111142283 Asian Female
+#> 3 MCID3111142290 Asian Male  
+#> 4 MCID3111142294 Asian Male  
+#> 5 MCID3111142299 Asian Male  
+#> # ℹ 97,550 more rows
+
+z <- y |> group_by(race)
+class(z)
+#> [1] "grouped_df" "tbl_df"     "tbl"        "data.frame"
+z <- as.data.frame(z)
+data.table::setattr(z, "class", c("tbl_df", "tbl", "data.frame"))
+class(z)
+#> [1] "tbl_df"     "tbl"        "data.frame"
 ```
 
 ### *Exclude post-baccalaureate terms*
@@ -517,22 +554,22 @@ satisfy) the data sufficiency criteria.
 
 DT <- add_data_sufficiency(DT)
 DT
-#> # A tibble: 97,536 × 8
-#>   mcid           level_i       adj_span timely_term term_i lower_limit
-#>   <chr>          <chr>            <dbl> <chr>       <chr>  <chr>      
-#> 1 MCID3111142225 01 First-year        6 19933       19881  19881      
-#> 2 MCID3111142283 01 First-year        6 19933       19881  19881      
-#> 3 MCID3111142290 01 First-year        6 19933       19881  19881      
-#> 4 MCID3111142294 01 First-year        6 19933       19881  19881      
-#> 5 MCID3111142299 01 First-year        6 19933       19881  19881      
-#>   upper_limit data_sufficiency
-#>   <chr>       <chr>           
-#> 1 20181       exclude-lower   
-#> 2 20096       exclude-lower   
-#> 3 20096       exclude-lower   
-#> 4 20096       exclude-lower   
-#> 5 20096       exclude-lower   
-#> # ℹ 97,531 more rows
+#> # A tibble: 632,917 × 7
+#>   mcid           term_i timely_term institution   lower_limit upper_limit
+#>   <chr>          <chr>  <chr>       <chr>         <chr>       <chr>      
+#> 1 MCID3111142225 19881  19933       Institution B 19881       20181      
+#> 2 MCID3111142283 19881  19933       Institution J 19881       20096      
+#> 3 MCID3111142283 19881  19933       Institution J 19881       20096      
+#> 4 MCID3111142283 19881  19933       Institution J 19881       20096      
+#> 5 MCID3111142283 19881  19933       Institution J 19881       20096      
+#>   data_sufficiency
+#>   <chr>           
+#> 1 exclude-lower   
+#> 2 exclude-lower   
+#> 3 exclude-lower   
+#> 4 exclude-lower   
+#> 5 exclude-lower   
+#> # ℹ 632,912 more rows
 ```
 
 Again, a quick assessment of the relative size of the three possible
@@ -545,11 +582,11 @@ DT |>
   tally() |>
   arrange(desc(n))
 #> # A tibble: 3 × 2
-#>   data_sufficiency     n
-#>   <chr>            <int>
-#> 1 include          76865
-#> 2 exclude-upper    17925
-#> 3 exclude-lower     2746
+#>   data_sufficiency      n
+#>   <chr>             <int>
+#> 1 include          525446
+#> 2 exclude-upper     87982
+#> 3 exclude-lower     19489
 ```
 
 We retain the rows labeled “include” for which we have sufficient data
@@ -561,15 +598,15 @@ DT <- DT |>
   filter(data_sufficiency == "include") |>
   select(mcid)
 DT
-#> # A tibble: 76,865 × 1
+#> # A tibble: 525,446 × 1
 #>   mcid          
 #>   <chr>         
 #> 1 MCID3111142689
 #> 2 MCID3111142782
-#> 3 MCID3111142881
-#> 4 MCID3111142884
-#> 5 MCID3111142893
-#> # ℹ 76,860 more rows
+#> 3 MCID3111142782
+#> 4 MCID3111142782
+#> 5 MCID3111142782
+#> # ℹ 525,441 more rows
 ```
 
 ### *Filter for degree seeking*
@@ -585,15 +622,15 @@ students.
 DT <- inner_join(DT, student, by = join_by(mcid)) |>
   select(mcid)
 DT
-#> # A tibble: 76,865 × 1
+#> # A tibble: 525,446 × 1
 #>   mcid          
 #>   <chr>         
 #> 1 MCID3111142689
 #> 2 MCID3111142782
-#> 3 MCID3111142881
-#> 4 MCID3111142884
-#> 5 MCID3111142893
-#> # ℹ 76,860 more rows
+#> 3 MCID3111142782
+#> 4 MCID3111142782
+#> 5 MCID3111142782
+#> # ℹ 525,441 more rows
 ```
 
 It happens that all students in this case are degree-seeking, so this
@@ -726,21 +763,14 @@ DT <- DT |>
   add_timely_term() |>
   add_completion_status()
 DT
-#> # A tibble: 76,865 × 7
-#>   mcid           term_i level_i       adj_span timely_term term_degree
-#>   <chr>          <chr>  <chr>            <dbl> <chr>       <chr>      
-#> 1 MCID3111142689 19883  01 First-year        6 19941       19913      
-#> 2 MCID3111142782 19883  01 First-year        6 19941       19903      
-#> 3 MCID3111142881 19893  01 First-year        6 19951       19894      
-#> 4 MCID3111142884 19883  01 First-year        6 19941       NA         
-#> 5 MCID3111142893 19883  01 First-year        6 19941       NA         
-#>   completion_status
-#>   <chr>            
-#> 1 timely           
-#> 2 timely           
-#> 3 timely           
-#> 4 NA               
-#> 5 NA               
+#> # A tibble: 76,865 × 4
+#>   mcid           timely_term term_degree completion_status
+#>   <chr>          <chr>       <chr>       <chr>            
+#> 1 MCID3111142689 19941       19913       timely           
+#> 2 MCID3111142782 19941       19903       timely           
+#> 3 MCID3111142881 19951       19894       timely           
+#> 4 MCID3111142884 19941       NA          NA               
+#> 5 MCID3111142893 19941       NA          NA               
 #> # ℹ 76,860 more rows
 ```
 

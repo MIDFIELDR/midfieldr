@@ -2,7 +2,7 @@
 % Please edit documentation in R/order_multiway.R
 \name{order_multiway}
 \alias{order_multiway}
-\title{Order categorical variables of multiway data}
+\title{Order multiway categories}
 \usage{
 order_multiway(
   dframe,

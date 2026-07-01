@@ -19,11 +19,6 @@ program (CIP code or degree label).
 
   Character, de-identified student ID. Key column.
 
-- `institution`:
-
-  Character, de-identified institution name, e.g., Institution A,
-  Institution B, etc.
-
 - `term_degree`:
 
   Character, academic year and term in which a student completes their
@@ -33,6 +28,11 @@ program (CIP code or degree label).
 
   Character, 6-digit CIP code of program in which a student is enrolled
   in a term. Key column.
+
+- `institution`:
+
+  Character, de-identified institution name, e.g., Institution A,
+  Institution B, etc.
 
 - `degree`:
 

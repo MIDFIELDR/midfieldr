@@ -19,21 +19,9 @@ course abbreviation, and course number.
 
   Character, de-identified student ID. Key column.
 
-- `institution`:
-
-  Character, de-identified institution name, e.g., Institution A,
-  Institution B, etc.
-
 - `term`:
 
   Character, academic year and term, format YYYYT. Key column.
-
-- `course`:
-
-  Character, course name, e.g., `Astrophysics III`,
-  `Calculus For Social Science And Business`, `Corp Financial Rprtng 1`,
-  `Environmental Sanitation II`, `Fitness and Wellness`,
-  `Introductory Astronomy 2`, `Our Changing Environment`, etc.
 
 - `abbrev`:
 
@@ -43,6 +31,18 @@ course abbreviation, and course number.
 - `number`:
 
   Character, course numeric identifier, e.g. 101, 3429. Key column.
+
+- `institution`:
+
+  Character, de-identified institution name, e.g., Institution A,
+  Institution B, etc.
+
+- `course`:
+
+  Character, course name, e.g., `Astrophysics III`,
+  `Calculus For Social Science And Business`, `Corp Financial Rprtng 1`,
+  `Environmental Sanitation II`, `Fitness and Wellness`,
+  `Introductory Astronomy 2`, `Our Changing Environment`, etc.
 
 - `section`:
 

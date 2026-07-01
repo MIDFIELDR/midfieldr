@@ -1,17 +1,14 @@
 
-# functions used in the test
-
-run_check <- function(x, text, fnc) {
+# function used in the test
+expect_class_preserved <- function(x, text, fnc) {
     
-    z <- fnc(x, text)
-    expect_equal(class(x), class(z))
+    run_check <- function(x, text, fnc) {
+        z <- fnc(x, text)
+        expect_equal(class(x), class(z))
+    }
     
-    rm(z)
-}
-
-expect_class_preserved <- function(cip, text, fnc) {
-    
-    x <- copy(cip)
+    # runs 3 checks: data.frame, tibble, data.table
+    x <- copy(x)
     
     x <- as.data.frame(x)
     run_check(x, text, fnc)
@@ -24,11 +21,6 @@ expect_class_preserved <- function(cip, text, fnc) {
     
     rm(x)
 }
-
-
-
-
-
 
 test_filter_cip_rows <- function() {
 

@@ -19,7 +19,7 @@
 New features
 
 - New function `add_term_cluster()` to identify rows of post-baccalaureate terms to exclude.
-- New function `select_record_cols()` to replace deprecated `select_required()`. Refines the colun selection even further. 
+- New function `select_record_cols()` to replace deprecated `select_required()`. Refines the column selection even further. 
 - New function `filter_cip_rows()` to replace deprecated `filter_cip()`.
 - New utilities  `look_at()`, `catch_error()`, and `sort_uniq()` that wrap base R functions with our preferred arguments. 
 - Add data set `cip2010`, constructed from a recent download of the source file (`CIPCode2010.csv`) from NCES. Has the same data structure as the existing `cip` dataset, but with more rows. 

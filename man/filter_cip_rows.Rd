@@ -2,39 +2,40 @@
 % Please edit documentation in R/filter_cip_rows.R
 \name{filter_cip_rows}
 \alias{filter_cip_rows}
-\title{Subset rows that include matches to search strings}
+\title{Choose rows of CIP data}
 \usage{
 filter_cip_rows(dframe, pattern, ..., negate = FALSE)
 }
 \arguments{
-\item{dframe}{Data frame of CIP program codes to be searched, typically
-\code{cip} that loads with midfieldr.}
+\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Expected variables (or subset thereof):
+\verb{\{cip6name, cip6, cip4name, cip4, cip2name, cip2\}.}}
 
-\item{pattern}{Character vector of search strings for retaining rows,
-not case-sensitive. Can include regular expressions.}
+\item{pattern}{Character vector of search strings, including regular
+expressions.}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
 referable only by name.}
 
-\item{negate}{Logical. If true, searches for not-pattern. Default FALSE.}
+\item{negate}{Logical (default FALSE). If TRUE, inverts the
+resulting Boolean vector.}
 }
 \value{
-A data frame subset of \code{dframe}. Output has the
-following properties:
+Data frame with the following properties:
 \itemize{
-\item Rows are a subset of the input, but appear in the same order.
+\item Data frame class is preserved. Groups and keys are not preserved.
+\item Rows are a subset of the input and appear in the same order.
 \item Columns are not modified.
-\item Data frame attributes (except groups) are preserved.
 }
 }
 \description{
-Subset a CIP data frame, retaining rows that match or partially match a
-vector of character strings.
+Subset a CIP data frame, retaining rows that match or partially match
+any string in a vector of character strings.
 }
 \details{
-Search terms can include regular expressions.
-Uses \code{grepl()}, therefore non-character columns (if any) that can be
-coerced to character are also searched for matches.
+Each element of the \code{pattern} vector is matched row-wise to every
+value in \code{dframe} using \verb{grepl().} Row values are coerced to character
+strings if possible. If \code{negate = FALSE} (default), a match retains
+the full row; if \verb{negate = TRUE,} a match removes the full row.
 }
 \examples{
 # Subset using keywords

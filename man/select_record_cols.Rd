@@ -2,7 +2,7 @@
 % Please edit documentation in R/select_record_cols.R
 \name{select_record_cols}
 \alias{select_record_cols}
-\title{Select basic columns of student-level records}
+\title{Choose columns of student records}
 \usage{
 select_record_cols(dframe, type = NULL, ..., col_pattern = NULL)
 }

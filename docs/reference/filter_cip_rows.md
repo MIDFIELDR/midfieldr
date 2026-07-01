@@ -1,10 +1,7 @@
-# Subset rows that include matches to search strings
+# Subset rows with search strings
 
 Subset a CIP data frame, retaining rows that match or partially match a
-vector of character strings. Search terms can include regular
-expressions. Uses [`grepl()`](https://rdrr.io/r/base/grep.html),
-therefore non-character columns (if any) that can be coerced to
-character are also searched for matches.
+vector of character strings.
 
 ## Usage
 
@@ -35,17 +32,20 @@ filter_cip_rows(dframe, pattern, ..., negate = FALSE)
 
 ## Value
 
-A data frame of the same type as `dframe`. The output has the following
-properties:
+A data frame subset of `dframe`. Output has the following properties:
 
 - Rows are a subset of the input, but appear in the same order.
 
 - Columns are not modified.
 
-- Groups are not preserved.
+- Data frame attributes (except groups) are preserved.
 
-- Data frame attributes are preserved for classes `data.frame`,
-  `data.table`, or `tbl_df`.
+## Details
+
+Search terms can include regular expressions. Uses
+[`grepl()`](https://rdrr.io/r/base/grep.html), therefore non-character
+columns (if any) that can be coerced to character are also searched for
+matches.
 
 ## Examples
 

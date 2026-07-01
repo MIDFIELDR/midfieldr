@@ -2,7 +2,7 @@
 
 # ---------- deprecated version
 
-#' Select basic columns of student-level records
+#' Select record columns
 #' @param midfield_x Deprecated `select_required()`. Data frame from which
 #'        columns are selected.
 #' @param select_add Deprecated `select_required()`. Character vector of
@@ -24,7 +24,7 @@ NULL
 
 # ---------- new version
 
-#' Select basic columns of student-level records
+#' Choose columns of student records 
 #'
 #' Subset a data frame, selecting columns by matching a vector of character
 #' strings. A convenience function to reduce the dimensions of a MIDFIELD

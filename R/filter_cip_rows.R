@@ -37,35 +37,40 @@ NULL
 
 
 
-#' Subset rows that include matches to search strings
+#' Choose rows of CIP data
 #'
-#' Subset a CIP data frame, retaining rows that match or partially match a
-#' vector of character strings.
+#' Subset a CIP data frame, retaining rows that match or partially match 
+#' any string in a vector of character strings.
+#' 
+#' Each element of the `pattern` vector is matched row-wise to every 
+#' value in `dframe` using `grepl().` Row values are coerced to character 
+#' strings if possible. If `negate = FALSE` (default), a match retains 
+#' the full row; if `negate = TRUE,` a match removes the full row.
 #'
-#' Search terms can include regular expressions.
-#' Uses `grepl()`, therefore non-character columns (if any) that can be
-#' coerced to character are also searched for matches.
-#'
-#' @param dframe Data frame of CIP program codes to be searched, typically
-#'        `cip` that loads with midfieldr.
-#' @param pattern Character vector of search strings for retaining rows,
-#'        not case-sensitive. Can include regular expressions.
+#' @param dframe `r dframe` Expected variables (or subset thereof): 
+#'       `{cip6name, cip6, cip4name, cip4, cip2name, cip2}.` 
+#' 
+#' @param pattern Character vector of search strings, including regular 
+#'        expressions.  
+#' 
 #' @param ... `r param_dots`
-#' @param negate Logical. If true, searches for not-pattern. Default FALSE.
+#' 
+#' @param negate Logical (default FALSE). If TRUE, inverts the 
+#'        resulting Boolean vector.
 #'
-#' @returns A data frame subset of `dframe`. Output has the
-#' following properties:
-#' * Rows are a subset of the input, but appear in the same order.
-#' * Columns are not modified.
-#' * Data frame attributes (except groups) are preserved.
+#' @returns Data frame with the following properties:
+#' * Data frame class is preserved. Groups and keys are not preserved.
+#' * Rows are a subset of the input and appear in the same order.
+#' * Columns are not modified. 
 #'
-#' @family filter_*
 #' @example man/examples/exa_filter_cip_rows.R
+#' @family filter_*
 #' @export
 #'
 filter_cip_rows <- function(dframe, pattern, ..., negate = FALSE) {
-  # ---------- checks, use base R syntax
-
+  
+  # ---------- base R checks (all data frame classes)
+  
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
@@ -74,11 +79,9 @@ filter_cip_rows <- function(dframe, pattern, ..., negate = FALSE) {
 
   # required argument
   qassert(dframe, "d+")
-
-  # assertions for optional arguments
-  # qassert(select, "s+") # missing is OK
-  # if (!is.null(keep_text)) qassert(keep_text, "s+")
-  # if (!is.null(drop_text)) qassert(drop_text, "s+")
+  if (!is.null(pattern)) qassert(pattern, "s+")
+  qassert(negate, "B1") # missing not allowed
+  
 
   # ---------- preparation
 
@@ -110,9 +113,9 @@ filter_cip_rows <- function(dframe, pattern, ..., negate = FALSE) {
     }), ]
   }
 
-  # ---------- restore state
-
-  # restore class
+  # ---------- prepare to return
+  
+  setkey(DT, NULL)
   setattr(DT, "class", prior_class)
   DT[]
 }

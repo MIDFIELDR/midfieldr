@@ -1,4 +1,4 @@
-# Prepare FYE data for multiple imputation
+# Prepare FYE data for imputation
 
 Constructs a data frame of student-level records of First-Year
 Engineering (FYE) programs and conditions the data for later use as an
@@ -211,8 +211,8 @@ prep_fye_mice(toy_student, toy_term)
 
 # Other columns, if any, are dropped
 colnames(toy_student)
-#>  [1] "mcid"           "institution"    "transfer"       "hours_transfer"
-#>  [5] "race"           "sex"            "age_desc"       "us_citizen"    
+#>  [1] "mcid"           "race"           "sex"            "institution"   
+#>  [5] "transfer"       "hours_transfer" "age_desc"       "us_citizen"    
 #>  [9] "home_zip"       "high_school"    "sat_math"       "sat_verbal"    
 #> [13] "act_comp"      
 colnames(prep_fye_mice(toy_student, toy_term))
@@ -220,7 +220,7 @@ colnames(prep_fye_mice(toy_student, toy_term))
 
 # Optional argument permits multiple CIP codes for FYE
 prep_fye_mice(midfield_student = toy_student, 
-              midfield_term =toy_term, 
+              midfield_term = toy_term, 
               fye_codes = c("140101", "140102"))
 #>               mcid          race    sex   institution  proxy
 #>             <char>        <fctr> <fctr>        <fctr> <fctr>

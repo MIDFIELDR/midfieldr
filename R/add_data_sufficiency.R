@@ -60,6 +60,7 @@
 #' @export
 #'
 add_data_sufficiency <- function(dframe, midfield_rec = term) {
+  
   # define required columns and variables to be added
   dframe_vars <- c("mcid", "term_i", "timely_term")
   record_vars <- c("mcid", "term", "institution")

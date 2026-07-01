@@ -46,7 +46,7 @@ catch_error(add_term_cluster(t, d))
 
 # Error, no term variable 
 catch_error(add_term_cluster(s, d))
-#> Error: Assertion on 'term_variable' failed: Must be element of set {'term','term_course','term_degree'}, but is not atomic scalar. 
+#> Error: Assertion on 'var' failed: Must be element of set {'term','term_course','term_degree'}, but is not atomic scalar. 
 
 # Error, missing dframe argument
 catch_error(add_term_cluster())

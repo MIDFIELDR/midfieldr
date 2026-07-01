@@ -1,22 +1,18 @@
-# Calculate a timely completion term for every student
+# Calculate timely completion terms
 
-Add columns to a data frame of student-level records that indicate each
-student's timely completion term, that is, the term by which program
-completion would be considered timely. By "completion" we mean an
-undergraduate earning their first baccalaureate degree (or degrees, for
-students earning more than one degree in the same term). The timely
-completion term is usually defined as 4-, 6-, or 8-years after
-admission. Our default is 6 years.
+To a data frame keyed by student ID, add a column indicating the
+student's timely completion term. Columns of supporting information are
+also added.
 
 ## Usage
 
 ``` r
 add_timely_term(
   dframe,
-  midfield_term = term,
+  midfield_rec = term,
   ...,
-  span = NULL,
-  sched_span = NULL
+  sched_span = NULL,
+  span = NULL
 )
 ```
 
@@ -24,80 +20,90 @@ add_timely_term(
 
 - dframe:
 
-  Working data frame of student-level records to which timely-term
-  columns are to be added. Required variable is `mcid`.
+  Data frame or data frame extension (e.g., data.table or tibble).
+  Required variable: `{mcid}`.
 
-- midfield_term:
+- midfield_rec:
 
-  MIDFIELD `term` data table or equivalent with required variables
-  `mcid`, `term`, and `level`.
+  MIDFIELD records *term* data frame or data frame extension. Required
+  variables: `{mcid, term, level}`.
 
 - ...:
 
   Not used for passing values; forces subsequent arguments to be
   referable only by name.
 
-- span:
-
-  Optional integer scalar, number of years to define timely completion.
-  Commonly used values are are 100%, 150%, and 200% of `sched_span.`
-  Default 6 years.
-
 - sched_span:
 
-  Optional integer scalar, the number of years an institution officially
-  schedules for completing a program. Default 4 years.
+  Integer scalar (default 4), the number of years an institution
+  officially schedules for completing a program.
+
+- span:
+
+  Integer scalar (default 6), number of years to define timely
+  completion, typically 4, 6, or 8 years (100%, 150%, 200% respectively
+  of `sched_span`).
 
 ## Value
 
-A data frame of the same type as `dframe`. The output has the following
-properties:
+Data frame with the following properties:
 
-- Rows are not modified.
+- Data frame class is preserved. Groups and keys are not preserved.
 
-- Columns are added, overwriting existing columns (if any) of the same
-  name. Other columns are not modified.
+- Rows are filtered for unique `mcid` values.
 
-- Groups are not preserved.
+- Column `{mcid}` is retained (all other columns are dropped). New
+  columns added:
 
-- Data frame attributes are preserved for classes `data.frame`,
-  `data.table`, or `tbl_df`.
+  - `term_i.`   Initial term of a student's longitudinal record, encoded
+    `YYYYT`. Extracted from `midfield_rec.`
+
+  - `level_i.`   Character. Student level (01 Freshman, 02 Sophomore,
+    etc.) in their initial term. Extracted from `midfield_rec.`
+
+  - `adj_span.`   Numeric. Integer span of years for timely completion
+    adjusted for a student's initial level.
+
+  - `timely_term.`   Character. Latest term by which program completion
+    would be considered timely for every student. Encoded `YYYYT.`
 
 ## Details
 
 In many studies, students must complete their programs in a specified
-time span to be considered "timely", for example 4-, 6-, or 8-years
-after admission. If they do not, their completion is "late" and they are
-grouped with the non-completers when computing a metric such as
-graduation rate.
+time span to be considered "timely", for example 4, 6, or 8 years after
+admission. The latest term by which program completion would be
+considered timely is the *timely completion term.* By "completion" we
+mean an undergraduate earning their first baccalaureate degree (or
+degrees, for students earning more than one degree in the same term).
 
-Our heuristic assigns `span` number of years (default is 6 years) to
-every student. For students admitted at second-year level or higher, the
-span is reduced by one year for each full year the student is assumed to
-have completed. For example, a student admitted at the second-year level
-is assumed to have completed one year of a program, so their span is
-reduced by one year. The adjusted span is added to the initial term to
-create the timely completion term in the `timely_term` column.
+The timely completion term is required for determining data sufficiency
+as well as timely completion status. The goal in either case is to
+refine a population, that is, obtain a data frame of IDs that satisfy
+our constraints. Thus `add_timely_term()` yields a column of timely term
+values and columns of supporting information keyed by ID. All other
+columns in `dframe` (if any) are dropped.
 
-The new columns are:
+Our heuristic assigns `span` number of years (default 6) to every
+student. For students admitted at second-year level or higher, the span
+is reduced by one year for each full year the student is assumed to have
+completed. For example, a student admitted at the second-year level is
+assumed to have completed one year of a program, so their span is
+reduced by one year. The adjusted span is added to their initial term to
+create the `timely_term` values.
 
-- `term_i` Initial term of a student's longitudinal record, encoded
-  `YYYYT`. Extracted from `term`.
-
-- `level_i`. Character. Student level (01 Freshman, 02 Sophomore, etc.)
-  in their initial term. Extracted from `term`.
-
-- `adj_span`. Numeric. Integer span of years for timely completion
-  adjusted for a student's initial level.
-
-- `timely_term`. Character. Latest term by which program completion
-  would be considered timely for every student. Encoded `YYYYT`.
+The supporting information in the output is provided so that the user
+can review the findings. Moreover,
+[`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
+and
+[`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
+require one or both of the added columns `{term_i, timely_term}.`
 
 ## See also
 
 Other add\_\*:
 [`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md),
-[`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
+[`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md),
+[`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md)
 
 ## Examples
 
@@ -106,7 +112,7 @@ Other add\_\*:
 dframe <- toy_student[1:10, .(mcid)]
 
 # Add timely completion term column
-add_timely_term(dframe, midfield_term = toy_term)
+add_timely_term(dframe, toy_term)
 #>               mcid term_i       level_i adj_span timely_term
 #>             <char> <char>        <char>    <num>      <char>
 #>  1: MCID3111158953  19881 01 First-year        6       19933
@@ -121,7 +127,7 @@ add_timely_term(dframe, midfield_term = toy_term)
 #> 10: MCID3111250695  19901 01 First-year        6       19953
 
 # Define timely completion as 200% of scheduled span (8 years)
-add_timely_term(dframe, midfield_term = toy_term, span = 8)
+add_timely_term(dframe, toy_term, span = 8)
 #>               mcid term_i       level_i adj_span timely_term
 #>             <char> <char>        <char>    <num>      <char>
 #>  1: MCID3111158953  19881 01 First-year        8       19953
@@ -149,7 +155,7 @@ dframe[, timely_term := NA_character_][]
 #>  8: MCID3111213943        <NA>
 #>  9: MCID3111248941        <NA>
 #> 10: MCID3111250695        <NA>
-add_timely_term(dframe, midfield_term = toy_term)
+add_timely_term(dframe, toy_term)
 #>               mcid term_i       level_i adj_span timely_term
 #>             <char> <char>        <char>    <num>      <char>
 #>  1: MCID3111158953  19881 01 First-year        6       19933
