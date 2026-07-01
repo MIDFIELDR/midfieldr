@@ -1,5 +1,32 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
+
+
+# ---------- deprecated version ----------
+
+#' midfieldr deprecated functions
+#' @param dframe `r dframe` Required variables: `{mcid, timely_term}`.
+#' @param midfield_rec `r midfield_x("*degree*")` Required variables:
+#'        `{mcid, term_degree}`.
+#' @rdname midfieldr-deprecated
+#' @export
+add_completion_status <- function(dframe, midfield_rec = degree) {
+  .Deprecated(
+    new = "completion_status",
+    package = "midfieldr",
+    msg = "This function was deprecated as part of an update to all 
+    midfieldr functions. Please use `completion_status()` instead."
+  )
+  
+  # original function calls the new function
+  completion_status(dframe = dframe, midfield_rec = midfield_rec)
+}
+NULL
+
+
+
+# ---------- current version ----------
+
 #' Determine completion status
 #'
 #' To a data frame keyed by student ID, add a column indicating if a
@@ -15,7 +42,7 @@
 #'
 #' The goal of determining timely completion is to refine a population, that
 #' is, obtain a data frame of IDs that satisfy our constraints. Thus
-#' `add_completion_status()` yields a column of completion status values and
+#' `completion_status()` yields a column of completion status values and
 #' columns of supporting information keyed by ID. All other columns in
 #' `dframe` (if any) are dropped.
 #'
@@ -40,11 +67,11 @@
 #'      completion terms; "late" for students completing their program
 #'      after their timely completion term; and "NA" for non-completers.
 #'
-#' @example man/examples/exa_add_completion_status.R
+#' @example man/examples/exa_completion_status.R
 #' @family add_*
 #' @export
 #'
-add_completion_status <- function(dframe, midfield_rec = degree) {
+completion_status <- function(dframe, midfield_rec = degree) {
   # define required columns and variables to be added
   dframe_vars <- c("mcid", "timely_term")
   record_vars <- c("mcid", "term_degree")

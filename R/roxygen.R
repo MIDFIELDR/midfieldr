@@ -18,7 +18,7 @@ dframe_add_term_cluster <- "Working data frame of student-level records
         to which a term-status column is to be added. Required
         variables are `mcid` and a single term variable."
 
-dframe_add_completion_status <- "Working data frame of student-level records
+dframe_completion_status <- "Working data frame of student-level records
         to which completion-status columns are to be added. Required variables
         are `mcid` and `timely_term.` See also `add_timely_term()`."
 
@@ -48,7 +48,7 @@ midfield_term_add_timely_term <- "MIDFIELD `term` data table or equivalent
 midfield_term_prep_fye_mice <- "MIDFIELD `term` data table or equivalent
         with required variables `mcid`, `institution`, `term`, and `cip6.`"
 
-midfield_degree_add_completion_status <- "MIDFIELD `degree` data table or
+midfield_degree_completion_status <- "MIDFIELD `degree` data table or
         equivalent with required variables `mcid` and `term_degree.`"
 
 midfield_degree_add_term_cluster <- "MIDFIELD `degree` data table or

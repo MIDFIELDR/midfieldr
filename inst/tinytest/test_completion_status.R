@@ -27,11 +27,11 @@ expect_class_preserved <- function(df1, df2, fnc) {
     rm(x, y)
 }
 
-test_add_completion_status <- function() {
+test_completion_status <- function() {
     
     # ---------- usage
     #
-    # add_completion_status(dframe, midfield_rec = degree)
+    # completion_status(dframe, midfield_rec = degree)
     
     # Needed for tinytest::build_install_test()
     suppressPackageStartupMessages(require("data.table"))
@@ -57,10 +57,10 @@ test_add_completion_status <- function() {
     # ---------- correct answers
     
     # check that class is preserved function
-    expect_class_preserved(dframe, degree, add_completion_status)
+    expect_class_preserved(dframe, degree, completion_status)
     
     # correct answers manually set up
-    DT <- add_completion_status(dframe, degree)
+    DT <- completion_status(dframe, degree)
     DT <- unique(DT)
     
     expect_equal("timely", DT[mcid == "A1_OK", (completion_status)])
@@ -80,23 +80,23 @@ test_add_completion_status <- function() {
     expect_equal(return_vars, colnames(DT))
     
     # correct answers naming and not naming arguments
-    x <- add_completion_status(dframe = dframe, midfield_rec = degree)
-    y <- add_completion_status(dframe, degree)
+    x <- completion_status(dframe = dframe, midfield_rec = degree)
+    y <- completion_status(dframe, degree)
     expect_equal(x, y)
     rm(x, y)
     
     # ---------- errors
     
     # required column missing
-    expect_error(add_completion_status(dframe[-mcid], degree))
-    expect_error(add_completion_status(dframe, degree[-mcid]))
+    expect_error(completion_status(dframe[-mcid], degree))
+    expect_error(completion_status(dframe, degree[-mcid]))
     
     # argument types incorrect
-    expect_error(add_completion_status(dframe[["mcid"]], degree))
-    expect_error(add_completion_status(dframe, degree[["mcid"]])) 
+    expect_error(completion_status(dframe[["mcid"]], degree))
+    expect_error(completion_status(dframe, degree[["mcid"]])) 
     
     invisible(NULL)
 }
 
-test_add_completion_status()
+test_completion_status()
 

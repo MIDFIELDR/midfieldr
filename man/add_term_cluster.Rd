@@ -52,8 +52,8 @@ x <- 1
 }
 \seealso{
 Other add_*:
-\code{\link[=add_completion_status]{add_completion_status()}},
 \code{\link[=add_data_sufficiency]{add_data_sufficiency()}},
-\code{\link[=add_timely_term]{add_timely_term()}}
+\code{\link[=add_timely_term]{add_timely_term()}},
+\code{\link[=completion_status]{completion_status()}}
 }
 \concept{add_*}

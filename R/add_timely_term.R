@@ -30,7 +30,7 @@
 #'
 #' The supporting information in the output is provided so that the user
 #' can review the findings. Moreover, `add_data_sufficiency()` and
-#' `add_completion_status()` require one or both of the added columns
+#' `completion_status()` require one or both of the added columns
 #' `{term_i, timely_term}.`
 #'
 #'
