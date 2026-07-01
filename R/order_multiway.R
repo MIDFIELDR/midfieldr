@@ -24,23 +24,23 @@
 #' category is encoded by the rows of each panel, and the quantitative variable
 #' is encoded along identical horizontal scales.
 #'
-#' @param dframe `r dframe` Required variables: a single quantitative value 
+#' @param dframe `r dframe` Required variables: a single quantitative value
 #'        for every combination of levels of two categorical variables.
-#' 
+#'
 #' @param quantity Character, name of the single multiway quantitative
 #'        variable
-#'        
+#'
 #' @param categories Character, vector of names of the two multiway
 #'        categorical variables
-#'        
+#'
 #' @param ... `r param_dots`
-#' 
+#'
 #' @param method Character, “median” (default) or “percent”, method of
 #'        ordering the levels of the categories. The median method computes the
 #'        medians of the quantitative column grouped by category. The percent
 #'        method computes percentages based on the same ratio underlying the
 #'        quantitative percentage variable except grouped by category.
-#'        
+#'
 #' @param ratio_of Character vector with the names of the
 #'        numerator and denominator columns that produced the quantitative
 #'        variable, required when `method` is "percent". Names can be
@@ -52,8 +52,8 @@
 #' * Rows are preserved.
 #' * Column specified by `quantity` is converted to type double.
 #' * Columns specified by `categories` are converted to factors and ordered.
-#' * Other columns are preserved with the exception that columns added by 
-#'   the function overwrite existing columns of the same name (if any). 
+#' * Other columns are preserved with the exception that columns added by
+#'   the function overwrite existing columns of the same name (if any).
 #' * Two new columns `CATEGORY_median` added when method is "median." Numeric medians of the quantitative variable grouped by the categorical variables. The `CATEGORY` placeholder in the column name is replaced by a category name from the `categories` argument. For example, suppose `categories = c("program", "people")` and `method = "median"`. The two new column names would be `program_median` and `people_median.`
 #' * Two new columns `CATEGORY_QUANTITY` added when method is "percent." Numeric percentages based on the same ratio that produces the quantitative variable except grouped by the categorical variables. The `CATEGORY` placeholder in the column name is replaced by a category name from the `categories` argument; the `QUANTITY` placeholder is replaced by the quantitative variable name in the `quantity` argument. For example, suppose `quantity = "grad_rate"`, `categories = c("program", "people")`, and `method = "percent"`. The two new column names  would be `program_grad_rate` and `people_grad_rate.`
 #'
@@ -90,7 +90,7 @@ order_multiway <- function(dframe,
 
   # class of required columns
   qassert(dframe[[quantity]], "n+") # numeric, length 1 or more
-  
+
   # categories class factor or character
   one_row_df <- as.data.frame(dframe)[1, categories, drop = FALSE]
   col_class <- unlist(lapply(one_row_df, class))
@@ -198,15 +198,11 @@ order_multiway <- function(dframe,
   }
 
   # ---------- prepare to return
-  
+
   setkey(DT, NULL)
   setattr(DT, "class", prior_class)
   DT[]
 }
-
-
-
-
 
 
 # --------------------------------------------------------------------------

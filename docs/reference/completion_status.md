@@ -3,11 +3,12 @@
 To a data frame keyed by student ID, add a column indicating if a
 student completed their program, and if so, whether their completion was
 timely or late. Columns of supporting information are also added.
+Unrelated columns are dropped.
 
 ## Usage
 
 ``` r
-add_completion_status(dframe, midfield_rec = degree)
+completion_status(dframe, midfield_rec = degree)
 ```
 
 ## Arguments
@@ -51,20 +52,13 @@ degree in the same term).
 
 The goal of determining timely completion is to refine a population,
 that is, obtain a data frame of IDs that satisfy our constraints. Thus
-`add_completion_status()` yields a column of completion status values
-and columns of supporting information keyed by ID. All other columns in
+`completion_status()` yields a column of completion status values and
+columns of supporting information keyed by ID. All other columns in
 `dframe` (if any) are dropped.
 
 The supporting information in the output is provided so that the user
 can review the findings. After review, we usually delete all columns
 except the IDs, yielding the refined population that was our goal.
-
-## See also
-
-Other add\_\*:
-[`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md),
-[`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md),
-[`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
 
 ## Examples
 
@@ -73,10 +67,10 @@ Other add\_\*:
 dframe <- toy_student[1:10, .(mcid)]
 
 # Timely term column is required to add completion status column
-dframe <- add_timely_term(dframe, toy_term)
+dframe <- timely_term(dframe, toy_term)
 
 # Add completion status column
-add_completion_status(dframe, toy_degree)
+completion_status(dframe, toy_degree)
 #>               mcid timely_term term_degree completion_status
 #>             <char>      <char>      <char>            <char>
 #>  1: MCID3111158953       19933        <NA>              <NA>
@@ -104,7 +98,7 @@ dframe[, completion_status := NA_character_][]
 #>  8: MCID3111213943  19891 01 First-year        6       19943              <NA>
 #>  9: MCID3111248941  19901 01 First-year        6       19953              <NA>
 #> 10: MCID3111250695  19901 01 First-year        6       19953              <NA>
-add_completion_status(dframe, toy_degree)
+completion_status(dframe, toy_degree)
 #>               mcid timely_term term_degree completion_status
 #>             <char>      <char>      <char>            <char>
 #>  1: MCID3111158953       19933        <NA>              <NA>

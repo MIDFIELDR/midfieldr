@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9005</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9011</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -215,9 +215,9 @@ started</a>.</p>
 <span><span class="va">source_degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Optional. Select variables required by midfieldr functions</span></span>
-<span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_record_cols.html">select_record_cols</a></span><span class="op">(</span><span class="va">source_student</span><span class="op">)</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_record_cols.html">select_record_cols</a></span><span class="op">(</span><span class="va">source_term</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_record_cols.html">select_record_cols</a></span><span class="op">(</span><span class="va">source_degree</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">source_student</span><span class="op">)</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">source_term</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">source_degree</span><span class="op">)</span></span></code></pre></div>
 <p><em>Initialize.</em>   Use the <code>term</code> and
 <code>student</code> data tables to obtain a data frame of student IDs
 meeting the data sufficiency and degree-seeking criteria. Applied to the
@@ -229,19 +229,19 @@ midfieldr.</p>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">baseline_mcid</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="add_completion_status">
-<code>add_completion_status()</code><a class="anchor" aria-label="anchor" href="#add_completion_status"></a>
+<h2 id="completion_status">
+<code>completion_status()</code><a class="anchor" aria-label="anchor" href="#completion_status"></a>
 </h2>
 <p>Add columns to a data frame of student-level records that indicate
 whether a student completed a degree, and if so, whether their
 completion was timely.</p>
 <p>The input data frame must have columns for ID and the timely
-completion term. We use <code><a href="../reference/add_timely_term.html">add_timely_term()</a></code> again, though
+completion term. We use <code><a href="../reference/timely_term.html">timely_term()</a></code> again, though
 alternatively we could have retained the <code>timely_term</code>
 variable from previous code chunks.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Timely term required before completion status</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Drop unnecessary columns</span></span>
 <span><span class="va">DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"term_i"</span>, <span class="st">"level_i"</span>, <span class="st">"adj_span"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span></code></pre></div>
@@ -259,13 +259,13 @@ student-level degree observations keyed by student ID. Default is
 identical results,</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Required arguments in order and explicitly named</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">DT</span>, midfield_rec <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/completion_status.html">completion_status</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">DT</span>, midfield_rec <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Required arguments in order, but not named</span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/completion_status.html">completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">degree</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Using the implicit default for the midfield_rec argument</span></span>
-<span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/completion_status.html">completion_status</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Demonstrate equivalence</span></span>
 <span><span class="fu"><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span>
@@ -284,7 +284,7 @@ timely completion term; and “NA” indicating non-completion.</p></li>
 </ul>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add completion status and supporting variables</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/completion_status.html">completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">degree</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                  mcid timely_term term_degree completion_status</span></span>
 <span><span class="co">#&gt;                &lt;char&gt;      &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span></span>
@@ -296,7 +296,7 @@ timely completion term; and “NA” indicating non-completion.</p></li>
 <span><span class="co">#&gt; 76920: MCID3112800920       20153        &lt;NA&gt;              &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 76921: MCID3112870009       20003        &lt;NA&gt;              &lt;NA&gt;</span></span></code></pre></div>
 <p>Similar to the details described in the data sufficiency vignette,
-<code><a href="../reference/add_completion_status.html">add_completion_status()</a></code> accepts <a href="art-020-data-sufficiency.html#alternate-source-names">Alternate
+<code><a href="../reference/completion_status.html">completion_status()</a></code> accepts <a href="art-020-data-sufficiency.html#alternate-source-names">Alternate
 source names</a> and uses <a href="art-020-data-sufficiency.html#silent-overwriting">Silent
 overwriting</a> when existing columns have the same name as one of the
 added columns.</p>
@@ -441,8 +441,8 @@ for this section.</p>
 <p><em>Graduates.</em>   A summary code chunk for ready reference.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Gather graduates, degree CIPs and terms</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/completion_status.html">completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">degree</span><span class="op">)</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">completion_status</span> <span class="op">==</span> <span class="st">"timely"</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term_degree</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>

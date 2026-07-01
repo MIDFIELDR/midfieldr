@@ -29,7 +29,7 @@ t <- toy_term[, .(mcid, term)]
 d <- toy_degree[, .(mcid, term_degree)]
 
 # No error
-catch_error(add_term_cluster(t, d))
+catch_error(post_bacc_terms(t, d))
 #>                 mcid   term first_degree_term term_cluster
 #>               <char> <char>            <char>       <char>
 #>    1: MCID3111158953  19881              <NA>   pre-degree
@@ -45,14 +45,14 @@ catch_error(add_term_cluster(t, d))
 #> 1095: MCID3112884375  20181              <NA>   pre-degree
 
 # Error, no term variable 
-catch_error(add_term_cluster(s, d))
+catch_error(post_bacc_terms(s, d))
 #> Error: Assertion on 'var' failed: Must be element of set {'term','term_course','term_degree'}, but is not atomic scalar. 
 
 # Error, missing dframe argument
-catch_error(add_term_cluster())
+catch_error(post_bacc_terms())
 #> Error: argument "dframe" is missing, with no default 
 
 # Error, missing degree argument
-catch_error(add_term_cluster(t))
+catch_error(post_bacc_terms(t))
 #> Error: object 'degree' not found 
 ```

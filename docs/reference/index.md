@@ -5,28 +5,31 @@
 - [`midfieldr`](https://midfieldr.github.io/midfieldr/reference/midfieldr-package.md)
   [`midfieldr-package`](https://midfieldr.github.io/midfieldr/reference/midfieldr-package.md)
   : midfieldr: Tools and Methods for Working with MIDFIELD Data in 'R'
-- [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+- [`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+  [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+  [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
   [`select_required()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+  [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
   : midfieldr deprecated functions
 
 ## Functions
 
-- [`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
+- [`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
   : Determine completion status
-- [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
+- [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
   : Determine data sufficiency
-- [`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md)
-  : Identify term clusters
-- [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
-  : Calculate timely completion terms
-- [`filter_cip_rows()`](https://midfieldr.github.io/midfieldr/reference/filter_cip_rows.md)
-  : Subset rows with search strings
+- [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
+  : Choose rows of CIP data
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
   : Order multiway categories
+- [`post_bacc_terms()`](https://midfieldr.github.io/midfieldr/reference/post_bacc_terms.md)
+  : Identify post-baccalaureate terms
 - [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
   : Prepare FYE data for imputation
-- [`select_record_cols()`](https://midfieldr.github.io/midfieldr/reference/select_record_cols.md)
-  : Select record columns
+- [`select_records()`](https://midfieldr.github.io/midfieldr/reference/select_records.md)
+  : Choose columns of student records
+- [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
+  : Calculate timely completion terms
 
 ## Utility
 

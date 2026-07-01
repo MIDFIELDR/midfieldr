@@ -210,7 +210,7 @@ started](https://midfieldr.github.io/midfieldr/articles/art-000-getting-started.
 source_term <- copy(term)
 
 # Select variables required by midfieldr functions
-term <- select_record_cols(source_term)
+term <- select_records(source_term)
 ```
 
 *Initialize.*   Assign a working data frame.
@@ -258,7 +258,7 @@ DT
 #> 97555: MCID3112898940 Institution B
 ```
 
-## `add_timely_term()`
+## `timely_term()`
 
 Add a column to a data frame of student-level data that indicates the
 latest term by which degree completion would be considered timely for
@@ -287,13 +287,13 @@ results,
 ``` r
 
 # Required arguments in order and explicitly named
-x <- add_timely_term(dframe = DT, midfield_rec = term)
+x <- timely_term(dframe = DT, midfield_rec = term)
 
 # Required arguments in order, but not named
-y <- add_timely_term(DT, term)
+y <- timely_term(DT, term)
 
 # Using the implicit default for the midfield_rec argument
-z <- add_timely_term(DT)
+z <- timely_term(DT)
 
 # Demonstrate equivalence
 check_equiv_frames(x, y)
@@ -318,7 +318,7 @@ check_equiv_frames(x, z)
 ``` r
 
 # Add timely term column and supporting variables
-DT <- add_timely_term(DT, term)
+DT <- timely_term(DT, term)
 DT
 #>                  mcid term_i       level_i adj_span timely_term
 #>                <char> <char>        <char>    <num>      <char>
@@ -380,10 +380,10 @@ like this,
 toy_mcid <- toy_student[, .(mcid)]
 
 # Source data table names that differ from the defaults
-toy_DT <- add_timely_term(dframe = toy_mcid, midfield_rec = toy_term)
+toy_DT <- timely_term(dframe = toy_mcid, midfield_rec = toy_term)
 
 # Equivalently
-toy_DT <- add_timely_term(toy_mcid, toy_term)
+toy_DT <- timely_term(toy_mcid, toy_term)
 toy_DT
 #>                mcid term_i       level_i adj_span timely_term
 #>              <char> <char>        <char>    <num>      <char>
@@ -415,7 +415,7 @@ replaced.
 ``` r
 
 # Demonstrate overwriting
-toy_DT <- add_timely_term(toy_DT, toy_term)
+toy_DT <- timely_term(toy_DT, toy_term)
 toy_DT
 #>                mcid term_i       level_i adj_span timely_term
 #>              <char> <char>        <char>    <num>      <char>
@@ -428,7 +428,7 @@ toy_DT
 #> 150: MCID3112884375  20181 01 First-year        6       20233
 ```
 
-## `add_data_sufficiency()`
+## `data_sufficiency()`
 
 Add a column to a data frame of Student Unit Record (SUR) observations
 that labels each row for inclusion or exclusion based on data
@@ -450,13 +450,13 @@ results,
 ``` r
 
 # Required arguments in order and explicitly named
-x <- add_data_sufficiency(dframe = DT, midfield_rec = term)
+x <- data_sufficiency(dframe = DT, midfield_rec = term)
 
 # Required arguments in order, but not named
-y <- add_data_sufficiency(DT, term)
+y <- data_sufficiency(DT, term)
 
 # Using the implicit default for the midfield_rec argument
-z <- add_data_sufficiency(DT)
+z <- data_sufficiency(DT)
 
 # Demonstrate equivalence
 check_equiv_frames(x, y)
@@ -488,7 +488,7 @@ check_equiv_frames(x, z)
 DT <- DT[, .(mcid, term_i, timely_term)]
 
 # Add data sufficiency column and supporting variables
-DT <- add_data_sufficiency(DT, term)
+DT <- data_sufficiency(DT, term)
 DT
 #>                   mcid term_i timely_term   institution lower_limit upper_limit
 #>                 <char> <char>      <char>        <char>      <char>      <char>
@@ -511,7 +511,7 @@ DT
 ```
 
 Similar to the details described in the previous section,
-[`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
+[`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
 accepts [Alternate source names](#alternate-source-names) and uses
 [Silent overwriting](#silent-overwriting) when existing columns have the
 same name as one of the added columns.
@@ -623,8 +623,8 @@ DT <- copy(term)
 ``` r
 
 # Filter for data sufficiency, output unique IDs
-DT <- add_timely_term(DT, term)
-DT <- add_data_sufficiency(DT, term)
+DT <- timely_term(DT, term)
+DT <- data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include", .(mcid)]
 DT <- unique(DT)
 ```

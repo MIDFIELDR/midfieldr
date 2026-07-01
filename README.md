@@ -19,11 +19,11 @@ student-level records modeled on the MIDFIELD database.
 - `filter_programs()` chooses rows of program data based on search
   terms.
 - `select_records()` chooses columns required by midfieldr functions.  
-- `add_term_cluster()` identifies rows of post-baccalaureate terms to
+- `post_bacc_terms()` identifies rows of post-baccalaureate terms to
   exclude.
-- `add_timely_term()` estimates a student’s timely graduation term.
-- `add_data_sufficiency()` identifies rows to exclude due to
-  insufficient data.
+- `timely_term()` estimates a student’s timely graduation term.
+- `data_sufficiency()` identifies rows to exclude due to insufficient
+  data.
 - `completion_status()` determines if a graduation is timely or late.
 - `prep_fye_mice()` conditions data for imputing starting majors of FYE
   students.  
@@ -88,9 +88,9 @@ term
 #> 1094: MCID3112882995  20181 141901 Institution B  01 First-year
 #> 1095: MCID3112884375  20181 520201 Institution B  01 First-year
 
-# Add a column to label term clusters
-term <- add_term_cluster(term)
-degree <- add_term_cluster(degree)
+# Identify post-baccalaureate terms
+term <- post_bacc_terms(term)
+degree <- post_bacc_terms(degree)
 
 term
 #>                 mcid   term   cip6   institution          level
@@ -114,7 +114,9 @@ term
 
 # Exclude rows after the first degree term
 term <- term[term_cluster != "post-first-degree"]
+term <- select_records(term)
 degree <- degree[term_cluster != "post-first-degree"]
+degree <- select_records(degree)
 
 term
 #>                 mcid   term   cip6   institution          level
@@ -126,17 +128,8 @@ term
 #> 1068: MCID3112881399  20181 260901 Institution B  01 First-year
 #> 1069: MCID3112882995  20181 141901 Institution B  01 First-year
 #> 1070: MCID3112884375  20181 520201 Institution B  01 First-year
-#>       first_degree_term term_cluster
-#>                  <char>       <char>
-#>    1:              <NA>   pre-degree
-#>    2:              <NA>   pre-degree
-#>    3:              <NA>   pre-degree
-#>   ---                               
-#> 1068:              <NA>   pre-degree
-#> 1069:              <NA>   pre-degree
-#> 1070:              <NA>   pre-degree
 
-# Population at this point, for next filter
+# Data frame of IDs for refining the ppulation
 DT <- term[, .(mcid)]
 DT <- unique(DT)
 
@@ -152,8 +145,8 @@ DT
 #> 150: MCID3112884375
 
 # Determine data sufficiency
-DT <- add_timely_term(DT)
-DT <- add_data_sufficiency(DT)
+DT <- timely_term(DT)
+DT <- data_sufficiency(DT)
 
 DT
 #>                 mcid term_i timely_term   institution lower_limit upper_limit
@@ -189,7 +182,7 @@ population
 #> 101: MCID3112411629
 #> 102: MCID3112498796
 
-# Filter records using inner join with population
+# Inner join to retain IDs in the population
 student <- population[student, on = "mcid", nomatch = NULL]
 term <- population[term, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]

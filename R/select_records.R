@@ -24,7 +24,7 @@ NULL
 
 # ---------- new version
 
-#' Choose columns of student records 
+#' Choose columns of student records
 #'
 #' Subset a data frame, selecting columns by matching a vector of character
 #' strings. A convenience function to reduce the dimensions of a MIDFIELD

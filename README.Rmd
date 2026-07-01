@@ -99,7 +99,7 @@ degree <- select_records(toy_degree)
 # Display one representative data frame
 term
 
-# Add a column to label term clusters
+# Identify post-baccalaureate terms
 term <- post_bacc_terms(term)
 degree <- post_bacc_terms(degree)
 
@@ -107,11 +107,13 @@ term
 
 # Exclude rows after the first degree term
 term <- term[term_cluster != "post-first-degree"]
+term <- select_records(term)
 degree <- degree[term_cluster != "post-first-degree"]
+degree <- select_records(degree)
 
 term
 
-# Population at this point, for next filter
+# Data frame of IDs for refining the ppulation
 DT <- term[, .(mcid)]
 DT <- unique(DT)
 
@@ -128,7 +130,7 @@ population <- DT[data_sufficiency == "include", .(mcid)]
 population <- unique(population)
 population
 
-# Filter records using inner join with population
+# Inner join to retain IDs in the population
 student <- population[student, on = "mcid", nomatch = NULL]
 term <- population[term, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]

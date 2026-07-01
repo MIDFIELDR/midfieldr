@@ -117,9 +117,9 @@ source_term <- copy(term)
 source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_record_cols(source_student)
-term <- select_record_cols(source_term)
-degree <- select_record_cols(source_degree)
+student <- select_records(source_student)
+term <- select_records(source_term)
+degree <- select_records(source_degree)
 ```
 
 *Initialize.*   Assign a working data frame.
@@ -137,8 +137,8 @@ sufficiency](https://midfieldr.github.io/midfieldr/articles/art-020-data-suffici
 ``` r
 
 # Filter for data sufficiency, output unique IDs
-DT <- add_timely_term(DT, term)
-DT <- add_data_sufficiency(DT, term)
+DT <- timely_term(DT, term)
+DT <- data_sufficiency(DT, term)
 DT <- DT[data_sufficiency == "include", .(mcid)]
 DT <- unique(DT)
 ```

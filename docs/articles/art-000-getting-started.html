@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9005</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9011</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -134,26 +134,26 @@ based on their contribution to a typical workflow:</p>
 <p>Programs</p>
 <ul>
 <li>
-<code><a href="../reference/filter_cip_rows.html">filter_cip_rows()</a></code> chooses rows of CIP data based on
+<code><a href="../reference/filter_programs.html">filter_programs()</a></code> chooses rows of CIP data based on
 search terms.</li>
 </ul>
 <p>Records</p>
 <ul>
 <li>
-<code><a href="../reference/select_record_cols.html">select_record_cols()</a></code> chooses columns of student records
+<code><a href="../reference/select_records.html">select_records()</a></code> chooses columns of student records
 required by midfieldr functions.</li>
 <li>
-<code><a href="../reference/add_term_cluster.html">add_term_cluster()</a></code> identifies rows of
-post-baccalaureate terms to exclude.</li>
+<code><a href="../reference/post_bacc_terms.html">post_bacc_terms()</a></code> identifies rows of post-baccalaureate
+terms to exclude.</li>
 <li>
-<code><a href="../reference/add_timely_term.html">add_timely_term()</a></code> estimates a student’s timely
-completion term.</li>
+<code><a href="../reference/timely_term.html">timely_term()</a></code> estimates a student’s timely completion
+term.</li>
 <li>
-<code><a href="../reference/add_data_sufficiency.html">add_data_sufficiency()</a></code> identifies rows to exclude due
-to insufficient data.</li>
+<code><a href="../reference/data_sufficiency.html">data_sufficiency()</a></code> identifies rows to exclude due to
+insufficient data.</li>
 <li>
-<code><a href="../reference/add_completion_status.html">add_completion_status()</a></code> determines if program
-completion is timely or late.</li>
+<code><a href="../reference/completion_status.html">completion_status()</a></code> determines if program completion is
+timely or late.</li>
 </ul>
 <p>Special conditioning</p>
 <ul>
@@ -220,16 +220,16 @@ variable.</p>
 <span><span class="co">#&gt; 1582:                         NonIPEDS - Undecided, Unspecified     99</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="filter_cip_rows">
-<code>filter_cip_rows()</code><a class="anchor" aria-label="anchor" href="#filter_cip_rows"></a>
+<h2 id="filter_programs">
+<code>filter_programs()</code><a class="anchor" aria-label="anchor" href="#filter_programs"></a>
 </h2>
 <p><em>Chooses rows of CIP data based on search terms.</em></p>
-<p><code><a href="../reference/filter_cip_rows.html">filter_cip_rows()</a></code> acts on the data frame assigned to its
+<p><code><a href="../reference/filter_programs.html">filter_programs()</a></code> acts on the data frame assigned to its
 <code>dframe</code> argument to select rows that match or partially
 match search strings. Search strings are case-independent and can
 include regular expressions.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"music"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"music"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                      cip6name   cip6</span></span>
 <span><span class="co">#&gt;                                        &lt;char&gt; &lt;char&gt;</span></span>
 <span><span class="co">#&gt;  1:                   Music Teacher Education 131312</span></span>
@@ -275,8 +275,8 @@ first pass below searches the default <code>cip</code> dataset for
 “music”. Our second pass searches the results of the first pass for any
 line that starts with “50”.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">first_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"music"</span><span class="op">)</span></span>
-<span><span class="va">second_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">first_pass</span>, <span class="st">"^50"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">first_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"music"</span><span class="op">)</span></span>
+<span><span class="va">second_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">first_pass</span>, <span class="st">"^50"</span><span class="op">)</span></span>
 <span><span class="va">second_pass</span></span>
 <span><span class="co">#&gt;                                 cip6name   cip6</span></span>
 <span><span class="co">#&gt;                                   &lt;char&gt; &lt;char&gt;</span></span>
@@ -322,7 +322,7 @@ line that starts with “50”.</p>
 searches the results of the second pass for any line that starts with
 “5009”.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">third_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cip_rows.html">filter_cip_rows</a></span><span class="op">(</span><span class="va">second_pass</span>, <span class="st">"^5009"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">third_pass</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">second_pass</span>, <span class="st">"^5009"</span><span class="op">)</span></span>
 <span><span class="va">third_pass</span></span>
 <span><span class="co">#&gt;                                 cip6name   cip6 cip4name   cip4</span></span>
 <span><span class="co">#&gt;                                   &lt;char&gt; &lt;char&gt;   &lt;char&gt; &lt;char&gt;</span></span>
@@ -444,19 +444,19 @@ names — <code>student</code>, <code>term</code>, and <code>degree</code>
 <span><span class="va">degree_source</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="select_record_cols">
-<code>select_record_cols()</code><a class="anchor" aria-label="anchor" href="#select_record_cols"></a>
+<h2 id="select_records">
+<code>select_records()</code><a class="anchor" aria-label="anchor" href="#select_records"></a>
 </h2>
 <p><em>Choose columns required by midfieldr functions.</em></p>
-<p><code><a href="../reference/select_record_cols.html">select_record_cols()</a></code> operates on student records to
-reduce the number of columns to those required by other midfieldr
-functions plus the key or composite key variables of the four data
-tables. Shown below, the records have been reduced to no more than 5
-columns required by other midfieldr functions.</p>
+<p><code><a href="../reference/select_records.html">select_records()</a></code> operates on student records to reduce
+the number of columns to those required by other midfieldr functions
+plus the key or composite key variables of the four data tables. Shown
+below, the records have been reduced to no more than 5 columns required
+by other midfieldr functions.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_record_cols.html">select_record_cols</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_record_cols.html">select_record_cols</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_record_cols.html">select_record_cols</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   97555 obs. of  4 variables:</span></span>
@@ -498,19 +498,19 @@ more readable, a benefit when working with the data interactively.</p>
 <span><span class="co">#&gt; 639915: MCID3112898940  20181 050103 Institution B  01 First-year</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="add_term_cluster">
-<code>add_term_cluster()</code><a class="anchor" aria-label="anchor" href="#add_term_cluster"></a>
+<h2 id="post_bacc_terms">
+<code>post_bacc_terms()</code><a class="anchor" aria-label="anchor" href="#post_bacc_terms"></a>
 </h2>
 <p><em>Identify rows of post-baccalaureate terms to exclude.</em></p>
-<p><code><a href="../reference/add_term_cluster.html">add_term_cluster()</a></code> identifies terms later than the first
+<p><code><a href="../reference/post_bacc_terms.html">post_bacc_terms()</a></code> identifies terms later than the first
 baccalaureate, if any. We are not generally interested in terms beyond
 the first degree term, so we use the results of this function to exclude
 post-first-degree terms.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_term_cluster.html">add_term_cluster</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_term_cluster.html">add_term_cluster</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span></code></pre></div>
-<p><code><a href="../reference/add_term_cluster.html">add_term_cluster()</a></code> adds a column indicating the cluster
-a term belongs to with respect to the first degree term.</p>
+<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/post_bacc_terms.html">post_bacc_terms</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/post_bacc_terms.html">post_bacc_terms</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="../reference/post_bacc_terms.html">post_bacc_terms()</a></code> adds a column indicating the cluster a
+term belongs to with respect to the first degree term.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">term</span></span>
 <span><span class="co">#&gt;                   mcid   term   cip6   institution          level</span></span>
@@ -551,8 +551,8 @@ the extra columns.</p>
 <code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="op">!</span><span class="st">"post-first-degree"</span>, on <span class="op">=</span> <span class="st">"term_cluster"</span><span class="op">]</span></span>
 <span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="op">!</span><span class="st">"post-first-degree"</span>, on <span class="op">=</span> <span class="st">"term_cluster"</span><span class="op">]</span></span>
 <span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_record_cols.html">select_record_cols</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_record_cols.html">select_record_cols</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">term</span></span>
 <span><span class="co">#&gt;                   mcid   term   cip6   institution          level</span></span>
@@ -570,8 +570,8 @@ the extra columns.</p>
 <span><span class="co">#&gt; 632917: MCID3112898940  20181 050103 Institution B  01 First-year</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="add_timely_term">
-<code>add_timely_term()</code><a class="anchor" aria-label="anchor" href="#add_timely_term"></a>
+<h2 id="timely_term">
+<code>timely_term()</code><a class="anchor" aria-label="anchor" href="#timely_term"></a>
 </h2>
 <p><em>Determine the term by which degree completion would be considered
 timely.</em></p>
@@ -595,13 +595,13 @@ unique set of IDs from the <code>term</code> record obtained above.</p>
 <span><span class="co">#&gt; 97534: MCID3112898894</span></span>
 <span><span class="co">#&gt; 97535: MCID3112898895</span></span>
 <span><span class="co">#&gt; 97536: MCID3112898940</span></span></code></pre></div>
-<p><code><a href="../reference/add_timely_term.html">add_timely_term()</a></code> adds a column indicating the last term
-by which a student’s degree completion would be considered timely,
+<p><code><a href="../reference/timely_term.html">timely_term()</a></code> adds a column indicating the last term by
+which a student’s degree completion would be considered timely,
 generally 6 years after admission. The timely completion term is
 required to determine data sufficiency as well as assessing timely
 completion.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                  mcid term_i       level_i adj_span timely_term</span></span>
@@ -619,18 +619,18 @@ completion.</p>
 <span><span class="co">#&gt; 97536: MCID3112898940  20181 01 First-year        6       20233</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="add_data_sufficiency">
-<code>add_data_sufficiency()</code><a class="anchor" aria-label="anchor" href="#add_data_sufficiency"></a>
+<h2 id="data_sufficiency">
+<code>data_sufficiency()</code><a class="anchor" aria-label="anchor" href="#data_sufficiency"></a>
 </h2>
 <p><em>Identify members of the population to exclude due to insufficient
 data.</em></p>
 <p>The data sufficiency criterion limits student records to those for
 which available data are sufficient to assess timely completion.</p>
-<p><code><a href="../reference/add_data_sufficiency.html">add_data_sufficiency()</a></code> adds a column that labels each
-row for inclusion or exclusion based on data sufficiency near the upper
-and lower bounds of an institution’s data range.</p>
+<p><code><a href="../reference/data_sufficiency.html">data_sufficiency()</a></code> adds a column that labels each row
+for inclusion or exclusion based on data sufficiency near the upper and
+lower bounds of an institution’s data range.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_data_sufficiency.html">add_data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_sufficiency.html">data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                   mcid term_i timely_term   institution lower_limit upper_limit</span></span>
@@ -693,22 +693,22 @@ the remainder of the study.</p>
 <span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">degree</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="add_completion_status">
-<code>add_completion_status()</code><a class="anchor" aria-label="anchor" href="#add_completion_status"></a>
+<h2 id="completion_status">
+<code>completion_status()</code><a class="anchor" aria-label="anchor" href="#completion_status"></a>
 </h2>
 <p><em>Determines if program completion is timely or late.</em></p>
 <p>This section often pertains to constructing a bloc of graduates,
 starting with the baseline population we obtained above. Completion
 status indicates whether or not a student completes a degree, and if
 they do, labeling it timely or late compared to their timely completion
-term. Thus we run <code><a href="../reference/add_timely_term.html">add_timely_term()</a></code> again.</p>
+term. Thus we run <code><a href="../reference/timely_term.html">timely_term()</a></code> again.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">population</span><span class="op">)</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_timely_term.html">add_timely_term</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span></code></pre></div>
-<p><code><a href="../reference/add_completion_status.html">add_completion_status()</a></code> adds a column indicating
-completion status for every student.</p>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="../reference/completion_status.html">completion_status()</a></code> adds a column indicating completion
+status for every student.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_completion_status.html">add_completion_status</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/completion_status.html">completion_status</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                  mcid timely_term term_degree completion_status</span></span>

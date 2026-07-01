@@ -21,13 +21,13 @@ prep_fye_mice(
 
 - midfield_student:
 
-  MIDFIELD `student` data table or equivalent with required variables
-  `mcid`, `race`, and `sex.`
+  MIDFIELD records *student* data frame or data frame extension.
+  Required variables: `{mcid, race, sex}.`
 
 - midfield_term:
 
-  MIDFIELD `term` data table or equivalent with required variables
-  `mcid`, `institution`, `term`, and `cip6.`
+  MIDFIELD records *term* data frame or data frame extension. Required
+  variables: `{mcid, term, cip6, institution}.`
 
 - ...:
 

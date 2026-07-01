@@ -1,28 +1,28 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
 #' Identify post-baccalaureate terms
-#' 
-#' To a data frame keyed by student ID and containing an academic term 
-#' variable, add a column that clusters terms with respect to a student's 
-#' first degree term. Post-baccalaureate terms are typically excluded from 
-#' the term, course, and degree data tables.  
-#' 
+#'
+#' To a data frame keyed by student ID and containing an academic term
+#' variable, add a column that clusters terms with respect to a student's
+#' first degree term. Post-baccalaureate terms are typically excluded from
+#' the term, course, and degree data tables.
+#'
 #' In a typical analysis, one is interested in a student's progress up to
 #' and including the term in which they earn their first degree or degrees.
 #' Any terms later than the first baccalaureate can usually be excluded from
 #' study.
-#' 
-#' @param dframe `r dframe` Required variables: `{mcid}` and one of 
+#'
+#' @param dframe `r dframe` Required variables: `{mcid}` and one of
 #'        `{term, term_course, term_degree}.`
-#'        
+#'
 #' @param midfield_rec `r midfield_x("*degree*")` Required variables:
-#'        `{mcid, term_degree}.`     
+#'        `{mcid, term_degree}.`
 #'
 #' @returns Data frame with the following properties:
 #' * Data frame class is preserved. Groups and keys are not preserved.
 #' * Rows are not modified.
-#' * Columns are not modified except new columns overwrite old columns of 
-#'   the same name. New columns: 
+#' * Columns are not modified except new columns overwrite old columns of
+#'   the same name. New columns:
 #'   - `first_degree_term.` &nbsp;  Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA`.
 #'      Joined from `midfield_rec$term_degree`.

@@ -232,7 +232,7 @@ sample(cip[, cip6name], 10)
 #> [10] "Sports and Exercise"
 ```
 
-## `filter_cip_rows()`
+## `filter_programs()`
 
 Subset the `cip` data frame, retaining rows that match or partially
 match a vector of character strings.
@@ -253,13 +253,13 @@ results,
 ``` r
 
 # Arguments named
-x <- filter_cip_rows(dframe = cip, pattern = c("engineering"))
+x <- filter_programs(dframe = cip, pattern = c("engineering"))
 
 # Arguments unnamed
-y <- filter_cip_rows(cip, "engineering")
+y <- filter_programs(cip, "engineering")
 
 # Using a chain
-z <- cip |> filter_cip_rows("engineering")
+z <- cip |> filter_programs("engineering")
 
 # Demonstrate equivalence
 check_equiv_frames(x, y)
@@ -280,7 +280,7 @@ Filtering the CIP data for all programs containing the word
 ``` r
 
 # Filter basics
-filter_cip_rows(cip, "engineering")
+filter_programs(cip, "engineering")
 #>                                                              cip6name   cip6
 #>                                                                <char> <char>
 #>   1:                                             Engineering, General 140101
@@ -317,7 +317,7 @@ the following code chunk.
 ``` r
 
 # Example 1 filter using keywords
-filter_cip_rows(cip, "civil")
+filter_programs(cip, "civil")
 ```
 
 | cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
@@ -352,13 +352,13 @@ successive passes do not. If used, the `cip` argument must be named.
 ``` r
 
 # First search
-first_pass <- filter_cip_rows(cip, "civil")
+first_pass <- filter_programs(cip, "civil")
 
 # Refine the search
-second_pass <- filter_cip_rows(first_pass, "engineering")
+second_pass <- filter_programs(first_pass, "engineering")
 
 # Refine further
-third_pass <- filter_cip_rows(second_pass, "technology", negate = TRUE)
+third_pass <- filter_programs(second_pass, "technology", negate = TRUE)
 ```
 
 | cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
@@ -381,7 +381,7 @@ and literature. Using “german” for the `keep_text` value yields
 ``` r
 
 # Search on text
-filter_cip_rows(cip, "german")
+filter_programs(cip, "german")
 ```
 
 | cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
@@ -408,7 +408,7 @@ argument.
 ``` r
 
 # Search on codes
-filter_cip_rows(cip, c("050125", "160501"))
+filter_programs(cip, c("050125", "160501"))
 ```
 
 | cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
@@ -425,19 +425,9 @@ strings for the search.
 ``` r
 
 # Search that produces an error
-filter_cip_rows(cip, c(050125, 160501))
-#>                          cip6name   cip6
-#>                            <char> <char>
-#> 1:                 German Studies 050125
-#> 2: German Language and Literature 160501
-#>                                       cip4name   cip4
-#>                                         <char> <char>
-#> 1:                                Area Studies   0501
-#> 2: Germanic Languages, Literatures Linguistics   1605
-#>                                               cip2name   cip2
-#>                                                 <char> <char>
-#> 1: Area, Ethnic, Cultural and Gender and Group Studies     05
-#> 2:      Foreign Languages, Literatures and Linguistics     16
+filter_programs(cip, c(050125, 160501))
+#> Error in `filter_programs()`:
+#> ! Assertion on 'pattern' failed. Must be of class 'string', not 'double'.
 ```
 
 ## Using a regular expression search
@@ -449,7 +439,7 @@ containing the 4-digit string. We use the regular expression notation
 ``` r
 
 # example 3 filter using regular expressions
-filter_cip_rows(cip, c("^1410", "^1419"))
+filter_programs(cip, c("^1410", "^1419"))
 ```
 
 | cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
@@ -469,7 +459,7 @@ programs. Here, the result includes all History programs.
 ``` r
 
 # Search on 2-digit code
-filter_cip_rows(cip, "^54")
+filter_programs(cip, "^54")
 ```
 
 | cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
@@ -494,7 +484,7 @@ codes. It can also be passed to the function as a character vector.
 
 # Search on vector of codes
 codes_we_want <- c("^24", "^4102", "^450202")
-filter_cip_rows(cip, codes_we_want)
+filter_programs(cip, codes_we_want)
 ```
 
 | cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
@@ -552,7 +542,7 @@ here. Our task is to create a variable with custom program names.
 options(datatable.print.nrows = 15)
 
 # Four engineering programs
-four_programs <- filter_cip_rows(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+four_programs <- filter_programs(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
 
 # Retain the needed columns
 four_programs <- four_programs[, .(cip6, cip4name)]
@@ -732,7 +722,7 @@ Requires editing before reuse with different programs.
 ``` r
 
 # Edit as required for different programs
-selected_programs <- filter_cip_rows(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+selected_programs <- filter_programs(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
 ```
 
 *Programs.*   A summary code chunk for ready reference. Requires editing

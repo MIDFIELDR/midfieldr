@@ -1,4 +1,4 @@
-# Select record columns
+# Choose columns of student records
 
 Subset a data frame, selecting columns by matching a vector of character
 strings. A convenience function to reduce the dimensions of a MIDFIELD
@@ -10,7 +10,7 @@ stages of an analysis.
 ## Usage
 
 ``` r
-select_record_cols(dframe, type = NULL, ..., col_pattern = NULL)
+select_records(dframe, type = NULL, ..., col_pattern = NULL)
 ```
 
 ## Arguments
@@ -78,7 +78,7 @@ argument. In all cases, unmatched search strings are silently ignored.
 
 ``` r
 # Basic usage
-select_record_cols(toy_student[1:5])
+select_records(toy_student[1:5])
 #>              mcid   race    sex   institution
 #>            <char> <char> <char>        <char>
 #> 1: MCID3111158953  White Female Institution J
@@ -86,7 +86,7 @@ select_record_cols(toy_student[1:5])
 #> 3: MCID3111160513  White   Male Institution J
 #> 4: MCID3111162677  White Female Institution J
 #> 5: MCID3111164287  White   Male Institution J
-select_record_cols(toy_term[1:5])
+select_records(toy_term[1:5])
 #>              mcid   term   cip6   institution          level
 #>            <char> <char> <char>        <char>         <char>
 #> 1: MCID3111158953  19881 240102 Institution J  01 First-year
@@ -94,7 +94,7 @@ select_record_cols(toy_term[1:5])
 #> 3: MCID3111158953  19891 240102 Institution J 02 Second-year
 #> 4: MCID3111158953  19893 240102 Institution J 02 Second-year
 #> 5: MCID3111158953  19901 240102 Institution J  03 Third-year
-select_record_cols(toy_course[1:5])
+select_records(toy_course[1:5])
 #>              mcid term_course abbrev number   institution
 #>            <char>      <char> <char> <char>        <char>
 #> 1: MCID3111158953       19881   EDCI   2984 Institution J
@@ -102,7 +102,7 @@ select_record_cols(toy_course[1:5])
 #> 3: MCID3111158953       19881     MN   1004 Institution J
 #> 4: MCID3111158953       19881   CHEM   1035 Institution J
 #> 5: MCID3111158953       19881   CHEM   1045 Institution J
-select_record_cols(toy_degree[1:5])
+select_records(toy_degree[1:5])
 #>              mcid term_degree   cip6   institution
 #>            <char>      <char> <char>        <char>
 #> 1: MCID3111159270       19913 141001 Institution J
@@ -112,7 +112,7 @@ select_record_cols(toy_degree[1:5])
 #> 5: MCID3111172083       19913 520201 Institution B
 
 # Return columns by record type
-select_record_cols(toy_student[1:5], type = "s")
+select_records(toy_student[1:5], type = "s")
 #>              mcid   race    sex
 #>            <char> <char> <char>
 #> 1: MCID3111158953  White Female
@@ -120,7 +120,7 @@ select_record_cols(toy_student[1:5], type = "s")
 #> 3: MCID3111160513  White   Male
 #> 4: MCID3111162677  White Female
 #> 5: MCID3111164287  White   Male
-select_record_cols(toy_term[1:5], "t")
+select_records(toy_term[1:5], "t")
 #>              mcid   term   cip6   institution          level
 #>            <char> <char> <char>        <char>         <char>
 #> 1: MCID3111158953  19881 240102 Institution J  01 First-year
@@ -128,7 +128,7 @@ select_record_cols(toy_term[1:5], "t")
 #> 3: MCID3111158953  19891 240102 Institution J 02 Second-year
 #> 4: MCID3111158953  19893 240102 Institution J 02 Second-year
 #> 5: MCID3111158953  19901 240102 Institution J  03 Third-year
-select_record_cols(toy_course[1:5], "c")
+select_records(toy_course[1:5], "c")
 #>              mcid term_course abbrev number
 #>            <char>      <char> <char> <char>
 #> 1: MCID3111158953       19881   EDCI   2984
@@ -136,7 +136,7 @@ select_record_cols(toy_course[1:5], "c")
 #> 3: MCID3111158953       19881     MN   1004
 #> 4: MCID3111158953       19881   CHEM   1035
 #> 5: MCID3111158953       19881   CHEM   1045
-select_record_cols(toy_degree[1:5], "d")
+select_records(toy_degree[1:5], "d")
 #>              mcid term_degree   cip6
 #>            <char>      <char> <char>
 #> 1: MCID3111159270       19913 141001
@@ -147,7 +147,7 @@ select_record_cols(toy_degree[1:5], "d")
 
 # With col_patterns for additional columns
 DT <- toy_student[141:146]
-select_record_cols(DT, "t", col_pattern = c("transfer", "hours_tranfer"))
+select_records(DT, "t", col_pattern = c("transfer", "hours_tranfer"))
 #>              mcid   institution              transfer hours_transfer
 #>            <char>        <char>                <char>          <num>
 #> 1: MCID3112802165 Institution B First-Time in College             NA
@@ -160,7 +160,7 @@ select_record_cols(DT, "t", col_pattern = c("transfer", "hours_tranfer"))
 # Using regular expressions
 these_IDs <- DT$mcid
 DT <- toy_term[mcid %chin% these_IDs]
-select_record_cols(DT, "t", col_pattern = c("^gpa"))
+select_records(DT, "t", col_pattern = c("^gpa"))
 #>               mcid   term   cip6   institution          level gpa_term
 #>             <char> <char> <char>        <char>         <char>    <num>
 #>  1: MCID3112802165  20161 500702 Institution B  01 First-year     3.88

@@ -9,7 +9,7 @@ factors with levels ordered for display in a multiway dot plot."><meta property=
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9005</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9011</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,19 +78,17 @@ factors with levels ordered for display in a multiway dot plot.</p>
 
 
 <dl><dt id="arg-dframe">dframe<a class="anchor" aria-label="anchor" href="#arg-dframe"></a></dt>
-<dd><p>Data frame containing a single quantitative value
-(or response) for every combination of levels of two categorical
-variables. Categories may be class character or factor. Two additional
-numeric columns are required when using the "percent" ordering method.</p></dd>
+<dd><p>Data frame or data frame extension (e.g., data.table or tibble). Required variables: a single quantitative value
+for every combination of levels of two categorical variables.</p></dd>
 
 
 <dt id="arg-quantity">quantity<a class="anchor" aria-label="anchor" href="#arg-quantity"></a></dt>
-<dd><p>Character, name (in quotes) of the single multiway quantitative
+<dd><p>Character, name of the single multiway quantitative
 variable</p></dd>
 
 
 <dt id="arg-categories">categories<a class="anchor" aria-label="anchor" href="#arg-categories"></a></dt>
-<dd><p>Character, vector of names (in quotes) of the two multiway
+<dd><p>Character, vector of names of the two multiway
 categorical variables</p></dd>
 
 
@@ -108,7 +106,7 @@ quantitative percentage variable except grouped by category.</p></dd>
 
 
 <dt id="arg-ratio-of">ratio_of<a class="anchor" aria-label="anchor" href="#arg-ratio-of"></a></dt>
-<dd><p>Character vector with the names (in quotes) of the
+<dd><p>Character vector with the names of the
 numerator and denominator columns that produced the quantitative
 variable, required when <code>method</code> is "percent". Names can be
 in any order; the algorithm assumes that the parameter with the
@@ -117,37 +115,15 @@ larger column sum is the denominator of the ratio.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame in <code>data.table</code> format with
-the following properties: rows are preserved; columns specified by
-<code>categories</code> are converted to factors and ordered; the column specified
-by <code>quantity</code> is converted to type double; other columns are preserved
-with the exception that columns added by the function overwrite existing
-columns of the same name (if any); grouping structures are not preserved.
-The added columns are:</p><dl><dt><code>CATEGORY_median</code> columns (when ordering method is "median")</dt>
-<dd><p>Numeric. Two columns of medians of the quantitative variable grouped
-by the categorical variables. The <code>CATEGORY</code> placeholder in
-the column name is replaced by a category name from the
-<code>categories</code> argument. For example, suppose
-<code>categories = c("program", "people")</code> and
-<code>method = "median"</code>. The two new column names would be
-<code>program_median</code> and <code>people_median.</code></p></dd>
-
-
-<dt><code>CATEGORY_QUANTITY</code> columns (when ordering method is "percent")</dt>
-<dd><p>Numeric. Two columns of percentages based on the same ratio that
-produces the quantitative variable except grouped by the categorical
-variables. The <code>CATEGORY</code> placeholder in the column name is
-replaced by a category name from the <code>categories</code> argument; the
-<code>QUANTITY</code> placeholder is replaced by the quantitative variable
-name in the <code>quantity</code> argument. For example, suppose
-<code>categories = c("program", "people")</code>, and
-<code>quantity = "grad_rate"</code>, and <code>method = "percent"</code>. The two
-new column names  would be <code>program_grad_rate</code> and
-<code>people_grad_rate.</code></p></dd>
-
-
-
-</dl></div>
+    <p>Data frame with the following properties:</p><ul><li><p>Data frame class is preserved. Groups and keys are not preserved.</p></li>
+<li><p>Rows are preserved.</p></li>
+<li><p>Column specified by <code>quantity</code> is converted to type double.</p></li>
+<li><p>Columns specified by <code>categories</code> are converted to factors and ordered.</p></li>
+<li><p>Other columns are preserved with the exception that columns added by
+the function overwrite existing columns of the same name (if any).</p></li>
+<li><p>Two new columns <code>CATEGORY_median</code> added when method is "median." Numeric medians of the quantitative variable grouped by the categorical variables. The <code>CATEGORY</code> placeholder in the column name is replaced by a category name from the <code>categories</code> argument. For example, suppose <code>categories = c("program", "people")</code> and <code>method = "median"</code>. The two new column names would be <code>program_median</code> and <code>people_median.</code></p></li>
+<li><p>Two new columns <code>CATEGORY_QUANTITY</code> added when method is "percent." Numeric percentages based on the same ratio that produces the quantitative variable except grouped by the categorical variables. The <code>CATEGORY</code> placeholder in the column name is replaced by a category name from the <code>categories</code> argument; the <code>QUANTITY</code> placeholder is replaced by the quantitative variable name in the <code>quantity</code> argument. For example, suppose <code>quantity = "grad_rate"</code>, <code>categories = c("program", "people")</code>, and <code>method = "percent"</code>. The two new column names  would be <code>program_grad_rate</code> and <code>people_grad_rate.</code></p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Multiway data

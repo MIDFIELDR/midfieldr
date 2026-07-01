@@ -1,7 +1,6 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
 
-
 # ---------- deprecated version ----------
 
 #' midfieldr deprecated functions
@@ -13,10 +12,10 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
   .Deprecated(
     new = "data_sufficiency",
     package = "midfieldr",
-    msg = "This function was deprecated as part of an update to all 
+    msg = "This function was deprecated as part of an update to all
     midfieldr functions. Please use `data_sufficiency()` instead."
   )
-  
+
   # original function calls the new function
   data_sufficiency(dframe = dframe, midfield_rec = midfield_term)
 }
@@ -31,7 +30,7 @@ NULL
 #' To a data frame keyed by student ID, add a column indicating that
 #' an institution's data range is sufficient to reliably assess a
 #' student's program completion. Columns of supporting
-#' information are also added.  Unrelated columns are dropped. 
+#' information are also added.  Unrelated columns are dropped.
 #'
 #' Because the time span of MIDFIELD term data varies by institution, each
 #' has their own lower and upper bounds. When assessing a student's program
@@ -85,7 +84,6 @@ NULL
 #' @export
 #'
 data_sufficiency <- function(dframe, midfield_rec = term) {
-  
   # define required columns and variables to be added
   dframe_vars <- c("mcid", "term_i", "timely_term")
   record_vars <- c("mcid", "term", "institution")

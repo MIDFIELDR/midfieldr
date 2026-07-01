@@ -74,14 +74,14 @@ The `cip` dataset loads with midfieldr.
 Unless you already know your program CIP codes, finding them entails
 some trial and error.
 
-[`filter_cip_rows()`](https://midfieldr.github.io/midfieldr/reference/filter_cip_rows.md)
+[`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
 searches `dframe` for string patterns. Searching for “civil engineering”
 yields programs in Engineering that we want and some in Engineering
 Technology that we do not.
 
 ``` r
 
-filter_cip_rows(cip, "civil engineering")
+filter_programs(cip, "civil engineering")
 #>                                          cip6name   cip6
 #>                                            <char> <char>
 #> 1:                     Civil Engineering, General 140801
@@ -122,7 +122,7 @@ accepted.
 
 ``` r
 
-filter_cip_rows(cip, "^1408")
+filter_programs(cip, "^1408")
 #>                                  cip6name   cip6          cip4name   cip4
 #>                                    <char> <char>            <char> <char>
 #> 1:             Civil Engineering, General 140801 Civil Engineering   1408
@@ -148,7 +148,7 @@ subset of `cip` with 54 rows.
 
 ``` r
 
-engr_cip <- filter_cip_rows(cip, "^14")
+engr_cip <- filter_programs(cip, "^14")
 engr_cip
 #>                                                         cip6name   cip6
 #>                                                           <char> <char>
@@ -196,7 +196,7 @@ Next, to search this result for Electrical Engineering, we assign
 
 ``` r
 
-filter_cip_rows(engr_cip, "electrical")
+filter_programs(engr_cip, "electrical")
 #>                                                         cip6name   cip6
 #>                                                           <char> <char>
 #> 1:        Electrical, Electronics and Communications Engineering 141001
@@ -234,7 +234,7 @@ desired 4-digit codes. We drop all columns except the 6-digit names and
 ``` r
 
 codes_we_want <- c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437")
-programs <- filter_cip_rows(cip, codes_we_want)
+programs <- filter_programs(cip, codes_we_want)
 programs <- programs[, .(cip6name, cip6)]
 
 programs
@@ -326,16 +326,16 @@ degree_source <- copy(degree)
 The working data frames `student, term,` and `degree` should always be
 present in our computing environment so we can take advantage of
 midfieldr default argument values. For example,
-[`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md)
+[`post_bacc_terms()`](https://midfieldr.github.io/midfieldr/reference/post_bacc_terms.md)
 accesses the `degree` table to do its work. If `degree` is in the
 environment, the following lines yield the same results:
 
 ``` r
 
 # not run
-add_term_cluster(term, midfield_rec = degree)
-add_term_cluster(term, degree)
-add_term_cluster(term)
+post_bacc_terms(term, midfield_rec = degree)
+post_bacc_terms(term, degree)
+post_bacc_terms(term)
 ```
 
 In this article, we use the latter form.
@@ -348,9 +348,9 @@ the key or composite key variables of the data tables.
 
 ``` r
 
-student <- select_record_cols(student, type = "s")
-term <- select_record_cols(term, "t")
-degree <- select_record_cols(degree, "d")
+student <- select_records(student, type = "s")
+term <- select_records(term, "t")
+degree <- select_records(degree, "d")
 ```
 
 [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
@@ -386,15 +386,15 @@ so we identify and exclude terms later than the first degree term.
 Multiple degrees earned in the first degree term are retained, but any
 courses, terms, or degrees after the first baccalaureate are excluded.
 
-[`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md)
+[`post_bacc_terms()`](https://midfieldr.github.io/midfieldr/reference/post_bacc_terms.md)
 adds a column of labels indicating that a term belongs to one of three
 clusters: terms that are prior to, equal to, or subsequent to the
 student’s first degree term.
 
 ``` r
 
-term <- add_term_cluster(term)
-degree <- add_term_cluster(degree)
+term <- post_bacc_terms(term)
+degree <- post_bacc_terms(degree)
 
 look_at(term)
 #> Classes 'data.table' and 'data.frame':   639915 obs. of  7 variables:
@@ -444,13 +444,13 @@ degree <- degree[!"post-first-degree", on = "term_cluster"]
 ```
 
 We can drop the added columns by applying
-[`select_record_cols()`](https://midfieldr.github.io/midfieldr/reference/select_record_cols.md)
+[`select_records()`](https://midfieldr.github.io/midfieldr/reference/select_records.md)
 again.
 
 ``` r
 
-term <- select_record_cols(term, "t")
-degree <- select_record_cols(degree, "d")
+term <- select_records(term, "t")
+degree <- select_records(degree, "d")
 
 look_at(term)
 #> Classes 'data.table' and 'data.frame':   632917 obs. of  5 variables:
@@ -500,12 +500,12 @@ make that assessment, we need the last term in which a student’s degree
 completion would be considered timely—in many cases, 6 years after
 admission.
 
-[`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
+[`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
 adds a column of timely completion terms, encoded YYYYT.
 
 ``` r
 
-DT <- add_timely_term(DT)
+DT <- timely_term(DT)
 DT
 #>                  mcid term_i       level_i adj_span timely_term
 #>                <char> <char>        <char>    <num>      <char>
@@ -543,14 +543,14 @@ DT
 #> 97536: MCID3112898940  20181       20233
 ```
 
-[`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
+[`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
 adds a column of labels indicating that a student ID should be included
 (or excluded) because for that student, the institution’s data range
 satisfies (or does not satisfy) the data sufficiency criteria.
 
 ``` r
 
-DT <- add_data_sufficiency(DT)
+DT <- data_sufficiency(DT)
 DT
 #>                   mcid term_i timely_term   institution lower_limit upper_limit
 #>                 <char> <char>      <char>        <char>      <char>      <char>
@@ -778,14 +778,14 @@ We want to retain timely graduates, so first we add the timely
 completion term (the same term we used for determining data sufficiency)
 to our population then apply the completion status function.
 
-[`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
+[`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
 adds a column of labels indicating that program completion was timely,
 late, or NA (for non-completers).
 
 ``` r
 
-DT <- add_timely_term(DT)
-DT <- add_completion_status(DT)
+DT <- timely_term(DT)
+DT <- completion_status(DT)
 DT
 #>                  mcid timely_term term_degree completion_status
 #>                <char>      <char>      <char>            <char>

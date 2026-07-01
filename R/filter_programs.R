@@ -39,37 +39,36 @@ NULL
 
 #' Choose rows of CIP data
 #'
-#' Subset a CIP data frame, retaining rows that match or partially match 
+#' Subset a CIP data frame, retaining rows that match or partially match
 #' any string in a vector of character strings.
-#' 
-#' Each element of the `pattern` vector is matched row-wise to every 
-#' value in `dframe` using `grepl().` Row values are coerced to character 
-#' strings if possible. If `negate = FALSE` (default), a match retains 
+#'
+#' Each element of the `pattern` vector is matched row-wise to every
+#' value in `dframe` using `grepl().` Row values are coerced to character
+#' strings if possible. If `negate = FALSE` (default), a match retains
 #' the full row; if `negate = TRUE,` a match removes the full row.
 #'
-#' @param dframe `r dframe` Expected variables (or subset thereof): 
-#'       `{cip6name, cip6, cip4name, cip4, cip2name, cip2}.` 
-#' 
-#' @param pattern Character vector of search strings, including regular 
-#'        expressions.  
-#' 
+#' @param dframe `r dframe` Expected variables (or subset thereof):
+#'       `{cip6name, cip6, cip4name, cip4, cip2name, cip2}.`
+#'
+#' @param pattern Character vector of search strings, including regular
+#'        expressions.
+#'
 #' @param ... `r param_dots`
-#' 
-#' @param negate Logical (default FALSE). If TRUE, inverts the 
+#'
+#' @param negate Logical (default FALSE). If TRUE, inverts the
 #'        resulting Boolean vector.
 #'
 #' @returns Data frame with the following properties:
 #' * Data frame class is preserved. Groups and keys are not preserved.
 #' * Rows are a subset of the input and appear in the same order.
-#' * Columns are not modified. 
+#' * Columns are not modified.
 #'
 #' @example man/examples/exa_filter_programs.R
 #' @export
 #'
 filter_programs <- function(dframe, pattern, ..., negate = FALSE) {
-  
   # ---------- base R checks (all data frame classes)
-  
+
   # assert arguments after dots used by name
   wrapr::stop_if_dot_args(
     substitute(list(...)),
@@ -80,7 +79,7 @@ filter_programs <- function(dframe, pattern, ..., negate = FALSE) {
   qassert(dframe, "d+")
   if (!is.null(pattern)) qassert(pattern, "s+")
   qassert(negate, "B1") # missing not allowed
-  
+
 
   # ---------- preparation
 
@@ -113,7 +112,7 @@ filter_programs <- function(dframe, pattern, ..., negate = FALSE) {
   }
 
   # ---------- prepare to return
-  
+
   setkey(DT, NULL)
   setattr(DT, "class", prior_class)
   DT[]

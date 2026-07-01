@@ -124,9 +124,9 @@ source_term <- copy(term)
 source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_record_cols(source_student)
-term <- select_record_cols(source_term)
-degree <- select_record_cols(source_degree)
+student <- select_records(source_student)
+term <- select_records(source_term)
+degree <- select_records(source_degree)
 ```
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a
@@ -142,7 +142,7 @@ and included with midfieldr.
 DT <- copy(baseline_mcid)
 ```
 
-## `add_completion_status()`
+## `completion_status()`
 
 Add columns to a data frame of student-level records that indicate
 whether a student completed a degree, and if so, whether their
@@ -150,14 +150,14 @@ completion was timely.
 
 The input data frame must have columns for ID and the timely completion
 term. We use
-[`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
+[`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
 again, though alternatively we could have retained the `timely_term`
 variable from previous code chunks.
 
 ``` r
 
 # Timely term required before completion status
-DT <- add_timely_term(DT, term)
+DT <- timely_term(DT, term)
 
 # Drop unnecessary columns
 DT[, c("term_i", "level_i", "adj_span") := NULL]
@@ -178,13 +178,13 @@ results,
 ``` r
 
 # Required arguments in order and explicitly named
-x <- add_completion_status(dframe = DT, midfield_rec = degree)
+x <- completion_status(dframe = DT, midfield_rec = degree)
 
 # Required arguments in order, but not named
-y <- add_completion_status(DT, degree)
+y <- completion_status(DT, degree)
 
 # Using the implicit default for the midfield_rec argument
-z <- add_completion_status(DT)
+z <- completion_status(DT)
 
 # Demonstrate equivalence
 check_equiv_frames(x, y)
@@ -206,7 +206,7 @@ check_equiv_frames(x, z)
 ``` r
 
 # Add completion status and supporting variables
-DT <- add_completion_status(DT, degree)
+DT <- completion_status(DT, degree)
 DT
 #>                  mcid timely_term term_degree completion_status
 #>                <char>      <char>      <char>            <char>
@@ -220,7 +220,7 @@ DT
 ```
 
 Similar to the details described in the data sufficiency vignette,
-[`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
+[`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
 accepts [Alternate source
 names](https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.html#alternate-source-names)
 and uses [Silent
@@ -401,8 +401,8 @@ DT <- copy(baseline_mcid)
 ``` r
 
 # Gather graduates, degree CIPs and terms
-DT <- add_timely_term(DT, term)
-DT <- add_completion_status(DT, degree)
+DT <- timely_term(DT, term)
+DT <- completion_status(DT, degree)
 DT <- DT[completion_status == "timely"]
 DT <- degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
 

@@ -4,12 +4,6 @@
 
 - [Introduction to
   midfieldr](https://midfieldr.github.io/midfieldr/articles/art-000-getting-started.md):
-- [Case study part 1:
-  Goals](https://midfieldr.github.io/midfieldr/articles/art-001-case-goals.md):
-- [Case study part 2:
-  Data](https://midfieldr.github.io/midfieldr/articles/art-002-case-data.md):
-- [Case study part 3:
-  Results](https://midfieldr.github.io/midfieldr/articles/art-003-case-results.md):
 - [Case
   study](https://midfieldr.github.io/midfieldr/articles/art-004-case-study.md):
 - [Case study using

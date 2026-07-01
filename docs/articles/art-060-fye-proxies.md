@@ -185,8 +185,8 @@ source_student <- copy(student)
 source_term <- copy(term)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_record_cols(source_student)
-term <- select_record_cols(source_term)
+student <- select_records(source_student)
+term <- select_records(source_term)
 ```
 
 ## `prep_fye_mice()`
@@ -892,7 +892,7 @@ represent department-level programs.
 ``` r
 
 # Obtain the 4-digit program names corresponding to these codes
-proxy_program_names <- filter_cip_rows(cip, proxy_cips)
+proxy_program_names <- filter_programs(cip, proxy_cips)
 proxy_program_names <- proxy_program_names[, .(cip6, program = cip4name)]
 proxy_program_names
 #>       cip6                                                 program

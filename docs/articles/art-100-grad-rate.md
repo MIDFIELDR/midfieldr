@@ -259,9 +259,9 @@ source_term <- copy(term)
 source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_record_cols(source_student)
-term <- select_record_cols(source_term)
-degree <- select_record_cols(source_degree)
+student <- select_records(source_student)
+term <- select_records(source_term)
+degree <- select_records(source_degree)
 ```
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a
@@ -354,8 +354,8 @@ DT <- copy(baseline_mcid)
 ``` r
 
 # Gather graduates, degree CIPs and terms
-DT <- add_timely_term(DT, term)
-DT <- add_completion_status(DT, degree)
+DT <- timely_term(DT, term)
+DT <- completion_status(DT, degree)
 DT <- DT[completion_status == "timely"]
 DT <- degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
 

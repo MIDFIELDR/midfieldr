@@ -20,20 +20,17 @@ order_multiway(
 
 - dframe:
 
-  Data frame containing a single quantitative value (or response) for
-  every combination of levels of two categorical variables. Categories
-  may be class character or factor. Two additional numeric columns are
-  required when using the "percent" ordering method.
+  Data frame or data frame extension (e.g., data.table or tibble).
+  Required variables: a single quantitative value for every combination
+  of levels of two categorical variables.
 
 - quantity:
 
-  Character, name (in quotes) of the single multiway quantitative
-  variable
+  Character, name of the single multiway quantitative variable
 
 - categories:
 
-  Character, vector of names (in quotes) of the two multiway categorical
-  variables
+  Character, vector of names of the two multiway categorical variables
 
 - ...:
 
@@ -50,41 +47,46 @@ order_multiway(
 
 - ratio_of:
 
-  Character vector with the names (in quotes) of the numerator and
-  denominator columns that produced the quantitative variable, required
-  when `method` is "percent". Names can be in any order; the algorithm
+  Character vector with the names of the numerator and denominator
+  columns that produced the quantitative variable, required when
+  `method` is "percent". Names can be in any order; the algorithm
   assumes that the parameter with the larger column sum is the
   denominator of the ratio.
 
 ## Value
 
-A data frame in `data.table` format with the following properties: rows
-are preserved; columns specified by `categories` are converted to
-factors and ordered; the column specified by `quantity` is converted to
-type double; other columns are preserved with the exception that columns
-added by the function overwrite existing columns of the same name (if
-any); grouping structures are not preserved. The added columns are:
+Data frame with the following properties:
 
-- `CATEGORY_median` columns (when ordering method is "median"):
+- Data frame class is preserved. Groups and keys are not preserved.
 
-  Numeric. Two columns of medians of the quantitative variable grouped
-  by the categorical variables. The `CATEGORY` placeholder in the column
-  name is replaced by a category name from the `categories` argument.
-  For example, suppose `categories = c("program", "people")` and
+- Rows are preserved.
+
+- Column specified by `quantity` is converted to type double.
+
+- Columns specified by `categories` are converted to factors and
+  ordered.
+
+- Other columns are preserved with the exception that columns added by
+  the function overwrite existing columns of the same name (if any).
+
+- Two new columns `CATEGORY_median` added when method is "median."
+  Numeric medians of the quantitative variable grouped by the
+  categorical variables. The `CATEGORY` placeholder in the column name
+  is replaced by a category name from the `categories` argument. For
+  example, suppose `categories = c("program", "people")` and
   `method = "median"`. The two new column names would be
   `program_median` and `people_median.`
 
-- `CATEGORY_QUANTITY` columns (when ordering method is "percent"):
-
-  Numeric. Two columns of percentages based on the same ratio that
-  produces the quantitative variable except grouped by the categorical
-  variables. The `CATEGORY` placeholder in the column name is replaced
-  by a category name from the `categories` argument; the `QUANTITY`
-  placeholder is replaced by the quantitative variable name in the
-  `quantity` argument. For example, suppose
-  `categories = c("program", "people")`, and `quantity = "grad_rate"`,
-  and `method = "percent"`. The two new column names would be
-  `program_grad_rate` and `people_grad_rate.`
+- Two new columns `CATEGORY_QUANTITY` added when method is "percent."
+  Numeric percentages based on the same ratio that produces the
+  quantitative variable except grouped by the categorical variables. The
+  `CATEGORY` placeholder in the column name is replaced by a category
+  name from the `categories` argument; the `QUANTITY` placeholder is
+  replaced by the quantitative variable name in the `quantity` argument.
+  For example, suppose `quantity = "grad_rate"`,
+  `categories = c("program", "people")`, and `method = "percent"`. The
+  two new column names would be `program_grad_rate` and
+  `people_grad_rate.`
 
 ## Details
 

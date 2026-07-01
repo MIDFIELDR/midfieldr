@@ -51,20 +51,20 @@
 #'
 #' @param midfield_student `r midfield_x("*student*")` Required variables:
 #'        `{mcid, race, sex}.`
-#'        
+#'
 #' @param midfield_term `r midfield_x("*term*")` Required variables:
 #'        `{mcid, term, cip6, institution}.`
-#'        
+#'
 #' @param ... `r param_dots`
-#' 
+#'
 #' @param fye_codes Optional character vector of 6-digit CIP codes to identify
 #'   FYE programs, default "140102". Codes must be 6-digit strings of numbers;
 #'   regular expressions are prohibited. Non-engineering codes---those that do
 #'   not start with 14---produce an error.
 #'
-#' @return Data frame conditioned for later use as an input to the mice R 
-#' package for multiple imputation. The data frame comprises one row for every 
-#' FYE student, first-term and migrator. Grouping structures are not preserved. 
+#' @return Data frame conditioned for later use as an input to the mice R
+#' package for multiple imputation. The data frame comprises one row for every
+#' FYE student, first-term and migrator. Grouping structures are not preserved.
 #' The columns returned are:
 #'  \describe{
 #'    \item{`mcid`}{Character, anonymized student identifier. Returned

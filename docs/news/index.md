@@ -7,17 +7,8 @@
 New features
 
 - New function
-  [`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md)
+  [`post_bacc_terms()`](https://midfieldr.github.io/midfieldr/reference/post_bacc_terms.md)
   to identify rows of post-baccalaureate terms to exclude.
-- New function
-  [`select_record_cols()`](https://midfieldr.github.io/midfieldr/reference/select_record_cols.md)
-  to replace deprecated
-  [`select_required()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md).
-  Refines the column selection even further.
-- New function
-  [`filter_cip_rows()`](https://midfieldr.github.io/midfieldr/reference/filter_cip_rows.md)
-  to replace deprecated
-  [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md).
 - New utilities
   [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md),
   [`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md),
@@ -27,14 +18,29 @@ New features
 - Add data set `cip2010`, constructed from a recent download of the
   source file (`CIPCode2010.csv`) from NCES. Has the same data structure
   as the existing `cip` dataset, but with more rows.
-- Add attempt in functions to preserve data frame attributes for classes
-  `data.frame`, `data.table`, and `tbl_df`.
+- Renamed/revised functions and their arguments:
+  - [`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
+    replaces the deprecated
+    [`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+  - [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
+    replaces the deprecated
+    [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+  - [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
+    replaces the deprecated
+    [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+  - [`select_records()`](https://midfieldr.github.io/midfieldr/reference/select_records.md)
+    replaces the deprecated
+    [`select_required()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+  - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
+    replaces the deprecated
+    [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
 
 Minor improvements
 
+- Data frame class is preserved (or attempted to be preserved) in all
+  functions with a data frame input/output.
 - New versions of toy data and case study data for consistency with
   midfielddata.
-- Revise README for brevity. Use toy data to illustrate usage.
 
 Bug fixes
 

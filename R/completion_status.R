@@ -1,7 +1,6 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
 
-
 # ---------- deprecated version ----------
 
 #' midfieldr deprecated functions
@@ -13,10 +12,10 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
   .Deprecated(
     new = "completion_status",
     package = "midfieldr",
-    msg = "This function was deprecated as part of an update to all 
+    msg = "This function was deprecated as part of an update to all
     midfieldr functions. Please use `completion_status()` instead."
   )
-  
+
   # original function calls the new function
   completion_status(dframe = dframe, midfield_rec = midfield_degree)
 }
@@ -31,7 +30,7 @@ NULL
 #' To a data frame keyed by student ID, add a column indicating if a
 #' student completed their program, and if so, whether their completion
 #' was timely or late. Columns of supporting information are
-#' also added. Unrelated columns are dropped. 
+#' also added. Unrelated columns are dropped.
 #'
 #' In many studies, students must complete their programs in a specified time
 #' span to be considered "timely", for example 4, 6, or 8 years after

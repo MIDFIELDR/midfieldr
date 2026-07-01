@@ -1,25 +1,25 @@
-# Subset rows with search strings
+# Choose rows of CIP data
 
-Subset a CIP data frame, retaining rows that match or partially match a
-vector of character strings.
+Subset a CIP data frame, retaining rows that match or partially match
+any string in a vector of character strings.
 
 ## Usage
 
 ``` r
-filter_cip_rows(dframe, pattern, ..., negate = FALSE)
+filter_programs(dframe, pattern, ..., negate = FALSE)
 ```
 
 ## Arguments
 
 - dframe:
 
-  Data frame of CIP program codes to be searched, typically `cip` that
-  loads with midfieldr.
+  Data frame or data frame extension (e.g., data.table or tibble).
+  Expected variables (or subset thereof):
+  `{cip6name, cip6, cip4name, cip4, cip2name, cip2}.`
 
 - pattern:
 
-  Character vector of search strings for retaining rows, not
-  case-sensitive. Can include regular expressions.
+  Character vector of search strings, including regular expressions.
 
 - ...:
 
@@ -28,30 +28,31 @@ filter_cip_rows(dframe, pattern, ..., negate = FALSE)
 
 - negate:
 
-  Logical. If true, searches for not-pattern. Default FALSE.
+  Logical (default FALSE). If TRUE, inverts the resulting Boolean
+  vector.
 
 ## Value
 
-A data frame subset of `dframe`. Output has the following properties:
+Data frame with the following properties:
 
-- Rows are a subset of the input, but appear in the same order.
+- Data frame class is preserved. Groups and keys are not preserved.
+
+- Rows are a subset of the input and appear in the same order.
 
 - Columns are not modified.
 
-- Data frame attributes (except groups) are preserved.
-
 ## Details
 
-Search terms can include regular expressions. Uses
-[`grepl()`](https://rdrr.io/r/base/grep.html), therefore non-character
-columns (if any) that can be coerced to character are also searched for
-matches.
+Each element of the `pattern` vector is matched row-wise to every value
+in `dframe` using `grepl().` Row values are coerced to character strings
+if possible. If `negate = FALSE` (default), a match retains the full
+row; if `negate = TRUE,` a match removes the full row.
 
 ## Examples
 
 ``` r
 # Subset using keywords
-filter_cip_rows(cip, pattern = "history")
+filter_programs(cip, pattern = "history")
 #>                                                cip6name   cip6
 #>                                                  <char> <char>
 #>  1:                 Architectural History and Criticism 040801
@@ -102,7 +103,7 @@ filter_cip_rows(cip, pattern = "history")
 #> 14:   5401                           History     54
 
 # Subset using codes
-filter_cip_rows(cip, pattern = "^54")
+filter_programs(cip, pattern = "^54")
 #>                                               cip6name   cip6 cip4name   cip4
 #>                                                 <char> <char>   <char> <char>
 #> 1:                                    History, General 540101  History   5401
@@ -127,7 +128,7 @@ filter_cip_rows(cip, pattern = "^54")
 #> 9:  History     54
 
 # Multiple passes to narrow the results
-first_pass <- filter_cip_rows(cip, "math")[, .(cip6name, cip6)]
+first_pass <- filter_programs(cip, "math")[, .(cip6name, cip6)]
 first_pass
 #>                                                                cip6name   cip6
 #>                                                                  <char> <char>
@@ -161,7 +162,7 @@ first_pass
 #>                                                                cip6name   cip6
 #>                                                                  <char> <char>
 
-second_pass <- filter_cip_rows(first_pass, c("bio", "educ"), negate = TRUE)
+second_pass <- filter_programs(first_pass, c("bio", "educ"), negate = TRUE)
 second_pass
 #>                                                                cip6name   cip6
 #>                                                                  <char> <char>
@@ -188,7 +189,7 @@ second_pass
 #>                                                                cip6name   cip6
 #>                                                                  <char> <char>
 
-third_pass <- filter_cip_rows(second_pass, c("^27", "^30"))
+third_pass <- filter_programs(second_pass, c("^27", "^30"))
 third_pass
 #>                                                                cip6name   cip6
 #>                                                                  <char> <char>

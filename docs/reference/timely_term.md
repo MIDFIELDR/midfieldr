@@ -2,18 +2,12 @@
 
 To a data frame keyed by student ID, add a column indicating the
 student's timely completion term. Columns of supporting information are
-also added.
+also added. Unrelated columns are dropped.
 
 ## Usage
 
 ``` r
-add_timely_term(
-  dframe,
-  midfield_rec = term,
-  ...,
-  sched_span = NULL,
-  span = NULL
-)
+timely_term(dframe, midfield_rec = term, ..., sched_span = NULL, span = NULL)
 ```
 
 ## Arguments
@@ -79,7 +73,7 @@ degrees, for students earning more than one degree in the same term).
 The timely completion term is required for determining data sufficiency
 as well as timely completion status. The goal in either case is to
 refine a population, that is, obtain a data frame of IDs that satisfy
-our constraints. Thus `add_timely_term()` yields a column of timely term
+our constraints. Thus `timely_term()` yields a column of timely term
 values and columns of supporting information keyed by ID. All other
 columns in `dframe` (if any) are dropped.
 
@@ -93,17 +87,10 @@ create the `timely_term` values.
 
 The supporting information in the output is provided so that the user
 can review the findings. Moreover,
-[`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md)
+[`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
 and
-[`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md)
+[`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
 require one or both of the added columns `{term_i, timely_term}.`
-
-## See also
-
-Other add\_\*:
-[`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md),
-[`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/add_data_sufficiency.md),
-[`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md)
 
 ## Examples
 
@@ -112,7 +99,7 @@ Other add\_\*:
 dframe <- toy_student[1:10, .(mcid)]
 
 # Add timely completion term column
-add_timely_term(dframe, toy_term)
+timely_term(dframe, toy_term)
 #>               mcid term_i       level_i adj_span timely_term
 #>             <char> <char>        <char>    <num>      <char>
 #>  1: MCID3111158953  19881 01 First-year        6       19933
@@ -127,7 +114,7 @@ add_timely_term(dframe, toy_term)
 #> 10: MCID3111250695  19901 01 First-year        6       19953
 
 # Define timely completion as 200% of scheduled span (8 years)
-add_timely_term(dframe, toy_term, span = 8)
+timely_term(dframe, toy_term, span = 8)
 #>               mcid term_i       level_i adj_span timely_term
 #>             <char> <char>        <char>    <num>      <char>
 #>  1: MCID3111158953  19881 01 First-year        8       19953
@@ -155,7 +142,7 @@ dframe[, timely_term := NA_character_][]
 #>  8: MCID3111213943        <NA>
 #>  9: MCID3111248941        <NA>
 #> 10: MCID3111250695        <NA>
-add_timely_term(dframe, toy_term)
+timely_term(dframe, toy_term)
 #>               mcid term_i       level_i adj_span timely_term
 #>             <char> <char>        <char>    <num>      <char>
 #>  1: MCID3111158953  19881 01 First-year        6       19933

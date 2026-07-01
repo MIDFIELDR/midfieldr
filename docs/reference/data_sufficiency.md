@@ -3,11 +3,12 @@
 To a data frame keyed by student ID, add a column indicating that an
 institution's data range is sufficient to reliably assess a student's
 program completion. Columns of supporting information are also added.
+Unrelated columns are dropped.
 
 ## Usage
 
 ``` r
-add_data_sufficiency(dframe, midfield_rec = term)
+data_sufficiency(dframe, midfield_rec = term)
 ```
 
 ## Arguments
@@ -70,20 +71,13 @@ range.
 
 The goal of determining data sufficiency is to refine a population, that
 is, obtain a data frame of IDs that satisfy our constraints. Thus
-`add_data_sufficiency()` yields a column of data sufficiency values and
+`data_sufficiency()` yields a column of data sufficiency values and
 columns of supporting information keyed by ID. All other columns in
 `dframe` (if any) are dropped.
 
 The supporting information in the output is provided so that the user
 can review the findings. After review, we usually delete all columns
 except the IDs, yielding the refined population that was our goal.
-
-## See also
-
-Other add\_\*:
-[`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/add_completion_status.md),
-[`add_term_cluster()`](https://midfieldr.github.io/midfieldr/reference/add_term_cluster.md),
-[`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/add_timely_term.md)
 
 ## Examples
 
@@ -92,10 +86,10 @@ Other add\_\*:
 dframe <- toy_student[1:10, .(mcid)]
 
 # Timely term column is required to add data sufficiency column
-dframe <- add_timely_term(dframe, toy_term)
+dframe <- timely_term(dframe, toy_term)
 
 # Add data sufficiency column
-add_data_sufficiency(dframe, toy_term)
+data_sufficiency(dframe, toy_term)
 #>               mcid term_i timely_term   institution lower_limit upper_limit
 #>             <char> <char>      <char>        <char>      <char>      <char>
 #>  1: MCID3111158953  19881       19933 Institution J       19881       20096
@@ -277,7 +271,7 @@ dframe[, data_sufficiency := NA_character_][]
 #>  8: MCID3111213943  19891 01 First-year        6       19943             <NA>
 #>  9: MCID3111248941  19901 01 First-year        6       19953             <NA>
 #> 10: MCID3111250695  19901 01 First-year        6       19953             <NA>
-add_data_sufficiency(dframe, toy_term)
+data_sufficiency(dframe, toy_term)
 #>               mcid term_i timely_term   institution lower_limit upper_limit
 #>             <char> <char>      <char>        <char>      <char>      <char>
 #>  1: MCID3111158953  19881       19933 Institution J       19881       20096
