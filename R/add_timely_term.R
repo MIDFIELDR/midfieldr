@@ -29,7 +29,7 @@
 #' `timely_term` values.
 #'
 #' The supporting information in the output is provided so that the user
-#' can review the findings. Moreover, `add_data_sufficiency()` and
+#' can review the findings. Moreover, `data_sufficiency()` and
 #' `completion_status()` require one or both of the added columns
 #' `{term_i, timely_term}.`
 #'

@@ -1,5 +1,31 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
+
+
+# ---------- deprecated version ----------
+
+#' midfieldr deprecated functions
+#' @param dframe `r dframe`
+#' @param midfield_term `r midfield_x("*term*")`
+#' @rdname midfieldr-deprecated
+#' @export
+add_data_sufficiency <- function(dframe, midfield_term = term) {
+  .Deprecated(
+    new = "data_sufficiency",
+    package = "midfieldr",
+    msg = "This function was deprecated as part of an update to all 
+    midfieldr functions. Please use `data_sufficiency()` instead."
+  )
+  
+  # original function calls the new function
+  data_sufficiency(dframe = dframe, midfield_rec = midfield_term)
+}
+NULL
+
+
+
+# ---------- current version ----------
+
 #' Determine data sufficiency
 #'
 #' To a data frame keyed by student ID, add a column indicating that
@@ -23,7 +49,7 @@
 #'
 #' The goal of determining data sufficiency is to refine a population, that
 #' is, obtain a data frame of IDs that satisfy our constraints. Thus
-#' `add_data_sufficiency()` yields a column of data sufficiency values and
+#' `data_sufficiency()` yields a column of data sufficiency values and
 #' columns of supporting information keyed by ID. All other columns in
 #' `dframe` (if any) are dropped.
 #'
@@ -55,11 +81,11 @@
 #'      if not, indicating at which boundary of the data range the ambiguity
 #'      occurs.
 #'
-#' @example man/examples/exa_add_data_sufficiency.R
+#' @example man/examples/exa_data_sufficiency.R
 #' @family add_*
 #' @export
 #'
-add_data_sufficiency <- function(dframe, midfield_rec = term) {
+data_sufficiency <- function(dframe, midfield_rec = term) {
   
   # define required columns and variables to be added
   dframe_vars <- c("mcid", "term_i", "timely_term")

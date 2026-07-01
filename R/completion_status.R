@@ -5,12 +5,11 @@
 # ---------- deprecated version ----------
 
 #' midfieldr deprecated functions
-#' @param dframe `r dframe` Required variables: `{mcid, timely_term}`.
-#' @param midfield_rec `r midfield_x("*degree*")` Required variables:
-#'        `{mcid, term_degree}`.
+#' @param dframe `r dframe`
+#' @param midfield_degree `r midfield_x("*degree*")`
 #' @rdname midfieldr-deprecated
 #' @export
-add_completion_status <- function(dframe, midfield_rec = degree) {
+add_completion_status <- function(dframe, midfield_degree = degree) {
   .Deprecated(
     new = "completion_status",
     package = "midfieldr",
@@ -19,7 +18,7 @@ add_completion_status <- function(dframe, midfield_rec = degree) {
   )
   
   # original function calls the new function
-  completion_status(dframe = dframe, midfield_rec = midfield_rec)
+  completion_status(dframe = dframe, midfield_rec = midfield_degree)
 }
 NULL
 

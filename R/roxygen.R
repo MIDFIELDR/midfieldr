@@ -22,7 +22,7 @@ dframe_completion_status <- "Working data frame of student-level records
         to which completion-status columns are to be added. Required variables
         are `mcid` and `timely_term.` See also `add_timely_term()`."
 
-dframe_add_data_sufficiency <- "Working data frame of student-level records
+dframe_data_sufficiency <- "Working data frame of student-level records
         to which data-sufficiency columns are to be added. Required variables
         are `mcid` and `timely_term.` See also `add_timely_term()`."
 
@@ -39,7 +39,7 @@ dframe_order_multiway <- 'Data frame containing a single quantitative value
 midfield_student_prep_fye_mice <- "MIDFIELD `student` data table or
         equivalent with required variables `mcid`, `race`, and `sex.`"
 
-midfield_term_add_data_sufficiency <- "MIDFIELD `term` data table or equivalent
+midfield_term_data_sufficiency <- "MIDFIELD `term` data table or equivalent
         with required variables `mcid`, `institution`, and `term`."
 
 midfield_term_add_timely_term <- "MIDFIELD `term` data table or equivalent

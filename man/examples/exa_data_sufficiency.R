@@ -5,8 +5,8 @@ dframe <- toy_student[1:10, .(mcid)]
 dframe <- add_timely_term(dframe, toy_term)
 
 # Add data sufficiency column
-add_data_sufficiency(dframe, toy_term)
+data_sufficiency(dframe, toy_term)
 
 # Existing data_sufficiency column, if any, is replaced
 dframe[, data_sufficiency := NA_character_][]
-add_data_sufficiency(dframe, toy_term)
+data_sufficiency(dframe, toy_term)

@@ -75,7 +75,7 @@ one year. The adjusted span is added to their initial term to create the
 \code{timely_term} values.
 
 The supporting information in the output is provided so that the user
-can review the findings. Moreover, \code{add_data_sufficiency()} and
+can review the findings. Moreover, \code{data_sufficiency()} and
 \code{completion_status()} require one or both of the added columns
 \verb{\{term_i, timely_term\}.}
 }
@@ -97,8 +97,8 @@ add_timely_term(dframe, toy_term)
 }
 \seealso{
 Other add_*:
-\code{\link[=add_data_sufficiency]{add_data_sufficiency()}},
 \code{\link[=add_term_cluster]{add_term_cluster()}},
-\code{\link[=completion_status]{completion_status()}}
+\code{\link[=completion_status]{completion_status()}},
+\code{\link[=data_sufficiency]{data_sufficiency()}}
 }
 \concept{add_*}

@@ -68,8 +68,8 @@ completion_status(dframe, toy_degree)
 }
 \seealso{
 Other add_*:
-\code{\link[=add_data_sufficiency]{add_data_sufficiency()}},
 \code{\link[=add_term_cluster]{add_term_cluster()}},
-\code{\link[=add_timely_term]{add_timely_term()}}
+\code{\link[=add_timely_term]{add_timely_term()}},
+\code{\link[=data_sufficiency]{data_sufficiency()}}
 }
 \concept{add_*}

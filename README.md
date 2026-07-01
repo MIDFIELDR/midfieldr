@@ -16,17 +16,15 @@ check](https://github.com/MIDFIELDR/midfieldr/actions/workflows/R-CMD-check.yaml
 Provides tools in R for working with undergraduate, longitudinal,
 student-level records modeled on the MIDFIELD database.
 
-- `filter_cip_rows()` chooses rows of program data based on search
+- `filter_programs()` chooses rows of program data based on search
   terms.
-- `select_record_cols()` chooses columns required by midfieldr
-  functions.  
+- `select_records()` chooses columns required by midfieldr functions.  
 - `add_term_cluster()` identifies rows of post-baccalaureate terms to
   exclude.
 - `add_timely_term()` estimates a student’s timely graduation term.
 - `add_data_sufficiency()` identifies rows to exclude due to
   insufficient data.
-- `add_completion_status()` determines if a graduation is timely or
-  late.
+- `completion_status()` determines if a graduation is timely or late.
 - `prep_fye_mice()` conditions data for imputing starting majors of FYE
   students.  
 - `order_multiway()` conditions data for Cleveland multiway charts.
@@ -74,9 +72,9 @@ library(midfieldr)
 library(data.table)
 
 # Choose a minimum set of columns
-student <- select_record_cols(toy_student)
-term <- select_record_cols(toy_term)
-degree <- select_record_cols(toy_degree)
+student <- select_records(toy_student)
+term <- select_records(toy_term)
+degree <- select_records(toy_degree)
 
 # Display one representative data frame
 term
@@ -197,7 +195,7 @@ term <- population[term, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
 # Drop temporary columns, records ready for further analysis
-select_record_cols(student)
+select_records(student)
 #>                mcid   race    sex   institution
 #>              <char> <char> <char>        <char>
 #>   1: MCID3111213943  White   Male Institution B
@@ -208,7 +206,7 @@ select_record_cols(student)
 #> 101: MCID3112411629  White   Male Institution B
 #> 102: MCID3112498796  White Female Institution B
 
-select_record_cols(term)
+select_records(term)
 #>                mcid   term   cip6   institution          level
 #>              <char> <char> <char>        <char>         <char>
 #>   1: MCID3111213943  19891 420101 Institution B  01 First-year
@@ -219,7 +217,7 @@ select_record_cols(term)
 #> 807: MCID3112498796  20133 090101 Institution B 04 Fourth-year
 #> 808: MCID3112498796  20134 090101 Institution B 04 Fourth-year
 
-select_record_cols(degree)
+select_records(degree)
 #>               mcid term_degree   cip6   institution
 #>             <char>      <char> <char>        <char>
 #>  1: MCID3111213943       19903 420101 Institution B

@@ -27,11 +27,11 @@ expect_class_preserved <- function(df1, df2, fnc) {
     rm(x, y)
 }
 
-test_add_data_sufficiency <- function() {
+test_data_sufficiency <- function() {
     
     # ---------- usage
     # 
-    # add_data_sufficiency(dframe, midfield_rec = term)
+    # data_sufficiency(dframe, midfield_rec = term)
     
     # Needed for build_install_test()
     suppressPackageStartupMessages(require("data.table"))
@@ -79,10 +79,10 @@ test_add_data_sufficiency <- function() {
     # ---------- correct answers
     
     # check that class is preserved function
-    expect_class_preserved(dframe, term, add_data_sufficiency)
+    expect_class_preserved(dframe, term, data_sufficiency)
     
     # correct answers manually set up
-    DT <- add_data_sufficiency(dframe, term)
+    DT <- data_sufficiency(dframe, term)
     DT <- unique(DT)
     
     expect_equal("include", DT[mcid == "A1_OK", (data_sufficiency)])
@@ -103,25 +103,25 @@ test_add_data_sufficiency <- function() {
     expect_equal(return_vars, colnames(DT))
     
     # correct answers naming and not naming arguments
-    x <- add_data_sufficiency(dframe = dframe, midfield_rec = term)
-    y <- add_data_sufficiency(dframe, term)
+    x <- data_sufficiency(dframe = dframe, midfield_rec = term)
+    y <- data_sufficiency(dframe, term)
     expect_equal(x, y)
     rm(x, y)
     
     # ---------- errors
     
     # required column missing
-    expect_error(add_data_sufficiency(dframe[-mcid], term))
-    expect_error(add_data_sufficiency(dframe, term[-mcid]))
+    expect_error(data_sufficiency(dframe[-mcid], term))
+    expect_error(data_sufficiency(dframe, term[-mcid]))
     
     # argument types incorrect
-    expect_error(add_data_sufficiency(dframe[["mcid"]], term))
-    expect_error(add_data_sufficiency(dframe, term[["mcid"]])) 
+    expect_error(data_sufficiency(dframe[["mcid"]], term))
+    expect_error(data_sufficiency(dframe, term[["mcid"]])) 
     
     invisible(NULL)
 }
 
-test_add_data_sufficiency()
+test_data_sufficiency()
 
 
 
