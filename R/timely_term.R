@@ -43,7 +43,7 @@ NULL
 #'
 #' To a data frame keyed by student ID, add a column indicating the
 #' student's timely completion term. Columns of supporting
-#' information are also added.
+#' information are also added.  Unrelated columns are dropped. 
 #'
 #' In many studies, students must complete their programs in a specified time
 #' span to be considered "timely", for example 4, 6, or 8 years after

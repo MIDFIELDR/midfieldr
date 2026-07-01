@@ -14,15 +14,13 @@ order_multiway(
 )
 }
 \arguments{
-\item{dframe}{Data frame containing a single quantitative value
-(or response) for every combination of levels of two categorical
-variables. Categories may be class character or factor. Two additional
-numeric columns are required when using the "percent" ordering method.}
+\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variables: a single quantitative value
+for every combination of levels of two categorical variables.}
 
-\item{quantity}{Character, name (in quotes) of the single multiway quantitative
+\item{quantity}{Character, name of the single multiway quantitative
 variable}
 
-\item{categories}{Character, vector of names (in quotes) of the two multiway
+\item{categories}{Character, vector of names of the two multiway
 categorical variables}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
@@ -34,42 +32,23 @@ medians of the quantitative column grouped by category. The percent
 method computes percentages based on the same ratio underlying the
 quantitative percentage variable except grouped by category.}
 
-\item{ratio_of}{Character vector with the names (in quotes) of the
+\item{ratio_of}{Character vector with the names of the
 numerator and denominator columns that produced the quantitative
 variable, required when \code{method} is "percent". Names can be
 in any order; the algorithm assumes that the parameter with the
 larger column sum is the denominator of the ratio.}
 }
 \value{
-A data frame in \code{data.table} format with
-the following properties: rows are preserved; columns specified by
-\code{categories} are converted to factors and ordered; the column specified
-by \code{quantity} is converted to type double; other columns are preserved
-with the exception that columns added by the function overwrite existing
-columns of the same name (if any); grouping structures are not preserved.
-The added columns are:
-\describe{
-\item{\code{CATEGORY_median} columns (when ordering method is "median")}{
-Numeric. Two columns of medians of the quantitative variable grouped
-by the categorical variables. The \code{CATEGORY} placeholder in
-the column name is replaced by a category name from the
-\code{categories} argument. For example, suppose
-\code{categories = c("program", "people")} and
-\code{method = "median"}. The two new column names would be
-\code{program_median} and \code{people_median.}}
-
-\item{\code{CATEGORY_QUANTITY} columns (when ordering method is "percent")}{
-Numeric. Two columns of percentages based on the same ratio that
-produces the quantitative variable except grouped by the categorical
-variables. The \code{CATEGORY} placeholder in the column name is
-replaced by a category name from the \code{categories} argument; the
-\code{QUANTITY} placeholder is replaced by the quantitative variable
-name in the \code{quantity} argument. For example, suppose
-\code{categories = c("program", "people")}, and
-\code{quantity = "grad_rate"}, and \code{method = "percent"}. The two
-new column names  would be \code{program_grad_rate} and
-\code{people_grad_rate.}}
-
+Data frame with the following properties:
+\itemize{
+\item Data frame class is preserved. Groups and keys are not preserved.
+\item Rows are preserved.
+\item Column specified by \code{quantity} is converted to type double.
+\item Columns specified by \code{categories} are converted to factors and ordered.
+\item Other columns are preserved with the exception that columns added by
+the function overwrite existing columns of the same name (if any).
+\item Two new columns \code{CATEGORY_median} added when method is "median." Numeric medians of the quantitative variable grouped by the categorical variables. The \code{CATEGORY} placeholder in the column name is replaced by a category name from the \code{categories} argument. For example, suppose \code{categories = c("program", "people")} and \code{method = "median"}. The two new column names would be \code{program_median} and \code{people_median.}
+\item Two new columns \code{CATEGORY_QUANTITY} added when method is "percent." Numeric percentages based on the same ratio that produces the quantitative variable except grouped by the categorical variables. The \code{CATEGORY} placeholder in the column name is replaced by a category name from the \code{categories} argument; the \code{QUANTITY} placeholder is replaced by the quantitative variable name in the \code{quantity} argument. For example, suppose \code{quantity = "grad_rate"}, \code{categories = c("program", "people")}, and \code{method = "percent"}. The two new column names  would be \code{program_grad_rate} and \code{people_grad_rate.}
 }
 }
 \description{

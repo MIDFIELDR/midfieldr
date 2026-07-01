@@ -33,7 +33,7 @@ after their timely completion term; and "NA" for non-completers.
 To a data frame keyed by student ID, add a column indicating if a
 student completed their program, and if so, whether their completion
 was timely or late. Columns of supporting information are
-also added.
+also added. Unrelated columns are dropped.
 }
 \details{
 In many studies, students must complete their programs in a specified time

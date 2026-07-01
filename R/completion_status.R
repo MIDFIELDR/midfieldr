@@ -31,7 +31,7 @@ NULL
 #' To a data frame keyed by student ID, add a column indicating if a
 #' student completed their program, and if so, whether their completion
 #' was timely or late. Columns of supporting information are
-#' also added.
+#' also added. Unrelated columns are dropped. 
 #'
 #' In many studies, students must complete their programs in a specified time
 #' span to be considered "timely", for example 4, 6, or 8 years after

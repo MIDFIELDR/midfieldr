@@ -12,11 +12,11 @@ prep_fye_mice(
 )
 }
 \arguments{
-\item{midfield_student}{MIDFIELD \code{student} data table or
-equivalent with required variables \code{mcid}, \code{race}, and \code{sex.}}
+\item{midfield_student}{MIDFIELD records \emph{student} data frame or data frame extension. Required variables:
+\verb{\{mcid, race, sex\}.}}
 
-\item{midfield_term}{MIDFIELD \code{term} data table or equivalent
-with required variables \code{mcid}, \code{institution}, \code{term}, and \code{cip6.}}
+\item{midfield_term}{MIDFIELD records \emph{term} data frame or data frame extension. Required variables:
+\verb{\{mcid, term, cip6, institution\}.}}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
 referable only by name.}
@@ -27,11 +27,10 @@ regular expressions are prohibited. Non-engineering codes---those that do
 not start with 14---produce an error.}
 }
 \value{
-A data frame in \code{data.table} format conditioned for
-later use as an input to the mice R package for multiple imputation. The
-data frame comprises one row for every FYE student, first-term and
-migrator. Grouping structures are not preserved. The columns returned
-are:
+A data frame in \code{data.table} format conditioned for later use as
+an input to the mice R package for multiple imputation. The data frame
+comprises one row for every FYE student, first-term and migrator.
+Grouping structures are not preserved. The columns returned are:
 \describe{
 \item{\code{mcid}}{Character, anonymized student identifier. Returned
 as-is.}
