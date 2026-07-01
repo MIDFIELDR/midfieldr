@@ -152,6 +152,7 @@ programs[, program := fcase(
 )]
 programs[, cip6name := gsub("Engineering", "Engng", cip6name)]
 programs[, cip6name := gsub("Communications", "Commn", cip6name)]
+programs[, cip6name := gsub("Electrical, Electronics", "Elec, Electr", cip6name)]
 
 programs
 ```
@@ -180,7 +181,7 @@ term_source <- copy(term)
 degree_source <- copy(degree)
 ```
 
-The working data frames `student, term,` and `degree` should always be present in our computing environment so we can take advantage of midfieldr default argument values. For example, `post_bacc_terms()` accesses the `degree` table to do its work. If `degree` is in the environment, the following lines yield the same results:
+The working data frames `student, term,` and `degree` should always be present in our computing environment so we can take advantage of midfieldr default argument values. For example, the function `post_bacc_terms()` accesses the `degree` table to do its work. If `degree` is in the environment, the following lines yield identical results:
 
 ```{r}
 #| eval: false
@@ -194,12 +195,12 @@ In this article, we use the latter form.
 
 ### *Select basic columns*
 
-Convenient for viewing data frames at intermediate stages. We reduce the number of columns to those required by other midfieldr functions plus the key or composite key variables of the data tables. 
+Convenient for viewing data frames at intermediate stages. We reduce the number of columns to those required by other midfieldr functions plus the key or composite key variables of the data tables. The optional `type` argument refines the column selection. 
 
 ```{r}
-student <- select_records(student, type = "s")
-term <- select_records(term, "t")
-degree <- select_records(degree, "d")
+student <- select_records(student, type = "s") # type "s" for student
+term <- select_records(term, "t")              # type "t" for term
+degree <- select_records(degree, "d")          # type "d" for degree
 ```
 
 `look_at()` is a midfieldr convenience function that wraps `base::str()`. 

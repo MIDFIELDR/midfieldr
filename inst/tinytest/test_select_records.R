@@ -87,21 +87,25 @@ test_select_records <- function() {
     
     # ---------- basic columns correct
     
+    expect_equal(sort(colnames(select_records(toy_student))),
+                 sort(c("mcid", "race", "sex")))
+    expect_equal(sort(colnames(select_records(toy_term))),
+                 sort(c("mcid", "term", "cip6", "institution", "level")))
+    expect_equal(sort(colnames(select_records(toy_course))),
+                 sort(c("mcid", "term_course", "abbrev", "number")))
+    expect_equal(sort(colnames(select_records(toy_degree))),
+                 sort(c("mcid", "term_degree", "cip6")))
+    
     default_cols <- c(
-        "mcid", "institution", "race", "sex", "cip6", "level", 
-        "abbrev", "number", "term", "term_course", "term_degree"
+      "mcid", "institution", "race", "sex", "cip6", "level", 
+      "abbrev", "number", "term", "term_course", "term_degree"
     )
-   
+    
     expect_equal_colnames <- function (x, these_cols, col_pattern = NULL) {
       expect_cols <- intersect(colnames(x), these_cols)
       result_cols <- colnames(select_records(x, col_pattern = col_pattern))
       expect_equal(expect_cols, result_cols)
     }
-    
-    expect_equal_colnames(toy_student, default_cols)
-    expect_equal_colnames(toy_course , default_cols)
-    expect_equal_colnames(toy_term   , default_cols)
-    expect_equal_colnames(toy_degree , default_cols)
     
     # col_pattern correct answer
     x <- copy(toy_term)

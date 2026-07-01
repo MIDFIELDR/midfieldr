@@ -27,10 +27,10 @@ regular expressions are prohibited. Non-engineering codes---those that do
 not start with 14---produce an error.}
 }
 \value{
-A data frame in \code{data.table} format conditioned for later use as
-an input to the mice R package for multiple imputation. The data frame
-comprises one row for every FYE student, first-term and migrator.
-Grouping structures are not preserved. The columns returned are:
+Data frame conditioned for later use as an input to the mice R
+package for multiple imputation. The data frame comprises one row for every
+FYE student, first-term and migrator. Grouping structures are not preserved.
+The columns returned are:
 \describe{
 \item{\code{mcid}}{Character, anonymized student identifier. Returned
 as-is.}

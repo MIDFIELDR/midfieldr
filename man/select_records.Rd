@@ -12,7 +12,7 @@ Expected choices are \code{student}, \code{term}, \code{course}, \code{degree} o
 equivalent.}
 
 \item{type}{Character identifying the record type. Possible values are "s",
-"t", "c", "d", or "a". See Details.}
+"t", "c", "d", "a", or NULL (default). See Details.}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
 referable only by name.}
@@ -32,29 +32,35 @@ following properties:
 }
 }
 \description{
-Subset a data frame, selecting columns by matching a vector of character
-strings. A convenience function to reduce the dimensions of a MIDFIELD
+Subset any of the four MIDFIELD data tables \verb{\{student, term, course, degree\}}
+by selecting from that data frame the columns required by other midfieldr
+functions.
+}
+\details{
+A convenience function to reduce the dimensions of a MIDFIELD
 data table by selecting only those columns required by other midfieldr
 functions or that are required to form a composite key. Particularly
 useful in interactive sessions when viewing the data tables at various
 stages of an analysis.
-}
-\details{
+
 Several midfieldr functions require input data frames containing
 specific variables (column names) such as \code{mcid} or \code{cip6}. In addition,
 the MIDFIELD data tables have specific variables that act as keys
-or composite keys to the information in that table. The \code{type} argument
-determines which columns are returned, if those columns exist in \code{dframe}:
+or composite keys to the information in that table. If the \code{type} argument
+is NULL (default), one of the following codes is assigned to return the
+column names indicated (if present):
 \itemize{
-\item \code{type = "s"} (student table) returns columns \verb{mcid, race, sex}
-\item \code{type = "t"} (term table) returns columns \verb{mcid, term, cip6, institution, level}
-\item \code{type = "c"} (course table) returns columns \verb{mcid, term_course, abbrev, number}
-\item \code{type = "d"} (degree table) returns columns \verb{mcid, term_degree, cip6}
-\item \code{type = "a"} (default) returns all the above
+\item \code{type = "s"} (student) looks for \verb{\{mcid, race, sex\}}
+\item \code{type = "t"} (term) looks for \verb{\{mcid, term, cip6, institution, level\}}
+\item \code{type = "c"} (course) looks for  \verb{\{mcid, term_course, abbrev, number\}}
+\item \code{type = "d"} (degree) looks for  \verb{\{mcid, term_degree, cip6\}}
+\item \code{type = "a"} looks for all the above columns
 }
 
-Additional column names can be included by using the \code{col_pattern}
-argument. In all cases, unmatched search strings are silently ignored.
+Specifying the type manually \verb{\{s, t, c, d, a\}} in the argument overrides
+the automatic selection. Additional column names can be included by using
+the \code{col_pattern} argument. In all cases, unmatched search strings are
+silently ignored.
 }
 \examples{
 # Basic usage

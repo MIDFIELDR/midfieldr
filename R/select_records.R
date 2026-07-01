@@ -26,8 +26,11 @@ NULL
 
 #' Choose columns of student records
 #'
-#' Subset a data frame, selecting columns by matching a vector of character
-#' strings. A convenience function to reduce the dimensions of a MIDFIELD
+#' Subset any of the four MIDFIELD data tables `{student, term, course, degree}` 
+#' by selecting from that data frame the columns required by other midfieldr 
+#' functions. 
+#' 
+#' A convenience function to reduce the dimensions of a MIDFIELD
 #' data table by selecting only those columns required by other midfieldr
 #' functions or that are required to form a composite key. Particularly
 #' useful in interactive sessions when viewing the data tables at various
@@ -36,23 +39,25 @@ NULL
 #' Several midfieldr functions require input data frames containing
 #' specific variables (column names) such as `mcid` or `cip6`. In addition,
 #' the MIDFIELD data tables have specific variables that act as keys
-#' or composite keys to the information in that table. The `type` argument
-#' determines which columns are returned, if those columns exist in `dframe`:
-#'
-#' * `type = "s"` (student table) returns columns `mcid, race, sex`
-#' * `type = "t"` (term table) returns columns `mcid, term, cip6, institution, level`
-#' * `type = "c"` (course table) returns columns `mcid, term_course, abbrev, number`
-#' * `type = "d"` (degree table) returns columns `mcid, term_degree, cip6`
-#' * `type = "a"` (default) returns all the above
-#'
-#' Additional column names can be included by using the `col_pattern`
-#' argument. In all cases, unmatched search strings are silently ignored.
+#' or composite keys to the information in that table. If the `type` argument 
+#' is NULL (default), one of the following codes is assigned to return the 
+#' column names indicated (if present):
+#' * `type = "s"` (student) looks for `{mcid, race, sex}`
+#' * `type = "t"` (term) looks for `{mcid, term, cip6, institution, level}`
+#' * `type = "c"` (course) looks for  `{mcid, term_course, abbrev, number}`
+#' * `type = "d"` (degree) looks for  `{mcid, term_degree, cip6}`
+#' * `type = "a"` looks for all the above columns
+#' 
+#' Specifying the type manually `{s, t, c, d, a}` in the argument overrides 
+#' the automatic selection. Additional column names can be included by using 
+#' the `col_pattern` argument. In all cases, unmatched search strings are 
+#' silently ignored.
 #'
 #' @param dframe Data frame of student records from which columns are selected.
 #'        Expected choices are `student`, `term`, `course`, `degree` or their
 #'        equivalent.
 #' @param type Character identifying the record type. Possible values are "s",
-#'        "t", "c", "d", or "a". See Details.
+#'        "t", "c", "d", "a", or NULL (default). See Details.
 #' @param ... `r param_dots`
 #' @param col_pattern Character vector containing strings or regular
 #'        expressions to be matched or partially matched to the column
@@ -84,7 +89,7 @@ select_records <- function(dframe, type = NULL, ..., col_pattern = NULL) {
   if (!is.null(col_pattern)) {
     checkmate::qassert(col_pattern, "s+")
   }
-  type <- type %?% "a"
+ if (!is.null(type)) {
   qassert(type, "S1")
   assert_subset(
     type,
@@ -92,7 +97,8 @@ select_records <- function(dframe, type = NULL, ..., col_pattern = NULL) {
     empty.ok = FALSE,
     .var.name = "type"
   )
-
+}
+  
   # ---------- preparation
 
   # to restore class except for groups in tibbles
@@ -101,6 +107,31 @@ select_records <- function(dframe, type = NULL, ..., col_pattern = NULL) {
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   setDT(dframe)
+
+  if (is.null(type)) {
+    uniq_s_cols <- c("race", "sex", "transfer", "hours_transfer", 
+                     "age_desc", "us_citizen", "home_zip", "high_school", 
+                     "sat_math", "sat_verbal", "act_comp")
+    uniq_t_cols <- c("term", "level", "standing", "coop", "hours_term", 
+                     "hours_term_attempt", "hours_cumul", "hours_cumul_attempt", 
+                     "gpa_term", "gpa_cumul")
+    uniq_c_cols <- c("term_course", "abbrev", "number", "course", "section", 
+                     "type", "faculty_rank", "hourse_course", "grade", 
+                     "discipline_midfield")
+    uniq_d_cols <- c("term_degree", "degree")
+    
+    if (length(intersect(colnames(dframe), uniq_s_cols)) > 0) {
+      type = "s"
+    } else if (length(intersect(colnames(dframe), uniq_t_cols)) > 0) {
+      type = "t"
+    } else if (length(intersect(colnames(dframe), uniq_c_cols)) > 0) {
+      type = "c"
+    } else if (length(intersect(colnames(dframe), uniq_d_cols)) > 0) {
+      type = "d"
+    }  else{
+      type = "a"
+    }
+  }
 
   # bind names due to NSE notes in R CMD check
   # NA
