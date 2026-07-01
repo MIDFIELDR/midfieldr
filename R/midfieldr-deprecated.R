@@ -8,7 +8,7 @@
 #'  new function is similar but with the CIP data frame as the first argument,
 #'  enabling chained functions like those encountered using dplyr and friends.}
 #'
-#'  \item{`select_required()`}{is deprecated in favor of [select_record_cols()].
+#'  \item{`select_required()`}{is deprecated in favor of [select_records()].
 #'  The new functionality is similar but with exact matching to the default
 #'  column names plus preserving data frame class.}
 #'

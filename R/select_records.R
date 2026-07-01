@@ -11,14 +11,14 @@
 #' @export
 select_required <- function(midfield_x, select_add = NULL) {
   .Deprecated(
-    new = "select_record_cols",
+    new = "select_records",
     package = "midfieldr",
     msg = "This function was deprecated for consistency with midfieldr
-    naming conventions. Please use `select_record_cols()` instead."
+    naming conventions. Please use `select_records()` instead."
   )
 
   # old function still works, wraps the new function
-  select_record_cols(dframe = midfield_x, col_pattern = select_add)
+  select_records(dframe = midfield_x, col_pattern = select_add)
 }
 NULL
 
@@ -66,9 +66,9 @@ NULL
 #' * Groups are not necessarily preserved.
 #' * Data frame attributes are preserved with the exception of grouped tibbles.
 #'
-#' @example man/examples/exa_select_record_cols.R
+#' @example man/examples/exa_select_records.R
 #' @export
-select_record_cols <- function(dframe, type = NULL, ..., col_pattern = NULL) {
+select_records <- function(dframe, type = NULL, ..., col_pattern = NULL) {
   # ---------- base R checks (all data frame classes)
   #
   # arguments after ... must be named
