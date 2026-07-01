@@ -18,17 +18,22 @@
 
 New features
 
-- New function `add_term_cluster()` to identify rows of post-baccalaureate terms to exclude.
-- New function `select_record_cols()` to replace deprecated `select_required()`. Refines the column selection even further. 
-- New function `filter_cip_rows()` to replace deprecated `filter_cip()`.
+- New function `post_bacc_terms()` to identify rows of post-baccalaureate terms to exclude.
 - New utilities  `look_at()`, `catch_error()`, and `sort_uniq()` that wrap base R functions with our preferred arguments. 
 - Add data set `cip2010`, constructed from a recent download of the source file (`CIPCode2010.csv`) from NCES. Has the same data structure as the existing `cip` dataset, but with more rows. 
-- Add attempt in functions to preserve data frame attributes for classes `data.frame`, `data.table`, and `tbl_df`. 
+- Renamed/revised functions and their arguments:
+  - `completion_status()` replaces the deprecated `add_completion_status()`
+  - `data_sufficiency()` replaces the deprecated `add_data_sufficiency()`
+  - `filter_programs()` replaces the deprecated `filter_cip()`
+  - `select_records()` replaces the deprecated `select_required()`
+  - `timely_term()` replaces the deprecated `add_timely_term()`
+
+ 
 
 Minor improvements
 
+- Data frame class is preserved (or attempted to be preserved) in all functions with a data frame input/output. 
 - New versions of toy data and case study data for consistency with midfielddata.
-- Revise README for brevity. Use toy data to illustrate usage.
 
 Bug fixes
 
