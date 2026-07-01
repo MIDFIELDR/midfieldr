@@ -27,10 +27,10 @@ expect_class_preserved <- function(df1, df2, fnc) {
   rm(x, y)
 }
 
-test_add_term_cluster <- function() {
+test_post_bacc_terms <- function() {
   
   # usage
-  # add_term_cluster(dframe, midfield_rec = degree)
+  # post_bacc_terms(dframe, midfield_rec = degree)
   
   # ---------- setup
   
@@ -43,34 +43,34 @@ test_add_term_cluster <- function() {
   # ---------- start tests
   
   # check that class is preserved function
-  expect_class_preserved(toy_term, toy_degree, add_term_cluster)
+  expect_class_preserved(toy_term, toy_degree, post_bacc_terms)
   
   # check for incorrect input class / required variables
-  expect_error(add_term_cluster(1))
-  expect_error(add_term_cluster(toy_term, "sat"))
-  expect_error(add_term_cluster(toy_student, toy_degree))
-  expect_error(add_term_cluster(toy_degree, toy_student))
+  expect_error(post_bacc_terms(1))
+  expect_error(post_bacc_terms(toy_term, "sat"))
+  expect_error(post_bacc_terms(toy_student, toy_degree))
+  expect_error(post_bacc_terms(toy_degree, toy_student))
   
   # term added columns correct
   x <- copy(toy_term)
   y <- copy(toy_degree)
-  z <- add_term_cluster(x, y)
+  z <- post_bacc_terms(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
   
   # course added columns correct
   x <- copy(toy_course)
-  z <- add_term_cluster(x, y)
+  z <- post_bacc_terms(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
   
   # degree added columns correct
   x <- copy(toy_degree)
-  z <- add_term_cluster(x, y)
+  z <- post_bacc_terms(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
   
   # confirm NO changes by reference
   term <- copy(toy_term)
   degr <- copy(toy_degree)
-  z <- add_term_cluster(term, degr)
+  z <- post_bacc_terms(term, degr)
   expect_true(check_equiv_frames(term, toy_term))
   expect_true(check_equiv_frames(degr, toy_degree))
   
@@ -109,7 +109,7 @@ test_add_term_cluster <- function() {
       "4", "20053"
   )
   setDT(x_degr)
-  ans <- add_term_cluster(x_term, x_degr)[["term_cluster"]]
+  ans <- post_bacc_terms(x_term, x_degr)[["term_cluster"]]
   expected_ans <- c("pre-degree", "first-degree", "post-first-degree", 
                     "pre-degree", "first-degree", 
                     "pre-degree", "first-degree", "first-degree", 
@@ -126,7 +126,7 @@ test_add_term_cluster <- function() {
   invisible(NULL)
 }
 
-test_add_term_cluster()
+test_post_bacc_terms()
 
 
 

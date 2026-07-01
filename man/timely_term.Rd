@@ -27,7 +27,8 @@ Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved. Groups and keys are not preserved.
 \item Rows are filtered for unique \code{mcid} values.
-\item Column \code{{mcid}} is retained (all other columns are dropped). New columns added:
+\item Column \code{{mcid}} is retained (all other columns are dropped). New
+columns added:
 \itemize{
 \item \code{term_i.}   Initial term of a student's longitudinal record,
 encoded \code{YYYYT}. Extracted from \code{midfield_rec.}
@@ -89,10 +90,3 @@ timely_term(dframe, toy_term)
 
 
 }
-\seealso{
-Other add_*:
-\code{\link[=add_term_cluster]{add_term_cluster()}},
-\code{\link[=completion_status]{completion_status()}},
-\code{\link[=data_sufficiency]{data_sufficiency()}}
-}
-\concept{add_*}

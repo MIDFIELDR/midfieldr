@@ -81,10 +81,3 @@ data_sufficiency(dframe, toy_term)
 dframe[, data_sufficiency := NA_character_][]
 data_sufficiency(dframe, toy_term)
 }
-\seealso{
-Other add_*:
-\code{\link[=add_term_cluster]{add_term_cluster()}},
-\code{\link[=completion_status]{completion_status()}},
-\code{\link[=timely_term]{timely_term()}}
-}
-\concept{add_*}

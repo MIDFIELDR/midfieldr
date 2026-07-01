@@ -55,4 +55,3 @@ third_pass <- filter_programs(second_pass, c("^27", "^30"))
 third_pass
  
 }
-\concept{filter_*}

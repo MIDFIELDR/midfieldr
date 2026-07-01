@@ -66,10 +66,3 @@ completion_status(dframe, toy_degree)
 dframe[, completion_status := NA_character_][]
 completion_status(dframe, toy_degree)
 }
-\seealso{
-Other add_*:
-\code{\link[=add_term_cluster]{add_term_cluster()}},
-\code{\link[=data_sufficiency]{data_sufficiency()}},
-\code{\link[=timely_term]{timely_term()}}
-}
-\concept{add_*}

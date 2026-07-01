@@ -14,7 +14,7 @@ midfield_x <- function(x) {
 # -------------------------------------------------------------------
 
 
-dframe_add_term_cluster <- "Working data frame of student-level records
+dframe_post_bacc_terms <- "Working data frame of student-level records
         to which a term-status column is to be added. Required
         variables are `mcid` and a single term variable."
 
@@ -51,7 +51,7 @@ midfield_term_prep_fye_mice <- "MIDFIELD `term` data table or equivalent
 midfield_degree_completion_status <- "MIDFIELD `degree` data table or
         equivalent with required variables `mcid` and `term_degree.`"
 
-midfield_degree_add_term_cluster <- "MIDFIELD `degree` data table or
+midfield_degree_post_bacc_terms <- "MIDFIELD `degree` data table or
         equivalent with required variables `mcid` and `term_degree.`"
 
 
@@ -68,7 +68,7 @@ param_dots <- "Not used for passing values; forces subsequent arguments to be
 
 
 
-return_add_term_cluster <- "A data frame with the following properties: rows
+return_post_bacc_terms <- "A data frame with the following properties: rows
        are preserved; columns `first_degree_term` and `term_status` are added
        or overwritten; all other columns are preserved.
        Grouping structures are not necessarily preserved."

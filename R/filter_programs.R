@@ -64,7 +64,6 @@ NULL
 #' * Columns are not modified. 
 #'
 #' @example man/examples/exa_filter_programs.R
-#' @family filter_*
 #' @export
 #'
 filter_programs <- function(dframe, pattern, ..., negate = FALSE) {

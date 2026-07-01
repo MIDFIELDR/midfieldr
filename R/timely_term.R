@@ -90,7 +90,8 @@ NULL
 #' @returns Data frame with the following properties:
 #' * Data frame class is preserved. Groups and keys are not preserved.
 #' * Rows are filtered for unique `mcid` values.
-#' * Column `{mcid}` is retained (all other columns are dropped). New columns added:
+#' * Column `{mcid}` is retained (all other columns are dropped). New 
+#'   columns added:
 #'   - `term_i.` &nbsp; Initial term of a student's longitudinal record,
 #'      encoded `YYYYT`. Extracted from `midfield_rec.`
 #'   - `level_i.` &nbsp; Character. Student level (01 Freshman, 02 Sophomore,
@@ -99,9 +100,7 @@ NULL
 #'      adjusted for a student's initial level.
 #'   - `timely_term.` &nbsp; Character. Latest term by which program completion
 #'      would be considered timely for every student. Encoded `YYYYT.`
-
 #'
-#' @family add_*
 #' @example man/examples/exa_timely_term.R
 #' @export
 #'

@@ -67,7 +67,6 @@ NULL
 #'      after their timely completion term; and "NA" for non-completers.
 #'
 #' @example man/examples/exa_completion_status.R
-#' @family add_*
 #' @export
 #'
 completion_status <- function(dframe, midfield_rec = degree) {

@@ -82,7 +82,6 @@ NULL
 #'      occurs.
 #'
 #' @example man/examples/exa_data_sufficiency.R
-#' @family add_*
 #' @export
 #'
 data_sufficiency <- function(dframe, midfield_rec = term) {

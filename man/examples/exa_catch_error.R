@@ -4,14 +4,14 @@ t <- toy_term[, .(mcid, term)]
 d <- toy_degree[, .(mcid, term_degree)]
 
 # No error
-catch_error(add_term_cluster(t, d))
+catch_error(post_bacc_terms(t, d))
 
 # Error, no term variable 
-catch_error(add_term_cluster(s, d))
+catch_error(post_bacc_terms(s, d))
 
 # Error, missing dframe argument
-catch_error(add_term_cluster())
+catch_error(post_bacc_terms())
 
 # Error, missing degree argument
-catch_error(add_term_cluster(t))
+catch_error(post_bacc_terms(t))
 

@@ -1,28 +1,28 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
-#' Identify term clusters
-#'
-#' Add columns to a student-records data frame indicating an observation
-#' should be included (or excluded) because the term is clustered with
-#' pre-degree (or post-first-degree) terms.
-#'
+#' Identify post-baccalaureate terms
+#' 
+#' To a data frame keyed by student ID and containing an academic term 
+#' variable, add a column that clusters terms with respect to a student's 
+#' first degree term. Post-baccalaureate terms are typically excluded from 
+#' the term, course, and degree data tables.  
+#' 
 #' In a typical analysis, one is interested in a student's progress up to
 #' and including the term in which they earn their first degree or degrees.
 #' Any terms later than the first baccalaureate can usually be excluded from
 #' study.
+#' 
+#' @param dframe `r dframe` Required variables: `{mcid}` and one of 
+#'        `{term, term_course, term_degree}.`
+#'        
+#' @param midfield_rec `r midfield_x("*degree*")` Required variables:
+#'        `{mcid, term_degree}.`     
 #'
-#' @param dframe Student-records data frame to which term-cluster columns
-#'        are to be added. Required variables are `mcid` and a single term
-#'        variable: `term` (when working with the term table),
-#'        `term_course` (course table), or `term_degree` (degree table).
-#'
-#' @param midfield_rec MIDFIELD `degree` data table or equivalent with
-#'        required variables `mcid` and `term_degree`.
-#'
-#' @returns Data frame `dframe` with added columns. Output has the
-#'          following properties:
+#' @returns Data frame with the following properties:
+#' * Data frame class is preserved. Groups and keys are not preserved.
 #' * Rows are not modified.
-#' * Columns added or updated/overwritten:
+#' * Columns are not modified except new columns overwrite old columns of 
+#'   the same name. New columns: 
 #'   - `first_degree_term.` &nbsp;  Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA`.
 #'      Joined from `midfield_rec$term_degree`.
@@ -30,14 +30,11 @@
 #'      to one of three clusters: terms that are prior to ("pre-degree"),
 #'      equal to ("first-degree"), or subsequent to ("post-first-degree")
 #'      the student’s first degree term.
-#' * Columns not listed above are not modified.
-#' * Data frame attributes (except groups) are preserved.
 #'
-#' @example man/examples/exa_add_term_cluster.R
-#' @family add_*
+#' @example man/examples/exa_post_bacc_terms.R
 #' @export
 #'
-add_term_cluster <- function(dframe, midfield_rec = degree) {
+post_bacc_terms <- function(dframe, midfield_rec = degree) {
   # ---------- base R checks (all data frame classes)
 
   # define required columns in midfield_x argument
