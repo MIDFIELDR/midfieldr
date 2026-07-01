@@ -419,11 +419,10 @@ term <- select_records(term)
 degree <- select_records(degree)
 
 look_at(student)
-#> Classes 'data.table' and 'data.frame':   97555 obs. of  4 variables:
-#>  $ mcid       : chr  "MCID3111142225" "MCID3111142283" "MCID3111142290" "MCID"..
-#>  $ race       : chr  "Asian" "Asian" "Asian" "Asian" ...
-#>  $ sex        : chr  "Male" "Female" "Male" "Male" ...
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
+#> Classes 'data.table' and 'data.frame':   97555 obs. of  3 variables:
+#>  $ mcid: chr  "MCID3111142225" "MCID3111142283" "MCID3111142290" "MCID3111142"..
+#>  $ race: chr  "Asian" "Asian" "Asian" "Asian" ...
+#>  $ sex : chr  "Male" "Female" "Male" "Male" ...
 
 look_at(term)
 #> Classes 'data.table' and 'data.frame':   639915 obs. of  5 variables:
@@ -434,11 +433,10 @@ look_at(term)
 #>  $ level      : chr  "01 First-year" "01 First-year" "01 First-year" "01 Firs"..
 
 look_at(degree)
-#> Classes 'data.table' and 'data.frame':   49665 obs. of  4 variables:
+#> Classes 'data.table' and 'data.frame':   49665 obs. of  3 variables:
 #>  $ mcid       : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294" "MCID"..
 #>  $ term_degree: chr  "19881" "19921" "19903" "19921" ...
 #>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 ```
 
 With a smaller number of columns, the printout of the data frame is more
