@@ -84,34 +84,34 @@ One can start an analysis with program data or with student record data---the ch
 
 Unless you already know your program CIP codes, finding them entails some trial and error.
 
-`filter_cip_rows()` searches `dframe` for string patterns. Searching for "civil engineering"  yields programs in Engineering that we want and some in Engineering Technology that we do not. 
+`filter_programs()` searches `dframe` for string patterns. Searching for "civil engineering"  yields programs in Engineering that we want and some in Engineering Technology that we do not. 
 
 ```{r}
-filter_cip_rows(cip, "civil engineering")
+filter_programs(cip, "civil engineering")
 ```
 
 These results suggest that Engineering has the 2-digit code "14" and that Civil Engineering has the 4-digit code "1408". We can extract Civil Engineering alone by searching `cip` for lines that start with "1408", yielding six 6-digit codes. Regular expressions such as "^1408" are accepted. 
 
 ```{r}
-filter_cip_rows(cip, "^1408")
+filter_programs(cip, "^1408")
 ```
 
 ```{r}
 #| echo: false
-N_engr_programs <- nrow(filter_cip_rows(cip, "^14"))
+N_engr_programs <- nrow(filter_programs(cip, "^14"))
 ```
 
 Knowing the 2-digit code for Engineering programs, our next search is for lines that start with "14". Note that the `cip` *argument* takes the `cip` dataset as its default *value.* The result is an Engineering subset of `cip` with `r N_engr_programs` rows.
 
 ```{r}
-engr_cip <- filter_cip_rows(cip, "^14")
+engr_cip <- filter_programs(cip, "^14")
 engr_cip
 ```
 
 Next, to search this result for Electrical Engineering, we assign `engr_cip` to the `cip` argument, yielding four 6-digit codes. 
 
 ```{r}
-filter_cip_rows(engr_cip, "electrical")
+filter_programs(engr_cip, "electrical")
 ```
 
 
@@ -134,7 +134,7 @@ To collect all our 6-digit codes, we create a search string of the desired 4-dig
 
 ```{r}
 codes_we_want <- c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437")
-programs <- filter_cip_rows(cip, codes_we_want)
+programs <- filter_programs(cip, codes_we_want)
 programs <- programs[, .(cip6name, cip6)]
 
 programs

@@ -4,7 +4,7 @@
 #'
 #' \describe{
 #'
-#'  \item{`filter_cip()`}{is deprecated in favor of [`filter_cip_rows()`]. The
+#'  \item{`filter_cip()`}{is deprecated in favor of [`filter_programs()`]. The
 #'  new function is similar but with the CIP data frame as the first argument,
 #'  enabling chained functions like those encountered using dplyr and friends.}
 #'

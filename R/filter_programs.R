@@ -14,11 +14,11 @@ filter_cip <- function(keep_text = NULL,
                        cip = NULL,
                        select = NULL) {
   .Deprecated(
-    new = "filter_cip_rows",
+    new = "filter_programs",
     package = "midfieldr",
     msg = "This function was deprecated to put the data frame as the
     first argument making it possible to chain with other functions.
-    Please use `filter_cip_rows()` instead."
+    Please use `filter_programs()` instead."
   )
 
   # attempt to continue to use original function with partial success
@@ -30,7 +30,7 @@ filter_cip <- function(keep_text = NULL,
     negate <- TRUE
   }
 
-  filter_cip_rows(dframe = cip, pattern = keep_text, negate = negate)
+  filter_programs(dframe = cip, pattern = keep_text, negate = negate)
 }
 NULL
 
@@ -63,11 +63,11 @@ NULL
 #' * Rows are a subset of the input and appear in the same order.
 #' * Columns are not modified. 
 #'
-#' @example man/examples/exa_filter_cip_rows.R
+#' @example man/examples/exa_filter_programs.R
 #' @family filter_*
 #' @export
 #'
-filter_cip_rows <- function(dframe, pattern, ..., negate = FALSE) {
+filter_programs <- function(dframe, pattern, ..., negate = FALSE) {
   
   # ---------- base R checks (all data frame classes)
   

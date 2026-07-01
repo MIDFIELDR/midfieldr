@@ -22,10 +22,10 @@ expect_class_preserved <- function(x, text, fnc) {
     rm(x)
 }
 
-test_filter_cip_rows <- function() {
+test_filter_programs <- function() {
 
     # usage
-    # filter_cip_rows(dframe,
+    # filter_programs(dframe,
     #             pattern, 
     #             ..., 
     #             negate = FALSE)
@@ -61,17 +61,17 @@ test_filter_cip_rows <- function() {
     # ---------- start tests
     
     # check that class is preserved function
-    expect_class_preserved(cip, "^14", filter_cip_rows)
+    expect_class_preserved(cip, "^14", filter_programs)
     
 
     # Arguments before ... do not have to be named if ordered correctly
     expect_equal(
-        filter_cip_rows(pattern = "500913", dframe = music_cip),
-        filter_cip_rows(music_cip, "500913")
+        filter_programs(pattern = "500913", dframe = music_cip),
+        filter_programs(music_cip, "500913")
     )
 
     # Error if no pattern
-    expect_error(filter_cip_rows(dframe = music_cip))
+    expect_error(filter_programs(dframe = music_cip))
 
 
     
@@ -82,16 +82,16 @@ test_filter_cip_rows <- function() {
     DT[, x_int  := .I]
     DT[, x_lgcl := TRUE]
 
-    # expect_equal(filter_cip_rows("Music", cip = DT))
-    expect_equal(filter_cip_rows("11", dframe = DT), DT[x_int == 11L])
-    expect_equivalent(filter_cip_rows("TRUE", dframe = DT), DT)
+    # expect_equal(filter_programs("Music", cip = DT))
+    expect_equal(filter_programs("11", dframe = DT), DT[x_int == 11L])
+    expect_equivalent(filter_programs("TRUE", dframe = DT), DT)
 
     
     # function output not printed
     invisible(NULL)
 }
 
-test_filter_cip_rows()
+test_filter_programs()
 
 
 

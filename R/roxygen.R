@@ -96,7 +96,7 @@ return_order_multiway <- "A data frame in `data.table` format with
         columns of the same name (if any); grouping structures are not preserved.
         The added columns are:"
 
-return_filter_cip_rows <- "A subset of `dframe` with the following properties:
+return_filter_programs <- "A subset of `dframe` with the following properties:
         includes rows those that match elements of `pattern` unless `negate`
         is true, then excludes rows that match `pattern`; all columns are
         preserved; grouping structures are not preserved."

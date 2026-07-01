@@ -87,21 +87,21 @@ For example, Geotechnical Engineering (140802) is a specialty in  Civil Engineer
 #| echo: false
 
 library("midfieldr")
-df <- filter_cip_rows(cip, "^41")
+df <- filter_programs(cip, "^41")
 n41 <- nrow(df)
-n4102 <- nrow(filter_cip_rows(df, "^4102"))
-n4103 <- nrow(filter_cip_rows(df, "^4103"))
+n4102 <- nrow(filter_programs(df, "^4102"))
+n4103 <- nrow(filter_programs(df, "^4103"))
 name41 <- unique(df[, cip2name])
 
-df24 <- filter_cip_rows(cip, "^24")
+df24 <- filter_programs(cip, "^24")
 n24 <- nrow(df24)
 name24 <- unique(df24[, cip2name])
 
-df51 <- filter_cip_rows(cip, "^51")
+df51 <- filter_programs(cip, "^51")
 n51 <- nrow(df51)
 name51 <- unique(df51[, cip2name])
 
-df1313 <- filter_cip_rows(cip, "^1313")
+df1313 <- filter_programs(cip, "^1313")
 n1313 <- nrow(df1313)
 name1313 <- unique(df1313[, cip2name])
 ```
@@ -111,7 +111,7 @@ To illustrate the taxonomy in a little more detail, we show in the table the pro
 ```{r}
 #| echo: false
 library(gt)
-x <- filter_cip_rows(cip, "^41")
+x <- filter_programs(cip, "^41")
 x[2:9, cip2name := "\U2003\U02193"]
 x[c(4, 5, 7, 8), cip4name := "\U2003\U02193"]
 
@@ -213,7 +213,7 @@ set.seed(NULL)
 
 
 
-## `filter_cip_rows()`
+## `filter_programs()`
 
 Subset the `cip` data frame, retaining rows that match or partially match a vector of character strings. 
 
@@ -229,13 +229,13 @@ Subset the `cip` data frame, retaining rows that match or partially match a vect
 
 ```{r}
 # Arguments named
-x <- filter_cip_rows(dframe = cip, pattern = c("engineering"))
+x <- filter_programs(dframe = cip, pattern = c("engineering"))
 
 # Arguments unnamed
-y <- filter_cip_rows(cip, "engineering")
+y <- filter_programs(cip, "engineering")
 
 # Using a chain
-z <- cip |> filter_cip_rows("engineering")
+z <- cip |> filter_programs("engineering")
 
 # Demonstrate equivalence
 check_equiv_frames(x, y)
@@ -248,11 +248,11 @@ check_equiv_frames(x, z)
 
 ## Using a keyword search
 
-Filtering the CIP data for all programs containing the word "engineering" yields `r nrow(filter_cip_rows(cip, "engineering"))` observations. 
+Filtering the CIP data for all programs containing the word "engineering" yields `r nrow(filter_programs(cip, "engineering"))` observations. 
 
 ```{r}
 # Filter basics
-filter_cip_rows(cip, "engineering")
+filter_programs(cip, "engineering")
 ```
 
 Suppose we want to find the CIP codes and names for all programs in Civil Engineering. The search is insensitive to case, so we start with the following code chunk. 
@@ -260,12 +260,12 @@ Suppose we want to find the CIP codes and names for all programs in Civil Engine
 ```{r}
 #| eval: false
 # Example 1 filter using keywords
-filter_cip_rows(cip, "civil")
+filter_programs(cip, "civil")
 ```
 
 ```{r}
 #| echo: false
-filter_cip_rows(cip, "civil") |>
+filter_programs(cip, "civil") |>
   gt() |>
   tab_caption("Table 2. Search results") |>
   tab_options(table.font.size = "small") |>
@@ -283,13 +283,13 @@ The following code chunk could be read as, "Start with the default  `cip` data f
 ```{r}
 #| results: hide
 # First search
-first_pass <- filter_cip_rows(cip, "civil")
+first_pass <- filter_programs(cip, "civil")
 
 # Refine the search
-second_pass <- filter_cip_rows(first_pass, "engineering")
+second_pass <- filter_programs(first_pass, "engineering")
 
 # Refine further
-third_pass <- filter_cip_rows(second_pass, "technology", negate = TRUE)
+third_pass <- filter_programs(second_pass, "technology", negate = TRUE)
 ```
 
 ```{r}
@@ -320,12 +320,12 @@ Suppose we want to study programs relating to German culture, language, and lite
 ```{r}
 #| eval: false
 # Search on text
-filter_cip_rows(cip, "german")
+filter_programs(cip, "german")
 ```
 
 ```{r}
 #| echo: false
-filter_cip_rows(cip, "german") |>
+filter_programs(cip, "german") |>
   gt() |>
   tab_caption("Table 4. Search results") |>
   tab_options(table.font.size = "small") |>
@@ -341,12 +341,12 @@ From the 6-digit program names we find only two that are of interest, German Stu
 ```{r}
 #| eval: false
 # Search on codes
-filter_cip_rows(cip, c("050125", "160501"))
+filter_programs(cip, c("050125", "160501"))
 ```
 
 ```{r }
 #| echo: false
-filter_cip_rows(cip, c("050125", "160501")) |>
+filter_programs(cip, c("050125", "160501")) |>
   gt() |>
   tab_caption("Table 5. Search results") |>
   tab_options(table.font.size = "small") |>
@@ -363,7 +363,7 @@ If the 6-digit codes are entered as integers, they are coerced to strings for th
 #| error: true
 
 # Search that produces an error
-filter_cip_rows(cip, c(050125, 160501))
+filter_programs(cip, c(050125, 160501))
 ```
 
 
@@ -379,12 +379,12 @@ Specifying 4-digit codes yields a data frame all 6-digit programs containing the
 ```{r}
 #| eval: false
 # example 3 filter using regular expressions
-filter_cip_rows(cip, c("^1410", "^1419"))
+filter_programs(cip, c("^1410", "^1419"))
 ```
 
 ```{r}
 #| echo: false
-filter_cip_rows(cip, c("^1410", "^1419")) |>
+filter_programs(cip, c("^1410", "^1419")) |>
   gt() |>
   tab_caption("Table 6. Search results") |>
   tab_options(table.font.size = "small") |>
@@ -400,12 +400,12 @@ The 2-digit series represent the most general groupings of related programs. Her
 ```{r}
 #| eval: false
 # Search on 2-digit code
-filter_cip_rows(cip, "^54")
+filter_programs(cip, "^54")
 ```
 
 ```{r}
 #| echo: false
-filter_cip_rows(cip, "^54") |>
+filter_programs(cip, "^54") |>
   gt() |>
   tab_caption("Table 7. Search results") |>
   tab_options(table.font.size = "small") |>
@@ -422,13 +422,13 @@ The series argument can include any combination of 2, 4, and 6-digit codes. It c
 #| eval: false
 # Search on vector of codes
 codes_we_want <- c("^24", "^4102", "^450202")
-filter_cip_rows(cip, codes_we_want)
+filter_programs(cip, codes_we_want)
 ```
 
 ```{r}
 #| echo: false
 codes_we_want <- c("^24", "^4102", "^450202")
-filter_cip_rows(cip, codes_we_want) |>
+filter_programs(cip, codes_we_want) |>
   gt() |>
   tab_caption("Table 8. Search results") |>
   tab_options(table.font.size = "small") |>
@@ -478,7 +478,7 @@ We obtain their 6-digit CIP codes. The 4-digit names are appropriate here.  Our 
 options(datatable.print.nrows = 15)
 
 # Four engineering programs
-four_programs <- filter_cip_rows(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+four_programs <- filter_programs(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
 
 # Retain the needed columns
 four_programs <- four_programs[, .(cip6, cip4name)]
@@ -559,7 +559,7 @@ check_equiv_frames(four_programs, study_programs)
 
 ```{r}
 # Edit as required for different programs
-selected_programs <- filter_cip_rows(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+selected_programs <- filter_programs(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
 ```
 
 *Programs.* &nbsp; A summary code chunk for ready reference. Requires editing before reuse with different programs.  
