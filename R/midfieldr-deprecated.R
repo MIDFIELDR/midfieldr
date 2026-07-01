@@ -13,6 +13,11 @@
 #'  [`data_sufficiency()`]. Update midfieldr file names and argument names,
 #'  dropping columns not used by the function, and preserving data frame 
 #'  class.} 
+#'  
+#'  \item{`add_timely_term()`}{is deprecated in favor of 
+#'  [`timely_term()`]. Update midfieldr file names and argument names,
+#'  dropping columns not used by the function, and preserving data frame 
+#'  class.} 
 #'
 #'  \item{`filter_cip()`}{is deprecated in favor of 
 #'  [`filter_programs()`]. The new function is similar but with the CIP 

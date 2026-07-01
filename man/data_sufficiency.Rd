@@ -72,7 +72,7 @@ except the IDs, yielding the refined population that was our goal.
 dframe <- toy_student[1:10, .(mcid)]
 
 # Timely term column is required to add data sufficiency column
-dframe <- add_timely_term(dframe, toy_term)
+dframe <- timely_term(dframe, toy_term)
 
 # Add data sufficiency column
 data_sufficiency(dframe, toy_term)
@@ -84,7 +84,7 @@ data_sufficiency(dframe, toy_term)
 \seealso{
 Other add_*:
 \code{\link[=add_term_cluster]{add_term_cluster()}},
-\code{\link[=add_timely_term]{add_timely_term()}},
-\code{\link[=completion_status]{completion_status()}}
+\code{\link[=completion_status]{completion_status()}},
+\code{\link[=timely_term]{timely_term()}}
 }
 \concept{add_*}

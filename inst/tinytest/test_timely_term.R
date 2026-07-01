@@ -28,11 +28,11 @@ expect_class_preserved <- function(df1, df2, fnc) {
 }
 
 # tinytest function
-test_add_timely_term <- function() {
+test_timely_term <- function() {
     
     # ---------- usage
     # 
-    # add_timely_term(
+    # timely_term(
     #     dframe,
     #     midfield_rec = term,
     #     ...,
@@ -84,10 +84,10 @@ test_add_timely_term <- function() {
     # ---------- correct answers
     
     # check that class is preserved function
-    expect_class_preserved(dframe, term, add_timely_term)
+    expect_class_preserved(dframe, term, timely_term)
     
     # correct answers manually set up
-    DT <- add_timely_term(dframe, term)
+    DT <- timely_term(dframe, term)
     
     expect_equal("19933", DT[mcid == "A1_OK", (timely_term)])
     expect_equal("19923", DT[mcid == "A2_OK_tfr", (timely_term)])
@@ -100,7 +100,7 @@ test_add_timely_term <- function() {
     expect_equal("19913", DT[mcid == "C2_exclude", (timely_term)])
     
     # correct answers with different span
-    DT <- add_timely_term(dframe, term, span = 5)
+    DT <- timely_term(dframe, term, span = 5)
     
     expect_equal("19923", DT[mcid == "A1_OK", (timely_term)])
     expect_equal("19913", DT[mcid == "A2_OK_tfr", (timely_term)])
@@ -113,12 +113,12 @@ test_add_timely_term <- function() {
     
     # optional arguments, NA same as NULL
     expect_equal(
-        add_timely_term(dframe, term),
-        add_timely_term(dframe, term, span = NA)
+        timely_term(dframe, term),
+        timely_term(dframe, term, span = NA)
     )
     expect_equal(
-        add_timely_term(dframe, term),
-        add_timely_term(dframe, term, span = NULL)
+        timely_term(dframe, term),
+        timely_term(dframe, term, span = NULL)
     )
     
     # correct columns in place
@@ -128,30 +128,30 @@ test_add_timely_term <- function() {
     expect_equal(return_vars, colnames(DT))
     
     # correct answers naming and not naming arguments
-    x <- add_timely_term(dframe = dframe, midfield_rec = term)
-    y <- add_timely_term(dframe, term)
+    x <- timely_term(dframe = dframe, midfield_rec = term)
+    y <- timely_term(dframe, term)
     expect_equal(x, y)
     rm(x, y)
     
     # ---------- errors
     
     # required column missing
-    expect_error(add_timely_term(dframe[-mcid], term))
-    expect_error(add_timely_term(dframe, term[-mcid]))
+    expect_error(timely_term(dframe[-mcid], term))
+    expect_error(timely_term(dframe, term[-mcid]))
     
     # arguments after ... must be named
-    expect_error(add_timely_term(dframe, term, 4))
+    expect_error(timely_term(dframe, term, 4))
     
     # argument types incorrect
-    expect_error(add_timely_term(dframe[["mcid"]], term))
-    expect_error(add_timely_term(dframe, term[["mcid"]])) 
-    expect_error(add_timely_term(dframe, term, sched_span = TRUE))
-    expect_error(add_timely_term(dframe, term, span = TRUE))
+    expect_error(timely_term(dframe[["mcid"]], term))
+    expect_error(timely_term(dframe, term[["mcid"]])) 
+    expect_error(timely_term(dframe, term, sched_span = TRUE))
+    expect_error(timely_term(dframe, term, span = TRUE))
     
     # span must be >=  sched_span
-    expect_error(add_timely_term(dframe, term, span = 2))
+    expect_error(timely_term(dframe, term, span = 2))
     
     invisible(NULL)
 }
 
-test_add_timely_term()
+test_timely_term()

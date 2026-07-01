@@ -2,7 +2,7 @@
 dframe <- toy_student[1:10, .(mcid)]
 
 # Timely term column is required to add completion status column
-dframe <- add_timely_term(dframe, toy_term)
+dframe <- timely_term(dframe, toy_term)
 
 # Add completion status column
 completion_status(dframe, toy_degree)

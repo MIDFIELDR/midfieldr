@@ -57,7 +57,7 @@ except the IDs, yielding the refined population that was our goal.
 dframe <- toy_student[1:10, .(mcid)]
 
 # Timely term column is required to add completion status column
-dframe <- add_timely_term(dframe, toy_term)
+dframe <- timely_term(dframe, toy_term)
 
 # Add completion status column
 completion_status(dframe, toy_degree)
@@ -69,7 +69,7 @@ completion_status(dframe, toy_degree)
 \seealso{
 Other add_*:
 \code{\link[=add_term_cluster]{add_term_cluster()}},
-\code{\link[=add_timely_term]{add_timely_term()}},
-\code{\link[=data_sufficiency]{data_sufficiency()}}
+\code{\link[=data_sufficiency]{data_sufficiency()}},
+\code{\link[=timely_term]{timely_term()}}
 }
 \concept{add_*}

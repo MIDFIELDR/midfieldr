@@ -79,7 +79,7 @@ Records
 
 - `select_records()` chooses columns of student records required by midfieldr functions.
 - `add_term_cluster()` identifies rows of post-baccalaureate terms to exclude. 
-- `add_timely_term()` estimates a student's timely completion term. 
+- `timely_term()` estimates a student's timely completion term. 
 - `data_sufficiency()` identifies rows to exclude due to insufficient data.
 - `completion_status()` determines if program completion is timely or late.
 
@@ -279,7 +279,7 @@ term
 
 
 
-## `add_timely_term()`
+## `timely_term()`
 
 *Determine the term by which degree completion would be considered timely.*
 
@@ -292,10 +292,10 @@ DT <- unique(DT)
 DT
 ```
 
-`add_timely_term()` adds a column indicating the last term by which a student’s degree completion would be considered timely, generally 6 years after admission.  The timely completion term is required to determine data sufficiency as well as assessing timely completion.  
+`timely_term()` adds a column indicating the last term by which a student’s degree completion would be considered timely, generally 6 years after admission.  The timely completion term is required to determine data sufficiency as well as assessing timely completion.  
 
 ```{r}
-DT <- add_timely_term(DT)
+DT <- timely_term(DT)
 
 DT
 ```
@@ -344,11 +344,11 @@ degree <- population[degree, on = "mcid", nomatch = NULL]
 
 *Determines if program completion is timely or late.*
 
-This section often pertains to constructing a bloc of graduates, starting with the baseline population we obtained above. Completion status indicates whether or not a student completes a degree, and if they do, labeling it timely or late compared to their timely completion term. Thus we run `add_timely_term()` again. 
+This section often pertains to constructing a bloc of graduates, starting with the baseline population we obtained above. Completion status indicates whether or not a student completes a degree, and if they do, labeling it timely or late compared to their timely completion term. Thus we run `timely_term()` again. 
 
 ```{r} 
 DT <- copy(population)
-DT <- add_timely_term(DT)
+DT <- timely_term(DT)
 ```
 
 `completion_status()` adds a column indicating completion status for every student.
