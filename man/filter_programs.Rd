@@ -22,9 +22,10 @@ resulting Boolean vector.}
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved. Groups and keys are not preserved.
+\item Data frame class is preserved.
 \item Rows are a subset of the input and appear in the same order.
 \item Columns are not modified.
+\item Groups and keys are not preserved.
 }
 }
 \description{
@@ -45,13 +46,19 @@ filter_programs(cip, pattern = "history")
 filter_programs(cip, pattern = "^54")
 
 # Multiple passes to narrow the results
-first_pass <- filter_programs(cip, "math")[, .(cip6name, cip6)]
-first_pass
+first_pass <- filter_programs(cip, "math")
+first_pass[, .(cip6name, cip6)]
 
 second_pass <- filter_programs(first_pass, c("bio", "educ"), negate = TRUE)
-second_pass
+second_pass[, .(cip6name, cip6)]
 
 third_pass <- filter_programs(second_pass, c("^27", "^30"))
-third_pass
- 
+third_pass[, .(cip6name, cip6)]
+
+# Multiple passes by chaining
+chain_pass <- cip |>
+    filter_programs("math") |>
+    filter_programs(c("bio", "educ"), negate = TRUE) |>
+    filter_programs(c("^27", "^30"))
+chain_pass[, .(cip6name, cip6)]
 }

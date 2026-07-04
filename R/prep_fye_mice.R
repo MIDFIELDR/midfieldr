@@ -5,7 +5,7 @@
 #' Constructs a data frame of student-level records of First-Year Engineering
 #' (FYE) programs and conditions the data for later use as an input to the mice
 #' R package for multiple imputation. Sets up three variables as predictors
-#' (institution, race/ethnicity, and sex) and one variable to be estimated
+#' (institution, race/ethnicity, and sex) and one variable to be imputed
 #' (program CIP code).
 #'
 #' At some US institutions, engineering students are required to complete a
@@ -62,23 +62,21 @@
 #'   regular expressions are prohibited. Non-engineering codes---those that do
 #'   not start with 14---produce an error.
 #'
-#' @return Data frame conditioned for later use as an input to the mice R
-#' package for multiple imputation. The data frame comprises one row for every
-#' FYE student, first-term and migrator. Grouping structures are not preserved.
-#' The columns returned are:
-#'  \describe{
-#'    \item{`mcid`}{Character, anonymized student identifier. Returned
-#'            as-is.}
-#'    \item{`race`}{Factor, race/ethnicity as self-reported by the
-#'            student. An imputation predictor variable.}
-#'    \item{`sex`}{Factor, sex as self-reported by the
-#'            student. An imputation predictor variable.}
-#'    \item{`institution`}{Factor, anonymized institution name. An
-#'            imputation predictor variable.}
-#'    \item{`proxy`}{Factor, 6-digit CIP code of a student's known,
+#' @returns Data frame with the following properties:
+#' * Data frame class is preserved.
+#' * Rows: One row for every FYE student from the `term` input data frame.
+#' * Columns: Conditioned for later use as an input to the mice R
+#'   package for multiple imputation as follows:
+#'   - `mcid` &nbsp; Character, anonymized student identifier.
+#'   - `race` &nbsp; Factor, race/ethnicity from the `student` input data
+#'      frame. An imputation predictor variable.
+#'   - `sex` &nbsp; Factor, sex from the `student` input data
+#'      frame. An imputation predictor variable.
+#'   - `institution` &nbsp; Factor, anonymized institution name from the
+#'      `term` data frame. An imputation predictor variable.
+#'   - `proxy` &nbsp; Factor, 6-digit CIP code of a student's known,
 #'            post-FYE engineering program or NA representing missing
-#'            values to be imputed.}
-#'  }
+#'            values to be imputed.
 #'
 #' @section Method: The function extracts all terms for all FYE students,
 #'   including those who migrate to enter Engineering after their first term,
@@ -241,11 +239,13 @@ prep_fye_mice <- function(midfield_student = student,
   fye[, proxy := as.factor(proxy)]
 
   # reorder rows
+  fye <- unique(fye)
   setkeyv(fye, c("institution", "proxy", "sex", "race"))
 
   # ---------- restore state
 
   # restore class
+
   setattr(fye, "class", prior_class)
   fye[]
 }

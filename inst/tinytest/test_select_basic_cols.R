@@ -25,10 +25,10 @@ expect_class_preserved <- function(df1, fnc) {
   rm(x)
 }
 
-test_select_records <- function() {
+test_select_basic_cols <- function() {
     
     # usage
-    # select_records(dframe, type, ..., col_patterncol_pattern = NULL)
+    # select_basic_cols(dframe, type, ..., col_patterncol_pattern = NULL)
     
     # Needed for tinytest::build_install_test()
   suppressPackageStartupMessages(require("data.table"))
@@ -42,34 +42,34 @@ test_select_records <- function() {
     # ---------- input checks
     
 
-    expect_error(select_records(1))
-    expect_error(select_records(toy_student, col_pattern = 1))
+    expect_error(select_basic_cols(1))
+    expect_error(select_basic_cols(toy_student, col_pattern = 1))
 
     # ---------- class preserved
     
-    expect_class_preserved(toy_student, select_records)
+    expect_class_preserved(toy_student, select_basic_cols)
     
     # # data.table preserved
     # x <- copy(toy_student)
-    # y <- select_records(x)
+    # y <- select_basic_cols(x)
     # expect_equal(class(x), class(y))
     # 
     # # tibble preserved
     # x <- copy(toy_student)
     # setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
-    # y <- select_records(x)
+    # y <- select_basic_cols(x)
     # expect_equal(class(x), class(y))
     # 
     # # base R data.frame preserved
     # x <- copy(toy_student)
     # setattr(x, "class", c("data.frame"))
-    # y <- select_records(x)
+    # y <- select_basic_cols(x)
     # expect_equal(class(x), class(y))
     # 
     # # grouped tibble yields data.frame
     # x <- copy(toy_student)
     # setattr(x, "class", c("grouped_df", "tbl_df", "tbl", "data.frame"))
-    # y <- select_records(x)
+    # y <- select_basic_cols(x)
     # expect_true(class(y) == "data.frame")
     
     
@@ -78,22 +78,22 @@ test_select_records <- function() {
     # keys preserved?
     # x <- copy(toy_student)
     # setkeyv(x, "mcid")
-    # y <- select_records(x)
+    # y <- select_basic_cols(x)
     # expect_equal(key(x), key(y))
     
     # setkeyv(x, NULL)
-    # y <- select_records(x)
+    # y <- select_basic_cols(x)
     # expect_equal(key(x), key(y))
     
     # ---------- basic columns correct
     
-    expect_equal(sort(colnames(select_records(toy_student))),
+    expect_equal(sort(colnames(select_basic_cols(toy_student))),
                  sort(c("mcid", "race", "sex")))
-    expect_equal(sort(colnames(select_records(toy_term))),
+    expect_equal(sort(colnames(select_basic_cols(toy_term))),
                  sort(c("mcid", "term", "cip6", "institution", "level")))
-    expect_equal(sort(colnames(select_records(toy_course))),
+    expect_equal(sort(colnames(select_basic_cols(toy_course))),
                  sort(c("mcid", "term_course", "abbrev", "number")))
-    expect_equal(sort(colnames(select_records(toy_degree))),
+    expect_equal(sort(colnames(select_basic_cols(toy_degree))),
                  sort(c("mcid", "term_degree", "cip6")))
     
     default_cols <- c(
@@ -103,7 +103,7 @@ test_select_records <- function() {
     
     expect_equal_colnames <- function (x, these_cols, col_pattern = NULL) {
       expect_cols <- intersect(colnames(x), these_cols)
-      result_cols <- colnames(select_records(x, col_pattern = col_pattern))
+      result_cols <- colnames(select_basic_cols(x, col_pattern = col_pattern))
       expect_equal(expect_cols, result_cols)
     }
     
@@ -123,19 +123,19 @@ test_select_records <- function() {
     
     # dframe 0 rows 0 cols when no default colnames present
     x <- toy_degree[, .(degree)]
-    expect_length(select_records(x), 0)
+    expect_length(select_basic_cols(x), 0)
 
     # confirm NO changes by reference
     student <- copy(toy_student)
-    y <- select_records(student)
+    y <- select_basic_cols(student)
     expect_true(check_equiv_frames(student, toy_student))
     
     term <- copy(toy_term)
-    y <- select_records(term)
+    y <- select_basic_cols(term)
     expect_true(check_equiv_frames(term, toy_term))
     
     degree <- copy(toy_degree)
-    y <- select_records(degree)
+    y <- select_basic_cols(degree)
     expect_true(check_equiv_frames(degree, toy_degree))
     
     
@@ -147,7 +147,7 @@ test_select_records <- function() {
     invisible(NULL)
 }
 
-test_select_records()
+test_select_basic_cols()
 
 
 

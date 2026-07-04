@@ -30,7 +30,7 @@ expect_class_preserved <- function(df1, df2, fnc) {
 test_post_bacc_terms <- function() {
   
   # usage
-  # post_bacc_terms(dframe, midfield_rec = degree)
+  # post_bacc_terms(dframe, midfield_table = degree)
   
   # ---------- setup
   
@@ -112,7 +112,7 @@ test_post_bacc_terms <- function() {
   ans <- post_bacc_terms(x_term, x_degr)[["term_cluster"]]
   expected_ans <- c("pre-degree", "first-degree", "post-first-degree", 
                     "pre-degree", "first-degree", 
-                    "pre-degree", "first-degree", "first-degree", 
+                    "pre-degree", "first-degree",  
                     "pre-degree", "first-degree", "post-first-degree", 
                     "pre-degree", "pre-degree")
   expect_equal(ans, expected_ans)

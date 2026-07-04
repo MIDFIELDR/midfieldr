@@ -131,9 +131,9 @@ source_term <- copy(term)
 source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_records(source_student)
-term <- select_records(source_term)
-degree <- select_records(source_degree)
+student <- select_basic_cols(source_student)
+term <- select_basic_cols(source_term)
+degree <- select_basic_cols(source_degree)
 ```
 
 *Initialize.* &nbsp; Assign a working data frame. 
@@ -269,11 +269,6 @@ check_equiv_frames(x, y)
 For example, not all students in `DT` will earn a degree. After a left join (`degree` into `DT`), all rows of `DT` are returned. IDs in `DT` with no match in `degree` have an NA in the `term_degree` column (a variable from  the `degree` source table). 
 
 ```{r}
-#| echo: false
-options(datatable.print.topn = 5)
-```
-
-```{r}
 x <- degree[DT, .(mcid, term_degree), on = c("mcid")]
 setkeyv(x, c("mcid"))
 x[]
@@ -293,11 +288,6 @@ x[]
 ```
 
 The result has `r length(unique(x$mcid))` unique IDs distributed over `r nrow(x)` observations.
-
-```{r}
-#| echo: false
-options(datatable.print.topn = 3)
-```
 
 *"Left" and "right" matter.*  &nbsp; In left joins (unlike inner joins), `X[Y]` and `Y[X]` return different results: 
 
@@ -373,34 +363,6 @@ DT
 
 
 
-## Reusable code
-
-*Preparation.* &nbsp; The baseline data frame we preserved earlier is the intake for this section.
-
-```{r}
-DT <- copy(baseline)
-```
-
-*Ever-enrolled.* &nbsp; A summary code chunk for ready reference.  Requires editing of `study_programs` before reuse with different programs.
-
-```{r}
-# Ever-enrolled bloc
-DT <- term[DT, .(mcid, cip6), on = c("mcid")]
-DT <- unique(DT)
-
-# Filter by program
-DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
-DT[, cip6 := NULL]
-DT <- unique(DT)
-```
-
-
-
-***
-
-[&#9665; Programs](art-040-programs.html) &nbsp;&nbsp; <a href="#top">&#9650; top of page</a> &nbsp;&nbsp; [FYE proxies &#9655;](art-060-fye-proxies.html) 
-
-***
 
 
 ```{r child = paste0(path_to_rmd, "/common-closing.Rmd")}

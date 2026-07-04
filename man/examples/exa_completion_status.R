@@ -1,12 +1,18 @@
-# Start with an excerpt from the student data set 
-dframe <- toy_student[1:10, .(mcid)]
+term <- toy_term
+degree <- toy_degree
 
-# Timely term column is required to add completion status column
-dframe <- timely_term(dframe, toy_term)
+# Start with a small population 
+x <- toy_student[21:36, .(mcid)]
+x
 
-# Add completion status column
-completion_status(dframe, toy_degree)
+# Timely term column is required
+x <- timely_term(x, term)
+x
 
-# Existing completion_status column, if any, is overwritten
-dframe[, completion_status := NA_character_][]
-completion_status(dframe, toy_degree)
+# Add completion status column, columns not used are dropped
+x <- completion_status(x, degree)
+x
+
+# Existing completion status column (if any) is replaced
+x[, completion_status := NA_character_][]
+completion_status(x, degree)

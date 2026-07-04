@@ -1,12 +1,17 @@
-# Start with an excerpt from the student data set 
-dframe <- toy_student[1:10, .(mcid)]
+term <- toy_term
 
-# Timely term column is required to add data sufficiency column
-dframe <- timely_term(dframe, toy_term)
+# Start with a small population 
+x <- toy_student[c(9:15, 342:344), .(mcid)]
+x
 
-# Add data sufficiency column
-data_sufficiency(dframe, toy_term)
+# Timely term column is required
+x <- timely_term(x, term)
+x
 
-# Existing data_sufficiency column, if any, is replaced
-dframe[, data_sufficiency := NA_character_][]
-data_sufficiency(dframe, toy_term)
+# Add data sufficiency column, columns not used are dropped
+x <- data_sufficiency(x, term)
+x
+
+# Existing data sufficiency column (if any) is replaced
+x[, data_sufficiency := NA_character_][]
+data_sufficiency(x, term)

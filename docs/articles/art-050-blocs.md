@@ -117,9 +117,9 @@ source_term <- copy(term)
 source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_records(source_student)
-term <- select_records(source_term)
-degree <- select_records(source_degree)
+student <- select_basic_cols(source_student)
+term <- select_basic_cols(source_term)
+degree <- select_basic_cols(source_degree)
 ```
 
 *Initialize.*   Assign a working data frame.
@@ -302,11 +302,7 @@ x[]
 #>     1: MCID3111142689       19913
 #>     2: MCID3111142782       19903
 #>     3: MCID3111142881       19894
-#>     4: MCID3111142884        <NA>
-#>     5: MCID3111142893        <NA>
 #>    ---                           
-#> 76988: MCID3112727985        <NA>
-#> 76989: MCID3112730841       20164
 #> 76990: MCID3112785480        <NA>
 #> 76991: MCID3112800920        <NA>
 #> 76992: MCID3112870009        <NA>
@@ -334,11 +330,7 @@ x[]
 #>      1: MCID3111142689  19883
 #>      2: MCID3111142782  19883
 #>      3: MCID3111142782  19885
-#>      4: MCID3111142782  19893
-#>      5: MCID3111142782  19895
 #>     ---                      
-#> 531415: MCID3112800920  20163
-#> 531416: MCID3112870009  19951
 #> 531417: MCID3112870009  19953
 #> 531418: MCID3112870009  19954
 #> 531419: MCID3112870009  19983
@@ -445,38 +437,6 @@ DT
 #> 5653:      ME MCID3112698681
 ```
 
-## Reusable code
-
-*Preparation.*   The baseline data frame we preserved earlier is the
-intake for this section.
-
-``` r
-
-DT <- copy(baseline)
-```
-
-*Ever-enrolled.*   A summary code chunk for ready reference. Requires
-editing of `study_programs` before reuse with different programs.
-
-``` r
-
-# Ever-enrolled bloc
-DT <- term[DT, .(mcid, cip6), on = c("mcid")]
-DT <- unique(DT)
-
-# Filter by program
-DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
-DT[, cip6 := NULL]
-DT <- unique(DT)
-```
-
-------------------------------------------------------------------------
-
-[◁
-Programs](https://midfieldr.github.io/midfieldr/articles/art-040-programs.md)
-   [▲ top of page](#top)    [FYE proxies
-▷](https://midfieldr.github.io/midfieldr/articles/art-060-fye-proxies.md)
-
-------------------------------------------------------------------------
+[▲ top of page](#top)
 
 ## References

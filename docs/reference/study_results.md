@@ -17,30 +17,30 @@ study_results
 
 - `program`:
 
-  Character, academic program label.
+  Character. Academic program label.
 
 - `sex`:
 
-  Character, sex as self-reported by the student, possible values are
-  Female, Male, and Unknown.
+  Character. Sex as self-reported by the student, possible values are
+  "Female", "Male", and "Unknown."
 
 - `race`:
 
-  Character, race/ethnicity as self-reported by the student, e.g.,
-  Asian, Black, Hispanic, etc.
+  Character. Race/ethnicity as self-reported by the student, e.g.,
+  "Asian", "Black", "Hispanic", etc.
 
 - `ever_enrolled`:
 
-  Numerical, number of students ever enrolled in a program.
+  Numerical. The number of students ever enrolled in a program.
 
 - `graduates`:
 
-  Numerical, number of students completing a program.
+  Numerical. Number of students completing a program.
 
 - `stickiness`:
 
-  Numerical, program stickiness, the ratio of `graduates` to
-  `ever_enrolled`, in percent.
+  Numerical. Program stickiness, the ratio of the number of graduates to
+  the number ever enrolled, in percent.
 
 ## Details
 

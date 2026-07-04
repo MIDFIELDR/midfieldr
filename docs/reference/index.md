@@ -26,7 +26,7 @@
   : Identify post-baccalaureate terms
 - [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
   : Prepare FYE data for imputation
-- [`select_records()`](https://midfieldr.github.io/midfieldr/reference/select_records.md)
+- [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
   : Choose columns of student records
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
   : Calculate timely completion terms
@@ -64,10 +64,10 @@
 ## Toy data for examples
 
 - [`toy_course`](https://midfieldr.github.io/midfieldr/reference/toy_course.md)
-  : Course data for examples
+  : Small 'course' dataset for examples
 - [`toy_degree`](https://midfieldr.github.io/midfieldr/reference/toy_degree.md)
-  : Degree data for examples
+  : Small 'degree' dataset for examples
 - [`toy_student`](https://midfieldr.github.io/midfieldr/reference/toy_student.md)
-  : Student data for examples
+  : Small 'student' dataset for examples
 - [`toy_term`](https://midfieldr.github.io/midfieldr/reference/toy_term.md)
-  : Term data for examples
+  : Small 'term' dataset for examples

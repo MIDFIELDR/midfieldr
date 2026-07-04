@@ -3,45 +3,44 @@
 \docType{data}
 \name{toy_term}
 \alias{toy_term}
-\title{Term data for examples}
+\title{Small 'term' dataset for examples}
 \format{
-\code{data.table} with 1095 rows and 13 columns keyed by student ID
-and term.
+Data frame with 1821 rows and 13 columns (\code{data.table} class).
+Composite key: \verb{\{mcid, term\}.}
 \describe{
-\item{\code{mcid}}{Character, de-identified student ID. Key column.}
-\item{\code{term}}{Character, academic year and term, format YYYYT.
-Key column.}
-\item{\code{cip6}}{Character, 6-digit CIP code of program in
-which a student is enrolled in a term, e.g., \code{090101},
-\code{141201}, \code{260901}, \code{420101}, etc.}
-\item{\code{institution}}{Character, de-identified institution
-name, e.g., Institution A, Institution B, etc.}
-\item{\code{level}}{Character, 01 Freshman, 02 Sophomore, etc.
-The equivalent values in the current practice data are 01
-First-Year, 02-Second Year, etc.}
-\item{\code{standing}}{Character, academic standing, e.g.,
-\verb{Good Standing}, \verb{Academic Warning}, etc.}
-\item{\code{coop}}{Character, cooperative education term, possible
-values are \code{Yes}, \code{No}.}
-\item{\code{hours_term}}{Numeric, credit hours earned
+\item{\code{mcid}}{Character. Anonymized student identifier
+that connects the four data tables, e.g., "MCID3111142897."}
+\item{\code{term}}{Character. Academic year and term the student
+attended, encoded \code{YYYYT.}}
+\item{\code{cip6}}{Character. The 6-digit CIP code of the program in
+which a student is enrolled in this term.}
+\item{\code{institution}}{Character. The anonymized name of
+the institution the student attended in a given term, e.g.,
+"Institution A", "Institution B", etc.}
+\item{\code{level}}{Character. Academic level of the student at the
+end of this term, e.g., "01 First-Year", "02-Second Year", etc.}
+\item{\code{standing}}{Character. Academic standing during the
+reported term, e.g., "Good Standing", "Academic Warning", etc.}
+\item{\code{coop}}{Character. Cooperative education term, possible
+values are "Yes", "No."}
+\item{\code{hours_term}}{Numeric. Credit hours earned
 in the term.}
-\item{\code{hours_term_attempt}}{Numeric, credit
+\item{\code{hours_term_attempt}}{Numeric. Credit
 hours attempted in the term.}
 \item{\code{hours_cumul}}{Numeric, cumulative credit hours
 earned.}
-\item{\code{hours_cumul_attempt}}{Numeric, cumulative
+\item{\code{hours_cumul_attempt}}{Numeric. Cumulative
 credit hours attempted.}
-\item{\code{gpa_term}}{Numeric, term grade point average.}
-\item{\code{gpa_cumul}}{Numeric, cumulative grade point average.}
+\item{\code{gpa_term}}{Numeric. Term grade point average.}
+\item{\code{gpa_cumul}}{Numeric. Cumulative grade point average.}
 }
 }
 \usage{
 toy_term
 }
 \description{
-Selected variables modeled on those in the \code{term} practice data for use in
-package examples and articles. Sampled from an early version of the practice
-data, the toy data are not a current practice data sample.
+A subset of rows from the midfielddata \code{term} table matching the IDs in
+\code{toy_student.} A small dataset for use in examples.
 }
 \seealso{
 Other toy-data:

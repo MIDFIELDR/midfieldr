@@ -605,7 +605,6 @@ quantitative variable.
 ``` r
 
 # Select multiway variables when quantity is a percentage
-options(datatable.print.topn = 3)
 DT_ratio <- copy(DT)
 DT_ratio[, c("race", "sex") := NULL]
 DT_ratio
@@ -935,14 +934,7 @@ setnames(tbl, old = "people", new = "Group", skip_absent = TRUE)
 Table 2: Four programs (N ever enrolled) percent stickiness {.table
 .gt_table quarto-disable-processing="false" quarto-bootstrap="false"}
 
-------------------------------------------------------------------------
-
-[◁
-Stickiness](https://midfieldr.github.io/midfieldr/articles/art-110-stickiness.md)
-   [▲ top of page](#top)    [Index
-▷](https://midfieldr.github.io/midfieldr/articles/index.md)
-
-------------------------------------------------------------------------
+[▲ top of page](#top)
 
 ## References
 

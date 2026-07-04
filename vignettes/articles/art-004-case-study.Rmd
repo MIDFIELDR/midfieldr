@@ -16,7 +16,6 @@ knitr::opts_chunk$set(fig.path = "figures/art-004-")
 # for any "child" arguments in r-code-chunks
 library("rprojroot")
 path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
-op <- options
 ```
 
 ```{r child = paste0(path_to_rmd, "/common-setup.Rmd")}
@@ -73,8 +72,8 @@ library(data.table)
 ```{r}
 #| echo: false
 options(
-  datatable.print.nrows = 10,
-  datatable.print.topn = 5
+  datatable.print.nrows = 8,
+  datatable.print.topn = 4
 )
 ```
 
@@ -161,9 +160,11 @@ Our programs data frame is complete: `r nrow(programs)` six-digit codes are enco
 
 ```{r}
 #| echo: false
-options(datatable.print.nrows = 10)
+options(
+  datatable.print.nrows = 6,
+  datatable.print.topn = 3
+)
 ```
-
 
 ## Records
 
@@ -186,7 +187,7 @@ The working data frames `student, term,` and `degree` should always be present i
 ```{r}
 #| eval: false
 # not run
-post_bacc_terms(term, midfield_rec = degree)
+post_bacc_terms(term, midfield_table = degree)
 post_bacc_terms(term, degree)
 post_bacc_terms(term)
 ```
@@ -198,9 +199,9 @@ In this article, we use the latter form.
 Convenient for viewing data frames at intermediate stages. We reduce the number of columns to those required by other midfieldr functions plus the key or composite key variables of the data tables. 
 
 ```{r}
-student <- select_records(student)
-term <- select_records(term)
-degree <- select_records(degree)
+student <- select_basic_cols(student)
+term <- select_basic_cols(term)
+degree <- select_basic_cols(degree)
 ```
 
 `look_at()` is a midfieldr convenience function that wraps `base::str()`. 
@@ -250,11 +251,11 @@ term <- term[!"post-first-degree", on = "term_cluster"]
 degree <- degree[!"post-first-degree", on = "term_cluster"]
 ```
 
-We can drop the added columns by applying `select_records()` again. 
+We can drop the added columns by applying `select_basic_cols()` again. 
 
 ```{r}
-term <- select_records(term, "t")
-degree <- select_records(degree, "d")
+term <- select_basic_cols(term, "t")
+degree <- select_basic_cols(degree, "d")
 
 look_at(term)
 
@@ -610,19 +611,9 @@ DT
 Stickiness is the ratio of the number of graduates to the number ever enrolled, expressed as a percentage. Stickiness is calculated for each combination of program, race/ethnicity, and sex. 
 
 ```{r}
-#| echo: false
-options(datatable.print.nrows = 50)
-```
-
-```{r}
 DT[, stickiness := round(100 * grad / ever, 1)]
 setkey(DT, NULL)
 DT[order(-grad, -ever)]
-```
-
-```{r}
-#| echo: false
-options(datatable.print.nrows = 5)
 ```
 
 

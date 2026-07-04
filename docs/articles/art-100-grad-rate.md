@@ -259,9 +259,9 @@ source_term <- copy(term)
 source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_records(source_student)
-term <- select_records(source_term)
-degree <- select_records(source_degree)
+student <- select_basic_cols(source_student)
+term <- select_basic_cols(source_term)
+degree <- select_basic_cols(source_degree)
 ```
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a
@@ -808,14 +808,7 @@ was below the threshold set to preserve anonymity. As noted earlier,
 these are largely an artifact of applying these groupings to practice
 data.
 
-------------------------------------------------------------------------
-
-[◁
-Groupings](https://midfieldr.github.io/midfieldr/articles/art-090-groupings.md)
-   [▲ top of page](#top)    [Stickiness
-▷](https://midfieldr.github.io/midfieldr/articles/art-110-stickiness.md)
-
-------------------------------------------------------------------------
+[▲ top of page](#top)
 
 ## References
 

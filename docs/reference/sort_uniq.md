@@ -46,11 +46,11 @@ A vector of unique values, sorted.
 # Character vector
 x <- toy_student$race
 sort_uniq(x)
-#> [1] "Asian"         "Black"         "Hispanic"      "International"
-#> [5] "Other/Unknown" "White"        
+#> [1] "Asian"           "Black"           "Hispanic"        "International"  
+#> [5] "Native American" "Other/Unknown"   "White"          
 
 # Numeric vector
 x <- toy_term$hours_term_attempt
 sort_uniq(x)
-#>  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 21 26
+#>  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 24
 ```

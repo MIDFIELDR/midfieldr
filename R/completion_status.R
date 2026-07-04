@@ -17,7 +17,7 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
   )
 
   # original function calls the new function
-  completion_status(dframe = dframe, midfield_rec = midfield_degree)
+  completion_status(dframe = dframe, midfield_table = midfield_degree)
 }
 NULL
 
@@ -30,7 +30,7 @@ NULL
 #' To a data frame keyed by student ID, add a column indicating if a
 #' student completed their program, and if so, whether their completion
 #' was timely or late. Columns of supporting information are
-#' also added. Unrelated columns are dropped.
+#' also added. Columns not related to the task are dropped.
 #'
 #' In many studies, students must complete their programs in a specified time
 #' span to be considered "timely", for example 4, 6, or 8 years after
@@ -50,25 +50,26 @@ NULL
 #'
 #' @param dframe `r dframe` Required variables: `{mcid, timely_term}`.
 #'
-#' @param midfield_rec `r midfield_x("*degree*")` Required variables:
+#' @param midfield_table `r midfield_x("*degree*")` Required variables:
 #'        `{mcid, term_degree}`.
 #'
 #' @returns Data frame with the following properties:
-#' * Data frame class is preserved. Groups and keys are not preserved.
+#' * Data frame class is preserved.
 #' * Rows are filtered for unique `mcid` values.
-#' * Columns `{mcid, timely_term}` are retained (all other columns
-#'   are dropped). New columns added:
+#' * Columns `{mcid, timely_term}` are retained. All other columns are
+#'   dropped and the following columns are added:
 #'   - `term_degree.` &nbsp; Character. Term in which the first degree(s) are
-#'      completed, encoded `YYYYT`. Joined from `midfield_rec.`
+#'      completed, encoded `YYYYT`. Joined from `midfield_table.`
 #'   - `completion_status.` &nbsp; Character. Possible values are "timely"
 #'      for students completing a degree no later than their timely
 #'      completion terms; "late" for students completing their program
 #'      after their timely completion term; and "NA" for non-completers.
+#' * Groups and keys are not preserved.
 #'
 #' @example man/examples/exa_completion_status.R
 #' @export
 #'
-completion_status <- function(dframe, midfield_rec = degree) {
+completion_status <- function(dframe, midfield_table = degree) {
   # define required columns and variables to be added
   dframe_vars <- c("mcid", "timely_term")
   record_vars <- c("mcid", "term_degree")
@@ -79,18 +80,18 @@ completion_status <- function(dframe, midfield_rec = degree) {
 
   # data frame assessment
   qassert(dframe, "d+")
-  qassert(midfield_rec, "d+")
+  qassert(midfield_table, "d+")
 
   # required columns
   assert_names(colnames(dframe), must.include = dframe_vars)
-  assert_names(colnames(midfield_rec), must.include = record_vars)
+  assert_names(colnames(midfield_table), must.include = record_vars)
 
   # class of required columns
   for (i in seq_along(dframe_vars)) {
     qassert(dframe[[dframe_vars[i]]], "s+")
   }
   for (i in seq_along(record_vars)) {
-    qassert(midfield_rec[[record_vars[i]]], "s+")
+    qassert(midfield_table[[record_vars[i]]], "s+")
   }
 
   # ---------- preparation
@@ -101,7 +102,7 @@ completion_status <- function(dframe, midfield_rec = degree) {
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   setDT(dframe)
-  reqd_record <- copy(midfield_rec)
+  reqd_record <- copy(midfield_table)
   setDT(reqd_record)
 
   # bind names due to NSE notes in R CMD check
@@ -132,6 +133,7 @@ completion_status <- function(dframe, midfield_rec = degree) {
 
   dframe <- dframe[, .SD, .SDcols = return_vars]
   setkey(dframe, NULL)
+  dframe <- unique(dframe)
   setattr(dframe, "class", prior_class)
   dframe[]
 }

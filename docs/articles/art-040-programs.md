@@ -538,9 +538,6 @@ here. Our task is to create a variable with custom program names.
 
 ``` r
 
-# Changing the number of rows to print
-options(datatable.print.nrows = 15)
-
 # Four engineering programs
 four_programs <- filter_programs(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
 
@@ -711,43 +708,7 @@ check_equiv_frames(four_programs, study_programs)
 #> [1] TRUE
 ```
 
-## Reusable code
-
-*Preparation.*   To provide a working example, we select the four
-engineering programs of the case study used throughout the articles
-(Civil, Electrical, Industrial/Systems, and Mechanical Engineering). We
-assume a prior search of `cip` yielded the relevant codes used here.
-Requires editing before reuse with different programs.
-
-``` r
-
-# Edit as required for different programs
-selected_programs <- filter_programs(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
-```
-
-*Programs.*   A summary code chunk for ready reference. Requires editing
-before reuse with different programs.
-
-``` r
-
-# Recode program labels. Edit as required.
-selected_programs[, program := fcase(
-  cip6 %like% "^1408", "CE",
-  cip6 %like% "^1410", "EE",
-  cip6 %like% "^1419", "ME",
-  cip6 %chin% c("142701", "143501", "143601", "143701"), "ISE"
-)]
-selected_programs <- selected_programs[, .(cip6, program)]
-```
-
-------------------------------------------------------------------------
-
-[◁ Degree
-seeking](https://midfieldr.github.io/midfieldr/articles/art-030-degree-seeking.md)
-   [▲ top of page](#top)    [Alternative CIPs
-▷](https://midfieldr.github.io/midfieldr/articles/art-041-alternative-cip.md)
-
-------------------------------------------------------------------------
+[▲ top of page](#top)
 
 ## References
 

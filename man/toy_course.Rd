@@ -3,50 +3,55 @@
 \docType{data}
 \name{toy_course}
 \alias{toy_course}
-\title{Course data for examples}
+\title{Small 'course' dataset for examples}
 \format{
-\code{data.table} with 5812 rows and 12 columns keyed by student ID,
-term, course abbreviation, and course number.
+Data frame with 8950 rows and 12 columns (\code{data.table} class).
+Composite key: \verb{\{mcid, term_course, abbrev, number\}.}
 \describe{
-\item{\code{mcid}}{Character, de-identified student ID. Key column.}
-\item{\code{term}}{Character, academic year and term, format YYYYT.
-Key column.}
-\item{\code{abbrev}}{Character, course alphabetical identifier,
-e.g. ENGR, MATH, ENGL. Key column.}
-\item{\code{number}}{Character, course numeric identifier, e.g.
-101, 3429. Key column.}
-\item{\code{institution}}{Character, de-identified institution
-name, e.g., Institution A, Institution B, etc.}
-\item{\code{course}}{Character, course name, e.g., \verb{Astrophysics III}, \verb{Calculus For Social Science And Business}, \verb{Corp Financial Rprtng 1}, \verb{Environmental Sanitation II}, \verb{Fitness and Wellness}, \verb{Introductory Astronomy 2}, \verb{Our Changing Environment}, etc.}
-\item{\code{section}}{Character, course section identifier, from
-one to four characters, e.g., \code{1}, \code{2}, \code{01}, \code{14}, \code{001},
-\code{040}, \code{785}, \code{H02}, \code{R01}, \verb{300E}, \verb{888R}, etc.}
-\item{\code{type}}{Character, predominant delivery method for this
-section, e.g., \code{Blended}, \verb{Distance Education}, \code{Face-to-Face},
-\code{Online}, etc.}
-\item{\code{faculty_rank}}{Character, academic rank of the
-person teaching the course, e.g., \verb{Assistant Professor},
-\verb{Associate Professor}, \verb{Graduate Assistant},
-\verb{Visiting Faculty}, etc.}
-\item{\code{hours_course}}{Numeric, number of credit-hours
+\item{\code{mcid}}{Character. Anonymized student identifier
+that connects the four data tables, e.g., "MCID3111142897."}
+\item{\code{term_course}}{Character. Academic year and term,
+encoded \code{YYYYT.}}
+\item{\code{abbrev}}{Character. Course alphabetical identifier,
+e.g. "ENGR", "MATH", "ENGL."}
+\item{\code{number}}{Character. Course numeric identifier, e.g.
+"101", "3429."}
+\item{\code{institution}}{Character. The anonymized name of
+the institution the student attended in a given term, e.g.,
+"Institution A", "Institution B", etc.}
+\item{\code{course}}{Character. Course name, e.g., "Astrophysics
+III", "Calculus For Social Science And Business", "Corp
+Financial Rprtng 1", "Environmental Sanitation II", "Fitness
+and Wellness", "Introductory Astronomy 2", "Our Changing
+Environment", etc.}
+\item{\code{section}}{Character. Course section identifier, from
+one to four characters, e.g., "1", "2", "01", "14", "001",
+"040", "785", "H02", "R01", "300E", "888R", etc.}
+\item{\code{type}}{Character. Predominant delivery method for this
+section, e.g., "Blended", "Distance Education", "Face-to-Face",
+"Online", etc.}
+\item{\code{faculty_rank}}{Character. The academic rank of the
+person teaching the course, e.g., "Assistant Professor",
+"Associate Professor", "Graduate Assistant",
+"Visiting Faculty", etc.}
+\item{\code{hours_course}}{Numeric. Number of credit-hours
 for successful course completion.}
-\item{\code{grade}}{Character, course grade, e.g., A+, A, A-, B+,
-I, NG, etc.}
-\item{\code{discipline_midfield}}{Character, a variable
+\item{\code{grade}}{Character. Course grade, e.g., "A+", "A", "A-", "B+",
+"I", "NG", etc.}
+\item{\code{discipline_midfield}}{Character. A variable
 for grouping courses by academic discipline
 assigned by the pre-2023 MIDFIELD data curator, e.g.,
-\code{Anthropology}, \code{Business}, \verb{Computer Science},
-\code{Engineering}, \verb{Language and Literature},
-\code{Mathematics},\verb{Visual and Performing Arts}, etc.}
+"Anthropology", "Business", "Computer Science",
+"Engineering", "Language and Literature",
+"Mathematics", "Visual and Performing Arts", etc.}
 }
 }
 \usage{
 toy_course
 }
 \description{
-Selected variables modeled on those in the \code{course} practice data for use in
-package examples and articles. Sampled from an early version of the practice
-data, the toy data are not a current practice data sample.
+A subset of rows from the midfielddata \code{course} table matching the IDs in
+\code{toy_student.} A small dataset for use in examples.
 }
 \seealso{
 Other toy-data:

@@ -156,9 +156,7 @@ engr_cip
 #>  2:                                              Pre-Engineering 140102
 #>  3: Aerospace, Aeronautical and Astronautical, Space Engineering 140201
 #>  4:      Agricultural, Biological Engineering and Bioengineering 140301
-#>  5:                                    Architectural Engineering 140401
 #> ---                                                                    
-#> 50:            Mechatronics, Robotics and Automation Engineering 144201
 #> 51:                                      Biochemical Engineering 144301
 #> 52:                                        Engineering Chemistry 144401
 #> 53:                           Biological, Biosystems Engineering 144501
@@ -169,9 +167,7 @@ engr_cip
 #>  2:                                    Engineering, General   1401 Engineering
 #>  3:   Aerospace, Aeronautical and Astronautical Engineering   1402 Engineering
 #>  4: Agricultural, Biological Engineering and Bioengineering   1403 Engineering
-#>  5:                               Architectural Engineering   1404 Engineering
 #> ---                                                                           
-#> 50:       Mechatronics, Robotics and Automation Engineering   1442 Engineering
 #> 51:                                 Biochemical Engineering   1443 Engineering
 #> 52:                                   Engineering Chemistry   1444 Engineering
 #> 53:                      Biological, Biosystems Engineering   1445 Engineering
@@ -182,9 +178,7 @@ engr_cip
 #>  2:     14
 #>  3:     14
 #>  4:     14
-#>  5:     14
 #> ---       
-#> 50:     14
 #> 51:     14
 #> 52:     14
 #> 53:     14
@@ -274,25 +268,26 @@ programs[, program := fcase(
 )]
 programs[, cip6name := gsub("Engineering", "Engng", cip6name)]
 programs[, cip6name := gsub("Communications", "Commn", cip6name)]
+programs[, cip6name := gsub("Electrical, Electronics", "Elec, Electr", cip6name)]
 
 programs
-#>                                           cip6name   cip6 program
-#>                                             <char> <char>  <char>
-#>  1:                           Civil Engng, General 140801      CE
-#>  2:                             Geotechnical Engng 140802      CE
-#>  3:                               Structural Engng 140803      CE
-#>  4:               Transportation and Highway Engng 140804      CE
-#>  5:                          Water Resources Engng 140805      CE
-#>  6:                             Civil Engng, Other 140899      CE
-#>  7:        Electrical, Electronics and Commn Engng 141001      EE
-#>  8:                        Laser and Optical Engng 141003      EE
-#>  9:                       Telecommunications Engng 141004      EE
-#> 10: Electrical, Electronics and Commn Engng, Other 141099      EE
-#> 11:                               Mechanical Engng 141901      ME
-#> 12:                                  Systems Engng 142701     ISE
-#> 13:                               Industrial Engng 143501     ISE
-#> 14:                            Manufacturing Engng 143601     ISE
-#> 15:                            Operations Research 143701     ISE
+#>                                cip6name   cip6 program
+#>                                  <char> <char>  <char>
+#>  1:                Civil Engng, General 140801      CE
+#>  2:                  Geotechnical Engng 140802      CE
+#>  3:                    Structural Engng 140803      CE
+#>  4:    Transportation and Highway Engng 140804      CE
+#>  5:               Water Resources Engng 140805      CE
+#>  6:                  Civil Engng, Other 140899      CE
+#>  7:        Elec, Electr and Commn Engng 141001      EE
+#>  8:             Laser and Optical Engng 141003      EE
+#>  9:            Telecommunications Engng 141004      EE
+#> 10: Elec, Electr and Commn Engng, Other 141099      EE
+#> 11:                    Mechanical Engng 141901      ME
+#> 12:                       Systems Engng 142701     ISE
+#> 13:                    Industrial Engng 143501     ISE
+#> 14:                 Manufacturing Engng 143601     ISE
+#> 15:                 Operations Research 143701     ISE
 ```
 
 Our programs data frame is complete: 15 six-digit codes are encoded
@@ -325,15 +320,15 @@ degree_source <- copy(degree)
 
 The working data frames `student, term,` and `degree` should always be
 present in our computing environment so we can take advantage of
-midfieldr default argument values. For example,
+midfieldr default argument values. For example, the function
 [`post_bacc_terms()`](https://midfieldr.github.io/midfieldr/reference/post_bacc_terms.md)
 accesses the `degree` table to do its work. If `degree` is in the
-environment, the following lines yield the same results:
+environment, the following lines yield identical results:
 
 ``` r
 
 # not run
-post_bacc_terms(term, midfield_rec = degree)
+post_bacc_terms(term, midfield_table = degree)
 post_bacc_terms(term, degree)
 post_bacc_terms(term)
 ```
@@ -348,9 +343,9 @@ the key or composite key variables of the data tables.
 
 ``` r
 
-student <- select_records(student, type = "s")
-term <- select_records(term, "t")
-degree <- select_records(degree, "d")
+student <- select_basic_cols(student)
+term <- select_basic_cols(term)
+degree <- select_basic_cols(degree)
 ```
 
 [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
@@ -444,27 +439,30 @@ degree <- degree[!"post-first-degree", on = "term_cluster"]
 ```
 
 We can drop the added columns by applying
-[`select_records()`](https://midfieldr.github.io/midfieldr/reference/select_records.md)
+[`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
 again.
 
 ``` r
 
-term <- select_records(term, "t")
-degree <- select_records(degree, "d")
+term <- select_basic_cols(term, "t")
+degree <- select_basic_cols(degree, "d")
 
 look_at(term)
-#> Classes 'data.table' and 'data.frame':   632917 obs. of  5 variables:
-#>  $ mcid       : chr  "MCID3111142225" "MCID3111142283" "MCID3111142283" "MCID"..
-#>  $ term       : chr  "19881" "19881" "19883" "19885" ...
-#>  $ cip6       : chr  "140901" "240102" "240102" "190601" ...
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
-#>  $ level      : chr  "01 First-year" "01 First-year" "01 First-year" "01 Firs"..
+#> Classes 'data.table' and 'data.frame':   632917 obs. of  7 variables:
+#>  $ mcid             : chr  "MCID3111142225" "MCID3111142283" "MCID3111142283""..
+#>  $ term             : chr  "19881" "19881" "19883" "19885" ...
+#>  $ cip6             : chr  "140901" "240102" "240102" "190601" ...
+#>  $ institution      : chr  "Institution B" "Institution J" "Institution J" "I"..
+#>  $ level            : chr  "01 First-year" "01 First-year" "01 First-year" "0"..
+#>  $ first_degree_term: chr  "19881" NA NA NA ...
+#>  $ term_cluster     : chr  "first-degree" "pre-degree" "pre-degree" "pre-degr"..
 
 look_at(degree)
-#> Classes 'data.table' and 'data.frame':   49618 obs. of  3 variables:
-#>  $ mcid       : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294" "MCID"..
-#>  $ term_degree: chr  "19881" "19921" "19903" "19921" ...
-#>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
+#> Classes 'data.table' and 'data.frame':   49618 obs. of  4 variables:
+#>  $ mcid             : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294""..
+#>  $ term_degree      : chr  "19881" "19921" "19903" "19921" ...
+#>  $ cip6             : chr  "141001" "141001" "141001" "141001" ...
+#>  $ first_degree_term: chr  "19881" "19921" "19903" "19921" ...
 ```
 
 ### *Filter for data sufficiency*
@@ -484,11 +482,7 @@ DT
 #>     1: MCID3111142225
 #>     2: MCID3111142283
 #>     3: MCID3111142290
-#>     4: MCID3111142294
-#>     5: MCID3111142299
 #>    ---               
-#> 97532: MCID3112898886
-#> 97533: MCID3112898890
 #> 97534: MCID3112898894
 #> 97535: MCID3112898895
 #> 97536: MCID3112898940
@@ -512,11 +506,7 @@ DT
 #>     1: MCID3111142225  19881 01 First-year        6       19933
 #>     2: MCID3111142283  19881 01 First-year        6       19933
 #>     3: MCID3111142290  19881 01 First-year        6       19933
-#>     4: MCID3111142294  19881 01 First-year        6       19933
-#>     5: MCID3111142299  19881 01 First-year        6       19933
 #>    ---                                                         
-#> 97532: MCID3112898886  20181 01 First-year        6       20233
-#> 97533: MCID3112898890  20181 01 First-year        6       20233
 #> 97534: MCID3112898894  20181 01 First-year        6       20233
 #> 97535: MCID3112898895  20181 01 First-year        6       20233
 #> 97536: MCID3112898940  20181 01 First-year        6       20233
@@ -533,11 +523,7 @@ DT
 #>     1: MCID3111142225  19881       19933
 #>     2: MCID3111142283  19881       19933
 #>     3: MCID3111142290  19881       19933
-#>     4: MCID3111142294  19881       19933
-#>     5: MCID3111142299  19881       19933
 #>    ---                                  
-#> 97532: MCID3112898886  20181       20233
-#> 97533: MCID3112898890  20181       20233
 #> 97534: MCID3112898894  20181       20233
 #> 97535: MCID3112898895  20181       20233
 #> 97536: MCID3112898940  20181       20233
@@ -552,32 +538,24 @@ satisfies (or does not satisfy) the data sufficiency criteria.
 
 DT <- data_sufficiency(DT)
 DT
-#>                   mcid term_i timely_term   institution lower_limit upper_limit
-#>                 <char> <char>      <char>        <char>      <char>      <char>
-#>      1: MCID3111142225  19881       19933 Institution B       19881       20181
-#>      2: MCID3111142283  19881       19933 Institution J       19881       20096
-#>      3: MCID3111142283  19881       19933 Institution J       19881       20096
-#>      4: MCID3111142283  19881       19933 Institution J       19881       20096
-#>      5: MCID3111142283  19881       19933 Institution J       19881       20096
-#>     ---                                                                        
-#> 632913: MCID3112898886  20181       20233 Institution B       19881       20181
-#> 632914: MCID3112898890  20181       20233 Institution B       19881       20181
-#> 632915: MCID3112898894  20181       20233 Institution B       19881       20181
-#> 632916: MCID3112898895  20181       20233 Institution B       19881       20181
-#> 632917: MCID3112898940  20181       20233 Institution B       19881       20181
-#>         data_sufficiency
-#>                   <char>
-#>      1:    exclude-lower
-#>      2:    exclude-lower
-#>      3:    exclude-lower
-#>      4:    exclude-lower
-#>      5:    exclude-lower
-#>     ---                 
-#> 632913:    exclude-upper
-#> 632914:    exclude-upper
-#> 632915:    exclude-upper
-#> 632916:    exclude-upper
-#> 632917:    exclude-upper
+#>                  mcid term_i timely_term   institution lower_limit upper_limit
+#>                <char> <char>      <char>        <char>      <char>      <char>
+#>     1: MCID3111142225  19881       19933 Institution B       19881       20181
+#>     2: MCID3111142283  19881       19933 Institution J       19881       20096
+#>     3: MCID3111142290  19881       19933 Institution J       19881       20096
+#>    ---                                                                        
+#> 97534: MCID3112898894  20181       20233 Institution B       19881       20181
+#> 97535: MCID3112898895  20181       20233 Institution B       19881       20181
+#> 97536: MCID3112898940  20181       20233 Institution B       19881       20181
+#>        data_sufficiency
+#>                  <char>
+#>     1:    exclude-lower
+#>     2:    exclude-lower
+#>     3:    exclude-lower
+#>    ---                 
+#> 97534:    exclude-upper
+#> 97535:    exclude-upper
+#> 97536:    exclude-upper
 ```
 
 Again, a quick assessment of the relative size of the three possible
@@ -586,11 +564,11 @@ labels.
 ``` r
 
 DT[, .N, by = c("data_sufficiency")][order(-N)]
-#>    data_sufficiency      N
-#>              <char>  <int>
-#> 1:          include 525446
-#> 2:    exclude-upper  87982
-#> 3:    exclude-lower  19489
+#>    data_sufficiency     N
+#>              <char> <int>
+#> 1:          include 76865
+#> 2:    exclude-upper 17925
+#> 3:    exclude-lower  2746
 ```
 
 We retain the rows labeled “include” for which we have sufficient data
@@ -600,19 +578,15 @@ from the institution and retain the ID column only.
 
 DT <- DT["include", on = "data_sufficiency", .(mcid)]
 DT
-#>                   mcid
-#>                 <char>
-#>      1: MCID3111142689
-#>      2: MCID3111142782
-#>      3: MCID3111142782
-#>      4: MCID3111142782
-#>      5: MCID3111142782
-#>     ---               
-#> 525442: MCID3112800920
-#> 525443: MCID3112870009
-#> 525444: MCID3112870009
-#> 525445: MCID3112870009
-#> 525446: MCID3112870009
+#>                  mcid
+#>                <char>
+#>     1: MCID3111142689
+#>     2: MCID3111142782
+#>     3: MCID3111142881
+#>    ---               
+#> 76863: MCID3112785480
+#> 76864: MCID3112800920
+#> 76865: MCID3112870009
 ```
 
 ### *Filter for degree seeking*
@@ -628,19 +602,15 @@ students.
 student_cols <- student[, .(mcid)]
 DT <- student_cols[DT, on = "mcid", nomatch = NULL]
 DT
-#>                   mcid
-#>                 <char>
-#>      1: MCID3111142689
-#>      2: MCID3111142782
-#>      3: MCID3111142782
-#>      4: MCID3111142782
-#>      5: MCID3111142782
-#>     ---               
-#> 525442: MCID3112800920
-#> 525443: MCID3112870009
-#> 525444: MCID3112870009
-#> 525445: MCID3112870009
-#> 525446: MCID3112870009
+#>                  mcid
+#>                <char>
+#>     1: MCID3111142689
+#>     2: MCID3111142782
+#>     3: MCID3111142881
+#>    ---               
+#> 76863: MCID3112785480
+#> 76864: MCID3112800920
+#> 76865: MCID3112870009
 ```
 
 It happens that all students in this case are degree-seeking, so this
@@ -661,11 +631,7 @@ population
 #>     1: MCID3111142689
 #>     2: MCID3111142782
 #>     3: MCID3111142881
-#>     4: MCID3111142884
-#>     5: MCID3111142893
 #>    ---               
-#> 76861: MCID3112727985
-#> 76862: MCID3112730841
 #> 76863: MCID3112785480
 #> 76864: MCID3112800920
 #> 76865: MCID3112870009
@@ -706,18 +672,21 @@ look_at(student)
 #>  $ sex : chr  "Female" "Female" "Male" "Male" ...
 
 look_at(term)
-#> Classes 'data.table' and 'data.frame':   525446 obs. of  5 variables:
-#>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142782" "MCID"..
-#>  $ term       : chr  "19883" "19883" "19885" "19893" ...
-#>  $ cip6       : chr  "090401" "260101" "260101" "260101" ...
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
-#>  $ level      : chr  "01 First-year" "01 First-year" "02 Second-year" "02 Sec"..
+#> Classes 'data.table' and 'data.frame':   525446 obs. of  7 variables:
+#>  $ mcid             : chr  "MCID3111142689" "MCID3111142782" "MCID3111142782""..
+#>  $ term             : chr  "19883" "19883" "19885" "19893" ...
+#>  $ cip6             : chr  "090401" "260101" "260101" "260101" ...
+#>  $ institution      : chr  "Institution B" "Institution J" "Institution J" "I"..
+#>  $ level            : chr  "01 First-year" "01 First-year" "02 Second-year" ""..
+#>  $ first_degree_term: chr  "19913" "19903" "19903" "19903" ...
+#>  $ term_cluster     : chr  "pre-degree" "pre-degree" "pre-degree" "pre-degree"..
 
 look_at(degree)
-#> Classes 'data.table' and 'data.frame':   43847 obs. of  3 variables:
-#>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID"..
-#>  $ term_degree: chr  "19913" "19903" "19894" "19901" ...
-#>  $ cip6       : chr  "090401" "260101" "450601" "141001" ...
+#> Classes 'data.table' and 'data.frame':   43847 obs. of  4 variables:
+#>  $ mcid             : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881""..
+#>  $ term_degree      : chr  "19913" "19903" "19894" "19901" ...
+#>  $ cip6             : chr  "090401" "260101" "450601" "141001" ...
+#>  $ first_degree_term: chr  "19913" "19903" "19894" "19901" ...
 ```
 
 ## Blocs and groupings
@@ -762,11 +731,7 @@ DT
 #>     1: MCID3111142689
 #>     2: MCID3111142782
 #>     3: MCID3111142881
-#>     4: MCID3111142884
-#>     5: MCID3111142893
 #>    ---               
-#> 76861: MCID3112727985
-#> 76862: MCID3112730841
 #> 76863: MCID3112785480
 #> 76864: MCID3112800920
 #> 76865: MCID3112870009
@@ -792,11 +757,7 @@ DT
 #>     1: MCID3111142689       19941       19913            timely
 #>     2: MCID3111142782       19941       19903            timely
 #>     3: MCID3111142881       19951       19894            timely
-#>     4: MCID3111142884       19941        <NA>              <NA>
-#>     5: MCID3111142893       19941        <NA>              <NA>
 #>    ---                                                         
-#> 76861: MCID3112727985       20173        <NA>              <NA>
-#> 76862: MCID3112730841       20173       20164            timely
 #> 76863: MCID3112785480       20123        <NA>              <NA>
 #> 76864: MCID3112800920       20153        <NA>              <NA>
 #> 76865: MCID3112870009       20003        <NA>              <NA>
@@ -827,11 +788,7 @@ DT
 #>     1: MCID3111142689
 #>     2: MCID3111142782
 #>     3: MCID3111142881
-#>     4: MCID3111142965
-#>     5: MCID3111143066
 #>    ---               
-#> 40426: MCID3112675459
-#> 40427: MCID3112675472
 #> 40428: MCID3112692944
 #> 40429: MCID3112694738
 #> 40430: MCID3112730841
@@ -853,11 +810,7 @@ DT
 #>     1: MCID3111142689 090401
 #>     2: MCID3111142782 260101
 #>     3: MCID3111142881 450601
-#>     4: MCID3111142965 141001
-#>     5: MCID3111143066 090401
 #>    ---                      
-#> 40486: MCID3112675459 261310
-#> 40487: MCID3112675472 500703
 #> 40488: MCID3112692944 090101
 #> 40489: MCID3112694738 230101
 #> 40490: MCID3112730841 040401
@@ -878,11 +831,7 @@ DT
 #>    1:      EE MCID3111142965
 #>    2:      EE MCID3111145102
 #>    3:      EE MCID3111146537
-#>    4:      EE MCID3111146674
-#>    5:     ISE MCID3111150194
 #>   ---                       
-#> 3259:      ME MCID3112618553
-#> 3260:      ME MCID3112618574
 #> 3261:      ME MCID3112618976
 #> 3262:      EE MCID3112619484
 #> 3263:      ME MCID3112641535
@@ -916,11 +865,7 @@ DT
 #>    1: MCID3111142965 International   Male      EE
 #>    2: MCID3111145102         White   Male      EE
 #>    3: MCID3111146537         Asian Female      EE
-#>    4: MCID3111146674         Asian   Male      EE
-#>    5: MCID3111150194         Black   Male     ISE
 #>   ---                                            
-#> 3259: MCID3112618553 International   Male      ME
-#> 3260: MCID3112618574 International   Male      ME
 #> 3261: MCID3112618976         White   Male      ME
 #> 3262: MCID3112619484         White   Male      EE
 #> 3263: MCID3112641535         White   Male      ME
@@ -942,11 +887,7 @@ graduates
 #>    1: MCID3111142965 International   Male      EE   grad
 #>    2: MCID3111145102         White   Male      EE   grad
 #>    3: MCID3111146537         Asian Female      EE   grad
-#>    4: MCID3111146674         Asian   Male      EE   grad
-#>    5: MCID3111150194         Black   Male     ISE   grad
 #>   ---                                                   
-#> 3259: MCID3112618553 International   Male      ME   grad
-#> 3260: MCID3112618574 International   Male      ME   grad
 #> 3261: MCID3112618976         White   Male      ME   grad
 #> 3262: MCID3112619484         White   Male      EE   grad
 #> 3263: MCID3112641535         White   Male      ME   grad
@@ -965,11 +906,7 @@ DT
 #>     1: MCID3111142689
 #>     2: MCID3111142782
 #>     3: MCID3111142881
-#>     4: MCID3111142884
-#>     5: MCID3111142893
 #>    ---               
-#> 76861: MCID3112727985
-#> 76862: MCID3112730841
 #> 76863: MCID3112785480
 #> 76864: MCID3112800920
 #> 76865: MCID3112870009
@@ -990,11 +927,7 @@ DT
 #>      1: MCID3111142689 090401
 #>      2: MCID3111142782 260101
 #>      3: MCID3111142881 450601
-#>      4: MCID3111142884 260406
-#>      5: MCID3111142893 400801
 #>     ---                      
-#> 126164: MCID3112785480 240102
-#> 126165: MCID3112785480 261201
 #> 126166: MCID3112800920 240102
 #> 126167: MCID3112800920 240199
 #> 126168: MCID3112870009 240102
@@ -1024,11 +957,7 @@ DT
 #>    1:      EE MCID3111142965
 #>    2:      EE MCID3111145102
 #>    3:      EE MCID3111146537
-#>    4:      EE MCID3111146674
-#>    5:     ISE MCID3111150194
 #>   ---                       
-#> 5579:      EE MCID3112619484
-#> 5580:      ME MCID3112619666
 #> 5581:      ME MCID3112641399
 #> 5582:      ME MCID3112641535
 #> 5583:      ME MCID3112698681
@@ -1062,11 +991,7 @@ DT
 #>    1: MCID3111142965 International   Male      EE
 #>    2: MCID3111145102         White   Male      EE
 #>    3: MCID3111146537         Asian Female      EE
-#>    4: MCID3111146674         Asian   Male      EE
-#>    5: MCID3111150194         Black   Male     ISE
 #>   ---                                            
-#> 5579: MCID3112619484         White   Male      EE
-#> 5580: MCID3112619666         White   Male      ME
 #> 5581: MCID3112641399         White   Male      ME
 #> 5582: MCID3112641535         White   Male      ME
 #> 5583: MCID3112698681         White   Male      ME
@@ -1089,11 +1014,7 @@ ever_enrolled
 #>    1: MCID3111142965 International   Male      EE   ever
 #>    2: MCID3111145102         White   Male      EE   ever
 #>    3: MCID3111146537         Asian Female      EE   ever
-#>    4: MCID3111146674         Asian   Male      EE   ever
-#>    5: MCID3111150194         Black   Male     ISE   ever
 #>   ---                                                   
-#> 5579: MCID3112619484         White   Male      EE   ever
-#> 5580: MCID3112619666         White   Male      ME   ever
 #> 5581: MCID3112641399         White   Male      ME   ever
 #> 5582: MCID3112641535         White   Male      ME   ever
 #> 5583: MCID3112698681         White   Male      ME   ever
@@ -1113,11 +1034,7 @@ DT
 #>    1: MCID3111142965 International   Male      EE   grad
 #>    2: MCID3111145102         White   Male      EE   grad
 #>    3: MCID3111146537         Asian Female      EE   grad
-#>    4: MCID3111146674         Asian   Male      EE   grad
-#>    5: MCID3111150194         Black   Male     ISE   grad
 #>   ---                                                   
-#> 8842: MCID3112619484         White   Male      EE   ever
-#> 8843: MCID3112619666         White   Male      ME   ever
 #> 8844: MCID3112641399         White   Male      ME   ever
 #> 8845: MCID3112641535         White   Male      ME   ever
 #> 8846: MCID3112698681         White   Male      ME   ever
@@ -1137,11 +1054,7 @@ DT
 #>  1:   grad      EE   International   Male    90
 #>  2:   grad      EE           White   Male   439
 #>  3:   grad      EE           Asian Female    12
-#>  4:   grad      EE           Asian   Male    71
-#>  5:   grad     ISE           Black   Male     6
 #> ---                                            
-#> 94:   ever      EE Native American Female     1
-#> 95:   ever      CE   Other/Unknown Female     5
 #> 96:   ever      ME Native American   Male     5
 #> 97:   ever      ME   Other/Unknown Female     8
 #> 98:   ever      CE Native American Female     1
@@ -1170,11 +1083,7 @@ DT
 #>  1:      CE Female           Asian    14    10
 #>  2:      CE Female           Black     4     1
 #>  3:      CE Female        Hispanic    13     6
-#>  4:      CE Female   International    23    13
-#>  5:      CE Female Native American     1     1
 #> ---                                           
-#> 46:      ME   Male        Hispanic    78    42
-#> 47:      ME   Male   International   176    89
 #> 48:      ME   Male Native American     5     1
 #> 49:      ME   Male   Other/Unknown    80    41
 #> 50:      ME   Male           White  1584   952
@@ -1198,55 +1107,10 @@ DT[order(-grad, -ever)]
 #>  1:      ME   Male           White  1584   952       60.1
 #>  2:      CE   Male           White   943   612       64.9
 #>  3:      EE   Male           White   845   439       52.0
-#>  4:      CE Female           White   260   162       62.3
-#>  5:      ME Female           White   212   134       63.2
-#>  6:     ISE   Male           White   178   130       73.0
-#>  7:      EE   Male   International   194    90       46.4
-#>  8:      ME   Male   International   176    89       50.6
-#>  9:      EE   Male           Asian   122    71       58.2
-#> 10:      EE Female           White   117    56       47.9
-#> 11:      CE   Male   International    97    55       56.7
-#> 12:     ISE Female           White    73    54       74.0
-#> 13:      ME   Male           Asian    76    49       64.5
-#> 14:      ME   Male        Hispanic    78    42       53.8
-#> 15:      ME   Male   Other/Unknown    80    41       51.2
-#> 16:      CE   Male        Hispanic    66    31       47.0
-#> 17:      CE   Male           Asian    30    25       83.3
-#> 18:      ME   Male           Black    29    19       65.5
-#> 19:      EE   Male        Hispanic    44    17       38.6
-#> 20:      EE   Male           Black    29    17       58.6
-#> 21:      EE   Male   Other/Unknown    40    16       40.0
-#> 22:     ISE   Male           Asian    21    14       66.7
-#> 23:      CE Female   International    23    13       56.5
-#> 24:      EE Female           Asian    21    12       57.1
-#> 25:     ISE   Male   International    21    12       57.1
-#> 26:      CE   Male   Other/Unknown    27    11       40.7
-#> 27:      ME Female   International    19    11       57.9
-#> 28:     ISE Female           Asian    15    10       66.7
-#> 29:      CE Female           Asian    14    10       71.4
-#> 30:      EE Female   International    27     9       33.3
-#> 31:      ME Female        Hispanic    12     8       66.7
-#> 32:      CE Female        Hispanic    13     6       46.2
-#> 33:     ISE   Male           Black     9     6       66.7
-#> 34:     ISE Female           Black     7     6       85.7
-#> 35:      CE   Male           Black     8     5       62.5
-#> 36:      ME Female   Other/Unknown     8     4       50.0
-#> 37:     ISE   Male        Hispanic     6     4       66.7
-#> 38:      EE Female        Hispanic     8     3       37.5
-#> 39:      EE Female   Other/Unknown     7     3       42.9
-#> 40:      EE Female           Black     6     3       50.0
-#> 41:      CE Female   Other/Unknown     5     3       60.0
-#> 42:     ISE Female   International     6     2       33.3
-#> 43:      ME Female           Black     3     2       66.7
-#> 44:      ME Female           Asian     7     1       14.3
-#> 45:      ME   Male Native American     5     1       20.0
-#> 46:      CE Female           Black     4     1       25.0
-#> 47:      CE   Male Native American     3     1       33.3
+#> ---                                                      
 #> 48:      CE Female Native American     1     1      100.0
 #> 49:      EE   Male Native American     3     0        0.0
 #> 50:      EE Female Native American     1     0        0.0
-#>     program    sex            race  ever  grad stickiness
-#>      <char> <char>          <char> <int> <int>      <num>
 ```
 
 ## Dissemination
@@ -1267,11 +1131,7 @@ DT
 #>  1:      CE Female         Asian    14    10       71.4
 #>  2:      CE Female      Hispanic    13     6       46.2
 #>  3:      CE Female International    23    13       56.5
-#>  4:      CE Female         White   260   162       62.3
-#>  5:      CE   Male         Asian    30    25       83.3
 #> ---                                                    
-#> 33:      ME   Male         Black    29    19       65.5
-#> 34:      ME   Male      Hispanic    78    42       53.8
 #> 35:      ME   Male International   176    89       50.6
 #> 36:      ME   Male Other/Unknown    80    41       51.2
 #> 37:      ME   Male         White  1584   952       60.1
@@ -1290,11 +1150,7 @@ DT
 #>  1:      CE         Asian Female         Asian Female    14    10       71.4
 #>  2:      CE      Hispanic Female      Hispanic Female    13     6       46.2
 #>  3:      CE International Female International Female    23    13       56.5
-#>  4:      CE         White Female         White Female   260   162       62.3
-#>  5:      CE         Asian   Male           Asian Male    30    25       83.3
 #> ---                                                                         
-#> 33:      ME         Black   Male           Black Male    29    19       65.5
-#> 34:      ME      Hispanic   Male        Hispanic Male    78    42       53.8
 #> 35:      ME International   Male   International Male   176    89       50.6
 #> 36:      ME Other/Unknown   Male   Other/Unknown Male    80    41       51.2
 #> 37:      ME         White   Male           White Male  1584   952       60.1
@@ -1317,11 +1173,7 @@ DT
 #>  1:      Civil         Asian Female         Asian Female    14    10       71.4
 #>  2:      Civil      Hispanic Female      Hispanic Female    13     6       46.2
 #>  3:      Civil International Female International Female    23    13       56.5
-#>  4:      Civil         White Female         White Female   260   162       62.3
-#>  5:      Civil         Asian   Male           Asian Male    30    25       83.3
 #> ---                                                                            
-#> 33: Mechanical         Black   Male           Black Male    29    19       65.5
-#> 34: Mechanical      Hispanic   Male        Hispanic Male    78    42       53.8
 #> 35: Mechanical International   Male   International Male   176    89       50.6
 #> 36: Mechanical Other/Unknown   Male   Other/Unknown Male    80    41       51.2
 #> 37: Mechanical         White   Male           White Male  1584   952       60.1
@@ -1341,11 +1193,7 @@ DT_table
 #>  1:      Civil         Asian Female       71.4
 #>  2:      Civil      Hispanic Female       46.2
 #>  3:      Civil International Female       56.5
-#>  4:      Civil         White Female       62.3
-#>  5:      Civil           Asian Male       83.3
 #> ---                                           
-#> 33: Mechanical           Black Male       65.5
-#> 34: Mechanical        Hispanic Male       53.8
 #> 35: Mechanical   International Male       50.6
 #> 36: Mechanical   Other/Unknown Male       51.2
 #> 37: Mechanical           White Male       60.1
@@ -1425,11 +1273,7 @@ DT_chart
 #>  1:      Civil         Asian Female         Asian Female    14    10       71.4
 #>  2:      Civil      Hispanic Female      Hispanic Female    13     6       46.2
 #>  3:      Civil International Female International Female    23    13       56.5
-#>  4:      Civil         White Female         White Female   260   162       62.3
-#>  5:      Civil         Asian   Male           Asian Male    30    25       83.3
 #> ---                                                                            
-#> 33: Mechanical         Black   Male           Black Male    29    19       65.5
-#> 34: Mechanical      Hispanic   Male        Hispanic Male    78    42       53.8
 #> 35: Mechanical International   Male   International Male   176    89       50.6
 #> 36: Mechanical Other/Unknown   Male   Other/Unknown Male    80    41       51.2
 #> 37: Mechanical         White   Male           White Male  1584   952       60.1
@@ -1459,11 +1303,7 @@ DT_chart
 #>  1:      Civil         Asian Female    10    14       71.4         Asian Female
 #>  2:      Civil      Hispanic Female     6    13       46.2      Hispanic Female
 #>  3:      Civil International Female    13    23       56.5 International Female
-#>  4:      Civil         White Female   162   260       62.3         White Female
-#>  5:      Civil           Asian Male    25    30       83.3         Asian   Male
 #> ---                                                                            
-#> 33: Mechanical           Black Male    19    29       65.5         Black   Male
-#> 34: Mechanical        Hispanic Male    42    78       53.8      Hispanic   Male
 #> 35: Mechanical   International Male    89   176       50.6 International   Male
 #> 36: Mechanical   Other/Unknown Male    41    80       51.2 Other/Unknown   Male
 #> 37: Mechanical           White Male   952  1584       60.1         White   Male
@@ -1472,11 +1312,7 @@ DT_chart
 #>  1:               62.8              64.0
 #>  2:               62.8              56.0
 #>  3:               62.8              47.8
-#>  4:               62.8              61.3
-#>  5:               62.8              63.9
 #> ---                                     
-#> 33:               59.3              62.7
-#> 34:               59.3              48.5
 #> 35:               59.3              50.4
 #> 36:               59.3              46.3
 #> 37:               59.3              60.1
@@ -1504,6 +1340,8 @@ ggplot(DT_chart, aes(x = stickiness, y = people)) +
 ![Figure 1: Program stickiness.](figures/art-004-fig01-1.png)
 
 Figure 1: Program stickiness.
+
+[▲ top of page](#top)
 
 ## References
 

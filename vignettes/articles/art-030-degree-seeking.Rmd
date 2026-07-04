@@ -90,8 +90,8 @@ source_student <- copy(student)
 source_term <- copy(term)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_records(source_student)
-term <- select_records(source_term)
+student <- select_basic_cols(source_student)
+term <- select_basic_cols(source_term)
 ```
 
 *Initialize.* &nbsp; Assign a working data frame. 
@@ -202,7 +202,7 @@ In either method, we can select columns from both data frames. Using `merge()` w
 
 ```{r}
 # Selecting columns from both data frames, merge() inner join
-x <- merge(DT[, .(mcid)], student[, .(mcid, institution)], by = c("mcid"), all = FALSE)
+x <- merge(DT[, .(mcid)], student[, .(mcid, sex)], by = c("mcid"), all = FALSE)
 setkey(x, NULL)
 x
 ```
@@ -211,7 +211,7 @@ In the `X[Y, j]` syntax, however, we can list the columns to be returned from bo
 
 ```{r}
 # Selecting columns from both data frames, X[Y] inner join
-y <- DT[student, .(mcid, institution), on = c("mcid"), nomatch = NULL]
+y <- DT[student, .(mcid, sex), on = c("mcid"), nomatch = NULL]
 y
 ```
 
@@ -255,32 +255,6 @@ DT
 
 
 
-
-
-## Reusable code
-
-*Preparation.* &nbsp; The baseline data frame we preserved earlier is the intake for this section.
-
-```{r}
-DT <- copy(baseline)
-```
-
-*Degree seeking.* &nbsp; A summary code chunk for ready reference.   
-
-```{r}
-# Filter for degree seeking, output unique IDs
-DT <- student[DT, .(mcid), on = c("mcid"), nomatch = NULL]
-DT <- unique(DT)
-```
-
-
-
-
-***
-
-[&#9665; Data sufficiency](art-020-data-sufficiency.html) &nbsp;&nbsp; <a href="#top">&#9650; top of page</a> &nbsp;&nbsp; [Programs &#9655;](art-040-programs.html) 
-
-***
 
 
 

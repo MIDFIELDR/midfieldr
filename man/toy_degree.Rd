@@ -3,30 +3,33 @@
 \docType{data}
 \name{toy_degree}
 \alias{toy_degree}
-\title{Degree data for examples}
+\title{Small 'degree' dataset for examples}
 \format{
-\code{data.table} with 96 rows and 4 columns keyed by student ID,
-term, and program (CIP code or degree label).
+Data frame with 193 rows and 4 columns (\code{data.table} class).
+Composite key: \verb{\{mcid, term_degree, cip6\}.}
 \describe{
-\item{\code{mcid}}{Character, de-identified student ID. Key column.}
-\item{\code{term_degree}}{Character, academic year and term
-in which a student completes their program, format YYYYT.}
-\item{\code{cip6}}{Character, 6-digit CIP code of program in
-which a student is enrolled in a term. Key column.}
-\item{\code{institution}}{Character, de-identified institution
-name, e.g., Institution A, Institution B, etc.}
-\item{\code{degree}}{Character, type of degree awarded, e.g.,
-Bachelor of Arts in Geography, Bachelor of Science
-in Finance, etc.}
+\item{\code{mcid}}{Character. Anonymized student identifier
+that connects the four data tables, e.g., "MCID3111142897."}
+\item{\code{term_degree}}{Character. Academic year and term
+in which a student completes their program, encoded
+\code{YYYYT.}}
+\item{\code{cip6}}{Character. The 6-digit CIP code of the program
+that the student completes in this term.}
+\item{\code{institution}}{Character. The anonymized name of
+the institution the student attended in a given term, e.g.,
+"Institution A", "Institution B", etc.}
+\item{\code{degree}}{Character. Type of degree awarded, e.g.,
+"Bachelor of Arts in Geography", "Bachelor of Science
+in Finance," etc.}
 }
 }
 \usage{
 toy_degree
 }
 \description{
-Selected variables modeled on those in the \code{degree} practice data for use in
-package examples and articles. Sampled from an early version of the practice
-data, the toy data are not a current practice data sample.
+A subset of rows from the midfielddata \code{degree} table that comprises
+those students from the \code{toy_student} dataset who complete a program.
+A small dataset used in examples.
 }
 \seealso{
 Other toy-data:

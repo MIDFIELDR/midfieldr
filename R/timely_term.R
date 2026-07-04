@@ -26,7 +26,7 @@ add_timely_term <- function(dframe,
   # original function calls the new function
   timely_term(
     dframe = dframe,
-    midfield_rec = midfield_term,
+    midfield_table = midfield_term,
     ...,
     sched_span = sched_span,
     span = span
@@ -42,8 +42,8 @@ NULL
 #' Calculate timely completion terms
 #'
 #' To a data frame keyed by student ID, add a column indicating the
-#' student's timely completion term. Columns of supporting
-#' information are also added.  Unrelated columns are dropped.
+#' student's timely completion term. Columns of supporting information
+#' are also added.  Columns not related to the task are dropped.
 #'
 #' In many studies, students must complete their programs in a specified time
 #' span to be considered "timely", for example 4, 6, or 8 years after
@@ -75,7 +75,7 @@ NULL
 #'
 #' @param dframe `r dframe` Required variable: `{mcid}`.
 #'
-#' @param midfield_rec `r midfield_x("*term*")` Required variables:
+#' @param midfield_table `r midfield_x("*term*")` Required variables:
 #'        `{mcid, term, level}`.
 #'
 #' @param ... `r param_dots`
@@ -88,24 +88,26 @@ NULL
 #'        of `sched_span`).
 #'
 #' @returns Data frame with the following properties:
-#' * Data frame class is preserved. Groups and keys are not preserved.
+#' * Data frame class is preserved.
 #' * Rows are filtered for unique `mcid` values.
 #' * Column `{mcid}` is retained (all other columns are dropped). New
 #'   columns added:
 #'   - `term_i.` &nbsp; Initial term of a student's longitudinal record,
-#'      encoded `YYYYT`. Extracted from `midfield_rec.`
+#'      encoded `YYYYT`. Extracted from `midfield_table.`
 #'   - `level_i.` &nbsp; Character. Student level (01 Freshman, 02 Sophomore,
-#'      etc.) in their initial term. Extracted from `midfield_rec.`
-#'   - `adj_span.` &nbsp; Numeric. Integer span of years for timely completion
-#'      adjusted for a student's initial level.
-#'   - `timely_term.` &nbsp; Character. Latest term by which program completion
+#'      etc.) in their initial term. Extracted from `midfield_table.`
+#'   - `adj_span.` &nbsp; Numeric. Integer span of years for timely
+#'      completion adjusted for a student's initial level.
+#'   - `timely_term.` &nbsp; Character. Latest term by which
+#'      program completion
 #'      would be considered timely for every student. Encoded `YYYYT.`
+#' * Groups and keys are not preserved.
 #'
 #' @example man/examples/exa_timely_term.R
 #' @export
 #'
 timely_term <- function(dframe,
-                        midfield_rec = term,
+                        midfield_table = term,
                         ...,
                         sched_span = NULL,
                         span = NULL) {
@@ -125,18 +127,18 @@ timely_term <- function(dframe,
 
   # data frame assessment
   qassert(dframe, "d+")
-  qassert(midfield_rec, "d+")
+  qassert(midfield_table, "d+")
 
   # required columns
   assert_names(colnames(dframe), must.include = dframe_vars)
-  assert_names(colnames(midfield_rec), must.include = record_vars)
+  assert_names(colnames(midfield_table), must.include = record_vars)
 
   # class of required columns
   for (i in seq_along(dframe_vars)) {
     qassert(dframe[[dframe_vars[i]]], "s+")
   }
   for (i in seq_along(record_vars)) {
-    qassert(midfield_rec[[record_vars[i]]], "s+")
+    qassert(midfield_table[[record_vars[i]]], "s+")
   }
 
   # other arguments
@@ -154,7 +156,7 @@ timely_term <- function(dframe,
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   setDT(dframe)
-  reqd_record <- copy(midfield_rec)
+  reqd_record <- copy(midfield_table)
   setDT(reqd_record)
 
   # bind names due to NSE notes in R CMD check
@@ -223,6 +225,7 @@ timely_term <- function(dframe,
 
   dframe <- dframe[, .SD, .SDcols = return_vars]
   setkey(dframe, NULL)
+  dframe <- unique(dframe)
   setattr(dframe, "class", prior_class)
   dframe[]
 }

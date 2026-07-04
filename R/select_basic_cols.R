@@ -11,14 +11,14 @@
 #' @export
 select_required <- function(midfield_x, select_add = NULL) {
   .Deprecated(
-    new = "select_records",
+    new = "select_basic_cols",
     package = "midfieldr",
     msg = "This function was deprecated for consistency with midfieldr
-    naming conventions. Please use `select_records()` instead."
+    naming conventions. Please use `select_basic_cols()` instead."
   )
 
   # old function still works, wraps the new function
-  select_records(dframe = midfield_x, col_pattern = select_add)
+  select_basic_cols(dframe = midfield_x, col_pattern = select_add)
 }
 NULL
 
@@ -26,10 +26,10 @@ NULL
 
 #' Choose columns of student records
 #'
-#' Subset any of the four MIDFIELD data tables `{student, term, course, degree}` 
-#' by selecting from that data frame the columns required by other midfieldr 
-#' functions. 
-#' 
+#' Subset any of the four MIDFIELD data tables `{student, term, course, degree}`
+#' by selecting from that data frame the columns required by other midfieldr
+#' functions.
+#'
 #' A convenience function to reduce the dimensions of a MIDFIELD
 #' data table by selecting only those columns required by other midfieldr
 #' functions or that are required to form a composite key. Particularly
@@ -39,41 +39,41 @@ NULL
 #' Several midfieldr functions require input data frames containing
 #' specific variables (column names) such as `mcid` or `cip6`. In addition,
 #' the MIDFIELD data tables have specific variables that act as keys
-#' or composite keys to the information in that table. If the `type` argument 
-#' is NULL (default), one of the following codes is assigned to return the 
+#' or composite keys to the information in that table. If the `type` argument
+#' is NULL (default), one of the following codes is assigned to return the
 #' column names indicated (if present):
 #' * `type = "s"` (student) looks for `{mcid, race, sex}`
 #' * `type = "t"` (term) looks for `{mcid, term, cip6, institution, level}`
 #' * `type = "c"` (course) looks for  `{mcid, term_course, abbrev, number}`
 #' * `type = "d"` (degree) looks for  `{mcid, term_degree, cip6}`
 #' * `type = "a"` looks for all the above columns
-#' 
-#' Specifying the type manually `{s, t, c, d, a}` in the argument overrides 
-#' the automatic selection. Additional column names can be included by using 
-#' the `col_pattern` argument. In all cases, unmatched search strings are 
+#'
+#' Specifying the type `{s, t, c, d, a}` manually in the argument overrides
+#' the automatic selection. Additional column names can be included by using
+#' the `col_pattern` argument. In all cases, unmatched search strings are
 #' silently ignored.
 #'
 #' @param dframe Data frame of student records from which columns are selected.
 #'        Expected choices are `student`, `term`, `course`, `degree` or their
 #'        equivalent.
-#' @param type Character identifying the record type. Possible values are "s",
-#'        "t", "c", "d", "a", or NULL (default). See Details.
-#' @param ... `r param_dots`
 #' @param col_pattern Character vector containing strings or regular
 #'        expressions to be matched or partially matched to the column
 #'        names of `dframe`.
+#' @param ... `r param_dots`
+#' @param type Character identifying the record type. Possible values are "s",
+#'        "t", "c", "d", "a", or NULL (default). See Details.
 #'
-#' @returns A data frame of the same type as `dframe`. The output has the
-#' following properties:
-#'
+#' @returns Data frame with the following properties:
+#' * Data frame class is preserved.
 #' * Rows are not modified.
-#' * Columns are a subset of the input, but appear in the same order.
-#' * Groups are not necessarily preserved.
-#' * Data frame attributes are preserved with the exception of grouped tibbles.
+#' * Columns are a subset of the input, appearing in the same order.
+#' * Groups and keys are not preserved.
 #'
-#' @example man/examples/exa_select_records.R
+#'
+#' @example man/examples/exa_select_basic_cols.R
 #' @export
-select_records <- function(dframe, type = NULL, ..., col_pattern = NULL) {
+#'
+select_basic_cols <- function(dframe, col_pattern = NULL, ..., type = NULL) {
   # ---------- base R checks (all data frame classes)
   #
   # arguments after ... must be named
@@ -89,16 +89,16 @@ select_records <- function(dframe, type = NULL, ..., col_pattern = NULL) {
   if (!is.null(col_pattern)) {
     checkmate::qassert(col_pattern, "s+")
   }
- if (!is.null(type)) {
-  qassert(type, "S1")
-  assert_subset(
-    type,
-    choices = c("s", "t", "c", "d", "a"),
-    empty.ok = FALSE,
-    .var.name = "type"
-  )
-}
-  
+  if (!is.null(type)) {
+    qassert(type, "S1")
+    assert_subset(
+      type,
+      choices = c("s", "t", "c", "d", "a"),
+      empty.ok = FALSE,
+      .var.name = "type"
+    )
+  }
+
   # ---------- preparation
 
   # to restore class except for groups in tibbles
@@ -109,27 +109,33 @@ select_records <- function(dframe, type = NULL, ..., col_pattern = NULL) {
   setDT(dframe)
 
   if (is.null(type)) {
-    uniq_s_cols <- c("race", "sex", "transfer", "hours_transfer", 
-                     "age_desc", "us_citizen", "home_zip", "high_school", 
-                     "sat_math", "sat_verbal", "act_comp")
-    uniq_t_cols <- c("term", "level", "standing", "coop", "hours_term", 
-                     "hours_term_attempt", "hours_cumul", "hours_cumul_attempt", 
-                     "gpa_term", "gpa_cumul")
-    uniq_c_cols <- c("term_course", "abbrev", "number", "course", "section", 
-                     "type", "faculty_rank", "hourse_course", "grade", 
-                     "discipline_midfield")
+    uniq_s_cols <- c(
+      "race", "sex", "transfer", "hours_transfer",
+      "age_desc", "us_citizen", "home_zip", "high_school",
+      "sat_math", "sat_verbal", "act_comp"
+    )
+    uniq_t_cols <- c(
+      "term", "level", "standing", "coop", "hours_term",
+      "hours_term_attempt", "hours_cumul", "hours_cumul_attempt",
+      "gpa_term", "gpa_cumul"
+    )
+    uniq_c_cols <- c(
+      "term_course", "abbrev", "number", "course", "section",
+      "type", "faculty_rank", "hourse_course", "grade",
+      "discipline_midfield"
+    )
     uniq_d_cols <- c("term_degree", "degree")
-    
+
     if (length(intersect(colnames(dframe), uniq_s_cols)) > 0) {
-      type = "s"
+      type <- "s"
     } else if (length(intersect(colnames(dframe), uniq_t_cols)) > 0) {
-      type = "t"
+      type <- "t"
     } else if (length(intersect(colnames(dframe), uniq_c_cols)) > 0) {
-      type = "c"
+      type <- "c"
     } else if (length(intersect(colnames(dframe), uniq_d_cols)) > 0) {
-      type = "d"
-    }  else{
-      type = "a"
+      type <- "d"
+    } else {
+      type <- "a"
     }
   }
 
@@ -175,6 +181,7 @@ select_records <- function(dframe, type = NULL, ..., col_pattern = NULL) {
 
   dframe <- dframe[, .SD, .SDcols = return_vars]
   setkey(dframe, NULL)
+  dframe <- unique(dframe)
   setattr(dframe, "class", prior_class)
   dframe[]
 }

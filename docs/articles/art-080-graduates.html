@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9011</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9013</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -215,9 +215,9 @@ started</a>.</p>
 <span><span class="va">source_degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Optional. Select variables required by midfieldr functions</span></span>
-<span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">source_student</span><span class="op">)</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">source_term</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">source_degree</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">source_student</span><span class="op">)</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">source_term</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">source_degree</span><span class="op">)</span></span></code></pre></div>
 <p><em>Initialize.</em>   Use the <code>term</code> and
 <code>student</code> data tables to obtain a data frame of student IDs
 meeting the data sufficiency and degree-seeking criteria. Applied to the
@@ -250,7 +250,7 @@ variable from previous code chunks.</p>
 <li><p><strong><code>dframe</code></strong>   Data frame of
 student-level records keyed by student ID. Required variables are
 <code>mcid</code> and <code>timely_term</code>.</p></li>
-<li><p><strong><code>midfield_rec</code></strong>   Data frame of
+<li><p><strong><code>midfield_table</code></strong>   Data frame of
 student-level degree observations keyed by student ID. Default is
 <code>degree</code>. Required variables are <code>mcid</code> and
 <code>term_degree</code>.</p></li>
@@ -259,12 +259,12 @@ student-level degree observations keyed by student ID. Default is
 identical results,</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Required arguments in order and explicitly named</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/completion_status.html">completion_status</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">DT</span>, midfield_rec <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/completion_status.html">completion_status</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">DT</span>, midfield_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Required arguments in order, but not named</span></span>
 <span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/completion_status.html">completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">degree</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Using the implicit default for the midfield_rec argument</span></span>
+<span><span class="co"># Using the implicit default for the midfield_table argument</span></span>
 <span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/completion_status.html">completion_status</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Demonstrate equivalence</span></span>
@@ -430,31 +430,7 @@ observations of ID and degree program label.</p>
 <span><span class="co">#&gt; 3264: MCID3112618976      ME</span></span>
 <span><span class="co">#&gt; 3265: MCID3112619484      EE</span></span>
 <span><span class="co">#&gt; 3266: MCID3112641535      ME</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="reusable-code">Reusable code<a class="anchor" aria-label="anchor" href="#reusable-code"></a>
-</h2>
-<p><em>Preparation.</em>   The data frame of baseline IDs is the intake
-for this section.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">baseline_mcid</span><span class="op">)</span></span></code></pre></div>
-<p><em>Graduates.</em>   A summary code chunk for ready reference.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Gather graduates, degree CIPs and terms</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/completion_status.html">completion_status</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">completion_status</span> <span class="op">==</span> <span class="st">"timely"</span><span class="op">]</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term_degree</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co"># Filter by programs and first degree terms</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_programs</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="va">term_degree</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">term_degree</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span> <span class="st">"mcid"</span><span class="op">]</span></span>
-<span><span class="va">DT</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span>, <span class="st">"term_degree"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span></code></pre></div>
-<hr>
-<p><a href="art-070-starters.html">◁ Starters</a>    <a href="#top">▲
-top of page</a>    <a href="art-090-groupings.html">Groupings ▷</a></p>
-<hr>
+<p><a href="#top">▲ top of page</a></p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

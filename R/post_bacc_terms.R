@@ -15,26 +15,27 @@
 #' @param dframe `r dframe` Required variables: `{mcid}` and one of
 #'        `{term, term_course, term_degree}.`
 #'
-#' @param midfield_rec `r midfield_x("*degree*")` Required variables:
+#' @param midfield_table `r midfield_x("*degree*")` Required variables:
 #'        `{mcid, term_degree}.`
 #'
 #' @returns Data frame with the following properties:
-#' * Data frame class is preserved. Groups and keys are not preserved.
+#' * Data frame class is preserved.
 #' * Rows are not modified.
-#' * Columns are not modified except new columns overwrite old columns of
-#'   the same name. New columns:
+#' * Columns are not modified except a new column replaces an existing
+#'   column if it has the same name. The new columns are:
 #'   - `first_degree_term.` &nbsp;  Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA`.
-#'      Joined from `midfield_rec$term_degree`.
+#'      Joined from the `term_degree` variable in `midfield_table.`
 #'   - `term_cluster.` &nbsp;  Character, indicating that a term belongs
 #'      to one of three clusters: terms that are prior to ("pre-degree"),
 #'      equal to ("first-degree"), or subsequent to ("post-first-degree")
 #'      the student’s first degree term.
+#' * Groups and keys are not preserved.
 #'
 #' @example man/examples/exa_post_bacc_terms.R
 #' @export
 #'
-post_bacc_terms <- function(dframe, midfield_rec = degree) {
+post_bacc_terms <- function(dframe, midfield_table = degree) {
   # ---------- base R checks (all data frame classes)
 
   # define required columns in midfield_x argument
@@ -42,7 +43,7 @@ post_bacc_terms <- function(dframe, midfield_rec = degree) {
 
   # assert data frames
   checkmate::qassert(dframe, "d+")
-  checkmate::qassert(midfield_rec, "d+")
+  checkmate::qassert(midfield_table, "d+")
 
   # assert class of required variables
   checkmate::qassert(dframe[["mcid"]], "s+")
@@ -54,11 +55,11 @@ post_bacc_terms <- function(dframe, midfield_rec = degree) {
   checkmate::qassert(var, "s1")
 
   # then assert
-  assert_names(colnames(midfield_rec),
+  assert_names(colnames(midfield_table),
     must.include = reqd_record_vars
   )
   for (i in seq_along(reqd_record_vars)) {
-    qassert(midfield_rec[[reqd_record_vars[i]]], "s+")
+    qassert(midfield_table[[reqd_record_vars[i]]], "s+")
   }
 
   # ---------- preparation
@@ -69,7 +70,7 @@ post_bacc_terms <- function(dframe, midfield_rec = degree) {
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   setDT(dframe)
-  reqd_record <- copy(midfield_rec)
+  reqd_record <- copy(midfield_table)
   setDT(reqd_record)
 
   # subset of required variables
@@ -132,5 +133,6 @@ post_bacc_terms <- function(dframe, midfield_rec = degree) {
 
   setattr(dframe, "class", prior_class)
   setkey(dframe, NULL)
+  dframe <- unique(dframe)
   dframe[]
 }

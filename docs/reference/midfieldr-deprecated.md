@@ -30,11 +30,11 @@ add_timely_term(
 
 - midfield_degree:
 
-  MIDFIELD records *degree* data frame or data frame extension.
+  Data frame or data frame extension of a MIDFIELD *degree* table.
 
 - midfield_term:
 
-  MIDFIELD records *term* data frame or data frame extension.
+  Data frame or data frame extension of a MIDFIELD *term* table.
 
 - keep_text:
 
@@ -109,6 +109,6 @@ add_timely_term(
 - `select_required()`:
 
   is deprecated in favor of
-  [`select_records()`](https://midfieldr.github.io/midfieldr/reference/select_records.md).
+  [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md).
   The new functionality is similar but with exact matching to the
   default column names plus preserving data frame class.

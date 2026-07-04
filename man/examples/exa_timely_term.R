@@ -1,14 +1,13 @@
-# Start with an excerpt from the student data set 
-dframe <- toy_student[1:10, .(mcid)]
+term <- toy_term
 
-# Add timely completion term column
-timely_term(dframe, toy_term)
+# Start with a small population 
+x <- toy_student[c(51:55, 346:350), .(mcid)]
+x
 
-# Define timely completion as 200% of scheduled span (8 years)
-timely_term(dframe, toy_term, span = 8)
+# Add timely term
+x <- timely_term(x, term)
+x
 
-# Existing timely_term column, if any, is overwritten
-dframe[, timely_term := NA_character_][]
-timely_term(dframe, toy_term)
-
-
+# Existing timely term column (if any) is replaced
+x[, timely_term := NA_character_][]
+timely_term(x, term)

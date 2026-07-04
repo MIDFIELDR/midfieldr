@@ -16,8 +16,8 @@ study_programs
 
 - `cip6`:
 
-  Character, 6-digit CIP code of program in which a student is enrolled
-  in a term.
+  Character. The 6-digit CIP code of the program in which a student is
+  enrolled in a term.
 
 - `program`:
 

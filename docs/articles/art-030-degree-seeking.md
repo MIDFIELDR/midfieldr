@@ -72,8 +72,8 @@ source_student <- copy(student)
 source_term <- copy(term)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_records(source_student)
-term <- select_records(source_term)
+student <- select_basic_cols(source_student)
+term <- select_basic_cols(source_term)
 ```
 
 *Initialize.*   Assign a working data frame.
@@ -210,18 +210,18 @@ explicitly subsetting the two data frames.
 ``` r
 
 # Selecting columns from both data frames, merge() inner join
-x <- merge(DT[, .(mcid)], student[, .(mcid, institution)], by = c("mcid"), all = FALSE)
+x <- merge(DT[, .(mcid)], student[, .(mcid, sex)], by = c("mcid"), all = FALSE)
 setkey(x, NULL)
 x
-#>                  mcid   institution
-#>                <char>        <char>
-#>     1: MCID3111142689 Institution B
-#>     2: MCID3111142782 Institution J
-#>     3: MCID3111142881 Institution B
-#>    ---                             
-#> 76873: MCID3112785480 Institution C
-#> 76874: MCID3112800920 Institution B
-#> 76875: MCID3112870009 Institution B
+#>                  mcid    sex
+#>                <char> <char>
+#>     1: MCID3111142689 Female
+#>     2: MCID3111142782 Female
+#>     3: MCID3111142881   Male
+#>    ---                      
+#> 76873: MCID3112785480   Male
+#> 76874: MCID3112800920 Female
+#> 76875: MCID3112870009   Male
 ```
 
 In the `X[Y, j]` syntax, however, we can list the columns to be returned
@@ -231,17 +231,17 @@ without subsetting the original two data frames.
 ``` r
 
 # Selecting columns from both data frames, X[Y] inner join
-y <- DT[student, .(mcid, institution), on = c("mcid"), nomatch = NULL]
+y <- DT[student, .(mcid, sex), on = c("mcid"), nomatch = NULL]
 y
-#>                  mcid   institution
-#>                <char>        <char>
-#>     1: MCID3111142689 Institution B
-#>     2: MCID3111142782 Institution J
-#>     3: MCID3111142881 Institution B
-#>    ---                             
-#> 76873: MCID3112785480 Institution C
-#> 76874: MCID3112800920 Institution B
-#> 76875: MCID3112870009 Institution B
+#>                  mcid    sex
+#>                <char> <char>
+#>     1: MCID3111142689 Female
+#>     2: MCID3111142782 Female
+#>     3: MCID3111142881   Male
+#>    ---                      
+#> 76873: MCID3112785480   Male
+#> 76874: MCID3112800920 Female
+#> 76875: MCID3112870009   Male
 ```
 
 *Demonstrate equivalence.*   Showing that the two approaches produce the
@@ -302,32 +302,6 @@ DT
 #> 76875: MCID3112870009
 ```
 
-## Reusable code
-
-*Preparation.*   The baseline data frame we preserved earlier is the
-intake for this section.
-
-``` r
-
-DT <- copy(baseline)
-```
-
-*Degree seeking.*   A summary code chunk for ready reference.
-
-``` r
-
-# Filter for degree seeking, output unique IDs
-DT <- student[DT, .(mcid), on = c("mcid"), nomatch = NULL]
-DT <- unique(DT)
-```
-
-------------------------------------------------------------------------
-
-[◁ Data
-sufficiency](https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.md)
-   [▲ top of page](#top)    [Programs
-▷](https://midfieldr.github.io/midfieldr/articles/art-040-programs.md)
-
-------------------------------------------------------------------------
+[▲ top of page](#top)
 
 ## References

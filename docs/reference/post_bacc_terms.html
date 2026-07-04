@@ -13,7 +13,7 @@ the term, course, and degree data tables."><meta property="og:image" content="ht
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9011</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9013</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,7 @@ the term, course, and degree data tables.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">post_bacc_terms</span><span class="op">(</span><span class="va">dframe</span>, midfield_rec <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">post_bacc_terms</span><span class="op">(</span><span class="va">dframe</span>, midfield_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -81,24 +81,25 @@ the term, course, and degree data tables.</p>
 <code>{term, term_course, term_degree}.</code></p></dd>
 
 
-<dt id="arg-midfield-rec">midfield_rec<a class="anchor" aria-label="anchor" href="#arg-midfield-rec"></a></dt>
-<dd><p>MIDFIELD records <em>degree</em> data frame or data frame extension. Required variables:
+<dt id="arg-midfield-table">midfield_table<a class="anchor" aria-label="anchor" href="#arg-midfield-table"></a></dt>
+<dd><p>Data frame or data frame extension of a MIDFIELD <em>degree</em> table. Required variables:
 <code>{mcid, term_degree}.</code></p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Data frame with the following properties:</p><ul><li><p>Data frame class is preserved. Groups and keys are not preserved.</p></li>
+    <p>Data frame with the following properties:</p><ul><li><p>Data frame class is preserved.</p></li>
 <li><p>Rows are not modified.</p></li>
-<li><p>Columns are not modified except new columns overwrite old columns of
-the same name. New columns:</p><ul><li><p><code>first_degree_term.</code>    Character. Term of a student's first
+<li><p>Columns are not modified except a new column replaces an existing
+column if it has the same name. The new columns are:</p><ul><li><p><code>first_degree_term.</code>    Character. Term of a student's first
 baccalaureate, encoded <code>YYYYT</code> or, if no degree recorded, <code>NA</code>.
-Joined from <code>midfield_rec$term_degree</code>.</p></li>
+Joined from the <code>term_degree</code> variable in <code>midfield_table.</code></p></li>
 <li><p><code>term_cluster.</code>    Character, indicating that a term belongs
 to one of three clusters: terms that are prior to ("pre-degree"),
 equal to ("first-degree"), or subsequent to ("post-first-degree")
 the student’s first degree term.</p></li>
 </ul></li>
+<li><p>Groups and keys are not preserved.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -110,9 +111,83 @@ study.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Examples TBD</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># reduce number of columns</span></span></span>
+<span class="r-in"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">toy_term</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">toy_degree</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># identify term-clusters in a 'term' table</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">post_bacc_terms</span><span class="op">(</span><span class="va">term</span>, <span class="va">degree</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"term_cluster"</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         term_cluster     N</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;char&gt; &lt;int&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:        pre-degree  1675</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:      first-degree   127</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3: post-first-degree    19</span>
+<span class="r-in"><span><span class="va">x</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 mcid   term   cip6   institution          level</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;char&gt; &lt;char&gt; &lt;char&gt;        &lt;char&gt;         &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    1: MCID3111142897  19881 400801 Institution B  01 First-year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    2: MCID3111157634  19881 240102 Institution J  01 First-year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    3: MCID3111157634  19883 040201 Institution J  01 First-year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    4: MCID3111157634  19891 040201 Institution J 02 Second-year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    5: MCID3111157634  19893 040201 Institution J 02 Second-year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ---                                                          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1817: MCID3112868072  20171 240199 Institution B  01 First-year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1818: MCID3112868072  20173 380101 Institution B 02 Second-year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1819: MCID3112869843  20173 240199 Institution B  01 First-year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1820: MCID3112869843  20181 240199 Institution B  01 First-year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1821: MCID3112885339  20181 520201 Institution B  01 First-year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       first_degree_term term_cluster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  &lt;char&gt;       &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    1:              &lt;NA&gt;   pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    2:              &lt;NA&gt;   pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    3:              &lt;NA&gt;   pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    4:              &lt;NA&gt;   pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    5:              &lt;NA&gt;   pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ---                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1817:              &lt;NA&gt;   pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1818:              &lt;NA&gt;   pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1819:              &lt;NA&gt;   pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1820:              &lt;NA&gt;   pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1821:              &lt;NA&gt;   pre-degree</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># identify term-clusters in a 'degree' table</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">post_bacc_terms</span><span class="op">(</span><span class="va">degree</span>, <span class="va">degree</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"term_cluster"</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         term_cluster     N</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;char&gt; &lt;int&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:      first-degree   192</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2: post-first-degree     1</span>
+<span class="r-in"><span><span class="va">x</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                mcid term_degree   cip6 first_degree_term term_cluster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              &lt;char&gt;      &lt;char&gt; &lt;char&gt;            &lt;char&gt;       &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1: MCID3111169601       19903 520201             19903 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2: MCID3111169729       19901 520201             19901 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3: MCID3111213539       19923 030103             19923 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4: MCID3111213856       19911 261399             19911 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5: MCID3111254225       19923 270101             19923 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 189: MCID3112701643       20173 090900             20173 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 190: MCID3112727716       20171 090101             20171 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 191: MCID3112749981       20173 110701             20173 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 192: MCID3112751130       20171 110701             20171 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 193: MCID3112839623       20181 160102             20181 first-degree</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># post-first-degree terms are usually dropped</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">[</span><span class="va">term_cluster</span> <span class="op">!=</span> <span class="st">"post-first-degree"</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                mcid term_degree   cip6 first_degree_term term_cluster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              &lt;char&gt;      &lt;char&gt; &lt;char&gt;            &lt;char&gt;       &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1: MCID3111169601       19903 520201             19903 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2: MCID3111169729       19901 520201             19901 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3: MCID3111213539       19923 030103             19923 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4: MCID3111213856       19911 261399             19911 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5: MCID3111254225       19923 270101             19923 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 188: MCID3112701643       20173 090900             20173 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 189: MCID3112727716       20171 090101             20171 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 190: MCID3112749981       20173 110701             20173 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 191: MCID3112751130       20171 110701             20171 first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 192: MCID3112839623       20181 160102             20181 first-degree</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

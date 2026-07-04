@@ -4,12 +4,12 @@
 \alias{timely_term}
 \title{Calculate timely completion terms}
 \usage{
-timely_term(dframe, midfield_rec = term, ..., sched_span = NULL, span = NULL)
+timely_term(dframe, midfield_table = term, ..., sched_span = NULL, span = NULL)
 }
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variable: \code{{mcid}}.}
 
-\item{midfield_rec}{MIDFIELD records \emph{term} data frame or data frame extension. Required variables:
+\item{midfield_table}{Data frame or data frame extension of a MIDFIELD \emph{term} table. Required variables:
 \verb{\{mcid, term, level\}}.}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
@@ -25,26 +25,28 @@ of \code{sched_span}).}
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved. Groups and keys are not preserved.
+\item Data frame class is preserved.
 \item Rows are filtered for unique \code{mcid} values.
 \item Column \code{{mcid}} is retained (all other columns are dropped). New
 columns added:
 \itemize{
 \item \code{term_i.}   Initial term of a student's longitudinal record,
-encoded \code{YYYYT}. Extracted from \code{midfield_rec.}
+encoded \code{YYYYT}. Extracted from \code{midfield_table.}
 \item \code{level_i.}   Character. Student level (01 Freshman, 02 Sophomore,
-etc.) in their initial term. Extracted from \code{midfield_rec.}
-\item \code{adj_span.}   Numeric. Integer span of years for timely completion
-adjusted for a student's initial level.
-\item \code{timely_term.}   Character. Latest term by which program completion
+etc.) in their initial term. Extracted from \code{midfield_table.}
+\item \code{adj_span.}   Numeric. Integer span of years for timely
+completion adjusted for a student's initial level.
+\item \code{timely_term.}   Character. Latest term by which
+program completion
 would be considered timely for every student. Encoded \code{YYYYT.}
 }
+\item Groups and keys are not preserved.
 }
 }
 \description{
 To a data frame keyed by student ID, add a column indicating the
-student's timely completion term. Columns of supporting
-information are also added.  Unrelated columns are dropped.
+student's timely completion term. Columns of supporting information
+are also added.  Columns not related to the task are dropped.
 }
 \details{
 In many studies, students must complete their programs in a specified time
@@ -75,18 +77,17 @@ can review the findings. Moreover, \code{data_sufficiency()} and
 \verb{\{term_i, timely_term\}.}
 }
 \examples{
-# Start with an excerpt from the student data set 
-dframe <- toy_student[1:10, .(mcid)]
+term <- toy_term
 
-# Add timely completion term column
-timely_term(dframe, toy_term)
+# Start with a small population 
+x <- toy_student[c(51:55, 346:350), .(mcid)]
+x
 
-# Define timely completion as 200\% of scheduled span (8 years)
-timely_term(dframe, toy_term, span = 8)
+# Add timely term
+x <- timely_term(x, term)
+x
 
-# Existing timely_term column, if any, is overwritten
-dframe[, timely_term := NA_character_][]
-timely_term(dframe, toy_term)
-
-
+# Existing timely term column (if any) is replaced
+x[, timely_term := NA_character_][]
+timely_term(x, term)
 }

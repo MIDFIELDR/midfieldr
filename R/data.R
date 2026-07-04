@@ -122,16 +122,16 @@
 
 # -------------------------------------------------------------------
 
-#' Student data for examples
+#' Small 'student' dataset for examples
 #'
-#' Selected variables modeled on those in the `student` practice data for use in
-#' package examples and articles. Sampled from an early version of the practice
-#' data, the toy data are not a current practice data sample.
+#' A subset of rows from the midfielddata `student` table. A small dataset
+#' for use in examples.
 #'
 #' @usage toy_student
 #' @family toy-data
 #'
-#' @format `data.table` with 150 rows and 13 columns keyed by student ID.
+#' @format Data frame with 351 rows and 13 columns (`data.table` class).
+#'         Key: `{mcid}.`
 #'   \describe{
 #'   `r var_mcid`
 #'   `r var_race`
@@ -149,48 +149,20 @@
 #'   }
 "toy_student"
 
-# -------------------------------------------------------------------
 
-#' Course data for examples
-#'
-#' Selected variables modeled on those in the `course` practice data for use in
-#' package examples and articles. Sampled from an early version of the practice
-#' data, the toy data are not a current practice data sample.
-#'
-#' @usage toy_course
-#' @family toy-data
-#'
-#' @format `data.table` with 5812 rows and 12 columns keyed by student ID,
-#'                      term, course abbreviation, and course number.
-#'   \describe{
-#'   `r var_mcid`
-#'   `r var_term`
-#'   `r var_abbrev`
-#'   `r var_number`
-#'   `r var_institution`
-#'   `r var_course`
-#'   `r var_section`
-#'   `r var_type`
-#'   `r var_faculty_rank`
-#'   `r var_hours_course`
-#'   `r var_grade`
-#'   `r var_discipline_midfield`
-#'   }
-"toy_course"
 
 # -------------------------------------------------------------------
 
-#' Term data for examples
+#' Small 'term' dataset for examples
 #'
-#' Selected variables modeled on those in the `term` practice data for use in
-#' package examples and articles. Sampled from an early version of the practice
-#' data, the toy data are not a current practice data sample.
+#' A subset of rows from the midfielddata `term` table matching the IDs in
+#' `toy_student.` A small dataset for use in examples.
 #'
 #' @usage toy_term
 #' @family toy-data
 #'
-#' @format `data.table` with 1095 rows and 13 columns keyed by student ID
-#'                      and term.
+#' @format Data frame with 1821 rows and 13 columns (`data.table` class).
+#'         Composite key: `{mcid, term}.`
 #'   \describe{
 #'   `r var_mcid`
 #'   `r var_term`
@@ -208,19 +180,49 @@
 #'   }
 "toy_term"
 
+
 # -------------------------------------------------------------------
 
-#' Degree data for examples
+#' Small 'course' dataset for examples
 #'
-#' Selected variables modeled on those in the `degree` practice data for use in
-#' package examples and articles. Sampled from an early version of the practice
-#' data, the toy data are not a current practice data sample.
+#' A subset of rows from the midfielddata `course` table matching the IDs in
+#' `toy_student.` A small dataset for use in examples.
+#'
+#' @usage toy_course
+#' @family toy-data
+#'
+#' @format Data frame with 8950 rows and 12 columns (`data.table` class).
+#'         Composite key: `{mcid, term_course, abbrev, number}.`
+#'   \describe{
+#'   `r var_mcid`
+#'   `r var_term_course`
+#'   `r var_abbrev`
+#'   `r var_number`
+#'   `r var_institution`
+#'   `r var_course`
+#'   `r var_section`
+#'   `r var_type`
+#'   `r var_faculty_rank`
+#'   `r var_hours_course`
+#'   `r var_grade`
+#'   `r var_discipline_midfield`
+#'   }
+"toy_course"
+
+
+# -------------------------------------------------------------------
+
+#' Small 'degree' dataset for examples
+#'
+#' A subset of rows from the midfielddata `degree` table that comprises
+#' those students from the `toy_student` dataset who complete a program.
+#' A small dataset used in examples.
 #'
 #' @usage toy_degree
 #' @family toy-data
 #'
-#' @format `data.table` with 96 rows and 4 columns keyed by student ID,
-#'                      term, and program (CIP code or degree label).
+#' @format Data frame with 193 rows and 4 columns (`data.table` class).
+#'         Composite key: `{mcid, term_degree, cip6}.`
 #'   \describe{
 #'   `r var_mcid`
 #'   `r var_term_degree`

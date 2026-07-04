@@ -47,7 +47,7 @@ Programs
 
 Records
 
-- [`select_records()`](https://midfieldr.github.io/midfieldr/reference/select_records.md)
+- [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
   chooses columns of student records required by midfieldr functions.
 - [`post_bacc_terms()`](https://midfieldr.github.io/midfieldr/reference/post_bacc_terms.md)
   identifies rows of post-baccalaureate terms to exclude.
@@ -68,6 +68,15 @@ Special conditioning
 ## Program data
 
 *Collecting and labeling 6-digit program codes.*
+
+``` r
+
+# if Nrows equal to or less than this N, print all rows
+options(datatable.print.nrows = 10)
+
+# if Nrows > N above, print this N rows
+options(datatable.print.topn = 5)
+```
 
 The *Classification of Instructional Programs (CIP)* is a taxonomy of
 academic programs, encoded by 6-digit numeric codes curated by the US
@@ -185,6 +194,54 @@ the results of the first pass for any line that starts with “50”.
 first_pass <- filter_programs(cip, "music")
 second_pass <- filter_programs(first_pass, "^50")
 second_pass
+#>                                 cip6name   cip6
+#>                                   <char> <char>
+#>  1:                         Digital Arts 500102
+#>  2:                      Musical Theatre 500509
+#>  3:                       Music, General 500901
+#>  4: Music History, Literature and Theory 500902
+#>  5:           Music Performance, General 500903
+#> ---                                            
+#> 16:                    Brass Instruments 500914
+#> 17:                 Woodwind Instruments 500915
+#> 18:               Percussion Instruments 500916
+#> 19:                         Music, Other 500999
+#> 20:                     Music Management 501003
+#>                                     cip4name   cip4                   cip2name
+#>                                       <char> <char>                     <char>
+#>  1:            General Art and Music Studies   5001 Visual and Performing Arts
+#>  2:       Drama, Theatre Arts and Stagecraft   5005 Visual and Performing Arts
+#>  3:                                    Music   5009 Visual and Performing Arts
+#>  4:                                    Music   5009 Visual and Performing Arts
+#>  5:                                    Music   5009 Visual and Performing Arts
+#> ---                                                                           
+#> 16:                                    Music   5009 Visual and Performing Arts
+#> 17:                                    Music   5009 Visual and Performing Arts
+#> 18:                                    Music   5009 Visual and Performing Arts
+#> 19:                                    Music   5009 Visual and Performing Arts
+#> 20: Arts, Entertainment and Media Management   5010 Visual and Performing Arts
+#>       cip2
+#>     <char>
+#>  1:     50
+#>  2:     50
+#>  3:     50
+#>  4:     50
+#>  5:     50
+#> ---       
+#> 16:     50
+#> 17:     50
+#> 18:     50
+#> 19:     50
+#> 20:     50
+```
+
+Alternatively, one may chain the operations,
+
+``` r
+
+cip |>
+  filter_programs("music") |>
+  filter_programs("^50")
 #>                                 cip6name   cip6
 #>                                   <char> <char>
 #>  1:                         Digital Arts 500102
@@ -368,11 +425,11 @@ term_source <- copy(term)
 degree_source <- copy(degree)
 ```
 
-## `select_records()`
+## `select_basic_cols()`
 
 *Choose columns required by midfieldr functions.*
 
-[`select_records()`](https://midfieldr.github.io/midfieldr/reference/select_records.md)
+[`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
 operates on student records to reduce the number of columns to those
 required by other midfieldr functions plus the key or composite key
 variables of the four data tables. Shown below, the records have been
@@ -380,16 +437,15 @@ reduced to no more than 5 columns required by other midfieldr functions.
 
 ``` r
 
-student <- select_records(student)
-term <- select_records(term)
-degree <- select_records(degree)
+student <- select_basic_cols(student)
+term <- select_basic_cols(term)
+degree <- select_basic_cols(degree)
 
 look_at(student)
-#> Classes 'data.table' and 'data.frame':   97555 obs. of  4 variables:
-#>  $ mcid       : chr  "MCID3111142225" "MCID3111142283" "MCID3111142290" "MCID"..
-#>  $ race       : chr  "Asian" "Asian" "Asian" "Asian" ...
-#>  $ sex        : chr  "Male" "Female" "Male" "Male" ...
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
+#> Classes 'data.table' and 'data.frame':   97555 obs. of  3 variables:
+#>  $ mcid: chr  "MCID3111142225" "MCID3111142283" "MCID3111142290" "MCID3111142"..
+#>  $ race: chr  "Asian" "Asian" "Asian" "Asian" ...
+#>  $ sex : chr  "Male" "Female" "Male" "Male" ...
 
 look_at(term)
 #> Classes 'data.table' and 'data.frame':   639915 obs. of  5 variables:
@@ -400,11 +456,10 @@ look_at(term)
 #>  $ level      : chr  "01 First-year" "01 First-year" "01 First-year" "01 Firs"..
 
 look_at(degree)
-#> Classes 'data.table' and 'data.frame':   49665 obs. of  4 variables:
+#> Classes 'data.table' and 'data.frame':   49665 obs. of  3 variables:
 #>  $ mcid       : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294" "MCID"..
 #>  $ term_degree: chr  "19881" "19921" "19903" "19921" ...
 #>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
 ```
 
 With a smaller number of columns, the printout of the data frame is more
@@ -413,19 +468,15 @@ readable, a benefit when working with the data interactively.
 ``` r
 
 term
-#>                   mcid   term   cip6   institution          level
-#>                 <char> <char> <char>        <char>         <char>
-#>      1: MCID3111142225  19881 140901 Institution B  01 First-year
-#>      2: MCID3111142283  19881 240102 Institution J  01 First-year
-#>      3: MCID3111142283  19883 240102 Institution J  01 First-year
-#>      4: MCID3111142283  19885 190601 Institution J  01 First-year
-#>      5: MCID3111142283  19891 190601 Institution J 02 Second-year
-#>     ---                                                          
-#> 639911: MCID3112898886  20181 500501 Institution B  01 First-year
-#> 639912: MCID3112898890  20181 451101 Institution B  01 First-year
-#> 639913: MCID3112898894  20181 451001 Institution B  01 First-year
-#> 639914: MCID3112898895  20181 302001 Institution B  01 First-year
-#> 639915: MCID3112898940  20181 050103 Institution B  01 First-year
+#>                   mcid   term   cip6   institution         level
+#>                 <char> <char> <char>        <char>        <char>
+#>      1: MCID3111142225  19881 140901 Institution B 01 First-year
+#>      2: MCID3111142283  19881 240102 Institution J 01 First-year
+#>      3: MCID3111142283  19883 240102 Institution J 01 First-year
+#>     ---                                                         
+#> 639913: MCID3112898894  20181 451001 Institution B 01 First-year
+#> 639914: MCID3112898895  20181 302001 Institution B 01 First-year
+#> 639915: MCID3112898940  20181 050103 Institution B 01 First-year
 ```
 
 ## `post_bacc_terms()`
@@ -450,29 +501,21 @@ the first degree term.
 ``` r
 
 term
-#>                   mcid   term   cip6   institution          level
-#>                 <char> <char> <char>        <char>         <char>
-#>      1: MCID3111142225  19881 140901 Institution B  01 First-year
-#>      2: MCID3111142283  19881 240102 Institution J  01 First-year
-#>      3: MCID3111142283  19883 240102 Institution J  01 First-year
-#>      4: MCID3111142283  19885 190601 Institution J  01 First-year
-#>      5: MCID3111142283  19891 190601 Institution J 02 Second-year
-#>     ---                                                          
-#> 639911: MCID3112898886  20181 500501 Institution B  01 First-year
-#> 639912: MCID3112898890  20181 451101 Institution B  01 First-year
-#> 639913: MCID3112898894  20181 451001 Institution B  01 First-year
-#> 639914: MCID3112898895  20181 302001 Institution B  01 First-year
-#> 639915: MCID3112898940  20181 050103 Institution B  01 First-year
+#>                   mcid   term   cip6   institution         level
+#>                 <char> <char> <char>        <char>        <char>
+#>      1: MCID3111142225  19881 140901 Institution B 01 First-year
+#>      2: MCID3111142283  19881 240102 Institution J 01 First-year
+#>      3: MCID3111142283  19883 240102 Institution J 01 First-year
+#>     ---                                                         
+#> 639913: MCID3112898894  20181 451001 Institution B 01 First-year
+#> 639914: MCID3112898895  20181 302001 Institution B 01 First-year
+#> 639915: MCID3112898940  20181 050103 Institution B 01 First-year
 #>         first_degree_term term_cluster
 #>                    <char>       <char>
 #>      1:             19881 first-degree
 #>      2:              <NA>   pre-degree
 #>      3:              <NA>   pre-degree
-#>      4:              <NA>   pre-degree
-#>      5:              <NA>   pre-degree
 #>     ---                               
-#> 639911:              <NA>   pre-degree
-#> 639912:              <NA>   pre-degree
 #> 639913:              <NA>   pre-degree
 #> 639914:              <NA>   pre-degree
 #> 639915:              <NA>   pre-degree
@@ -497,23 +540,19 @@ the extra columns.
 term <- term[!"post-first-degree", on = "term_cluster"]
 degree <- degree[!"post-first-degree", on = "term_cluster"]
 
-term <- select_records(term)
-degree <- select_records(degree)
+term <- select_basic_cols(term)
+degree <- select_basic_cols(degree)
 
 term
-#>                   mcid   term   cip6   institution          level
-#>                 <char> <char> <char>        <char>         <char>
-#>      1: MCID3111142225  19881 140901 Institution B  01 First-year
-#>      2: MCID3111142283  19881 240102 Institution J  01 First-year
-#>      3: MCID3111142283  19883 240102 Institution J  01 First-year
-#>      4: MCID3111142283  19885 190601 Institution J  01 First-year
-#>      5: MCID3111142283  19891 190601 Institution J 02 Second-year
-#>     ---                                                          
-#> 632913: MCID3112898886  20181 500501 Institution B  01 First-year
-#> 632914: MCID3112898890  20181 451101 Institution B  01 First-year
-#> 632915: MCID3112898894  20181 451001 Institution B  01 First-year
-#> 632916: MCID3112898895  20181 302001 Institution B  01 First-year
-#> 632917: MCID3112898940  20181 050103 Institution B  01 First-year
+#>                   mcid   term   cip6   institution         level
+#>                 <char> <char> <char>        <char>        <char>
+#>      1: MCID3111142225  19881 140901 Institution B 01 First-year
+#>      2: MCID3111142283  19881 240102 Institution J 01 First-year
+#>      3: MCID3111142283  19883 240102 Institution J 01 First-year
+#>     ---                                                         
+#> 632915: MCID3112898894  20181 451001 Institution B 01 First-year
+#> 632916: MCID3112898895  20181 302001 Institution B 01 First-year
+#> 632917: MCID3112898940  20181 050103 Institution B 01 First-year
 ```
 
 ## `timely_term()`
@@ -535,11 +574,7 @@ DT
 #>     1: MCID3111142225
 #>     2: MCID3111142283
 #>     3: MCID3111142290
-#>     4: MCID3111142294
-#>     5: MCID3111142299
 #>    ---               
-#> 97532: MCID3112898886
-#> 97533: MCID3112898890
 #> 97534: MCID3112898894
 #> 97535: MCID3112898895
 #> 97536: MCID3112898940
@@ -561,11 +596,7 @@ DT
 #>     1: MCID3111142225  19881 01 First-year        6       19933
 #>     2: MCID3111142283  19881 01 First-year        6       19933
 #>     3: MCID3111142290  19881 01 First-year        6       19933
-#>     4: MCID3111142294  19881 01 First-year        6       19933
-#>     5: MCID3111142299  19881 01 First-year        6       19933
 #>    ---                                                         
-#> 97532: MCID3112898886  20181 01 First-year        6       20233
-#> 97533: MCID3112898890  20181 01 First-year        6       20233
 #> 97534: MCID3112898894  20181 01 First-year        6       20233
 #> 97535: MCID3112898895  20181 01 First-year        6       20233
 #> 97536: MCID3112898940  20181 01 First-year        6       20233
@@ -589,32 +620,24 @@ data range.
 DT <- data_sufficiency(DT)
 
 DT
-#>                   mcid term_i timely_term   institution lower_limit upper_limit
-#>                 <char> <char>      <char>        <char>      <char>      <char>
-#>      1: MCID3111142225  19881       19933 Institution B       19881       20181
-#>      2: MCID3111142283  19881       19933 Institution J       19881       20096
-#>      3: MCID3111142283  19881       19933 Institution J       19881       20096
-#>      4: MCID3111142283  19881       19933 Institution J       19881       20096
-#>      5: MCID3111142283  19881       19933 Institution J       19881       20096
-#>     ---                                                                        
-#> 632913: MCID3112898886  20181       20233 Institution B       19881       20181
-#> 632914: MCID3112898890  20181       20233 Institution B       19881       20181
-#> 632915: MCID3112898894  20181       20233 Institution B       19881       20181
-#> 632916: MCID3112898895  20181       20233 Institution B       19881       20181
-#> 632917: MCID3112898940  20181       20233 Institution B       19881       20181
-#>         data_sufficiency
-#>                   <char>
-#>      1:    exclude-lower
-#>      2:    exclude-lower
-#>      3:    exclude-lower
-#>      4:    exclude-lower
-#>      5:    exclude-lower
-#>     ---                 
-#> 632913:    exclude-upper
-#> 632914:    exclude-upper
-#> 632915:    exclude-upper
-#> 632916:    exclude-upper
-#> 632917:    exclude-upper
+#>                  mcid term_i timely_term   institution lower_limit upper_limit
+#>                <char> <char>      <char>        <char>      <char>      <char>
+#>     1: MCID3111142225  19881       19933 Institution B       19881       20181
+#>     2: MCID3111142283  19881       19933 Institution J       19881       20096
+#>     3: MCID3111142290  19881       19933 Institution J       19881       20096
+#>    ---                                                                        
+#> 97534: MCID3112898894  20181       20233 Institution B       19881       20181
+#> 97535: MCID3112898895  20181       20233 Institution B       19881       20181
+#> 97536: MCID3112898940  20181       20233 Institution B       19881       20181
+#>        data_sufficiency
+#>                  <char>
+#>     1:    exclude-lower
+#>     2:    exclude-lower
+#>     3:    exclude-lower
+#>    ---                 
+#> 97534:    exclude-upper
+#> 97535:    exclude-upper
+#> 97536:    exclude-upper
 ```
 
 The possible values for data sufficiency are:
@@ -639,11 +662,7 @@ population
 #>     1: MCID3111142689
 #>     2: MCID3111142782
 #>     3: MCID3111142881
-#>     4: MCID3111142884
-#>     5: MCID3111142893
 #>    ---               
-#> 76861: MCID3112727985
-#> 76862: MCID3112730841
 #> 76863: MCID3112785480
 #> 76864: MCID3112800920
 #> 76865: MCID3112870009
@@ -691,11 +710,7 @@ DT
 #>     1: MCID3111142689       19941       19913            timely
 #>     2: MCID3111142782       19941       19903            timely
 #>     3: MCID3111142881       19951       19894            timely
-#>     4: MCID3111142884       19941        <NA>              <NA>
-#>     5: MCID3111142893       19941        <NA>              <NA>
 #>    ---                                                         
-#> 76861: MCID3112727985       20173        <NA>              <NA>
-#> 76862: MCID3112730841       20173       20164            timely
 #> 76863: MCID3112785480       20123        <NA>              <NA>
 #> 76864: MCID3112800920       20153        <NA>              <NA>
 #> 76865: MCID3112870009       20003        <NA>              <NA>
@@ -723,11 +738,7 @@ graduates
 #>     1: MCID3111142689   grad
 #>     2: MCID3111142782   grad
 #>     3: MCID3111142881   grad
-#>     4: MCID3111142965   grad
-#>     5: MCID3111143066   grad
 #>    ---                      
-#> 40426: MCID3112675459   grad
-#> 40427: MCID3112675472   grad
 #> 40428: MCID3112692944   grad
 #> 40429: MCID3112694738   grad
 #> 40430: MCID3112730841   grad
@@ -760,6 +771,8 @@ Utilities
   errors.  
 - [`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
   re-exported from the wrapr package
+
+[▲ top of page](#top)
 
 ## References
 

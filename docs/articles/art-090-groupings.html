@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9011</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9013</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -186,9 +186,9 @@ started</a>.</p>
 <span><span class="va">source_degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Optional. Select variables required by midfieldr functions</span></span>
-<span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">source_student</span><span class="op">)</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">source_term</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">source_degree</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">source_student</span><span class="op">)</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">source_term</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">source_degree</span><span class="op">)</span></span></code></pre></div>
 <p><em>Initialize.</em>   Use the <code>term</code> and
 <code>student</code> data tables to obtain a data frame of student IDs
 meeting the data sufficiency and degree-seeking criteria. Applied to the
@@ -540,7 +540,7 @@ illustrate joining other variables from <code>student</code>,
 <code>term</code>, and <code>degree</code> to a working data frame.</p>
 <p>We use the original source files copied earlier because some
 variables we want to use were removed when we applied
-<code><a href="../reference/select_records.html">select_records()</a></code>.</p>
+<code><a href="../reference/select_basic_cols.html">select_basic_cols()</a></code>.</p>
 <div class="section level3">
 <h3 id="from-student">From <code>student</code><a class="anchor" aria-label="anchor" href="#from-student"></a>
 </h3>
@@ -668,38 +668,8 @@ join matching rules, students in <code>DT</code> who do not graduate
 will have NA values in the <code>term_degree</code> and
 <code>cip6</code> columns of the joined data tables. Thus this result
 has 76,875 unique students of whom 43,786 earned degrees.</p>
+<p><a href="#top">▲ top of page</a></p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="reusable-code">Reusable code<a class="anchor" aria-label="anchor" href="#reusable-code"></a>
-</h2>
-<p><em>Program labels preparation.</em>   The CIP baseline data frame we
-preserved earlier is the intake for this section.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">baseline_cip</span><span class="op">)</span></span></code></pre></div>
-<p><em>Program labels.</em>   A summary code chunk for ready reference.
-In gathering a bloc of <em>starters</em>, the join-by variable might be
-<code>start</code> instead of <code>cip6</code>.</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Filter by program</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">study_programs</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cip6"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">DT</span><span class="op">[</span>, <span class="va">cip6</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span></code></pre></div>
-<p><em>Demographics preparation.</em>   The data frame of baseline IDs
-is the intake for this section.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">baseline_mcid</span><span class="op">)</span></span></code></pre></div>
-<p><em>Demographics.</em>   A summary code chunk for ready
-reference.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Join race/ethnicity and sex</span></span>
-<span><span class="va">cols_we_want</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">race</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">cols_we_want</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-<hr>
-<p><a href="art-080-graduates.html">◁ Graduates</a>    <a href="#top">▲
-top of page</a>    <a href="art-100-grad-rate.html">Graduation rate
-▷</a></p>
-<hr>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

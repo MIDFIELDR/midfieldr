@@ -2,12 +2,12 @@
 
 To a data frame keyed by student ID, add a column indicating the
 student's timely completion term. Columns of supporting information are
-also added. Unrelated columns are dropped.
+also added. Columns not related to the task are dropped.
 
 ## Usage
 
 ``` r
-timely_term(dframe, midfield_rec = term, ..., sched_span = NULL, span = NULL)
+timely_term(dframe, midfield_table = term, ..., sched_span = NULL, span = NULL)
 ```
 
 ## Arguments
@@ -17,10 +17,10 @@ timely_term(dframe, midfield_rec = term, ..., sched_span = NULL, span = NULL)
   Data frame or data frame extension (e.g., data.table or tibble).
   Required variable: `{mcid}`.
 
-- midfield_rec:
+- midfield_table:
 
-  MIDFIELD records *term* data frame or data frame extension. Required
-  variables: `{mcid, term, level}`.
+  Data frame or data frame extension of a MIDFIELD *term* table.
+  Required variables: `{mcid, term, level}`.
 
 - ...:
 
@@ -42,7 +42,7 @@ timely_term(dframe, midfield_rec = term, ..., sched_span = NULL, span = NULL)
 
 Data frame with the following properties:
 
-- Data frame class is preserved. Groups and keys are not preserved.
+- Data frame class is preserved.
 
 - Rows are filtered for unique `mcid` values.
 
@@ -50,16 +50,18 @@ Data frame with the following properties:
   columns added:
 
   - `term_i.`   Initial term of a student's longitudinal record, encoded
-    `YYYYT`. Extracted from `midfield_rec.`
+    `YYYYT`. Extracted from `midfield_table.`
 
   - `level_i.`   Character. Student level (01 Freshman, 02 Sophomore,
-    etc.) in their initial term. Extracted from `midfield_rec.`
+    etc.) in their initial term. Extracted from `midfield_table.`
 
   - `adj_span.`   Numeric. Integer span of years for timely completion
     adjusted for a student's initial level.
 
   - `timely_term.`   Character. Latest term by which program completion
     would be considered timely for every student. Encoded `YYYYT.`
+
+- Groups and keys are not preserved.
 
 ## Details
 
@@ -95,65 +97,65 @@ require one or both of the added columns `{term_i, timely_term}.`
 ## Examples
 
 ``` r
-# Start with an excerpt from the student data set 
-dframe <- toy_student[1:10, .(mcid)]
+term <- toy_term
 
-# Add timely completion term column
-timely_term(dframe, toy_term)
-#>               mcid term_i       level_i adj_span timely_term
-#>             <char> <char>        <char>    <num>      <char>
-#>  1: MCID3111158953  19881 01 First-year        6       19933
-#>  2: MCID3111159270  19881 01 First-year        6       19933
-#>  3: MCID3111160513  19881 01 First-year        6       19933
-#>  4: MCID3111162677  19881 01 First-year        6       19933
-#>  5: MCID3111164287  19881 01 First-year        6       19933
-#>  6: MCID3111171205  19881 01 First-year        6       19933
-#>  7: MCID3111172083  19881 01 First-year        6       19933
-#>  8: MCID3111213943  19891 01 First-year        6       19943
-#>  9: MCID3111248941  19901 01 First-year        6       19953
-#> 10: MCID3111250695  19901 01 First-year        6       19953
+# Start with a small population 
+x <- toy_student[c(51:55, 346:350), .(mcid)]
+x
+#>               mcid
+#>             <char>
+#>  1: MCID3111412771
+#>  2: MCID3111413518
+#>  3: MCID3111417249
+#>  4: MCID3111417990
+#>  5: MCID3111418880
+#>  6: MCID3112799709
+#>  7: MCID3112815901
+#>  8: MCID3112839623
+#>  9: MCID3112868072
+#> 10: MCID3112869843
 
-# Define timely completion as 200% of scheduled span (8 years)
-timely_term(dframe, toy_term, span = 8)
-#>               mcid term_i       level_i adj_span timely_term
-#>             <char> <char>        <char>    <num>      <char>
-#>  1: MCID3111158953  19881 01 First-year        8       19953
-#>  2: MCID3111159270  19881 01 First-year        8       19953
-#>  3: MCID3111160513  19881 01 First-year        8       19953
-#>  4: MCID3111162677  19881 01 First-year        8       19953
-#>  5: MCID3111164287  19881 01 First-year        8       19953
-#>  6: MCID3111171205  19881 01 First-year        8       19953
-#>  7: MCID3111172083  19881 01 First-year        8       19953
-#>  8: MCID3111213943  19891 01 First-year        8       19963
-#>  9: MCID3111248941  19901 01 First-year        8       19973
-#> 10: MCID3111250695  19901 01 First-year        8       19973
+# Add timely term
+x <- timely_term(x, term)
+x
+#>               mcid term_i        level_i adj_span timely_term
+#>             <char> <char>         <char>    <num>      <char>
+#>  1: MCID3111412771  19931  01 First-year        6       19983
+#>  2: MCID3111413518  19931  01 First-year        6       19983
+#>  3: MCID3111417249  19941 02 Second-year        5       19983
+#>  4: MCID3111417990  19931  01 First-year        6       19983
+#>  5: MCID3111418880  19931  01 First-year        6       19983
+#>  6: MCID3112799709  20161  01 First-year        6       20213
+#>  7: MCID3112815901  20161  01 First-year        6       20213
+#>  8: MCID3112839623  20171  01 First-year        6       20223
+#>  9: MCID3112868072  20171  01 First-year        6       20223
+#> 10: MCID3112869843  20173  01 First-year        6       20231
 
-# Existing timely_term column, if any, is overwritten
-dframe[, timely_term := NA_character_][]
-#>               mcid timely_term
-#>             <char>      <char>
-#>  1: MCID3111158953        <NA>
-#>  2: MCID3111159270        <NA>
-#>  3: MCID3111160513        <NA>
-#>  4: MCID3111162677        <NA>
-#>  5: MCID3111164287        <NA>
-#>  6: MCID3111171205        <NA>
-#>  7: MCID3111172083        <NA>
-#>  8: MCID3111213943        <NA>
-#>  9: MCID3111248941        <NA>
-#> 10: MCID3111250695        <NA>
-timely_term(dframe, toy_term)
-#>               mcid term_i       level_i adj_span timely_term
-#>             <char> <char>        <char>    <num>      <char>
-#>  1: MCID3111158953  19881 01 First-year        6       19933
-#>  2: MCID3111159270  19881 01 First-year        6       19933
-#>  3: MCID3111160513  19881 01 First-year        6       19933
-#>  4: MCID3111162677  19881 01 First-year        6       19933
-#>  5: MCID3111164287  19881 01 First-year        6       19933
-#>  6: MCID3111171205  19881 01 First-year        6       19933
-#>  7: MCID3111172083  19881 01 First-year        6       19933
-#>  8: MCID3111213943  19891 01 First-year        6       19943
-#>  9: MCID3111248941  19901 01 First-year        6       19953
-#> 10: MCID3111250695  19901 01 First-year        6       19953
-
+# Existing timely term column (if any) is replaced
+x[, timely_term := NA_character_][]
+#>               mcid term_i        level_i adj_span timely_term
+#>             <char> <char>         <char>    <num>      <char>
+#>  1: MCID3111412771  19931  01 First-year        6        <NA>
+#>  2: MCID3111413518  19931  01 First-year        6        <NA>
+#>  3: MCID3111417249  19941 02 Second-year        5        <NA>
+#>  4: MCID3111417990  19931  01 First-year        6        <NA>
+#>  5: MCID3111418880  19931  01 First-year        6        <NA>
+#>  6: MCID3112799709  20161  01 First-year        6        <NA>
+#>  7: MCID3112815901  20161  01 First-year        6        <NA>
+#>  8: MCID3112839623  20171  01 First-year        6        <NA>
+#>  9: MCID3112868072  20171  01 First-year        6        <NA>
+#> 10: MCID3112869843  20173  01 First-year        6        <NA>
+timely_term(x, term)
+#>               mcid term_i        level_i adj_span timely_term
+#>             <char> <char>         <char>    <num>      <char>
+#>  1: MCID3111412771  19931  01 First-year        6       19983
+#>  2: MCID3111413518  19931  01 First-year        6       19983
+#>  3: MCID3111417249  19941 02 Second-year        5       19983
+#>  4: MCID3111417990  19931  01 First-year        6       19983
+#>  5: MCID3111418880  19931  01 First-year        6       19983
+#>  6: MCID3112799709  20161  01 First-year        6       20213
+#>  7: MCID3112815901  20161  01 First-year        6       20213
+#>  8: MCID3112839623  20171  01 First-year        6       20223
+#>  9: MCID3112868072  20171  01 First-year        6       20223
+#> 10: MCID3112869843  20173  01 First-year        6       20231
 ```

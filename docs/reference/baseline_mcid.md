@@ -16,7 +16,8 @@ baseline_mcid
 
 - `mcid`:
 
-  Character, de-identified student ID. Key column.
+  Character. Anonymized student identifier that connects the four data
+  tables, e.g., "MCID3111142897."
 
 ## See also
 

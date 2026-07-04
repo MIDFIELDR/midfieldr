@@ -31,7 +31,7 @@ test_completion_status <- function() {
     
     # ---------- usage
     #
-    # completion_status(dframe, midfield_rec = degree)
+    # completion_status(dframe, midfield_table = degree)
     
     # Needed for tinytest::build_install_test()
     suppressPackageStartupMessages(require("data.table"))
@@ -80,7 +80,7 @@ test_completion_status <- function() {
     expect_equal(return_vars, colnames(DT))
     
     # correct answers naming and not naming arguments
-    x <- completion_status(dframe = dframe, midfield_rec = degree)
+    x <- completion_status(dframe = dframe, midfield_table = degree)
     y <- completion_status(dframe, degree)
     expect_equal(x, y)
     rm(x, y)

@@ -1,8 +1,7 @@
-# Term data for examples
+# Small 'term' dataset for examples
 
-Selected variables modeled on those in the `term` practice data for use
-in package examples and articles. Sampled from an early version of the
-practice data, the toy data are not a current practice data sample.
+A subset of rows from the midfielddata `term` table matching the IDs in
+`toy_student.` A small dataset for use in examples.
 
 ## Usage
 
@@ -12,48 +11,51 @@ toy_term
 
 ## Format
 
-`data.table` with 1095 rows and 13 columns keyed by student ID and term.
+Data frame with 1821 rows and 13 columns (`data.table` class). Composite
+key: `{mcid, term}.`
 
 - `mcid`:
 
-  Character, de-identified student ID. Key column.
+  Character. Anonymized student identifier that connects the four data
+  tables, e.g., "MCID3111142897."
 
 - `term`:
 
-  Character, academic year and term, format YYYYT. Key column.
+  Character. Academic year and term the student attended, encoded
+  `YYYYT.`
 
 - `cip6`:
 
-  Character, 6-digit CIP code of program in which a student is enrolled
-  in a term, e.g., `090101`, `141201`, `260901`, `420101`, etc.
+  Character. The 6-digit CIP code of the program in which a student is
+  enrolled in this term.
 
 - `institution`:
 
-  Character, de-identified institution name, e.g., Institution A,
-  Institution B, etc.
+  Character. The anonymized name of the institution the student attended
+  in a given term, e.g., "Institution A", "Institution B", etc.
 
 - `level`:
 
-  Character, 01 Freshman, 02 Sophomore, etc. The equivalent values in
-  the current practice data are 01 First-Year, 02-Second Year, etc.
+  Character. Academic level of the student at the end of this term,
+  e.g., "01 First-Year", "02-Second Year", etc.
 
 - `standing`:
 
-  Character, academic standing, e.g., `Good Standing`,
-  `Academic Warning`, etc.
+  Character. Academic standing during the reported term, e.g., "Good
+  Standing", "Academic Warning", etc.
 
 - `coop`:
 
-  Character, cooperative education term, possible values are `Yes`,
-  `No`.
+  Character. Cooperative education term, possible values are "Yes",
+  "No."
 
 - `hours_term`:
 
-  Numeric, credit hours earned in the term.
+  Numeric. Credit hours earned in the term.
 
 - `hours_term_attempt`:
 
-  Numeric, credit hours attempted in the term.
+  Numeric. Credit hours attempted in the term.
 
 - `hours_cumul`:
 
@@ -61,15 +63,15 @@ toy_term
 
 - `hours_cumul_attempt`:
 
-  Numeric, cumulative credit hours attempted.
+  Numeric. Cumulative credit hours attempted.
 
 - `gpa_term`:
 
-  Numeric, term grade point average.
+  Numeric. Term grade point average.
 
 - `gpa_cumul`:
 
-  Numeric, cumulative grade point average.
+  Numeric. Cumulative grade point average.
 
 ## See also
 

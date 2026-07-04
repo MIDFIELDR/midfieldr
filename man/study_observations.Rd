@@ -8,15 +8,16 @@
 \code{data.table} with 8919 rows and 5 columns.
 The variables are:
 \describe{
-\item{\code{mcid}}{Character, de-identified student ID. Key column.}
-\item{\code{race}}{Character, race/ethnicity as self-reported
-by the student, e.g., Asian, Black, Hispanic, etc.}
-\item{\code{sex}}{Character, sex as self-reported by the student,
-possible values are Female, Male, and Unknown.}
-\item{\code{program}}{Character, academic program label.}
-\item{\code{bloc}}{Character, indicating the grouping
-(\code{ever_enrolled} or \code{graduates}) to which an observation
-belongs.}
+\item{\code{mcid}}{Character. Anonymized student identifier
+that connects the four data tables, e.g., "MCID3111142897."}
+\item{\code{race}}{Character. Race/ethnicity as self-reported
+by the student, e.g., "Asian", "Black", "Hispanic", etc.}
+\item{\code{sex}}{Character. Sex as self-reported by the student,
+possible values are "Female", "Male", and "Unknown."}
+\item{\code{program}}{Character. Academic program label.}
+\item{\code{bloc}}{Character. A group of student-level data dealt
+with as a unit, e.g., starters, students ever-enrolled,
+graduates, etc.}
 }
 }
 \usage{

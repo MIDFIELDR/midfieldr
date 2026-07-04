@@ -7,7 +7,8 @@
 \format{
 \code{data.table} with 76875 rows and 1 column:
 \describe{
-\item{\code{mcid}}{Character, de-identified student ID. Key column.}
+\item{\code{mcid}}{Character. Anonymized student identifier
+that connects the four data tables, e.g., "MCID3111142897."}
 }
 }
 \usage{

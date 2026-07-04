@@ -115,9 +115,9 @@ source_term <- copy(term)
 source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_records(source_student)
-term <- select_records(source_term)
-degree <- select_records(source_degree)
+student <- select_basic_cols(source_student)
+term <- select_basic_cols(source_term)
+degree <- select_basic_cols(source_degree)
 ```
 
 ```{r child = paste0(path_to_rmd, "/note-baseline-mcid.Rmd")}
@@ -394,7 +394,7 @@ sort(unique(x$people))
 
 Depending on one's research question, any number of MIDFIELD variables might be used for grouping records. In this section we illustrate joining other variables from `student`, `term`, and `degree` to a working data frame. 
 
-We use the original source files copied earlier because some variables we want to use were removed when we applied `select_records()`. 
+We use the original source files copied earlier because some variables we want to use were removed when we applied `select_basic_cols()`. 
 
 
 
@@ -534,46 +534,6 @@ z <- length(unique(z$mcid))
 
 
 
-
-
-
-## Reusable code
-
-*Program labels preparation.* &nbsp; The CIP baseline data frame we preserved earlier is the intake for this section.  
-
-```{r}
-DT <- copy(baseline_cip)
-```
-
-*Program labels.* &nbsp; A summary code chunk for ready reference. In gathering a bloc of *starters*, the join-by variable might be `start` instead of `cip6`. 
-
-```{r}
-# Filter by program
-DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
-DT[, cip6 := NULL]
-DT <- unique(DT)
-```
-
-*Demographics preparation.* &nbsp; The data frame of baseline IDs is the intake for this section.
-
-```{r}
-DT <- copy(baseline_mcid)
-```
-
-*Demographics.* &nbsp; A summary code chunk for ready reference.   
-
-```{r}
-# Join race/ethnicity and sex
-cols_we_want <- student[, .(mcid, race, sex)]
-DT <- cols_we_want[DT, on = c("mcid")]
-```
-
-
-***
-
-[&#9665; Graduates](art-080-graduates.html) &nbsp;&nbsp; <a href="#top">&#9650; top of page</a> &nbsp;&nbsp; [Graduation rate &#9655;](art-100-grad-rate.html) 
-
-***
 
 
 

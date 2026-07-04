@@ -17,9 +17,11 @@ A wrapper on \code{base::tryCatch()} for previewing an error message, if any.
 }
 \examples{
 # Example data frames
-s <- toy_student[, .(mcid)]
-t <- toy_term[, .(mcid, term)]
-d <- toy_degree[, .(mcid, term_degree)]
+sel_ids <- toy_student[14:18, (mcid)]
+
+s <- toy_student[mcid \%chin\% sel_ids, .(mcid, sex)]
+t <- toy_term[mcid \%chin\% sel_ids, .(mcid, term)]
+d <- toy_degree[mcid \%chin\% sel_ids, .(mcid, term_degree)]
 
 # No error
 catch_error(post_bacc_terms(t, d))
@@ -32,5 +34,4 @@ catch_error(post_bacc_terms())
 
 # Error, missing degree argument
 catch_error(post_bacc_terms(t))
-
 }

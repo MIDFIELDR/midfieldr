@@ -25,22 +25,24 @@ New features
   - [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
     replaces the deprecated
     [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
-  - [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
-    replaces the deprecated
-    [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
-  - [`select_records()`](https://midfieldr.github.io/midfieldr/reference/select_records.md)
+  - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
     replaces the deprecated
     [`select_required()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
   - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
     replaces the deprecated
     [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+  - [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
+    replaces the deprecated
+    [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
 
 Minor improvements
 
 - Data frame class is preserved (or attempted to be preserved) in all
   functions with a data frame input/output.
 - New versions of toy data and case study data for consistency with
-  midfielddata.
+  midfielddata and sufficient to demonstrate the possible values of data
+  sufficiency, timely completion, etc.
+- Now depends on R \>= 4.1.0 because pipe \|\> used in examples.
 
 Bug fixes
 

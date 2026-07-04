@@ -474,9 +474,12 @@ By searching `cip`, we can find that the 4-digit codes for the four engineering 
 We obtain their 6-digit CIP codes. The 4-digit names are appropriate here.  Our  task is to create a variable with custom program names. 
 
 ```{r}
-# Changing the number of rows to print
+#| echo: false
+op <- options()
 options(datatable.print.nrows = 15)
+```
 
+```{r}
 # Four engineering programs
 four_programs <- filter_programs(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
 
@@ -492,6 +495,7 @@ To make the assignments clear, our approach here will be to assign a new `progra
 four_programs[, program := NA_character_]
 four_programs
 ```
+
 
 ### 1. Use `cip4name %ilike%` to recode one value
 
@@ -546,41 +550,17 @@ check_equiv_frames(four_programs, study_programs)
 ```
 
 
-
-
-
-
-
-
-
-## Reusable code
-
-*Preparation.* &nbsp; To provide a working example, we select the four engineering programs of the case study used throughout the articles (Civil, Electrical, Industrial/Systems, and Mechanical Engineering). We assume a prior search of `cip` yielded the relevant codes used here. Requires editing before reuse with different programs.
-
 ```{r}
-# Edit as required for different programs
-selected_programs <- filter_programs(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
-```
-
-*Programs.* &nbsp; A summary code chunk for ready reference. Requires editing before reuse with different programs.  
-
-```{r}
-# Recode program labels. Edit as required.
-selected_programs[, program := fcase(
-  cip6 %like% "^1408", "CE",
-  cip6 %like% "^1410", "EE",
-  cip6 %like% "^1419", "ME",
-  cip6 %chin% c("142701", "143501", "143601", "143701"), "ISE"
-)]
-selected_programs <- selected_programs[, .(cip6, program)]
+#| echo: false
+options(op)
 ```
 
 
-***
 
-[&#9665; Degree seeking](art-030-degree-seeking.html) &nbsp;&nbsp; <a href="#top">&#9650; top of page</a> &nbsp;&nbsp; [Alternative CIPs &#9655;](art-041-alternative-cip.html) 
 
-***
+
+
+
 
 
 

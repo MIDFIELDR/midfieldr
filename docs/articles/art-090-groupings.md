@@ -100,9 +100,9 @@ source_term <- copy(term)
 source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_records(source_student)
-term <- select_records(source_term)
-degree <- select_records(source_degree)
+student <- select_basic_cols(source_student)
+term <- select_basic_cols(source_term)
+degree <- select_basic_cols(source_degree)
 ```
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a
@@ -535,7 +535,7 @@ working data frame.
 
 We use the original source files copied earlier because some variables
 we want to use were removed when we applied
-[`select_records()`](https://midfieldr.github.io/midfieldr/reference/select_records.md).
+[`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md).
 
 ### From `student`
 
@@ -706,52 +706,6 @@ rules, students in `DT` who do not graduate will have NA values in the
 `term_degree` and `cip6` columns of the joined data tables. Thus this
 result has 76,875 unique students of whom 43,786 earned degrees.
 
-## Reusable code
-
-*Program labels preparation.*   The CIP baseline data frame we preserved
-earlier is the intake for this section.
-
-``` r
-
-DT <- copy(baseline_cip)
-```
-
-*Program labels.*   A summary code chunk for ready reference. In
-gathering a bloc of *starters*, the join-by variable might be `start`
-instead of `cip6`.
-
-``` r
-
-# Filter by program
-DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
-DT[, cip6 := NULL]
-DT <- unique(DT)
-```
-
-*Demographics preparation.*   The data frame of baseline IDs is the
-intake for this section.
-
-``` r
-
-DT <- copy(baseline_mcid)
-```
-
-*Demographics.*   A summary code chunk for ready reference.
-
-``` r
-
-# Join race/ethnicity and sex
-cols_we_want <- student[, .(mcid, race, sex)]
-DT <- cols_we_want[DT, on = c("mcid")]
-```
-
-------------------------------------------------------------------------
-
-[◁
-Graduates](https://midfieldr.github.io/midfieldr/articles/art-080-graduates.md)
-   [▲ top of page](#top)    [Graduation rate
-▷](https://midfieldr.github.io/midfieldr/articles/art-100-grad-rate.md)
-
-------------------------------------------------------------------------
+[▲ top of page](#top)
 
 ## References

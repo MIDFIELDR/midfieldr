@@ -35,11 +35,13 @@ filter_programs(dframe, pattern, ..., negate = FALSE)
 
 Data frame with the following properties:
 
-- Data frame class is preserved. Groups and keys are not preserved.
+- Data frame class is preserved.
 
 - Rows are a subset of the input and appear in the same order.
 
 - Columns are not modified.
+
+- Groups and keys are not preserved.
 
 ## Details
 
@@ -128,8 +130,8 @@ filter_programs(cip, pattern = "^54")
 #> 9:  History     54
 
 # Multiple passes to narrow the results
-first_pass <- filter_programs(cip, "math")[, .(cip6name, cip6)]
-first_pass
+first_pass <- filter_programs(cip, "math")
+first_pass[, .(cip6name, cip6)]
 #>                                                                cip6name   cip6
 #>                                                                  <char> <char>
 #>  1:                                       Mathematics Teacher Education 131311
@@ -163,7 +165,7 @@ first_pass
 #>                                                                  <char> <char>
 
 second_pass <- filter_programs(first_pass, c("bio", "educ"), negate = TRUE)
-second_pass
+second_pass[, .(cip6name, cip6)]
 #>                                                                cip6name   cip6
 #>                                                                  <char> <char>
 #>  1:                                                Mathematics, General 270101
@@ -183,14 +185,10 @@ second_pass
 #> 15:                                                   Statistics, Other 270599
 #> 16:                                   Mathematics and Statistics, Other 279999
 #> 17: Multi, Interdisciplinary Studies - Mathematics and Computer Science 300801
-#> 18:                                 Developmental, Remedial Mathematics 320104
-#> 19:                                Theoretical and Mathematical Physics 400810
-#> 20:                                                        Aromatherapy 513701
-#>                                                                cip6name   cip6
-#>                                                                  <char> <char>
+#> 18:                                Theoretical and Mathematical Physics 400810
 
 third_pass <- filter_programs(second_pass, c("^27", "^30"))
-third_pass
+third_pass[, .(cip6name, cip6)]
 #>                                                                cip6name   cip6
 #>                                                                  <char> <char>
 #>  1:                                                Mathematics, General 270101
@@ -210,5 +208,30 @@ third_pass
 #> 15:                                                   Statistics, Other 270599
 #> 16:                                   Mathematics and Statistics, Other 279999
 #> 17: Multi, Interdisciplinary Studies - Mathematics and Computer Science 300801
- 
+
+# Multiple passes by chaining
+chain_pass <- cip |>
+    filter_programs("math") |>
+    filter_programs(c("bio", "educ"), negate = TRUE) |>
+    filter_programs(c("^27", "^30"))
+chain_pass[, .(cip6name, cip6)]
+#>                                                                cip6name   cip6
+#>                                                                  <char> <char>
+#>  1:                                                Mathematics, General 270101
+#>  2:                                           Algebra and Number Theory 270102
+#>  3:                                    Analysis and Functional Analysis 270103
+#>  4:                                        Geometry, Geometric Analysis 270104
+#>  5:                                            Topology and Foundations 270105
+#>  6:                                                  Mathematics, Other 270199
+#>  7:                                                 Applied Mathematics 270301
+#>  8:                                           Computational Mathematics 270303
+#>  9:                               Computational and Applied Mathematics 270304
+#> 10:                                               Financial Mathematics 270305
+#> 11:                                          Applied Mathematics, Other 270399
+#> 12:                                                 Statistics, General 270501
+#> 13:                             Mathematical Statistics and Probability 270502
+#> 14:                                          Mathematics and Statistics 270503
+#> 15:                                                   Statistics, Other 270599
+#> 16:                                   Mathematics and Statistics, Other 279999
+#> 17: Multi, Interdisciplinary Studies - Mathematics and Computer Science 300801
 ```

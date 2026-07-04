@@ -7,17 +7,18 @@
 \format{
 \code{data.table} with 50 rows and 6 columns:
 \describe{
-\item{\code{program}}{Character, academic program label.}
-\item{\code{sex}}{Character, sex as self-reported by the student,
-possible values are Female, Male, and Unknown.}
-\item{\code{race}}{Character, race/ethnicity as self-reported
-by the student, e.g., Asian, Black, Hispanic, etc.}
-\item{\code{ever_enrolled}}{Numerical, number of students
+\item{\code{program}}{Character. Academic program label.}
+\item{\code{sex}}{Character. Sex as self-reported by the student,
+possible values are "Female", "Male", and "Unknown."}
+\item{\code{race}}{Character. Race/ethnicity as self-reported
+by the student, e.g., "Asian", "Black", "Hispanic", etc.}
+\item{\code{ever_enrolled}}{Numerical. The number of students
 ever enrolled in a program.}
-\item{\code{graduates}}{Numerical, number of students completing
+\item{\code{graduates}}{Numerical. Number of students completing
 a program.}
-\item{\code{stickiness}}{Numerical, program stickiness, the
-ratio of \code{graduates} to \code{ever_enrolled}, in percent.}
+\item{\code{stickiness}}{Numerical. Program stickiness, the
+ratio of the number of graduates to the number ever
+enrolled, in percent.}
 }
 }
 \usage{

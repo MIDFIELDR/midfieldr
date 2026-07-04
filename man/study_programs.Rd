@@ -7,7 +7,7 @@
 \format{
 \code{data.table} with 15 rows and 2 columns. The variables are:
 \describe{
-\item{\code{cip6}}{Character, 6-digit CIP code of program in which
+\item{\code{cip6}}{Character. The 6-digit CIP code of the program in which
 a student is enrolled in a term.}
 \item{\code{program}}{Character, abbreviated labels for four engineering
 programs. Values are "CE" (Civil Engineering), "EE" (Electrical

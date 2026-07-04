@@ -185,8 +185,8 @@ source_student <- copy(student)
 source_term <- copy(term)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_records(source_student)
-term <- select_records(source_term)
+student <- select_basic_cols(source_student)
+term <- select_basic_cols(source_term)
 ```
 
 ## `prep_fye_mice()`
@@ -1081,19 +1081,7 @@ start
 The results indicate (for the case study data) a potential under-count
 of 45% to 97% if FYE proxies are excluded when counting starters.
 
-------------------------------------------------------------------------
-
-[◁
-Blocs](https://midfieldr.github.io/midfieldr/articles/art-050-blocs.md)
-   [▲ top of page](#top)    [Starters
-▷](https://midfieldr.github.io/midfieldr/articles/art-070-starters.md)
-
-------------------------------------------------------------------------
-
-## Reusable code
-
-Given the number of lines of code and the number of case-specific
-parameters involved, a reusable code section is not provided.
+[▲ top of page](#top)
 
 ## References
 

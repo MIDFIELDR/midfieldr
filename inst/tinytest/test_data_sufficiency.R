@@ -31,7 +31,7 @@ test_data_sufficiency <- function() {
     
     # ---------- usage
     # 
-    # data_sufficiency(dframe, midfield_rec = term)
+    # data_sufficiency(dframe, midfield_table = term)
     
     # Needed for build_install_test()
     suppressPackageStartupMessages(require("data.table"))
@@ -103,7 +103,7 @@ test_data_sufficiency <- function() {
     expect_equal(return_vars, colnames(DT))
     
     # correct answers naming and not naming arguments
-    x <- data_sufficiency(dframe = dframe, midfield_rec = term)
+    x <- data_sufficiency(dframe = dframe, midfield_table = term)
     y <- data_sufficiency(dframe, term)
     expect_equal(x, y)
     rm(x, y)

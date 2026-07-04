@@ -3,12 +3,12 @@
 To a data frame keyed by student ID, add a column indicating if a
 student completed their program, and if so, whether their completion was
 timely or late. Columns of supporting information are also added.
-Unrelated columns are dropped.
+Columns not related to the task are dropped.
 
 ## Usage
 
 ``` r
-completion_status(dframe, midfield_rec = degree)
+completion_status(dframe, midfield_table = degree)
 ```
 
 ## Arguments
@@ -18,29 +18,31 @@ completion_status(dframe, midfield_rec = degree)
   Data frame or data frame extension (e.g., data.table or tibble).
   Required variables: `{mcid, timely_term}`.
 
-- midfield_rec:
+- midfield_table:
 
-  MIDFIELD records *degree* data frame or data frame extension. Required
-  variables: `{mcid, term_degree}`.
+  Data frame or data frame extension of a MIDFIELD *degree* table.
+  Required variables: `{mcid, term_degree}`.
 
 ## Value
 
 Data frame with the following properties:
 
-- Data frame class is preserved. Groups and keys are not preserved.
+- Data frame class is preserved.
 
 - Rows are filtered for unique `mcid` values.
 
-- Columns `{mcid, timely_term}` are retained (all other columns are
-  dropped). New columns added:
+- Columns `{mcid, timely_term}` are retained. All other columns are
+  dropped and the following columns are added:
 
   - `term_degree.`   Character. Term in which the first degree(s) are
-    completed, encoded `YYYYT`. Joined from `midfield_rec.`
+    completed, encoded `YYYYT`. Joined from `midfield_table.`
 
   - `completion_status.`   Character. Possible values are "timely" for
     students completing a degree no later than their timely completion
     terms; "late" for students completing their program after their
     timely completion term; and "NA" for non-completers.
+
+- Groups and keys are not preserved.
 
 ## Details
 
@@ -63,52 +65,112 @@ except the IDs, yielding the refined population that was our goal.
 ## Examples
 
 ``` r
-# Start with an excerpt from the student data set 
-dframe <- toy_student[1:10, .(mcid)]
+term <- toy_term
+degree <- toy_degree
 
-# Timely term column is required to add completion status column
-dframe <- timely_term(dframe, toy_term)
+# Start with a small population 
+x <- toy_student[21:36, .(mcid)]
+x
+#>               mcid
+#>             <char>
+#>  1: MCID3111257807
+#>  2: MCID3111258275
+#>  3: MCID3111258347
+#>  4: MCID3111259642
+#>  5: MCID3111262210
+#>  6: MCID3111265287
+#>  7: MCID3111269576
+#>  8: MCID3111272691
+#>  9: MCID3111272880
+#> 10: MCID3111277081
+#> 11: MCID3111278815
+#> 12: MCID3111282337
+#> 13: MCID3111296595
+#> 14: MCID3111301718
+#> 15: MCID3111310842
+#> 16: MCID3111311799
 
-# Add completion status column
-completion_status(dframe, toy_degree)
+# Timely term column is required
+x <- timely_term(x, term)
+x
+#>               mcid term_i       level_i adj_span timely_term
+#>             <char> <char>        <char>    <num>      <char>
+#>  1: MCID3111257807  19901 01 First-year        6       19953
+#>  2: MCID3111258275  19901 01 First-year        6       19953
+#>  3: MCID3111258347  19901 01 First-year        6       19953
+#>  4: MCID3111259642  19901 01 First-year        6       19953
+#>  5: MCID3111262210  19901 01 First-year        6       19953
+#>  6: MCID3111265287  19901 01 First-year        6       19953
+#>  7: MCID3111269576  19901 01 First-year        6       19953
+#>  8: MCID3111272691  19901 01 First-year        6       19953
+#>  9: MCID3111272880  19901 01 First-year        6       19953
+#> 10: MCID3111277081  19903 01 First-year        6       19961
+#> 11: MCID3111278815  19903 01 First-year        6       19961
+#> 12: MCID3111282337  19904 01 First-year        6       19963
+#> 13: MCID3111296595  19911 01 First-year        6       19963
+#> 14: MCID3111301718  19911 01 First-year        6       19963
+#> 15: MCID3111310842  19911 01 First-year        6       19963
+#> 16: MCID3111311799  19911 01 First-year        6       19963
+
+# Add completion status column, columns not used are dropped
+x <- completion_status(x, degree)
+x
 #>               mcid timely_term term_degree completion_status
 #>             <char>      <char>      <char>            <char>
-#>  1: MCID3111158953       19933        <NA>              <NA>
-#>  2: MCID3111159270       19933       19913            timely
-#>  3: MCID3111160513       19933        <NA>              <NA>
-#>  4: MCID3111162677       19933       19913            timely
-#>  5: MCID3111164287       19933       19913            timely
-#>  6: MCID3111171205       19933       19913            timely
-#>  7: MCID3111172083       19933       19913            timely
-#>  8: MCID3111213943       19943       19903            timely
-#>  9: MCID3111248941       19953       19943            timely
-#> 10: MCID3111250695       19953        <NA>              <NA>
+#>  1: MCID3111257807       19953       19964              late
+#>  2: MCID3111258275       19953       19921            timely
+#>  3: MCID3111258347       19953       19923            timely
+#>  4: MCID3111259642       19953       19934            timely
+#>  5: MCID3111262210       19953       19951            timely
+#>  6: MCID3111265287       19953       19904            timely
+#>  7: MCID3111269576       19953       19943            timely
+#>  8: MCID3111272691       19953       19914            timely
+#>  9: MCID3111272880       19953       19934            timely
+#> 10: MCID3111277081       19961       19963              late
+#> 11: MCID3111278815       19961        <NA>              <NA>
+#> 12: MCID3111282337       19963       19924            timely
+#> 13: MCID3111296595       19963        <NA>              <NA>
+#> 14: MCID3111301718       19963        <NA>              <NA>
+#> 15: MCID3111310842       19963        <NA>              <NA>
+#> 16: MCID3111311799       19963        <NA>              <NA>
 
-# Existing completion_status column, if any, is overwritten
-dframe[, completion_status := NA_character_][]
-#>               mcid term_i       level_i adj_span timely_term completion_status
-#>             <char> <char>        <char>    <num>      <char>            <char>
-#>  1: MCID3111158953  19881 01 First-year        6       19933              <NA>
-#>  2: MCID3111159270  19881 01 First-year        6       19933              <NA>
-#>  3: MCID3111160513  19881 01 First-year        6       19933              <NA>
-#>  4: MCID3111162677  19881 01 First-year        6       19933              <NA>
-#>  5: MCID3111164287  19881 01 First-year        6       19933              <NA>
-#>  6: MCID3111171205  19881 01 First-year        6       19933              <NA>
-#>  7: MCID3111172083  19881 01 First-year        6       19933              <NA>
-#>  8: MCID3111213943  19891 01 First-year        6       19943              <NA>
-#>  9: MCID3111248941  19901 01 First-year        6       19953              <NA>
-#> 10: MCID3111250695  19901 01 First-year        6       19953              <NA>
-completion_status(dframe, toy_degree)
+# Existing completion status column (if any) is replaced
+x[, completion_status := NA_character_][]
 #>               mcid timely_term term_degree completion_status
 #>             <char>      <char>      <char>            <char>
-#>  1: MCID3111158953       19933        <NA>              <NA>
-#>  2: MCID3111159270       19933       19913            timely
-#>  3: MCID3111160513       19933        <NA>              <NA>
-#>  4: MCID3111162677       19933       19913            timely
-#>  5: MCID3111164287       19933       19913            timely
-#>  6: MCID3111171205       19933       19913            timely
-#>  7: MCID3111172083       19933       19913            timely
-#>  8: MCID3111213943       19943       19903            timely
-#>  9: MCID3111248941       19953       19943            timely
-#> 10: MCID3111250695       19953        <NA>              <NA>
+#>  1: MCID3111257807       19953       19964              <NA>
+#>  2: MCID3111258275       19953       19921              <NA>
+#>  3: MCID3111258347       19953       19923              <NA>
+#>  4: MCID3111259642       19953       19934              <NA>
+#>  5: MCID3111262210       19953       19951              <NA>
+#>  6: MCID3111265287       19953       19904              <NA>
+#>  7: MCID3111269576       19953       19943              <NA>
+#>  8: MCID3111272691       19953       19914              <NA>
+#>  9: MCID3111272880       19953       19934              <NA>
+#> 10: MCID3111277081       19961       19963              <NA>
+#> 11: MCID3111278815       19961        <NA>              <NA>
+#> 12: MCID3111282337       19963       19924              <NA>
+#> 13: MCID3111296595       19963        <NA>              <NA>
+#> 14: MCID3111301718       19963        <NA>              <NA>
+#> 15: MCID3111310842       19963        <NA>              <NA>
+#> 16: MCID3111311799       19963        <NA>              <NA>
+completion_status(x, degree)
+#>               mcid timely_term term_degree completion_status
+#>             <char>      <char>      <char>            <char>
+#>  1: MCID3111257807       19953       19964              late
+#>  2: MCID3111258275       19953       19921            timely
+#>  3: MCID3111258347       19953       19923            timely
+#>  4: MCID3111259642       19953       19934            timely
+#>  5: MCID3111262210       19953       19951            timely
+#>  6: MCID3111265287       19953       19904            timely
+#>  7: MCID3111269576       19953       19943            timely
+#>  8: MCID3111272691       19953       19914            timely
+#>  9: MCID3111272880       19953       19934            timely
+#> 10: MCID3111277081       19961       19963              late
+#> 11: MCID3111278815       19961        <NA>              <NA>
+#> 12: MCID3111282337       19963       19924            timely
+#> 13: MCID3111296595       19963        <NA>              <NA>
+#> 14: MCID3111301718       19963        <NA>              <NA>
+#> 15: MCID3111310842       19963        <NA>              <NA>
+#> 16: MCID3111311799       19963        <NA>              <NA>
 ```

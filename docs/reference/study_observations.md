@@ -16,26 +16,27 @@ study_observations
 
 - `mcid`:
 
-  Character, de-identified student ID. Key column.
+  Character. Anonymized student identifier that connects the four data
+  tables, e.g., "MCID3111142897."
 
 - `race`:
 
-  Character, race/ethnicity as self-reported by the student, e.g.,
-  Asian, Black, Hispanic, etc.
+  Character. Race/ethnicity as self-reported by the student, e.g.,
+  "Asian", "Black", "Hispanic", etc.
 
 - `sex`:
 
-  Character, sex as self-reported by the student, possible values are
-  Female, Male, and Unknown.
+  Character. Sex as self-reported by the student, possible values are
+  "Female", "Male", and "Unknown."
 
 - `program`:
 
-  Character, academic program label.
+  Character. Academic program label.
 
 - `bloc`:
 
-  Character, indicating the grouping (`ever_enrolled` or `graduates`) to
-  which an observation belongs.
+  Character. A group of student-level data dealt with as a unit, e.g.,
+  starters, students ever-enrolled, graduates, etc.
 
 ## Details
 

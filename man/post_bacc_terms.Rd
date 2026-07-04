@@ -4,31 +4,32 @@
 \alias{post_bacc_terms}
 \title{Identify post-baccalaureate terms}
 \usage{
-post_bacc_terms(dframe, midfield_rec = degree)
+post_bacc_terms(dframe, midfield_table = degree)
 }
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variables: \code{{mcid}} and one of
 \verb{\{term, term_course, term_degree\}.}}
 
-\item{midfield_rec}{MIDFIELD records \emph{degree} data frame or data frame extension. Required variables:
+\item{midfield_table}{Data frame or data frame extension of a MIDFIELD \emph{degree} table. Required variables:
 \verb{\{mcid, term_degree\}.}}
 }
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved. Groups and keys are not preserved.
+\item Data frame class is preserved.
 \item Rows are not modified.
-\item Columns are not modified except new columns overwrite old columns of
-the same name. New columns:
+\item Columns are not modified except a new column replaces an existing
+column if it has the same name. The new columns are:
 \itemize{
 \item \code{first_degree_term.}    Character. Term of a student's first
 baccalaureate, encoded \code{YYYYT} or, if no degree recorded, \code{NA}.
-Joined from \code{midfield_rec$term_degree}.
+Joined from the \code{term_degree} variable in \code{midfield_table.}
 \item \code{term_cluster.}    Character, indicating that a term belongs
 to one of three clusters: terms that are prior to ("pre-degree"),
 equal to ("first-degree"), or subsequent to ("post-first-degree")
 the student’s first degree term.
 }
+\item Groups and keys are not preserved.
 }
 }
 \description{
@@ -44,7 +45,20 @@ Any terms later than the first baccalaureate can usually be excluded from
 study.
 }
 \examples{
+# reduce number of columns
+term <- select_basic_cols(toy_term)
+degree <- select_basic_cols(toy_degree)
 
-# Examples TBD
-x <- 1
+# identify term-clusters in a 'term' table
+x <- post_bacc_terms(term, degree)
+x[, .N, by = "term_cluster"][order(-N)]
+x
+
+# identify term-clusters in a 'degree' table
+x <- post_bacc_terms(degree, degree)
+x[, .N, by = "term_cluster"][order(-N)]
+x
+
+# post-first-degree terms are usually dropped
+x[term_cluster != "post-first-degree"]
 }

@@ -34,7 +34,7 @@ test_timely_term <- function() {
     # 
     # timely_term(
     #     dframe,
-    #     midfield_rec = term,
+    #     midfield_table = term,
     #     ...,
     #     sched_span = NULL, 
     #     span = NULL
@@ -128,7 +128,7 @@ test_timely_term <- function() {
     expect_equal(return_vars, colnames(DT))
     
     # correct answers naming and not naming arguments
-    x <- timely_term(dframe = dframe, midfield_rec = term)
+    x <- timely_term(dframe = dframe, midfield_table = term)
     y <- timely_term(dframe, term)
     expect_equal(x, y)
     rm(x, y)

@@ -59,9 +59,10 @@ NULL
 #'        resulting Boolean vector.
 #'
 #' @returns Data frame with the following properties:
-#' * Data frame class is preserved. Groups and keys are not preserved.
+#' * Data frame class is preserved.
 #' * Rows are a subset of the input and appear in the same order.
 #' * Columns are not modified.
+#' * Groups and keys are not preserved.
 #'
 #' @example man/examples/exa_filter_programs.R
 #' @export

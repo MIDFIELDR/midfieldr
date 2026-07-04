@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9011</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9013</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -247,8 +247,8 @@ started</a>.</p>
 <span><span class="va">source_term</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Optional. Select variables required by midfieldr functions</span></span>
-<span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">source_student</span><span class="op">)</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_records.html">select_records</a></span><span class="op">(</span><span class="va">source_term</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">source_student</span><span class="op">)</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">source_term</span><span class="op">)</span></span></code></pre></div>
 <p><em>Initialize.</em>   Use the <code>term</code> and
 <code>student</code> data tables to obtain a data frame of student IDs
 meeting the data sufficiency and degree-seeking criteria. Applied to the
@@ -514,46 +514,7 @@ specific programs,” this bloc concludes with a filter by program.</p>
 <span><span class="co">#&gt; 4046: MCID3112619118      EE</span></span>
 <span><span class="co">#&gt; 4047: MCID3112619484      EE</span></span>
 <span><span class="co">#&gt; 4048: MCID3112619666      ME</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="reusable-code">Reusable code<a class="anchor" aria-label="anchor" href="#reusable-code"></a>
-</h2>
-<p><em>Preparation.</em>   The data frame of baseline IDs is the intake
-for this section.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">baseline_mcid</span><span class="op">)</span></span></code></pre></div>
-<p><em>Starters.</em>   Summary code chunks for ready reference.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Isolate starting term</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term</span>, <span class="va">cip6</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="op">!</span><span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"999999"</span><span class="op">]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">DT</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span>, <span class="st">"term"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="va">term</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span> <span class="st">"mcid"</span><span class="op">]</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span></code></pre></div>
-<p>For starters without FYE, finish by renaming <code>cip6</code></p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Not run</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, start <span class="op">=</span> <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-<p>For starters with FYE, continue with FYE proxies.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">fye_proxy</span><span class="op">[</span><span class="va">DT</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span>, <span class="va">proxy</span><span class="op">)</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mcid"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">DT</span><span class="op">[</span>, <span class="va">start</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
-<span>  <span class="va">cip6</span> <span class="op">==</span> <span class="st">"140102"</span>, <span class="va">proxy</span>,</span>
-<span>  <span class="va">cip6</span> <span class="op">!=</span> <span class="st">"140102"</span>, <span class="va">cip6</span></span>
-<span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">start</span><span class="op">)</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co"># Filter by program on start</span></span>
-<span><span class="va">join_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">study_programs</span><span class="op">)</span></span>
-<span><span class="va">join_labels</span> <span class="op">&lt;-</span> <span class="va">join_labels</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">program</span>, start <span class="op">=</span> <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">join_labels</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"start"</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">program</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span></code></pre></div>
-<hr>
-<p><a href="art-060-fye-proxies.html">◁ FYE proxies</a>   
-<a href="#top">▲ top of page</a>    <a href="art-080-graduates.html">Graduates ▷</a></p>
-<hr>
+<p><a href="#top">▲ top of page</a></p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

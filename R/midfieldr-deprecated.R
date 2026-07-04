@@ -25,7 +25,7 @@
 #'  encountered using dplyr and friends.}
 #'
 #'  \item{`select_required()`}{is deprecated in favor of
-#'  [select_records()]. The new functionality is similar but with
+#'  [select_basic_cols()]. The new functionality is similar but with
 #'  exact matching to the default column names plus preserving data
 #'  frame class.}
 #'

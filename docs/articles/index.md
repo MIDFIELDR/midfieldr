@@ -10,7 +10,7 @@
   dplyr](https://midfieldr.github.io/midfieldr/articles/art-005-case-dplyr.md):
 - [Planning a
   workflow](https://midfieldr.github.io/midfieldr/articles/art-010-planning.md):
-- [Planning](https://midfieldr.github.io/midfieldr/articles/art-011-planning-v2.md):
+- [Planning](https://midfieldr.github.io/midfieldr/articles/art-011-planning.md):
 - [Data
   sufficiency](https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.md):
 - [Degree

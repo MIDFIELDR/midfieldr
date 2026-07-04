@@ -24,16 +24,16 @@ New features
 - Renamed/revised functions and their arguments:
   - `completion_status()` replaces the deprecated `add_completion_status()`
   - `data_sufficiency()` replaces the deprecated `add_data_sufficiency()`
-  - `filter_programs()` replaces the deprecated `filter_cip()`
-  - `select_records()` replaces the deprecated `select_required()`
+  - `select_basic_cols()` replaces the deprecated `select_required()`
   - `timely_term()` replaces the deprecated `add_timely_term()`
-
+  - `filter_programs()` replaces the deprecated `filter_cip()`
  
 
 Minor improvements
 
 - Data frame class is preserved (or attempted to be preserved) in all functions with a data frame input/output. 
-- New versions of toy data and case study data for consistency with midfielddata.
+- New versions of toy data and case study data for consistency with midfielddata and sufficient to demonstrate the possible values of data sufficiency, timely completion, etc. 
+- Now depends on R >= 4.1.0 because pipe |> used in examples. 
 
 Bug fixes
 

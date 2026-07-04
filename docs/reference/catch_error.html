@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9011</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9013</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,25 +79,45 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Example data frames</span></span></span>
-<span class="r-in"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="va">toy_student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">t</span> <span class="op">&lt;-</span> <span class="va">toy_term</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">toy_degree</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term_degree</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">sel_ids</span> <span class="op">&lt;-</span> <span class="va">toy_student</span><span class="op">[</span><span class="fl">14</span><span class="op">:</span><span class="fl">18</span>, <span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="va">toy_student</span><span class="op">[</span><span class="va">mcid</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/chmatch.html" class="external-link">%chin%</a></span> <span class="va">sel_ids</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">t</span> <span class="op">&lt;-</span> <span class="va">toy_term</span><span class="op">[</span><span class="va">mcid</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/chmatch.html" class="external-link">%chin%</a></span> <span class="va">sel_ids</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">toy_degree</span><span class="op">[</span><span class="va">mcid</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/chmatch.html" class="external-link">%chin%</a></span> <span class="va">sel_ids</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term_degree</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># No error</span></span></span>
 <span class="r-in"><span><span class="fu">catch_error</span><span class="op">(</span><span class="fu"><a href="post_bacc_terms.html">post_bacc_terms</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">d</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 mcid   term first_degree_term term_cluster</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;char&gt; &lt;char&gt;            &lt;char&gt;       &lt;char&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    1: MCID3111158953  19881              &lt;NA&gt;   pre-degree</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    2: MCID3111158953  19883              &lt;NA&gt;   pre-degree</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    3: MCID3111158953  19891              &lt;NA&gt;   pre-degree</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    4: MCID3111158953  19893              &lt;NA&gt;   pre-degree</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    5: MCID3111158953  19901              &lt;NA&gt;   pre-degree</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ---                                                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1091: MCID3112846308  20181              &lt;NA&gt;   pre-degree</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1092: MCID3112877403  20181              &lt;NA&gt;   pre-degree</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1093: MCID3112881399  20181              &lt;NA&gt;   pre-degree</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1094: MCID3112882995  20181              &lt;NA&gt;   pre-degree</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1095: MCID3112884375  20181              &lt;NA&gt;   pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               mcid   term first_degree_term      term_cluster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;char&gt; &lt;char&gt;            &lt;char&gt;            &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1: MCID3111213539  19891             19923        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2: MCID3111213539  19893             19923        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3: MCID3111213539  19901             19923        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4: MCID3111213539  19903             19923        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5: MCID3111213539  19911             19923        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6: MCID3111213539  19913             19923        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: MCID3111213539  19921             19923        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8: MCID3111213539  19923             19923      first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9: MCID3111213539  19924             19923 post-first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10: MCID3111213856  19891             19911        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: MCID3111213856  19893             19911        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12: MCID3111213856  19901             19911        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13: MCID3111213856  19903             19911        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14: MCID3111213856  19904             19911        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15: MCID3111246563  19901              &lt;NA&gt;        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16: MCID3111246563  19903              &lt;NA&gt;        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17: MCID3111254225  19901             19923        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18: MCID3111254225  19903             19923        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19: MCID3111254225  19911             19923        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20: MCID3111254225  19923             19923      first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21: MCID3111254412  19901             19933        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22: MCID3111254412  19903             19933        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23: MCID3111254412  19911             19933        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24: MCID3111254412  19913             19933        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25: MCID3111254412  19921             19933        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26: MCID3111254412  19931             19933        pre-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27: MCID3111254412  19933             19933      first-degree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               mcid   term first_degree_term      term_cluster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;char&gt; &lt;char&gt;            &lt;char&gt;            &lt;char&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Error, no term variable </span></span></span>
 <span class="r-in"><span><span class="fu">catch_error</span><span class="op">(</span><span class="fu"><a href="post_bacc_terms.html">post_bacc_terms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">d</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -110,7 +130,6 @@
 <span class="r-in"><span><span class="co"># Error, missing degree argument</span></span></span>
 <span class="r-in"><span><span class="fu">catch_error</span><span class="op">(</span><span class="fu"><a href="post_bacc_terms.html">post_bacc_terms</a></span><span class="op">(</span><span class="va">t</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Error: object 'degree' not found </span>
-<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

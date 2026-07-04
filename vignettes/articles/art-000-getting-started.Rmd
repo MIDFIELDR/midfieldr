@@ -45,16 +45,6 @@ library(midfielddata)
 library(data.table)
 ```
 
-```{r}
-#| echo: false
-
-options(
-  datatable.print.topn = 3,
-  datatable.print.nrows = 6
-)
-```
-
-
 Before you start:
 
 1. *On syntax:* &nbsp; Data manipulation in our sample scripts and internally in functions is coded using data.table syntax. However, midfieldr functions do attempt to preserve data frame attributes such as base R `data.frame` or tibble `tbl_df`. 
@@ -77,7 +67,7 @@ Programs
 
 Records
 
-- `select_records()` chooses columns of student records required by midfieldr functions.
+- `select_basic_cols()` chooses columns of student records required by midfieldr functions.
 - `post_bacc_terms()` identifies rows of post-baccalaureate terms to exclude. 
 - `timely_term()` estimates a student's timely completion term. 
 - `data_sufficiency()` identifies rows to exclude due to insufficient data.
@@ -99,19 +89,21 @@ Special conditioning
 
 ## Program data
 
+
 *Collecting and labeling 6-digit program codes.*
+
+```{r}
+# if Nrows equal to or less than this N, print all rows
+options(datatable.print.nrows = 10)
+
+# if Nrows > N above, print this N rows
+options(datatable.print.topn = 5)
+```
+
 
 The *Classification of Instructional Programs (CIP)* is a taxonomy of academic programs, encoded by 6-digit numeric codes curated by the US Department of Education [@NCES:2010]. 
 
 The `cip` data set, loaded with midfieldr, is a subset of the NCES CIP2010 data that contains codes and names for `r nrow(cip)` instructional programs organized on three levels---a 6-digit series, a 4-digit series, and a 2-digit series---keyed by the `cip6` variable. 
-
-```{r}
-#| echo: false
-options(
-  datatable.print.topn = 5,
-  datatable.print.nrows = 10
-)
-```
 
 ```{r}
 cip
@@ -122,6 +114,7 @@ cip
 
 
 ## `filter_programs()`
+
 
 *Chooses rows of CIP data based on search terms.*
 
@@ -158,7 +151,7 @@ third_pass
 ```{r}
 #| echo: false
 options(
-  datatable.print.topn = 20,
+  datatable.print.topn = 10,
   datatable.print.nrows = 20
 )
 ```
@@ -185,8 +178,8 @@ Which specific programs we select depend on the study, of course, but in all cas
 ```{r}
 #| echo: false
 options(
-  datatable.print.topn = 5,
-  datatable.print.nrows = 5
+  datatable.print.topn = 3,
+  datatable.print.nrows = 6
 )
 ```
 
@@ -220,16 +213,16 @@ degree_source <- copy(degree)
 
 
 
-## `select_records()` 
+## `select_basic_cols()` 
 
 *Choose columns required by midfieldr functions.* 
 
-`select_records()` operates on student records to reduce the number of columns to those required by other midfieldr functions plus the key or composite key variables of the four data tables. Shown below, the records have been reduced to no more than 5 columns required by other midfieldr functions. 
+`select_basic_cols()` operates on student records to reduce the number of columns to those required by other midfieldr functions plus the key or composite key variables of the four data tables. Shown below, the records have been reduced to no more than 5 columns required by other midfieldr functions. 
 
 ```{r}
-student <- select_records(student)
-term <- select_records(term)
-degree <- select_records(degree)
+student <- select_basic_cols(student)
+term <- select_basic_cols(term)
+degree <- select_basic_cols(degree)
 
 look_at(student)
 
@@ -279,8 +272,8 @@ We filter to exclude all terms labeled "post-first-degree" and remove the extra 
 term <- term[!"post-first-degree", on = "term_cluster"]
 degree <- degree[!"post-first-degree", on = "term_cluster"]
 
-term <- select_records(term)
-degree <- select_records(degree)
+term <- select_basic_cols(term)
+degree <- select_basic_cols(degree)
 
 term
 ```

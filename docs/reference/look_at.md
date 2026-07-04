@@ -32,12 +32,12 @@ look_at(cip)
 #>  $ cip2name: chr  "Agriculture, Agricultural Operations and Related Sciences""..
 #>  $ cip2    : chr  "01" "01" "01" "01" ...
 look_at(toy_degree)
-#> Classes 'data.table' and 'data.frame':   96 obs. of  5 variables:
-#>  $ mcid       : chr  "MCID3111159270" "MCID3111162677" "MCID3111164287" "MCID"..
-#>  $ term_degree: chr  "19913" "19913" "19913" "19913" ...
-#>  $ cip6       : chr  "141001" "140701" "141001" "270101" ...
-#>  $ institution: chr  "Institution J" "Institution J" "Institution J" "Institu"..
-#>  $ degree     : chr  "Bachelor of Science in Electrical Engineering" "Bachelo"..
+#> Classes 'data.table' and 'data.frame':   193 obs. of  5 variables:
+#>  $ mcid       : chr  "MCID3111169601" "MCID3111169729" "MCID3111213539" "MCID"..
+#>  $ term_degree: chr  "19903" "19901" "19923" "19911" ...
+#>  $ cip6       : chr  "520201" "520201" "030103" "261399" ...
+#>  $ institution: chr  "Institution B" "Institution B" "Institution B" "Institu"..
+#>  $ degree     : chr  "Bachelor of Science in Business Administration and Mana"..
 
 # character vectors
 x <- sort(unique(toy_degree$institution))

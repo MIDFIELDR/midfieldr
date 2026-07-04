@@ -4,36 +4,37 @@
 \alias{completion_status}
 \title{Determine completion status}
 \usage{
-completion_status(dframe, midfield_rec = degree)
+completion_status(dframe, midfield_table = degree)
 }
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variables: \verb{\{mcid, timely_term\}}.}
 
-\item{midfield_rec}{MIDFIELD records \emph{degree} data frame or data frame extension. Required variables:
+\item{midfield_table}{Data frame or data frame extension of a MIDFIELD \emph{degree} table. Required variables:
 \verb{\{mcid, term_degree\}}.}
 }
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved. Groups and keys are not preserved.
+\item Data frame class is preserved.
 \item Rows are filtered for unique \code{mcid} values.
-\item Columns \verb{\{mcid, timely_term\}} are retained (all other columns
-are dropped). New columns added:
+\item Columns \verb{\{mcid, timely_term\}} are retained. All other columns are
+dropped and the following columns are added:
 \itemize{
 \item \code{term_degree.}   Character. Term in which the first degree(s) are
-completed, encoded \code{YYYYT}. Joined from \code{midfield_rec.}
+completed, encoded \code{YYYYT}. Joined from \code{midfield_table.}
 \item \code{completion_status.}   Character. Possible values are "timely"
 for students completing a degree no later than their timely
 completion terms; "late" for students completing their program
 after their timely completion term; and "NA" for non-completers.
 }
+\item Groups and keys are not preserved.
 }
 }
 \description{
 To a data frame keyed by student ID, add a column indicating if a
 student completed their program, and if so, whether their completion
 was timely or late. Columns of supporting information are
-also added. Unrelated columns are dropped.
+also added. Columns not related to the task are dropped.
 }
 \details{
 In many studies, students must complete their programs in a specified time
@@ -53,16 +54,22 @@ can review the findings. After review, we usually delete all columns
 except the IDs, yielding the refined population that was our goal.
 }
 \examples{
-# Start with an excerpt from the student data set 
-dframe <- toy_student[1:10, .(mcid)]
+term <- toy_term
+degree <- toy_degree
 
-# Timely term column is required to add completion status column
-dframe <- timely_term(dframe, toy_term)
+# Start with a small population 
+x <- toy_student[21:36, .(mcid)]
+x
 
-# Add completion status column
-completion_status(dframe, toy_degree)
+# Timely term column is required
+x <- timely_term(x, term)
+x
 
-# Existing completion_status column, if any, is overwritten
-dframe[, completion_status := NA_character_][]
-completion_status(dframe, toy_degree)
+# Add completion status column, columns not used are dropped
+x <- completion_status(x, degree)
+x
+
+# Existing completion status column (if any) is replaced
+x[, completion_status := NA_character_][]
+completion_status(x, degree)
 }

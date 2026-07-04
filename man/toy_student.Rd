@@ -3,45 +3,47 @@
 \docType{data}
 \name{toy_student}
 \alias{toy_student}
-\title{Student data for examples}
+\title{Small 'student' dataset for examples}
 \format{
-\code{data.table} with 150 rows and 13 columns keyed by student ID.
+Data frame with 351 rows and 13 columns (\code{data.table} class).
+Key: \verb{\{mcid\}.}
 \describe{
-\item{\code{mcid}}{Character, de-identified student ID. Key column.}
-\item{\code{race}}{Character, race/ethnicity as self-reported
-by the student, e.g., Asian, Black, Hispanic, etc.}
-\item{\code{sex}}{Character, sex as self-reported by the student,
-possible values are Female, Male, and Unknown.}
-\item{\code{institution}}{Character, de-identified institution
-name, e.g., Institution A, Institution B, etc.}
-\item{\code{transfer}}{Character, transfer status, possible
-values are \verb{First-Time in College}, \verb{First-Time Transfer}.}
-\item{\code{hours_transfer}}{Numeric, number of credit
+\item{\code{mcid}}{Character. Anonymized student identifier
+that connects the four data tables, e.g., "MCID3111142897."}
+\item{\code{race}}{Character. Race/ethnicity as self-reported
+by the student, e.g., "Asian", "Black", "Hispanic", etc.}
+\item{\code{sex}}{Character. Sex as self-reported by the student,
+possible values are "Female", "Male", and "Unknown."}
+\item{\code{institution}}{Character. The anonymized name of
+the institution the student attended in a given term, e.g.,
+"Institution A", "Institution B", etc.}
+\item{\code{transfer}}{Character. Transfer status, possible
+values are "First-Time in College", "First-Time Transfer."}
+\item{\code{hours_transfer}}{Numeric. Number of credit
 hours transferred (or NA).}
-\item{\code{age_desc}}{Character, age group, possible values
-are \verb{25 and Older}, \verb{Under 25}.}
-\item{\code{us_citizen}}{Character, US citizenship, possible
-values are \code{No}, \code{Yes}.}
-\item{\code{home_zip}}{Character, home ZIP code (or \code{NA}),
-e.g., \code{02056}, \code{20170}, \code{51301}, \code{80129}, etc.}
-\item{\code{high_school}}{Character, code for the last high
-school attended before admission (or \code{NA}), e.g., \code{060075},
-\code{210512}, \code{431800}, \code{502195}, etc.}
-\item{\code{sat_math}}{Numeric, SAT mathematics test score
-(or \code{NA}).}
-\item{\code{sat_verbal}}{Numeric, SAT reading test score
-(or \code{NA}).}
-\item{\code{act_comp}}{Numeric, ACT composite test score
-(or \code{NA}).}
+\item{\code{age_desc}}{Character. Age group, possible values
+are "25 and Older", "Under 25."}
+\item{\code{us_citizen}}{Character. US citizenship, possible
+values are "No", "Yes."}
+\item{\code{home_zip}}{Character. Home ZIP code (or NA),
+e.g., "02056", "20170", "51301", "80129", etc.}
+\item{\code{high_school}}{Character. Code for the last high
+school attended before admission (or NA), e.g., "060075",
+"210512", "431800", "502195", etc.}
+\item{\code{sat_math}}{Numeric. SAT mathematics test score
+(or NA).}
+\item{\code{sat_verbal}}{Numeric. SAT reading test score
+(or NA).}
+\item{\code{act_comp}}{Numeric. ACT composite test score
+(or NA).}
 }
 }
 \usage{
 toy_student
 }
 \description{
-Selected variables modeled on those in the \code{student} practice data for use in
-package examples and articles. Sampled from an early version of the practice
-data, the toy data are not a current practice data sample.
+A subset of rows from the midfielddata \code{student} table. A small dataset
+for use in examples.
 }
 \seealso{
 Other toy-data:

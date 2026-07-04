@@ -1,8 +1,7 @@
-# Course data for examples
+# Small 'course' dataset for examples
 
-Selected variables modeled on those in the `course` practice data for
-use in package examples and articles. Sampled from an early version of
-the practice data, the toy data are not a current practice data sample.
+A subset of rows from the midfielddata `course` table matching the IDs
+in `toy_student.` A small dataset for use in examples.
 
 ## Usage
 
@@ -12,70 +11,70 @@ toy_course
 
 ## Format
 
-`data.table` with 5812 rows and 12 columns keyed by student ID, term,
-course abbreviation, and course number.
+Data frame with 8950 rows and 12 columns (`data.table` class). Composite
+key: `{mcid, term_course, abbrev, number}.`
 
 - `mcid`:
 
-  Character, de-identified student ID. Key column.
+  Character. Anonymized student identifier that connects the four data
+  tables, e.g., "MCID3111142897."
 
-- `term`:
+- `term_course`:
 
-  Character, academic year and term, format YYYYT. Key column.
+  Character. Academic year and term, encoded `YYYYT.`
 
 - `abbrev`:
 
-  Character, course alphabetical identifier, e.g. ENGR, MATH, ENGL. Key
-  column.
+  Character. Course alphabetical identifier, e.g. "ENGR", "MATH",
+  "ENGL."
 
 - `number`:
 
-  Character, course numeric identifier, e.g. 101, 3429. Key column.
+  Character. Course numeric identifier, e.g. "101", "3429."
 
 - `institution`:
 
-  Character, de-identified institution name, e.g., Institution A,
-  Institution B, etc.
+  Character. The anonymized name of the institution the student attended
+  in a given term, e.g., "Institution A", "Institution B", etc.
 
 - `course`:
 
-  Character, course name, e.g., `Astrophysics III`,
-  `Calculus For Social Science And Business`, `Corp Financial Rprtng 1`,
-  `Environmental Sanitation II`, `Fitness and Wellness`,
-  `Introductory Astronomy 2`, `Our Changing Environment`, etc.
+  Character. Course name, e.g., "Astrophysics III", "Calculus For Social
+  Science And Business", "Corp Financial Rprtng 1", "Environmental
+  Sanitation II", "Fitness and Wellness", "Introductory Astronomy 2",
+  "Our Changing Environment", etc.
 
 - `section`:
 
-  Character, course section identifier, from one to four characters,
-  e.g., `1`, `2`, `01`, `14`, `001`, `040`, `785`, `H02`, `R01`, `300E`,
-  `888R`, etc.
+  Character. Course section identifier, from one to four characters,
+  e.g., "1", "2", "01", "14", "001", "040", "785", "H02", "R01", "300E",
+  "888R", etc.
 
 - `type`:
 
-  Character, predominant delivery method for this section, e.g.,
-  `Blended`, `Distance Education`, `Face-to-Face`, `Online`, etc.
+  Character. Predominant delivery method for this section, e.g.,
+  "Blended", "Distance Education", "Face-to-Face", "Online", etc.
 
 - `faculty_rank`:
 
-  Character, academic rank of the person teaching the course, e.g.,
-  `Assistant Professor`, `Associate Professor`, `Graduate Assistant`,
-  `Visiting Faculty`, etc.
+  Character. The academic rank of the person teaching the course, e.g.,
+  "Assistant Professor", "Associate Professor", "Graduate Assistant",
+  "Visiting Faculty", etc.
 
 - `hours_course`:
 
-  Numeric, number of credit-hours for successful course completion.
+  Numeric. Number of credit-hours for successful course completion.
 
 - `grade`:
 
-  Character, course grade, e.g., A+, A, A-, B+, I, NG, etc.
+  Character. Course grade, e.g., "A+", "A", "A-", "B+", "I", "NG", etc.
 
 - `discipline_midfield`:
 
-  Character, a variable for grouping courses by academic discipline
-  assigned by the pre-2023 MIDFIELD data curator, e.g., `Anthropology`,
-  `Business`, `Computer Science`, `Engineering`,
-  `Language and Literature`, `Mathematics`,`Visual and Performing Arts`,
-  etc.
+  Character. A variable for grouping courses by academic discipline
+  assigned by the pre-2023 MIDFIELD data curator, e.g., "Anthropology",
+  "Business", "Computer Science", "Engineering", "Language and
+  Literature", "Mathematics", "Visual and Performing Arts", etc.
 
 ## See also
 

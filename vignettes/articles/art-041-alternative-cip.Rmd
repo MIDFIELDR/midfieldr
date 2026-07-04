@@ -21,11 +21,6 @@ path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
 ```{r child = paste0(path_to_rmd, "/common-setup.Rmd")}
 ```
 
-```{r}
-#| echo: false
-options(datatable.print.topn = 10)
-```
-
 In this article, we demonstrate constructing a Classification of Instructional Programs (CIP) dataset using primary source data from the US Integrated Postsecondary Education Data System (IPEDS). The result is a dataset (`cip2010`) that can be used as an alternative to midfieldr's original CIP data (`cip`). The latest version of midfieldr includes both datasets. 
 
 This article in the MIDFIELD workflow:
@@ -87,7 +82,7 @@ The first step is to download the CSV file from the IPEDs website. After saving 
 DT <- fread(path_to_csv_file, colClasses = "character")
 
 # View the result
-str(DT, strict.width = "cut", give.attr = FALSE, vec.len = 12)
+look_at(DT)
 ```
 
 To construct our own CIP data set, we need three columns: 
@@ -98,7 +93,7 @@ cols_we_want <- c("CIPFamily", "CIPCode", "CIPTitle")
 DT <- DT[, ..cols_we_want]
 
 # View the result
-str(DT, strict.width = "cut", give.attr = FALSE, vec.len = 12)
+look_at(DT)
 ```
 
 Closer look at a sample of our primary-source data. 
@@ -153,6 +148,7 @@ cip[cip2 == "04", .(cip2, cip2name)][1]
 
 ```{r}
 #| echo: false
+op <- options()
 options(datatable.print.topn = 5)
 ```
 
@@ -176,7 +172,7 @@ filter_programs(DT, "131209")
 DT[, N_digits := str_length(CIPCode)]
 
 # View result
-str(DT, strict.width = "cut", give.attr = FALSE, vec.len = 12)
+look_at(DT)
 
 # Confirm 2, 4, or 6 digits
 unique(DT$N_digits)
@@ -191,7 +187,7 @@ DT2 <- DT[N_digits == 2, .(CIPFamily,
   cip2name = CIPTitle
 )]
 # View the result
-str(DT2, strict.width = "cut", give.attr = FALSE, vec.len = 12)
+look_at(DT2)
 ```
 
 Repeat for the 4-digit codes and names. Extract the first two digits of the 4-digit code to compare to `CIPFamily` (also 2-digits)
@@ -204,7 +200,7 @@ DT4 <- DT[N_digits == 4, .(CIPFamily,
   cip4name = CIPTitle
 )]
 # View the result
-str(DT4, strict.width = "cut", give.attr = FALSE)
+look_at(DT4)
 ```
 
 Repeat for the 6-digit codes and names, extracting both 2- and 4-digit codes for comparison and joining later. 
@@ -218,7 +214,7 @@ DT6 <- DT[N_digits == 6, .(CIPFamily,
   cip6name = CIPTitle
 )]
 # View the result
-str(DT6, strict.width = "cut", give.attr = FALSE, vec.len = 12)
+look_at(DT6)
 ```
 
 Compare the 2-digit codes in each data frame. If the data were correctly entered, this check for equality should all be TRUE. 
@@ -293,6 +289,10 @@ unique(substr(DT$cip6, 1, 2) == DT$cip2)
 unique(substr(DT$cip4, 1, 2) == DT$cip2)
 ```
 
+```{r}
+#| echo: false
+options(op)
+```
 
 ## Undecided or unspecified programs
 
@@ -361,33 +361,6 @@ Here we see an instance of a minor program title difference between the two data
 #   overwrite = TRUE
 # )
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-***
-
-[&#9665; Programs](art-040-programs.html) &nbsp;&nbsp; <a href="#top">&#9650; top of page</a> &nbsp;&nbsp; [Blocs &#9655;](art-050-blocs.html)
-
-***
-
-
-
 
 
 

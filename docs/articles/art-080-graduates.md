@@ -124,9 +124,9 @@ source_term <- copy(term)
 source_degree <- copy(degree)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_records(source_student)
-term <- select_records(source_term)
-degree <- select_records(source_degree)
+student <- select_basic_cols(source_student)
+term <- select_basic_cols(source_term)
+degree <- select_basic_cols(source_degree)
 ```
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a
@@ -168,7 +168,7 @@ DT[, c("term_i", "level_i", "adj_span") := NULL]
 - **`dframe`**   Data frame of student-level records keyed by student
   ID. Required variables are `mcid` and `timely_term`.
 
-- **`midfield_rec`**   Data frame of student-level degree observations
+- **`midfield_table`**   Data frame of student-level degree observations
   keyed by student ID. Default is `degree`. Required variables are
   `mcid` and `term_degree`.
 
@@ -178,12 +178,12 @@ results,
 ``` r
 
 # Required arguments in order and explicitly named
-x <- completion_status(dframe = DT, midfield_rec = degree)
+x <- completion_status(dframe = DT, midfield_table = degree)
 
 # Required arguments in order, but not named
 y <- completion_status(DT, degree)
 
-# Using the implicit default for the midfield_rec argument
+# Using the implicit default for the midfield_table argument
 z <- completion_status(DT)
 
 # Demonstrate equivalence
@@ -386,40 +386,6 @@ DT
 #> 3266: MCID3112641535      ME
 ```
 
-## Reusable code
-
-*Preparation.*   The data frame of baseline IDs is the intake for this
-section.
-
-``` r
-
-DT <- copy(baseline_mcid)
-```
-
-*Graduates.*   A summary code chunk for ready reference.
-
-``` r
-
-# Gather graduates, degree CIPs and terms
-DT <- timely_term(DT, term)
-DT <- completion_status(DT, degree)
-DT <- DT[completion_status == "timely"]
-DT <- degree[DT, .(mcid, term_degree, cip6), on = c("mcid")]
-
-# Filter by programs and first degree terms
-DT <- study_programs[DT, on = c("cip6"), nomatch = NULL]
-DT <- DT[, .SD[term_degree == min(term_degree)], by = "mcid"]
-DT[, c("cip6", "term_degree") := NULL]
-DT <- unique(DT)
-```
-
-------------------------------------------------------------------------
-
-[◁
-Starters](https://midfieldr.github.io/midfieldr/articles/art-070-starters.md)
-   [▲ top of page](#top)    [Groupings
-▷](https://midfieldr.github.io/midfieldr/articles/art-090-groupings.md)
-
-------------------------------------------------------------------------
+[▲ top of page](#top)
 
 ## References

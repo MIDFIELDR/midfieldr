@@ -16,14 +16,6 @@ knitr::opts_chunk$set(fig.path = "figures/art-005-")
 # for any "child" arguments in r-code-chunks
 library("rprojroot")
 path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
-op <- options
-
-library(pillar)
-options(
-  pillar.width = Inf,
-  pillar.print_max = 10,
-  pillar.print_min = 5
-)
 ```
 
 ```{r child = paste0(path_to_rmd, "/common-setup.Rmd")}
@@ -70,6 +62,17 @@ library(midfielddata)
 library(dplyr)
 library(tidyr)
 library(stringr)
+
+# save current options to restore later
+opt <- options()
+
+# printout options for tibbles
+library(pillar)
+options(
+  pillar.width = Inf,
+  pillar.print_max = 15,
+  pillar.print_min = 6
+)
 ```
 
 
@@ -186,7 +189,7 @@ The working data frames `student, term,` and `degree` should always be present i
 ```{r}
 #| eval: false
 # not run
-post_bacc_terms(term, midfield_rec = degree)
+post_bacc_terms(term, midfield_table = degree)
 post_bacc_terms(term, degree)
 post_bacc_terms(term)
 ```
@@ -198,9 +201,9 @@ In this article, we use the latter form.
 Optional, but convenient for viewing data frames at intermediate stages. We reduce the number of columns to those required by other midfieldr functions plus the key or composite key variables of the data tables. 
 
 ```{r}
-student <- select_records(student)
-term <- select_records(term)
-degree <- select_records(degree)
+student <- select_basic_cols(student)
+term <- select_basic_cols(term)
+degree <- select_basic_cols(degree)
 ```
 
 `look_at()` is a midfieldr convenience function that wraps `base::str()`. 
@@ -277,11 +280,11 @@ degree <- degree |>
   filter(term_cluster != "post-first-degree")
 ```
 
-We can drop the added columns by applying `select_records()` again. 
+We can drop the added columns by applying `select_basic_cols()` again. 
 
 ```{r}
-term <- select_records(term, "t")
-degree <- select_records(degree, "d")
+term <- select_basic_cols(term, "t")
+degree <- select_basic_cols(degree, "d")
 
 look_at(term)
 
@@ -644,21 +647,10 @@ DT
 Stickiness is the ratio of the number of graduates to the number ever enrolled, expressed as a percentage. Stickiness is calculated for each combination of program, race/ethnicity, and sex. 
 
 ```{r}
-#| echo: false
-options(datatable.print.nrows = 50)
-```
-
-```{r}
 DT <- DT |>
   mutate(stickiness = round(100 * grad / ever, 1))
 DT
 ```
-
-```{r}
-#| echo: false
-options(datatable.print.nrows = 5)
-```
-
 
 ## Dissemination
 
@@ -695,11 +687,6 @@ DT
 ```
 
 ### *Table*
-
-```{r}
-#| echo: false
-options(datatable.print.nrows = 12)
-```
 
 Omit columns that won't appear in the table. 
 
@@ -738,12 +725,6 @@ DT_table |>
   )
 ```
 
-```{r}
-#| echo: false
-options(datatable.print.nrows = 5)
-```
-
-
 ### *Chart*
 
 To use `ggplot()`, we want the data in its block-record form. 
@@ -767,7 +748,6 @@ DT_chart <- order_multiway(DT_chart,
 DT_chart
 ```
 
-
 Format the chart for publication. 
 
 ```{r}
@@ -788,9 +768,6 @@ ggplot(DT_chart, aes(x = stickiness, y = people)) +
   labs(x = "Stickiness (%)", y = "") +
   theme_light(base_size = 10)
 ```
-
-
-
 
 ```{r child = paste0(path_to_rmd, "/common-closing.Rmd")}
 ```

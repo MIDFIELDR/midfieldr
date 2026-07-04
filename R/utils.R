@@ -1,6 +1,5 @@
 # Re-export functions, external utilities, and internal utilities
 
-
 # ------------------------------------------ RE-EXPORTS
 
 #' @export
@@ -145,47 +144,47 @@ find_old_cols <- function(dframe, new_cols) {
 #' same name as the added column is overwritten.
 #'
 #' @param dframe Data frame with required variable `mcid.`
-#' @param midfield_rec MIDFIELD `term` data table or equivalent with required
+#' @param midfield_table MIDFIELD `term` data table or equivalent with required
 #' variables `mcid`, `institution`, and `term`.
 #' @noRd
 #'
 add_institution <- function(dframe,
-                            midfield_rec = term) {
+                            midfield_table = term) {
   # remove all keys
   on.exit(setkey(dframe, NULL))
-  on.exit(setkey(midfield_rec, NULL), add = TRUE)
+  on.exit(setkey(midfield_table, NULL), add = TRUE)
 
   # required arguments
   qassert(dframe, "d+")
-  qassert(midfield_rec, "d+")
+  qassert(midfield_table, "d+")
 
   # optional arguments
   # NA
 
   # inputs modified (or not) by reference
   dframe <- copy(as.data.table(dframe)) #  must copy
-  setDT(midfield_rec) # immediately subset, so side-effect OK
+  setDT(midfield_table) # immediately subset, so side-effect OK
 
   # required columns
   assert_names(colnames(dframe),
     must.include = c("mcid")
   )
-  assert_names(colnames(midfield_rec),
+  assert_names(colnames(midfield_table),
     must.include = c("mcid", "institution", "term")
   )
 
   # class of required columns
   qassert(dframe[, mcid], "s+")
-  qassert(midfield_rec[, mcid], "s+")
-  qassert(midfield_rec[, institution], "s+")
-  qassert(midfield_rec[, term], "s+")
+  qassert(midfield_table[, mcid], "s+")
+  qassert(midfield_table[, institution], "s+")
+  qassert(midfield_table[, term], "s+")
 
   # bind names due to NSE notes in R CMD check
   N <- NULL
 
   # do the work
   # Inner join using three columns of term
-  x <- midfield_rec[, .(mcid, institution, term)]
+  x <- midfield_table[, .(mcid, institution, term)]
   y <- unique(dframe[, .(mcid)])
   DT <- y[x, on = .(mcid), nomatch = NULL]
 

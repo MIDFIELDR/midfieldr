@@ -4,43 +4,44 @@
 \alias{data_sufficiency}
 \title{Determine data sufficiency}
 \usage{
-data_sufficiency(dframe, midfield_rec = term)
+data_sufficiency(dframe, midfield_table = term)
 }
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variables: \verb{\{mcid, term_i, timely_term\}}.}
 
-\item{midfield_rec}{MIDFIELD records \emph{term} data frame or data frame extension. Required variables:
+\item{midfield_table}{Data frame or data frame extension of a MIDFIELD \emph{term} table. Required variables:
 \verb{\{mcid, term, institution\}}.}
 }
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved. Groups and keys are not preserved.
+\item Data frame class is preserved.
 \item Rows are filtered for unique \code{mcid} values.
-\item Columns \verb{\{mcid, term_i, timely_term\}} are retained (all other columns
-are dropped). New columns added:
+\item Columns \verb{\{mcid, term_i, timely_term\}} are retained. All
+other columns are dropped and the following columns are added:
 \itemize{
 \item \code{institution.}   Character. Institution in which the student is
-enrolled in the given term. Extracted from \code{midfield_rec.} The
+enrolled in the given term. Extracted from \code{midfield_table.} The
 limits given in the next two columns are specific to the institution.
 \item \code{lower_limit.}   Character. Initial term of an institution's
-data range, encoded \code{YYYYT}. Extracted from \code{midfield_rec.}
+data range, encoded \code{YYYYT}. Extracted from \code{midfield_table.}
 Compared to \code{term_i} to determine the lower-limit exclusion.
 \item \code{upper_limit.}   Character. Final term of an institution's
-data range, encoded \code{YYYYT}. Extracted from \code{midfield_rec.}
+data range, encoded \code{YYYYT}. Extracted from \code{midfield_table.}
 Compared to \code{timely_term} to determine upper-limit exclusion.
 \item \code{data_sufficiency.}   Character. Possible values are "include",
 if the data are sufficient; and "exclude-lower" or "exclude-upper"
 if not, indicating at which boundary of the data range the ambiguity
 occurs.
 }
+\item Groups and keys are not preserved.
 }
 }
 \description{
 To a data frame keyed by student ID, add a column indicating that
 an institution's data range is sufficient to reliably assess a
 student's program completion. Columns of supporting
-information are also added.  Unrelated columns are dropped.
+information are also added. Columns not related to the task are dropped.
 }
 \details{
 Because the time span of MIDFIELD term data varies by institution, each
@@ -68,16 +69,21 @@ can review the findings. After review, we usually delete all columns
 except the IDs, yielding the refined population that was our goal.
 }
 \examples{
-# Start with an excerpt from the student data set 
-dframe <- toy_student[1:10, .(mcid)]
+term <- toy_term
 
-# Timely term column is required to add data sufficiency column
-dframe <- timely_term(dframe, toy_term)
+# Start with a small population 
+x <- toy_student[c(9:15, 342:344), .(mcid)]
+x
 
-# Add data sufficiency column
-data_sufficiency(dframe, toy_term)
+# Timely term column is required
+x <- timely_term(x, term)
+x
 
-# Existing data_sufficiency column, if any, is replaced
-dframe[, data_sufficiency := NA_character_][]
-data_sufficiency(dframe, toy_term)
+# Add data sufficiency column, columns not used are dropped
+x <- data_sufficiency(x, term)
+x
+
+# Existing data sufficiency column (if any) is replaced
+x[, data_sufficiency := NA_character_][]
+data_sufficiency(x, term)
 }

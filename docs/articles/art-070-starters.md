@@ -157,8 +157,8 @@ source_student <- copy(student)
 source_term <- copy(term)
 
 # Optional. Select variables required by midfieldr functions
-student <- select_records(source_student)
-term <- select_records(source_term)
+student <- select_basic_cols(source_student)
+term <- select_basic_cols(source_term)
 ```
 
 *Initialize.*   Use the `term` and `student` data tables to obtain a
@@ -482,63 +482,6 @@ DT
 #> 4048: MCID3112619666      ME
 ```
 
-## Reusable code
-
-*Preparation.*   The data frame of baseline IDs is the intake for this
-section.
-
-``` r
-
-DT <- copy(baseline_mcid)
-```
-
-*Starters.*   Summary code chunks for ready reference.
-
-``` r
-
-# Isolate starting term
-DT <- term[DT, .(mcid, term, cip6), on = c("mcid")]
-DT <- DT[!cip6 %like% "999999"]
-setorderv(DT, cols = c("mcid", "term"))
-DT <- DT[, .SD[term == min(term)], by = "mcid"]
-DT <- DT[, .(mcid, cip6)]
-DT <- unique(DT)
-```
-
-For starters without FYE, finish by renaming `cip6`
-
-``` r
-
-# Not run
-DT <- DT[, .(mcid, start = cip6)]
-```
-
-For starters with FYE, continue with FYE proxies.
-
-``` r
-
-DT <- fye_proxy[DT, .(mcid, cip6, proxy), on = c("mcid")]
-DT[, start := fcase(
-  cip6 == "140102", proxy,
-  cip6 != "140102", cip6
-)]
-DT <- DT[, .(mcid, start)]
-
-# Filter by program on start
-join_labels <- copy(study_programs)
-join_labels <- join_labels[, .(program, start = cip6)]
-DT <- join_labels[DT, on = c("start"), nomatch = NULL]
-DT <- DT[, .(mcid, program)]
-DT <- unique(DT)
-```
-
-------------------------------------------------------------------------
-
-[◁ FYE
-proxies](https://midfieldr.github.io/midfieldr/articles/art-060-fye-proxies.md)
-   [▲ top of page](#top)    [Graduates
-▷](https://midfieldr.github.io/midfieldr/articles/art-080-graduates.md)
-
-------------------------------------------------------------------------
+[▲ top of page](#top)
 
 ## References

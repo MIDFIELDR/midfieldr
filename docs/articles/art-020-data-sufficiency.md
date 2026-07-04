@@ -210,7 +210,7 @@ started](https://midfieldr.github.io/midfieldr/articles/art-000-getting-started.
 source_term <- copy(term)
 
 # Select variables required by midfieldr functions
-term <- select_records(source_term)
+term <- select_basic_cols(source_term)
 ```
 
 *Initialize.*   Assign a working data frame.
@@ -269,7 +269,7 @@ every student.
 - **`dframe`**   Data frame of student-level records keyed by student
   ID. Required variable (column) is `mcid`.
 
-- **`midfield_rec`**   Data frame of student-level term observations
+- **`midfield_table`**   Data frame of student-level term observations
   keyed by student ID. Default is `term`. Required variables (columns)
   are `mcid`, `term`, and `level`.
 
@@ -287,12 +287,12 @@ results,
 ``` r
 
 # Required arguments in order and explicitly named
-x <- timely_term(dframe = DT, midfield_rec = term)
+x <- timely_term(dframe = DT, midfield_table = term)
 
 # Required arguments in order, but not named
 y <- timely_term(DT, term)
 
-# Using the implicit default for the midfield_rec argument
+# Using the implicit default for the midfield_table argument
 z <- timely_term(DT)
 
 # Demonstrate equivalence
@@ -380,20 +380,20 @@ like this,
 toy_mcid <- toy_student[, .(mcid)]
 
 # Source data table names that differ from the defaults
-toy_DT <- timely_term(dframe = toy_mcid, midfield_rec = toy_term)
+toy_DT <- timely_term(dframe = toy_mcid, midfield_table = toy_term)
 
 # Equivalently
 toy_DT <- timely_term(toy_mcid, toy_term)
 toy_DT
 #>                mcid term_i       level_i adj_span timely_term
 #>              <char> <char>        <char>    <num>      <char>
-#>   1: MCID3111158953  19881 01 First-year        6       19933
-#>   2: MCID3111159270  19881 01 First-year        6       19933
-#>   3: MCID3111160513  19881 01 First-year        6       19933
+#>   1: MCID3111142897  19881 01 First-year        6       19933
+#>   2: MCID3111157634  19881 01 First-year        6       19933
+#>   3: MCID3111158724  19881 01 First-year        6       19933
 #>  ---                                                         
-#> 148: MCID3112881399  20181 01 First-year        6       20233
-#> 149: MCID3112882995  20181 01 First-year        6       20233
-#> 150: MCID3112884375  20181 01 First-year        6       20233
+#> 349: MCID3112868072  20171 01 First-year        6       20223
+#> 350: MCID3112869843  20173 01 First-year        6       20231
+#> 351: MCID3112885339  20181 01 First-year        6       20233
 ```
 
 ### Silent overwriting
@@ -419,13 +419,13 @@ toy_DT <- timely_term(toy_DT, toy_term)
 toy_DT
 #>                mcid term_i       level_i adj_span timely_term
 #>              <char> <char>        <char>    <num>      <char>
-#>   1: MCID3111158953  19881 01 First-year        6       19933
-#>   2: MCID3111159270  19881 01 First-year        6       19933
-#>   3: MCID3111160513  19881 01 First-year        6       19933
+#>   1: MCID3111142897  19881 01 First-year        6       19933
+#>   2: MCID3111157634  19881 01 First-year        6       19933
+#>   3: MCID3111158724  19881 01 First-year        6       19933
 #>  ---                                                         
-#> 148: MCID3112881399  20181 01 First-year        6       20233
-#> 149: MCID3112882995  20181 01 First-year        6       20233
-#> 150: MCID3112884375  20181 01 First-year        6       20233
+#> 349: MCID3112868072  20171 01 First-year        6       20223
+#> 350: MCID3112869843  20173 01 First-year        6       20231
+#> 351: MCID3112885339  20181 01 First-year        6       20233
 ```
 
 ## `data_sufficiency()`
@@ -440,7 +440,7 @@ range.
 - **`dframe`**   Data frame of student-level records keyed by student
   ID. Required variables are `mcid` and `timely_term`.
 
-- **`midfield_rec`**   Data frame of student-level term observations
+- **`midfield_table`**   Data frame of student-level term observations
   keyed by student ID. Default is `term`. Required variables are `mcid`,
   `institution`, and `term`.
 
@@ -450,12 +450,12 @@ results,
 ``` r
 
 # Required arguments in order and explicitly named
-x <- data_sufficiency(dframe = DT, midfield_rec = term)
+x <- data_sufficiency(dframe = DT, midfield_table = term)
 
 # Required arguments in order, but not named
 y <- data_sufficiency(DT, term)
 
-# Using the implicit default for the midfield_rec argument
+# Using the implicit default for the midfield_table argument
 z <- data_sufficiency(DT)
 
 # Demonstrate equivalence
@@ -490,24 +490,24 @@ DT <- DT[, .(mcid, term_i, timely_term)]
 # Add data sufficiency column and supporting variables
 DT <- data_sufficiency(DT, term)
 DT
-#>                   mcid term_i timely_term   institution lower_limit upper_limit
-#>                 <char> <char>      <char>        <char>      <char>      <char>
-#>      1: MCID3111142225  19881       19933 Institution B       19881       20181
-#>      2: MCID3111142283  19881       19933 Institution J       19881       20096
-#>      3: MCID3111142283  19881       19933 Institution J       19881       20096
-#>     ---                                                                        
-#> 639913: MCID3112898894  20181       20233 Institution B       19881       20181
-#> 639914: MCID3112898895  20181       20233 Institution B       19881       20181
-#> 639915: MCID3112898940  20181       20233 Institution B       19881       20181
-#>         data_sufficiency
-#>                   <char>
-#>      1:    exclude-lower
-#>      2:    exclude-lower
-#>      3:    exclude-lower
-#>     ---                 
-#> 639913:    exclude-upper
-#> 639914:    exclude-upper
-#> 639915:    exclude-upper
+#>                  mcid term_i timely_term   institution lower_limit upper_limit
+#>                <char> <char>      <char>        <char>      <char>      <char>
+#>     1: MCID3111142225  19881       19933 Institution B       19881       20181
+#>     2: MCID3111142283  19881       19933 Institution J       19881       20096
+#>     3: MCID3111142290  19881       19933 Institution J       19881       20096
+#>    ---                                                                        
+#> 97553: MCID3112898894  20181       20233 Institution B       19881       20181
+#> 97554: MCID3112898895  20181       20233 Institution B       19881       20181
+#> 97555: MCID3112898940  20181       20233 Institution B       19881       20181
+#>        data_sufficiency
+#>                  <char>
+#>     1:    exclude-lower
+#>     2:    exclude-lower
+#>     3:    exclude-lower
+#>    ---                 
+#> 97553:    exclude-upper
+#> 97554:    exclude-upper
+#> 97555:    exclude-upper
 ```
 
 Similar to the details described in the previous section,
@@ -544,19 +544,9 @@ DT[mcid == "MCID3112785480"]
 #>              mcid term_i timely_term   institution lower_limit upper_limit
 #>            <char> <char>      <char>        <char>      <char>      <char>
 #> 1: MCID3112785480  20071       20123 Institution C       19901       20154
-#> 2: MCID3112785480  20071       20123 Institution C       19901       20154
-#> 3: MCID3112785480  20071       20123 Institution C       19901       20154
-#> 4: MCID3112785480  20071       20123 Institution C       19901       20154
-#> 5: MCID3112785480  20071       20123 Institution C       19901       20154
-#> 6: MCID3112785480  20071       20123 Institution C       19901       20154
 #>    data_sufficiency
 #>              <char>
 #> 1:          include
-#> 2:          include
-#> 3:          include
-#> 4:          include
-#> 5:          include
-#> 6:          include
 ```
 
 *Example 4.*   Exemplifies “Student B” in Figure 1. The student attends
@@ -572,13 +562,9 @@ DT[mcid == "MCID3111170322"]
 #>              mcid term_i timely_term   institution lower_limit upper_limit
 #>            <char> <char>      <char>        <char>      <char>      <char>
 #> 1: MCID3111170322  20133       20191 Institution B       19881       20181
-#> 2: MCID3111170322  20133       20191 Institution B       19881       20181
-#> 3: MCID3111170322  20133       20191 Institution B       19881       20181
 #>    data_sufficiency
 #>              <char>
 #> 1:    exclude-upper
-#> 2:    exclude-upper
-#> 3:    exclude-upper
 ```
 
 *Example 5.*   Exemplifies “Student C” in Figure 2. The student attends
@@ -589,53 +575,14 @@ term is Fall 1988 so the 1988 lower-limit exclusion applies.
 
 # Display one student by ID
 DT[mcid == "MCID3112056754"]
-#>               mcid term_i timely_term   institution lower_limit upper_limit
-#>             <char> <char>      <char>        <char>      <char>      <char>
-#>  1: MCID3112056754  19881       19933 Institution J       19881       20096
-#>  2: MCID3112056754  19881       19933 Institution J       19881       20096
-#>  3: MCID3112056754  19881       19933 Institution J       19881       20096
-#> ---                                                                        
-#> 18: MCID3112056754  19881       19933 Institution J       19881       20096
-#> 19: MCID3112056754  19881       19933 Institution J       19881       20096
-#> 20: MCID3112056754  19881       19933 Institution J       19881       20096
-#>     data_sufficiency
-#>               <char>
-#>  1:    exclude-lower
-#>  2:    exclude-lower
-#>  3:    exclude-lower
-#> ---                 
-#> 18:    exclude-lower
-#> 19:    exclude-lower
-#> 20:    exclude-lower
+#>              mcid term_i timely_term   institution lower_limit upper_limit
+#>            <char> <char>      <char>        <char>      <char>      <char>
+#> 1: MCID3112056754  19881       19933 Institution J       19881       20096
+#>    data_sufficiency
+#>              <char>
+#> 1:    exclude-lower
 ```
 
-## Reusable code
-
-*Preparation.*   The `term` data table is the intake for this section.
-
-``` r
-
-DT <- copy(term)
-```
-
-*Data sufficiency.*   A summary code chunk for ready reference.
-
-``` r
-
-# Filter for data sufficiency, output unique IDs
-DT <- timely_term(DT, term)
-DT <- data_sufficiency(DT, term)
-DT <- DT[data_sufficiency == "include", .(mcid)]
-DT <- unique(DT)
-```
-
-------------------------------------------------------------------------
-
-[◁ Planning a
-workflow](https://midfieldr.github.io/midfieldr/articles/art-010-planning.md)
-   [▲ top of page](#top)    [Degree seeking
-▷](https://midfieldr.github.io/midfieldr/articles/art-030-degree-seeking.md)
-
-------------------------------------------------------------------------
+[▲ top of page](#top)
 
 ## References

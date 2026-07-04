@@ -74,16 +74,16 @@ table.
 DT <- fread(path_to_csv_file, colClasses = "character")
 
 # View the result
-str(DT, strict.width = "cut", give.attr = FALSE, vec.len = 12)
+look_at(DT)
 #> Classes 'data.table' and 'data.frame':   2318 obs. of  8 variables:
-#>  $ CIPFamily      : chr  "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "0"..
-#>  $ CIPCode        : chr  "01" "01.00" "01.0000" "01.01" "01.0101" "01.0102" ""..
+#>  $ CIPFamily      : chr  "01" "01" "01" "01" ...
+#>  $ CIPCode        : chr  "01" "01.00" "01.0000" "01.01" ...
 #>  $ Action         : chr  "No substantive changes" "No substantive changes" "N"..
-#>  $ TextChange     : chr  "no" "no" "no" "no" "no" "no" "no" "no" "no" "no" "n"..
+#>  $ TextChange     : chr  "no" "no" "no" "no" ...
 #>  $ CIPTitle       : chr  "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SC"..
 #>  $ CIPDefinition  : chr  "Instructional programs that focus on agriculture an"..
-#>  $ CrossReferences: chr  "" "" "14.0301 - Agricultural Engineering." "" "" """..
-#>  $ Examples       : chr  "" "" "" "" "" "Examples: - Agricultural Systems Man"..
+#>  $ CrossReferences: chr  "" "" "14.0301 - Agricultural Engineering." "" ...
+#>  $ Examples       : chr  "" "" "" "" ...
 ```
 
 To construct our own CIP data set, we need three columns:
@@ -95,10 +95,10 @@ cols_we_want <- c("CIPFamily", "CIPCode", "CIPTitle")
 DT <- DT[, ..cols_we_want]
 
 # View the result
-str(DT, strict.width = "cut", give.attr = FALSE, vec.len = 12)
+look_at(DT)
 #> Classes 'data.table' and 'data.frame':   2318 obs. of  3 variables:
-#>  $ CIPFamily: chr  "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01"..
-#>  $ CIPCode  : chr  "01" "01.00" "01.0000" "01.01" "01.0101" "01.0102" "01.010"..
+#>  $ CIPFamily: chr  "01" "01" "01" "01" ...
+#>  $ CIPCode  : chr  "01" "01.00" "01.0000" "01.01" ...
 #>  $ CIPTitle : chr  "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES"..
 ```
 
@@ -118,23 +118,15 @@ setorderv(x, "CIPCode")
 
 # View the result
 x
-#>     CIPFamily CIPCode                                             CIPTitle
-#>        <char>  <char>                                               <char>
-#>  1:        04      04                   ARCHITECTURE AND RELATED SERVICES.
-#>  2:        04   04.10                             Real Estate Development.
-#>  3:        05 05.0117                                      Baltic Studies.
-#>  4:        09 09.0102                    Mass Communication/Media Studies.
-#>  5:        10   10.02 Audiovisual Communications Technologies/Technicians.
-#>  6:        10 10.0302                                 Printing Management.
-#>  7:        11 11.0701                                    Computer Science.
-#>  8:        12      12                      PERSONAL AND CULINARY SERVICES.
-#>  9:        13 13.0301                          Curriculum and Instruction.
-#> 10:        13 13.0499   Educational Administration and Supervision, Other.
-#> 11:        13   13.05              Educational/Instructional Media Design.
-#> 12:        13   13.11           Student Counseling and Personnel Services.
-#> 13:        13 13.1209       Kindergarten/Preschool Education and Teaching.
-#> 14:        13 13.1312                             Music Teacher Education.
-#> 15:        13 13.1319                         Technical Teacher Education.
+#>     CIPFamily CIPCode                                       CIPTitle
+#>        <char>  <char>                                         <char>
+#>  1:        04      04             ARCHITECTURE AND RELATED SERVICES.
+#>  2:        04   04.10                       Real Estate Development.
+#>  3:        05 05.0117                                Baltic Studies.
+#> ---                                                                 
+#> 13:        13 13.1209 Kindergarten/Preschool Education and Teaching.
+#> 14:        13 13.1312                       Music Teacher Education.
+#> 15:        13 13.1319                   Technical Teacher Education.
 ```
 
 Viewing the result, we observe:
@@ -214,12 +206,12 @@ expected to be 2, 4, or 6.
 DT[, N_digits := str_length(CIPCode)]
 
 # View result
-str(DT, strict.width = "cut", give.attr = FALSE, vec.len = 12)
+look_at(DT)
 #> Classes 'data.table' and 'data.frame':   2318 obs. of  4 variables:
-#>  $ CIPFamily: chr  "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01"..
-#>  $ CIPCode  : chr  "01" "0100" "010000" "0101" "010101" "010102" "010103" "01"..
+#>  $ CIPFamily: chr  "01" "01" "01" "01" ...
+#>  $ CIPCode  : chr  "01" "0100" "010000" "0101" ...
 #>  $ CIPTitle : chr  "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES"..
-#>  $ N_digits : int  2 4 6 4 6 6 6 6 6 6 6 4 6 6 6 6 4 6 6 6 6 6 6 6 6 6 4 6 4 6..
+#>  $ N_digits : int  2 4 6 4 6 6 6 6 6 6 ...
 
 # Confirm 2, 4, or 6 digits
 unique(DT$N_digits)
@@ -237,10 +229,10 @@ DT2 <- DT[N_digits == 2, .(CIPFamily,
   cip2name = CIPTitle
 )]
 # View the result
-str(DT2, strict.width = "cut", give.attr = FALSE, vec.len = 12)
+look_at(DT2)
 #> Classes 'data.table' and 'data.frame':   48 obs. of  3 variables:
-#>  $ CIPFamily: chr  "01" "03" "04" "05" "09" "10" "11" "12" "13" "14" "15" "16"..
-#>  $ cip2     : chr  "01" "03" "04" "05" "09" "10" "11" "12" "13" "14" "15" "16"..
+#>  $ CIPFamily: chr  "01" "03" "04" "05" ...
+#>  $ cip2     : chr  "01" "03" "04" "05" ...
 #>  $ cip2name : chr  "AGRICULTURE, AGRICULTURE OPERATIONS, AND RELATED SCIENCES"..
 ```
 
@@ -256,7 +248,7 @@ DT4 <- DT[N_digits == 4, .(CIPFamily,
   cip4name = CIPTitle
 )]
 # View the result
-str(DT4, strict.width = "cut", give.attr = FALSE)
+look_at(DT4)
 #> Classes 'data.table' and 'data.frame':   422 obs. of  4 variables:
 #>  $ CIPFamily: chr  "01" "01" "01" "01" ...
 #>  $ cip2     : chr  "01" "01" "01" "01" ...
@@ -277,12 +269,12 @@ DT6 <- DT[N_digits == 6, .(CIPFamily,
   cip6name = CIPTitle
 )]
 # View the result
-str(DT6, strict.width = "cut", give.attr = FALSE, vec.len = 12)
+look_at(DT6)
 #> Classes 'data.table' and 'data.frame':   1848 obs. of  5 variables:
-#>  $ CIPFamily: chr  "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01"..
-#>  $ cip2     : chr  "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01" "01"..
-#>  $ cip4     : chr  "0100" "0101" "0101" "0101" "0101" "0101" "0101" "0101" "0"..
-#>  $ cip6     : chr  "010000" "010101" "010102" "010103" "010104" "010105" "010"..
+#>  $ CIPFamily: chr  "01" "01" "01" "01" ...
+#>  $ cip2     : chr  "01" "01" "01" "01" ...
+#>  $ cip4     : chr  "0100" "0101" "0101" "0101" ...
+#>  $ cip6     : chr  "010000" "010101" "010102" "010103" ...
 #>  $ cip6name : chr  "Agriculture, General" "Agricultural Business and Manageme"..
 ```
 
@@ -457,40 +449,28 @@ DT
 #>    1:     01 Agriculture, Agriculture Operations, and Related Sciences   0100
 #>    2:     01 Agriculture, Agriculture Operations, and Related Sciences   0101
 #>    3:     01 Agriculture, Agriculture Operations, and Related Sciences   0101
-#>    4:     01 Agriculture, Agriculture Operations, and Related Sciences   0101
-#>    5:     01 Agriculture, Agriculture Operations, and Related Sciences   0101
 #>   ---                                                                        
-#> 1845:     60                                        Residency Programs   6005
-#> 1846:     60                                        Residency Programs   6005
 #> 1847:     60                                        Residency Programs   6006
 #> 1848:     60                                        Residency Programs   6006
 #> 1849:     99                         Undecided/Unspecified (non-IPEDS)   9999
-#>                                                     cip4name   cip6
-#>                                                       <char> <char>
-#>    1:                                   Agriculture, General 010000
-#>    2:                   Agricultural Business and Management 010101
-#>    3:                   Agricultural Business and Management 010102
-#>    4:                   Agricultural Business and Management 010103
-#>    5:                   Agricultural Business and Management 010104
-#>   ---                                                              
-#> 1845: Medical Residency Programs - Subspecialty Certificates 600584
-#> 1846: Medical Residency Programs - Subspecialty Certificates 600599
-#> 1847:                  Podiatric Medicine Residency Programs 600601
-#> 1848:                  Podiatric Medicine Residency Programs 600602
-#> 1849:                      Undecided/Unspecified (non-IPEDS) 999999
-#>                                                            cip6name
-#>                                                              <char>
-#>    1:                                          Agriculture, General
-#>    2:                 Agricultural Business and Management, General
-#>    3:                 Agribusiness/Agricultural Business Operations
-#>    4:                                        Agricultural Economics
-#>    5:                                Farm/Farm and Ranch Management
-#>   ---                                                              
-#> 1845:                          Vascular Neurology Residency Program
-#> 1846: Medical Residency Programs - Subspecialty Certificates, Other
-#> 1847:         Podiatric Medicine and Surgery - 24 Residency Program
-#> 1848:         Podiatric Medicine and Surgery - 36 Residency Program
-#> 1849:                             Undecided/Unspecified (non-IPEDS)
+#>                                    cip4name   cip6
+#>                                      <char> <char>
+#>    1:                  Agriculture, General 010000
+#>    2:  Agricultural Business and Management 010101
+#>    3:  Agricultural Business and Management 010102
+#>   ---                                             
+#> 1847: Podiatric Medicine Residency Programs 600601
+#> 1848: Podiatric Medicine Residency Programs 600602
+#> 1849:     Undecided/Unspecified (non-IPEDS) 999999
+#>                                                    cip6name
+#>                                                      <char>
+#>    1:                                  Agriculture, General
+#>    2:         Agricultural Business and Management, General
+#>    3:         Agribusiness/Agricultural Business Operations
+#>   ---                                                      
+#> 1847: Podiatric Medicine and Surgery - 24 Residency Program
+#> 1848: Podiatric Medicine and Surgery - 36 Residency Program
+#> 1849:                     Undecided/Unspecified (non-IPEDS)
 ```
 
 *Verify prepared data.*   `cip2010`, included with midfieldr, contains
@@ -557,14 +537,7 @@ two datasets. The other program names in this major are identical.
 - 140802 Geotechnical Engineering (`cip`)
 - 140802 Geotechnical and Geoenvironmental Engineering (`cip2010`)
 
-------------------------------------------------------------------------
-
-[◁
-Programs](https://midfieldr.github.io/midfieldr/articles/art-040-programs.md)
-   [▲ top of page](#top)    [Blocs
-▷](https://midfieldr.github.io/midfieldr/articles/art-050-blocs.md)
-
-------------------------------------------------------------------------
+[▲ top of page](#top)
 
 ## References
 

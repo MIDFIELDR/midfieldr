@@ -12,10 +12,10 @@ prep_fye_mice(
 )
 }
 \arguments{
-\item{midfield_student}{MIDFIELD records \emph{student} data frame or data frame extension. Required variables:
+\item{midfield_student}{Data frame or data frame extension of a MIDFIELD \emph{student} table. Required variables:
 \verb{\{mcid, race, sex\}.}}
 
-\item{midfield_term}{MIDFIELD records \emph{term} data frame or data frame extension. Required variables:
+\item{midfield_term}{Data frame or data frame extension of a MIDFIELD \emph{term} table. Required variables:
 \verb{\{mcid, term, cip6, institution\}.}}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
@@ -27,29 +27,31 @@ regular expressions are prohibited. Non-engineering codes---those that do
 not start with 14---produce an error.}
 }
 \value{
-Data frame conditioned for later use as an input to the mice R
-package for multiple imputation. The data frame comprises one row for every
-FYE student, first-term and migrator. Grouping structures are not preserved.
-The columns returned are:
-\describe{
-\item{\code{mcid}}{Character, anonymized student identifier. Returned
-as-is.}
-\item{\code{race}}{Factor, race/ethnicity as self-reported by the
-student. An imputation predictor variable.}
-\item{\code{sex}}{Factor, sex as self-reported by the
-student. An imputation predictor variable.}
-\item{\code{institution}}{Factor, anonymized institution name. An
-imputation predictor variable.}
-\item{\code{proxy}}{Factor, 6-digit CIP code of a student's known,
+Data frame with the following properties:
+\itemize{
+\item Data frame class is preserved.
+\item Rows: One row for every FYE student from the \code{term} input data frame.
+\item Columns: Conditioned for later use as an input to the mice R
+package for multiple imputation as follows:
+\itemize{
+\item \code{mcid}   Character, anonymized student identifier.
+\item \code{race}   Factor, race/ethnicity from the \code{student} input data
+frame. An imputation predictor variable.
+\item \code{sex}   Factor, sex from the \code{student} input data
+frame. An imputation predictor variable.
+\item \code{institution}   Factor, anonymized institution name from the
+\code{term} data frame. An imputation predictor variable.
+\item \code{proxy}   Factor, 6-digit CIP code of a student's known,
 post-FYE engineering program or NA representing missing
-values to be imputed.}
+values to be imputed.
+}
 }
 }
 \description{
 Constructs a data frame of student-level records of First-Year Engineering
 (FYE) programs and conditions the data for later use as an input to the mice
 R package for multiple imputation. Sets up three variables as predictors
-(institution, race/ethnicity, and sex) and one variable to be estimated
+(institution, race/ethnicity, and sex) and one variable to be imputed
 (program CIP code).
 }
 \details{

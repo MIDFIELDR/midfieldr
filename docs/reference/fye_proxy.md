@@ -18,11 +18,12 @@ fye_proxy
 
 - `mcid`:
 
-  Character, de-identified student ID. Key column.
+  Character. Anonymized student identifier that connects the four data
+  tables, e.g., "MCID3111142897."
 
 - `proxy`:
 
-  Character, 6-digit CIP code of the estimated proxy program.
+  Character. The 6-digit CIP code of the estimated proxy program.
 
 ## Details
 

@@ -17,7 +17,7 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
   )
 
   # original function calls the new function
-  data_sufficiency(dframe = dframe, midfield_rec = midfield_term)
+  data_sufficiency(dframe = dframe, midfield_table = midfield_term)
 }
 NULL
 
@@ -30,7 +30,7 @@ NULL
 #' To a data frame keyed by student ID, add a column indicating that
 #' an institution's data range is sufficient to reliably assess a
 #' student's program completion. Columns of supporting
-#' information are also added.  Unrelated columns are dropped.
+#' information are also added. Columns not related to the task are dropped.
 #'
 #' Because the time span of MIDFIELD term data varies by institution, each
 #' has their own lower and upper bounds. When assessing a student's program
@@ -58,32 +58,33 @@ NULL
 #'
 #' @param dframe `r dframe` Required variables: `{mcid, term_i, timely_term}`.
 #'
-#' @param midfield_rec `r midfield_x("*term*")` Required variables:
+#' @param midfield_table `r midfield_x("*term*")` Required variables:
 #'        `{mcid, term, institution}`.
 #'
 #' @returns Data frame with the following properties:
-#' * Data frame class is preserved. Groups and keys are not preserved.
+#' * Data frame class is preserved.
 #' * Rows are filtered for unique `mcid` values.
-#' * Columns `{mcid, term_i, timely_term}` are retained (all other columns
-#'   are dropped). New columns added:
+#' * Columns `{mcid, term_i, timely_term}` are retained. All
+#'   other columns are dropped and the following columns are added:
 #'   - `institution.` &nbsp; Character. Institution in which the student is
-#'      enrolled in the given term. Extracted from `midfield_rec.` The
+#'      enrolled in the given term. Extracted from `midfield_table.` The
 #'      limits given in the next two columns are specific to the institution.
 #'   - `lower_limit.` &nbsp; Character. Initial term of an institution's
-#'      data range, encoded `YYYYT`. Extracted from `midfield_rec.`
+#'      data range, encoded `YYYYT`. Extracted from `midfield_table.`
 #'      Compared to `term_i` to determine the lower-limit exclusion.
 #'   - `upper_limit.` &nbsp; Character. Final term of an institution's
-#'      data range, encoded `YYYYT`. Extracted from `midfield_rec.`
+#'      data range, encoded `YYYYT`. Extracted from `midfield_table.`
 #'      Compared to `timely_term` to determine upper-limit exclusion.
 #'   - `data_sufficiency.` &nbsp; Character. Possible values are "include",
 #'      if the data are sufficient; and "exclude-lower" or "exclude-upper"
 #'      if not, indicating at which boundary of the data range the ambiguity
 #'      occurs.
+#' * Groups and keys are not preserved.
 #'
 #' @example man/examples/exa_data_sufficiency.R
 #' @export
 #'
-data_sufficiency <- function(dframe, midfield_rec = term) {
+data_sufficiency <- function(dframe, midfield_table = term) {
   # define required columns and variables to be added
   dframe_vars <- c("mcid", "term_i", "timely_term")
   record_vars <- c("mcid", "term", "institution")
@@ -94,18 +95,18 @@ data_sufficiency <- function(dframe, midfield_rec = term) {
 
   # data frame assessment
   qassert(dframe, "d+")
-  qassert(midfield_rec, "d+")
+  qassert(midfield_table, "d+")
 
   # required columns
   assert_names(colnames(dframe), must.include = dframe_vars)
-  assert_names(colnames(midfield_rec), must.include = record_vars)
+  assert_names(colnames(midfield_table), must.include = record_vars)
 
   # class of required columns
   for (i in seq_along(dframe_vars)) {
     qassert(dframe[[dframe_vars[i]]], "s+")
   }
   for (i in seq_along(record_vars)) {
-    qassert(midfield_rec[[record_vars[i]]], "s+")
+    qassert(midfield_table[[record_vars[i]]], "s+")
   }
 
   # ---------- preparation
@@ -116,7 +117,7 @@ data_sufficiency <- function(dframe, midfield_rec = term) {
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   setDT(dframe)
-  reqd_record <- copy(midfield_rec)
+  reqd_record <- copy(midfield_table)
   setDT(reqd_record)
 
   # subset required variables
@@ -166,6 +167,7 @@ data_sufficiency <- function(dframe, midfield_rec = term) {
 
   dframe <- dframe[, .SD, .SDcols = return_vars]
   setkey(dframe, NULL)
+  dframe <- unique(dframe)
   setattr(dframe, "class", prior_class)
   dframe[]
 }
