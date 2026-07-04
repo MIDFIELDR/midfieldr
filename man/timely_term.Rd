@@ -9,14 +9,14 @@ timely_term(dframe, midfield_table = term, ..., sched_span = NULL, span = NULL)
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variable: \code{{mcid}}.}
 
-\item{midfield_table}{Data frame or data frame extension of a MIDFIELD \emph{term} table. Required variables:
+\item{midfield_table}{MIDFIELD  \emph{\strong{term}}  dataset (data frame or data frame extension). Required variables:
 \verb{\{mcid, term, level\}}.}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
 referable only by name.}
 
-\item{sched_span}{Integer scalar (default 4), the number of years an institution
-officially schedules for completing a program.}
+\item{sched_span}{Integer scalar (default 4), the number of years an
+institution officially schedules for completing a program.}
 
 \item{span}{Integer scalar (default 6), number of years to define timely
 completion, typically 4, 6, or 8 years (100\%, 150\%, 200\% respectively
@@ -26,7 +26,7 @@ of \code{sched_span}).}
 Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved.
-\item Rows are filtered for uniqueness.
+\item Rows are filtered for uniqueness. Row order is not modified.
 \item Columns are not modified except any existing column with the same name
 as one of the new columns is dropped. The new columns are:
 \itemize{
@@ -85,10 +85,25 @@ x <- toy_student[c(51:55, 346:350), .(mcid)]
 x
 
 # Add timely term
-x <- timely_term(x, term)
+x <- timely_term(x, midfield_table = term)
 x
 
 # Existing timely term column (if any) is replaced
 x[, timely_term := NA_character_][]
-timely_term(x, term)
+timely_term(x, midfield_table = term)
+
+# Columns not involved in the function are not modified
+# For example, here we add "sex" to dframe
+x <- toy_student[c(51:55, 346:350), .(mcid, sex)]
+x
+x <- timely_term(dframe = x, midfield_table = term)
+x
+
+# A variable in dframe with the same name as a variable  
+# being joined from midfield_table is not affected. 
+# For example, here we add a "term" column to x
+x <- x[, .(mcid, sex, term = term_i)]
+x
+x <- timely_term(dframe = x, midfield_table = term)
+x
 }

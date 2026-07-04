@@ -53,9 +53,10 @@ NULL
 #' the `col_pattern` argument. In all cases, unmatched search strings are
 #' silently ignored.
 #'
-#' @param dframe Data frame of student records from which columns are selected.
-#'        Expected choices are `student`, `term`, `course`, `degree` or their
-#'        equivalent.
+#' @param dframe MIDFIELD ***student***, ***term***, ***course***, or 
+#'        ***degree*** dataset (data frame or data frame extension) or a data 
+#'        frame derived from one of these. 
+#' 
 #' @param col_pattern Character vector containing strings or regular
 #'        expressions to be matched or partially matched to the column
 #'        names of `dframe`.

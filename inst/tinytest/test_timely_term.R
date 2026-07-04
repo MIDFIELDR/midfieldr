@@ -136,6 +136,13 @@ test_timely_term <- function() {
     return_vars <- c(x_vars, added_vars)
     expect_equal(return_vars, colnames(y))
 
+    # row order is maintained
+    x <- copy(test_DT)
+    setorderv(x, c("level", "term"))
+    x[, rownum := .I]
+    y <- timely_term(x, term)
+    expect_equal(x$rownum, y$rownum)
+    
     # correct answers naming and not naming arguments
     x <- timely_term(dframe = dframe, midfield_table = term)
     y <- timely_term(dframe, term)

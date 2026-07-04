@@ -76,7 +76,7 @@ NULL
 #'
 #' @param dframe `r dframe` Required variable: `{mcid}`.
 #'
-#' @param midfield_table `r midfield_x("*term*")` Required variables:
+#' @param midfield_table `r midfield_x("***term***")` Required variables:
 #'        `{mcid, term, level}`.
 #'
 #' @param ... `r param_dots`
@@ -90,7 +90,7 @@ NULL
 #'
 #' @returns Data frame with the following properties:
 #' * Data frame class is preserved.
-#' * Rows are filtered for uniqueness.
+#' * Rows are filtered for uniqueness. Row order is not modified. 
 #' * Columns are not modified except any existing column with the same name
 #'   as one of the new columns is dropped. The new columns are:
 #'   - `term_i.` &nbsp; Initial term of a student's longitudinal record,
@@ -116,10 +116,6 @@ timely_term <- function(dframe,
   reqd_dframe_vars <- c("mcid")
   reqd_table_vars <- c("mcid", "term", "level")
   added_vars <- c("term_i", "level_i", "adj_span", "timely_term")
-
-  # cols to be added are removed from existing dframe col names
-  return_dframe_vars <- setdiff(colnames(dframe), added_vars)
-  return_vars <- c(return_dframe_vars, added_vars)
 
   # ---------- base R checks (all data frame classes)
   #
@@ -166,6 +162,7 @@ timely_term <- function(dframe,
   # bind names due to NSE notes in R CMD check
   adj_span <- NULL
   delta <- NULL
+  idx <- NULL
   level_i <- NULL
   term_i <- NULL
   timely_term <- NULL
@@ -173,14 +170,22 @@ timely_term <- function(dframe,
 
   # ---------- do the work
 
+  # add temp col to restore row order
+  dframe[, idx := .I]
+  
+  # remove new column names from existing dframe column names (if any)
+  dframe_vars <- setdiff(colnames(dframe), added_vars)
+  return_vars <- c(dframe_vars, added_vars)
+  
   # subset required variables
-  dframe <- dframe[, .SD, .SDcols = return_dframe_vars]
+  dframe <- dframe[, .SD, .SDcols = dframe_vars]
   dframe <- unique(dframe, na.rm = TRUE)
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
   midf_table <- unique(midf_table, na.rm = TRUE)
 
-  # inner-join IDs and term vars
-  x <- midf_table[dframe, on = "mcid", nomatch = NULL]
+  # inner-join dframe ID-only with required table vars
+  x <- unique(dframe[, .(mcid)])
+  x <- midf_table[x, on = "mcid", nomatch = NULL]
   x <- unique(x)
 
   # keep the row of the first term, lowest level
@@ -190,7 +195,7 @@ timely_term <- function(dframe,
   # rename term and level
   x <- x[, .(mcid, term_i = term, level_i = level)]
 
-  # left-join term_i and level_i to dframe
+  # left-join the results back to dframe
   dframe <- x[dframe, on = "mcid"]
 
   # ---------- construct timely term
@@ -227,9 +232,13 @@ timely_term <- function(dframe,
 
   # ---------- prepare to return
 
+  # restore column and row order
   dframe <- dframe[, .SD, .SDcols = return_vars]
-  setkey(dframe, NULL)
+  setkey(dframe, idx)
+  dframe[, idx := NULL]
   dframe <- unique(dframe)
+  
+  # restore class
   setattr(dframe, "class", prior_class)
   dframe[]
 }

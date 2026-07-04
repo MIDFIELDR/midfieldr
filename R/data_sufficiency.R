@@ -58,7 +58,7 @@ NULL
 #'
 #' @param dframe `r dframe` Required variables: `{mcid, term_i, timely_term}`.
 #'
-#' @param midfield_table `r midfield_x("*term*")` Required variables:
+#' @param midfield_table `r midfield_x("***term***")` Required variables:
 #'        `{mcid, term, institution}`.
 #'
 #' @returns Data frame with the following properties:

@@ -7,9 +7,9 @@
 select_basic_cols(dframe, col_pattern = NULL, ..., type = NULL)
 }
 \arguments{
-\item{dframe}{Data frame of student records from which columns are selected.
-Expected choices are \code{student}, \code{term}, \code{course}, \code{degree} or their
-equivalent.}
+\item{dframe}{MIDFIELD \emph{\strong{student}}, \emph{\strong{term}}, \emph{\strong{course}}, or
+\emph{\strong{degree}} dataset (data frame or data frame extension) or a
+data frame derived from one of these.}
 
 \item{col_pattern}{Character vector containing strings or regular
 expressions to be matched or partially matched to the column

@@ -7,7 +7,7 @@ param_dots <- "Not used for passing values; forces subsequent arguments to be
 dframe <- "Data frame or data frame extension (e.g., data.table or tibble)."
 
 midfield_x <- function(x) {
-  paste0("Data frame or data frame extension of a MIDFIELD ", x, " table.")
+  paste0("MIDFIELD  ", x, "  dataset (data frame or data frame extension).")
 }
 
 

@@ -8,6 +8,7 @@
 #' @importFrom checkmate qassert
 #'
 #' @importFrom data.table :=
+#' @importFrom data.table .I
 #' @importFrom data.table .N
 #' @importFrom data.table .SD
 #' @importFrom data.table %chin%

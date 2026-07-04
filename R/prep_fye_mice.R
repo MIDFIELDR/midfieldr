@@ -49,10 +49,10 @@
 #' acceptable value, not missing data. Observations with missing or unknown
 #' values in the ID or institution columns (if any) should be removed.
 #'
-#' @param midfield_student `r midfield_x("*student*")` Required variables:
+#' @param midfield_student `r midfield_x("***student***")` Required variables:
 #'        `{mcid, race, sex}.`
 #'
-#' @param midfield_term `r midfield_x("*term*")` Required variables:
+#' @param midfield_term `r midfield_x("***term***")` Required variables:
 #'        `{mcid, term, cip6, institution}.`
 #'
 #' @param ... `r param_dots`

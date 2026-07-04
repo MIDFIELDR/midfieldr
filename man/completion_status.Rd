@@ -9,7 +9,7 @@ completion_status(dframe, midfield_table = degree)
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variables: \verb{\{mcid, timely_term\}}.}
 
-\item{midfield_table}{Data frame or data frame extension of a MIDFIELD \emph{degree} table. Required variables:
+\item{midfield_table}{MIDFIELD  \emph{\strong{degree}}  dataset (data frame or data frame extension). Required variables:
 \verb{\{mcid, term_degree\}}.}
 }
 \value{
