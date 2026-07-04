@@ -39,27 +39,27 @@ post_bacc_terms <- function(dframe, midfield_table = degree) {
   # ---------- base R checks (all data frame classes)
 
   # define required columns in midfield_x argument
-  reqd_record_vars <- c("mcid", "term_degree")
+  midf_table_vars <- c("mcid", "term_degree")
 
   # assert data frames
-  checkmate::qassert(dframe, "d+")
-  checkmate::qassert(midfield_table, "d+")
+  qassert(dframe, "d+")
+  qassert(midfield_table, "d+")
 
   # assert class of required variables
-  checkmate::qassert(dframe[["mcid"]], "s+")
+  qassert(dframe[["mcid"]], "s+")
 
   # dframe term variable, exact match, string, length 1
   term_var_choices <- c("term", "term_course", "term_degree")
   var <- intersect(term_var_choices, colnames(dframe))
-  checkmate::assert_choice(var, choices = term_var_choices)
-  checkmate::qassert(var, "s1")
+  assert_choice(var, choices = term_var_choices)
+  qassert(var, "s1")
 
   # then assert
   assert_names(colnames(midfield_table),
-    must.include = reqd_record_vars
+    must.include = midf_table_vars
   )
-  for (i in seq_along(reqd_record_vars)) {
-    qassert(midfield_table[[reqd_record_vars[i]]], "s+")
+  for (i in seq_along(midf_table_vars)) {
+    qassert(midfield_table[[midf_table_vars[i]]], "s+")
   }
 
   # ---------- preparation
@@ -70,12 +70,12 @@ post_bacc_terms <- function(dframe, midfield_table = degree) {
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   setDT(dframe)
-  reqd_record <- copy(midfield_table)
-  setDT(reqd_record)
+  midf_table <- copy(midfield_table)
+  setDT(midf_table)
 
   # subset of required variables
-  reqd_record <- reqd_record[, .SD, .SDcols = reqd_record_vars]
-  reqd_record <- unique(reqd_record, na.rm = TRUE)
+  midf_table <- midf_table[, .SD, .SDcols = midf_table_vars]
+  midf_table <- unique(midf_table, na.rm = TRUE)
 
   # bind names due to NSE notes in R CMD check
   term_var <- NULL
@@ -98,10 +98,10 @@ post_bacc_terms <- function(dframe, midfield_table = degree) {
   dframe_id <- unique(dframe_id, na.rm = TRUE)
 
   # inner-join input-ID and midfield-degree data
-  x <- reqd_record[dframe_id, on = "mcid", nomatch = NULL]
+  x <- midf_table[dframe_id, on = "mcid", nomatch = NULL]
 
   # keep the term of the first degree(s)
-  setorderv(x, reqd_record_vars, order = 1)
+  setorderv(x, midf_table_vars, order = 1)
   x <- x[, .SD[1], by = "mcid"]
 
   # rename the first degree term

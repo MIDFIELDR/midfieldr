@@ -708,8 +708,6 @@ check_equiv_frames(four_programs, study_programs)
 #> [1] TRUE
 ```
 
-[▲ top of page](#top)
-
 ## References
 
 NCES. 2010. *IPEDS Classification of Instructional Programs (CIP)*.

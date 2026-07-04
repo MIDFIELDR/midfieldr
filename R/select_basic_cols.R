@@ -83,11 +83,11 @@ select_basic_cols <- function(dframe, col_pattern = NULL, ..., type = NULL) {
   )
 
   # data frame assessment
-  checkmate::qassert(dframe, "d+")
+  qassert(dframe, "d+")
 
   # optional arguments
   if (!is.null(col_pattern)) {
-    checkmate::qassert(col_pattern, "s+")
+    qassert(col_pattern, "s+")
   }
   if (!is.null(type)) {
     qassert(type, "S1")

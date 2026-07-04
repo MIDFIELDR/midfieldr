@@ -934,8 +934,6 @@ setnames(tbl, old = "people", new = "Group", skip_absent = TRUE)
 Table 2: Four programs (N ever enrolled) percent stickiness {.table
 .gt_table quarto-disable-processing="false" quarto-bootstrap="false"}
 
-[▲ top of page](#top)
-
 ## References
 
 Cleveland, William S. 1993. *Visualizing Data*. Hobart Press.

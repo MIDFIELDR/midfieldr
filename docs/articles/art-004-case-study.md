@@ -1341,8 +1341,6 @@ ggplot(DT_chart, aes(x = stickiness, y = people)) +
 
 Figure 1: Program stickiness.
 
-[▲ top of page](#top)
-
 ## References
 
 Cleveland, William S. 1993. *Visualizing Data*. Hobart Press.

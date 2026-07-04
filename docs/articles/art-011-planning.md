@@ -51,8 +51,6 @@ N\_\textrm{ever}.
 Edit column names to suit the audience. Condition/transform data as
 needed for tables or charts.
 
-[▲ top of page](#top)
-
 ## References
 
 Ohland, Matthew, Marisa Orr, Richard Layton, Susan Lord, and Russell

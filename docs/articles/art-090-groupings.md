@@ -706,6 +706,4 @@ rules, students in `DT` who do not graduate will have NA values in the
 `term_degree` and `cip6` columns of the joined data tables. Thus this
 result has 76,875 unique students of whom 43,786 earned degrees.
 
-[▲ top of page](#top)
-
 ## References

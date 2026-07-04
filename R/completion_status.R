@@ -102,8 +102,8 @@ completion_status <- function(dframe, midfield_table = degree) {
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   setDT(dframe)
-  reqd_record <- copy(midfield_table)
-  setDT(reqd_record)
+  midf_table <- copy(midfield_table)
+  setDT(midf_table)
 
   # bind names due to NSE notes in R CMD check
   completion_status <- NULL
@@ -114,11 +114,11 @@ completion_status <- function(dframe, midfield_table = degree) {
   # subset required variables
   dframe <- dframe[, .SD, .SDcols = dframe_vars]
   dframe <- unique(dframe, na.rm = TRUE)
-  reqd_record <- reqd_record[, .SD, .SDcols = record_vars]
-  reqd_record <- unique(reqd_record, na.rm = TRUE)
+  midf_table <- midf_table[, .SD, .SDcols = record_vars]
+  midf_table <- unique(midf_table, na.rm = TRUE)
 
   # join degree records
-  dframe <- reqd_record[dframe, on = "mcid"]
+  dframe <- midf_table[dframe, on = "mcid"]
 
   # ---------- timely completion labels
 

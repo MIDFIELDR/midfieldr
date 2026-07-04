@@ -81,7 +81,18 @@ term <- select_basic_cols(source_term)
 ``` r
 
 # Working data frame
-DT <- copy(term)
+DT <- term[, .(mcid)]
+DT <- unique(DT)
+DT
+#>                  mcid
+#>                <char>
+#>     1: MCID3111142225
+#>     2: MCID3111142283
+#>     3: MCID3111142290
+#>    ---               
+#> 97553: MCID3112898894
+#> 97554: MCID3112898895
+#> 97555: MCID3112898940
 ```
 
 *Data sufficiency.*   Filter to satisfy the data sufficiency criterion.
@@ -301,7 +312,5 @@ DT
 #> 76874: MCID3112800920
 #> 76875: MCID3112870009
 ```
-
-[▲ top of page](#top)
 
 ## References

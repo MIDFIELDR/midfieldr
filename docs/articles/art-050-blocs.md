@@ -127,7 +127,7 @@ degree <- select_basic_cols(source_degree)
 ``` r
 
 # Working data frame
-DT <- copy(term)
+DT <- copy(term)[, .(mcid)]
 ```
 
 *Data sufficiency.*   Filter to satisfy the data sufficiency criterion.
@@ -436,7 +436,5 @@ DT
 #> 5652:      ME MCID3112641535
 #> 5653:      ME MCID3112698681
 ```
-
-[▲ top of page](#top)
 
 ## References

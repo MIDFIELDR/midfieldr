@@ -1,8 +1,9 @@
 # Calculate timely completion terms
 
-To a data frame keyed by student ID, add a column indicating the
-student's timely completion term. Columns of supporting information are
-also added. Columns not related to the task are dropped.
+Add a column indicating the term by which a student's program completion
+would be considered timely. Columns of supporting information are also
+added. Any existing column with the same name as one of the new columns
+is dropped.
 
 ## Usage
 
@@ -44,10 +45,10 @@ Data frame with the following properties:
 
 - Data frame class is preserved.
 
-- Rows are filtered for unique `mcid` values.
+- Rows are filtered for uniqueness.
 
-- Column `{mcid}` is retained (all other columns are dropped). New
-  columns added:
+- Columns are not modified except any existing column with the same name
+  as one of the new columns is dropped. The new columns are:
 
   - `term_i.`   Initial term of a student's longitudinal record, encoded
     `YYYYT`. Extracted from `midfield_table.`

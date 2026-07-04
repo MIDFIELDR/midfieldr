@@ -26,9 +26,9 @@ of \code{sched_span}).}
 Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved.
-\item Rows are filtered for unique \code{mcid} values.
-\item Column \code{{mcid}} is retained (all other columns are dropped). New
-columns added:
+\item Rows are filtered for uniqueness.
+\item Columns are not modified except any existing column with the same name
+as one of the new columns is dropped. The new columns are:
 \itemize{
 \item \code{term_i.}   Initial term of a student's longitudinal record,
 encoded \code{YYYYT}. Extracted from \code{midfield_table.}
@@ -44,9 +44,10 @@ would be considered timely for every student. Encoded \code{YYYYT.}
 }
 }
 \description{
-To a data frame keyed by student ID, add a column indicating the
-student's timely completion term. Columns of supporting information
-are also added.  Columns not related to the task are dropped.
+Add a column indicating the term by which a student's program
+completion would be considered timely. Columns of supporting information
+are also added. Any existing column with the same name as one of the
+new columns is dropped.
 }
 \details{
 In many studies, students must complete their programs in a specified time

@@ -1081,8 +1081,6 @@ start
 The results indicate (for the case study data) a potential under-count
 of 45% to 97% if FYE proxies are excluded when counting starters.
 
-[▲ top of page](#top)
-
 ## References
 
 Azur, Melissa J., Elizabeth A. Stuart, Constantine Frangakis, and Philip

@@ -127,6 +127,15 @@ test_timely_term <- function() {
     return_vars <- c(dframe_vars, added_vars)
     expect_equal(return_vars, colnames(DT))
     
+    
+    # columns in dframe not involved in function are un-modified
+    x <- dframe[, inactive_col := 1:nrow(dframe)]
+    y <- timely_term(x, term)
+    x_vars <- colnames(x)
+    added_vars  <- c("term_i", "level_i", "adj_span", "timely_term")
+    return_vars <- c(x_vars, added_vars)
+    expect_equal(return_vars, colnames(y))
+
     # correct answers naming and not naming arguments
     x <- timely_term(dframe = dframe, midfield_table = term)
     y <- timely_term(dframe, term)

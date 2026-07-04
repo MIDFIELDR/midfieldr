@@ -386,6 +386,4 @@ DT
 #> 3266: MCID3112641535      ME
 ```
 
-[▲ top of page](#top)
-
 ## References

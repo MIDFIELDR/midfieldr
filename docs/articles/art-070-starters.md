@@ -482,6 +482,4 @@ DT
 #> 4048: MCID3112619666      ME
 ```
 
-[▲ top of page](#top)
-
 ## References

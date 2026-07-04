@@ -41,9 +41,10 @@ NULL
 
 #' Calculate timely completion terms
 #'
-#' To a data frame keyed by student ID, add a column indicating the
-#' student's timely completion term. Columns of supporting information
-#' are also added.  Columns not related to the task are dropped.
+#' Add a column indicating the term by which a student's program
+#' completion would be considered timely. Columns of supporting information
+#' are also added. Any existing column with the same name as one of the
+#' new columns is dropped.
 #'
 #' In many studies, students must complete their programs in a specified time
 #' span to be considered "timely", for example 4, 6, or 8 years after
@@ -89,9 +90,9 @@ NULL
 #'
 #' @returns Data frame with the following properties:
 #' * Data frame class is preserved.
-#' * Rows are filtered for unique `mcid` values.
-#' * Column `{mcid}` is retained (all other columns are dropped). New
-#'   columns added:
+#' * Rows are filtered for uniqueness.
+#' * Columns are not modified except any existing column with the same name
+#'   as one of the new columns is dropped. The new columns are:
 #'   - `term_i.` &nbsp; Initial term of a student's longitudinal record,
 #'      encoded `YYYYT`. Extracted from `midfield_table.`
 #'   - `level_i.` &nbsp; Character. Student level (01 Freshman, 02 Sophomore,
@@ -112,10 +113,13 @@ timely_term <- function(dframe,
                         sched_span = NULL,
                         span = NULL) {
   # define required columns and variables to be added
-  dframe_vars <- c("mcid")
-  record_vars <- c("mcid", "term", "level")
+  reqd_dframe_vars <- c("mcid")
+  reqd_table_vars <- c("mcid", "term", "level")
   added_vars <- c("term_i", "level_i", "adj_span", "timely_term")
-  return_vars <- c(dframe_vars, added_vars)
+
+  # cols to be added are removed from existing dframe col names
+  return_dframe_vars <- setdiff(colnames(dframe), added_vars)
+  return_vars <- c(return_dframe_vars, added_vars)
 
   # ---------- base R checks (all data frame classes)
   #
@@ -130,15 +134,15 @@ timely_term <- function(dframe,
   qassert(midfield_table, "d+")
 
   # required columns
-  assert_names(colnames(dframe), must.include = dframe_vars)
-  assert_names(colnames(midfield_table), must.include = record_vars)
+  assert_names(colnames(dframe), must.include = reqd_dframe_vars)
+  assert_names(colnames(midfield_table), must.include = reqd_table_vars)
 
   # class of required columns
-  for (i in seq_along(dframe_vars)) {
-    qassert(dframe[[dframe_vars[i]]], "s+")
+  for (i in seq_along(reqd_dframe_vars)) {
+    qassert(dframe[[reqd_dframe_vars[i]]], "s+")
   }
-  for (i in seq_along(record_vars)) {
-    qassert(midfield_table[[record_vars[i]]], "s+")
+  for (i in seq_along(reqd_table_vars)) {
+    qassert(midfield_table[[reqd_table_vars[i]]], "s+")
   }
 
   # other arguments
@@ -156,8 +160,8 @@ timely_term <- function(dframe,
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   setDT(dframe)
-  reqd_record <- copy(midfield_table)
-  setDT(reqd_record)
+  midf_table <- copy(midfield_table)
+  setDT(midf_table)
 
   # bind names due to NSE notes in R CMD check
   adj_span <- NULL
@@ -170,13 +174,13 @@ timely_term <- function(dframe,
   # ---------- do the work
 
   # subset required variables
-  dframe <- dframe[, .SD, .SDcols = dframe_vars]
+  dframe <- dframe[, .SD, .SDcols = return_dframe_vars]
   dframe <- unique(dframe, na.rm = TRUE)
-  reqd_record <- reqd_record[, .SD, .SDcols = record_vars]
-  reqd_record <- unique(reqd_record, na.rm = TRUE)
+  midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
+  midf_table <- unique(midf_table, na.rm = TRUE)
 
   # inner-join IDs and term vars
-  x <- reqd_record[dframe, on = "mcid", nomatch = NULL]
+  x <- midf_table[dframe, on = "mcid", nomatch = NULL]
   x <- unique(x)
 
   # keep the row of the first term, lowest level

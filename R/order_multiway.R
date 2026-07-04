@@ -154,21 +154,6 @@ order_multiway <- function(dframe,
   categ_1 <- categories[[1]]
   categ_2 <- categories[[2]]
 
-  # if (method == "alphabet") {
-  #
-  #   # alphabetical order returns categories as factors with levels
-  #   # ordered in reverse alphabetical order such that the graph rows and
-  #   # panels are in alphabetical order from the top down
-  #   DT <- order_by_alphabet(
-  #     DT,
-  #     categ_1,
-  #     categ_2
-  #   )
-  #
-  #   # organize the return column order
-  #   setcolorder(DT, c(categories, quantity))
-  # } else
-
   if (method == "percent") {
     # ratio-based metrics, e.g., stickiness or graduation rate
     # returns categories as factors with levels ordered by the metric
@@ -185,7 +170,7 @@ order_multiway <- function(dframe,
 
     # function-based ordering returns categories as factors with levels
     # ordered by category median()
-    DT <- order_by_function(
+    DT <- order_by_median(
       DT,
       categ_1,
       categ_2,
@@ -212,9 +197,6 @@ order_by_percent <- function(dframe,
                              categories,
                              quantity,
                              ratio_of) {
-  # avoid possible copy-by-reference side effects
-  DT <- copy(dframe)
-
   # bind names due to NSE notes in R CMD check
   A <- NULL
   B <- NULL
@@ -223,7 +205,7 @@ order_by_percent <- function(dframe,
   NEW_COL <- NULL
 
   # replace NA in count columns with zero
-  DT[, (ratio_of) := lapply(.SD, function(quantity) {
+  dframe[, (ratio_of) := lapply(.SD, function(quantity) {
     fifelse(is.na(quantity), 0, quantity)
   }), .SDcols = ratio_of]
 
@@ -231,14 +213,11 @@ order_by_percent <- function(dframe,
   # provides columns needed to determine row and panel order
   for (categ_i in categories) {
     for (count_i in ratio_of) {
-      # execute expressions with column names as parameters
-      wrapr::let(
-        c(COUNT_I = count_i),
-        {
-          new_col <- paste(categ_i, count_i, sep = "_")
-          DT[, (new_col) := sum(COUNT_I), by = categ_i]
-        }
-      )
+      new_col <- paste(categ_i, count_i, sep = "_")
+      dframe[, (new_col) := sum(COUNT_I),
+        by = categ_i,
+        env = list(COUNT_I = count_i)
+      ]
     }
   }
 
@@ -246,7 +225,7 @@ order_by_percent <- function(dframe,
   # denominator of the ratio. Assumes the smaller number is the numerator,
   # e.g., grad / ever or grad / start. Always more starters or ever-enrolled
   # overall (summing across all programs) than grads.
-  count_col_totals <- colSums(DT[, ratio_of, with = FALSE])
+  count_col_totals <- colSums(dframe[, ratio_of, with = FALSE])
   count_col_min <- names(which.min(count_col_totals))
   count_col_max <- names(which.max(count_col_totals))
 
@@ -259,67 +238,36 @@ order_by_percent <- function(dframe,
     b <- paste(categ_i, count_col_max, sep = "_")
     new_col <- paste(categ_i, quantity, sep = "_")
 
-    # execute expressions with column names as parameters
-    wrapr::let(
-      c(
+    # percent-based metric by individual category
+    dframe[, NEW_COL := round(100 * A / B, 1),
+      env = list(
         A = a,
         B = b,
+        NEW_COL = new_col
+      )
+    ]
+
+    # order factor levels by values in new column
+    dframe[, CATEG_I := reorder(CATEG_I, NEW_COL),
+      env = list(
         CATEG_I = categ_i,
         NEW_COL = new_col
-      ),
-      {
-        # percent-based metric by individual category
-        DT[, NEW_COL := round(100 * A / B, 1)]
+      )
+    ]
 
-        # order factor levels by values in new column
-        DT[, CATEG_I := reorder(CATEG_I, NEW_COL)]
-
-        # drop A and B with the intermediate sums
-        DT[, A := NULL]
-        DT[, B := NULL]
-      }
-    )
+    dframe[, `:=`(A = NULL, B = NULL),
+      env = list(A = a, B = b)
+    ]
   }
-  DT[]
+  dframe[]
 }
-# --------------------------------------------------------------------------
-# order_by_alphabet <- function(dframe,
-#                               categ_1,
-#                               categ_2) {
-#
-#   # avoid possible copy-by-reference side effects
-#   DT <- copy(dframe)
-#
-#   # bind names due to NSE notes in R CMD check
-#   CATEG_1 <- NULL
-#   CATEG_2 <- NULL
-#
-#   # execute expressions with column names as parameters
-#   wrapr::let(
-#     c(
-#       CATEG_1 = categ_1,
-#       CATEG_2 = categ_2
-#     ),
-#     {
-#         setDT(DT)
-#         DT[, CATEG_1 := as.character(CATEG_1)]
-#         DT[, CATEG_2 := as.character(CATEG_2)]
-#         setorder(DT, -CATEG_1, -CATEG_2)
-#         DT[, CATEG_1 := as.factor(CATEG_1)]
-#         DT[, CATEG_2 := as.factor(CATEG_2)]
-#     }
-#   )
-#   DT[]
-# }
-# --------------------------------------------------------------------------
-order_by_function <- function(dframe,
-                              categ_1,
-                              categ_2,
-                              quantity,
-                              method) {
-  # avoid possible copy-by-reference side effects
-  DT <- copy(dframe)
 
+# --------------------------------------------------------------------------
+order_by_median <- function(dframe,
+                            categ_1,
+                            categ_2,
+                            quantity,
+                            method) {
   # bind names due to NSE notes in R CMD check
   CATEG_1 <- NULL
   CATEG_2 <- NULL
@@ -331,32 +279,40 @@ order_by_function <- function(dframe,
   if (method == "median") {
     f <- stats::median
   }
-  # if (method == "sum") {
-  #   f <- sum
-  # }
-  # if (method == "mean") {
-  #   f <- mean
-  # }
 
   # create names for value variables
   order_1 <- paste(categ_1, method, sep = "_")
   order_2 <- paste(categ_2, method, sep = "_")
 
-  # execute expressions with column names as parameters
-  wrapr::let(
-    c(
-      CATEG_1 = categ_1,
-      CATEG_2 = categ_2,
+
+  dframe[, ORDER_1 := f(QUANTITY, na.rm = TRUE),
+    by = CATEG_1,
+    env = list(
       ORDER_1 = order_1,
+      QUANTITY = quantity,
+      CATEG_1 = categ_1
+    )
+  ]
+  dframe[, ORDER_2 := f(QUANTITY, na.rm = TRUE),
+    by = CATEG_2,
+    env = list(
       ORDER_2 = order_2,
-      QUANTITY = quantity
-    ),
-    {
-      DT[, ORDER_1 := f(QUANTITY, na.rm = TRUE), by = CATEG_1]
-      DT[, ORDER_2 := f(QUANTITY, na.rm = TRUE), by = CATEG_2]
-      DT[, CATEG_1 := reorder(CATEG_1, ORDER_1)]
-      DT[, CATEG_2 := reorder(CATEG_2, ORDER_2)]
-    }
-  )
-  DT[]
+      QUANTITY = quantity,
+      CATEG_2 = categ_2
+    )
+  ]
+  dframe[, CATEG_1 := reorder(CATEG_1, ORDER_1),
+    env = list(
+      CATEG_1 = categ_1,
+      ORDER_1 = order_1
+    )
+  ]
+  dframe[, CATEG_2 := reorder(CATEG_2, ORDER_2),
+    env = list(
+      CATEG_2 = categ_2,
+      ORDER_2 = order_2
+    )
+  ]
+
+  dframe[]
 }

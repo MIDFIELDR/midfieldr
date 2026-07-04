@@ -628,8 +628,6 @@ was below the threshold set to preserve anonymity. As noted earlier,
 these are largely an artifact of applying these groupings to practice
 data.
 
-[▲ top of page](#top)
-
 ## References
 
 Ohland, Matthew, Marisa Orr, Richard Layton, Susan Lord, and Russell

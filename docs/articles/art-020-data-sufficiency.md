@@ -320,15 +320,15 @@ check_equiv_frames(x, z)
 # Add timely term column and supporting variables
 DT <- timely_term(DT, term)
 DT
-#>                  mcid term_i       level_i adj_span timely_term
-#>                <char> <char>        <char>    <num>      <char>
-#>     1: MCID3111142225  19881 01 First-year        6       19933
-#>     2: MCID3111142283  19881 01 First-year        6       19933
-#>     3: MCID3111142290  19881 01 First-year        6       19933
-#>    ---                                                         
-#> 97553: MCID3112898894  20181 01 First-year        6       20233
-#> 97554: MCID3112898895  20181 01 First-year        6       20233
-#> 97555: MCID3112898940  20181 01 First-year        6       20233
+#>                  mcid   institution term_i       level_i adj_span timely_term
+#>                <char>        <char> <char>        <char>    <num>      <char>
+#>     1: MCID3111142225 Institution B  19881 01 First-year        6       19933
+#>     2: MCID3111142283 Institution J  19881 01 First-year        6       19933
+#>     3: MCID3111142290 Institution J  19881 01 First-year        6       19933
+#>    ---                                                                       
+#> 97553: MCID3112898894 Institution B  20181 01 First-year        6       20233
+#> 97554: MCID3112898895 Institution B  20181 01 First-year        6       20233
+#> 97555: MCID3112898940 Institution B  20181 01 First-year        6       20233
 ```
 
 ### Closer look
@@ -345,9 +345,9 @@ timely completion is 6 years, that is, academic years 2007–08, 08–09,
 
 # Display one student by ID
 DT[mcid == "MCID3112785480"]
-#>              mcid term_i       level_i adj_span timely_term
-#>            <char> <char>        <char>    <num>      <char>
-#> 1: MCID3112785480  20071 01 First-year        6       20123
+#>              mcid   institution term_i       level_i adj_span timely_term
+#>            <char>        <char> <char>        <char>    <num>      <char>
+#> 1: MCID3112785480 Institution C  20071 01 First-year        6       20123
 ```
 
 *Example 2.*   The student’s initial term is Spring 2002 (encoded
@@ -361,9 +361,9 @@ completion term of Fall 2005.
 
 # Display one student by ID
 DT[mcid == "MCID3111860641"]
-#>              mcid term_i       level_i adj_span timely_term
-#>            <char> <char>        <char>    <num>      <char>
-#> 1: MCID3111860641  20013 03 Third-year        4       20051
+#>              mcid   institution term_i       level_i adj_span timely_term
+#>            <char>        <char> <char>        <char>    <num>      <char>
+#> 1: MCID3111860641 Institution J  20013 03 Third-year        4       20051
 ```
 
 ### Alternate source names
@@ -582,7 +582,5 @@ DT[mcid == "MCID3112056754"]
 #>              <char>
 #> 1:    exclude-lower
 ```
-
-[▲ top of page](#top)
 
 ## References

@@ -117,14 +117,14 @@ data_sufficiency <- function(dframe, midfield_table = term) {
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   setDT(dframe)
-  reqd_record <- copy(midfield_table)
-  setDT(reqd_record)
+  midf_table <- copy(midfield_table)
+  setDT(midf_table)
 
   # subset required variables
   dframe <- dframe[, .SD, .SDcols = dframe_vars]
   dframe <- unique(dframe, na.rm = TRUE)
-  reqd_record <- reqd_record[, .SD, .SDcols = record_vars]
-  reqd_record <- unique(reqd_record, na.rm = TRUE)
+  midf_table <- midf_table[, .SD, .SDcols = record_vars]
+  midf_table <- unique(midf_table, na.rm = TRUE)
 
   # bind names due to NSE notes in R CMD check
   data_sufficiency <- NULL
@@ -138,14 +138,14 @@ data_sufficiency <- function(dframe, midfield_table = term) {
   # subset required variables
   dframe <- dframe[, .SD, .SDcols = dframe_vars]
   dframe <- unique(dframe, na.rm = TRUE)
-  reqd_record <- reqd_record[, .SD, .SDcols = record_vars]
-  reqd_record <- unique(reqd_record, na.rm = TRUE)
+  midf_table <- midf_table[, .SD, .SDcols = record_vars]
+  midf_table <- unique(midf_table, na.rm = TRUE)
 
   # join institutions
-  dframe <- reqd_record[dframe, on = "mcid"]
+  dframe <- midf_table[dframe, on = "mcid"]
 
   # find lower and upper limits by institution
-  inst <- reqd_record[, .(term, institution)]
+  inst <- midf_table[, .(term, institution)]
   inst <- unique(inst)
   inst <- inst[, .(lower_limit = min(term), upper_limit = max(term)),
     by = "institution"

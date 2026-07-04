@@ -43,7 +43,8 @@ pak::pak("MIDFIELDR/midfieldr")
 midfieldr is designed to work with data from MIDFIELD ([Ohland
 2023](#ref-ohland:midfield:2023)) or any other database with a similar
 structure. A sample of these data (with 98,000 students) is provided in
-midfielddata, an R data package you can install from GitHub.
+[midfielddata](https://midfieldr.github.io/midfielddata/), an R data
+package you can install from GitHub.
 
 ``` r
 
@@ -58,7 +59,7 @@ the American Society for Engineering Education (ASEE).
 
 ## Usage
 
-We illustrate usage with a 150-student sample that loads with midfieldr.
+We illustrate usage with a 351-student sample that loads with midfieldr.
 These “toy” data frames—`toy_student, toy_term,` and `toy_degree`—have
 the same structure as the data frames `student, term,` and `degree` in
 midfielddata that we use in package articles.
@@ -73,7 +74,6 @@ student <- select_basic_cols(toy_student)
 term <- select_basic_cols(toy_term)
 degree <- select_basic_cols(toy_degree)
 
-# Display one representative data frame
 term
 #>                 mcid   term   cip6   institution         level
 #>               <char> <char> <char>        <char>        <char>
@@ -111,8 +111,30 @@ term
 
 # Exclude rows after the first degree term
 term <- term[term_cluster != "post-first-degree"]
-term <- select_basic_cols(term)
 degree <- degree[term_cluster != "post-first-degree"]
+
+term
+#>                 mcid   term   cip6   institution         level
+#>               <char> <char> <char>        <char>        <char>
+#>    1: MCID3111142897  19881 400801 Institution B 01 First-year
+#>    2: MCID3111157634  19881 240102 Institution J 01 First-year
+#>    3: MCID3111157634  19883 040201 Institution J 01 First-year
+#>   ---                                                         
+#> 1800: MCID3112869843  20173 240199 Institution B 01 First-year
+#> 1801: MCID3112869843  20181 240199 Institution B 01 First-year
+#> 1802: MCID3112885339  20181 520201 Institution B 01 First-year
+#>       first_degree_term term_cluster
+#>                  <char>       <char>
+#>    1:              <NA>   pre-degree
+#>    2:              <NA>   pre-degree
+#>    3:              <NA>   pre-degree
+#>   ---                               
+#> 1800:              <NA>   pre-degree
+#> 1801:              <NA>   pre-degree
+#> 1802:              <NA>   pre-degree
+
+# Drop temporary columns
+term <- select_basic_cols(term)
 degree <- select_basic_cols(degree)
 
 term
@@ -126,7 +148,7 @@ term
 #> 1801: MCID3112869843  20181 240199 Institution B 01 First-year
 #> 1802: MCID3112885339  20181 520201 Institution B 01 First-year
 
-# Data frame of IDs for refining the ppulation
+# Data frame of IDs for refining the population
 DT <- term[, .(mcid)]
 DT <- unique(DT)
 
@@ -168,6 +190,7 @@ DT
 # Retain rows with sufficient institutional data
 population <- DT[data_sufficiency == "include", .(mcid)]
 population <- unique(population)
+
 population
 #>                mcid
 #>              <char>
@@ -184,19 +207,7 @@ student <- population[student, on = "mcid", nomatch = NULL]
 term <- population[term, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-# Drop temporary columns, records ready for further analysis
-select_basic_cols(student)
-#>                mcid          race    sex
-#>              <char>        <char> <char>
-#>   1: MCID3111198701         White   Male
-#>   2: MCID3111208924         White   Male
-#>   3: MCID3111213539         White Female
-#>  ---                                    
-#> 238: MCID3112592592         White   Male
-#> 239: MCID3112593368         White Female
-#> 240: MCID3112617577 International Female
-
-select_basic_cols(term)
+term
 #>                 mcid   term   cip6   institution          level
 #>               <char> <char> <char>        <char>         <char>
 #>    1: MCID3111198701  19891 240102 Institution J  01 First-year
@@ -207,24 +218,27 @@ select_basic_cols(term)
 #> 1329: MCID3112593368  20153 090101 Institution B 04 Fourth-year
 #> 1330: MCID3112617577  20123 240199 Institution B  01 First-year
 
-select_basic_cols(degree)
-#>                mcid term_degree   cip6
-#>              <char>      <char> <char>
-#>   1: MCID3111213539       19923 030103
-#>   2: MCID3111213856       19911 261399
-#>   3: MCID3111254225       19923 270101
-#>  ---                                  
-#> 167: MCID3112587501       20141 420101
-#> 168: MCID3112592592       20153 520201
-#> 169: MCID3112593368       20153 090101
+# Drop temporary columns
+student <- select_basic_cols(student)
+term <- select_basic_cols(term)
+degree <- select_basic_cols(degree)
+
+term
+#>                 mcid   term   cip6   institution          level
+#>               <char> <char> <char>        <char>         <char>
+#>    1: MCID3111198701  19891 240102 Institution J  01 First-year
+#>    2: MCID3111198701  19893 520301 Institution J  01 First-year
+#>    3: MCID3111208924  19891 240102 Institution J  01 First-year
+#>   ---                                                          
+#> 1328: MCID3112593368  20151 090101 Institution B  03 Third-year
+#> 1329: MCID3112593368  20153 090101 Institution B 04 Fourth-year
+#> 1330: MCID3112617577  20123 240199 Institution B  01 First-year
 ```
 
 ## Acknowledgments
 
 The development of midfieldr and midfielddata was supported by the US
 National Science Foundation through grant numbers 1545667 and 2142087.
-
-[▲ top of page](#top)
 
 ## References
 

@@ -537,8 +537,6 @@ two datasets. The other program names in this major are identical.
 - 140802 Geotechnical Engineering (`cip`)
 - 140802 Geotechnical and Geoenvironmental Engineering (`cip2010`)
 
-[▲ top of page](#top)
-
 ## References
 
 NCES. 2026. *IPEDS Classification of Instructional Programs (CIP)*.

@@ -2,12 +2,9 @@
 "_PACKAGE"
 
 #' @importFrom checkmate assert_choice
-#' @importFrom checkmate assert_data_frame
-#' @importFrom checkmate assert_function
 #' @importFrom checkmate assert_int
 #' @importFrom checkmate assert_names
 #' @importFrom checkmate assert_subset
-#' @importFrom checkmate check_set_equal
 #' @importFrom checkmate qassert
 #'
 #' @importFrom data.table :=
@@ -19,7 +16,6 @@
 #' @importFrom data.table copy
 #' @importFrom data.table fcase
 #' @importFrom data.table fifelse
-#' @importFrom data.table key
 #' @importFrom data.table setattr
 #' @importFrom data.table setcolorder
 #' @importFrom data.table setDF
@@ -36,9 +32,8 @@
 #'
 #' @importFrom utils str
 #'
-#' @importFrom wrapr let
-#' @importFrom wrapr stop_if_dot_args
 #' @importFrom wrapr %?%
+#' @importFrom wrapr stop_if_dot_args
 #  see utils.R for re-export of wrapr::check_equiv_frames
 NULL
 

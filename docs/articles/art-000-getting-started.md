@@ -772,8 +772,6 @@ Utilities
 - [`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
   re-exported from the wrapr package
 
-[▲ top of page](#top)
-
 ## References
 
 NCES. 2010. *IPEDS Classification of Instructional Programs (CIP)*.
