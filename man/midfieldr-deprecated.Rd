@@ -30,9 +30,9 @@ add_timely_term(
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble).}
 
-\item{midfield_degree}{MIDFIELD  \emph{degree}  dataset (data frame or data frame extension).}
+\item{midfield_degree}{Data frame of \emph{degree} student-level records.}
 
-\item{midfield_term}{MIDFIELD  \emph{term}  dataset (data frame or data frame extension).}
+\item{midfield_term}{Data frame of \emph{term} student-level records.}
 
 \item{keep_text}{Deprecated \code{filter_cip()}. Character vector of search text to keep.}
 

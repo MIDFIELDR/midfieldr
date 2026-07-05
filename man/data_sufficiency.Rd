@@ -9,7 +9,7 @@ data_sufficiency(dframe, midfield_table = term)
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variables: \verb{\{mcid, term_i, timely_term\}}.}
 
-\item{midfield_table}{MIDFIELD  \emph{\strong{term}}  dataset (data frame or data frame extension). Required variables:
+\item{midfield_table}{Data frame of \emph{term} student-level records. Required variables:
 \verb{\{mcid, term, institution\}}.}
 }
 \value{

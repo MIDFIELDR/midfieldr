@@ -53,9 +53,8 @@ NULL
 #' the `col_pattern` argument. In all cases, unmatched search strings are
 #' silently ignored.
 #'
-#' @param dframe MIDFIELD ***student***, ***term***, ***course***, or 
-#'        ***degree*** dataset (data frame or data frame extension) or a data 
-#'        frame derived from one of these. 
+#' @param dframe 
+#'       `r midfield_x("*student*, *term*, *course*, or *degree*")` 
 #' 
 #' @param col_pattern Character vector containing strings or regular
 #'        expressions to be matched or partially matched to the column

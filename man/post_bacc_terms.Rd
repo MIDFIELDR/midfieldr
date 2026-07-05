@@ -10,7 +10,7 @@ post_bacc_terms(dframe, midfield_table = degree)
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variables: \code{{mcid}} and one of
 \verb{\{term, term_course, term_degree\}.}}
 
-\item{midfield_table}{MIDFIELD  \emph{\strong{degree}}  dataset (data frame or data frame extension). Required variables:
+\item{midfield_table}{Data frame of \emph{degree} student-level records. Required variables:
 \verb{\{mcid, term_degree\}.}}
 }
 \value{

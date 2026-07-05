@@ -2,15 +2,15 @@
 % Please edit documentation in R/timely_term.R
 \name{timely_term}
 \alias{timely_term}
-\title{Calculate timely completion terms}
+\title{Estimate timely completion terms}
 \usage{
 timely_term(dframe, midfield_table = term, ..., sched_span = NULL, span = NULL)
 }
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variable: \code{{mcid}}.}
 
-\item{midfield_table}{MIDFIELD  \emph{\strong{term}}  dataset (data frame or data frame extension). Required variables:
-\verb{\{mcid, term, level\}}.}
+\item{midfield_table}{Data frame of \emph{term} student-level records.
+Required variables: \verb{\{mcid, term, level\}}.}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
 referable only by name.}
@@ -26,17 +26,17 @@ of \code{sched_span}).}
 Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved.
-\item Rows are filtered for uniqueness. Row order is not modified.
-\item Columns are not modified except any existing column with the same name
-as one of the new columns is dropped. The new columns are:
+\item Rows are filtered for unique student IDs.
+\item Variable \code{{mcid}} is retained. All other columns are dropped and the
+following variables are added:
 \itemize{
-\item \code{term_i.}   Initial term of a student's longitudinal record,
+\item \code{term_i}   Initial term of a student's longitudinal record,
 encoded \code{YYYYT}. Extracted from \code{midfield_table.}
-\item \code{level_i.}   Character. Student level (01 Freshman, 02 Sophomore,
+\item \code{level_i}   Character. Student level (01 Freshman, 02 Sophomore,
 etc.) in their initial term. Extracted from \code{midfield_table.}
-\item \code{adj_span.}   Numeric. Integer span of years for timely
+\item \code{adj_span}   Numeric. Integer span of years for timely
 completion adjusted for a student's initial level.
-\item \code{timely_term.}   Character. Latest term by which
+\item \code{timely_term}   Character. Latest term by which
 program completion
 would be considered timely for every student. Encoded \code{YYYYT.}
 }
@@ -44,66 +44,39 @@ would be considered timely for every student. Encoded \code{YYYYT.}
 }
 }
 \description{
-Add a column indicating the term by which a student's program
-completion would be considered timely. Columns of supporting information
-are also added. Any existing column with the same name as one of the
-new columns is dropped.
+Starting with a data frame of unique student IDs, estimate the term by
+which a student's program completion would be considered timely and add
+columns to the data frame that support the finding.
 }
 \details{
-In many studies, students must complete their programs in a specified time
-span to be considered "timely", for example 4, 6, or 8 years after
-admission. The latest term by which program completion would be considered
-timely is the \emph{timely completion term.} By "completion" we mean an
-undergraduate earning their first baccalaureate degree (or degrees, for
-students earning more than one degree in the same term).
-
-The timely completion term is required for determining data sufficiency
-as well as timely completion status. The goal in either case is to refine
-a population, that is, obtain a data frame of IDs that satisfy our
-constraints. Thus \code{timely_term()} yields a column of  timely term
-values and columns of supporting information keyed by ID. All other columns
-in \code{dframe} (if any) are dropped.
+The latest term by which program completion would be considered
+timely is the \emph{timely completion term,} typically 4, 6, or 8 years after
+admission depending on the definition adopted in a particular study. By
+"completion" we mean an undergraduate earning their first baccalaureate
+degree or degrees.
 
 Our heuristic assigns \code{span} number of years (default 6) to every
 student. For students admitted at second-year level or higher, the span is
 reduced by one year for each full year the student is assumed to have
-completed. For example, a student admitted at the second-year level is
-assumed to have completed one year of a program, so their span is reduced by
-one year. The adjusted span is added to their initial term to create the
-\code{timely_term} values.
+completed. The adjusted span is added to their initial term to create the
+\code{timely_term} values. These results are documented in the output.
 
-The supporting information in the output is provided so that the user
-can review the findings. Moreover, \code{data_sufficiency()} and
-\code{completion_status()} require one or both of the added columns
+Determining completion status requires output variable \code{{timely_term}};
+determining data sufficiency requires output variables
 \verb{\{term_i, timely_term\}.}
 }
 \examples{
 term <- toy_term
 
 # Start with a small population 
-x <- toy_student[c(51:55, 346:350), .(mcid)]
+x <- toy_student[c(51:55, 346:350), .(mcid, sex)]
 x
 
-# Add timely term
+# Add timely term, unrelated variables (sex) are dropped
 x <- timely_term(x, midfield_table = term)
 x
 
-# Existing timely term column (if any) is replaced
-x[, timely_term := NA_character_][]
+# Existing column with same name as added column is replaced
+x[, adj_span := 0L][]
 timely_term(x, midfield_table = term)
-
-# Columns not involved in the function are not modified
-# For example, here we add "sex" to dframe
-x <- toy_student[c(51:55, 346:350), .(mcid, sex)]
-x
-x <- timely_term(dframe = x, midfield_table = term)
-x
-
-# A variable in dframe with the same name as a variable  
-# being joined from midfield_table is not affected. 
-# For example, here we add a "term" column to x
-x <- x[, .(mcid, sex, term = term_i)]
-x
-x <- timely_term(dframe = x, midfield_table = term)
-x
 }

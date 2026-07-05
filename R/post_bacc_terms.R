@@ -15,7 +15,7 @@
 #' @param dframe `r dframe` Required variables: `{mcid}` and one of
 #'        `{term, term_course, term_degree}.`
 #'
-#' @param midfield_table `r midfield_x("***degree***")` Required variables:
+#' @param midfield_table `r midfield_x("*degree*")` Required variables:
 #'        `{mcid, term_degree}.`
 #'
 #' @returns Data frame with the following properties:

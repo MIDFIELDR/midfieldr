@@ -12,10 +12,10 @@ prep_fye_mice(
 )
 }
 \arguments{
-\item{midfield_student}{MIDFIELD  \emph{\strong{student}}  dataset (data frame or data frame extension). Required variables:
+\item{midfield_student}{Data frame of \emph{\strong{student}} student-level records. Required variables:
 \verb{\{mcid, race, sex\}.}}
 
-\item{midfield_term}{MIDFIELD  \emph{\strong{term}}  dataset (data frame or data frame extension). Required variables:
+\item{midfield_term}{Data frame of \emph{\strong{term}} student-level records. Required variables:
 \verb{\{mcid, term, cip6, institution\}.}}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be

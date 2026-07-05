@@ -5,7 +5,7 @@
 
 #' midfieldr deprecated functions
 #' @param dframe `r dframe`
-#' @param midfield_term `r midfield_x("*term*")`
+#' @param midfield_term `r midfield_x("\\[term\\]")`
 #' @rdname midfieldr-deprecated
 #' @export
 add_data_sufficiency <- function(dframe, midfield_term = term) {
@@ -58,7 +58,7 @@ NULL
 #'
 #' @param dframe `r dframe` Required variables: `{mcid, term_i, timely_term}`.
 #'
-#' @param midfield_table `r midfield_x("***term***")` Required variables:
+#' @param midfield_table `r midfield_x("*term*")` Required variables:
 #'        `{mcid, term, institution}`.
 #'
 #' @returns Data frame with the following properties:
@@ -128,13 +128,14 @@ data_sufficiency <- function(dframe, midfield_table = term) {
 
   # bind names due to NSE notes in R CMD check
   data_sufficiency <- NULL
+  idx <- NULL
   lower_limit <- NULL
   term_i <- NULL
   timely_term <- NULL
   upper_limit <- NULL
 
   # ---------- do the work
-
+  
   # subset required variables
   dframe <- dframe[, .SD, .SDcols = dframe_vars]
   dframe <- unique(dframe, na.rm = TRUE)
@@ -164,10 +165,13 @@ data_sufficiency <- function(dframe, midfield_table = term) {
   )]
 
   # ---------- prepare to return
-
+  
+  # restore column and row order
   dframe <- dframe[, .SD, .SDcols = return_vars]
-  setkey(dframe, NULL)
+  dframe[, idx := NULL]
   dframe <- unique(dframe)
+  
+  # restore class
   setattr(dframe, "class", prior_class)
   dframe[]
 }

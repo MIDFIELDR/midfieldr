@@ -1,5 +1,5 @@
-# R code used for documentation
 
+# R code used for documentation
 
 param_dots <- "Not used for passing values; forces subsequent arguments to be
         referable only by name."
@@ -7,9 +7,8 @@ param_dots <- "Not used for passing values; forces subsequent arguments to be
 dframe <- "Data frame or data frame extension (e.g., data.table or tibble)."
 
 midfield_x <- function(x) {
-  paste0("MIDFIELD  ", x, "  dataset (data frame or data frame extension).")
+    paste("Data frame of", x, "student-level records.")
 }
-
 
 # Variable names used in data.R
 

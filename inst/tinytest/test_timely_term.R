@@ -127,21 +127,17 @@ test_timely_term <- function() {
     return_vars <- c(dframe_vars, added_vars)
     expect_equal(return_vars, colnames(DT))
     
-    
-    # columns in dframe not involved in function are un-modified
+    # columns in dframe not involved in function are dropped
     x <- dframe[, inactive_col := 1:nrow(dframe)]
     y <- timely_term(x, term)
-    x_vars <- colnames(x)
-    added_vars  <- c("term_i", "level_i", "adj_span", "timely_term")
-    return_vars <- c(x_vars, added_vars)
-    expect_equal(return_vars, colnames(y))
+    expect_equal("inactive_col", setdiff(colnames(x), colnames(y)))
 
     # row order is maintained
     x <- copy(test_DT)
     setorderv(x, c("level", "term"))
     x[, rownum := .I]
     y <- timely_term(x, term)
-    expect_equal(x$rownum, y$rownum)
+    expect_equal(y[["mcid"]], unique(x[["mcid"]]))
     
     # correct answers naming and not naming arguments
     x <- timely_term(dframe = dframe, midfield_table = term)
