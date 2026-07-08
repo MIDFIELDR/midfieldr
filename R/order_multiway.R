@@ -49,7 +49,7 @@
 #'        is the denominator of the ratio.
 #'
 #' @returns Data frame with the following properties:
-#' * `r class_presrv`
+#' * `r df_class_preserved`
 #' * Rows are preserved, though the row order may change.
 #' * Numerical variables are converted to type double. Columns
 #'   specified by `categories` are converted to factors and ordered.
@@ -69,7 +69,7 @@
 #'   `quantity = "grad_rate",` the two new column names would be:
 #'   - `program_grad_rate`
 #'   - `people_grad_rate`
-#' * `r groups_not`
+#' * `r not_preserved`
 #'
 #' @references
 #'   Cleveland WS (1993). \emph{Visualizing Data}. Hobart Press, Summit, NJ.

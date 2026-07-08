@@ -26,8 +26,7 @@ of \code{sched_span}).}
 Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved.
-\item Rows are not modified except duplicated rows are removed. Row order is
-preserved.
+\item Row order is preserved. Duplicated rows are removed.
 \item Variable \code{{mcid}} is retained. All other columns (if any) are dropped
 and the following variables are added:
 \itemize{

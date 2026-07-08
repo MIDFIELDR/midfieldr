@@ -18,8 +18,7 @@ provided by \verb{timely_term().}}
 Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved.
-\item Rows are not modified except duplicated rows are removed.
-Row order is preserved.
+\item Row order is preserved. Duplicated rows are removed.
 \item Variables \verb{\{mcid, term_i, timely_term\}} are retained. All other
 columns (if any) are dropped and the following variables are added:
 \itemize{

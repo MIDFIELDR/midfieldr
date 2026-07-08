@@ -64,7 +64,7 @@
 #'   not start with 14---produce an error.
 #'
 #' @returns Data frame with the following properties:
-#' * `r class_presrv`
+#' * `r df_class_preserved`
 #' * Rows: One row for every FYE student from the `term` input data frame.
 #' * Columns: Conditioned for later use as an input to the mice R
 #'   package for multiple imputation as follows:

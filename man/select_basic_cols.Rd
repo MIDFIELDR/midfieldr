@@ -24,7 +24,7 @@ referable only by name.}
 Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved.
-\item Rows are not modified.
+\item Row order is preserved. Duplicated rows are removed.
 \item Columns are a subset of the input, appearing in the same order.
 \item Groups and keys are not preserved.
 }

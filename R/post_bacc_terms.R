@@ -19,8 +19,8 @@
 #'        `{mcid, term_degree}.`
 #'
 #' @returns Data frame with the following properties:
-#' * `r class_presrv`
-#' * `r rows_not_mod`
+#' * `r df_class_preserved`
+#' * `r rows_not_modified`
 #' * New columns are added or replace existing columns of the same name (if
 #'   any). Other columns are not modified. The following variables are added:
 #'   - `first_degree_term.` &nbsp;  Character. Term of a student's first
@@ -30,7 +30,7 @@
 #'      to one of three clusters: terms that are prior to ("pre-degree"),
 #'      equal to ("first-degree"), or subsequent to ("post-first-degree")
 #'      the student’s first degree term.
-#' * `r groups_not`
+#' * `r not_preserved`
 #'
 #' @example man/examples/exa_post_bacc_terms.R
 #' @export

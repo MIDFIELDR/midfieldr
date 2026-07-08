@@ -53,8 +53,8 @@ NULL
 #'        `{mcid, term, institution}.`
 #'
 #' @returns Data frame with the following properties:
-#' * `r class_presrv`
-#' * `r rows_not_mod`
+#' * `r df_class_preserved`
+#' * `r rows_not_modified`
 #' * Variables `{mcid, term_i, timely_term}` are retained. All other
 #'   columns (if any) are dropped and the following variables are added:
 #'   - `institution.` &nbsp; Character. Institution in which the student is
@@ -70,7 +70,7 @@ NULL
 #'      if the data are sufficient; and "exclude-lower" or "exclude-upper"
 #'      if not, indicating at which boundary of the data range the ambiguity
 #'      occurs.
-#' * `r groups_not`
+#' * `r not_preserved`
 #'
 #' @example man/examples/exa_data_sufficiency.R
 #' @export

@@ -8,10 +8,12 @@ dframe <- "Data frame or data frame extension (e.g., data.table or tibble)"
 midfield_x <- function(x) {
   paste("`", x, "`", "data frame")
 }
-class_presrv <- "Data frame class is preserved."
-rows_not_mod <- "Rows are not modified except duplicated rows are removed.
-        Row order is preserved."
-groups_not <- "Groups and keys are not preserved."
+
+df_class_preserved <- "Data frame class is preserved."
+
+rows_not_modified <- "Row order is preserved. Duplicated rows are removed."
+
+not_preserved <- "Groups and keys are not preserved."
 
 
 # ---------- Variable names used in data.R

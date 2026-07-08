@@ -66,10 +66,10 @@ NULL
 #'        "t", "c", "d", "a", or NULL (default). See Details.
 #'
 #' @returns Data frame with the following properties:
-#' * `r class_presrv`
-#' * Rows are not modified.
+#' * `r df_class_preserved`
+#' * `r rows_not_modified`
 #' * Columns are a subset of the input, appearing in the same order.
-#' * `r groups_not`
+#' * `r not_preserved`
 #'
 #' @example man/examples/exa_select_basic_cols.R
 #' @export

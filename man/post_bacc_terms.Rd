@@ -17,8 +17,7 @@ post_bacc_terms(dframe, midfield_table = degree)
 Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved.
-\item Rows are not modified except duplicated rows are removed.
-Row order is preserved.
+\item Row order is preserved. Duplicated rows are removed.
 \item New columns are added or replace existing columns of the same name (if
 any). Other columns are not modified. The following variables are added:
 \itemize{

@@ -1,18 +1,20 @@
 term <- toy_term
 degree <- toy_degree
 
-# Start with a small population 
+# Start with a selected population 
 x <- toy_student[21:36, .(mcid)]
 x
 
 # Timely term column is required
-x <- timely_term(x, term)
+x <- timely_term(x, midfield_table = term)
 x
 
-# Add completion status column, columns not used are dropped
-x <- completion_status(x, degree)
+# Build completion status data frame
+x <- completion_status(x, midfield_table = degree)
 x
 
-# Existing completion status column (if any) is replaced
-x[, completion_status := NA_character_][]
+# Only ID and timely term are pulled from x, all other columns drop
+x[, term_degree := "17761"]
+x[, completion_status := "unknown"][]
 completion_status(x, degree)
+

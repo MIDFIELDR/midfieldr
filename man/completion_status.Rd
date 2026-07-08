@@ -2,13 +2,12 @@
 % Please edit documentation in R/completion_status.R
 \name{completion_status}
 \alias{completion_status}
-\title{Determine completion status}
+\title{Build a completion status data frame}
 \usage{
 completion_status(dframe, midfield_table = degree)
 }
 \arguments{
-\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble) with required variables \verb{\{mcid, timely_term\}.}
-The latter variable is provided by \verb{timely_term().}}
+\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble) with required variables \verb{\{mcid, timely_term\}.}}
 
 \item{midfield_table}{\code{degree} data frame with required
 variables \verb{\{mcid, term_degree\}.}}
@@ -17,53 +16,54 @@ variables \verb{\{mcid, term_degree\}.}}
 Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved.
-\item Rows are not modified except duplicated rows are removed.
-Row order is preserved.
-\item Columns \verb{\{mcid, timely_term\}} are retained. All other columns (if any)
-are dropped and the following variables are added:
+\item One row per student.
+\item Columns returned:
 \itemize{
-\item \code{term_degree.}   Character. Term in which the first degree(s) are
-completed, encoded \code{YYYYT}. Joined from \code{midfield_table.}
-\item \code{completion_status.}   Character. Possible values are "timely",
+\item \code{mcid}   Pulled from \code{dframe.}
+\item \code{timely_term}   Pulled from \code{dframe.}
+\item \code{term_degree}   Joined from \code{midfield_table.}
+\item \code{completion_status}   Character. Possible values of "timely",
 "late" and "NA".
 }
-\item Groups and keys are not preserved.
 }
 }
 \description{
-For each student in a data frame, determine their \emph{completion status}
-(timely, late, or NA) and add columns that support the findings.
+Assembles a data frame with one row per student and with columns for
+student ID, timely completion term, first degree term (if any), and
+\emph{completion status}---timely, late, or NA. Depends on \code{timely_term()}
+being run beforehand.
 }
 \details{
-By \emph{completing a program} we mean an undergraduate earning their first
-baccalaureate degree or degrees. \emph{Timely} completion is typically 4, 6, or
-8 years after admission depending on the definition adopted in a particular
-study. The term at the upper limit of that span is the
-\emph{timely completion term.}
+Program \emph{completion} means graduating with a first baccalaureate
+degree. Completion is \emph{timely} if it occurs within a specified
+span, typically 4, 6, or 8 years after admission. The term at the end of
+that span is the \emph{timely completion term.}
 
-Our heuristic obtains a student's first degree term (if any) from
-\code{midfield_table}. Completion status is "timely" for students completing
-a degree no later than their timely completion terms; "late" for
-students completing their program after their timely completion term;
-and "NA" for non-completers. These results are documented in the output.
+The student ID and timely completion term are pulled from \code{dframe}; all other
+columns are dropped. The first degree term is joined from \code{midfield_table}.
+For students with a degree, completion no later than the timely term is
+"timely"; completion after the timely term is "late." For students with no
+degree, completion status is NA.
 }
 \examples{
 term <- toy_term
 degree <- toy_degree
 
-# Start with a small population 
+# Start with a selected population 
 x <- toy_student[21:36, .(mcid)]
 x
 
 # Timely term column is required
-x <- timely_term(x, term)
+x <- timely_term(x, midfield_table = term)
 x
 
-# Add completion status column, columns not used are dropped
-x <- completion_status(x, degree)
+# Build completion status data frame
+x <- completion_status(x, midfield_table = degree)
 x
 
-# Existing completion status column (if any) is replaced
-x[, completion_status := NA_character_][]
+# Only ID and timely term are pulled from x, all other columns drop
+x[, term_degree := "17761"]
+x[, completion_status := "unknown"][]
 completion_status(x, degree)
+
 }

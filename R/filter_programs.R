@@ -57,11 +57,11 @@ NULL
 #'        resulting Boolean vector.
 #'
 #' @returns Data frame with the following properties:
-#' * `r class_presrv`
+#' * `r df_class_preserved`
 #' * Rows are a subset of the input and appear in the same order.
 #'   Duplicated rows are removed.
 #' * Columns are not modified.
-#' * `r groups_not`
+#' * `r not_preserved`
 #'
 #' @example man/examples/exa_filter_programs.R
 #' @export

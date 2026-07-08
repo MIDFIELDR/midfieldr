@@ -22,39 +22,38 @@ NULL
 #
 # ---------- current version
 #
-#' Determine completion status
-#'
-#' For each student in a data frame, determine their *completion status*
-#' (timely, late, or NA) and add columns that support the findings.
-#'
-#' By *completing a program* we mean an undergraduate earning their first
-#' baccalaureate degree or degrees. *Timely* completion is typically 4, 6, or
-#' 8 years after admission depending on the definition adopted in a particular
-#' study. The term at the upper limit of that span is the
-#' *timely completion term.*
-#'
-#' Our heuristic obtains a student's first degree term (if any) from
-#' `midfield_table`. Completion status is "timely" for students completing
-#' a degree no later than their timely completion terms; "late" for
-#' students completing their program after their timely completion term;
-#' and "NA" for non-completers. These results are documented in the output.
-#'
+#' Build a completion status data frame
+#' 
+#' Assembles a data frame with one row per student and with columns for 
+#' student ID, timely completion term, first degree term (if any), and 
+#' *completion status*---timely, late, or NA. Depends on `timely_term()` 
+#' being run beforehand.
+#' 
+#' Program *completion* means graduating with a first baccalaureate 
+#' degree. Completion is *timely* if it occurs within a specified 
+#' span, typically 4, 6, or 8 years after admission. The term at the end of 
+#' that span is the *timely completion term.* 
+#' 
+#' The student ID and timely completion term are pulled from `dframe`; all other 
+#' columns are dropped. The first degree term is joined from `midfield_table`. 
+#' For students with a degree, completion no later than the timely term is 
+#' "timely"; completion after the timely term is "late." For students with no 
+#' degree, completion status is NA.
+#' 
 #' @param dframe `r dframe` with required variables `{mcid, timely_term}.`
-#'        The latter variable is provided by `timely_term().`
 #'
 #' @param midfield_table `r midfield_x("degree")` with required
 #'        variables `{mcid, term_degree}.`
 #'
 #' @returns Data frame with the following properties:
-#' * `r class_presrv`
-#' * `r rows_not_mod`
-#' * Columns `{mcid, timely_term}` are retained. All other columns (if any)
-#'   are dropped and the following variables are added:
-#'   - `term_degree.` &nbsp; Character. Term in which the first degree(s) are
-#'      completed, encoded `YYYYT`. Joined from `midfield_table.`
-#'   - `completion_status.` &nbsp; Character. Possible values are "timely",
+#' * `r df_class_preserved`
+#' * One row per student. 
+#' * Columns returned:
+#'   - `mcid` &nbsp; Pulled from `dframe.`
+#'   - `timely_term` &nbsp; Pulled from `dframe.`
+#'   - `term_degree` &nbsp; Joined from `midfield_table.`
+#'   - `completion_status` &nbsp; Character. Possible values of "timely",
 #'      "late" and "NA".
-#' * `r groups_not`
 #'
 #' @example man/examples/exa_completion_status.R
 #' @export

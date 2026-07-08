@@ -77,9 +77,8 @@ NULL
 #'        of `sched_span`).
 #'
 #' @returns Data frame with the following properties:
-#' * Data frame class is preserved.
-#' * Rows are not modified except duplicated rows are removed. Row order is
-#'   preserved.
+#' * `r df_class_preserved`
+#' * `r rows_not_modified`
 #' * Variable `{mcid}` is retained. All other columns (if any) are dropped
 #'   and the following variables are added:
 #'   - `term_i` &nbsp; Initial term of a student's longitudinal record,
@@ -91,7 +90,7 @@ NULL
 #'   - `timely_term` &nbsp; Character. Latest term by which
 #'      program completion
 #'      would be considered timely for every student. Encoded `YYYYT.`
-#' * `r groups_not`
+#' * `r not_preserved`
 #'
 #' @example man/examples/exa_timely_term.R
 #' @export
