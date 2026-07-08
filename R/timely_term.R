@@ -101,6 +101,7 @@ timely_term <- function(dframe,
                         ...,
                         sched_span = NULL,
                         span = NULL) {
+  #
   # ---------- assign active column names
 
   reqd_dframe_vars <- c("mcid")

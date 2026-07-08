@@ -113,7 +113,8 @@ prep_fye_mice <- function(midfield_student = student,
                           midfield_term = term,
                           ...,
                           fye_codes = NULL) {
-  # ---------- checks, use base R syntax
+  #
+  # ---------- base R checks (all data frame classes)
 
   # arguments after ... must be named
   wrapr::stop_if_dot_args(
@@ -165,10 +166,9 @@ prep_fye_mice <- function(midfield_student = student,
   qassert(midfield_term[["term"]], "s+")
   qassert(midfield_term[["cip6"]], "s+")
 
-
   # ---------- preparation
-
-  # to restore class except for groups in tibbles
+  
+  # to restore class, but not grouped_DF (tibbles)
   prior_class <- setdiff(class(midfield_student), "grouped_df")
 
   # prevent by-ref changes propagating to global env
@@ -180,7 +180,7 @@ prep_fye_mice <- function(midfield_student = student,
   # bind names due to NSE notes in R CMD check
   proxy <- NULL
 
-  # Do the work
+  # ---------- do the work
 
   # All FYE students, all terms
   fye <- midfield_term[cip6 %chin% fye_codes, .(mcid, institution)]
@@ -229,24 +229,25 @@ prep_fye_mice <- function(midfield_student = student,
   # Merge known transition CIPs to ever FYE (left-outer join)
   fye <- DT[fye, on = c("mcid")]
 
-  # Add race and sex (left-outer join). Ensure uniqueness.
+  # Add race and sex (left-outer join)
   fye <- midfield_student[fye, .(mcid, race, sex, institution, proxy), on = c("mcid")]
   fye <- unique(fye)
-
+  
   # Convert to factors to prepare for mice()
   fye[, race := as.factor(race)]
   fye[, sex := as.factor(sex)]
   fye[, institution := as.factor(institution)]
   fye[, proxy := as.factor(proxy)]
-
-  # reorder rows
-  fye <- unique(fye)
-  setkeyv(fye, c("institution", "proxy", "sex", "race"))
-
-  # ---------- restore state
-
+  
+  # ---------- prepare to return
+  
+  # set row order
+  setorderv(fye, c("institution", "proxy", "sex", "race"))
+  
   # restore class
-
+  setkey(fye, NULL)
   setattr(fye, "class", prior_class)
+  
+  # done
   fye[]
 }

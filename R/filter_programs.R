@@ -69,7 +69,7 @@ NULL
 filter_programs <- function(dframe, pattern, ..., negate = FALSE) {
   #
   # ---------- base R checks (all data frame classes)
-  #
+  
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     "Arguments after ... must be named, e.g., arg = val."
@@ -79,18 +79,18 @@ filter_programs <- function(dframe, pattern, ..., negate = FALSE) {
   qassert(dframe, "d+")
   if (!is.null(pattern)) qassert(pattern, "s+")
   qassert(negate, "B1") # missing not allowed
-  #
+  
   # ---------- preparation
-  #
+  
   # to restore class, but not grouped_DF (tibbles)
   prior_class <- setdiff(class(dframe), "grouped_df")
 
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   setDT(dframe)
-  #
+  
   # ---------- do the work
-  #
+  
   if (length(pattern) > 0) {
     pattern <- paste0(pattern, collapse = "|")
 
@@ -102,9 +102,9 @@ filter_programs <- function(dframe, pattern, ..., negate = FALSE) {
       }
     }), ]
   }
-  #
+  
   # ---------- prepare to return
-  #
+  
   # ensure unique rows
   dframe <- unique(dframe)
 

@@ -75,8 +75,9 @@ NULL
 #' @export
 #'
 select_basic_cols <- function(dframe, col_pattern = NULL, ..., type = NULL) {
-  # ---------- base R checks (all data frame classes)
   #
+  # ---------- base R checks (all data frame classes)
+  
   # arguments after ... must be named
   wrapr::stop_if_dot_args(
     substitute(list(...)),

@@ -62,13 +62,13 @@ NULL
 completion_status <- function(dframe, midfield_table = degree) {
   #
   # ---------- assign active column names
-  #
+  
   reqd_dframe_vars <- c("mcid", "timely_term")
   reqd_table_vars <- c("mcid", "term_degree")
   added_vars <- c("term_degree", "completion_status")
-  #
+  
   # ---------- base R checks (all data frame classes)
-  #
+  
   # data frame assessment
   qassert(dframe, "d+")
   qassert(midfield_table, "d+")
@@ -84,9 +84,9 @@ completion_status <- function(dframe, midfield_table = degree) {
   for (i in seq_along(reqd_table_vars)) {
     qassert(midfield_table[[reqd_table_vars[i]]], "s+")
   }
-  #
+  
   # ---------- preparation
-  #
+  
   # to restore class, but not grouped_DF (tibbles)
   prior_class <- setdiff(class(dframe), "grouped_df")
 
@@ -100,9 +100,9 @@ completion_status <- function(dframe, midfield_table = degree) {
   completion_status <- NULL
   idx <- NULL
   timely_term <- NULL
-  #
+  
   # ---------- do the work
-  #
+  
   # subset required variables
   dframe <- dframe[, .SD, .SDcols = reqd_dframe_vars]
   dframe <- unique(dframe, na.rm = TRUE)
@@ -114,9 +114,9 @@ completion_status <- function(dframe, midfield_table = degree) {
 
   # join degree records
   dframe <- midf_table[dframe, on = "mcid"]
-  #
+  
   # ---------- timely completion labels
-  #
+  
   # completion is timely, late, or NA
   dframe[, completion_status := fifelse(
     term_degree <= timely_term,
@@ -124,9 +124,9 @@ completion_status <- function(dframe, midfield_table = degree) {
     "late",
     na = NA_character_
   )]
-  #
+  
   # ---------- prepare to return
-  #
+  
   # restore row order
   setkey(dframe, idx)
 

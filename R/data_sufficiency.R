@@ -78,13 +78,13 @@ NULL
 data_sufficiency <- function(dframe, midfield_table = term) {
   #
   # ---------- assign active column names
-  #
+  
   reqd_dframe_vars <- c("mcid", "term_i", "timely_term")
   reqd_table_vars <- c("mcid", "term", "institution")
   added_vars <- c("institution", "lower_limit", "upper_limit", "data_sufficiency")
-  #
+  
   # ---------- base R checks (all data frame classes)
-  #
+  
   # data frame assessment
   qassert(dframe, "d+")
   qassert(midfield_table, "d+")
@@ -100,9 +100,9 @@ data_sufficiency <- function(dframe, midfield_table = term) {
   for (i in seq_along(reqd_table_vars)) {
     qassert(midfield_table[[reqd_table_vars[i]]], "s+")
   }
-  #
+  
   # ---------- preparation
-  #
+  
   # to restore class except for groups in tibbles
   prior_class <- setdiff(class(dframe), "grouped_df")
 
@@ -119,9 +119,9 @@ data_sufficiency <- function(dframe, midfield_table = term) {
   term_i <- NULL
   timely_term <- NULL
   upper_limit <- NULL
-  #
+  
   # ---------- do the work
-  #
+  
   # subset required variables
   dframe <- dframe[, .SD, .SDcols = reqd_dframe_vars]
   dframe <- unique(dframe, na.rm = TRUE)
@@ -142,18 +142,18 @@ data_sufficiency <- function(dframe, midfield_table = term) {
   ]
   # join institution limits
   dframe <- x[dframe, on = "institution"]
-  #
+  
   # ---------- data sufficiency labels
-  #
+  
   # one row per ID
   dframe[, data_sufficiency := fcase(
     timely_term > upper_limit, "exclude-upper",
     term_i == lower_limit, "exclude-lower",
     default = "include"
   )]
-  #
+  
   # ---------- prepare to return
-  #
+  
   # restore row order
   setkey(dframe, idx)
 
